@@ -66,4 +66,12 @@ export function registerGen1Moves() {
       MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.Growth, {
+    name: 'Growth',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: 0,
+    flags: 0,
+  });
 }

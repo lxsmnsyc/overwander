@@ -26,9 +26,14 @@ function createStageMove(stage: Stages, config: StageMovesConfig) {
 }
 
 const setupAttackStageMoves = createStageMove(Stages.Attack, {
-  [Moves.Growl]: 1,
+  [Moves.Growl]: -1,
+});
+
+const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {
+  [Moves.Growth]: 1,
 });
 
 export function setupStageMoves(battle: Battle) {
   setupAttackStageMoves(battle);
+  setupSpecialAttackStageMoves(battle);
 }

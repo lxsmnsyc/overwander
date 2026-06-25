@@ -18,4 +18,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Growl, {
+    name: 'Growl',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 40,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Sound,
+  });
 }

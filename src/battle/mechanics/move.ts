@@ -1,5 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import {
   TYPE_EFFECTIVENESS,
   TYPE_EFFECTIVENESS_FACTOR,
@@ -14,7 +14,6 @@ import {
   MoveTargetFlags,
   StatFlags,
 } from '../../data/ids/moves';
-import { Stages } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type { Alliance, Battle, Move, Team, Unit } from '../core';
 import type {
@@ -26,7 +25,7 @@ import type {
   UnitAttackResolveCriticalEvent,
   UnitAttackResolveEffectivenessEvent,
 } from '../events';
-import { BattleEvents, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
@@ -148,6 +147,14 @@ export function setupCastingMechanics(battle: Battle) {
     queue.delete(event.move);
 
     event.move.startCooldown();
+  });
+
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+    if (event.source === event.target) {
+      // Setup cast cancel
+    } else {
+      // TODO setup target switch
+    }
   });
 }
 
@@ -345,6 +352,14 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     return event.hit;
   }
 
+  function triggerFailed(parent: TriggerMoveTargetEvent) {
+    battle.emit(BattleEvents.TriggerMoveFailed, {
+      id: 'TriggerMoveFailed',
+      disabled: false,
+      parent,
+    });
+  }
+
   function triggerMiss(parent: TriggerMoveTargetEvent) {
     battle.emit(BattleEvents.TriggerMoveMissed, {
       id: 'TriggerMoveMissed',
@@ -374,6 +389,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
 
       // if the target is immune, skip
       if (isImmune) {
+        triggerFailed(event);
         return;
       }
       // For moves with accuracy, perform accuracy check
@@ -519,6 +535,7 @@ export function setupAttackMechanics(battle: Battle) {
       const parent = event.parent;
       const source = parent.source;
       const target = parent.target;
+
       const category = parent.category;
 
       // multiply to effective attack stat
@@ -607,7 +624,12 @@ export function setupAttackMechanics(battle: Battle) {
         flags |= DamageFlags.NonLethal;
       }
 
-      event.source.damage(event.target, amount, flags);
+      event.source.damage(
+        { type: EffectType.Move, unit: event.source, move: event.move },
+        event.target,
+        amount,
+        flags,
+      );
 
       if (event.target.alive) {
         runAttackEffect(event);

@@ -1,8 +1,68 @@
 export const enum Stats {
-	HP = 0,
-	Attack = 1,
-	Defense = 2,
-	SpecialAttack = 3,
-	SpecialDefense = 4,
-	Speed = 5,
+  HP = 0,
+  Attack = 1,
+  Defense = 2,
+  SpecialAttack = 3,
+  SpecialDefense = 4,
+  Speed = 5,
+}
+
+export type StatsField = { [key in Stats]: number };
+
+export const enum StatsKind {
+  Base = 0,
+  Individual = 1,
+  Effort = 2,
+}
+
+export function createStatsField() {
+  return {
+    [Stats.HP]: 0,
+    [Stats.Attack]: 0,
+    [Stats.Defense]: 0,
+    [Stats.SpecialAttack]: 0,
+    [Stats.SpecialDefense]: 0,
+    [Stats.Speed]: 0,
+  };
+}
+
+export const enum Stages {
+  Attack = 0,
+  Defense = 1,
+  SpecialAttack = 2,
+  SpecialDefense = 3,
+  Speed = 4,
+  Evasion = 5,
+  Accuracy = 6,
+}
+
+export type StagesField = { [key in Stages]: number };
+
+export function createStagesField() {
+  return {
+    [Stages.Accuracy]: 0,
+    [Stages.Attack]: 0,
+    [Stages.Defense]: 0,
+    [Stages.Evasion]: 0,
+    [Stages.SpecialAttack]: 0,
+    [Stages.SpecialDefense]: 0,
+    [Stages.Speed]: 0,
+  };
+}
+
+export function getStageFromStat(stat: Stats): Stages | undefined {
+  switch (stat) {
+    case Stats.Attack:
+      return Stages.Attack;
+    case Stats.Defense:
+      return Stages.Defense;
+    case Stats.SpecialAttack:
+      return Stages.SpecialAttack;
+    case Stats.SpecialDefense:
+      return Stages.SpecialDefense;
+    case Stats.Speed:
+      return Stages.Speed;
+    default:
+      return undefined;
+  }
 }

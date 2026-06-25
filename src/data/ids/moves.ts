@@ -5,19 +5,31 @@ export const enum MoveCategories {
 }
 
 export const enum MoveTargetFlags {
+  // Target includes the source
   Self = 0b0000001,
+
+  // Target is a unit
   Unit = 0b0000010,
+
+  // Target is a team
   Team = 0b0000100,
 
+  // Target is own unit/team
   Own = 0b0001000,
+
+  // Target is an ally unit/team
   Ally = 0b0010000,
+
+  // Target is an enemy unit/team
   Enemy = 0b0100000,
 
+  // Target multiple units/teams
   Multiple = 0b1000000,
 }
 
 export const enum MoveFlags {
   Contact = 0b000001,
+  Sound = 0b000010,
 }
 
 export const enum MoveAttackFlags {
@@ -55,4 +67,6 @@ export const enum MoveTargetPriorities {
 
 export const enum Moves {
   Tackle,
+  Growl,
+  LeechSeed,
 }

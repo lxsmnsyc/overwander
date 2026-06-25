@@ -1,5 +1,6 @@
 export const enum Statuses {
   Casting,
+  Seeding,
 }
 
 export const enum Weathers {
@@ -20,13 +21,3 @@ export const enum Terrains {
 }
 
 export const enum TeamStatuses {}
-
-export const enum Stages {
-  Attack = 0,
-  Defense = 1,
-  SpecialAttack = 2,
-  SpecialDefense = 3,
-  Speed = 4,
-  Evasion = 5,
-  Accuracy = 6,
-}

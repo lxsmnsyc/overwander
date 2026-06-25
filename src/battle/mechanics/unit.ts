@@ -1,16 +1,20 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import {
+  createStagesField,
+  getStageFromStat,
+  Stats,
+  StatsKind,
+} from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
-import { Stages } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
 
 function setupUnitStatusMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Exact, event => {
-    event.source.status.add(event.status);
+    event.source.status[event.status] = event.cause;
   });
   battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Exact, event => {
-    event.source.status.delete(event.status);
+    event.source.status[event.status] = undefined;
   });
 }
 
@@ -45,6 +49,14 @@ function setupUnitStageMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitCheckStage, EventPriority.Exact, event => {
     event.value = event.source.stages[event.stage];
   });
+
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Exact, event => {
+    event.source.stages = createStagesField();
+  });
+
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+    event.source.stages = createStagesField();
+  });
 }
 
 function setupUnitTypeMechanics(battle: Battle) {
@@ -77,6 +89,25 @@ function setupUnitDamageMechanics(battle: Battle) {
   });
 }
 
+function checkSharedStat(level: number, base: number, iv: number, ev: number) {
+  return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100);
+}
+
+function checkHPStat(level: number, base: number, iv: number, ev: number) {
+  // TODO make the pokemon's tankier?
+  return checkSharedStat(level, base, iv, ev) + level + 10;
+}
+
+function checkOtherStat(
+  level: number,
+  base: number,
+  iv: number,
+  ev: number,
+  nature: number,
+) {
+  return Math.floor((checkSharedStat(level, base, iv, ev) + 5) * nature);
+}
+
 function setupUnitStatMechancis(battle: Battle) {
   battle.on(BattleEvents.UnitSetLevel, EventPriority.Exact, event => {
     event.source.level = event.value;
@@ -89,32 +120,33 @@ function setupUnitStatMechancis(battle: Battle) {
   battle.on(BattleEvents.UnitSetStat, EventPriority.Exact, event => {
     // when changing HP stat, scale current health
     if (event.stat === Stats.HP) {
-      const max = event.source.stats[event.stat];
+      const max = event.source.checkStat(event.stat, 0);
       const current = event.source.health;
       event.source.setHealth((current / max) * event.value);
     }
-    event.source.stats[event.stat] = event.value;
-  });
-  battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, event => {
-    event.value = event.source.stats[event.stat];
+    event.source.stats[event.kind][event.stat] = event.value;
   });
 
-  function getStageFromStat(stat: Stats): Stages | undefined {
-    switch (stat) {
-      case Stats.Attack:
-        return Stages.Attack;
-      case Stats.Defense:
-        return Stages.Defense;
-      case Stats.SpecialAttack:
-        return Stages.SpecialAttack;
-      case Stats.SpecialDefense:
-        return Stages.SpecialDefense;
-      case Stats.Speed:
-        return Stages.Speed;
-      default:
-        return undefined;
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, event => {
+    // TODO apply level formula
+    if (event.stat === Stats.HP) {
+      event.value = checkHPStat(
+        event.source.level,
+        event.source.stats[StatsKind.Base][event.stat],
+        event.source.stats[StatsKind.Individual][event.stat],
+        event.source.stats[StatsKind.Effort][event.stat],
+      );
+    } else {
+      event.value = checkOtherStat(
+        event.source.level,
+        event.source.stats[StatsKind.Base][event.stat],
+        event.source.stats[StatsKind.Individual][event.stat],
+        event.source.stats[StatsKind.Effort][event.stat],
+        // TODO nature
+        1.0,
+      );
     }
-  }
+  });
 
   function getNormalStage(value: number, stat: Stats, flags: number) {
     if (flags & StatFlags.Critical) {
@@ -153,10 +185,27 @@ function setupUnitStatMechancis(battle: Battle) {
   });
 }
 
+function setupUnitSwitchMechanics(battle: Battle) {
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+    if (event.success) {
+      event.source.leave();
+      if (event.source !== event.target) {
+        event.target.leave();
+      }
+      // Trigger re-entry
+      event.source.enter();
+      if (event.source !== event.target) {
+        event.target.enter();
+      }
+    }
+  });
+}
+
 export function setupUnitMechanics(battle: Battle) {
   setupUnitStatusMechanics(battle);
   setupUnitTypeMechanics(battle);
   setupUnitStatMechancis(battle);
   setupUnitStageMechanics(battle);
   setupUnitDamageMechanics(battle);
+  setupUnitSwitchMechanics(battle);
 }

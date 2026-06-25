@@ -1,12 +1,12 @@
 import type { BaseEvent, EventPriority } from '../core/event-emitter';
 import type { EventMap } from '../core/event-engine';
-import type { Stats } from '../data/constants/stats';
+import type { Stages, Stats, StatsKind } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
-import type { Stages, TeamStatuses, Weathers } from '../data/ids/status';
-import type { Alliance, Move, Status, Team, Unit } from './core';
+import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
+import type { Alliance, Move, Team, Unit } from './core';
 
 export const enum BattleEvents {
   // Core events
@@ -55,6 +55,7 @@ export const enum BattleEvents {
   TriggerMoveRollHit,
 
   TriggerMoveMissed,
+  TriggerMoveFailed,
 
   TriggerMoveEffect,
 
@@ -69,6 +70,7 @@ export const enum BattleEvents {
   UnitAttackResolveEffectiveness,
   UnitAttackEffect,
 
+  UnitHeal,
   UnitDamage,
   UnitFaints,
 
@@ -76,6 +78,7 @@ export const enum BattleEvents {
   UnitCreated,
 
   UnitEntersField,
+  UnitLeavesField,
 
   UnitSetStat,
   UnitSetLevel,
@@ -108,6 +111,8 @@ export const enum BattleEvents {
   UnitEnableAbility,
   UnitDisableAbility,
 
+  UnitSwitch,
+
   // Field events
   SetWeather,
   SetTerrain,
@@ -136,6 +141,19 @@ export type MoveTarget =
   | { type: MoveTargetType.Unit; unit: Unit }
   | { type: MoveTargetType.Team; team: Team }
   | { type: MoveTargetType.None };
+
+export const enum EffectType {
+  None = 0,
+  Move = 1,
+  Ability = 2,
+  Item = 3,
+}
+
+export type EffectCause =
+  | { type: EffectType.Move; move: Moves; unit: Unit }
+  | { type: EffectType.Item; item: Items; unit: Unit }
+  | { type: EffectType.Ability; ability: Abilities; unit: Unit }
+  | { type: EffectType.None };
 
 export interface TickEvent extends BaseEvent {
   duration: number;
@@ -187,11 +205,15 @@ export interface CheckMoveDurationEvent extends CheckMoveEvent {
 
 export interface UnitStatEvent extends UnitEvent {
   stat: Stats;
+  value: number;
 }
 
 export interface CheckUnitStatEvent extends UnitStatEvent {
-  value: number;
   flags: number;
+}
+
+export interface UnitSetStatEvent extends UnitStatEvent {
+  kind: StatsKind;
 }
 
 export interface CheckUnitEscapeEvent extends UnitEvent {
@@ -216,19 +238,19 @@ export interface UnitSetValueEvent extends UnitEvent {
   value: number;
 }
 
-export interface UnitSetStatEvent extends UnitStatEvent {
-  value: number;
-}
-
 export interface UnitTypeEvent extends UnitEvent {
   type: Types;
 }
 
 export interface UnitStatusEvent extends UnitEvent {
-  status: Status;
+  status: Statuses;
 }
 
-export interface TriggerMoveMissedEvent extends BaseEvent {
+export interface UnitUpdateStatusEvent extends UnitStatusEvent {
+  cause: EffectCause;
+}
+
+export interface TriggerMoveTargetChildEvent extends BaseEvent {
   parent: TriggerMoveTargetEvent;
 }
 
@@ -262,6 +284,10 @@ export interface UnitStageEvent extends UnitEvent {
   value: number;
 }
 
+export interface UnitUpdateStageEvent extends UnitStageEvent {
+  cause: EffectCause;
+}
+
 export interface TeamEvent extends BaseEvent {
   team: Team;
 }
@@ -270,6 +296,9 @@ export interface TeamStatusEvent extends TeamEvent {
   status: TeamStatuses;
 }
 
+export interface TeamUpdateStatusEvent extends TeamStatusEvent {
+  cause: EffectCause;
+}
 export interface TeamUnitEvent extends TeamEvent {
   unit: Unit;
 }
@@ -282,15 +311,24 @@ export interface UnitDamageEvent extends UnitEvent {
   target: Unit;
   value: number;
   flags: number;
+  cause: EffectCause;
+}
+
+export interface UnitHealEvent extends UnitEvent {
+  target: Unit;
+  value: number;
+  flags: number;
+  cause: EffectCause;
 }
 
 export interface UnitFaintsEvent extends UnitEvent {
   attacker: Unit;
 }
 
-export interface UnitAttackEvent extends UnitDamageEvent {
+export interface UnitAttackEvent extends UnitEvent {
   target: Unit;
   value: number;
+  flags: number;
 
   move: Moves;
   category: MoveCategories;
@@ -361,6 +399,11 @@ export interface MoveUpdateCooldownEvent extends MoveEvent {
   cooldown: CooldownData;
 }
 
+export interface UnitSwitchEvent extends UnitEvent {
+  target: Unit;
+  success: boolean;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -403,12 +446,19 @@ export interface BattleEventMap extends EventMap {
     EventPriority,
   ];
   [BattleEvents.TriggerMoveRollHit]: [TriggerMoveRollHitEvent, EventPriority];
-  [BattleEvents.TriggerMoveMissed]: [TriggerMoveMissedEvent, EventPriority];
+  [BattleEvents.TriggerMoveMissed]: [
+    TriggerMoveTargetChildEvent,
+    EventPriority,
+  ];
+  [BattleEvents.TriggerMoveFailed]: [
+    TriggerMoveTargetChildEvent,
+    EventPriority,
+  ];
 
   // Unit events
-  [BattleEvents.UnitAddStatus]: [UnitStatusEvent, EventPriority];
-  [BattleEvents.UnitRemoveStatus]: [UnitStatusEvent, EventPriority];
-  [BattleEvents.UnitTriggerStatus]: [UnitStatusEvent, EventPriority];
+  [BattleEvents.UnitAddStatus]: [UnitUpdateStatusEvent, EventPriority];
+  [BattleEvents.UnitRemoveStatus]: [UnitUpdateStatusEvent, EventPriority];
+  [BattleEvents.UnitTriggerStatus]: [UnitUpdateStatusEvent, EventPriority];
 
   [BattleEvents.UnitSetLevel]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.UnitSetHealth]: [UnitSetValueEvent, EventPriority];
@@ -417,8 +467,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitAddType]: [UnitTypeEvent, EventPriority];
   [BattleEvents.UnitRemoveType]: [UnitTypeEvent, EventPriority];
 
-  [BattleEvents.UnitAddStage]: [UnitStageEvent, EventPriority];
-  [BattleEvents.UnitRemoveStage]: [UnitStageEvent, EventPriority];
+  [BattleEvents.UnitAddStage]: [UnitUpdateStageEvent, EventPriority];
+  [BattleEvents.UnitRemoveStage]: [UnitUpdateStageEvent, EventPriority];
   [BattleEvents.UnitCheckStage]: [UnitStageEvent, EventPriority];
 
   [BattleEvents.UnitAttack]: [UnitAttackEvent, EventPriority];
@@ -452,9 +502,12 @@ export interface BattleEventMap extends EventMap {
   ];
   [BattleEvents.UnitAttackEffect]: [UnitAttackChildEvent, EventPriority];
 
+  [BattleEvents.UnitHeal]: [UnitHealEvent, EventPriority];
   [BattleEvents.UnitDamage]: [UnitDamageEvent, EventPriority];
   [BattleEvents.UnitFaints]: [UnitFaintsEvent, EventPriority];
   [BattleEvents.UnitEntersField]: [UnitEvent, EventPriority];
+  [BattleEvents.UnitLeavesField]: [UnitEvent, EventPriority];
+  [BattleEvents.UnitSwitch]: [UnitSwitchEvent, EventPriority];
 
   [BattleEvents.UnitAddAbility]: [UnitAbilityEvent, EventPriority];
   [BattleEvents.UnitRemoveAbility]: [UnitAbilityEvent, EventPriority];
@@ -480,6 +533,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.TeamRemoveUnit]: [TeamUnitEvent, EventPriority];
   [BattleEvents.TeamAddStatus]: [TeamStatusEvent, EventPriority];
   [BattleEvents.TeamRemoveStatus]: [TeamStatusEvent, EventPriority];
+  [BattleEvents.TeamSetWeather]: [TeamWeatherEvent, EventPriority];
 
   [BattleEvents.AllianceAddTeam]: [AllianceTeamEvent, EventPriority];
   [BattleEvents.AllianceRemoveTeam]: [AllianceTeamEvent, EventPriority];

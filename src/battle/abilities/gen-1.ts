@@ -5,7 +5,7 @@ import { Abilities } from '../../data/ids/abilities';
 import { DamageFlags, MoveFlags } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
-import { BattleEvents } from '../events';
+import { BattleEvents, EffectType } from '../events';
 import { isWeatherRainy, isWeatherSunny } from '../utils';
 import {
   createAbility,
@@ -71,6 +71,11 @@ const setupAbilities = [
         ) {
           const maxHP = event.move.source.checkStat(Stats.HP, 0);
           event.move.source.damage(
+            {
+              type: EffectType.Ability,
+              ability: Abilities.SolarPower,
+              unit: event.move.source,
+            },
             event.move.source,
             maxHP / 8,
             DamageFlags.NonLethal,

@@ -1,6 +1,6 @@
 import { AleaRNG } from '../core/alea';
 import { EventEngine } from '../core/event-engine';
-import { Stats } from '../data/constants/stats';
+import { createStatsField, Stats, StatsKind } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import { Abilities } from '../data/ids/abilities';
 import { Items } from '../data/ids/items';
@@ -20,6 +20,7 @@ import type {
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CooldownData,
+  EffectCause,
   MoveTarget,
 } from './events';
 import { BattleEvents } from './events';
@@ -145,6 +146,12 @@ export class Unit {
     });
   }
 
+  /**
+   * TODO:
+   * - set appearance
+   * - set species
+   */
+
   health = 0;
 
   setHealth(value: number) {
@@ -156,22 +163,20 @@ export class Unit {
     });
   }
 
-  stats: Record<Stats, number> = {
-    [Stats.Attack]: 0,
-    [Stats.Defense]: 0,
-    [Stats.HP]: 0,
-    [Stats.SpecialAttack]: 0,
-    [Stats.SpecialDefense]: 0,
-    [Stats.Speed]: 0,
+  stats = {
+    [StatsKind.Base]: createStatsField(),
+    [StatsKind.Individual]: createStatsField(),
+    [StatsKind.Effort]: createStatsField(),
   };
 
-  setStat(stat: Stats, value: number) {
+  setStat(kind: StatsKind, stat: Stats, value: number) {
     this.battle.emit(BattleEvents.UnitSetStat, {
       id: 'UnitSetStat',
       disabled: false,
       source: this,
       stat,
       value,
+      kind,
     });
   }
 
@@ -352,24 +357,40 @@ export class Unit {
   }
 
   // status
-  status = new Set<Status>();
+  status: { [key in Statuses]?: EffectCause } = {};
 
-  addStatus(status: Status) {
+  addStatus(status: Statuses, cause: EffectCause) {
     this.battle.emit(BattleEvents.UnitAddStatus, {
       id: 'UnitAddStatus',
       disabled: false,
       source: this,
       status,
+      cause,
     });
   }
 
-  removeStatus(status: Status) {
+  removeStatus(status: Statuses, cause: EffectCause) {
     this.battle.emit(BattleEvents.UnitAddStatus, {
       id: 'UnitRemoveStatus',
       disabled: false,
       source: this,
       status,
+      cause,
     });
+  }
+
+  triggerStatus(status: Statuses, cause: EffectCause) {
+    this.battle.emit(BattleEvents.UnitTriggerStatus, {
+      id: 'UnitTriggerStatus',
+      disabled: false,
+      source: this,
+      status,
+      cause,
+    });
+  }
+
+  getStatus(status: Statuses) {
+    return this.status[status];
   }
 
   stages: Record<Stages, number> = {
@@ -382,23 +403,25 @@ export class Unit {
     [Stages.Speed]: 0,
   };
 
-  addStage(stage: Stages, value: number) {
+  addStage(stage: Stages, value: number, cause: EffectCause) {
     this.battle.emit(BattleEvents.UnitAddStage, {
       id: 'UnitAddStage',
       disabled: false,
       source: this,
       stage,
       value,
+      cause,
     });
   }
 
-  removeStage(stage: Stages, value: number) {
+  removeStage(stage: Stages, value: number, cause: EffectCause) {
     this.battle.emit(BattleEvents.UnitRemoveStage, {
       id: 'UnitRemoveStage',
       disabled: false,
       source: this,
       stage,
       value,
+      cause,
     });
   }
 
@@ -415,7 +438,19 @@ export class Unit {
     return event.stage;
   }
 
-  damage(target: Unit, value: number, flags: number) {
+  heal(cause: EffectCause, target: Unit, value: number, flags: number) {
+    this.battle.emit(BattleEvents.UnitHeal, {
+      id: 'UnitHeal',
+      disabled: false,
+      source: this,
+      target,
+      value,
+      flags,
+      cause,
+    });
+  }
+
+  damage(cause: EffectCause, target: Unit, value: number, flags: number) {
     this.battle.emit(BattleEvents.UnitDamage, {
       id: 'UnitDamage',
       disabled: false,
@@ -423,6 +458,7 @@ export class Unit {
       target,
       value,
       flags,
+      cause,
     });
   }
 
@@ -458,12 +494,38 @@ export class Unit {
     });
   }
 
+  switch(target: Unit) {
+    this.battle.emit(BattleEvents.UnitSwitch, {
+      id: 'UnitSwitch',
+      disabled: false,
+      source: this,
+      target,
+      success: this.checkEscape(),
+    });
+  }
+
+  enter() {
+    this.battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: this,
+    });
+  }
+
+  leave() {
+    this.battle.emit(BattleEvents.UnitLeavesField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: this,
+    });
+  }
+
   checkEscape() {
     const event: CheckUnitEscapeEvent = {
       id: 'CheckUnitEscape',
       disabled: false,
       source: this,
-      success: false,
+      success: true,
     };
 
     this.battle.emit(BattleEvents.CheckUnitEscape, event);
@@ -604,6 +666,7 @@ export class Team {
       id: 'TeamSetWeather',
       disabled: false,
       weather,
+      team: this,
     });
   }
 }
@@ -757,11 +820,4 @@ export class Move {
       });
     }
   }
-}
-
-export class Status {
-  constructor(
-    public source: Unit,
-    public id: Statuses,
-  ) {}
 }

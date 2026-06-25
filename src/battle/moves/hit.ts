@@ -4,7 +4,7 @@ import { getMoveData } from '../../data/moves';
 import type { Battle, Unit } from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
-const HIT_MOVES = new Set([Moves.Tackle, Moves.VineWhip]);
+const HIT_MOVES = new Set([Moves.Tackle, Moves.VineWhip, Moves.RazorLeaf]);
 
 export function runHit(move: Moves, source: Unit, target: Unit) {
   source.attack(

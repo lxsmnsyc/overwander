@@ -56,4 +56,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.RazorLeaf, {
+    name: 'Razor Leaf',
+    type: Types.Grass,
+    category: MoveCategories.Physical,
+    pp: 25,
+    accuracy: 95,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

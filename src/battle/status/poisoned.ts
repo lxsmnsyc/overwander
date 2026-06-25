@@ -26,12 +26,6 @@ export function setupPoisonedStatusMechanics(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Exact, event => {
-    event.source.removeStatus(Statuses.Poisoned, {
-      type: EffectType.None,
-    });
-  });
-
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
     if (event.status === Statuses.Poisoned && !instances.has(event.source)) {
       instances.set(event.source, {

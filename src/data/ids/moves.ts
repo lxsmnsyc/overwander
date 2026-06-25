@@ -69,4 +69,5 @@ export const enum Moves {
   Tackle,
   Growl,
   LeechSeed,
+  VineWhip,
 }

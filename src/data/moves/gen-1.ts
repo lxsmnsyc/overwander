@@ -28,4 +28,23 @@ export function registerGen1Moves() {
       MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Sound,
   });
+  registerMove(Moves.LeechSeed, {
+    name: 'Leech Seed',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.VineWhip, {
+    name: 'Vine Whip',
+    type: Types.Grass,
+    category: MoveCategories.Physical,
+    power: 45,
+    pp: 25,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

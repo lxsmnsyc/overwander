@@ -70,4 +70,5 @@ export const enum Moves {
   Growl,
   LeechSeed,
   VineWhip,
+  PoisonPowder,
 }

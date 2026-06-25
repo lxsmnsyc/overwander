@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { Battle } from '../core';
+import type { Battle } from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 type StageMovesConfig = { [key in Moves]?: number };

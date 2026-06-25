@@ -1,6 +1,6 @@
 export const enum Statuses {
-  Casting,
   Seeding,
+  Poisoned,
 }
 
 export const enum Weathers {

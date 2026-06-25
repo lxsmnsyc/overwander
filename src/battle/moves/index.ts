@@ -1,4 +1,4 @@
-import { Battle } from '../core';
+import type { Battle } from '../core';
 import { setupHitMoves } from './hit';
 import { setupLeechSeed } from './leech-seed';
 import { setupStageMoves } from './stage';

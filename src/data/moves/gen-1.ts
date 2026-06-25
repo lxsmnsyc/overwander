@@ -47,4 +47,13 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.PoisonPowder, {
+    name: 'Poison Powder',
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 35,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

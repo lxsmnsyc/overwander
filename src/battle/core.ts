@@ -16,9 +16,11 @@ import type {
   CheckMovePPEvent,
   CheckMovePriorityEvent,
   CheckMoveTypeEvent,
+  CheckUnitCanCastEvent,
   CheckUnitEscapeEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
+  CheckUnitStatusImmunityEvent,
   CooldownData,
   EffectCause,
   MoveTarget,
@@ -228,6 +230,8 @@ export class Unit {
 
   moves = new Set<Move>();
 
+  casting?: Move;
+
   addMove(move: Move) {
     this.battle.emit(BattleEvents.UnitAddMove, {
       id: 'UnitAddMove',
@@ -360,17 +364,19 @@ export class Unit {
   status: { [key in Statuses]?: EffectCause } = {};
 
   addStatus(status: Statuses, cause: EffectCause) {
-    this.battle.emit(BattleEvents.UnitAddStatus, {
-      id: 'UnitAddStatus',
-      disabled: false,
-      source: this,
-      status,
-      cause,
-    });
+    if (!this.checkStatusImmunity(status, cause)) {
+      this.battle.emit(BattleEvents.UnitAddStatus, {
+        id: 'UnitAddStatus',
+        disabled: false,
+        source: this,
+        status,
+        cause,
+      });
+    }
   }
 
   removeStatus(status: Statuses, cause: EffectCause) {
-    this.battle.emit(BattleEvents.UnitAddStatus, {
+    this.battle.emit(BattleEvents.UnitRemoveStatus, {
       id: 'UnitRemoveStatus',
       disabled: false,
       source: this,
@@ -607,6 +613,30 @@ export class Unit {
     };
     this.battle.emit(BattleEvents.CheckMovePriority, event);
     return event.priority;
+  }
+
+  checkCanCast() {
+    const event: CheckUnitCanCastEvent = {
+      id: 'CheckUnitCanCast',
+      disabled: false,
+      source: this,
+      success: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanCast, event);
+    return event.success;
+  }
+
+  checkStatusImmunity(status: Statuses, cause: EffectCause) {
+    const event: CheckUnitStatusImmunityEvent = {
+      id: 'CheckUnitStatusImmunity',
+      disabled: false,
+      source: this,
+      status,
+      cause,
+      immune: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitStatusImmunity, event);
+    return event.immune;
   }
 }
 

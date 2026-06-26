@@ -103,6 +103,7 @@ export function setupCastingMechanics(battle: Battle) {
       progress: 0,
       duration: castTime,
     };
+    event.move.source.casting = event.move;
 
     // Add new entry for the tick updates
     queue.add(event.move);
@@ -136,6 +137,7 @@ export function setupCastingMechanics(battle: Battle) {
   });
 
   battle.on(BattleEvents.MoveStopCast, EventPriority.Exact, event => {
+    event.move.source.casting = undefined;
     event.move.casting = undefined;
     queue.delete(event.move);
   });
@@ -143,6 +145,7 @@ export function setupCastingMechanics(battle: Battle) {
   battle.on(BattleEvents.MoveEndCast, EventPriority.Exact, event => {
     event.move.source.triggerMove(event.move.id, event.target);
 
+    event.move.source.casting = undefined;
     event.move.casting = undefined;
     queue.delete(event.move);
 

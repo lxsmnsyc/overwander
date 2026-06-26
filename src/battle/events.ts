@@ -32,6 +32,7 @@ export const enum BattleEvents {
 
   CheckUnitEscape,
   CheckUnitCanCast,
+  CheckUnitStatusImmunity,
 
   CheckTypeEffectiveness,
 
@@ -404,6 +405,14 @@ export interface UnitSwitchEvent extends UnitEvent {
   success: boolean;
 }
 
+export interface CheckUnitCanCastEvent extends UnitEvent {
+  success: boolean;
+}
+
+export interface CheckUnitStatusImmunityEvent extends UnitUpdateStatusEvent {
+  immune: boolean;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -422,6 +431,11 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
   [BattleEvents.CheckUnitEscape]: [CheckUnitEscapeEvent, EventPriority];
+  [BattleEvents.CheckUnitCanCast]: [CheckUnitCanCastEvent, EventPriority];
+  [BattleEvents.CheckUnitStatusImmunity]: [
+    CheckUnitStatusImmunityEvent,
+    EventPriority,
+  ];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];
 

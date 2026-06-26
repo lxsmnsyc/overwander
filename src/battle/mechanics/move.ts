@@ -159,6 +159,12 @@ export function setupCastingMechanics(battle: Battle) {
       // TODO setup target switch
     }
   });
+
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+    if (event.source.casting) {
+      event.source.casting.endCast();
+    }
+  });
 }
 
 export function setupCooldownMechanics(battle: Battle) {

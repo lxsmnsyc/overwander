@@ -1,5 +1,5 @@
 import { Weathers } from '../data/ids/status';
-import { Battle } from './core';
+import type { Battle } from './core';
 
 export function isWeatherSunny(battle: Battle) {
   return (

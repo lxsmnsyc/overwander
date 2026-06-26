@@ -6,7 +6,10 @@ import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
-import type { Alliance, Move, Team, Unit } from './core';
+import type { Alliance } from './alliance';
+import type { Move } from './move';
+import type { Team } from './team';
+import type { Unit } from './unit';
 
 export const enum BattleEvents {
   // Core events
@@ -402,7 +405,6 @@ export interface MoveUpdateCooldownEvent extends MoveEvent {
 
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
-  success: boolean;
 }
 
 export interface CheckUnitCanCastEvent extends UnitEvent {

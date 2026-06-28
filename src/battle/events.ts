@@ -7,7 +7,6 @@ import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type { Alliance } from './alliance';
-import type { Move } from './move';
 import type { Team } from './team';
 import type { Unit } from './unit';
 
@@ -22,46 +21,54 @@ export const enum BattleEvents {
   EnableMove,
   DisableMove,
 
-  CheckMoveType,
-  CheckMoveImmunity,
-  CheckMoveAccuracy,
-  CheckMovePP,
-  CheckMovePower,
-  CheckMovePriority,
-  CheckMoveDuration,
+  CheckUnitMoveType,
+  CheckUnitMoveImmunity,
+  CheckUnitMoveAccuracy,
+  CheckUnitMovePP,
+  CheckUnitMovePower,
+  CheckUnitMovePriority,
+  CheckUnitMoveCooldown,
+  CheckUnitMoveSteps,
 
   CheckUnitStat,
   CheckUnitStage,
 
   CheckUnitEscape,
-  CheckUnitCanCast,
   CheckUnitStatusImmunity,
 
   CheckTypeEffectiveness,
 
   ResolveUnitStat,
 
-  MoveStartCast,
-  MoveEndCast,
-  MoveStopCast,
-  MoveUpdateCast,
+  UnitInterrupt,
 
-  MoveStartCooldown,
-  MoveEndCooldown,
-  MoveUpdateCooldown,
+  CheckUnitCanCast,
 
-  // Move events
-  TriggerMove,
+  UnitCast,
+  UnitUpdateCast,
+  UnitFinishCast,
+  UnitStopCast,
 
-  TriggerMoveTarget,
+  UnitStartCooldown,
+  UnitFinishCooldown,
+  UnitUpdateCooldown,
 
-  TriggerMoveResolveAccuracy,
-  TriggerMoveRollHit,
+  CheckUnitCanChannel,
 
-  TriggerMoveMissed,
-  TriggerMoveFailed,
+  UnitChannel,
+  UnitUpdateChannel,
+  UnitFinishChannel,
+  UnitStopChannel,
 
-  TriggerMoveEffect,
+  UnitTriggerMove,
+  UnitTriggerMoveTarget,
+  UnitTriggerMoveEffect,
+
+  UnitTriggerMoveResolveAccuracy,
+  UnitTriggerMoveRollHit,
+
+  UnitTriggerMoveMissed,
+  UnitTriggerMoveFailed,
 
   // Damage events
   UnitAttack,
@@ -102,6 +109,8 @@ export const enum BattleEvents {
 
   UnitAddMove,
   UnitRemoveMove,
+  UnitEnableMove,
+  UnitDisableMove,
 
   UnitAddItem,
   UnitRemoveItem,
@@ -171,40 +180,76 @@ export interface UnitEvent extends BaseEvent {
   source: Unit;
 }
 
-export interface CheckMoveEvent extends UnitEvent {
+export interface UnitMoveEvent extends UnitEvent {
   move: Moves;
 }
 
-export interface CheckMoveTargetEvent extends CheckMoveEvent {
-  target: Unit;
+export interface UnitCastEvent extends UnitMoveEvent {
+  target: MoveTarget;
 }
 
-export interface CheckMoveTypeEvent extends CheckMoveTargetEvent {
+export interface CheckUnitCanCastEvent extends UnitCastEvent {
+  success: boolean;
+}
+
+export interface UnitUpdateCastEvent extends UnitEvent {
+  data: Partial<CastingData>;
+}
+
+export interface UnitUpdateCooldownEvent extends UnitMoveEvent {
+  data: Partial<ProgressData>;
+}
+
+export interface CheckUnitMoveEvent extends UnitMoveEvent {
+  target: MoveTarget;
+}
+
+export interface CheckUnitMoveTypeEvent extends CheckUnitMoveEvent {
   type: Types;
 }
 
-export interface CheckMoveImmunityEvent extends CheckMoveTypeEvent {
+export interface CheckUnitMoveImmunityEvent extends CheckUnitMoveTypeEvent {
   immune: boolean;
 }
 
-export interface CheckMoveAccuracyEvent extends CheckMoveTargetEvent {
+export interface CheckUnitMoveAccuracyEvent extends CheckUnitMoveEvent {
   accuracy?: number;
 }
 
-export interface CheckMovePPEvent extends CheckMoveEvent {
+export interface CheckUnitMovePPEvent extends CheckUnitMoveEvent {
   pp: number;
 }
 
-export interface CheckMovePowerEvent extends CheckMoveTargetEvent {
+export interface CheckUnitMovePowerEvent extends CheckUnitMoveEvent {
   power?: number;
 }
 
-export interface CheckMovePriorityEvent extends CheckMoveEvent {
+export interface CheckUnitMovePriorityEvent extends CheckUnitMoveEvent {
   priority: number;
 }
 
-export interface CheckMoveDurationEvent extends CheckMoveEvent {
+export interface CheckUnitMoveCooldownEvent extends CheckUnitMoveEvent {
   duration: number;
+}
+
+export interface CheckUnitMoveStepsEvent extends CheckUnitMoveEvent {
+  steps: number;
+}
+
+export interface UnitChannelEvent extends UnitCastEvent {
+  steps: number;
+}
+
+export interface CheckUnitCanChannelEvent extends UnitChannelEvent {
+  success: boolean;
+}
+
+export interface UnitUpdateChannelEvent extends UnitEvent {
+  data: Partial<ChannelingData>;
+}
+
+export interface UnitTriggerMoveEvent extends UnitCastEvent {
+  steps: number;
 }
 
 export interface UnitStatEvent extends UnitEvent {
@@ -233,11 +278,6 @@ export interface CheckUnitStageEvent extends UnitStageEvent {
   flags: number;
 }
 
-export interface TriggerMoveEvent extends UnitEvent {
-  move: Moves;
-  target: MoveTarget;
-}
-
 export interface UnitSetValueEvent extends UnitEvent {
   value: number;
 }
@@ -254,8 +294,8 @@ export interface UnitUpdateStatusEvent extends UnitStatusEvent {
   cause: EffectCause;
 }
 
-export interface TriggerMoveTargetChildEvent extends BaseEvent {
-  parent: TriggerMoveTargetEvent;
+export interface UnitTriggerMoveChildEvent extends BaseEvent {
+  parent: UnitTriggerMoveEvent;
 }
 
 export interface TriggerMoveCheckPowerEvent extends BaseEvent {
@@ -263,24 +303,14 @@ export interface TriggerMoveCheckPowerEvent extends BaseEvent {
   power?: number;
 }
 
-export interface TriggerMoveCheckAccuracyEvent extends BaseEvent {
-  parent: TriggerMoveTargetEvent;
-  accuracy?: number;
-}
-
-export interface TriggerMoveResolveAccuracyEvent extends BaseEvent {
-  parent: TriggerMoveTargetEvent;
+export interface UnitTriggerMoveResolveAccuracyEvent extends BaseEvent {
+  parent: UnitTriggerMoveEvent;
   accuracy: number;
 }
 
-export interface TriggerMoveRollHitEvent
-  extends TriggerMoveResolveAccuracyEvent {
+export interface UnitTriggerMoveRollHitEvent
+  extends UnitTriggerMoveResolveAccuracyEvent {
   hit: boolean;
-}
-
-export interface TriggerMoveTargetEvent extends UnitEvent {
-  move: Moves;
-  target: MoveTarget;
 }
 
 export interface UnitStageEvent extends UnitEvent {
@@ -379,36 +409,8 @@ export interface UnitItemEvent extends UnitEvent {
   item: Items;
 }
 
-export interface UnitMoveEvent extends UnitEvent {
-  move: Move;
-}
-
-export interface MoveEvent extends BaseEvent {
-  move: Move;
-}
-
-export interface MoveCastEvent extends MoveEvent {
-  target: MoveTarget;
-}
-
-export interface MoveCheckPriorityEvent extends MoveCastEvent {
-  priority: number;
-}
-
-export interface MoveUpdateCastEvent extends MoveEvent {
-  casting: CastingData;
-}
-
-export interface MoveUpdateCooldownEvent extends MoveEvent {
-  cooldown: CooldownData;
-}
-
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
-}
-
-export interface CheckUnitCanCastEvent extends UnitEvent {
-  success: boolean;
 }
 
 export interface CheckUnitStatusImmunityEvent extends UnitUpdateStatusEvent {
@@ -422,54 +424,36 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.Tick]: [TickEvent, EventPriority];
 
   // Checks
-  [BattleEvents.CheckMoveType]: [CheckMoveTypeEvent, EventPriority];
-  [BattleEvents.CheckMoveAccuracy]: [CheckMoveAccuracyEvent, EventPriority];
-  [BattleEvents.CheckMoveImmunity]: [CheckMoveImmunityEvent, EventPriority];
-  [BattleEvents.CheckMovePP]: [CheckMovePPEvent, EventPriority];
-  [BattleEvents.CheckMovePower]: [CheckMovePowerEvent, EventPriority];
-  [BattleEvents.CheckMovePriority]: [CheckMovePriorityEvent, EventPriority];
-  [BattleEvents.CheckMoveDuration]: [CheckMoveDurationEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveType]: [CheckUnitMoveTypeEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveAccuracy]: [
+    CheckUnitMoveAccuracyEvent,
+    EventPriority,
+  ];
+  [BattleEvents.CheckUnitMoveImmunity]: [
+    CheckUnitMoveImmunityEvent,
+    EventPriority,
+  ];
+  [BattleEvents.CheckUnitMovePP]: [CheckUnitMovePPEvent, EventPriority];
+  [BattleEvents.CheckUnitMovePower]: [CheckUnitMovePowerEvent, EventPriority];
+  [BattleEvents.CheckUnitMovePriority]: [
+    CheckUnitMovePriorityEvent,
+    EventPriority,
+  ];
+  [BattleEvents.CheckUnitMoveCooldown]: [
+    CheckUnitMoveCooldownEvent,
+    EventPriority,
+  ];
+  [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
 
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
   [BattleEvents.CheckUnitEscape]: [CheckUnitEscapeEvent, EventPriority];
-  [BattleEvents.CheckUnitCanCast]: [CheckUnitCanCastEvent, EventPriority];
   [BattleEvents.CheckUnitStatusImmunity]: [
     CheckUnitStatusImmunityEvent,
     EventPriority,
   ];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];
-
-  // Cast events
-  [BattleEvents.MoveStartCast]: [MoveCastEvent, EventPriority];
-  [BattleEvents.MoveEndCast]: [MoveCastEvent, EventPriority];
-  [BattleEvents.MoveStopCast]: [MoveCastEvent, EventPriority];
-  [BattleEvents.MoveUpdateCast]: [MoveUpdateCastEvent, EventPriority];
-
-  [BattleEvents.MoveStartCooldown]: [UnitMoveEvent, EventPriority];
-  [BattleEvents.MoveEndCooldown]: [UnitMoveEvent, EventPriority];
-  [BattleEvents.MoveUpdateCooldown]: [MoveUpdateCooldownEvent, EventPriority];
-
-  [BattleEvents.TriggerMove]: [TriggerMoveEvent, EventPriority];
-
-  [BattleEvents.TriggerMoveTarget]: [TriggerMoveTargetEvent, EventPriority];
-
-  [BattleEvents.TriggerMoveEffect]: [TriggerMoveTargetEvent, EventPriority];
-
-  [BattleEvents.TriggerMoveResolveAccuracy]: [
-    TriggerMoveResolveAccuracyEvent,
-    EventPriority,
-  ];
-  [BattleEvents.TriggerMoveRollHit]: [TriggerMoveRollHitEvent, EventPriority];
-  [BattleEvents.TriggerMoveMissed]: [
-    TriggerMoveTargetChildEvent,
-    EventPriority,
-  ];
-  [BattleEvents.TriggerMoveFailed]: [
-    TriggerMoveTargetChildEvent,
-    EventPriority,
-  ];
 
   // Unit events
   [BattleEvents.UnitAddStatus]: [UnitUpdateStatusEvent, EventPriority];
@@ -540,9 +524,46 @@ export interface BattleEventMap extends EventMap {
 
   [BattleEvents.UnitAddMove]: [UnitMoveEvent, EventPriority];
   [BattleEvents.UnitRemoveMove]: [UnitMoveEvent, EventPriority];
+  [BattleEvents.UnitEnableMove]: [UnitMoveEvent, EventPriority];
+  [BattleEvents.UnitDisableMove]: [UnitMoveEvent, EventPriority];
 
-  [BattleEvents.EnableMove]: [MoveEvent, EventPriority];
-  [BattleEvents.DisableMove]: [MoveEvent, EventPriority];
+  // Casting events
+  [BattleEvents.CheckUnitCanCast]: [CheckUnitCanCastEvent, EventPriority];
+  [BattleEvents.UnitCast]: [UnitCastEvent, EventPriority];
+  [BattleEvents.UnitUpdateCast]: [UnitUpdateCastEvent, EventPriority];
+  [BattleEvents.UnitStopCast]: [UnitEvent, EventPriority];
+  [BattleEvents.UnitFinishCast]: [UnitEvent, EventPriority];
+
+  [BattleEvents.UnitStartCooldown]: [UnitCastEvent, EventPriority];
+  [BattleEvents.UnitUpdateCooldown]: [UnitUpdateCooldownEvent, EventPriority];
+  [BattleEvents.UnitFinishCooldown]: [UnitMoveEvent, EventPriority];
+
+  [BattleEvents.CheckUnitCanChannel]: [CheckUnitCanChannelEvent, EventPriority];
+  [BattleEvents.UnitChannel]: [UnitChannelEvent, EventPriority];
+  [BattleEvents.UnitUpdateChannel]: [UnitUpdateChannelEvent, EventPriority];
+  [BattleEvents.UnitStopChannel]: [UnitEvent, EventPriority];
+  [BattleEvents.UnitFinishChannel]: [UnitEvent, EventPriority];
+
+  [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
+
+  [BattleEvents.UnitTriggerMoveResolveAccuracy]: [
+    UnitTriggerMoveResolveAccuracyEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitTriggerMoveRollHit]: [
+    UnitTriggerMoveRollHitEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitTriggerMoveMissed]: [
+    UnitTriggerMoveChildEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitTriggerMoveFailed]: [
+    UnitTriggerMoveChildEvent,
+    EventPriority,
+  ];
 
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];
@@ -560,13 +581,24 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.RemoveAlliance]: [AllianceEvent, EventPriority];
 }
 
-export interface CastingData {
-  target: MoveTarget;
+export interface ProgressData {
   progress: number;
   duration: number;
 }
 
-export interface CooldownData {
-  progress: number;
-  duration: number;
+export interface CastingData {
+  move: Moves;
+  target: MoveTarget;
+  time: ProgressData;
+}
+
+export interface MoveState {
+  move: Moves;
+  source: Unit;
+  disabled: boolean;
+  cooldown?: ProgressData;
+}
+
+export interface ChannelingData extends CastingData {
+  steps: number;
 }

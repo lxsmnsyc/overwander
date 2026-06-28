@@ -28,8 +28,14 @@ export const enum MoveTargetFlags {
 }
 
 export const enum MoveFlags {
-  Contact = 0b000001,
-  Sound = 0b000010,
+  /**
+   * Move makes contact with the target
+   */
+  Contact = 0b01,
+  /**
+   * Sound-based
+   */
+  Sound = 0b10,
 }
 
 export const enum MoveAttackFlags {

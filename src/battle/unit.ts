@@ -1,5 +1,5 @@
 import type { Stats } from '../data/constants/stats';
-import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
+import { createStatsField, Stages, StatsKind } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
@@ -7,22 +7,27 @@ import type { MoveCategories, Moves } from '../data/ids/moves';
 import type { Statuses } from '../data/ids/status';
 import type { Battle } from './core';
 import type {
-  CheckMoveAccuracyEvent,
-  CheckMoveImmunityEvent,
-  CheckMovePPEvent,
-  CheckMovePowerEvent,
-  CheckMovePriorityEvent,
-  CheckMoveTypeEvent,
+  CastingData,
+  ChannelingData,
   CheckUnitCanCastEvent,
+  CheckUnitCanChannelEvent,
   CheckUnitEscapeEvent,
+  CheckUnitMoveAccuracyEvent,
+  CheckUnitMoveImmunityEvent,
+  CheckUnitMovePowerEvent,
+  CheckUnitMovePPEvent,
+  CheckUnitMovePriorityEvent,
+  CheckUnitMoveStepsEvent,
+  CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusImmunityEvent,
   EffectCause,
+  MoveState,
   MoveTarget,
+  ProgressData,
 } from './events';
 import { BattleEvents } from './events';
-import type { Move } from './move';
 import type { Team } from './team';
 
 export class Unit {
@@ -30,36 +35,6 @@ export class Unit {
     public battle: Battle,
     public team: Team,
   ) {}
-
-  triggerMove(move: Moves, target: MoveTarget) {
-    this.battle.emit(BattleEvents.TriggerMove, {
-      id: 'TriggerMove',
-      disabled: false,
-      source: this,
-      move,
-      target,
-    });
-  }
-
-  triggerMoveTarget(move: Moves, target: MoveTarget) {
-    this.battle.emit(BattleEvents.TriggerMoveTarget, {
-      id: 'TriggerMoveTarget',
-      disabled: false,
-      source: this,
-      move,
-      target,
-    });
-  }
-
-  triggerMoveEffect(move: Moves, target: MoveTarget) {
-    this.battle.emit(BattleEvents.TriggerMoveEffect, {
-      id: 'TriggerMoveEffect',
-      disabled: false,
-      source: this,
-      move,
-      target,
-    });
-  }
 
   level = 0;
 
@@ -152,11 +127,15 @@ export class Unit {
     });
   }
 
-  moves = new Set<Move>();
+  interrupt() {
+    // TODO UnitInterrupt
+  }
 
-  casting?: Move;
+  casting?: CastingData;
 
-  addMove(move: Move) {
+  moves: { [key in Moves]?: MoveState } = {};
+
+  addMove(move: Moves) {
     this.battle.emit(BattleEvents.UnitAddMove, {
       id: 'UnitAddMove',
       disabled: false,
@@ -165,12 +144,208 @@ export class Unit {
     });
   }
 
-  removeMove(move: Move) {
+  removeMove(move: Moves) {
     this.battle.emit(BattleEvents.UnitRemoveMove, {
       id: 'UnitRemoveMove',
       disabled: false,
       source: this,
       move,
+    });
+  }
+
+  enableMove(move: Moves) {
+    this.battle.emit(BattleEvents.UnitEnableMove, {
+      id: 'UnitEnableMove',
+      disabled: false,
+      source: this,
+      move,
+    });
+  }
+
+  disableMove(move: Moves) {
+    this.battle.emit(BattleEvents.UnitDisableMove, {
+      id: 'UnitDisableMove',
+      disabled: false,
+      source: this,
+      move,
+    });
+  }
+
+  checkCanCast(move: Moves, target: MoveTarget) {
+    const event: CheckUnitCanCastEvent = {
+      id: 'CheckUnitCanCast',
+      disabled: false,
+      source: this,
+      success: true,
+      move,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanCast, event);
+    return event.success;
+  }
+
+  cast(move: Moves, target: MoveTarget) {
+    if (this.checkCanCast(move, target)) {
+      this.battle.emit(BattleEvents.UnitCast, {
+        id: 'UnitCast',
+        disabled: false,
+        source: this,
+        move,
+        target,
+      });
+    }
+  }
+
+  updateCast(data: Partial<CastingData>) {
+    if (this.casting) {
+      this.battle.emit(BattleEvents.UnitUpdateCast, {
+        id: 'UnitUpdateCast',
+        disabled: false,
+        source: this,
+        data,
+      });
+    }
+  }
+
+  stopCast() {
+    if (this.casting) {
+      this.battle.emit(BattleEvents.UnitStopCast, {
+        id: 'UnitStopCast',
+        disabled: false,
+        source: this,
+      });
+    }
+  }
+
+  finishCast() {
+    if (this.casting) {
+      this.battle.emit(BattleEvents.UnitFinishCast, {
+        id: 'UnitFinishCast',
+        disabled: false,
+        source: this,
+      });
+    }
+  }
+
+  startCooldown(move: Moves, target: MoveTarget) {
+    this.battle.emit(BattleEvents.UnitStartCooldown, {
+      id: 'UnitStartCooldown',
+      disabled: false,
+      source: this,
+      move,
+      target,
+    });
+  }
+
+  updateCooldown(move: Moves, data: Partial<ProgressData>) {
+    this.battle.emit(BattleEvents.UnitUpdateCooldown, {
+      id: 'UnitUpdateCooldown',
+      disabled: false,
+      source: this,
+      move,
+      data,
+    });
+  }
+
+  finishCooldown(move: Moves) {
+    this.battle.emit(BattleEvents.UnitFinishCooldown, {
+      id: 'UnitFinishCooldown',
+      disabled: false,
+      source: this,
+      move,
+    });
+  }
+
+  channeling?: ChannelingData;
+
+  checkCanChannel(move: Moves, target: MoveTarget, steps: number) {
+    const event: CheckUnitCanChannelEvent = {
+      id: 'CheckUnitCanChannel',
+      disabled: false,
+      source: this,
+      success: true,
+      move,
+      target,
+      steps,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanCast, event);
+    return event.success;
+  }
+
+  channel(move: Moves, target: MoveTarget, steps: number) {
+    if (this.checkCanChannel(move, target, steps)) {
+      this.battle.emit(BattleEvents.UnitChannel, {
+        id: 'UnitChannel',
+        disabled: false,
+        source: this,
+        move,
+        target,
+        steps,
+      });
+    }
+  }
+
+  updateChannel(data: Partial<ChannelingData>) {
+    if (this.casting) {
+      this.battle.emit(BattleEvents.UnitUpdateChannel, {
+        id: 'UnitUpdateChannel',
+        disabled: false,
+        source: this,
+        data,
+      });
+    }
+  }
+
+  stopChannel() {
+    if (this.channeling) {
+      this.battle.emit(BattleEvents.UnitStopChannel, {
+        id: 'UnitStopChannel',
+        disabled: false,
+        source: this,
+      });
+    }
+  }
+
+  finishChannel() {
+    if (this.channeling) {
+      this.battle.emit(BattleEvents.UnitFinishChannel, {
+        id: 'UnitFinishChannel',
+        disabled: false,
+        source: this,
+      });
+    }
+  }
+
+  triggerMove(move: Moves, target: MoveTarget, steps: number) {
+    this.battle.emit(BattleEvents.UnitTriggerMove, {
+      id: 'TriggerMove',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      steps,
+    });
+  }
+
+  triggerMoveTarget(move: Moves, target: MoveTarget, steps: number) {
+    this.battle.emit(BattleEvents.UnitTriggerMoveTarget, {
+      id: 'UnitTriggerMoveTarget',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      steps,
+    });
+  }
+
+  triggerMoveEffect(move: Moves, target: MoveTarget, steps: number) {
+    this.battle.emit(BattleEvents.UnitTriggerMoveEffect, {
+      id: 'UnitTriggerMoveEffect',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      steps,
     });
   }
 
@@ -465,22 +640,22 @@ export class Unit {
   }
 
   // Checks
-  checkMoveType(move: Moves, target: Unit) {
-    const event: CheckMoveTypeEvent = {
-      id: 'CheckMoveType',
+  checkMoveType(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveTypeEvent = {
+      id: 'CheckUnitMoveType',
       disabled: false,
       source: this,
       move,
       target,
       type: Types.Unknown,
     };
-    this.battle.emit(BattleEvents.CheckMoveType, event);
+    this.battle.emit(BattleEvents.CheckUnitMoveType, event);
     return event.type;
   }
 
-  checkMoveImmunity(move: Moves, target: Unit, type: Types) {
-    const event: CheckMoveImmunityEvent = {
-      id: 'CheckMoveImmunity',
+  checkMoveImmunity(move: Moves, target: MoveTarget, type: Types) {
+    const event: CheckUnitMoveImmunityEvent = {
+      id: 'CheckUnitMoveImmunity',
       disabled: false,
       source: this,
       move,
@@ -488,67 +663,71 @@ export class Unit {
       type,
       immune: false,
     };
-    this.battle.emit(BattleEvents.CheckMoveImmunity, event);
-    return event.type;
+    this.battle.emit(BattleEvents.CheckUnitMoveImmunity, event);
+    return event.immune;
   }
 
-  checkMoveAccuracy(move: Moves, target: Unit) {
-    const event: CheckMoveAccuracyEvent = {
-      id: 'CheckMoveAccuracy',
+  checkMoveAccuracy(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveAccuracyEvent = {
+      id: 'CheckUnitMoveAccuracy',
       disabled: false,
       source: this,
       move,
       target,
     };
-    this.battle.emit(BattleEvents.CheckMoveAccuracy, event);
+    this.battle.emit(BattleEvents.CheckUnitMoveAccuracy, event);
     return event.accuracy;
   }
 
-  checkMovePower(move: Moves, target: Unit) {
-    const event: CheckMovePowerEvent = {
-      id: 'CheckMovePower',
+  checkMovePower(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMovePowerEvent = {
+      id: 'CheckUnitMovePower',
       disabled: false,
       source: this,
       move,
       target,
     };
-    this.battle.emit(BattleEvents.CheckMovePower, event);
+    this.battle.emit(BattleEvents.CheckUnitMovePower, event);
     return event.power;
   }
 
-  checkMovePP(move: Moves) {
-    const event: CheckMovePPEvent = {
+  checkMovePP(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMovePPEvent = {
       id: 'CheckMovePP',
       disabled: false,
       source: this,
       move,
       pp: 0,
+      target,
     };
-    this.battle.emit(BattleEvents.CheckMovePP, event);
+    this.battle.emit(BattleEvents.CheckUnitMovePP, event);
     return event.pp;
   }
 
-  checkMovePriority(move: Moves) {
-    const event: CheckMovePriorityEvent = {
-      id: 'CheckMovePriority',
+  checkMovePriority(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMovePriorityEvent = {
+      id: 'CheckUnitMovePriority',
       disabled: false,
       source: this,
       move,
       priority: 0,
+      target,
     };
-    this.battle.emit(BattleEvents.CheckMovePriority, event);
+    this.battle.emit(BattleEvents.CheckUnitMovePriority, event);
     return event.priority;
   }
 
-  checkCanCast() {
-    const event: CheckUnitCanCastEvent = {
-      id: 'CheckUnitCanCast',
+  checkMoveSteps(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveStepsEvent = {
+      id: 'CheckUnitMoveSteps',
       disabled: false,
       source: this,
-      success: true,
+      move,
+      steps: 0,
+      target,
     };
-    this.battle.emit(BattleEvents.CheckUnitCanCast, event);
-    return event.success;
+    this.battle.emit(BattleEvents.CheckUnitMoveSteps, event);
+    return event.steps;
   }
 
   checkStatusImmunity(status: Statuses, cause: EffectCause) {

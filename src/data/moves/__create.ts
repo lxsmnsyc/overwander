@@ -20,6 +20,8 @@ export interface MoveData {
   target: number;
 
   flags: number;
+
+  steps?: number;
 }
 
 const MOVE_DATA = new Map<Moves, MoveData>();

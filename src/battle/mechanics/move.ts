@@ -15,17 +15,21 @@ import {
   StatFlags,
 } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Alliance, Battle, Move, Team, Unit } from '../core';
+import type { Alliance } from '../alliance';
+import type { Battle } from '../core';
 import type {
-  TriggerMoveResolveAccuracyEvent,
-  TriggerMoveRollHitEvent,
-  TriggerMoveTargetEvent,
+  MoveState,
   UnitAttackEvent,
   UnitAttackResolveAmountEvent,
   UnitAttackResolveCriticalEvent,
   UnitAttackResolveEffectivenessEvent,
+  UnitTriggerMoveEvent,
+  UnitTriggerMoveResolveAccuracyEvent,
+  UnitTriggerMoveRollHitEvent,
 } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import type { Team } from '../team';
+import type { Unit } from '../unit';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
@@ -56,192 +60,510 @@ function isUnitImmune(unit: Unit, offending: Types) {
   return false;
 }
 
+function createMoveState(source: Unit, move: Moves): MoveState {
+  return {
+    source,
+    move,
+    disabled: false,
+    cooldown: {
+      duration: 0,
+      progress: 0,
+    },
+  };
+}
+
 export function setupMoveMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitAddMove, EventPriority.Exact, event => {
-    event.source.moves.add(event.move);
+    event.source.moves[event.move] = createMoveState(event.source, event.move);
   });
   battle.on(BattleEvents.UnitRemoveMove, EventPriority.Exact, event => {
-    event.source.moves.delete(event.move);
+    event.source.moves[event.move] = undefined;
   });
-  battle.on(BattleEvents.EnableMove, EventPriority.Exact, event => {
-    event.move.disabled = false;
+  battle.on(BattleEvents.UnitEnableMove, EventPriority.Exact, event => {
+    const current = event.source.moves[event.move];
+    if (current) {
+      current.disabled = false;
+    }
   });
-  battle.on(BattleEvents.DisableMove, EventPriority.Exact, event => {
-    event.move.disabled = true;
+  battle.on(BattleEvents.UnitDisableMove, EventPriority.Exact, event => {
+    const current = event.source.moves[event.move];
+    if (current) {
+      current.disabled = true;
+    }
   });
 
   // Checks
-  battle.on(BattleEvents.CheckMoveType, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Exact, event => {
     event.type = getMoveData(event.move).type;
   });
-  battle.on(BattleEvents.CheckMoveImmunity, EventPriority.Exact, event => {
-    event.immune = isUnitImmune(event.target, event.type);
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, event => {
+    if (event.target.type === MoveTargetType.Unit) {
+      event.immune = isUnitImmune(event.target.unit, event.type);
+    }
   });
-  battle.on(BattleEvents.CheckMoveAccuracy, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, event => {
     event.accuracy = getMoveData(event.move).accuracy;
   });
-  battle.on(BattleEvents.CheckMovePower, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, event => {
     event.power = getMoveData(event.move).power;
   });
-  battle.on(BattleEvents.CheckMovePP, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Exact, event => {
     event.pp = getMoveData(event.move).pp;
   });
-  battle.on(BattleEvents.CheckMovePriority, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Exact, event => {
     event.priority = getMoveData(event.move).priority ?? 0;
   });
 }
 
+function isCastingTargetUnit(caster: Unit, target: Unit) {
+  return (
+    caster.casting &&
+    caster.casting.target.type === MoveTargetType.Unit &&
+    caster.casting.target.unit === target
+  );
+}
+
+function canUnitCastMove(caster: Unit, move: Moves) {
+  const data = caster.moves[move];
+  if (data) {
+    return !(data.disabled || data.cooldown);
+  }
+  return false;
+}
+
 export function setupCastingMechanics(battle: Battle) {
-  const queue = new Set<Move>();
+  const queue = new Set<Unit>();
 
-  battle.on(BattleEvents.MoveStartCast, EventPriority.Exact, event => {
-    const priority = event.move.source.checkMovePriority(event.move.id);
-    const castTime = getCastTime(priority);
-
-    event.move.casting = {
-      target: event.target,
-      progress: 0,
-      duration: castTime,
-    };
-    event.move.source.casting = event.move;
-
-    // Add new entry for the tick updates
-    queue.add(event.move);
-  });
-
-  battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
-    for (const move of queue) {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+    for (const unit of queue) {
       // advance timer
-      if (move.casting) {
-        move.updateCast({
-          progress: move.casting.progress + event.duration,
+      if (unit.casting) {
+        unit.updateCast({
+          time: {
+            duration: unit.casting.time.duration,
+            progress: unit.casting.time.progress + event.duration,
+          },
         });
       } else {
-        move.endCast();
+        unit.stopCast();
       }
     }
   });
 
-  battle.on(BattleEvents.MoveUpdateCast, EventPriority.Exact, event => {
-    event.move.casting = event.casting;
-    if (
-      event.casting.target.type === MoveTargetType.Unit &&
-      event.casting.target.unit.alive
-    ) {
-      if (event.casting.progress >= event.casting.duration) {
-        event.move.endCast();
+  timer.stop();
+
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Exact, event => {
+    if (event.success) {
+      event.success =
+        // Caster must be alive
+        event.source.alive &&
+        // Caster must not be casting/channeling
+        !!(event.source.casting || event.source.channeling) &&
+        // Move must not be disabled or in cooldown
+        canUnitCastMove(event.source, event.move);
+
+      // If the move target is a unit, make sure it is still alive
+      if (event.target.type === MoveTargetType.Unit) {
+        event.success = event.success && event.target.unit.alive;
       }
-    } else {
-      event.move.stopCast();
     }
   });
 
-  battle.on(BattleEvents.MoveStopCast, EventPriority.Exact, event => {
-    event.move.source.casting = undefined;
-    event.move.casting = undefined;
-    queue.delete(event.move);
+  battle.on(BattleEvents.UnitCast, EventPriority.Exact, event => {
+    const priority = event.source.checkMovePriority(event.move, event.target);
+    const castTime = getCastTime(priority);
+
+    event.source.casting = {
+      target: event.target,
+      time: {
+        progress: 0,
+        duration: castTime,
+      },
+      move: event.move,
+    };
+
+    // Add new entry for the tick updates
+    queue.add(event.source);
+
+    if (queue.size === 1) {
+      timer.start();
+    }
   });
 
-  battle.on(BattleEvents.MoveEndCast, EventPriority.Exact, event => {
-    event.move.source.triggerMove(event.move.id, event.target);
+  battle.on(BattleEvents.UnitUpdateCast, EventPriority.Exact, event => {
+    if (event.source.casting) {
+      event.source.casting = {
+        ...event.source.casting,
+        ...event.data,
+      };
 
-    event.move.source.casting = undefined;
-    event.move.casting = undefined;
-    queue.delete(event.move);
+      if (
+        event.source.casting.time.progress >= event.source.casting.time.duration
+      ) {
+        event.source.finishCast();
+      }
+    }
+  });
 
-    event.move.startCooldown();
+  battle.on(BattleEvents.UnitStopCast, EventPriority.Exact, event => {
+    event.source.casting = undefined;
+    queue.delete(event.source);
+
+    if (queue.size === 0) {
+      timer.stop();
+    }
+  });
+
+  battle.on(BattleEvents.UnitFinishCast, EventPriority.Exact, event => {
+    const casting = event.source.casting;
+    if (casting) {
+      event.source.stopCast();
+
+      event.source.startCooldown(casting.move, casting.target);
+
+      const steps = event.source.checkMoveSteps(casting.move, casting.target);
+
+      if (steps > 0) {
+        event.source.channel(casting.move, casting.target, steps - 1);
+      } else {
+        event.source.triggerMove(casting.move, casting.target, 0);
+      }
+    }
   });
 
   battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
     if (event.source === event.target) {
-      // Setup cast cancel
+      // Look up all casting units and stop those whose current target
+      // is the switching unit
+      for (const unit of queue) {
+        if (
+          isCastingTargetUnit(unit, event.source) ||
+          isCastingTargetUnit(unit, event.target)
+        ) {
+          unit.stopCast();
+        }
+      }
     } else {
-      // TODO setup target switch
+      // Otherwise, update the casting target
+      for (const unit of queue) {
+        if (isCastingTargetUnit(unit, event.source)) {
+          unit.updateCast({
+            target: {
+              type: MoveTargetType.Unit,
+              unit: event.target,
+            },
+          });
+          // TODO should this swap targets?
+        } else if (isCastingTargetUnit(unit, event.target)) {
+          unit.updateCast({
+            target: {
+              type: MoveTargetType.Unit,
+              unit: event.source,
+            },
+          });
+        }
+      }
     }
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+    // If the casting unit dies, stop casting
     if (event.source.casting) {
-      event.source.casting.endCast();
+      event.source.stopCast();
+    } else {
+      // Otherwise, look up all casting units whose current target is this unit.
+      for (const unit of queue) {
+        if (isCastingTargetUnit(unit, event.source)) {
+          unit.stopCast();
+        }
+      }
+    }
+  });
+}
+
+function isChannelingTargetUnit(caster: Unit, target: Unit) {
+  return (
+    caster.channeling &&
+    caster.channeling.target.type === MoveTargetType.Unit &&
+    caster.channeling.target.unit === target
+  );
+}
+
+export function setupChannelingMechanics(battle: Battle) {
+  const queue = new Set<Unit>();
+
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+    for (const unit of queue) {
+      // advance timer
+      if (unit.channeling) {
+        unit.updateChannel({
+          time: {
+            duration: unit.channeling.time.duration,
+            progress: unit.channeling.time.progress + event.duration,
+          },
+        });
+      } else {
+        unit.stopChannel();
+      }
+    }
+  });
+
+  timer.stop();
+
+  battle.on(BattleEvents.CheckUnitCanChannel, EventPriority.Exact, event => {
+    if (event.success) {
+      event.success =
+        // Caster must be alive
+        event.source.alive &&
+        // Caster must not be casting/channeling
+        !!(event.source.casting || event.source.channeling) &&
+        // Move must not be disabled
+        !event.source.moves[event.move]?.disabled;
+
+      // If the move target is a unit, make sure it is still alive
+      if (event.target.type === MoveTargetType.Unit) {
+        event.success = event.success && event.target.unit.alive;
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitChannel, EventPriority.Exact, event => {
+    const priority = event.source.checkMovePriority(event.move, event.target);
+    const castTime = getCastTime(priority);
+
+    event.source.channeling = {
+      target: event.target,
+      time: {
+        progress: 0,
+        duration: castTime,
+      },
+      move: event.move,
+      steps: event.steps,
+    };
+
+    // Add new entry for the tick updates
+    queue.add(event.source);
+
+    if (queue.size === 1) {
+      timer.start();
+    }
+  });
+
+  battle.on(BattleEvents.UnitUpdateChannel, EventPriority.Exact, event => {
+    if (event.source.channeling) {
+      event.source.channeling = {
+        ...event.source.channeling,
+        ...event.data,
+      };
+
+      if (
+        event.source.channeling.time.progress >=
+        event.source.channeling.time.duration
+      ) {
+        event.source.finishChannel();
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitStopChannel, EventPriority.Exact, event => {
+    event.source.channeling = undefined;
+    queue.delete(event.source);
+
+    if (queue.size === 0) {
+      timer.stop();
+    }
+  });
+
+  battle.on(BattleEvents.UnitFinishChannel, EventPriority.Exact, event => {
+    const channeling = event.source.channeling;
+    if (channeling) {
+      // Stop channeling
+      event.source.stopChannel();
+
+      // Trigger move
+      event.source.triggerMove(
+        channeling.move,
+        channeling.target,
+        channeling.steps,
+      );
+
+      // Recast move if step is more than 1
+      if (channeling.steps > 0) {
+        event.source.channel(
+          channeling.move,
+          channeling.target,
+          channeling.steps - 1,
+        );
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+    if (event.source === event.target) {
+      // Look up all casting units and stop those whose current target
+      // is the switching unit
+      for (const unit of queue) {
+        if (
+          isChannelingTargetUnit(unit, event.source) ||
+          isChannelingTargetUnit(unit, event.target)
+        ) {
+          unit.stopCast();
+        }
+      }
+    } else {
+      // Otherwise, update the casting target
+      for (const unit of queue) {
+        if (isChannelingTargetUnit(unit, event.source)) {
+          unit.updateCast({
+            target: {
+              type: MoveTargetType.Unit,
+              unit: event.target,
+            },
+          });
+          // TODO should this swap targets?
+        } else if (isChannelingTargetUnit(unit, event.target)) {
+          unit.updateCast({
+            target: {
+              type: MoveTargetType.Unit,
+              unit: event.source,
+            },
+          });
+        }
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+    // If the casting unit dies, stop casting
+    if (event.source.casting) {
+      event.source.stopCast();
+    } else {
+      // Otherwise, look up all casting units whose current target is this unit.
+      for (const unit of queue) {
+        if (isCastingTargetUnit(unit, event.source)) {
+          unit.stopCast();
+        }
+      }
     }
   });
 }
 
 export function setupCooldownMechanics(battle: Battle) {
-  const queue = new Set<Move>();
+  const queue = new Set<MoveState>();
 
   const PP_COOLDOWN_BASIS = 180; // How many usages is possible within 3 minutes
 
-  battle.on(BattleEvents.MoveStartCooldown, EventPriority.Exact, event => {
-    event.move.cooldown = {
-      progress: 0,
-      duration:
-        (PP_COOLDOWN_BASIS / event.source.checkMovePP(event.move.id)) * 1000,
-    };
-  });
-
-  battle.on(BattleEvents.MoveEndCooldown, EventPriority.Exact, event => {
-    event.move.cooldown = undefined;
-    queue.delete(event.move);
-  });
-
-  battle.on(BattleEvents.MoveUpdateCooldown, EventPriority.Exact, event => {
-    event.move.cooldown = event.cooldown;
-    if (event.cooldown.progress >= event.cooldown.duration) {
-      event.move.endCooldown();
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+    for (const state of queue) {
+      // advance timer
+      if (state.cooldown) {
+        state.source.updateCooldown(state.move, {
+          progress: state.cooldown.progress + event.duration,
+        });
+      }
     }
   });
 
-  battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
-    for (const move of queue) {
-      // advance timer
-      if (move.cooldown) {
-        move.updateCooldown({
-          progress: move.cooldown.progress + event.duration,
-        });
-      } else {
-        move.endCooldown();
+  timer.stop();
+
+  battle.on(BattleEvents.UnitStartCooldown, EventPriority.Exact, event => {
+    const data = event.source.moves[event.move];
+    if (data) {
+      data.cooldown = {
+        progress: 0,
+        duration:
+          (PP_COOLDOWN_BASIS /
+            event.source.checkMovePP(event.move, event.target)) *
+          1000,
+      };
+
+      queue.add(data);
+
+      if (queue.size === 1) {
+        timer.start();
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitFinishCooldown, EventPriority.Exact, event => {
+    const data = event.source.moves[event.move];
+    if (data) {
+      data.cooldown = undefined;
+      queue.delete(data);
+      if (queue.size === 0) {
+        timer.stop();
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitUpdateCooldown, EventPriority.Exact, event => {
+    const state = event.source.moves[event.move];
+    if (state?.cooldown) {
+      state.cooldown = {
+        ...state.cooldown,
+        ...event.data,
+      };
+      if (state.cooldown.progress >= state.cooldown.duration) {
+        event.source.finishCooldown(event.move);
       }
     }
   });
 }
 
-function targetTeamUnits(source: Unit, move: Moves, team: Team) {
+function targetTeamUnits(source: Unit, move: Moves, team: Team, steps: number) {
   for (const unit of team.units) {
     if (source !== unit) {
-      source.triggerMoveTarget(move, {
-        type: MoveTargetType.Unit,
-        unit,
-      });
+      source.triggerMoveTarget(
+        move,
+        {
+          type: MoveTargetType.Unit,
+          unit,
+        },
+        steps,
+      );
     }
   }
 }
 
-function targetAllianceUnits(source: Unit, move: Moves, alliance: Alliance) {
+function targetAllianceUnits(
+  source: Unit,
+  move: Moves,
+  alliance: Alliance,
+  steps: number,
+) {
   for (const team of alliance.teams) {
     if (team !== source.team) {
-      targetTeamUnits(source, move, team);
+      targetTeamUnits(source, move, team, steps);
     }
   }
 }
 
-function targetTeam(source: Unit, move: Moves, team: Team) {
-  source.triggerMoveTarget(move, {
-    type: MoveTargetType.Team,
-    team,
-  });
+function targetTeam(source: Unit, move: Moves, team: Team, steps: number) {
+  source.triggerMoveTarget(
+    move,
+    {
+      type: MoveTargetType.Team,
+      team,
+    },
+    steps,
+  );
 }
 
-function targetAllianceTeams(source: Unit, move: Moves, alliance: Alliance) {
+function targetAllianceTeams(
+  source: Unit,
+  move: Moves,
+  alliance: Alliance,
+  steps: number,
+) {
   for (const team of alliance.teams) {
     if (team !== source.team) {
-      targetTeam(source, move, team);
+      targetTeam(source, move, team, steps);
     }
   }
 }
 
 export function setupTriggerMoveMechanics(battle: Battle) {
-  battle.on(BattleEvents.TriggerMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, event => {
     const moveData = getMoveData(event.move);
 
     /**
@@ -255,59 +577,80 @@ export function setupTriggerMoveMechanics(battle: Battle) {
       if (moveData.target & MoveTargetFlags.Unit) {
         // Target the source first
         if (moveData.target & MoveTargetFlags.Self) {
-          event.source.triggerMoveTarget(event.move, {
-            type: MoveTargetType.Unit,
-            unit: event.source,
-          });
+          event.source.triggerMoveTarget(
+            event.move,
+            {
+              type: MoveTargetType.Unit,
+              unit: event.source,
+            },
+            event.steps,
+          );
         }
         // Target the units from own team
         if (moveData.target & MoveTargetFlags.Own) {
-          targetTeamUnits(event.source, event.move, event.source.team);
+          targetTeamUnits(
+            event.source,
+            event.move,
+            event.source.team,
+            event.steps,
+          );
         }
         if (moveData.target & MoveTargetFlags.Ally) {
           targetAllianceUnits(
             event.source,
             event.move,
             event.source.team.alliance,
+            event.steps,
           );
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
           const ownAlliance = event.source.team.alliance;
           for (const alliance of battle.alliances) {
             if (alliance !== ownAlliance) {
-              targetAllianceUnits(event.source, event.move, alliance);
+              targetAllianceUnits(
+                event.source,
+                event.move,
+                alliance,
+                event.steps,
+              );
             }
           }
         }
         // Otherwise, target by team
       } else if (moveData.target & MoveTargetFlags.Team) {
         if (moveData.target & MoveTargetFlags.Own) {
-          targetTeam(event.source, event.move, event.source.team);
+          targetTeam(event.source, event.move, event.source.team, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Ally) {
           targetAllianceTeams(
             event.source,
             event.move,
             event.source.team.alliance,
+            event.steps,
           );
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
           const ownAlliance = event.source.team.alliance;
           for (const alliance of battle.alliances) {
             if (alliance !== ownAlliance) {
-              targetAllianceTeams(event.source, event.move, alliance);
+              targetAllianceTeams(
+                event.source,
+                event.move,
+                alliance,
+                event.steps,
+              );
             }
           }
         }
       }
     } else {
       // Just forward the target by default
-      event.source.triggerMoveTarget(event.move, event.target);
+      event.source.triggerMoveTarget(event.move, event.target, event.steps);
     }
   });
 
   battle.on(
-    BattleEvents.TriggerMoveResolveAccuracy,
+    BattleEvents.UnitTriggerMoveResolveAccuracy,
     EventPriority.Exact,
     event => {
       const parent = event.parent;
@@ -331,80 +674,73 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     },
   );
 
-  battle.on(BattleEvents.TriggerMoveRollHit, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Exact, event => {
     event.hit = battle.random() * 100 <= event.accuracy;
   });
 
-  function resolveMoveAccuracy(
-    parent: TriggerMoveTargetEvent,
-    accuracy: number,
-  ) {
-    const event: TriggerMoveResolveAccuracyEvent = {
-      id: 'TriggerMoveResolveAccuracy',
+  function resolveMoveAccuracy(parent: UnitTriggerMoveEvent, accuracy: number) {
+    const event: UnitTriggerMoveResolveAccuracyEvent = {
+      id: 'UnitTriggerMoveResolveAccuracy',
       disabled: false,
       parent,
       accuracy,
     };
-    battle.emit(BattleEvents.TriggerMoveResolveAccuracy, event);
+    battle.emit(BattleEvents.UnitTriggerMoveResolveAccuracy, event);
     return event.accuracy;
   }
 
-  function rollHit(parent: TriggerMoveTargetEvent, accuracy: number) {
-    const event: TriggerMoveRollHitEvent = {
-      id: 'TriggerMoveRollHit',
+  function rollHit(parent: UnitTriggerMoveEvent, accuracy: number) {
+    const event: UnitTriggerMoveRollHitEvent = {
+      id: 'TriggerMovUnitTriggerMoveRollHiteRollHit',
       disabled: false,
       parent,
       accuracy,
       hit: false,
     };
-    battle.emit(BattleEvents.TriggerMoveRollHit, event);
+    battle.emit(BattleEvents.UnitTriggerMoveRollHit, event);
     return event.hit;
   }
 
-  function triggerFailed(parent: TriggerMoveTargetEvent) {
-    battle.emit(BattleEvents.TriggerMoveFailed, {
-      id: 'TriggerMoveFailed',
+  function triggerFailed(parent: UnitTriggerMoveEvent) {
+    battle.emit(BattleEvents.UnitTriggerMoveFailed, {
+      id: 'UnitTriggerMoveFailed',
       disabled: false,
       parent,
     });
   }
 
-  function triggerMiss(parent: TriggerMoveTargetEvent) {
-    battle.emit(BattleEvents.TriggerMoveMissed, {
-      id: 'TriggerMoveMissed',
+  function triggerMiss(parent: UnitTriggerMoveEvent) {
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
       disabled: false,
       parent,
     });
   }
 
-  battle.on(BattleEvents.TriggerMoveTarget, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveTarget, EventPriority.Exact, event => {
     const currentSource = event.source;
+    const currentMove = event.move;
+    // Get the move's type
+    const currentType = currentSource.checkMoveType(currentMove, event.target);
+
+    // Check for the target's immunity
+    const isImmune = currentSource.checkMoveImmunity(
+      currentMove,
+      event.target,
+      currentType,
+    );
+
+    // if the target is immune, skip
+    if (isImmune) {
+      triggerFailed(event);
+      return;
+    }
 
     if (event.target.type === MoveTargetType.Unit) {
-      const currentMove = event.move;
-      const currentTarget = event.target.unit;
-      // Get the move's type
-      const currentType = currentSource.checkMoveType(
-        currentMove,
-        currentTarget,
-      );
-
-      // Check for the target's immunity
-      const isImmune = currentSource.checkMoveImmunity(
-        currentMove,
-        currentTarget,
-        currentType,
-      );
-
-      // if the target is immune, skip
-      if (isImmune) {
-        triggerFailed(event);
-        return;
-      }
       // For moves with accuracy, perform accuracy check
       const baseAccuracy = currentSource.checkMoveAccuracy(
         currentMove,
-        currentTarget,
+        event.target,
       );
       // Check if the move doesn't have perfect accuracy
       if (baseAccuracy != null) {
@@ -419,7 +755,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     }
 
     // Trigger move effect
-    currentSource.triggerMoveEffect(event.move, event.target);
+    currentSource.triggerMoveEffect(event.move, event.target, event.steps);
   });
 }
 

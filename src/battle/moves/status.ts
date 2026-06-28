@@ -6,6 +6,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
+  [Moves.Toxic]: Statuses.BadlyPoisoned,
 };
 
 function setupUnitStatusMoves(battle: Battle) {

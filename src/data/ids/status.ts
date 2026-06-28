@@ -2,6 +2,7 @@ export const enum Statuses {
   Seeding,
   Poisoned,
   Sleeping,
+  BadlyPoisoned,
 }
 
 export const enum Weathers {

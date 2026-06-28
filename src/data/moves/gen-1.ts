@@ -93,4 +93,13 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Toxic, {
+    name: 'Toxic',
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

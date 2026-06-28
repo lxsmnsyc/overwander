@@ -223,10 +223,12 @@ export function setupCastingMechanics(battle: Battle) {
 
       const steps = event.source.checkMoveSteps(casting.move, casting.target);
 
+      // Trigger first step
+      event.source.triggerMove(casting.move, casting.target, steps);
+
       if (steps > 0) {
+        // Channel next effect
         event.source.channel(casting.move, casting.target, steps - 1);
-      } else {
-        event.source.triggerMove(casting.move, casting.target, 0);
       }
     }
   });

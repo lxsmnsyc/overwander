@@ -15,7 +15,8 @@ export function setupHitMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     if (
       HIT_MOVES.has(event.move) &&
-      event.target.type === MoveTargetType.Unit
+      event.target.type === MoveTargetType.Unit &&
+      event.steps === 0
     ) {
       event.source.attack(
         event.target.unit,

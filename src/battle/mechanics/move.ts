@@ -267,16 +267,17 @@ export function setupCastingMechanics(battle: Battle) {
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
-    // If the casting unit dies, stop casting
+    // look up all casting units whose current target is this unit.
+    for (const unit of queue) {
+      if (isCastingTargetUnit(unit, event.source)) {
+        unit.stopCast();
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, event => {
     if (event.source.casting) {
       event.source.stopCast();
-    } else {
-      // Otherwise, look up all casting units whose current target is this unit.
-      for (const unit of queue) {
-        if (isCastingTargetUnit(unit, event.source)) {
-          unit.stopCast();
-        }
-      }
     }
   });
 }
@@ -434,16 +435,17 @@ export function setupChannelingMechanics(battle: Battle) {
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
-    // If the casting unit dies, stop casting
-    if (event.source.casting) {
-      event.source.stopCast();
-    } else {
-      // Otherwise, look up all casting units whose current target is this unit.
-      for (const unit of queue) {
-        if (isCastingTargetUnit(unit, event.source)) {
-          unit.stopCast();
-        }
+    // look up all channeling units whose current target is this unit.
+    for (const unit of queue) {
+      if (isChannelingTargetUnit(unit, event.source)) {
+        unit.stopChannel();
       }
+    }
+  });
+
+  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, event => {
+    if (event.source.channeling) {
+      event.source.stopChannel();
     }
   });
 }

@@ -508,6 +508,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitEntersField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitLeavesField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitSwitch]: [UnitSwitchEvent, EventPriority];
+  [BattleEvents.UnitInterrupt]: [UnitEvent, EventPriority];
 
   [BattleEvents.UnitAddAbility]: [UnitAbilityEvent, EventPriority];
   [BattleEvents.UnitRemoveAbility]: [UnitAbilityEvent, EventPriority];

@@ -85,6 +85,7 @@ function setupUnitDamageMechanics(battle: Battle) {
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+    event.source.interrupt();
     event.source.alive = false;
   });
 }

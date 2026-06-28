@@ -601,7 +601,7 @@ export class Unit {
   }
 
   switch(target: Unit) {
-    if (this.checkEscape()) {
+    if (this.checkEscape() && target.checkEscape()) {
       this.battle.emit(BattleEvents.UnitSwitch, {
         id: 'UnitSwitch',
         disabled: false,

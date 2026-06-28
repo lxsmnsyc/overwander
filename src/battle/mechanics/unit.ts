@@ -186,6 +186,9 @@ function setupUnitStatMechancis(battle: Battle) {
 }
 
 function setupUnitSwitchMechanics(battle: Battle) {
+  battle.on(BattleEvents.CheckUnitEscape, EventPriority.Exact, event => {
+    event.success = !event.source.channeling;
+  });
   battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
     event.source.leave();
     if (event.source !== event.target) {

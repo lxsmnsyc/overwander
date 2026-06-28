@@ -74,4 +74,15 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.SolarBeam, {
+    name: 'Solar Beam',
+    type: Types.Grass,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 120,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    steps: 1,
+  });
 }

@@ -4,7 +4,12 @@ import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
-const HIT_MOVES = new Set([Moves.Tackle, Moves.VineWhip, Moves.RazorLeaf]);
+const HIT_MOVES = new Set([
+  Moves.Tackle,
+  Moves.VineWhip,
+  Moves.RazorLeaf,
+  Moves.SolarBeam,
+]);
 
 export function setupHitMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {

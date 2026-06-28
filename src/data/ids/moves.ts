@@ -79,4 +79,5 @@ export const enum Moves {
   PoisonPowder,
   RazorLeaf,
   Growth,
+  SolarBeam,
 }

@@ -31,6 +31,7 @@ function createStageMove(stage: Stages, config: StageMovesConfig) {
 
 const setupAttackStageMoves = createStageMove(Stages.Attack, {
   [Moves.Growl]: -1,
+  [Moves.SwordsDance]: 2,
 });
 
 const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {

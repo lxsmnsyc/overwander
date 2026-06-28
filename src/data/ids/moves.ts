@@ -80,4 +80,5 @@ export const enum Moves {
   RazorLeaf,
   Growth,
   SolarBeam,
+  SwordsDance
 }

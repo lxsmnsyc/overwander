@@ -85,4 +85,12 @@ export function registerGen1Moves() {
     flags: 0,
     steps: 1,
   });
+  registerMove(Moves.SwordsDance, {
+    name: 'Swords Dance',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: 0,
+    flags: 0,
+  });
 }

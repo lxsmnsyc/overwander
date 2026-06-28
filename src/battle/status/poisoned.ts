@@ -1,15 +1,16 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Statuses } from '../../data/ids/status';
-import type { Battle, Unit } from '../core';
+import type { Battle } from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
+import type { Unit } from '../unit';
 
 interface PoisonedData {
   progress: number;
   cause: EffectCause;
 }
 
-export function setupPoisonedStatusMechanics(battle: Battle) {
+export function setupPoisonedStatus(battle: Battle) {
   const instances = new Map<Unit, PoisonedData>();
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {

@@ -9,7 +9,7 @@ const STATUS_MOVES: { [key in Moves]?: Statuses } = {
 };
 
 function setupUnitStatusMoves(battle: Battle) {
-  battle.on(BattleEvents.TriggerMoveEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     const targetStatus = STATUS_MOVES[event.move];
 
     if (targetStatus && event.target.type === MoveTargetType.Unit) {

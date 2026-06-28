@@ -55,7 +55,7 @@ const setupAbilities = [
     return new MergedAbilityLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, event => {
         if (
-          isWeatherSunny(battle) &&
+          isWeatherSunny(event.source) &&
           event.stat === Stats.SpecialAttack &&
           event.source.hasAbility(Abilities.SolarPower)
         ) {
@@ -64,25 +64,25 @@ const setupAbilities = [
       }),
       // Due to the lack of turn mechanics, we only need to damage the
       // unit when it starts using an ability
-      battle.on(BattleEvents.MoveStartCast, EventPriority.Post, event => {
+      battle.on(BattleEvents.UnitCast, EventPriority.Post, event => {
         if (
-          isWeatherSunny(battle) &&
-          event.move.source.hasAbility(Abilities.SolarPower)
+          isWeatherSunny(event.source) &&
+          event.source.hasAbility(Abilities.SolarPower)
         ) {
-          const maxHP = event.move.source.checkStat(Stats.HP, 0);
-          event.move.source.damage(
+          const maxHP = event.source.checkStat(Stats.HP, 0);
+          event.source.damage(
             {
               type: EffectType.Ability,
               ability: Abilities.SolarPower,
-              unit: event.move.source,
+              unit: event.source,
             },
-            event.move.source,
+            event.source,
             maxHP / 8,
             DamageFlags.NonLethal,
           );
 
           // For visual cues
-          event.move.source.triggerAbility(Abilities.SolarPower);
+          event.source.triggerAbility(Abilities.SolarPower);
         }
       }),
     ]);
@@ -91,17 +91,21 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Tough_Claws_(Ability)
   createAbility(Abilities.ToughClaws, battle => {
     const FACTOR = 5325 / 4096;
-    return battle.on(BattleEvents.CheckMovePower, EventPriority.Post, event => {
-      if (event.power != null) {
-        const moveData = getMoveData(event.move);
-        if (
-          event.source.hasAbility(Abilities.ToughClaws) &&
-          moveData.flags & MoveFlags.Contact
-        ) {
-          event.power *= FACTOR;
+    return battle.on(
+      BattleEvents.CheckUnitMovePower,
+      EventPriority.Post,
+      event => {
+        if (event.power != null) {
+          const moveData = getMoveData(event.move);
+          if (
+            event.source.hasAbility(Abilities.ToughClaws) &&
+            moveData.flags & MoveFlags.Contact
+          ) {
+            event.power *= FACTOR;
+          }
         }
-      }
-    });
+      },
+    );
   }),
 
   // createDrizzleAbility(Abilities.Drought, Weathers.Sunny),
@@ -112,16 +116,16 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Rain_Dish_(Ability)
   createAbility(Abilities.RainDish, battle => {
     // No turn mechanics, we use move cast instead.
-    return battle.on(BattleEvents.MoveStartCast, EventPriority.Post, event => {
+    return battle.on(BattleEvents.UnitCast, EventPriority.Post, event => {
       if (
-        isWeatherRainy(battle) &&
-        event.move.source.hasAbility(Abilities.RainDish)
+        isWeatherRainy(event.source) &&
+        event.source.hasAbility(Abilities.RainDish)
       ) {
-        const maxHP = event.move.source.checkStat(Stats.HP, 0);
-        event.move.source.setHealth(event.move.source.health + maxHP);
+        const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
+        event.source.setHealth(event.source.health + maxHP);
 
         // For visual cues
-        event.move.source.triggerAbility(Abilities.RainDish);
+        event.source.triggerAbility(Abilities.RainDish);
       }
     });
   }),

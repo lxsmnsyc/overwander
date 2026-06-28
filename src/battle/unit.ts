@@ -4,7 +4,7 @@ import { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
-import type { Statuses } from '../data/ids/status';
+import { Weathers, type Statuses } from '../data/ids/status';
 import type { Battle } from './core';
 import type {
   CastingData,
@@ -26,6 +26,7 @@ import type {
   MoveState,
   MoveTarget,
   ProgressData,
+  UnitWeatherEvent,
 } from './events';
 import { BattleEvents } from './events';
 import type { Team } from './team';
@@ -741,5 +742,16 @@ export class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitStatusImmunity, event);
     return event.immune;
+  }
+
+  checkWeather() {
+    const event: UnitWeatherEvent = {
+      id: 'CheckUnitWeather',
+      disabled: false,
+      source: this,
+      weather: Weathers.None,
+    };
+    this.battle.emit(BattleEvents.CheckUnitWeather, event);
+    return event.weather;
   }
 }

@@ -1,10 +1,10 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
-import { Types } from '../../data/constants/types';
-import { Abilities } from '../../data/ids/abilities';
-import { Weathers } from '../../data/ids/status';
-import { Battle, Unit } from '../core';
+import type { Types } from '../../data/constants/types';
+import type { Abilities } from '../../data/ids/abilities';
+import type { Battle } from '../core';
 import { BattleEvents } from '../events';
+import type { Unit } from '../unit';
 
 interface AbilityLifecycle {
   start(): void;

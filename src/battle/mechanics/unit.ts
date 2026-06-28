@@ -187,16 +187,14 @@ function setupUnitStatMechancis(battle: Battle) {
 
 function setupUnitSwitchMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
-    if (event.success) {
-      event.source.leave();
-      if (event.source !== event.target) {
-        event.target.leave();
-      }
-      // Trigger re-entry
-      event.source.enter();
-      if (event.source !== event.target) {
-        event.target.enter();
-      }
+    event.source.leave();
+    if (event.source !== event.target) {
+      event.target.leave();
+    }
+    // Trigger re-entry
+    event.source.enter();
+    if (event.source !== event.target) {
+      event.target.enter();
     }
   });
 }

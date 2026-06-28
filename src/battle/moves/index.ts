@@ -1,5 +1,6 @@
 import type { Battle } from '../core';
 import { setupHitMoves } from './hit';
+import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
 import { setupPowderMoves } from './powder';
 import { setupStageMoves } from './stage';
@@ -12,4 +13,5 @@ export function setupMoves(battle: Battle) {
 
   setupLeechSeed(battle);
   setupPowderMoves(battle);
+  setupIncreasedCriticalHitRatioMoves(battle);
 }

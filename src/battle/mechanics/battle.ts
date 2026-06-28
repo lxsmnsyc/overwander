@@ -1,17 +1,14 @@
 import { EventPriority } from '../../core/event-emitter';
-import {
-  BATTLE_END_EVENT,
-  BATTLE_INIT_EVENT,
-  BATTLE_START_EVENT,
-} from '../events';
+import type { Battle } from '../core';
+import { BattleEvents } from '../events';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
 
-export function initBattleMechanics() {
+export function setupBattleMechanics(battle: Battle) {
   let raf: number;
 
-  BATTLE_INIT_EVENT.on(EventPriority.Exact, () => {
+  battle.on(BattleEvents.Start, EventPriority.Exact, () => {
     /**
      * Setup timer
      */
@@ -25,7 +22,7 @@ export function initBattleMechanics() {
       elapsed = current;
 
       while (diff >= FPS_DURATION) {
-        // round.tick(FPS_DURATION);
+        battle.tick(FPS_DURATION);
         diff -= FPS_DURATION;
       }
 
@@ -35,11 +32,7 @@ export function initBattleMechanics() {
     }
   });
 
-  BATTLE_START_EVENT.on(EventPriority.Exact, () => {
-    // TODO
-  });
-
-  BATTLE_END_EVENT.on(EventPriority.Exact, () => {
+  battle.on(BattleEvents.End, EventPriority.Exact, () => {
     if (raf != null) {
       cancelAnimationFrame(raf);
     }

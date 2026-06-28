@@ -30,6 +30,7 @@ export const enum BattleEvents {
   CheckUnitMoveCooldown,
   CheckUnitMoveSteps,
 
+  CheckUnitWeather,
   CheckUnitStat,
   CheckUnitStage,
 
@@ -298,11 +299,6 @@ export interface UnitTriggerMoveChildEvent extends BaseEvent {
   parent: UnitTriggerMoveEvent;
 }
 
-export interface TriggerMoveCheckPowerEvent extends BaseEvent {
-  parent: TriggerMoveTargetEvent;
-  power?: number;
-}
-
 export interface UnitTriggerMoveResolveAccuracyEvent extends BaseEvent {
   parent: UnitTriggerMoveEvent;
   accuracy: number;
@@ -311,6 +307,10 @@ export interface UnitTriggerMoveResolveAccuracyEvent extends BaseEvent {
 export interface UnitTriggerMoveRollHitEvent
   extends UnitTriggerMoveResolveAccuracyEvent {
   hit: boolean;
+}
+
+export interface UnitWeatherEvent extends UnitEvent {
+  weather: Weathers;
 }
 
 export interface UnitStageEvent extends UnitEvent {
@@ -564,6 +564,8 @@ export interface BattleEventMap extends EventMap {
     UnitTriggerMoveChildEvent,
     EventPriority,
   ];
+
+  [BattleEvents.CheckUnitWeather]: [UnitWeatherEvent, EventPriority];
 
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];

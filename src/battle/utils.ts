@@ -1,18 +1,12 @@
 import { Weathers } from '../data/ids/status';
-import type { Battle } from './core';
+import type { Unit } from './unit';
 
-export function isWeatherSunny(battle: Battle) {
-  return (
-    !battle.weather.disabled &&
-    (battle.weather.current === Weathers.Sunny ||
-      battle.weather.current === Weathers.ExtremeSunny)
-  );
+export function isWeatherSunny(unit: Unit) {
+  const weather = unit.checkWeather();
+  return weather === Weathers.Sunny || weather === Weathers.ExtremeSunny;
 }
 
-export function isWeatherRainy(battle: Battle) {
-  return (
-    !battle.weather.disabled &&
-    (battle.weather.current === Weathers.Rain ||
-      battle.weather.current === Weathers.HeavyRain)
-  );
+export function isWeatherRainy(unit: Unit) {
+  const weather = unit.checkWeather();
+  return weather === Weathers.Rain || weather === Weathers.HeavyRain;
 }

@@ -8,20 +8,24 @@ type StageMovesConfig = { [key in Moves]?: number };
 
 function createStageMove(stage: Stages, config: StageMovesConfig) {
   return (battle: Battle) => {
-    battle.on(BattleEvents.TriggerMoveEffect, EventPriority.Exact, event => {
-      let target = event.source;
-      if (event.target.type === MoveTargetType.Unit) {
-        target = event.target.unit;
-      }
-      const move = event.move;
-      if (move in config) {
-        target.addStage(stage, config[move] || 0, {
-          type: EffectType.Move,
-          unit: event.source,
-          move: event.move,
-        });
-      }
-    });
+    battle.on(
+      BattleEvents.UnitTriggerMoveEffect,
+      EventPriority.Exact,
+      event => {
+        let target = event.source;
+        if (event.target.type === MoveTargetType.Unit) {
+          target = event.target.unit;
+        }
+        const move = event.move;
+        if (move in config) {
+          target.addStage(stage, config[move] || 0, {
+            type: EffectType.Move,
+            unit: event.source,
+            move: event.move,
+          });
+        }
+      },
+    );
   };
 }
 

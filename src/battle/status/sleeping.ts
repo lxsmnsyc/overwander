@@ -1,7 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type { Battle, Unit } from '../core';
+import type { Battle } from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
+import type { Unit } from '../unit';
 
 interface SleepingData {
   progress: number;
@@ -10,7 +11,7 @@ interface SleepingData {
 
 const DURATION = 2000;
 
-export function setupSleepingStatusMechanics(battle: Battle) {
+export function setupSleepingStatus(battle: Battle) {
   const instances = new Map<Unit, SleepingData>();
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
@@ -37,9 +38,7 @@ export function setupSleepingStatusMechanics(battle: Battle) {
 
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
     if (event.status === Statuses.Sleeping && !instances.has(event.source)) {
-      if (event.source.casting) {
-        event.source.casting.stopCast();
-      }
+      event.source.interrupt();
 
       instances.set(event.source, {
         progress: DURATION,

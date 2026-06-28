@@ -6,16 +6,20 @@ import type { Battle } from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 export function setupLeechSeed(battle: Battle) {
-  battle.on(BattleEvents.CheckMoveImmunity, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, event => {
     // TODO Sappy Seed
-    if (!event.immune && event.move === Moves.LeechSeed) {
+    if (
+      !event.immune &&
+      event.move === Moves.LeechSeed &&
+      event.target.type === MoveTargetType.Unit
+    ) {
       event.immune =
-        event.target.types.has(Types.Grass) ||
-        !!event.target.getStatus(Statuses.Seeding);
+        event.target.unit.types.has(Types.Grass) ||
+        !!event.target.unit.getStatus(Statuses.Seeding);
     }
   });
 
-  battle.on(BattleEvents.TriggerMoveEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     // TODO Sappy Seed
     if (
       event.move === Moves.LeechSeed &&

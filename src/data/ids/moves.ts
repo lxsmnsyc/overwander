@@ -82,4 +82,5 @@ export const enum Moves {
   SolarBeam,
   SwordsDance,
   Toxic,
+  BodySlam,
 }

@@ -963,6 +963,32 @@ export function setupAttackMechanics(battle: Battle) {
     });
   }
 
+  function checkUnitAttackEffect(parent: UnitAttackEvent) {
+    const event = {
+      id: 'CheckUnitAttackEffect',
+      disabled: false,
+      parent,
+      success: true,
+    };
+    battle.emit(BattleEvents.CheckUnitAttackEffect, event);
+    return event.success;
+  }
+
+  function checkUnitAttackEffectChance(parent: UnitAttackEvent) {
+    const event = {
+      id: 'CheckUnitAttackEffect',
+      disabled: false,
+      parent,
+      value: 0,
+    };
+    battle.emit(BattleEvents.CheckUnitAttackEffectChance, event);
+    return event.value;
+  }
+
+  battle.on(BattleEvents.CheckUnitAttackEffect, EventPriority.Exact, event => {
+    event.success = event.parent.source.alive && event.parent.target.alive;
+  });
+
   battle.on(BattleEvents.UnitAttack, EventPriority.Exact, event => {
     if (event.target.alive) {
       const amount = resolveDamage(event);
@@ -980,8 +1006,11 @@ export function setupAttackMechanics(battle: Battle) {
         flags,
       );
 
-      if (event.target.alive) {
-        runAttackEffect(event);
+      if (checkUnitAttackEffect(event)) {
+        const chance = checkUnitAttackEffectChance(event);
+        if (chance == null || chance >= battle.random() * 100) {
+          runAttackEffect(event);
+        }
       }
     }
   });

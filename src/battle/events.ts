@@ -80,6 +80,9 @@ export const enum BattleEvents {
   UnitAttackResolveSTAB,
   UnitAttackResolveCriticalMult,
   UnitAttackResolveEffectiveness,
+
+  CheckUnitAttackEffect,
+  CheckUnitAttackEffectChance,
   UnitAttackEffect,
 
   UnitHeal,
@@ -295,6 +298,10 @@ export interface UnitUpdateStatusEvent extends UnitStatusEvent {
   cause: EffectCause;
 }
 
+export interface CheckUnitStatusImmunityEvent extends UnitUpdateStatusEvent {
+  immune: boolean;
+}
+
 export interface UnitTriggerMoveChildEvent extends BaseEvent {
   parent: UnitTriggerMoveEvent;
 }
@@ -393,6 +400,14 @@ export interface UnitAttackResolveStatEvent
   stat: Stats;
 }
 
+export interface CheckUnitAttackEffectEvent extends UnitAttackChildEvent {
+  success: boolean;
+}
+
+export interface CheckUnitAttackEffectChanceEvent extends UnitAttackChildEvent {
+  value?: number;
+}
+
 export interface AllianceEvent extends BaseEvent {
   alliance: Alliance;
 }
@@ -411,10 +426,6 @@ export interface UnitItemEvent extends UnitEvent {
 
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
-}
-
-export interface CheckUnitStatusImmunityEvent extends UnitUpdateStatusEvent {
-  immune: boolean;
 }
 
 export interface BattleEventMap extends EventMap {
@@ -498,6 +509,15 @@ export interface BattleEventMap extends EventMap {
   ];
   [BattleEvents.UnitAttackResolveEffectiveness]: [
     UnitAttackResolveEffectivenessEvent,
+    EventPriority,
+  ];
+
+  [BattleEvents.CheckUnitAttackEffect]: [
+    CheckUnitAttackEffectEvent,
+    EventPriority,
+  ];
+  [BattleEvents.CheckUnitAttackEffectChance]: [
+    CheckUnitAttackEffectChanceEvent,
     EventPriority,
   ];
   [BattleEvents.UnitAttackEffect]: [UnitAttackChildEvent, EventPriority];

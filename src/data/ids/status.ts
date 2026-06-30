@@ -4,6 +4,8 @@ export const enum Statuses {
   Sleeping,
   BadlyPoisoned,
   Paralyzed,
+  Minimized,
+  Invulnerable,
 }
 
 export const enum Weathers {

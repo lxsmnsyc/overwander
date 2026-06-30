@@ -9,6 +9,7 @@ const HIT_MOVES = new Set([
   Moves.VineWhip,
   Moves.RazorLeaf,
   Moves.SolarBeam,
+  Moves.BodySlam,
 ]);
 
 export function setupHitMoves(battle: Battle) {

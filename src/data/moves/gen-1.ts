@@ -102,4 +102,13 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.BodySlam, {
+    name: 'Body Slam',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

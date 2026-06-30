@@ -658,47 +658,58 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     EventPriority.Exact,
     event => {
       const parent = event.parent;
-      /**
-       *  Base modifier for accuracy
-       */
-      let accuracyStage = parent.source.checkStage(
-        Stages.Accuracy,
-        StatFlags.Attack,
+      const baseAccuracy = parent.source.checkMoveAccuracy(
+        parent.move,
+        parent.target,
       );
-      if (parent.target.type === MoveTargetType.Unit) {
-        accuracyStage -= parent.target.unit.checkStage(
-          Stages.Evasion,
+
+      if (baseAccuracy) {
+        /**
+         *  Base modifier for accuracy
+         */
+        let accuracyStage = parent.source.checkStage(
+          Stages.Accuracy,
           StatFlags.Attack,
         );
+        if (parent.target.type === MoveTargetType.Unit) {
+          accuracyStage -= parent.target.unit.checkStage(
+            Stages.Evasion,
+            StatFlags.Attack,
+          );
 
-        accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
+          accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
+        }
+        event.accuracy =
+          baseAccuracy * accuracyStage < 0
+            ? 3 / (3 - accuracyStage)
+            : (3 + accuracyStage) / 3;
       }
-      event.accuracy *=
-        accuracyStage < 0 ? 3 / (3 - accuracyStage) : (3 + accuracyStage) / 3;
     },
   );
 
-  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Exact, event => {
-    event.hit = battle.random() * 100 <= event.accuracy;
-  });
-
-  function resolveMoveAccuracy(parent: UnitTriggerMoveEvent, accuracy: number) {
+  function resolveMoveAccuracy(parent: UnitTriggerMoveEvent) {
     const event: UnitTriggerMoveResolveAccuracyEvent = {
       id: 'UnitTriggerMoveResolveAccuracy',
       disabled: false,
       parent,
-      accuracy,
     };
     battle.emit(BattleEvents.UnitTriggerMoveResolveAccuracy, event);
     return event.accuracy;
   }
 
-  function rollHit(parent: UnitTriggerMoveEvent, accuracy: number) {
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Exact, event => {
+    if (!event.hit) {
+      const actualAccuracy = resolveMoveAccuracy(event.parent);
+      event.hit =
+        actualAccuracy == null || battle.random() * 100 <= actualAccuracy;
+    }
+  });
+
+  function rollHit(parent: UnitTriggerMoveEvent) {
     const event: UnitTriggerMoveRollHitEvent = {
       id: 'TriggerMovUnitTriggerMoveRollHiteRollHit',
       disabled: false,
       parent,
-      accuracy,
       hit: false,
     };
     battle.emit(BattleEvents.UnitTriggerMoveRollHit, event);
@@ -740,22 +751,9 @@ export function setupTriggerMoveMechanics(battle: Battle) {
       return;
     }
 
-    if (event.target.type === MoveTargetType.Unit) {
-      // For moves with accuracy, perform accuracy check
-      const baseAccuracy = currentSource.checkMoveAccuracy(
-        currentMove,
-        event.target,
-      );
-      // Check if the move doesn't have perfect accuracy
-      if (baseAccuracy != null) {
-        const actualAccuracy = resolveMoveAccuracy(event, baseAccuracy);
-
-        // Roll a hit
-        if (!rollHit(event, actualAccuracy)) {
-          triggerMiss(event);
-          return;
-        }
-      }
+    if (event.target.type === MoveTargetType.Unit && !rollHit(event)) {
+      triggerMiss(event);
+      return;
     }
 
     // Trigger move effect
@@ -774,12 +772,11 @@ export function setupAttackMechanics(battle: Battle) {
     battle.emit(BattleEvents.UnitAttackCheckCriticalRatio, event);
     return event.value;
   }
-  function resolveCriticalHit(parent: UnitAttackEvent, ratio: number) {
+  function resolveCriticalHit(parent: UnitAttackEvent) {
     const event: UnitAttackResolveCriticalEvent = {
       id: 'UnitAttackResolveCriticalHit',
       disabled: false,
       parent,
-      value: ratio,
       critical: false,
     };
     battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
@@ -864,10 +861,34 @@ export function setupAttackMechanics(battle: Battle) {
   });
 
   battle.on(
+    BattleEvents.UnitAttackResolveCriticalChance,
+    EventPriority.Exact,
+    event => {
+      event.value =
+        (1 / 16) *
+        2 ** Math.min(Math.max(0, resolveCriticalHitRatio(event.parent)), 4);
+    },
+  );
+
+  function resolveCriticalHitChance(parent: UnitAttackEvent) {
+    const event: UnitAttackResolveAmountEvent = {
+      id: 'UnitAttackResolveCriticalChance',
+      disabled: false,
+      value: 0,
+      parent,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveCriticalChance, event);
+    return event.value;
+  }
+
+  battle.on(
     BattleEvents.UnitAttackResolveCriticalHit,
     EventPriority.Exact,
     event => {
-      event.critical = battle.random() <= event.value;
+      if (!event.critical) {
+        const chance = resolveCriticalHitChance(event.parent);
+        event.critical = chance == null || battle.random() <= chance;
+      }
     },
   );
 
@@ -902,12 +923,7 @@ export function setupAttackMechanics(battle: Battle) {
 
           // If critical is enabled, roll for a hit
           if (event.parent.flags & MoveAttackFlags.Critical) {
-            const ratio =
-              (1 / 16) *
-              2 **
-                Math.min(Math.max(0, resolveCriticalHitRatio(event.parent)), 4);
-
-            isCritical = resolveCriticalHit(event.parent, ratio);
+            isCritical = resolveCriticalHit(event.parent);
           }
 
           // Get stat stage

@@ -74,6 +74,7 @@ export const enum BattleEvents {
   // Damage events
   UnitAttack,
   UnitAttackCheckCriticalRatio,
+  UnitAttackResolveCriticalChance,
   UnitAttackResolveCriticalHit,
   UnitAttackResolveDamage,
   UnitAttackResolveStat,
@@ -308,11 +309,11 @@ export interface UnitTriggerMoveChildEvent extends BaseEvent {
 
 export interface UnitTriggerMoveResolveAccuracyEvent extends BaseEvent {
   parent: UnitTriggerMoveEvent;
-  accuracy: number;
+  accuracy?: number;
 }
 
-export interface UnitTriggerMoveRollHitEvent
-  extends UnitTriggerMoveResolveAccuracyEvent {
+export interface UnitTriggerMoveRollHitEvent extends BaseEvent {
+  parent: UnitTriggerMoveEvent;
   hit: boolean;
 }
 
@@ -390,8 +391,7 @@ export interface UnitAttackResolveAmountEvent extends UnitAttackChildEvent {
   value: number;
 }
 
-export interface UnitAttackResolveCriticalEvent
-  extends UnitAttackResolveAmountEvent {
+export interface UnitAttackResolveCriticalEvent extends UnitAttackChildEvent {
   critical: boolean;
 }
 
@@ -484,6 +484,10 @@ export interface BattleEventMap extends EventMap {
 
   [BattleEvents.UnitAttack]: [UnitAttackEvent, EventPriority];
   [BattleEvents.UnitAttackCheckCriticalRatio]: [
+    UnitAttackResolveAmountEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitAttackResolveCriticalChance]: [
     UnitAttackResolveAmountEvent,
     EventPriority,
   ];

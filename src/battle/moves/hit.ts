@@ -10,6 +10,7 @@ const HIT_MOVES = new Set([
   Moves.RazorLeaf,
   Moves.SolarBeam,
   Moves.BodySlam,
+  Moves.TakeDown,
 ]);
 
 export function setupHitMoves(battle: Battle) {

@@ -107,7 +107,18 @@ export function registerGen1Moves() {
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
+    power: 85,
     accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.TakeDown, {
+    name: 'Take Down',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 90,
+    accuracy: 85,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });

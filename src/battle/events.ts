@@ -36,6 +36,7 @@ export const enum BattleEvents {
 
   CheckUnitEscape,
   CheckUnitStatusImmunity,
+  CheckUnitRecoil,
 
   CheckTypeEffectiveness,
 
@@ -428,6 +429,11 @@ export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
 }
 
+export interface CheckUnitRecoilEvent extends BaseEvent {
+  parent: UnitDamageEvent;
+  recoil: boolean;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -463,6 +469,7 @@ export interface BattleEventMap extends EventMap {
     CheckUnitStatusImmunityEvent,
     EventPriority,
   ];
+  [BattleEvents.CheckUnitRecoil]: [CheckUnitRecoilEvent, EventPriority];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];
 

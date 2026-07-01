@@ -58,6 +58,10 @@ export const enum DamageFlags {
    * The damage doesn't knock-out the unit
    */
   NonLethal = 0b0001,
+  /**
+   * The damage is done indirectly (either by status, recoil, etc.)
+   */
+  Indirect = 0b0010,
 }
 
 export const enum StatFlags {
@@ -83,4 +87,5 @@ export const enum Moves {
   SwordsDance,
   Toxic,
   BodySlam,
+  TakeDown,
 }

@@ -1,5 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
@@ -62,7 +63,12 @@ export function setupSeedingStatus(battle: Battle) {
 
       if (event.cause.type !== EffectType.None) {
         // Deal damage to the target first
-        event.cause.unit.damage(event.cause, event.source, amount, 0);
+        event.cause.unit.damage(
+          event.cause,
+          event.source,
+          amount,
+          DamageFlags.Indirect,
+        );
 
         // Heal the source
         event.cause.unit.heal(event.cause, event.cause.unit, amount, 0);

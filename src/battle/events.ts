@@ -355,6 +355,7 @@ export interface UnitDamageEvent extends UnitEvent {
   value: number;
   flags: number;
   cause: EffectCause;
+  success: boolean;
 }
 
 export interface UnitHealEvent extends UnitEvent {
@@ -376,6 +377,8 @@ export interface UnitAttackEvent extends UnitEvent {
   move: Moves;
   category: MoveCategories;
   type: Types;
+
+  success: boolean;
 }
 
 export interface UnitAttackChildEvent extends BaseEvent {

@@ -1015,7 +1015,7 @@ export function setupAttackMechanics(battle: Battle) {
         flags |= DamageFlags.NonLethal;
       }
 
-      event.source.damage(
+      event.success = event.source.damage(
         { type: EffectType.Move, unit: event.source, move: event.move },
         event.target,
         amount,

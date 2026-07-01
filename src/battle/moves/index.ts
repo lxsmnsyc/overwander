@@ -4,6 +4,7 @@ import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
 import { setupPowderMoves } from './powder';
+import { setupRage } from './rage';
 import { setupRecoilMoves } from './recoil';
 import { setupSolarBeam } from './solar-beam';
 import { setupStageMoves } from './stage';
@@ -24,4 +25,5 @@ export function setupMoves(battle: Battle) {
   setupSolarBeam(battle);
   setupLeechSeed(battle);
   setupBodySlam(battle);
+  setupRage(battle);
 }

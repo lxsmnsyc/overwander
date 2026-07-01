@@ -26,6 +26,8 @@ import type {
   MoveState,
   MoveTarget,
   ProgressData,
+  UnitAttackEvent,
+  UnitDamageEvent,
   UnitWeatherEvent,
 } from './events';
 import { BattleEvents } from './events';
@@ -557,7 +559,7 @@ export class Unit {
   }
 
   damage(cause: EffectCause, target: Unit, value: number, flags: number) {
-    this.battle.emit(BattleEvents.UnitDamage, {
+    const event: UnitDamageEvent = {
       id: 'UnitDamage',
       disabled: false,
       source: this,
@@ -565,7 +567,10 @@ export class Unit {
       value,
       flags,
       cause,
-    });
+      success: false,
+    };
+    this.battle.emit(BattleEvents.UnitDamage, event);
+    return event.success;
   }
 
   alive = true;
@@ -587,7 +592,7 @@ export class Unit {
     category: MoveCategories,
     flags: number,
   ) {
-    this.battle.emit(BattleEvents.UnitAttack, {
+    const event: UnitAttackEvent = {
       id: 'UnitAttack',
       disabled: false,
       source: this,
@@ -597,7 +602,10 @@ export class Unit {
       category,
       type,
       flags,
-    });
+      success: false,
+    };
+    this.battle.emit(BattleEvents.UnitAttack, event);
+    return event.success;
   }
 
   switch(target: Unit) {

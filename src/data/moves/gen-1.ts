@@ -132,4 +132,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Rage, {
+    name: 'Rage',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

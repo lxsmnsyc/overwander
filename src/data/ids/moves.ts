@@ -89,4 +89,5 @@ export const enum Moves {
   BodySlam,
   TakeDown,
   DoubleEdge,
+  Rage,
 }

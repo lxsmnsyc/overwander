@@ -6,6 +6,7 @@ export const enum Statuses {
   Paralyzed,
   Minimized,
   Invulnerable,
+  Raging,
 }
 
 export const enum Weathers {

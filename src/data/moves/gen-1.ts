@@ -122,4 +122,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.DoubleEdge, {
+    name: 'Double Edge',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 120,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

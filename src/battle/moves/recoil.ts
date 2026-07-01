@@ -9,7 +9,8 @@ import {
 } from '../events';
 
 const RECOIL_MOVES: { [key in Moves]?: number } = {
-  [Moves.TakeDown]: 0.25,
+  [Moves.TakeDown]: 1 / 4,
+  [Moves.DoubleEdge]: 1 / 3,
 };
 
 export function setupRecoilMoves(battle: Battle) {

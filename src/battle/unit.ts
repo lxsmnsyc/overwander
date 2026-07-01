@@ -19,7 +19,6 @@ import type {
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTypeEvent,
-  CheckUnitRecoilEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusImmunityEvent,

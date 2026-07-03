@@ -18,6 +18,7 @@ import type {
   CheckUnitMovePPEvent,
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
+  CheckUnitMoveTimeEvent,
   CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
@@ -761,5 +762,31 @@ export class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitWeather, event);
     return event.weather;
+  }
+
+  checkMoveCastTime(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveCastTime',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveCastTime, event);
+    return event.duration;
+  }
+
+  checkMoveChannelTime(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveChannelTime',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveChannelTime, event);
+    return event.duration;
   }
 }

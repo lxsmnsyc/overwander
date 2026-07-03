@@ -30,6 +30,9 @@ export const enum BattleEvents {
   CheckUnitMoveCooldown,
   CheckUnitMoveSteps,
 
+  CheckUnitMoveCastTime,
+  CheckUnitMoveChannelTime,
+
   CheckUnitWeather,
   CheckUnitStat,
   CheckUnitStage,
@@ -234,10 +237,9 @@ export interface CheckUnitMovePriorityEvent extends CheckUnitMoveEvent {
   priority: number;
 }
 
-export interface CheckUnitMoveCooldownEvent extends CheckUnitMoveEvent {
+export interface CheckUnitMoveTimeEvent extends CheckUnitMoveEvent {
   duration: number;
 }
-
 export interface CheckUnitMoveStepsEvent extends CheckUnitMoveEvent {
   steps: number;
 }
@@ -459,11 +461,13 @@ export interface BattleEventMap extends EventMap {
     CheckUnitMovePriorityEvent,
     EventPriority,
   ];
-  [BattleEvents.CheckUnitMoveCooldown]: [
-    CheckUnitMoveCooldownEvent,
+  [BattleEvents.CheckUnitMoveCooldown]: [CheckUnitMoveTimeEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveChannelTime]: [
+    CheckUnitMoveTimeEvent,
     EventPriority,
   ];
-  [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
 
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];

@@ -169,9 +169,14 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
+  battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Exact, event => {
+    event.duration = getCastTime(
+      event.source.checkMovePriority(event.move, event.target),
+    );
+  });
+
   battle.on(BattleEvents.UnitCast, EventPriority.Exact, event => {
-    const priority = event.source.checkMovePriority(event.move, event.target);
-    const castTime = getCastTime(priority);
+    const castTime = event.source.checkMoveCastTime(event.move, event.target);
 
     event.source.casting = {
       target: event.target,
@@ -331,8 +336,10 @@ export function setupChannelingMechanics(battle: Battle) {
   });
 
   battle.on(BattleEvents.UnitChannel, EventPriority.Exact, event => {
-    const priority = event.source.checkMovePriority(event.move, event.target);
-    const castTime = getCastTime(priority);
+    const castTime = event.source.checkMoveChannelTime(
+      event.move,
+      event.target,
+    );
 
     event.source.channeling = {
       target: event.target,

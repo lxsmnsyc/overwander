@@ -90,4 +90,5 @@ export const enum Moves {
   TakeDown,
   DoubleEdge,
   Rage,
+  MegaDrain,
 }

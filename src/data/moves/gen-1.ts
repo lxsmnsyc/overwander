@@ -142,4 +142,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.MegaDrain, {
+    name: 'Mega Drain',
+    type: Types.Grass,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

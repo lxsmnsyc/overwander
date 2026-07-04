@@ -13,6 +13,7 @@ const HIT_MOVES = new Set([
   Moves.TakeDown,
   Moves.DoubleEdge,
   Moves.Rage,
+  Moves.MegaDrain,
 ]);
 
 export function setupHitMoves(battle: Battle) {

@@ -74,6 +74,7 @@ export const enum BattleEvents {
 
   UnitTriggerMoveMissed,
   UnitTriggerMoveFailed,
+  UnitTriggerMoveEffectFailed,
 
   // Damage events
   UnitAttack,
@@ -586,6 +587,10 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveEffectFailed]: [
+    UnitTriggerMoveEvent,
+    EventPriority,
+  ];
 
   [BattleEvents.UnitTriggerMoveResolveAccuracy]: [
     UnitTriggerMoveResolveAccuracyEvent,

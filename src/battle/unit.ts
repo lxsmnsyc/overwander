@@ -353,6 +353,17 @@ export class Unit {
     });
   }
 
+  triggerMoveEffectFailed(move: Moves, target: MoveTarget, steps: number) {
+    this.battle.emit(BattleEvents.UnitTriggerMoveEffectFailed, {
+      id: 'UnitTriggerMoveEffectFailed',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      steps,
+    });
+  }
+
   items: { [key in Items]?: boolean } = {};
 
   addItem(item: Items) {

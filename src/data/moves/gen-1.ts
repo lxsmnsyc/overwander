@@ -152,4 +152,12 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.Mimic, {
+    name: 'Mimic',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

@@ -1,8 +1,10 @@
 import type { Battle } from '../core';
+import { setupAbsorb } from './absorb';
 import { setupBodySlam } from './body-slam';
 import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
+import { setupMimic } from './mimic';
 import { setupPowderMoves } from './powder';
 import { setupRage } from './rage';
 import { setupRecoilMoves } from './recoil';
@@ -26,4 +28,6 @@ export function setupMoves(battle: Battle) {
   setupLeechSeed(battle);
   setupBodySlam(battle);
   setupRage(battle);
+  setupAbsorb(battle);
+  setupMimic(battle);
 }

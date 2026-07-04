@@ -471,6 +471,8 @@ export function setupCooldownMechanics(battle: Battle) {
         state.source.updateCooldown(state.move, {
           progress: state.cooldown.progress + event.duration,
         });
+      } else {
+        state.source.finishCooldown(state.move);
       }
     }
   });

@@ -176,5 +176,6 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
     steps: 1,
+    priority: 1,
   });
 }

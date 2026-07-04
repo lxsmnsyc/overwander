@@ -1,5 +1,6 @@
 import type { Battle } from '../core';
 import { setupAbsorb } from './absorb';
+import { setupBide } from './bide';
 import { setupBodySlam } from './body-slam';
 import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
@@ -30,4 +31,5 @@ export function setupMoves(battle: Battle) {
   setupRage(battle);
   setupAbsorb(battle);
   setupMimic(battle);
+  setupBide(battle);
 }

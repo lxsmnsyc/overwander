@@ -168,4 +168,13 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Bide, {
+    name: 'Bide',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    steps: 1,
+  });
 }

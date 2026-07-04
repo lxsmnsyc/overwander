@@ -93,4 +93,5 @@ export const enum Moves {
   MegaDrain,
   Mimic,
   DoubleTeam,
+  Bide,
 }

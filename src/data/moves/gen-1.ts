@@ -160,4 +160,12 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.DoubleTeam, {
+    name: 'Double Team',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 15,
+    target: 0,
+    flags: 0,
+  });
 }

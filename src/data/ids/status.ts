@@ -8,6 +8,7 @@ export const enum Statuses {
   Invulnerable,
   Raging,
   Biding,
+  Confused,
 }
 
 export const enum Weathers {
@@ -27,4 +28,6 @@ export const enum Terrains {
   None,
 }
 
-export const enum TeamStatuses {}
+export const enum TeamStatuses {
+  Reflect,
+}

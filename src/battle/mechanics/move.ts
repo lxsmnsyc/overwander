@@ -969,6 +969,9 @@ export function setupAttackMechanics(battle: Battle) {
           event.value *= 85 + ((100 - 85) * battle.random()) / 100;
         }
 
+        if (event.parent.flags & MoveAttackFlags.Confused) {
+          return;
+        }
         // Calculate type effectiveness
         for (const type of target.types) {
           event.value *= resolveEffectiveness(parent, type);

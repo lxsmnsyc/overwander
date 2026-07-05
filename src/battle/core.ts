@@ -17,6 +17,10 @@ export class Battle extends EventEngine<BattleEventMap> {
     return this.rng.random();
   }
 
+  randomRange(min: number, max: number) {
+    return min + this.random() * (max - min);
+  }
+
   initialize() {
     this.emit(BattleEvents.Initialize, {
       id: 'Initialize',

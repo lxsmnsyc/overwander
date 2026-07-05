@@ -1,8 +1,12 @@
-import { type TeamStatuses, Weathers } from "../data/ids/status";
-import type { Alliance } from "./alliance";
-import type { Battle } from "./core";
-import { BattleEvents } from "./events";
-import type { Unit } from "./unit";
+import { type TeamStatuses, Weathers } from '../data/ids/status';
+import type { Alliance } from './alliance';
+import type { Battle } from './core';
+import {
+  BattleEvents,
+  type CheckTeamStatusImmunityEvent,
+  type EffectCause,
+} from './events';
+import type { Unit } from './unit';
 
 export class Team {
   units = new Set<Unit>();
@@ -30,23 +34,25 @@ export class Team {
     });
   }
 
-  status = new Set<TeamStatuses>();
+  status: { [key in TeamStatuses]?: EffectCause } = {};
 
-  addStatus(status: TeamStatuses) {
+  addStatus(status: TeamStatuses, cause: EffectCause) {
     this.battle.emit(BattleEvents.TeamAddStatus, {
       id: 'TeamAddStatus',
       disabled: false,
       team: this,
       status,
+      cause,
     });
   }
 
-  removeStatus(status: TeamStatuses) {
+  removeStatus(status: TeamStatuses, cause: EffectCause) {
     this.battle.emit(BattleEvents.TeamRemoveStatus, {
       id: 'TeamRemoveStatus',
       disabled: false,
       team: this,
       status,
+      cause,
     });
   }
 
@@ -62,5 +68,18 @@ export class Team {
       weather,
       team: this,
     });
+  }
+
+  checkStatusImmunity(status: TeamStatuses, cause: EffectCause) {
+    const event: CheckTeamStatusImmunityEvent = {
+      id: 'CheckTeamStatusImmunity',
+      disabled: false,
+      team: this,
+      status,
+      cause,
+      immune: false,
+    };
+    this.battle.emit(BattleEvents.CheckTeamStatusImmunity, event);
+    return event.immune;
   }
 }

@@ -51,6 +51,10 @@ export const enum MoveAttackFlags {
    * Move is non-lethal
    */
   NonLethal = 0b0100,
+  /**
+   * Reserved for Confused status
+   */
+  Confused = 0b1000,
 }
 
 export const enum DamageFlags {
@@ -76,6 +80,7 @@ export const enum MoveTargetPriorities {
 }
 
 export const enum Moves {
+  _Confused,
   Tackle,
   Growl,
   LeechSeed,
@@ -94,4 +99,5 @@ export const enum Moves {
   Mimic,
   DoubleTeam,
   Bide,
+  Reflect,
 }

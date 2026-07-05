@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import { Statuses } from '../../data/ids/status';
+import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
@@ -51,6 +51,24 @@ function setupUnitStatusMoves(battle: Battle) {
   });
 }
 
+const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
+  [Moves.Reflect]: TeamStatuses.Reflect,
+};
+
+function setupTeamStatusMoves(battle: Battle) {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+    const targetStatus = TEAM_STATUS_MOVES[event.move];
+    if (targetStatus) {
+      event.source.team.addStatus(targetStatus, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      });
+    }
+  });
+}
+
 export function setupStatusMoves(battle: Battle) {
   setupUnitStatusMoves(battle);
+  setupTeamStatusMoves(battle);
 }

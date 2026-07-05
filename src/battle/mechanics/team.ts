@@ -10,9 +10,9 @@ export function setupTeamMechanics(battle: Battle) {
     event.team.units.add(event.unit);
   });
   battle.on(BattleEvents.TeamAddStatus, EventPriority.Exact, event => {
-    event.team.status.add(event.status);
+    event.team.status[event.status] = event.cause;
   });
   battle.on(BattleEvents.TeamRemoveStatus, EventPriority.Exact, event => {
-    event.team.status.add(event.status);
+    event.team.status[event.status] = undefined;
   });
 }

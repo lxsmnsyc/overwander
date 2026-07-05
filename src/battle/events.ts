@@ -32,6 +32,7 @@ export const enum BattleEvents {
 
   CheckUnitMoveCastTime,
   CheckUnitMoveChannelTime,
+  CheckUnitMoveDuration,
 
   CheckUnitWeather,
   CheckUnitStat,
@@ -146,6 +147,8 @@ export const enum BattleEvents {
   TeamAddStatus,
   TeamRemoveStatus,
   TeamSetWeather,
+
+  CheckTeamStatusImmunity,
 
   AllianceAddTeam,
   AllianceRemoveTeam,
@@ -334,25 +337,6 @@ export interface UnitUpdateStageEvent extends UnitStageEvent {
   cause: EffectCause;
 }
 
-export interface TeamEvent extends BaseEvent {
-  team: Team;
-}
-
-export interface TeamStatusEvent extends TeamEvent {
-  status: TeamStatuses;
-}
-
-export interface TeamUpdateStatusEvent extends TeamStatusEvent {
-  cause: EffectCause;
-}
-export interface TeamUnitEvent extends TeamEvent {
-  unit: Unit;
-}
-
-export interface TeamWeatherEvent extends TeamEvent {
-  weather: Weathers;
-}
-
 export interface UnitDamageEvent extends UnitEvent {
   target: Unit;
   value: number;
@@ -440,6 +424,29 @@ export interface CheckUnitRecoilEvent extends BaseEvent {
   recoil: boolean;
 }
 
+export interface TeamEvent extends BaseEvent {
+  team: Team;
+}
+
+export interface TeamStatusEvent extends TeamEvent {
+  status: TeamStatuses;
+}
+
+export interface TeamUpdateStatusEvent extends TeamStatusEvent {
+  cause: EffectCause;
+}
+export interface TeamUnitEvent extends TeamEvent {
+  unit: Unit;
+}
+
+export interface TeamWeatherEvent extends TeamEvent {
+  weather: Weathers;
+}
+
+export interface CheckTeamStatusImmunityEvent extends TeamUpdateStatusEvent {
+  immune: boolean;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -469,6 +476,7 @@ export interface BattleEventMap extends EventMap {
     CheckUnitMoveTimeEvent,
     EventPriority,
   ];
+  [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];
 
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
@@ -614,9 +622,14 @@ export interface BattleEventMap extends EventMap {
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];
   [BattleEvents.TeamRemoveUnit]: [TeamUnitEvent, EventPriority];
-  [BattleEvents.TeamAddStatus]: [TeamStatusEvent, EventPriority];
-  [BattleEvents.TeamRemoveStatus]: [TeamStatusEvent, EventPriority];
+  [BattleEvents.TeamAddStatus]: [TeamUpdateStatusEvent, EventPriority];
+  [BattleEvents.TeamRemoveStatus]: [TeamUpdateStatusEvent, EventPriority];
   [BattleEvents.TeamSetWeather]: [TeamWeatherEvent, EventPriority];
+
+  [BattleEvents.CheckTeamStatusImmunity]: [
+    CheckTeamStatusImmunityEvent,
+    EventPriority,
+  ];
 
   [BattleEvents.AllianceAddTeam]: [AllianceTeamEvent, EventPriority];
   [BattleEvents.AllianceRemoveTeam]: [AllianceTeamEvent, EventPriority];

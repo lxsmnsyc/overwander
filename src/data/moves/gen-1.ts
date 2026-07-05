@@ -178,4 +178,12 @@ export function registerGen1Moves() {
     steps: 1,
     priority: 1,
   });
+  registerMove(Moves.Reflect, {
+    name: 'Reflect',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargetFlags.Team | MoveTargetFlags.Own,
+    flags: 0,
+  });
 }

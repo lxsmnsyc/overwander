@@ -800,4 +800,17 @@ export class Unit {
     this.battle.emit(BattleEvents.CheckUnitMoveChannelTime, event);
     return event.duration;
   }
+
+  checkMoveDuration(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveDuration',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveDuration, event);
+    return event.duration;
+  }
 }

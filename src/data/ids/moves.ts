@@ -100,4 +100,5 @@ export const enum Moves {
   DoubleTeam,
   Bide,
   Reflect,
+  Rest,
 }

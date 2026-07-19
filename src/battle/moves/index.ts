@@ -9,6 +9,7 @@ import { setupMimic } from './mimic';
 import { setupPowderMoves } from './powder';
 import { setupRage } from './rage';
 import { setupRecoilMoves } from './recoil';
+import { setupRest } from './rest';
 import { setupSolarBeam } from './solar-beam';
 import { setupStageMoves } from './stage';
 import { setupStatusMoves } from './status';
@@ -32,4 +33,5 @@ export function setupMoves(battle: Battle) {
   setupAbsorb(battle);
   setupMimic(battle);
   setupBide(battle);
+  setupRest(battle);
 }

@@ -186,4 +186,12 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Team | MoveTargetFlags.Own,
     flags: 0,
   });
+  registerMove(Moves.Rest, {
+    name: 'Rest',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 5,
+    target: 0,
+    flags: 0,
+  });
 }

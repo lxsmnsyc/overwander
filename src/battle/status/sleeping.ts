@@ -60,4 +60,8 @@ export function setupSleepingStatus(battle: Battle) {
       }
     }
   });
+
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+    event.source.removeStatus(Statuses.Sleeping, event.cause);
+  });
 }

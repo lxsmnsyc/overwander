@@ -30,6 +30,12 @@ export function setupConfusedStatus(battle: Battle) {
 
   timer.stop();
 
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+    event.source.removeStatus(Statuses.Confused, {
+      type: EffectType.None,
+    });
+  });
+
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
     if (
       event.success &&

@@ -68,6 +68,10 @@ export function setupPoisonedStatus(battle: Battle) {
       }
     }
   });
+
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+    event.source.removeStatus(Statuses.Poisoned, event.cause);
+  });
 }
 
 interface BadlyPoisonedData {
@@ -146,5 +150,9 @@ export function setupBadlyPoisonedStatus(battle: Battle) {
         instance.step += 1;
       }
     }
+  });
+
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+    event.source.removeStatus(Statuses.BadlyPoisoned, event.cause);
   });
 }

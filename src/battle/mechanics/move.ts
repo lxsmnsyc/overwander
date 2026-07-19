@@ -19,6 +19,7 @@ import type { Alliance } from '../alliance';
 import type { Battle } from '../core';
 import type {
   MoveState,
+  TriggerMoveData,
   UnitAttackEvent,
   UnitAttackResolveAmountEvent,
   UnitAttackResolveCriticalEvent,
@@ -576,7 +577,58 @@ function targetAllianceTeams(
 }
 
 export function setupTriggerMoveMechanics(battle: Battle) {
+  const triggerMoveData = new Set<TriggerMoveData>();
+
+  function triggerMoveUpdate(data: Partial<TriggerMoveData>) {
+    battle.emit(BattleEvents.UnitTriggerMoveUpdate, {
+      id: 'UnitTriggerMoveUpdate',
+      disabled: false,
+      data,
+    });
+  }
+
+  function triggerMoveEnd(data: UnitTriggerMoveEvent) {
+    battle.emit(BattleEvents.UnitTriggerMoveEnd, {
+      ...data,
+      id: 'UnitTriggerMoveEnd',
+      disabled: false,
+    });
+  }
+
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+    for (const data of triggerMoveData) {
+      if (data.time.progress >= data.time.duration) {
+        data.time.progress += event.duration;
+        triggerMoveUpdate(data);
+      } else {
+        triggerMoveData.delete(data);
+
+        if (triggerMoveData.size === 0) {
+          timer.stop();
+        }
+
+        triggerMoveEnd(data.parent);
+      }
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, event => {
+    const data: TriggerMoveData = {
+      parent: event,
+      time: {
+        progress: 0,
+        duration: event.source.checkMoveDelay(event.move, event.target),
+      },
+    };
+
+    triggerMoveData.add(data);
+
+    if (triggerMoveData.size === 1) {
+      timer.start();
+    }
+  });
+
+  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, event => {
     const moveData = getMoveData(event.move);
 
     /**

@@ -585,6 +585,15 @@ export class Unit {
     return event.success;
   }
 
+  cure(cause: EffectCause) {
+    this.battle.emit(BattleEvents.UnitCure, {
+      id: 'UnitCure',
+      disabled: false,
+      source: this,
+      cause,
+    });
+  }
+
   alive = true;
 
   faint(attacker: Unit) {
@@ -811,6 +820,19 @@ export class Unit {
       target,
     };
     this.battle.emit(BattleEvents.CheckUnitMoveDuration, event);
+    return event.duration;
+  }
+
+  checkMoveDelay(move: Moves, target: MoveTarget) {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveDelay',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveDelay, event);
     return event.duration;
   }
 }

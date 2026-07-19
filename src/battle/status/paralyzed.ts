@@ -29,4 +29,8 @@ export function setupParalyzedStatus(battle: Battle) {
       event.status === Statuses.Paralyzed &&
       event.source.types.has(Types.Electric);
   });
+
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+    event.source.removeStatus(Statuses.Paralyzed, event.cause);
+  });
 }

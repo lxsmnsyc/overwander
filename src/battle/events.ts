@@ -33,6 +33,7 @@ export const enum BattleEvents {
   CheckUnitMoveCastTime,
   CheckUnitMoveChannelTime,
   CheckUnitMoveDuration,
+  CheckUnitMoveDelay,
 
   CheckUnitWeather,
   CheckUnitStat,
@@ -67,6 +68,8 @@ export const enum BattleEvents {
   UnitStopChannel,
 
   UnitTriggerMove,
+  UnitTriggerMoveUpdate,
+  UnitTriggerMoveEnd,
   UnitTriggerMoveTarget,
   UnitTriggerMoveEffect,
 
@@ -92,6 +95,7 @@ export const enum BattleEvents {
   CheckUnitAttackEffectChance,
   UnitAttackEffect,
 
+  UnitCure,
   UnitHeal,
   UnitDamage,
   UnitFaints,
@@ -262,6 +266,10 @@ export interface UnitUpdateChannelEvent extends UnitEvent {
 
 export interface UnitTriggerMoveEvent extends UnitCastEvent {
   steps: number;
+}
+
+export interface UnitTriggerMoveUpdateEvent extends BaseEvent {
+  data: Partial<TriggerMoveData>;
 }
 
 export interface UnitStatEvent extends UnitEvent {
@@ -447,6 +455,10 @@ export interface CheckTeamStatusImmunityEvent extends TeamUpdateStatusEvent {
   immune: boolean;
 }
 
+export interface UnitCureEvent extends UnitEvent {
+  cause: EffectCause;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -477,6 +489,7 @@ export interface BattleEventMap extends EventMap {
     EventPriority,
   ];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveDelay]: [CheckUnitMoveTimeEvent, EventPriority];
 
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
@@ -552,6 +565,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitHeal]: [UnitHealEvent, EventPriority];
   [BattleEvents.UnitDamage]: [UnitDamageEvent, EventPriority];
   [BattleEvents.UnitFaints]: [UnitFaintsEvent, EventPriority];
+  [BattleEvents.UnitCure]: [UnitCureEvent, EventPriority];
+
   [BattleEvents.UnitEntersField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitLeavesField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitSwitch]: [UnitSwitchEvent, EventPriority];
@@ -593,6 +608,12 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitFinishChannel]: [UnitEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveUpdate]: [
+    UnitTriggerMoveUpdateEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitTriggerMoveEnd]: [UnitTriggerMoveEvent, EventPriority];
+
   [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEffectFailed]: [
@@ -648,6 +669,11 @@ export interface ProgressData {
 export interface CastingData {
   move: Moves;
   target: MoveTarget;
+  time: ProgressData;
+}
+
+export interface TriggerMoveData {
+  parent: UnitTriggerMoveEvent;
   time: ProgressData;
 }
 

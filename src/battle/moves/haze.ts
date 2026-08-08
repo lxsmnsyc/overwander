@@ -17,13 +17,9 @@ export default function setupHaze(battle: Battle): void {
     } as const;
 
     // Every unit's stat stages reset, the user's included
-    for (const alliance of battle.alliances) {
-      for (const team of alliance.teams) {
-        for (const unit of team.units) {
-          if (unit.alive) {
-            unit.resetStages(cause);
-          }
-        }
+    for (const unit of battle.units()) {
+      if (unit.alive) {
+        unit.resetStages(cause);
       }
     }
   });

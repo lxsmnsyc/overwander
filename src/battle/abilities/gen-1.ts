@@ -340,17 +340,9 @@ const setupAbilities = [
         unit: event.source,
       } as const;
 
-      const ownAlliance = event.source.team.alliance;
-
-      for (const alliance of battle.alliances) {
-        if (alliance !== ownAlliance) {
-          for (const team of alliance.teams) {
-            for (const unit of team.units) {
-              if (unit.alive) {
-                unit.addStage(Stages.Attack, -1, cause);
-              }
-            }
-          }
+      for (const unit of battle.units(event.source.team.alliance)) {
+        if (unit.alive) {
+          unit.addStage(Stages.Attack, -1, cause);
         }
       }
 
@@ -375,25 +367,19 @@ const setupAbilities = [
         unit: source,
       } as const;
 
-      const ownAlliance = source.team.alliance;
+      for (const team of battle.teams(source.team.alliance)) {
+        let units = holders.get(team);
 
-      for (const alliance of battle.alliances) {
-        if (alliance !== ownAlliance) {
-          for (const team of alliance.teams) {
-            let units = holders.get(team);
-
-            if (!units) {
-              units = new Set();
-              holders.set(team, units);
-            }
-
-            if (units.size === 0) {
-              team.addStatus(TeamStatuses.Unnerved, cause);
-            }
-
-            units.add(source);
-          }
+        if (!units) {
+          units = new Set();
+          holders.set(team, units);
         }
+
+        if (units.size === 0) {
+          team.addStatus(TeamStatuses.Unnerved, cause);
+        }
+
+        units.add(source);
       }
 
       // For visual cues
@@ -777,19 +763,10 @@ const setupAbilities = [
         return;
       }
 
-      const ownAlliance = event.source.team.alliance;
-
-      for (const alliance of battle.alliances) {
-        if (alliance === ownAlliance) {
-          continue;
-        }
-        for (const team of alliance.teams) {
-          for (const unit of team.units) {
-            if (unit.alive && holdsAnyItem(unit)) {
-              event.source.triggerAbility(Abilities.Frisk);
-              return;
-            }
-          }
+      for (const unit of battle.units(event.source.team.alliance)) {
+        if (unit.alive && holdsAnyItem(unit)) {
+          event.source.triggerAbility(Abilities.Frisk);
+          return;
         }
       }
     });

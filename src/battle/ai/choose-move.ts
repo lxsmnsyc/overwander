@@ -146,13 +146,7 @@ export function setupChooseMoveAI(battle: Battle): void {
         }
       }
       if (targetFlags & MoveTargetFlags.Enemy) {
-        for (const alliance of battle.alliances) {
-          if (alliance !== ownAlliance) {
-            for (const team of alliance.teams) {
-              addUnits(team.units, false);
-            }
-          }
-        }
+        addUnits(battle.units(ownAlliance), false);
       }
     } else if (targetFlags & MoveTargetFlags.Team) {
       if (targetFlags & MoveTargetFlags.Own) {
@@ -166,12 +160,8 @@ export function setupChooseMoveAI(battle: Battle): void {
         }
       }
       if (targetFlags & MoveTargetFlags.Enemy) {
-        for (const alliance of battle.alliances) {
-          if (alliance !== ownAlliance) {
-            for (const team of alliance.teams) {
-              targets.push({ type: MoveTargetType.Team, team });
-            }
-          }
+        for (const team of battle.teams(ownAlliance)) {
+          targets.push({ type: MoveTargetType.Team, team });
         }
       }
     }

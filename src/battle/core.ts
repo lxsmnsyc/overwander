@@ -4,6 +4,8 @@ import { Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
 import type { BattleEventMap } from './events';
 import { BattleEvents } from './events';
+import type Team from './team';
+import type Unit from './unit';
 
 export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
@@ -80,5 +82,26 @@ export default class Battle extends EventEngine<BattleEventMap> {
       disabled: false,
       alliance,
     });
+  }
+
+  /**
+   * Every team across all alliances, optionally excluding one
+   * alliance (e.g. the unit's own, to reach only enemy teams)
+   */
+  *teams(exclude?: Alliance): IterableIterator<Team> {
+    for (const alliance of this.alliances) {
+      if (alliance !== exclude) {
+        yield* alliance.teams;
+      }
+    }
+  }
+
+  /**
+   * Every unit across all teams, optionally excluding one alliance
+   */
+  *units(exclude?: Alliance): IterableIterator<Unit> {
+    for (const team of this.teams(exclude)) {
+      yield* team.units;
+    }
   }
 }

@@ -630,11 +630,8 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
           targetAllianceUnits(event.source, event.move, event.source.team.alliance, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
-          const ownAlliance = event.source.team.alliance;
-          for (const alliance of battle.alliances) {
-            if (alliance !== ownAlliance) {
-              targetAllianceUnits(event.source, event.move, alliance, event.steps);
-            }
+          for (const team of battle.teams(event.source.team.alliance)) {
+            targetTeamUnits(event.source, event.move, team, event.steps);
           }
         }
         // Otherwise, target by team
@@ -646,11 +643,8 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
           targetAllianceTeams(event.source, event.move, event.source.team.alliance, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
-          const ownAlliance = event.source.team.alliance;
-          for (const alliance of battle.alliances) {
-            if (alliance !== ownAlliance) {
-              targetAllianceTeams(event.source, event.move, alliance, event.steps);
-            }
+          for (const team of battle.teams(event.source.team.alliance)) {
+            targetTeam(event.source, event.move, team, event.steps);
           }
         }
       }

@@ -47,4 +47,6 @@ export const enum Abilities {
   MagicGuard = 31,
   FriendGuard = 32,
   Unaware = 33,
+  // Vulpix
+  FlashFire = 34,
 }

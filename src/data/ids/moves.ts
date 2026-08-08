@@ -191,4 +191,6 @@ export const enum Moves {
   Metronome = 102,
   DefenseCurl = 103,
   LightScreen = 104,
+  Roar = 105,
+  ConfuseRay = 106,
 }

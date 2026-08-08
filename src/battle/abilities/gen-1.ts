@@ -10,7 +10,7 @@ import {
   MoveFlags,
 } from '../../data/ids/moves';
 import { Genders } from '../../data/ids/species';
-import { Statuses, TeamStatuses } from '../../data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
@@ -28,6 +28,7 @@ import { isWeatherRainy, isWeatherSandstorm, isWeatherSunny } from '../utils';
 import {
   createAbility,
   createBlazeAbility,
+  createDrizzleAbility,
   MergedAbilityLifecycle,
 } from './__create';
 
@@ -128,7 +129,8 @@ const setupAbilities = [
     );
   }),
 
-  // createDrizzleAbility(Abilities.Drought, Weathers.Sunny),
+  // https://bulbapedia.bulbagarden.net/wiki/Drought_(Ability)
+  createDrizzleAbility(Abilities.Drought, Weathers.Sunny),
 
   // Squirtle
   createBlazeAbility(Abilities.Torrent, Types.Water),
@@ -781,6 +783,77 @@ const setupAbilities = [
         }
       },
     );
+  }),
+
+  // Vulpix
+  // https://bulbapedia.bulbagarden.net/wiki/Flash_Fire_(Ability)
+  createAbility(Abilities.FlashFire, battle => {
+    const FACTOR = 1.5;
+
+    /**
+     * Holders whose Flash Fire has been activated by absorbing a
+     * Fire-type move; the boost lasts until they leave the field.
+     */
+    const activated = new Set<Unit>();
+
+    return new MergedAbilityLifecycle([
+      // Pure query: grants the immunity, no side effects
+      battle.on(
+        BattleEvents.CheckUnitMoveImmunity,
+        EventPriority.Post,
+        event => {
+          if (
+            event.type === Types.Fire &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.FlashFire)
+          ) {
+            event.immune = true;
+          }
+        },
+      ),
+      // The absorb activation only fires when a real move actually
+      // fails against the holder, never on speculative immunity checks
+      battle.on(
+        BattleEvents.UnitTriggerMoveFailed,
+        EventPriority.Post,
+        event => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.FlashFire) &&
+            parent.source.checkMoveType(parent.move, parent.target) ===
+              Types.Fire
+          ) {
+            const holder = parent.target.unit;
+
+            if (!activated.has(holder)) {
+              activated.add(holder);
+              holder.triggerAbility(Abilities.FlashFire);
+            }
+          }
+        },
+      ),
+      // An activated holder's own Fire moves hit harder
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, event => {
+        if (
+          event.power != null &&
+          activated.has(event.source) &&
+          event.source.hasAbility(Abilities.FlashFire) &&
+          getMoveData(event.move).type === Types.Fire
+        ) {
+          event.power *= FACTOR;
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+        activated.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, event => {
+        activated.delete(event.source);
+      }),
+    ]);
   }),
 ];
 

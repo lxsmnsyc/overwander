@@ -2,6 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import type { Types } from '../../data/constants/types';
 import type { Abilities } from '../../data/ids/abilities';
+import { Weathers } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
 import type { Unit } from '../unit';
@@ -117,34 +118,34 @@ export function createBlazeAbility(
  * https://bulbapedia.bulbagarden.net/wiki/Drought_(Ability)
  * https://bulbapedia.bulbagarden.net/wiki/Sand_Stream_(Ability)
  */
-// export function createDrizzleAbility(
-//   targetAbility: Abilities,
-//   targetWeather: Weathers,
-// ) {
-//   function triggerWeather(battle: Battle, source: Unit) {
-//     if (source.hasAbility(targetAbility)) {
-//       switch (battle.weather.current) {
-//         case Weathers.ExtremeSunny:
-//         case Weathers.HeavyRain:
-//         case Weathers.StrongWinds:
-//           break;
-//         default:
-//           battle.setWeather(targetWeather);
-//           source.triggerAbility(targetAbility);
-//           break;
-//       }
-//     }
-//   }
-//   return createAbility(targetAbility, battle => {
-//     return new MergedAbilityLifecycle([
-//       // For when the unit transforms
-//       battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, event => {
-//         triggerWeather(battle, event.source);
-//       }),
-//       // For when the unit re-enters
-//       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
-//         triggerWeather(battle, event.source);
-//       }),
-//     ]);
-//   });
-// }
+export function createDrizzleAbility(
+  targetAbility: Abilities,
+  targetWeather: Weathers,
+) {
+  function triggerWeather(battle: Battle, source: Unit) {
+    if (source.hasAbility(targetAbility)) {
+      switch (battle.weather.current) {
+        case Weathers.ExtremeSunny:
+        case Weathers.HeavyRain:
+        case Weathers.StrongWinds:
+          break;
+        default:
+          battle.setWeather(targetWeather);
+          source.triggerAbility(targetAbility);
+          break;
+      }
+    }
+  }
+  return createAbility(targetAbility, battle => {
+    return new MergedAbilityLifecycle([
+      // For when the unit transforms
+      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, event => {
+        triggerWeather(battle, event.source);
+      }),
+      // For when the unit re-enters
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
+        triggerWeather(battle, event.source);
+      }),
+    ]);
+  });
+}

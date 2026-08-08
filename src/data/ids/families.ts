@@ -13,4 +13,5 @@ export const enum Families {
   NidoranF = 11,
   NidoranM = 12,
   Clefairy = 13,
+  Vulpix = 14,
 }

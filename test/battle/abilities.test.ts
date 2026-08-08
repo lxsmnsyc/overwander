@@ -785,3 +785,45 @@ describe('Cute Charm', () => {
     expect(attacker.status[Statuses.Infatuated]).toBeDefined();
   });
 });
+
+describe('Flash Fire', () => {
+  it('absorbs Fire moves and boosts its own Fire power', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FlashFire);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+    const enemy = { type: MoveTargetType.Unit, unit: attacker } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.Ember, target, Types.Fire)).toBe(
+      true,
+    );
+
+    // Not yet activated: Ember is at its base power
+    expect(holder.checkMovePower(Moves.Ember, enemy)).toBe(40);
+
+    const before = holder.health;
+    attacker.triggerMoveTarget(Moves.Ember, target, 0);
+
+    expect(holder.health).toBe(before);
+    expect(holder.checkMovePower(Moves.Ember, enemy)).toBe(60);
+
+    // The boost is lost when the holder leaves the field
+    holder.leave();
+    expect(holder.checkMovePower(Moves.Ember, enemy)).toBe(40);
+  });
+});
+
+describe('Drought', () => {
+  it('turns the battle sunny when the holder gains it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    expect(battle.weather.current).toBe(Weathers.None);
+
+    holder.addAbility(Abilities.Drought);
+
+    expect(battle.weather.current).toBe(Weathers.Sunny);
+  });
+});

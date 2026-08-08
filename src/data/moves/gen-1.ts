@@ -1012,4 +1012,23 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Team | MoveTargetFlags.Own,
     flags: 0,
   });
+  registerMove(Moves.Roar, {
+    name: 'Roar',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    priority: -6,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Sound,
+    steps: 1,
+  });
+  registerMove(Moves.ConfuseRay, {
+    name: 'Confuse Ray',
+    type: Types.Ghost,
+    category: MoveCategories.Status,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

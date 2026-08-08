@@ -11,6 +11,7 @@ import { registerRattataSpecies } from './rattata';
 import { registerSandshrewSpecies } from './sandshrew';
 import { registerSpearowSpecies } from './spearow';
 import { registerSquirtleSpecies } from './squirtle';
+import { registerVulpixSpecies } from './vulpix';
 import { registerWeedleSpecies } from './weedle';
 
 export { getSpeciesData } from './__create';
@@ -30,4 +31,5 @@ export function registerSpecies() {
   registerNidoranFSpecies();
   registerNidoranMSpecies();
   registerClefairySpecies();
+  registerVulpixSpecies();
 }

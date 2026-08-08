@@ -2,6 +2,8 @@ import { registerBulbasaurSpecies } from './bulbasaur';
 import { registerCaterpieSpecies } from './caterpie';
 import { registerCharmanderSpecies } from './charmander';
 import { registerEkansSpecies } from './ekans';
+import { registerNidoranFSpecies } from './nidoran-f';
+import { registerNidoranMSpecies } from './nidoran-m';
 import { registerPidgeySpecies } from './pidgey';
 import { registerPikachuSpecies } from './pikachu';
 import { registerRattataSpecies } from './rattata';
@@ -24,4 +26,6 @@ export function registerSpecies() {
   registerEkansSpecies();
   registerPikachuSpecies();
   registerSandshrewSpecies();
+  registerNidoranFSpecies();
+  registerNidoranMSpecies();
 }

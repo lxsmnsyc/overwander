@@ -233,6 +233,10 @@ function setupUnitSpeciesMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitSetAppearance, EventPriority.Exact, event => {
     event.source.appearance = event.species;
   });
+
+  battle.on(BattleEvents.UnitSetGender, EventPriority.Exact, event => {
+    event.source.gender = event.gender;
+  });
 }
 
 function setupUnitSwitchMechanics(battle: Battle) {

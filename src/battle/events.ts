@@ -9,7 +9,7 @@ import type {
   Moves,
   MoveTargetPriorities,
 } from '../data/ids/moves';
-import type { Species } from '../data/ids/species';
+import type { Genders, Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type { Alliance } from './alliance';
 import type { Team } from './team';
@@ -175,6 +175,7 @@ export const enum BattleEvents {
   CheckTeamAIUnit = 113,
 
   CheckUnitCanConsumeItem = 114,
+  UnitSetGender = 115,
 }
 
 export const enum MoveTargetType {
@@ -489,6 +490,10 @@ export interface UnitSpeciesEvent extends UnitEvent {
   species: Species;
 }
 
+export interface UnitSetGenderEvent extends UnitEvent {
+  gender: Genders;
+}
+
 export interface CheckUnitAIMoveScoreEvent extends UnitMoveEvent {
   target: MoveTarget;
   score: number;
@@ -704,6 +709,7 @@ export interface BattleEventMap extends EventMap {
 
   [BattleEvents.UnitSetSpecies]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetAppearance]: [UnitSpeciesEvent, EventPriority];
+  [BattleEvents.UnitSetGender]: [UnitSetGenderEvent, EventPriority];
 
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];

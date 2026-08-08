@@ -911,4 +911,44 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.DoubleKick, {
+    name: 'Double Kick',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 30,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.HornAttack, {
+    name: 'Horn Attack',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 25,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.HornDrill, {
+    name: 'Horn Drill',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 5,
+    accuracy: 30,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  // TODO rampage lock (repeat use, confusion afterwards)
+  registerMove(Moves.Thrash, {
+    name: 'Thrash',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 120,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

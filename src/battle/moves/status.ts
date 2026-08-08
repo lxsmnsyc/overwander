@@ -52,6 +52,14 @@ const EFFECT_STAGE_MOVES: {
   [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
 };
 
+/**
+ * Whether the move carries a secondary attack effect (used by e.g.
+ * Sheer Force)
+ */
+export function hasAttackEffect(move: Moves) {
+  return EFFECT_STATUS_MOVES[move] != null || EFFECT_STAGE_MOVES[move] != null;
+}
+
 function setupUnitStatusMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     const targetStatus = STATUS_MOVES[event.move];

@@ -9,6 +9,7 @@ import {
   MoveCategories,
   MoveFlags,
 } from '../../data/ids/moves';
+import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
@@ -19,6 +20,7 @@ import {
   MoveTargetType,
   type UnitAttackEvent,
 } from '../events';
+import { hasAttackEffect } from '../moves/status';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type { Team } from '../team';
 import type { Unit } from '../unit';
@@ -611,6 +613,86 @@ const setupAbilities = [
         event.value *= 2;
       }
     });
+  }),
+
+  // Nidoran
+  // https://bulbapedia.bulbagarden.net/wiki/Poison_Point_(Ability)
+  createAbility(Abilities.PoisonPoint, battle => {
+    const CHANCE = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, event => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.PoisonPoint) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        battle.random() < CHANCE
+      ) {
+        event.target.triggerAbility(Abilities.PoisonPoint);
+
+        event.cause.unit.addStatus(Statuses.Poisoned, {
+          type: EffectType.Ability,
+          ability: Abilities.PoisonPoint,
+          unit: event.target,
+        });
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Rivalry_(Ability)
+  createAbility(Abilities.Rivalry, battle => {
+    return battle.on(
+      BattleEvents.UnitAttackResolveDamage,
+      EventPriority.Post,
+      event => {
+        const source = event.parent.source;
+        const target = event.parent.target;
+
+        if (
+          source.hasAbility(Abilities.Rivalry) &&
+          source.gender !== Genders.Genderless &&
+          target.gender !== Genders.Genderless &&
+          !(event.parent.flags & MoveAttackFlags.Pure) &&
+          !(event.parent.flags & MoveAttackFlags.Confused)
+        ) {
+          event.value *= source.gender === target.gender ? 1.25 : 0.75;
+        }
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sheer_Force_(Ability)
+  createAbility(Abilities.SheerForce, battle => {
+    const FACTOR = 5325 / 4096;
+
+    return new MergedAbilityLifecycle([
+      // Moves with a secondary effect hit harder...
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, event => {
+        if (
+          event.power != null &&
+          event.source.hasAbility(Abilities.SheerForce) &&
+          hasAttackEffect(event.move)
+        ) {
+          event.power *= FACTOR;
+        }
+      }),
+      // ...but lose the effect entirely (vetoed at the check, so the
+      // effect chance is never even rolled)
+      battle.on(
+        BattleEvents.CheckUnitAttackEffect,
+        EventPriority.Post,
+        event => {
+          if (
+            event.success &&
+            event.parent.source.hasAbility(Abilities.SheerForce)
+          ) {
+            event.success = false;
+          }
+        },
+      ),
+    ]);
   }),
 ];
 

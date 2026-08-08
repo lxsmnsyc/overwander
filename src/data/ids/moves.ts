@@ -180,4 +180,8 @@ export const enum Moves {
   Thunderbolt = 91,
   PayDay = 92,
   FurySwipes = 93,
+  DoubleKick = 94,
+  HornAttack = 95,
+  HornDrill = 96,
+  Thrash = 97,
 }

@@ -10,4 +10,6 @@ export const enum Families {
   Ekans = 8,
   Pikachu = 9,
   Sandshrew = 10,
+  NidoranF = 11,
+  NidoranM = 12,
 }

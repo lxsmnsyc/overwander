@@ -13,6 +13,7 @@ const NON_HIT_MOVES = new Set<Moves>([
   Moves.PinMissile,
   Moves.Twineedle,
   Moves.FurySwipes,
+  Moves.DoubleKick,
 ]);
 
 export function setupHitMoves(battle: Battle) {

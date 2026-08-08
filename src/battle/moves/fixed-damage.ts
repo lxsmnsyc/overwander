@@ -21,6 +21,8 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.DragonRage]: () => 40,
   // https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)
   [Moves.Fissure]: (_, target) => target.health,
+  // https://bulbapedia.bulbagarden.net/wiki/Horn_Drill_(move)
+  [Moves.HornDrill]: (_, target) => target.health,
   // https://bulbapedia.bulbagarden.net/wiki/Super_Fang_(move)
   [Moves.SuperFang]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)

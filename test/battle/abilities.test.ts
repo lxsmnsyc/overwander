@@ -11,6 +11,7 @@ import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Abilities } from '../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
+import { Genders } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -595,5 +596,78 @@ describe('Sand Rush', () => {
     teamA.weather.current = Weathers.Sandstorm;
 
     expect(unit.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+});
+
+describe('Poison Point', () => {
+  it('poisons attackers on direct contact damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PoisonPoint);
+
+    attacker.damage(
+      { type: EffectType.Move, move: Moves.Tackle, unit: attacker },
+      holder,
+      10,
+      0,
+    );
+
+    expect(attacker.status[Statuses.Poisoned]).toBeDefined();
+  });
+});
+
+describe('Sheer Force', () => {
+  it('boosts effect-carrying moves and suppresses their effects', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // secondary effects would always proc
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addAbility(Abilities.SheerForce);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    // Body Slam carries a paralysis effect: boosted, effect suppressed
+    expect(unit.checkMovePower(Moves.BodySlam, target)).toBeCloseTo(
+      (85 * 5325) / 4096,
+    );
+    unit.triggerMoveTarget(Moves.BodySlam, target, 0);
+    expect(enemy.status[Statuses.Paralyzed]).toBeUndefined();
+
+    // Tackle has no effect: unchanged
+    expect(unit.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Rivalry', () => {
+  it('scales damage by gender matchup', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.Rivalry);
+    unit.setGender(Genders.Male);
+
+    const male = createUnit(battle, teamB);
+    const female = createUnit(battle, teamB);
+    const genderless = createUnit(battle, teamB);
+    male.setGender(Genders.Male);
+    female.setGender(Genders.Female);
+
+    const hit = (defender: Unit) =>
+      dealDamage(
+        unit,
+        defender,
+        Moves.Tackle,
+        40,
+        Types.Normal,
+        MoveCategories.Physical,
+      );
+
+    expect(hit(male)).toBeCloseTo(19.6 * 1.25);
+    expect(hit(female)).toBeCloseTo(19.6 * 0.75);
+    expect(hit(genderless)).toBeCloseTo(19.6);
   });
 });

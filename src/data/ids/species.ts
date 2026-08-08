@@ -1,3 +1,9 @@
+export const enum Genders {
+  Genderless = 0,
+  Male = 1,
+  Female = 2,
+}
+
 export const enum Species {
   Missingno = 0,
   Egg = 1,
@@ -30,4 +36,10 @@ export const enum Species {
   Raichu = 28,
   Sandshrew = 29,
   Sandslash = 30,
+  NidoranF = 31,
+  Nidorina = 32,
+  Nidoqueen = 33,
+  NidoranM = 34,
+  Nidorino = 35,
+  Nidoking = 36,
 }

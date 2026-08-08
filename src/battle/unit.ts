@@ -4,7 +4,7 @@ import { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
-import { Species } from '../data/ids/species';
+import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
 import type { Battle } from './core';
 import type {
@@ -76,6 +76,17 @@ export class Unit {
       disabled: false,
       source: this,
       species,
+    });
+  }
+
+  gender = Genders.Genderless;
+
+  setGender(gender: Genders) {
+    this.battle.emit(BattleEvents.UnitSetGender, {
+      id: 'UnitSetGender',
+      disabled: false,
+      source: this,
+      gender,
     });
   }
 

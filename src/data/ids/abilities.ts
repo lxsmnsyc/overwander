@@ -38,4 +38,8 @@ export const enum Abilities {
   // Sandshrew
   SandVeil = 25,
   SandRush = 26,
+  // Nidoran
+  PoisonPoint = 27,
+  Rivalry = 28,
+  SheerForce = 29,
 }

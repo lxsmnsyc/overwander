@@ -32,6 +32,7 @@ const setupAbilities = [
     // https://bulbapedia.bulbagarden.net/wiki/Chlorophyll_(Ability)
     return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, event => {
       if (
+        isWeatherSunny(event.source) &&
         event.stat === Stats.Speed &&
         event.source.hasAbility(Abilities.Chlorophyll)
       ) {

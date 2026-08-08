@@ -3,7 +3,10 @@ import { Moves } from '../../data/ids/moves';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
 
-const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([Moves.RazorLeaf]);
+const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
+  Moves.RazorLeaf,
+  Moves.Slash,
+]);
 
 export function setupIncreasedCriticalHitRatioMoves(battle: Battle) {
   battle.on(

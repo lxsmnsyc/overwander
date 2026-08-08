@@ -1,17 +1,17 @@
 export const enum Abilities {
   // Bulbasaur
-  Overgrow,
-  Chlorophyll,
-  ThickFat,
+  Overgrow = 0,
+  Chlorophyll = 1,
+  ThickFat = 2,
   // Charmander
-  Blaze,
-  SolarPower,
-  ToughClaws,
-  Drought,
+  Blaze = 3,
+  SolarPower = 4,
+  ToughClaws = 5,
+  Drought = 6,
   // Squirtle
-  Torrent,
-  RainDish,
+  Torrent = 7,
+  RainDish = 8,
   // Caterpie
-  ShieldDust,
-  RunAway,
+  ShieldDust = 9,
+  RunAway = 10,
 }

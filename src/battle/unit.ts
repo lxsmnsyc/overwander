@@ -4,7 +4,7 @@ import { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
-import { Weathers, type Statuses } from '../data/ids/status';
+import { type Statuses, Weathers } from '../data/ids/status';
 import type { Battle } from './core';
 import type {
   CastingData,

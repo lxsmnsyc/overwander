@@ -1,4 +1,4 @@
-import { Species } from './ids/species';
+import type { Species } from './ids/species';
 
 export interface PokemonInstance {
   // Pokemon species

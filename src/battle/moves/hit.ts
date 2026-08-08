@@ -16,6 +16,21 @@ const HIT_MOVES = new Set([
   Moves.MegaDrain,
   Moves.HyperBeam,
   Moves.Cut,
+  Moves.Scratch,
+  Moves.Ember,
+  Moves.Slash,
+  Moves.Flamethrower,
+  Moves.FireSpin,
+  Moves.MegaPunch,
+  Moves.MegaKick,
+  Moves.Submission,
+  Moves.Dig,
+  Moves.FireBlast,
+  Moves.Swift,
+  Moves.SkullBash,
+  Moves.Strength,
+  Moves.Earthquake,
+  Moves.Fly,
 ]);
 
 export function setupHitMoves(battle: Battle) {

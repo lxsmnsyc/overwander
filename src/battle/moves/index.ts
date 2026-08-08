@@ -2,6 +2,8 @@ import type { Battle } from '../core';
 import { setupAbsorb } from './absorb';
 import { setupBide } from './bide';
 import { setupBodySlam } from './body-slam';
+import { setupChargeMoves } from './charge';
+import { setupFixedDamageMoves } from './fixed-damage';
 import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
@@ -11,6 +13,7 @@ import { setupRage } from './rage';
 import { setupRechargeMoves } from './recharge';
 import { setupRecoilMoves } from './recoil';
 import { setupRest } from './rest';
+import { setupSemiInvulnerableMoves } from './semi-invulnerable';
 import { setupSolarBeam } from './solar-beam';
 import { setupStageMoves } from './stage';
 import { setupStatusMoves } from './status';
@@ -27,6 +30,9 @@ export function setupMoves(battle: Battle) {
   setupIncreasedCriticalHitRatioMoves(battle);
   setupRecoilMoves(battle);
   setupRechargeMoves(battle);
+  setupChargeMoves(battle);
+  setupSemiInvulnerableMoves(battle);
+  setupFixedDamageMoves(battle);
 
   // Variations
   setupSolarBeam(battle);

@@ -38,6 +38,10 @@ const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {
   [Moves.Growth]: 1,
 });
 
+const setupDefenseStageMoves = createStageMove(Stages.Defense, {
+  [Moves.Leer]: -1,
+});
+
 const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {
   [Moves.DoubleTeam]: 1,
 });
@@ -45,5 +49,6 @@ const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {
 export function setupStageMoves(battle: Battle) {
   setupAttackStageMoves(battle);
   setupSpecialAttackStageMoves(battle);
+  setupDefenseStageMoves(battle);
   setupEvasionStageMoves(battle);
 }

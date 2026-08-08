@@ -2,6 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
+import { setupBurnedStatus } from './burned';
 import { setupConfusedStatus } from './confused';
 import { setupParalyzedStatus } from './paralyzed';
 import { setupPoisonedStatus } from './poisoned';
@@ -9,6 +10,7 @@ import { setupRechargingStatus } from './recharging';
 import { setupSeedingStatus } from './seeding';
 import { setupSleepingStatus } from './sleeping';
 import { setupSubstitutedStatus } from './substituted';
+import { setupTrappedStatus } from './trapped';
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Paralyzed,
@@ -16,6 +18,8 @@ const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Poisoned,
   Statuses.Seeding,
   Statuses.Sleeping,
+  Statuses.Burned,
+  Statuses.Trapped,
 ]);
 
 const NON_REFRESHABLE_TEAM_STATUS = new Set<TeamStatuses>([
@@ -60,6 +64,8 @@ export function seupStatus(battle: Battle) {
   setupConfusedStatus(battle);
   setupRechargingStatus(battle);
   setupSubstitutedStatus(battle);
+  setupBurnedStatus(battle);
+  setupTrappedStatus(battle);
 
   setupNonRefreshableStatus(battle);
 }

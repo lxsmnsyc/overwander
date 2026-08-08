@@ -231,4 +231,195 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Scratch, {
+    name: 'Scratch',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Ember, {
+    name: 'Ember',
+    type: Types.Fire,
+    category: MoveCategories.Special,
+    pp: 25,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Leer, {
+    name: 'Leer',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Slash, {
+    name: 'Slash',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 70,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Flamethrower, {
+    name: 'Flamethrower',
+    type: Types.Fire,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 90,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.FireSpin, {
+    name: 'Fire Spin',
+    type: Types.Fire,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 35,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.MegaPunch, {
+    name: 'Mega Punch',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 80,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.MegaKick, {
+    name: 'Mega Kick',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 5,
+    power: 120,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Submission, {
+    name: 'Submission',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 80,
+    accuracy: 80,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.SeismicToss, {
+    name: 'Seismic Toss',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.DragonRage, {
+    name: 'Dragon Rage',
+    type: Types.Dragon,
+    category: MoveCategories.Special,
+    pp: 10,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Dig, {
+    name: 'Dig',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+    steps: 1,
+  });
+  registerMove(Moves.FireBlast, {
+    name: 'Fire Blast',
+    type: Types.Fire,
+    category: MoveCategories.Special,
+    pp: 5,
+    power: 110,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Swift, {
+    name: 'Swift',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 60,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.SkullBash, {
+    name: 'Skull Bash',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 130,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+    steps: 1,
+  });
+  registerMove(Moves.Strength, {
+    name: 'Strength',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Earthquake, {
+    name: 'Earthquake',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 100,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Fissure, {
+    name: 'Fissure',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    pp: 5,
+    accuracy: 30,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Fly, {
+    name: 'Fly',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 90,
+    accuracy: 95,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+    steps: 1,
+  });
 }

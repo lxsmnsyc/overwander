@@ -1,16 +1,18 @@
 export const enum Statuses {
-  Seeding,
-  Poisoned,
-  Sleeping,
-  BadlyPoisoned,
-  Paralyzed,
-  Minimized,
-  Invulnerable,
-  Raging,
-  Biding,
-  Confused,
-  Recharging,
-  Substituted,
+  Seeding = 0,
+  Poisoned = 1,
+  Sleeping = 2,
+  BadlyPoisoned = 3,
+  Paralyzed = 4,
+  Minimized = 5,
+  Invulnerable = 6,
+  Raging = 7,
+  Biding = 8,
+  Confused = 9,
+  Recharging = 10,
+  Substituted = 11,
+  Burned = 12,
+  Trapped = 13,
 }
 
 export const enum Weathers {
@@ -27,9 +29,9 @@ export const enum Weathers {
 }
 
 export const enum Terrains {
-  None,
+  None = 0,
 }
 
 export const enum TeamStatuses {
-  Reflect,
+  Reflect = 0,
 }

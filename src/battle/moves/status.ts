@@ -12,10 +12,18 @@ const STATUS_MOVES: { [key in Moves]?: Statuses } = {
 
 const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.BodySlam]: Statuses.Paralyzed,
+  [Moves.Ember]: Statuses.Burned,
+  [Moves.Flamethrower]: Statuses.Burned,
+  [Moves.FireBlast]: Statuses.Burned,
+  [Moves.FireSpin]: Statuses.Trapped,
 };
 
 const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.BodySlam]: 30,
+  [Moves.Ember]: 10,
+  [Moves.Flamethrower]: 10,
+  [Moves.FireBlast]: 10,
+  [Moves.FireSpin]: 100,
 };
 
 function setupUnitStatusMoves(battle: Battle) {

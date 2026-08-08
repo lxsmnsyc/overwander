@@ -11,6 +11,7 @@ import {
 const RECOIL_MOVES: { [key in Moves]?: number } = {
   [Moves.TakeDown]: 1 / 4,
   [Moves.DoubleEdge]: 1 / 3,
+  [Moves.Submission]: 1 / 4,
 };
 
 export function setupRecoilMoves(battle: Battle) {

@@ -1,3 +1,4 @@
 export const enum Families {
-  Bulbasaur,
+  Bulbasaur = 0,
+  Charmander = 1,
 }

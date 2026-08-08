@@ -5,7 +5,7 @@ import type { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
-import { Species } from '../data/ids/species';
+import type { Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type { Alliance } from './alliance';
 import type { Team } from './team';
@@ -13,156 +13,156 @@ import type { Unit } from './unit';
 
 export const enum BattleEvents {
   // Core events
-  Initialize,
-  Start,
-  End,
-  Tick,
+  Initialize = 0,
+  Start = 1,
+  End = 2,
+  Tick = 3,
 
   // Cast events
-  EnableMove,
-  DisableMove,
+  EnableMove = 4,
+  DisableMove = 5,
 
-  CheckUnitMoveType,
-  CheckUnitMoveImmunity,
-  CheckUnitMoveAccuracy,
-  CheckUnitMovePP,
-  CheckUnitMovePower,
-  CheckUnitMovePriority,
-  CheckUnitMoveCooldown,
-  CheckUnitMoveSteps,
+  CheckUnitMoveType = 6,
+  CheckUnitMoveImmunity = 7,
+  CheckUnitMoveAccuracy = 8,
+  CheckUnitMovePP = 9,
+  CheckUnitMovePower = 10,
+  CheckUnitMovePriority = 11,
+  CheckUnitMoveCooldown = 12,
+  CheckUnitMoveSteps = 13,
 
-  CheckUnitMoveCastTime,
-  CheckUnitMoveChannelTime,
-  CheckUnitMoveDuration,
-  CheckUnitMoveDelay,
+  CheckUnitMoveCastTime = 14,
+  CheckUnitMoveChannelTime = 15,
+  CheckUnitMoveDuration = 16,
+  CheckUnitMoveDelay = 17,
 
-  CheckUnitWeather,
-  CheckUnitStat,
-  CheckUnitStage,
+  CheckUnitWeather = 18,
+  CheckUnitStat = 19,
+  CheckUnitStage = 20,
 
-  CheckUnitEscape,
-  CheckUnitStatusImmunity,
-  CheckUnitRecoil,
+  CheckUnitEscape = 21,
+  CheckUnitStatusImmunity = 22,
+  CheckUnitRecoil = 23,
 
-  CheckTypeEffectiveness,
+  CheckTypeEffectiveness = 24,
 
-  ResolveUnitStat,
+  ResolveUnitStat = 25,
 
-  UnitInterrupt,
+  UnitInterrupt = 26,
 
-  CheckUnitCanCast,
+  CheckUnitCanCast = 27,
 
-  UnitCast,
-  UnitUpdateCast,
-  UnitFinishCast,
-  UnitStopCast,
+  UnitCast = 28,
+  UnitUpdateCast = 29,
+  UnitFinishCast = 30,
+  UnitStopCast = 31,
 
-  UnitStartCooldown,
-  UnitFinishCooldown,
-  UnitUpdateCooldown,
+  UnitStartCooldown = 32,
+  UnitFinishCooldown = 33,
+  UnitUpdateCooldown = 34,
 
-  CheckUnitCanChannel,
+  CheckUnitCanChannel = 35,
 
-  UnitChannel,
-  UnitUpdateChannel,
-  UnitFinishChannel,
-  UnitStopChannel,
+  UnitChannel = 36,
+  UnitUpdateChannel = 37,
+  UnitFinishChannel = 38,
+  UnitStopChannel = 39,
 
-  UnitTriggerMove,
-  UnitTriggerMoveUpdate,
-  UnitTriggerMoveEnd,
-  UnitTriggerMoveTarget,
-  UnitTriggerMoveEffect,
+  UnitTriggerMove = 40,
+  UnitTriggerMoveUpdate = 41,
+  UnitTriggerMoveEnd = 42,
+  UnitTriggerMoveTarget = 43,
+  UnitTriggerMoveEffect = 44,
 
-  UnitTriggerMoveResolveAccuracy,
-  UnitTriggerMoveRollHit,
+  UnitTriggerMoveResolveAccuracy = 45,
+  UnitTriggerMoveRollHit = 46,
 
-  UnitTriggerMoveMissed,
-  UnitTriggerMoveFailed,
-  UnitTriggerMoveEffectFailed,
+  UnitTriggerMoveMissed = 47,
+  UnitTriggerMoveFailed = 48,
+  UnitTriggerMoveEffectFailed = 49,
 
   // Damage events
-  UnitAttack,
-  UnitAttackCheckCriticalRatio,
-  UnitAttackResolveCriticalChance,
-  UnitAttackResolveCriticalHit,
-  UnitAttackResolveDamage,
-  UnitAttackResolveStat,
-  UnitAttackResolveSTAB,
-  UnitAttackResolveCriticalMult,
-  UnitAttackResolveEffectiveness,
+  UnitAttack = 50,
+  UnitAttackCheckCriticalRatio = 51,
+  UnitAttackResolveCriticalChance = 52,
+  UnitAttackResolveCriticalHit = 53,
+  UnitAttackResolveDamage = 54,
+  UnitAttackResolveStat = 55,
+  UnitAttackResolveSTAB = 56,
+  UnitAttackResolveCriticalMult = 57,
+  UnitAttackResolveEffectiveness = 58,
 
-  CheckUnitAttackEffect,
-  CheckUnitAttackEffectChance,
-  UnitAttackEffect,
+  CheckUnitAttackEffect = 59,
+  CheckUnitAttackEffectChance = 60,
+  UnitAttackEffect = 61,
 
-  UnitCure,
-  UnitHeal,
-  UnitDamage,
-  UnitFaints,
+  UnitCure = 62,
+  UnitHeal = 63,
+  UnitDamage = 64,
+  UnitFaints = 65,
 
   // Unit event
-  UnitCreated,
+  UnitCreated = 66,
 
-  UnitEntersField,
-  UnitLeavesField,
+  UnitEntersField = 67,
+  UnitLeavesField = 68,
 
-  UnitSetStat,
-  UnitSetLevel,
-  UnitSetHealth,
-  UnitSetMaxHealth,
+  UnitSetStat = 69,
+  UnitSetLevel = 70,
+  UnitSetHealth = 71,
+  UnitSetMaxHealth = 72,
 
-  UnitAddType,
-  UnitRemoveType,
+  UnitAddType = 73,
+  UnitRemoveType = 74,
 
-  UnitAddStatus,
-  UnitRemoveStatus,
-  UnitTriggerStatus,
+  UnitAddStatus = 75,
+  UnitRemoveStatus = 76,
+  UnitTriggerStatus = 77,
 
-  UnitAddStage,
-  UnitRemoveStage,
-  UnitCheckStage,
+  UnitAddStage = 78,
+  UnitRemoveStage = 79,
+  UnitCheckStage = 80,
 
-  UnitAddMove,
-  UnitRemoveMove,
-  UnitEnableMove,
-  UnitDisableMove,
+  UnitAddMove = 81,
+  UnitRemoveMove = 82,
+  UnitEnableMove = 83,
+  UnitDisableMove = 84,
 
-  UnitAddItem,
-  UnitRemoveItem,
-  UnitTriggerItem,
-  UnitEnableItem,
-  UnitDisableItem,
+  UnitAddItem = 85,
+  UnitRemoveItem = 86,
+  UnitTriggerItem = 87,
+  UnitEnableItem = 88,
+  UnitDisableItem = 89,
 
-  UnitAddAbility,
-  UnitRemoveAbility,
-  UnitTriggerAbility,
-  UnitEnableAbility,
-  UnitDisableAbility,
+  UnitAddAbility = 90,
+  UnitRemoveAbility = 91,
+  UnitTriggerAbility = 92,
+  UnitEnableAbility = 93,
+  UnitDisableAbility = 94,
 
-  UnitSwitch,
+  UnitSwitch = 95,
 
-  UnitSetSpecies,
-  UnitSetAppearance,
+  UnitSetSpecies = 96,
+  UnitSetAppearance = 97,
 
   // Field events
-  SetWeather,
-  SetTerrain,
+  SetWeather = 98,
+  SetTerrain = 99,
 
   // Side events
-  TeamAddUnit,
-  TeamRemoveUnit,
-  TeamAddStatus,
-  TeamRemoveStatus,
-  TeamSetWeather,
+  TeamAddUnit = 100,
+  TeamRemoveUnit = 101,
+  TeamAddStatus = 102,
+  TeamRemoveStatus = 103,
+  TeamSetWeather = 104,
 
-  CheckTeamStatusImmunity,
+  CheckTeamStatusImmunity = 105,
 
-  AllianceAddTeam,
-  AllianceRemoveTeam,
+  AllianceAddTeam = 106,
+  AllianceRemoveTeam = 107,
 
-  AddAlliance,
-  RemoveAlliance,
+  AddAlliance = 108,
+  RemoveAlliance = 109,
 }
 
 export const enum MoveTargetType {

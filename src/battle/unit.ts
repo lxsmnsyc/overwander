@@ -4,6 +4,7 @@ import { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
+import { Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
 import type { Battle } from './core';
 import type {
@@ -51,11 +52,31 @@ export class Unit {
     });
   }
 
+  species = Species.Missingno;
+
+  setSpecies(species: Species) {
+    this.battle.emit(BattleEvents.UnitSetSpecies, {
+      id: 'UnitSetSpecies',
+      disabled: false,
+      source: this,
+      species,
+    });
+  }
+
   /**
-   * TODO:
-   * - set appearance
-   * - set species
+   * The species this unit looks like (e.g. Illusion, Transform).
+   * Follows the actual species unless explicitly overridden.
    */
+  appearance = Species.Missingno;
+
+  setAppearance(species: Species) {
+    this.battle.emit(BattleEvents.UnitSetAppearance, {
+      id: 'UnitSetAppearance',
+      disabled: false,
+      source: this,
+      species,
+    });
+  }
 
   health = 0;
 

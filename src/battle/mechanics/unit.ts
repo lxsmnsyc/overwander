@@ -6,6 +6,7 @@ import {
   StatsKind,
 } from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
+import { getSpeciesData } from '../../data/species';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
 
@@ -192,6 +193,43 @@ function setupUnitStatMechancis(battle: Battle) {
   });
 }
 
+const ALL_STATS = [
+  Stats.HP,
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+];
+
+function setupUnitSpeciesMechanics(battle: Battle) {
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Exact, event => {
+    const data = getSpeciesData(event.species);
+
+    event.source.species = event.species;
+
+    // Apply the species' base stats
+    for (const stat of ALL_STATS) {
+      event.source.setStat(StatsKind.Base, stat, data.stats[stat]);
+    }
+
+    // Replace the unit's types
+    for (const type of [...event.source.types]) {
+      event.source.removeType(type);
+    }
+    for (const type of data.types) {
+      event.source.addType(type);
+    }
+
+    // The appearance follows the actual species unless overridden later
+    event.source.setAppearance(event.species);
+  });
+
+  battle.on(BattleEvents.UnitSetAppearance, EventPriority.Exact, event => {
+    event.source.appearance = event.species;
+  });
+}
+
 function setupUnitSwitchMechanics(battle: Battle) {
   battle.on(BattleEvents.CheckUnitEscape, EventPriority.Exact, event => {
     event.success = !event.source.channeling;
@@ -215,5 +253,6 @@ export function setupUnitMechanics(battle: Battle) {
   setupUnitStatMechancis(battle);
   setupUnitStageMechanics(battle);
   setupUnitDamageMechanics(battle);
+  setupUnitSpeciesMechanics(battle);
   setupUnitSwitchMechanics(battle);
 }

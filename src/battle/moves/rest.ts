@@ -7,6 +7,10 @@ import { BattleEvents, EffectType } from '../events';
 
 export function setupRest(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+    if (event.move !== Moves.Rest) {
+      return;
+    }
+
     if (
       event.source.checkStatusImmunity(Statuses.Sleeping, {
         type: EffectType.Move,

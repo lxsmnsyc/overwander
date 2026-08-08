@@ -112,6 +112,9 @@ export function setupMoveMechanics(battle: Battle) {
   battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Exact, event => {
     event.priority = getMoveData(event.move).priority ?? 0;
   });
+  battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Exact, event => {
+    event.steps = getMoveData(event.move).steps ?? 0;
+  });
 }
 
 function isCastingTargetUnit(caster: Unit, target: Unit) {
@@ -595,10 +598,9 @@ export function setupTriggerMoveMechanics(battle: Battle) {
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
     for (const data of triggerMoveData) {
+      data.time.progress += event.duration;
+
       if (data.time.progress >= data.time.duration) {
-        data.time.progress += event.duration;
-        triggerMoveUpdate(data);
-      } else {
         triggerMoveData.delete(data);
 
         if (triggerMoveData.size === 0) {
@@ -606,16 +608,26 @@ export function setupTriggerMoveMechanics(battle: Battle) {
         }
 
         triggerMoveEnd(data.parent);
+      } else {
+        triggerMoveUpdate(data);
       }
     }
   });
 
   battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, event => {
+    const duration = event.source.checkMoveDelay(event.move, event.target);
+
+    // No delay: resolve in the same frame
+    if (duration <= 0) {
+      triggerMoveEnd(event);
+      return;
+    }
+
     const data: TriggerMoveData = {
       parent: event,
       time: {
         progress: 0,
-        duration: event.source.checkMoveDelay(event.move, event.target),
+        duration,
       },
     };
 

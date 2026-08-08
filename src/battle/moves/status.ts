@@ -52,7 +52,8 @@ function setupUnitStatusMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     const targetStatus = STATUS_MOVES[event.move];
 
-    if (targetStatus && event.target.type === MoveTargetType.Unit) {
+    // Explicit null check: the first Statuses enum member is 0
+    if (targetStatus != null && event.target.type === MoveTargetType.Unit) {
       event.target.unit.addStatus(targetStatus, {
         type: EffectType.Move,
         move: event.move,
@@ -62,7 +63,7 @@ function setupUnitStatusMoves(battle: Battle) {
 
     const selfStatus = SELF_STATUS_MOVES[event.move];
 
-    if (selfStatus) {
+    if (selfStatus != null) {
       event.source.addStatus(selfStatus, {
         type: EffectType.Move,
         move: event.move,
@@ -110,7 +111,8 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
 function setupTeamStatusMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     const targetStatus = TEAM_STATUS_MOVES[event.move];
-    if (targetStatus) {
+    // Explicit null check: the first TeamStatuses enum member is 0
+    if (targetStatus != null) {
       event.source.team.addStatus(targetStatus, {
         type: EffectType.Move,
         move: event.move,

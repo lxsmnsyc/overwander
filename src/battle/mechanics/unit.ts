@@ -70,6 +70,13 @@ function setupUnitTypeMechanics(battle: Battle) {
 }
 
 function setupUnitDamageMechanics(battle: Battle) {
+  battle.on(BattleEvents.UnitHeal, EventPriority.Exact, event => {
+    if (event.target.alive) {
+      // setHealth clamps to the max HP
+      event.target.setHealth(event.target.health + event.value);
+    }
+  });
+
   battle.on(BattleEvents.UnitDamage, EventPriority.Exact, event => {
     if (event.target.alive) {
       let value = Math.max(0, event.target.health - event.value);

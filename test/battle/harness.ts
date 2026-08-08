@@ -1,4 +1,5 @@
 import { setupGen1Abilities } from '../../src/battle/abilities/gen-1';
+import { setupRatingAI } from '../../src/battle/ai/rating';
 import { Alliance } from '../../src/battle/alliance';
 import { Battle } from '../../src/battle/core';
 import { setupAbilityMechanics } from '../../src/battle/mechanics/ability';
@@ -61,6 +62,8 @@ export function createBattle(seed = 'test-seed'): BattleHarness {
   setupMoves(battle);
   seupStatus(battle);
   setupGen1Abilities(battle);
+  // Rating resolver only; the idle AI loop stays out of tests
+  setupRatingAI(battle);
 
   const allianceA = new Alliance(battle);
   const allianceB = new Alliance(battle);

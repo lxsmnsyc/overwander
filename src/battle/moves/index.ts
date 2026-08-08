@@ -3,6 +3,7 @@ import { setupAbsorb } from './absorb';
 import { setupBide } from './bide';
 import { setupBodySlam } from './body-slam';
 import { setupChargeMoves } from './charge';
+import { setupCounter } from './counter';
 import { setupFixedDamageMoves } from './fixed-damage';
 import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
@@ -44,4 +45,5 @@ export function setupMoves(battle: Battle) {
   setupBide(battle);
   setupRest(battle);
   setupSubstitute(battle);
+  setupCounter(battle);
 }

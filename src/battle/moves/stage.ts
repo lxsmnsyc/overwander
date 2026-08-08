@@ -40,6 +40,8 @@ const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {
 
 const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.Leer]: -1,
+  [Moves.TailWhip]: -1,
+  [Moves.Withdraw]: 1,
 });
 
 const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {

@@ -31,6 +31,14 @@ const HIT_MOVES = new Set([
   Moves.Strength,
   Moves.Earthquake,
   Moves.Fly,
+  Moves.Bubble,
+  Moves.WaterGun,
+  Moves.Bite,
+  Moves.HydroPump,
+  Moves.BubbleBeam,
+  Moves.IceBeam,
+  Moves.Blizzard,
+  Moves.Surf,
 ]);
 
 export function setupHitMoves(battle: Battle) {

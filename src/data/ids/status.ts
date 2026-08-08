@@ -13,6 +13,8 @@ export const enum Statuses {
   Substituted = 11,
   Burned = 12,
   Trapped = 13,
+  Flinched = 14,
+  Frozen = 15,
 }
 
 export const enum Weathers {

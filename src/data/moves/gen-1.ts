@@ -422,4 +422,115 @@ export function registerGen1Moves() {
     flags: MoveFlags.Contact,
     steps: 1,
   });
+  registerMove(Moves.TailWhip, {
+    name: 'Tail Whip',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Bubble, {
+    name: 'Bubble',
+    type: Types.Water,
+    category: MoveCategories.Special,
+    pp: 30,
+    power: 40,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.WaterGun, {
+    name: 'Water Gun',
+    type: Types.Water,
+    category: MoveCategories.Special,
+    pp: 25,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Bite, {
+    name: 'Bite',
+    type: Types.Dark,
+    category: MoveCategories.Physical,
+    pp: 25,
+    power: 60,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Withdraw, {
+    name: 'Withdraw',
+    type: Types.Water,
+    category: MoveCategories.Status,
+    pp: 40,
+    target: 0,
+    flags: 0,
+  });
+  registerMove(Moves.HydroPump, {
+    name: 'Hydro Pump',
+    type: Types.Water,
+    category: MoveCategories.Special,
+    pp: 5,
+    power: 110,
+    accuracy: 80,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.BubbleBeam, {
+    name: 'Bubble Beam',
+    type: Types.Water,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.IceBeam, {
+    name: 'Ice Beam',
+    type: Types.Ice,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 90,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Blizzard, {
+    name: 'Blizzard',
+    type: Types.Ice,
+    category: MoveCategories.Special,
+    pp: 5,
+    power: 110,
+    accuracy: 70,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Counter, {
+    name: 'Counter',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 20,
+    accuracy: 100,
+    priority: -5,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Surf, {
+    name: 'Surf',
+    type: Types.Water,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 90,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

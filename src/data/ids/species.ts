@@ -8,4 +8,7 @@ export const enum Species {
   Charmander = 6,
   Charmeleon = 7,
   Charizard = 8,
+  Squirtle = 9,
+  Wartortle = 10,
+  Blastoise = 11,
 }

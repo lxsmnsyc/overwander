@@ -1,4 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
+import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type { Battle } from '../core';
@@ -16,6 +17,16 @@ const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Flamethrower]: Statuses.Burned,
   [Moves.FireBlast]: Statuses.Burned,
   [Moves.FireSpin]: Statuses.Trapped,
+  [Moves.Bite]: Statuses.Flinched,
+  [Moves.IceBeam]: Statuses.Frozen,
+  [Moves.Blizzard]: Statuses.Frozen,
+};
+
+const EFFECT_STAGE_MOVES: {
+  [key in Moves]?: { stage: Stages; value: number };
+} = {
+  [Moves.Bubble]: { stage: Stages.Speed, value: -1 },
+  [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1 },
 };
 
 const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
@@ -24,6 +35,11 @@ const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.Flamethrower]: 10,
   [Moves.FireBlast]: 10,
   [Moves.FireSpin]: 100,
+  [Moves.Bite]: 30,
+  [Moves.IceBeam]: 10,
+  [Moves.Blizzard]: 10,
+  [Moves.Bubble]: 10,
+  [Moves.BubbleBeam]: 10,
 };
 
 function setupUnitStatusMoves(battle: Battle) {
@@ -48,14 +64,22 @@ function setupUnitStatusMoves(battle: Battle) {
   );
 
   battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, event => {
+    const cause = {
+      type: EffectType.Move,
+      move: event.parent.move,
+      unit: event.parent.source,
+    } as const;
+
     const status = EFFECT_STATUS_MOVES[event.parent.move];
 
     if (status) {
-      event.parent.target.addStatus(status, {
-        type: EffectType.Move,
-        move: event.parent.move,
-        unit: event.parent.source,
-      });
+      event.parent.target.addStatus(status, cause);
+    }
+
+    const stage = EFFECT_STAGE_MOVES[event.parent.move];
+
+    if (stage) {
+      event.parent.target.addStage(stage.stage, stage.value, cause);
     }
   });
 }

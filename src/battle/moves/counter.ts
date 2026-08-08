@@ -1,14 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
-import {
-  DamageFlags,
-  MoveAttackFlags,
-  MoveCategories,
-  Moves,
-} from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface CounterData {
   attacker: Unit;
@@ -16,11 +11,11 @@ interface CounterData {
 }
 
 // https://bulbapedia.bulbagarden.net/wiki/Counter_(move)
-export function setupCounter(battle: Battle) {
+export default function setupCounter(battle: Battle): void {
   const lastPhysicalHit = new Map<Unit, CounterData>();
 
   // Track the last direct physical hit each unit takes
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
     if (
       event.success &&
       !(event.flags & DamageFlags.Indirect) &&
@@ -35,15 +30,15 @@ export function setupCounter(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFaints, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
     lastPhysicalHit.delete(event.source);
   });
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
     lastPhysicalHit.delete(event.source);
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move !== Moves.Counter) {
       return;
     }
@@ -52,11 +47,7 @@ export function setupCounter(battle: Battle) {
 
     // Fails without a physical hit to return, or when the attacker is gone
     if (!record?.attacker.alive) {
-      event.source.triggerMoveEffectFailed(
-        Moves.Counter,
-        event.target,
-        event.steps,
-      );
+      event.source.triggerMoveEffectFailed(Moves.Counter, event.target, event.steps);
       return;
     }
 

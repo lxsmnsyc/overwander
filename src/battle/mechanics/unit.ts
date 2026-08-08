@@ -1,20 +1,15 @@
 import { EventPriority } from '../../core/event-emitter';
-import {
-  createStagesField,
-  getStageFromStat,
-  Stats,
-  StatsKind,
-} from '../../data/constants/stats';
+import { Stats, StatsKind, createStagesField, getStageFromStat } from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getSpeciesData } from '../../data/species';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
 
-function setupUnitStatusMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Exact, event => {
+function setupUnitStatusMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Exact, (event) => {
     event.source.status[event.status] = event.cause;
   });
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Exact, (event) => {
     event.source.status[event.status] = undefined;
   });
 }
@@ -22,8 +17,8 @@ function setupUnitStatusMechanics(battle: Battle) {
 const MIN_STAGE = -6;
 const MAX_STAGE = 6;
 
-function setupUnitStageMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitAddStage, EventPriority.Exact, event => {
+function setupUnitStageMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitAddStage, EventPriority.Exact, (event) => {
     // Get the current stage
     const current = event.source.stages[event.stage];
     // Get the new stage
@@ -35,7 +30,7 @@ function setupUnitStageMechanics(battle: Battle) {
     event.value = clampedStage - current;
   });
 
-  battle.on(BattleEvents.UnitRemoveStage, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitRemoveStage, EventPriority.Exact, (event) => {
     // Get the current stage
     const current = event.source.stages[event.stage];
     // Get the new stage
@@ -47,37 +42,37 @@ function setupUnitStageMechanics(battle: Battle) {
     event.value = clampedStage - current;
   });
 
-  battle.on(BattleEvents.CheckUnitStage, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitStage, EventPriority.Exact, (event) => {
     event.value = event.source.stages[event.stage];
   });
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Exact, (event) => {
     event.source.stages = createStagesField();
   });
 
-  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, (event) => {
     event.source.stages = createStagesField();
   });
 }
 
-function setupUnitTypeMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitAddType, EventPriority.Exact, event => {
+function setupUnitTypeMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitAddType, EventPriority.Exact, (event) => {
     event.source.types.add(event.type);
   });
-  battle.on(BattleEvents.UnitRemoveType, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitRemoveType, EventPriority.Exact, (event) => {
     event.source.types.delete(event.type);
   });
 }
 
-function setupUnitDamageMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitHeal, EventPriority.Exact, event => {
+function setupUnitDamageMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitHeal, EventPriority.Exact, (event) => {
     if (event.target.alive) {
       // setHealth clamps to the max HP
       event.target.setHealth(event.target.health + event.value);
     }
   });
 
-  battle.on(BattleEvents.UnitDamage, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitDamage, EventPriority.Exact, (event) => {
     if (event.target.alive) {
       let value = Math.max(0, event.target.health - event.value);
 
@@ -96,17 +91,17 @@ function setupUnitDamageMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, (event) => {
     event.source.interrupt();
     event.source.alive = false;
   });
 }
 
-function checkSharedStat(level: number, base: number, iv: number, ev: number) {
+function checkSharedStat(level: number, base: number, iv: number, ev: number): number {
   return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100);
 }
 
-function checkHPStat(level: number, base: number, iv: number, ev: number) {
+function checkHPStat(level: number, base: number, iv: number, ev: number): number {
   // TODO make the pokemon's tankier?
   return checkSharedStat(level, base, iv, ev) + level + 10;
 }
@@ -117,20 +112,20 @@ function checkOtherStat(
   iv: number,
   ev: number,
   nature: number,
-) {
+): number {
   return Math.floor((checkSharedStat(level, base, iv, ev) + 5) * nature);
 }
 
-function setupUnitStatMechancis(battle: Battle) {
-  battle.on(BattleEvents.UnitSetLevel, EventPriority.Exact, event => {
+function setupUnitStatMechancis(battle: Battle): void {
+  battle.on(BattleEvents.UnitSetLevel, EventPriority.Exact, (event) => {
     event.source.level = event.value;
   });
-  battle.on(BattleEvents.UnitSetHealth, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSetHealth, EventPriority.Exact, (event) => {
     const max = event.source.checkStat(Stats.HP, 0);
     event.source.health = Math.min(event.value, max);
   });
 
-  battle.on(BattleEvents.UnitSetStat, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSetStat, EventPriority.Exact, (event) => {
     // when changing HP stat, scale current health
     if (event.stat === Stats.HP) {
       const max = event.source.checkStat(event.stat, 0);
@@ -140,7 +135,7 @@ function setupUnitStatMechancis(battle: Battle) {
     event.source.stats[event.kind][event.stat] = event.value;
   });
 
-  battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, (event) => {
     // TODO apply level formula
     if (event.stat === Stats.HP) {
       event.value = checkHPStat(
@@ -161,7 +156,7 @@ function setupUnitStatMechancis(battle: Battle) {
     }
   });
 
-  function getNormalStage(value: number, stat: Stats, flags: number) {
+  function getNormalStage(value: number, stat: Stats, flags: number): number {
     if (flags & StatFlags.Critical) {
       switch (stat) {
         case Stats.Attack:
@@ -176,6 +171,10 @@ function setupUnitStatMechancis(battle: Battle) {
             return 0;
           }
           return value;
+        // HP and Speed stages are unaffected by critical hits
+        case Stats.HP:
+        case Stats.Speed:
+          break;
       }
     }
     return value;
@@ -185,14 +184,11 @@ function setupUnitStatMechancis(battle: Battle) {
     return value < 0 ? 2 / (2 - value) : (2 + value) / 2;
   }
 
-  battle.on(BattleEvents.ResolveUnitStat, EventPriority.Exact, event => {
+  battle.on(BattleEvents.ResolveUnitStat, EventPriority.Exact, (event) => {
     event.value = event.source.checkStat(event.stat, event.flags);
 
     const targetStage = getStageFromStat(event.stat);
-    const stageValue =
-      targetStage == null
-        ? 0
-        : event.source.checkStage(targetStage, event.flags);
+    const stageValue = targetStage == null ? 0 : event.source.checkStage(targetStage, event.flags);
     const normalStage = getNormalStage(stageValue, event.stat, event.flags);
     event.value *= getStageFactor(normalStage);
   });
@@ -207,8 +203,8 @@ const ALL_STATS = [
   Stats.Speed,
 ];
 
-function setupUnitSpeciesMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Exact, event => {
+function setupUnitSpeciesMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Exact, (event) => {
     const data = getSpeciesData(event.species);
 
     event.source.species = event.species;
@@ -230,20 +226,20 @@ function setupUnitSpeciesMechanics(battle: Battle) {
     event.source.setAppearance(event.species);
   });
 
-  battle.on(BattleEvents.UnitSetAppearance, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSetAppearance, EventPriority.Exact, (event) => {
     event.source.appearance = event.species;
   });
 
-  battle.on(BattleEvents.UnitSetGender, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSetGender, EventPriority.Exact, (event) => {
     event.source.gender = event.gender;
   });
 }
 
-function setupUnitSwitchMechanics(battle: Battle) {
-  battle.on(BattleEvents.CheckUnitEscape, EventPriority.Exact, event => {
+function setupUnitSwitchMechanics(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitEscape, EventPriority.Exact, (event) => {
     event.success = !event.source.channeling;
   });
-  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, (event) => {
     event.source.leave();
     if (event.source !== event.target) {
       event.target.leave();
@@ -256,7 +252,7 @@ function setupUnitSwitchMechanics(battle: Battle) {
   });
 }
 
-export function setupUnitMechanics(battle: Battle) {
+export default function setupUnitMechanics(battle: Battle): void {
   setupUnitStatusMechanics(battle);
   setupUnitTypeMechanics(battle);
   setupUnitStatMechancis(battle);

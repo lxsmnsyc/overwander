@@ -1,8 +1,8 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
@@ -31,7 +31,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-export function registerSandshrewSpecies() {
+export default function registerSandshrewSpecies(): void {
   registerSpecies(Species.Sandshrew, {
     dexNumber: 27,
     name: 'Sandshrew',

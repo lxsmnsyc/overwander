@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  BattleEvents,
-  EffectType,
-  MoveTargetType,
-} from '../../src/battle/events';
-import type { Unit } from '../../src/battle/unit';
+import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import type Unit from '../../src/battle/unit';
 import { Types } from '../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
@@ -13,11 +9,14 @@ import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function moveCause(unit: Unit, move = Moves.Tackle) {
+function moveCause(
+  unit: Unit,
+  move = Moves.Tackle,
+): { readonly type: EffectType.Move; readonly move: Moves; readonly unit: Unit } {
   return { type: EffectType.Move, move, unit } as const;
 }
 
-function unitTarget(unit: Unit) {
+function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
 }
 
@@ -43,7 +42,7 @@ describe('Poisoned', () => {
     const victim = createUnit(battle, teamB);
 
     let applications = 0;
-    battle.on(BattleEvents.UnitAddStatus, 2, event => {
+    battle.on(BattleEvents.UnitAddStatus, 2, (event) => {
       if (event.status === Statuses.Poisoned) {
         applications += 1;
       }
@@ -81,28 +80,14 @@ describe('Burned', () => {
 
     const healthy = (() => {
       const before = victim.health;
-      attacker.attack(
-        victim,
-        Moves.Tackle,
-        40,
-        Types.Normal,
-        MoveCategories.Physical,
-        0,
-      );
+      attacker.attack(victim, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
       return before - victim.health;
     })();
 
     attacker.addStatus(Statuses.Burned, moveCause(victim, Moves.Ember));
 
     const before = victim.health;
-    attacker.attack(
-      victim,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(victim, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(before - victim.health).toBeCloseTo(healthy / 2);
 
     const attackerBefore = attacker.health;
@@ -236,14 +221,7 @@ describe('Reflect', () => {
     teamB.addStatus(TeamStatuses.Reflect, moveCause(guarded, Moves.Reflect));
 
     const before = guarded.health;
-    attacker.attack(
-      guarded,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(guarded, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(before - guarded.health).toBeCloseTo(19.6 * (2732 / 4096));
 
     battle.tick(10000);

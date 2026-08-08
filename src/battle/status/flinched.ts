@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface FlinchedData {
   progress: number;
@@ -12,10 +12,10 @@ interface FlinchedData {
 // Real-time equivalent of losing the turn
 const DURATION = 500;
 
-export function setupFlinchedStatus(battle: Battle) {
+export default function setupFlinchedStatus(battle: Battle): void {
   const instances = new Map<Unit, FlinchedData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress -= event.duration;
 
@@ -27,7 +27,7 @@ export function setupFlinchedStatus(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Flinched]) {
       event.success = false;
 
@@ -37,7 +37,7 @@ export function setupFlinchedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Flinched) {
       event.source.interrupt();
 
@@ -52,7 +52,7 @@ export function setupFlinchedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Flinched) {
       instances.delete(event.source);
 

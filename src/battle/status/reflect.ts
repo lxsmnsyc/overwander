@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause } from '../events';
-import type { Team } from '../team';
+import type Team from '../team';
 
 interface ScreenData {
   progress: number;
@@ -22,7 +22,7 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
   return (battle: Battle) => {
     const instances = new Map<Team, ScreenData>();
 
-    const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+    const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       for (const [team, data] of instances.entries()) {
         data.progress -= event.duration;
 
@@ -34,7 +34,7 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
 
     timer.stop();
 
-    battle.on(BattleEvents.TeamAddStatus, EventPriority.Post, event => {
+    battle.on(BattleEvents.TeamAddStatus, EventPriority.Post, (event) => {
       if (event.status === status && !instances.has(event.team)) {
         instances.set(event.team, {
           progress: SCREEN_DURATION,
@@ -47,7 +47,7 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
       }
     });
 
-    battle.on(BattleEvents.TeamRemoveStatus, EventPriority.Post, event => {
+    battle.on(BattleEvents.TeamRemoveStatus, EventPriority.Post, (event) => {
       if (event.status === status) {
         instances.delete(event.team);
 
@@ -57,28 +57,23 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
       }
     });
 
-    battle.on(
-      BattleEvents.UnitAttackResolveDamage,
-      EventPriority.Post,
-      event => {
-        if (
-          event.parent.category === category &&
-          event.parent.target.team.status[status] != null &&
-          !(event.parent.flags & MoveAttackFlags.Confused)
-        ) {
-          event.value *= DAMAGE_REDUCTION;
-        }
-      },
-    );
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      if (
+        event.parent.category === category &&
+        event.parent.target.team.status[status] != null &&
+        !(event.parent.flags & MoveAttackFlags.Confused)
+      ) {
+        event.value *= DAMAGE_REDUCTION;
+      }
+    });
   };
 }
 
-export const setupReflectStatus = createScreenStatus(
-  TeamStatuses.Reflect,
-  MoveCategories.Physical,
-);
+const setupReflectStatus = createScreenStatus(TeamStatuses.Reflect, MoveCategories.Physical);
 
-export const setupLightScreenStatus = createScreenStatus(
-  TeamStatuses.LightScreen,
-  MoveCategories.Special,
-);
+const setupLightScreenStatus = createScreenStatus(TeamStatuses.LightScreen, MoveCategories.Special);
+
+export default function setupScreenStatus(battle: Battle): void {
+  setupReflectStatus(battle);
+  setupLightScreenStatus(battle);
+}

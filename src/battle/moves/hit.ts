@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
 /**
@@ -17,8 +17,8 @@ const NON_HIT_MOVES = new Set<Moves>([
   Moves.DoubleSlap,
 ]);
 
-export function setupHitMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+export default function setupHitMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (
       event.target.type !== MoveTargetType.Unit ||
       event.steps !== 0 ||

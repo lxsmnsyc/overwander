@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
@@ -8,18 +8,14 @@ import { BattleEvents } from '../events';
  * the field.
  * https://bulbapedia.bulbagarden.net/wiki/Focus_Energy_(move)
  */
-export function setupFocusEnergyStatus(battle: Battle) {
-  battle.on(
-    BattleEvents.UnitAttackCheckCriticalRatio,
-    EventPriority.Post,
-    event => {
-      if (event.parent.source.status[Statuses.FocusEnergy]) {
-        event.value += 2;
-      }
-    },
-  );
+export default function setupFocusEnergyStatus(battle: Battle): void {
+  battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+    if (event.parent.source.status[Statuses.FocusEnergy]) {
+      event.value += 2;
+    }
+  });
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
     const cause = event.source.status[Statuses.FocusEnergy];
 
     if (cause) {

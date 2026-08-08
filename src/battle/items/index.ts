@@ -1,6 +1,6 @@
-import type { Battle } from '../core';
-import { setupBerries } from './berries';
+import type Battle from '../core';
+import setupBerries from './berries';
 
-export function setupItems(battle: Battle) {
+export default function setupItems(battle: Battle): void {
   setupBerries(battle);
 }

@@ -2,18 +2,14 @@ import type { BaseEvent, EventPriority } from '../core/event-emitter';
 import type { EventMap } from '../core/event-engine';
 import type { Stages, Stats, StatsKind } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
-import type { Abilities } from '../data/ids/abilities';
+import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import type {
-  MoveCategories,
-  Moves,
-  MoveTargetPriorities,
-} from '../data/ids/moves';
+import type { MoveCategories, MoveTargetPriorities, Moves } from '../data/ids/moves';
 import type { Genders, Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
-import type { Alliance } from './alliance';
-import type { Team } from './team';
-import type { Unit } from './unit';
+import type Alliance from './alliance';
+import type Team from './team';
+import type Unit from './unit';
 
 export const enum BattleEvents {
   // Core events
@@ -397,8 +393,7 @@ export interface UnitAttackChildEvent extends BaseEvent {
   parent: UnitAttackEvent;
 }
 
-export interface UnitAttackResolveEffectivenessEvent
-  extends UnitAttackChildEvent {
+export interface UnitAttackResolveEffectivenessEvent extends UnitAttackChildEvent {
   defendingType: Types;
   multiplier: number;
 }
@@ -411,8 +406,7 @@ export interface UnitAttackResolveCriticalEvent extends UnitAttackChildEvent {
   critical: boolean;
 }
 
-export interface UnitAttackResolveStatEvent
-  extends UnitAttackResolveAmountEvent {
+export interface UnitAttackResolveStatEvent extends UnitAttackResolveAmountEvent {
   stat: Stats;
   /**
    * The unit whose stat is being resolved (the attacker for the
@@ -534,37 +528,22 @@ export interface BattleEventMap extends EventMap {
 
   // Checks
   [BattleEvents.CheckUnitMoveType]: [CheckUnitMoveTypeEvent, EventPriority];
-  [BattleEvents.CheckUnitMoveAccuracy]: [
-    CheckUnitMoveAccuracyEvent,
-    EventPriority,
-  ];
-  [BattleEvents.CheckUnitMoveImmunity]: [
-    CheckUnitMoveImmunityEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitMoveAccuracy]: [CheckUnitMoveAccuracyEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveImmunity]: [CheckUnitMoveImmunityEvent, EventPriority];
   [BattleEvents.CheckUnitMovePP]: [CheckUnitMovePPEvent, EventPriority];
   [BattleEvents.CheckUnitMovePower]: [CheckUnitMovePowerEvent, EventPriority];
-  [BattleEvents.CheckUnitMovePriority]: [
-    CheckUnitMovePriorityEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitMovePriority]: [CheckUnitMovePriorityEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCooldown]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
-  [BattleEvents.CheckUnitMoveChannelTime]: [
-    CheckUnitMoveTimeEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDelay]: [CheckUnitMoveTimeEvent, EventPriority];
 
   [BattleEvents.CheckUnitStat]: [CheckUnitStatEvent, EventPriority];
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
   [BattleEvents.CheckUnitEscape]: [CheckUnitEscapeEvent, EventPriority];
-  [BattleEvents.CheckUnitStatusImmunity]: [
-    CheckUnitStatusImmunityEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitStatusImmunity]: [CheckUnitStatusImmunityEvent, EventPriority];
   [BattleEvents.CheckUnitRecoil]: [CheckUnitRecoilEvent, EventPriority];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];
@@ -586,47 +565,20 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitCheckStage]: [UnitStageEvent, EventPriority];
 
   [BattleEvents.UnitAttack]: [UnitAttackEvent, EventPriority];
-  [BattleEvents.UnitAttackCheckCriticalRatio]: [
-    UnitAttackResolveAmountEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveCriticalChance]: [
-    UnitAttackResolveAmountEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveCriticalHit]: [
-    UnitAttackResolveCriticalEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveDamage]: [
-    UnitAttackResolveAmountEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveStat]: [
-    UnitAttackResolveStatEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveSTAB]: [
-    UnitAttackResolveAmountEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitAttackResolveCriticalMult]: [
-    UnitAttackResolveAmountEvent,
-    EventPriority,
-  ];
+  [BattleEvents.UnitAttackCheckCriticalRatio]: [UnitAttackResolveAmountEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveCriticalChance]: [UnitAttackResolveAmountEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveCriticalHit]: [UnitAttackResolveCriticalEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveDamage]: [UnitAttackResolveAmountEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveStat]: [UnitAttackResolveStatEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveSTAB]: [UnitAttackResolveAmountEvent, EventPriority];
+  [BattleEvents.UnitAttackResolveCriticalMult]: [UnitAttackResolveAmountEvent, EventPriority];
   [BattleEvents.UnitAttackResolveEffectiveness]: [
     UnitAttackResolveEffectivenessEvent,
     EventPriority,
   ];
 
-  [BattleEvents.CheckUnitAttackEffect]: [
-    CheckUnitAttackEffectEvent,
-    EventPriority,
-  ];
-  [BattleEvents.CheckUnitAttackEffectChance]: [
-    CheckUnitAttackEffectChanceEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitAttackEffect]: [CheckUnitAttackEffectEvent, EventPriority];
+  [BattleEvents.CheckUnitAttackEffectChance]: [CheckUnitAttackEffectChanceEvent, EventPriority];
   [BattleEvents.UnitAttackEffect]: [UnitAttackChildEvent, EventPriority];
 
   [BattleEvents.UnitHeal]: [UnitHealEvent, EventPriority];
@@ -675,35 +627,20 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitFinishChannel]: [UnitEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, EventPriority];
-  [BattleEvents.UnitTriggerMoveUpdate]: [
-    UnitTriggerMoveUpdateEvent,
-    EventPriority,
-  ];
+  [BattleEvents.UnitTriggerMoveUpdate]: [UnitTriggerMoveUpdateEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEnd]: [UnitTriggerMoveEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
-  [BattleEvents.UnitTriggerMoveEffectFailed]: [
-    UnitTriggerMoveEvent,
-    EventPriority,
-  ];
+  [BattleEvents.UnitTriggerMoveEffectFailed]: [UnitTriggerMoveEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMoveResolveAccuracy]: [
     UnitTriggerMoveResolveAccuracyEvent,
     EventPriority,
   ];
-  [BattleEvents.UnitTriggerMoveRollHit]: [
-    UnitTriggerMoveRollHitEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitTriggerMoveMissed]: [
-    UnitTriggerMoveChildEvent,
-    EventPriority,
-  ];
-  [BattleEvents.UnitTriggerMoveFailed]: [
-    UnitTriggerMoveChildEvent,
-    EventPriority,
-  ];
+  [BattleEvents.UnitTriggerMoveRollHit]: [UnitTriggerMoveRollHitEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveMissed]: [UnitTriggerMoveChildEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveFailed]: [UnitTriggerMoveChildEvent, EventPriority];
 
   [BattleEvents.CheckUnitWeather]: [UnitWeatherEvent, EventPriority];
 
@@ -718,10 +655,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.TeamRemoveStatus]: [TeamUpdateStatusEvent, EventPriority];
   [BattleEvents.TeamSetWeather]: [TeamWeatherEvent, EventPriority];
 
-  [BattleEvents.CheckTeamStatusImmunity]: [
-    CheckTeamStatusImmunityEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckTeamStatusImmunity]: [CheckTeamStatusImmunityEvent, EventPriority];
 
   [BattleEvents.AllianceAddTeam]: [AllianceTeamEvent, EventPriority];
   [BattleEvents.AllianceRemoveTeam]: [AllianceTeamEvent, EventPriority];
@@ -732,17 +666,11 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.RemoveAlliance]: [AllianceEvent, EventPriority];
 
   // AI events
-  [BattleEvents.CheckUnitAIMoveScore]: [
-    CheckUnitAIMoveScoreEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitAIMoveScore]: [CheckUnitAIMoveScoreEvent, EventPriority];
   [BattleEvents.UnitAIChooseMove]: [UnitAIChooseMoveEvent, EventPriority];
   [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];
-  [BattleEvents.CheckUnitCanConsumeItem]: [
-    CheckUnitCanConsumeItemEvent,
-    EventPriority,
-  ];
+  [BattleEvents.CheckUnitCanConsumeItem]: [CheckUnitCanConsumeItemEvent, EventPriority];
 }
 
 export interface ProgressData {

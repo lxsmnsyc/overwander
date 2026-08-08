@@ -2,11 +2,11 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
-export function setupRest(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+export default function setupRest(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move !== Moves.Rest) {
       return;
     }
@@ -18,11 +18,7 @@ export function setupRest(battle: Battle) {
         unit: event.source,
       })
     ) {
-      event.source.triggerMoveEffectFailed(
-        Moves.Rest,
-        event.target,
-        event.steps,
-      );
+      event.source.triggerMoveEffectFailed(Moves.Rest, event.target, event.steps);
       return;
     }
     // Cure unit first

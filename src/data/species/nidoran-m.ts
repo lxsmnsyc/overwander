@@ -1,8 +1,8 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
@@ -46,7 +46,7 @@ const EVOLVED_TEACHABLE = [
   Moves.Strength,
 ];
 
-export function registerNidoranMSpecies() {
+export default function registerNidoranMSpecies(): void {
   registerSpecies(Species.NidoranM, {
     dexNumber: 32,
     name: 'Nidoran M',

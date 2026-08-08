@@ -1,20 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
-import type { Unit } from '../../src/battle/unit';
+import type Unit from '../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
-import {
-  DamageFlags,
-  MoveCategories,
-  Moves,
-  StatFlags,
-} from '../../src/data/ids/moves';
+import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function unitTarget(unit: Unit) {
+function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
 }
 
@@ -102,24 +97,10 @@ describe('type effectiveness and STAB', () => {
     const fire = createUnit(battle, teamB, [Types.Fire]);
     const water = createUnit(battle, teamB, [Types.Water]);
 
-    attacker.attack(
-      fire,
-      Moves.WaterGun,
-      40,
-      Types.Water,
-      MoveCategories.Special,
-      0,
-    );
+    attacker.attack(fire, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
     expect(160 - fire.health).toBeCloseTo(19.6 * 2);
 
-    attacker.attack(
-      water,
-      Moves.WaterGun,
-      40,
-      Types.Water,
-      MoveCategories.Special,
-      0,
-    );
+    attacker.attack(water, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
     expect(160 - water.health).toBeCloseTo(19.6 * 0.5);
   });
 
@@ -140,14 +121,7 @@ describe('type effectiveness and STAB', () => {
     const grass = createUnit(battle, teamA, [Types.Grass]);
     const defender = createUnit(battle, teamB);
 
-    grass.attack(
-      defender,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-      0,
-    );
+    grass.attack(defender, Moves.VineWhip, 45, Types.Grass, MoveCategories.Physical, 0);
 
     expect(160 - defender.health).toBeCloseTo((0.44 * 45 + 2) * 1.5);
   });
@@ -211,14 +185,10 @@ describe('casting flow', () => {
     expect(defender.health).toBeCloseTo(160 - 19.6);
 
     // Tackle is now on cooldown (180 / 35 PP ~ 5143ms)
-    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(
-      false,
-    );
+    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
 
     battle.tick(5200);
-    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(
-      true,
-    );
+    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(true);
   });
 
   it('priority moves cast faster', () => {

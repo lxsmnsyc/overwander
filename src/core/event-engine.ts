@@ -10,7 +10,7 @@ export type EventDefinition = [event: BaseEvent, priority: number];
 export type EventMap = Record<number | string, EventDefinition>;
 
 export class EventEngine<T extends EventMap, K extends keyof T = keyof T> {
-  private emitters: Partial<Record<K, EventEmitter<any, any>>> = {};
+  private readonly emitters: Partial<Record<K, EventEmitter<any, any>>> = {};
 
   on<E extends K, D extends EventDefinition = T[E]>(
     type: E,
@@ -18,6 +18,8 @@ export class EventEngine<T extends EventMap, K extends keyof T = keyof T> {
     listener: EventEmitterListener<D[0]>,
   ): EventListenerLifecycle<D[0]> {
     this.emitters[type] ||= new EventEmitter();
+    // The emitter store is untyped (any); the signature restores D[0]
+    // oxlint-disable-next-line typescript/no-unsafe-return
     return this.emitters[type].on(priority, listener);
   }
 
@@ -30,10 +32,7 @@ export class EventEngine<T extends EventMap, K extends keyof T = keyof T> {
     this.emitters[type].off(priority, listener);
   }
 
-  emit<E extends K, D extends EventDefinition = T[E]>(
-    type: E,
-    event: D[0],
-  ): void {
+  emit<E extends K>(type: E, event: T[E][0]): void {
     this.emitters[type] ||= new EventEmitter();
     this.emitters[type].emit(event);
   }

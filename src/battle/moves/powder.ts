@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
 export const POWDER_MOVES = new Set<Moves>([
@@ -10,9 +10,9 @@ export const POWDER_MOVES = new Set<Moves>([
   Moves.StunSpore,
 ]);
 
-export function setupPowderMoves(battle: Battle) {
+export default function setupPowderMoves(battle: Battle): void {
   // Setup grass-type immunity
-  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
     if (
       !event.immune &&
       POWDER_MOVES.has(event.move) &&

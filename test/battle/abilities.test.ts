@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import type { Battle } from '../../src/battle/core';
+import type Battle from '../../src/battle/core';
 import {
   BattleEvents,
   EffectType,
   MoveTargetType,
   type UnitAttackEvent,
 } from '../../src/battle/events';
-import type { Unit } from '../../src/battle/unit';
+import type Unit from '../../src/battle/unit';
 import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
-import { Abilities } from '../../src/data/ids/abilities';
+import Abilities from '../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
@@ -44,7 +44,7 @@ function resolveAttackStat(
   unit: Unit,
   stat: Stats,
   value: number,
-) {
+): number {
   const event = {
     id: 'UnitAttackResolveStat',
     disabled: false,
@@ -65,7 +65,7 @@ function dealDamage(
   power: number,
   type: Types,
   category: MoveCategories,
-) {
+): number {
   const before = defender.health;
   attacker.attack(defender, move, power, type, category, 0);
   return before - defender.health;
@@ -78,24 +78,14 @@ describe('Blaze (pinch abilities)', () => {
     const defender = createUnit(battle, teamB);
     attacker.addAbility(Abilities.Blaze);
 
-    const parent = makeAttack(
-      attacker,
-      defender,
-      Moves.Ember,
-      Types.Fire,
-      MoveCategories.Special,
-    );
+    const parent = makeAttack(attacker, defender, Moves.Ember, Types.Fire, MoveCategories.Special);
 
     // Full health: no boost
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100),
-    ).toBe(100);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100)).toBe(100);
 
     attacker.setHealth(40); // 40 <= 160 / 3
 
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100),
-    ).toBe(150);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100)).toBe(150);
   });
 
   it('does not boost moves of other types', () => {
@@ -113,9 +103,7 @@ describe('Blaze (pinch abilities)', () => {
       MoveCategories.Physical,
     );
 
-    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
-      100,
-    );
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(100);
   });
 });
 
@@ -126,22 +114,12 @@ describe('Thick Fat', () => {
     const defender = createUnit(battle, teamB);
     defender.addAbility(Abilities.ThickFat);
 
-    const parent = makeAttack(
-      attacker,
-      defender,
-      Moves.Ember,
-      Types.Fire,
-      MoveCategories.Special,
-    );
+    const parent = makeAttack(attacker, defender, Moves.Ember, Types.Fire, MoveCategories.Special);
 
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100),
-    ).toBe(50);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100)).toBe(50);
 
     // The defensive stat of the target is untouched
-    expect(
-      resolveAttackStat(battle, parent, defender, Stats.SpecialDefense, 100),
-    ).toBe(100);
+    expect(resolveAttackStat(battle, parent, defender, Stats.SpecialDefense, 100)).toBe(100);
   });
 });
 
@@ -190,9 +168,7 @@ describe('Tough Claws', () => {
 
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
-    expect(unit.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
-      (40 * 5325) / 4096,
-    );
+    expect(unit.checkMovePower(Moves.Tackle, target)).toBeCloseTo((40 * 5325) / 4096);
     expect(unit.checkMovePower(Moves.Ember, target)).toBe(40);
   });
 });
@@ -265,7 +241,7 @@ describe('Shed Skin', () => {
     unit.addAbility(Abilities.ShedSkin);
     unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
 
-    const cast = () =>
+    const cast = (): void => {
       battle.emit(BattleEvents.UnitCast, {
         id: 'UnitCast',
         disabled: false,
@@ -273,6 +249,7 @@ describe('Shed Skin', () => {
         move: Moves.Tackle,
         target: { type: MoveTargetType.None },
       });
+    };
 
     pinRandom(battle, 0.99);
     cast();
@@ -307,13 +284,7 @@ describe('Sniper', () => {
     const event = {
       id: 'UnitAttackResolveCriticalMult',
       disabled: false,
-      parent: makeAttack(
-        attacker,
-        defender,
-        Moves.Slash,
-        Types.Normal,
-        MoveCategories.Physical,
-      ),
+      parent: makeAttack(attacker, defender, Moves.Slash, Types.Normal, MoveCategories.Physical),
       value: 2,
     };
     battle.emit(BattleEvents.UnitAttackResolveCriticalMult, event);
@@ -389,15 +360,11 @@ describe('Guts', () => {
       MoveCategories.Physical,
     );
 
-    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
-      100,
-    );
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(100);
 
     attacker.addStatus(Statuses.Paralyzed, NONE_CAUSE);
 
-    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
-      150,
-    );
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(150);
   });
 
   it('nets 1.5x physical damage while burned (halving compensated)', () => {
@@ -447,17 +414,9 @@ describe('Hustle', () => {
     const enemy = createUnit(battle, teamB);
     unit.addAbility(Abilities.Hustle);
 
-    const parent = makeAttack(
-      unit,
-      enemy,
-      Moves.Tackle,
-      Types.Normal,
-      MoveCategories.Physical,
-    );
+    const parent = makeAttack(unit, enemy, Moves.Tackle, Types.Normal, MoveCategories.Physical);
 
-    expect(resolveAttackStat(battle, parent, unit, Stats.Attack, 100)).toBe(
-      150,
-    );
+    expect(resolveAttackStat(battle, parent, unit, Stats.Attack, 100)).toBe(150);
 
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
@@ -504,9 +463,7 @@ describe('Lightning Rod', () => {
 
     const target = { type: MoveTargetType.Unit, unit: holder } as const;
 
-    expect(
-      attacker.checkMoveImmunity(Moves.Thunderbolt, target, Types.Electric),
-    ).toBe(true);
+    expect(attacker.checkMoveImmunity(Moves.Thunderbolt, target, Types.Electric)).toBe(true);
 
     // Speculative immunity checks grant no boost
     expect(holder.stages[Stages.SpecialAttack]).toBe(0);
@@ -608,12 +565,7 @@ describe('Poison Point', () => {
     const attacker = createUnit(battle, teamB);
     holder.addAbility(Abilities.PoisonPoint);
 
-    attacker.damage(
-      { type: EffectType.Move, move: Moves.Tackle, unit: attacker },
-      holder,
-      10,
-      0,
-    );
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
 
     expect(attacker.status[Statuses.Poisoned]).toBeDefined();
   });
@@ -630,9 +582,7 @@ describe('Sheer Force', () => {
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
     // Body Slam carries a paralysis effect: boosted, effect suppressed
-    expect(unit.checkMovePower(Moves.BodySlam, target)).toBeCloseTo(
-      (85 * 5325) / 4096,
-    );
+    expect(unit.checkMovePower(Moves.BodySlam, target)).toBeCloseTo((85 * 5325) / 4096);
     unit.triggerMoveTarget(Moves.BodySlam, target, 0);
     expect(enemy.status[Statuses.Paralyzed]).toBeUndefined();
 
@@ -656,15 +606,8 @@ describe('Rivalry', () => {
     male.setGender(Genders.Male);
     female.setGender(Genders.Female);
 
-    const hit = (defender: Unit) =>
-      dealDamage(
-        unit,
-        defender,
-        Moves.Tackle,
-        40,
-        Types.Normal,
-        MoveCategories.Physical,
-      );
+    const hit = (defender: Unit): number =>
+      dealDamage(unit, defender, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
 
     expect(hit(male)).toBeCloseTo(19.6 * 1.25);
     expect(hit(female)).toBeCloseTo(19.6 * 0.75);
@@ -688,14 +631,7 @@ describe('Magic Guard', () => {
     expect(holder.health).toBe(160); // poison chip blocked
 
     pinRandom(battle, 1);
-    attacker.attack(
-      holder,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(holder.health).toBeCloseTo(160 - 19.6); // direct damage lands
   });
 });
@@ -709,24 +645,10 @@ describe('Friend Guard', () => {
     const attacker = createUnit(battle, teamB);
     guard.addAbility(Abilities.FriendGuard);
 
-    attacker.attack(
-      protectedAlly,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(protectedAlly, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(160 - protectedAlly.health).toBeCloseTo(19.6 * 0.75);
 
-    attacker.attack(
-      guard,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(guard, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(160 - guard.health).toBeCloseTo(19.6);
   });
 });
@@ -742,24 +664,10 @@ describe('Unaware', () => {
 
     attacker.addStage(Stages.Attack, 2, NONE_CAUSE);
 
-    attacker.attack(
-      normal,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(normal, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(160 - normal.health).toBeCloseTo(0.44 * 40 * 2 + 2); // boosted
 
-    attacker.attack(
-      unaware,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-      0,
-    );
+    attacker.attack(unaware, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(160 - unaware.health).toBeCloseTo(19.6); // boost ignored
   });
 });
@@ -775,12 +683,7 @@ describe('Cute Charm', () => {
     holder.setGender(Genders.Female);
     attacker.setGender(Genders.Male);
 
-    attacker.damage(
-      { type: EffectType.Move, move: Moves.Tackle, unit: attacker },
-      holder,
-      10,
-      0,
-    );
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
 
     expect(attacker.status[Statuses.Infatuated]).toBeDefined();
   });
@@ -796,9 +699,7 @@ describe('Flash Fire', () => {
     const target = { type: MoveTargetType.Unit, unit: holder } as const;
     const enemy = { type: MoveTargetType.Unit, unit: attacker } as const;
 
-    expect(attacker.checkMoveImmunity(Moves.Ember, target, Types.Fire)).toBe(
-      true,
-    );
+    expect(attacker.checkMoveImmunity(Moves.Ember, target, Types.Fire)).toBe(true);
 
     // Not yet activated: Ember is at its base power
     expect(holder.checkMovePower(Moves.Ember, enemy)).toBe(40);

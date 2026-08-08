@@ -1,8 +1,8 @@
 import type { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
-import type { Abilities } from '../ids/abilities';
-import type { EggGroups } from '../ids/egg-groups';
-import type { Families } from '../ids/families';
+import type Abilities from '../ids/abilities';
+import type EggGroups from '../ids/egg-groups';
+import type Families from '../ids/families';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
 
@@ -66,7 +66,7 @@ export interface SpeciesData {
 
 const SPECIES_MAP = new Map<Species, SpeciesData>();
 
-export function registerSpecies(species: Species, data: SpeciesData) {
+export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
 }
 

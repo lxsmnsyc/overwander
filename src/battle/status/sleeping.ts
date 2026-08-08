@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface SleepingData {
   progress: number;
@@ -11,10 +11,10 @@ interface SleepingData {
 
 const DURATION = 2000;
 
-export function setupSleepingStatus(battle: Battle) {
+export default function setupSleepingStatus(battle: Battle): void {
   const instances = new Map<Unit, SleepingData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress -= event.duration;
 
@@ -26,7 +26,7 @@ export function setupSleepingStatus(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Sleeping]) {
       event.success = false;
 
@@ -36,7 +36,7 @@ export function setupSleepingStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Sleeping && !instances.has(event.source)) {
       event.source.interrupt();
 
@@ -51,7 +51,7 @@ export function setupSleepingStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Sleeping) {
       instances.delete(event.source);
 
@@ -61,7 +61,7 @@ export function setupSleepingStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, (event) => {
     event.source.removeStatus(Statuses.Sleeping, event.cause);
   });
 }

@@ -1,27 +1,23 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getRegisteredMoves } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
  * Moves Metronome never calls
  */
-const EXCLUDED = new Set<Moves>([
-  Moves._Confused,
-  Moves.Metronome,
-  Moves.MirrorMove,
-]);
+const EXCLUDED = new Set<Moves>([Moves._Confused, Moves.Metronome, Moves.MirrorMove]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Metronome_(move)
-export function setupMetronome(battle: Battle) {
+export default function setupMetronome(battle: Battle): void {
   /**
    * The callable move pool, resolved once per battle setup (the move
    * registry is filled during data registration, before any battle).
    */
-  const pool = getRegisteredMoves().filter(move => !EXCLUDED.has(move));
+  const pool = getRegisteredMoves().filter((move) => !EXCLUDED.has(move));
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move !== Moves.Metronome) {
       return;
     }

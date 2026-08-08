@@ -1,8 +1,8 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
@@ -36,7 +36,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-export function registerSquirtleSpecies() {
+export default function registerSquirtleSpecies(): void {
   registerSpecies(Species.Squirtle, {
     dexNumber: 7,
     name: 'Squirtle',
@@ -129,12 +129,7 @@ export function registerSquirtleSpecies() {
         42: [Moves.SkullBash],
         52: [Moves.HydroPump],
       },
-      teachable: [
-        ...FAMILY_TEACHABLE,
-        Moves.HyperBeam,
-        Moves.Earthquake,
-        Moves.Fissure,
-      ],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Earthquake, Moves.Fissure],
     },
   });
 }

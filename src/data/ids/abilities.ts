@@ -1,4 +1,4 @@
-export const enum Abilities {
+const enum Abilities {
   // Bulbasaur
   Overgrow = 0,
   Chlorophyll = 1,
@@ -50,3 +50,5 @@ export const enum Abilities {
   // Vulpix
   FlashFire = 34,
 }
+
+export default Abilities;

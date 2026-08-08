@@ -1,12 +1,12 @@
 import type { Stats } from '../data/constants/stats';
-import { createStatsField, Stages, StatsKind } from '../data/constants/stats';
+import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
-import type { Abilities } from '../data/ids/abilities';
+import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
-import type { Battle } from './core';
+import type Battle from './core';
 import type {
   CastingData,
   ChannelingData,
@@ -16,8 +16,8 @@ import type {
   CheckUnitEscapeEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveImmunityEvent,
-  CheckUnitMovePowerEvent,
   CheckUnitMovePPEvent,
+  CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTimeEvent,
@@ -34,9 +34,9 @@ import type {
   UnitWeatherEvent,
 } from './events';
 import { BattleEvents } from './events';
-import type { Team } from './team';
+import type Team from './team';
 
-export class Unit {
+export default class Unit {
   constructor(
     public battle: Battle,
     public team: Team,
@@ -44,7 +44,7 @@ export class Unit {
 
   level = 0;
 
-  setLevel(value: number) {
+  setLevel(value: number): void {
     this.battle.emit(BattleEvents.UnitSetLevel, {
       id: 'UnitSetLevel',
       disabled: false,
@@ -55,7 +55,7 @@ export class Unit {
 
   species = Species.Missingno;
 
-  setSpecies(species: Species) {
+  setSpecies(species: Species): void {
     this.battle.emit(BattleEvents.UnitSetSpecies, {
       id: 'UnitSetSpecies',
       disabled: false,
@@ -70,7 +70,7 @@ export class Unit {
    */
   appearance = Species.Missingno;
 
-  setAppearance(species: Species) {
+  setAppearance(species: Species): void {
     this.battle.emit(BattleEvents.UnitSetAppearance, {
       id: 'UnitSetAppearance',
       disabled: false,
@@ -81,7 +81,7 @@ export class Unit {
 
   gender = Genders.Genderless;
 
-  setGender(gender: Genders) {
+  setGender(gender: Genders): void {
     this.battle.emit(BattleEvents.UnitSetGender, {
       id: 'UnitSetGender',
       disabled: false,
@@ -92,7 +92,7 @@ export class Unit {
 
   health = 0;
 
-  setHealth(value: number) {
+  setHealth(value: number): void {
     this.battle.emit(BattleEvents.UnitSetHealth, {
       id: 'UnitSetHealth',
       disabled: false,
@@ -107,7 +107,7 @@ export class Unit {
     [StatsKind.Effort]: createStatsField(),
   };
 
-  setStat(kind: StatsKind, stat: Stats, value: number) {
+  setStat(kind: StatsKind, stat: Stats, value: number): void {
     this.battle.emit(BattleEvents.UnitSetStat, {
       id: 'UnitSetStat',
       disabled: false,
@@ -118,7 +118,7 @@ export class Unit {
     });
   }
 
-  checkStat(stat: Stats, flags: number) {
+  checkStat(stat: Stats, flags: number): number {
     const event: CheckUnitStatEvent = {
       id: 'CheckUnitStat',
       disabled: false,
@@ -131,7 +131,7 @@ export class Unit {
     return event.value;
   }
 
-  resolveStat(stat: Stats, flags: number) {
+  resolveStat(stat: Stats, flags: number): number {
     const event: CheckUnitStatEvent = {
       id: 'ResolveUnitStat',
       disabled: false,
@@ -146,7 +146,7 @@ export class Unit {
 
   types = new Set<Types>();
 
-  addType(type: Types) {
+  addType(type: Types): void {
     this.battle.emit(BattleEvents.UnitAddType, {
       id: 'UnitAddType',
       disabled: false,
@@ -155,7 +155,7 @@ export class Unit {
     });
   }
 
-  removeType(type: Types) {
+  removeType(type: Types): void {
     this.battle.emit(BattleEvents.UnitRemoveType, {
       id: 'UnitRemoveType',
       disabled: false,
@@ -164,7 +164,7 @@ export class Unit {
     });
   }
 
-  interrupt() {
+  interrupt(): void {
     this.battle.emit(BattleEvents.UnitInterrupt, {
       id: 'UnitInterrupt',
       disabled: false,
@@ -176,7 +176,7 @@ export class Unit {
 
   moves: { [key in Moves]?: MoveState } = {};
 
-  addMove(move: Moves) {
+  addMove(move: Moves): void {
     this.battle.emit(BattleEvents.UnitAddMove, {
       id: 'UnitAddMove',
       disabled: false,
@@ -185,7 +185,7 @@ export class Unit {
     });
   }
 
-  removeMove(move: Moves) {
+  removeMove(move: Moves): void {
     this.battle.emit(BattleEvents.UnitRemoveMove, {
       id: 'UnitRemoveMove',
       disabled: false,
@@ -194,7 +194,7 @@ export class Unit {
     });
   }
 
-  enableMove(move: Moves) {
+  enableMove(move: Moves): void {
     this.battle.emit(BattleEvents.UnitEnableMove, {
       id: 'UnitEnableMove',
       disabled: false,
@@ -203,7 +203,7 @@ export class Unit {
     });
   }
 
-  disableMove(move: Moves) {
+  disableMove(move: Moves): void {
     this.battle.emit(BattleEvents.UnitDisableMove, {
       id: 'UnitDisableMove',
       disabled: false,
@@ -212,7 +212,7 @@ export class Unit {
     });
   }
 
-  checkCanCast(move: Moves, target: MoveTarget) {
+  checkCanCast(move: Moves, target: MoveTarget): boolean {
     const event: CheckUnitCanCastEvent = {
       id: 'CheckUnitCanCast',
       disabled: false,
@@ -225,7 +225,7 @@ export class Unit {
     return event.success;
   }
 
-  cast(move: Moves, target: MoveTarget) {
+  cast(move: Moves, target: MoveTarget): void {
     if (this.checkCanCast(move, target)) {
       this.battle.emit(BattleEvents.UnitCast, {
         id: 'UnitCast',
@@ -237,7 +237,7 @@ export class Unit {
     }
   }
 
-  updateCast(data: Partial<CastingData>) {
+  updateCast(data: Partial<CastingData>): void {
     if (this.casting) {
       this.battle.emit(BattleEvents.UnitUpdateCast, {
         id: 'UnitUpdateCast',
@@ -248,7 +248,7 @@ export class Unit {
     }
   }
 
-  stopCast() {
+  stopCast(): void {
     if (this.casting) {
       this.battle.emit(BattleEvents.UnitStopCast, {
         id: 'UnitStopCast',
@@ -258,7 +258,7 @@ export class Unit {
     }
   }
 
-  finishCast() {
+  finishCast(): void {
     if (this.casting) {
       this.battle.emit(BattleEvents.UnitFinishCast, {
         id: 'UnitFinishCast',
@@ -268,7 +268,7 @@ export class Unit {
     }
   }
 
-  startCooldown(move: Moves, target: MoveTarget) {
+  startCooldown(move: Moves, target: MoveTarget): void {
     this.battle.emit(BattleEvents.UnitStartCooldown, {
       id: 'UnitStartCooldown',
       disabled: false,
@@ -278,7 +278,7 @@ export class Unit {
     });
   }
 
-  updateCooldown(move: Moves, data: Partial<ProgressData>) {
+  updateCooldown(move: Moves, data: Partial<ProgressData>): void {
     this.battle.emit(BattleEvents.UnitUpdateCooldown, {
       id: 'UnitUpdateCooldown',
       disabled: false,
@@ -288,7 +288,7 @@ export class Unit {
     });
   }
 
-  finishCooldown(move: Moves) {
+  finishCooldown(move: Moves): void {
     this.battle.emit(BattleEvents.UnitFinishCooldown, {
       id: 'UnitFinishCooldown',
       disabled: false,
@@ -299,7 +299,7 @@ export class Unit {
 
   channeling?: ChannelingData;
 
-  checkCanChannel(move: Moves, target: MoveTarget, steps: number) {
+  checkCanChannel(move: Moves, target: MoveTarget, steps: number): boolean {
     const event: CheckUnitCanChannelEvent = {
       id: 'CheckUnitCanChannel',
       disabled: false,
@@ -313,7 +313,7 @@ export class Unit {
     return event.success;
   }
 
-  channel(move: Moves, target: MoveTarget, steps: number) {
+  channel(move: Moves, target: MoveTarget, steps: number): void {
     if (this.checkCanChannel(move, target, steps)) {
       this.battle.emit(BattleEvents.UnitChannel, {
         id: 'UnitChannel',
@@ -326,7 +326,7 @@ export class Unit {
     }
   }
 
-  updateChannel(data: Partial<ChannelingData>) {
+  updateChannel(data: Partial<ChannelingData>): void {
     if (this.casting) {
       this.battle.emit(BattleEvents.UnitUpdateChannel, {
         id: 'UnitUpdateChannel',
@@ -337,7 +337,7 @@ export class Unit {
     }
   }
 
-  stopChannel() {
+  stopChannel(): void {
     if (this.channeling) {
       this.battle.emit(BattleEvents.UnitStopChannel, {
         id: 'UnitStopChannel',
@@ -347,7 +347,7 @@ export class Unit {
     }
   }
 
-  finishChannel() {
+  finishChannel(): void {
     if (this.channeling) {
       this.battle.emit(BattleEvents.UnitFinishChannel, {
         id: 'UnitFinishChannel',
@@ -357,7 +357,7 @@ export class Unit {
     }
   }
 
-  triggerMove(move: Moves, target: MoveTarget, steps: number) {
+  triggerMove(move: Moves, target: MoveTarget, steps: number): void {
     this.battle.emit(BattleEvents.UnitTriggerMove, {
       id: 'TriggerMove',
       disabled: false,
@@ -368,7 +368,7 @@ export class Unit {
     });
   }
 
-  triggerMoveTarget(move: Moves, target: MoveTarget, steps: number) {
+  triggerMoveTarget(move: Moves, target: MoveTarget, steps: number): void {
     this.battle.emit(BattleEvents.UnitTriggerMoveTarget, {
       id: 'UnitTriggerMoveTarget',
       disabled: false,
@@ -379,7 +379,7 @@ export class Unit {
     });
   }
 
-  triggerMoveEffect(move: Moves, target: MoveTarget, steps: number) {
+  triggerMoveEffect(move: Moves, target: MoveTarget, steps: number): void {
     this.battle.emit(BattleEvents.UnitTriggerMoveEffect, {
       id: 'UnitTriggerMoveEffect',
       disabled: false,
@@ -390,7 +390,7 @@ export class Unit {
     });
   }
 
-  triggerMoveEffectFailed(move: Moves, target: MoveTarget, steps: number) {
+  triggerMoveEffectFailed(move: Moves, target: MoveTarget, steps: number): void {
     this.battle.emit(BattleEvents.UnitTriggerMoveEffectFailed, {
       id: 'UnitTriggerMoveEffectFailed',
       disabled: false,
@@ -403,7 +403,7 @@ export class Unit {
 
   items: { [key in Items]?: boolean } = {};
 
-  addItem(item: Items) {
+  addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',
       disabled: false,
@@ -412,7 +412,7 @@ export class Unit {
     });
   }
 
-  removeItem(item: Items) {
+  removeItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitRemoveItem, {
       id: 'UnitRemoveItem',
       disabled: false,
@@ -421,7 +421,7 @@ export class Unit {
     });
   }
 
-  triggerItem(item: Items) {
+  triggerItem(item: Items): void {
     if (this.items[item]) {
       this.battle.emit(BattleEvents.UnitTriggerItem, {
         id: 'UnitTriggerItem',
@@ -432,7 +432,7 @@ export class Unit {
     }
   }
 
-  checkCanConsumeItem(item: Items) {
+  checkCanConsumeItem(item: Items): boolean {
     const event: CheckUnitCanConsumeItemEvent = {
       id: 'CheckUnitCanConsumeItem',
       disabled: false,
@@ -444,7 +444,7 @@ export class Unit {
     return event.success;
   }
 
-  enableItem(item: Items) {
+  enableItem(item: Items): void {
     if (this.items[item] === false) {
       this.battle.emit(BattleEvents.UnitEnableItem, {
         id: 'UnitEnableItem',
@@ -455,7 +455,7 @@ export class Unit {
     }
   }
 
-  disableItem(item: Items) {
+  disableItem(item: Items): void {
     if (this.items[item] === true) {
       this.battle.emit(BattleEvents.UnitDisableItem, {
         id: 'UnitDisableItem',
@@ -468,7 +468,7 @@ export class Unit {
 
   abilities: { [key in Abilities]?: boolean } = {};
 
-  addAbility(ability: Abilities) {
+  addAbility(ability: Abilities): void {
     this.battle.emit(BattleEvents.UnitAddAbility, {
       id: 'UnitAddAbility',
       disabled: false,
@@ -477,7 +477,7 @@ export class Unit {
     });
   }
 
-  removeAbility(ability: Abilities) {
+  removeAbility(ability: Abilities): void {
     this.battle.emit(BattleEvents.UnitRemoveAbility, {
       id: 'UnitRemoveAbility',
       disabled: false,
@@ -486,11 +486,11 @@ export class Unit {
     });
   }
 
-  hasAbility(ability: Abilities) {
-    return this.abilities[ability];
+  hasAbility(ability: Abilities): boolean {
+    return this.abilities[ability] === true;
   }
 
-  triggerAbility(ability: Abilities) {
+  triggerAbility(ability: Abilities): void {
     if (this.abilities[ability]) {
       this.battle.emit(BattleEvents.UnitTriggerAbility, {
         id: 'UnitTriggerAbility',
@@ -501,7 +501,7 @@ export class Unit {
     }
   }
 
-  enableAbility(ability: Abilities) {
+  enableAbility(ability: Abilities): void {
     if (this.abilities[ability] === false) {
       this.battle.emit(BattleEvents.UnitEnableAbility, {
         id: 'UnitEnableAbility',
@@ -512,7 +512,7 @@ export class Unit {
     }
   }
 
-  disableAbility(ability: Abilities) {
+  disableAbility(ability: Abilities): void {
     if (this.abilities[ability] === true) {
       this.battle.emit(BattleEvents.UnitDisableAbility, {
         id: 'UnitDisableAbility',
@@ -526,7 +526,7 @@ export class Unit {
   // status
   status: { [key in Statuses]?: EffectCause } = {};
 
-  addStatus(status: Statuses, cause: EffectCause) {
+  addStatus(status: Statuses, cause: EffectCause): void {
     if (!this.checkStatusImmunity(status, cause)) {
       this.battle.emit(BattleEvents.UnitAddStatus, {
         id: 'UnitAddStatus',
@@ -538,7 +538,7 @@ export class Unit {
     }
   }
 
-  removeStatus(status: Statuses, cause: EffectCause) {
+  removeStatus(status: Statuses, cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitRemoveStatus, {
       id: 'UnitRemoveStatus',
       disabled: false,
@@ -548,7 +548,7 @@ export class Unit {
     });
   }
 
-  triggerStatus(status: Statuses, cause: EffectCause) {
+  triggerStatus(status: Statuses, cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitTriggerStatus, {
       id: 'UnitTriggerStatus',
       disabled: false,
@@ -558,7 +558,7 @@ export class Unit {
     });
   }
 
-  getStatus(status: Statuses) {
+  getStatus(status: Statuses): EffectCause | undefined {
     return this.status[status];
   }
 
@@ -572,7 +572,7 @@ export class Unit {
     [Stages.Speed]: 0,
   };
 
-  addStage(stage: Stages, value: number, cause: EffectCause) {
+  addStage(stage: Stages, value: number, cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitAddStage, {
       id: 'UnitAddStage',
       disabled: false,
@@ -583,7 +583,7 @@ export class Unit {
     });
   }
 
-  removeStage(stage: Stages, value: number, cause: EffectCause) {
+  removeStage(stage: Stages, value: number, cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitRemoveStage, {
       id: 'UnitRemoveStage',
       disabled: false,
@@ -594,7 +594,7 @@ export class Unit {
     });
   }
 
-  checkStage(stage: Stages, flags: number) {
+  checkStage(stage: Stages, flags: number): number {
     const event: CheckUnitStageEvent = {
       id: 'CheckUnitStage',
       disabled: false,
@@ -607,7 +607,7 @@ export class Unit {
     return event.value;
   }
 
-  heal(cause: EffectCause, target: Unit, value: number, flags: number) {
+  heal(cause: EffectCause, target: Unit, value: number, flags: number): void {
     this.battle.emit(BattleEvents.UnitHeal, {
       id: 'UnitHeal',
       disabled: false,
@@ -619,7 +619,7 @@ export class Unit {
     });
   }
 
-  damage(cause: EffectCause, target: Unit, value: number, flags: number) {
+  damage(cause: EffectCause, target: Unit, value: number, flags: number): boolean {
     const event: UnitDamageEvent = {
       id: 'UnitDamage',
       disabled: false,
@@ -634,7 +634,7 @@ export class Unit {
     return event.success;
   }
 
-  cure(cause: EffectCause) {
+  cure(cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitCure, {
       id: 'UnitCure',
       disabled: false,
@@ -645,7 +645,7 @@ export class Unit {
 
   alive = true;
 
-  faint(attacker: Unit) {
+  faint(attacker: Unit): void {
     this.battle.emit(BattleEvents.UnitFaints, {
       id: 'UnitFaints',
       disabled: false,
@@ -661,7 +661,7 @@ export class Unit {
     type: Types,
     category: MoveCategories,
     flags: number,
-  ) {
+  ): boolean {
     const event: UnitAttackEvent = {
       id: 'UnitAttack',
       disabled: false,
@@ -678,7 +678,7 @@ export class Unit {
     return event.success;
   }
 
-  switch(target: Unit) {
+  switch(target: Unit): void {
     if (this.checkEscape() && target.checkEscape()) {
       this.forceSwitch(target);
     }
@@ -688,7 +688,7 @@ export class Unit {
    * Switch without the escape checks (e.g. forced switch-out moves
    * that bypass trapping)
    */
-  forceSwitch(target: Unit) {
+  forceSwitch(target: Unit): void {
     this.battle.emit(BattleEvents.UnitSwitch, {
       id: 'UnitSwitch',
       disabled: false,
@@ -697,7 +697,7 @@ export class Unit {
     });
   }
 
-  enter() {
+  enter(): void {
     this.battle.emit(BattleEvents.UnitEntersField, {
       id: 'UnitEntersField',
       disabled: false,
@@ -705,7 +705,7 @@ export class Unit {
     });
   }
 
-  leave() {
+  leave(): void {
     this.battle.emit(BattleEvents.UnitLeavesField, {
       id: 'UnitEntersField',
       disabled: false,
@@ -713,7 +713,7 @@ export class Unit {
     });
   }
 
-  checkEscape() {
+  checkEscape(): boolean {
     const event: CheckUnitEscapeEvent = {
       id: 'CheckUnitEscape',
       disabled: false,
@@ -727,7 +727,7 @@ export class Unit {
   }
 
   // Checks
-  checkMoveType(move: Moves, target: MoveTarget) {
+  checkMoveType(move: Moves, target: MoveTarget): Types {
     const event: CheckUnitMoveTypeEvent = {
       id: 'CheckUnitMoveType',
       disabled: false,
@@ -740,7 +740,7 @@ export class Unit {
     return event.type;
   }
 
-  checkMoveImmunity(move: Moves, target: MoveTarget, type: Types) {
+  checkMoveImmunity(move: Moves, target: MoveTarget, type: Types): boolean {
     const event: CheckUnitMoveImmunityEvent = {
       id: 'CheckUnitMoveImmunity',
       disabled: false,
@@ -754,7 +754,7 @@ export class Unit {
     return event.immune;
   }
 
-  checkMoveAccuracy(move: Moves, target: MoveTarget) {
+  checkMoveAccuracy(move: Moves, target: MoveTarget): number | undefined {
     const event: CheckUnitMoveAccuracyEvent = {
       id: 'CheckUnitMoveAccuracy',
       disabled: false,
@@ -766,7 +766,7 @@ export class Unit {
     return event.accuracy;
   }
 
-  checkMovePower(move: Moves, target: MoveTarget) {
+  checkMovePower(move: Moves, target: MoveTarget): number | undefined {
     const event: CheckUnitMovePowerEvent = {
       id: 'CheckUnitMovePower',
       disabled: false,
@@ -778,7 +778,7 @@ export class Unit {
     return event.power;
   }
 
-  checkMovePP(move: Moves, target: MoveTarget) {
+  checkMovePP(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMovePPEvent = {
       id: 'CheckMovePP',
       disabled: false,
@@ -791,7 +791,7 @@ export class Unit {
     return event.pp;
   }
 
-  checkMovePriority(move: Moves, target: MoveTarget) {
+  checkMovePriority(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMovePriorityEvent = {
       id: 'CheckUnitMovePriority',
       disabled: false,
@@ -804,7 +804,7 @@ export class Unit {
     return event.priority;
   }
 
-  checkMoveSteps(move: Moves, target: MoveTarget) {
+  checkMoveSteps(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveStepsEvent = {
       id: 'CheckUnitMoveSteps',
       disabled: false,
@@ -817,7 +817,7 @@ export class Unit {
     return event.steps;
   }
 
-  checkStatusImmunity(status: Statuses, cause: EffectCause) {
+  checkStatusImmunity(status: Statuses, cause: EffectCause): boolean {
     const event: CheckUnitStatusImmunityEvent = {
       id: 'CheckUnitStatusImmunity',
       disabled: false,
@@ -830,7 +830,7 @@ export class Unit {
     return event.immune;
   }
 
-  checkWeather() {
+  checkWeather(): Weathers {
     const event: UnitWeatherEvent = {
       id: 'CheckUnitWeather',
       disabled: false,
@@ -841,7 +841,7 @@ export class Unit {
     return event.weather;
   }
 
-  checkMoveCastTime(move: Moves, target: MoveTarget) {
+  checkMoveCastTime(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveTimeEvent = {
       id: 'CheckUnitMoveCastTime',
       disabled: false,
@@ -854,7 +854,7 @@ export class Unit {
     return event.duration;
   }
 
-  checkMoveChannelTime(move: Moves, target: MoveTarget) {
+  checkMoveChannelTime(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveTimeEvent = {
       id: 'CheckUnitMoveChannelTime',
       disabled: false,
@@ -867,7 +867,7 @@ export class Unit {
     return event.duration;
   }
 
-  checkMoveDuration(move: Moves, target: MoveTarget) {
+  checkMoveDuration(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveTimeEvent = {
       id: 'CheckUnitMoveDuration',
       disabled: false,
@@ -880,7 +880,7 @@ export class Unit {
     return event.duration;
   }
 
-  checkMoveDelay(move: Moves, target: MoveTarget) {
+  checkMoveDelay(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveTimeEvent = {
       id: 'CheckUnitMoveDelay',
       disabled: false,

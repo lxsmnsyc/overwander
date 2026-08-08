@@ -1,13 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
-import {
-  MoveAttackFlags,
-  MoveCategories,
-  Moves,
-  MoveTargetFlags,
-} from '../../data/ids/moves';
+import { MoveAttackFlags, MoveCategories, MoveTargetFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import {
   type AIMoveChoice,
   BattleEvents,
@@ -20,7 +15,7 @@ import {
   type UnitAttackResolveAmountEvent,
 } from '../events';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 /**
  * Gen 4/5 cartridge AI style move selection: every usable move starts
@@ -44,7 +39,7 @@ const HEALING_MOVES = new Set<Moves>([Moves.Rest]);
  * Pick the best move for a unit. Internal to the AI module; the idle
  * loop drives this, external code never calls it directly.
  */
-export function chooseMove(battle: Battle, source: Unit) {
+export function chooseMove(battle: Battle, source: Unit): AIMoveChoice | undefined {
   const event: UnitAIChooseMoveEvent = {
     id: 'UnitAIChooseMove',
     disabled: false,
@@ -55,7 +50,7 @@ export function chooseMove(battle: Battle, source: Unit) {
   return event.choice;
 }
 
-export function setupChooseMoveAI(battle: Battle) {
+export function setupChooseMoveAI(battle: Battle): void {
   /**
    * Expected damage simulated through the engine's own resolver: a
    * synthetic UnitAttackResolveDamage event runs the real damage
@@ -65,7 +60,7 @@ export function setupChooseMoveAI(battle: Battle) {
    * The Critical flag is left out so no crit roll happens; the
    * resolver still consumes one battle.random() for the damage range.
    */
-  function estimateDamage(source: Unit, move: Moves, target: Unit) {
+  function estimateDamage(source: Unit, move: Moves, target: Unit): number {
     const data = getMoveData(move);
 
     if (data.power == null || data.category === MoveCategories.Status) {
@@ -98,7 +93,7 @@ export function setupChooseMoveAI(battle: Battle) {
     return event.value;
   }
 
-  function scoreMove(source: Unit, move: Moves, target: MoveTarget) {
+  function scoreMove(source: Unit, move: Moves, target: MoveTarget): number {
     const event: CheckUnitAIMoveScoreEvent = {
       id: 'CheckUnitAIMoveScore',
       disabled: false,
@@ -128,7 +123,7 @@ export function setupChooseMoveAI(battle: Battle) {
     const ownTeam = source.team;
     const ownAlliance = ownTeam.alliance;
 
-    function addUnits(units: Iterable<Unit>, skipSource: boolean) {
+    function addUnits(units: Iterable<Unit>, skipSource: boolean): void {
       for (const unit of units) {
         if (unit.alive && !(skipSource && unit === source)) {
           targets.push({ type: MoveTargetType.Unit, unit });
@@ -192,12 +187,12 @@ export function setupChooseMoveAI(battle: Battle) {
    * Resolver: enumerate the unit's usable moves against the collected
    * targets, score every pair, keep the best (random tie-break).
    */
-  battle.on(BattleEvents.UnitAIChooseMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitAIChooseMove, EventPriority.Exact, (event) => {
     const source = event.source;
 
     let best: AIMoveChoice[] = [];
 
-    function consider(move: Moves, target: MoveTarget) {
+    function consider(move: Moves, target: MoveTarget): void {
       const score = scoreMove(source, move, target);
 
       if (best.length === 0 || score > best[0].score) {
@@ -207,9 +202,10 @@ export function setupChooseMoveAI(battle: Battle) {
       }
     }
 
-    for (const key in source.moves) {
-      const state = source.moves[Number(key) as Moves];
-
+    for (const state of Object.values(source.moves)) {
+      // tsc types the mapped-record values as possibly undefined;
+      // tsgolint disagrees, so the guard is flagged as unnecessary
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
       if (!state || state.disabled || state.cooldown) {
         continue;
       }
@@ -229,7 +225,7 @@ export function setupChooseMoveAI(battle: Battle) {
   // --- Scoring modifiers ---
 
   // Damaging moves: prefer stronger hits, reward guaranteed KOs
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
     if (event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -266,7 +262,7 @@ export function setupChooseMoveAI(battle: Battle) {
   });
 
   // Status-inflicting moves: useless when the target can't receive it
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
     const status = STATUS_MOVES[event.move];
 
     if (status == null || event.target.type !== MoveTargetType.Unit) {
@@ -297,7 +293,7 @@ export function setupChooseMoveAI(battle: Battle) {
 
   // Self statuses (e.g. Focus Energy): useless when already active,
   // reckless when about to go down
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
     const status = SELF_STATUS_MOVES[event.move];
 
     if (status == null) {
@@ -322,7 +318,7 @@ export function setupChooseMoveAI(battle: Battle) {
   });
 
   // Healing moves: valuable when hurt, useless when topped off
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
     if (!HEALING_MOVES.has(event.move)) {
       return;
     }

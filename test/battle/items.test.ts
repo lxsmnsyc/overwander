@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
-import type { Unit } from '../../src/battle/unit';
-import { Abilities } from '../../src/data/ids/abilities';
+import type Unit from '../../src/battle/unit';
+import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
@@ -9,7 +9,10 @@ import { createBattle, createUnit } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function moveCause(unit: Unit, move = Moves.Tackle) {
+function moveCause(
+  unit: Unit,
+  move = Moves.Tackle,
+): { readonly type: EffectType.Move; readonly move: Moves; readonly unit: Unit } {
   return { type: EffectType.Move, move, unit } as const;
 }
 

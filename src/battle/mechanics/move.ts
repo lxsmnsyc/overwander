@@ -15,9 +15,11 @@ import {
   StatFlags,
 } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Alliance } from '../alliance';
-import type { Battle } from '../core';
+import type Alliance from '../alliance';
+import type Battle from '../core';
 import type {
+  CheckUnitAttackEffectChanceEvent,
+  CheckUnitAttackEffectEvent,
   MoveState,
   TriggerMoveData,
   UnitAttackEvent,
@@ -30,8 +32,8 @@ import type {
   UnitTriggerMoveRollHitEvent,
 } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import type { Team } from '../team';
-import type { Unit } from '../unit';
+import type Team from '../team';
+import type Unit from '../unit';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
@@ -42,18 +44,11 @@ function getCastTime(priority: number): number {
   return (BASE_FRAMES - priority * FRAMES_PER_PRIORITY) * FPS_DURATION;
 }
 
-function isTypeImmune(offendingType: Types, defendingType: Types) {
-  const table = TYPE_EFFECTIVENESS[offendingType];
-
-  if (table) {
-    const kind = table[defendingType];
-    return kind && kind === TypeEffectiveness.Immune;
-  }
-
-  return false;
+function isTypeImmune(offendingType: Types, defendingType: Types): boolean {
+  return TYPE_EFFECTIVENESS[offendingType][defendingType] === TypeEffectiveness.Immune;
 }
 
-function isUnitImmune(unit: Unit, offending: Types) {
+function isUnitImmune(unit: Unit, offending: Types): boolean {
   for (const defending of unit.types) {
     if (isTypeImmune(offending, defending)) {
       return true;
@@ -71,20 +66,20 @@ function createMoveState(source: Unit, move: Moves): MoveState {
   };
 }
 
-export function setupMoveMechanics(battle: Battle) {
-  battle.on(BattleEvents.UnitAddMove, EventPriority.Exact, event => {
+export function setupMoveMechanics(battle: Battle): void {
+  battle.on(BattleEvents.UnitAddMove, EventPriority.Exact, (event) => {
     event.source.moves[event.move] = createMoveState(event.source, event.move);
   });
-  battle.on(BattleEvents.UnitRemoveMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitRemoveMove, EventPriority.Exact, (event) => {
     event.source.moves[event.move] = undefined;
   });
-  battle.on(BattleEvents.UnitEnableMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitEnableMove, EventPriority.Exact, (event) => {
     const current = event.source.moves[event.move];
     if (current) {
       current.disabled = false;
     }
   });
-  battle.on(BattleEvents.UnitDisableMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitDisableMove, EventPriority.Exact, (event) => {
     const current = event.source.moves[event.move];
     if (current) {
       current.disabled = true;
@@ -92,40 +87,40 @@ export function setupMoveMechanics(battle: Battle) {
   });
 
   // Checks
-  battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Exact, (event) => {
     event.type = getMoveData(event.move).type;
   });
-  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
     if (event.target.type === MoveTargetType.Unit) {
       event.immune = isUnitImmune(event.target.unit, event.type);
     }
   });
-  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, (event) => {
     event.accuracy = getMoveData(event.move).accuracy;
   });
-  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
     event.power = getMoveData(event.move).power;
   });
-  battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Exact, (event) => {
     event.pp = getMoveData(event.move).pp;
   });
-  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Exact, (event) => {
     event.priority = getMoveData(event.move).priority ?? 0;
   });
-  battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Exact, (event) => {
     event.steps = getMoveData(event.move).steps ?? 0;
   });
 }
 
-function isCastingTargetUnit(caster: Unit, target: Unit) {
+function isCastingTargetUnit(caster: Unit, target: Unit): boolean {
   return (
-    caster.casting &&
+    !!caster.casting &&
     caster.casting.target.type === MoveTargetType.Unit &&
     caster.casting.target.unit === target
   );
 }
 
-function canUnitCastMove(caster: Unit, move: Moves) {
+function canUnitCastMove(caster: Unit, move: Moves): boolean {
   const data = caster.moves[move];
   if (data) {
     return !(data.disabled || data.cooldown);
@@ -133,10 +128,10 @@ function canUnitCastMove(caster: Unit, move: Moves) {
   return false;
 }
 
-export function setupCastingMechanics(battle: Battle) {
+export function setupCastingMechanics(battle: Battle): void {
   const queue = new Set<Unit>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, (event) => {
     for (const unit of queue) {
       // advance timer
       if (unit.casting) {
@@ -154,13 +149,13 @@ export function setupCastingMechanics(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Exact, (event) => {
     if (event.success) {
       event.success =
         // Caster must be alive
         event.source.alive &&
         // Caster must not be casting/channeling
-        !(event.source.casting || event.source.channeling) &&
+        !(event.source.casting ?? event.source.channeling) &&
         // Move must not be disabled or in cooldown
         canUnitCastMove(event.source, event.move);
 
@@ -171,13 +166,11 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Exact, event => {
-    event.duration = getCastTime(
-      event.source.checkMovePriority(event.move, event.target),
-    );
+  battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Exact, (event) => {
+    event.duration = getCastTime(event.source.checkMovePriority(event.move, event.target));
   });
 
-  battle.on(BattleEvents.UnitCast, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitCast, EventPriority.Exact, (event) => {
     const castTime = event.source.checkMoveCastTime(event.move, event.target);
 
     event.source.casting = {
@@ -197,22 +190,20 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitUpdateCast, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitUpdateCast, EventPriority.Exact, (event) => {
     if (event.source.casting) {
       event.source.casting = {
         ...event.source.casting,
         ...event.data,
       };
 
-      if (
-        event.source.casting.time.progress >= event.source.casting.time.duration
-      ) {
+      if (event.source.casting.time.progress >= event.source.casting.time.duration) {
         event.source.finishCast();
       }
     }
   });
 
-  battle.on(BattleEvents.UnitStopCast, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitStopCast, EventPriority.Exact, (event) => {
     event.source.casting = undefined;
     queue.delete(event.source);
 
@@ -221,7 +212,7 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFinishCast, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFinishCast, EventPriority.Exact, (event) => {
     const casting = event.source.casting;
     if (casting) {
       event.source.stopCast();
@@ -240,15 +231,12 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, (event) => {
     if (event.source === event.target) {
       // Look up all casting units and stop those whose current target
       // is the switching unit
       for (const unit of queue) {
-        if (
-          isCastingTargetUnit(unit, event.source) ||
-          isCastingTargetUnit(unit, event.target)
-        ) {
+        if (isCastingTargetUnit(unit, event.source) || isCastingTargetUnit(unit, event.target)) {
           unit.stopCast();
         }
       }
@@ -275,7 +263,7 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, (event) => {
     // look up all casting units whose current target is this unit.
     for (const unit of queue) {
       if (isCastingTargetUnit(unit, event.source)) {
@@ -284,25 +272,25 @@ export function setupCastingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, (event) => {
     if (event.source.casting) {
       event.source.stopCast();
     }
   });
 }
 
-function isChannelingTargetUnit(caster: Unit, target: Unit) {
+function isChannelingTargetUnit(caster: Unit, target: Unit): boolean {
   return (
-    caster.channeling &&
+    !!caster.channeling &&
     caster.channeling.target.type === MoveTargetType.Unit &&
     caster.channeling.target.unit === target
   );
 }
 
-export function setupChannelingMechanics(battle: Battle) {
+export function setupChannelingMechanics(battle: Battle): void {
   const queue = new Set<Unit>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, (event) => {
     for (const unit of queue) {
       // advance timer
       if (unit.channeling) {
@@ -320,13 +308,13 @@ export function setupChannelingMechanics(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanChannel, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitCanChannel, EventPriority.Exact, (event) => {
     if (event.success) {
       event.success =
         // Caster must be alive
         event.source.alive &&
         // Caster must not be casting/channeling
-        !!(event.source.casting || event.source.channeling) &&
+        !!(event.source.casting ?? event.source.channeling) &&
         // Move must not be disabled
         !event.source.moves[event.move]?.disabled;
 
@@ -337,11 +325,8 @@ export function setupChannelingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitChannel, EventPriority.Exact, event => {
-    const castTime = event.source.checkMoveChannelTime(
-      event.move,
-      event.target,
-    );
+  battle.on(BattleEvents.UnitChannel, EventPriority.Exact, (event) => {
+    const castTime = event.source.checkMoveChannelTime(event.move, event.target);
 
     event.source.channeling = {
       target: event.target,
@@ -361,23 +346,20 @@ export function setupChannelingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitUpdateChannel, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitUpdateChannel, EventPriority.Exact, (event) => {
     if (event.source.channeling) {
       event.source.channeling = {
         ...event.source.channeling,
         ...event.data,
       };
 
-      if (
-        event.source.channeling.time.progress >=
-        event.source.channeling.time.duration
-      ) {
+      if (event.source.channeling.time.progress >= event.source.channeling.time.duration) {
         event.source.finishChannel();
       }
     }
   });
 
-  battle.on(BattleEvents.UnitStopChannel, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitStopChannel, EventPriority.Exact, (event) => {
     event.source.channeling = undefined;
     queue.delete(event.source);
 
@@ -386,31 +368,23 @@ export function setupChannelingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFinishChannel, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFinishChannel, EventPriority.Exact, (event) => {
     const channeling = event.source.channeling;
     if (channeling) {
       // Stop channeling
       event.source.stopChannel();
 
       // Trigger move
-      event.source.triggerMove(
-        channeling.move,
-        channeling.target,
-        channeling.steps,
-      );
+      event.source.triggerMove(channeling.move, channeling.target, channeling.steps);
 
       // Recast move if step is more than 1
       if (channeling.steps > 0) {
-        event.source.channel(
-          channeling.move,
-          channeling.target,
-          channeling.steps - 1,
-        );
+        event.source.channel(channeling.move, channeling.target, channeling.steps - 1);
       }
     }
   });
 
-  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, (event) => {
     if (event.source === event.target) {
       // Look up all casting units and stop those whose current target
       // is the switching unit
@@ -445,7 +419,7 @@ export function setupChannelingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFaints, EventPriority.Exact, (event) => {
     // look up all channeling units whose current target is this unit.
     for (const unit of queue) {
       if (isChannelingTargetUnit(unit, event.source)) {
@@ -454,19 +428,19 @@ export function setupChannelingMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitInterrupt, EventPriority.Exact, (event) => {
     if (event.source.channeling) {
       event.source.stopChannel();
     }
   });
 }
 
-export function setupCooldownMechanics(battle: Battle) {
+export function setupCooldownMechanics(battle: Battle): void {
   const queue = new Set<MoveState>();
 
   const PP_COOLDOWN_BASIS = 180; // How many usages is possible within 3 minutes
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, (event) => {
     for (const state of queue) {
       // advance timer
       if (state.cooldown) {
@@ -481,15 +455,12 @@ export function setupCooldownMechanics(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.UnitStartCooldown, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitStartCooldown, EventPriority.Exact, (event) => {
     const data = event.source.moves[event.move];
     if (data) {
       data.cooldown = {
         progress: 0,
-        duration:
-          (PP_COOLDOWN_BASIS /
-            event.source.checkMovePP(event.move, event.target)) *
-          1000,
+        duration: (PP_COOLDOWN_BASIS / event.source.checkMovePP(event.move, event.target)) * 1000,
       };
 
       queue.add(data);
@@ -500,7 +471,7 @@ export function setupCooldownMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitFinishCooldown, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitFinishCooldown, EventPriority.Exact, (event) => {
     const data = event.source.moves[event.move];
     if (data) {
       data.cooldown = undefined;
@@ -511,7 +482,7 @@ export function setupCooldownMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitUpdateCooldown, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitUpdateCooldown, EventPriority.Exact, (event) => {
     const state = event.source.moves[event.move];
     if (state?.cooldown) {
       state.cooldown = {
@@ -525,7 +496,7 @@ export function setupCooldownMechanics(battle: Battle) {
   });
 }
 
-function targetTeamUnits(source: Unit, move: Moves, team: Team, steps: number) {
+function targetTeamUnits(source: Unit, move: Moves, team: Team, steps: number): void {
   for (const unit of team.units) {
     if (source !== unit) {
       source.triggerMoveTarget(
@@ -540,12 +511,7 @@ function targetTeamUnits(source: Unit, move: Moves, team: Team, steps: number) {
   }
 }
 
-function targetAllianceUnits(
-  source: Unit,
-  move: Moves,
-  alliance: Alliance,
-  steps: number,
-) {
+function targetAllianceUnits(source: Unit, move: Moves, alliance: Alliance, steps: number): void {
   for (const team of alliance.teams) {
     if (team !== source.team) {
       targetTeamUnits(source, move, team, steps);
@@ -553,7 +519,7 @@ function targetAllianceUnits(
   }
 }
 
-function targetTeam(source: Unit, move: Moves, team: Team, steps: number) {
+function targetTeam(source: Unit, move: Moves, team: Team, steps: number): void {
   source.triggerMoveTarget(
     move,
     {
@@ -564,12 +530,7 @@ function targetTeam(source: Unit, move: Moves, team: Team, steps: number) {
   );
 }
 
-function targetAllianceTeams(
-  source: Unit,
-  move: Moves,
-  alliance: Alliance,
-  steps: number,
-) {
+function targetAllianceTeams(source: Unit, move: Moves, alliance: Alliance, steps: number): void {
   for (const team of alliance.teams) {
     if (team !== source.team) {
       targetTeam(source, move, team, steps);
@@ -577,10 +538,10 @@ function targetAllianceTeams(
   }
 }
 
-export function setupTriggerMoveMechanics(battle: Battle) {
+export function setupTriggerMoveMechanics(battle: Battle): void {
   const triggerMoveData = new Set<TriggerMoveData>();
 
-  function triggerMoveUpdate(data: Partial<TriggerMoveData>) {
+  function triggerMoveUpdate(data: Partial<TriggerMoveData>): void {
     battle.emit(BattleEvents.UnitTriggerMoveUpdate, {
       id: 'UnitTriggerMoveUpdate',
       disabled: false,
@@ -588,7 +549,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     });
   }
 
-  function triggerMoveEnd(data: UnitTriggerMoveEvent) {
+  function triggerMoveEnd(data: UnitTriggerMoveEvent): void {
     battle.emit(BattleEvents.UnitTriggerMoveEnd, {
       ...data,
       id: 'UnitTriggerMoveEnd',
@@ -596,7 +557,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     });
   }
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, (event) => {
     for (const data of triggerMoveData) {
       data.time.progress += event.duration;
 
@@ -614,7 +575,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, (event) => {
     const duration = event.source.checkMoveDelay(event.move, event.target);
 
     // No delay: resolve in the same frame
@@ -638,7 +599,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, (event) => {
     const moveData = getMoveData(event.move);
 
     /**
@@ -663,31 +624,16 @@ export function setupTriggerMoveMechanics(battle: Battle) {
         }
         // Target the units from own team
         if (moveData.target & MoveTargetFlags.Own) {
-          targetTeamUnits(
-            event.source,
-            event.move,
-            event.source.team,
-            event.steps,
-          );
+          targetTeamUnits(event.source, event.move, event.source.team, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Ally) {
-          targetAllianceUnits(
-            event.source,
-            event.move,
-            event.source.team.alliance,
-            event.steps,
-          );
+          targetAllianceUnits(event.source, event.move, event.source.team.alliance, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
           const ownAlliance = event.source.team.alliance;
           for (const alliance of battle.alliances) {
             if (alliance !== ownAlliance) {
-              targetAllianceUnits(
-                event.source,
-                event.move,
-                alliance,
-                event.steps,
-              );
+              targetAllianceUnits(event.source, event.move, alliance, event.steps);
             }
           }
         }
@@ -697,23 +643,13 @@ export function setupTriggerMoveMechanics(battle: Battle) {
           targetTeam(event.source, event.move, event.source.team, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Ally) {
-          targetAllianceTeams(
-            event.source,
-            event.move,
-            event.source.team.alliance,
-            event.steps,
-          );
+          targetAllianceTeams(event.source, event.move, event.source.team.alliance, event.steps);
         }
         if (moveData.target & MoveTargetFlags.Enemy) {
           const ownAlliance = event.source.team.alliance;
           for (const alliance of battle.alliances) {
             if (alliance !== ownAlliance) {
-              targetAllianceTeams(
-                event.source,
-                event.move,
-                alliance,
-                event.steps,
-              );
+              targetAllianceTeams(event.source, event.move, alliance, event.steps);
             }
           }
         }
@@ -724,42 +660,26 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     }
   });
 
-  battle.on(
-    BattleEvents.UnitTriggerMoveResolveAccuracy,
-    EventPriority.Exact,
-    event => {
-      const parent = event.parent;
-      const baseAccuracy = parent.source.checkMoveAccuracy(
-        parent.move,
-        parent.target,
-      );
+  battle.on(BattleEvents.UnitTriggerMoveResolveAccuracy, EventPriority.Exact, (event) => {
+    const parent = event.parent;
+    const baseAccuracy = parent.source.checkMoveAccuracy(parent.move, parent.target);
 
-      if (baseAccuracy) {
-        /**
-         *  Base modifier for accuracy
-         */
-        let accuracyStage = parent.source.checkStage(
-          Stages.Accuracy,
-          StatFlags.Attack,
-        );
-        if (parent.target.type === MoveTargetType.Unit) {
-          accuracyStage -= parent.target.unit.checkStage(
-            Stages.Evasion,
-            StatFlags.Attack,
-          );
+    if (baseAccuracy) {
+      /**
+       *  Base modifier for accuracy
+       */
+      let accuracyStage = parent.source.checkStage(Stages.Accuracy, StatFlags.Attack);
+      if (parent.target.type === MoveTargetType.Unit) {
+        accuracyStage -= parent.target.unit.checkStage(Stages.Evasion, StatFlags.Attack);
 
-          accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
-        }
-        event.accuracy =
-          baseAccuracy *
-          (accuracyStage < 0
-            ? 3 / (3 - accuracyStage)
-            : (3 + accuracyStage) / 3);
+        accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
       }
-    },
-  );
+      event.accuracy =
+        baseAccuracy * (accuracyStage < 0 ? 3 / (3 - accuracyStage) : (3 + accuracyStage) / 3);
+    }
+  });
 
-  function resolveMoveAccuracy(parent: UnitTriggerMoveEvent) {
+  function resolveMoveAccuracy(parent: UnitTriggerMoveEvent): number | undefined {
     const event: UnitTriggerMoveResolveAccuracyEvent = {
       id: 'UnitTriggerMoveResolveAccuracy',
       disabled: false,
@@ -769,15 +689,14 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     return event.accuracy;
   }
 
-  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Exact, (event) => {
     if (!event.hit) {
       const actualAccuracy = resolveMoveAccuracy(event.parent);
-      event.hit =
-        actualAccuracy == null || battle.random() * 100 <= actualAccuracy;
+      event.hit = actualAccuracy == null || battle.random() * 100 <= actualAccuracy;
     }
   });
 
-  function rollHit(parent: UnitTriggerMoveEvent) {
+  function rollHit(parent: UnitTriggerMoveEvent): boolean {
     const event: UnitTriggerMoveRollHitEvent = {
       id: 'TriggerMovUnitTriggerMoveRollHiteRollHit',
       disabled: false,
@@ -788,7 +707,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     return event.hit;
   }
 
-  function triggerFailed(parent: UnitTriggerMoveEvent) {
+  function triggerFailed(parent: UnitTriggerMoveEvent): void {
     battle.emit(BattleEvents.UnitTriggerMoveFailed, {
       id: 'UnitTriggerMoveFailed',
       disabled: false,
@@ -796,7 +715,7 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     });
   }
 
-  function triggerMiss(parent: UnitTriggerMoveEvent) {
+  function triggerMiss(parent: UnitTriggerMoveEvent): void {
     battle.emit(BattleEvents.UnitTriggerMoveMissed, {
       id: 'UnitTriggerMoveMissed',
       disabled: false,
@@ -804,18 +723,14 @@ export function setupTriggerMoveMechanics(battle: Battle) {
     });
   }
 
-  battle.on(BattleEvents.UnitTriggerMoveTarget, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveTarget, EventPriority.Exact, (event) => {
     const currentSource = event.source;
     const currentMove = event.move;
     // Get the move's type
     const currentType = currentSource.checkMoveType(currentMove, event.target);
 
     // Check for the target's immunity
-    const isImmune = currentSource.checkMoveImmunity(
-      currentMove,
-      event.target,
-      currentType,
-    );
+    const isImmune = currentSource.checkMoveImmunity(currentMove, event.target, currentType);
 
     // if the target is immune, skip
     if (isImmune) {
@@ -833,8 +748,8 @@ export function setupTriggerMoveMechanics(battle: Battle) {
   });
 }
 
-export function setupAttackMechanics(battle: Battle) {
-  function resolveCriticalHitRatio(parent: UnitAttackEvent) {
+export function setupAttackMechanics(battle: Battle): void {
+  function resolveCriticalHitRatio(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackCheckCriticalRatio',
       disabled: false,
@@ -844,7 +759,7 @@ export function setupAttackMechanics(battle: Battle) {
     battle.emit(BattleEvents.UnitAttackCheckCriticalRatio, event);
     return event.value;
   }
-  function resolveCriticalHit(parent: UnitAttackEvent) {
+  function resolveCriticalHit(parent: UnitAttackEvent): boolean {
     const event: UnitAttackResolveCriticalEvent = {
       id: 'UnitAttackResolveCriticalHit',
       disabled: false,
@@ -855,7 +770,7 @@ export function setupAttackMechanics(battle: Battle) {
     return event.critical;
   }
 
-  function resolveDamage(parent: UnitAttackEvent) {
+  function resolveDamage(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackResolveDamage',
       disabled: false,
@@ -871,7 +786,7 @@ export function setupAttackMechanics(battle: Battle) {
     unit: Unit,
     stat: Stats,
     value: number,
-  ) {
+  ): number {
     const event: UnitAttackResolveStatEvent = {
       id: 'UnitAttackResolveStat',
       disabled: false,
@@ -884,7 +799,7 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
-  function resolveSTAB(parent: UnitAttackEvent) {
+  function resolveSTAB(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackResolveStage',
       disabled: false,
@@ -895,7 +810,7 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
-  function resolveCriticalMult(parent: UnitAttackEvent) {
+  function resolveCriticalMult(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackResolveStage',
       disabled: false,
@@ -906,7 +821,7 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
-  function resolveEffectiveness(parent: UnitAttackEvent, defendingType: Types) {
+  function resolveEffectiveness(parent: UnitAttackEvent, defendingType: Types): number {
     const event: UnitAttackResolveEffectivenessEvent = {
       id: 'UnitAttackResolveEffectiveness',
       disabled: false,
@@ -918,32 +833,20 @@ export function setupAttackMechanics(battle: Battle) {
     return event.multiplier;
   }
 
-  battle.on(
-    BattleEvents.UnitAttackResolveEffectiveness,
-    EventPriority.Exact,
-    event => {
-      const effectivenessTable = TYPE_EFFECTIVENESS[event.parent.type];
+  battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Exact, (event) => {
+    const result = TYPE_EFFECTIVENESS[event.parent.type][event.defendingType];
 
-      if (effectivenessTable) {
-        const result = effectivenessTable[event.defendingType];
+    // Explicit null check: TypeEffectiveness.Effective is 0
+    if (result != null) {
+      event.multiplier *= TYPE_EFFECTIVENESS_FACTOR[result];
+    }
+  });
 
-        // Explicit null check: TypeEffectiveness.Effective is 0
-        if (result != null) {
-          event.multiplier *= TYPE_EFFECTIVENESS_FACTOR[result];
-        }
-      }
-    },
-  );
+  battle.on(BattleEvents.UnitAttackResolveCriticalMult, EventPriority.Exact, (event) => {
+    event.value = 2;
+  });
 
-  battle.on(
-    BattleEvents.UnitAttackResolveCriticalMult,
-    EventPriority.Exact,
-    event => {
-      event.value = 2;
-    },
-  );
-
-  battle.on(BattleEvents.UnitAttackResolveSTAB, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitAttackResolveSTAB, EventPriority.Exact, (event) => {
     if (event.parent.source.types.has(event.parent.type)) {
       event.value = 1.5;
     } else {
@@ -951,17 +854,11 @@ export function setupAttackMechanics(battle: Battle) {
     }
   });
 
-  battle.on(
-    BattleEvents.UnitAttackResolveCriticalChance,
-    EventPriority.Exact,
-    event => {
-      event.value =
-        (1 / 16) *
-        2 ** Math.min(Math.max(0, resolveCriticalHitRatio(event.parent)), 4);
-    },
-  );
+  battle.on(BattleEvents.UnitAttackResolveCriticalChance, EventPriority.Exact, (event) => {
+    event.value = (1 / 16) * 2 ** Math.min(Math.max(0, resolveCriticalHitRatio(event.parent)), 4);
+  });
 
-  function resolveCriticalHitChance(parent: UnitAttackEvent) {
+  function resolveCriticalHitChance(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackResolveCriticalChance',
       disabled: false,
@@ -972,109 +869,97 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
-  battle.on(
-    BattleEvents.UnitAttackResolveCriticalHit,
-    EventPriority.Exact,
-    event => {
-      if (!event.critical) {
-        const chance = resolveCriticalHitChance(event.parent);
-        event.critical = chance == null || battle.random() <= chance;
+  battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Exact, (event) => {
+    if (!event.critical) {
+      const chance = resolveCriticalHitChance(event.parent);
+      event.critical = battle.random() <= chance;
+    }
+  });
+
+  battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Exact, (event) => {
+    /**
+     * Refer to Gen V+ calculation
+     *
+     * https://bulbapedia.bulbagarden.net/wiki/Damage#Damage_calculation
+     */
+
+    const parent = event.parent;
+    const source = parent.source;
+    const target = parent.target;
+
+    const category = parent.category;
+
+    // multiply to effective attack stat
+    if (event.parent.flags & MoveAttackFlags.Pure) {
+      // do nothing
+    } else {
+      if (category !== MoveCategories.Status) {
+        // Base amount
+        let base = (2 * source.level) / 5 + 2;
+
+        // multiply to power
+        base *= event.value;
+
+        let isCritical = false;
+
+        // If critical is enabled, roll for a hit
+        if (event.parent.flags & MoveAttackFlags.Critical) {
+          isCritical = resolveCriticalHit(event.parent);
+        }
+
+        // Get stat stage
+        const preferredAttackStat =
+          category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack;
+        const preferredDefenseStat =
+          category === MoveCategories.Physical ? Stats.Defense : Stats.SpecialDefense;
+
+        let statFlag = StatFlags.Attack;
+
+        // For critical hit, set a flag that ignores the negative attack/positive defense stages
+        if (isCritical) {
+          statFlag |= StatFlags.Critical;
+        }
+
+        const attackStat = resolveAttackStat(
+          parent,
+          source,
+          preferredAttackStat,
+          source.resolveStat(preferredAttackStat, statFlag),
+        );
+        const defenseStat = resolveAttackStat(
+          parent,
+          target,
+          preferredDefenseStat,
+          target.resolveStat(preferredDefenseStat, statFlag),
+        );
+
+        base *= attackStat / Math.max(1, defenseStat);
+        base = base / 50 + 2;
+
+        event.value = base;
+
+        if (isCritical) {
+          event.value *= resolveCriticalMult(parent);
+        }
+
+        // Random factor: 85% to 100%
+        event.value *= battle.randomRange(0.85, 1);
       }
-    },
-  );
 
-  battle.on(
-    BattleEvents.UnitAttackResolveDamage,
-    EventPriority.Exact,
-    event => {
-      /**
-       * Refer to Gen V+ calculation
-       *
-       * https://bulbapedia.bulbagarden.net/wiki/Damage#Damage_calculation
-       */
-
-      const parent = event.parent;
-      const source = parent.source;
-      const target = parent.target;
-
-      const category = parent.category;
-
-      // multiply to effective attack stat
-      if (event.parent.flags & MoveAttackFlags.Pure) {
-        // do nothing
-      } else {
-        if (category !== MoveCategories.Status) {
-          // Base amount
-          let base = (2 * source.level) / 5 + 2;
-
-          // multiply to power
-          base *= event.value;
-
-          let isCritical = false;
-
-          // If critical is enabled, roll for a hit
-          if (event.parent.flags & MoveAttackFlags.Critical) {
-            isCritical = resolveCriticalHit(event.parent);
-          }
-
-          // Get stat stage
-          const preferredAttackStat =
-            category === MoveCategories.Physical
-              ? Stats.Attack
-              : Stats.SpecialAttack;
-          const preferredDefenseStat =
-            category === MoveCategories.Physical
-              ? Stats.Defense
-              : Stats.SpecialDefense;
-
-          let statFlag = StatFlags.Attack;
-
-          // For critical hit, set a flag that ignores the negative attack/positive defense stages
-          if (isCritical) {
-            statFlag |= StatFlags.Critical;
-          }
-
-          const attackStat = resolveAttackStat(
-            parent,
-            source,
-            preferredAttackStat,
-            source.resolveStat(preferredAttackStat, statFlag),
-          );
-          const defenseStat = resolveAttackStat(
-            parent,
-            target,
-            preferredDefenseStat,
-            target.resolveStat(preferredDefenseStat, statFlag),
-          );
-
-          base *= attackStat / Math.max(1, defenseStat);
-          base = base / 50 + 2;
-
-          event.value = base;
-
-          if (isCritical) {
-            event.value *= resolveCriticalMult(parent);
-          }
-
-          // Random factor: 85% to 100%
-          event.value *= battle.randomRange(0.85, 1);
-        }
-
-        if (event.parent.flags & MoveAttackFlags.Confused) {
-          return;
-        }
-        // Calculate type effectiveness
-        for (const type of target.types) {
-          event.value *= resolveEffectiveness(parent, type);
-        }
-
-        // STAB
-        event.value *= resolveSTAB(parent);
+      if (event.parent.flags & MoveAttackFlags.Confused) {
+        return;
       }
-    },
-  );
+      // Calculate type effectiveness
+      for (const type of target.types) {
+        event.value *= resolveEffectiveness(parent, type);
+      }
 
-  function runAttackEffect(parent: UnitAttackEvent) {
+      // STAB
+      event.value *= resolveSTAB(parent);
+    }
+  });
+
+  function runAttackEffect(parent: UnitAttackEvent): void {
     battle.emit(BattleEvents.UnitAttackEffect, {
       id: 'UnitAttackEffect',
       disabled: false,
@@ -1082,8 +967,8 @@ export function setupAttackMechanics(battle: Battle) {
     });
   }
 
-  function checkUnitAttackEffect(parent: UnitAttackEvent) {
-    const event = {
+  function checkUnitAttackEffect(parent: UnitAttackEvent): boolean {
+    const event: CheckUnitAttackEffectEvent = {
       id: 'CheckUnitAttackEffect',
       disabled: false,
       parent,
@@ -1093,8 +978,8 @@ export function setupAttackMechanics(battle: Battle) {
     return event.success;
   }
 
-  function checkUnitAttackEffectChance(parent: UnitAttackEvent) {
-    const event = {
+  function checkUnitAttackEffectChance(parent: UnitAttackEvent): number | undefined {
+    const event: CheckUnitAttackEffectChanceEvent = {
       id: 'CheckUnitAttackEffect',
       disabled: false,
       parent,
@@ -1104,11 +989,11 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
-  battle.on(BattleEvents.CheckUnitAttackEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitAttackEffect, EventPriority.Exact, (event) => {
     event.success = event.parent.source.alive && event.parent.target.alive;
   });
 
-  battle.on(BattleEvents.UnitAttack, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitAttack, EventPriority.Exact, (event) => {
     if (event.target.alive) {
       const amount = resolveDamage(event);
 

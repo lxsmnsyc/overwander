@@ -2,15 +2,16 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { MoveTargetPriorities } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import {
   BattleEvents,
   type CheckTeamAIUnitEvent,
   type CheckUnitAIRatingEvent,
   MoveTargetType,
 } from '../events';
-import type { Team } from '../team';
-import type { Unit } from '../unit';
+import type Team from '../team';
+import type Unit from '../unit';
+import { hasAnyStatus } from '../utils';
 
 const RATED_STATS = [
   Stats.Attack,
@@ -23,7 +24,7 @@ const RATED_STATS = [
 /**
  * Major conditions that hamper a unit beyond its raw stats
  */
-const HAMPERING_STATUS = [
+const HAMPERING_STATUS = new Set<Statuses>([
   Statuses.Poisoned,
   Statuses.BadlyPoisoned,
   Statuses.Burned,
@@ -31,14 +32,14 @@ const HAMPERING_STATUS = [
   Statuses.Sleeping,
   Statuses.Frozen,
   Statuses.Confused,
-];
+]);
 
 const HAMPERING_FACTOR = 0.75;
 
 /**
  * How strong a unit currently is. Internal to the AI module.
  */
-export function checkUnitRating(battle: Battle, source: Unit) {
+export function checkUnitRating(battle: Battle, source: Unit): number {
   const event: CheckUnitAIRatingEvent = {
     id: 'CheckUnitAIRating',
     disabled: false,
@@ -58,7 +59,7 @@ export function checkTeamUnit(
   team: Team,
   priority: MoveTargetPriorities,
   exclude?: Unit,
-) {
+): Unit | undefined {
   const event: CheckTeamAIUnitEvent = {
     id: 'CheckTeamAIUnit',
     disabled: false,
@@ -71,9 +72,9 @@ export function checkTeamUnit(
   return event.unit;
 }
 
-export function setupRatingAI(battle: Battle) {
+export function setupRatingAI(battle: Battle): void {
   // Base rating: current health plus resolved stats (stages included)
-  battle.on(BattleEvents.CheckUnitAIRating, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitAIRating, EventPriority.Exact, (event) => {
     let rating = event.source.health;
 
     for (const stat of RATED_STATS) {
@@ -84,8 +85,8 @@ export function setupRatingAI(battle: Battle) {
   });
 
   // Hampering statuses drag the rating down
-  battle.on(BattleEvents.CheckUnitAIRating, EventPriority.Post, event => {
-    if (HAMPERING_STATUS.some(status => event.source.status[status])) {
+  battle.on(BattleEvents.CheckUnitAIRating, EventPriority.Post, (event) => {
+    if (hasAnyStatus(event.source, HAMPERING_STATUS)) {
       event.rating *= HAMPERING_FACTOR;
     }
   });
@@ -95,7 +96,7 @@ export function setupRatingAI(battle: Battle) {
    * threatening enemy scores higher, so the AI concentrates fire on
    * the biggest current threat instead of spreading it arbitrarily.
    */
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
     if (event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -107,9 +108,7 @@ export function setupRatingAI(battle: Battle) {
       return;
     }
 
-    const ratio =
-      checkUnitRating(battle, target) /
-      Math.max(1, checkUnitRating(battle, source));
+    const ratio = checkUnitRating(battle, target) / Math.max(1, checkUnitRating(battle, source));
 
     if (ratio >= 1.5) {
       event.score += 3;
@@ -121,7 +120,7 @@ export function setupRatingAI(battle: Battle) {
   });
 
   // Resolver: pick the team's unit by priority
-  battle.on(BattleEvents.CheckTeamAIUnit, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckTeamAIUnit, EventPriority.Exact, (event) => {
     const candidates: Unit[] = [];
 
     for (const unit of event.team.units) {

@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface SemiInvulnerableConfig {
   /**
@@ -40,7 +40,7 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   },
 };
 
-function getSemiInvulnerableConfig(target: Unit) {
+function getSemiInvulnerableConfig(target: Unit): SemiInvulnerableConfig | undefined {
   const cause = target.status[Statuses.Invulnerable];
 
   if (cause && cause.type === EffectType.Move) {
@@ -50,8 +50,8 @@ function getSemiInvulnerableConfig(target: Unit) {
   return undefined;
 }
 
-export function setupSemiInvulnerableMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+export default function setupSemiInvulnerableMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move in SEMI_INVULNERABLE_MOVES) {
       const cause = {
         type: EffectType.Move,
@@ -75,7 +75,7 @@ export function setupSemiInvulnerableMoves(battle: Battle) {
    * base accuracy means "no accuracy check" to the resolver, so zeroing
    * the accuracy would guarantee a hit instead of a miss.
    */
-  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
     const target = event.parent.target;
 
     if (event.hit && target.type === MoveTargetType.Unit) {
@@ -88,7 +88,7 @@ export function setupSemiInvulnerableMoves(battle: Battle) {
   });
 
   // Reaching moves that punish the hiding spot deal double damage
-  battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
     const config = getSemiInvulnerableConfig(event.parent.target);
 
     if (config?.doubled.has(event.parent.move)) {

@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 /**
  * Moves that deal a fixed amount of damage: no stat calculation, no
@@ -16,7 +16,7 @@ const FIXED_DAMAGE_MOVES: {
   [key in Moves]?: (source: Unit, target: Unit) => number;
 } = {
   // https://bulbapedia.bulbagarden.net/wiki/Seismic_Toss_(move)
-  [Moves.SeismicToss]: source => source.level,
+  [Moves.SeismicToss]: (source) => source.level,
   // https://bulbapedia.bulbagarden.net/wiki/Dragon_Rage_(move)
   [Moves.DragonRage]: () => 40,
   // https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)
@@ -26,19 +26,14 @@ const FIXED_DAMAGE_MOVES: {
   // https://bulbapedia.bulbagarden.net/wiki/Super_Fang_(move)
   [Moves.SuperFang]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)
-  [Moves.Psywave]: source =>
-    Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
+  [Moves.Psywave]: (source) => Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
 };
 
-export function setupFixedDamageMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+export default function setupFixedDamageMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const getAmount = FIXED_DAMAGE_MOVES[event.move];
 
-    if (
-      getAmount &&
-      event.target.type === MoveTargetType.Unit &&
-      event.steps === 0
-    ) {
+    if (getAmount && event.target.type === MoveTargetType.Unit && event.steps === 0) {
       event.source.attack(
         event.target.unit,
         event.move,

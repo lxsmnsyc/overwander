@@ -33,10 +33,7 @@ export const TYPE_EFFECTIVENESS_FACTOR: Record<TypeEffectiveness, number> = {
   [TypeEffectiveness.Immune]: 0,
 };
 
-export const TYPE_EFFECTIVENESS: Record<
-  Types,
-  { [type in Types]?: TypeEffectiveness }
-> = {
+export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffectiveness }> = {
   [Types.Normal]: {
     [Types.Ghost]: TypeEffectiveness.Immune,
 

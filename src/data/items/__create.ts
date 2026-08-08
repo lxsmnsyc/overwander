@@ -1,4 +1,4 @@
-import type { Items, ItemTypes } from '../ids/items';
+import type { ItemTypes, Items } from '../ids/items';
 
 export interface ItemData {
   name: string;
@@ -13,7 +13,7 @@ export interface ItemData {
 
 const ITEM_DATA = new Map<Items, ItemData>();
 
-export function registerItem(item: Items, data: ItemData) {
+export function registerItem(item: Items, data: ItemData): void {
   ITEM_DATA.set(item, data);
 }
 

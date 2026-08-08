@@ -1,11 +1,11 @@
-import { setupGen1Abilities } from '../../src/battle/abilities/gen-1';
+import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
-import { Alliance } from '../../src/battle/alliance';
-import { Battle } from '../../src/battle/core';
-import { setupItems } from '../../src/battle/items';
-import { setupAbilityMechanics } from '../../src/battle/mechanics/ability';
-import { setupAllianceMechanics } from '../../src/battle/mechanics/alliance';
-import { setupItemMechanics } from '../../src/battle/mechanics/item';
+import Alliance from '../../src/battle/alliance';
+import Battle from '../../src/battle/core';
+import setupItems from '../../src/battle/items';
+import setupAbilityMechanics from '../../src/battle/mechanics/ability';
+import setupAllianceMechanics from '../../src/battle/mechanics/alliance';
+import setupItemMechanics from '../../src/battle/mechanics/item';
 import {
   setupAttackMechanics,
   setupCastingMechanics,
@@ -14,17 +14,17 @@ import {
   setupMoveMechanics,
   setupTriggerMoveMechanics,
 } from '../../src/battle/mechanics/move';
-import { setupTeamMechanics } from '../../src/battle/mechanics/team';
-import { setupUnitMechanics } from '../../src/battle/mechanics/unit';
-import { setupWeatherMechanics } from '../../src/battle/mechanics/weather';
-import { setupMoves } from '../../src/battle/moves';
-import { seupStatus } from '../../src/battle/status';
-import { Team } from '../../src/battle/team';
-import { Unit } from '../../src/battle/unit';
+import setupTeamMechanics from '../../src/battle/mechanics/team';
+import setupUnitMechanics from '../../src/battle/mechanics/unit';
+import setupWeatherMechanics from '../../src/battle/mechanics/weather';
+import setupMoves from '../../src/battle/moves';
+import setupStatus from '../../src/battle/status';
+import Team from '../../src/battle/team';
+import Unit from '../../src/battle/unit';
 import { Stats, StatsKind } from '../../src/data/constants/stats';
 import type { Types } from '../../src/data/constants/types';
-import { registerItems } from '../../src/data/items';
-import { registerGen1Moves } from '../../src/data/moves/gen-1';
+import registerItems from '../../src/data/items';
+import registerGen1Moves from '../../src/data/moves/gen-1';
 import { registerSpecies } from '../../src/data/species';
 
 let dataRegistered = false;
@@ -65,8 +65,8 @@ export function createBattle(seed = 'test-seed'): BattleHarness {
   setupTriggerMoveMechanics(battle);
   setupAttackMechanics(battle);
   setupMoves(battle);
-  seupStatus(battle);
-  setupGen1Abilities(battle);
+  setupStatus(battle);
+  setupAbilities(battle);
   setupItems(battle);
   // Rating resolver only; the idle AI loop stays out of tests
   setupRatingAI(battle);
@@ -96,7 +96,7 @@ const ALL_STATS = [
  * Level 50 unit with 100 in every base stat (105 in each battle stat,
  * 160 max HP) at full health.
  */
-export function createUnit(battle: Battle, team: Team, types: Types[] = []) {
+export function createUnit(battle: Battle, team: Team, types: Types[] = []): Unit {
   const unit = new Unit(battle, team);
   team.addUnit(unit);
 
@@ -118,6 +118,6 @@ export function createUnit(battle: Battle, team: Team, types: Types[] = []) {
 /**
  * Pin the battle RNG to a fixed value for deterministic rolls.
  */
-export function pinRandom(battle: Battle, value: number) {
+export function pinRandom(battle: Battle, value: number): void {
   battle.random = () => value;
 }

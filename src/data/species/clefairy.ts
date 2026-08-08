@@ -1,8 +1,8 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
@@ -42,7 +42,7 @@ const FAMILY_TEACHABLE = [
   Moves.Flash,
 ];
 
-export function registerClefairySpecies() {
+export default function registerClefairySpecies(): void {
   registerSpecies(Species.Clefairy, {
     dexNumber: 35,
     name: 'Clefairy',
@@ -57,11 +57,7 @@ export function registerClefairySpecies() {
       [Stats.Speed]: 35,
     },
     types: [Types.Fairy],
-    abilities: [
-      Abilities.FriendGuard,
-      Abilities.CuteCharm,
-      Abilities.MagicGuard,
-    ],
+    abilities: [Abilities.FriendGuard, Abilities.CuteCharm, Abilities.MagicGuard],
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 150,

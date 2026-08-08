@@ -15,7 +15,7 @@ export const enum StatsKind {
   Effort = 2,
 }
 
-export function createStatsField() {
+export function createStatsField(): StatsField {
   return {
     [Stats.HP]: 0,
     [Stats.Attack]: 0,
@@ -38,7 +38,7 @@ export const enum Stages {
 
 export type StagesField = { [key in Stages]: number };
 
-export function createStagesField() {
+export function createStagesField(): StagesField {
   return {
     [Stages.Accuracy]: 0,
     [Stages.Attack]: 0,
@@ -62,6 +62,8 @@ export function getStageFromStat(stat: Stats): Stages | undefined {
       return Stages.SpecialDefense;
     case Stats.Speed:
       return Stages.Speed;
+    // HP has no stage
+    case Stats.HP:
     default:
       return undefined;
   }

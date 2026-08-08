@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
-import { setupIdleAI } from '../../src/battle/ai/idle';
+import setupIdleAI from '../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
-import { Moves, MoveTargetPriorities } from '../../src/data/ids/moves';
+import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
-import { createBattle, createUnit, pinRandom } from './harness';
+import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function createAIBattle() {
+function createAIBattle(): BattleHarness {
   const harness = createBattle();
   setupChooseMoveAI(harness.battle);
   return harness;
@@ -38,15 +38,9 @@ describe('unit rating', () => {
     const weak = createUnit(battle, teamA);
     weak.setHealth(20);
 
-    expect(checkTeamUnit(battle, teamA, MoveTargetPriorities.Strongest)).toBe(
-      strong,
-    );
-    expect(checkTeamUnit(battle, teamA, MoveTargetPriorities.Weakest)).toBe(
-      weak,
-    );
-    expect(
-      checkTeamUnit(battle, teamA, MoveTargetPriorities.Strongest, strong),
-    ).toBe(weak);
+    expect(checkTeamUnit(battle, teamA, MoveTargetPriorities.Strongest)).toBe(strong);
+    expect(checkTeamUnit(battle, teamA, MoveTargetPriorities.Weakest)).toBe(weak);
+    expect(checkTeamUnit(battle, teamA, MoveTargetPriorities.Strongest, strong)).toBe(weak);
   });
 });
 
@@ -64,9 +58,7 @@ describe('choose move', () => {
     const choice = chooseMove(battle, unit);
 
     expect(choice?.move).toBe(Moves.Tackle);
-    expect(
-      choice?.target.type === MoveTargetType.Unit && choice.target.unit,
-    ).toBe(dying);
+    expect(choice?.target.type === MoveTargetType.Unit && choice.target.unit).toBe(dying);
     expect(healthy.health).toBe(160); // scoring never applies damage
   });
 
@@ -82,9 +74,7 @@ describe('choose move', () => {
 
     const choice = chooseMove(battle, unit);
 
-    expect(
-      choice?.target.type === MoveTargetType.Unit && choice.target.unit,
-    ).toBe(threat);
+    expect(choice?.target.type === MoveTargetType.Unit && choice.target.unit).toBe(threat);
   });
 
   it('avoids moves the target is immune to', () => {
@@ -120,7 +110,7 @@ describe('choose move', () => {
 });
 
 describe('idle AI', () => {
-  function createIdleBattle() {
+  function createIdleBattle(): BattleHarness {
     const harness = createBattle();
     setupChooseMoveAI(harness.battle);
     setupIdleAI(harness.battle);

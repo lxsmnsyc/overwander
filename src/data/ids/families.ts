@@ -1,4 +1,4 @@
-export const enum Families {
+const enum Families {
   Bulbasaur = 0,
   Charmander = 1,
   Squirtle = 2,
@@ -15,3 +15,5 @@ export const enum Families {
   Clefairy = 13,
   Vulpix = 14,
 }
+
+export default Families;

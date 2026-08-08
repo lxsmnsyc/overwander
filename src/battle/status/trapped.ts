@@ -2,9 +2,9 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface TrappedData {
   duration: number;
@@ -16,10 +16,10 @@ interface TrappedData {
 const TRAPPED_DURATION = 4000;
 const TRAPPED_TICK = 1000;
 
-export function setupTrappedStatus(battle: Battle) {
+export default function setupTrappedStatus(battle: Battle): void {
   const instances = new Map<Unit, TrappedData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress += event.duration;
       data.duration -= event.duration;
@@ -40,7 +40,7 @@ export function setupTrappedStatus(battle: Battle) {
   timer.stop();
 
   // A trapped unit cannot escape or switch out
-  battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Trapped]) {
       event.success = false;
 
@@ -50,7 +50,7 @@ export function setupTrappedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Trapped && !instances.has(event.source)) {
       instances.set(event.source, {
         duration: TRAPPED_DURATION,
@@ -64,7 +64,7 @@ export function setupTrappedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Trapped) {
       instances.delete(event.source);
 
@@ -74,18 +74,13 @@ export function setupTrappedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, (event) => {
     if (event.status === Statuses.Trapped) {
       // Modern residual damage: 1/8 of max HP
       const amount = event.source.checkStat(Stats.HP, 0) / 8;
 
       if (event.cause.type !== EffectType.None) {
-        event.cause.unit.damage(
-          event.cause,
-          event.source,
-          amount,
-          DamageFlags.Indirect,
-        );
+        event.cause.unit.damage(event.cause, event.source, amount, DamageFlags.Indirect);
       }
     }
   });

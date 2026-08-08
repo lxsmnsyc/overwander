@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Moves, MoveTargetPriorities } from '../../data/ids/moves';
+import { MoveTargetPriorities, Moves } from '../../data/ids/moves';
 import { checkTeamUnit } from '../ai/rating';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 /**
  * Multi-step moves that force a unit off the field, replaced by a
@@ -21,8 +21,8 @@ import type { Unit } from '../unit';
 const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar]);
 const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport]);
 
-export function setupSwitchOutMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+export default function setupSwitchOutMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     // The wind-up step; the semi-invulnerable move group handles the
     // vanishing of self switch-out users.
     if (event.steps !== 0) {
@@ -33,10 +33,7 @@ export function setupSwitchOutMoves(battle: Battle) {
     let priority: MoveTargetPriorities | undefined;
     let forced = false;
 
-    if (
-      FORCED_SWITCH_MOVES.has(event.move) &&
-      event.target.type === MoveTargetType.Unit
-    ) {
+    if (FORCED_SWITCH_MOVES.has(event.move) && event.target.type === MoveTargetType.Unit) {
       unit = event.target.unit;
       priority = MoveTargetPriorities.Weakest;
       forced = true;
@@ -56,17 +53,12 @@ export function setupSwitchOutMoves(battle: Battle) {
      * both the leaving unit and its replacement can escape.
      */
     const canSwitch =
-      replacement != null &&
-      (forced || (unit.checkEscape() && replacement.checkEscape()));
+      replacement != null && (forced || (unit.checkEscape() && replacement.checkEscape()));
 
-    if (canSwitch && replacement) {
+    if (canSwitch) {
       unit.forceSwitch(replacement);
     } else {
-      event.source.triggerMoveEffectFailed(
-        event.move,
-        event.target,
-        event.steps,
-      );
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
     }
   });
 }

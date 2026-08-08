@@ -1,21 +1,22 @@
 {
   "name": "poketerra",
+  "private": true,
   "type": "module",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "vitest run",
     "cs:ver": "changeset version",
     "cs:pub": "changeset publish",
     "cs:add": "changeset add"
   },
-  "publishConfig": {
-    "access": "restricted"
-  },
-  "private": true,
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
     "@lxsmnsyc/oxlint-config": "^0.1.2",
     "oxfmt": "^0.62.0",
     "oxlint": "^1.77.0",
+    "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }

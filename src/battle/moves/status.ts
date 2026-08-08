@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -59,12 +59,12 @@ const EFFECT_STAGE_MOVES: {
  * Whether the move carries a secondary attack effect (used by e.g.
  * Sheer Force)
  */
-export function hasAttackEffect(move: Moves) {
+export function hasAttackEffect(move: Moves): boolean {
   return EFFECT_STATUS_MOVES[move] != null || EFFECT_STAGE_MOVES[move] != null;
 }
 
-function setupUnitStatusMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+function setupUnitStatusMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const targetStatus = STATUS_MOVES[event.move];
 
     // Explicit null check: the first Statuses enum member is 0
@@ -87,18 +87,14 @@ function setupUnitStatusMoves(battle: Battle) {
     }
   });
 
-  battle.on(
-    BattleEvents.CheckUnitAttackEffectChance,
-    EventPriority.Post,
-    event => {
-      event.value =
-        EFFECT_STATUS_MOVES[event.parent.move]?.chance ??
-        EFFECT_STAGE_MOVES[event.parent.move]?.chance ??
-        0;
-    },
-  );
+  battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
+    event.value =
+      EFFECT_STATUS_MOVES[event.parent.move]?.chance ??
+      EFFECT_STAGE_MOVES[event.parent.move]?.chance ??
+      0;
+  });
 
-  battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, (event) => {
     const cause = {
       type: EffectType.Move,
       move: event.parent.move,
@@ -124,8 +120,8 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.LightScreen]: TeamStatuses.LightScreen,
 };
 
-function setupTeamStatusMoves(battle: Battle) {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+function setupTeamStatusMoves(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const targetStatus = TEAM_STATUS_MOVES[event.move];
     // Explicit null check: the first TeamStatuses enum member is 0
     if (targetStatus != null) {
@@ -138,7 +134,7 @@ function setupTeamStatusMoves(battle: Battle) {
   });
 }
 
-export function setupStatusMoves(battle: Battle) {
+export function setupStatusMoves(battle: Battle): void {
   setupUnitStatusMoves(battle);
   setupTeamStatusMoves(battle);
 }

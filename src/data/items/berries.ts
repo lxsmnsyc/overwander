@@ -1,11 +1,11 @@
-import { ItemFlags, Items, ItemTypes } from '../ids/items';
+import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
 /**
  * Battle-only berries: held berries whose effect triggers on their
  * own during battle. All of them are consumed by their trigger.
  */
-export function registerBattleBerries() {
+export default function registerBattleBerries(): void {
   // Cures paralysis
   registerItem(Items.CheriBerry, {
     name: 'Cheri Berry',

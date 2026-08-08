@@ -26,7 +26,7 @@ export interface MoveData {
 
 const MOVE_DATA = new Map<Moves, MoveData>();
 
-export function registerMove(move: Moves, data: MoveData) {
+export function registerMove(move: Moves, data: MoveData): void {
   MOVE_DATA.set(move, data);
 }
 

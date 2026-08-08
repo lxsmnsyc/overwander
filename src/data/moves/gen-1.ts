@@ -1,13 +1,8 @@
 import { Types } from '../constants/types';
-import {
-  MoveCategories,
-  MoveFlags,
-  Moves,
-  MoveTargetFlags,
-} from '../ids/moves';
+import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../ids/moves';
 import { registerMove } from './__create';
 
-export function registerGen1Moves() {
+export default function registerGen1Moves(): void {
   registerMove(Moves.Tackle, {
     name: 'Tackle',
     type: Types.Normal,
@@ -24,8 +19,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Status,
     pp: 40,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Sound,
   });
   registerMove(Moves.LeechSeed, {
@@ -62,8 +56,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Physical,
     pp: 25,
     accuracy: 95,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Growth, {
@@ -257,8 +250,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Status,
     pp: 30,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Slash, {
@@ -366,8 +358,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Special,
     pp: 20,
     power: 60,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.SkullBash, {
@@ -398,8 +389,7 @@ export function registerGen1Moves() {
     pp: 10,
     power: 100,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Fissure, {
@@ -428,8 +418,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Status,
     pp: 30,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Bubble, {
@@ -439,8 +428,7 @@ export function registerGen1Moves() {
     pp: 30,
     power: 40,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.WaterGun, {
@@ -508,8 +496,7 @@ export function registerGen1Moves() {
     pp: 5,
     power: 110,
     accuracy: 70,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Counter, {
@@ -529,8 +516,7 @@ export function registerGen1Moves() {
     pp: 15,
     power: 90,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.StringShot, {
@@ -539,8 +525,7 @@ export function registerGen1Moves() {
     category: MoveCategories.Status,
     pp: 40,
     accuracy: 95,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.Harden, {
@@ -837,8 +822,7 @@ export function registerGen1Moves() {
     pp: 30,
     power: 40,
     accuracy: 100,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.RockSlide, {
@@ -848,8 +832,7 @@ export function registerGen1Moves() {
     pp: 10,
     power: 75,
     accuracy: 90,
-    target:
-      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
   registerMove(Moves.ThunderShock, {

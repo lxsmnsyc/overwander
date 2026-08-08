@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { isWeatherRainy, isWeatherSunny } from '../utils';
 
@@ -22,8 +22,8 @@ const WEATHER_ACCURACY_MOVES: { [key in Moves]?: WeatherAccuracyConfig } = {
   [Moves.Blizzard]: { hail: null },
 };
 
-export function setupWeatherAccuracyMoves(battle: Battle) {
-  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, event => {
+export default function setupWeatherAccuracyMoves(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
     const config = WEATHER_ACCURACY_MOVES[event.move];
 
     if (!config || event.accuracy == null) {

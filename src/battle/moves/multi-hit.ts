@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface MultiHitConfig {
   min: number;
@@ -36,10 +36,10 @@ interface MultiHitInstance {
   progress: number;
 }
 
-export function setupMultiHitMoves(battle: Battle) {
+export default function setupMultiHitMoves(battle: Battle): void {
   const instances = new Set<MultiHitInstance>();
 
-  function strike(instance: MultiHitInstance) {
+  function strike(instance: MultiHitInstance): void {
     instance.source.attack(
       instance.target,
       instance.move,
@@ -52,14 +52,11 @@ export function setupMultiHitMoves(battle: Battle) {
     instance.remaining -= 1;
   }
 
-  function isFinished(instance: MultiHitInstance) {
-    return (
-      instance.remaining <= 0 ||
-      !(instance.source.alive && instance.target.alive)
-    );
+  function isFinished(instance: MultiHitInstance): boolean {
+    return instance.remaining <= 0 || !(instance.source.alive && instance.target.alive);
   }
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const instance of instances) {
       instance.progress += event.duration;
 
@@ -81,7 +78,7 @@ export function setupMultiHitMoves(battle: Battle) {
 
   timer.stop();
 
-  function cancel(source: Unit) {
+  function cancel(source: Unit): void {
     for (const instance of instances) {
       if (instance.source === source) {
         instances.delete(instance);
@@ -94,15 +91,15 @@ export function setupMultiHitMoves(battle: Battle) {
   }
 
   // Remaining strikes are interrupted the same way move usage is
-  battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
     cancel(event.source);
   });
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
     cancel(event.source);
   });
 
-  function rollHitCount(config: MultiHitConfig) {
+  function rollHitCount(config: MultiHitConfig): number {
     if (config.min === config.max) {
       return config.min;
     }
@@ -125,14 +122,10 @@ export function setupMultiHitMoves(battle: Battle) {
     return 5;
   }
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const config = MULTI_HIT_MOVES[event.move];
 
-    if (
-      config &&
-      event.target.type === MoveTargetType.Unit &&
-      event.steps === 0
-    ) {
+    if (config && event.target.type === MoveTargetType.Unit && event.steps === 0) {
       const instance: MultiHitInstance = {
         source: event.source,
         target: event.target.unit,

@@ -1,4 +1,4 @@
-export const enum Natures {
+const enum Natures {
   Hardy = 0,
   Lonely = 1,
   Brave = 2,
@@ -25,3 +25,5 @@ export const enum Natures {
   Careful = 23,
   Quirky = 24,
 }
+
+export default Natures;

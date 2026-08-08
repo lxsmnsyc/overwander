@@ -2,9 +2,9 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 /**
  * Held berries that trigger on their own in battle. Eating a berry
@@ -12,14 +12,14 @@ import type { Unit } from '../unit';
  * enemy Unnerve) keeps the berry for later.
  */
 
-const STATUS_CURE_BERRIES: { [key in Items]?: Statuses[] } = {
-  [Items.CheriBerry]: [Statuses.Paralyzed],
-  [Items.ChestoBerry]: [Statuses.Sleeping],
-  [Items.PechaBerry]: [Statuses.Poisoned, Statuses.BadlyPoisoned],
-  [Items.RawstBerry]: [Statuses.Burned],
-  [Items.AspearBerry]: [Statuses.Frozen],
-  [Items.PersimBerry]: [Statuses.Confused],
-  [Items.LumBerry]: [
+const STATUS_CURE_BERRIES: { [key in Items]?: Set<Statuses> } = {
+  [Items.CheriBerry]: new Set([Statuses.Paralyzed]),
+  [Items.ChestoBerry]: new Set([Statuses.Sleeping]),
+  [Items.PechaBerry]: new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]),
+  [Items.RawstBerry]: new Set([Statuses.Burned]),
+  [Items.AspearBerry]: new Set([Statuses.Frozen]),
+  [Items.PersimBerry]: new Set([Statuses.Confused]),
+  [Items.LumBerry]: new Set([
     Statuses.Paralyzed,
     Statuses.Sleeping,
     Statuses.Poisoned,
@@ -27,7 +27,7 @@ const STATUS_CURE_BERRIES: { [key in Items]?: Statuses[] } = {
     Statuses.Burned,
     Statuses.Frozen,
     Statuses.Confused,
-  ],
+  ]),
 };
 
 interface HealBerryConfig {
@@ -40,10 +40,10 @@ interface HealBerryConfig {
 
 const HEAL_BERRIES: { [key in Items]?: HealBerryConfig } = {
   [Items.OranBerry]: { threshold: 0.5, heal: () => 10 },
-  [Items.SitrusBerry]: { threshold: 0.5, heal: max => max / 4 },
+  [Items.SitrusBerry]: { threshold: 0.5, heal: (max) => max / 4 },
 };
 
-export function setupBerries(battle: Battle) {
+export default function setupBerries(battle: Battle): void {
   function eat(unit: Unit, item: Items): EffectCause | undefined {
     if (unit.items[item] !== true || !unit.checkCanConsumeItem(item)) {
       return undefined;
@@ -56,12 +56,16 @@ export function setupBerries(battle: Battle) {
     return { type: EffectType.Item, item, unit };
   }
 
-  function heldBerries(unit: Unit) {
+  function heldBerries(unit: Unit): Items[] {
     const held: Items[] = [];
 
     for (const key in unit.items) {
-      if (unit.items[Number(key) as Items] === true) {
-        held.push(Number(key) as Items);
+      // tsc requires the assertion to index the Items-mapped record;
+      // tsgolint resolves the const enum to number and disagrees
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      const item = Number(key) as Items;
+      if (unit.items[item] === true) {
+        held.push(item);
       }
     }
 
@@ -69,11 +73,11 @@ export function setupBerries(battle: Battle) {
   }
 
   // Status-cure berries eat themselves the moment the status lands
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     for (const item of heldBerries(event.source)) {
       const cures = STATUS_CURE_BERRIES[item];
 
-      if (cures?.includes(event.status)) {
+      if (cures?.has(event.status)) {
         const cause = eat(event.source, item);
 
         if (cause) {
@@ -85,7 +89,7 @@ export function setupBerries(battle: Battle) {
   });
 
   // Healing berries trigger when health drops to the threshold
-  battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
     const unit = event.source;
 
     if (!unit.alive || unit.health <= 0) {
@@ -113,7 +117,7 @@ export function setupBerries(battle: Battle) {
    * Leppa restores a depleted move. The cooldown is this engine's
    * stand-in for spent PP, so the berry clears it as it starts.
    */
-  battle.on(BattleEvents.UnitStartCooldown, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitStartCooldown, EventPriority.Post, (event) => {
     if (eat(event.source, Items.LeppaBerry)) {
       event.source.finishCooldown(event.move);
     }

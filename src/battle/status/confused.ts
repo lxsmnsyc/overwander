@@ -2,9 +2,9 @@ import { EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface ConfusedData {
   progress: number;
@@ -15,10 +15,10 @@ const MIN_DURATION = 2000;
 const MAX_DURATION = 5000;
 const CONFUSION_CHANCE = 1 / 3;
 
-export function setupConfusedStatus(battle: Battle) {
+export default function setupConfusedStatus(battle: Battle): void {
   const instances = new Map<Unit, ConfusedData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress -= event.duration;
 
@@ -30,13 +30,13 @@ export function setupConfusedStatus(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
     event.source.removeStatus(Statuses.Confused, {
       type: EffectType.None,
     });
   });
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (
       event.success &&
       event.source.status[Statuses.Confused] &&
@@ -50,7 +50,7 @@ export function setupConfusedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Confused && !instances.has(event.source)) {
       instances.set(event.source, {
         progress: battle.randomRange(MIN_DURATION, MAX_DURATION),
@@ -63,7 +63,7 @@ export function setupConfusedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Confused) {
       instances.delete(event.source);
 
@@ -73,7 +73,7 @@ export function setupConfusedStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Confused) {
       event.source.attack(
         event.source,

@@ -1,8 +1,8 @@
-import { registerBattleBerries } from './berries';
+import registerBattleBerries from './berries';
 
-export type { ItemData } from './__create';
 export { getItemData, registerItem } from './__create';
+export type { ItemData } from './__create';
 
-export function registerItems() {
+export default function registerItems(): void {
   registerBattleBerries();
 }

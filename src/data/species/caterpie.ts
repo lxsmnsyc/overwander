@@ -1,13 +1,13 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
-export function registerCaterpieSpecies() {
+export default function registerCaterpieSpecies(): void {
   registerSpecies(Species.Caterpie, {
     dexNumber: 10,
     name: 'Caterpie',

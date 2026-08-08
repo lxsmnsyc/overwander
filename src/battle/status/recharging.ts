@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface RechargingData {
   progress: number;
@@ -12,10 +12,10 @@ interface RechargingData {
 // Real-time equivalent of the single recharge turn
 const DURATION = 1000;
 
-export function setupRechargingStatus(battle: Battle) {
+export default function setupRechargingStatus(battle: Battle): void {
   const instances = new Map<Unit, RechargingData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress -= event.duration;
 
@@ -27,7 +27,7 @@ export function setupRechargingStatus(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Recharging]) {
       event.success = false;
 
@@ -37,7 +37,7 @@ export function setupRechargingStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Recharging && !instances.has(event.source)) {
       instances.set(event.source, {
         progress: DURATION,
@@ -50,7 +50,7 @@ export function setupRechargingStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Recharging) {
       instances.delete(event.source);
 

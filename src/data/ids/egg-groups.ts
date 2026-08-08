@@ -1,4 +1,4 @@
-export const enum EggGroups {
+const enum EggGroups {
   Monster = 0,
   Water1 = 1,
   Bug = 2,
@@ -15,3 +15,5 @@ export const enum EggGroups {
   Dragon = 13,
   NoEggsDiscovered = 14,
 }
+
+export default EggGroups;

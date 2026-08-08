@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { Battle } from '../../src/battle/core';
-import {
-  BattleEvents,
-  EffectType,
-  MoveTargetType,
-} from '../../src/battle/events';
-import type { Unit } from '../../src/battle/unit';
+import type Battle from '../../src/battle/core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import type Unit from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Moves } from '../../src/data/ids/moves';
@@ -14,7 +10,7 @@ import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function unitTarget(unit: Unit) {
+function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
 }
 
@@ -25,7 +21,7 @@ const NONE_TARGET = { type: MoveTargetType.None } as const;
  * and 100-accuracy moves connect. A neutral typeless hit with power P
  * between the standard harness units deals 0.44 * P + 2 damage.
  */
-function plainDamage(power: number) {
+function plainDamage(power: number): number {
   return 0.44 * power + 2;
 }
 
@@ -159,9 +155,7 @@ describe('Body Slam vs Minimize', () => {
     const defender = createUnit(battle, teamB);
     defender.addStatus(Statuses.Minimized, NONE_CAUSE);
 
-    expect(
-      attacker.checkMoveAccuracy(Moves.BodySlam, unitTarget(defender)),
-    ).toBeUndefined();
+    expect(attacker.checkMoveAccuracy(Moves.BodySlam, unitTarget(defender))).toBeUndefined();
   });
 });
 
@@ -278,7 +272,7 @@ describe('fixed damage moves', () => {
 });
 
 describe('multi-hit moves', () => {
-  function countStrikes(battle: Battle) {
+  function countStrikes(battle: Battle): () => number {
     let strikes = 0;
     battle.on(BattleEvents.UnitAttack, 2, () => {
       strikes += 1;
@@ -417,9 +411,7 @@ describe('weather accuracy', () => {
 
     teamA.weather.current = Weathers.Hail;
 
-    expect(
-      unit.checkMoveAccuracy(Moves.Blizzard, unitTarget(enemy)),
-    ).toBeUndefined();
+    expect(unit.checkMoveAccuracy(Moves.Blizzard, unitTarget(enemy))).toBeUndefined();
   });
 });
 
@@ -450,16 +442,12 @@ describe('Hyper Beam', () => {
 
     expect(defender.health).toBeCloseTo(160 - plainDamage(150));
     expect(attacker.status[Statuses.Recharging]).toBeDefined();
-    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(
-      false,
-    );
+    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
 
     battle.tick(1000);
 
     expect(attacker.status[Statuses.Recharging]).toBeUndefined();
-    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(
-      true,
-    );
+    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(true);
   });
 });
 
@@ -562,9 +550,9 @@ describe('Bide', () => {
 });
 
 describe('switch-out moves', () => {
-  function recordSwitches(battle: Battle) {
-    const switches: Array<{ source: Unit; target: Unit }> = [];
-    battle.on(BattleEvents.UnitSwitch, 2, event => {
+  function recordSwitches(battle: Battle): { source: Unit; target: Unit }[] {
+    const switches: { source: Unit; target: Unit }[] = [];
+    battle.on(BattleEvents.UnitSwitch, 2, (event) => {
       switches.push({ source: event.source, target: event.target });
     });
     return switches;

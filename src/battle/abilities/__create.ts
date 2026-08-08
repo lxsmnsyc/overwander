@@ -1,11 +1,11 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import type { Types } from '../../data/constants/types';
-import type { Abilities } from '../../data/ids/abilities';
+import type Abilities from '../../data/ids/abilities';
 import { Weathers } from '../../data/ids/status';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface AbilityLifecycle {
   start(): void;
@@ -17,29 +17,26 @@ export class MergedAbilityLifecycle implements AbilityLifecycle {
     // no-op
   }
 
-  start() {
+  start(): void {
     for (const lifecycle of this.lifecycles) {
       lifecycle.start();
     }
   }
 
-  stop() {
+  stop(): void {
     for (const lifecycle of this.lifecycles) {
       lifecycle.stop();
     }
   }
 }
 
-export function createAbility(
-  ability: Abilities,
-  setup: (battle: Battle) => AbilityLifecycle,
-) {
-  return (battle: Battle) => {
+export function createAbility(ability: Abilities, setup: (battle: Battle) => AbilityLifecycle) {
+  return (battle: Battle): void => {
     const lifecycle = setup(battle);
 
     const units = new Set<Unit>();
 
-    function enableAbility(current: Abilities, source: Unit) {
+    function enableAbility(current: Abilities, source: Unit): void {
       if (current === ability) {
         units.add(source);
 
@@ -49,7 +46,7 @@ export function createAbility(
       }
     }
 
-    function disableAbility(current: Abilities, source: Unit) {
+    function disableAbility(current: Abilities, source: Unit): void {
       if (ability === current) {
         units.delete(source);
 
@@ -59,19 +56,19 @@ export function createAbility(
       }
     }
 
-    battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, event => {
+    battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
       enableAbility(event.ability, event.source);
     });
 
-    battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, event => {
+    battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
       disableAbility(event.ability, event.source);
     });
 
-    battle.on(BattleEvents.UnitEnableAbility, EventPriority.Post, event => {
+    battle.on(BattleEvents.UnitEnableAbility, EventPriority.Post, (event) => {
       enableAbility(event.ability, event.source);
     });
 
-    battle.on(BattleEvents.UnitDisableAbility, EventPriority.Post, event => {
+    battle.on(BattleEvents.UnitDisableAbility, EventPriority.Post, (event) => {
       disableAbility(event.ability, event.source);
     });
   };
@@ -86,30 +83,26 @@ export function createAbility(
 export function createBlazeAbility(
   targetAbility: Abilities,
   targetType: Types,
-) {
-  return createAbility(targetAbility, battle => {
-    return battle.on(
-      BattleEvents.UnitAttackResolveStat,
-      EventPriority.Post,
-      event => {
-        const source = event.parent.source;
-        const type = event.parent.type;
-        if (
-          type === targetType &&
-          event.unit === source &&
-          (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-          source.hasAbility(targetAbility)
-        ) {
-          const currentHP = source.health;
-          const maxHP = source.checkStat(Stats.HP, 0);
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const source = event.parent.source;
+      const type = event.parent.type;
+      if (
+        type === targetType &&
+        event.unit === source &&
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        source.hasAbility(targetAbility)
+      ) {
+        const currentHP = source.health;
+        const maxHP = source.checkStat(Stats.HP, 0);
 
-          if (currentHP <= maxHP / 3) {
-            event.value *= 1.5;
-          }
+        if (currentHP <= maxHP / 3) {
+          event.value *= 1.5;
         }
-      },
-    );
-  });
+      }
+    }),
+  );
 }
 
 /**
@@ -121,31 +114,32 @@ export function createBlazeAbility(
 export function createDrizzleAbility(
   targetAbility: Abilities,
   targetWeather: Weathers,
-) {
-  function triggerWeather(battle: Battle, source: Unit) {
-    if (source.hasAbility(targetAbility)) {
-      switch (battle.weather.current) {
-        case Weathers.ExtremeSunny:
-        case Weathers.HeavyRain:
-        case Weathers.StrongWinds:
-          break;
-        default:
-          battle.setWeather(targetWeather);
-          source.triggerAbility(targetAbility);
-          break;
-      }
+): (battle: Battle) => void {
+  // Primal weathers cannot be overridden
+  const PRIMAL_WEATHERS = new Set<Weathers>([
+    Weathers.ExtremeSunny,
+    Weathers.HeavyRain,
+    Weathers.StrongWinds,
+  ]);
+
+  function triggerWeather(battle: Battle, source: Unit): void {
+    if (source.hasAbility(targetAbility) && !PRIMAL_WEATHERS.has(battle.weather.current)) {
+      battle.setWeather(targetWeather);
+      source.triggerAbility(targetAbility);
     }
   }
-  return createAbility(targetAbility, battle => {
-    return new MergedAbilityLifecycle([
-      // For when the unit transforms
-      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, event => {
-        triggerWeather(battle, event.source);
-      }),
-      // For when the unit re-enters
-      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
-        triggerWeather(battle, event.source);
-      }),
-    ]);
-  });
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // For when the unit transforms
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          triggerWeather(battle, event.source);
+        }),
+        // For when the unit re-enters
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          triggerWeather(battle, event.source);
+        }),
+      ]),
+  );
 }

@@ -1,11 +1,11 @@
-import { AleaRNG } from '../core/alea';
+import AleaRNG from '../core/alea';
 import { EventEngine } from '../core/event-engine';
 import { Weathers } from '../data/ids/status';
-import type { Alliance } from './alliance';
+import type Alliance from './alliance';
 import type { BattleEventMap } from './events';
 import { BattleEvents } from './events';
 
-export class Battle extends EventEngine<BattleEventMap> {
+export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
 
   constructor(seed: string) {
@@ -13,36 +13,36 @@ export class Battle extends EventEngine<BattleEventMap> {
     this.rng = new AleaRNG(seed);
   }
 
-  random() {
+  random(): number {
     return this.rng.random();
   }
 
-  randomRange(min: number, max: number) {
+  randomRange(min: number, max: number): number {
     return min + this.random() * (max - min);
   }
 
-  initialize() {
+  initialize(): void {
     this.emit(BattleEvents.Initialize, {
       id: 'Initialize',
       disabled: false,
     });
   }
 
-  start() {
+  start(): void {
     this.emit(BattleEvents.Start, {
       id: 'Start',
       disabled: false,
     });
   }
 
-  end() {
+  end(): void {
     this.emit(BattleEvents.End, {
       id: 'End',
       disabled: false,
     });
   }
 
-  tick(duration: number) {
+  tick(duration: number): void {
     this.emit(BattleEvents.Tick, {
       id: 'Tick',
       disabled: false,
@@ -56,7 +56,7 @@ export class Battle extends EventEngine<BattleEventMap> {
     disabled: false,
   };
 
-  setWeather(weather: Weathers) {
+  setWeather(weather: Weathers): void {
     this.emit(BattleEvents.SetWeather, {
       id: 'Weather',
       disabled: false,
@@ -66,7 +66,7 @@ export class Battle extends EventEngine<BattleEventMap> {
 
   alliances = new Set<Alliance>();
 
-  addAlliance(alliance: Alliance) {
+  addAlliance(alliance: Alliance): void {
     this.emit(BattleEvents.AddAlliance, {
       id: 'AddAlliance',
       disabled: false,
@@ -74,7 +74,7 @@ export class Battle extends EventEngine<BattleEventMap> {
     });
   }
 
-  removeAlliance(alliance: Alliance) {
+  removeAlliance(alliance: Alliance): void {
     this.emit(BattleEvents.RemoveAlliance, {
       id: 'RemoveAlliance',
       disabled: false,

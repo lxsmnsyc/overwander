@@ -1,22 +1,22 @@
-import { registerBulbasaurSpecies } from './bulbasaur';
-import { registerCaterpieSpecies } from './caterpie';
-import { registerCharmanderSpecies } from './charmander';
-import { registerClefairySpecies } from './clefairy';
-import { registerEkansSpecies } from './ekans';
-import { registerNidoranFSpecies } from './nidoran-f';
-import { registerNidoranMSpecies } from './nidoran-m';
-import { registerPidgeySpecies } from './pidgey';
-import { registerPikachuSpecies } from './pikachu';
-import { registerRattataSpecies } from './rattata';
-import { registerSandshrewSpecies } from './sandshrew';
-import { registerSpearowSpecies } from './spearow';
-import { registerSquirtleSpecies } from './squirtle';
-import { registerVulpixSpecies } from './vulpix';
-import { registerWeedleSpecies } from './weedle';
+import registerBulbasaurSpecies from './bulbasaur';
+import registerCaterpieSpecies from './caterpie';
+import registerCharmanderSpecies from './charmander';
+import registerClefairySpecies from './clefairy';
+import registerEkansSpecies from './ekans';
+import registerNidoranFSpecies from './nidoran-f';
+import registerNidoranMSpecies from './nidoran-m';
+import registerPidgeySpecies from './pidgey';
+import registerPikachuSpecies from './pikachu';
+import registerRattataSpecies from './rattata';
+import registerSandshrewSpecies from './sandshrew';
+import registerSpearowSpecies from './spearow';
+import registerSquirtleSpecies from './squirtle';
+import registerVulpixSpecies from './vulpix';
+import registerWeedleSpecies from './weedle';
 
 export { getSpeciesData } from './__create';
 
-export function registerSpecies() {
+export function registerSpecies(): void {
   registerBulbasaurSpecies();
   registerCharmanderSpecies();
   registerSquirtleSpecies();

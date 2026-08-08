@@ -1,8 +1,8 @@
 import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import { Abilities } from '../ids/abilities';
-import { EggGroups } from '../ids/egg-groups';
-import { Families } from '../ids/families';
+import Abilities from '../ids/abilities';
+import EggGroups from '../ids/egg-groups';
+import Families from '../ids/families';
 import { Moves } from '../ids/moves';
 import { Species } from '../ids/species';
 import { registerSpecies } from './__create';
@@ -26,7 +26,7 @@ const FAMILY_TEACHABLE = [
   Moves.Fly,
 ];
 
-export function registerSpearowSpecies() {
+export default function registerSpearowSpecies(): void {
   registerSpecies(Species.Spearow, {
     dexNumber: 21,
     name: 'Spearow',

@@ -1,14 +1,10 @@
 import { type TeamStatuses, Weathers } from '../data/ids/status';
-import type { Alliance } from './alliance';
-import type { Battle } from './core';
-import {
-  BattleEvents,
-  type CheckTeamStatusImmunityEvent,
-  type EffectCause,
-} from './events';
-import type { Unit } from './unit';
+import type Alliance from './alliance';
+import type Battle from './core';
+import { BattleEvents, type CheckTeamStatusImmunityEvent, type EffectCause } from './events';
+import type Unit from './unit';
 
-export class Team {
+export default class Team {
   units = new Set<Unit>();
 
   constructor(
@@ -16,7 +12,7 @@ export class Team {
     public alliance: Alliance,
   ) {}
 
-  addUnit(unit: Unit) {
+  addUnit(unit: Unit): void {
     this.battle.emit(BattleEvents.TeamAddUnit, {
       id: 'TeamAddUnit',
       disabled: false,
@@ -25,7 +21,7 @@ export class Team {
     });
   }
 
-  removeUnit(unit: Unit) {
+  removeUnit(unit: Unit): void {
     this.battle.emit(BattleEvents.TeamRemoveUnit, {
       id: 'TeamRemoveUnit',
       disabled: false,
@@ -36,7 +32,7 @@ export class Team {
 
   status: { [key in TeamStatuses]?: EffectCause } = {};
 
-  addStatus(status: TeamStatuses, cause: EffectCause) {
+  addStatus(status: TeamStatuses, cause: EffectCause): void {
     this.battle.emit(BattleEvents.TeamAddStatus, {
       id: 'TeamAddStatus',
       disabled: false,
@@ -46,7 +42,7 @@ export class Team {
     });
   }
 
-  removeStatus(status: TeamStatuses, cause: EffectCause) {
+  removeStatus(status: TeamStatuses, cause: EffectCause): void {
     this.battle.emit(BattleEvents.TeamRemoveStatus, {
       id: 'TeamRemoveStatus',
       disabled: false,
@@ -61,7 +57,7 @@ export class Team {
     disabled: false,
   };
 
-  setWeather(weather: Weathers) {
+  setWeather(weather: Weathers): void {
     this.battle.emit(BattleEvents.TeamSetWeather, {
       id: 'TeamSetWeather',
       disabled: false,
@@ -70,7 +66,7 @@ export class Team {
     });
   }
 
-  checkStatusImmunity(status: TeamStatuses, cause: EffectCause) {
+  checkStatusImmunity(status: TeamStatuses, cause: EffectCause): boolean {
     const event: CheckTeamStatusImmunityEvent = {
       id: 'CheckTeamStatusImmunity',
       disabled: false,

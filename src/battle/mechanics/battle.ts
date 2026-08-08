@@ -1,12 +1,12 @@
 import { EventPriority } from '../../core/event-emitter';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
 
-export function setupBattleMechanics(battle: Battle) {
-  let raf: number;
+export default function setupBattleMechanics(battle: Battle): void {
+  let raf: number | undefined;
 
   battle.on(BattleEvents.Start, EventPriority.Exact, () => {
     /**
@@ -15,7 +15,7 @@ export function setupBattleMechanics(battle: Battle) {
     let elapsed = Date.now();
     raf = requestAnimationFrame(update);
 
-    function update() {
+    function update(): void {
       raf = requestAnimationFrame(update);
       const current = Date.now();
       let diff = current - elapsed;

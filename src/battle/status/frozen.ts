@@ -3,9 +3,9 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type { Battle } from '../core';
+import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type { Unit } from '../unit';
+import type Unit from '../unit';
 
 interface FrozenData {
   progress: number;
@@ -15,10 +15,10 @@ interface FrozenData {
 // Real-time equivalent of the ~20%-per-turn thaw chance
 const DURATION = 3000;
 
-export function setupFrozenStatus(battle: Battle) {
+export default function setupFrozenStatus(battle: Battle): void {
   const instances = new Map<Unit, FrozenData>();
 
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, event => {
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress -= event.duration;
 
@@ -30,7 +30,7 @@ export function setupFrozenStatus(battle: Battle) {
 
   timer.stop();
 
-  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, event => {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Frozen]) {
       event.success = false;
 
@@ -41,7 +41,7 @@ export function setupFrozenStatus(battle: Battle) {
   });
 
   // Fire-type move damage thaws the target
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
     const data = instances.get(event.target);
 
     if (
@@ -55,7 +55,7 @@ export function setupFrozenStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Frozen && !instances.has(event.source)) {
       event.source.interrupt();
 
@@ -70,7 +70,7 @@ export function setupFrozenStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Frozen) {
       instances.delete(event.source);
 
@@ -80,7 +80,7 @@ export function setupFrozenStatus(battle: Battle) {
     }
   });
 
-  battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
+  battle.on(BattleEvents.UnitCure, EventPriority.Post, (event) => {
     event.source.removeStatus(Statuses.Frozen, event.cause);
   });
 }

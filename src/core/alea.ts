@@ -1,7 +1,7 @@
 class Mash {
   private n = 0xefc8249d;
 
-  mash(data: string | number) {
+  mash(data: string | number): number {
     const current = '' + data;
 
     for (let i = 0, l = current.length; i < l; i++) {
@@ -20,7 +20,7 @@ class Mash {
   }
 }
 
-export class AleaRNG {
+export default class AleaRNG {
   private s0: number;
   private s1: number;
   private s2: number;
@@ -60,7 +60,7 @@ export class AleaRNG {
     }
   }
 
-  random() {
+  random(): number {
     this.steps++;
 
     const t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
@@ -73,7 +73,7 @@ export class AleaRNG {
     return this.s2;
   }
 
-  int32() {
+  int32(): number {
     return this.random() * 0x100000000;
   }
 }

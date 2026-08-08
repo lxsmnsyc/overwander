@@ -179,4 +179,5 @@ export const enum Moves {
   Thunder = 90,
   Thunderbolt = 91,
   PayDay = 92,
+  FurySwipes = 93,
 }

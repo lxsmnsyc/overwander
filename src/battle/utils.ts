@@ -10,3 +10,7 @@ export function isWeatherRainy(unit: Unit) {
   const weather = unit.checkWeather();
   return weather === Weathers.Rain || weather === Weathers.HeavyRain;
 }
+
+export function isWeatherSandstorm(unit: Unit) {
+  return unit.checkWeather() === Weathers.Sandstorm;
+}

@@ -18,7 +18,7 @@ import {
   type UnitAttackEvent,
 } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
-import { isWeatherRainy, isWeatherSunny } from '../utils';
+import { isWeatherRainy, isWeatherSandstorm, isWeatherSunny } from '../utils';
 import {
   createAbility,
   createBlazeAbility,
@@ -490,6 +490,38 @@ const setupAbilities = [
         },
       ),
     ]);
+  }),
+
+  // Sandshrew
+  // https://bulbapedia.bulbagarden.net/wiki/Sand_Veil_(Ability)
+  createAbility(Abilities.SandVeil, battle => {
+    return battle.on(
+      BattleEvents.CheckUnitMoveAccuracy,
+      EventPriority.Post,
+      event => {
+        if (
+          event.accuracy != null &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit.hasAbility(Abilities.SandVeil) &&
+          isWeatherSandstorm(event.target.unit)
+        ) {
+          event.accuracy *= 0.8;
+        }
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sand_Rush_(Ability)
+  createAbility(Abilities.SandRush, battle => {
+    return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, event => {
+      if (
+        event.stat === Stats.Speed &&
+        event.source.hasAbility(Abilities.SandRush) &&
+        isWeatherSandstorm(event.source)
+      ) {
+        event.value *= 2;
+      }
+    });
   }),
 ];
 

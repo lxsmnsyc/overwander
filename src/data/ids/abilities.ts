@@ -38,4 +38,7 @@ export const enum Abilities {
   // Pikachu
   Static = 23,
   LightningRod = 24,
+  // Sandshrew
+  SandVeil = 25,
+  SandRush = 26,
 }

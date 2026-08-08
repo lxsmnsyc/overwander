@@ -566,3 +566,34 @@ describe('Intimidate', () => {
     expect(ally.stages[Stages.Attack]).toBe(0);
   });
 });
+
+describe('Sand Veil', () => {
+  it('taxes incoming accuracy in a sandstorm', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SandVeil);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBe(100);
+
+    teamB.weather.current = Weathers.Sandstorm;
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(80);
+  });
+});
+
+describe('Sand Rush', () => {
+  it('doubles speed in a sandstorm', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.SandRush);
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(105);
+
+    teamA.weather.current = Weathers.Sandstorm;
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+});

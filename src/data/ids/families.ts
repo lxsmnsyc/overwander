@@ -9,4 +9,5 @@ export const enum Families {
   Spearow = 7,
   Ekans = 8,
   Pikachu = 9,
+  Sandshrew = 10,
 }

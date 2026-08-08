@@ -28,4 +28,6 @@ export const enum Species {
   Arbok = 26,
   Pikachu = 27,
   Raichu = 28,
+  Sandshrew = 29,
+  Sandslash = 30,
 }

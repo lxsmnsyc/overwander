@@ -901,4 +901,14 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.FurySwipes, {
+    name: 'Fury Swipes',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 18,
+    accuracy: 80,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

@@ -7,7 +7,7 @@ import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
 
 export interface LearnSetData {
-  level: Record<number, Moves>;
+  level: Record<number, Moves[]>;
   teachable: Moves[];
   // TODO Breeding
 }

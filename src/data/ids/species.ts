@@ -3,4 +3,6 @@ export const enum Species {
   Egg,
   Substitute,
   Bulbasaur,
+  Ivysaur,
+  Venusaur,
 }

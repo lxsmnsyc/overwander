@@ -12,6 +12,7 @@ import type {
   ChannelingData,
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
+  CheckUnitCanConsumeItemEvent,
   CheckUnitEscapeEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveImmunityEvent,
@@ -420,6 +421,18 @@ export class Unit {
     }
   }
 
+  checkCanConsumeItem(item: Items) {
+    const event: CheckUnitCanConsumeItemEvent = {
+      id: 'CheckUnitCanConsumeItem',
+      disabled: false,
+      source: this,
+      item,
+      success: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitCanConsumeItem, event);
+    return event.success;
+  }
+
   enableItem(item: Items) {
     if (this.items[item] === false) {
       this.battle.emit(BattleEvents.UnitEnableItem, {
@@ -442,7 +455,7 @@ export class Unit {
     }
   }
 
-  abilities: { [key in Items]?: boolean } = {};
+  abilities: { [key in Abilities]?: boolean } = {};
 
   addAbility(ability: Abilities) {
     this.battle.emit(BattleEvents.UnitAddAbility, {

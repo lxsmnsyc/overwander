@@ -2,6 +2,7 @@ import { setupGen1Abilities } from '../../src/battle/abilities/gen-1';
 import { setupRatingAI } from '../../src/battle/ai/rating';
 import { Alliance } from '../../src/battle/alliance';
 import { Battle } from '../../src/battle/core';
+import { setupItems } from '../../src/battle/items';
 import { setupAbilityMechanics } from '../../src/battle/mechanics/ability';
 import { setupAllianceMechanics } from '../../src/battle/mechanics/alliance';
 import { setupItemMechanics } from '../../src/battle/mechanics/item';
@@ -22,6 +23,7 @@ import { Team } from '../../src/battle/team';
 import { Unit } from '../../src/battle/unit';
 import { Stats, StatsKind } from '../../src/data/constants/stats';
 import type { Types } from '../../src/data/constants/types';
+import { registerItems } from '../../src/data/items';
 import { registerGen1Moves } from '../../src/data/moves/gen-1';
 import { registerSpecies } from '../../src/data/species';
 
@@ -44,6 +46,7 @@ export function createBattle(seed = 'test-seed'): BattleHarness {
   if (!dataRegistered) {
     registerGen1Moves();
     registerSpecies();
+    registerItems();
     dataRegistered = true;
   }
 
@@ -64,6 +67,7 @@ export function createBattle(seed = 'test-seed'): BattleHarness {
   setupMoves(battle);
   seupStatus(battle);
   setupGen1Abilities(battle);
+  setupItems(battle);
   // Rating resolver only; the idle AI loop stays out of tests
   setupRatingAI(battle);
 

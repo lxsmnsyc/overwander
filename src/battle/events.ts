@@ -173,6 +173,8 @@ export const enum BattleEvents {
   UnitAIChooseMove = 111,
   CheckUnitAIRating = 112,
   CheckTeamAIUnit = 113,
+
+  CheckUnitCanConsumeItem = 114,
 }
 
 export const enum MoveTargetType {
@@ -436,6 +438,11 @@ export interface AllianceTeamEvent extends AllianceEvent {
 
 export interface UnitAbilityEvent extends UnitEvent {
   ability: Abilities;
+}
+
+export interface CheckUnitCanConsumeItemEvent extends UnitEvent {
+  item: Items;
+  success: boolean;
 }
 
 export interface UnitItemEvent extends UnitEvent {
@@ -726,6 +733,10 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitAIChooseMove]: [UnitAIChooseMoveEvent, EventPriority];
   [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];
+  [BattleEvents.CheckUnitCanConsumeItem]: [
+    CheckUnitCanConsumeItemEvent,
+    EventPriority,
+  ];
 }
 
 export interface ProgressData {

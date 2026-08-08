@@ -1,7 +1,7 @@
 import { registerBulbasaurSpecies } from './bulbasaur';
 import { registerCaterpieSpecies } from './caterpie';
-import { registerEkansSpecies } from './ekans';
 import { registerCharmanderSpecies } from './charmander';
+import { registerEkansSpecies } from './ekans';
 import { registerPidgeySpecies } from './pidgey';
 import { registerPikachuSpecies } from './pikachu';
 import { registerRattataSpecies } from './rattata';

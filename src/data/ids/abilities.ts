@@ -31,9 +31,6 @@ export const enum Abilities {
   Hustle = 20,
   // Ekans
   Intimidate = 21,
-  /**
-   * TODO no berry/item pressure mechanics yet
-   */
   Unnerve = 22,
   // Pikachu
   Static = 23,

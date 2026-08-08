@@ -37,4 +37,8 @@ export const enum Terrains {
 
 export const enum TeamStatuses {
   Reflect = 0,
+  /**
+   * An enemy Unnerve unit is on the field; the team cannot eat berries
+   */
+  Unnerved = 1,
 }

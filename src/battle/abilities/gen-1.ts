@@ -2,13 +2,15 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Abilities } from '../../data/ids/abilities';
+import { ItemTypes } from '../../data/ids/items';
 import {
   DamageFlags,
   MoveAttackFlags,
   MoveCategories,
   MoveFlags,
 } from '../../data/ids/moves';
-import { Statuses } from '../../data/ids/status';
+import { Statuses, TeamStatuses } from '../../data/ids/status';
+import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
 import {
@@ -18,6 +20,8 @@ import {
   type UnitAttackEvent,
 } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
+import type { Team } from '../team';
+import type { Unit } from '../unit';
 import { isWeatherRainy, isWeatherSandstorm, isWeatherSunny } from '../utils';
 import {
   createAbility,
@@ -388,34 +392,119 @@ const setupAbilities = [
   // Ekans
   // https://bulbapedia.bulbagarden.net/wiki/Intimidate_(Ability)
   createAbility(Abilities.Intimidate, battle => {
-    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
-      if (!event.source.hasAbility(Abilities.Intimidate)) {
-        return;
-      }
+    return battle.on(
+      BattleEvents.UnitEntersField,
+      EventPriority.Post,
+      event => {
+        if (!event.source.hasAbility(Abilities.Intimidate)) {
+          return;
+        }
 
+        const cause = {
+          type: EffectType.Ability,
+          ability: Abilities.Intimidate,
+          unit: event.source,
+        } as const;
+
+        const ownAlliance = event.source.team.alliance;
+
+        for (const alliance of battle.alliances) {
+          if (alliance !== ownAlliance) {
+            for (const team of alliance.teams) {
+              for (const unit of team.units) {
+                if (unit.alive) {
+                  unit.addStage(Stages.Attack, -1, cause);
+                }
+              }
+            }
+          }
+        }
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.Intimidate);
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Unnerve_(Ability)
+  createAbility(Abilities.Unnerve, battle => {
+    /**
+     * Unnerve holders currently pressuring each enemy team. The
+     * Unnerved team status is kept while at least one holder is up,
+     * so consumption checks are a single status lookup.
+     */
+    const holders = new Map<Team, Set<Unit>>();
+
+    function pressure(source: Unit) {
       const cause = {
         type: EffectType.Ability,
-        ability: Abilities.Intimidate,
-        unit: event.source,
+        ability: Abilities.Unnerve,
+        unit: source,
       } as const;
 
-      const ownAlliance = event.source.team.alliance;
+      const ownAlliance = source.team.alliance;
 
       for (const alliance of battle.alliances) {
         if (alliance !== ownAlliance) {
           for (const team of alliance.teams) {
-            for (const unit of team.units) {
-              if (unit.alive) {
-                unit.addStage(Stages.Attack, -1, cause);
-              }
+            let units = holders.get(team);
+
+            if (!units) {
+              units = new Set();
+              holders.set(team, units);
             }
+
+            if (units.size === 0) {
+              team.addStatus(TeamStatuses.Unnerved, cause);
+            }
+
+            units.add(source);
           }
         }
       }
 
       // For visual cues
-      event.source.triggerAbility(Abilities.Intimidate);
-    });
+      source.triggerAbility(Abilities.Unnerve);
+    }
+
+    function release(source: Unit) {
+      for (const [team, units] of holders) {
+        if (units.delete(source) && units.size === 0) {
+          team.removeStatus(TeamStatuses.Unnerved, {
+            type: EffectType.Ability,
+            ability: Abilities.Unnerve,
+            unit: source,
+          });
+        }
+      }
+    }
+
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
+        if (event.source.hasAbility(Abilities.Unnerve)) {
+          pressure(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, event => {
+        release(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, event => {
+        release(event.source);
+      }),
+      battle.on(
+        BattleEvents.CheckUnitCanConsumeItem,
+        EventPriority.Post,
+        event => {
+          if (
+            event.success &&
+            event.source.team.status[TeamStatuses.Unnerved] != null &&
+            getItemData(event.item).type === ItemTypes.Berry
+          ) {
+            event.success = false;
+          }
+        },
+      ),
+    ]);
   }),
 
   // Pikachu

@@ -18,55 +18,34 @@ export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.FocusEnergy]: Statuses.FocusEnergy,
 };
 
-const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
-  [Moves.BodySlam]: Statuses.Paralyzed,
-  [Moves.Ember]: Statuses.Burned,
-  [Moves.Flamethrower]: Statuses.Burned,
-  [Moves.FireBlast]: Statuses.Burned,
-  [Moves.FireSpin]: Statuses.Trapped,
-  [Moves.Bite]: Statuses.Flinched,
-  [Moves.IceBeam]: Statuses.Frozen,
-  [Moves.Blizzard]: Statuses.Frozen,
-  [Moves.Confusion]: Statuses.Confused,
-  [Moves.Psybeam]: Statuses.Confused,
-  [Moves.PoisonSting]: Statuses.Poisoned,
-  [Moves.Twineedle]: Statuses.Poisoned,
-  [Moves.SkyAttack]: Statuses.Flinched,
-  [Moves.HyperFang]: Statuses.Flinched,
-  [Moves.ThunderShock]: Statuses.Paralyzed,
-  [Moves.Thunder]: Statuses.Paralyzed,
-  [Moves.Thunderbolt]: Statuses.Paralyzed,
+const EFFECT_STATUS_MOVES: {
+  [key in Moves]?: { status: Statuses; chance: number };
+} = {
+  [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.Ember]: { status: Statuses.Burned, chance: 10 },
+  [Moves.Flamethrower]: { status: Statuses.Burned, chance: 10 },
+  [Moves.FireBlast]: { status: Statuses.Burned, chance: 10 },
+  [Moves.FireSpin]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.Bite]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.IceBeam]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.Blizzard]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.Confusion]: { status: Statuses.Confused, chance: 10 },
+  [Moves.Psybeam]: { status: Statuses.Confused, chance: 10 },
+  [Moves.PoisonSting]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.Twineedle]: { status: Statuses.Poisoned, chance: 20 },
+  [Moves.SkyAttack]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.HyperFang]: { status: Statuses.Flinched, chance: 10 },
+  [Moves.ThunderShock]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.Thunder]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.Thunderbolt]: { status: Statuses.Paralyzed, chance: 10 },
 };
 
 const EFFECT_STAGE_MOVES: {
-  [key in Moves]?: { stage: Stages; value: number };
+  [key in Moves]?: { stage: Stages; value: number; chance: number };
 } = {
-  [Moves.Bubble]: { stage: Stages.Speed, value: -1 },
-  [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1 },
-  [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1 },
-};
-
-const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
-  [Moves.BodySlam]: 30,
-  [Moves.Ember]: 10,
-  [Moves.Flamethrower]: 10,
-  [Moves.FireBlast]: 10,
-  [Moves.FireSpin]: 100,
-  [Moves.Bite]: 30,
-  [Moves.IceBeam]: 10,
-  [Moves.Blizzard]: 10,
-  [Moves.Bubble]: 10,
-  [Moves.BubbleBeam]: 10,
-  [Moves.Confusion]: 10,
-  [Moves.Psybeam]: 10,
-  [Moves.Psychic]: 10,
-  [Moves.PoisonSting]: 30,
-  [Moves.Twineedle]: 20,
-  [Moves.SkyAttack]: 30,
-  [Moves.HyperFang]: 10,
-  [Moves.ThunderShock]: 10,
-  [Moves.Thunder]: 30,
-  [Moves.Thunderbolt]: 10,
+  [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
+  [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
+  [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
 };
 
 function setupUnitStatusMoves(battle: Battle) {
@@ -96,7 +75,10 @@ function setupUnitStatusMoves(battle: Battle) {
     BattleEvents.CheckUnitAttackEffectChance,
     EventPriority.Post,
     event => {
-      event.value = EFFECT_STATUS_CHANCE[event.parent.move] ?? 0;
+      event.value =
+        EFFECT_STATUS_MOVES[event.parent.move]?.chance ??
+        EFFECT_STAGE_MOVES[event.parent.move]?.chance ??
+        0;
     },
   );
 
@@ -110,7 +92,7 @@ function setupUnitStatusMoves(battle: Battle) {
     const status = EFFECT_STATUS_MOVES[event.parent.move];
 
     if (status) {
-      event.parent.target.addStatus(status, cause);
+      event.parent.target.addStatus(status.status, cause);
     }
 
     const stage = EFFECT_STAGE_MOVES[event.parent.move];

@@ -95,6 +95,7 @@ export function createBlazeAbility(
         const type = event.parent.type;
         if (
           type === targetType &&
+          event.unit === source &&
           (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
           source.hasAbility(targetAbility)
         ) {

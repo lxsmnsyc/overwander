@@ -1,5 +1,4 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Types } from '../../data/constants/types';
 import { Statuses } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents } from '../events';
@@ -22,13 +21,8 @@ export function setupParalyzedStatus(battle: Battle) {
     event.success = event.success && !rollParalyzed(event.source);
   });
 
-  // Electric types are naturally immune to paralysis
-  battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, event => {
-    event.immune =
-      !event.immune &&
-      event.status === Statuses.Paralyzed &&
-      event.source.types.has(Types.Electric);
-  });
+  // Electric-type immunity to paralysis is handled by the shared
+  // STATUS_TYPE_IMMUNITY table in status/index.ts
 
   battle.on(BattleEvents.UnitCure, EventPriority.Post, event => {
     event.source.removeStatus(Statuses.Paralyzed, event.cause);

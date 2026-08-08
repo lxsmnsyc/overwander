@@ -16,7 +16,8 @@ export function setupIncreasedCriticalHitRatioMoves(battle: Battle) {
     EventPriority.Post,
     event => {
       if (INCREASED_CRITICAL_HIT_RATIO_MOVES.has(event.parent.move)) {
-        event.value = 1;
+        // Additive so it stacks with Focus Energy and similar boosts
+        event.value += 1;
       }
     },
   );

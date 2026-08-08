@@ -42,11 +42,14 @@ export function setupMirrorMove(battle: Battle) {
       return;
     }
 
-    // Use the copied move back at the original user
-    event.source.triggerMove(
-      copied,
-      event.target,
-      event.source.checkMoveSteps(copied, event.target),
-    );
+    // Use the copied move back at the original user, mirroring the
+    // finish-cast flow so multi-step moves channel their later steps
+    const steps = event.source.checkMoveSteps(copied, event.target);
+
+    event.source.triggerMove(copied, event.target, steps);
+
+    if (steps > 0) {
+      event.source.channel(copied, event.target, steps - 1);
+    }
   });
 }

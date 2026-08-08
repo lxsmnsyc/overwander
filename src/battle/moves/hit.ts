@@ -1,75 +1,47 @@
 import { EventPriority } from '../../core/event-emitter';
-import { MoveAttackFlags, Moves } from '../../data/ids/moves';
+import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
-const HIT_MOVES = new Set([
-  Moves.Tackle,
-  Moves.VineWhip,
-  Moves.RazorLeaf,
-  Moves.SolarBeam,
-  Moves.BodySlam,
-  Moves.TakeDown,
-  Moves.DoubleEdge,
-  Moves.Rage,
-  Moves.MegaDrain,
-  Moves.HyperBeam,
-  Moves.Cut,
-  Moves.Scratch,
-  Moves.Ember,
-  Moves.Slash,
-  Moves.Flamethrower,
-  Moves.FireSpin,
-  Moves.MegaPunch,
-  Moves.MegaKick,
-  Moves.Submission,
-  Moves.Dig,
-  Moves.FireBlast,
-  Moves.Swift,
-  Moves.SkullBash,
-  Moves.Strength,
-  Moves.Earthquake,
-  Moves.Fly,
-  Moves.Bubble,
-  Moves.WaterGun,
-  Moves.Bite,
-  Moves.HydroPump,
-  Moves.BubbleBeam,
-  Moves.IceBeam,
-  Moves.Blizzard,
-  Moves.Surf,
-  Moves.Confusion,
-  Moves.Psybeam,
-  Moves.Psychic,
-  Moves.PoisonSting,
-  Moves.Gust,
-  Moves.QuickAttack,
-  Moves.WingAttack,
-  Moves.RazorWind,
-  Moves.SkyAttack,
-  Moves.HyperFang,
-  Moves.ThunderShock,
-  Moves.Thunder,
-  Moves.Thunderbolt,
-  Moves.PayDay,
+/**
+ * Damaging moves with their own damage resolution, opted out of the
+ * plain hit handler (e.g. multi-hit moves fire their own strikes)
+ */
+const NON_HIT_MOVES = new Set<Moves>([
+  Moves.FuryAttack,
+  Moves.PinMissile,
+  Moves.Twineedle,
 ]);
 
 export function setupHitMoves(battle: Battle) {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, event => {
     if (
-      HIT_MOVES.has(event.move) &&
-      event.target.type === MoveTargetType.Unit &&
-      event.steps === 0
+      event.target.type !== MoveTargetType.Unit ||
+      event.steps !== 0 ||
+      NON_HIT_MOVES.has(event.move)
     ) {
-      event.source.attack(
-        event.target.unit,
-        event.move,
-        event.source.checkMovePower(event.move, event.target) ?? 0,
-        event.source.checkMoveType(event.move, event.target),
-        getMoveData(event.move).category,
-        MoveAttackFlags.Critical,
-      );
+      return;
     }
+
+    /**
+     * Plain hits are derived from the move registry: any damaging move
+     * with a base power. Fixed-damage moves (Seismic Toss, Counter,
+     * Bide, ...) carry no power and resolve through their own groups.
+     */
+    const data = getMoveData(event.move);
+
+    if (data.category === MoveCategories.Status || data.power == null) {
+      return;
+    }
+
+    event.source.attack(
+      event.target.unit,
+      event.move,
+      event.source.checkMovePower(event.move, event.target) ?? 0,
+      event.source.checkMoveType(event.move, event.target),
+      data.category,
+      MoveAttackFlags.Critical,
+    );
   });
 }

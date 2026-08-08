@@ -31,6 +31,7 @@ export function setupSwitchOutMoves(battle: Battle) {
 
     let unit: Unit | undefined;
     let priority: MoveTargetPriorities | undefined;
+    let forced = false;
 
     if (
       FORCED_SWITCH_MOVES.has(event.move) &&
@@ -38,6 +39,7 @@ export function setupSwitchOutMoves(battle: Battle) {
     ) {
       unit = event.target.unit;
       priority = MoveTargetPriorities.Weakest;
+      forced = true;
     } else if (SELF_SWITCH_MOVES.has(event.move)) {
       unit = event.source;
       priority = MoveTargetPriorities.Strongest;
@@ -49,8 +51,16 @@ export function setupSwitchOutMoves(battle: Battle) {
 
     const replacement = checkTeamUnit(battle, unit.team, priority, unit);
 
-    if (replacement) {
-      unit.switch(replacement);
+    /**
+     * Forced switch-outs bypass trapping; friendly ones fail unless
+     * both the leaving unit and its replacement can escape.
+     */
+    const canSwitch =
+      replacement != null &&
+      (forced || (unit.checkEscape() && replacement.checkEscape()));
+
+    if (canSwitch && replacement) {
+      unit.forceSwitch(replacement);
     } else {
       event.source.triggerMoveEffectFailed(
         event.move,

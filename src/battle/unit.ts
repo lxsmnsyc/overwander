@@ -656,13 +656,21 @@ export class Unit {
 
   switch(target: Unit) {
     if (this.checkEscape() && target.checkEscape()) {
-      this.battle.emit(BattleEvents.UnitSwitch, {
-        id: 'UnitSwitch',
-        disabled: false,
-        source: this,
-        target,
-      });
+      this.forceSwitch(target);
     }
+  }
+
+  /**
+   * Switch without the escape checks (e.g. forced switch-out moves
+   * that bypass trapping)
+   */
+  forceSwitch(target: Unit) {
+    this.battle.emit(BattleEvents.UnitSwitch, {
+      id: 'UnitSwitch',
+      disabled: false,
+      source: this,
+      target,
+    });
   }
 
   enter() {

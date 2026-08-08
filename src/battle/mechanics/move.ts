@@ -67,10 +67,7 @@ function createMoveState(source: Unit, move: Moves): MoveState {
     source,
     move,
     disabled: false,
-    cooldown: {
-      duration: 0,
-      progress: 0,
-    },
+    cooldown: undefined,
   };
 }
 
@@ -160,7 +157,7 @@ export function setupCastingMechanics(battle: Battle) {
         // Caster must be alive
         event.source.alive &&
         // Caster must not be casting/channeling
-        !!(event.source.casting || event.source.channeling) &&
+        !(event.source.casting || event.source.channeling) &&
         // Move must not be disabled or in cooldown
         canUnitCastMove(event.source, event.move);
 
@@ -742,9 +739,10 @@ export function setupTriggerMoveMechanics(battle: Battle) {
           accuracyStage = Math.max(-6, Math.min(accuracyStage, 6));
         }
         event.accuracy =
-          baseAccuracy * accuracyStage < 0
+          baseAccuracy *
+          (accuracyStage < 0
             ? 3 / (3 - accuracyStage)
-            : (3 + accuracyStage) / 3;
+            : (3 + accuracyStage) / 3);
       }
     },
   );
@@ -858,6 +856,7 @@ export function setupAttackMechanics(battle: Battle) {
 
   function resolveAttackStat(
     parent: UnitAttackEvent,
+    unit: Unit,
     stat: Stats,
     value: number,
   ) {
@@ -865,6 +864,7 @@ export function setupAttackMechanics(battle: Battle) {
       id: 'UnitAttackResolveStat',
       disabled: false,
       parent,
+      unit,
       stat,
       value,
     };
@@ -1023,11 +1023,13 @@ export function setupAttackMechanics(battle: Battle) {
 
           const attackStat = resolveAttackStat(
             parent,
+            source,
             preferredAttackStat,
             source.resolveStat(preferredAttackStat, statFlag),
           );
           const defenseStat = resolveAttackStat(
             parent,
+            target,
             preferredDefenseStat,
             target.resolveStat(preferredDefenseStat, statFlag),
           );
@@ -1042,7 +1044,7 @@ export function setupAttackMechanics(battle: Battle) {
           }
 
           // Random factor: 85% to 100%
-          event.value *= (85 + (100 - 85) * battle.random()) / 100;
+          event.value *= battle.randomRange(0.85, 1);
         }
 
         if (event.parent.flags & MoveAttackFlags.Confused) {

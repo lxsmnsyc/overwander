@@ -17,6 +17,19 @@ import { setupSubstitutedStatus } from './substituted';
 import { setupTrappedStatus } from './trapped';
 
 /**
+ * The major status conditions (used by Guts, Shed Skin, and similar
+ * status-sensitive effects)
+ */
+export const MAJOR_STATUS_CONDITIONS: Statuses[] = [
+  Statuses.Poisoned,
+  Statuses.BadlyPoisoned,
+  Statuses.Burned,
+  Statuses.Paralyzed,
+  Statuses.Sleeping,
+  Statuses.Frozen,
+];
+
+/**
  * Statuses that block the unit from casting moves (each hooks
  * CheckUnitCanCast in its own setup)
  */

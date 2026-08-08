@@ -72,22 +72,20 @@ function setupUnitTypeMechanics(battle: Battle) {
 function setupUnitDamageMechanics(battle: Battle) {
   battle.on(BattleEvents.UnitDamage, EventPriority.Exact, event => {
     if (event.target.alive) {
-      let value = event.target.health - event.value;
+      let value = Math.max(0, event.target.health - event.value);
 
       // Prevent knocking out
       if (event.flags & DamageFlags.NonLethal) {
         value = Math.max(1, value);
       }
 
-      if (value > 0) {
-        event.target.setHealth(value);
+      event.target.setHealth(value);
 
-        if (event.target.health <= 0) {
-          event.target.faint(event.source);
-        }
-
-        event.success = true;
+      if (event.target.health <= 0) {
+        event.target.faint(event.source);
       }
+
+      event.success = true;
     }
   });
 

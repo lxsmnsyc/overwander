@@ -78,7 +78,7 @@ export function setupBide(battle: Battle) {
         });
 
         const current = bideData.get(event.source);
-        if (current) {
+        if (current && current.value > 0 && current.target !== event.source) {
           const moveTarget: MoveTarget = {
             type: MoveTargetType.Unit,
             unit: current.target,
@@ -89,13 +89,14 @@ export function setupBide(battle: Battle) {
           if (
             !event.source.checkMoveImmunity(event.move, moveTarget, moveType)
           ) {
+            // Return double the stored damage as typeless fixed damage
             event.source.attack(
               current.target,
               event.move,
-              current.value,
+              current.value * 2,
               moveType,
               getMoveData(event.move).category,
-              MoveAttackFlags.Critical,
+              MoveAttackFlags.Pure,
             );
             return;
           }

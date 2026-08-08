@@ -2,7 +2,12 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Abilities } from '../../data/ids/abilities';
-import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveFlags,
+} from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
@@ -12,24 +17,13 @@ import {
   MoveTargetType,
   type UnitAttackEvent,
 } from '../events';
+import { MAJOR_STATUS_CONDITIONS } from '../status';
 import { isWeatherRainy, isWeatherSunny } from '../utils';
 import {
   createAbility,
   createBlazeAbility,
   MergedAbilityLifecycle,
 } from './__create';
-
-/**
- * Major conditions that power up Guts
- */
-const GUTS_STATUS = [
-  Statuses.Poisoned,
-  Statuses.BadlyPoisoned,
-  Statuses.Burned,
-  Statuses.Paralyzed,
-  Statuses.Sleeping,
-  Statuses.Frozen,
-];
 
 const setupAbilities = [
   // Bulbasaur
@@ -56,6 +50,7 @@ const setupAbilities = [
         const type = event.parent.type;
         if (
           (type === Types.Fire || type === Types.Ice) &&
+          event.unit === event.parent.source &&
           (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
           event.parent.target.hasAbility(Abilities.ThickFat)
         ) {
@@ -184,20 +179,11 @@ const setupAbilities = [
   // Metapod/Kakuna
   // https://bulbapedia.bulbagarden.net/wiki/Shed_Skin_(Ability)
   createAbility(Abilities.ShedSkin, battle => {
-    const CURABLE_STATUS = [
-      Statuses.Poisoned,
-      Statuses.BadlyPoisoned,
-      Statuses.Paralyzed,
-      Statuses.Sleeping,
-      Statuses.Burned,
-      Statuses.Frozen,
-    ];
-
     // No turn mechanics, we roll the 30% cure on move cast instead.
     return battle.on(BattleEvents.UnitCast, EventPriority.Post, event => {
       if (
         event.source.hasAbility(Abilities.ShedSkin) &&
-        CURABLE_STATUS.some(status => event.source.status[status]) &&
+        MAJOR_STATUS_CONDITIONS.some(status => event.source.status[status]) &&
         battle.random() < 0.3
       ) {
         event.source.cure({
@@ -298,32 +284,57 @@ const setupAbilities = [
   // Rattata
   // https://bulbapedia.bulbagarden.net/wiki/Guts_(Ability)
   createAbility(Abilities.Guts, battle => {
-    return battle.on(
-      BattleEvents.UnitAttackResolveStat,
-      EventPriority.Post,
-      event => {
-        if (
-          event.stat === Stats.Attack &&
-          event.parent.source.hasAbility(Abilities.Guts) &&
-          GUTS_STATUS.some(status => event.parent.source.status[status])
-        ) {
-          event.value *= 1.5;
-        }
-      },
-    );
+    return new MergedAbilityLifecycle([
+      battle.on(
+        BattleEvents.UnitAttackResolveStat,
+        EventPriority.Post,
+        event => {
+          if (
+            event.stat === Stats.Attack &&
+            event.unit === event.parent.source &&
+            event.unit.hasAbility(Abilities.Guts) &&
+            MAJOR_STATUS_CONDITIONS.some(status => event.unit.status[status])
+          ) {
+            event.value *= 1.5;
+          }
+        },
+      ),
+      // Guts ignores the burn physical-damage halving; compensate the
+      // 0.5 factor applied by the burn status (same guards)
+      battle.on(
+        BattleEvents.UnitAttackResolveDamage,
+        EventPriority.Post,
+        event => {
+          if (
+            event.parent.category === MoveCategories.Physical &&
+            event.parent.source.status[Statuses.Burned] &&
+            event.parent.source.hasAbility(Abilities.Guts) &&
+            !(event.parent.flags & MoveAttackFlags.Pure) &&
+            !(event.parent.flags & MoveAttackFlags.Confused)
+          ) {
+            event.value *= 2;
+          }
+        },
+      ),
+    ]);
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Hustle_(Ability)
   createAbility(Abilities.Hustle, battle => {
     return new MergedAbilityLifecycle([
-      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, event => {
-        if (
-          event.stat === Stats.Attack &&
-          event.source.hasAbility(Abilities.Hustle)
-        ) {
-          event.value *= 1.5;
-        }
-      }),
+      battle.on(
+        BattleEvents.UnitAttackResolveStat,
+        EventPriority.Post,
+        event => {
+          if (
+            event.stat === Stats.Attack &&
+            event.unit === event.parent.source &&
+            event.unit.hasAbility(Abilities.Hustle)
+          ) {
+            event.value *= 1.5;
+          }
+        },
+      ),
       battle.on(
         BattleEvents.CheckUnitMoveAccuracy,
         EventPriority.Post,
@@ -368,29 +379,50 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Lightning_Rod_(Ability)
   createAbility(Abilities.LightningRod, battle => {
-    return battle.on(
-      BattleEvents.CheckUnitMoveImmunity,
-      EventPriority.Post,
-      event => {
-        if (
-          !event.immune &&
-          event.type === Types.Electric &&
-          event.target.type === MoveTargetType.Unit &&
-          event.target.unit !== event.source &&
-          event.target.unit.hasAbility(Abilities.LightningRod)
-        ) {
-          event.immune = true;
+    return new MergedAbilityLifecycle([
+      // Pure query: grants the immunity, no side effects
+      battle.on(
+        BattleEvents.CheckUnitMoveImmunity,
+        EventPriority.Post,
+        event => {
+          if (
+            event.type === Types.Electric &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.LightningRod)
+          ) {
+            event.immune = true;
+          }
+        },
+      ),
+      // The absorb boost only fires when a real move actually fails
+      // against the holder, never on speculative immunity checks
+      battle.on(
+        BattleEvents.UnitTriggerMoveFailed,
+        EventPriority.Post,
+        event => {
+          const parent = event.parent;
 
-          event.target.unit.triggerAbility(Abilities.LightningRod);
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.LightningRod) &&
+            parent.source.checkMoveType(parent.move, parent.target) ===
+              Types.Electric
+          ) {
+            const holder = parent.target.unit;
 
-          event.target.unit.addStage(Stages.SpecialAttack, 1, {
-            type: EffectType.Ability,
-            ability: Abilities.LightningRod,
-            unit: event.target.unit,
-          });
-        }
-      },
-    );
+            holder.triggerAbility(Abilities.LightningRod);
+
+            holder.addStage(Stages.SpecialAttack, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.LightningRod,
+              unit: holder,
+            });
+          }
+        },
+      ),
+    ]);
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)

@@ -411,6 +411,11 @@ export interface UnitAttackResolveCriticalEvent extends UnitAttackChildEvent {
 export interface UnitAttackResolveStatEvent
   extends UnitAttackResolveAmountEvent {
   stat: Stats;
+  /**
+   * The unit whose stat is being resolved (the attacker for the
+   * offensive stat, the target for the defensive stat)
+   */
+  unit: Unit;
 }
 
 export interface CheckUnitAttackEffectEvent extends UnitAttackChildEvent {

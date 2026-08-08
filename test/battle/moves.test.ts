@@ -655,3 +655,65 @@ describe('Metronome', () => {
     expect(160 - enemy.health).toBeCloseTo(19.6 * 2 * 0.85);
   });
 });
+
+describe('Disable', () => {
+  it('fails when the target is idle and has not used a move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    target.addMove(Moves.Tackle);
+
+    attacker.triggerMoveTarget(Moves.Disable, unitTarget(target), 0);
+
+    expect(target.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+
+  it('falls back to the last used move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    target.addMove(Moves.Growl);
+
+    target.cast(Moves.Growl, unitTarget(attacker));
+    battle.tick(1800); // finish the cast; target is idle again
+
+    attacker.triggerMoveTarget(Moves.Disable, unitTarget(target), 0);
+
+    expect(target.moves[Moves.Growl]?.disabled).toBe(true);
+  });
+
+  it('releases after the duration, even for single-move units', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    target.addMove(Moves.Tackle);
+
+    target.cast(Moves.Tackle, unitTarget(attacker));
+    attacker.triggerMoveTarget(Moves.Disable, unitTarget(target), 0);
+
+    expect(target.moves[Moves.Tackle]?.disabled).toBe(true);
+
+    battle.tick(5000);
+
+    expect(target.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+
+  it('interrupts and disables the move being cast', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    target.addMove(Moves.Tackle);
+    target.cast(Moves.Tackle, unitTarget(attacker));
+
+    expect(target.casting).toBeDefined();
+
+    attacker.triggerMoveTarget(Moves.Disable, unitTarget(target), 0);
+
+    expect(target.casting).toBeUndefined();
+    expect(target.moves[Moves.Tackle]?.disabled).toBe(true);
+  });
+});

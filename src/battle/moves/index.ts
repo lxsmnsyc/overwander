@@ -4,6 +4,7 @@ import setupBide from './bide';
 import setupBodySlam from './body-slam';
 import setupChargeMoves from './charge';
 import setupCounter from './counter';
+import setupDisable from './disable';
 import setupFixedDamageMoves from './fixed-damage';
 import setupHitMoves from './hit';
 import setupIncreasedCriticalHitRatioMoves from './increased-critical-hit';
@@ -53,6 +54,7 @@ export default function setupMoves(battle: Battle): void {
   setupRest(battle);
   setupSubstitute(battle);
   setupCounter(battle);
+  setupDisable(battle);
   setupMirrorMove(battle);
   setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);

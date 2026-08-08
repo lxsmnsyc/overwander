@@ -1014,4 +1014,13 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.Disable, {
+    name: 'Disable',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

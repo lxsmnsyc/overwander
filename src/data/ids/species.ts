@@ -46,4 +46,6 @@ export const enum Species {
   Clefable = 38,
   Vulpix = 39,
   Ninetales = 40,
+  Jigglypuff = 41,
+  Wigglytuff = 42,
 }

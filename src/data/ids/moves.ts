@@ -193,4 +193,5 @@ export const enum Moves {
   LightScreen = 104,
   Roar = 105,
   ConfuseRay = 106,
+  Disable = 107,
 }

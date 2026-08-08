@@ -14,6 +14,7 @@ const enum Families {
   NidoranM = 12,
   Clefairy = 13,
   Vulpix = 14,
+  Jigglypuff = 15,
 }
 
 export default Families;

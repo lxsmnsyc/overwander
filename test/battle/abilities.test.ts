@@ -728,3 +728,30 @@ describe('Drought', () => {
     expect(battle.weather.current).toBe(Weathers.Sunny);
   });
 });
+
+describe('Competitive', () => {
+  it('raises special attack sharply when an enemy lowers a stat', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Competitive);
+
+    holder.addStage(Stages.Attack, -1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: enemy,
+    });
+
+    expect(holder.stages[Stages.SpecialAttack]).toBe(2);
+  });
+
+  it('ignores self-inflicted drops', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Competitive);
+
+    holder.addStage(Stages.Attack, -1, NONE_CAUSE);
+
+    expect(holder.stages[Stages.SpecialAttack]).toBe(0);
+  });
+});

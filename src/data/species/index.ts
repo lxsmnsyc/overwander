@@ -3,6 +3,7 @@ import registerCaterpieSpecies from './caterpie';
 import registerCharmanderSpecies from './charmander';
 import registerClefairySpecies from './clefairy';
 import registerEkansSpecies from './ekans';
+import registerJigglypuffSpecies from './jigglypuff';
 import registerNidoranFSpecies from './nidoran-f';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
@@ -32,4 +33,5 @@ export function registerSpecies(): void {
   registerNidoranMSpecies();
   registerClefairySpecies();
   registerVulpixSpecies();
+  registerJigglypuffSpecies();
 }

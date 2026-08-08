@@ -732,6 +732,68 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Jigglypuff
+  // https://bulbapedia.bulbagarden.net/wiki/Competitive_(Ability)
+  createAbility(Abilities.Competitive, (battle) =>
+    battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
+      const cause = event.cause;
+
+      // Only stat drops inflicted by an enemy raise the holder's ire;
+      // its own boost has a positive value, so it never re-triggers
+      if (
+        event.value < 0 &&
+        event.source.hasAbility(Abilities.Competitive) &&
+        cause.type !== EffectType.None &&
+        cause.unit !== event.source &&
+        cause.unit.team.alliance !== event.source.team.alliance
+      ) {
+        event.source.triggerAbility(Abilities.Competitive);
+
+        event.source.addStage(Stages.SpecialAttack, 2, {
+          type: EffectType.Ability,
+          ability: Abilities.Competitive,
+          unit: event.source,
+        });
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Frisk_(Ability)
+  createAbility(Abilities.Frisk, (battle) => {
+    function holdsAnyItem(unit: Unit): boolean {
+      for (const held of Object.values(unit.items)) {
+        if (held) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Reveal is a visual cue: the trigger fires when any opposing
+    // unit holds an item as the holder enters the field
+    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (!event.source.hasAbility(Abilities.Frisk)) {
+        return;
+      }
+
+      const ownAlliance = event.source.team.alliance;
+
+      for (const alliance of battle.alliances) {
+        if (alliance === ownAlliance) {
+          continue;
+        }
+        for (const team of alliance.teams) {
+          for (const unit of team.units) {
+            if (unit.alive && holdsAnyItem(unit)) {
+              event.source.triggerAbility(Abilities.Frisk);
+              return;
+            }
+          }
+        }
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

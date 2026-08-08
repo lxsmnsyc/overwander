@@ -49,6 +49,9 @@ const enum Abilities {
   Unaware = 33,
   // Vulpix
   FlashFire = 34,
+  // Jigglypuff
+  Competitive = 35,
+  Frisk = 36,
 }
 
 export default Abilities;

@@ -16,6 +16,17 @@ import { setupSleepingStatus } from './sleeping';
 import { setupSubstitutedStatus } from './substituted';
 import { setupTrappedStatus } from './trapped';
 
+/**
+ * Statuses that block the unit from casting moves (each hooks
+ * CheckUnitCanCast in its own setup)
+ */
+export const MOVE_LOCKING_STATUS: Statuses[] = [
+  Statuses.Sleeping,
+  Statuses.Frozen,
+  Statuses.Flinched,
+  Statuses.Recharging,
+];
+
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Paralyzed,
   Statuses.BadlyPoisoned,

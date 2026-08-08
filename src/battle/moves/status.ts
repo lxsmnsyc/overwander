@@ -5,7 +5,7 @@ import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type { Battle } from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
-const STATUS_MOVES: { [key in Moves]?: Statuses } = {
+export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
   [Moves.SleepPowder]: Statuses.Sleeping,
   [Moves.Toxic]: Statuses.BadlyPoisoned,
@@ -13,7 +13,7 @@ const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Supersonic]: Statuses.Confused,
 };
 
-const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
+export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.FocusEnergy]: Statuses.FocusEnergy,
 };
 

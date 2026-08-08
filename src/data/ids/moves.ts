@@ -42,19 +42,25 @@ export const enum MoveAttackFlags {
   /**
    * Move deals direct damage (with no boost from stages/type effectiveness)
    */
-  Pure = 0b0001,
+  Pure = 0b00001,
   /**
    * Move can deal a critical
    */
-  Critical = 0b0010,
+  Critical = 0b00010,
   /**
    * Move is non-lethal
    */
-  NonLethal = 0b0100,
+  NonLethal = 0b00100,
   /**
    * Reserved for Confused status
    */
-  Confused = 0b1000,
+  Confused = 0b01000,
+  /**
+   * The attack is a simulation (e.g. AI damage estimation), not an
+   * actual attack — listeners with side effects (visual cues, state
+   * tracking) should ignore it
+   */
+  Simulated = 0b10000,
 }
 
 export const enum DamageFlags {

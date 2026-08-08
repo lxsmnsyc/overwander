@@ -4,7 +4,11 @@ import type { Stages, Stats, StatsKind } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import type { MoveCategories, Moves } from '../data/ids/moves';
+import type {
+  MoveCategories,
+  Moves,
+  MoveTargetPriorities,
+} from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type { Alliance } from './alliance';
@@ -163,6 +167,12 @@ export const enum BattleEvents {
 
   AddAlliance = 108,
   RemoveAlliance = 109,
+
+  // AI events
+  CheckUnitAIMoveScore = 110,
+  UnitAIChooseMove = 111,
+  CheckUnitAIRating = 112,
+  CheckTeamAIUnit = 113,
 }
 
 export const enum MoveTargetType {
@@ -467,6 +477,38 @@ export interface UnitSpeciesEvent extends UnitEvent {
   species: Species;
 }
 
+export interface CheckUnitAIMoveScoreEvent extends UnitMoveEvent {
+  target: MoveTarget;
+  score: number;
+}
+
+export interface AIMoveChoice {
+  move: Moves;
+  target: MoveTarget;
+  score: number;
+}
+
+export interface UnitAIChooseMoveEvent extends UnitEvent {
+  choice?: AIMoveChoice;
+}
+
+export interface CheckUnitAIRatingEvent extends UnitEvent {
+  /**
+   * How strong the unit currently is: resolved stats with stages
+   * applied, adjusted by statuses and remaining health
+   */
+  rating: number;
+}
+
+export interface CheckTeamAIUnitEvent extends TeamEvent {
+  priority: MoveTargetPriorities;
+  /**
+   * Unit to leave out of consideration (e.g. the one switching out)
+   */
+  exclude?: Unit;
+  unit?: Unit;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -670,6 +712,15 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.SetWeather]: [WeatherEvent, EventPriority];
   [BattleEvents.AddAlliance]: [AllianceEvent, EventPriority];
   [BattleEvents.RemoveAlliance]: [AllianceEvent, EventPriority];
+
+  // AI events
+  [BattleEvents.CheckUnitAIMoveScore]: [
+    CheckUnitAIMoveScoreEvent,
+    EventPriority,
+  ];
+  [BattleEvents.UnitAIChooseMove]: [UnitAIChooseMoveEvent, EventPriority];
+  [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
+  [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];
 }
 
 export interface ProgressData {

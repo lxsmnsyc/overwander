@@ -50,4 +50,7 @@ export const enum Species {
   Wigglytuff = 42,
   Zubat = 43,
   Golbat = 44,
+  Oddish = 45,
+  Gloom = 46,
+  Vileplume = 47,
 }

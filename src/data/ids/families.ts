@@ -16,6 +16,7 @@ const enum Families {
   Vulpix = 14,
   Jigglypuff = 15,
   Zubat = 16,
+  Oddish = 17,
 }
 
 export default Families;

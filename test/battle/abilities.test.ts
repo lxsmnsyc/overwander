@@ -815,3 +815,40 @@ describe('Infiltrator', () => {
     expect(bypassed / screened).toBeCloseTo(4096 / 2732);
   });
 });
+
+describe('Stench', () => {
+  it('may flinch the target on damaging hits', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+
+    const holder = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Stench);
+
+    victim.damage({ type: EffectType.Move, move: Moves.Tackle, unit: holder }, victim, 10, 0);
+
+    expect(victim.status[Statuses.Flinched]).toBeDefined();
+  });
+});
+
+describe('Effect Spore', () => {
+  it('afflicts contact attackers, sparing Grass types', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // lowest roll: poison
+
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const grass = createUnit(battle, teamB, [Types.Grass]);
+    holder.addAbility(Abilities.EffectSpore);
+
+    const hit = (unit: typeof attacker): void => {
+      holder.damage({ type: EffectType.Move, move: Moves.Tackle, unit }, holder, 10, 0);
+    };
+
+    hit(attacker);
+    expect(attacker.status[Statuses.Poisoned]).toBeDefined();
+
+    hit(grass);
+    expect(grass.status[Statuses.Poisoned]).toBeUndefined();
+  });
+});

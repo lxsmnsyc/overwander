@@ -1041,4 +1041,24 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Absorb, {
+    name: 'Absorb',
+    type: Types.Grass,
+    category: MoveCategories.Special,
+    pp: 25,
+    power: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.PetalDance, {
+    name: 'Petal Dance',
+    type: Types.Grass,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 120,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

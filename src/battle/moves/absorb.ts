@@ -3,7 +3,7 @@ import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
-const ABSORB_MOVES = new Set<Moves>([Moves.MegaDrain, Moves.LeechLife]);
+const ABSORB_MOVES = new Set<Moves>([Moves.Absorb, Moves.MegaDrain, Moves.LeechLife]);
 
 const HEALING_FACTOR = 0.5;
 

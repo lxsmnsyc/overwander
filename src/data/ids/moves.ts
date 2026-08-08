@@ -196,4 +196,6 @@ export const enum Moves {
   Disable = 107,
   LeechLife = 108,
   Haze = 109,
+  Absorb = 110,
+  PetalDance = 111,
 }

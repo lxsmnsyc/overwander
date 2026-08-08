@@ -827,6 +827,76 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Oddish
+  // https://bulbapedia.bulbagarden.net/wiki/Stench_(Ability)
+  createAbility(Abilities.Stench, (battle) => {
+    const CHANCE = 0.1;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.cause.unit.hasAbility(Abilities.Stench) &&
+        event.target.alive &&
+        battle.random() < CHANCE
+      ) {
+        const holder = event.cause.unit;
+
+        holder.triggerAbility(Abilities.Stench);
+
+        event.target.addStatus(Statuses.Flinched, {
+          type: EffectType.Ability,
+          ability: Abilities.Stench,
+          unit: holder,
+        });
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Effect_Spore_(Ability)
+  createAbility(Abilities.EffectSpore, (battle) => {
+    // 30% total on contact: 9% poison, 10% paralysis, 11% sleep
+    const POISON = 0.09;
+    const PARALYSIS = 0.19;
+    const SLEEP = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.EffectSpore) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        // Grass types are immune to spores (modern mechanics)
+        !event.cause.unit.types.has(Types.Grass)
+      ) {
+        const roll = battle.random();
+
+        let status: Statuses | undefined;
+        if (roll < POISON) {
+          status = Statuses.Poisoned;
+        } else if (roll < PARALYSIS) {
+          status = Statuses.Paralyzed;
+        } else if (roll < SLEEP) {
+          status = Statuses.Sleeping;
+        }
+
+        if (status != null) {
+          event.target.triggerAbility(Abilities.EffectSpore);
+
+          event.cause.unit.addStatus(status, {
+            type: EffectType.Ability,
+            ability: Abilities.EffectSpore,
+            unit: event.target,
+          });
+        }
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

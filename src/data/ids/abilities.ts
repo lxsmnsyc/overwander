@@ -55,6 +55,9 @@ const enum Abilities {
   // Zubat
   InnerFocus = 37,
   Infiltrator = 38,
+  // Oddish
+  Stench = 39,
+  EffectSpore = 40,
 }
 
 export default Abilities;

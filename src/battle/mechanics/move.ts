@@ -997,6 +997,10 @@ export function setupAttackMechanics(battle: Battle): void {
         flags |= DamageFlags.NonLethal;
       }
 
+      if (event.flags & MoveAttackFlags.Piercing) {
+        flags |= DamageFlags.Piercing;
+      }
+
       event.success = event.source.damage(
         { type: EffectType.Move, unit: event.source, move: event.move },
         event.target,

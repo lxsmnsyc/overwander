@@ -852,3 +852,39 @@ describe('Effect Spore', () => {
     expect(grass.status[Statuses.Poisoned]).toBeUndefined();
   });
 });
+
+describe('Infiltrator vs Substitute', () => {
+  it('pierces the substitute while plain attacks are absorbed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+
+    const plain = createUnit(battle, teamA);
+    const infiltrator = createUnit(battle, teamA);
+    infiltrator.addAbility(Abilities.Infiltrator);
+
+    const targetA = createUnit(battle, teamB);
+    const targetB = createUnit(battle, teamB);
+    targetA.addStatus(Statuses.Substituted, NONE_CAUSE);
+    targetB.addStatus(Statuses.Substituted, NONE_CAUSE);
+
+    const absorbed = dealDamage(
+      plain,
+      targetA,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const pierced = dealDamage(
+      infiltrator,
+      targetB,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(absorbed).toBe(0);
+    expect(pierced).toBeCloseTo(0.44 * 40 + 2);
+  });
+});

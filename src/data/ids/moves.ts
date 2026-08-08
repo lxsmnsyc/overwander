@@ -61,6 +61,10 @@ export const enum MoveAttackFlags {
    * tracking) should ignore it
    */
   Simulated = 0b10000,
+  /**
+   * The attack pierces damage-absorbing shields (e.g. Substitute)
+   */
+  Piercing = 0b100000,
 }
 
 export const enum DamageFlags {
@@ -72,6 +76,10 @@ export const enum DamageFlags {
    * The damage is done indirectly (either by status, recoil, etc.)
    */
   Indirect = 0b0010,
+  /**
+   * The damage pierces damage-absorbing shields (e.g. Substitute)
+   */
+  Piercing = 0b0100,
 }
 
 export const enum StatFlags {

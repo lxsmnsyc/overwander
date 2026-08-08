@@ -814,18 +814,28 @@ const setupAbilities = [
       [MoveCategories.Special]: TeamStatuses.LightScreen,
     };
 
-    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      const screen = SCREEN_BY_CATEGORY[event.parent.category];
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const screen = SCREEN_BY_CATEGORY[event.parent.category];
 
-      if (
-        screen != null &&
-        event.parent.source.hasAbility(Abilities.Infiltrator) &&
-        event.parent.target.team.status[screen] != null &&
-        !(event.parent.flags & MoveAttackFlags.Confused)
-      ) {
-        event.value *= SCREEN_COMPENSATION;
-      }
-    });
+        if (
+          screen != null &&
+          event.parent.source.hasAbility(Abilities.Infiltrator) &&
+          event.parent.target.team.status[screen] != null &&
+          !(event.parent.flags & MoveAttackFlags.Confused)
+        ) {
+          event.value *= SCREEN_COMPENSATION;
+        }
+      }),
+      // The holder's attacks pierce damage-absorbing shields (e.g.
+      // Substitute); the flag is set before the attack resolves, so
+      // the shield's own damage handler simply honors it
+      battle.on(BattleEvents.UnitAttack, EventPriority.Pre, (event) => {
+        if (event.source.hasAbility(Abilities.Infiltrator)) {
+          event.flags |= MoveAttackFlags.Piercing;
+        }
+      }),
+    ]);
   }),
 
   // Oddish

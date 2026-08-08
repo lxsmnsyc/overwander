@@ -1,6 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
-import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
@@ -54,9 +53,10 @@ export default function setupSubstitutedStatus(battle: Battle): void {
       !(event.flags & DamageFlags.Indirect) &&
       event.cause.type === EffectType.Move &&
       event.cause.unit !== event.target &&
-      // Sound-based moves and Infiltrator attackers go through
+      // Sound-based moves and piercing damage (e.g. Infiltrator) go
+      // through
       !(getMoveData(event.cause.move).flags & MoveFlags.Sound) &&
-      !event.cause.unit.hasAbility(Abilities.Infiltrator)
+      !(event.flags & DamageFlags.Piercing)
     ) {
       data.health -= event.value;
 

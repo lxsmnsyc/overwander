@@ -101,4 +101,5 @@ export const enum Moves {
   Bide,
   Reflect,
   Rest,
+  HyperBeam,
 }

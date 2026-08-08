@@ -8,6 +8,7 @@ import { setupLeechSeed } from './leech-seed';
 import { setupMimic } from './mimic';
 import { setupPowderMoves } from './powder';
 import { setupRage } from './rage';
+import { setupRechargeMoves } from './recharge';
 import { setupRecoilMoves } from './recoil';
 import { setupRest } from './rest';
 import { setupSolarBeam } from './solar-beam';
@@ -24,6 +25,7 @@ export function setupMoves(battle: Battle) {
   setupPowderMoves(battle);
   setupIncreasedCriticalHitRatioMoves(battle);
   setupRecoilMoves(battle);
+  setupRechargeMoves(battle);
 
   // Variations
   setupSolarBeam(battle);

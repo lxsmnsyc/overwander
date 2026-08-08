@@ -9,6 +9,7 @@ export const enum Statuses {
   Raging,
   Biding,
   Confused,
+  Recharging,
 }
 
 export const enum Weathers {

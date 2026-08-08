@@ -5,6 +5,7 @@ import type { Types } from '../data/constants/types';
 import type { Abilities } from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
+import { Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type { Alliance } from './alliance';
 import type { Team } from './team';
@@ -140,6 +141,9 @@ export const enum BattleEvents {
   UnitDisableAbility,
 
   UnitSwitch,
+
+  UnitSetSpecies,
+  UnitSetAppearance,
 
   // Field events
   SetWeather,
@@ -459,6 +463,10 @@ export interface UnitCureEvent extends UnitEvent {
   cause: EffectCause;
 }
 
+export interface UnitSpeciesEvent extends UnitEvent {
+  species: Species;
+}
+
 export interface BattleEventMap extends EventMap {
   [BattleEvents.Initialize]: [BaseEvent, EventPriority];
   [BattleEvents.Start]: [BaseEvent, EventPriority];
@@ -639,6 +647,9 @@ export interface BattleEventMap extends EventMap {
   ];
 
   [BattleEvents.CheckUnitWeather]: [UnitWeatherEvent, EventPriority];
+
+  [BattleEvents.UnitSetSpecies]: [UnitSpeciesEvent, EventPriority];
+  [BattleEvents.UnitSetAppearance]: [UnitSpeciesEvent, EventPriority];
 
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];

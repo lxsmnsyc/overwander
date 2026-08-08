@@ -5,6 +5,7 @@ import { BattleEvents } from '../events';
 import { setupConfusedStatus } from './confused';
 import { setupParalyzedStatus } from './paralyzed';
 import { setupPoisonedStatus } from './poisoned';
+import { setupRechargingStatus } from './recharging';
 import { setupSeedingStatus } from './seeding';
 import { setupSleepingStatus } from './sleeping';
 
@@ -56,6 +57,7 @@ export function seupStatus(battle: Battle) {
   setupSleepingStatus(battle);
   setupParalyzedStatus(battle);
   setupConfusedStatus(battle);
+  setupRechargingStatus(battle);
 
   setupNonRefreshableStatus(battle);
 }

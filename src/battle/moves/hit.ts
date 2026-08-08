@@ -14,6 +14,7 @@ const HIT_MOVES = new Set([
   Moves.DoubleEdge,
   Moves.Rage,
   Moves.MegaDrain,
+  Moves.HyperBeam,
 ]);
 
 export function setupHitMoves(battle: Battle) {

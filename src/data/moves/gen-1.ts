@@ -194,4 +194,14 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.HyperBeam, {
+    name: 'Hyper Beam',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 5,
+    power: 150,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

@@ -13,6 +13,10 @@ const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Supersonic]: Statuses.Confused,
 };
 
+const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
+  [Moves.FocusEnergy]: Statuses.FocusEnergy,
+};
+
 const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.BodySlam]: Statuses.Paralyzed,
   [Moves.Ember]: Statuses.Burned,
@@ -24,6 +28,8 @@ const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Blizzard]: Statuses.Frozen,
   [Moves.Confusion]: Statuses.Confused,
   [Moves.Psybeam]: Statuses.Confused,
+  [Moves.PoisonSting]: Statuses.Poisoned,
+  [Moves.Twineedle]: Statuses.Poisoned,
 };
 
 const EFFECT_STAGE_MOVES: {
@@ -48,6 +54,8 @@ const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.Confusion]: 10,
   [Moves.Psybeam]: 10,
   [Moves.Psychic]: 10,
+  [Moves.PoisonSting]: 30,
+  [Moves.Twineedle]: 20,
 };
 
 function setupUnitStatusMoves(battle: Battle) {
@@ -56,6 +64,16 @@ function setupUnitStatusMoves(battle: Battle) {
 
     if (targetStatus && event.target.type === MoveTargetType.Unit) {
       event.target.unit.addStatus(targetStatus, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      });
+    }
+
+    const selfStatus = SELF_STATUS_MOVES[event.move];
+
+    if (selfStatus) {
+      event.source.addStatus(selfStatus, {
         type: EffectType.Move,
         move: event.move,
         unit: event.source,

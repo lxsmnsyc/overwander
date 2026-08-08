@@ -19,4 +19,7 @@ export const enum Abilities {
   // Butterfree
   CompoundEyes = 12,
   TintedLens = 13,
+  // Beedrill
+  Swarm = 14,
+  Sniper = 15,
 }

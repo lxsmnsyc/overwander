@@ -15,6 +15,7 @@ export const enum Statuses {
   Trapped = 13,
   Flinched = 14,
   Frozen = 15,
+  FocusEnergy = 16,
 }
 
 export const enum Weathers {

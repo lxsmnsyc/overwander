@@ -9,6 +9,7 @@ import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
 import { setupMimic } from './mimic';
+import { setupMultiHitMoves } from './multi-hit';
 import { setupPowderMoves } from './powder';
 import { setupRage } from './rage';
 import { setupRechargeMoves } from './recharge';
@@ -36,6 +37,7 @@ export function setupMoves(battle: Battle) {
   setupSemiInvulnerableMoves(battle);
   setupFixedDamageMoves(battle);
   setupSwitchOutMoves(battle);
+  setupMultiHitMoves(battle);
 
   // Variations
   setupSolarBeam(battle);

@@ -6,6 +6,7 @@ import { BattleEvents } from '../events';
 import { setupBurnedStatus } from './burned';
 import { setupConfusedStatus } from './confused';
 import { setupFlinchedStatus } from './flinched';
+import { setupFocusEnergyStatus } from './focus-energy';
 import { setupFrozenStatus } from './frozen';
 import { setupParalyzedStatus } from './paralyzed';
 import { setupPoisonedStatus } from './poisoned';
@@ -24,6 +25,7 @@ const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Burned,
   Statuses.Trapped,
   Statuses.Frozen,
+  Statuses.FocusEnergy,
 ]);
 
 const NON_REFRESHABLE_TEAM_STATUS = new Set<TeamStatuses>([
@@ -99,6 +101,7 @@ export function seupStatus(battle: Battle) {
   setupTrappedStatus(battle);
   setupFlinchedStatus(battle);
   setupFrozenStatus(battle);
+  setupFocusEnergyStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

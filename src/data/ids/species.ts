@@ -14,4 +14,7 @@ export const enum Species {
   Caterpie = 12,
   Metapod = 13,
   Butterfree = 14,
+  Weedle = 15,
+  Kakuna = 16,
+  Beedrill = 17,
 }

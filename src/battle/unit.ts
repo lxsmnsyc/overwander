@@ -153,7 +153,11 @@ export class Unit {
   }
 
   interrupt() {
-    // TODO UnitInterrupt
+    this.battle.emit(BattleEvents.UnitInterrupt, {
+      id: 'UnitInterrupt',
+      disabled: false,
+      source: this,
+    });
   }
 
   casting?: CastingData;

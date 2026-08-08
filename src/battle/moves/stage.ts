@@ -47,6 +47,7 @@ const setupDefenseStageMoves = createStageMove(Stages.Defense, {
 
 const setupSpeedStageMoves = createStageMove(Stages.Speed, {
   [Moves.StringShot]: -2,
+  [Moves.Agility]: 2,
 });
 
 const setupAccuracyStageMoves = createStageMove(Stages.Accuracy, {

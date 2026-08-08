@@ -146,4 +146,10 @@ export const enum Moves {
   Psywave = 63,
   Teleport = 64,
   Flash = 65,
+  PoisonSting = 66,
+  FuryAttack = 67,
+  FocusEnergy = 68,
+  Twineedle = 69,
+  PinMissile = 70,
+  Agility = 71,
 }

@@ -212,6 +212,22 @@ const setupAbilities = [
     );
   }),
 
+  // Beedrill
+  createBlazeAbility(Abilities.Swarm, Types.Bug),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sniper_(Ability)
+  createAbility(Abilities.Sniper, battle => {
+    return battle.on(
+      BattleEvents.UnitAttackResolveCriticalMult,
+      EventPriority.Post,
+      event => {
+        if (event.parent.source.hasAbility(Abilities.Sniper)) {
+          event.value *= 1.5;
+        }
+      },
+    );
+  }),
+
   // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)
   createAbility(Abilities.TintedLens, battle => {
     // Total effectiveness per attack; doubling applies once on the

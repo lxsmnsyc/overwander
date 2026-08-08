@@ -594,6 +594,15 @@ export default class Unit {
     });
   }
 
+  resetStages(cause: EffectCause): void {
+    this.battle.emit(BattleEvents.UnitResetStages, {
+      id: 'UnitResetStages',
+      disabled: false,
+      source: this,
+      cause,
+    });
+  }
+
   checkStage(stage: Stages, flags: number): number {
     const event: CheckUnitStageEvent = {
       id: 'CheckUnitStage',

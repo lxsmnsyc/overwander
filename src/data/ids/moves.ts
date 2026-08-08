@@ -194,4 +194,6 @@ export const enum Moves {
   Roar = 105,
   ConfuseRay = 106,
   Disable = 107,
+  LeechLife = 108,
+  Haze = 109,
 }

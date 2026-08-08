@@ -794,6 +794,62 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Zubat
+  // https://bulbapedia.bulbagarden.net/wiki/Inner_Focus_(Ability)
+  createAbility(
+    Abilities.InnerFocus,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot flinch
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Flinched &&
+            event.source.hasAbility(Abilities.InnerFocus)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Unfazed by Intimidate (modern mechanics)
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+          if (
+            event.value < 0 &&
+            event.cause.type === EffectType.Ability &&
+            event.cause.ability === Abilities.Intimidate &&
+            event.source.hasAbility(Abilities.InnerFocus)
+          ) {
+            event.disabled = true;
+            event.source.triggerAbility(Abilities.InnerFocus);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Infiltrator_(Ability)
+  createAbility(Abilities.Infiltrator, (battle) => {
+    // Inverse of the screens' 2732/4096 reduction; like the Guts burn
+    // compensation, the bypass undoes the screen's cut on the total
+    const SCREEN_COMPENSATION = 4096 / 2732;
+
+    const SCREEN_BY_CATEGORY: { [key in MoveCategories]?: TeamStatuses } = {
+      [MoveCategories.Physical]: TeamStatuses.Reflect,
+      [MoveCategories.Special]: TeamStatuses.LightScreen,
+    };
+
+    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const screen = SCREEN_BY_CATEGORY[event.parent.category];
+
+      if (
+        screen != null &&
+        event.parent.source.hasAbility(Abilities.Infiltrator) &&
+        event.parent.target.team.status[screen] != null &&
+        !(event.parent.flags & MoveAttackFlags.Confused)
+      ) {
+        event.value *= SCREEN_COMPENSATION;
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

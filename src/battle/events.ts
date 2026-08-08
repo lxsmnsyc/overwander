@@ -172,6 +172,7 @@ export const enum BattleEvents {
 
   CheckUnitCanConsumeItem = 114,
   UnitSetGender = 115,
+  UnitResetStages = 116,
 }
 
 export const enum MoveTargetType {
@@ -488,6 +489,10 @@ export interface UnitSetGenderEvent extends UnitEvent {
   gender: Genders;
 }
 
+export interface UnitResetStagesEvent extends UnitEvent {
+  cause: EffectCause;
+}
+
 export interface CheckUnitAIMoveScoreEvent extends UnitMoveEvent {
   target: MoveTarget;
   score: number;
@@ -647,6 +652,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitSetSpecies]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetAppearance]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetGender]: [UnitSetGenderEvent, EventPriority];
+  [BattleEvents.UnitResetStages]: [UnitResetStagesEvent, EventPriority];
 
   // Team events
   [BattleEvents.TeamAddUnit]: [TeamUnitEvent, EventPriority];

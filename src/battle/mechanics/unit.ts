@@ -46,6 +46,10 @@ function setupUnitStageMechanics(battle: Battle): void {
     event.value = event.source.stages[event.stage];
   });
 
+  battle.on(BattleEvents.UnitResetStages, EventPriority.Exact, (event) => {
+    event.source.stages = createStagesField();
+  });
+
   battle.on(BattleEvents.UnitLeavesField, EventPriority.Exact, (event) => {
     event.source.stages = createStagesField();
   });

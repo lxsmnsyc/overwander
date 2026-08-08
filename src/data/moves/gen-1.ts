@@ -1023,4 +1023,22 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.LeechLife, {
+    name: 'Leech Life',
+    type: Types.Bug,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Haze, {
+    name: 'Haze',
+    type: Types.Ice,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: 0,
+    flags: 0,
+  });
 }

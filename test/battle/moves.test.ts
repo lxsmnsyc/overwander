@@ -717,3 +717,19 @@ describe('Disable', () => {
     expect(target.moves[Moves.Tackle]?.disabled).toBe(true);
   });
 });
+
+describe('Haze', () => {
+  it('resets the stat stages of every unit on both sides', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const user = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    user.addStage(Stages.Attack, 2, NONE_CAUSE);
+    enemy.addStage(Stages.Defense, -3, NONE_CAUSE);
+
+    user.triggerMoveEffect(Moves.Haze, NONE_TARGET, 0);
+
+    expect(user.stages[Stages.Attack]).toBe(0);
+    expect(enemy.stages[Stages.Defense]).toBe(0);
+  });
+});

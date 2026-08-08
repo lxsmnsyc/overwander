@@ -52,6 +52,9 @@ const enum Abilities {
   // Jigglypuff
   Competitive = 35,
   Frisk = 36,
+  // Zubat
+  InnerFocus = 37,
+  Infiltrator = 38,
 }
 
 export default Abilities;

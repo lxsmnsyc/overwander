@@ -12,7 +12,7 @@ import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
-import { Statuses, Weathers } from '../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -753,5 +753,65 @@ describe('Competitive', () => {
     holder.addStage(Stages.Attack, -1, NONE_CAUSE);
 
     expect(holder.stages[Stages.SpecialAttack]).toBe(0);
+  });
+});
+
+describe('Inner Focus', () => {
+  it('cannot flinch', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.InnerFocus);
+
+    holder.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Flinched]).toBeUndefined();
+  });
+
+  it('is unfazed by Intimidate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const exposed = createUnit(battle, teamA);
+    const intimidator = createUnit(battle, teamB);
+    holder.addAbility(Abilities.InnerFocus);
+    intimidator.addAbility(Abilities.Intimidate);
+
+    intimidator.enter();
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(exposed.stages[Stages.Attack]).toBe(-1);
+  });
+});
+
+describe('Infiltrator', () => {
+  it('attacks through screens', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+
+    const plain = createUnit(battle, teamA);
+    const infiltrator = createUnit(battle, teamA);
+    infiltrator.addAbility(Abilities.Infiltrator);
+
+    const targetA = createUnit(battle, teamB);
+    const targetB = createUnit(battle, teamB);
+    teamB.addStatus(TeamStatuses.Reflect, NONE_CAUSE);
+
+    const screened = dealDamage(
+      plain,
+      targetA,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const bypassed = dealDamage(
+      infiltrator,
+      targetB,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(bypassed / screened).toBeCloseTo(4096 / 2732);
   });
 });

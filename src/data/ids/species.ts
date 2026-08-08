@@ -48,4 +48,6 @@ export const enum Species {
   Ninetales = 40,
   Jigglypuff = 41,
   Wigglytuff = 42,
+  Zubat = 43,
+  Golbat = 44,
 }

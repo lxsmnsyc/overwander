@@ -14,6 +14,7 @@ import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
 import registerVulpixSpecies from './vulpix';
 import registerWeedleSpecies from './weedle';
+import registerZubatSpecies from './zubat';
 
 export { getSpeciesData } from './__create';
 
@@ -34,4 +35,5 @@ export function registerSpecies(): void {
   registerClefairySpecies();
   registerVulpixSpecies();
   registerJigglypuffSpecies();
+  registerZubatSpecies();
 }

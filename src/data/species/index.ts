@@ -4,6 +4,7 @@ import { registerCharmanderSpecies } from './charmander';
 import { registerPidgeySpecies } from './pidgey';
 import { registerPikachuSpecies } from './pikachu';
 import { registerRattataSpecies } from './rattata';
+import { registerSpearowSpecies } from './spearow';
 import { registerSquirtleSpecies } from './squirtle';
 import { registerWeedleSpecies } from './weedle';
 
@@ -17,5 +18,6 @@ export function registerSpecies() {
   registerWeedleSpecies();
   registerPidgeySpecies();
   registerRattataSpecies();
+  registerSpearowSpecies();
   registerPikachuSpecies();
 }

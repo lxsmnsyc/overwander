@@ -6,5 +6,6 @@ export const enum Families {
   Weedle = 4,
   Pidgey = 5,
   Rattata = 6,
-  Pikachu = 7,
+  Spearow = 7,
+  Pikachu = 8,
 }

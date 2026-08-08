@@ -22,6 +22,8 @@ export const enum Species {
   Pidgeot = 20,
   Rattata = 21,
   Raticate = 22,
-  Pikachu = 23,
-  Raichu = 24,
+  Spearow = 23,
+  Fearow = 24,
+  Pikachu = 25,
+  Raichu = 26,
 }

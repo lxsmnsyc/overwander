@@ -782,6 +782,26 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Peck, {
+    name: 'Peck',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 35,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.DrillPeck, {
+    name: 'Drill Peck',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
   registerMove(Moves.ThunderShock, {
     name: 'Thunder Shock',
     type: Types.Electric,

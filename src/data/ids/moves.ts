@@ -165,4 +165,9 @@ export const enum Moves {
   MirrorMove = 76,
   RazorWind = 77,
   SkyAttack = 78,
+  ThunderShock = 79,
+  ThunderWave = 80,
+  Thunder = 81,
+  Thunderbolt = 82,
+  PayDay = 83,
 }

@@ -11,6 +11,7 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Toxic]: Statuses.BadlyPoisoned,
   [Moves.StunSpore]: Statuses.Paralyzed,
   [Moves.Supersonic]: Statuses.Confused,
+  [Moves.ThunderWave]: Statuses.Paralyzed,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -31,6 +32,9 @@ const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonSting]: Statuses.Poisoned,
   [Moves.Twineedle]: Statuses.Poisoned,
   [Moves.SkyAttack]: Statuses.Flinched,
+  [Moves.ThunderShock]: Statuses.Paralyzed,
+  [Moves.Thunder]: Statuses.Paralyzed,
+  [Moves.Thunderbolt]: Statuses.Paralyzed,
 };
 
 const EFFECT_STAGE_MOVES: {
@@ -58,6 +62,9 @@ const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.PoisonSting]: 30,
   [Moves.Twineedle]: 20,
   [Moves.SkyAttack]: 30,
+  [Moves.ThunderShock]: 10,
+  [Moves.Thunder]: 30,
+  [Moves.Thunderbolt]: 10,
 };
 
 function setupUnitStatusMoves(battle: Battle) {

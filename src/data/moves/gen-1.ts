@@ -763,4 +763,53 @@ export function registerGen1Moves() {
     flags: 0,
     steps: 1,
   });
+  registerMove(Moves.ThunderShock, {
+    name: 'Thunder Shock',
+    type: Types.Electric,
+    category: MoveCategories.Special,
+    pp: 30,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.ThunderWave, {
+    name: 'Thunder Wave',
+    type: Types.Electric,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Thunder, {
+    name: 'Thunder',
+    type: Types.Electric,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 110,
+    accuracy: 70,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Thunderbolt, {
+    name: 'Thunderbolt',
+    type: Types.Electric,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 90,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.PayDay, {
+    name: 'Pay Day',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

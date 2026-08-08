@@ -22,6 +22,7 @@ import { setupStageMoves } from './stage';
 import { setupStatusMoves } from './status';
 import { setupSubstitute } from './substitute';
 import { setupSwitchOutMoves } from './switch-out';
+import { setupThunder } from './thunder';
 
 export function setupMoves(battle: Battle) {
   // Overarching groups
@@ -52,4 +53,5 @@ export function setupMoves(battle: Battle) {
   setupSubstitute(battle);
   setupCounter(battle);
   setupMirrorMove(battle);
+  setupThunder(battle);
 }

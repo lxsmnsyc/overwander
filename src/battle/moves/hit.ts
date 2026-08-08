@@ -48,6 +48,10 @@ const HIT_MOVES = new Set([
   Moves.WingAttack,
   Moves.RazorWind,
   Moves.SkyAttack,
+  Moves.ThunderShock,
+  Moves.Thunder,
+  Moves.Thunderbolt,
+  Moves.PayDay,
 ]);
 
 export function setupHitMoves(battle: Battle) {

@@ -6,7 +6,12 @@ import { DamageFlags, MoveFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
-import { BattleEvents, EffectType, type UnitAttackEvent } from '../events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+  type UnitAttackEvent,
+} from '../events';
 import { isWeatherRainy, isWeatherSunny } from '../utils';
 import {
   createAbility,
@@ -276,6 +281,59 @@ const setupAbilities = [
         event.source.triggerAbility(Abilities.BigPecks);
       }
     });
+  }),
+
+  // Pikachu
+  // https://bulbapedia.bulbagarden.net/wiki/Static_(Ability)
+  createAbility(Abilities.Static, battle => {
+    const CHANCE = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, event => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.Static) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        battle.random() < CHANCE
+      ) {
+        event.target.triggerAbility(Abilities.Static);
+
+        event.cause.unit.addStatus(Statuses.Paralyzed, {
+          type: EffectType.Ability,
+          ability: Abilities.Static,
+          unit: event.target,
+        });
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Lightning_Rod_(Ability)
+  createAbility(Abilities.LightningRod, battle => {
+    return battle.on(
+      BattleEvents.CheckUnitMoveImmunity,
+      EventPriority.Post,
+      event => {
+        if (
+          !event.immune &&
+          event.type === Types.Electric &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.target.unit.hasAbility(Abilities.LightningRod)
+        ) {
+          event.immune = true;
+
+          event.target.unit.triggerAbility(Abilities.LightningRod);
+
+          event.target.unit.addStage(Stages.SpecialAttack, 1, {
+            type: EffectType.Ability,
+            ability: Abilities.LightningRod,
+            unit: event.target.unit,
+          });
+        }
+      },
+    );
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)

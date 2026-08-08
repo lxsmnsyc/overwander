@@ -20,4 +20,6 @@ export const enum Species {
   Pidgey = 18,
   Pidgeotto = 19,
   Pidgeot = 20,
+  Pikachu = 21,
+  Raichu = 22,
 }

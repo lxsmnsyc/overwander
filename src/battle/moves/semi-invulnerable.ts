@@ -27,9 +27,9 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
     doubled: new Set([Moves.Earthquake]),
   },
   // https://bulbapedia.bulbagarden.net/wiki/Fly_(move)
-  // TODO Twister (doubled), Thunder, Hurricane once implemented
+  // TODO Twister (doubled), Hurricane once implemented
   [Moves.Fly]: {
-    bypass: new Set([Moves.Gust]),
+    bypass: new Set([Moves.Gust, Moves.Thunder]),
     doubled: new Set([Moves.Gust]),
   },
   // Self switch-out: the user vanishes during the wind-up step.

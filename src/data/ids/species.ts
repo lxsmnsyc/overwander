@@ -17,4 +17,7 @@ export const enum Species {
   Weedle = 15,
   Kakuna = 16,
   Beedrill = 17,
+  Pidgey = 18,
+  Pidgeotto = 19,
+  Pidgeot = 20,
 }

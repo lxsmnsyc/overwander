@@ -1,6 +1,7 @@
 import { registerBulbasaurSpecies } from './bulbasaur';
 import { registerCaterpieSpecies } from './caterpie';
 import { registerCharmanderSpecies } from './charmander';
+import { registerPidgeySpecies } from './pidgey';
 import { registerSquirtleSpecies } from './squirtle';
 import { registerWeedleSpecies } from './weedle';
 
@@ -12,4 +13,5 @@ export function registerSpecies() {
   registerSquirtleSpecies();
   registerCaterpieSpecies();
   registerWeedleSpecies();
+  registerPidgeySpecies();
 }

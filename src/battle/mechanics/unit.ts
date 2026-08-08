@@ -47,7 +47,7 @@ function setupUnitStageMechanics(battle: Battle) {
     event.value = clampedStage - current;
   });
 
-  battle.on(BattleEvents.UnitCheckStage, EventPriority.Exact, event => {
+  battle.on(BattleEvents.CheckUnitStage, EventPriority.Exact, event => {
     event.value = event.source.stages[event.stage];
   });
 

@@ -43,6 +43,11 @@ const HIT_MOVES = new Set([
   Moves.Psybeam,
   Moves.Psychic,
   Moves.PoisonSting,
+  Moves.Gust,
+  Moves.QuickAttack,
+  Moves.WingAttack,
+  Moves.RazorWind,
+  Moves.SkyAttack,
 ]);
 
 export function setupHitMoves(battle: Battle) {

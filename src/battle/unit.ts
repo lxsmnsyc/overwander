@@ -580,7 +580,7 @@ export class Unit {
       flags,
     };
     this.battle.emit(BattleEvents.CheckUnitStage, event);
-    return event.stage;
+    return event.value;
   }
 
   heal(cause: EffectCause, target: Unit, value: number, flags: number) {

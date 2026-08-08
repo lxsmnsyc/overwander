@@ -22,4 +22,8 @@ export const enum Abilities {
   // Beedrill
   Swarm = 14,
   Sniper = 15,
+  // Pidgey
+  KeenEye = 16,
+  TangledFeet = 17,
+  BigPecks = 18,
 }

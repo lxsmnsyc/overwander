@@ -52,6 +52,7 @@ const setupSpeedStageMoves = createStageMove(Stages.Speed, {
 
 const setupAccuracyStageMoves = createStageMove(Stages.Accuracy, {
   [Moves.Flash]: -1,
+  [Moves.SandAttack]: -1,
 });
 
 const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {

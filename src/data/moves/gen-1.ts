@@ -693,4 +693,74 @@ export function registerGen1Moves() {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Gust, {
+    name: 'Gust',
+    type: Types.Flying,
+    category: MoveCategories.Special,
+    pp: 35,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.SandAttack, {
+    name: 'Sand Attack',
+    type: Types.Ground,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.QuickAttack, {
+    name: 'Quick Attack',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 40,
+    accuracy: 100,
+    priority: 1,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.WingAttack, {
+    name: 'Wing Attack',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 60,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.MirrorMove, {
+    name: 'Mirror Move',
+    type: Types.Flying,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.RazorWind, {
+    name: 'Razor Wind',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    steps: 1,
+  });
+  registerMove(Moves.SkyAttack, {
+    name: 'Sky Attack',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 5,
+    power: 140,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    steps: 1,
+  });
 }

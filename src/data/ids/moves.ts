@@ -152,4 +152,11 @@ export const enum Moves {
   Twineedle = 69,
   PinMissile = 70,
   Agility = 71,
+  Gust = 72,
+  SandAttack = 73,
+  QuickAttack = 74,
+  WingAttack = 75,
+  MirrorMove = 76,
+  RazorWind = 77,
+  SkyAttack = 78,
 }

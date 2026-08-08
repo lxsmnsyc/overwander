@@ -4,4 +4,5 @@ export const enum Families {
   Squirtle = 2,
   Caterpie = 3,
   Weedle = 4,
+  Pidgey = 5,
 }

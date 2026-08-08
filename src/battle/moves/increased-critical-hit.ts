@@ -6,6 +6,8 @@ import { BattleEvents } from '../events';
 const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
   Moves.RazorLeaf,
   Moves.Slash,
+  Moves.RazorWind,
+  Moves.SkyAttack,
 ]);
 
 export function setupIncreasedCriticalHitRatioMoves(battle: Battle) {

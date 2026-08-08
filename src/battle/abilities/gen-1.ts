@@ -1,5 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Abilities } from '../../data/ids/abilities';
 import { DamageFlags, MoveFlags } from '../../data/ids/moves';
@@ -226,6 +226,56 @@ const setupAbilities = [
         }
       },
     );
+  }),
+
+  // Pidgey
+  // https://bulbapedia.bulbagarden.net/wiki/Keen_Eye_(Ability)
+  createAbility(Abilities.KeenEye, battle => {
+    return battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, event => {
+      if (
+        event.stage === Stages.Accuracy &&
+        event.value < 0 &&
+        event.source.hasAbility(Abilities.KeenEye) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.disabled = true;
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.KeenEye);
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Tangled_Feet_(Ability)
+  createAbility(Abilities.TangledFeet, battle => {
+    return battle.on(BattleEvents.CheckUnitStage, EventPriority.Post, event => {
+      if (
+        event.stage === Stages.Evasion &&
+        event.source.status[Statuses.Confused] &&
+        event.source.hasAbility(Abilities.TangledFeet)
+      ) {
+        event.value *= 2;
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Big_Pecks_(Ability)
+  createAbility(Abilities.BigPecks, battle => {
+    return battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, event => {
+      if (
+        event.stage === Stages.Defense &&
+        event.value < 0 &&
+        event.source.hasAbility(Abilities.BigPecks) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.disabled = true;
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.BigPecks);
+      }
+    });
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)

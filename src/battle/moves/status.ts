@@ -30,6 +30,7 @@ const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Psybeam]: Statuses.Confused,
   [Moves.PoisonSting]: Statuses.Poisoned,
   [Moves.Twineedle]: Statuses.Poisoned,
+  [Moves.SkyAttack]: Statuses.Flinched,
 };
 
 const EFFECT_STAGE_MOVES: {
@@ -56,6 +57,7 @@ const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.Psychic]: 10,
   [Moves.PoisonSting]: 30,
   [Moves.Twineedle]: 20,
+  [Moves.SkyAttack]: 30,
 };
 
 function setupUnitStatusMoves(battle: Battle) {

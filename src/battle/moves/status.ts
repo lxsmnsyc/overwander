@@ -6,6 +6,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
+  [Moves.SleepPowder]: Statuses.Sleeping,
   [Moves.Toxic]: Statuses.BadlyPoisoned,
 };
 

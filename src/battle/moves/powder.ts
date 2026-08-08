@@ -4,7 +4,10 @@ import { Moves } from '../../data/ids/moves';
 import type { Battle } from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 
-export const POWDER_MOVES = new Set<Moves>([Moves.PoisonPowder]);
+export const POWDER_MOVES = new Set<Moves>([
+  Moves.PoisonPowder,
+  Moves.SleepPowder,
+]);
 
 export function setupPowderMoves(battle: Battle) {
   // Setup grass-type immunity

@@ -102,4 +102,7 @@ export const enum Moves {
   Reflect,
   Rest,
   HyperBeam,
+  SleepPowder,
+  Cut,
+  Substitute,
 }

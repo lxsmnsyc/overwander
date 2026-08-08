@@ -14,6 +14,7 @@ import { setupRest } from './rest';
 import { setupSolarBeam } from './solar-beam';
 import { setupStageMoves } from './stage';
 import { setupStatusMoves } from './status';
+import { setupSubstitute } from './substitute';
 
 export function setupMoves(battle: Battle) {
   // Overarching groups
@@ -36,4 +37,5 @@ export function setupMoves(battle: Battle) {
   setupMimic(battle);
   setupBide(battle);
   setupRest(battle);
+  setupSubstitute(battle);
 }

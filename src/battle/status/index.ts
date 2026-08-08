@@ -8,6 +8,7 @@ import { setupPoisonedStatus } from './poisoned';
 import { setupRechargingStatus } from './recharging';
 import { setupSeedingStatus } from './seeding';
 import { setupSleepingStatus } from './sleeping';
+import { setupSubstitutedStatus } from './substituted';
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Paralyzed,
@@ -58,6 +59,7 @@ export function seupStatus(battle: Battle) {
   setupParalyzedStatus(battle);
   setupConfusedStatus(battle);
   setupRechargingStatus(battle);
+  setupSubstitutedStatus(battle);
 
   setupNonRefreshableStatus(battle);
 }

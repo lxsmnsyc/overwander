@@ -10,6 +10,7 @@ export const enum Statuses {
   Biding,
   Confused,
   Recharging,
+  Substituted,
 }
 
 export const enum Weathers {

@@ -204,4 +204,31 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.SleepPowder, {
+    name: 'Sleep Powder',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Cut, {
+    name: 'Cut',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 50,
+    accuracy: 95,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Substitute, {
+    name: 'Substitute',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: 0,
+    flags: 0,
+  });
 }

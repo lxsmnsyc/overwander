@@ -26,7 +26,10 @@ export const enum Abilities {
   KeenEye = 16,
   TangledFeet = 17,
   BigPecks = 18,
+  // Rattata
+  Guts = 19,
+  Hustle = 20,
   // Pikachu
-  Static = 19,
-  LightningRod = 20,
+  Static = 21,
+  LightningRod = 22,
 }

@@ -3,6 +3,7 @@ import { registerCaterpieSpecies } from './caterpie';
 import { registerCharmanderSpecies } from './charmander';
 import { registerPidgeySpecies } from './pidgey';
 import { registerPikachuSpecies } from './pikachu';
+import { registerRattataSpecies } from './rattata';
 import { registerSquirtleSpecies } from './squirtle';
 import { registerWeedleSpecies } from './weedle';
 
@@ -15,5 +16,6 @@ export function registerSpecies() {
   registerCaterpieSpecies();
   registerWeedleSpecies();
   registerPidgeySpecies();
+  registerRattataSpecies();
   registerPikachuSpecies();
 }

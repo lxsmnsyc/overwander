@@ -24,6 +24,7 @@ import type {
   UnitAttackResolveAmountEvent,
   UnitAttackResolveCriticalEvent,
   UnitAttackResolveEffectivenessEvent,
+  UnitAttackResolveStatEvent,
   UnitTriggerMoveEvent,
   UnitTriggerMoveResolveAccuracyEvent,
   UnitTriggerMoveRollHitEvent,
@@ -855,6 +856,22 @@ export function setupAttackMechanics(battle: Battle) {
     return event.value;
   }
 
+  function resolveAttackStat(
+    parent: UnitAttackEvent,
+    stat: Stats,
+    value: number,
+  ) {
+    const event: UnitAttackResolveStatEvent = {
+      id: 'UnitAttackResolveStat',
+      disabled: false,
+      parent,
+      stat,
+      value,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveStat, event);
+    return event.value;
+  }
+
   function resolveSTAB(parent: UnitAttackEvent) {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackResolveStage',
@@ -1004,21 +1021,28 @@ export function setupAttackMechanics(battle: Battle) {
             statFlag |= StatFlags.Critical;
           }
 
-          const attackStat = source.resolveStat(preferredAttackStat, statFlag);
-          const defenseStat = target.resolveStat(
+          const attackStat = resolveAttackStat(
+            parent,
+            preferredAttackStat,
+            source.resolveStat(preferredAttackStat, statFlag),
+          );
+          const defenseStat = resolveAttackStat(
+            parent,
             preferredDefenseStat,
-            statFlag,
+            target.resolveStat(preferredDefenseStat, statFlag),
           );
 
-          base *= attackStat / defenseStat;
+          base *= attackStat / Math.max(1, defenseStat);
           base = base / 50 + 2;
+
+          event.value = base;
 
           if (isCritical) {
             event.value *= resolveCriticalMult(parent);
           }
 
-          // Random factor
-          event.value *= 85 + ((100 - 85) * battle.random()) / 100;
+          // Random factor: 85% to 100%
+          event.value *= (85 + (100 - 85) * battle.random()) / 100;
         }
 
         if (event.parent.flags & MoveAttackFlags.Confused) {

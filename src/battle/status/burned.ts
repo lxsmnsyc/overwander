@@ -1,5 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import { Abilities } from '../../data/ids/abilities';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -73,11 +74,13 @@ export function setupBurnedStatus(battle: Battle) {
     }
   });
 
-  // A burn halves the damage of the user's physical moves
+  // A burn halves the damage of the user's physical moves;
+  // Guts ignores the halving
   battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, event => {
     if (
       event.parent.category === MoveCategories.Physical &&
       event.parent.source.status[Statuses.Burned] &&
+      !event.parent.source.hasAbility(Abilities.Guts) &&
       !(event.parent.flags & MoveAttackFlags.Pure) &&
       !(event.parent.flags & MoveAttackFlags.Confused)
     ) {

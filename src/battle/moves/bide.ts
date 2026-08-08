@@ -87,7 +87,7 @@ export function setupBide(battle: Battle) {
           const moveType = event.source.checkMoveType(event.move, moveTarget);
 
           if (
-            event.source.checkMoveImmunity(event.move, moveTarget, moveType)
+            !event.source.checkMoveImmunity(event.move, moveTarget, moveType)
           ) {
             event.source.attack(
               current.target,

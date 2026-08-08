@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Abilities } from '../../data/ids/abilities';
-import { DamageFlags, MoveFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
@@ -18,6 +18,18 @@ import {
   createBlazeAbility,
   MergedAbilityLifecycle,
 } from './__create';
+
+/**
+ * Major conditions that power up Guts
+ */
+const GUTS_STATUS = [
+  Statuses.Poisoned,
+  Statuses.BadlyPoisoned,
+  Statuses.Burned,
+  Statuses.Paralyzed,
+  Statuses.Sleeping,
+  Statuses.Frozen,
+];
 
 const setupAbilities = [
   // Bulbasaur
@@ -281,6 +293,51 @@ const setupAbilities = [
         event.source.triggerAbility(Abilities.BigPecks);
       }
     });
+  }),
+
+  // Rattata
+  // https://bulbapedia.bulbagarden.net/wiki/Guts_(Ability)
+  createAbility(Abilities.Guts, battle => {
+    return battle.on(
+      BattleEvents.UnitAttackResolveStat,
+      EventPriority.Post,
+      event => {
+        if (
+          event.stat === Stats.Attack &&
+          event.parent.source.hasAbility(Abilities.Guts) &&
+          GUTS_STATUS.some(status => event.parent.source.status[status])
+        ) {
+          event.value *= 1.5;
+        }
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Hustle_(Ability)
+  createAbility(Abilities.Hustle, battle => {
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, event => {
+        if (
+          event.stat === Stats.Attack &&
+          event.source.hasAbility(Abilities.Hustle)
+        ) {
+          event.value *= 1.5;
+        }
+      }),
+      battle.on(
+        BattleEvents.CheckUnitMoveAccuracy,
+        EventPriority.Post,
+        event => {
+          if (
+            event.accuracy != null &&
+            event.source.hasAbility(Abilities.Hustle) &&
+            getMoveData(event.move).category === MoveCategories.Physical
+          ) {
+            event.accuracy *= 0.8;
+          }
+        },
+      ),
+    ]);
   }),
 
   // Pikachu

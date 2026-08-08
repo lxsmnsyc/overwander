@@ -763,6 +763,25 @@ export function registerGen1Moves() {
     flags: 0,
     steps: 1,
   });
+  registerMove(Moves.HyperFang, {
+    name: 'Hyper Fang',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 80,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.SuperFang, {
+    name: 'Super Fang',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
   registerMove(Moves.ThunderShock, {
     name: 'Thunder Shock',
     type: Types.Electric,

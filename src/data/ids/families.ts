@@ -5,5 +5,6 @@ export const enum Families {
   Caterpie = 3,
   Weedle = 4,
   Pidgey = 5,
-  Pikachu = 6,
+  Rattata = 6,
+  Pikachu = 7,
 }

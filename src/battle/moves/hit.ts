@@ -48,6 +48,7 @@ const HIT_MOVES = new Set([
   Moves.WingAttack,
   Moves.RazorWind,
   Moves.SkyAttack,
+  Moves.HyperFang,
   Moves.ThunderShock,
   Moves.Thunder,
   Moves.Thunderbolt,

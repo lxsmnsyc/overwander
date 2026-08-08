@@ -43,6 +43,7 @@ const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.TailWhip]: -1,
   [Moves.Withdraw]: 1,
   [Moves.Harden]: 1,
+  [Moves.Screech]: -2,
 });
 
 const setupSpeedStageMoves = createStageMove(Stages.Speed, {

@@ -41,7 +41,7 @@ const setupAbilities = [
     });
   }),
 
-  // Mega Venusaur
+  // Bulbasaur (Mega Venusaur)
   // https://bulbapedia.bulbagarden.net/wiki/Thick_Fat_(Ability)
   createAbility(Abilities.ThickFat, battle => {
     return battle.on(
@@ -216,7 +216,40 @@ const setupAbilities = [
     );
   }),
 
-  // Beedrill
+  // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)
+  createAbility(Abilities.TintedLens, battle => {
+    // Total effectiveness per attack; doubling applies once on the
+    // final damage when the attack is not very effective overall.
+    const totals = new WeakMap<UnitAttackEvent, number>();
+
+    return new MergedAbilityLifecycle([
+      battle.on(
+        BattleEvents.UnitAttackResolveEffectiveness,
+        EventPriority.Post,
+        event => {
+          if (event.parent.source.hasAbility(Abilities.TintedLens)) {
+            totals.set(
+              event.parent,
+              (totals.get(event.parent) ?? 1) * event.multiplier,
+            );
+          }
+        },
+      ),
+      battle.on(
+        BattleEvents.UnitAttackResolveDamage,
+        EventPriority.Post,
+        event => {
+          const total = totals.get(event.parent);
+
+          if (total != null && total < 1) {
+            event.value *= 2;
+          }
+        },
+      ),
+    ]);
+  }),
+
+  // Weedle/Beedrill
   createBlazeAbility(Abilities.Swarm, Types.Bug),
 
   // https://bulbapedia.bulbagarden.net/wiki/Sniper_(Ability)
@@ -352,6 +385,39 @@ const setupAbilities = [
     ]);
   }),
 
+  // Ekans
+  // https://bulbapedia.bulbagarden.net/wiki/Intimidate_(Ability)
+  createAbility(Abilities.Intimidate, battle => {
+    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, event => {
+      if (!event.source.hasAbility(Abilities.Intimidate)) {
+        return;
+      }
+
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.Intimidate,
+        unit: event.source,
+      } as const;
+
+      const ownAlliance = event.source.team.alliance;
+
+      for (const alliance of battle.alliances) {
+        if (alliance !== ownAlliance) {
+          for (const team of alliance.teams) {
+            for (const unit of team.units) {
+              if (unit.alive) {
+                unit.addStage(Stages.Attack, -1, cause);
+              }
+            }
+          }
+        }
+      }
+
+      // For visual cues
+      event.source.triggerAbility(Abilities.Intimidate);
+    });
+  }),
+
   // Pikachu
   // https://bulbapedia.bulbagarden.net/wiki/Static_(Ability)
   createAbility(Abilities.Static, battle => {
@@ -420,39 +486,6 @@ const setupAbilities = [
               ability: Abilities.LightningRod,
               unit: holder,
             });
-          }
-        },
-      ),
-    ]);
-  }),
-
-  // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)
-  createAbility(Abilities.TintedLens, battle => {
-    // Total effectiveness per attack; doubling applies once on the
-    // final damage when the attack is not very effective overall.
-    const totals = new WeakMap<UnitAttackEvent, number>();
-
-    return new MergedAbilityLifecycle([
-      battle.on(
-        BattleEvents.UnitAttackResolveEffectiveness,
-        EventPriority.Post,
-        event => {
-          if (event.parent.source.hasAbility(Abilities.TintedLens)) {
-            totals.set(
-              event.parent,
-              (totals.get(event.parent) ?? 1) * event.multiplier,
-            );
-          }
-        },
-      ),
-      battle.on(
-        BattleEvents.UnitAttackResolveDamage,
-        EventPriority.Post,
-        event => {
-          const total = totals.get(event.parent);
-
-          if (total != null && total < 1) {
-            event.value *= 2;
           }
         },
       ),

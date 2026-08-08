@@ -1,5 +1,6 @@
 import { registerBulbasaurSpecies } from './bulbasaur';
 import { registerCaterpieSpecies } from './caterpie';
+import { registerEkansSpecies } from './ekans';
 import { registerCharmanderSpecies } from './charmander';
 import { registerPidgeySpecies } from './pidgey';
 import { registerPikachuSpecies } from './pikachu';
@@ -19,5 +20,6 @@ export function registerSpecies() {
   registerPidgeySpecies();
   registerRattataSpecies();
   registerSpearowSpecies();
+  registerEkansSpecies();
   registerPikachuSpecies();
 }

@@ -29,7 +29,13 @@ export const enum Abilities {
   // Rattata
   Guts = 19,
   Hustle = 20,
+  // Ekans
+  Intimidate = 21,
+  /**
+   * TODO no berry/item pressure mechanics yet
+   */
+  Unnerve = 22,
   // Pikachu
-  Static = 21,
-  LightningRod = 22,
+  Static = 23,
+  LightningRod = 24,
 }

@@ -24,6 +24,8 @@ export const enum Species {
   Raticate = 22,
   Spearow = 23,
   Fearow = 24,
-  Pikachu = 25,
-  Raichu = 26,
+  Ekans = 25,
+  Arbok = 26,
+  Pikachu = 27,
+  Raichu = 28,
 }

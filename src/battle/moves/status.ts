@@ -12,6 +12,7 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.StunSpore]: Statuses.Paralyzed,
   [Moves.Supersonic]: Statuses.Confused,
   [Moves.ThunderWave]: Statuses.Paralyzed,
+  [Moves.Glare]: Statuses.Paralyzed,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -26,6 +27,8 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Flamethrower]: { status: Statuses.Burned, chance: 10 },
   [Moves.FireBlast]: { status: Statuses.Burned, chance: 10 },
   [Moves.FireSpin]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.Wrap]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.RockSlide]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Bite]: { status: Statuses.Flinched, chance: 30 },
   [Moves.IceBeam]: { status: Statuses.Frozen, chance: 10 },
   [Moves.Blizzard]: { status: Statuses.Frozen, chance: 10 },
@@ -46,6 +49,7 @@ const EFFECT_STAGE_MOVES: {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
 };
 
 function setupUnitStatusMoves(battle: Battle) {

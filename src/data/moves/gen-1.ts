@@ -802,6 +802,56 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Wrap, {
+    name: 'Wrap',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 15,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Glare, {
+    name: 'Glare',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Screech, {
+    name: 'Screech',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 40,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Sound,
+  });
+  registerMove(Moves.Acid, {
+    name: 'Acid',
+    type: Types.Poison,
+    category: MoveCategories.Special,
+    pp: 30,
+    power: 40,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.RockSlide, {
+    name: 'Rock Slide',
+    type: Types.Rock,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 75,
+    accuracy: 90,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
   registerMove(Moves.ThunderShock, {
     name: 'Thunder Shock',
     type: Types.Electric,

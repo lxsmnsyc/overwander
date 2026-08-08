@@ -551,3 +551,18 @@ describe('Tinted Lens', () => {
     expect(withLens / withoutLens).toBeCloseTo(2);
   });
 });
+
+describe('Intimidate', () => {
+  it('lowers enemy attack on entering the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const intimidator = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    intimidator.addAbility(Abilities.Intimidate);
+
+    intimidator.enter();
+
+    expect(enemy.stages[Stages.Attack]).toBe(-1);
+    expect(ally.stages[Stages.Attack]).toBe(0);
+  });
+});

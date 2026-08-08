@@ -9,8 +9,9 @@ import { setupFlinchedStatus } from './flinched';
 import { setupFocusEnergyStatus } from './focus-energy';
 import { setupFrozenStatus } from './frozen';
 import { setupParalyzedStatus } from './paralyzed';
-import { setupPoisonedStatus } from './poisoned';
+import { setupBadlyPoisonedStatus, setupPoisonedStatus } from './poisoned';
 import { setupRechargingStatus } from './recharging';
+import { setupReflectStatus } from './reflect';
 import { setupSeedingStatus } from './seeding';
 import { setupSleepingStatus } from './sleeping';
 import { setupSubstitutedStatus } from './substituted';
@@ -115,7 +116,9 @@ function setupStatusTypeImmunity(battle: Battle) {
 
 export function seupStatus(battle: Battle) {
   setupPoisonedStatus(battle);
+  setupBadlyPoisonedStatus(battle);
   setupSeedingStatus(battle);
+  setupReflectStatus(battle);
   setupSleepingStatus(battle);
   setupParalyzedStatus(battle);
   setupConfusedStatus(battle);

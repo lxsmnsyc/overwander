@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Battle } from '../../src/battle/core';
-import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+} from '../../src/battle/events';
 import type { Unit } from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';

@@ -927,7 +927,8 @@ export function setupAttackMechanics(battle: Battle) {
       if (effectivenessTable) {
         const result = effectivenessTable[event.defendingType];
 
-        if (result) {
+        // Explicit null check: TypeEffectiveness.Effective is 0
+        if (result != null) {
           event.multiplier *= TYPE_EFFECTIVENESS_FACTOR[result];
         }
       }

@@ -23,8 +23,9 @@ import { Unit } from '../../src/battle/unit';
 import { Stats, StatsKind } from '../../src/data/constants/stats';
 import type { Types } from '../../src/data/constants/types';
 import { registerGen1Moves } from '../../src/data/moves/gen-1';
+import { registerSpecies } from '../../src/data/species';
 
-let movesRegistered = false;
+let dataRegistered = false;
 
 export interface BattleHarness {
   battle: Battle;
@@ -40,9 +41,10 @@ export interface BattleHarness {
  * left out; tests drive time with battle.tick().
  */
 export function createBattle(seed = 'test-seed'): BattleHarness {
-  if (!movesRegistered) {
+  if (!dataRegistered) {
     registerGen1Moves();
-    movesRegistered = true;
+    registerSpecies();
+    dataRegistered = true;
   }
 
   const battle = new Battle(seed);

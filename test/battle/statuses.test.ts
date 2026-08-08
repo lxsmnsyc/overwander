@@ -1,0 +1,263 @@
+import { describe, expect, it } from 'vitest';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+} from '../../src/battle/events';
+import type { Unit } from '../../src/battle/unit';
+import { Types } from '../../src/data/constants/types';
+import { MoveCategories, Moves } from '../../src/data/ids/moves';
+import { Statuses, TeamStatuses } from '../../src/data/ids/status';
+import { createBattle, createUnit, pinRandom } from './harness';
+
+const NONE_CAUSE = { type: EffectType.None } as const;
+
+function moveCause(unit: Unit, move = Moves.Tackle) {
+  return { type: EffectType.Move, move, unit } as const;
+}
+
+function unitTarget(unit: Unit) {
+  return { type: MoveTargetType.Unit, unit } as const;
+}
+
+describe('Poisoned', () => {
+  it('drains an eighth of max health per tick and is curable', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    victim.addStatus(Statuses.Poisoned, moveCause(attacker));
+
+    battle.tick(1000);
+    expect(victim.health).toBe(140);
+
+    victim.cure(NONE_CAUSE);
+    battle.tick(1000);
+    expect(victim.health).toBe(140);
+  });
+
+  it('cannot be reapplied while active', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    let applications = 0;
+    battle.on(BattleEvents.UnitAddStatus, 2, event => {
+      if (event.status === Statuses.Poisoned) {
+        applications += 1;
+      }
+    });
+
+    victim.addStatus(Statuses.Poisoned, moveCause(attacker));
+    victim.addStatus(Statuses.Poisoned, moveCause(attacker));
+
+    expect(applications).toBe(1);
+  });
+});
+
+describe('Badly Poisoned', () => {
+  it('escalates its damage every tick', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    victim.addStatus(Statuses.BadlyPoisoned, moveCause(attacker, Moves.Toxic));
+
+    battle.tick(1000);
+    expect(victim.health).toBe(150); // 1/16
+
+    battle.tick(1000);
+    expect(victim.health).toBe(130); // + 2/16
+  });
+});
+
+describe('Burned', () => {
+  it('drains a sixteenth per tick and halves physical damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    const healthy = (() => {
+      const before = victim.health;
+      attacker.attack(
+        victim,
+        Moves.Tackle,
+        40,
+        Types.Normal,
+        MoveCategories.Physical,
+        0,
+      );
+      return before - victim.health;
+    })();
+
+    attacker.addStatus(Statuses.Burned, moveCause(victim, Moves.Ember));
+
+    const before = victim.health;
+    attacker.attack(
+      victim,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(before - victim.health).toBeCloseTo(healthy / 2);
+
+    const attackerBefore = attacker.health;
+    battle.tick(1000);
+    expect(attackerBefore - attacker.health).toBe(10); // 160 / 16
+  });
+});
+
+describe('Leech Seed', () => {
+  it('drains the victim and heals the seeder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const seeder = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+    seeder.setHealth(100);
+
+    victim.addStatus(Statuses.Seeding, moveCause(seeder, Moves.LeechSeed));
+
+    battle.tick(1000);
+
+    expect(victim.health).toBe(140);
+    expect(seeder.health).toBe(120);
+  });
+});
+
+describe('Sleeping', () => {
+  it('blocks casting until it wears off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    unit.addStatus(Statuses.Sleeping, NONE_CAUSE);
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    battle.tick(2000);
+    expect(unit.status[Statuses.Sleeping]).toBeUndefined();
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
+  });
+});
+
+describe('Frozen', () => {
+  it('blocks casting and thaws on Fire damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    unit.addStatus(Statuses.Frozen, NONE_CAUSE);
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    enemy.triggerMoveEffect(Moves.Ember, unitTarget(unit), 0);
+
+    expect(unit.status[Statuses.Frozen]).toBeUndefined();
+  });
+});
+
+describe('Flinched', () => {
+  it('briefly blocks casting', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    unit.addStatus(Statuses.Flinched, NONE_CAUSE);
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    battle.tick(500);
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
+  });
+});
+
+describe('Paralyzed', () => {
+  it('blocks actions a quarter of the time', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    pinRandom(battle, 0); // roll 0 <= 25
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    pinRandom(battle, 0.5); // roll 50 > 25
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
+  });
+});
+
+describe('Trapped', () => {
+  it('blocks escape and drains health until it expires', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    victim.addStatus(Statuses.Trapped, moveCause(attacker, Moves.FireSpin));
+    expect(victim.checkEscape()).toBe(false);
+
+    battle.tick(1000);
+    expect(victim.health).toBe(140); // 1/8
+
+    battle.tick(3000);
+    expect(victim.status[Statuses.Trapped]).toBeUndefined();
+    expect(victim.checkEscape()).toBe(true);
+  });
+});
+
+describe('Confused', () => {
+  it('sometimes blocks the action and hits the user instead', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addStatus(Statuses.Confused, NONE_CAUSE);
+
+    pinRandom(battle, 0.5); // >= 1/3: hurts itself
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+    expect(unit.health).toBeLessThan(160);
+
+    pinRandom(battle, 0.1); // < 1/3: acts normally
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
+  });
+});
+
+describe('Reflect', () => {
+  it('reduces physical damage for the team until it expires', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const guarded = createUnit(battle, teamB);
+
+    teamB.addStatus(TeamStatuses.Reflect, moveCause(guarded, Moves.Reflect));
+
+    const before = guarded.health;
+    attacker.attack(
+      guarded,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(before - guarded.health).toBeCloseTo(19.6 * (2732 / 4096));
+
+    battle.tick(10000);
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+});
+
+describe('status type immunities', () => {
+  it('Fire types cannot be burned', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const fire = createUnit(battle, teamB, [Types.Fire]);
+
+    fire.addStatus(Statuses.Burned, moveCause(attacker, Moves.Ember));
+
+    expect(fire.status[Statuses.Burned]).toBeUndefined();
+  });
+});

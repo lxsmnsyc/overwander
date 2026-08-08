@@ -112,9 +112,9 @@ describe('Blaze (pinch abilities)', () => {
       MoveCategories.Physical,
     );
 
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.Attack, 100),
-    ).toBe(100);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
+      100,
+    );
   });
 });
 
@@ -388,15 +388,15 @@ describe('Guts', () => {
       MoveCategories.Physical,
     );
 
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.Attack, 100),
-    ).toBe(100);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
+      100,
+    );
 
     attacker.addStatus(Statuses.Paralyzed, NONE_CAUSE);
 
-    expect(
-      resolveAttackStat(battle, parent, attacker, Stats.Attack, 100),
-    ).toBe(150);
+    expect(resolveAttackStat(battle, parent, attacker, Stats.Attack, 100)).toBe(
+      150,
+    );
   });
 
   it('nets 1.5x physical damage while burned (halving compensated)', () => {

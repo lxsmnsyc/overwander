@@ -3,6 +3,7 @@ import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
 import { setupIdleAI } from '../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
+import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Moves, MoveTargetPriorities } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
@@ -67,6 +68,23 @@ describe('choose move', () => {
       choice?.target.type === MoveTargetType.Unit && choice.target.unit,
     ).toBe(dying);
     expect(healthy.health).toBe(160); // scoring never applies damage
+  });
+
+  it('focuses fire on the higher-rated threat', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const weakened = createUnit(battle, teamB);
+    const threat = createUnit(battle, teamB);
+    // Same health and defenses (equal damage bonus), lower rating
+    weakened.addStage(Stages.Attack, -6, NONE_CAUSE);
+    unit.addMove(Moves.Tackle);
+
+    const choice = chooseMove(battle, unit);
+
+    expect(
+      choice?.target.type === MoveTargetType.Unit && choice.target.unit,
+    ).toBe(threat);
   });
 
   it('avoids moves the target is immune to', () => {

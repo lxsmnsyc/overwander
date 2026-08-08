@@ -7,6 +7,7 @@ import {
   BattleEvents,
   type CheckTeamAIUnitEvent,
   type CheckUnitAIRatingEvent,
+  MoveTargetType,
 } from '../events';
 import type { Team } from '../team';
 import type { Unit } from '../unit';
@@ -86,6 +87,36 @@ export function setupRatingAI(battle: Battle) {
   battle.on(BattleEvents.CheckUnitAIRating, EventPriority.Post, event => {
     if (HAMPERING_STATUS.some(status => event.source.status[status])) {
       event.rating *= HAMPERING_FACTOR;
+    }
+  });
+
+  /**
+   * Rating-aware focus for move selection: a move aimed at a
+   * threatening enemy scores higher, so the AI concentrates fire on
+   * the biggest current threat instead of spreading it arbitrarily.
+   */
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, event => {
+    if (event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const source = event.source;
+    const target = event.target.unit;
+
+    if (target === source || target.team.alliance === source.team.alliance) {
+      return;
+    }
+
+    const ratio =
+      checkUnitRating(battle, target) /
+      Math.max(1, checkUnitRating(battle, source));
+
+    if (ratio >= 1.5) {
+      event.score += 3;
+    } else if (ratio >= 1) {
+      event.score += 2;
+    } else if (ratio >= 0.5) {
+      event.score += 1;
     }
   });
 

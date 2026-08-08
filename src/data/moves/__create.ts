@@ -30,6 +30,10 @@ export function registerMove(move: Moves, data: MoveData) {
   MOVE_DATA.set(move, data);
 }
 
+export function getRegisteredMoves(): Moves[] {
+  return [...MOVE_DATA.keys()];
+}
+
 export function getMoveData(move: Moves): MoveData {
   const result = MOVE_DATA.get(move);
   if (result) {

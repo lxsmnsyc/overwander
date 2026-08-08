@@ -42,4 +42,6 @@ export const enum Species {
   NidoranM = 34,
   Nidorino = 35,
   Nidoking = 36,
+  Clefairy = 37,
+  Clefable = 38,
 }

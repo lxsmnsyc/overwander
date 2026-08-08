@@ -8,10 +8,11 @@ import { setupConfusedStatus } from './confused';
 import { setupFlinchedStatus } from './flinched';
 import { setupFocusEnergyStatus } from './focus-energy';
 import { setupFrozenStatus } from './frozen';
+import { setupInfatuatedStatus } from './infatuated';
 import { setupParalyzedStatus } from './paralyzed';
 import { setupBadlyPoisonedStatus, setupPoisonedStatus } from './poisoned';
 import { setupRechargingStatus } from './recharging';
-import { setupReflectStatus } from './reflect';
+import { setupLightScreenStatus, setupReflectStatus } from './reflect';
 import { setupSeedingStatus } from './seeding';
 import { setupSleepingStatus } from './sleeping';
 import { setupSubstitutedStatus } from './substituted';
@@ -51,10 +52,12 @@ const NON_REFRESHABLE_STATUS = new Set<Statuses>([
   Statuses.Trapped,
   Statuses.Frozen,
   Statuses.FocusEnergy,
+  Statuses.Infatuated,
 ]);
 
 const NON_REFRESHABLE_TEAM_STATUS = new Set<TeamStatuses>([
   TeamStatuses.Reflect,
+  TeamStatuses.LightScreen,
 ]);
 
 function setupNonRefreshableStatus(battle: Battle) {
@@ -119,6 +122,7 @@ export function seupStatus(battle: Battle) {
   setupBadlyPoisonedStatus(battle);
   setupSeedingStatus(battle);
   setupReflectStatus(battle);
+  setupLightScreenStatus(battle);
   setupSleepingStatus(battle);
   setupParalyzedStatus(battle);
   setupConfusedStatus(battle);
@@ -129,6 +133,7 @@ export function seupStatus(battle: Battle) {
   setupFlinchedStatus(battle);
   setupFrozenStatus(battle);
   setupFocusEnergyStatus(battle);
+  setupInfatuatedStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

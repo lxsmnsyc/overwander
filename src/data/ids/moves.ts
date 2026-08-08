@@ -184,4 +184,11 @@ export const enum Moves {
   HornAttack = 95,
   HornDrill = 96,
   Thrash = 97,
+  Pound = 98,
+  Sing = 99,
+  DoubleSlap = 100,
+  Minimize = 101,
+  Metronome = 102,
+  DefenseCurl = 103,
+  LightScreen = 104,
 }

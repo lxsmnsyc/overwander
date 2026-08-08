@@ -951,4 +951,65 @@ export function registerGen1Moves() {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Pound, {
+    name: 'Pound',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Sing, {
+    name: 'Sing',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 55,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Sound,
+  });
+  registerMove(Moves.DoubleSlap, {
+    name: 'Double Slap',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 15,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Minimize, {
+    name: 'Minimize',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: 0,
+    flags: 0,
+  });
+  registerMove(Moves.Metronome, {
+    name: 'Metronome',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.DefenseCurl, {
+    name: 'Defense Curl',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 40,
+    target: 0,
+    flags: 0,
+  });
+  registerMove(Moves.LightScreen, {
+    name: 'Light Screen',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: MoveTargetFlags.Team | MoveTargetFlags.Own,
+    flags: 0,
+  });
 }

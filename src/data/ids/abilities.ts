@@ -42,4 +42,9 @@ export const enum Abilities {
   PoisonPoint = 27,
   Rivalry = 28,
   SheerForce = 29,
+  // Clefairy
+  CuteCharm = 30,
+  MagicGuard = 31,
+  FriendGuard = 32,
+  Unaware = 33,
 }

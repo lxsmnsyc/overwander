@@ -7,6 +7,7 @@ import {
 import type { Unit } from '../../src/battle/unit';
 import { Types } from '../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
+import { Genders } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses } from '../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -259,5 +260,53 @@ describe('status type immunities', () => {
     fire.addStatus(Statuses.Burned, moveCause(attacker, Moves.Ember));
 
     expect(fire.status[Statuses.Burned]).toBeUndefined();
+  });
+});
+
+describe('Infatuated', () => {
+  it('only takes hold between opposite genders', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const charmer = createUnit(battle, teamA);
+    const smitten = createUnit(battle, teamB);
+    const sameGender = createUnit(battle, teamB);
+    charmer.setGender(Genders.Female);
+    smitten.setGender(Genders.Male);
+    sameGender.setGender(Genders.Female);
+
+    const cause = {
+      type: EffectType.Move,
+      move: Moves.Tackle,
+      unit: charmer,
+    } as const;
+
+    smitten.addStatus(Statuses.Infatuated, cause);
+    sameGender.addStatus(Statuses.Infatuated, cause);
+
+    expect(smitten.status[Statuses.Infatuated]).toBeDefined();
+    expect(sameGender.status[Statuses.Infatuated]).toBeUndefined();
+  });
+
+  it('blocks actions half the time and breaks when the charmer faints', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const charmer = createUnit(battle, teamA);
+    const smitten = createUnit(battle, teamB);
+    charmer.setGender(Genders.Female);
+    smitten.setGender(Genders.Male);
+    smitten.addMove(Moves.Tackle);
+
+    smitten.addStatus(Statuses.Infatuated, {
+      type: EffectType.Move,
+      move: Moves.Tackle,
+      unit: charmer,
+    });
+
+    pinRandom(battle, 0); // roll < 0.5: immobilized
+    expect(smitten.checkCanCast(Moves.Tackle, unitTarget(charmer))).toBe(false);
+
+    pinRandom(battle, 0.9);
+    expect(smitten.checkCanCast(Moves.Tackle, unitTarget(charmer))).toBe(true);
+
+    charmer.damage(NONE_CAUSE, charmer, 999, 0);
+    expect(smitten.status[Statuses.Infatuated]).toBeUndefined();
   });
 });

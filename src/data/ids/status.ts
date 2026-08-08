@@ -16,6 +16,7 @@ export const enum Statuses {
   Flinched = 14,
   Frozen = 15,
   FocusEnergy = 16,
+  Infatuated = 17,
 }
 
 export const enum Weathers {
@@ -41,4 +42,5 @@ export const enum TeamStatuses {
    * An enemy Unnerve unit is on the field; the team cannot eat berries
    */
   Unnerved = 1,
+  LightScreen = 2,
 }

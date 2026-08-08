@@ -13,10 +13,12 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Supersonic]: Statuses.Confused,
   [Moves.ThunderWave]: Statuses.Paralyzed,
   [Moves.Glare]: Statuses.Paralyzed,
+  [Moves.Sing]: Statuses.Sleeping,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.FocusEnergy]: Statuses.FocusEnergy,
+  [Moves.Minimize]: Statuses.Minimized,
 };
 
 const EFFECT_STATUS_MOVES: {
@@ -118,6 +120,7 @@ function setupUnitStatusMoves(battle: Battle) {
 
 const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
+  [Moves.LightScreen]: TeamStatuses.LightScreen,
 };
 
 function setupTeamStatusMoves(battle: Battle) {

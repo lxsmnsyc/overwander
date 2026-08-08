@@ -671,3 +671,117 @@ describe('Rivalry', () => {
     expect(hit(genderless)).toBeCloseTo(19.6);
   });
 });
+
+describe('Magic Guard', () => {
+  it('blocks indirect damage only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MagicGuard);
+
+    holder.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonPowder,
+      unit: attacker,
+    });
+    battle.tick(1000);
+    expect(holder.health).toBe(160); // poison chip blocked
+
+    pinRandom(battle, 1);
+    attacker.attack(
+      holder,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(holder.health).toBeCloseTo(160 - 19.6); // direct damage lands
+  });
+});
+
+describe('Friend Guard', () => {
+  it('reduces damage taken by teammates, not the holder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const guard = createUnit(battle, teamA);
+    const protectedAlly = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    guard.addAbility(Abilities.FriendGuard);
+
+    attacker.attack(
+      protectedAlly,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(160 - protectedAlly.health).toBeCloseTo(19.6 * 0.75);
+
+    attacker.attack(
+      guard,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(160 - guard.health).toBeCloseTo(19.6);
+  });
+});
+
+describe('Unaware', () => {
+  it('ignores the attacker offensive stages when defending', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const unaware = createUnit(battle, teamB);
+    const normal = createUnit(battle, teamB);
+    unaware.addAbility(Abilities.Unaware);
+
+    attacker.addStage(Stages.Attack, 2, NONE_CAUSE);
+
+    attacker.attack(
+      normal,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(160 - normal.health).toBeCloseTo(0.44 * 40 * 2 + 2); // boosted
+
+    attacker.attack(
+      unaware,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      0,
+    );
+    expect(160 - unaware.health).toBeCloseTo(19.6); // boost ignored
+  });
+});
+
+describe('Cute Charm', () => {
+  it('infatuates opposite-gender attackers on contact', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CuteCharm);
+    holder.setGender(Genders.Female);
+    attacker.setGender(Genders.Male);
+
+    attacker.damage(
+      { type: EffectType.Move, move: Moves.Tackle, unit: attacker },
+      holder,
+      10,
+      0,
+    );
+
+    expect(attacker.status[Statuses.Infatuated]).toBeDefined();
+  });
+});

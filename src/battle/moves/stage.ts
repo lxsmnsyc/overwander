@@ -44,6 +44,7 @@ const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.Withdraw]: 1,
   [Moves.Harden]: 1,
   [Moves.Screech]: -2,
+  [Moves.DefenseCurl]: 1,
 });
 
 const setupSpeedStageMoves = createStageMove(Stages.Speed, {
@@ -56,8 +57,9 @@ const setupAccuracyStageMoves = createStageMove(Stages.Accuracy, {
   [Moves.SandAttack]: -1,
 });
 
-const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {
+const setupEvasionStageMoves = createStageMove(Stages.Evasion, {
   [Moves.DoubleTeam]: 1,
+  [Moves.Minimize]: 2,
 });
 
 export function setupStageMoves(battle: Battle) {

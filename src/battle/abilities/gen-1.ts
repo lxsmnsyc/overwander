@@ -694,6 +694,94 @@ const setupAbilities = [
       ),
     ]);
   }),
+
+  // Clefairy
+  // https://bulbapedia.bulbagarden.net/wiki/Cute_Charm_(Ability)
+  createAbility(Abilities.CuteCharm, battle => {
+    const CHANCE = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, event => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.CuteCharm) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        battle.random() < CHANCE
+      ) {
+        event.target.triggerAbility(Abilities.CuteCharm);
+
+        // The gender matchup is enforced by the status immunity
+        event.cause.unit.addStatus(Statuses.Infatuated, {
+          type: EffectType.Ability,
+          ability: Abilities.CuteCharm,
+          unit: event.target,
+        });
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
+  createAbility(Abilities.MagicGuard, battle => {
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Pre, event => {
+      // Only direct attack damage can hurt the holder
+      if (
+        event.flags & DamageFlags.Indirect &&
+        event.target.hasAbility(Abilities.MagicGuard)
+      ) {
+        event.disabled = true;
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Friend_Guard_(Ability)
+  createAbility(Abilities.FriendGuard, battle => {
+    return battle.on(
+      BattleEvents.UnitAttackResolveDamage,
+      EventPriority.Post,
+      event => {
+        const target = event.parent.target;
+
+        for (const unit of target.team.units) {
+          if (
+            unit !== target &&
+            unit.alive &&
+            unit.hasAbility(Abilities.FriendGuard)
+          ) {
+            event.value *= 0.75;
+            return;
+          }
+        }
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Unaware_(Ability)
+  createAbility(Abilities.Unaware, battle => {
+    return battle.on(
+      BattleEvents.UnitAttackResolveStat,
+      EventPriority.Post,
+      event => {
+        const parent = event.parent;
+
+        /**
+         * An Unaware defender ignores the attacker's offensive stages;
+         * an Unaware attacker ignores the defender's defensive stages.
+         * Either way the stat resolves without its stage factor.
+         */
+        const ignored =
+          (event.unit === parent.source &&
+            parent.target.hasAbility(Abilities.Unaware)) ||
+          (event.unit === parent.target &&
+            parent.source.hasAbility(Abilities.Unaware));
+
+        if (ignored) {
+          event.value = event.unit.checkStat(event.stat, 0);
+        }
+      },
+    );
+  }),
 ];
 
 export function setupGen1Abilities(battle: Battle) {

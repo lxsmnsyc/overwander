@@ -21,6 +21,7 @@ const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.Twineedle]: { min: 2, max: 2 },
   [Moves.FurySwipes]: { min: 2, max: 5 },
   [Moves.DoubleKick]: { min: 2, max: 2 },
+  [Moves.DoubleSlap]: { min: 2, max: 5 },
 };
 
 // Delay between strikes

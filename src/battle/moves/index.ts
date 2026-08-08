@@ -8,6 +8,7 @@ import { setupFixedDamageMoves } from './fixed-damage';
 import { setupHitMoves } from './hit';
 import { setupIncreasedCriticalHitRatioMoves } from './increased-critical-hit';
 import { setupLeechSeed } from './leech-seed';
+import { setupMetronome } from './metronome';
 import { setupMimic } from './mimic';
 import { setupMirrorMove } from './mirror-move';
 import { setupMultiHitMoves } from './multi-hit';
@@ -53,5 +54,6 @@ export function setupMoves(battle: Battle) {
   setupSubstitute(battle);
   setupCounter(battle);
   setupMirrorMove(battle);
+  setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);
 }

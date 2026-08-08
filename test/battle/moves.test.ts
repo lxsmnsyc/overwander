@@ -626,3 +626,44 @@ describe('Solar Beam', () => {
     expect(unit.checkMovePower(Moves.SolarBeam, target)).toBe(60);
   });
 });
+
+describe('Light Screen', () => {
+  it('reduces special damage for the team', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const guarded = createUnit(battle, teamB);
+
+    guarded.triggerMoveEffect(Moves.LightScreen, NONE_TARGET, 0);
+    expect(teamB.status[TeamStatuses.LightScreen]).toBeDefined();
+
+    attacker.triggerMoveEffect(Moves.Ember, unitTarget(guarded), 0);
+    expect(160 - guarded.health).toBeCloseTo(19.6 * (2732 / 4096));
+  });
+});
+
+describe('Minimize', () => {
+  it('raises evasion by two and marks the user minimized', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.triggerMoveEffect(Moves.Minimize, NONE_TARGET, 0);
+
+    expect(unit.stages[Stages.Evasion]).toBe(2);
+    expect(unit.status[Statuses.Minimized]).toBeDefined();
+  });
+});
+
+describe('Metronome', () => {
+  it('calls a random registered move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // first registered move: Tackle
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    unit.triggerMoveEffect(Moves.Metronome, unitTarget(enemy), 0);
+
+    // Tackle lands (crit at pin 0, 85% range roll)
+    expect(160 - enemy.health).toBeCloseTo(19.6 * 2 * 0.85);
+  });
+});

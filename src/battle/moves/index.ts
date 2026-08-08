@@ -19,6 +19,7 @@ import { setupSolarBeam } from './solar-beam';
 import { setupStageMoves } from './stage';
 import { setupStatusMoves } from './status';
 import { setupSubstitute } from './substitute';
+import { setupSwitchOutMoves } from './switch-out';
 
 export function setupMoves(battle: Battle) {
   // Overarching groups
@@ -34,6 +35,7 @@ export function setupMoves(battle: Battle) {
   setupChargeMoves(battle);
   setupSemiInvulnerableMoves(battle);
   setupFixedDamageMoves(battle);
+  setupSwitchOutMoves(battle);
 
   // Variations
   setupSolarBeam(battle);

@@ -11,4 +11,7 @@ export const enum Species {
   Squirtle = 9,
   Wartortle = 10,
   Blastoise = 11,
+  Caterpie = 12,
+  Metapod = 13,
+  Butterfree = 14,
 }

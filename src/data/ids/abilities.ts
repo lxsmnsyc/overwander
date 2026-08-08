@@ -14,4 +14,9 @@ export const enum Abilities {
   // Caterpie
   ShieldDust = 9,
   RunAway = 10,
+  // Metapod
+  ShedSkin = 11,
+  // Butterfree
+  CompoundEyes = 12,
+  TintedLens = 13,
 }

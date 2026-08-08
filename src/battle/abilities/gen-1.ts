@@ -3,9 +3,10 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Abilities } from '../../data/ids/abilities';
 import { DamageFlags, MoveFlags } from '../../data/ids/moves';
+import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type { Battle } from '../core';
-import { BattleEvents, EffectType } from '../events';
+import { BattleEvents, EffectType, type UnitAttackEvent } from '../events';
 import { isWeatherRainy, isWeatherSunny } from '../utils';
 import {
   createAbility,
@@ -164,6 +165,85 @@ const setupAbilities = [
   }),
 
   // Metapod/Kakuna
+  // https://bulbapedia.bulbagarden.net/wiki/Shed_Skin_(Ability)
+  createAbility(Abilities.ShedSkin, battle => {
+    const CURABLE_STATUS = [
+      Statuses.Poisoned,
+      Statuses.BadlyPoisoned,
+      Statuses.Paralyzed,
+      Statuses.Sleeping,
+      Statuses.Burned,
+      Statuses.Frozen,
+    ];
+
+    // No turn mechanics, we roll the 30% cure on move cast instead.
+    return battle.on(BattleEvents.UnitCast, EventPriority.Post, event => {
+      if (
+        event.source.hasAbility(Abilities.ShedSkin) &&
+        CURABLE_STATUS.some(status => event.source.status[status]) &&
+        battle.random() < 0.3
+      ) {
+        event.source.cure({
+          type: EffectType.Ability,
+          ability: Abilities.ShedSkin,
+          unit: event.source,
+        });
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.ShedSkin);
+      }
+    });
+  }),
+
+  // Butterfree
+  // https://bulbapedia.bulbagarden.net/wiki/Compound_Eyes_(Ability)
+  createAbility(Abilities.CompoundEyes, battle => {
+    return battle.on(
+      BattleEvents.CheckUnitMoveAccuracy,
+      EventPriority.Post,
+      event => {
+        if (
+          event.accuracy != null &&
+          event.source.hasAbility(Abilities.CompoundEyes)
+        ) {
+          event.accuracy *= 1.3;
+        }
+      },
+    );
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Tinted_Lens_(Ability)
+  createAbility(Abilities.TintedLens, battle => {
+    // Total effectiveness per attack; doubling applies once on the
+    // final damage when the attack is not very effective overall.
+    const totals = new WeakMap<UnitAttackEvent, number>();
+
+    return new MergedAbilityLifecycle([
+      battle.on(
+        BattleEvents.UnitAttackResolveEffectiveness,
+        EventPriority.Post,
+        event => {
+          if (event.parent.source.hasAbility(Abilities.TintedLens)) {
+            totals.set(
+              event.parent,
+              (totals.get(event.parent) ?? 1) * event.multiplier,
+            );
+          }
+        },
+      ),
+      battle.on(
+        BattleEvents.UnitAttackResolveDamage,
+        EventPriority.Post,
+        event => {
+          const total = totals.get(event.parent);
+
+          if (total != null && total < 1) {
+            event.value *= 2;
+          }
+        },
+      ),
+    ]);
+  }),
 ];
 
 export function setupGen1Abilities(battle: Battle) {

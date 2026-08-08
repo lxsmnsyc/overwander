@@ -7,6 +7,7 @@ import { BattleEvents, MoveTargetType } from '../events';
 export const POWDER_MOVES = new Set<Moves>([
   Moves.PoisonPowder,
   Moves.SleepPowder,
+  Moves.StunSpore,
 ]);
 
 export function setupPowderMoves(battle: Battle) {

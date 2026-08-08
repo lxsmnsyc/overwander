@@ -533,4 +533,108 @@ export function registerGen1Moves() {
       MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.StringShot, {
+    name: 'String Shot',
+    type: Types.Bug,
+    category: MoveCategories.Status,
+    pp: 40,
+    accuracy: 95,
+    target:
+      MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Harden, {
+    name: 'Harden',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: 0,
+    flags: 0,
+  });
+  registerMove(Moves.Confusion, {
+    name: 'Confusion',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 25,
+    power: 50,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.StunSpore, {
+    name: 'Stun Spore',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 30,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Supersonic, {
+    name: 'Supersonic',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 55,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Sound,
+  });
+  registerMove(Moves.Whirlwind, {
+    name: 'Whirlwind',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    priority: -6,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    steps: 1,
+  });
+  registerMove(Moves.Psybeam, {
+    name: 'Psybeam',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Psychic, {
+    name: 'Psychic',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 90,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Psywave, {
+    name: 'Psywave',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Teleport, {
+    name: 'Teleport',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    priority: -6,
+    target: 0,
+    flags: 0,
+    steps: 1,
+  });
+  registerMove(Moves.Flash, {
+    name: 'Flash',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

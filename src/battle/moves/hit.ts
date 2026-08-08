@@ -39,6 +39,9 @@ const HIT_MOVES = new Set([
   Moves.IceBeam,
   Moves.Blizzard,
   Moves.Surf,
+  Moves.Confusion,
+  Moves.Psybeam,
+  Moves.Psychic,
 ]);
 
 export function setupHitMoves(battle: Battle) {

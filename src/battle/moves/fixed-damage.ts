@@ -21,6 +21,9 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.DragonRage]: () => 40,
   // https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)
   [Moves.Fissure]: (_, target) => target.health,
+  // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)
+  [Moves.Psywave]: source =>
+    Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
 };
 
 export function setupFixedDamageMoves(battle: Battle) {

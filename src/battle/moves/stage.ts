@@ -42,6 +42,15 @@ const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.Leer]: -1,
   [Moves.TailWhip]: -1,
   [Moves.Withdraw]: 1,
+  [Moves.Harden]: 1,
+});
+
+const setupSpeedStageMoves = createStageMove(Stages.Speed, {
+  [Moves.StringShot]: -2,
+});
+
+const setupAccuracyStageMoves = createStageMove(Stages.Accuracy, {
+  [Moves.Flash]: -1,
 });
 
 const setupEvasionStageMoves = createStageMove(Stages.SpecialAttack, {
@@ -52,5 +61,7 @@ export function setupStageMoves(battle: Battle) {
   setupAttackStageMoves(battle);
   setupSpecialAttackStageMoves(battle);
   setupDefenseStageMoves(battle);
+  setupSpeedStageMoves(battle);
+  setupAccuracyStageMoves(battle);
   setupEvasionStageMoves(battle);
 }

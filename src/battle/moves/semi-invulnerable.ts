@@ -32,6 +32,12 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
     bypass: new Set(),
     doubled: new Set(),
   },
+  // Self switch-out: the user vanishes during the wind-up step.
+  // The switch itself is handled by the switch-out move group.
+  [Moves.Teleport]: {
+    bypass: new Set(),
+    doubled: new Set(),
+  },
 };
 
 function getSemiInvulnerableConfig(target: Unit) {

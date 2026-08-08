@@ -9,6 +9,8 @@ const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
   [Moves.SleepPowder]: Statuses.Sleeping,
   [Moves.Toxic]: Statuses.BadlyPoisoned,
+  [Moves.StunSpore]: Statuses.Paralyzed,
+  [Moves.Supersonic]: Statuses.Confused,
 };
 
 const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -20,6 +22,8 @@ const EFFECT_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Bite]: Statuses.Flinched,
   [Moves.IceBeam]: Statuses.Frozen,
   [Moves.Blizzard]: Statuses.Frozen,
+  [Moves.Confusion]: Statuses.Confused,
+  [Moves.Psybeam]: Statuses.Confused,
 };
 
 const EFFECT_STAGE_MOVES: {
@@ -27,6 +31,7 @@ const EFFECT_STAGE_MOVES: {
 } = {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1 },
+  [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1 },
 };
 
 const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
@@ -40,6 +45,9 @@ const EFFECT_STATUS_CHANCE: { [key in Moves]?: number } = {
   [Moves.Blizzard]: 10,
   [Moves.Bubble]: 10,
   [Moves.BubbleBeam]: 10,
+  [Moves.Confusion]: 10,
+  [Moves.Psybeam]: 10,
+  [Moves.Psychic]: 10,
 };
 
 function setupUnitStatusMoves(battle: Battle) {

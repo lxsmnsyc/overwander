@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { EventPriority } from '../../src/core/event-emitter';
 import type Battle from '../../src/battle/core';
 import {
   BattleEvents,
@@ -1079,5 +1080,67 @@ describe('Cloud Nine', () => {
     duck.faint(duck);
 
     expect(swimmer.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+});
+
+describe('Vital Spirit', () => {
+  it('cannot fall asleep, with a cue on real attempts only', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.VitalSpirit);
+
+    let cues = 0;
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+      if (event.ability === Abilities.VitalSpirit) {
+        cues += 1;
+      }
+    });
+
+    // Speculative immunity checks stay silent
+    holder.checkStatusImmunity(Statuses.Sleeping, NONE_CAUSE);
+    expect(cues).toBe(0);
+
+    holder.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Sleeping]).toBeUndefined();
+    expect(cues).toBe(1);
+  });
+});
+
+describe('Anger Point', () => {
+  it('maxes attack when struck by a critical hit', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // crits always land
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.AngerPoint);
+
+    attacker.attack(
+      holder,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      2, // MoveAttackFlags.Critical
+    );
+
+    expect(holder.stages[Stages.Attack]).toBe(6);
+  });
+});
+
+describe('Defiant', () => {
+  it('raises attack sharply when an enemy lowers a stat', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Defiant);
+
+    holder.addStage(Stages.Defense, -1, {
+      type: EffectType.Move,
+      move: Moves.TailWhip,
+      unit: enemy,
+    });
+
+    expect(holder.stages[Stages.Attack]).toBe(2);
   });
 });

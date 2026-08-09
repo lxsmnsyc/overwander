@@ -207,4 +207,5 @@ export const enum Moves {
   Absorb = 110,
   PetalDance = 111,
   Spore = 112,
+  KarateChop = 113,
 }

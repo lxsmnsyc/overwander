@@ -1090,4 +1090,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.KarateChop, {
+    name: 'Karate Chop',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 25,
+    power: 50,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

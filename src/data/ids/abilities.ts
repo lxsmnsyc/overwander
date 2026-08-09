@@ -73,6 +73,10 @@ const enum Abilities {
   // Psyduck
   CloudNine = 49,
   SwiftSwim = 50,
+  // Mankey
+  VitalSpirit = 51,
+  AngerPoint = 52,
+  Defiant = 53,
 }
 
 export default Abilities;

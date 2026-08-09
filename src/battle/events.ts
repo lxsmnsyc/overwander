@@ -173,6 +173,12 @@ export const enum BattleEvents {
   CheckUnitCanConsumeItem = 114,
   UnitSetGender = 115,
   UnitResetStages = 116,
+  /**
+   * A real status application was blocked by an immunity; unlike the
+   * speculative CheckUnitStatusImmunity, this only fires on actual
+   * attempts, so visual cues can hook it safely
+   */
+  UnitAddStatusFailed = 117,
 }
 
 export const enum MoveTargetType {
@@ -555,6 +561,7 @@ export interface BattleEventMap extends EventMap {
 
   // Unit events
   [BattleEvents.UnitAddStatus]: [UnitUpdateStatusEvent, EventPriority];
+  [BattleEvents.UnitAddStatusFailed]: [UnitUpdateStatusEvent, EventPriority];
   [BattleEvents.UnitRemoveStatus]: [UnitUpdateStatusEvent, EventPriority];
   [BattleEvents.UnitTriggerStatus]: [UnitUpdateStatusEvent, EventPriority];
 

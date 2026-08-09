@@ -5,6 +5,7 @@ import registerClefairySpecies from './clefairy';
 import registerDiglettSpecies from './diglett';
 import registerEkansSpecies from './ekans';
 import registerJigglypuffSpecies from './jigglypuff';
+import registerMankeySpecies from './mankey';
 import registerMeowthSpecies from './meowth';
 import registerNidoranFSpecies from './nidoran-f';
 import registerOddishSpecies from './oddish';
@@ -48,4 +49,5 @@ export function registerSpecies(): void {
   registerDiglettSpecies();
   registerMeowthSpecies();
   registerPsyduckSpecies();
+  registerMankeySpecies();
 }

@@ -1093,17 +1093,27 @@ const setupAbilities = [
 
   // Persian
   // https://bulbapedia.bulbagarden.net/wiki/Limber_(Ability)
-  createAbility(Abilities.Limber, (battle) =>
-    // Pure query: cannot be paralyzed
-    battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-      if (
-        !event.immune &&
-        event.status === Statuses.Paralyzed &&
-        event.source.hasAbility(Abilities.Limber)
-      ) {
-        event.immune = true;
-      }
-    }),
+  createAbility(
+    Abilities.Limber,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot be paralyzed
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Paralyzed &&
+            event.source.hasAbility(Abilities.Limber)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Paralyzed && event.source.hasAbility(Abilities.Limber)) {
+            event.source.triggerAbility(Abilities.Limber);
+          }
+        }),
+      ]),
   ),
 
   // Psyduck
@@ -1157,6 +1167,99 @@ const setupAbilities = [
         event.value *= 2;
       }
     }),
+  ),
+
+  // Mankey
+  // https://bulbapedia.bulbagarden.net/wiki/Vital_Spirit_(Ability)
+  createAbility(
+    Abilities.VitalSpirit,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot fall asleep
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Sleeping &&
+            event.source.hasAbility(Abilities.VitalSpirit)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (
+            event.status === Statuses.Sleeping &&
+            event.source.hasAbility(Abilities.VitalSpirit)
+          ) {
+            event.source.triggerAbility(Abilities.VitalSpirit);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Anger_Point_(Ability)
+  createAbility(
+    Abilities.AngerPoint,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: a real critical hit on the holder triggers it
+        battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.critical &&
+            parent.target.hasAbility(Abilities.AngerPoint) &&
+            parent.target !== parent.source &&
+            !(parent.flags & MoveAttackFlags.Simulated)
+          ) {
+            parent.target.triggerAbility(Abilities.AngerPoint);
+          }
+        }),
+        // Effect: maximal rage; the stage clamp caps this at +6
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+          if (event.ability === Abilities.AngerPoint) {
+            event.source.addStage(Stages.Attack, 12, {
+              type: EffectType.Ability,
+              ability: Abilities.AngerPoint,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Defiant_(Ability)
+  createAbility(
+    Abilities.Defiant,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: only stat drops inflicted by an enemy trigger
+        // the defiance; its own boost has a positive value, so it
+        // never re-triggers
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
+          const cause = event.cause;
+
+          if (
+            event.value < 0 &&
+            event.source.hasAbility(Abilities.Defiant) &&
+            cause.type !== EffectType.None &&
+            cause.unit !== event.source &&
+            cause.unit.team.alliance !== event.source.team.alliance
+          ) {
+            event.source.triggerAbility(Abilities.Defiant);
+          }
+        }),
+        // Effect: the sharp Attack boost rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+          if (event.ability === Abilities.Defiant) {
+            event.source.addStage(Stages.Attack, 2, {
+              type: EffectType.Ability,
+              ability: Abilities.Defiant,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
   ),
 ];
 

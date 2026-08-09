@@ -63,4 +63,6 @@ export const enum Species {
   Persian = 55,
   Psyduck = 56,
   Golduck = 57,
+  Mankey = 58,
+  Primeape = 59,
 }

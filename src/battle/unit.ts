@@ -527,7 +527,15 @@ export default class Unit {
   status: { [key in Statuses]?: EffectCause } = {};
 
   addStatus(status: Statuses, cause: EffectCause): void {
-    if (!this.checkStatusImmunity(status, cause)) {
+    if (this.checkStatusImmunity(status, cause)) {
+      this.battle.emit(BattleEvents.UnitAddStatusFailed, {
+        id: 'UnitAddStatusFailed',
+        disabled: false,
+        source: this,
+        status,
+        cause,
+      });
+    } else {
       this.battle.emit(BattleEvents.UnitAddStatus, {
         id: 'UnitAddStatus',
         disabled: false,

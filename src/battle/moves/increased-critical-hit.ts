@@ -8,6 +8,7 @@ const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
   Moves.Slash,
   Moves.RazorWind,
   Moves.SkyAttack,
+  Moves.KarateChop,
 ]);
 
 export default function setupIncreasedCriticalHitRatioMoves(battle: Battle): void {

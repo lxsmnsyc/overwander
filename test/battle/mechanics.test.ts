@@ -4,6 +4,8 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/event
 import type Unit from '../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
+import Abilities from '../../src/data/ids/abilities';
+import { Items } from '../../src/data/ids/items';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { createBattle, createUnit, pinRandom } from './harness';
@@ -242,5 +244,37 @@ describe('move delay', () => {
     });
 
     expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(250);
+  });
+});
+
+describe('battle limits', () => {
+  it('caps items and abilities at the default of one each', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.addItem(Items.CheriBerry);
+    unit.addItem(Items.OranBerry); // over the limit
+
+    expect(unit.items[Items.CheriBerry]).toBe(true);
+    expect(unit.items[Items.OranBerry]).toBeUndefined();
+
+    unit.addAbility(Abilities.RunAway);
+    unit.addAbility(Abilities.Limber); // over the limit
+
+    expect(unit.abilities[Abilities.RunAway]).toBe(true);
+    expect(unit.abilities[Abilities.Limber]).toBeUndefined();
+  });
+
+  it('honors configured limits', () => {
+    const { battle, teamA } = createBattle('test-seed', { items: 2, abilities: 2 });
+    const unit = createUnit(battle, teamA);
+
+    unit.addItem(Items.CheriBerry);
+    unit.addItem(Items.OranBerry);
+    unit.addAbility(Abilities.RunAway);
+    unit.addAbility(Abilities.Limber);
+
+    expect(unit.items[Items.OranBerry]).toBe(true);
+    expect(unit.abilities[Abilities.Limber]).toBe(true);
   });
 });

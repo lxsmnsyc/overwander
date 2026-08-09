@@ -66,6 +66,10 @@ const enum Abilities {
   // Diglett
   ArenaTrap = 44,
   SandForce = 45,
+  // Meowth
+  Pickup = 46,
+  Technician = 47,
+  Limber = 48,
 }
 
 export default Abilities;

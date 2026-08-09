@@ -15,7 +15,9 @@ import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
 import {
+  countHeldItems,
   hasAnyStatus,
+  holdsAnyItem,
   isUnitGrounded,
   isWeatherRainy,
   isWeatherSandstorm,
@@ -752,19 +754,10 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Frisk_(Ability)
-  createAbility(Abilities.Frisk, (battle) => {
-    function holdsAnyItem(unit: Unit): boolean {
-      for (const held of Object.values(unit.items)) {
-        if (held) {
-          return true;
-        }
-      }
-      return false;
-    }
-
+  createAbility(Abilities.Frisk, (battle) =>
     // Reveal is a visual cue: the trigger fires when any opposing
     // unit holds an item as the holder enters the field
-    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
       if (!event.source.hasAbility(Abilities.Frisk)) {
         return;
       }
@@ -775,8 +768,8 @@ const setupAbilities = [
           return;
         }
       }
-    });
-  }),
+    }),
+  ),
 
   // Zubat
   // https://bulbapedia.bulbagarden.net/wiki/Inner_Focus_(Ability)
@@ -1055,6 +1048,63 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Meowth
+  // https://bulbapedia.bulbagarden.net/wiki/Pickup_(Ability)
+  createAbility(Abilities.Pickup, (battle) =>
+    // In-battle behavior: when another unit consumes its item, a
+    // holder with a free item slot scavenges it
+    battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, (event) => {
+      for (const unit of battle.units()) {
+        if (
+          unit !== event.source &&
+          unit.alive &&
+          unit.hasAbility(Abilities.Pickup) &&
+          countHeldItems(unit) < battle.limits.items
+        ) {
+          unit.addItem(event.item);
+
+          // Cue only when the pickup actually landed (the add can
+          // still be vetoed, e.g. by the item limit)
+          if (unit.items[event.item] === true) {
+            unit.triggerAbility(Abilities.Pickup);
+            return;
+          }
+        }
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Technician_(Ability)
+  createAbility(Abilities.Technician, (battle) => {
+    const THRESHOLD = 60;
+    const FACTOR = 1.5;
+
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.power <= THRESHOLD &&
+        event.source.hasAbility(Abilities.Technician)
+      ) {
+        event.power *= FACTOR;
+      }
+    });
+  }),
+
+  // Persian
+  // https://bulbapedia.bulbagarden.net/wiki/Limber_(Ability)
+  createAbility(Abilities.Limber, (battle) =>
+    // Pure query: cannot be paralyzed
+    battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+      if (
+        !event.immune &&
+        event.status === Statuses.Paralyzed &&
+        event.source.hasAbility(Abilities.Limber)
+      ) {
+        event.immune = true;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

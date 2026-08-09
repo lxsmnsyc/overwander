@@ -7,12 +7,29 @@ import { BattleEvents } from './events';
 import type Team from './team';
 import type Unit from './unit';
 
+export interface BattleLimits {
+  /**
+   * Maximum holdable items a unit can carry at once
+   */
+  items: number;
+  /**
+   * Maximum abilities a unit can have at once
+   */
+  abilities: number;
+}
+
 export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
 
-  constructor(seed: string) {
+  limits: BattleLimits;
+
+  constructor(seed: string, limits?: Partial<BattleLimits>) {
     super();
     this.rng = new AleaRNG(seed);
+    this.limits = {
+      items: limits?.items ?? 1,
+      abilities: limits?.abilities ?? 1,
+    };
   }
 
   random(): number {

@@ -10,6 +10,7 @@ import type Unit from '../../src/battle/unit';
 import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
+import { Items } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
@@ -975,5 +976,71 @@ describe('Sand Force', () => {
 
     expect(holder.checkMovePower(Moves.Earthquake, target)).toBeCloseTo(130);
     expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Technician', () => {
+  it('boosts weak moves only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Technician);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(60); // 40 * 1.5
+    expect(holder.checkMovePower(Moves.Slash, target)).toBe(70); // above threshold
+  });
+});
+
+describe('Limber', () => {
+  it('cannot be paralyzed', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Limber);
+
+    holder.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+});
+
+describe('Pickup', () => {
+  it('scavenges an item another unit consumed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const consumer = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Pickup);
+
+    consumer.addItem(Items.OranBerry);
+    consumer.triggerItem(Items.OranBerry);
+
+    expect(holder.items[Items.OranBerry]).toBe(true);
+  });
+
+  it('needs a free item slot within the battle limit', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const consumer = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Pickup);
+    holder.addItem(Items.CheriBerry); // fills the only slot
+
+    consumer.addItem(Items.OranBerry);
+    consumer.triggerItem(Items.OranBerry);
+
+    expect(holder.items[Items.OranBerry]).toBeUndefined();
+  });
+
+  it('scavenges into a spare slot when the limit allows', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', { items: 2 });
+    const holder = createUnit(battle, teamA);
+    const consumer = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Pickup);
+    holder.addItem(Items.CheriBerry);
+
+    consumer.addItem(Items.OranBerry);
+    consumer.triggerItem(Items.OranBerry);
+
+    expect(holder.items[Items.OranBerry]).toBe(true);
   });
 });

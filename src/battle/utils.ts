@@ -1,5 +1,7 @@
 import { Types } from '../data/constants/types';
+import { ItemFlags, type Items } from '../data/ids/items';
 import { Statuses, Weathers } from '../data/ids/status';
+import { getItemData } from '../data/items';
 import type Unit from './unit';
 
 /**
@@ -13,6 +15,39 @@ export function isUnitGrounded(unit: Unit): boolean {
     return true;
   }
   return unit.status[Statuses.Floating] == null && !unit.types.has(Types.Flying);
+}
+
+/**
+ * Whether the unit holds any item
+ */
+export function holdsAnyItem(unit: Unit): boolean {
+  for (const held of Object.values(unit.items)) {
+    if (held) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Holdable items currently occupying the unit's item slots (disabled
+ * ones included); compared against the battle's item limit
+ */
+export function countHeldItems(unit: Unit): number {
+  let count = 0;
+
+  for (const key in unit.items) {
+    // tsc requires the assertion to index the Items-mapped record;
+    // tsgolint resolves the const enum to number and disagrees
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const item = Number(key) as Items;
+
+    if (unit.items[item] != null && getItemData(item).flags & ItemFlags.Holdable) {
+      count += 1;
+    }
+  }
+
+  return count;
 }
 
 /**

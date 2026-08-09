@@ -72,6 +72,7 @@ export default function registerCharmanderSpecies(): void {
     name: 'Charmeleon',
     category: 'Flame Pokemon',
     family: Families.Charmander,
+    evolvesFrom: Species.Charmander,
     stats: {
       [Stats.HP]: 58,
       [Stats.Attack]: 64,
@@ -104,6 +105,7 @@ export default function registerCharmanderSpecies(): void {
     name: 'Charizard',
     category: 'Flame Pokemon',
     family: Families.Charmander,
+    evolvesFrom: Species.Charmeleon,
     stats: {
       [Stats.HP]: 78,
       [Stats.Attack]: 84,

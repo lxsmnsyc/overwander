@@ -60,6 +60,7 @@ export default function registerZubatSpecies(): void {
     name: 'Golbat',
     category: 'Bat Pokemon',
     family: Families.Zubat,
+    evolvesFrom: Species.Zubat,
     stats: {
       [Stats.HP]: 75,
       [Stats.Attack]: 80,

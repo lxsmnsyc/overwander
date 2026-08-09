@@ -39,6 +39,7 @@ export default function registerWeedleSpecies(): void {
     name: 'Kakuna',
     category: 'Cocoon Pokemon',
     family: Families.Weedle,
+    evolvesFrom: Species.Weedle,
     stats: {
       [Stats.HP]: 45,
       [Stats.Attack]: 25,
@@ -66,6 +67,7 @@ export default function registerWeedleSpecies(): void {
     name: 'Beedrill',
     category: 'Poison Bee Pokemon',
     family: Families.Weedle,
+    evolvesFrom: Species.Kakuna,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 90,

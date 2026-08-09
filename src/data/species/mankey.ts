@@ -71,6 +71,7 @@ export default function registerMankeySpecies(): void {
     name: 'Primeape',
     category: 'Pig Monkey Pokemon',
     family: Families.Mankey,
+    evolvesFrom: Species.Mankey,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 105,

@@ -65,6 +65,7 @@ export default function registerBulbasaurSpecies(): void {
     name: 'Ivysaur',
     category: 'Seed Pokemon',
     family: Families.Bulbasaur,
+    evolvesFrom: Species.Bulbasaur,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 62,
@@ -98,6 +99,7 @@ export default function registerBulbasaurSpecies(): void {
     name: 'Venusaur',
     category: 'Seed Pokemon',
     family: Families.Bulbasaur,
+    evolvesFrom: Species.Ivysaur,
     stats: {
       [Stats.HP]: 80,
       [Stats.Attack]: 82,

@@ -64,6 +64,7 @@ export default function registerMeowthSpecies(): void {
     name: 'Persian',
     category: 'Classy Cat Pokemon',
     family: Families.Meowth,
+    evolvesFrom: Species.Meowth,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 70,

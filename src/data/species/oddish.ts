@@ -62,6 +62,7 @@ export default function registerOddishSpecies(): void {
     name: 'Gloom',
     category: 'Weed Pokemon',
     family: Families.Oddish,
+    evolvesFrom: Species.Oddish,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 65,
@@ -92,6 +93,7 @@ export default function registerOddishSpecies(): void {
     name: 'Vileplume',
     category: 'Flower Pokemon',
     family: Families.Oddish,
+    evolvesFrom: Species.Gloom,
     stats: {
       [Stats.HP]: 75,
       [Stats.Attack]: 80,

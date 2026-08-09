@@ -74,6 +74,7 @@ export default function registerSquirtleSpecies(): void {
     name: 'Wartortle',
     category: 'Turtle Pokemon',
     family: Families.Squirtle,
+    evolvesFrom: Species.Squirtle,
     stats: {
       [Stats.HP]: 59,
       [Stats.Attack]: 63,
@@ -106,6 +107,7 @@ export default function registerSquirtleSpecies(): void {
     name: 'Blastoise',
     category: 'Shellfish Pokemon',
     family: Families.Squirtle,
+    evolvesFrom: Species.Wartortle,
     stats: {
       [Stats.HP]: 79,
       [Stats.Attack]: 83,

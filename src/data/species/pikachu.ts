@@ -69,6 +69,7 @@ export default function registerPikachuSpecies(): void {
     name: 'Raichu',
     category: 'Mouse Pokemon',
     family: Families.Pikachu,
+    evolvesFrom: Species.Pikachu,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 90,

@@ -39,6 +39,7 @@ export default function registerCaterpieSpecies(): void {
     name: 'Metapod',
     category: 'Cocoon Pokemon',
     family: Families.Caterpie,
+    evolvesFrom: Species.Caterpie,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 20,
@@ -66,6 +67,7 @@ export default function registerCaterpieSpecies(): void {
     name: 'Butterfree',
     category: 'Butterfly Pokemon',
     family: Families.Caterpie,
+    evolvesFrom: Species.Metapod,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 45,

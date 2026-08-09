@@ -71,6 +71,7 @@ export default function registerPsyduckSpecies(): void {
     name: 'Golduck',
     category: 'Duck Pokemon',
     family: Families.Psyduck,
+    evolvesFrom: Species.Psyduck,
     stats: {
       [Stats.HP]: 80,
       [Stats.Attack]: 82,

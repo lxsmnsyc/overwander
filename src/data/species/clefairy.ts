@@ -80,6 +80,7 @@ export default function registerClefairySpecies(): void {
     name: 'Clefable',
     category: 'Fairy Pokemon',
     family: Families.Clefairy,
+    evolvesFrom: Species.Clefairy,
     stats: {
       [Stats.HP]: 95,
       [Stats.Attack]: 70,

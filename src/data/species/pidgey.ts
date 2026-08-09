@@ -64,6 +64,7 @@ export default function registerPidgeySpecies(): void {
     name: 'Pidgeotto',
     category: 'Bird Pokemon',
     family: Families.Pidgey,
+    evolvesFrom: Species.Pidgey,
     stats: {
       [Stats.HP]: 63,
       [Stats.Attack]: 60,
@@ -96,6 +97,7 @@ export default function registerPidgeySpecies(): void {
     name: 'Pidgeot',
     category: 'Bird Pokemon',
     family: Families.Pidgey,
+    evolvesFrom: Species.Pidgeotto,
     stats: {
       [Stats.HP]: 83,
       [Stats.Attack]: 80,

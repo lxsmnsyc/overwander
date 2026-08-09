@@ -62,6 +62,7 @@ export default function registerDiglettSpecies(): void {
     name: 'Dugtrio',
     category: 'Mole Pokemon',
     family: Families.Diglett,
+    evolvesFrom: Species.Diglett,
     stats: {
       [Stats.HP]: 35,
       [Stats.Attack]: 100,

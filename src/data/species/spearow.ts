@@ -63,6 +63,7 @@ export default function registerSpearowSpecies(): void {
     name: 'Fearow',
     category: 'Beak Pokemon',
     family: Families.Spearow,
+    evolvesFrom: Species.Spearow,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 90,

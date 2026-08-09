@@ -24,7 +24,7 @@ import registerVulpixSpecies from './vulpix';
 import registerWeedleSpecies from './weedle';
 import registerZubatSpecies from './zubat';
 
-export { getSpeciesData } from './__create';
+export { getSpeciesAbilities, getSpeciesData } from './__create';
 
 export function registerSpecies(): void {
   registerBulbasaurSpecies();

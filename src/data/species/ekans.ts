@@ -66,6 +66,7 @@ export default function registerEkansSpecies(): void {
     name: 'Arbok',
     category: 'Cobra Pokemon',
     family: Families.Ekans,
+    evolvesFrom: Species.Ekans,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 95,

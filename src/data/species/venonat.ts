@@ -63,6 +63,7 @@ export default function registerVenonatSpecies(): void {
     name: 'Venomoth',
     category: 'Poison Moth Pokemon',
     family: Families.Venonat,
+    evolvesFrom: Species.Venonat,
     stats: {
       [Stats.HP]: 70,
       [Stats.Attack]: 65,

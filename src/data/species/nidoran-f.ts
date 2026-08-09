@@ -83,6 +83,7 @@ export default function registerNidoranFSpecies(): void {
     name: 'Nidorina',
     category: 'Poison Pin Pokemon',
     family: Families.NidoranF,
+    evolvesFrom: Species.NidoranF,
     stats: {
       [Stats.HP]: 70,
       [Stats.Attack]: 62,
@@ -115,6 +116,7 @@ export default function registerNidoranFSpecies(): void {
     name: 'Nidoqueen',
     category: 'Drill Pokemon',
     family: Families.NidoranF,
+    evolvesFrom: Species.Nidorina,
     stats: {
       [Stats.HP]: 90,
       [Stats.Attack]: 92,

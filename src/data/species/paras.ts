@@ -64,6 +64,7 @@ export default function registerParasSpecies(): void {
     name: 'Parasect',
     category: 'Mushroom Pokemon',
     family: Families.Paras,
+    evolvesFrom: Species.Paras,
     stats: {
       [Stats.HP]: 60,
       [Stats.Attack]: 95,

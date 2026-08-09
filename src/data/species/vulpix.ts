@@ -62,6 +62,7 @@ export default function registerVulpixSpecies(): void {
     name: 'Ninetales',
     category: 'Fox Pokemon',
     family: Families.Vulpix,
+    evolvesFrom: Species.Vulpix,
     stats: {
       [Stats.HP]: 73,
       [Stats.Attack]: 76,

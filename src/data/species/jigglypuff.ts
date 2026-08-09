@@ -80,6 +80,7 @@ export default function registerJigglypuffSpecies(): void {
     name: 'Wigglytuff',
     category: 'Balloon Pokemon',
     family: Families.Jigglypuff,
+    evolvesFrom: Species.Jigglypuff,
     stats: {
       [Stats.HP]: 140,
       [Stats.Attack]: 70,

@@ -65,6 +65,7 @@ export default function registerRattataSpecies(): void {
     name: 'Raticate',
     category: 'Mouse Pokemon',
     family: Families.Rattata,
+    evolvesFrom: Species.Rattata,
     stats: {
       [Stats.HP]: 55,
       [Stats.Attack]: 81,

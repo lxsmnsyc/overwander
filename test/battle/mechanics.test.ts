@@ -8,6 +8,7 @@ import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
+import { getSpeciesAbilities } from '../../src/data/species';
 import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -276,5 +277,23 @@ describe('battle limits', () => {
 
     expect(unit.items[Items.OranBerry]).toBe(true);
     expect(unit.abilities[Abilities.Limber]).toBe(true);
+  });
+});
+
+describe('species abilities', () => {
+  it('evolved species learn their pre-evolutions abilities', () => {
+    // Vileplume's own set plus Gloom's Stench and Oddish's Run Away
+    const vileplume = getSpeciesAbilities(Species.Vileplume);
+
+    expect(vileplume.has(Abilities.EffectSpore)).toBe(true);
+    expect(vileplume.has(Abilities.Chlorophyll)).toBe(true);
+    expect(vileplume.has(Abilities.Stench)).toBe(true);
+    expect(vileplume.has(Abilities.RunAway)).toBe(true);
+
+    // Base species only know their own set
+    const oddish = getSpeciesAbilities(Species.Oddish);
+
+    expect(oddish.has(Abilities.Stench)).toBe(false);
+    expect(oddish.size).toBe(2);
   });
 });

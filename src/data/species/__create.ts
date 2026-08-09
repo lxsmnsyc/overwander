@@ -30,6 +30,10 @@ export interface SpeciesData {
    */
   family: Families;
   /**
+   * The species this pokemon evolves from, if any
+   */
+  evolvesFrom?: Species;
+  /**
    * Base stats of the pokemon
    */
   stats: Record<Stats, number>;
@@ -76,4 +80,25 @@ export function getSpeciesData(species: Species): SpeciesData {
     return result;
   }
   throw new Error('Missing species data for ' + species);
+}
+
+/**
+ * Every ability the species can learn: its own set plus its
+ * pre-evolutions' sets, walked up the evolution chain
+ */
+export function getSpeciesAbilities(species: Species): Set<Abilities> {
+  const abilities = new Set<Abilities>();
+
+  let current: Species | undefined = species;
+  while (current != null) {
+    const data = getSpeciesData(current);
+
+    for (const ability of data.abilities) {
+      abilities.add(ability);
+    }
+
+    current = data.evolvesFrom;
+  }
+
+  return abilities;
 }

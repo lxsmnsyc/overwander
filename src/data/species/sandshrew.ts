@@ -68,6 +68,7 @@ export default function registerSandshrewSpecies(): void {
     name: 'Sandslash',
     category: 'Mouse Pokemon',
     family: Families.Sandshrew,
+    evolvesFrom: Species.Sandshrew,
     stats: {
       [Stats.HP]: 75,
       [Stats.Attack]: 100,

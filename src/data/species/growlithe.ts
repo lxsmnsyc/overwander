@@ -63,6 +63,7 @@ export default function registerGrowlitheSpecies(): void {
     name: 'Arcanine',
     category: 'Legendary Pokemon',
     family: Families.Growlithe,
+    evolvesFrom: Species.Growlithe,
     stats: {
       [Stats.HP]: 90,
       [Stats.Attack]: 110,

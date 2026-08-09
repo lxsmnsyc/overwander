@@ -94,6 +94,8 @@ const enum Abilities {
   // Geodude
   RockHead = 62,
   Sturdy = 63,
+  // Ponyta
+  FlameBody = 64,
 }
 
 export default Abilities;

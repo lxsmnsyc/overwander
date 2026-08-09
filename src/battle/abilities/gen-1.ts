@@ -1605,6 +1605,34 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Ponyta
+  // https://bulbapedia.bulbagarden.net/wiki/Flame_Body_(Ability)
+  createAbility(Abilities.FlameBody, (battle) => {
+    const CHANCE = 0.3;
+
+    // The effect targets the attacker, which the trigger event
+    // cannot carry, so it stays inline
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.FlameBody) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        battle.random() < CHANCE
+      ) {
+        event.target.triggerAbility(Abilities.FlameBody);
+
+        event.cause.unit.addStatus(Statuses.Burned, {
+          type: EffectType.Ability,
+          ability: Abilities.FlameBody,
+          unit: event.target,
+        });
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

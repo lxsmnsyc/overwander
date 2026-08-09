@@ -1353,3 +1353,18 @@ describe('Damp', () => {
     expect(bomber.checkCanCast(Moves.SelfDestruct, { type: MoveTargetType.None })).toBe(true);
   });
 });
+
+describe('Flame Body', () => {
+  it('may burn contact attackers', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FlameBody);
+
+    holder.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+
+    expect(attacker.status[Statuses.Burned]).toBeDefined();
+  });
+});

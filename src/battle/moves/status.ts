@@ -46,6 +46,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.ThunderShock]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.Thunder]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.Thunderbolt]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.Stomp]: { status: Statuses.Flinched, chance: 30 },
 };
 
 const EFFECT_STAGE_MOVES: {

@@ -18,6 +18,7 @@ import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
 import registerPoliwagSpecies from './poliwag';
+import registerPonytaSpecies from './ponyta';
 import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
@@ -64,4 +65,5 @@ export function registerSpecies(): void {
   registerBellsproutSpecies();
   registerTentacoolSpecies();
   registerGeodudeSpecies();
+  registerPonytaSpecies();
 }

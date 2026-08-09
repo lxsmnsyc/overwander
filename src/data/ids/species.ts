@@ -84,4 +84,6 @@ export const enum Species {
   Geodude = 76,
   Graveler = 77,
   Golem = 78,
+  Ponyta = 79,
+  Rapidash = 80,
 }

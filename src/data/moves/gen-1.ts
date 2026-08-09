@@ -1203,4 +1203,14 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.Stomp, {
+    name: 'Stomp',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

@@ -823,3 +823,21 @@ describe('Self-Destruct', () => {
     expect(bomber.alive).toBe(false);
   });
 });
+
+describe('Stomp vs Minimize', () => {
+  it('never misses and squashes minimized targets', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const attacker = createUnit(battle, teamA);
+    const minimized = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    minimized.addStatus(Statuses.Minimized, NONE_CAUSE);
+
+    expect(attacker.checkMoveAccuracy(Moves.Stomp, unitTarget(minimized))).toBeUndefined();
+
+    attacker.triggerMoveEffect(Moves.Stomp, unitTarget(plain), 0);
+    attacker.triggerMoveEffect(Moves.Stomp, unitTarget(minimized), 0);
+
+    expect((160 - minimized.health) / (160 - plain.health)).toBeCloseTo(2);
+  });
+});

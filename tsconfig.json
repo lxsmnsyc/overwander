@@ -4,6 +4,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
+    "types": ["@solidjs/start/env", "@types/node"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,

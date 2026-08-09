@@ -2381,3 +2381,17 @@ describe('Filter', () => {
     expect(holder.health).toBe(plain.health);
   });
 });
+
+describe('Moxie', () => {
+  it('raises attack after a direct knock-out', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hunter = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+    hunter.addAbility(Abilities.Moxie);
+
+    hunter.damage({ type: EffectType.Move, move: Moves.Tackle, unit: hunter }, victim, 999, 0);
+
+    expect(victim.alive).toBe(false);
+    expect(hunter.stages[Stages.Attack]).toBe(1);
+  });
+});

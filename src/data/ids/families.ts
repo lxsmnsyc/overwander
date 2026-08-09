@@ -59,6 +59,10 @@ const enum Families {
   MrMime = 56,
   Scyther = 57,
   Jynx = 58,
+  Electabuzz = 59,
+  Magmar = 60,
+  Pinsir = 61,
+  Tauros = 62,
 }
 
 export default Families;

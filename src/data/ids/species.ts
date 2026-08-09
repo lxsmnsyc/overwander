@@ -132,4 +132,8 @@ export const enum Species {
   MrMime = 124,
   Scyther = 125,
   Jynx = 126,
+  Electabuzz = 127,
+  Magmar = 128,
+  Pinsir = 129,
+  Tauros = 130,
 }

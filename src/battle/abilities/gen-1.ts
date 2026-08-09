@@ -2493,6 +2493,38 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Pinsir
+  // https://bulbapedia.bulbagarden.net/wiki/Moxie_(Ability)
+  createAbility(
+    Abilities.Moxie,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: a direct move knocked the target out
+        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            !event.target.alive &&
+            !(event.flags & DamageFlags.Indirect) &&
+            event.cause.type === EffectType.Move &&
+            event.cause.unit !== event.target &&
+            event.cause.unit.hasAbility(Abilities.Moxie)
+          ) {
+            event.cause.unit.triggerAbility(Abilities.Moxie);
+          }
+        }),
+        // Effect: the Attack surge rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Moxie) {
+            event.source.addStage(Stages.Attack, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.Moxie,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

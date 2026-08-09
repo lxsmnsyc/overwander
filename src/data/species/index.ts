@@ -29,6 +29,7 @@ import registerJynxSpecies from './jynx';
 import registerKabutoSpecies from './kabuto';
 import registerKangaskhanSpecies from './kangaskhan';
 import registerKoffingSpecies from './koffing';
+import registerLegendaryBirdSpecies from './legendary-birds';
 import registerLickitungSpecies from './lickitung';
 import registerMachopSpecies from './machop';
 import registerMagikarpSpecies from './magikarp';
@@ -146,4 +147,5 @@ export function registerSpecies(): void {
   registerKabutoSpecies();
   registerAerodactylSpecies();
   registerSnorlaxSpecies();
+  registerLegendaryBirdSpecies();
 }

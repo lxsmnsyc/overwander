@@ -2896,6 +2896,27 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Articuno
+  // https://bulbapedia.bulbagarden.net/wiki/Snow_Cloak_(Ability)
+  createAbility(
+    Abilities.SnowCloak,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Sand Veil's hail twin: incoming accuracy is taxed
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (
+            event.accuracy != null &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.SnowCloak) &&
+            isWeatherHail(event.target.unit)
+          ) {
+            event.accuracy *= 0.8;
+          }
+        }),
+        chipImmunity(battle, Abilities.SnowCloak, Weathers.Hail),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

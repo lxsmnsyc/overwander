@@ -171,6 +171,8 @@ const enum Abilities {
   Pressure = 109,
   // Snorlax
   Immunity = 110,
+  // Articuno
+  SnowCloak = 111,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

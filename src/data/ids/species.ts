@@ -151,4 +151,7 @@ export const enum Species {
   Kabutops = 143,
   Aerodactyl = 144,
   Snorlax = 145,
+  Articuno = 146,
+  Zapdos = 147,
+  Moltres = 148,
 }

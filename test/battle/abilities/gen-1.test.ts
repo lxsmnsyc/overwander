@@ -2636,3 +2636,23 @@ describe('Immunity', () => {
     expect(holder.status[Statuses.BadlyPoisoned]).toBeUndefined();
   });
 });
+
+describe('Snow Cloak', () => {
+  it('taxes incoming accuracy in hail and shields the chip', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SnowCloak);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBe(100);
+
+    battle.setWeather(Weathers.Hail);
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(80);
+
+    battle.tick(1000);
+    expect(holder.health).toBe(160); // no hail chip
+  });
+});

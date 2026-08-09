@@ -1,5 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
+import { DamageFlags, Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
@@ -9,8 +9,21 @@ const HEALING_FACTOR = 0.5;
 
 export default function setupAbsorb(battle: Battle): void {
   battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
-    if (event.cause.type === EffectType.Move && ABSORB_MOVES.has(event.cause.move)) {
-      event.source.heal(event.cause, event.source, event.value * HEALING_FACTOR, 0);
+    if (
+      // Only the direct hit drains; indirect damage carrying the move
+      // cause (e.g. a Liquid Ooze backfire) must not re-trigger it
+      !(event.flags & DamageFlags.Indirect) &&
+      event.cause.type === EffectType.Move &&
+      ABSORB_MOVES.has(event.cause.move)
+    ) {
+      const amount = event.source.checkDrain(event.target, event.value * HEALING_FACTOR);
+
+      if (amount >= 0) {
+        event.source.heal(event.cause, event.source, amount, 0);
+      } else {
+        // The drain backfired (e.g. Liquid Ooze)
+        event.source.damage(event.cause, event.source, -amount, DamageFlags.Indirect);
+      }
     }
   });
 }

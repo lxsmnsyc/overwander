@@ -79,4 +79,6 @@ export const enum Species {
   Bellsprout = 71,
   Weepinbell = 72,
   Victreebel = 73,
+  Tentacool = 74,
+  Tentacruel = 75,
 }

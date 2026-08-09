@@ -45,6 +45,7 @@ const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.Harden]: 1,
   [Moves.Screech]: -2,
   [Moves.DefenseCurl]: 1,
+  [Moves.Barrier]: 2,
 });
 
 const setupSpeedStageMoves = createStageMove(Stages.Speed, {

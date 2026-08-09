@@ -55,6 +55,7 @@ const EFFECT_STAGE_MOVES: {
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.Constrict]: { stage: Stages.Speed, value: -1, chance: 10 },
 };
 
 /**

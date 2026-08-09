@@ -213,4 +213,6 @@ export const enum Moves {
   Recover = 116,
   LowKick = 117,
   Slam = 118,
+  Constrict = 119,
+  Barrier = 120,
 }

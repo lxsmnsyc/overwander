@@ -88,6 +88,9 @@ const enum Abilities {
   Steadfast = 58,
   // Bellsprout
   Gluttony = 59,
+  // Tentacool
+  ClearBody = 60,
+  LiquidOoze = 61,
 }
 
 export default Abilities;

@@ -1146,4 +1146,22 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Constrict, {
+    name: 'Constrict',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 10,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Barrier, {
+    name: 'Barrier',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: 0,
+    flags: 0,
+  });
 }

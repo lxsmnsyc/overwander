@@ -1481,6 +1481,39 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Tentacool
+  // https://bulbapedia.bulbagarden.net/wiki/Clear_Body_(Ability)
+  createAbility(Abilities.ClearBody, (battle) =>
+    // Mutates the in-flight stage event, so the effect stays inline
+    battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+      if (
+        event.value < 0 &&
+        event.source.hasAbility(Abilities.ClearBody) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.disabled = true;
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.ClearBody);
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Liquid_Ooze_(Ability)
+  createAbility(Abilities.LiquidOoze, (battle) =>
+    // Drains from the holder backfire; only fired on real drains,
+    // so the cue is safe here
+    battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
+      if (event.value > 0 && event.target.hasAbility(Abilities.LiquidOoze)) {
+        event.value = -event.value;
+
+        // For visual cues
+        event.target.triggerAbility(Abilities.LiquidOoze);
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

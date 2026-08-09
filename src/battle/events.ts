@@ -180,6 +180,7 @@ export const enum BattleEvents {
    */
   UnitAddStatusFailed = 117,
   CheckUnitItemThreshold = 118,
+  CheckUnitDrain = 119,
 }
 
 export const enum MoveTargetType {
@@ -460,6 +461,15 @@ export interface CheckUnitItemThresholdEvent extends UnitItemEvent {
   threshold: number;
 }
 
+/**
+ * Health drained by the source from the target; listeners adjust the
+ * amount — a negative value hurts the drainer instead (Liquid Ooze)
+ */
+export interface CheckUnitDrainEvent extends UnitEvent {
+  target: Unit;
+  value: number;
+}
+
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
 }
@@ -694,6 +704,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];
   [BattleEvents.CheckUnitCanConsumeItem]: [CheckUnitCanConsumeItemEvent, EventPriority];
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
+  [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
 }
 
 export interface ProgressData {

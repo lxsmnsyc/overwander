@@ -62,11 +62,20 @@ export default function setupSeedingStatus(battle: Battle): void {
       const amount = event.source.checkStat(Stats.HP, 0) / 8;
 
       if (event.cause.type !== EffectType.None) {
-        // Deal damage to the target first
-        event.cause.unit.damage(event.cause, event.source, amount, DamageFlags.Indirect);
+        const seeder = event.cause.unit;
 
-        // Heal the source
-        event.cause.unit.heal(event.cause, event.cause.unit, amount, 0);
+        // Deal damage to the target first
+        seeder.damage(event.cause, event.source, amount, DamageFlags.Indirect);
+
+        const drained = seeder.checkDrain(event.source, amount);
+
+        if (drained >= 0) {
+          // Heal the source
+          seeder.heal(event.cause, seeder, drained, 0);
+        } else {
+          // The drain backfired (e.g. Liquid Ooze)
+          seeder.damage(event.cause, seeder, -drained, DamageFlags.Indirect);
+        }
       }
     }
   });

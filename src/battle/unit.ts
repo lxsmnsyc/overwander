@@ -13,6 +13,7 @@ import type {
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
+  CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
@@ -457,6 +458,22 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitItemThreshold, event);
     return event.threshold;
+  }
+
+  /**
+   * The amount this unit drains from the target; negative when the
+   * drain backfires (e.g. Liquid Ooze)
+   */
+  checkDrain(target: Unit, value: number): number {
+    const event: CheckUnitDrainEvent = {
+      id: 'CheckUnitDrain',
+      disabled: false,
+      source: this,
+      target,
+      value,
+    };
+    this.battle.emit(BattleEvents.CheckUnitDrain, event);
+    return event.value;
   }
 
   enableItem(item: Items): void {

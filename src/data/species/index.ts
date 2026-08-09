@@ -23,6 +23,7 @@ import registerRattataSpecies from './rattata';
 import registerSandshrewSpecies from './sandshrew';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
+import registerTentacoolSpecies from './tentacool';
 import registerVenonatSpecies from './venonat';
 import registerVulpixSpecies from './vulpix';
 import registerWeedleSpecies from './weedle';
@@ -60,4 +61,5 @@ export function registerSpecies(): void {
   registerAbraSpecies();
   registerMachopSpecies();
   registerBellsproutSpecies();
+  registerTentacoolSpecies();
 }

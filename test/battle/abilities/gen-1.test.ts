@@ -1253,3 +1253,40 @@ describe('Steadfast', () => {
     expect(holder.stages[Stages.Speed]).toBe(1);
   });
 });
+
+describe('Clear Body', () => {
+  it('blocks stat drops from other units but not its own', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ClearBody);
+
+    holder.addStage(Stages.Attack, -1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: enemy,
+    });
+    expect(holder.stages[Stages.Attack]).toBe(0);
+
+    // Self-inflicted drops still apply
+    holder.addStage(Stages.Attack, -1, NONE_CAUSE);
+    expect(holder.stages[Stages.Attack]).toBe(-1);
+  });
+});
+
+describe('Liquid Ooze', () => {
+  it('makes drains backfire on the drinker', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const drinker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LiquidOoze);
+
+    drinker.triggerMoveEffect(Moves.MegaDrain, { type: MoveTargetType.Unit, unit: holder }, 0);
+
+    const dealt = 160 - holder.health;
+    expect(dealt).toBeGreaterThan(0);
+    // Half the damage dealt comes back as damage, not healing
+    expect(160 - drinker.health).toBeCloseTo(dealt / 2);
+  });
+});

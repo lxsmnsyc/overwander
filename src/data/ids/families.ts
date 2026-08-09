@@ -28,6 +28,7 @@ const enum Families {
   Abra = 26,
   Machop = 27,
   Bellsprout = 28,
+  Tentacool = 29,
 }
 
 export default Families;

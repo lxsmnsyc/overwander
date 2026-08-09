@@ -1503,4 +1503,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.DizzyPunch, {
+    name: 'Dizzy Punch',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 70,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

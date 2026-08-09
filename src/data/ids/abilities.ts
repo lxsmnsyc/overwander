@@ -137,6 +137,14 @@ const enum Abilities {
   IronFist = 89,
   // Koffing
   NeutralizingGas = 90,
+  // Chansey
+  NaturalCure = 91,
+  SereneGrace = 92,
+  Healer = 93,
+  // Tangela
+  LeafGuard = 94,
+  // Kangaskhan
+  Scrappy = 95,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

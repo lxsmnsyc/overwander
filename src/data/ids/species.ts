@@ -120,4 +120,7 @@ export const enum Species {
   Weezing = 112,
   Rhyhorn = 113,
   Rhydon = 114,
+  Chansey = 115,
+  Tangela = 116,
+  Kangaskhan = 117,
 }

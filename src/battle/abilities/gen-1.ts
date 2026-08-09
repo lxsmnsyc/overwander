@@ -45,6 +45,7 @@ import {
   createAbility,
   createBlazeAbility,
   createDrizzleAbility,
+  createHydrationAbility,
   createShellArmorAbility,
 } from './__create';
 
@@ -1846,34 +1847,7 @@ const setupAbilities = [
   ),
 
   // Seel
-  // https://bulbapedia.bulbagarden.net/wiki/Hydration_(Ability)
-  createAbility(
-    Abilities.Hydration,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: no major status conditions in the rain
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            MAJOR_STATUS_CONDITIONS.has(event.status) &&
-            isWeatherRainy(event.source) &&
-            event.source.hasAbility(Abilities.Hydration)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real application was blocked
-        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          if (
-            MAJOR_STATUS_CONDITIONS.has(event.status) &&
-            isWeatherRainy(event.source) &&
-            event.source.hasAbility(Abilities.Hydration)
-          ) {
-            event.source.triggerAbility(Abilities.Hydration);
-          }
-        }),
-      ]),
-  ),
+  createHydrationAbility(Abilities.Hydration, isWeatherRainy),
 
   // https://bulbapedia.bulbagarden.net/wiki/Ice_Body_(Ability)
   createAbility(
@@ -2312,6 +2286,7 @@ const setupAbilities = [
       Moves.FirePunch,
       Moves.IcePunch,
       Moves.ThunderPunch,
+      Moves.DizzyPunch,
     ]);
     const FACTOR = 1.2;
 
@@ -2373,6 +2348,112 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Chansey
+  // https://bulbapedia.bulbagarden.net/wiki/Natural_Cure_(Ability)
+  createAbility(
+    Abilities.NaturalCure,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: leaving the field with a status condition
+        battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+          if (
+            event.source.hasAbility(Abilities.NaturalCure) &&
+            hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS)
+          ) {
+            event.source.triggerAbility(Abilities.NaturalCure);
+          }
+        }),
+        // The cure rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.NaturalCure) {
+            event.source.cure({
+              type: EffectType.Ability,
+              ability: Abilities.NaturalCure,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Serene_Grace_(Ability)
+  createAbility(Abilities.SereneGrace, (battle) =>
+    // Mutates the in-flight chance check, so the effect stays inline
+    battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
+      if (event.value != null && event.parent.source.hasAbility(Abilities.SereneGrace)) {
+        event.value *= 2;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Healer_(Ability)
+  createAbility(Abilities.Healer, (battle) => {
+    const CHANCE = 0.3;
+
+    // No turn mechanics, we detect on move cast instead; the cure
+    // needs the rolled ally, so the effect stays inline
+    return battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      if (!event.source.hasAbility(Abilities.Healer)) {
+        return;
+      }
+
+      for (const ally of event.source.team.units) {
+        if (
+          ally !== event.source &&
+          ally.alive &&
+          hasAnyStatus(ally, MAJOR_STATUS_CONDITIONS) &&
+          battle.random() < CHANCE
+        ) {
+          event.source.triggerAbility(Abilities.Healer);
+
+          ally.cure({
+            type: EffectType.Ability,
+            ability: Abilities.Healer,
+            unit: event.source,
+          });
+        }
+      }
+    });
+  }),
+
+  // Tangela
+  createHydrationAbility(Abilities.LeafGuard, isWeatherSunny),
+
+  // Kangaskhan
+  // https://bulbapedia.bulbagarden.net/wiki/Scrappy_(Ability)
+  createAbility(
+    Abilities.Scrappy,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Normal and Fighting moves connect with Ghosts
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.immune &&
+            (event.type === Types.Normal || event.type === Types.Fighting) &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.types.has(Types.Ghost) &&
+            event.source.hasAbility(Abilities.Scrappy)
+          ) {
+            event.immune = false;
+          }
+        }),
+        // Unfazed by Intimidate (modern mechanics)
+        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            event.value < 0 &&
+            event.cause.type === EffectType.Ability &&
+            event.cause.ability === Abilities.Intimidate &&
+            event.source.hasAbility(Abilities.Scrappy)
+          ) {
+            event.success = false;
+
+            event.source.triggerAbility(Abilities.Scrappy);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

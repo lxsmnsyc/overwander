@@ -5,6 +5,7 @@ import type Abilities from '../../data/ids/abilities';
 import { Weathers } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';
 
 interface AbilityLifecycle {
@@ -102,6 +103,46 @@ export function createBlazeAbility(
         }
       }
     }),
+  );
+}
+
+/**
+ * Meta ability for weather status guards (Hydration, Leaf Guard):
+ * the holder cannot receive major status conditions while its
+ * weather is up
+ * https://bulbapedia.bulbagarden.net/wiki/Hydration_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Leaf_Guard_(Ability)
+ */
+export function createHydrationAbility(
+  targetAbility: Abilities,
+  inWeather: (unit: Unit) => boolean,
+): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: no major status conditions in the weather
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            MAJOR_STATUS_CONDITIONS.has(event.status) &&
+            inWeather(event.source) &&
+            event.source.hasAbility(targetAbility)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (
+            MAJOR_STATUS_CONDITIONS.has(event.status) &&
+            inWeather(event.source) &&
+            event.source.hasAbility(targetAbility)
+          ) {
+            event.source.triggerAbility(targetAbility);
+          }
+        }),
+      ]),
   );
 }
 

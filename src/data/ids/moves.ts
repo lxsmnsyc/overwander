@@ -262,4 +262,5 @@ export const enum Moves {
   HiJumpKick = 151,
   Smog = 152,
   SmokeScreen = 153,
+  DizzyPunch = 154,
 }

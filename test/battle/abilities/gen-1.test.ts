@@ -2230,3 +2230,87 @@ describe('protected abilities', () => {
     expect(unit.hasAbility(Abilities.Shadow)).toBe(true);
   });
 });
+
+describe('Natural Cure', () => {
+  it('cures status conditions on leaving the field', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.NaturalCure);
+    unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    unit.leave();
+
+    expect(unit.status[Statuses.Poisoned]).toBeUndefined();
+  });
+});
+
+describe('Serene Grace', () => {
+  it('doubles secondary effect chances', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SereneGrace);
+
+    const event = {
+      id: 'CheckUnitAttackEffectChance',
+      disabled: false,
+      parent: makeAttack(holder, enemy, Moves.BodySlam, Types.Normal, MoveCategories.Physical),
+      value: undefined as number | undefined,
+    };
+
+    battle.emit(BattleEvents.CheckUnitAttackEffectChance, event);
+
+    expect(event.value).toBe(60); // Body Slam's 30% doubled
+  });
+});
+
+describe('Healer', () => {
+  it('may cure an ally on cast', () => {
+    const { battle, teamA } = createBattle();
+    pinRandom(battle, 0); // the cure always procs
+    const healer = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    healer.addAbility(Abilities.Healer);
+    ally.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: healer,
+      move: Moves.Pound,
+      target: { type: MoveTargetType.None },
+    });
+
+    expect(ally.status[Statuses.Burned]).toBeUndefined();
+  });
+});
+
+describe('Leaf Guard', () => {
+  it('blocks major status conditions in the sun', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.LeafGuard);
+    teamA.weather.current = Weathers.Sunny;
+
+    unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(unit.status[Statuses.Poisoned]).toBeUndefined();
+  });
+});
+
+describe('Scrappy', () => {
+  it('hits Ghosts with Normal and Fighting moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB);
+    ghost.types.add(Types.Ghost);
+
+    const target = { type: MoveTargetType.Unit, unit: ghost } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.Tackle, target, Types.Normal)).toBe(true);
+
+    attacker.addAbility(Abilities.Scrappy);
+
+    expect(attacker.checkMoveImmunity(Moves.Tackle, target, Types.Normal)).toBe(false);
+  });
+});

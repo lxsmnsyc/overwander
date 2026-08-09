@@ -50,6 +50,9 @@ const enum Families {
   Lickitung = 47,
   Koffing = 48,
   Rhyhorn = 49,
+  Chansey = 50,
+  Tangela = 51,
+  Kangaskhan = 52,
 }
 
 export default Families;

@@ -2250,16 +2250,17 @@ const setupAbilities = [
     function removeHolder(unit: Unit, keepUnit: boolean): void {
       if (holders.delete(unit) && holders.size === 0) {
         // The gas lifting re-activates entry abilities (modern
-        // mechanics): every living unit re-enters the field. Other
-        // gas carriers are skipped so a benched one cannot silently
-        // re-establish the gas.
+        // mechanics). The reactivation flag keeps this from reading
+        // as a genuine entry, so one-time entry side-effects don't
+        // re-trigger. Other gas carriers are skipped so a benched
+        // one cannot silently re-establish the gas.
         for (const other of battle.units()) {
           if (
             other.alive &&
             (keepUnit || other !== unit) &&
             !other.hasAbility(Abilities.NeutralizingGas)
           ) {
-            other.enter();
+            other.enter(true);
           }
         }
       }

@@ -2806,4 +2806,30 @@ describe('interaction fixes', () => {
 
     expect(victim.stages[Stages.Attack]).toBe(-1);
   });
+
+  it('lifting Neutralizing Gas does not replay genuine entry side-effects', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gas = createUnit(battle, teamA);
+    gas.addAbility(Abilities.NeutralizingGas);
+    gas.enter();
+
+    const target = createUnit(battle, teamB);
+
+    // Stand-in for one-time entry side-effects (entry hazards,
+    // first-entry dormancy): they only honor genuine entries
+    let genuineEntries = 0;
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (event.source === target && !event.reactivation) {
+        genuineEntries += 1;
+      }
+    });
+
+    target.enter();
+    expect(genuineEntries).toBe(1);
+
+    // The gas lifting re-activates abilities without counting as an
+    // entry
+    gas.leave();
+    expect(genuineEntries).toBe(1);
+  });
 });

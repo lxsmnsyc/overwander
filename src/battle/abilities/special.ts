@@ -51,7 +51,11 @@ const setupAbilities = [
       // The first time a Boss takes the field it lies dormant,
       // unable to act while the warm-up runs out
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-        if (event.source.hasAbility(Abilities.Boss) && !awakened.has(event.source)) {
+        if (
+          !event.reactivation &&
+          event.source.hasAbility(Abilities.Boss) &&
+          !awakened.has(event.source)
+        ) {
           awakened.add(event.source);
 
           event.source.addStatus(Statuses.Dormant, {

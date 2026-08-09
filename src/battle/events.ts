@@ -233,6 +233,16 @@ export interface UnitEvent extends BaseEvent {
   source: Unit;
 }
 
+export interface UnitEntersFieldEvent extends UnitEvent {
+  /**
+   * True when this is not a genuine entry but an ability
+   * re-activation (e.g. Neutralizing Gas lifting). Entry abilities
+   * fire either way; one-time entry side-effects (hazards, dormancy)
+   * must skip reactivations.
+   */
+  reactivation: boolean;
+}
+
 export interface UnitMoveEvent extends UnitEvent {
   move: Moves;
 }
@@ -718,7 +728,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitFaints]: [UnitFaintsEvent, EventPriority];
   [BattleEvents.UnitCure]: [UnitCureEvent, EventPriority];
 
-  [BattleEvents.UnitEntersField]: [UnitEvent, EventPriority];
+  [BattleEvents.UnitEntersField]: [UnitEntersFieldEvent, EventPriority];
   [BattleEvents.UnitLeavesField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitSwitch]: [UnitSwitchEvent, EventPriority];
   [BattleEvents.UnitInterrupt]: [UnitEvent, EventPriority];

@@ -831,11 +831,12 @@ export default class Unit {
     });
   }
 
-  enter(): void {
+  enter(reactivation = false): void {
     this.battle.emit(BattleEvents.UnitEntersField, {
       id: 'UnitEntersField',
       disabled: false,
       source: this,
+      reactivation,
     });
   }
 

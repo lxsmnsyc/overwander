@@ -2345,3 +2345,39 @@ describe('Scrappy', () => {
     expect(attacker.checkMoveImmunity(Moves.Tackle, target, Types.Normal)).toBe(false);
   });
 });
+
+describe('Filter', () => {
+  it('softens super-effective hits by a quarter', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    holder.types.add(Types.Grass);
+    plain.types.add(Types.Grass);
+    holder.addAbility(Abilities.Filter);
+
+    attacker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: plain }, 0);
+    attacker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: holder }, 0);
+
+    const plainDamage = 160 - plain.health;
+    const filteredDamage = 160 - holder.health;
+
+    expect(plainDamage).toBeGreaterThan(0);
+    expect(filteredDamage).toBeCloseTo(plainDamage * 0.75);
+  });
+
+  it('leaves neutral hits alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Filter);
+
+    attacker.triggerMoveEffect(Moves.Tackle, { type: MoveTargetType.Unit, unit: plain }, 0);
+    attacker.triggerMoveEffect(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder }, 0);
+
+    expect(holder.health).toBe(plain.health);
+  });
+});

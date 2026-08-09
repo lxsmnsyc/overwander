@@ -129,4 +129,7 @@ export const enum Species {
   Seaking = 121,
   Staryu = 122,
   Starmie = 123,
+  MrMime = 124,
+  Scyther = 125,
+  Jynx = 126,
 }

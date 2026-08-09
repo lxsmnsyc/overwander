@@ -56,6 +56,9 @@ const enum Families {
   Horsea = 53,
   Goldeen = 54,
   Staryu = 55,
+  MrMime = 56,
+  Scyther = 57,
+  Jynx = 58,
 }
 
 export default Families;

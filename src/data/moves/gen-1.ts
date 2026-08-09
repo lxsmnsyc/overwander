@@ -1523,4 +1523,13 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.LovelyKiss, {
+    name: 'Lovely Kiss',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

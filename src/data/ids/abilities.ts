@@ -149,6 +149,8 @@ const enum Abilities {
   WaterVeil = 96,
   // Staryu
   Illuminate = 97,
+  // MrMime
+  Filter = 98,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

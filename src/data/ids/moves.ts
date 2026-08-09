@@ -264,4 +264,5 @@ export const enum Moves {
   SmokeScreen = 153,
   DizzyPunch = 154,
   Waterfall = 155,
+  LovelyKiss = 156,
 }

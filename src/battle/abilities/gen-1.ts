@@ -2468,6 +2468,31 @@ const setupAbilities = [
 
   // Staryu
   createKeenEyeAbility(Abilities.Illuminate),
+
+  // MrMime
+  // https://bulbapedia.bulbagarden.net/wiki/Filter_(Ability)
+  createAbility(Abilities.Filter, (battle) => {
+    const FACTOR = 0.75;
+
+    // Total effectiveness per attack; the reduction applies once on
+    // the final damage when the attack is super effective overall
+    const totals = new WeakMap<UnitAttackEvent, number>();
+
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+        if (event.parent.target.hasAbility(Abilities.Filter)) {
+          totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const total = totals.get(event.parent);
+
+        if (total != null && total > 1) {
+          event.value *= FACTOR;
+        }
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

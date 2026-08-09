@@ -1100,4 +1100,21 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Hypnosis, {
+    name: 'Hypnosis',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 60,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Amnesia, {
+    name: 'Amnesia',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: 0,
+    flags: 0,
+  });
 }

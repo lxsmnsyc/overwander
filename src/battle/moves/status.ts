@@ -16,6 +16,7 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Sing]: Statuses.Sleeping,
   [Moves.ConfuseRay]: Statuses.Confused,
   [Moves.Spore]: Statuses.Sleeping,
+  [Moves.Hypnosis]: Statuses.Sleeping,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {

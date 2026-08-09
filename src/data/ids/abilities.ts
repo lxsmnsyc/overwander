@@ -79,6 +79,8 @@ const enum Abilities {
   Defiant = 53,
   // Growlithe
   Justified = 54,
+  // Poliwag
+  WaterAbsorb = 55,
 }
 
 export default Abilities;

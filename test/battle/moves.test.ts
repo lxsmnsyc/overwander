@@ -774,3 +774,14 @@ describe('semi-invulnerable positional statuses', () => {
     );
   });
 });
+
+describe('Amnesia', () => {
+  it('sharply raises the user special defense', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.triggerMoveEffect(Moves.Amnesia, NONE_TARGET, 0);
+
+    expect(unit.stages[Stages.SpecialDefense]).toBe(2);
+  });
+});

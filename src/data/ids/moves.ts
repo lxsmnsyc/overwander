@@ -208,4 +208,6 @@ export const enum Moves {
   PetalDance = 111,
   Spore = 112,
   KarateChop = 113,
+  Hypnosis = 114,
+  Amnesia = 115,
 }

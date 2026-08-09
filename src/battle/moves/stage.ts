@@ -34,6 +34,10 @@ const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {
   [Moves.Growth]: 1,
 });
 
+const setupSpecialDefenseStageMoves = createStageMove(Stages.SpecialDefense, {
+  [Moves.Amnesia]: 2,
+});
+
 const setupDefenseStageMoves = createStageMove(Stages.Defense, {
   [Moves.Leer]: -1,
   [Moves.TailWhip]: -1,
@@ -61,6 +65,7 @@ const setupEvasionStageMoves = createStageMove(Stages.Evasion, {
 export default function setupStageMoves(battle: Battle): void {
   setupAttackStageMoves(battle);
   setupSpecialAttackStageMoves(battle);
+  setupSpecialDefenseStageMoves(battle);
   setupDefenseStageMoves(battle);
   setupSpeedStageMoves(battle);
   setupAccuracyStageMoves(battle);

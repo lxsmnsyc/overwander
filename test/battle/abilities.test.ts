@@ -1162,3 +1162,22 @@ describe('Justified', () => {
     expect(holder.stages[Stages.Attack]).toBe(1);
   });
 });
+
+describe('Water Absorb', () => {
+  it('absorbs Water moves and heals a quarter of max health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WaterAbsorb);
+    holder.setHealth(100);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.WaterGun, target, Types.Water)).toBe(true);
+
+    attacker.triggerMoveTarget(Moves.WaterGun, target, 0);
+
+    expect(holder.health).toBe(140); // 100 + 160 / 4
+  });
+});

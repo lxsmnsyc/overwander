@@ -1332,6 +1332,54 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Poliwag
+  // https://bulbapedia.bulbagarden.net/wiki/Water_Absorb_(Ability)
+  createAbility(
+    Abilities.WaterAbsorb,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: grants the Water immunity
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.type === Types.Water &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.WaterAbsorb)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Detection: a real Water move fails against the holder
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.WaterAbsorb) &&
+            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
+          ) {
+            parent.target.unit.triggerAbility(Abilities.WaterAbsorb);
+          }
+        }),
+        // Effect: the quarter-max-health heal rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.WaterAbsorb) {
+            event.source.heal(
+              {
+                type: EffectType.Ability,
+                ability: Abilities.WaterAbsorb,
+                unit: event.source,
+              },
+              event.source,
+              event.source.checkStat(Stats.HP, 0) / 4,
+              0,
+            );
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

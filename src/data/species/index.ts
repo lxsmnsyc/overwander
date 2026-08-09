@@ -13,6 +13,7 @@ import registerOddishSpecies from './oddish';
 import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
+import registerPoliwagSpecies from './poliwag';
 import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
@@ -52,4 +53,5 @@ export function registerSpecies(): void {
   registerPsyduckSpecies();
   registerMankeySpecies();
   registerGrowlitheSpecies();
+  registerPoliwagSpecies();
 }

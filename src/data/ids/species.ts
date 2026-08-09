@@ -67,4 +67,7 @@ export const enum Species {
   Primeape = 59,
   Growlithe = 60,
   Arcanine = 61,
+  Poliwag = 62,
+  Poliwhirl = 63,
+  Poliwrath = 64,
 }

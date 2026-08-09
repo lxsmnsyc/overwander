@@ -23,6 +23,7 @@ const enum Families {
   Meowth = 21,
   Psyduck = 22,
   Mankey = 23,
+  Growlithe = 24,
 }
 
 export default Families;

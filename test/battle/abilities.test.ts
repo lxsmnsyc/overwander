@@ -1144,3 +1144,21 @@ describe('Defiant', () => {
     expect(holder.stages[Stages.Attack]).toBe(2);
   });
 });
+
+describe('Justified', () => {
+  it('raises attack when hit by a Dark move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Justified);
+
+    holder.damage({ type: EffectType.Move, move: Moves.Bite, unit: attacker }, holder, 10, 0);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+
+    // Non-Dark moves leave it unmoved
+    holder.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+  });
+});

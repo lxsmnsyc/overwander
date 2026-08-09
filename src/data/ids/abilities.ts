@@ -77,6 +77,8 @@ const enum Abilities {
   VitalSpirit = 51,
   AngerPoint = 52,
   Defiant = 53,
+  // Growlithe
+  Justified = 54,
 }
 
 export default Abilities;

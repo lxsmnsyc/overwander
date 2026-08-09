@@ -1300,6 +1300,38 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Growlithe
+  // https://bulbapedia.bulbagarden.net/wiki/Justified_(Ability)
+  createAbility(
+    Abilities.Justified,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: direct damage from a Dark-type move
+        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            !(event.flags & DamageFlags.Indirect) &&
+            event.cause.type === EffectType.Move &&
+            event.cause.unit !== event.target &&
+            event.target.hasAbility(Abilities.Justified) &&
+            getMoveData(event.cause.move).type === Types.Dark
+          ) {
+            event.target.triggerAbility(Abilities.Justified);
+          }
+        }),
+        // Effect: the Attack boost rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Justified) {
+            event.source.addStage(Stages.Attack, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.Justified,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

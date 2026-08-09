@@ -65,4 +65,6 @@ export const enum Species {
   Golduck = 57,
   Mankey = 58,
   Primeape = 59,
+  Growlithe = 60,
+  Arcanine = 61,
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
+import { BattleModes } from '../../src/battle/core';
 import setupIdleAI from '../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
@@ -11,8 +12,8 @@ import { type BattleHarness, createBattle, createUnit, pinRandom } from './harne
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
-function createAIBattle(): BattleHarness {
-  const harness = createBattle();
+function createAIBattle(mode?: BattleModes): BattleHarness {
+  const harness = createBattle('test-seed', undefined, mode);
   setupChooseMoveAI(harness.battle);
   return harness;
 }
@@ -106,6 +107,37 @@ describe('choose move', () => {
     const choice = chooseMove(battle, unit);
 
     expect(choice?.move).toBe(Moves.Growl);
+  });
+
+  it('prefers friendly stage boosts during raid battles', () => {
+    const { battle, teamA, teamB } = createAIBattle(BattleModes.Raid);
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.SwordsDance);
+
+    const choice = chooseMove(battle, unit);
+
+    expect(choice?.move).toBe(Moves.SwordsDance);
+
+    // Maxed out: the boost turns useless and the attack wins again
+    unit.stages[Stages.Attack] = 6;
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+  });
+
+  it('does not favor stage boosts outside raids', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addMove(Moves.SwordsDance);
+
+    const choice = chooseMove(battle, unit);
+
+    expect(choice?.move).toBe(Moves.Tackle);
   });
 });
 

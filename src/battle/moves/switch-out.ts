@@ -18,7 +18,7 @@ import type Unit from '../unit';
  * moves (none yet) would not care about the replacement and can use
  * MoveTargetPriorities.Random.
  */
-const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar]);
+export const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar]);
 const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport]);
 
 export default function setupSwitchOutMoves(battle: Battle): void {

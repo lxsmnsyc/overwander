@@ -69,6 +69,11 @@ export const enum MoveAttackFlags {
    * The attack pierces damage-absorbing shields (e.g. Substitute)
    */
   Piercing = 0b100000,
+  /**
+   * The attack's amount derives from the target's health (e.g. OHKO
+   * moves, Super Fang)
+   */
+  HealthScaled = 0b1000000,
 }
 
 export const enum DamageFlags {
@@ -84,6 +89,11 @@ export const enum DamageFlags {
    * The damage pierces damage-absorbing shields (e.g. Substitute)
    */
   Piercing = 0b0100,
+  /**
+   * The amount derives from the recipient's health (e.g. OHKO moves,
+   * residual max-HP fractions)
+   */
+  HealthScaled = 0b1000,
 }
 
 export const enum StatFlags {

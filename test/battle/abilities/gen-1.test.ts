@@ -13,7 +13,7 @@ import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
-import { MoveCategories, Moves } from '../../../src/data/ids/moves';
+import { DamageFlags, MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Genders } from '../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from '../harness';
@@ -1819,5 +1819,131 @@ describe('Weak Armor', () => {
 
     expect(holder.stages[Stages.Defense]).toBe(-1);
     expect(holder.stages[Stages.Speed]).toBe(2);
+  });
+});
+
+describe('Boss', () => {
+  it('multiplies stats: tenfold HP, doubled otherwise', () => {
+    const { battle, teamA } = createBattle();
+    const boss = createUnit(battle, teamA);
+    boss.addAbility(Abilities.Boss);
+
+    expect(boss.checkStat(Stats.HP, 0)).toBe(1600);
+    expect(boss.checkStat(Stats.Attack, 0)).toBe(210);
+    expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+
+  it('is immune to negative stage applications', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const cause = { type: EffectType.Move, move: Moves.Growl, unit: enemy } as const;
+
+    boss.addStage(Stages.Attack, -1, cause);
+    boss.removeStage(Stages.Defense, 1, cause);
+
+    expect(boss.stages[Stages.Attack]).toBe(0);
+    expect(boss.stages[Stages.Defense]).toBe(0);
+
+    // Positive applications still land
+    boss.addStage(Stages.Attack, 1, cause);
+    expect(boss.stages[Stages.Attack]).toBe(1);
+  });
+
+  it('is immune to health-scaling damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    // Super Fang halves health; the boss shrugs it off
+    attacker.triggerMoveEffect(Moves.SuperFang, { type: MoveTargetType.Unit, unit: boss }, 0);
+    expect(boss.health).toBe(160);
+
+    // Health-scaled indirect damage (e.g. residuals) is ignored too
+    attacker.damage(NONE_CAUSE, boss, 10, DamageFlags.Indirect | DamageFlags.HealthScaled);
+    expect(boss.health).toBe(160);
+
+    // Plain damage still lands
+    attacker.damage(NONE_CAUSE, boss, 10, 0);
+    expect(boss.health).toBe(150);
+  });
+
+  it('shrugs off disruption statuses unless self-inflicted', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const hostile = { type: EffectType.Move, move: Moves.Hypnosis, unit: enemy } as const;
+
+    boss.addStatus(Statuses.Sleeping, hostile);
+    boss.addStatus(Statuses.Trapped, hostile);
+    boss.addStatus(Statuses.Flinched, hostile);
+    boss.addStatus(Statuses.Frozen, hostile);
+
+    expect(boss.status[Statuses.Sleeping]).toBeUndefined();
+    expect(boss.status[Statuses.Trapped]).toBeUndefined();
+    expect(boss.status[Statuses.Flinched]).toBeUndefined();
+    expect(boss.status[Statuses.Frozen]).toBeUndefined();
+
+    // Self-inflicted sleep (e.g. Rest) still lands
+    boss.addStatus(Statuses.Sleeping, { type: EffectType.Move, move: Moves.Rest, unit: boss });
+
+    expect(boss.status[Statuses.Sleeping]).toBeDefined();
+  });
+
+  it('cannot have its moves disabled', () => {
+    const { battle, teamA } = createBattle();
+    const boss = createUnit(battle, teamA);
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+
+    boss.disableMove(Moves.Tackle);
+
+    expect(boss.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+
+  it('cannot be forced out', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    createUnit(battle, teamB); // bench replacement
+    boss.addAbility(Abilities.Boss);
+
+    let switches = 0;
+    battle.on(BattleEvents.UnitSwitch, EventPriority.Post, () => {
+      switches += 1;
+    });
+
+    enemy.triggerMoveEffect(Moves.Roar, { type: MoveTargetType.Unit, unit: boss }, 0);
+
+    expect(switches).toBe(0);
+  });
+
+  it('widens single-target enemy moves to every enemy', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const boss = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    battle.emit(BattleEvents.UnitTriggerMoveEnd, {
+      id: 'UnitTriggerMoveEnd',
+      disabled: false,
+      source: boss,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.Unit, unit: first },
+      steps: 0,
+    });
+
+    expect(first.health).toBeLessThan(160);
+    expect(second.health).toBeLessThan(160);
+    expect(ally.health).toBe(160);
   });
 });

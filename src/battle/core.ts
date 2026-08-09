@@ -18,18 +18,30 @@ export interface BattleLimits {
   abilities: number;
 }
 
+export const enum BattleModes {
+  PvP = 0,
+  /**
+   * Raid battles: weather changes only affect the changing unit's
+   * own team, unless a Boss unit triggers them
+   */
+  Raid = 1,
+}
+
 export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
 
   limits: BattleLimits;
 
-  constructor(seed: string, limits?: Partial<BattleLimits>) {
+  mode: BattleModes;
+
+  constructor(seed: string, limits?: Partial<BattleLimits>, mode = BattleModes.PvP) {
     super();
     this.rng = new AleaRNG(seed);
     this.limits = {
       items: limits?.items ?? 1,
       abilities: limits?.abilities ?? 1,
     };
+    this.mode = mode;
   }
 
   random(): number {

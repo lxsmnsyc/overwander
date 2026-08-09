@@ -14,6 +14,8 @@ import {
   type UnitAttackEvent,
   type UnitAttackResolveAmountEvent,
 } from '../events';
+import { BattleModes } from '../core';
+import { getStageMoveEffect } from '../moves/stage';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 
@@ -31,6 +33,12 @@ const BASE_SCORE = 100;
  * neutral option, so the move is only picked when everything is bad.
  */
 const USELESS_PENALTY = 10;
+
+/**
+ * Raid battles favor setting up: enough to outbid any non-KO damage
+ * bonus (which caps at +4)
+ */
+const RAID_BUFF_BONUS = 6;
 
 // AI knowledge tables (kept here, like the cartridge AI's own lists)
 const HEALING_MOVES = new Set<Moves>([Moves.Rest, Moves.Recover]);
@@ -305,6 +313,34 @@ export function setupChooseMoveAI(battle: Battle): void {
     } else if (ratio < 0.3) {
       event.score -= 5;
     }
+  });
+
+  // Raid battles: friendly stage-boosting moves take priority
+  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+    if (battle.mode !== BattleModes.Raid) {
+      return;
+    }
+
+    const effect = getStageMoveEffect(event.move);
+
+    // Only boosts pointed at the own side qualify
+    if (
+      effect == null ||
+      effect.value <= 0 ||
+      getMoveData(event.move).target & MoveTargetFlags.Enemy
+    ) {
+      return;
+    }
+
+    const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
+
+    // Useless once the receiver's stage is maxed out
+    if (receiver.stages[effect.stage] >= 6) {
+      event.score -= USELESS_PENALTY;
+      return;
+    }
+
+    event.score += RAID_BUFF_BONUS;
   });
 
   // Healing moves: valuable when hurt, useless when topped off

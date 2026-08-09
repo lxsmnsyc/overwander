@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
+import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
@@ -355,5 +356,51 @@ describe('weather chip damage', () => {
 
     expect(exposed.health).toBe(150);
     expect(sheltered.health).toBe(160);
+  });
+});
+
+describe('battle modes', () => {
+  it('raid weather changes only affect the changing team', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    unit.setWeather(Weathers.Rain);
+
+    expect(teamA.weather.current).toBe(Weathers.Rain);
+    expect(battle.weather.current).toBe(Weathers.None);
+    expect(unit.checkWeather()).toBe(Weathers.Rain);
+    expect(enemy.checkWeather()).toBe(Weathers.None);
+  });
+
+  it('boss raid weather lands battle-wide', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+    const boss = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    boss.setWeather(Weathers.Sandstorm);
+
+    expect(battle.weather.current).toBe(Weathers.Sandstorm);
+    expect(enemy.checkWeather()).toBe(Weathers.Sandstorm);
+  });
+
+  it('pvp weather changes are battle-wide', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.setWeather(Weathers.Rain);
+
+    expect(battle.weather.current).toBe(Weathers.Rain);
+  });
+
+  it('battle weather outranks team weather', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    teamA.weather.current = Weathers.Sunny;
+    battle.setWeather(Weathers.Rain);
+
+    expect(unit.checkWeather()).toBe(Weathers.Rain);
   });
 });

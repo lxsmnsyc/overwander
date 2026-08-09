@@ -24,6 +24,7 @@ import type {
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
+  CheckUnitMoveTargetFlagsEvent,
   CheckUnitMoveTimeEvent,
   CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
@@ -936,6 +937,30 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitGrounded, event);
     return event.grounded;
+  }
+
+  setWeather(weather: Weathers): void {
+    this.battle.emit(BattleEvents.UnitSetWeather, {
+      id: 'UnitSetWeather',
+      disabled: false,
+      source: this,
+      weather,
+      // Scope is resolved by the weather mechanics (battle mode) and
+      // listeners (e.g. Boss) that widen it
+      global: false,
+    });
+  }
+
+  checkMoveTargetFlags(move: Moves): number {
+    const event: CheckUnitMoveTargetFlagsEvent = {
+      id: 'CheckUnitMoveTargetFlags',
+      disabled: false,
+      source: this,
+      move,
+      flags: 0,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveTargetFlags, event);
+    return event.flags;
   }
 
   checkMoveHits(move: Moves, target: MoveTarget, hits: number, max: number): number {

@@ -59,7 +59,12 @@ export default function setupBurnedStatus(battle: Battle): void {
       const amount = event.source.checkStat(Stats.HP, 0) / 16;
 
       if (event.cause.type !== EffectType.None) {
-        event.cause.unit.damage(event.cause, event.source, amount, DamageFlags.Indirect);
+        event.cause.unit.damage(
+          event.cause,
+          event.source,
+          amount,
+          DamageFlags.Indirect | DamageFlags.HealthScaled,
+        );
       }
     }
   });

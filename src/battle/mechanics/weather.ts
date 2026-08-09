@@ -4,6 +4,7 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
 import type Battle from '../core';
+import { BattleModes } from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Unit from '../unit';
 
@@ -49,13 +50,24 @@ export default function setupWeatherMechanics(battle: Battle): void {
     event.team.weather.current = event.weather;
   });
 
-  // Team-local weather shadows the global battle weather
+  // Weather changes coming from a unit route by battle mode: PvP is
+  // always battle-wide, raid stays team-local unless a listener
+  // (e.g. Boss) widened the scope
+  battle.on(BattleEvents.UnitSetWeather, EventPriority.Exact, (event) => {
+    if (event.global || battle.mode === BattleModes.PvP) {
+      battle.setWeather(event.weather);
+    } else {
+      event.source.team.setWeather(event.weather);
+    }
+  });
+
+  // The battle weather outranks team-local weather
   battle.on(BattleEvents.CheckUnitWeather, EventPriority.Exact, (event) => {
     const team = event.source.team;
-    if (!team.weather.disabled && team.weather.current !== Weathers.None) {
-      event.weather = team.weather.current;
-    } else if (!battle.weather.disabled && battle.weather.current !== Weathers.None) {
+    if (!battle.weather.disabled && battle.weather.current !== Weathers.None) {
       event.weather = battle.weather.current;
+    } else if (!team.weather.disabled && team.weather.current !== Weathers.None) {
+      event.weather = team.weather.current;
     }
   });
 
@@ -80,7 +92,7 @@ export default function setupWeatherMechanics(battle: Battle): void {
           { type: EffectType.Weather, weather, unit },
           unit,
           amount,
-          DamageFlags.Indirect,
+          DamageFlags.Indirect | DamageFlags.HealthScaled,
         );
       }
     }

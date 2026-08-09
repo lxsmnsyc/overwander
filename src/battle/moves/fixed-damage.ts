@@ -40,18 +40,34 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.Psywave]: (source) => Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
 };
 
+/**
+ * Fixed-damage moves whose amount derives from the target's health
+ */
+const HEALTH_SCALED_MOVES = new Set<Moves>([
+  Moves.Fissure,
+  Moves.HornDrill,
+  Moves.Guillotine,
+  Moves.SuperFang,
+]);
+
 export default function setupFixedDamageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const getAmount = FIXED_DAMAGE_MOVES[event.move];
 
     if (getAmount && event.target.type === MoveTargetType.Unit && event.steps === 0) {
+      let flags = MoveAttackFlags.Pure;
+
+      if (HEALTH_SCALED_MOVES.has(event.move)) {
+        flags |= MoveAttackFlags.HealthScaled;
+      }
+
       event.source.attack(
         event.target.unit,
         event.move,
         getAmount(event.source, event.target.unit),
         event.source.checkMoveType(event.move, event.target),
         getMoveData(event.move).category,
-        MoveAttackFlags.Pure,
+        flags,
       );
     }
   });

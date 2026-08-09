@@ -139,10 +139,11 @@ export function createDrizzleAbility(
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           triggerWeather(battle, event.source);
         }),
-        // The weather change rides the trigger
+        // The weather change rides the trigger; scope resolves
+        // through the unit (battle mode, Boss override)
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === targetAbility) {
-            battle.setWeather(targetWeather);
+            event.source.setWeather(targetWeather);
           }
         }),
       ]),

@@ -187,6 +187,8 @@ export const enum BattleEvents {
   UnitUpdateStatusTimer = 123,
   CheckUnitMoveHits = 124,
   CheckUnitGrounded = 125,
+  CheckUnitMoveTargetFlags = 126,
+  UnitSetWeather = 127,
 }
 
 export const enum MoveTargetType {
@@ -300,6 +302,25 @@ export interface CheckUnitMoveHitsEvent extends CheckUnitMoveEvent {
  */
 export interface CheckUnitGroundedEvent extends UnitEvent {
   grounded: boolean;
+}
+
+/**
+ * Resolves the effective MoveTargetFlags mask a move uses when its
+ * targets resolve; listeners (e.g. Boss) may widen it
+ */
+export interface CheckUnitMoveTargetFlagsEvent extends UnitMoveEvent {
+  flags: number;
+}
+
+/**
+ * A weather change originating from a unit. `global` decides whether
+ * it lands on the whole battle or just the unit's own team — the
+ * default follows the battle mode, and listeners (e.g. Boss) may
+ * widen it
+ */
+export interface UnitSetWeatherEvent extends UnitEvent {
+  weather: Weathers;
+  global: boolean;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {
@@ -625,6 +646,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
   [BattleEvents.CheckUnitMoveHits]: [CheckUnitMoveHitsEvent, EventPriority];
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
+  [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];

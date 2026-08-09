@@ -65,7 +65,12 @@ export default function setupSeedingStatus(battle: Battle): void {
         const seeder = event.cause.unit;
 
         // Deal damage to the target first
-        seeder.damage(event.cause, event.source, amount, DamageFlags.Indirect);
+        seeder.damage(
+          event.cause,
+          event.source,
+          amount,
+          DamageFlags.Indirect | DamageFlags.HealthScaled,
+        );
 
         const drained = seeder.checkDrain(event.source, amount);
 

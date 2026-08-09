@@ -25,51 +25,78 @@ function createStageMove(stage: Stages, config: StageMovesConfig) {
   };
 }
 
-const setupAttackStageMoves = createStageMove(Stages.Attack, {
-  [Moves.Growl]: -1,
-  [Moves.SwordsDance]: 2,
-  [Moves.Meditate]: 1,
-});
+const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
+  [
+    Stages.Attack,
+    {
+      [Moves.Growl]: -1,
+      [Moves.SwordsDance]: 2,
+      [Moves.Meditate]: 1,
+    },
+  ],
+  [
+    Stages.SpecialAttack,
+    {
+      [Moves.Growth]: 1,
+    },
+  ],
+  [
+    Stages.SpecialDefense,
+    {
+      [Moves.Amnesia]: 2,
+    },
+  ],
+  [
+    Stages.Defense,
+    {
+      [Moves.Leer]: -1,
+      [Moves.TailWhip]: -1,
+      [Moves.Withdraw]: 1,
+      [Moves.Harden]: 1,
+      [Moves.Screech]: -2,
+      [Moves.DefenseCurl]: 1,
+      [Moves.Barrier]: 2,
+    },
+  ],
+  [
+    Stages.Speed,
+    {
+      [Moves.StringShot]: -2,
+      [Moves.Agility]: 2,
+    },
+  ],
+  [
+    Stages.Accuracy,
+    {
+      [Moves.Flash]: -1,
+      [Moves.SandAttack]: -1,
+    },
+  ],
+  [
+    Stages.Evasion,
+    {
+      [Moves.DoubleTeam]: 1,
+      [Moves.Minimize]: 2,
+    },
+  ],
+];
 
-const setupSpecialAttackStageMoves = createStageMove(Stages.SpecialAttack, {
-  [Moves.Growth]: 1,
-});
+/**
+ * The stage change a move applies, if any (used by e.g. the AI)
+ */
+export function getStageMoveEffect(move: Moves): { stage: Stages; value: number } | undefined {
+  for (const [stage, config] of STAGE_MOVE_GROUPS) {
+    const value = config[move];
 
-const setupSpecialDefenseStageMoves = createStageMove(Stages.SpecialDefense, {
-  [Moves.Amnesia]: 2,
-});
-
-const setupDefenseStageMoves = createStageMove(Stages.Defense, {
-  [Moves.Leer]: -1,
-  [Moves.TailWhip]: -1,
-  [Moves.Withdraw]: 1,
-  [Moves.Harden]: 1,
-  [Moves.Screech]: -2,
-  [Moves.DefenseCurl]: 1,
-  [Moves.Barrier]: 2,
-});
-
-const setupSpeedStageMoves = createStageMove(Stages.Speed, {
-  [Moves.StringShot]: -2,
-  [Moves.Agility]: 2,
-});
-
-const setupAccuracyStageMoves = createStageMove(Stages.Accuracy, {
-  [Moves.Flash]: -1,
-  [Moves.SandAttack]: -1,
-});
-
-const setupEvasionStageMoves = createStageMove(Stages.Evasion, {
-  [Moves.DoubleTeam]: 1,
-  [Moves.Minimize]: 2,
-});
+    if (value != null) {
+      return { stage, value };
+    }
+  }
+  return undefined;
+}
 
 export default function setupStageMoves(battle: Battle): void {
-  setupAttackStageMoves(battle);
-  setupSpecialAttackStageMoves(battle);
-  setupSpecialDefenseStageMoves(battle);
-  setupDefenseStageMoves(battle);
-  setupSpeedStageMoves(battle);
-  setupAccuracyStageMoves(battle);
-  setupEvasionStageMoves(battle);
+  for (const [stage, config] of STAGE_MOVE_GROUPS) {
+    createStageMove(stage, config)(battle);
+  }
 }

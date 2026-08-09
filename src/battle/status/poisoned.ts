@@ -59,7 +59,12 @@ export function setupPoisonedStatus(battle: Battle): void {
 
       if (event.cause.type !== EffectType.None) {
         // Deal damage to the target first
-        event.cause.unit.damage(event.cause, event.source, amount, DamageFlags.Indirect);
+        event.cause.unit.damage(
+          event.cause,
+          event.source,
+          amount,
+          DamageFlags.Indirect | DamageFlags.HealthScaled,
+        );
       }
     }
   });
@@ -129,7 +134,12 @@ export function setupBadlyPoisonedStatus(battle: Battle): void {
         const cause = event.cause.type === EffectType.None ? event.source : event.cause.unit;
 
         // Deal damage to the target first
-        cause.damage(event.cause, event.source, amount * instance.step, DamageFlags.Indirect);
+        cause.damage(
+          event.cause,
+          event.source,
+          amount * instance.step,
+          DamageFlags.Indirect | DamageFlags.HealthScaled,
+        );
 
         instance.step += 1;
       }

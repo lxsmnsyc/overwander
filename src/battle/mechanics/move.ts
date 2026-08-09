@@ -614,8 +614,14 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
     }
   });
 
+  // The effective target mask resolves through the event engine so
+  // abilities (e.g. Boss) can widen it
+  battle.on(BattleEvents.CheckUnitMoveTargetFlags, EventPriority.Exact, (event) => {
+    event.flags = getMoveData(event.move).target;
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, (event) => {
-    const moveData = getMoveData(event.move);
+    const targetFlags = event.source.checkMoveTargetFlags(event.move);
 
     /**
      * For multiple target type, the casting doesn't require a pre-defined
@@ -623,11 +629,11 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
      *
      * Singular target types require a casting target.
      */
-    if (moveData.target & MoveTargetFlags.Multiple) {
+    if (targetFlags & MoveTargetFlags.Multiple) {
       // Check if target mode is per-unit
-      if (moveData.target & MoveTargetFlags.Unit) {
+      if (targetFlags & MoveTargetFlags.Unit) {
         // Target the source first
-        if (moveData.target & MoveTargetFlags.Self) {
+        if (targetFlags & MoveTargetFlags.Self) {
           event.source.triggerMoveTarget(
             event.move,
             {
@@ -638,26 +644,26 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
           );
         }
         // Target the units from own team
-        if (moveData.target & MoveTargetFlags.Own) {
+        if (targetFlags & MoveTargetFlags.Own) {
           targetTeamUnits(event.source, event.move, event.source.team, event.steps);
         }
-        if (moveData.target & MoveTargetFlags.Ally) {
+        if (targetFlags & MoveTargetFlags.Ally) {
           targetAllianceUnits(event.source, event.move, event.source.team.alliance, event.steps);
         }
-        if (moveData.target & MoveTargetFlags.Enemy) {
+        if (targetFlags & MoveTargetFlags.Enemy) {
           for (const team of battle.teams(event.source.team.alliance)) {
             targetTeamUnits(event.source, event.move, team, event.steps);
           }
         }
         // Otherwise, target by team
-      } else if (moveData.target & MoveTargetFlags.Team) {
-        if (moveData.target & MoveTargetFlags.Own) {
+      } else if (targetFlags & MoveTargetFlags.Team) {
+        if (targetFlags & MoveTargetFlags.Own) {
           targetTeam(event.source, event.move, event.source.team, event.steps);
         }
-        if (moveData.target & MoveTargetFlags.Ally) {
+        if (targetFlags & MoveTargetFlags.Ally) {
           targetAllianceTeams(event.source, event.move, event.source.team.alliance, event.steps);
         }
-        if (moveData.target & MoveTargetFlags.Enemy) {
+        if (targetFlags & MoveTargetFlags.Enemy) {
           for (const team of battle.teams(event.source.team.alliance)) {
             targetTeam(event.source, event.move, team, event.steps);
           }
@@ -1014,6 +1020,10 @@ export function setupAttackMechanics(battle: Battle): void {
 
       if (event.flags & MoveAttackFlags.Piercing) {
         flags |= DamageFlags.Piercing;
+      }
+
+      if (event.flags & MoveAttackFlags.HealthScaled) {
+        flags |= DamageFlags.HealthScaled;
       }
 
       event.success = event.source.damage(

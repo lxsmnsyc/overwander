@@ -69,6 +69,7 @@ const enum Families {
   Eevee = 66,
   Porygon = 67,
   Omanyte = 68,
+  Kabuto = 69,
 }
 
 export default Families;

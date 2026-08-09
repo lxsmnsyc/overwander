@@ -25,6 +25,7 @@ import registerJigglypuffSpecies from './jigglypuff';
 import registerKrabbySpecies from './krabby';
 import registerLaprasSpecies from './lapras';
 import registerJynxSpecies from './jynx';
+import registerKabutoSpecies from './kabuto';
 import registerKangaskhanSpecies from './kangaskhan';
 import registerKoffingSpecies from './koffing';
 import registerLickitungSpecies from './lickitung';
@@ -140,4 +141,5 @@ export function registerSpecies(): void {
   registerEeveeSpecies();
   registerPorygonSpecies();
   registerOmanyteSpecies();
+  registerKabutoSpecies();
 }

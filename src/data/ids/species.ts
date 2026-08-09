@@ -147,4 +147,6 @@ export const enum Species {
   Porygon = 139,
   Omanyte = 140,
   Omastar = 141,
+  Kabuto = 142,
+  Kabutops = 143,
 }

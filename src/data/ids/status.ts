@@ -31,6 +31,11 @@ export const enum Statuses {
    * The unit is underwater (e.g. Dive's hidden step)
    */
   Submerged = 20,
+  /**
+   * The unit is warming up and cannot act (e.g. a Boss entering the
+   * field for the first time)
+   */
+  Dormant = 21,
 }
 
 export const enum Weathers {

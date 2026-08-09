@@ -1946,6 +1946,52 @@ describe('Boss', () => {
     expect(switches).toBe(0);
   });
 
+  it('casts twice as slowly but cannot be interrupted', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(boss.checkMoveCastTime(Moves.Tackle, target)).toBe(
+      plain.checkMoveCastTime(Moves.Tackle, target) * 2,
+    );
+
+    boss.cast(Moves.Tackle, target);
+    expect(boss.casting).toBeDefined();
+
+    boss.interrupt();
+    expect(boss.casting).toBeDefined();
+  });
+
+  it('lies dormant for five seconds on its first entry only', () => {
+    const { battle, teamA } = createBattle();
+    const boss = createUnit(battle, teamA);
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+
+    boss.enter();
+
+    const target = { type: MoveTargetType.None } as const;
+
+    expect(boss.status[Statuses.Dormant]).toBeDefined();
+    expect(boss.checkCanCast(Moves.Tackle, target)).toBe(false);
+
+    battle.tick(5000);
+
+    expect(boss.status[Statuses.Dormant]).toBeUndefined();
+    expect(boss.checkCanCast(Moves.Tackle, target)).toBe(true);
+
+    // Later entries skip the warm-up
+    boss.leave();
+    boss.enter();
+
+    expect(boss.status[Statuses.Dormant]).toBeUndefined();
+  });
+
   it('widens single-target enemy moves to every enemy', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);

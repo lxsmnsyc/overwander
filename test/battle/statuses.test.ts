@@ -169,10 +169,28 @@ describe('Paralyzed', () => {
     unit.addMove(Moves.Tackle);
     unit.addStatus(Statuses.Paralyzed, NONE_CAUSE);
 
+    pinRandom(battle, 0.5); // roll 50 > 25
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
+
     pinRandom(battle, 0); // roll 0 <= 25
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+  });
 
-    pinRandom(battle, 0.5); // roll 50 > 25
+  it('locks out new attempts for a second after a proc', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    unit.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    pinRandom(battle, 0); // proc
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    // A winning roll changes nothing while the numbness lasts
+    pinRandom(battle, 0.5);
+    expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
+
+    battle.tick(1000);
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
   });
 });

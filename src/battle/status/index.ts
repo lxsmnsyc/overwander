@@ -5,6 +5,7 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 import setupBurnedStatus from './burned';
 import setupConfusedStatus from './confused';
+import setupDormantStatus from './dormant';
 import setupFlinchedStatus from './flinched';
 import setupFocusEnergyStatus from './focus-energy';
 import setupFrozenStatus from './frozen';
@@ -41,6 +42,7 @@ export const MOVE_LOCKING_STATUS = new Set<Statuses>([
   Statuses.Frozen,
   Statuses.Flinched,
   Statuses.Recharging,
+  Statuses.Dormant,
 ]);
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
@@ -123,6 +125,7 @@ export default function setupStatus(battle: Battle): void {
   setupFocusEnergyStatus(battle);
   setupInfatuatedStatus(battle);
   setupGroundedStatus(battle);
+  setupDormantStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

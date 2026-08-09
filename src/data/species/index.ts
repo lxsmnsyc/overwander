@@ -37,6 +37,7 @@ import registerMeowthSpecies from './meowth';
 import registerMrMimeSpecies from './mr-mime';
 import registerNidoranFSpecies from './nidoran-f';
 import registerOddishSpecies from './oddish';
+import registerOmanyteSpecies from './omanyte';
 import registerOnixSpecies from './onix';
 import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
@@ -138,4 +139,5 @@ export function registerSpecies(): void {
   registerDittoSpecies();
   registerEeveeSpecies();
   registerPorygonSpecies();
+  registerOmanyteSpecies();
 }

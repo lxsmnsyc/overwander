@@ -145,4 +145,6 @@ export const enum Species {
   Jolteon = 137,
   Flareon = 138,
   Porygon = 139,
+  Omanyte = 140,
+  Omastar = 141,
 }

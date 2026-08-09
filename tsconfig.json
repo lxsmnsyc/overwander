@@ -6,7 +6,7 @@
     "lib": ["ESNext", "DOM"],
     "types": ["@solidjs/start/env", "@types/node"],
     "importHelpers": true,
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,
@@ -15,10 +15,14 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "bundler",
-    "jsx": "react",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "skipLibCheck": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "esModuleInterop": true,
     "target": "ESNext",
-    "useDefineForClassFields": false,
-    "declarationMap": true
+    "useDefineForClassFields": false
   }
 }

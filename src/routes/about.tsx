@@ -1,6 +1,7 @@
-import { Title } from "@solidjs/meta";
+import type { JSX } from 'solid-js';
+import { Title } from '@solidjs/meta';
 
-export default function About() {
+export default function About(): JSX.Element {
   return (
     <main>
       <Title>About</Title>

@@ -23,6 +23,26 @@ export const enum ItemFlags {
   Usable = 0b100,
 }
 
+/**
+ * Poke Ball variants a catch can be made with
+ */
+export const enum Balls {
+  PokeBall = 0,
+  GreatBall = 1,
+  UltraBall = 2,
+  MasterBall = 3,
+  PremierBall = 4,
+  HealBall = 5,
+  LuxuryBall = 6,
+  NetBall = 7,
+  DiveBall = 8,
+  NestBall = 9,
+  RepeatBall = 10,
+  TimerBall = 11,
+  QuickBall = 12,
+  DuskBall = 13,
+}
+
 export const enum Items {
   // Battle berries
   CheriBerry = 0,

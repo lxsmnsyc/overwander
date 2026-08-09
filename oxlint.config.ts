@@ -3,7 +3,7 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   extends: [config],
-  ignorePatterns: ['example.js'],
+  ignorePatterns: ['example.js', '.output', '.vinxi'],
   rules: {
     'new-cap': 'off',
     'no-underscore-dangle': 'off',

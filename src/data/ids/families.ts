@@ -55,6 +55,7 @@ const enum Families {
   Kangaskhan = 52,
   Horsea = 53,
   Goldeen = 54,
+  Staryu = 55,
 }
 
 export default Families;

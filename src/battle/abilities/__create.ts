@@ -1,10 +1,10 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import { Weathers } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents } from '../events';
+import { BattleEvents, EffectType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';
 
@@ -143,6 +143,32 @@ export function createHydrationAbility(
           }
         }),
       ]),
+  );
+}
+
+/**
+ * Meta ability for Keen Eye and Illuminate (modern mechanics): other
+ * units cannot lower the holder's accuracy
+ * https://bulbapedia.bulbagarden.net/wiki/Keen_Eye_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Illuminate_(Ability)
+ */
+export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        event.stage === Stages.Accuracy &&
+        event.value < 0 &&
+        event.source.hasAbility(targetAbility) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.success = false;
+
+        // For visual cues
+        event.source.triggerAbility(targetAbility);
+      }
+    }),
   );
 }
 

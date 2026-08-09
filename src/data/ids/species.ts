@@ -127,4 +127,6 @@ export const enum Species {
   Seadra = 119,
   Goldeen = 120,
   Seaking = 121,
+  Staryu = 122,
+  Starmie = 123,
 }

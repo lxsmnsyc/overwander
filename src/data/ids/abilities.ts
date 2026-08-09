@@ -147,6 +147,8 @@ const enum Abilities {
   Scrappy = 95,
   // Goldeen
   WaterVeil = 96,
+  // Staryu
+  Illuminate = 97,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

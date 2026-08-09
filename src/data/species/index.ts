@@ -45,6 +45,7 @@ import registerShellderSpecies from './shellder';
 import registerSlowpokeSpecies from './slowpoke';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
+import registerStaryuSpecies from './staryu';
 import registerTangelaSpecies from './tangela';
 import registerTentacoolSpecies from './tentacool';
 import registerTyrogueSpecies from './tyrogue';
@@ -112,4 +113,5 @@ export function registerSpecies(): void {
   registerKangaskhanSpecies();
   registerHorseaSpecies();
   registerGoldeenSpecies();
+  registerStaryuSpecies();
 }

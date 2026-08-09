@@ -46,6 +46,7 @@ import {
   createBlazeAbility,
   createDrizzleAbility,
   createHydrationAbility,
+  createKeenEyeAbility,
   createShellArmorAbility,
 } from './__create';
 
@@ -280,24 +281,7 @@ const setupAbilities = [
   ),
 
   // Pidgey
-  // https://bulbapedia.bulbagarden.net/wiki/Keen_Eye_(Ability)
-  createAbility(Abilities.KeenEye, (battle) =>
-    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
-      if (
-        event.success &&
-        event.stage === Stages.Accuracy &&
-        event.value < 0 &&
-        event.source.hasAbility(Abilities.KeenEye) &&
-        event.cause.type !== EffectType.None &&
-        event.cause.unit !== event.source
-      ) {
-        event.success = false;
-
-        // For visual cues
-        event.source.triggerAbility(Abilities.KeenEye);
-      }
-    }),
-  ),
+  createKeenEyeAbility(Abilities.KeenEye),
 
   // https://bulbapedia.bulbagarden.net/wiki/Tangled_Feet_(Ability)
   createAbility(Abilities.TangledFeet, (battle) =>
@@ -2481,6 +2465,9 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Staryu
+  createKeenEyeAbility(Abilities.Illuminate),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

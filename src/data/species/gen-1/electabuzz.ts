@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -26,6 +27,8 @@ export default function registerElectabuzzSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.QuickAttack, Moves.Leer],

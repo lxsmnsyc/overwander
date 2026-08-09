@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -61,6 +62,8 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 180,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.KarateChop],
@@ -99,6 +102,8 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 90,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.KarateChop, Moves.LowKick],
@@ -131,6 +136,8 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.KarateChop, Moves.LowKick],

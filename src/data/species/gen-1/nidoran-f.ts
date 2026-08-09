@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -72,6 +73,8 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 235,
+    biomes: [Biome.Grassland, Biome.Savanna],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Tackle],
@@ -112,6 +115,8 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 120,
+    biomes: [Biome.Grassland, Biome.Savanna],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Tackle, Moves.Scratch],
@@ -145,6 +150,8 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 45,
+    biomes: [Biome.Grassland, Biome.Savanna],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Scratch, Moves.TailWhip],

@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -60,6 +61,8 @@ export default function registerPsyduckSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
+    biomes: [Biome.Swamp, Biome.Beach],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Scratch],
@@ -92,6 +95,8 @@ export default function registerPsyduckSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
+    biomes: [Biome.Swamp, Biome.Beach],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.TailWhip, Moves.Disable],

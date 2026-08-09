@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -51,6 +52,8 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.Grassland, Biome.TemperateForest],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Absorb],
@@ -91,6 +94,8 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
+    biomes: [Biome.Grassland, Biome.TemperateForest],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Absorb, Moves.PoisonPowder, Moves.StunSpore],
@@ -122,6 +127,8 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.Grassland, Biome.TemperateForest],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Absorb, Moves.PoisonPowder, Moves.PetalDance],

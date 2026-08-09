@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -26,6 +27,8 @@ export default function registerMewtwoSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Confusion, Moves.Disable, Moves.Swift],

@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -58,6 +59,8 @@ export default function registerExeggcuteSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 90,
+    biomes: [Biome.TropicalRainforest, Biome.TropicalSeasonalForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Barrage, Moves.Hypnosis],
@@ -91,6 +94,8 @@ export default function registerExeggcuteSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.TropicalRainforest, Biome.TropicalSeasonalForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Barrage, Moves.Hypnosis],

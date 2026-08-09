@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -62,6 +63,8 @@ export default function registerSquirtleSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Beach, Biome.Swamp],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip],
@@ -102,6 +105,8 @@ export default function registerSquirtleSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Beach, Biome.Swamp],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip, Moves.Bubble],
@@ -135,6 +140,8 @@ export default function registerSquirtleSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Beach, Biome.Ocean],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip, Moves.Bubble, Moves.WaterGun],

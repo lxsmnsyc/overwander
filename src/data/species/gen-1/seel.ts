@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -59,6 +60,8 @@ export default function registerSeelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
+    biomes: [Biome.Ocean, Biome.Glacier],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Headbutt],
@@ -91,6 +94,8 @@ export default function registerSeelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
+    biomes: [Biome.Ocean, Biome.Glacier],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Headbutt, Moves.Growl, Moves.AuroraBeam],

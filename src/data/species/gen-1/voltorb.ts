@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -56,6 +57,8 @@ export default function registerVoltorbSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 190,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Screech],
@@ -88,6 +91,8 @@ export default function registerVoltorbSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 60,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom],

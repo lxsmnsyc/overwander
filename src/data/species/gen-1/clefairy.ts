@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -69,6 +70,8 @@ export default function registerClefairySpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 150,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Pound, Moves.Growl],
@@ -102,6 +105,8 @@ export default function registerClefairySpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 25,
+    biomes: [Biome.Mountain],
+    activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Sing, Moves.DoubleSlap, Moves.Minimize, Moves.Metronome],

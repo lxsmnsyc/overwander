@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -54,6 +55,8 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.VineWhip, Moves.Growth],
@@ -95,6 +98,8 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
+    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.VineWhip, Moves.Growth, Moves.Wrap],
@@ -129,6 +134,8 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.SleepPowder, Moves.StunSpore, Moves.Acid, Moves.RazorLeaf],

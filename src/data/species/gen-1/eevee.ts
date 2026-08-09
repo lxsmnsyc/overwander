@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -61,6 +62,8 @@ export default function registerEeveeSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.SandAttack],
@@ -92,6 +95,8 @@ export default function registerEeveeSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Beach, Biome.Ocean],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.WaterGun],
@@ -134,6 +139,8 @@ export default function registerEeveeSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.ThunderShock],
@@ -175,6 +182,8 @@ export default function registerEeveeSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
+    biomes: [Biome.Shrubland, Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.Ember],

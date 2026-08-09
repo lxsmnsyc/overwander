@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -68,6 +69,8 @@ export default function registerJigglypuffSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 170,
+    biomes: [Biome.Grassland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Sing],
@@ -102,6 +105,8 @@ export default function registerJigglypuffSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 50,
+    biomes: [Biome.Grassland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Sing, Moves.Disable, Moves.DefenseCurl, Moves.DoubleSlap],

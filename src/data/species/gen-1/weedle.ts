@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -33,6 +34,8 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.TemperateForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.PoisonSting, Moves.StringShot],
@@ -67,6 +70,8 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
+    biomes: [Biome.TemperateForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Harden],
@@ -95,6 +100,8 @@ export default function registerWeedleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.TemperateForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.FuryAttack],

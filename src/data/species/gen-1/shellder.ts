@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -57,6 +58,8 @@ export default function registerShellderSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
+    biomes: [Biome.Ocean, Biome.Beach],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Withdraw],
@@ -89,6 +92,8 @@ export default function registerShellderSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
+    biomes: [Biome.Ocean],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Withdraw, Moves.Supersonic, Moves.Clamp, Moves.AuroraBeam],

@@ -1,6 +1,7 @@
 import type { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
+import type Biome from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import type { Items } from '../ids/items';
@@ -87,12 +88,20 @@ export interface SpeciesData {
    */
   catchRate: number;
   /**
+   * Biomes this pokemon naturally spawns in
+   */
+  biomes: Biome[];
+  /**
+   * TimeOfDay bitfield of the day-cycle periods this pokemon is
+   * active in
+   */
+  activeTimes: number;
+  /**
    * Learn Set
    */
   learnSet: LearnSetData;
 
   // TODO
-  // Biome
   // Height
   // Weight
 }

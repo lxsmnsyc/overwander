@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -53,6 +54,8 @@ export default function registerGrowlitheSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [3, 1],
     catchRate: 190,
+    biomes: [Biome.Grassland, Biome.Savanna],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Bite, Moves.Roar],
@@ -85,6 +88,8 @@ export default function registerGrowlitheSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [3, 1],
     catchRate: 75,
+    biomes: [Biome.Grassland, Biome.Savanna],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Roar, Moves.Ember, Moves.Leer, Moves.TakeDown],

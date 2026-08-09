@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -55,6 +56,8 @@ export default function registerRattataSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip],
@@ -86,6 +89,8 @@ export default function registerRattataSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 127,
+    biomes: [Biome.Grassland],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip, Moves.QuickAttack],

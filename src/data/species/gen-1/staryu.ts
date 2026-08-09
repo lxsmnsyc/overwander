@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -64,6 +65,8 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 225,
+    biomes: [Biome.Beach, Biome.CoralReef],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Tackle],
@@ -98,6 +101,8 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 60,
+    biomes: [Biome.Beach, Biome.CoralReef],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.WaterGun, Moves.Harden],

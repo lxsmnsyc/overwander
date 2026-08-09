@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -52,6 +53,8 @@ export default function registerSpearowSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.Shrubland, Biome.Savanna],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Peck, Moves.Growl],
@@ -84,6 +87,8 @@ export default function registerSpearowSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 90,
+    biomes: [Biome.Shrubland, Biome.Savanna],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
         1: [Moves.Peck, Moves.Growl, Moves.Leer],

@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -67,6 +68,8 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.Swamp],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Bubble],
@@ -107,6 +110,8 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 120,
+    biomes: [Biome.Swamp],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Bubble, Moves.Hypnosis, Moves.WaterGun],
@@ -140,6 +145,8 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.Swamp],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Hypnosis, Moves.WaterGun, Moves.DoubleSlap, Moves.BodySlam],

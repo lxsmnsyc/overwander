@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -52,6 +53,8 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 190,
+    biomes: [Biome.Grassland, Biome.Shrubland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Ember, Moves.TailWhip],
@@ -84,6 +87,8 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 75,
+    biomes: [Biome.Grassland, Biome.Shrubland],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Ember, Moves.TailWhip, Moves.QuickAttack, Moves.Roar],

@@ -1,6 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -33,6 +34,8 @@ export default function registerMagikarpSpecies(): void {
     eggGroups: [EggGroups.Water2, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 255,
+    biomes: [Biome.Swamp, Biome.Ocean],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Splash],
@@ -62,6 +65,8 @@ export default function registerMagikarpSpecies(): void {
     eggGroups: [EggGroups.Water2, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 45,
+    biomes: [Biome.Ocean, Biome.DeepOcean],
+    activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         20: [Moves.Bite],

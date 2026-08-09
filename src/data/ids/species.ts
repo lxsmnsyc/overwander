@@ -90,4 +90,5 @@ export const enum Species {
   Slowbro = 82,
   Magnemite = 83,
   Magneton = 84,
+  Farfetchd = 85,
 }

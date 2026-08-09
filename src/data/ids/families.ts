@@ -33,6 +33,7 @@ const enum Families {
   Ponyta = 31,
   Slowpoke = 32,
   Magnemite = 33,
+  Farfetchd = 34,
 }
 
 export default Families;

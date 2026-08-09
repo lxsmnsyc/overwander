@@ -8,6 +8,7 @@ export const POWDER_MOVES = new Set<Moves>([
   Moves.PoisonPowder,
   Moves.SleepPowder,
   Moves.StunSpore,
+  Moves.Spore,
 ]);
 
 export default function setupPowderMoves(battle: Battle): void {

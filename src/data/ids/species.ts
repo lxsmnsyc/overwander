@@ -53,4 +53,6 @@ export const enum Species {
   Oddish = 45,
   Gloom = 46,
   Vileplume = 47,
+  Paras = 48,
+  Parasect = 49,
 }

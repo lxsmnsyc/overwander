@@ -1061,4 +1061,13 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Spore, {
+    name: 'Spore',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

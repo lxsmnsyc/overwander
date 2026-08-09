@@ -58,6 +58,9 @@ const enum Abilities {
   // Oddish
   Stench = 39,
   EffectSpore = 40,
+  // Paras
+  DrySkin = 41,
+  Damp = 42,
 }
 
 export default Abilities;

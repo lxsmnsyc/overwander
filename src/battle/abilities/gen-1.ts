@@ -907,6 +907,84 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Paras
+  // https://bulbapedia.bulbagarden.net/wiki/Dry_Skin_(Ability)
+  createAbility(
+    Abilities.DrySkin,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: grants the Water immunity
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.type === Types.Water &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.DrySkin)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Absorbing a real Water move heals a quarter of max health
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.DrySkin) &&
+            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
+          ) {
+            const holder = parent.target.unit;
+
+            holder.triggerAbility(Abilities.DrySkin);
+
+            holder.heal(
+              { type: EffectType.Ability, ability: Abilities.DrySkin, unit: holder },
+              holder,
+              holder.checkStat(Stats.HP, 0) / 4,
+              0,
+            );
+          }
+        }),
+        // The dry skin burns: Fire damage hits harder
+        battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+          if (
+            event.parent.type === Types.Fire &&
+            event.parent.target.hasAbility(Abilities.DrySkin) &&
+            !(event.parent.flags & MoveAttackFlags.Pure) &&
+            !(event.parent.flags & MoveAttackFlags.Confused)
+          ) {
+            event.value *= 1.25;
+          }
+        }),
+        // Soaks up rain, dries out in the sun (rolled on cast, like
+        // Rain Dish and Solar Power)
+        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+          if (!event.source.hasAbility(Abilities.DrySkin)) {
+            return;
+          }
+
+          const maxHP = event.source.checkStat(Stats.HP, 0);
+
+          if (isWeatherRainy(event.source)) {
+            event.source.setHealth(event.source.health + maxHP / 8);
+            event.source.triggerAbility(Abilities.DrySkin);
+          } else if (isWeatherSunny(event.source)) {
+            event.source.damage(
+              { type: EffectType.Ability, ability: Abilities.DrySkin, unit: event.source },
+              event.source,
+              maxHP / 8,
+              DamageFlags.NonLethal | DamageFlags.Indirect,
+            );
+            event.source.triggerAbility(Abilities.DrySkin);
+          }
+        }),
+      ]),
+  ),
+
+  // TODO Damp (Paras hidden ability): blocks Self-Destruct, Explosion
+  // and Aftermath once those are implemented
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

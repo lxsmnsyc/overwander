@@ -6,6 +6,7 @@ import registerEkansSpecies from './ekans';
 import registerJigglypuffSpecies from './jigglypuff';
 import registerNidoranFSpecies from './nidoran-f';
 import registerOddishSpecies from './oddish';
+import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
 import registerPikachuSpecies from './pikachu';
@@ -38,4 +39,5 @@ export function registerSpecies(): void {
   registerJigglypuffSpecies();
   registerZubatSpecies();
   registerOddishSpecies();
+  registerParasSpecies();
 }

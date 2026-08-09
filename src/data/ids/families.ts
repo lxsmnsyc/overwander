@@ -17,6 +17,7 @@ const enum Families {
   Jigglypuff = 15,
   Zubat = 16,
   Oddish = 17,
+  Paras = 18,
 }
 
 export default Families;

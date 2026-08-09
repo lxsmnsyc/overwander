@@ -888,3 +888,37 @@ describe('Infiltrator vs Substitute', () => {
     expect(pierced).toBeCloseTo(0.44 * 40 + 2);
   });
 });
+
+describe('Dry Skin', () => {
+  it('absorbs Water moves and heals a quarter of max health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.99);
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DrySkin);
+    holder.setHealth(100);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.WaterGun, target, Types.Water)).toBe(true);
+
+    attacker.triggerMoveTarget(Moves.WaterGun, target, 0);
+
+    expect(holder.health).toBe(140); // 100 + 160 / 4
+  });
+
+  it('takes extra damage from Fire moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+
+    const attacker = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const dry = createUnit(battle, teamB);
+    dry.addAbility(Abilities.DrySkin);
+
+    const normal = dealDamage(attacker, plain, Moves.Ember, 40, Types.Fire, MoveCategories.Special);
+    const boosted = dealDamage(attacker, dry, Moves.Ember, 40, Types.Fire, MoveCategories.Special);
+
+    expect(boosted / normal).toBeCloseTo(1.25);
+  });
+});

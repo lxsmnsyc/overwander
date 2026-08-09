@@ -1708,6 +1708,32 @@ describe('Forewarn', () => {
   });
 });
 
+describe('Hyper Cutter', () => {
+  it('blocks attack drops from other units only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HyperCutter);
+
+    holder.addStage(Stages.Attack, -1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: enemy,
+    });
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+
+    // Self-inflicted drops still apply
+    holder.addStage(Stages.Attack, -1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: holder,
+    });
+
+    expect(holder.stages[Stages.Attack]).toBe(-1);
+  });
+});
+
 describe('Weak Armor', () => {
   it('trades defense for speed when hit by a physical move', () => {
     const { battle, teamA, teamB } = createBattle();

@@ -236,4 +236,7 @@ export const enum Moves {
   DreamEater = 135,
   Bind = 136,
   Meditate = 137,
+  ViceGrip = 138,
+  Guillotine = 139,
+  Crabhammer = 140,
 }

@@ -122,6 +122,8 @@ const enum Abilities {
   // Drowzee
   Insomnia = 80,
   Forewarn = 81,
+  // Krabby
+  HyperCutter = 82,
 }
 
 export default Abilities;

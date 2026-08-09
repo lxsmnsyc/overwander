@@ -2096,6 +2096,26 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Krabby
+  // https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
+  createAbility(Abilities.HyperCutter, (battle) =>
+    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        event.stage === Stages.Attack &&
+        event.value < 0 &&
+        event.source.hasAbility(Abilities.HyperCutter) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.success = false;
+
+        // For visual cues
+        event.source.triggerAbility(Abilities.HyperCutter);
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

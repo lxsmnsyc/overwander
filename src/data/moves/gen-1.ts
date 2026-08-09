@@ -1342,4 +1342,33 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.ViceGrip, {
+    name: 'Vice Grip',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 55,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Guillotine, {
+    name: 'Guillotine',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 5,
+    accuracy: 30,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.Crabhammer, {
+    name: 'Crabhammer',
+    type: Types.Water,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 100,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

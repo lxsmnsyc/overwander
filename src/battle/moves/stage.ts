@@ -32,6 +32,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Growl]: -1,
       [Moves.SwordsDance]: 2,
       [Moves.Meditate]: 1,
+      [Moves.Sharpen]: 1,
     },
   ],
   [

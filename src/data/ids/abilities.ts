@@ -164,6 +164,9 @@ const enum Abilities {
   // Jolteon
   VoltAbsorb = 105,
   QuickFeet = 106,
+  // Porygon
+  Trace = 107,
+  Download = 108,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

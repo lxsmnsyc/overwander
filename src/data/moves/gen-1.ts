@@ -1565,4 +1565,12 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Sharpen, {
+    name: 'Sharpen',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: 0,
+    flags: 0,
+  });
 }

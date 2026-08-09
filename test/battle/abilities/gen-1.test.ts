@@ -9,7 +9,7 @@ import {
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
@@ -2568,5 +2568,35 @@ describe('Anticipation', () => {
     eevee.enter();
 
     expect(triggers).toBe(1);
+  });
+});
+
+describe('Trace', () => {
+  it('copies the strongest enemy ability and replaces itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addAbility(Abilities.SwiftSwim);
+
+    const porygon = createUnit(battle, teamA);
+    porygon.addAbility(Abilities.Trace);
+    porygon.enter();
+
+    expect(porygon.hasAbility(Abilities.SwiftSwim)).toBe(true);
+    expect(porygon.hasAbility(Abilities.Trace)).toBe(false);
+  });
+});
+
+describe('Download', () => {
+  it('boosts the attack matching the softer enemy side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.setStat(StatsKind.Base, Stats.Defense, 50); // softer physical side
+
+    const porygon = createUnit(battle, teamA);
+    porygon.addAbility(Abilities.Download);
+    porygon.enter();
+
+    expect(porygon.stages[Stages.Attack]).toBe(1);
+    expect(porygon.stages[Stages.SpecialAttack]).toBe(0);
   });
 });

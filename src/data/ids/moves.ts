@@ -269,4 +269,5 @@ export const enum Moves {
   Mist = 158,
   Transform = 159,
   AcidArmor = 160,
+  Sharpen = 161,
 }

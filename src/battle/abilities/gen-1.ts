@@ -2730,6 +2730,118 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Porygon
+  // https://bulbapedia.bulbagarden.net/wiki/Trace_(Ability)
+  createAbility(Abilities.Trace, (battle) => {
+    const UNTRACEABLE = new Set<Abilities>([
+      Abilities.Trace,
+      Abilities.Imposter,
+      Abilities.NeutralizingGas,
+      ...PROTECTED_ABILITIES,
+    ]);
+
+    function firstTraceable(unit: Unit): Abilities | undefined {
+      for (const key in unit.abilities) {
+        // tsc requires the assertion to index the Abilities-mapped
+        // record; tsgolint resolves the const enum to number
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        const ability = Number(key) as Abilities;
+
+        if (unit.abilities[ability] === true && !UNTRACEABLE.has(ability)) {
+          return ability;
+        }
+      }
+      return undefined;
+    }
+
+    function findTrace(source: Unit): Abilities | undefined {
+      let best: Abilities | undefined;
+      let bestRating = Number.NEGATIVE_INFINITY;
+
+      for (const enemy of battle.units(source.team.alliance)) {
+        if (enemy.alive) {
+          const ability = firstTraceable(enemy);
+          const rating = checkUnitRating(battle, enemy);
+
+          if (ability != null && rating > bestRating) {
+            best = ability;
+            bestRating = rating;
+          }
+        }
+      }
+
+      return best;
+    }
+
+    return new MergedAbilityLifecycle([
+      // Detection: entering the field with something to copy
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Trace) && findTrace(event.source) != null) {
+          event.source.triggerAbility(Abilities.Trace);
+        }
+      }),
+      // Effect: the copy rides the trigger and replaces Trace itself
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.Trace) {
+          const ability = findTrace(event.source);
+
+          if (ability != null) {
+            event.source.removeAbility(Abilities.Trace);
+            event.source.addAbility(ability);
+          }
+        }
+      }),
+    ]);
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Download_(Ability)
+  createAbility(
+    Abilities.Download,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: entering the field with enemies to analyze
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.source.hasAbility(Abilities.Download)) {
+            return;
+          }
+
+          for (const enemy of battle.units(event.source.team.alliance)) {
+            if (enemy.alive) {
+              event.source.triggerAbility(Abilities.Download);
+              return;
+            }
+          }
+        }),
+        // Effect: the boost rides the trigger — Attack against the
+        // softer physical side, Special Attack otherwise
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Download) {
+            return;
+          }
+
+          let defense = 0;
+          let specialDefense = 0;
+
+          for (const enemy of battle.units(event.source.team.alliance)) {
+            if (enemy.alive) {
+              defense += enemy.checkStat(Stats.Defense, 0);
+              specialDefense += enemy.checkStat(Stats.SpecialDefense, 0);
+            }
+          }
+
+          event.source.addStage(
+            defense < specialDefense ? Stages.Attack : Stages.SpecialAttack,
+            1,
+            {
+              type: EffectType.Ability,
+              ability: Abilities.Download,
+              unit: event.source,
+            },
+          );
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

@@ -43,6 +43,7 @@ import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
 import registerPinsirSpecies from './pinsir';
 import registerPoliwagSpecies from './poliwag';
+import registerPorygonSpecies from './porygon';
 import registerPonytaSpecies from './ponyta';
 import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
@@ -136,4 +137,5 @@ export function registerSpecies(): void {
   registerLaprasSpecies();
   registerDittoSpecies();
   registerEeveeSpecies();
+  registerPorygonSpecies();
 }

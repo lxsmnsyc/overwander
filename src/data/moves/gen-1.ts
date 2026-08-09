@@ -1557,4 +1557,12 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.AcidArmor, {
+    name: 'Acid Armor',
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: 0,
+    flags: 0,
+  });
 }

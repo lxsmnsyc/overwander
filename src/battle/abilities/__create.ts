@@ -4,7 +4,7 @@ import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import { Weathers } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';
 
@@ -140,6 +140,64 @@ export function createHydrationAbility(
             event.source.hasAbility(targetAbility)
           ) {
             event.source.triggerAbility(targetAbility);
+          }
+        }),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for type-absorbing healers (Water Absorb, Volt
+ * Absorb): the holder is immune to the type and heals a quarter of
+ * its max health when a real move of it fails against it
+ * https://bulbapedia.bulbagarden.net/wiki/Water_Absorb_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Volt_Absorb_(Ability)
+ */
+export function createWaterAbsorbAbility(
+  targetAbility: Abilities,
+  targetType: Types,
+): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: grants the type immunity
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.type === targetType &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(targetAbility)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Detection: a real move of the type fails against the holder
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(targetAbility) &&
+            parent.source.checkMoveType(parent.move, parent.target) === targetType
+          ) {
+            parent.target.unit.triggerAbility(targetAbility);
+          }
+        }),
+        // Effect: the quarter-max-health heal rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === targetAbility) {
+            event.source.heal(
+              {
+                type: EffectType.Ability,
+                ability: targetAbility,
+                unit: event.source,
+              },
+              event.source,
+              event.source.checkStat(Stats.HP, 0) / 4,
+              0,
+            );
           }
         }),
       ]),

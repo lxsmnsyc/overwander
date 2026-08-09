@@ -56,6 +56,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Screech]: -2,
       [Moves.DefenseCurl]: 1,
       [Moves.Barrier]: 2,
+      [Moves.AcidArmor]: 2,
     },
   ],
   [

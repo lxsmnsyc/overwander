@@ -140,4 +140,8 @@ export const enum Species {
   Gyarados = 132,
   Lapras = 133,
   Ditto = 134,
+  Eevee = 135,
+  Vaporeon = 136,
+  Jolteon = 137,
+  Flareon = 138,
 }

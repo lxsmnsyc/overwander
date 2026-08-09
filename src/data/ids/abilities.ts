@@ -158,6 +158,12 @@ const enum Abilities {
   Rattled = 101,
   // Ditto
   Imposter = 102,
+  // Eevee
+  Adaptability = 103,
+  Anticipation = 104,
+  // Jolteon
+  VoltAbsorb = 105,
+  QuickFeet = 106,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

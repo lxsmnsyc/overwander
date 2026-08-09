@@ -2498,3 +2498,75 @@ describe('Imposter', () => {
     expect(ditto.moves[Moves.Ember]).toBeDefined();
   });
 });
+
+describe('Adaptability', () => {
+  it('raises STAB to double', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.types.add(Types.Fire);
+    unit.addAbility(Abilities.Adaptability);
+
+    const event = {
+      id: 'UnitAttackResolveSTAB',
+      disabled: false,
+      parent: makeAttack(unit, enemy, Moves.Ember, Types.Fire, MoveCategories.Special),
+      value: 0,
+    };
+
+    battle.emit(BattleEvents.UnitAttackResolveSTAB, event);
+
+    expect(event.value).toBe(2);
+  });
+});
+
+describe('Volt Absorb', () => {
+  it('absorbs Electric moves as healing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.VoltAbsorb);
+    holder.setHealth(100);
+
+    attacker.triggerMoveTarget(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: holder }, 0);
+
+    expect(holder.health).toBe(140); // healed a quarter of 160
+  });
+});
+
+describe('Quick Feet', () => {
+  it('speeds up while statused', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.QuickFeet);
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(105);
+
+    unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBeCloseTo(105 * 1.5);
+  });
+});
+
+describe('Anticipation', () => {
+  it('shudders on entry against threatening moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addMove(Moves.KarateChop); // Fighting vs Normal: super effective
+
+    let triggers = 0;
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+      if (event.ability === Abilities.Anticipation) {
+        triggers += 1;
+      }
+    });
+
+    const eevee = createUnit(battle, teamA);
+    eevee.types.add(Types.Normal);
+    eevee.addAbility(Abilities.Anticipation);
+    eevee.enter();
+
+    expect(triggers).toBe(1);
+  });
+});

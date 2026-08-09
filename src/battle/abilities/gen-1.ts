@@ -4,7 +4,7 @@ import {
   EventPriority,
 } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
-import { Types } from '../../data/constants/types';
+import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../data/ids/items';
 import {
@@ -54,6 +54,7 @@ import {
   createHydrationAbility,
   createKeenEyeAbility,
   createShellArmorAbility,
+  createWaterAbsorbAbility,
 } from './__create';
 
 // Vetoes the residual weather chip damage carried by the given weather
@@ -1415,52 +1416,7 @@ const setupAbilities = [
   ),
 
   // Poliwag
-  // https://bulbapedia.bulbagarden.net/wiki/Water_Absorb_(Ability)
-  createAbility(
-    Abilities.WaterAbsorb,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: grants the Water immunity
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Water &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.WaterAbsorb)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // Detection: a real Water move fails against the holder
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.WaterAbsorb) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
-          ) {
-            parent.target.unit.triggerAbility(Abilities.WaterAbsorb);
-          }
-        }),
-        // Effect: the quarter-max-health heal rides the trigger
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.WaterAbsorb) {
-            event.source.heal(
-              {
-                type: EffectType.Ability,
-                ability: Abilities.WaterAbsorb,
-                unit: event.source,
-              },
-              event.source,
-              event.source.checkStat(Stats.HP, 0) / 4,
-              0,
-            );
-          }
-        }),
-      ]),
-  ),
+  createWaterAbsorbAbility(Abilities.WaterAbsorb, Types.Water),
 
   // Abra
   // https://bulbapedia.bulbagarden.net/wiki/Synchronize_(Ability)
@@ -2696,6 +2652,84 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Eevee
+  // https://bulbapedia.bulbagarden.net/wiki/Adaptability_(Ability)
+  createAbility(Abilities.Adaptability, (battle) =>
+    // Mutates the in-flight STAB resolution, so the effect stays inline
+    battle.on(BattleEvents.UnitAttackResolveSTAB, EventPriority.Post, (event) => {
+      if (event.value > 1 && event.parent.source.hasAbility(Abilities.Adaptability)) {
+        event.value = 2;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Anticipation_(Ability)
+  createAbility(Abilities.Anticipation, (battle) => {
+    function effectiveness(attacking: Types, defender: Unit): number {
+      let factor = 1;
+
+      for (const defending of defender.types) {
+        const entry = TYPE_EFFECTIVENESS[attacking][defending];
+
+        if (entry != null) {
+          factor *= TYPE_EFFECTIVENESS_FACTOR[entry];
+        }
+      }
+
+      return factor;
+    }
+
+    function isThreatening(holder: Unit, move: Moves): boolean {
+      const data = getMoveData(move);
+
+      if (OHKO_MOVES.has(move)) {
+        return true;
+      }
+
+      return data.category !== MoveCategories.Status && effectiveness(data.type, holder) > 1;
+    }
+
+    // The shudder is a visual cue: it fires once per foe carrying a
+    // threatening move as the holder enters the field
+    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (!event.source.hasAbility(Abilities.Anticipation)) {
+        return;
+      }
+
+      for (const unit of battle.units(event.source.team.alliance)) {
+        if (!unit.alive) {
+          continue;
+        }
+
+        for (const state of Object.values(unit.moves)) {
+          // tsgolint narrows the optional record's values to defined;
+          // at runtime cleared slots hold undefined
+          // oxlint-disable-next-line typescript/no-unnecessary-condition
+          if (state && isThreatening(event.source, state.move)) {
+            event.source.triggerAbility(Abilities.Anticipation);
+            break;
+          }
+        }
+      }
+    });
+  }),
+
+  // Jolteon
+  createWaterAbsorbAbility(Abilities.VoltAbsorb, Types.Electric),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Quick_Feet_(Ability)
+  createAbility(Abilities.QuickFeet, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        event.stat === Stats.Speed &&
+        event.source.hasAbility(Abilities.QuickFeet) &&
+        hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS)
+      ) {
+        event.value *= 1.5;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

@@ -95,4 +95,6 @@ export const enum Species {
   Dodrio = 87,
   Seel = 88,
   Dewgong = 89,
+  Grimer = 90,
+  Muk = 91,
 }

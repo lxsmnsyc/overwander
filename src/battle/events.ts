@@ -486,6 +486,10 @@ export interface UnitItemEvent extends UnitEvent {
   item: Items;
 }
 
+export interface UnitRemoveItemEvent extends UnitItemEvent {
+  cause: EffectCause;
+}
+
 /**
  * The health fraction at (or below) which the unit consumes a pinch
  * item; listeners (e.g. Gluttony) adjust it
@@ -662,7 +666,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitTriggerAbility]: [UnitAbilityEvent, EventPriority];
 
   [BattleEvents.UnitAddItem]: [UnitItemEvent, EventPriority];
-  [BattleEvents.UnitRemoveItem]: [UnitItemEvent, EventPriority];
+  [BattleEvents.UnitRemoveItem]: [UnitRemoveItemEvent, EventPriority];
 
   [BattleEvents.UnitEnableItem]: [UnitItemEvent, EventPriority];
   [BattleEvents.UnitDisableItem]: [UnitItemEvent, EventPriority];

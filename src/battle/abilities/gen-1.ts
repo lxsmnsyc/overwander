@@ -1887,6 +1887,51 @@ const setupAbilities = [
         chipImmunity(battle, Abilities.IceBody, Weathers.Hail),
       ]),
   ),
+
+  // Grimer
+  // https://bulbapedia.bulbagarden.net/wiki/Sticky_Hold_(Ability)
+  createAbility(Abilities.StickyHold, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Pre, (event) => {
+      // Only the holder itself (e.g. eating its berry) may remove its
+      // item; removal forced by another unit is blocked
+      if (
+        'unit' in event.cause &&
+        event.cause.unit !== event.source &&
+        event.source.hasAbility(Abilities.StickyHold)
+      ) {
+        event.disabled = true;
+
+        event.source.triggerAbility(Abilities.StickyHold);
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Poison_Touch_(Ability)
+  createAbility(Abilities.PoisonTouch, (battle) => {
+    const CHANCE = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.cause.unit.hasAbility(Abilities.PoisonTouch) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        battle.random() < CHANCE
+      ) {
+        const attacker = event.cause.unit;
+
+        attacker.triggerAbility(Abilities.PoisonTouch);
+
+        event.target.addStatus(Statuses.Poisoned, {
+          type: EffectType.Ability,
+          ability: Abilities.PoisonTouch,
+          unit: attacker,
+        });
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

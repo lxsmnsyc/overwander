@@ -7,6 +7,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
+  [Moves.PoisonGas]: Statuses.Poisoned,
   [Moves.SleepPowder]: Statuses.Sleeping,
   [Moves.Toxic]: Statuses.BadlyPoisoned,
   [Moves.StunSpore]: Statuses.Paralyzed,
@@ -48,6 +49,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Thunderbolt]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.Stomp]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Headbutt]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Sludge]: { status: Statuses.Poisoned, chance: 30 },
 };
 
 const EFFECT_STAGE_MOVES: {

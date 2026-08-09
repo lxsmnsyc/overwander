@@ -36,6 +36,7 @@ const enum Families {
   Farfetchd = 34,
   Doduo = 35,
   Seel = 36,
+  Grimer = 37,
 }
 
 export default Families;

@@ -416,12 +416,13 @@ export default class Unit {
     });
   }
 
-  removeItem(item: Items): void {
+  removeItem(item: Items, cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitRemoveItem, {
       id: 'UnitRemoveItem',
       disabled: false,
       source: this,
       item,
+      cause,
     });
   }
 

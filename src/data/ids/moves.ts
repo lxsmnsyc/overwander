@@ -223,4 +223,6 @@ export const enum Moves {
   SonicBoom = 126,
   TriAttack = 127,
   AuroraBeam = 128,
+  PoisonGas = 129,
+  Sludge = 130,
 }

@@ -1531,3 +1531,43 @@ describe('Ice Body', () => {
     expect(plain.health).toBe(150);
   });
 });
+
+describe('Sticky Hold', () => {
+  it('blocks item removal forced by other units', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const thief = createUnit(battle, teamB);
+    holder.addAbility(Abilities.StickyHold);
+    holder.addItem(Items.OranBerry);
+
+    holder.removeItem(Items.OranBerry, {
+      type: EffectType.Move,
+      move: Moves.Tackle,
+      unit: thief,
+    });
+    expect(holder.items[Items.OranBerry]).toBe(true);
+
+    // Self-removal (e.g. consuming a berry) still goes through
+    holder.removeItem(Items.OranBerry, {
+      type: EffectType.Item,
+      item: Items.OranBerry,
+      unit: holder,
+    });
+    expect(holder.items[Items.OranBerry]).toBeUndefined();
+  });
+});
+
+describe('Poison Touch', () => {
+  it('poisons the target on direct contact damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+    attacker.addAbility(Abilities.PoisonTouch);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, victim, 10, 0);
+
+    expect(victim.status[Statuses.Poisoned]).toBeDefined();
+  });
+});

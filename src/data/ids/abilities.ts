@@ -108,6 +108,9 @@ const enum Abilities {
   // Seel
   Hydration = 71,
   IceBody = 72,
+  // Grimer
+  StickyHold = 73,
+  PoisonTouch = 74,
 }
 
 export default Abilities;

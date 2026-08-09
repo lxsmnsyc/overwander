@@ -1254,4 +1254,24 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.PoisonGas, {
+    name: 'Poison Gas',
+    type: Types.Poison,
+    category: MoveCategories.Status,
+    pp: 40,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Sludge, {
+    name: 'Sludge',
+    type: Types.Poison,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
 }

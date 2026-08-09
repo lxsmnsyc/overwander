@@ -51,13 +51,15 @@ export default function setupBerries(battle: Battle): void {
       return undefined;
     }
 
+    const cause = { type: EffectType.Item, item, unit } as const;
+
     // Disable first: the berry's effect rides the trigger, and a heal
     // re-entering the detection must not see the berry as still edible
     unit.disableItem(item);
     unit.triggerItem(item);
-    unit.removeItem(item);
+    unit.removeItem(item, cause);
 
-    return { type: EffectType.Item, item, unit };
+    return cause;
   }
 
   function heldBerries(unit: Unit): Items[] {

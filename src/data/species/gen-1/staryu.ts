@@ -37,7 +37,7 @@ const FAMILY_TEACHABLE = [
   Moves.Flash,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Analytic, Abilities.Illuminate, Abilities.NaturalCure];
+const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];
 
 export default function registerStaryuSpecies(): void {
   registerSpecies(Species.Staryu, {
@@ -62,6 +62,7 @@ export default function registerStaryuSpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Analytic,
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 225,
@@ -98,6 +99,7 @@ export default function registerStaryuSpecies(): void {
     },
     types: [Types.Water, Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Analytic,
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 60,

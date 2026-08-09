@@ -29,7 +29,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Reckless, Abilities.LightningRod, Abilities.RockHead];
+const FAMILY_ABILITIES = [Abilities.LightningRod, Abilities.RockHead];
 
 export default function registerRhyhornSpecies(): void {
   registerSpecies(Species.Rhyhorn, {
@@ -54,6 +54,7 @@ export default function registerRhyhornSpecies(): void {
     },
     types: [Types.Ground, Types.Rock],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Reckless,
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 120,
@@ -89,6 +90,7 @@ export default function registerRhyhornSpecies(): void {
     },
     types: [Types.Ground, Types.Rock],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Reckless,
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 60,

@@ -27,7 +27,7 @@ const FAMILY_TEACHABLE = [
   Moves.Cut,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Gluttony, Abilities.Chlorophyll];
+const FAMILY_ABILITIES = [Abilities.Chlorophyll];
 
 export default function registerBellsproutSpecies(): void {
   registerSpecies(Species.Bellsprout, {
@@ -52,6 +52,7 @@ export default function registerBellsproutSpecies(): void {
     },
     types: [Types.Grass, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Gluttony,
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
@@ -95,6 +96,7 @@ export default function registerBellsproutSpecies(): void {
     },
     types: [Types.Grass, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Gluttony,
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
@@ -131,6 +133,7 @@ export default function registerBellsproutSpecies(): void {
     },
     types: [Types.Grass, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Gluttony,
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,

@@ -47,7 +47,7 @@ const EVOLVED_TEACHABLE = [
   Moves.SeismicToss,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Regenerator, Abilities.Oblivious, Abilities.OwnTempo];
+const FAMILY_ABILITIES = [Abilities.Oblivious, Abilities.OwnTempo];
 
 export default function registerSlowpokeSpecies(): void {
   registerSpecies(Species.Slowpoke, {
@@ -72,6 +72,7 @@ export default function registerSlowpokeSpecies(): void {
     },
     types: [Types.Water, Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Regenerator,
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -107,6 +108,7 @@ export default function registerSlowpokeSpecies(): void {
     },
     types: [Types.Water, Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Regenerator,
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 75,

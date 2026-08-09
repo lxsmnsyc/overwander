@@ -63,6 +63,6 @@ export default class World {
       spreadNoise(this.elevation.noise(sampleX, sampleY)),
     );
 
-    return new Chunk(`${this.seed}(${x}, ${y})`, biome);
+    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, biome);
   }
 }

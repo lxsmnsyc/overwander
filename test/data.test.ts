@@ -11,7 +11,12 @@ import { Items } from '../src/data/ids/items';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
 import registerItems from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
-import { getSpeciesAbilities, getSpeciesData, registerSpecies } from '../src/data/species';
+import {
+  getSpeciesAbilities,
+  getSpeciesAbilityPools,
+  getSpeciesData,
+  registerSpecies,
+} from '../src/data/species';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -35,6 +40,27 @@ describe('species abilities', () => {
 
     expect(oddish.has(Abilities.Stench)).toBe(false);
     expect(oddish.size).toBe(2);
+  });
+
+  it('splits hidden abilities from regular abilities', () => {
+    const lapras = getSpeciesData(Species.Lapras);
+
+    expect(lapras.abilities).toEqual([Abilities.WaterAbsorb, Abilities.ShellArmor]);
+    expect(lapras.hiddenAbility).toBe(Abilities.Hydration);
+
+    // Species without one leave the field unset
+    expect(getSpeciesData(Species.Gastly).hiddenAbility).toBeUndefined();
+
+    // The ancestry walk still covers hidden abilities
+    expect(getSpeciesAbilities(Species.Lapras).has(Abilities.Hydration)).toBe(true);
+  });
+
+  it('pools regular and hidden abilities across the line', () => {
+    // Vileplume's line shares Chlorophyll; each stage hides its own
+    const pools = getSpeciesAbilityPools(Species.Vileplume);
+
+    expect(pools.regular).toEqual([Abilities.Chlorophyll]);
+    expect(pools.hidden).toEqual([Abilities.EffectSpore, Abilities.Stench, Abilities.RunAway]);
   });
 });
 

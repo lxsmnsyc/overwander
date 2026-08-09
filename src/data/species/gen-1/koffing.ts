@@ -24,7 +24,7 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Stench, Abilities.Levitate, Abilities.NeutralizingGas];
+const FAMILY_ABILITIES = [Abilities.Levitate, Abilities.NeutralizingGas];
 
 export default function registerKoffingSpecies(): void {
   registerSpecies(Species.Koffing, {
@@ -49,6 +49,7 @@ export default function registerKoffingSpecies(): void {
     },
     types: [Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Stench,
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -83,6 +84,7 @@ export default function registerKoffingSpecies(): void {
     },
     types: [Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Stench,
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 60,

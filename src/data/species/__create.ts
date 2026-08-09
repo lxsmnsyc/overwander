@@ -72,9 +72,13 @@ export interface SpeciesData {
    */
   types: Types[];
   /**
-   * Possible abilities of this pokemon
+   * Possible regular abilities of this pokemon
    */
   abilities: Abilities[];
+  /**
+   * The rarer hidden ability, if the species has one
+   */
+  hiddenAbility?: Abilities;
   /**
    * Egg groups
    */
@@ -150,6 +154,36 @@ export function getSpeciesData(species: Species): SpeciesData {
   throw new Error('Missing species data for ' + species);
 }
 
+export interface SpeciesAbilityPools {
+  regular: Abilities[];
+  hidden: Abilities[];
+}
+
+/**
+ * The species' rollable ability pools: its own regular and hidden
+ * abilities plus its pre-evolutions', deduplicated in chain order
+ */
+export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
+  const regular = new Set<Abilities>();
+  const hidden = new Set<Abilities>();
+
+  let current: Species | undefined = species;
+  while (current != null) {
+    const data = getSpeciesData(current);
+
+    for (const ability of data.abilities) {
+      regular.add(ability);
+    }
+    if (data.hiddenAbility != null) {
+      hidden.add(data.hiddenAbility);
+    }
+
+    current = data.evolvesFrom;
+  }
+
+  return { regular: [...regular], hidden: [...hidden] };
+}
+
 /**
  * Every ability the species can learn: its own set plus its
  * pre-evolutions' sets, walked up the evolution chain
@@ -163,6 +197,9 @@ export function getSpeciesAbilities(species: Species): Set<Abilities> {
 
     for (const ability of data.abilities) {
       abilities.add(ability);
+    }
+    if (data.hiddenAbility != null) {
+      abilities.add(data.hiddenAbility);
     }
 
     current = data.evolvesFrom;

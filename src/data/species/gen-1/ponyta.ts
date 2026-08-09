@@ -26,7 +26,7 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
 ];
 
-const FAMILY_ABILITIES = [Abilities.FlameBody, Abilities.RunAway, Abilities.FlashFire];
+const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.FlashFire];
 
 export default function registerPonytaSpecies(): void {
   registerSpecies(Species.Ponyta, {
@@ -51,6 +51,7 @@ export default function registerPonytaSpecies(): void {
     },
     types: [Types.Fire],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.FlameBody,
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -86,6 +87,7 @@ export default function registerPonytaSpecies(): void {
     },
     types: [Types.Fire],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.FlameBody,
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 60,

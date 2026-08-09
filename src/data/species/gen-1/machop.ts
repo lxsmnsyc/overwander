@@ -34,7 +34,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Steadfast, Abilities.Guts, Abilities.NoGuard];
+const FAMILY_ABILITIES = [Abilities.Guts, Abilities.NoGuard];
 
 export default function registerMachopSpecies(): void {
   registerSpecies(Species.Machop, {
@@ -59,6 +59,7 @@ export default function registerMachopSpecies(): void {
     },
     types: [Types.Fighting],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Steadfast,
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 180,
@@ -99,6 +100,7 @@ export default function registerMachopSpecies(): void {
     },
     types: [Types.Fighting],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Steadfast,
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 90,
@@ -133,6 +135,7 @@ export default function registerMachopSpecies(): void {
     },
     types: [Types.Fighting],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Steadfast,
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,

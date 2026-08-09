@@ -31,7 +31,7 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Harvest, Abilities.Chlorophyll];
+const FAMILY_ABILITIES = [Abilities.Chlorophyll];
 
 export default function registerExeggcuteSpecies(): void {
   registerSpecies(Species.Exeggcute, {
@@ -56,6 +56,7 @@ export default function registerExeggcuteSpecies(): void {
     },
     types: [Types.Grass, Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Harvest,
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 90,
@@ -91,6 +92,7 @@ export default function registerExeggcuteSpecies(): void {
     },
     types: [Types.Grass, Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Harvest,
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,

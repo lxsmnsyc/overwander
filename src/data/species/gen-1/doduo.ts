@@ -25,7 +25,7 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
 ];
 
-const FAMILY_ABILITIES = [Abilities.TangledFeet, Abilities.RunAway, Abilities.EarlyBird];
+const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.EarlyBird];
 
 export default function registerDoduoSpecies(): void {
   registerSpecies(Species.Doduo, {
@@ -50,6 +50,7 @@ export default function registerDoduoSpecies(): void {
     },
     types: [Types.Normal, Types.Flying],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.TangledFeet,
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -85,6 +86,7 @@ export default function registerDoduoSpecies(): void {
     },
     types: [Types.Normal, Types.Flying],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.TangledFeet,
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 45,

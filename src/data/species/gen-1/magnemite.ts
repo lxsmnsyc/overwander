@@ -28,7 +28,7 @@ const FAMILY_TEACHABLE = [
   Moves.Flash,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Analytic, Abilities.MagnetPull, Abilities.Sturdy];
+const FAMILY_ABILITIES = [Abilities.MagnetPull, Abilities.Sturdy];
 
 export default function registerMagnemiteSpecies(): void {
   registerSpecies(Species.Magnemite, {
@@ -53,6 +53,7 @@ export default function registerMagnemiteSpecies(): void {
     },
     types: [Types.Electric, Types.Steel],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Analytic,
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 190,
@@ -88,6 +89,7 @@ export default function registerMagnemiteSpecies(): void {
     },
     types: [Types.Electric, Types.Steel],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Analytic,
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 60,

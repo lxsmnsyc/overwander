@@ -30,7 +30,7 @@ const FAMILY_TEACHABLE = [
   Moves.Cut,
 ];
 
-const FAMILY_ABILITIES = [Abilities.RainDish, Abilities.ClearBody, Abilities.LiquidOoze];
+const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];
 
 export default function registerTentacoolSpecies(): void {
   registerSpecies(Species.Tentacool, {
@@ -55,6 +55,7 @@ export default function registerTentacoolSpecies(): void {
     },
     types: [Types.Water, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.RainDish,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -92,6 +93,7 @@ export default function registerTentacoolSpecies(): void {
     },
     types: [Types.Water, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.RainDish,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,

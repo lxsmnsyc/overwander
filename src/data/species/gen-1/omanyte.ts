@@ -28,7 +28,7 @@ const FAMILY_TEACHABLE = [
   Moves.Surf,
 ];
 
-const FAMILY_ABILITIES = [Abilities.WeakArmor, Abilities.SwiftSwim, Abilities.ShellArmor];
+const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
 
 export default function registerOmanyteSpecies(): void {
   registerSpecies(Species.Omanyte, {
@@ -53,6 +53,7 @@ export default function registerOmanyteSpecies(): void {
     },
     types: [Types.Rock, Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.WeakArmor,
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
@@ -86,6 +87,7 @@ export default function registerOmanyteSpecies(): void {
     },
     types: [Types.Rock, Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.WeakArmor,
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,

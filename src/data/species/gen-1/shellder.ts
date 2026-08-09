@@ -30,7 +30,7 @@ const FAMILY_TEACHABLE = [
   Moves.Surf,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Overcoat, Abilities.ShellArmor, Abilities.SkillLink];
+const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
 
 export default function registerShellderSpecies(): void {
   registerSpecies(Species.Shellder, {
@@ -55,6 +55,7 @@ export default function registerShellderSpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Overcoat,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -89,6 +90,7 @@ export default function registerShellderSpecies(): void {
     },
     types: [Types.Water, Types.Ice],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Overcoat,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,

@@ -28,7 +28,7 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
 ];
 
-const FAMILY_ABILITIES = [Abilities.PoisonTouch, Abilities.Stench, Abilities.StickyHold];
+const FAMILY_ABILITIES = [Abilities.Stench, Abilities.StickyHold];
 
 export default function registerGrimerSpecies(): void {
   registerSpecies(Species.Grimer, {
@@ -53,6 +53,7 @@ export default function registerGrimerSpecies(): void {
     },
     types: [Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.PoisonTouch,
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -87,6 +88,7 @@ export default function registerGrimerSpecies(): void {
     },
     types: [Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.PoisonTouch,
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 75,

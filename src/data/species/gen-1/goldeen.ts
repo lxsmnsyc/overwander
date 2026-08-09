@@ -28,7 +28,7 @@ const FAMILY_TEACHABLE = [
   Moves.Surf,
 ];
 
-const FAMILY_ABILITIES = [Abilities.LightningRod, Abilities.SwiftSwim, Abilities.WaterVeil];
+const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];
 
 export default function registerGoldeenSpecies(): void {
   registerSpecies(Species.Goldeen, {
@@ -53,6 +53,7 @@ export default function registerGoldeenSpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.LightningRod,
     eggGroups: [EggGroups.Water2],
     genderRatio: [1, 1],
     catchRate: 225,
@@ -88,6 +89,7 @@ export default function registerGoldeenSpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.LightningRod,
     eggGroups: [EggGroups.Water2],
     genderRatio: [1, 1],
     catchRate: 60,

@@ -36,7 +36,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.BattleArmor, Abilities.RockHead, Abilities.LightningRod];
+const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];
 
 export default function registerCuboneSpecies(): void {
   registerSpecies(Species.Cubone, {
@@ -61,6 +61,7 @@ export default function registerCuboneSpecies(): void {
     },
     types: [Types.Ground],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.BattleArmor,
     eggGroups: [EggGroups.Monster],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -95,6 +96,7 @@ export default function registerCuboneSpecies(): void {
     },
     types: [Types.Ground],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.BattleArmor,
     eggGroups: [EggGroups.Monster],
     genderRatio: [1, 1],
     catchRate: 75,

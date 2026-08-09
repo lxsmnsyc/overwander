@@ -3,15 +3,14 @@ import { getSpawnPool, pickSpawn } from '../data/biome';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Species } from '../data/ids/species';
 import type Chunk from './chunk';
+import { CELL_COUNT, CHUNK_CELLS } from './chunk';
 
 /**
- * One spawn roll: the species, the 32-bit seed that drives its
- * instance generation, and its level
+ * One spawn roll: the species, the 32-bit individual value that
+ * drives its IVs, and the 32-bit trait value whose four 8-bit
+ * slices drive its level, gender, ability and nature
  */
-export type Spawn = [species: Species, seed: number, level: number];
-
-const MIN_SPAWN_LEVEL = 5;
-const MAX_SPAWN_LEVEL = 100;
+export type Spawn = [species: Species, individualValue: number, traitValue: number];
 
 /**
  * Snapshots quantize the day into 5-minute windows, so every
@@ -47,30 +46,52 @@ export default class ChunkSnapshot {
   private spawns: Spawn[] | null = null;
 
   /**
+   * Cell occupancy, row-major; filled when the spawns roll
+   */
+  private readonly cells: (Spawn | null)[] = new Array<Spawn | null>(CELL_COUNT).fill(null);
+
+  /**
    * Roll the snapshot's spawns from the biome's spawn pool for this
-   * window's time of day, honoring the rarity bands and weights.
-   * The first call fixes the result for the snapshot's lifetime;
-   * later calls return the same spawns regardless of count
+   * window's time of day, honoring the rarity bands and weights, and
+   * place each on its own free cell — the chunk's landmark cells are
+   * pre-occupied and never receive spawns. The first call fixes the
+   * result for the snapshot's lifetime; later calls return the same
+   * spawns regardless of count
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
       const spawns: Spawn[] = [];
+      const occupied = this.chunk.getLandmarkCells();
+      const free = Array.from({ length: CELL_COUNT }, (_, cell) => cell).filter(
+        (cell) => !occupied.has(cell),
+      );
 
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count && free.length > 0; i++) {
         const species = pickSpawn(pool, () => this.rng.random());
 
         if (species == null) {
           break;
         }
 
-        const level =
-          MIN_SPAWN_LEVEL + Math.floor(this.rng.random() * (MAX_SPAWN_LEVEL - MIN_SPAWN_LEVEL + 1));
+        // The draws land in tuple order: individual value, then the
+        // trait value, then the cell placement
+        const spawn: Spawn = [species, this.rng.int32(), this.rng.int32()];
+        const [cell] = free.splice(Math.floor(this.rng.random() * free.length), 1);
 
-        spawns.push([species, this.rng.int32(), level]);
+        this.cells[cell] = spawn;
+        spawns.push(spawn);
       }
       this.spawns = spawns;
     }
     return this.spawns;
+  }
+
+  /**
+   * The spawn occupying the given cell, if any; cells are empty
+   * until the spawns roll
+   */
+  getSpawnAt(cellX: number, cellY: number): Spawn | null {
+    return this.cells[cellY * CHUNK_CELLS + cellX] ?? null;
   }
 }

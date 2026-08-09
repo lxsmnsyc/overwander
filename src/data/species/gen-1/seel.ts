@@ -32,7 +32,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.IceBody, Abilities.ThickFat, Abilities.Hydration];
+const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.Hydration];
 
 export default function registerSeelSpecies(): void {
   registerSpecies(Species.Seel, {
@@ -57,6 +57,7 @@ export default function registerSeelSpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.IceBody,
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -91,6 +92,7 @@ export default function registerSeelSpecies(): void {
     },
     types: [Types.Water, Types.Ice],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.IceBody,
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,

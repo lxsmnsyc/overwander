@@ -29,7 +29,7 @@ const FAMILY_TEACHABLE = [
   Moves.Flash,
 ];
 
-const FAMILY_ABILITIES = [Abilities.Aftermath, Abilities.Soundproof, Abilities.Static];
+const FAMILY_ABILITIES = [Abilities.Soundproof, Abilities.Static];
 
 export default function registerVoltorbSpecies(): void {
   registerSpecies(Species.Voltorb, {
@@ -54,6 +54,7 @@ export default function registerVoltorbSpecies(): void {
     },
     types: [Types.Electric],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Aftermath,
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 190,
@@ -88,6 +89,7 @@ export default function registerVoltorbSpecies(): void {
     },
     types: [Types.Electric],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.Aftermath,
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 60,

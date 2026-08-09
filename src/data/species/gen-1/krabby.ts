@@ -30,7 +30,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.SheerForce, Abilities.HyperCutter, Abilities.ShellArmor];
+const FAMILY_ABILITIES = [Abilities.HyperCutter, Abilities.ShellArmor];
 
 export default function registerKrabbySpecies(): void {
   registerSpecies(Species.Krabby, {
@@ -55,6 +55,7 @@ export default function registerKrabbySpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.SheerForce,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 225,
@@ -89,6 +90,7 @@ export default function registerKrabbySpecies(): void {
     },
     types: [Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.SheerForce,
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,

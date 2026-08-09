@@ -35,7 +35,7 @@ const FAMILY_TEACHABLE = [
   Moves.Flash,
 ];
 
-const FAMILY_ABILITIES = [Abilities.InnerFocus, Abilities.Insomnia, Abilities.Forewarn];
+const FAMILY_ABILITIES = [Abilities.Insomnia, Abilities.Forewarn];
 
 export default function registerDrowzeeSpecies(): void {
   registerSpecies(Species.Drowzee, {
@@ -60,6 +60,7 @@ export default function registerDrowzeeSpecies(): void {
     },
     types: [Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.InnerFocus,
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 190,
@@ -95,6 +96,7 @@ export default function registerDrowzeeSpecies(): void {
     },
     types: [Types.Psychic],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.InnerFocus,
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 75,

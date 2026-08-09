@@ -28,7 +28,7 @@ const FAMILY_TEACHABLE = [
   Moves.Surf,
 ];
 
-const FAMILY_ABILITIES = [Abilities.WeakArmor, Abilities.SwiftSwim, Abilities.BattleArmor];
+const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];
 
 export default function registerKabutoSpecies(): void {
   registerSpecies(Species.Kabuto, {
@@ -53,6 +53,7 @@ export default function registerKabutoSpecies(): void {
     },
     types: [Types.Rock, Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.WeakArmor,
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
@@ -86,6 +87,7 @@ export default function registerKabutoSpecies(): void {
     },
     types: [Types.Rock, Types.Water],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.WeakArmor,
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,

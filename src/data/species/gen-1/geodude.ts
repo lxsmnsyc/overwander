@@ -36,7 +36,7 @@ const FAMILY_TEACHABLE = [
   Moves.Strength,
 ];
 
-const FAMILY_ABILITIES = [Abilities.SandVeil, Abilities.RockHead, Abilities.Sturdy];
+const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.Sturdy];
 
 export default function registerGeodudeSpecies(): void {
   registerSpecies(Species.Geodude, {
@@ -61,6 +61,7 @@ export default function registerGeodudeSpecies(): void {
     },
     types: [Types.Rock, Types.Ground],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.SandVeil,
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 255,
@@ -102,6 +103,7 @@ export default function registerGeodudeSpecies(): void {
     },
     types: [Types.Rock, Types.Ground],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.SandVeil,
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 120,
@@ -136,6 +138,7 @@ export default function registerGeodudeSpecies(): void {
     },
     types: [Types.Rock, Types.Ground],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbility: Abilities.SandVeil,
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 45,

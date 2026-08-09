@@ -1181,3 +1181,36 @@ describe('Water Absorb', () => {
     expect(holder.health).toBe(140); // 100 + 160 / 4
   });
 });
+
+describe('Synchronize', () => {
+  it('reflects poison, burn, and paralysis onto the inflicter', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Synchronize);
+
+    holder.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonPowder,
+      unit: attacker,
+    });
+
+    expect(holder.status[Statuses.Poisoned]).toBeDefined();
+    expect(attacker.status[Statuses.Poisoned]).toBeDefined();
+  });
+
+  it('does not reflect sleep', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Synchronize);
+
+    holder.addStatus(Statuses.Sleeping, {
+      type: EffectType.Move,
+      move: Moves.Hypnosis,
+      unit: attacker,
+    });
+
+    expect(attacker.status[Statuses.Sleeping]).toBeUndefined();
+  });
+});

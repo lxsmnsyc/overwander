@@ -81,6 +81,8 @@ const enum Abilities {
   Justified = 54,
   // Poliwag
   WaterAbsorb = 55,
+  // Abra
+  Synchronize = 56,
 }
 
 export default Abilities;

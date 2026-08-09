@@ -1117,4 +1117,12 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Recover, {
+    name: 'Recover',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 5,
+    target: 0,
+    flags: 0,
+  });
 }

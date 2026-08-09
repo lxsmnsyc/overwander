@@ -785,3 +785,15 @@ describe('Amnesia', () => {
     expect(unit.stages[Stages.SpecialDefense]).toBe(2);
   });
 });
+
+describe('Recover', () => {
+  it('heals half of max health', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.setHealth(40);
+
+    unit.triggerMoveEffect(Moves.Recover, NONE_TARGET, 0);
+
+    expect(unit.health).toBe(120); // 40 + 160 / 2
+  });
+});

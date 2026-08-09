@@ -70,4 +70,7 @@ export const enum Species {
   Poliwag = 62,
   Poliwhirl = 63,
   Poliwrath = 64,
+  Abra = 65,
+  Kadabra = 66,
+  Alakazam = 67,
 }

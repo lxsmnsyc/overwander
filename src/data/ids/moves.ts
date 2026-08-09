@@ -210,4 +210,5 @@ export const enum Moves {
   KarateChop = 113,
   Hypnosis = 114,
   Amnesia = 115,
+  Recover = 116,
 }

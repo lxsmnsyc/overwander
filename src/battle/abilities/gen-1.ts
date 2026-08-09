@@ -1380,6 +1380,39 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Abra
+  // https://bulbapedia.bulbagarden.net/wiki/Synchronize_(Ability)
+  createAbility(Abilities.Synchronize, (battle) => {
+    const SYNC_STATUS = new Set<Statuses>([
+      Statuses.Poisoned,
+      Statuses.BadlyPoisoned,
+      Statuses.Burned,
+      Statuses.Paralyzed,
+    ]);
+
+    // The effect targets the inflicting unit, which the trigger event
+    // cannot carry, so it stays inline. Two Synchronize holders never
+    // ping-pong: the reflected status is non-refreshable on re-add
+    return battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+      const cause = event.cause;
+
+      if (
+        SYNC_STATUS.has(event.status) &&
+        event.source.hasAbility(Abilities.Synchronize) &&
+        cause.type !== EffectType.None &&
+        cause.unit !== event.source
+      ) {
+        event.source.triggerAbility(Abilities.Synchronize);
+
+        cause.unit.addStatus(event.status, {
+          type: EffectType.Ability,
+          ability: Abilities.Synchronize,
+          unit: event.source,
+        });
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

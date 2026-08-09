@@ -33,7 +33,7 @@ const BASE_SCORE = 100;
 const USELESS_PENALTY = 10;
 
 // AI knowledge tables (kept here, like the cartridge AI's own lists)
-const HEALING_MOVES = new Set<Moves>([Moves.Rest]);
+const HEALING_MOVES = new Set<Moves>([Moves.Rest, Moves.Recover]);
 
 /**
  * Pick the best move for a unit. Internal to the AI module; the idle

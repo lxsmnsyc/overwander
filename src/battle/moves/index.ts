@@ -18,6 +18,7 @@ import setupPowderMoves from './powder';
 import setupRage from './rage';
 import setupRechargeMoves from './recharge';
 import setupRecoilMoves from './recoil';
+import setupRecoverMoves from './recover';
 import setupRest from './rest';
 import setupSemiInvulnerableMoves from './semi-invulnerable';
 import setupSolarBeam from './solar-beam';
@@ -57,6 +58,7 @@ export default function setupMoves(battle: Battle): void {
   setupCounter(battle);
   setupDisable(battle);
   setupHaze(battle);
+  setupRecoverMoves(battle);
   setupMirrorMove(battle);
   setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);

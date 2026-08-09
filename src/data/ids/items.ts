@@ -61,4 +61,39 @@ export const enum Items {
   ThunderStone = 12,
   LeafStone = 13,
   MoonStone = 14,
+  // Poke balls
+  PokeBall = 15,
+  GreatBall = 16,
+  UltraBall = 17,
+  MasterBall = 18,
+  PremierBall = 19,
+  HealBall = 20,
+  LuxuryBall = 21,
+  NetBall = 22,
+  DiveBall = 23,
+  NestBall = 24,
+  RepeatBall = 25,
+  TimerBall = 26,
+  QuickBall = 27,
+  DuskBall = 28,
 }
+
+/**
+ * The inventory item behind each ball variant
+ */
+export const BALL_ITEMS: Record<Balls, Items> = {
+  [Balls.PokeBall]: Items.PokeBall,
+  [Balls.GreatBall]: Items.GreatBall,
+  [Balls.UltraBall]: Items.UltraBall,
+  [Balls.MasterBall]: Items.MasterBall,
+  [Balls.PremierBall]: Items.PremierBall,
+  [Balls.HealBall]: Items.HealBall,
+  [Balls.LuxuryBall]: Items.LuxuryBall,
+  [Balls.NetBall]: Items.NetBall,
+  [Balls.DiveBall]: Items.DiveBall,
+  [Balls.NestBall]: Items.NestBall,
+  [Balls.RepeatBall]: Items.RepeatBall,
+  [Balls.TimerBall]: Items.TimerBall,
+  [Balls.QuickBall]: Items.QuickBall,
+  [Balls.DuskBall]: Items.DuskBall,
+};

@@ -17,6 +17,12 @@ export function asNumberArray(value: unknown): number[] {
     : [];
 }
 
+export function asStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === 'string')
+    : [];
+}
+
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value != null;
 }

@@ -118,4 +118,6 @@ export const enum Species {
   Lickitung = 110,
   Koffing = 111,
   Weezing = 112,
+  Rhyhorn = 113,
+  Rhydon = 114,
 }

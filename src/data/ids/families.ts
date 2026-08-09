@@ -49,6 +49,7 @@ const enum Families {
   Tyrogue = 46,
   Lickitung = 47,
   Koffing = 48,
+  Rhyhorn = 49,
 }
 
 export default Families;

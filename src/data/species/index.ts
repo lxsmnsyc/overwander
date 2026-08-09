@@ -34,6 +34,7 @@ import registerPonytaSpecies from './ponyta';
 import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
+import registerRhyhornSpecies from './rhyhorn';
 import registerSandshrewSpecies from './sandshrew';
 import registerSeelSpecies from './seel';
 import registerShellderSpecies from './shellder';
@@ -100,4 +101,5 @@ export function registerSpecies(): void {
   registerTyrogueSpecies();
   registerLickitungSpecies();
   registerKoffingSpecies();
+  registerRhyhornSpecies();
 }

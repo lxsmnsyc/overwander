@@ -21,6 +21,7 @@ import registerGrowlitheSpecies from './growlithe';
 import registerHorseaSpecies from './horsea';
 import registerJigglypuffSpecies from './jigglypuff';
 import registerKrabbySpecies from './krabby';
+import registerLaprasSpecies from './lapras';
 import registerJynxSpecies from './jynx';
 import registerKangaskhanSpecies from './kangaskhan';
 import registerKoffingSpecies from './koffing';
@@ -130,4 +131,5 @@ export function registerSpecies(): void {
   registerPinsirSpecies();
   registerTaurosSpecies();
   registerMagikarpSpecies();
+  registerLaprasSpecies();
 }

@@ -62,4 +62,9 @@ export const enum TeamStatuses {
    */
   Unnerved = 1,
   LightScreen = 2,
+  /**
+   * The team is shrouded in mist; other units cannot lower its
+   * members' stages
+   */
+  Mist = 3,
 }

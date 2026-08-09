@@ -143,6 +143,7 @@ function setupUnitStatusMoves(battle: Battle): void {
 const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
+  [Moves.Mist]: TeamStatuses.Mist,
 };
 
 function setupTeamStatusMoves(battle: Battle): void {

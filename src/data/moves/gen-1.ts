@@ -1541,4 +1541,12 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.Mist, {
+    name: 'Mist',
+    type: Types.Ice,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: MoveTargetFlags.Team | MoveTargetFlags.Own,
+    flags: 0,
+  });
 }

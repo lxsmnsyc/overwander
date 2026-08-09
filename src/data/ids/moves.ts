@@ -266,4 +266,5 @@ export const enum Moves {
   Waterfall = 155,
   LovelyKiss = 156,
   Splash = 157,
+  Mist = 158,
 }

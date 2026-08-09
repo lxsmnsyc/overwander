@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
+import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders } from '../../src/data/ids/species';
@@ -357,5 +358,33 @@ describe('positional statuses', () => {
 
     expect(unit.status[Statuses.Grounded]).toBeUndefined();
     expect(unit.status[Statuses.Submerged]).toBeDefined();
+  });
+});
+
+describe('Mist', () => {
+  it('shields the team from stage drops by others until it expires', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const veiled = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    veiled.triggerMoveEffect(Moves.Mist, { type: MoveTargetType.Team, team: teamA }, 0);
+
+    const hostile = { type: EffectType.Move, move: Moves.Growl, unit: enemy } as const;
+
+    veiled.addStage(Stages.Attack, -1, hostile);
+    expect(veiled.stages[Stages.Attack]).toBe(0);
+
+    // Self-inflicted drops still apply
+    veiled.addStage(Stages.Attack, -1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: veiled,
+    });
+    expect(veiled.stages[Stages.Attack]).toBe(-1);
+
+    battle.tick(10000);
+
+    veiled.addStage(Stages.Attack, -1, hostile);
+    expect(veiled.stages[Stages.Attack]).toBe(-2);
   });
 });

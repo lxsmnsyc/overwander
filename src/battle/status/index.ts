@@ -11,6 +11,7 @@ import setupFocusEnergyStatus from './focus-energy';
 import setupFrozenStatus from './frozen';
 import setupGroundedStatus from './grounded';
 import setupInfatuatedStatus from './infatuated';
+import setupMistStatus from './mist';
 import setupParalyzedStatus from './paralyzed';
 import { setupBadlyPoisonedStatus, setupPoisonedStatus } from './poisoned';
 import setupRechargingStatus from './recharging';
@@ -61,6 +62,7 @@ const NON_REFRESHABLE_STATUS = new Set<Statuses>([
 const NON_REFRESHABLE_TEAM_STATUS = new Set<TeamStatuses>([
   TeamStatuses.Reflect,
   TeamStatuses.LightScreen,
+  TeamStatuses.Mist,
 ]);
 
 function setupNonRefreshableStatus(battle: Battle): void {
@@ -126,6 +128,7 @@ export default function setupStatus(battle: Battle): void {
   setupInfatuatedStatus(battle);
   setupGroundedStatus(battle);
   setupDormantStatus(battle);
+  setupMistStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

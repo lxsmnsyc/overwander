@@ -179,6 +179,7 @@ export const enum BattleEvents {
    * attempts, so visual cues can hook it safely
    */
   UnitAddStatusFailed = 117,
+  CheckUnitItemThreshold = 118,
 }
 
 export const enum MoveTargetType {
@@ -451,6 +452,14 @@ export interface UnitItemEvent extends UnitEvent {
   item: Items;
 }
 
+/**
+ * The health fraction at (or below) which the unit consumes a pinch
+ * item; listeners (e.g. Gluttony) adjust it
+ */
+export interface CheckUnitItemThresholdEvent extends UnitItemEvent {
+  threshold: number;
+}
+
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
 }
@@ -684,6 +693,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];
   [BattleEvents.CheckUnitCanConsumeItem]: [CheckUnitCanConsumeItemEvent, EventPriority];
+  [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
 }
 
 export interface ProgressData {

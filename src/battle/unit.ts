@@ -14,6 +14,7 @@ import type {
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
   CheckUnitEscapeEvent,
+  CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
@@ -422,7 +423,9 @@ export default class Unit {
   }
 
   triggerItem(item: Items): void {
-    if (this.items[item]) {
+    // Presence check (not truthiness): a consumed item is disabled
+    // right before its trigger fires the effect
+    if (this.items[item] != null) {
       this.battle.emit(BattleEvents.UnitTriggerItem, {
         id: 'UnitTriggerItem',
         disabled: false,
@@ -442,6 +445,18 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitCanConsumeItem, event);
     return event.success;
+  }
+
+  checkItemThreshold(item: Items, threshold: number): number {
+    const event: CheckUnitItemThresholdEvent = {
+      id: 'CheckUnitItemThreshold',
+      disabled: false,
+      source: this,
+      item,
+      threshold,
+    };
+    this.battle.emit(BattleEvents.CheckUnitItemThreshold, event);
+    return event.threshold;
   }
 
   enableItem(item: Items): void {

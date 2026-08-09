@@ -212,4 +212,5 @@ export const enum Moves {
   Amnesia = 115,
   Recover = 116,
   LowKick = 117,
+  Slam = 118,
 }

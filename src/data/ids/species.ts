@@ -76,4 +76,7 @@ export const enum Species {
   Machop = 68,
   Machoke = 69,
   Machamp = 70,
+  Bellsprout = 71,
+  Weepinbell = 72,
+  Victreebel = 73,
 }

@@ -27,6 +27,7 @@ const enum Families {
   Poliwag = 25,
   Abra = 26,
   Machop = 27,
+  Bellsprout = 28,
 }
 
 export default Families;

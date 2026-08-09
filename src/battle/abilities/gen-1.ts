@@ -1470,6 +1470,17 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Bellsprout
+  // https://bulbapedia.bulbagarden.net/wiki/Gluttony_(Ability)
+  createAbility(Abilities.Gluttony, (battle) =>
+    // The holder eats pinch items early: doubled threshold
+    battle.on(BattleEvents.CheckUnitItemThreshold, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.Gluttony)) {
+        event.threshold = Math.min(1, event.threshold * 2);
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

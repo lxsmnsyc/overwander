@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../src/battle/core';
-import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
-import type Unit from '../../src/battle/unit';
-import { Stages } from '../../src/data/constants/stats';
-import { Types } from '../../src/data/constants/types';
-import { Moves } from '../../src/data/ids/moves';
-import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
-import { createBattle, createUnit, pinRandom } from './harness';
+import type Battle from '../../../src/battle/core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import type Unit from '../../../src/battle/unit';
+import { Stages } from '../../../src/data/constants/stats';
+import { Types } from '../../../src/data/constants/types';
+import { Moves } from '../../../src/data/ids/moves';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 

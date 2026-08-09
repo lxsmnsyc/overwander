@@ -86,6 +86,8 @@ const enum Abilities {
   // Machop
   NoGuard = 57,
   Steadfast = 58,
+  // Bellsprout
+  Gluttony = 59,
 }
 
 export default Abilities;

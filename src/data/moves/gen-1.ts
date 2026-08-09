@@ -1136,4 +1136,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Slam, {
+    name: 'Slam',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 80,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

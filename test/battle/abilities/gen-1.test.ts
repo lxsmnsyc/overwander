@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { EventPriority } from '../../src/core/event-emitter';
-import type Battle from '../../src/battle/core';
+import { EventPriority } from '../../../src/core/event-emitter';
+import type Battle from '../../../src/battle/core';
 import {
   BattleEvents,
   EffectType,
   MoveTargetType,
   type UnitAttackEvent,
-} from '../../src/battle/events';
-import type Unit from '../../src/battle/unit';
-import { Stages, Stats } from '../../src/data/constants/stats';
-import { Types } from '../../src/data/constants/types';
-import Abilities from '../../src/data/ids/abilities';
-import { Items } from '../../src/data/ids/items';
-import { MoveCategories, Moves } from '../../src/data/ids/moves';
-import { Genders } from '../../src/data/ids/species';
-import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
-import { createBattle, createUnit, pinRandom } from './harness';
+} from '../../../src/battle/events';
+import type Unit from '../../../src/battle/unit';
+import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Types } from '../../../src/data/constants/types';
+import Abilities from '../../../src/data/ids/abilities';
+import { Items } from '../../../src/data/ids/items';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
+import { Genders } from '../../../src/data/ids/species';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 

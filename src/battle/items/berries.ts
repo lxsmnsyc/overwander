@@ -32,7 +32,9 @@ const STATUS_CURE_BERRIES: { [key in Items]?: Set<Statuses> } = {
 
 interface HealBerryConfig {
   /**
-   * Fraction of max health at (or below) which the berry triggers
+   * Fraction of max health at (or below) which the berry triggers;
+   * the base value of the CheckUnitItemThreshold event (abilities
+   * like Gluttony adjust it there)
    */
   threshold: number;
   heal: (maxHealth: number) => number;
@@ -49,7 +51,9 @@ export default function setupBerries(battle: Battle): void {
       return undefined;
     }
 
-    // For visual cues
+    // Disable first: the berry's effect rides the trigger, and a heal
+    // re-entering the detection must not see the berry as still edible
+    unit.disableItem(item);
     unit.triggerItem(item);
     unit.removeItem(item);
 
@@ -72,23 +76,18 @@ export default function setupBerries(battle: Battle): void {
     return held;
   }
 
-  // Status-cure berries eat themselves the moment the status lands
+  // Detection: status-cure berries eat themselves the moment a
+  // covered status lands
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     for (const item of heldBerries(event.source)) {
-      const cures = STATUS_CURE_BERRIES[item];
-
-      if (cures?.has(event.status)) {
-        const cause = eat(event.source, item);
-
-        if (cause) {
-          event.source.removeStatus(event.status, cause);
-          return;
-        }
+      if (STATUS_CURE_BERRIES[item]?.has(event.status) && eat(event.source, item)) {
+        return;
       }
     }
   });
 
-  // Healing berries trigger when health drops to the threshold
+  // Detection: healing berries trigger when health drops to the
+  // unit's resolved threshold
   battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
     const unit = event.source;
 
@@ -101,21 +100,53 @@ export default function setupBerries(battle: Battle): void {
     for (const item of heldBerries(unit)) {
       const config = HEAL_BERRIES[item];
 
-      if (config && unit.health <= maxHealth * config.threshold) {
-        // Consume first: the heal re-enters UnitSetHealth
-        const cause = eat(unit, item);
+      if (
+        config != null &&
+        unit.health <= maxHealth * unit.checkItemThreshold(item, config.threshold) &&
+        eat(unit, item)
+      ) {
+        return;
+      }
+    }
+  });
 
-        if (cause) {
-          unit.heal(cause, unit, config.heal(maxHealth), 0);
-          return;
+  // Effect: the cure rides the trigger, clearing every covered
+  // status the unit currently has
+  battle.on(BattleEvents.UnitTriggerItem, EventPriority.Exact, (event) => {
+    const cures = STATUS_CURE_BERRIES[event.item];
+
+    if (cures) {
+      const cause = { type: EffectType.Item, item: event.item, unit: event.source } as const;
+
+      for (const status of cures) {
+        if (event.source.status[status] != null) {
+          event.source.removeStatus(status, cause);
         }
       }
     }
   });
 
+  // Effect: the heal rides the trigger
+  battle.on(BattleEvents.UnitTriggerItem, EventPriority.Exact, (event) => {
+    const config = HEAL_BERRIES[event.item];
+
+    if (config) {
+      const maxHealth = event.source.checkStat(Stats.HP, 0);
+
+      event.source.heal(
+        { type: EffectType.Item, item: event.item, unit: event.source },
+        event.source,
+        config.heal(maxHealth),
+        0,
+      );
+    }
+  });
+
   /**
    * Leppa restores a depleted move. The cooldown is this engine's
-   * stand-in for spent PP, so the berry clears it as it starts.
+   * stand-in for spent PP, so the berry clears it as it starts. The
+   * effect needs the move from the detection event, which the trigger
+   * cannot carry, so it stays inline.
    */
   battle.on(BattleEvents.UnitStartCooldown, EventPriority.Post, (event) => {
     if (eat(event.source, Items.LeppaBerry)) {

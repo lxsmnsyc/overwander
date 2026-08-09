@@ -139,3 +139,22 @@ describe('Unnerve', () => {
     expect(holder.items[Items.SitrusBerry]).toBeUndefined();
   });
 });
+
+describe('Gluttony', () => {
+  it('eats pinch berries at a doubled threshold', () => {
+    const { battle, teamA } = createBattle();
+    const glutton = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    glutton.addAbility(Abilities.Gluttony);
+    glutton.addItem(Items.SitrusBerry);
+    plain.addItem(Items.SitrusBerry);
+
+    // Above the normal 50% threshold but under Gluttony's doubled one
+    glutton.setHealth(120);
+    plain.setHealth(120);
+
+    expect(glutton.items[Items.SitrusBerry]).toBeUndefined(); // eaten
+    expect(glutton.health).toBe(160); // 120 + 160 / 4
+    expect(plain.items[Items.SitrusBerry]).toBe(true); // still held
+  });
+});

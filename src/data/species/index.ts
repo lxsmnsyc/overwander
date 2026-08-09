@@ -17,6 +17,7 @@ import registerGrimerSpecies from './grimer';
 import registerGrowlitheSpecies from './growlithe';
 import registerJigglypuffSpecies from './jigglypuff';
 import registerKrabbySpecies from './krabby';
+import registerKoffingSpecies from './koffing';
 import registerLickitungSpecies from './lickitung';
 import registerMachopSpecies from './machop';
 import registerMagnemiteSpecies from './magnemite';
@@ -98,4 +99,5 @@ export function registerSpecies(): void {
   registerCuboneSpecies();
   registerTyrogueSpecies();
   registerLickitungSpecies();
+  registerKoffingSpecies();
 }

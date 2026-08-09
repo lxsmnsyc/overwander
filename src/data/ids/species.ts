@@ -116,4 +116,6 @@ export const enum Species {
   Hitmonlee = 108,
   Hitmonchan = 109,
   Lickitung = 110,
+  Koffing = 111,
+  Weezing = 112,
 }

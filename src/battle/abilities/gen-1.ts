@@ -27,6 +27,7 @@ import { OHKO_MOVES } from '../moves/fixed-damage';
 import { RECOIL_MOVES } from '../moves/recoil';
 import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { hasAttackEffect } from '../moves/status';
+import { PROTECTED_ABILITIES } from './special';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
@@ -2323,6 +2324,54 @@ const setupAbilities = [
         event.power *= FACTOR;
       }
     });
+  }),
+
+  // Koffing
+  // https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability)
+  createAbility(Abilities.NeutralizingGas, (battle) => {
+    /**
+     * Abilities the gas cannot shut down: other gas holders and the
+     * disable-protected special tier
+     */
+    const UNSUPPRESSIBLE = new Set<Abilities>([Abilities.NeutralizingGas, ...PROTECTED_ABILITIES]);
+
+    // Holders currently on the field (the Unnerve pattern)
+    const holders = new Set<Unit>();
+
+    return new MergedAbilityLifecycle([
+      // Pure query: while any holder is up, every other unit's
+      // abilities read as absent — no unit state is touched, so the
+      // gas lifting restores everything for free
+      battle.on(BattleEvents.CheckUnitAbility, EventPriority.Post, (event) => {
+        if (
+          event.enabled &&
+          holders.size > 0 &&
+          !holders.has(event.source) &&
+          !UNSUPPRESSIBLE.has(event.ability)
+        ) {
+          event.enabled = false;
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.NeutralizingGas)) {
+          holders.add(event.source);
+
+          // For visual cues
+          event.source.triggerAbility(Abilities.NeutralizingGas);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+        if (event.ability === Abilities.NeutralizingGas) {
+          holders.delete(event.source);
+        }
+      }),
+    ]);
   }),
 ];
 

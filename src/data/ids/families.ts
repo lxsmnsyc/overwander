@@ -48,6 +48,7 @@ const enum Families {
   // Hitmonlee/Hitmonchan (the Gen 2 baby names the family)
   Tyrogue = 46,
   Lickitung = 47,
+  Koffing = 48,
 }
 
 export default Families;

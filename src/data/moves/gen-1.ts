@@ -1484,4 +1484,23 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Smog, {
+    name: 'Smog',
+    type: Types.Poison,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 30,
+    accuracy: 70,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.SmokeScreen, {
+    name: 'Smokescreen',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

@@ -58,6 +58,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.IcePunch]: { status: Statuses.Frozen, chance: 10 },
   [Moves.ThunderPunch]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.RollingKick]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Smog]: { status: Statuses.Poisoned, chance: 40 },
 };
 
 const EFFECT_STAGE_MOVES: {

@@ -10,6 +10,7 @@ import type Battle from './core';
 import type {
   CastingData,
   ChannelingData,
+  CheckUnitAbilityEvent,
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
@@ -549,7 +550,17 @@ export default class Unit {
   }
 
   hasAbility(ability: Abilities): boolean {
-    return this.abilities[ability] === true;
+    const event: CheckUnitAbilityEvent = {
+      id: 'CheckUnitAbility',
+      disabled: false,
+      source: this,
+      ability,
+      // The unit's own record is the baseline; suppressors (e.g.
+      // Neutralizing Gas) may clear it
+      enabled: this.abilities[ability] === true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitAbility, event);
+    return event.enabled;
   }
 
   triggerAbility(ability: Abilities): void {

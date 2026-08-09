@@ -135,6 +135,8 @@ const enum Abilities {
   Reckless = 87,
   Unburden = 88,
   IronFist = 89,
+  // Koffing
+  NeutralizingGas = 90,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

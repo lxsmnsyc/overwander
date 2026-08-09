@@ -2162,3 +2162,71 @@ describe('crash moves', () => {
     expect(unit.health).toBe(80);
   });
 });
+
+describe('Neutralizing Gas', () => {
+  it('suppresses other abilities while a holder is fielded', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const runner = createUnit(battle, teamA);
+    runner.addAbility(Abilities.SandRush);
+
+    expect(runner.hasAbility(Abilities.SandRush)).toBe(true);
+
+    const gas = createUnit(battle, teamB);
+    gas.addAbility(Abilities.NeutralizingGas);
+    gas.enter();
+
+    expect(runner.hasAbility(Abilities.SandRush)).toBe(false);
+
+    gas.leave();
+
+    expect(runner.hasAbility(Abilities.SandRush)).toBe(true);
+  });
+
+  it('suppresses abilities gained under the gas but spares specials', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', { abilities: 2 });
+    const gas = createUnit(battle, teamA);
+    gas.addAbility(Abilities.NeutralizingGas);
+    gas.enter();
+
+    const late = createUnit(battle, teamB);
+    late.addAbility(Abilities.Limber);
+    late.addAbility(Abilities.Boss);
+
+    expect(late.hasAbility(Abilities.Limber)).toBe(false);
+    expect(late.hasAbility(Abilities.Boss)).toBe(true);
+  });
+
+  it('keeps suppressing while another holder remains', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const runner = createUnit(battle, teamA);
+    runner.addAbility(Abilities.SandRush);
+
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    first.addAbility(Abilities.NeutralizingGas);
+    second.addAbility(Abilities.NeutralizingGas);
+    first.enter();
+    second.enter();
+
+    first.leave();
+    expect(runner.hasAbility(Abilities.SandRush)).toBe(false);
+
+    second.leave();
+    expect(runner.hasAbility(Abilities.SandRush)).toBe(true);
+  });
+});
+
+describe('protected abilities', () => {
+  it('Boss and Shadow cannot be disabled', () => {
+    const { battle, teamA } = createBattle('test-seed', { abilities: 2 });
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.Boss);
+    unit.addAbility(Abilities.Shadow);
+
+    unit.disableAbility(Abilities.Boss);
+    unit.disableAbility(Abilities.Shadow);
+
+    expect(unit.hasAbility(Abilities.Boss)).toBe(true);
+    expect(unit.hasAbility(Abilities.Shadow)).toBe(true);
+  });
+});

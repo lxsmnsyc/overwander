@@ -10,6 +10,12 @@ import type Unit from '../unit';
 import { MergedAbilityLifecycle, createAbility } from './__create';
 
 /**
+ * Special-tier abilities that can never be disabled (e.g. by
+ * Neutralizing Gas or future ability-suppressing effects)
+ */
+export const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
+
+/**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest)
  */
 const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
@@ -196,6 +202,13 @@ const setupAbilities = [
 ];
 
 export default function setupSpecialAbilities(battle: Battle): void {
+  // Always active: special-tier abilities cannot be switched off
+  battle.on(BattleEvents.UnitDisableAbility, EventPriority.Pre, (event) => {
+    if (PROTECTED_ABILITIES.has(event.ability)) {
+      event.disabled = true;
+    }
+  });
+
   for (const setup of setupAbilities) {
     setup(battle);
   }

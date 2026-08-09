@@ -189,6 +189,7 @@ export const enum BattleEvents {
   CheckUnitGrounded = 125,
   CheckUnitMoveTargetFlags = 126,
   UnitSetWeather = 127,
+  CheckUnitAbility = 128,
 }
 
 export const enum MoveTargetType {
@@ -321,6 +322,16 @@ export interface CheckUnitMoveTargetFlagsEvent extends UnitMoveEvent {
 export interface UnitSetWeatherEvent extends UnitEvent {
   weather: Weathers;
   global: boolean;
+}
+
+/**
+ * Resolves whether the unit can currently use an ability: `enabled`
+ * starts from the unit's own ability record and suppressors (e.g.
+ * Neutralizing Gas) may clear it
+ */
+export interface CheckUnitAbilityEvent extends UnitEvent {
+  ability: Abilities;
+  enabled: boolean;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {
@@ -648,6 +659,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
+  [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];

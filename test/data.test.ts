@@ -68,12 +68,22 @@ describe('biome data', () => {
 
   it('assigns habitat biomes to species', () => {
     expect(getSpeciesData(Species.Sandshrew).biomes).toEqual([Biome.Desert]);
-    expect(getSpeciesData(Species.Lapras).biomes).toEqual([Biome.Ocean, Biome.DeepOcean]);
+    expect(getSpeciesData(Species.Lapras).biomes).toEqual([
+      Biome.Ocean,
+      Biome.DeepOcean,
+      Biome.PolarOcean,
+    ]);
     expect(getSpeciesData(Species.Articuno).biomes).toContain(Biome.Glacier);
 
     // Evolution can move a species to new waters
     expect(getSpeciesData(Species.Magikarp).biomes).toContain(Biome.Swamp);
     expect(getSpeciesData(Species.Gyarados).biomes).not.toContain(Biome.Swamp);
+
+    // The gap-filler biomes all have residents
+    expect(getSpeciesData(Species.Eevee).biomes).toContain(Biome.Woodland);
+    expect(getSpeciesData(Species.Tauros).biomes).toContain(Biome.Steppe);
+    expect(getSpeciesData(Species.Paras).biomes).toContain(Biome.MontaneForest);
+    expect(getSpeciesData(Species.Seel).biomes).toContain(Biome.PolarOcean);
   });
 
   it('assigns day-cycle preferences to species', () => {

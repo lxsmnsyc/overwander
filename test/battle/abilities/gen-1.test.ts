@@ -542,6 +542,19 @@ describe('Sand Veil', () => {
 
     expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(80);
   });
+
+  it('shields the holder from sandstorm chip damage', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    holder.addAbility(Abilities.SandVeil);
+
+    battle.setWeather(Weathers.Sandstorm);
+    battle.tick(1000);
+
+    expect(holder.health).toBe(160);
+    expect(plain.health).toBe(150);
+  });
 });
 
 describe('Sand Rush', () => {
@@ -1466,5 +1479,55 @@ describe('Early Bird', () => {
 
     battle.tick(1000);
     expect(plain.status[Statuses.Sleeping]).toBeUndefined();
+  });
+});
+
+describe('Hydration', () => {
+  it('blocks major status conditions in the rain', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.Hydration);
+    teamA.weather.current = Weathers.Rain;
+
+    unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
+    expect(unit.status[Statuses.Poisoned]).toBeUndefined();
+
+    teamA.weather.current = Weathers.None;
+
+    unit.addStatus(Statuses.Poisoned, NONE_CAUSE);
+    expect(unit.status[Statuses.Poisoned]).toBeDefined();
+  });
+});
+
+describe('Ice Body', () => {
+  it('heals a sixteenth of max health on cast in hail', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.IceBody);
+    teamA.weather.current = Weathers.Hail;
+    unit.setHealth(100);
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: unit,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.None },
+    });
+
+    expect(unit.health).toBe(110);
+  });
+
+  it('shields the holder from hail chip damage', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    holder.addAbility(Abilities.IceBody);
+
+    battle.setWeather(Weathers.Hail);
+    battle.tick(1000);
+
+    expect(holder.health).toBe(160);
+    expect(plain.health).toBe(150);
   });
 });

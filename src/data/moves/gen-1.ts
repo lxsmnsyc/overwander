@@ -1244,4 +1244,14 @@ export default function registerGen1Moves(): void {
     flags: 0,
     delay: PROJECTILE_DELAY,
   });
+  registerMove(Moves.AuroraBeam, {
+    name: 'Aurora Beam',
+    type: Types.Ice,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

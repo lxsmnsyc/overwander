@@ -75,3 +75,8 @@ export function isWeatherRainy(unit: Unit): boolean {
 export function isWeatherSandstorm(unit: Unit): boolean {
   return unit.checkWeather() === Weathers.Sandstorm;
 }
+
+export function isWeatherHail(unit: Unit): boolean {
+  const weather = unit.checkWeather();
+  return weather === Weathers.Hail || weather === Weathers.Snow;
+}

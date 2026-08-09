@@ -8,6 +8,7 @@ import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
+import { Weathers } from '../../src/data/ids/status';
 import { getSpeciesAbilities } from '../../src/data/species';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -295,5 +296,64 @@ describe('species abilities', () => {
 
     expect(oddish.has(Abilities.Stench)).toBe(false);
     expect(oddish.size).toBe(2);
+  });
+});
+
+describe('weather chip damage', () => {
+  it('sandstorm chips a sixteenth of max health per interval', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const rocky = createUnit(battle, teamB);
+    rocky.types.add(Types.Rock);
+
+    battle.setWeather(Weathers.Sandstorm);
+
+    battle.tick(500);
+    expect(unit.health).toBe(160);
+
+    battle.tick(500);
+    expect(unit.health).toBe(150);
+    expect(rocky.health).toBe(160);
+
+    battle.tick(1000);
+    expect(unit.health).toBe(140);
+  });
+
+  it('hail chips everyone but Ice types', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const icy = createUnit(battle, teamB);
+    icy.types.add(Types.Ice);
+
+    battle.setWeather(Weathers.Hail);
+    battle.tick(1000);
+
+    expect(unit.health).toBe(150);
+    expect(icy.health).toBe(160);
+  });
+
+  it('stops chipping when the weather clears', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    battle.setWeather(Weathers.Sandstorm);
+    battle.tick(1000);
+    expect(unit.health).toBe(150);
+
+    battle.setWeather(Weathers.None);
+    battle.tick(1000);
+    expect(unit.health).toBe(150);
+  });
+
+  it('team-local weather only chips exposed units', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const exposed = createUnit(battle, teamA);
+    const sheltered = createUnit(battle, teamB);
+
+    teamA.setWeather(Weathers.Hail);
+    battle.tick(1000);
+
+    expect(exposed.health).toBe(150);
+    expect(sheltered.health).toBe(160);
   });
 });

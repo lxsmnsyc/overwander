@@ -35,6 +35,7 @@ const enum Families {
   Magnemite = 33,
   Farfetchd = 34,
   Doduo = 35,
+  Seel = 36,
 }
 
 export default Families;

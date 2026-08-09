@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { type EventListenerLifecycle, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
@@ -9,7 +9,13 @@ import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+  type UnitAttackEvent,
+  type UnitDamageEvent,
+} from '../events';
 import { OHKO_MOVES } from '../moves/fixed-damage';
 import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { hasAttackEffect } from '../moves/status';
@@ -21,6 +27,7 @@ import {
   hasAnyStatus,
   holdsAnyItem,
   isUnitGrounded,
+  isWeatherHail,
   isWeatherRainy,
   isWeatherSandstorm,
   isWeatherSunny,
@@ -31,6 +38,24 @@ import {
   createBlazeAbility,
   createDrizzleAbility,
 } from './__create';
+
+// Vetoes the residual weather chip damage carried by the given weather
+// cause (see mechanics/weather.ts)
+function chipImmunity(
+  battle: Battle,
+  ability: Abilities,
+  weather: Weathers,
+): EventListenerLifecycle<UnitDamageEvent> {
+  return battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+    if (
+      event.cause.type === EffectType.Weather &&
+      event.cause.weather === weather &&
+      event.target.hasAbility(ability)
+    ) {
+      event.disabled = true;
+    }
+  });
+}
 
 const setupAbilities = [
   // Bulbasaur
@@ -528,30 +553,40 @@ const setupAbilities = [
 
   // Sandshrew
   // https://bulbapedia.bulbagarden.net/wiki/Sand_Veil_(Ability)
-  createAbility(Abilities.SandVeil, (battle) =>
-    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
-      if (
-        event.accuracy != null &&
-        event.target.type === MoveTargetType.Unit &&
-        event.target.unit.hasAbility(Abilities.SandVeil) &&
-        isWeatherSandstorm(event.target.unit)
-      ) {
-        event.accuracy *= 0.8;
-      }
-    }),
+  createAbility(
+    Abilities.SandVeil,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (
+            event.accuracy != null &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.SandVeil) &&
+            isWeatherSandstorm(event.target.unit)
+          ) {
+            event.accuracy *= 0.8;
+          }
+        }),
+        chipImmunity(battle, Abilities.SandVeil, Weathers.Sandstorm),
+      ]),
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Sand_Rush_(Ability)
-  createAbility(Abilities.SandRush, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (
-        event.stat === Stats.Speed &&
-        event.source.hasAbility(Abilities.SandRush) &&
-        isWeatherSandstorm(event.source)
-      ) {
-        event.value *= 2;
-      }
-    }),
+  createAbility(
+    Abilities.SandRush,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (
+            event.stat === Stats.Speed &&
+            event.source.hasAbility(Abilities.SandRush) &&
+            isWeatherSandstorm(event.source)
+          ) {
+            event.value *= 2;
+          }
+        }),
+        chipImmunity(battle, Abilities.SandRush, Weathers.Sandstorm),
+      ]),
   ),
 
   // Nidoran
@@ -1119,16 +1154,19 @@ const setupAbilities = [
     const BOOSTED = new Set<Types>([Types.Ground, Types.Rock, Types.Steel]);
     const FACTOR = 1.3;
 
-    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-      if (
-        event.power != null &&
-        event.source.hasAbility(Abilities.SandForce) &&
-        isWeatherSandstorm(event.source) &&
-        BOOSTED.has(getMoveData(event.move).type)
-      ) {
-        event.power *= FACTOR;
-      }
-    });
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (
+          event.power != null &&
+          event.source.hasAbility(Abilities.SandForce) &&
+          isWeatherSandstorm(event.source) &&
+          BOOSTED.has(getMoveData(event.move).type)
+        ) {
+          event.power *= FACTOR;
+        }
+      }),
+      chipImmunity(battle, Abilities.SandForce, Weathers.Sandstorm),
+    ]);
   }),
 
   // Meowth
@@ -1796,6 +1834,58 @@ const setupAbilities = [
         event.duration /= 2;
       }
     }),
+  ),
+
+  // Seel
+  // https://bulbapedia.bulbagarden.net/wiki/Hydration_(Ability)
+  createAbility(
+    Abilities.Hydration,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: no major status conditions in the rain
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            MAJOR_STATUS_CONDITIONS.has(event.status) &&
+            isWeatherRainy(event.source) &&
+            event.source.hasAbility(Abilities.Hydration)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (
+            MAJOR_STATUS_CONDITIONS.has(event.status) &&
+            isWeatherRainy(event.source) &&
+            event.source.hasAbility(Abilities.Hydration)
+          ) {
+            event.source.triggerAbility(Abilities.Hydration);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Ice_Body_(Ability)
+  createAbility(
+    Abilities.IceBody,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // No turn mechanics, we detect on move cast instead
+        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+          if (isWeatherHail(event.source) && event.source.hasAbility(Abilities.IceBody)) {
+            event.source.triggerAbility(Abilities.IceBody);
+          }
+        }),
+        // The heal rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.IceBody) {
+            const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
+            event.source.setHealth(event.source.health + maxHP);
+          }
+        }),
+        chipImmunity(battle, Abilities.IceBody, Weathers.Hail),
+      ]),
   ),
 ];
 

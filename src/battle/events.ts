@@ -203,12 +203,15 @@ export const enum EffectType {
   Move = 1,
   Ability = 2,
   Item = 3,
+  Weather = 4,
 }
 
 export type EffectCause =
   | { type: EffectType.Move; move: Moves; unit: Unit }
   | { type: EffectType.Item; item: Items; unit: Unit }
   | { type: EffectType.Ability; ability: Abilities; unit: Unit }
+  // Environmental damage: `unit` is the afflicted unit itself
+  | { type: EffectType.Weather; weather: Weathers; unit: Unit }
   | { type: EffectType.None };
 
 export interface TickEvent extends BaseEvent {

@@ -105,6 +105,9 @@ const enum Abilities {
   Analytic = 69,
   // Doduo
   EarlyBird = 70,
+  // Seel
+  Hydration = 71,
+  IceBody = 72,
 }
 
 export default Abilities;

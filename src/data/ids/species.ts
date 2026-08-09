@@ -93,4 +93,6 @@ export const enum Species {
   Farfetchd = 85,
   Doduo = 86,
   Dodrio = 87,
+  Seel = 88,
+  Dewgong = 89,
 }

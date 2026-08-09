@@ -222,4 +222,5 @@ export const enum Moves {
   Headbutt = 125,
   SonicBoom = 126,
   TriAttack = 127,
+  AuroraBeam = 128,
 }

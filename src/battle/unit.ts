@@ -17,6 +17,7 @@ import type {
   CheckUnitEscapeEvent,
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
+  CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
@@ -923,6 +924,20 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveSteps, event);
     return event.steps;
+  }
+
+  checkMoveHits(move: Moves, target: MoveTarget, hits: number, max: number): number {
+    const event: CheckUnitMoveHitsEvent = {
+      id: 'CheckUnitMoveHits',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      hits,
+      max,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveHits, event);
+    return event.hits;
   }
 
   checkStatusImmunity(status: Statuses, cause: EffectCause): boolean {

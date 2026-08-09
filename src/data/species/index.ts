@@ -28,6 +28,7 @@ import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
 import registerSandshrewSpecies from './sandshrew';
 import registerSeelSpecies from './seel';
+import registerShellderSpecies from './shellder';
 import registerSlowpokeSpecies from './slowpoke';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
@@ -78,4 +79,5 @@ export function registerSpecies(): void {
   registerDoduoSpecies();
   registerSeelSpecies();
   registerGrimerSpecies();
+  registerShellderSpecies();
 }

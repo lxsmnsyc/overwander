@@ -22,6 +22,7 @@ const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.FurySwipes]: { min: 2, max: 5 },
   [Moves.DoubleKick]: { min: 2, max: 2 },
   [Moves.DoubleSlap]: { min: 2, max: 5 },
+  [Moves.SpikeCannon]: { min: 2, max: 5 },
 };
 
 // Delay between strikes
@@ -131,7 +132,14 @@ export default function setupMultiHitMoves(battle: Battle): void {
         target: event.target.unit,
         moveTarget: event.target,
         move: event.move,
-        remaining: rollHitCount(config),
+        // The roll resolves through the event engine so abilities
+        // (e.g. Skill Link) can adjust it
+        remaining: event.source.checkMoveHits(
+          event.move,
+          event.target,
+          rollHitCount(config),
+          config.max,
+        ),
         progress: 0,
       };
 

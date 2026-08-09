@@ -111,6 +111,10 @@ const enum Abilities {
   // Grimer
   StickyHold = 73,
   PoisonTouch = 74,
+  // Shellder
+  ShellArmor = 75,
+  SkillLink = 76,
+  Overcoat = 77,
 }
 
 export default Abilities;

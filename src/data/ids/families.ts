@@ -37,6 +37,7 @@ const enum Families {
   Doduo = 35,
   Seel = 36,
   Grimer = 37,
+  Shellder = 38,
 }
 
 export default Families;

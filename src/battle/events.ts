@@ -185,6 +185,7 @@ export const enum BattleEvents {
   CheckUnitRemoveStage = 121,
   CheckUnitStatusDuration = 122,
   UnitUpdateStatusTimer = 123,
+  CheckUnitMoveHits = 124,
 }
 
 export const enum MoveTargetType {
@@ -279,6 +280,16 @@ export interface CheckUnitMoveTimeEvent extends CheckUnitMoveEvent {
 }
 export interface CheckUnitMoveStepsEvent extends CheckUnitMoveEvent {
   steps: number;
+}
+
+/**
+ * Resolves how many times a multi-hit move strikes: `hits` starts at
+ * the rolled count and listeners (e.g. Skill Link) may adjust it up
+ * to `max`
+ */
+export interface CheckUnitMoveHitsEvent extends CheckUnitMoveEvent {
+  hits: number;
+  max: number;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {
@@ -602,6 +613,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMovePriority]: [CheckUnitMovePriorityEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCooldown]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveHits]: [CheckUnitMoveHitsEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];

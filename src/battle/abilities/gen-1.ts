@@ -1932,6 +1932,58 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Shellder
+  // https://bulbapedia.bulbagarden.net/wiki/Shell_Armor_(Ability)
+  createAbility(Abilities.ShellArmor, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
+      if (event.critical && event.parent.target.hasAbility(Abilities.ShellArmor)) {
+        event.critical = false;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Skill_Link_(Ability)
+  createAbility(Abilities.SkillLink, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveHits, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.SkillLink)) {
+        event.hits = event.max;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Overcoat_(Ability)
+  createAbility(
+    Abilities.Overcoat,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        chipImmunity(battle, Abilities.Overcoat, Weathers.Sandstorm),
+        chipImmunity(battle, Abilities.Overcoat, Weathers.Hail),
+        // Pure query: powder- and spore-based moves cannot land
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.Overcoat) &&
+            getMoveData(event.move).flags & MoveFlags.Powder
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real use was blocked
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (
+            target.type === MoveTargetType.Unit &&
+            target.unit.hasAbility(Abilities.Overcoat) &&
+            getMoveData(event.parent.move).flags & MoveFlags.Powder
+          ) {
+            target.unit.triggerAbility(Abilities.Overcoat);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

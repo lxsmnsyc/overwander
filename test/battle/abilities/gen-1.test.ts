@@ -6,6 +6,7 @@ import {
   EffectType,
   MoveTargetType,
   type UnitAttackEvent,
+  type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats } from '../../../src/data/constants/stats';
@@ -1569,5 +1570,76 @@ describe('Poison Touch', () => {
     attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, victim, 10, 0);
 
     expect(victim.status[Statuses.Poisoned]).toBeDefined();
+  });
+});
+
+describe('Shell Armor', () => {
+  it('blocks critical hits', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // every roll would crit
+
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ShellArmor);
+
+    for (const [defender, expected] of [
+      [holder, false],
+      [plain, true],
+    ] as const) {
+      const event: UnitAttackResolveCriticalEvent = {
+        id: 'UnitAttackResolveCriticalHit',
+        disabled: false,
+        parent: makeAttack(attacker, defender, Moves.Tackle, Types.Normal, MoveCategories.Physical),
+        critical: false,
+      };
+
+      battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
+
+      expect(event.critical).toBe(expected);
+    }
+  });
+});
+
+describe('Skill Link', () => {
+  it('multi-hit moves always strike the maximum count', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(unit.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(2);
+
+    unit.addAbility(Abilities.SkillLink);
+
+    expect(unit.checkMoveHits(Moves.SpikeCannon, target, 2, 5)).toBe(5);
+  });
+});
+
+describe('Overcoat', () => {
+  it('is immune to powder moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Overcoat);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.SleepPowder, target, Types.Grass)).toBe(true);
+    expect(attacker.checkMoveImmunity(Moves.Tackle, target, Types.Normal)).toBe(false);
+  });
+
+  it('shields the holder from both weather chips', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Overcoat);
+
+    battle.setWeather(Weathers.Sandstorm);
+    battle.tick(1000);
+    battle.setWeather(Weathers.Hail);
+    battle.tick(1000);
+
+    expect(holder.health).toBe(160);
   });
 });

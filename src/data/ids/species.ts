@@ -97,4 +97,6 @@ export const enum Species {
   Dewgong = 89,
   Grimer = 90,
   Muk = 91,
+  Shellder = 92,
+  Cloyster = 93,
 }

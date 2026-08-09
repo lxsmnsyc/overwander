@@ -31,11 +31,15 @@ export const enum MoveFlags {
   /**
    * Move makes contact with the target
    */
-  Contact = 0b01,
+  Contact = 0b001,
   /**
    * Sound-based
    */
-  Sound = 0b10,
+  Sound = 0b010,
+  /**
+   * Powder- or spore-based (blocked by e.g. Overcoat)
+   */
+  Powder = 0b100,
 }
 
 export const enum MoveAttackFlags {
@@ -225,4 +229,6 @@ export const enum Moves {
   AuroraBeam = 128,
   PoisonGas = 129,
   Sludge = 130,
+  Clamp = 131,
+  SpikeCannon = 132,
 }

@@ -52,7 +52,7 @@ export default function registerGen1Moves(): void {
     pp: 35,
     accuracy: 75,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Powder,
   });
   registerMove(Moves.RazorLeaf, {
     name: 'Razor Leaf',
@@ -209,7 +209,7 @@ export default function registerGen1Moves(): void {
     pp: 15,
     accuracy: 75,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Powder,
   });
   registerMove(Moves.Cut, {
     name: 'Cut',
@@ -566,7 +566,7 @@ export default function registerGen1Moves(): void {
     pp: 30,
     accuracy: 75,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Powder,
   });
   registerMove(Moves.Supersonic, {
     name: 'Supersonic',
@@ -1088,7 +1088,7 @@ export default function registerGen1Moves(): void {
     pp: 15,
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Powder,
   });
   registerMove(Moves.KarateChop, {
     name: 'Karate Chop',
@@ -1269,6 +1269,27 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Special,
     pp: 20,
     power: 65,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
+  registerMove(Moves.Clamp, {
+    name: 'Clamp',
+    type: Types.Water,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 35,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.SpikeCannon, {
+    name: 'Spike Cannon',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 20,
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,

@@ -61,6 +61,8 @@ const enum Abilities {
   // Paras
   DrySkin = 41,
   Damp = 42,
+  // Venonat
+  WonderSkin = 43,
 }
 
 export default Abilities;

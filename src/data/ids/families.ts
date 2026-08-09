@@ -18,6 +18,7 @@ const enum Families {
   Zubat = 16,
   Oddish = 17,
   Paras = 18,
+  Venonat = 19,
 }
 
 export default Families;

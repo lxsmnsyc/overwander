@@ -14,6 +14,7 @@ import registerRattataSpecies from './rattata';
 import registerSandshrewSpecies from './sandshrew';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
+import registerVenonatSpecies from './venonat';
 import registerVulpixSpecies from './vulpix';
 import registerWeedleSpecies from './weedle';
 import registerZubatSpecies from './zubat';
@@ -40,4 +41,5 @@ export function registerSpecies(): void {
   registerZubatSpecies();
   registerOddishSpecies();
   registerParasSpecies();
+  registerVenonatSpecies();
 }

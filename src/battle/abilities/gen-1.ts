@@ -985,6 +985,23 @@ const setupAbilities = [
 
   // TODO Damp (Paras hidden ability): blocks Self-Destruct, Explosion
   // and Aftermath once those are implemented
+
+  // Venonat (Venomoth)
+  // https://bulbapedia.bulbagarden.net/wiki/Wonder_Skin_(Ability)
+  createAbility(Abilities.WonderSkin, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+      if (
+        event.accuracy != null &&
+        event.accuracy > 50 &&
+        getMoveData(event.move).category === MoveCategories.Status &&
+        event.target.type === MoveTargetType.Unit &&
+        event.target.unit !== event.source &&
+        event.target.unit.hasAbility(Abilities.WonderSkin)
+      ) {
+        event.accuracy = 50;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

@@ -922,3 +922,17 @@ describe('Dry Skin', () => {
     expect(boosted / normal).toBeCloseTo(1.25);
   });
 });
+
+describe('Wonder Skin', () => {
+  it('drops accurate status moves to 50 percent, leaving attacks alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WonderSkin);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveAccuracy(Moves.StunSpore, target)).toBe(50);
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBe(100);
+  });
+});

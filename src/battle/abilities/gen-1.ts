@@ -1105,6 +1105,59 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Psyduck
+  // https://bulbapedia.bulbagarden.net/wiki/Cloud_Nine_(Ability)
+  createAbility(Abilities.CloudNine, (battle) => {
+    /**
+     * Holders currently on the field (the Unnerve pattern): weather
+     * checks reduce to a single size lookup instead of scanning
+     * every unit each time
+     */
+    const holders = new Set<Unit>();
+
+    return new MergedAbilityLifecycle([
+      // Weather effects are suppressed while any holder is up
+      battle.on(BattleEvents.CheckUnitWeather, EventPriority.Post, (event) => {
+        if (holders.size > 0) {
+          event.weather = Weathers.None;
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.CloudNine)) {
+          holders.add(event.source);
+
+          // Announce on entry
+          event.source.triggerAbility(Abilities.CloudNine);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      // Losing the ability mid-battle also lifts the suppression
+      battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+        if (event.ability === Abilities.CloudNine) {
+          holders.delete(event.source);
+        }
+      }),
+    ]);
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Swift_Swim_(Ability)
+  createAbility(Abilities.SwiftSwim, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        isWeatherRainy(event.source) &&
+        event.stat === Stats.Speed &&
+        event.source.hasAbility(Abilities.SwiftSwim)
+      ) {
+        event.value *= 2;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

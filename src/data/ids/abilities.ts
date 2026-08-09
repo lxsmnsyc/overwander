@@ -70,6 +70,9 @@ const enum Abilities {
   Pickup = 46,
   Technician = 47,
   Limber = 48,
+  // Psyduck
+  CloudNine = 49,
+  SwiftSwim = 50,
 }
 
 export default Abilities;

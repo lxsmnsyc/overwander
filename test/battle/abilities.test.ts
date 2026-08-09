@@ -1044,3 +1044,40 @@ describe('Pickup', () => {
     expect(holder.items[Items.OranBerry]).toBe(true);
   });
 });
+
+describe('Swift Swim', () => {
+  it('doubles speed in the rain', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.SwiftSwim);
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(105);
+
+    teamA.weather.current = Weathers.Rain;
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+});
+
+describe('Cloud Nine', () => {
+  it('suppresses weather effects for everyone while up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swimmer = createUnit(battle, teamA);
+    swimmer.addAbility(Abilities.SwiftSwim);
+    teamA.weather.current = Weathers.Rain;
+
+    expect(swimmer.checkStat(Stats.Speed, 0)).toBe(210);
+
+    const duck = createUnit(battle, teamB);
+    duck.addAbility(Abilities.CloudNine);
+    duck.enter();
+
+    expect(swimmer.checkWeather()).toBe(Weathers.None);
+    expect(swimmer.checkStat(Stats.Speed, 0)).toBe(105);
+
+    // Suppression lifts when the holder goes down
+    duck.faint(duck);
+
+    expect(swimmer.checkStat(Stats.Speed, 0)).toBe(210);
+  });
+});

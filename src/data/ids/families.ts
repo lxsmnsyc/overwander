@@ -21,6 +21,7 @@ const enum Families {
   Venonat = 19,
   Diglett = 20,
   Meowth = 21,
+  Psyduck = 22,
 }
 
 export default Families;

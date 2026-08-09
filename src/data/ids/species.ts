@@ -61,4 +61,6 @@ export const enum Species {
   Dugtrio = 53,
   Meowth = 54,
   Persian = 55,
+  Psyduck = 56,
+  Golduck = 57,
 }

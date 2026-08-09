@@ -11,6 +11,7 @@ import registerOddishSpecies from './oddish';
 import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
+import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
 import registerSandshrewSpecies from './sandshrew';
@@ -46,4 +47,5 @@ export function registerSpecies(): void {
   registerVenonatSpecies();
   registerDiglettSpecies();
   registerMeowthSpecies();
+  registerPsyduckSpecies();
 }

@@ -2327,7 +2327,9 @@ const setupAbilities = [
           event.enabled = false;
         }
       }),
-      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      // Pre: the gas is up before any other entry listener (e.g.
+      // entry-triggered abilities) processes the same event
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Pre, (event) => {
         if (event.source.hasAbility(Abilities.NeutralizingGas)) {
           holders.add(event.source);
 

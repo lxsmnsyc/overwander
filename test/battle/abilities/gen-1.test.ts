@@ -2196,6 +2196,25 @@ describe('Neutralizing Gas', () => {
     expect(late.hasAbility(Abilities.Boss)).toBe(true);
   });
 
+  it('suppresses before other entry listeners of the same event', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const runner = createUnit(battle, teamA);
+    runner.addAbility(Abilities.SandRush);
+    const gas = createUnit(battle, teamB);
+    gas.addAbility(Abilities.NeutralizingGas);
+
+    let seen: boolean | undefined;
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (event.source === gas) {
+        seen = runner.hasAbility(Abilities.SandRush);
+      }
+    });
+
+    gas.enter();
+
+    expect(seen).toBe(false);
+  });
+
   it('keeps suppressing while another holder remains', () => {
     const { battle, teamA, teamB } = createBattle();
     const runner = createUnit(battle, teamA);

@@ -23,6 +23,7 @@ const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.DoubleKick]: { min: 2, max: 2 },
   [Moves.DoubleSlap]: { min: 2, max: 5 },
   [Moves.SpikeCannon]: { min: 2, max: 5 },
+  [Moves.Barrage]: { min: 2, max: 5 },
 };
 
 // Delay between strikes

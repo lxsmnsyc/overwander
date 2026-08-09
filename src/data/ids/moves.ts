@@ -239,4 +239,6 @@ export const enum Moves {
   ViceGrip = 138,
   Guillotine = 139,
   Crabhammer = 140,
+  Barrage = 141,
+  EggBomb = 142,
 }

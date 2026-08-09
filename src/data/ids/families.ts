@@ -43,6 +43,7 @@ const enum Families {
   Drowzee = 41,
   Krabby = 42,
   Voltorb = 43,
+  Exeggcute = 44,
 }
 
 export default Families;

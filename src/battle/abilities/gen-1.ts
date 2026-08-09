@@ -2,7 +2,7 @@ import { type EventListenerLifecycle, EventPriority } from '../../core/event-emi
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { ItemTypes } from '../../data/ids/items';
+import { ItemTypes, type Items } from '../../data/ids/items';
 import { DamageFlags, MoveAttackFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
@@ -2194,6 +2194,53 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Exeggcute
+  // https://bulbapedia.bulbagarden.net/wiki/Harvest_(Ability)
+  createAbility(Abilities.Harvest, (battle) => {
+    const CHANCE = 0.5;
+
+    // Last berry each holder consumed, restorable by the next harvest
+    const consumed = new Map<Unit, Items>();
+
+    return new MergedAbilityLifecycle([
+      // Only self-consumption (e.g. eating a pinch berry) is
+      // harvestable; forced removal by others is not
+      battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+        if (
+          event.cause.type === EffectType.Item &&
+          event.source.hasAbility(Abilities.Harvest) &&
+          getItemData(event.item).type === ItemTypes.Berry
+        ) {
+          consumed.set(event.source, event.item);
+        }
+      }),
+      // No turn mechanics, we detect on move cast instead; the
+      // regrowth is guaranteed in the sun, a coin flip otherwise
+      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+        if (
+          consumed.has(event.source) &&
+          event.source.hasAbility(Abilities.Harvest) &&
+          (isWeatherSunny(event.source) || battle.random() < CHANCE)
+        ) {
+          event.source.triggerAbility(Abilities.Harvest);
+        }
+      }),
+      // The regrowth rides the trigger
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        const berry = consumed.get(event.source);
+
+        if (event.ability === Abilities.Harvest && berry != null) {
+          consumed.delete(event.source);
+
+          event.source.addItem(berry);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        consumed.delete(event.source);
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

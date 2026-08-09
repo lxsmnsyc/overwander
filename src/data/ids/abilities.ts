@@ -127,6 +127,8 @@ const enum Abilities {
   // Voltorb
   Soundproof = 83,
   Aftermath = 84,
+  // Exeggcute
+  Harvest = 85,
 }
 
 export default Abilities;

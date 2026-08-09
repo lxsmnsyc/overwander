@@ -1750,6 +1750,33 @@ describe('Aftermath', () => {
   });
 });
 
+describe('Harvest', () => {
+  it('regrows a self-consumed berry on cast in the sun', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.Harvest);
+    unit.addItem(Items.OranBerry);
+    teamA.weather.current = Weathers.Sunny;
+
+    unit.removeItem(Items.OranBerry, {
+      type: EffectType.Item,
+      item: Items.OranBerry,
+      unit,
+    });
+    expect(unit.items[Items.OranBerry]).toBeUndefined();
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: unit,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.None },
+    });
+
+    expect(unit.items[Items.OranBerry]).toBe(true);
+  });
+});
+
 describe('Hyper Cutter', () => {
   it('blocks attack drops from other units only', () => {
     const { battle, teamA, teamB } = createBattle();

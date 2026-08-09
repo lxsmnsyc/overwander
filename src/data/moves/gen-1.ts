@@ -1371,4 +1371,26 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Barrage, {
+    name: 'Barrage',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 15,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
+  registerMove(Moves.EggBomb, {
+    name: 'Egg Bomb',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 100,
+    accuracy: 75,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
 }

@@ -109,4 +109,6 @@ export const enum Species {
   Kingler = 101,
   Voltorb = 102,
   Electrode = 103,
+  Exeggcute = 104,
+  Exeggutor = 105,
 }

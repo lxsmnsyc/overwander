@@ -39,6 +39,7 @@ const enum Families {
   Grimer = 37,
   Shellder = 38,
   Gastly = 39,
+  Onix = 40,
 }
 
 export default Families;

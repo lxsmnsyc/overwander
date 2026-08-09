@@ -117,6 +117,8 @@ const enum Abilities {
   Overcoat = 77,
   // Gastly
   Levitate = 78,
+  // Onix
+  WeakArmor = 79,
 }
 
 export default Abilities;

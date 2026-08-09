@@ -234,4 +234,5 @@ export const enum Moves {
   Lick = 133,
   NightShade = 134,
   DreamEater = 135,
+  Bind = 136,
 }

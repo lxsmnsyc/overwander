@@ -35,6 +35,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.FireSpin]: { status: Statuses.Trapped, chance: 100 },
   [Moves.Wrap]: { status: Statuses.Trapped, chance: 100 },
   [Moves.Clamp]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.Bind]: { status: Statuses.Trapped, chance: 100 },
   [Moves.RockSlide]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Bite]: { status: Statuses.Flinched, chance: 30 },
   [Moves.IceBeam]: { status: Statuses.Frozen, chance: 10 },

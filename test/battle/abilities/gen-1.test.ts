@@ -1670,3 +1670,22 @@ describe('Levitate', () => {
     expect(holder.checkGrounded()).toBe(true);
   });
 });
+
+describe('Weak Armor', () => {
+  it('trades defense for speed when hit by a physical move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WeakArmor);
+
+    // Special moves leave the armor intact
+    attacker.damage({ type: EffectType.Move, move: Moves.Ember, unit: attacker }, holder, 10, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(0);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(-1);
+    expect(holder.stages[Stages.Speed]).toBe(2);
+  });
+});

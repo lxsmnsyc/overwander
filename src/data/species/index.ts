@@ -19,6 +19,7 @@ import registerMankeySpecies from './mankey';
 import registerMeowthSpecies from './meowth';
 import registerNidoranFSpecies from './nidoran-f';
 import registerOddishSpecies from './oddish';
+import registerOnixSpecies from './onix';
 import registerParasSpecies from './paras';
 import registerNidoranMSpecies from './nidoran-m';
 import registerPidgeySpecies from './pidgey';
@@ -82,4 +83,5 @@ export function registerSpecies(): void {
   registerGrimerSpecies();
   registerShellderSpecies();
   registerGastlySpecies();
+  registerOnixSpecies();
 }

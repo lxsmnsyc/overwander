@@ -2016,6 +2016,41 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Onix
+  // https://bulbapedia.bulbagarden.net/wiki/Weak_Armor_(Ability)
+  createAbility(
+    Abilities.WeakArmor,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: direct damage from a physical move
+        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            !(event.flags & DamageFlags.Indirect) &&
+            event.cause.type === EffectType.Move &&
+            event.cause.unit !== event.target &&
+            event.target.hasAbility(Abilities.WeakArmor) &&
+            getMoveData(event.cause.move).category === MoveCategories.Physical
+          ) {
+            event.target.triggerAbility(Abilities.WeakArmor);
+          }
+        }),
+        // Effect: the armor cracks — Defense drops, Speed surges
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.WeakArmor) {
+            const cause = {
+              type: EffectType.Ability,
+              ability: Abilities.WeakArmor,
+              unit: event.source,
+            } as const;
+
+            event.source.addStage(Stages.Defense, -1, cause);
+            event.source.addStage(Stages.Speed, 2, cause);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

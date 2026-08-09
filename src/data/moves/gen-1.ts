@@ -1324,4 +1324,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  registerMove(Moves.Bind, {
+    name: 'Bind',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 15,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

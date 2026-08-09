@@ -124,6 +124,9 @@ const enum Abilities {
   Forewarn = 81,
   // Krabby
   HyperCutter = 82,
+  // Voltorb
+  Soundproof = 83,
+  Aftermath = 84,
 }
 
 export default Abilities;

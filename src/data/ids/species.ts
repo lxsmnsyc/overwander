@@ -107,4 +107,6 @@ export const enum Species {
   Hypno = 99,
   Krabby = 100,
   Kingler = 101,
+  Voltorb = 102,
+  Electrode = 103,
 }

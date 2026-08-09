@@ -1061,7 +1061,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Damp_(Ability)
-  // TODO Aftermath suppression once Aftermath is implemented
+  // (Aftermath performs its own explicit Damp suppression check)
   createAbility(Abilities.Damp, (battle) => {
     /**
      * Holders currently on the field (the Unnerve/Cloud Nine
@@ -2113,6 +2113,84 @@ const setupAbilities = [
 
         // For visual cues
         event.source.triggerAbility(Abilities.HyperCutter);
+      }
+    }),
+  ),
+
+  // Voltorb
+  // https://bulbapedia.bulbagarden.net/wiki/Soundproof_(Ability)
+  createAbility(
+    Abilities.Soundproof,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: sound-based moves cannot land
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.Soundproof) &&
+            getMoveData(event.move).flags & MoveFlags.Sound
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real use was blocked
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (
+            target.type === MoveTargetType.Unit &&
+            target.unit.hasAbility(Abilities.Soundproof) &&
+            getMoveData(event.parent.move).flags & MoveFlags.Sound
+          ) {
+            target.unit.triggerAbility(Abilities.Soundproof);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Aftermath_(Ability)
+  createAbility(Abilities.Aftermath, (battle) =>
+    battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        !event.target.alive &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.hasAbility(Abilities.Aftermath) &&
+        getMoveData(event.cause.move).flags & MoveFlags.Contact
+      ) {
+        // A Damp unit on the field suppresses the blast; every
+        // holder reacts for the visual cue
+        let suppressed = false;
+
+        for (const unit of battle.units()) {
+          if (unit.alive && unit.hasAbility(Abilities.Damp)) {
+            suppressed = true;
+
+            unit.triggerAbility(Abilities.Damp);
+          }
+        }
+
+        if (suppressed) {
+          return;
+        }
+
+        const attacker = event.cause.unit;
+
+        event.target.triggerAbility(Abilities.Aftermath);
+
+        event.target.damage(
+          {
+            type: EffectType.Ability,
+            ability: Abilities.Aftermath,
+            unit: event.target,
+          },
+          attacker,
+          attacker.checkStat(Stats.HP, 0) / 4,
+          DamageFlags.Indirect,
+        );
       }
     }),
   ),

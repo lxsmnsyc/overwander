@@ -1708,6 +1708,48 @@ describe('Forewarn', () => {
   });
 });
 
+describe('Soundproof', () => {
+  it('is immune to sound-based moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Soundproof);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.Growl, target, Types.Normal)).toBe(true);
+    expect(attacker.checkMoveImmunity(Moves.Tackle, target, Types.Normal)).toBe(false);
+  });
+});
+
+describe('Aftermath', () => {
+  it('damages the attacker when knocked out by contact', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Aftermath);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 999, 0);
+
+    expect(holder.alive).toBe(false);
+    expect(attacker.health).toBe(120); // a quarter of 160 max HP
+  });
+
+  it('is suppressed while a Damp unit is on the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const damp = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Aftermath);
+    damp.addAbility(Abilities.Damp);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 999, 0);
+
+    expect(holder.alive).toBe(false);
+    expect(attacker.health).toBe(160);
+  });
+});
+
 describe('Hyper Cutter', () => {
   it('blocks attack drops from other units only', () => {
     const { battle, teamA, teamB } = createBattle();

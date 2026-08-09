@@ -936,3 +936,44 @@ describe('Wonder Skin', () => {
     expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBe(100);
   });
 });
+
+describe('Arena Trap', () => {
+  it('traps grounded enemies, sparing Flying types and Run Away', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const trapper = createUnit(battle, teamA);
+    trapper.addAbility(Abilities.ArenaTrap);
+
+    const grounded = createUnit(battle, teamB);
+    const flying = createUnit(battle, teamB, [Types.Flying]);
+    const runner = createUnit(battle, teamB);
+    runner.addAbility(Abilities.RunAway);
+
+    expect(grounded.checkEscape()).toBe(false);
+    expect(flying.checkEscape()).toBe(true);
+    expect(runner.checkEscape()).toBe(true);
+    // The trapper's own side is unaffected
+    expect(trapper.checkEscape()).toBe(true);
+
+    // The Grounded status (e.g. Gravity) drags airborne units down
+    flying.addStatus(Statuses.Grounded, NONE_CAUSE);
+    expect(flying.checkEscape()).toBe(false);
+  });
+});
+
+describe('Sand Force', () => {
+  it('boosts Ground, Rock and Steel power in a sandstorm only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SandForce);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Earthquake, target)).toBe(100);
+
+    teamA.weather.current = Weathers.Sandstorm;
+
+    expect(holder.checkMovePower(Moves.Earthquake, target)).toBeCloseTo(130);
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});

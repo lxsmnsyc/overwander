@@ -63,6 +63,9 @@ const enum Abilities {
   Damp = 42,
   // Venonat
   WonderSkin = 43,
+  // Diglett
+  ArenaTrap = 44,
+  SandForce = 45,
 }
 
 export default Abilities;

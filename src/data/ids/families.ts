@@ -19,6 +19,7 @@ const enum Families {
   Oddish = 17,
   Paras = 18,
   Venonat = 19,
+  Diglett = 20,
 }
 
 export default Families;

@@ -17,6 +17,20 @@ export const enum Statuses {
   Frozen = 15,
   FocusEnergy = 16,
   Infatuated = 17,
+  /**
+   * The unit is forced onto the ground (e.g. by Gravity or Smack
+   * Down), overriding any airborne trait
+   */
+  Grounded = 18,
+  /**
+   * The unit hovers above the ground (e.g. a held Balloon, Fly's
+   * airborne step)
+   */
+  Floating = 19,
+  /**
+   * The unit is underwater (e.g. Dive's hidden step)
+   */
+  Submerged = 20,
 }
 
 export const enum Weathers {

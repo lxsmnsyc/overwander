@@ -14,6 +14,11 @@ interface SemiInvulnerableConfig {
    * Subset of bypass moves that deal double damage
    */
   doubled: Set<Moves>;
+  /**
+   * Positional status held during the hidden step (e.g. Floating for
+   * Fly, Submerged for Dive), applied alongside Invulnerable
+   */
+  status?: Statuses;
 }
 
 /**
@@ -31,7 +36,10 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   [Moves.Fly]: {
     bypass: new Set([Moves.Gust, Moves.Thunder]),
     doubled: new Set([Moves.Gust]),
+    status: Statuses.Floating,
   },
+  // TODO Dive once implemented: bypass Surf/Whirlpool (doubled),
+  // status: Statuses.Submerged
   // Self switch-out: the user vanishes during the wind-up step.
   // The switch itself is handled by the switch-out move group.
   [Moves.Teleport]: {
@@ -52,7 +60,9 @@ function getSemiInvulnerableConfig(target: Unit): SemiInvulnerableConfig | undef
 
 export default function setupSemiInvulnerableMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
-    if (event.move in SEMI_INVULNERABLE_MOVES) {
+    const config = SEMI_INVULNERABLE_MOVES[event.move];
+
+    if (config) {
       const cause = {
         type: EffectType.Move,
         move: event.move,
@@ -61,8 +71,16 @@ export default function setupSemiInvulnerableMoves(battle: Battle): void {
 
       if (event.steps === 1) {
         event.source.addStatus(Statuses.Invulnerable, cause);
+
+        if (config.status != null) {
+          event.source.addStatus(config.status, cause);
+        }
       } else {
         event.source.removeStatus(Statuses.Invulnerable, cause);
+
+        if (config.status != null) {
+          event.source.removeStatus(config.status, cause);
+        }
       }
     }
   });

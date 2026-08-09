@@ -57,4 +57,6 @@ export const enum Species {
   Parasect = 49,
   Venonat = 50,
   Venomoth = 51,
+  Diglett = 52,
+  Dugtrio = 53,
 }

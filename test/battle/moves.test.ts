@@ -733,3 +733,44 @@ describe('Haze', () => {
     expect(enemy.stages[Stages.Defense]).toBe(0);
   });
 });
+
+describe('semi-invulnerable positional statuses', () => {
+  it('Fly holds the Floating status during its airborne step', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    unit.triggerMoveEffect(Moves.Fly, unitTarget(enemy), 1);
+
+    expect(unit.status[Statuses.Invulnerable]).toBeDefined();
+    expect(unit.status[Statuses.Floating]).toBeDefined();
+
+    // Airborne: Ground moves cannot reach it
+    expect(enemy.checkMoveImmunity(Moves.Earthquake, unitTarget(unit), Types.Ground)).toBe(true);
+
+    unit.triggerMoveEffect(Moves.Fly, unitTarget(enemy), 0);
+
+    expect(unit.status[Statuses.Invulnerable]).toBeUndefined();
+    expect(unit.status[Statuses.Floating]).toBeUndefined();
+  });
+
+  it('the Floating status alone grants Ground immunity, Grounded revokes it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const balloon = createUnit(battle, teamB);
+
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(balloon), Types.Ground)).toBe(
+      false,
+    );
+
+    balloon.addStatus(Statuses.Floating, NONE_CAUSE);
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(balloon), Types.Ground)).toBe(
+      true,
+    );
+
+    balloon.addStatus(Statuses.Grounded, NONE_CAUSE);
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(balloon), Types.Ground)).toBe(
+      false,
+    );
+  });
+});

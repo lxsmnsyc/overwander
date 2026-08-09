@@ -14,7 +14,13 @@ import { hasAttackEffect } from '../moves/status';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
-import { hasAnyStatus, isWeatherRainy, isWeatherSandstorm, isWeatherSunny } from '../utils';
+import {
+  hasAnyStatus,
+  isUnitGrounded,
+  isWeatherRainy,
+  isWeatherSandstorm,
+  isWeatherSunny,
+} from '../utils';
 import {
   MergedAbilityLifecycle,
   createAbility,
@@ -1002,6 +1008,53 @@ const setupAbilities = [
       }
     }),
   ),
+
+  // Diglett
+  // https://bulbapedia.bulbagarden.net/wiki/Arena_Trap_(Ability)
+  createAbility(Abilities.ArenaTrap, (battle) =>
+    battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        !event.success ||
+        // Airborne and Ghost-type units cannot be trapped, and Run
+        // Away escapes regardless: the explicit check (instead of a
+        // Post override) keeps the trap cue from firing spuriously
+        !isUnitGrounded(source) ||
+        source.types.has(Types.Ghost) ||
+        source.hasAbility(Abilities.RunAway)
+      ) {
+        return;
+      }
+
+      for (const unit of battle.units(source.team.alliance)) {
+        if (unit.alive && unit.hasAbility(Abilities.ArenaTrap)) {
+          event.success = false;
+
+          // For visual cues
+          unit.triggerAbility(Abilities.ArenaTrap);
+          return;
+        }
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sand_Force_(Ability)
+  createAbility(Abilities.SandForce, (battle) => {
+    const BOOSTED = new Set<Types>([Types.Ground, Types.Rock, Types.Steel]);
+    const FACTOR = 1.3;
+
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(Abilities.SandForce) &&
+        isWeatherSandstorm(event.source) &&
+        BOOSTED.has(getMoveData(event.move).type)
+      ) {
+        event.power *= FACTOR;
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

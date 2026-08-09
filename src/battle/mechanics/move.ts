@@ -4,7 +4,7 @@ import {
   TYPE_EFFECTIVENESS,
   TYPE_EFFECTIVENESS_FACTOR,
   TypeEffectiveness,
-  type Types,
+  Types,
 } from '../../data/constants/types';
 import type { Moves } from '../../data/ids/moves';
 import {
@@ -34,6 +34,7 @@ import type {
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { isUnitGrounded } from '../utils';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
@@ -93,6 +94,18 @@ export function setupMoveMechanics(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
     if (event.target.type === MoveTargetType.Unit) {
       event.immune = isUnitImmune(event.target.unit, event.type);
+    }
+  });
+  // Ground moves cannot reach airborne units (Floating status, Flying
+  // type); the Grounded status drags them back into range
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
+    if (
+      !event.immune &&
+      event.type === Types.Ground &&
+      event.target.type === MoveTargetType.Unit &&
+      !isUnitGrounded(event.target.unit)
+    ) {
+      event.immune = true;
     }
   });
   battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, (event) => {

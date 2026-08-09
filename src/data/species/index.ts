@@ -2,6 +2,7 @@ import registerBulbasaurSpecies from './bulbasaur';
 import registerCaterpieSpecies from './caterpie';
 import registerCharmanderSpecies from './charmander';
 import registerClefairySpecies from './clefairy';
+import registerDiglettSpecies from './diglett';
 import registerEkansSpecies from './ekans';
 import registerJigglypuffSpecies from './jigglypuff';
 import registerNidoranFSpecies from './nidoran-f';
@@ -42,4 +43,5 @@ export function registerSpecies(): void {
   registerOddishSpecies();
   registerParasSpecies();
   registerVenonatSpecies();
+  registerDiglettSpecies();
 }

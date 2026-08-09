@@ -136,4 +136,6 @@ export const enum Species {
   Magmar = 128,
   Pinsir = 129,
   Tauros = 130,
+  Magikarp = 131,
+  Gyarados = 132,
 }

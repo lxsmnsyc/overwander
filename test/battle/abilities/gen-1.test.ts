@@ -2453,3 +2453,28 @@ describe('Mold Breaker', () => {
     expect(filtered.health).toBe(plain.health);
   });
 });
+
+describe('Rattled', () => {
+  it('gains speed when hit by scary types or intimidated', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const karp = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    karp.addAbility(Abilities.Rattled);
+
+    // A Normal hit does not rattle
+    enemy.damage({ type: EffectType.Move, move: Moves.Tackle, unit: enemy }, karp, 10, 0);
+    expect(karp.stages[Stages.Speed]).toBe(0);
+
+    // A Ghost hit does
+    enemy.damage({ type: EffectType.Move, move: Moves.Lick, unit: enemy }, karp, 10, 0);
+    expect(karp.stages[Stages.Speed]).toBe(1);
+
+    // Intimidate rattles too (modern mechanics)
+    karp.addStage(Stages.Attack, -1, {
+      type: EffectType.Ability,
+      ability: Abilities.Intimidate,
+      unit: enemy,
+    });
+    expect(karp.stages[Stages.Speed]).toBe(2);
+  });
+});

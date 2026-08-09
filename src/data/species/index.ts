@@ -26,6 +26,7 @@ import registerKangaskhanSpecies from './kangaskhan';
 import registerKoffingSpecies from './koffing';
 import registerLickitungSpecies from './lickitung';
 import registerMachopSpecies from './machop';
+import registerMagikarpSpecies from './magikarp';
 import registerMagmarSpecies from './magmar';
 import registerMagnemiteSpecies from './magnemite';
 import registerMankeySpecies from './mankey';
@@ -128,4 +129,5 @@ export function registerSpecies(): void {
   registerMagmarSpecies();
   registerPinsirSpecies();
   registerTaurosSpecies();
+  registerMagikarpSpecies();
 }

@@ -63,6 +63,7 @@ const enum Families {
   Magmar = 60,
   Pinsir = 61,
   Tauros = 62,
+  Magikarp = 63,
 }
 
 export default Families;

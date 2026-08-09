@@ -2473,6 +2473,48 @@ const setupAbilities = [
   // Staryu
   createKeenEyeAbility(Abilities.Illuminate),
 
+  // Magikarp
+  // https://bulbapedia.bulbagarden.net/wiki/Rattled_(Ability)
+  createAbility(Abilities.Rattled, (battle) => {
+    const SCARY_TYPES = new Set<Types>([Types.Bug, Types.Dark, Types.Ghost]);
+
+    return new MergedAbilityLifecycle([
+      // Detection: direct damage from a scary-typed move
+      battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.Rattled) &&
+          SCARY_TYPES.has(getMoveData(event.cause.move).type)
+        ) {
+          event.target.triggerAbility(Abilities.Rattled);
+        }
+      }),
+      // Detection: being Intimidated (modern mechanics)
+      battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
+        if (
+          event.cause.type === EffectType.Ability &&
+          event.cause.ability === Abilities.Intimidate &&
+          event.source.hasAbility(Abilities.Rattled)
+        ) {
+          event.source.triggerAbility(Abilities.Rattled);
+        }
+      }),
+      // Effect: the Speed jolt rides the trigger
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.Rattled) {
+          event.source.addStage(Stages.Speed, 1, {
+            type: EffectType.Ability,
+            ability: Abilities.Rattled,
+            unit: event.source,
+          });
+        }
+      }),
+    ]);
+  }),
+
   // MrMime
   // https://bulbapedia.bulbagarden.net/wiki/Filter_(Ability)
   createAbility(Abilities.Filter, (battle) => {

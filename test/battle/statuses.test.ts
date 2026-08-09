@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { Types } from '../../src/data/constants/types';
@@ -286,5 +287,39 @@ describe('Infatuated', () => {
 
     charmer.damage(NONE_CAUSE, charmer, 999, 0);
     expect(smitten.status[Statuses.Infatuated]).toBeUndefined();
+  });
+});
+
+describe('timed status progression', () => {
+  it('exposes timer progress through events, like casting', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    const seen: number[] = [];
+    battle.on(BattleEvents.UnitUpdateStatusTimer, EventPriority.Post, (event) => {
+      if (event.status === Statuses.Sleeping && event.data.progress != null) {
+        seen.push(event.data.progress);
+      }
+    });
+
+    unit.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    battle.tick(500);
+    battle.tick(500);
+
+    expect(seen).toEqual([500, 1000]);
+    expect(unit.status[Statuses.Sleeping]).toBeDefined();
+  });
+
+  it('the progression event is authoritative and can fast-forward', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    // Jump straight past the 2000ms duration
+    unit.updateStatusTimer(Statuses.Sleeping, { progress: 2000 });
+
+    expect(unit.status[Statuses.Sleeping]).toBeUndefined();
   });
 });

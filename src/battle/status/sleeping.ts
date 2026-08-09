@@ -1,30 +1,15 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type Unit from '../unit';
-
-interface SleepingData {
-  progress: number;
-  cause: EffectCause;
-}
+import { BattleEvents, EffectType } from '../events';
+import createTimedStatus from './__create';
 
 const DURATION = 2000;
 
+const setupTimer = createTimedStatus(Statuses.Sleeping, DURATION);
+
 export default function setupSleepingStatus(battle: Battle): void {
-  const instances = new Map<Unit, SleepingData>();
-
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-    for (const [unit, data] of instances.entries()) {
-      data.progress -= event.duration;
-
-      if (data.progress <= 0) {
-        unit.removeStatus(Statuses.Sleeping, data.cause);
-      }
-    }
-  });
-
-  timer.stop();
+  setupTimer(battle);
 
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Sleeping]) {
@@ -37,28 +22,8 @@ export default function setupSleepingStatus(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
-    if (event.status === Statuses.Sleeping && !instances.has(event.source)) {
-      event.source.interrupt();
-
-      instances.set(event.source, {
-        // Resolved through the event engine (e.g. Early Bird halves it)
-        progress: event.source.checkStatusDuration(Statuses.Sleeping, DURATION),
-        cause: event.cause,
-      });
-
-      if (instances.size === 1) {
-        timer.start();
-      }
-    }
-  });
-
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Sleeping) {
-      instances.delete(event.source);
-
-      if (instances.size === 0) {
-        timer.stop();
-      }
+      event.source.interrupt();
     }
   });
 

@@ -184,6 +184,7 @@ export const enum BattleEvents {
   CheckUnitAddStage = 120,
   CheckUnitRemoveStage = 121,
   CheckUnitStatusDuration = 122,
+  UnitUpdateStatusTimer = 123,
 }
 
 export const enum MoveTargetType {
@@ -376,6 +377,15 @@ export interface UnitUpdateStageEvent extends UnitStageEvent {
  */
 export interface CheckUnitStatusDurationEvent extends UnitStatusEvent {
   duration: number;
+}
+
+/**
+ * A timed status advanced, structured like UnitUpdateCast: emitted
+ * every tick with the new progress so visual cues can render it, and
+ * authoritative — the timed status applies the data on Exact
+ */
+export interface UnitUpdateStatusTimerEvent extends UnitStatusEvent {
+  data: Partial<ProgressData>;
 }
 
 /**
@@ -726,6 +736,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
+  [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
   [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
   [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];
 }

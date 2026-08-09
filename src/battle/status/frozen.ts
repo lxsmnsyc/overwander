@@ -4,31 +4,16 @@ import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents, type EffectCause, EffectType } from '../events';
-import type Unit from '../unit';
-
-interface FrozenData {
-  progress: number;
-  cause: EffectCause;
-}
+import { BattleEvents, EffectType } from '../events';
+import createTimedStatus from './__create';
 
 // Real-time equivalent of the ~20%-per-turn thaw chance
 const DURATION = 3000;
 
+const setupTimer = createTimedStatus(Statuses.Frozen, DURATION);
+
 export default function setupFrozenStatus(battle: Battle): void {
-  const instances = new Map<Unit, FrozenData>();
-
-  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-    for (const [unit, data] of instances.entries()) {
-      data.progress -= event.duration;
-
-      if (data.progress <= 0) {
-        unit.removeStatus(Statuses.Frozen, data.cause);
-      }
-    }
-  });
-
-  timer.stop();
+  setupTimer(battle);
 
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (event.success && event.source.status[Statuses.Frozen]) {
@@ -42,41 +27,22 @@ export default function setupFrozenStatus(battle: Battle): void {
 
   // Fire-type move damage thaws the target
   battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
-    const data = instances.get(event.target);
+    const cause = event.target.status[Statuses.Frozen];
 
     if (
-      data &&
+      cause &&
       event.success &&
       !(event.flags & DamageFlags.Indirect) &&
       event.cause.type === EffectType.Move &&
       getMoveData(event.cause.move).type === Types.Fire
     ) {
-      event.target.removeStatus(Statuses.Frozen, data.cause);
+      event.target.removeStatus(Statuses.Frozen, cause);
     }
   });
 
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
-    if (event.status === Statuses.Frozen && !instances.has(event.source)) {
-      event.source.interrupt();
-
-      instances.set(event.source, {
-        progress: DURATION,
-        cause: event.cause,
-      });
-
-      if (instances.size === 1) {
-        timer.start();
-      }
-    }
-  });
-
-  battle.on(BattleEvents.UnitRemoveStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Frozen) {
-      instances.delete(event.source);
-
-      if (instances.size === 0) {
-        timer.stop();
-      }
+      event.source.interrupt();
     }
   });
 

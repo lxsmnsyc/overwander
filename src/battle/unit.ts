@@ -450,6 +450,18 @@ export default class Unit {
     return event.success;
   }
 
+  updateStatusTimer(status: Statuses, data: Partial<ProgressData>): void {
+    if (this.status[status] != null) {
+      this.battle.emit(BattleEvents.UnitUpdateStatusTimer, {
+        id: 'UnitUpdateStatusTimer',
+        disabled: false,
+        source: this,
+        status,
+        data,
+      });
+    }
+  }
+
   checkStatusDuration(status: Statuses, duration: number): number {
     const event: CheckUnitStatusDurationEvent = {
       id: 'CheckUnitStatusDuration',

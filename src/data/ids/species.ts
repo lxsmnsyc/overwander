@@ -103,4 +103,6 @@ export const enum Species {
   Haunter = 95,
   Gengar = 96,
   Onix = 97,
+  Drowzee = 98,
+  Hypno = 99,
 }

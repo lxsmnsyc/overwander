@@ -1334,4 +1334,12 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Meditate, {
+    name: 'Meditate',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 40,
+    target: 0,
+    flags: 0,
+  });
 }

@@ -2051,6 +2051,51 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Drowzee
+  // https://bulbapedia.bulbagarden.net/wiki/Insomnia_(Ability)
+  createAbility(
+    Abilities.Insomnia,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot fall asleep
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Sleeping &&
+            event.source.hasAbility(Abilities.Insomnia)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Sleeping && event.source.hasAbility(Abilities.Insomnia)) {
+            event.source.triggerAbility(Abilities.Insomnia);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Forewarn_(Ability)
+  createAbility(Abilities.Forewarn, (battle) =>
+    // Reveal is a visual cue: the trigger fires once per opposing
+    // move-carrying unit as the holder enters the field
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (!event.source.hasAbility(Abilities.Forewarn)) {
+        return;
+      }
+
+      for (const unit of battle.units(event.source.team.alliance)) {
+        // tsgolint narrows the optional record's values to defined;
+        // at runtime cleared slots hold undefined
+        // oxlint-disable-next-line typescript/no-unnecessary-condition
+        if (unit.alive && Object.values(unit.moves).some((state) => state != null)) {
+          event.source.triggerAbility(Abilities.Forewarn);
+        }
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

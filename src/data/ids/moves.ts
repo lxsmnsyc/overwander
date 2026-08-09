@@ -235,4 +235,5 @@ export const enum Moves {
   NightShade = 134,
   DreamEater = 135,
   Bind = 136,
+  Meditate = 137,
 }

@@ -119,6 +119,9 @@ const enum Abilities {
   Levitate = 78,
   // Onix
   WeakArmor = 79,
+  // Drowzee
+  Insomnia = 80,
+  Forewarn = 81,
 }
 
 export default Abilities;

@@ -1671,6 +1671,43 @@ describe('Levitate', () => {
   });
 });
 
+describe('Insomnia', () => {
+  it('blocks sleep', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Insomnia);
+
+    holder.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Sleeping]).toBeUndefined();
+  });
+});
+
+describe('Forewarn', () => {
+  it('cues on entry once per move-carrying foe', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamB);
+    enemy.addMove(Moves.Tackle);
+    other.addMove(Moves.Growl);
+
+    let triggers = 0;
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+      if (event.ability === Abilities.Forewarn) {
+        triggers += 1;
+      }
+    });
+
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Forewarn);
+    holder.enter();
+
+    expect(bare.alive).toBe(true);
+    expect(triggers).toBe(2);
+  });
+});
+
 describe('Weak Armor', () => {
   it('trades defense for speed when hit by a physical move', () => {
     const { battle, teamA, teamB } = createBattle();

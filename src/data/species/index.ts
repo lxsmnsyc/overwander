@@ -6,6 +6,7 @@ import registerCharmanderSpecies from './charmander';
 import registerClefairySpecies from './clefairy';
 import registerDoduoSpecies from './doduo';
 import registerDiglettSpecies from './diglett';
+import registerDrowzeeSpecies from './drowzee';
 import registerEkansSpecies from './ekans';
 import registerFarfetchdSpecies from './farfetchd';
 import registerGastlySpecies from './gastly';
@@ -84,4 +85,5 @@ export function registerSpecies(): void {
   registerShellderSpecies();
   registerGastlySpecies();
   registerOnixSpecies();
+  registerDrowzeeSpecies();
 }

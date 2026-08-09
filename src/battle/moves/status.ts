@@ -51,6 +51,7 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Stomp]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Headbutt]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Sludge]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.Lick]: { status: Statuses.Paralyzed, chance: 30 },
 };
 
 const EFFECT_STAGE_MOVES: {

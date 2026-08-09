@@ -8,6 +8,7 @@ import registerDoduoSpecies from './doduo';
 import registerDiglettSpecies from './diglett';
 import registerEkansSpecies from './ekans';
 import registerFarfetchdSpecies from './farfetchd';
+import registerGastlySpecies from './gastly';
 import registerGeodudeSpecies from './geodude';
 import registerGrimerSpecies from './grimer';
 import registerGrowlitheSpecies from './growlithe';
@@ -80,4 +81,5 @@ export function registerSpecies(): void {
   registerSeelSpecies();
   registerGrimerSpecies();
   registerShellderSpecies();
+  registerGastlySpecies();
 }

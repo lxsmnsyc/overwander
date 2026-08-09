@@ -15,6 +15,7 @@ import type {
   CheckUnitCanConsumeItemEvent,
   CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
+  CheckUnitGroundedEvent,
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveHitsEvent,
@@ -924,6 +925,17 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveSteps, event);
     return event.steps;
+  }
+
+  checkGrounded(): boolean {
+    const event: CheckUnitGroundedEvent = {
+      id: 'CheckUnitGrounded',
+      disabled: false,
+      source: this,
+      grounded: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitGrounded, event);
+    return event.grounded;
   }
 
   checkMoveHits(move: Moves, target: MoveTarget, hits: number, max: number): number {

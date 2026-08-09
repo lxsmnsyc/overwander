@@ -323,3 +323,21 @@ describe('timed status progression', () => {
     expect(unit.status[Statuses.Sleeping]).toBeUndefined();
   });
 });
+
+describe('positional statuses', () => {
+  it('grounded, floating and submerged are mutually exclusive', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.addStatus(Statuses.Floating, NONE_CAUSE);
+    unit.addStatus(Statuses.Grounded, NONE_CAUSE);
+
+    expect(unit.status[Statuses.Floating]).toBeUndefined();
+    expect(unit.status[Statuses.Grounded]).toBeDefined();
+
+    unit.addStatus(Statuses.Submerged, NONE_CAUSE);
+
+    expect(unit.status[Statuses.Grounded]).toBeUndefined();
+    expect(unit.status[Statuses.Submerged]).toBeDefined();
+  });
+});

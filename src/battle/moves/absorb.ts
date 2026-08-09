@@ -1,13 +1,32 @@
 import { EventPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
+import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
-const ABSORB_MOVES = new Set<Moves>([Moves.Absorb, Moves.MegaDrain, Moves.LeechLife]);
+const ABSORB_MOVES = new Set<Moves>([
+  Moves.Absorb,
+  Moves.MegaDrain,
+  Moves.LeechLife,
+  Moves.DreamEater,
+]);
 
 const HEALING_FACTOR = 0.5;
 
 export default function setupAbsorb(battle: Battle): void {
+  // Dream Eater only works on sleeping targets
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
+    if (
+      event.move === Moves.DreamEater &&
+      event.target.type === MoveTargetType.Unit &&
+      event.target.unit.status[Statuses.Sleeping] == null
+    ) {
+      event.disabled = true;
+
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+    }
+  });
+
   battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
     if (
       // Only the direct hit drains; indirect damage carrying the move

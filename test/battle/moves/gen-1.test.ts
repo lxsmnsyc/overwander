@@ -221,6 +221,29 @@ describe('absorb moves', () => {
   });
 });
 
+describe('Dream Eater', () => {
+  it('only drains sleeping targets', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.setHealth(100);
+
+    // Awake: the move fails outright
+    attacker.triggerMoveEffect(Moves.DreamEater, unitTarget(defender), 0);
+
+    expect(defender.health).toBe(160);
+    expect(attacker.health).toBe(100);
+
+    defender.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    attacker.triggerMoveEffect(Moves.DreamEater, unitTarget(defender), 0);
+
+    expect(defender.health).toBeCloseTo(160 - plainDamage(100));
+    expect(attacker.health).toBeCloseTo(100 + plainDamage(100) / 2);
+  });
+});
+
 describe('fixed damage moves', () => {
   it('deal their exact amounts', () => {
     const { battle, teamA, teamB } = createBattle();

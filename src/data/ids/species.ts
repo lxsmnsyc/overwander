@@ -99,4 +99,7 @@ export const enum Species {
   Muk = 91,
   Shellder = 92,
   Cloyster = 93,
+  Gastly = 94,
+  Haunter = 95,
+  Gengar = 96,
 }

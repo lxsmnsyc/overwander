@@ -231,4 +231,7 @@ export const enum Moves {
   Sludge = 130,
   Clamp = 131,
   SpikeCannon = 132,
+  Lick = 133,
+  NightShade = 134,
+  DreamEater = 135,
 }

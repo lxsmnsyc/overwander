@@ -34,7 +34,6 @@ import type {
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
-import { isUnitGrounded } from '../utils';
 
 const FPS = 60;
 const FPS_DURATION = 1000 / FPS;
@@ -103,7 +102,7 @@ export function setupMoveMechanics(battle: Battle): void {
       !event.immune &&
       event.type === Types.Ground &&
       event.target.type === MoveTargetType.Unit &&
-      !isUnitGrounded(event.target.unit)
+      !event.target.unit.checkGrounded()
     ) {
       event.immune = true;
     }

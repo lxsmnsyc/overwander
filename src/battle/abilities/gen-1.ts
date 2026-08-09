@@ -26,7 +26,6 @@ import {
   countHeldItems,
   hasAnyStatus,
   holdsAnyItem,
-  isUnitGrounded,
   isWeatherHail,
   isWeatherRainy,
   isWeatherSandstorm,
@@ -1131,7 +1130,7 @@ const setupAbilities = [
         // Airborne and Ghost-type units cannot be trapped, and Run
         // Away escapes regardless: the explicit check (instead of a
         // Post override) keeps the trap cue from firing spuriously
-        !isUnitGrounded(source) ||
+        !source.checkGrounded() ||
         source.types.has(Types.Ghost) ||
         source.hasAbility(Abilities.RunAway)
       ) {
@@ -1980,6 +1979,39 @@ const setupAbilities = [
             getMoveData(event.parent.move).flags & MoveFlags.Powder
           ) {
             target.unit.triggerAbility(Abilities.Overcoat);
+          }
+        }),
+      ]),
+  ),
+
+  // Gastly
+  // https://bulbapedia.bulbagarden.net/wiki/Levitate_(Ability)
+  createAbility(
+    Abilities.Levitate,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Airborne unless something (e.g. Gravity) forces grounding;
+        // the shared immunity rule then blocks Ground moves
+        battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
+          if (
+            event.grounded &&
+            event.source.status[Statuses.Grounded] == null &&
+            event.source.hasAbility(Abilities.Levitate)
+          ) {
+            event.grounded = false;
+          }
+        }),
+        // The cue only fires when a real Ground move was avoided
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (
+            target.type === MoveTargetType.Unit &&
+            target.unit.hasAbility(Abilities.Levitate) &&
+            !target.unit.checkGrounded() &&
+            event.parent.source.checkMoveType(event.parent.move, target) === Types.Ground
+          ) {
+            target.unit.triggerAbility(Abilities.Levitate);
           }
         }),
       ]),

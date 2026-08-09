@@ -8,6 +8,7 @@ import setupConfusedStatus from './confused';
 import setupFlinchedStatus from './flinched';
 import setupFocusEnergyStatus from './focus-energy';
 import setupFrozenStatus from './frozen';
+import setupGroundedStatus from './grounded';
 import setupInfatuatedStatus from './infatuated';
 import setupParalyzedStatus from './paralyzed';
 import { setupBadlyPoisonedStatus, setupPoisonedStatus } from './poisoned';
@@ -121,6 +122,7 @@ export default function setupStatus(battle: Battle): void {
   setupFrozenStatus(battle);
   setupFocusEnergyStatus(battle);
   setupInfatuatedStatus(battle);
+  setupGroundedStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

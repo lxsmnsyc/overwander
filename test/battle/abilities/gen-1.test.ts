@@ -1643,3 +1643,30 @@ describe('Overcoat', () => {
     expect(holder.health).toBe(160);
   });
 });
+
+describe('Levitate', () => {
+  it('lifts the holder off the ground and blocks Ground moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    expect(holder.checkGrounded()).toBe(true);
+
+    holder.addAbility(Abilities.Levitate);
+
+    expect(holder.checkGrounded()).toBe(false);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, target, Types.Ground)).toBe(true);
+  });
+
+  it('is overridden by the Grounded status', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Levitate);
+    holder.addStatus(Statuses.Grounded, NONE_CAUSE);
+
+    expect(holder.checkGrounded()).toBe(true);
+  });
+});

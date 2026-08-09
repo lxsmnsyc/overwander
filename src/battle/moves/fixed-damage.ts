@@ -22,6 +22,8 @@ const FIXED_DAMAGE_MOVES: {
 } = {
   // https://bulbapedia.bulbagarden.net/wiki/Seismic_Toss_(move)
   [Moves.SeismicToss]: (source) => source.level,
+  // https://bulbapedia.bulbagarden.net/wiki/Night_Shade_(move)
+  [Moves.NightShade]: (source) => source.level,
   // https://bulbapedia.bulbagarden.net/wiki/Dragon_Rage_(move)
   [Moves.DragonRage]: () => 40,
   // https://bulbapedia.bulbagarden.net/wiki/Sonic_Boom_(move)

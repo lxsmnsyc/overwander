@@ -1295,4 +1295,33 @@ export default function registerGen1Moves(): void {
     flags: 0,
     delay: PROJECTILE_DELAY,
   });
+  registerMove(Moves.Lick, {
+    name: 'Lick',
+    type: Types.Ghost,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 30,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.NightShade, {
+    name: 'Night Shade',
+    type: Types.Ghost,
+    category: MoveCategories.Special,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.DreamEater, {
+    name: 'Dream Eater',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 15,
+    power: 100,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

@@ -186,6 +186,7 @@ export const enum BattleEvents {
   CheckUnitStatusDuration = 122,
   UnitUpdateStatusTimer = 123,
   CheckUnitMoveHits = 124,
+  CheckUnitGrounded = 125,
 }
 
 export const enum MoveTargetType {
@@ -290,6 +291,15 @@ export interface CheckUnitMoveStepsEvent extends CheckUnitMoveEvent {
 export interface CheckUnitMoveHitsEvent extends CheckUnitMoveEvent {
   hits: number;
   max: number;
+}
+
+/**
+ * Resolves whether the unit stands on the ground; airborne traits
+ * (Floating status, Flying type, Levitate) clear it and the Grounded
+ * status forces it back
+ */
+export interface CheckUnitGroundedEvent extends UnitEvent {
+  grounded: boolean;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {
@@ -614,6 +624,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveCooldown]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
   [BattleEvents.CheckUnitMoveHits]: [CheckUnitMoveHitsEvent, EventPriority];
+  [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];

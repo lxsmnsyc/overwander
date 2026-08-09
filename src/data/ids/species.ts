@@ -157,4 +157,6 @@ export const enum Species {
   Dratini = 149,
   Dragonair = 150,
   Dragonite = 151,
+  Mewtwo = 152,
+  Mew = 153,
 }

@@ -76,6 +76,8 @@ const enum Families {
   Zapdos = 73,
   Moltres = 74,
   Dratini = 75,
+  Mewtwo = 76,
+  Mew = 77,
 }
 
 export default Families;

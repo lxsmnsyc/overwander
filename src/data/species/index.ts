@@ -38,6 +38,8 @@ import registerMagmarSpecies from './magmar';
 import registerMagnemiteSpecies from './magnemite';
 import registerMankeySpecies from './mankey';
 import registerMeowthSpecies from './meowth';
+import registerMewSpecies from './mew';
+import registerMewtwoSpecies from './mewtwo';
 import registerMrMimeSpecies from './mr-mime';
 import registerNidoranFSpecies from './nidoran-f';
 import registerOddishSpecies from './oddish';
@@ -150,4 +152,6 @@ export function registerSpecies(): void {
   registerSnorlaxSpecies();
   registerLegendaryBirdSpecies();
   registerDratiniSpecies();
+  registerMewtwoSpecies();
+  registerMewSpecies();
 }

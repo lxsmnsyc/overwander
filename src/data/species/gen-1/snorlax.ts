@@ -27,7 +27,7 @@ export default function registerSnorlaxSpecies(): void {
     eggGroups: [EggGroups.Monster],
     genderRatio: [7, 1],
     catchRate: 25,
-    biomes: [Biome.Mountain, Biome.TemperateForest],
+    biomes: [Biome.Mountain, Biome.TemperateForest, Biome.Taiga],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

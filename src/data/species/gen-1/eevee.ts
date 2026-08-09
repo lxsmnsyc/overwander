@@ -62,7 +62,7 @@ export default function registerEeveeSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

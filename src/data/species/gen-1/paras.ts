@@ -54,7 +54,7 @@ export default function registerParasSpecies(): void {
     eggGroups: [EggGroups.Bug, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.TemperateForest, Biome.Mountain],
+    biomes: [Biome.TemperateForest, Biome.MontaneForest, Biome.Taiga],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -88,7 +88,7 @@ export default function registerParasSpecies(): void {
     eggGroups: [EggGroups.Bug, EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.TemperateForest, Biome.Mountain],
+    biomes: [Biome.TemperateForest, Biome.MontaneForest, Biome.Taiga],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

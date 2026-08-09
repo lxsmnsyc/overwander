@@ -27,7 +27,7 @@ export default function registerChanseySpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [0, 1],
     catchRate: 30,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

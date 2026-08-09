@@ -27,7 +27,7 @@ export default function registerTangelaSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TropicalSeasonalForest],
+    biomes: [Biome.Grassland, Biome.TemperateRainforest],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

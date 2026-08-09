@@ -53,7 +53,7 @@ export default function registerPidgeySpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -95,7 +95,7 @@ export default function registerPidgeySpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -130,7 +130,7 @@ export default function registerPidgeySpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

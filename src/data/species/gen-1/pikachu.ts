@@ -60,7 +60,7 @@ export default function registerPikachuSpecies(): void {
     eggGroups: [EggGroups.Field, EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.TemperateForest],
+    biomes: [Biome.TemperateForest, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -94,7 +94,7 @@ export default function registerPikachuSpecies(): void {
     eggGroups: [EggGroups.Field, EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.TemperateForest],
+    biomes: [Biome.TemperateForest, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

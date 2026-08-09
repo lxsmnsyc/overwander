@@ -56,7 +56,7 @@ export default function registerRattataSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -89,7 +89,7 @@ export default function registerRattataSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 127,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

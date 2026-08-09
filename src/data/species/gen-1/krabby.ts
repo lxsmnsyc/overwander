@@ -58,7 +58,7 @@ export default function registerKrabbySpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Beach],
+    biomes: [Biome.Beach, Biome.Mangrove],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -92,7 +92,7 @@ export default function registerKrabbySpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Beach],
+    biomes: [Biome.Beach, Biome.Mangrove],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

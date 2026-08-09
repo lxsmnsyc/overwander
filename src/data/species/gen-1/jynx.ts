@@ -27,7 +27,7 @@ export default function registerJynxSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [0, 1],
     catchRate: 45,
-    biomes: [Biome.Glacier, Biome.Tundra],
+    biomes: [Biome.Glacier, Biome.Tundra, Biome.Taiga],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

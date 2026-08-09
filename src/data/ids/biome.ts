@@ -25,6 +25,12 @@ const enum Biome {
   Mountain = 17,
   AlpineTundra = 18,
   Glacier = 19,
+  // Gap fillers: climate-space regions the first set left to their
+  // distant neighbors
+  Woodland = 20,
+  Steppe = 21,
+  MontaneForest = 22,
+  PolarOcean = 23,
 }
 
 export default Biome;
@@ -111,6 +117,17 @@ export const BIOME_CONFIGS: { [key in Biome]: BiomeConfig } = {
   [Biome.Mountain]: { humidity: 0, temperature: -0.2, elevation: 0.7 },
   [Biome.AlpineTundra]: { humidity: -0.1, temperature: -0.6, elevation: 0.85 },
   [Biome.Glacier]: { humidity: 0.2, temperature: -0.9, elevation: 0.9 },
+
+  // Gap fillers
+  // Open-canopy woodland sits near the climate origin, between
+  // grassland and closed forest
+  [Biome.Woodland]: { humidity: 0.1, temperature: 0.3, elevation: 0.15 },
+  // Eurasian-style dry cool grassland between prairie and cold desert
+  [Biome.Steppe]: { humidity: -0.5, temperature: -0.1, elevation: 0.25 },
+  // Humid cloud-forest slopes between rainforest and bare mountain
+  [Biome.MontaneForest]: { humidity: 0.5, temperature: 0, elevation: 0.55 },
+  // High-latitude seas so cold coasts don't jump straight to land
+  [Biome.PolarOcean]: { humidity: 1, temperature: -0.8, elevation: -0.5 },
 };
 
 /**

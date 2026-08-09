@@ -63,7 +63,7 @@ export default function registerDrowzeeSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -98,7 +98,7 @@ export default function registerDrowzeeSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

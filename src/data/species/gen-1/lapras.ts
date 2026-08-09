@@ -27,7 +27,7 @@ export default function registerLaprasSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean, Biome.DeepOcean],
+    biomes: [Biome.Ocean, Biome.DeepOcean, Biome.PolarOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

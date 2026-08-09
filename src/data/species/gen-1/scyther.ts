@@ -27,7 +27,7 @@ export default function registerScytherSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

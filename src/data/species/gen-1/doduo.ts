@@ -53,7 +53,7 @@ export default function registerDoduoSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Savanna, Biome.Grassland],
+    biomes: [Biome.Savanna, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -88,7 +88,7 @@ export default function registerDoduoSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Savanna, Biome.Grassland],
+    biomes: [Biome.Savanna, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

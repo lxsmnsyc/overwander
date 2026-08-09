@@ -62,7 +62,7 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 180,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.AlpineTundra],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -102,7 +102,7 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 90,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.AlpineTundra],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -136,7 +136,7 @@ export default function registerMachopSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.AlpineTundra],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

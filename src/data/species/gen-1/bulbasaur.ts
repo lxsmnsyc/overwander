@@ -53,7 +53,7 @@ export default function registerBulbasaurSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Grass],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -96,7 +96,7 @@ export default function registerBulbasaurSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Grass],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -132,7 +132,7 @@ export default function registerBulbasaurSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Grass],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

@@ -27,7 +27,7 @@ export default function registerTaurosSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 0],
     catchRate: 45,
-    biomes: [Biome.Savanna, Biome.Grassland],
+    biomes: [Biome.Savanna, Biome.Grassland, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

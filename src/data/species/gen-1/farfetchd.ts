@@ -47,7 +47,7 @@ export default function registerFarfetchdSpecies(): void {
     eggGroups: [EggGroups.Flying, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.Swamp],
+    biomes: [Biome.Grassland, Biome.Swamp, Biome.Mangrove],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

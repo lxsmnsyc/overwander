@@ -50,7 +50,7 @@ export default function registerZubatSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.MontaneForest],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -84,7 +84,7 @@ export default function registerZubatSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.MontaneForest],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

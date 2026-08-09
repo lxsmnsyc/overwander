@@ -27,7 +27,7 @@ export default function registerPinsirSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest],
+    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest, Biome.MontaneForest],
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {

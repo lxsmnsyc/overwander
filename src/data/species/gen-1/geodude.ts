@@ -64,7 +64,7 @@ export default function registerGeodudeSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -105,7 +105,7 @@ export default function registerGeodudeSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -139,7 +139,7 @@ export default function registerGeodudeSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

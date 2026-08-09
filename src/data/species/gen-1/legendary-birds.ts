@@ -47,7 +47,7 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Glacier, Biome.AlpineTundra],
+    biomes: [Biome.Glacier, Biome.AlpineTundra, Biome.PolarOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

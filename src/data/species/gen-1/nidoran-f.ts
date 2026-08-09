@@ -73,7 +73,7 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 235,
-    biomes: [Biome.Grassland, Biome.Savanna],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -115,7 +115,7 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 120,
-    biomes: [Biome.Grassland, Biome.Savanna],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -150,7 +150,7 @@ export default function registerNidoranFSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [0, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.Savanna],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Woodland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

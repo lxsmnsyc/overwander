@@ -34,7 +34,7 @@ export default function registerCaterpieSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.TemperateForest],
+    biomes: [Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -70,7 +70,7 @@ export default function registerCaterpieSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.TemperateForest],
+    biomes: [Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -100,7 +100,7 @@ export default function registerCaterpieSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.TemperateForest],
+    biomes: [Biome.TemperateForest, Biome.Woodland],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

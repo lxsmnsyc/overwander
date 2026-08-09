@@ -52,7 +52,7 @@ export default function registerDiglettSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Mountain, Biome.Desert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -86,7 +86,7 @@ export default function registerDiglettSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 50,
-    biomes: [Biome.Mountain, Biome.Desert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -92,7 +92,7 @@ export default function registerShellderSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Ocean],
+    biomes: [Biome.Ocean, Biome.PolarOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

@@ -69,7 +69,7 @@ export default function registerJigglypuffSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 170,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -105,7 +105,7 @@ export default function registerJigglypuffSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 3],
     catchRate: 50,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Woodland],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

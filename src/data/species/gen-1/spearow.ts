@@ -53,7 +53,7 @@ export default function registerSpearowSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Shrubland, Biome.Savanna],
+    biomes: [Biome.Shrubland, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -87,7 +87,7 @@ export default function registerSpearowSpecies(): void {
     eggGroups: [EggGroups.Flying],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Shrubland, Biome.Savanna],
+    biomes: [Biome.Shrubland, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

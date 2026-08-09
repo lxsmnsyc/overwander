@@ -54,7 +54,7 @@ export default function registerGrowlitheSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [3, 1],
     catchRate: 190,
-    biomes: [Biome.Grassland, Biome.Savanna],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -88,7 +88,7 @@ export default function registerGrowlitheSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [3, 1],
     catchRate: 75,
-    biomes: [Biome.Grassland, Biome.Savanna],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

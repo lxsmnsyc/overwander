@@ -1,4 +1,5 @@
 import registerAbraSpecies from './abra';
+import registerAerodactylSpecies from './aerodactyl';
 import registerBellsproutSpecies from './bellsprout';
 import registerBulbasaurSpecies from './bulbasaur';
 import registerCaterpieSpecies from './caterpie';
@@ -142,4 +143,5 @@ export function registerSpecies(): void {
   registerPorygonSpecies();
   registerOmanyteSpecies();
   registerKabutoSpecies();
+  registerAerodactylSpecies();
 }

@@ -2600,3 +2600,25 @@ describe('Download', () => {
     expect(porygon.stages[Stages.SpecialAttack]).toBe(0);
   });
 });
+
+describe('Pressure', () => {
+  it('halves effective PP for moves aimed at the holder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Pressure);
+
+    const target = { type: MoveTargetType.Unit, unit: holder } as const;
+
+    expect(attacker.checkMovePP(Moves.Tackle, target)).toBe(17.5); // 35 / 2
+
+    // The holder's own moves are unaffected
+    expect(holder.checkMovePP(Moves.Tackle, { type: MoveTargetType.Unit, unit: attacker })).toBe(
+      35,
+    );
+
+    // A Boss caster shrugs the pressure off
+    attacker.addAbility(Abilities.Boss);
+    expect(attacker.checkMovePP(Moves.Tackle, target)).toBe(35);
+  });
+});

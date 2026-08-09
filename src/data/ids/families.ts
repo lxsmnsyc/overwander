@@ -70,6 +70,7 @@ const enum Families {
   Porygon = 67,
   Omanyte = 68,
   Kabuto = 69,
+  Aerodactyl = 70,
 }
 
 export default Families;

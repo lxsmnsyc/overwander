@@ -167,6 +167,8 @@ const enum Abilities {
   // Porygon
   Trace = 107,
   Download = 108,
+  // Aerodactyl
+  Pressure = 109,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

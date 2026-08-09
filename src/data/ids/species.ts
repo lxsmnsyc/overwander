@@ -149,4 +149,5 @@ export const enum Species {
   Omastar = 141,
   Kabuto = 142,
   Kabutops = 143,
+  Aerodactyl = 144,
 }

@@ -2842,6 +2842,35 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Aerodactyl
+  // https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)
+  createAbility(
+    Abilities.Pressure,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Real-time analog of doubled PP usage: moves aimed at the
+        // holder resolve with half their PP, doubling their cooldown.
+        // A Boss caster is exempt (explicit check, like Run Away vs
+        // Arena Trap).
+        battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Post, (event) => {
+          if (
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.Pressure) &&
+            !event.source.hasAbility(Abilities.Boss)
+          ) {
+            event.pp = Math.max(1, event.pp / 2);
+          }
+        }),
+        // For visual cues: the classic entry announcement
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(Abilities.Pressure)) {
+            event.source.triggerAbility(Abilities.Pressure);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

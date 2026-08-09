@@ -57,6 +57,7 @@ import registerSeelSpecies from './seel';
 import registerShellderSpecies from './shellder';
 import registerScytherSpecies from './scyther';
 import registerSlowpokeSpecies from './slowpoke';
+import registerSnorlaxSpecies from './snorlax';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
 import registerStaryuSpecies from './staryu';
@@ -144,4 +145,5 @@ export function registerSpecies(): void {
   registerOmanyteSpecies();
   registerKabutoSpecies();
   registerAerodactylSpecies();
+  registerSnorlaxSpecies();
 }

@@ -2622,3 +2622,17 @@ describe('Pressure', () => {
     expect(attacker.checkMovePP(Moves.Tackle, target)).toBe(35);
   });
 });
+
+describe('Immunity', () => {
+  it('blocks both poison forms', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Immunity);
+
+    holder.addStatus(Statuses.Poisoned, NONE_CAUSE);
+    holder.addStatus(Statuses.BadlyPoisoned, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Poisoned]).toBeUndefined();
+    expect(holder.status[Statuses.BadlyPoisoned]).toBeUndefined();
+  });
+});

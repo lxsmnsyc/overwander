@@ -71,6 +71,7 @@ const enum Families {
   Omanyte = 68,
   Kabuto = 69,
   Aerodactyl = 70,
+  Snorlax = 71,
 }
 
 export default Families;

@@ -2871,6 +2871,31 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Snorlax
+  // https://bulbapedia.bulbagarden.net/wiki/Immunity_(Ability)
+  createAbility(Abilities.Immunity, (battle) => {
+    const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+    return new MergedAbilityLifecycle([
+      // Pure query: cannot be poisoned in any form
+      battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+        if (
+          !event.immune &&
+          POISONS.has(event.status) &&
+          event.source.hasAbility(Abilities.Immunity)
+        ) {
+          event.immune = true;
+        }
+      }),
+      // The cue only fires when a real application was blocked
+      battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+        if (POISONS.has(event.status) && event.source.hasAbility(Abilities.Immunity)) {
+          event.source.triggerAbility(Abilities.Immunity);
+        }
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

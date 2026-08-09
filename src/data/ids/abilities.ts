@@ -169,6 +169,8 @@ const enum Abilities {
   Download = 108,
   // Aerodactyl
   Pressure = 109,
+  // Snorlax
+  Immunity = 110,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

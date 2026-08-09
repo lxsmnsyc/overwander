@@ -124,7 +124,6 @@ export function createDrizzleAbility(
 
   function triggerWeather(battle: Battle, source: Unit): void {
     if (source.hasAbility(targetAbility) && !PRIMAL_WEATHERS.has(battle.weather.current)) {
-      battle.setWeather(targetWeather);
       source.triggerAbility(targetAbility);
     }
   }
@@ -139,6 +138,12 @@ export function createDrizzleAbility(
         // For when the unit re-enters
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           triggerWeather(battle, event.source);
+        }),
+        // The weather change rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === targetAbility) {
+            battle.setWeather(targetWeather);
+          }
         }),
       ]),
   );

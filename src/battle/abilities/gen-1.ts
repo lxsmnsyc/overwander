@@ -79,10 +79,15 @@ const setupAbilities = [
             event.value *= 2;
           }
         }),
-        // Due to the lack of turn mechanics, we only need to damage the
-        // unit when it starts using an ability
+        // Due to the lack of turn mechanics, we only detect on move
+        // cast; the chip damage rides the trigger
         battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
           if (isWeatherSunny(event.source) && event.source.hasAbility(Abilities.SolarPower)) {
+            event.source.triggerAbility(Abilities.SolarPower);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.SolarPower) {
             const maxHP = event.source.checkStat(Stats.HP, 0);
             event.source.damage(
               {
@@ -94,9 +99,6 @@ const setupAbilities = [
               maxHP / 8,
               DamageFlags.NonLethal,
             );
-
-            // For visual cues
-            event.source.triggerAbility(Abilities.SolarPower);
           }
         }),
       ]),
@@ -122,17 +124,24 @@ const setupAbilities = [
   createBlazeAbility(Abilities.Torrent, Types.Water),
 
   // https://bulbapedia.bulbagarden.net/wiki/Rain_Dish_(Ability)
-  createAbility(Abilities.RainDish, (battle) =>
-    // No turn mechanics, we use move cast instead.
-    battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-      if (isWeatherRainy(event.source) && event.source.hasAbility(Abilities.RainDish)) {
-        const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
-        event.source.setHealth(event.source.health + maxHP);
-
-        // For visual cues
-        event.source.triggerAbility(Abilities.RainDish);
-      }
-    }),
+  createAbility(
+    Abilities.RainDish,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // No turn mechanics, we detect on move cast instead
+        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+          if (isWeatherRainy(event.source) && event.source.hasAbility(Abilities.RainDish)) {
+            event.source.triggerAbility(Abilities.RainDish);
+          }
+        }),
+        // The heal rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.RainDish) {
+            const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
+            event.source.setHealth(event.source.health + maxHP);
+          }
+        }),
+      ]),
   ),
 
   // Caterpie/Weedle
@@ -162,24 +171,31 @@ const setupAbilities = [
 
   // Metapod/Kakuna
   // https://bulbapedia.bulbagarden.net/wiki/Shed_Skin_(Ability)
-  createAbility(Abilities.ShedSkin, (battle) =>
-    // No turn mechanics, we roll the 30% cure on move cast instead.
-    battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-      if (
-        event.source.hasAbility(Abilities.ShedSkin) &&
-        hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS) &&
-        battle.random() < 0.3
-      ) {
-        event.source.cure({
-          type: EffectType.Ability,
-          ability: Abilities.ShedSkin,
-          unit: event.source,
-        });
-
-        // For visual cues
-        event.source.triggerAbility(Abilities.ShedSkin);
-      }
-    }),
+  createAbility(
+    Abilities.ShedSkin,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // No turn mechanics, we roll the 30% cure on move cast instead
+        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+          if (
+            event.source.hasAbility(Abilities.ShedSkin) &&
+            hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS) &&
+            battle.random() < 0.3
+          ) {
+            event.source.triggerAbility(Abilities.ShedSkin);
+          }
+        }),
+        // The cure rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.ShedSkin) {
+            event.source.cure({
+              type: EffectType.Ability,
+              ability: Abilities.ShedSkin,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
   ),
 
   // Butterfree
@@ -336,27 +352,34 @@ const setupAbilities = [
 
   // Ekans
   // https://bulbapedia.bulbagarden.net/wiki/Intimidate_(Ability)
-  createAbility(Abilities.Intimidate, (battle) =>
-    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-      if (!event.source.hasAbility(Abilities.Intimidate)) {
-        return;
-      }
+  createAbility(
+    Abilities.Intimidate,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(Abilities.Intimidate)) {
+            event.source.triggerAbility(Abilities.Intimidate);
+          }
+        }),
+        // The enemy attack drop rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Intimidate) {
+            return;
+          }
 
-      const cause = {
-        type: EffectType.Ability,
-        ability: Abilities.Intimidate,
-        unit: event.source,
-      } as const;
+          const cause = {
+            type: EffectType.Ability,
+            ability: Abilities.Intimidate,
+            unit: event.source,
+          } as const;
 
-      for (const unit of battle.units(event.source.team.alliance)) {
-        if (unit.alive) {
-          unit.addStage(Stages.Attack, -1, cause);
-        }
-      }
-
-      // For visual cues
-      event.source.triggerAbility(Abilities.Intimidate);
-    }),
+          for (const unit of battle.units(event.source.team.alliance)) {
+            if (unit.alive) {
+              unit.addStage(Stages.Attack, -1, cause);
+            }
+          }
+        }),
+      ]),
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Unnerve_(Ability)
@@ -472,7 +495,7 @@ const setupAbilities = [
             event.immune = true;
           }
         }),
-        // The absorb boost only fires when a real move actually fails
+        // The absorb only fires when a real move actually fails
         // against the holder, never on speculative immunity checks
         battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
           const parent = event.parent;
@@ -483,14 +506,16 @@ const setupAbilities = [
             parent.target.unit.hasAbility(Abilities.LightningRod) &&
             parent.source.checkMoveType(parent.move, parent.target) === Types.Electric
           ) {
-            const holder = parent.target.unit;
-
-            holder.triggerAbility(Abilities.LightningRod);
-
-            holder.addStage(Stages.SpecialAttack, 1, {
+            parent.target.unit.triggerAbility(Abilities.LightningRod);
+          }
+        }),
+        // The special attack boost rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.LightningRod) {
+            event.source.addStage(Stages.SpecialAttack, 1, {
               type: EffectType.Ability,
               ability: Abilities.LightningRod,
-              unit: holder,
+              unit: event.source,
             });
           }
         }),
@@ -702,9 +727,14 @@ const setupAbilities = [
           const holder = parent.target.unit;
 
           if (!activated.has(holder)) {
-            activated.add(holder);
             holder.triggerAbility(Abilities.FlashFire);
           }
+        }
+      }),
+      // The activation rides the trigger
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.FlashFire) {
+          activated.add(event.source);
         }
       }),
       // An activated holder's own Fire moves hit harder
@@ -729,28 +759,37 @@ const setupAbilities = [
 
   // Jigglypuff
   // https://bulbapedia.bulbagarden.net/wiki/Competitive_(Ability)
-  createAbility(Abilities.Competitive, (battle) =>
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
-      const cause = event.cause;
+  createAbility(
+    Abilities.Competitive,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: only stat drops inflicted by an enemy raise the
+        // holder's ire; its own boost has a positive value, so it
+        // never re-triggers
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
+          const cause = event.cause;
 
-      // Only stat drops inflicted by an enemy raise the holder's ire;
-      // its own boost has a positive value, so it never re-triggers
-      if (
-        event.value < 0 &&
-        event.source.hasAbility(Abilities.Competitive) &&
-        cause.type !== EffectType.None &&
-        cause.unit !== event.source &&
-        cause.unit.team.alliance !== event.source.team.alliance
-      ) {
-        event.source.triggerAbility(Abilities.Competitive);
-
-        event.source.addStage(Stages.SpecialAttack, 2, {
-          type: EffectType.Ability,
-          ability: Abilities.Competitive,
-          unit: event.source,
-        });
-      }
-    }),
+          if (
+            event.value < 0 &&
+            event.source.hasAbility(Abilities.Competitive) &&
+            cause.type !== EffectType.None &&
+            cause.unit !== event.source &&
+            cause.unit.team.alliance !== event.source.team.alliance
+          ) {
+            event.source.triggerAbility(Abilities.Competitive);
+          }
+        }),
+        // Effect: the sharp Special Attack boost rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Competitive) {
+            event.source.addStage(Stages.SpecialAttack, 2, {
+              type: EffectType.Ability,
+              ability: Abilities.Competitive,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Frisk_(Ability)
@@ -1216,7 +1255,7 @@ const setupAbilities = [
           }
         }),
         // Effect: maximal rage; the stage clamp caps this at +6
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.AngerPoint) {
             event.source.addStage(Stages.Attack, 12, {
               type: EffectType.Ability,
@@ -1250,7 +1289,7 @@ const setupAbilities = [
           }
         }),
         // Effect: the sharp Attack boost rides the trigger
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.Defiant) {
             event.source.addStage(Stages.Attack, 2, {
               type: EffectType.Ability,

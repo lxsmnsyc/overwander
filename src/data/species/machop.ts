@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -38,6 +38,13 @@ const FAMILY_ABILITIES = [Abilities.Steadfast, Abilities.Guts, Abilities.NoGuard
 export default function registerMachopSpecies(): void {
   registerSpecies(Species.Machop, {
     dexNumber: 66,
+    evolvesInto: [
+      {
+        species: Species.Machoke,
+        method: EvolutionMethod.Level,
+        level: 28,
+      },
+    ],
     name: 'Machop',
     category: 'Superpower Pokemon',
     family: Families.Machop,
@@ -69,6 +76,12 @@ export default function registerMachopSpecies(): void {
 
   registerSpecies(Species.Machoke, {
     dexNumber: 67,
+    evolvesInto: [
+      {
+        species: Species.Machamp,
+        method: EvolutionMethod.Trade,
+      },
+    ],
     name: 'Machoke',
     category: 'Superpower Pokemon',
     family: Families.Machop,

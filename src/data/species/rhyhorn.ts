@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -33,6 +33,13 @@ const FAMILY_ABILITIES = [Abilities.Reckless, Abilities.LightningRod, Abilities.
 export default function registerRhyhornSpecies(): void {
   registerSpecies(Species.Rhyhorn, {
     dexNumber: 111,
+    evolvesInto: [
+      {
+        species: Species.Rhydon,
+        method: EvolutionMethod.Level,
+        level: 42,
+      },
+    ],
     name: 'Rhyhorn',
     category: 'Spikes Pokemon',
     family: Families.Rhyhorn,

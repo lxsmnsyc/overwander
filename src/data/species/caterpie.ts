@@ -4,12 +4,19 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 export default function registerCaterpieSpecies(): void {
   registerSpecies(Species.Caterpie, {
     dexNumber: 10,
+    evolvesInto: [
+      {
+        species: Species.Metapod,
+        method: EvolutionMethod.Level,
+        level: 7,
+      },
+    ],
     name: 'Caterpie',
     category: 'Worm Pokemon',
     family: Families.Caterpie,
@@ -36,6 +43,13 @@ export default function registerCaterpieSpecies(): void {
 
   registerSpecies(Species.Metapod, {
     dexNumber: 11,
+    evolvesInto: [
+      {
+        species: Species.Butterfree,
+        method: EvolutionMethod.Level,
+        level: 10,
+      },
+    ],
     name: 'Metapod',
     category: 'Cocoon Pokemon',
     family: Families.Caterpie,

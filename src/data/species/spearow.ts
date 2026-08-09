@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -29,6 +29,13 @@ const FAMILY_TEACHABLE = [
 export default function registerSpearowSpecies(): void {
   registerSpecies(Species.Spearow, {
     dexNumber: 21,
+    evolvesInto: [
+      {
+        species: Species.Fearow,
+        method: EvolutionMethod.Level,
+        level: 20,
+      },
+    ],
     name: 'Spearow',
     category: 'Tiny Bird Pokemon',
     family: Families.Spearow,

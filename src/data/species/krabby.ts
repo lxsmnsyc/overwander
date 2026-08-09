@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -34,6 +34,13 @@ const FAMILY_ABILITIES = [Abilities.SheerForce, Abilities.HyperCutter, Abilities
 export default function registerKrabbySpecies(): void {
   registerSpecies(Species.Krabby, {
     dexNumber: 98,
+    evolvesInto: [
+      {
+        species: Species.Kingler,
+        method: EvolutionMethod.Level,
+        level: 28,
+      },
+    ],
     name: 'Krabby',
     category: 'River Crab Pokemon',
     family: Families.Krabby,

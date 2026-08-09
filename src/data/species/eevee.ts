@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -27,6 +28,23 @@ const FAMILY_TEACHABLE = [
 export default function registerEeveeSpecies(): void {
   registerSpecies(Species.Eevee, {
     dexNumber: 133,
+    evolvesInto: [
+      {
+        species: Species.Vaporeon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.WaterStone,
+      },
+      {
+        species: Species.Jolteon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ThunderStone,
+      },
+      {
+        species: Species.Flareon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.FireStone,
+      },
+    ],
     name: 'Eevee',
     category: 'Evolution Pokemon',
     family: Families.Eevee,

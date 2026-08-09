@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -35,6 +35,13 @@ const FAMILY_TEACHABLE = [
 export default function registerDratiniSpecies(): void {
   registerSpecies(Species.Dratini, {
     dexNumber: 147,
+    evolvesInto: [
+      {
+        species: Species.Dragonair,
+        method: EvolutionMethod.Level,
+        level: 30,
+      },
+    ],
     name: 'Dratini',
     category: 'Dragon Pokemon',
     family: Families.Dratini,
@@ -66,6 +73,13 @@ export default function registerDratiniSpecies(): void {
 
   registerSpecies(Species.Dragonair, {
     dexNumber: 148,
+    evolvesInto: [
+      {
+        species: Species.Dragonite,
+        method: EvolutionMethod.Level,
+        level: 55,
+      },
+    ],
     name: 'Dragonair',
     category: 'Dragon Pokemon',
     family: Families.Dratini,

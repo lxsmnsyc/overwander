@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -40,6 +40,13 @@ const FAMILY_ABILITIES = [Abilities.SandVeil, Abilities.RockHead, Abilities.Stur
 export default function registerGeodudeSpecies(): void {
   registerSpecies(Species.Geodude, {
     dexNumber: 74,
+    evolvesInto: [
+      {
+        species: Species.Graveler,
+        method: EvolutionMethod.Level,
+        level: 25,
+      },
+    ],
     name: 'Geodude',
     category: 'Rock Pokemon',
     family: Families.Geodude,
@@ -72,6 +79,12 @@ export default function registerGeodudeSpecies(): void {
 
   registerSpecies(Species.Graveler, {
     dexNumber: 75,
+    evolvesInto: [
+      {
+        species: Species.Golem,
+        method: EvolutionMethod.Trade,
+      },
+    ],
     name: 'Graveler',
     category: 'Rock Pokemon',
     family: Families.Geodude,

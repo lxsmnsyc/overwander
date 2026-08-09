@@ -3,8 +3,33 @@ import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
+import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
+
+/**
+ * One way a species evolves: the target species and the required
+ * conditions (an EvolutionMethod bitfield with its parameters)
+ */
+export interface EvolutionData {
+  /**
+   * The species this pokemon evolves into
+   */
+  species: Species;
+  /**
+   * EvolutionMethod bitfield of the required conditions
+   */
+  method: number;
+  /**
+   * Level threshold (EvolutionMethod.Level)
+   */
+  level?: number;
+  /**
+   * The item used on or held by the pokemon
+   * (EvolutionMethod.UsedItem / EvolutionMethod.HeldItem)
+   */
+  item?: Items;
+}
 
 export interface LearnSetData {
   level: Record<number, Moves[]>;
@@ -33,6 +58,10 @@ export interface SpeciesData {
    * The species this pokemon evolves from, if any
    */
   evolvesFrom?: Species;
+  /**
+   * The evolutions available to this pokemon, if any
+   */
+  evolvesInto?: EvolutionData[];
   /**
    * Base stats of the pokemon
    */

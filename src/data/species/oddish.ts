@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -27,6 +28,13 @@ const FAMILY_TEACHABLE = [
 export default function registerOddishSpecies(): void {
   registerSpecies(Species.Oddish, {
     dexNumber: 43,
+    evolvesInto: [
+      {
+        species: Species.Gloom,
+        method: EvolutionMethod.Level,
+        level: 21,
+      },
+    ],
     name: 'Oddish',
     category: 'Weed Pokemon',
     family: Families.Oddish,
@@ -59,6 +67,13 @@ export default function registerOddishSpecies(): void {
 
   registerSpecies(Species.Gloom, {
     dexNumber: 44,
+    evolvesInto: [
+      {
+        species: Species.Vileplume,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
+    ],
     name: 'Gloom',
     category: 'Weed Pokemon',
     family: Families.Oddish,

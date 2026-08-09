@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -57,6 +57,13 @@ const FAMILY_STATS = {
 export default function registerGastlySpecies(): void {
   registerSpecies(Species.Gastly, {
     dexNumber: 92,
+    evolvesInto: [
+      {
+        species: Species.Haunter,
+        method: EvolutionMethod.Level,
+        level: 25,
+      },
+    ],
     name: 'Gastly',
     category: 'Gas Pokemon',
     family: Families.Gastly,
@@ -78,6 +85,12 @@ export default function registerGastlySpecies(): void {
 
   registerSpecies(Species.Haunter, {
     dexNumber: 93,
+    evolvesInto: [
+      {
+        species: Species.Gengar,
+        method: EvolutionMethod.Trade,
+      },
+    ],
     name: 'Haunter',
     category: 'Gas Pokemon',
     family: Families.Gastly,

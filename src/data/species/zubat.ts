@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -26,6 +26,13 @@ const FAMILY_TEACHABLE = [
 export default function registerZubatSpecies(): void {
   registerSpecies(Species.Zubat, {
     dexNumber: 41,
+    evolvesInto: [
+      {
+        species: Species.Golbat,
+        method: EvolutionMethod.Level,
+        level: 22,
+      },
+    ],
     name: 'Zubat',
     category: 'Bat Pokemon',
     family: Families.Zubat,

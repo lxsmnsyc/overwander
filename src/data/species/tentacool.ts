@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -34,6 +34,13 @@ const FAMILY_ABILITIES = [Abilities.RainDish, Abilities.ClearBody, Abilities.Liq
 export default function registerTentacoolSpecies(): void {
   registerSpecies(Species.Tentacool, {
     dexNumber: 72,
+    evolvesInto: [
+      {
+        species: Species.Tentacruel,
+        method: EvolutionMethod.Level,
+        level: 30,
+      },
+    ],
     name: 'Tentacool',
     category: 'Jellyfish Pokemon',
     family: Families.Tentacool,

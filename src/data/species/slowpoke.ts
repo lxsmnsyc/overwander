@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -51,6 +51,13 @@ const FAMILY_ABILITIES = [Abilities.Regenerator, Abilities.Oblivious, Abilities.
 export default function registerSlowpokeSpecies(): void {
   registerSpecies(Species.Slowpoke, {
     dexNumber: 79,
+    evolvesInto: [
+      {
+        species: Species.Slowbro,
+        method: EvolutionMethod.Level,
+        level: 37,
+      },
+    ],
     name: 'Slowpoke',
     category: 'Dopey Pokemon',
     family: Families.Slowpoke,

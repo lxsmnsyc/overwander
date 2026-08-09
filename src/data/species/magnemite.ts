@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -32,6 +32,13 @@ const FAMILY_ABILITIES = [Abilities.Analytic, Abilities.MagnetPull, Abilities.St
 export default function registerMagnemiteSpecies(): void {
   registerSpecies(Species.Magnemite, {
     dexNumber: 81,
+    evolvesInto: [
+      {
+        species: Species.Magneton,
+        method: EvolutionMethod.Level,
+        level: 30,
+      },
+    ],
     name: 'Magnemite',
     category: 'Magnet Pokemon',
     family: Families.Magnemite,

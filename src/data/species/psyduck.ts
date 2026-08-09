@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -37,6 +37,13 @@ const FAMILY_TEACHABLE = [
 export default function registerPsyduckSpecies(): void {
   registerSpecies(Species.Psyduck, {
     dexNumber: 54,
+    evolvesInto: [
+      {
+        species: Species.Golduck,
+        method: EvolutionMethod.Level,
+        level: 33,
+      },
+    ],
     name: 'Psyduck',
     category: 'Duck Pokemon',
     family: Families.Psyduck,

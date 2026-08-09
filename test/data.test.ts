@@ -1,0 +1,53 @@
+import { describe, expect, it } from 'vitest';
+import Abilities from '../src/data/ids/abilities';
+import { Items } from '../src/data/ids/items';
+import { EvolutionMethod, Species } from '../src/data/ids/species';
+import registerItems from '../src/data/items';
+import registerGen1Moves from '../src/data/moves/gen-1';
+import { getSpeciesAbilities, getSpeciesData, registerSpecies } from '../src/data/species';
+
+// Registry-only tests: no battle is involved, the data just has to
+// be registered (re-registration is an idempotent map overwrite)
+registerGen1Moves();
+registerSpecies();
+registerItems();
+
+describe('species abilities', () => {
+  it('evolved species learn their pre-evolutions abilities', () => {
+    // Vileplume's own set plus Gloom's Stench and Oddish's Run Away
+    const vileplume = getSpeciesAbilities(Species.Vileplume);
+
+    expect(vileplume.has(Abilities.EffectSpore)).toBe(true);
+    expect(vileplume.has(Abilities.Chlorophyll)).toBe(true);
+    expect(vileplume.has(Abilities.Stench)).toBe(true);
+    expect(vileplume.has(Abilities.RunAway)).toBe(true);
+
+    // Base species only know their own set
+    const oddish = getSpeciesAbilities(Species.Oddish);
+
+    expect(oddish.has(Abilities.Stench)).toBe(false);
+    expect(oddish.size).toBe(2);
+  });
+});
+
+describe('evolution data', () => {
+  it('describes level, stone and trade evolutions', () => {
+    expect(getSpeciesData(Species.Bulbasaur).evolvesInto).toEqual([
+      { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
+    ]);
+
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(3);
+    expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
+      species: Species.Vaporeon,
+      method: EvolutionMethod.UsedItem,
+      item: Items.WaterStone,
+    });
+
+    expect(getSpeciesData(Species.Haunter).evolvesInto).toEqual([
+      { species: Species.Gengar, method: EvolutionMethod.Trade },
+    ]);
+
+    // Final stages have none
+    expect(getSpeciesData(Species.Venusaur).evolvesInto).toBeUndefined();
+  });
+});

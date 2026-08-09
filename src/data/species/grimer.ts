@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -32,6 +32,13 @@ const FAMILY_ABILITIES = [Abilities.PoisonTouch, Abilities.Stench, Abilities.Sti
 export default function registerGrimerSpecies(): void {
   registerSpecies(Species.Grimer, {
     dexNumber: 88,
+    evolvesInto: [
+      {
+        species: Species.Muk,
+        method: EvolutionMethod.Level,
+        level: 38,
+      },
+    ],
     name: 'Grimer',
     category: 'Sludge Pokemon',
     family: Families.Grimer,

@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -29,6 +29,13 @@ const FAMILY_TEACHABLE = [
 export default function registerBulbasaurSpecies(): void {
   registerSpecies(Species.Bulbasaur, {
     dexNumber: 1,
+    evolvesInto: [
+      {
+        species: Species.Ivysaur,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
     name: 'Bulbasaur',
     category: 'Seed Pokemon',
     family: Families.Bulbasaur,
@@ -62,6 +69,13 @@ export default function registerBulbasaurSpecies(): void {
 
   registerSpecies(Species.Ivysaur, {
     dexNumber: 2,
+    evolvesInto: [
+      {
+        species: Species.Venusaur,
+        method: EvolutionMethod.Level,
+        level: 32,
+      },
+    ],
     name: 'Ivysaur',
     category: 'Seed Pokemon',
     family: Families.Bulbasaur,

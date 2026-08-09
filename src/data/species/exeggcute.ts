@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -34,6 +35,13 @@ const FAMILY_ABILITIES = [Abilities.Harvest, Abilities.Chlorophyll];
 export default function registerExeggcuteSpecies(): void {
   registerSpecies(Species.Exeggcute, {
     dexNumber: 102,
+    evolvesInto: [
+      {
+        species: Species.Exeggutor,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
+    ],
     name: 'Exeggcute',
     category: 'Egg Pokemon',
     family: Families.Exeggcute,

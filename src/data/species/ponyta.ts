@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -30,6 +30,13 @@ const FAMILY_ABILITIES = [Abilities.FlameBody, Abilities.RunAway, Abilities.Flas
 export default function registerPonytaSpecies(): void {
   registerSpecies(Species.Ponyta, {
     dexNumber: 77,
+    evolvesInto: [
+      {
+        species: Species.Rapidash,
+        method: EvolutionMethod.Level,
+        level: 40,
+      },
+    ],
     name: 'Ponyta',
     category: 'Fire Horse Pokemon',
     family: Families.Ponyta,

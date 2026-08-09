@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -43,6 +44,13 @@ const EVOLVED_TEACHABLE = [
 export default function registerPoliwagSpecies(): void {
   registerSpecies(Species.Poliwag, {
     dexNumber: 60,
+    evolvesInto: [
+      {
+        species: Species.Poliwhirl,
+        method: EvolutionMethod.Level,
+        level: 25,
+      },
+    ],
     name: 'Poliwag',
     category: 'Tadpole Pokemon',
     family: Families.Poliwag,
@@ -75,6 +83,13 @@ export default function registerPoliwagSpecies(): void {
 
   registerSpecies(Species.Poliwhirl, {
     dexNumber: 61,
+    evolvesInto: [
+      {
+        species: Species.Poliwrath,
+        method: EvolutionMethod.UsedItem,
+        item: Items.WaterStone,
+      },
+    ],
     name: 'Poliwhirl',
     category: 'Tadpole Pokemon',
     family: Families.Poliwag,

@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -30,6 +31,13 @@ const FAMILY_ABILITIES = [Abilities.Gluttony, Abilities.Chlorophyll];
 export default function registerBellsproutSpecies(): void {
   registerSpecies(Species.Bellsprout, {
     dexNumber: 69,
+    evolvesInto: [
+      {
+        species: Species.Weepinbell,
+        method: EvolutionMethod.Level,
+        level: 21,
+      },
+    ],
     name: 'Bellsprout',
     category: 'Flower Pokemon',
     family: Families.Bellsprout,
@@ -63,6 +71,13 @@ export default function registerBellsproutSpecies(): void {
 
   registerSpecies(Species.Weepinbell, {
     dexNumber: 70,
+    evolvesInto: [
+      {
+        species: Species.Victreebel,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
+    ],
     name: 'Weepinbell',
     category: 'Flycatcher Pokemon',
     family: Families.Bellsprout,

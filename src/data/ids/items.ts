@@ -5,6 +5,7 @@ export const enum ItemTypes {
   Held = 3,
   Machine = 4,
   KeyItem = 5,
+  Evolution = 6,
 }
 
 export const enum ItemFlags {
@@ -34,4 +35,10 @@ export const enum Items {
   PersimBerry = 7,
   LumBerry = 8,
   SitrusBerry = 9,
+  // Evolution stones
+  FireStone = 10,
+  WaterStone = 11,
+  ThunderStone = 12,
+  LeafStone = 13,
+  MoonStone = 14,
 }

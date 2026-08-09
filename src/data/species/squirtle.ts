@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -39,6 +39,13 @@ const FAMILY_TEACHABLE = [
 export default function registerSquirtleSpecies(): void {
   registerSpecies(Species.Squirtle, {
     dexNumber: 7,
+    evolvesInto: [
+      {
+        species: Species.Wartortle,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
     name: 'Squirtle',
     category: 'Tiny Turtle Pokemon',
     family: Families.Squirtle,
@@ -71,6 +78,13 @@ export default function registerSquirtleSpecies(): void {
 
   registerSpecies(Species.Wartortle, {
     dexNumber: 8,
+    evolvesInto: [
+      {
+        species: Species.Blastoise,
+        method: EvolutionMethod.Level,
+        level: 36,
+      },
+    ],
     name: 'Wartortle',
     category: 'Turtle Pokemon',
     family: Families.Squirtle,

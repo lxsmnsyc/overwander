@@ -4,6 +4,66 @@ export const enum Genders {
   Female = 2,
 }
 
+/**
+ * How a species evolves, as combinable bit flags (e.g. a trade while
+ * holding an item is Trade | HeldItem)
+ */
+export const enum EvolutionMethod {
+  /**
+   * Reaching a level threshold
+   */
+  Level = 0b1,
+  /**
+   * An evolution item used on the pokemon (e.g. stones)
+   */
+  UsedItem = 0b10,
+  /**
+   * Holding an item when the trigger fires
+   */
+  HeldItem = 0b100,
+  /**
+   * Being traded
+   */
+  Trade = 0b1000,
+  /**
+   * High friendship
+   */
+  Friendship = 0b10000,
+  /**
+   * Day/night restriction
+   */
+  TimeOfDay = 0b100000,
+  /**
+   * Gender restriction
+   */
+  Gender = 0b1000000,
+  /**
+   * A specific location or field condition
+   */
+  Location = 0b10000000,
+  /**
+   * Knowing a specific move
+   */
+  KnownMove = 0b100000000,
+  /**
+   * A specific party composition (e.g. a certain species or type
+   * present)
+   */
+  PartyCondition = 0b1000000000,
+  /**
+   * A specific weather
+   */
+  Weather = 0b10000000000,
+  /**
+   * A stat comparison (e.g. Attack vs Defense)
+   */
+  StatComparison = 0b100000000000,
+  /**
+   * A one-off condition outside the other flags
+   */
+  Special = 0b1000000000000,
+}
+
 export const enum Species {
   Missingno = 0,
   Egg = 1,

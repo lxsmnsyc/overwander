@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -32,6 +32,13 @@ const FAMILY_TEACHABLE = [
 export default function registerEkansSpecies(): void {
   registerSpecies(Species.Ekans, {
     dexNumber: 23,
+    evolvesInto: [
+      {
+        species: Species.Arbok,
+        method: EvolutionMethod.Level,
+        level: 22,
+      },
+    ],
     name: 'Ekans',
     category: 'Snake Pokemon',
     family: Families.Ekans,

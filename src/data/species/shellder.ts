@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -33,6 +34,13 @@ const FAMILY_ABILITIES = [Abilities.Overcoat, Abilities.ShellArmor, Abilities.Sk
 export default function registerShellderSpecies(): void {
   registerSpecies(Species.Shellder, {
     dexNumber: 90,
+    evolvesInto: [
+      {
+        species: Species.Cloyster,
+        method: EvolutionMethod.UsedItem,
+        item: Items.WaterStone,
+      },
+    ],
     name: 'Shellder',
     category: 'Bivalve Pokemon',
     family: Families.Shellder,

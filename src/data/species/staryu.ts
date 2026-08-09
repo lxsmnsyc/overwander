@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -40,6 +41,13 @@ const FAMILY_ABILITIES = [Abilities.Analytic, Abilities.Illuminate, Abilities.Na
 export default function registerStaryuSpecies(): void {
   registerSpecies(Species.Staryu, {
     dexNumber: 120,
+    evolvesInto: [
+      {
+        species: Species.Starmie,
+        method: EvolutionMethod.UsedItem,
+        item: Items.WaterStone,
+      },
+    ],
     name: 'Staryu',
     category: 'Star Shape Pokemon',
     family: Families.Staryu,

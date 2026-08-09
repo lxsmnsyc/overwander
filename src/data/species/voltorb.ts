@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -33,6 +33,13 @@ const FAMILY_ABILITIES = [Abilities.Aftermath, Abilities.Soundproof, Abilities.S
 export default function registerVoltorbSpecies(): void {
   registerSpecies(Species.Voltorb, {
     dexNumber: 100,
+    evolvesInto: [
+      {
+        species: Species.Electrode,
+        method: EvolutionMethod.Level,
+        level: 30,
+      },
+    ],
     name: 'Voltorb',
     category: 'Ball Pokemon',
     family: Families.Voltorb,

@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -29,6 +29,13 @@ const FAMILY_ABILITIES = [Abilities.TangledFeet, Abilities.RunAway, Abilities.Ea
 export default function registerDoduoSpecies(): void {
   registerSpecies(Species.Doduo, {
     dexNumber: 84,
+    evolvesInto: [
+      {
+        species: Species.Dodrio,
+        method: EvolutionMethod.Level,
+        level: 31,
+      },
+    ],
     name: 'Doduo',
     category: 'Twin Bird Pokemon',
     family: Families.Doduo,

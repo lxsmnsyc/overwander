@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -37,6 +37,13 @@ const FAMILY_TEACHABLE = [
 export default function registerCharmanderSpecies(): void {
   registerSpecies(Species.Charmander, {
     dexNumber: 4,
+    evolvesInto: [
+      {
+        species: Species.Charmeleon,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
     name: 'Charmander',
     category: 'Lizard Pokemon',
     family: Families.Charmander,
@@ -69,6 +76,13 @@ export default function registerCharmanderSpecies(): void {
 
   registerSpecies(Species.Charmeleon, {
     dexNumber: 5,
+    evolvesInto: [
+      {
+        species: Species.Charizard,
+        method: EvolutionMethod.Level,
+        level: 36,
+      },
+    ],
     name: 'Charmeleon',
     category: 'Flame Pokemon',
     family: Families.Charmander,

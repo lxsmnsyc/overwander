@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -56,6 +56,13 @@ const KADABRA_LEVEL_MOVES = {
 export default function registerAbraSpecies(): void {
   registerSpecies(Species.Abra, {
     dexNumber: 63,
+    evolvesInto: [
+      {
+        species: Species.Kadabra,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
     name: 'Abra',
     category: 'Psi Pokemon',
     family: Families.Abra,
@@ -75,6 +82,12 @@ export default function registerAbraSpecies(): void {
 
   registerSpecies(Species.Kadabra, {
     dexNumber: 64,
+    evolvesInto: [
+      {
+        species: Species.Alakazam,
+        method: EvolutionMethod.Trade,
+      },
+    ],
     name: 'Kadabra',
     category: 'Psi Pokemon',
     family: Families.Abra,

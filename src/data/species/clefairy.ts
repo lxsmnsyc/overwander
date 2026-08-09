@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -45,6 +46,13 @@ const FAMILY_TEACHABLE = [
 export default function registerClefairySpecies(): void {
   registerSpecies(Species.Clefairy, {
     dexNumber: 35,
+    evolvesInto: [
+      {
+        species: Species.Clefable,
+        method: EvolutionMethod.UsedItem,
+        item: Items.MoonStone,
+      },
+    ],
     name: 'Clefairy',
     category: 'Fairy Pokemon',
     family: Families.Clefairy,

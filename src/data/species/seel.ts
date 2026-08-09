@@ -4,7 +4,7 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -36,6 +36,13 @@ const FAMILY_ABILITIES = [Abilities.IceBody, Abilities.ThickFat, Abilities.Hydra
 export default function registerSeelSpecies(): void {
   registerSpecies(Species.Seel, {
     dexNumber: 86,
+    evolvesInto: [
+      {
+        species: Species.Dewgong,
+        method: EvolutionMethod.Level,
+        level: 34,
+      },
+    ],
     name: 'Seel',
     category: 'Sea Lion Pokemon',
     family: Families.Seel,

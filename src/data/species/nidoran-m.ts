@@ -3,8 +3,9 @@ import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
+import { Items } from '../ids/items';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -49,6 +50,13 @@ const EVOLVED_TEACHABLE = [
 export default function registerNidoranMSpecies(): void {
   registerSpecies(Species.NidoranM, {
     dexNumber: 32,
+    evolvesInto: [
+      {
+        species: Species.Nidorino,
+        method: EvolutionMethod.Level,
+        level: 16,
+      },
+    ],
     name: 'Nidoran M',
     category: 'Poison Pin Pokemon',
     family: Families.NidoranM,
@@ -81,6 +89,13 @@ export default function registerNidoranMSpecies(): void {
 
   registerSpecies(Species.Nidorino, {
     dexNumber: 33,
+    evolvesInto: [
+      {
+        species: Species.Nidoking,
+        method: EvolutionMethod.UsedItem,
+        item: Items.MoonStone,
+      },
+    ],
     name: 'Nidorino',
     category: 'Poison Pin Pokemon',
     family: Families.NidoranM,

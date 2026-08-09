@@ -4,12 +4,19 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 export default function registerWeedleSpecies(): void {
   registerSpecies(Species.Weedle, {
     dexNumber: 13,
+    evolvesInto: [
+      {
+        species: Species.Kakuna,
+        method: EvolutionMethod.Level,
+        level: 7,
+      },
+    ],
     name: 'Weedle',
     category: 'Hairy Bug Pokemon',
     family: Families.Weedle,
@@ -36,6 +43,13 @@ export default function registerWeedleSpecies(): void {
 
   registerSpecies(Species.Kakuna, {
     dexNumber: 14,
+    evolvesInto: [
+      {
+        species: Species.Beedrill,
+        method: EvolutionMethod.Level,
+        level: 10,
+      },
+    ],
     name: 'Kakuna',
     category: 'Cocoon Pokemon',
     family: Families.Weedle,

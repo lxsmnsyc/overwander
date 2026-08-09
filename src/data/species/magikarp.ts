@@ -4,12 +4,19 @@ import Abilities from '../ids/abilities';
 import EggGroups from '../ids/egg-groups';
 import Families from '../ids/families';
 import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import { EvolutionMethod, Species } from '../ids/species';
 import { registerSpecies } from './__create';
 
 export default function registerMagikarpSpecies(): void {
   registerSpecies(Species.Magikarp, {
     dexNumber: 129,
+    evolvesInto: [
+      {
+        species: Species.Gyarados,
+        method: EvolutionMethod.Level,
+        level: 20,
+      },
+    ],
     name: 'Magikarp',
     category: 'Fish Pokemon',
     family: Families.Magikarp,

@@ -110,6 +110,9 @@ export function setupMoveMechanics(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Exact, (event) => {
     event.steps = getMoveData(event.move).steps ?? 0;
   });
+  battle.on(BattleEvents.CheckUnitMoveDelay, EventPriority.Exact, (event) => {
+    event.duration = getMoveData(event.move).delay ?? 0;
+  });
 }
 
 function isCastingTargetUnit(caster: Unit, target: Unit): boolean {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { EffectType, MoveTargetType } from '../../src/battle/events';
+import { EventPriority } from '../../src/core/event-emitter';
+import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
@@ -218,5 +219,28 @@ describe('casting flow', () => {
 
     battle.tick(3000);
     expect(defender.health).toBe(160);
+  });
+});
+
+describe('move delay', () => {
+  it('resolves the visual delay from move data with listener overrides', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    // Contact moves have no projectile: defaults to zero
+    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(0);
+
+    // Projectile moves declare their flight time in data
+    expect(unit.checkMoveDelay(Moves.Ember, target)).toBe(250);
+
+    // The visual layer can nudge it per battle
+    battle.on(BattleEvents.CheckUnitMoveDelay, EventPriority.Post, (event) => {
+      event.duration += 250;
+    });
+
+    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(250);
   });
 });

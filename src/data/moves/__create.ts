@@ -22,6 +22,13 @@ export interface MoveData {
   flags: number;
 
   steps?: number;
+
+  /**
+   * Visual delay in milliseconds (e.g. a projectile's flight time
+   * before the impact cue); purely presentational, the battle
+   * mechanics never wait on it
+   */
+  delay?: number;
 }
 
 const MOVE_DATA = new Map<Moves, MoveData>();

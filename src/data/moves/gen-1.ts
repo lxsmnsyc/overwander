@@ -2,6 +2,9 @@ import { Types } from '../constants/types';
 import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../ids/moves';
 import { registerMove } from './__create';
 
+// Flight time of a thrown/shot projectile before its impact cue
+const PROJECTILE_DELAY = 250;
+
 export default function registerGen1Moves(): void {
   registerMove(Moves.Tackle, {
     name: 'Tackle',
@@ -30,6 +33,7 @@ export default function registerGen1Moves(): void {
     accuracy: 90,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.VineWhip, {
     name: 'Vine Whip',
@@ -58,6 +62,7 @@ export default function registerGen1Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Growth, {
     name: 'Growth',
@@ -243,6 +248,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Leer, {
     name: 'Leer',
@@ -351,6 +357,7 @@ export default function registerGen1Moves(): void {
     accuracy: 85,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Swift, {
     name: 'Swift',
@@ -360,6 +367,7 @@ export default function registerGen1Moves(): void {
     power: 60,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.SkullBash, {
     name: 'Skull Bash',
@@ -430,6 +438,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.WaterGun, {
     name: 'Water Gun',
@@ -440,6 +449,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Bite, {
     name: 'Bite',
@@ -468,6 +478,7 @@ export default function registerGen1Moves(): void {
     accuracy: 80,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.BubbleBeam, {
     name: 'Bubble Beam',
@@ -478,6 +489,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.IceBeam, {
     name: 'Ice Beam',
@@ -527,6 +539,7 @@ export default function registerGen1Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Harden, {
     name: 'Harden',
@@ -631,6 +644,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.FuryAttack, {
     name: 'Fury Attack',
@@ -659,6 +673,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.PinMissile, {
     name: 'Pin Missile',
@@ -669,6 +684,7 @@ export default function registerGen1Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.Agility, {
     name: 'Agility',
@@ -696,6 +712,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.QuickAttack, {
     name: 'Quick Attack',
@@ -824,6 +841,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.RockSlide, {
     name: 'Rock Slide',
@@ -834,6 +852,7 @@ export default function registerGen1Moves(): void {
     accuracy: 90,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.ThunderShock, {
     name: 'Thunder Shock',
@@ -883,6 +902,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
+    delay: PROJECTILE_DELAY,
   });
   registerMove(Moves.FurySwipes, {
     name: 'Fury Swipes',

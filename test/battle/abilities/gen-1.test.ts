@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EventPriority } from '../../../src/core/event-emitter';
+import { AttackPriority, EventPriority } from '../../../src/core/event-emitter';
 import type Battle from '../../../src/battle/core';
 import {
   BattleEvents,
@@ -2393,5 +2393,63 @@ describe('Moxie', () => {
 
     expect(victim.alive).toBe(false);
     expect(hunter.stages[Stages.Attack]).toBe(1);
+  });
+});
+
+describe('Mold Breaker', () => {
+  it('pierces Levitate with Ground moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const floater = createUnit(battle, teamB);
+    floater.addAbility(Abilities.Levitate);
+
+    const target = { type: MoveTargetType.Unit, unit: floater } as const;
+
+    attacker.triggerMoveTarget(Moves.Earthquake, target, 0);
+    expect(floater.health).toBe(160); // Levitate holds without the mold breaker
+
+    attacker.addAbility(Abilities.MoldBreaker);
+
+    attacker.triggerMoveTarget(Moves.Earthquake, target, 0);
+    expect(floater.health).toBeLessThan(160);
+
+    // The window closed: Levitate reads as present again
+    expect(floater.hasAbility(Abilities.Levitate)).toBe(true);
+  });
+
+  it('closes its window even when the attack is disabled mid-flight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const breaker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+    breaker.addAbility(Abilities.MoldBreaker);
+    victim.addAbility(Abilities.SandRush);
+
+    // A later listener kills the resolution mid-flight
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+      event.disabled = true;
+    });
+
+    breaker.triggerMoveTarget(Moves.Tackle, { type: MoveTargetType.Unit, unit: victim }, 0);
+
+    expect(victim.health).toBe(160);
+    expect(victim.hasAbility(Abilities.SandRush)).toBe(true);
+  });
+
+  it('pierces Filter during damage resolution', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const breaker = createUnit(battle, teamA);
+    const filtered = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    breaker.addAbility(Abilities.MoldBreaker);
+    filtered.types.add(Types.Grass);
+    plain.types.add(Types.Grass);
+    filtered.addAbility(Abilities.Filter);
+
+    breaker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: plain }, 0);
+    breaker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: filtered }, 0);
+
+    expect(filtered.health).toBe(plain.health);
   });
 });

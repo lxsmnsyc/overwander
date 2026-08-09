@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -18,7 +18,7 @@ export default function setupSelfDestructMoves(battle: Battle): void {
    * standard chain is replaced by indirect damage of the move's raw
    * power, so no damage modification applies.
    */
-  battle.on(BattleEvents.UnitTriggerMoveTarget, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
     if (
       SELF_DESTRUCT_MOVES.has(event.move) &&
       event.target.type === MoveTargetType.Unit &&

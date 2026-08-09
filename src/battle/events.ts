@@ -1,4 +1,4 @@
-import type { BaseEvent, EventPriority } from '../core/event-emitter';
+import type { AttackPriority, BaseEvent, EventPriority } from '../core/event-emitter';
 import type { EventMap } from '../core/event-engine';
 import type { Stages, Stats, StatsKind } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
@@ -690,7 +690,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitRemoveStage]: [UnitUpdateStageEvent, EventPriority];
   [BattleEvents.UnitCheckStage]: [UnitStageEvent, EventPriority];
 
-  [BattleEvents.UnitAttack]: [UnitAttackEvent, EventPriority];
+  [BattleEvents.UnitAttack]: [UnitAttackEvent, AttackPriority];
   [BattleEvents.UnitAttackCheckCriticalRatio]: [UnitAttackResolveAmountEvent, EventPriority];
   [BattleEvents.UnitAttackResolveCriticalChance]: [UnitAttackResolveAmountEvent, EventPriority];
   [BattleEvents.UnitAttackResolveCriticalHit]: [UnitAttackResolveCriticalEvent, EventPriority];
@@ -756,7 +756,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitTriggerMoveUpdate]: [UnitTriggerMoveUpdateEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEnd]: [UnitTriggerMoveEvent, EventPriority];
 
-  [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, AttackPriority];
   [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEffectFailed]: [UnitTriggerMoveEvent, EventPriority];
 

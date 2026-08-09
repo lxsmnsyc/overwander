@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import {
   TYPE_EFFECTIVENESS,
@@ -738,7 +738,7 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
     });
   }
 
-  battle.on(BattleEvents.UnitTriggerMoveTarget, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Exact, (event) => {
     const currentSource = event.source;
     const currentMove = event.move;
     // Get the move's type
@@ -1008,7 +1008,7 @@ export function setupAttackMechanics(battle: Battle): void {
     event.success = event.parent.source.alive && event.parent.target.alive;
   });
 
-  battle.on(BattleEvents.UnitAttack, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitAttack, AttackPriority.Exact, (event) => {
     if (event.target.alive) {
       const amount = resolveDamage(event);
 

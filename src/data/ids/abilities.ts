@@ -153,6 +153,7 @@ const enum Abilities {
   Filter = 98,
   // Pinsir
   Moxie = 99,
+  MoldBreaker = 100,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

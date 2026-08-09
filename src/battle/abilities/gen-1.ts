@@ -1,4 +1,8 @@
-import { type EventListenerLifecycle, EventPriority } from '../../core/event-emitter';
+import {
+  AttackPriority,
+  type EventListenerLifecycle,
+  EventPriority,
+} from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
@@ -902,7 +906,7 @@ const setupAbilities = [
       // The holder's attacks pierce damage-absorbing shields (e.g.
       // Substitute); the flag is set before the attack resolves, so
       // the shield's own damage handler simply honors it
-      battle.on(BattleEvents.UnitAttack, EventPriority.Pre, (event) => {
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
         if (event.source.hasAbility(Abilities.Infiltrator)) {
           event.flags |= MoveAttackFlags.Piercing;
         }
@@ -2525,6 +2529,87 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  /**
+   * https://bulbapedia.bulbagarden.net/wiki/Mold_Breaker_(Ability)
+   *
+   * Draft: while a holder's move resolves against a target, the
+   * target's abilities read as absent (via the CheckUnitAbility
+   * query), so defensive abilities like Levitate, Filter or Shell
+   * Armor cannot hinder the attack. The window opens at Prepare
+   * (before every regular listener) and closes at Cleanup, which
+   * always runs even when the event is disabled mid-emission — the
+   * bracket cannot leak. Known limit of the draft: post-damage
+   * contact abilities (e.g. Static, Aftermath) are also ignored
+   * while the attack window is open.
+   */
+  createAbility(Abilities.MoldBreaker, (battle) => {
+    const EXEMPT = new Set<Abilities>([Abilities.NeutralizingGas, ...PROTECTED_ABILITIES]);
+
+    /**
+     * Nested per-defender window counts for in-flight holder attacks
+     * (the whole pipeline is synchronous, so bracketing the entry
+     * events at Pre/Post scopes every nested query)
+     */
+    const ignored = new Map<Unit, number>();
+    const opened = new WeakSet<object>();
+
+    function push(event: object, target: Unit): void {
+      opened.add(event);
+      ignored.set(target, (ignored.get(target) ?? 0) + 1);
+    }
+
+    function pop(event: object, target: Unit): void {
+      if (opened.delete(event)) {
+        const count = ignored.get(target) ?? 0;
+
+        if (count <= 1) {
+          ignored.delete(target);
+        } else {
+          ignored.set(target, count - 1);
+        }
+      }
+    }
+
+    return new MergedAbilityLifecycle([
+      // Pure query: an ignored defender's abilities read as absent
+      battle.on(BattleEvents.CheckUnitAbility, EventPriority.Post, (event) => {
+        if (event.enabled && ignored.has(event.source) && !EXEMPT.has(event.ability)) {
+          event.enabled = false;
+        }
+      }),
+      // For visual cues: the classic entry announcement
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.MoldBreaker)) {
+          event.source.triggerAbility(Abilities.MoldBreaker);
+        }
+      }),
+      // Target resolution window (immunity, accuracy, effects)
+      battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Prepare, (event) => {
+        if (
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.source.hasAbility(Abilities.MoldBreaker)
+        ) {
+          push(event, event.target.unit);
+        }
+      }),
+      battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Cleanup, (event) => {
+        if (event.target.type === MoveTargetType.Unit) {
+          pop(event, event.target.unit);
+        }
+      }),
+      // Attack resolution window (damage math, criticals)
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Prepare, (event) => {
+        if (event.target !== event.source && event.source.hasAbility(Abilities.MoldBreaker)) {
+          push(event, event.target);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+        pop(event, event.target);
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

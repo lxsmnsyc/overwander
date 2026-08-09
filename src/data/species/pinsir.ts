@@ -22,8 +22,7 @@ export default function registerPinsirSpecies(): void {
       [Stats.Speed]: 85,
     },
     types: [Types.Bug],
-    // TODO Mold Breaker needs attack-scoped ability ignoring
-    abilities: [Abilities.Moxie, Abilities.HyperCutter],
+    abilities: [Abilities.Moxie, Abilities.HyperCutter, Abilities.MoldBreaker],
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -23,7 +23,7 @@ export default function setupRage(battle: Battle): void {
       });
     }
   });
-  battle.on(BattleEvents.UnitAttack, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
     if (event.target.status[Statuses.Raging]) {
       event.target.addStage(Stages.Attack, 1, {
         type: EffectType.Move,

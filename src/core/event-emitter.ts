@@ -9,6 +9,28 @@ export const enum EventPriority {
   Post = 2,
 }
 
+/**
+ * Priority scale for attack-resolution events (UnitTriggerMoveTarget,
+ * UnitAttack): the regular Pre/Exact/Post range is wrapped by a
+ * Prepare/Cleanup bracket (e.g. Mold Breaker's attack-scoped ability
+ * suppression, post-attack bookkeeping)
+ */
+export const enum AttackPriority {
+  /**
+   * Runs before every regular listener
+   */
+  Prepare = 0,
+  Pre = 1,
+  Exact = 2,
+  Post = 3,
+  /**
+   * Runs after every regular listener — and ALWAYS runs, even when a
+   * listener disabled the event mid-emission, so Prepare/Cleanup
+   * brackets cannot leak
+   */
+  Cleanup = 4,
+}
+
 export interface EventEmitterListener<T> {
   (event: T, self: this): void;
 
@@ -49,17 +71,27 @@ export class EventEmitter<T extends BaseEvent, P extends number> {
     const queue = [...this.queue];
     for (let i = 0, len = queue.length; i < len; i++) {
       const listeners = queue[i];
-      // Listeners mutate event.disabled mid-emission; the checker's
-      // narrowing cannot see the mutation through the callback calls.
+      /**
+       * Listeners mutate event.disabled mid-emission (the checker's
+       * narrowing cannot see it through the callback calls); a
+       * disabled event skips the remaining regular listeners, but
+       * AttackPriority.Cleanup listeners always run so brackets
+       * cannot leak. Events on the regular EventPriority scale never
+       * register at that index, so the rule is inert for them.
+       */
+      // The queue index is a plain number standing in for the const
+      // enum; tsgolint flags the comparison either way
+      // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+      const skippable = i !== AttackPriority.Cleanup;
       // oxlint-disable-next-line typescript/no-unnecessary-condition
-      if (event.disabled) {
-        return;
+      if (skippable && event.disabled) {
+        continue;
       }
       if (listeners) {
         for (const listener of [...listeners]) {
           // oxlint-disable-next-line typescript/no-unnecessary-condition
-          if (event.disabled) {
-            return;
+          if (skippable && event.disabled) {
+            break;
           }
           if (!listener.disabled) {
             listener(event, listener);

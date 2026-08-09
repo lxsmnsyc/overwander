@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { AttackPriority } from '../../../src/core/event-emitter';
 import type Battle from '../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
@@ -297,7 +298,7 @@ describe('fixed damage moves', () => {
 describe('multi-hit moves', () => {
   function countStrikes(battle: Battle): () => number {
     let strikes = 0;
-    battle.on(BattleEvents.UnitAttack, 2, () => {
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, () => {
       strikes += 1;
     });
     return () => strikes;

@@ -106,6 +106,22 @@ export function createBlazeAbility(
 }
 
 /**
+ * Meta ability for Shell Armor and Battle Armor: critical hits never
+ * land on the holder
+ * https://bulbapedia.bulbagarden.net/wiki/Shell_Armor_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Battle_Armor_(Ability)
+ */
+export function createShellArmorAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
+      if (event.critical && event.parent.target.hasAbility(targetAbility)) {
+        event.critical = false;
+      }
+    }),
+  );
+}
+
+/**
  * Meta ability for Drizzle, Drought, Sand Stream and Snow Warning
  * https://bulbapedia.bulbagarden.net/wiki/Drizzle_(Ability)
  * https://bulbapedia.bulbagarden.net/wiki/Drought_(Ability)

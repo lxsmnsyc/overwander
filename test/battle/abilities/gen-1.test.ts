@@ -1601,6 +1601,28 @@ describe('Shell Armor', () => {
   });
 });
 
+describe('Battle Armor', () => {
+  it('blocks critical hits like Shell Armor', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // every roll would crit
+
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.BattleArmor);
+
+    const event: UnitAttackResolveCriticalEvent = {
+      id: 'UnitAttackResolveCriticalHit',
+      disabled: false,
+      parent: makeAttack(attacker, holder, Moves.Tackle, Types.Normal, MoveCategories.Physical),
+      critical: false,
+    };
+
+    battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
+
+    expect(event.critical).toBe(false);
+  });
+});
+
 describe('Skill Link', () => {
   it('multi-hit moves always strike the maximum count', () => {
     const { battle, teamA, teamB } = createBattle();

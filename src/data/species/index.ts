@@ -4,6 +4,7 @@ import registerBulbasaurSpecies from './bulbasaur';
 import registerCaterpieSpecies from './caterpie';
 import registerCharmanderSpecies from './charmander';
 import registerClefairySpecies from './clefairy';
+import registerCuboneSpecies from './cubone';
 import registerDoduoSpecies from './doduo';
 import registerDiglettSpecies from './diglett';
 import registerDrowzeeSpecies from './drowzee';
@@ -92,4 +93,5 @@ export function registerSpecies(): void {
   registerKrabbySpecies();
   registerVoltorbSpecies();
   registerExeggcuteSpecies();
+  registerCuboneSpecies();
 }

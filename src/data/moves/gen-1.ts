@@ -1393,4 +1393,25 @@ export default function registerGen1Moves(): void {
     flags: 0,
     delay: PROJECTILE_DELAY,
   });
+  registerMove(Moves.BoneClub, {
+    name: 'Bone Club',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 65,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Bonemerang, {
+    name: 'Bonemerang',
+    type: Types.Ground,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 50,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
 }

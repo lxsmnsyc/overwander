@@ -129,6 +129,8 @@ const enum Abilities {
   Aftermath = 84,
   // Exeggcute
   Harvest = 85,
+  // Cubone
+  BattleArmor = 86,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

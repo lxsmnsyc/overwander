@@ -24,6 +24,7 @@ const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.DoubleSlap]: { min: 2, max: 5 },
   [Moves.SpikeCannon]: { min: 2, max: 5 },
   [Moves.Barrage]: { min: 2, max: 5 },
+  [Moves.Bonemerang]: { min: 2, max: 2 },
 };
 
 // Delay between strikes

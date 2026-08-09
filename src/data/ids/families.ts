@@ -44,6 +44,7 @@ const enum Families {
   Krabby = 42,
   Voltorb = 43,
   Exeggcute = 44,
+  Cubone = 45,
 }
 
 export default Families;

@@ -251,4 +251,6 @@ export const enum Moves {
   Crabhammer = 140,
   Barrage = 141,
   EggBomb = 142,
+  BoneClub = 143,
+  Bonemerang = 144,
 }

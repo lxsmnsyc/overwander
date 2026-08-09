@@ -111,4 +111,6 @@ export const enum Species {
   Electrode = 103,
   Exeggcute = 104,
   Exeggutor = 105,
+  Cubone = 106,
+  Marowak = 107,
 }

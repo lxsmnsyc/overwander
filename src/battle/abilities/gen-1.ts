@@ -36,6 +36,7 @@ import {
   createAbility,
   createBlazeAbility,
   createDrizzleAbility,
+  createShellArmorAbility,
 } from './__create';
 
 // Vetoes the residual weather chip damage carried by the given weather
@@ -1933,14 +1934,7 @@ const setupAbilities = [
   }),
 
   // Shellder
-  // https://bulbapedia.bulbagarden.net/wiki/Shell_Armor_(Ability)
-  createAbility(Abilities.ShellArmor, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
-      if (event.critical && event.parent.target.hasAbility(Abilities.ShellArmor)) {
-        event.critical = false;
-      }
-    }),
-  ),
+  createShellArmorAbility(Abilities.ShellArmor),
 
   // https://bulbapedia.bulbagarden.net/wiki/Skill_Link_(Ability)
   createAbility(Abilities.SkillLink, (battle) =>
@@ -2241,6 +2235,9 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Cubone
+  createShellArmorAbility(Abilities.BattleArmor),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

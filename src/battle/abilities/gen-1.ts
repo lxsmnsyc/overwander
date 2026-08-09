@@ -1413,6 +1413,63 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Machop
+  // https://bulbapedia.bulbagarden.net/wiki/No_Guard_(Ability)
+  createAbility(
+    Abilities.NoGuard,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Moves used by or against the holder skip the accuracy check
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (
+            event.source.hasAbility(Abilities.NoGuard) ||
+            (event.target.type === MoveTargetType.Unit &&
+              event.target.unit.hasAbility(Abilities.NoGuard))
+          ) {
+            event.accuracy = undefined;
+          }
+        }),
+        // ...and reach even semi-invulnerable targets (the roll only
+        // resolves false here when something forced the miss)
+        battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            !event.hit &&
+            (parent.source.hasAbility(Abilities.NoGuard) ||
+              (parent.target.type === MoveTargetType.Unit &&
+                parent.target.unit.hasAbility(Abilities.NoGuard)))
+          ) {
+            event.hit = true;
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Steadfast_(Ability)
+  createAbility(
+    Abilities.Steadfast,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: the holder flinches
+        battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Flinched && event.source.hasAbility(Abilities.Steadfast)) {
+            event.source.triggerAbility(Abilities.Steadfast);
+          }
+        }),
+        // Effect: the Speed boost rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Steadfast) {
+            event.source.addStage(Stages.Speed, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.Steadfast,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

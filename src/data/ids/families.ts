@@ -26,6 +26,7 @@ const enum Families {
   Growlithe = 24,
   Poliwag = 25,
   Abra = 26,
+  Machop = 27,
 }
 
 export default Families;

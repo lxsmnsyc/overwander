@@ -83,6 +83,9 @@ const enum Abilities {
   WaterAbsorb = 55,
   // Abra
   Synchronize = 56,
+  // Machop
+  NoGuard = 57,
+  Steadfast = 58,
 }
 
 export default Abilities;

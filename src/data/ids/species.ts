@@ -73,4 +73,7 @@ export const enum Species {
   Abra = 65,
   Kadabra = 66,
   Alakazam = 67,
+  Machop = 68,
+  Machoke = 69,
+  Machamp = 70,
 }

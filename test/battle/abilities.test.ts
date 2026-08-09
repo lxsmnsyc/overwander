@@ -1214,3 +1214,42 @@ describe('Synchronize', () => {
     expect(attacker.status[Statuses.Sleeping]).toBeUndefined();
   });
 });
+
+describe('No Guard', () => {
+  it('removes the accuracy check both ways and reaches hidden targets', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.NoGuard);
+
+    // Outgoing and incoming inaccurate moves lose their check
+    expect(
+      holder.checkMoveAccuracy(Moves.Hypnosis, { type: MoveTargetType.Unit, unit: enemy }),
+    ).toBeUndefined();
+    expect(
+      enemy.checkMoveAccuracy(Moves.Hypnosis, { type: MoveTargetType.Unit, unit: holder }),
+    ).toBeUndefined();
+
+    // Semi-invulnerable targets can still be reached
+    pinRandom(battle, 1);
+    enemy.triggerMoveEffect(Moves.Fly, { type: MoveTargetType.Unit, unit: holder }, 1);
+    const before = holder.health;
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(holder.health).toBe(before); // sanity: holder untouched
+
+    holder.triggerMoveTarget(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy }, 0);
+    expect(enemy.health).toBeLessThan(160);
+  });
+});
+
+describe('Steadfast', () => {
+  it('gains speed when flinching', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Steadfast);
+
+    holder.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(holder.stages[Stages.Speed]).toBe(1);
+  });
+});

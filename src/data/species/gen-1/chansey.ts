@@ -1,0 +1,76 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerChanseySpecies(): void {
+  registerSpecies(Species.Chansey, {
+    dexNumber: 113,
+    name: 'Chansey',
+    category: 'Egg Pokemon',
+    family: Families.Chansey,
+    stats: {
+      [Stats.HP]: 250,
+      [Stats.Attack]: 5,
+      [Stats.Defense]: 5,
+      [Stats.SpecialAttack]: 35,
+      [Stats.SpecialDefense]: 105,
+      [Stats.Speed]: 50,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.Healer, Abilities.NaturalCure, Abilities.SereneGrace],
+    eggGroups: [EggGroups.Fairy],
+    genderRatio: [0, 1],
+    catchRate: 30,
+    learnSet: {
+      level: {
+        1: [Moves.Pound, Moves.DoubleSlap],
+        24: [Moves.Sing],
+        30: [Moves.Growl],
+        38: [Moves.Minimize],
+        44: [Moves.DefenseCurl],
+        48: [Moves.LightScreen],
+        54: [Moves.DoubleEdge],
+      },
+      teachable: [
+        Moves.Toxic,
+        Moves.MegaPunch,
+        Moves.MegaKick,
+        Moves.BodySlam,
+        Moves.TakeDown,
+        Moves.DoubleEdge,
+        Moves.BubbleBeam,
+        Moves.WaterGun,
+        Moves.IceBeam,
+        Moves.Blizzard,
+        Moves.HyperBeam,
+        Moves.Submission,
+        Moves.Counter,
+        Moves.SeismicToss,
+        Moves.Rage,
+        Moves.Thunderbolt,
+        Moves.Thunder,
+        Moves.Psychic,
+        Moves.Teleport,
+        Moves.Mimic,
+        Moves.DoubleTeam,
+        Moves.Reflect,
+        Moves.Bide,
+        Moves.Metronome,
+        Moves.FireBlast,
+        Moves.SkullBash,
+        Moves.Rest,
+        Moves.ThunderWave,
+        Moves.Psywave,
+        Moves.TriAttack,
+        Moves.Substitute,
+        Moves.Strength,
+        Moves.Flash,
+      ],
+    },
+  });
+}

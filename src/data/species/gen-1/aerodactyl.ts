@@ -1,0 +1,59 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerAerodactylSpecies(): void {
+  registerSpecies(Species.Aerodactyl, {
+    dexNumber: 142,
+    name: 'Aerodactyl',
+    category: 'Fossil Pokemon',
+    family: Families.Aerodactyl,
+    stats: {
+      [Stats.HP]: 80,
+      [Stats.Attack]: 105,
+      [Stats.Defense]: 65,
+      [Stats.SpecialAttack]: 60,
+      [Stats.SpecialDefense]: 75,
+      [Stats.Speed]: 130,
+    },
+    types: [Types.Rock, Types.Flying],
+    abilities: [Abilities.Unnerve, Abilities.RockHead, Abilities.Pressure],
+    eggGroups: [EggGroups.Flying],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    learnSet: {
+      level: {
+        1: [Moves.WingAttack, Moves.Agility],
+        33: [Moves.Supersonic],
+        38: [Moves.Bite],
+        45: [Moves.TakeDown],
+        54: [Moves.HyperBeam],
+      },
+      teachable: [
+        Moves.Toxic,
+        Moves.RazorWind,
+        Moves.Whirlwind,
+        Moves.TakeDown,
+        Moves.DoubleEdge,
+        Moves.HyperBeam,
+        Moves.Rage,
+        Moves.DragonRage,
+        Moves.Mimic,
+        Moves.DoubleTeam,
+        Moves.Reflect,
+        Moves.Bide,
+        Moves.FireBlast,
+        Moves.Swift,
+        Moves.SkyAttack,
+        Moves.Rest,
+        Moves.Substitute,
+        Moves.Fly,
+      ],
+    },
+  });
+}

@@ -145,6 +145,8 @@ const enum Abilities {
   LeafGuard = 94,
   // Kangaskhan
   Scrappy = 95,
+  // Goldeen
+  WaterVeil = 96,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -14,6 +14,7 @@ import registerExeggcuteSpecies from './exeggcute';
 import registerFarfetchdSpecies from './farfetchd';
 import registerGastlySpecies from './gastly';
 import registerGeodudeSpecies from './geodude';
+import registerGoldeenSpecies from './goldeen';
 import registerGrimerSpecies from './grimer';
 import registerGrowlitheSpecies from './growlithe';
 import registerHorseaSpecies from './horsea';
@@ -110,4 +111,5 @@ export function registerSpecies(): void {
   registerTangelaSpecies();
   registerKangaskhanSpecies();
   registerHorseaSpecies();
+  registerGoldeenSpecies();
 }

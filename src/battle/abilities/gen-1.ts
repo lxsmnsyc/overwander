@@ -2456,6 +2456,31 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Goldeen
+  // https://bulbapedia.bulbagarden.net/wiki/Water_Veil_(Ability)
+  createAbility(
+    Abilities.WaterVeil,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot be burned
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Burned &&
+            event.source.hasAbility(Abilities.WaterVeil)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Burned && event.source.hasAbility(Abilities.WaterVeil)) {
+            event.source.triggerAbility(Abilities.WaterVeil);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

@@ -125,4 +125,6 @@ export const enum Species {
   Kangaskhan = 117,
   Horsea = 118,
   Seadra = 119,
+  Goldeen = 120,
+  Seaking = 121,
 }

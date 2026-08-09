@@ -54,6 +54,7 @@ const enum Families {
   Tangela = 51,
   Kangaskhan = 52,
   Horsea = 53,
+  Goldeen = 54,
 }
 
 export default Families;

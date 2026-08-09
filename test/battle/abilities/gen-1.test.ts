@@ -2317,6 +2317,18 @@ describe('Leaf Guard', () => {
   });
 });
 
+describe('Water Veil', () => {
+  it('blocks burns', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.WaterVeil);
+
+    holder.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Burned]).toBeUndefined();
+  });
+});
+
 describe('Scrappy', () => {
   it('hits Ghosts with Normal and Fighting moves', () => {
     const { battle, teamA, teamB } = createBattle();

@@ -263,4 +263,5 @@ export const enum Moves {
   Smog = 152,
   SmokeScreen = 153,
   DizzyPunch = 154,
+  Waterfall = 155,
 }

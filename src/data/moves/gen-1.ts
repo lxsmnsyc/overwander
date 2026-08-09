@@ -1513,4 +1513,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.Waterfall, {
+    name: 'Waterfall',
+    type: Types.Water,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

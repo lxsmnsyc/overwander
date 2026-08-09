@@ -115,4 +115,5 @@ export const enum Species {
   Marowak = 107,
   Hitmonlee = 108,
   Hitmonchan = 109,
+  Lickitung = 110,
 }

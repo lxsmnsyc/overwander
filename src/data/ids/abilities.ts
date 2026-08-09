@@ -103,6 +103,8 @@ const enum Abilities {
   // Magnemite
   MagnetPull = 68,
   Analytic = 69,
+  // Doduo
+  EarlyBird = 70,
 }
 
 export default Abilities;

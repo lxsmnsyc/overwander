@@ -41,7 +41,8 @@ export default function setupSleepingStatus(battle: Battle): void {
       event.source.interrupt();
 
       instances.set(event.source, {
-        progress: DURATION,
+        // Resolved through the event engine (e.g. Early Bird halves it)
+        progress: event.source.checkStatusDuration(Statuses.Sleeping, DURATION),
         cause: event.cause,
       });
 

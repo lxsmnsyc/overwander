@@ -65,7 +65,12 @@ const EFFECT_STAGE_MOVES: {
  * Sheer Force)
  */
 export function hasAttackEffect(move: Moves): boolean {
-  return EFFECT_STATUS_MOVES[move] != null || EFFECT_STAGE_MOVES[move] != null;
+  return (
+    EFFECT_STATUS_MOVES[move] != null ||
+    EFFECT_STAGE_MOVES[move] != null ||
+    // Tri Attack rolls its own three-way status in its move group
+    move === Moves.TriAttack
+  );
 }
 
 function setupUnitStatusMoves(battle: Battle): void {

@@ -26,6 +26,7 @@ import type {
   CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
+  CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
   CheckUnitUpdateStageEvent,
   EffectCause,
@@ -447,6 +448,18 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitCanConsumeItem, event);
     return event.success;
+  }
+
+  checkStatusDuration(status: Statuses, duration: number): number {
+    const event: CheckUnitStatusDurationEvent = {
+      id: 'CheckUnitStatusDuration',
+      disabled: false,
+      source: this,
+      status,
+      duration,
+    };
+    this.battle.emit(BattleEvents.CheckUnitStatusDuration, event);
+    return event.duration;
   }
 
   checkItemThreshold(item: Items, threshold: number): number {

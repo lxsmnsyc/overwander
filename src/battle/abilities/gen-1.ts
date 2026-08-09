@@ -1786,6 +1786,17 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Doduo
+  // https://bulbapedia.bulbagarden.net/wiki/Early_Bird_(Ability)
+  createAbility(Abilities.EarlyBird, (battle) =>
+    // Mutates the in-flight duration check, so the effect stays inline
+    battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+      if (event.status === Statuses.Sleeping && event.source.hasAbility(Abilities.EarlyBird)) {
+        event.duration /= 2;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

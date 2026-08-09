@@ -1448,3 +1448,23 @@ describe('Analytic', () => {
     expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(40 * 1.3);
   });
 });
+
+describe('Early Bird', () => {
+  it('sleeps for half the usual duration', () => {
+    const { battle, teamA } = createBattle();
+    const bird = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    bird.addAbility(Abilities.EarlyBird);
+
+    bird.addStatus(Statuses.Sleeping, NONE_CAUSE);
+    plain.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    // Half of the 2000ms sleep: the bird is up, the other is not
+    battle.tick(1100);
+    expect(bird.status[Statuses.Sleeping]).toBeUndefined();
+    expect(plain.status[Statuses.Sleeping]).toBeDefined();
+
+    battle.tick(1000);
+    expect(plain.status[Statuses.Sleeping]).toBeUndefined();
+  });
+});

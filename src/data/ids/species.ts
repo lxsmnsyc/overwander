@@ -91,4 +91,6 @@ export const enum Species {
   Magnemite = 83,
   Magneton = 84,
   Farfetchd = 85,
+  Doduo = 86,
+  Dodrio = 87,
 }

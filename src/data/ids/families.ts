@@ -34,6 +34,7 @@ const enum Families {
   Slowpoke = 32,
   Magnemite = 33,
   Farfetchd = 34,
+  Doduo = 35,
 }
 
 export default Families;

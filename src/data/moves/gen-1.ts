@@ -1233,4 +1233,15 @@ export default function registerGen1Moves(): void {
     flags: 0,
     delay: PROJECTILE_DELAY,
   });
+  registerMove(Moves.TriAttack, {
+    name: 'Tri Attack',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
 }

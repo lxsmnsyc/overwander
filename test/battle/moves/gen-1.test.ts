@@ -854,3 +854,17 @@ describe('Sonic Boom', () => {
     expect(defender.health).toBe(140);
   });
 });
+
+describe('Tri Attack', () => {
+  it('may inflict one of three statuses', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // effect procs, rolls the first status
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMoveTarget(Moves.TriAttack, unitTarget(defender), 0);
+
+    expect(defender.health).toBeLessThan(160);
+    expect(defender.status[Statuses.Burned]).toBeDefined();
+  });
+});

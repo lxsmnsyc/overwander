@@ -183,6 +183,7 @@ export const enum BattleEvents {
   CheckUnitDrain = 119,
   CheckUnitAddStage = 120,
   CheckUnitRemoveStage = 121,
+  CheckUnitStatusDuration = 122,
 }
 
 export const enum MoveTargetType {
@@ -367,6 +368,14 @@ export interface UnitStageEvent extends UnitEvent {
 
 export interface UnitUpdateStageEvent extends UnitStageEvent {
   cause: EffectCause;
+}
+
+/**
+ * How long a timed status holds the unit; listeners (e.g. Early
+ * Bird) adjust the duration in milliseconds
+ */
+export interface CheckUnitStatusDurationEvent extends UnitStatusEvent {
+  duration: number;
 }
 
 /**
@@ -716,6 +725,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitCanConsumeItem]: [CheckUnitCanConsumeItemEvent, EventPriority];
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
+  [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
   [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];
 }

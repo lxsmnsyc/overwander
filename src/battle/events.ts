@@ -181,6 +181,8 @@ export const enum BattleEvents {
   UnitAddStatusFailed = 117,
   CheckUnitItemThreshold = 118,
   CheckUnitDrain = 119,
+  CheckUnitAddStage = 120,
+  CheckUnitRemoveStage = 121,
 }
 
 export const enum MoveTargetType {
@@ -365,6 +367,15 @@ export interface UnitStageEvent extends UnitEvent {
 
 export interface UnitUpdateStageEvent extends UnitStageEvent {
   cause: EffectCause;
+}
+
+/**
+ * Whether the stage change may apply; blockers (e.g. Clear Body,
+ * Keen Eye, a substitute) veto it here instead of disabling the
+ * update event
+ */
+export interface CheckUnitUpdateStageEvent extends UnitUpdateStageEvent {
+  success: boolean;
 }
 
 export interface UnitDamageEvent extends UnitEvent {
@@ -705,6 +716,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitCanConsumeItem]: [CheckUnitCanConsumeItemEvent, EventPriority];
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
+  [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
+  [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];
 }
 
 export interface ProgressData {

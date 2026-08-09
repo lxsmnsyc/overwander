@@ -27,6 +27,7 @@ import type {
   CheckUnitStageEvent,
   CheckUnitStatEvent,
   CheckUnitStatusImmunityEvent,
+  CheckUnitUpdateStageEvent,
   EffectCause,
   MoveState,
   MoveTarget,
@@ -612,26 +613,58 @@ export default class Unit {
     [Stages.Speed]: 0,
   };
 
-  addStage(stage: Stages, value: number, cause: EffectCause): void {
-    this.battle.emit(BattleEvents.UnitAddStage, {
-      id: 'UnitAddStage',
+  checkAddStage(stage: Stages, value: number, cause: EffectCause): boolean {
+    const event: CheckUnitUpdateStageEvent = {
+      id: 'CheckUnitAddStage',
       disabled: false,
       source: this,
       stage,
       value,
       cause,
-    });
+      success: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitAddStage, event);
+    return event.success;
+  }
+
+  addStage(stage: Stages, value: number, cause: EffectCause): void {
+    if (this.checkAddStage(stage, value, cause)) {
+      this.battle.emit(BattleEvents.UnitAddStage, {
+        id: 'UnitAddStage',
+        disabled: false,
+        source: this,
+        stage,
+        value,
+        cause,
+      });
+    }
+  }
+
+  checkRemoveStage(stage: Stages, value: number, cause: EffectCause): boolean {
+    const event: CheckUnitUpdateStageEvent = {
+      id: 'CheckUnitRemoveStage',
+      disabled: false,
+      source: this,
+      stage,
+      value,
+      cause,
+      success: true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitRemoveStage, event);
+    return event.success;
   }
 
   removeStage(stage: Stages, value: number, cause: EffectCause): void {
-    this.battle.emit(BattleEvents.UnitRemoveStage, {
-      id: 'UnitRemoveStage',
-      disabled: false,
-      source: this,
-      stage,
-      value,
-      cause,
-    });
+    if (this.checkRemoveStage(stage, value, cause)) {
+      this.battle.emit(BattleEvents.UnitRemoveStage, {
+        id: 'UnitRemoveStage',
+        disabled: false,
+        source: this,
+        stage,
+        value,
+        cause,
+      });
+    }
   }
 
   resetStages(cause: EffectCause): void {

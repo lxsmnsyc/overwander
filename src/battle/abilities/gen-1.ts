@@ -245,15 +245,16 @@ const setupAbilities = [
   // Pidgey
   // https://bulbapedia.bulbagarden.net/wiki/Keen_Eye_(Ability)
   createAbility(Abilities.KeenEye, (battle) =>
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
       if (
+        event.success &&
         event.stage === Stages.Accuracy &&
         event.value < 0 &&
         event.source.hasAbility(Abilities.KeenEye) &&
         event.cause.type !== EffectType.None &&
         event.cause.unit !== event.source
       ) {
-        event.disabled = true;
+        event.success = false;
 
         // For visual cues
         event.source.triggerAbility(Abilities.KeenEye);
@@ -276,15 +277,16 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Big_Pecks_(Ability)
   createAbility(Abilities.BigPecks, (battle) =>
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
       if (
+        event.success &&
         event.stage === Stages.Defense &&
         event.value < 0 &&
         event.source.hasAbility(Abilities.BigPecks) &&
         event.cause.type !== EffectType.None &&
         event.cause.unit !== event.source
       ) {
-        event.disabled = true;
+        event.success = false;
 
         // For visual cues
         event.source.triggerAbility(Abilities.BigPecks);
@@ -827,14 +829,15 @@ const setupAbilities = [
           }
         }),
         // Unfazed by Intimidate (modern mechanics)
-        battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
           if (
+            event.success &&
             event.value < 0 &&
             event.cause.type === EffectType.Ability &&
             event.cause.ability === Abilities.Intimidate &&
             event.source.hasAbility(Abilities.InnerFocus)
           ) {
-            event.disabled = true;
+            event.success = false;
             event.source.triggerAbility(Abilities.InnerFocus);
           }
         }),
@@ -1485,15 +1488,16 @@ const setupAbilities = [
   // Tentacool
   // https://bulbapedia.bulbagarden.net/wiki/Clear_Body_(Ability)
   createAbility(Abilities.ClearBody, (battle) =>
-    // Mutates the in-flight stage event, so the effect stays inline
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+    // Mutates the in-flight check event, so the effect stays inline
+    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
       if (
+        event.success &&
         event.value < 0 &&
         event.source.hasAbility(Abilities.ClearBody) &&
         event.cause.type !== EffectType.None &&
         event.cause.unit !== event.source
       ) {
-        event.disabled = true;
+        event.success = false;
 
         // For visual cues
         event.source.triggerAbility(Abilities.ClearBody);

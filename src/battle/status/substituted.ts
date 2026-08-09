@@ -81,13 +81,14 @@ export default function setupSubstitutedStatus(battle: Battle): void {
   });
 
   // ...as well as stat stage changes from other units' moves
-  battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
     if (
+      event.success &&
       event.source.status[Statuses.Substituted] &&
       event.cause.type === EffectType.Move &&
       event.cause.unit !== event.source
     ) {
-      event.disabled = true;
+      event.success = false;
     }
   });
 }

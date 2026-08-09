@@ -81,4 +81,7 @@ export const enum Species {
   Victreebel = 73,
   Tentacool = 74,
   Tentacruel = 75,
+  Geodude = 76,
+  Graveler = 77,
+  Golem = 78,
 }

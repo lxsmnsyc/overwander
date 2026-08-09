@@ -797,3 +797,29 @@ describe('Recover', () => {
     expect(unit.health).toBe(120); // 40 + 160 / 2
   });
 });
+
+describe('Self-Destruct', () => {
+  it('hitting an enemy costs the user nothing by itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const bomber = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    bomber.triggerMoveEffect(Moves.Explosion, unitTarget(enemy), 0);
+
+    expect(enemy.health).toBeLessThan(160);
+    expect(bomber.health).toBe(160);
+  });
+
+  it('the self target takes the raw power as indirect damage, skipping checks', () => {
+    const { battle, teamA } = createBattle();
+    pinRandom(battle, 0.99); // no accuracy roll happens for the self-hit
+    const bomber = createUnit(battle, teamA);
+
+    bomber.triggerMoveTarget(Moves.Explosion, unitTarget(bomber), 0);
+
+    // 250 raw power against 160 max health: unmodified and lethal
+    expect(bomber.health).toBe(0);
+    expect(bomber.alive).toBe(false);
+  });
+});

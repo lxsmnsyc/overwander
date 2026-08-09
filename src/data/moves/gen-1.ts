@@ -1164,4 +1164,43 @@ export default function registerGen1Moves(): void {
     target: 0,
     flags: 0,
   });
+  registerMove(Moves.RockThrow, {
+    name: 'Rock Throw',
+    type: Types.Rock,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 50,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
+  registerMove(Moves.SelfDestruct, {
+    name: 'Self-Destruct',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 5,
+    power: 200,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple |
+      MoveTargetFlags.Self |
+      MoveTargetFlags.Enemy |
+      MoveTargetFlags.Unit,
+    flags: 0,
+  });
+  registerMove(Moves.Explosion, {
+    name: 'Explosion',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 5,
+    power: 250,
+    accuracy: 100,
+    target:
+      MoveTargetFlags.Multiple |
+      MoveTargetFlags.Self |
+      MoveTargetFlags.Enemy |
+      MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

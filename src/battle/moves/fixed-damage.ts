@@ -12,6 +12,11 @@ import type Unit from '../unit';
  * TODO type immunities should still apply
  * (e.g. Seismic Toss vs Ghost, Fissure vs Flying)
  */
+/**
+ * One-hit KO moves (used by Sturdy's immunity)
+ */
+export const OHKO_MOVES = new Set<Moves>([Moves.Fissure, Moves.HornDrill]);
+
 const FIXED_DAMAGE_MOVES: {
   [key in Moves]?: (source: Unit, target: Unit) => number;
 } = {

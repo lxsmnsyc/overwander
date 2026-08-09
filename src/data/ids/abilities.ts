@@ -91,6 +91,9 @@ const enum Abilities {
   // Tentacool
   ClearBody = 60,
   LiquidOoze = 61,
+  // Geodude
+  RockHead = 62,
+  Sturdy = 63,
 }
 
 export default Abilities;

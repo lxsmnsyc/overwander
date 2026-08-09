@@ -215,4 +215,7 @@ export const enum Moves {
   Slam = 118,
   Constrict = 119,
   Barrier = 120,
+  RockThrow = 121,
+  SelfDestruct = 122,
+  Explosion = 123,
 }

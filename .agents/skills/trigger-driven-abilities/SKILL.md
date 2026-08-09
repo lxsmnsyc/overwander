@@ -40,6 +40,15 @@ createAbility(
 - `Unit.triggerAbility` already checks the unit has the ability, so the effect listener needs only the ability-id match.
 - Self-boosts guard against re-triggering naturally when the detection condition can't match the effect (e.g. Defiant detects negative stage deltas; its own boost is positive).
 
+## Field-presence abilities
+
+When the effect depends on "any holder currently on the field" (Unnerve, Cloud Nine, Damp), keep a closure `Set` of on-field holders instead of scanning every unit in the hot path:
+
+- `UnitEntersField` adds the holder (and fires the entry cue if any).
+- `UnitLeavesField`, `UnitFaints`, and a matching `UnitRemoveAbility` remove it.
+- The suppression/effect check reduces to `holders.size > 0` (or a per-team lookup, as Unnerve does with its team status).
+- When the suppression fires a cue, it fires for **every** holder in the set, never just the first one.
+
 ## When to stay inline
 
 - The effect **mutates the detection event** (Shield Dust disabling the attack effect, Run Away setting escape success, Inner Focus vetoing a stage drop, Arena Trap blocking escape).

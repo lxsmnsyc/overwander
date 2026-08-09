@@ -20,6 +20,7 @@ import setupRechargeMoves from './recharge';
 import setupRecoilMoves from './recoil';
 import setupRecoverMoves from './recover';
 import setupRest from './rest';
+import setupSelfDestructMoves from './self-destruct';
 import setupSemiInvulnerableMoves from './semi-invulnerable';
 import setupSolarBeam from './solar-beam';
 import setupStageMoves from './stage';
@@ -59,6 +60,7 @@ export default function setupMoves(battle: Battle): void {
   setupDisable(battle);
   setupHaze(battle);
   setupRecoverMoves(battle);
+  setupSelfDestructMoves(battle);
   setupMirrorMove(battle);
   setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);

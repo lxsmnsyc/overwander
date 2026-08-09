@@ -10,6 +10,8 @@ import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
+import { OHKO_MOVES } from '../moves/fixed-damage';
+import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { hasAttackEffect } from '../moves/status';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
@@ -1024,8 +1026,47 @@ const setupAbilities = [
       ]),
   ),
 
-  // TODO Damp (Paras hidden ability): blocks Self-Destruct, Explosion
-  // and Aftermath once those are implemented
+  // https://bulbapedia.bulbagarden.net/wiki/Damp_(Ability)
+  // TODO Aftermath suppression once Aftermath is implemented
+  createAbility(Abilities.Damp, (battle) => {
+    /**
+     * Holders currently on the field (the Unnerve/Cloud Nine
+     * pattern): cast checks reduce to a single size lookup instead
+     * of scanning every unit each time
+     */
+    const holders = new Set<Unit>();
+
+    return new MergedAbilityLifecycle([
+      // Nobody on the field can blow itself up while a holder is up
+      battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
+        if (event.success && holders.size > 0 && SELF_DESTRUCT_MOVES.has(event.move)) {
+          event.success = false;
+
+          // For visual cues: every holder on the field reacts
+          for (const holder of holders) {
+            holder.triggerAbility(Abilities.Damp);
+          }
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Damp)) {
+          holders.add(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      // Losing the ability mid-battle also lifts the suppression
+      battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+        if (event.ability === Abilities.Damp) {
+          holders.delete(event.source);
+        }
+      }),
+    ]);
+  }),
 
   // Venonat (Venomoth)
   // https://bulbapedia.bulbagarden.net/wiki/Wonder_Skin_(Ability)
@@ -1517,6 +1558,52 @@ const setupAbilities = [
         event.target.triggerAbility(Abilities.LiquidOoze);
       }
     }),
+  ),
+
+  // Geodude
+  // https://bulbapedia.bulbagarden.net/wiki/Rock_Head_(Ability)
+  createAbility(Abilities.RockHead, (battle) =>
+    // Mutates the in-flight recoil check, so the effect stays inline
+    battle.on(BattleEvents.CheckUnitRecoil, EventPriority.Post, (event) => {
+      if (event.recoil && event.parent.source.hasAbility(Abilities.RockHead)) {
+        event.recoil = false;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sturdy_(Ability)
+  createAbility(
+    Abilities.Sturdy,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: one-hit KO moves cannot touch the holder
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            OHKO_MOVES.has(event.move) &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.Sturdy)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // Endures any single blow from full health with 1 HP left
+        battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+          if (
+            event.target.alive &&
+            !(event.flags & DamageFlags.Indirect) &&
+            event.value >= event.target.health &&
+            event.target.hasAbility(Abilities.Sturdy) &&
+            event.target.health >= event.target.checkStat(Stats.HP, 0)
+          ) {
+            event.value = event.target.health - 1;
+
+            // For visual cues
+            event.target.triggerAbility(Abilities.Sturdy);
+          }
+        }),
+      ]),
   ),
 ];
 

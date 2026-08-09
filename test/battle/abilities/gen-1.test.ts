@@ -1290,3 +1290,66 @@ describe('Liquid Ooze', () => {
     expect(160 - drinker.health).toBeCloseTo(dealt / 2);
   });
 });
+
+describe('Rock Head', () => {
+  it('takes no recoil damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.RockHead);
+
+    holder.triggerMoveEffect(Moves.TakeDown, { type: MoveTargetType.Unit, unit: enemy }, 0);
+
+    expect(enemy.health).toBeLessThan(160);
+    expect(holder.health).toBe(160); // no recoil
+  });
+});
+
+describe('Sturdy', () => {
+  it('endures a lethal blow from full health and blocks OHKO moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Sturdy);
+
+    expect(
+      attacker.checkMoveImmunity(
+        Moves.Fissure,
+        { type: MoveTargetType.Unit, unit: holder },
+        Types.Ground,
+      ),
+    ).toBe(true);
+
+    attacker.damage(NONE_CAUSE, holder, 999, 0);
+
+    expect(holder.health).toBe(1);
+    expect(holder.alive).toBe(true);
+
+    // Not from full health: goes down normally
+    attacker.damage(NONE_CAUSE, holder, 999, 0);
+    expect(holder.alive).toBe(false);
+  });
+});
+
+describe('Damp', () => {
+  it('forbids self-destructing while a holder is on the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bomber = createUnit(battle, teamA);
+    const damp = createUnit(battle, teamB);
+    bomber.addMove(Moves.SelfDestruct);
+    bomber.addMove(Moves.Tackle);
+
+    expect(bomber.checkCanCast(Moves.SelfDestruct, { type: MoveTargetType.None })).toBe(true);
+
+    damp.addAbility(Abilities.Damp);
+    damp.enter();
+
+    expect(bomber.checkCanCast(Moves.SelfDestruct, { type: MoveTargetType.None })).toBe(false);
+    expect(bomber.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(true);
+
+    // Suppression lifts when the holder goes down
+    damp.faint(damp);
+    expect(bomber.checkCanCast(Moves.SelfDestruct, { type: MoveTargetType.None })).toBe(true);
+  });
+});

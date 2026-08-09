@@ -75,6 +75,7 @@ const enum Families {
   Articuno = 72,
   Zapdos = 73,
   Moltres = 74,
+  Dratini = 75,
 }
 
 export default Families;

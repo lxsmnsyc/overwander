@@ -2656,3 +2656,36 @@ describe('Snow Cloak', () => {
     expect(holder.health).toBe(160); // no hail chip
   });
 });
+
+describe('Marvel Scale', () => {
+  it('hardens defense while statused', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.MarvelScale);
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBe(105);
+
+    holder.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(105 * 1.5);
+  });
+});
+
+describe('Multiscale', () => {
+  it('halves damage taken at full health only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Multiscale);
+
+    const before = holder.health;
+    attacker.triggerMoveEffect(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder }, 0);
+    const first = before - holder.health;
+
+    attacker.triggerMoveEffect(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder }, 0);
+    const second = before - first - holder.health;
+
+    expect(second).toBeCloseTo(first * 2);
+  });
+});

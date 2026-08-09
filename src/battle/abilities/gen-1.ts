@@ -2917,6 +2917,37 @@ const setupAbilities = [
         chipImmunity(battle, Abilities.SnowCloak, Weathers.Hail),
       ]),
   ),
+
+  // Dratini
+  // https://bulbapedia.bulbagarden.net/wiki/Marvel_Scale_(Ability)
+  createAbility(Abilities.MarvelScale, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        event.stat === Stats.Defense &&
+        event.source.hasAbility(Abilities.MarvelScale) &&
+        hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS)
+      ) {
+        event.value *= 1.5;
+      }
+    }),
+  ),
+
+  // Dragonite
+  // https://bulbapedia.bulbagarden.net/wiki/Multiscale_(Ability)
+  createAbility(Abilities.Multiscale, (battle) =>
+    // Mutates the in-flight damage resolution, so the effect stays
+    // inline
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const target = event.parent.target;
+
+      if (
+        target.hasAbility(Abilities.Multiscale) &&
+        target.health >= target.checkStat(Stats.HP, 0)
+      ) {
+        event.value *= 0.5;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

@@ -173,6 +173,10 @@ const enum Abilities {
   Immunity = 110,
   // Articuno
   SnowCloak = 111,
+  // Dratini
+  MarvelScale = 112,
+  // Dragonite
+  Multiscale = 113,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -10,6 +10,7 @@ import registerCuboneSpecies from './cubone';
 import registerDoduoSpecies from './doduo';
 import registerDiglettSpecies from './diglett';
 import registerDittoSpecies from './ditto';
+import registerDratiniSpecies from './dratini';
 import registerDrowzeeSpecies from './drowzee';
 import registerEeveeSpecies from './eevee';
 import registerEkansSpecies from './ekans';
@@ -148,4 +149,5 @@ export function registerSpecies(): void {
   registerAerodactylSpecies();
   registerSnorlaxSpecies();
   registerLegendaryBirdSpecies();
+  registerDratiniSpecies();
 }

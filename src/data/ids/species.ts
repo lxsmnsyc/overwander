@@ -154,4 +154,7 @@ export const enum Species {
   Articuno = 146,
   Zapdos = 147,
   Moltres = 148,
+  Dratini = 149,
+  Dragonair = 150,
+  Dragonite = 151,
 }

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, MoveTargetFlags } from '../../data/ids/moves';
@@ -92,7 +92,7 @@ const setupAbilities = [
         }
       }),
       // Health-scaling damage never lands, direct or indirect
-      battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
         if (event.flags & DamageFlags.HealthScaled && event.target.hasAbility(Abilities.Boss)) {
           event.disabled = true;
 

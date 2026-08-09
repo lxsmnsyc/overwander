@@ -1,28 +1,17 @@
 import { EventPriority } from '../../core/event-emitter';
-import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
+import { MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
-
-/**
- * Damaging moves with their own damage resolution, opted out of the
- * plain hit handler (e.g. multi-hit moves fire their own strikes)
- */
-const NON_HIT_MOVES = new Set<Moves>([
-  Moves.FuryAttack,
-  Moves.PinMissile,
-  Moves.Twineedle,
-  Moves.FurySwipes,
-  Moves.DoubleKick,
-  Moves.DoubleSlap,
-]);
+import { MULTI_HIT_MOVES } from './multi-hit';
 
 export default function setupHitMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (
       event.target.type !== MoveTargetType.Unit ||
       event.steps !== 0 ||
-      NON_HIT_MOVES.has(event.move)
+      // Multi-hit moves fire their own strikes
+      MULTI_HIT_MOVES[event.move] != null
     ) {
       return;
     }

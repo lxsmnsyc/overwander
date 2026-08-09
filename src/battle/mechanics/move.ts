@@ -11,6 +11,7 @@ import {
   DamageFlags,
   MoveAttackFlags,
   MoveCategories,
+  MoveFlags,
   MoveTargetFlags,
   StatFlags,
 } from '../../data/ids/moves';
@@ -93,6 +94,18 @@ export function setupMoveMechanics(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
     if (event.target.type === MoveTargetType.Unit) {
       event.immune = isUnitImmune(event.target.unit, event.type);
+    }
+  });
+  // Powder- and spore-based moves cannot affect Grass types
+  // (modern mechanics)
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
+    if (
+      !event.immune &&
+      event.target.type === MoveTargetType.Unit &&
+      event.target.unit.types.has(Types.Grass) &&
+      getMoveData(event.move).flags & MoveFlags.Powder
+    ) {
+      event.immune = true;
     }
   });
   // Ground moves cannot reach airborne units (Floating status, Flying

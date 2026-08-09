@@ -943,7 +943,7 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
-  // TODO rampage lock (repeat use, confusion afterwards)
+  // Rampage: every step lands the same attack
   registerMove(Moves.Thrash, {
     name: 'Thrash',
     type: Types.Normal,
@@ -953,6 +953,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
+    steps: 2,
   });
   registerMove(Moves.Pound, {
     name: 'Pound',
@@ -1071,6 +1072,7 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
   });
+  // Rampage: every step lands the same attack
   registerMove(Moves.PetalDance, {
     name: 'Petal Dance',
     type: Types.Grass,
@@ -1080,6 +1082,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
+    steps: 2,
   });
   registerMove(Moves.Spore, {
     name: 'Spore',

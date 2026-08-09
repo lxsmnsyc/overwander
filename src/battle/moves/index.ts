@@ -17,6 +17,7 @@ import setupMirrorMove from './mirror-move';
 import setupMultiHitMoves from './multi-hit';
 import setupPowderMoves from './powder';
 import setupRage from './rage';
+import setupRampageMoves from './rampage';
 import setupRechargeMoves from './recharge';
 import setupRecoilMoves from './recoil';
 import setupRecoverMoves from './recover';
@@ -41,6 +42,7 @@ export default function setupMoves(battle: Battle): void {
   // Small groups
   setupPowderMoves(battle);
   setupIncreasedCriticalHitRatioMoves(battle);
+  setupRampageMoves(battle);
   setupRecoilMoves(battle);
   setupCrashMoves(battle);
   setupTransform(battle);

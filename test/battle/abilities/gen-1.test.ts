@@ -2689,3 +2689,121 @@ describe('Multiscale', () => {
     expect(second).toBeCloseTo(first * 2);
   });
 });
+
+describe('interaction fixes', () => {
+  it('Quick Feet ignores the paralysis speed drop', () => {
+    const { battle, teamA } = createBattle();
+    const slow = createUnit(battle, teamA);
+    const quick = createUnit(battle, teamA);
+    quick.addAbility(Abilities.QuickFeet);
+
+    slow.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+    quick.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    expect(slow.checkStat(Stats.Speed, 0)).toBeCloseTo(105 * 0.5);
+    expect(quick.checkStat(Stats.Speed, 0)).toBeCloseTo(105 * 1.5);
+  });
+
+  it('Keen Eye attacks ignore the target evasion stages', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const dodger = createUnit(battle, teamB);
+    dodger.addStage(Stages.Evasion, 6, NONE_CAUSE);
+
+    const parent = {
+      id: 'UnitTriggerMove',
+      disabled: false,
+      source: attacker,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.Unit, unit: dodger },
+      steps: 0,
+    } as const;
+
+    const resolve = (): number | undefined => {
+      const event = {
+        id: 'UnitTriggerMoveResolveAccuracy',
+        disabled: false,
+        parent,
+        accuracy: undefined as number | undefined,
+      };
+      battle.emit(BattleEvents.UnitTriggerMoveResolveAccuracy, event);
+      return event.accuracy;
+    };
+
+    expect(resolve()).toBeCloseTo(100 / 3);
+
+    attacker.addAbility(Abilities.KeenEye);
+
+    expect(resolve()).toBeCloseTo(100);
+  });
+
+  it('Overcoat blocks Effect Spore procs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // the spore would always proc
+    const holder = createUnit(battle, teamA);
+    const cloaked = createUnit(battle, teamB);
+    holder.addAbility(Abilities.EffectSpore);
+    cloaked.addAbility(Abilities.Overcoat);
+
+    cloaked.damage({ type: EffectType.Move, move: Moves.Tackle, unit: cloaked }, holder, 10, 0);
+
+    expect(cloaked.status[Statuses.Poisoned]).toBeUndefined();
+  });
+
+  it('Mold Breaker attacks still trigger contact punishers', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0); // Static would always proc
+    const breaker = createUnit(battle, teamA);
+    const staticHolder = createUnit(battle, teamB);
+    breaker.addAbility(Abilities.MoldBreaker);
+    staticHolder.addAbility(Abilities.Static);
+
+    breaker.triggerMoveTarget(Moves.Tackle, { type: MoveTargetType.Unit, unit: staticHolder }, 0);
+
+    expect(staticHolder.health).toBeLessThan(160);
+    expect(breaker.status[Statuses.Paralyzed]).toBeDefined();
+  });
+
+  it('Lightning Rod draws single-target Electric moves to the holder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamB);
+    const rod = createUnit(battle, teamB);
+    rod.addAbility(Abilities.LightningRod);
+
+    attacker.triggerMoveTarget(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: plain }, 0);
+
+    expect(plain.health).toBe(160); // redirected away
+    expect(rod.health).toBe(160); // absorbed
+    expect(rod.stages[Stages.SpecialAttack]).toBe(1);
+  });
+
+  it('gaining a status-immunity ability cures the status', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+
+    unit.addAbility(Abilities.Limber);
+
+    expect(unit.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+
+  it('lifting Neutralizing Gas re-triggers entry abilities', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const victim = createUnit(battle, teamA);
+    const gas = createUnit(battle, teamA);
+    gas.addAbility(Abilities.NeutralizingGas);
+    gas.enter();
+
+    const intimidator = createUnit(battle, teamB);
+    intimidator.addAbility(Abilities.Intimidate);
+    intimidator.enter(); // suppressed: no drop
+
+    expect(victim.stages[Stages.Attack]).toBe(0);
+
+    gas.leave();
+
+    expect(victim.stages[Stages.Attack]).toBe(-1);
+  });
+});

@@ -1,8 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
+import { StatFlags } from '../../data/ids/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
-import { Weathers } from '../../data/ids/status';
+import { type Statuses, Weathers } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
@@ -205,28 +206,109 @@ export function createWaterAbsorbAbility(
 }
 
 /**
+ * Meta ability for status-immunity abilities (Limber, Vital Spirit,
+ * Insomnia, Water Veil, Immunity): the statuses cannot land, a cue
+ * fires on blocked applications, and gaining the ability cures any
+ * blocked status already present
+ * https://bulbapedia.bulbagarden.net/wiki/Limber_(Ability)
+ */
+export function createLimberAbility(
+  targetAbility: Abilities,
+  statuses: Statuses[],
+): (battle: Battle) => void {
+  const blocked = new Set(statuses);
+
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: the statuses cannot land
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            blocked.has(event.status) &&
+            event.source.hasAbility(targetAbility)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (blocked.has(event.status) && event.source.hasAbility(targetAbility)) {
+            event.source.triggerAbility(targetAbility);
+          }
+        }),
+        // Gaining the ability also cures a blocked status already
+        // present (modern mechanics)
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (event.ability === targetAbility) {
+            for (const status of blocked) {
+              if (event.source.status[status] != null) {
+                event.source.removeStatus(status, {
+                  type: EffectType.Ability,
+                  ability: targetAbility,
+                  unit: event.source,
+                });
+              }
+            }
+          }
+        }),
+      ]),
+  );
+}
+
+/**
  * Meta ability for Keen Eye and Illuminate (modern mechanics): other
- * units cannot lower the holder's accuracy
+ * units cannot lower the holder's accuracy, and the holder's own
+ * attacks ignore the target's evasion stages
  * https://bulbapedia.bulbagarden.net/wiki/Keen_Eye_(Ability)
  * https://bulbapedia.bulbagarden.net/wiki/Illuminate_(Ability)
  */
-export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle) => void {
-  return createAbility(targetAbility, (battle) =>
-    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
-      if (
-        event.success &&
-        event.stage === Stages.Accuracy &&
-        event.value < 0 &&
-        event.source.hasAbility(targetAbility) &&
-        event.cause.type !== EffectType.None &&
-        event.cause.unit !== event.source
-      ) {
-        event.success = false;
+function accuracyStageFactor(stage: number): number {
+  const clamped = Math.max(-6, Math.min(stage, 6));
+  return clamped < 0 ? 3 / (3 - clamped) : (3 + clamped) / 3;
+}
 
-        // For visual cues
-        event.source.triggerAbility(targetAbility);
-      }
-    }),
+export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            event.stage === Stages.Accuracy &&
+            event.value < 0 &&
+            event.source.hasAbility(targetAbility) &&
+            event.cause.type !== EffectType.None &&
+            event.cause.unit !== event.source
+          ) {
+            event.success = false;
+
+            // For visual cues
+            event.source.triggerAbility(targetAbility);
+          }
+        }),
+        // The holder's attacks ignore the target's evasion stages:
+        // compensate the stage factor the shared resolver applied
+        battle.on(BattleEvents.UnitTriggerMoveResolveAccuracy, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.accuracy != null &&
+            parent.target.type === MoveTargetType.Unit &&
+            parent.source.hasAbility(targetAbility)
+          ) {
+            const accuracy = parent.source.checkStage(Stages.Accuracy, StatFlags.Attack);
+            const evasion = parent.target.unit.checkStage(Stages.Evasion, StatFlags.Attack);
+
+            if (evasion !== 0) {
+              event.accuracy *=
+                accuracyStageFactor(accuracy) / accuracyStageFactor(accuracy - evasion);
+            }
+          }
+        }),
+      ]),
   );
 }
 

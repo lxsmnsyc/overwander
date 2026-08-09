@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, MoveFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -45,7 +45,7 @@ export default function setupSubstitutedStatus(battle: Battle): void {
    * moves go through, matching the modern behavior. Excess damage beyond
    * the substitute's remaining HP is discarded.
    */
-  battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
     const data = instances.get(event.target);
 
     if (

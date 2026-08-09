@@ -1,4 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
+import { Stats } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
@@ -63,6 +65,18 @@ export default function setupParalyzedStatus(battle: Battle): void {
 
     return false;
   }
+
+  // Paralysis halves Speed; Quick Feet holders ignore the drop
+  // (explicit check, like Run Away vs Arena Trap)
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+    if (
+      event.stat === Stats.Speed &&
+      event.source.status[Statuses.Paralyzed] != null &&
+      !event.source.hasAbility(Abilities.QuickFeet)
+    ) {
+      event.value *= 0.5;
+    }
+  });
 
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     event.success = event.success && !rollParalyzed(event.source);

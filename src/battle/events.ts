@@ -714,7 +714,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitAttackEffect]: [UnitAttackChildEvent, EventPriority];
 
   [BattleEvents.UnitHeal]: [UnitHealEvent, EventPriority];
-  [BattleEvents.UnitDamage]: [UnitDamageEvent, EventPriority];
+  [BattleEvents.UnitDamage]: [UnitDamageEvent, AttackPriority];
   [BattleEvents.UnitFaints]: [UnitFaintsEvent, EventPriority];
   [BattleEvents.UnitCure]: [UnitCureEvent, EventPriority];
 

@@ -8,9 +8,8 @@ import type Unit from '../unit';
 /**
  * Moves that deal a fixed amount of damage: no stat calculation, no
  * critical hit, no STAB or type effectiveness (Pure attack flag).
- *
- * TODO type immunities should still apply
- * (e.g. Seismic Toss vs Ghost, Fissure vs Flying)
+ * Type immunities still gate the hit through the shared
+ * UnitTriggerMoveTarget immunity check.
  */
 /**
  * One-hit KO moves (used by Sturdy's immunity)

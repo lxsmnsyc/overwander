@@ -15,7 +15,7 @@ interface MultiHitConfig {
  * attack, so per-hit secondary effects (e.g. Twineedle's poison) roll
  * on every strike.
  */
-const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
+export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.FuryAttack]: { min: 2, max: 5 },
   [Moves.PinMissile]: { min: 2, max: 5 },
   [Moves.Twineedle]: { min: 2, max: 2 },

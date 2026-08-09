@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import {
@@ -29,7 +29,7 @@ export default function setupRecoilMoves(battle: Battle): void {
     event.recoil = !event.recoil && event.parent.target.alive;
   });
 
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     if (checkRecoil(event) && event.cause.type === EffectType.Move) {
       const recoilFactor = RECOIL_MOVES[event.cause.move];
 

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -26,7 +26,7 @@ export default function setupFrozenStatus(battle: Battle): void {
   });
 
   // Fire-type move damage thaws the target
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     const cause = event.target.status[Statuses.Frozen];
 
     if (

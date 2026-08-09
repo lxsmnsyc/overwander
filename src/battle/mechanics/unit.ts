@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats, StatsKind, createStagesField, getStageFromStat } from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
@@ -77,7 +77,7 @@ function setupUnitDamageMechanics(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitDamage, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Exact, (event) => {
     if (event.target.alive) {
       let value = Math.max(0, event.target.health - event.value);
 

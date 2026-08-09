@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -27,7 +27,7 @@ export default function setupAbsorb(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     if (
       // Only the direct hit drains; indirect damage carrying the move
       // cause (e.g. a Liquid Ooze backfire) must not re-trigger it

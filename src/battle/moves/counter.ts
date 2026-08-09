@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -15,7 +15,7 @@ export default function setupCounter(battle: Battle): void {
   const lastPhysicalHit = new Map<Unit, CounterData>();
 
   // Track the last direct physical hit each unit takes
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     if (
       event.success &&
       !(event.flags & DamageFlags.Indirect) &&

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
@@ -33,7 +33,7 @@ export default function setupBide(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     if (event.target.status[Statuses.Biding] && event.target.alive) {
       const current = bideData.get(event.target);
       if (current) {

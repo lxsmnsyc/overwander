@@ -4,6 +4,7 @@ import type Battle from '../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
+import Abilities from '../../../src/data/ids/abilities';
 import { Types } from '../../../src/data/constants/types';
 import { Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
@@ -915,5 +916,53 @@ describe('Transform', () => {
     expect(ditto.types.has(Types.Fire)).toBe(false);
     expect(ditto.moves[Moves.Ember]).toBeUndefined();
     expect(ditto.moves[Moves.Transform]).toBeDefined();
+  });
+});
+
+describe('interaction fixes', () => {
+  it('fixed damage respects type immunities and Scrappy pierces them', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB);
+    ghost.types.add(Types.Ghost);
+
+    attacker.triggerMoveTarget(Moves.SeismicToss, unitTarget(ghost), 0);
+    expect(ghost.health).toBe(160);
+
+    attacker.addAbility(Abilities.Scrappy);
+
+    attacker.triggerMoveTarget(Moves.SeismicToss, unitTarget(ghost), 0);
+    expect(ghost.health).toBe(110); // level 50 fixed damage
+  });
+
+  it('powder moves cannot affect Grass types', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const grass = createUnit(battle, teamB);
+    grass.types.add(Types.Grass);
+
+    expect(attacker.checkMoveImmunity(Moves.SleepPowder, unitTarget(grass), Types.Grass)).toBe(
+      true,
+    );
+  });
+
+  it('rampage moves strike on every step', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMoveEffect(Moves.Thrash, unitTarget(defender), 2);
+    attacker.triggerMoveEffect(Moves.Thrash, unitTarget(defender), 1);
+
+    const single = plainDamage(120);
+    expect(160 - defender.health).toBeCloseTo(single * 2);
+
+    // The final step goes through the shared hit handler and the
+    // fatigue leaves the user confused
+    attacker.triggerMoveEffect(Moves.Thrash, unitTarget(defender), 0);
+    expect(defender.alive).toBe(false);
+    expect(attacker.status[Statuses.Confused]).toBeDefined();
   });
 });

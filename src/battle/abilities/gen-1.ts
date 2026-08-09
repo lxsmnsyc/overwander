@@ -53,6 +53,7 @@ import {
   createDrizzleAbility,
   createHydrationAbility,
   createKeenEyeAbility,
+  createLimberAbility,
   createShellArmorAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -64,7 +65,7 @@ function chipImmunity(
   ability: Abilities,
   weather: Weathers,
 ): EventListenerLifecycle<UnitDamageEvent> {
-  return battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+  return battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
     if (
       event.cause.type === EffectType.Weather &&
       event.cause.weather === weather &&
@@ -488,7 +489,7 @@ const setupAbilities = [
   createAbility(Abilities.Static, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -514,6 +515,31 @@ const setupAbilities = [
     Abilities.LightningRod,
     (battle) =>
       new MergedAbilityLifecycle([
+        // Single-target Electric moves are drawn to a rod on the
+        // defending side
+        battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+          if (
+            event.target.type !== MoveTargetType.Unit ||
+            event.target.unit.hasAbility(Abilities.LightningRod) ||
+            event.source.checkMoveType(event.move, event.target) !== Types.Electric
+          ) {
+            return;
+          }
+
+          const alliance = event.target.unit.team.alliance;
+
+          for (const unit of battle.units()) {
+            if (
+              unit.alive &&
+              unit !== event.source &&
+              unit.team.alliance === alliance &&
+              unit.hasAbility(Abilities.LightningRod)
+            ) {
+              event.target = { type: MoveTargetType.Unit, unit };
+              return;
+            }
+          }
+        }),
         // Pure query: grants the immunity, no side effects
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -595,7 +621,7 @@ const setupAbilities = [
   createAbility(Abilities.PoisonPoint, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -664,7 +690,7 @@ const setupAbilities = [
   createAbility(Abilities.CuteCharm, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -688,7 +714,7 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
   createAbility(Abilities.MagicGuard, (battle) =>
-    battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
       // Only direct attack damage can hurt the holder
       if (event.flags & DamageFlags.Indirect && event.target.hasAbility(Abilities.MagicGuard)) {
         event.disabled = true;
@@ -922,7 +948,7 @@ const setupAbilities = [
   createAbility(Abilities.Stench, (battle) => {
     const CHANCE = 0.1;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -952,7 +978,7 @@ const setupAbilities = [
     const PARALYSIS = 0.19;
     const SLEEP = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -960,8 +986,10 @@ const setupAbilities = [
         event.cause.unit !== event.target &&
         event.target.hasAbility(Abilities.EffectSpore) &&
         getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        // Grass types are immune to spores (modern mechanics)
-        !event.cause.unit.types.has(Types.Grass)
+        // Grass types and Overcoat holders are immune to spores
+        // (modern mechanics; explicit check)
+        !event.cause.unit.types.has(Types.Grass) &&
+        !event.cause.unit.hasAbility(Abilities.Overcoat)
       ) {
         const roll = battle.random();
 
@@ -1214,28 +1242,7 @@ const setupAbilities = [
 
   // Persian
   // https://bulbapedia.bulbagarden.net/wiki/Limber_(Ability)
-  createAbility(
-    Abilities.Limber,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: cannot be paralyzed
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            event.status === Statuses.Paralyzed &&
-            event.source.hasAbility(Abilities.Limber)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real application was blocked
-        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          if (event.status === Statuses.Paralyzed && event.source.hasAbility(Abilities.Limber)) {
-            event.source.triggerAbility(Abilities.Limber);
-          }
-        }),
-      ]),
-  ),
+  createLimberAbility(Abilities.Limber, [Statuses.Paralyzed]),
 
   // Psyduck
   // https://bulbapedia.bulbagarden.net/wiki/Cloud_Nine_(Ability)
@@ -1292,31 +1299,7 @@ const setupAbilities = [
 
   // Mankey
   // https://bulbapedia.bulbagarden.net/wiki/Vital_Spirit_(Ability)
-  createAbility(
-    Abilities.VitalSpirit,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: cannot fall asleep
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            event.status === Statuses.Sleeping &&
-            event.source.hasAbility(Abilities.VitalSpirit)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real application was blocked
-        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          if (
-            event.status === Statuses.Sleeping &&
-            event.source.hasAbility(Abilities.VitalSpirit)
-          ) {
-            event.source.triggerAbility(Abilities.VitalSpirit);
-          }
-        }),
-      ]),
-  ),
+  createLimberAbility(Abilities.VitalSpirit, [Statuses.Sleeping]),
 
   // https://bulbapedia.bulbagarden.net/wiki/Anger_Point_(Ability)
   createAbility(
@@ -1390,7 +1373,7 @@ const setupAbilities = [
     (battle) =>
       new MergedAbilityLifecycle([
         // Detection: direct damage from a Dark-type move
-        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
             event.success &&
             !(event.flags & DamageFlags.Indirect) &&
@@ -1582,7 +1565,7 @@ const setupAbilities = [
           }
         }),
         // Endures any single blow from full health with 1 HP left
-        battle.on(BattleEvents.UnitDamage, EventPriority.Pre, (event) => {
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
           if (
             event.target.alive &&
             !(event.flags & DamageFlags.Indirect) &&
@@ -1606,7 +1589,7 @@ const setupAbilities = [
 
     // The effect targets the attacker, which the trigger event
     // cannot carry, so it stays inline
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -1665,6 +1648,19 @@ const setupAbilities = [
             event.source.triggerAbility(Abilities.Oblivious);
           }
         }),
+        // Gaining the ability also cures the blocked status
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (
+            event.ability === Abilities.Oblivious &&
+            event.source.status[Statuses.Infatuated] != null
+          ) {
+            event.source.removeStatus(Statuses.Infatuated, {
+              type: EffectType.Ability,
+              ability: Abilities.Oblivious,
+              unit: event.source,
+            });
+          }
+        }),
       ]),
   ),
 
@@ -1700,6 +1696,19 @@ const setupAbilities = [
           ) {
             event.success = false;
             event.source.triggerAbility(Abilities.OwnTempo);
+          }
+        }),
+        // Gaining the ability also cures the blocked status
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (
+            event.ability === Abilities.OwnTempo &&
+            event.source.status[Statuses.Confused] != null
+          ) {
+            event.source.removeStatus(Statuses.Confused, {
+              type: EffectType.Ability,
+              ability: Abilities.OwnTempo,
+              unit: event.source,
+            });
           }
         }),
       ]),
@@ -1839,7 +1848,7 @@ const setupAbilities = [
   createAbility(Abilities.PoisonTouch, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !(event.flags & DamageFlags.Indirect) &&
@@ -1947,7 +1956,7 @@ const setupAbilities = [
     (battle) =>
       new MergedAbilityLifecycle([
         // Detection: direct damage from a physical move
-        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
             event.success &&
             !(event.flags & DamageFlags.Indirect) &&
@@ -1977,28 +1986,7 @@ const setupAbilities = [
 
   // Drowzee
   // https://bulbapedia.bulbagarden.net/wiki/Insomnia_(Ability)
-  createAbility(
-    Abilities.Insomnia,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: cannot fall asleep
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            event.status === Statuses.Sleeping &&
-            event.source.hasAbility(Abilities.Insomnia)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real application was blocked
-        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          if (event.status === Statuses.Sleeping && event.source.hasAbility(Abilities.Insomnia)) {
-            event.source.triggerAbility(Abilities.Insomnia);
-          }
-        }),
-      ]),
-  ),
+  createLimberAbility(Abilities.Insomnia, [Statuses.Sleeping]),
 
   // https://bulbapedia.bulbagarden.net/wiki/Forewarn_(Ability)
   createAbility(Abilities.Forewarn, (battle) =>
@@ -2074,7 +2062,7 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Aftermath_(Ability)
   createAbility(Abilities.Aftermath, (battle) =>
-    battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.success &&
         !event.target.alive &&
@@ -2259,6 +2247,24 @@ const setupAbilities = [
     // Holders currently on the field (the Unnerve pattern)
     const holders = new Set<Unit>();
 
+    function removeHolder(unit: Unit, keepUnit: boolean): void {
+      if (holders.delete(unit) && holders.size === 0) {
+        // The gas lifting re-activates entry abilities (modern
+        // mechanics): every living unit re-enters the field. Other
+        // gas carriers are skipped so a benched one cannot silently
+        // re-establish the gas.
+        for (const other of battle.units()) {
+          if (
+            other.alive &&
+            (keepUnit || other !== unit) &&
+            !other.hasAbility(Abilities.NeutralizingGas)
+          ) {
+            other.enter();
+          }
+        }
+      }
+    }
+
     return new MergedAbilityLifecycle([
       // Pure query: while any holder is up, every other unit's
       // abilities read as absent — no unit state is touched, so the
@@ -2284,14 +2290,14 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
-        holders.delete(event.source);
+        removeHolder(event.source, false);
       }),
       battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-        holders.delete(event.source);
+        removeHolder(event.source, false);
       }),
       battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
         if (event.ability === Abilities.NeutralizingGas) {
-          holders.delete(event.source);
+          removeHolder(event.source, true);
         }
       }),
     ]);
@@ -2405,28 +2411,7 @@ const setupAbilities = [
 
   // Goldeen
   // https://bulbapedia.bulbagarden.net/wiki/Water_Veil_(Ability)
-  createAbility(
-    Abilities.WaterVeil,
-    (battle) =>
-      new MergedAbilityLifecycle([
-        // Pure query: cannot be burned
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            event.status === Statuses.Burned &&
-            event.source.hasAbility(Abilities.WaterVeil)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // The cue only fires when a real application was blocked
-        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          if (event.status === Statuses.Burned && event.source.hasAbility(Abilities.WaterVeil)) {
-            event.source.triggerAbility(Abilities.WaterVeil);
-          }
-        }),
-      ]),
-  ),
+  createLimberAbility(Abilities.WaterVeil, [Statuses.Burned]),
 
   // Staryu
   createKeenEyeAbility(Abilities.Illuminate),
@@ -2438,7 +2423,7 @@ const setupAbilities = [
 
     return new MergedAbilityLifecycle([
       // Detection: direct damage from a scary-typed move
-      battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
           !(event.flags & DamageFlags.Indirect) &&
@@ -2547,7 +2532,7 @@ const setupAbilities = [
     (battle) =>
       new MergedAbilityLifecycle([
         // Detection: a direct move knocked the target out
-        battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
             event.success &&
             !event.target.alive &&
@@ -2575,15 +2560,15 @@ const setupAbilities = [
   /**
    * https://bulbapedia.bulbagarden.net/wiki/Mold_Breaker_(Ability)
    *
-   * Draft: while a holder's move resolves against a target, the
-   * target's abilities read as absent (via the CheckUnitAbility
-   * query), so defensive abilities like Levitate, Filter or Shell
-   * Armor cannot hinder the attack. The window opens at Prepare
-   * (before every regular listener) and closes at Cleanup, which
-   * always runs even when the event is disabled mid-emission — the
-   * bracket cannot leak. Known limit of the draft: post-damage
-   * contact abilities (e.g. Static, Aftermath) are also ignored
-   * while the attack window is open.
+   * While a holder's move resolves against a target, the target's
+   * abilities read as absent (via the CheckUnitAbility query), so
+   * defensive abilities like Levitate, Filter or Shell Armor cannot
+   * hinder the attack. The windows open at Prepare (before every
+   * regular listener) and close at Cleanup, which always runs even
+   * when the event is disabled mid-emission — the brackets cannot
+   * leak. The window is suspended while UnitDamage emissions run, so
+   * post-damage contact abilities (Static, Aftermath, ...) still
+   * fire like in the games.
    */
   createAbility(Abilities.MoldBreaker, (battle) => {
     const EXEMPT = new Set<Abilities>([Abilities.NeutralizingGas, ...PROTECTED_ABILITIES]);
@@ -2591,18 +2576,28 @@ const setupAbilities = [
     /**
      * Nested per-defender window counts for in-flight holder attacks
      * (the whole pipeline is synchronous, so bracketing the entry
-     * events at Pre/Post scopes every nested query)
+     * events at Prepare/Cleanup scopes every nested query); the
+     * opened map remembers each event's pushed defender in case the
+     * target is retargeted mid-flight (e.g. Lightning Rod)
      */
     const ignored = new Map<Unit, number>();
-    const opened = new WeakSet<object>();
+    const opened = new WeakMap<object, Unit>();
+
+    // Damage application (and its post-damage reactions) sees real
+    // abilities: the suppression only covers the move's resolution
+    let suspended = 0;
 
     function push(event: object, target: Unit): void {
-      opened.add(event);
+      opened.set(event, target);
       ignored.set(target, (ignored.get(target) ?? 0) + 1);
     }
 
-    function pop(event: object, target: Unit): void {
-      if (opened.delete(event)) {
+    function pop(event: object): void {
+      const target = opened.get(event);
+
+      if (target) {
+        opened.delete(event);
+
         const count = ignored.get(target) ?? 0;
 
         if (count <= 1) {
@@ -2616,7 +2611,12 @@ const setupAbilities = [
     return new MergedAbilityLifecycle([
       // Pure query: an ignored defender's abilities read as absent
       battle.on(BattleEvents.CheckUnitAbility, EventPriority.Post, (event) => {
-        if (event.enabled && ignored.has(event.source) && !EXEMPT.has(event.ability)) {
+        if (
+          event.enabled &&
+          suspended === 0 &&
+          ignored.has(event.source) &&
+          !EXEMPT.has(event.ability)
+        ) {
           event.enabled = false;
         }
       }),
@@ -2637,9 +2637,7 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Cleanup, (event) => {
-        if (event.target.type === MoveTargetType.Unit) {
-          pop(event, event.target.unit);
-        }
+        pop(event);
       }),
       // Attack resolution window (damage math, criticals)
       battle.on(BattleEvents.UnitAttack, AttackPriority.Prepare, (event) => {
@@ -2648,7 +2646,19 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
-        pop(event, event.target);
+        pop(event);
+      }),
+      // Damage bracket: suspend the suppression for the application
+      // and every post-damage reaction nested in it
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Prepare, () => {
+        if (ignored.size > 0) {
+          suspended += 1;
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Cleanup, () => {
+        if (suspended > 0) {
+          suspended -= 1;
+        }
       }),
     ]);
   }),
@@ -2874,28 +2884,7 @@ const setupAbilities = [
 
   // Snorlax
   // https://bulbapedia.bulbagarden.net/wiki/Immunity_(Ability)
-  createAbility(Abilities.Immunity, (battle) => {
-    const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
-
-    return new MergedAbilityLifecycle([
-      // Pure query: cannot be poisoned in any form
-      battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-        if (
-          !event.immune &&
-          POISONS.has(event.status) &&
-          event.source.hasAbility(Abilities.Immunity)
-        ) {
-          event.immune = true;
-        }
-      }),
-      // The cue only fires when a real application was blocked
-      battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-        if (POISONS.has(event.status) && event.source.hasAbility(Abilities.Immunity)) {
-          event.source.triggerAbility(Abilities.Immunity);
-        }
-      }),
-    ]);
-  }),
+  createLimberAbility(Abilities.Immunity, [Statuses.Poisoned, Statuses.BadlyPoisoned]),
 
   // Articuno
   // https://bulbapedia.bulbagarden.net/wiki/Snow_Cloak_(Ability)

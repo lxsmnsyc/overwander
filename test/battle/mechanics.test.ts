@@ -7,6 +7,7 @@ import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
+import Natures from '../../src/data/ids/natures';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Weathers } from '../../src/data/ids/status';
@@ -402,5 +403,22 @@ describe('battle modes', () => {
     battle.setWeather(Weathers.Rain);
 
     expect(unit.checkWeather()).toBe(Weathers.Rain);
+  });
+});
+
+describe('natures', () => {
+  it('raise and lower stats by ten percent', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    // Neutral by default
+    expect(unit.checkStat(Stats.Attack, 0)).toBe(105);
+
+    unit.setNature(Natures.Adamant);
+
+    expect(unit.checkStat(Stats.Attack, 0)).toBe(Math.floor(105 * 1.1));
+    expect(unit.checkStat(Stats.SpecialAttack, 0)).toBe(Math.floor(105 * 0.9));
+    expect(unit.checkStat(Stats.Defense, 0)).toBe(105);
+    expect(unit.checkStat(Stats.HP, 0)).toBe(160); // HP is nature-neutral
   });
 });

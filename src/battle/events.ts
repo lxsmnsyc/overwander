@@ -5,6 +5,7 @@ import type { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, MoveTargetPriorities, Moves } from '../data/ids/moves';
+import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
@@ -190,6 +191,7 @@ export const enum BattleEvents {
   CheckUnitMoveTargetFlags = 126,
   UnitSetWeather = 127,
   CheckUnitAbility = 128,
+  UnitSetNature = 129,
 }
 
 export const enum MoveTargetType {
@@ -332,6 +334,10 @@ export interface UnitSetWeatherEvent extends UnitEvent {
 export interface CheckUnitAbilityEvent extends UnitEvent {
   ability: Abilities;
   enabled: boolean;
+}
+
+export interface UnitSetNatureEvent extends UnitEvent {
+  nature: Natures;
 }
 
 export interface UnitChannelEvent extends UnitCastEvent {
@@ -773,6 +779,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitSetSpecies]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetAppearance]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetGender]: [UnitSetGenderEvent, EventPriority];
+  [BattleEvents.UnitSetNature]: [UnitSetNatureEvent, EventPriority];
   [BattleEvents.UnitResetStages]: [UnitResetStagesEvent, EventPriority];
 
   // Team events

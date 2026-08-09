@@ -4,6 +4,7 @@ import { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { MoveCategories, Moves } from '../data/ids/moves';
+import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
 import type Battle from './core';
@@ -95,6 +96,17 @@ export default class Unit {
       disabled: false,
       source: this,
       gender,
+    });
+  }
+
+  nature = Natures.Hardy;
+
+  setNature(nature: Natures): void {
+    this.battle.emit(BattleEvents.UnitSetNature, {
+      id: 'UnitSetNature',
+      disabled: false,
+      source: this,
+      nature,
     });
   }
 

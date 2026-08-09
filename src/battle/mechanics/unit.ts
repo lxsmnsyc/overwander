@@ -1,6 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats, StatsKind, createStagesField, getStageFromStat } from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
+import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
@@ -154,8 +155,7 @@ function setupUnitStatMechancis(battle: Battle): void {
         event.source.stats[StatsKind.Base][event.stat],
         event.source.stats[StatsKind.Individual][event.stat],
         event.source.stats[StatsKind.Effort][event.stat],
-        // TODO nature
-        1.0,
+        getNatureFactor(event.source.nature, event.stat),
       );
     }
   });
@@ -236,6 +236,10 @@ function setupUnitSpeciesMechanics(battle: Battle): void {
 
   battle.on(BattleEvents.UnitSetGender, EventPriority.Exact, (event) => {
     event.source.gender = event.gender;
+  });
+
+  battle.on(BattleEvents.UnitSetNature, EventPriority.Exact, (event) => {
+    event.source.nature = event.nature;
   });
 }
 

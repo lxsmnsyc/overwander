@@ -21,12 +21,13 @@ import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
-import type { SpawnInstance } from '../overworld/spawn-instance';
+import type { Encounter, EncounterType } from '../overworld/encounter';
+import { asNumber, asNumberArray, asRecord, asString } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
 
 /**
- * A caught spawn, permanently recorded. The IVs, gender and nature
- * are stored explicitly (even though they re-derive from the
+ * A caught encounter, permanently recorded. The IVs, gender and
+ * nature are stored explicitly (even though they re-derive from the
  * individual and trait values) so records are readable and
  * queryable on their own. Abilities, held items and ownership
  * history live in their own stores keyed by the same id
@@ -36,6 +37,10 @@ export interface CaughtPokemon {
    * The current owner's uid
    */
   owner: string;
+  /**
+   * How the pokemon was originally encountered
+   */
+  type: EncounterType;
   species: Species;
   level: number;
   individualValue: number;
@@ -46,6 +51,11 @@ export interface CaughtPokemon {
   ivs: Record<Stats, number>;
   gender: Genders;
   nature: Natures;
+  /**
+   * The shiny verdict as seen by the original catcher, frozen at
+   * catch time so trades cannot change it
+   */
+  shiny: boolean;
   moves: Moves[];
   /**
    * The ball the catch was made with
@@ -84,28 +94,6 @@ const ABILITIES_COLLECTION = 'caughtAbilities';
 const ITEMS_COLLECTION = 'caughtItems';
 const OWNERS_COLLECTION = 'caughtOwners';
 
-function asNumber(value: unknown, fallback = 0): number {
-  return typeof value === 'number' ? value : fallback;
-}
-
-function asString(value: unknown): string {
-  return typeof value === 'string' ? value : '';
-}
-
-function asNumberArray(value: unknown): number[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is number => typeof entry === 'number')
-    : [];
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value != null;
-}
-
-function asRecord(value: unknown): Record<string, unknown> {
-  return isRecord(value) ? value : {};
-}
-
 function asStatRecord(value: unknown): Record<Stats, number> {
   const source = asRecord(value);
 
@@ -127,6 +115,7 @@ const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
 
     return {
       owner: asString(data.owner),
+      type: asNumber(data.type) as EncounterType,
       species: asNumber(data.species) as Species,
       level: asNumber(data.level),
       individualValue: asNumber(data.individualValue),
@@ -134,6 +123,7 @@ const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
       ivs: asStatRecord(data.ivs),
       gender: asNumber(data.gender) as Genders,
       nature: asNumber(data.nature) as Natures,
+      shiny: data.shiny === true,
       moves: asNumberArray(data.moves) as Moves[],
       ball: asNumber(data.ball) as Balls,
       caughtAt: asNumber(data.caughtAt),
@@ -170,7 +160,7 @@ function zeroEffortValues(): Record<Stats, number> {
  */
 export async function recordCatch(
   user: User,
-  instance: SpawnInstance,
+  encounter: Encounter,
   ball: Balls,
   caughtAt = Date.now(),
 ): Promise<string> {
@@ -180,25 +170,27 @@ export async function recordCatch(
 
   batch.set(ref, {
     owner: user.uid,
-    species: instance.species,
-    level: instance.level,
-    individualValue: instance.individualValue,
-    traitValue: instance.traitValue,
-    ivs: instance.ivs,
-    gender: instance.gender,
-    nature: instance.nature,
-    moves: instance.moves,
+    type: encounter.type,
+    species: encounter.species,
+    level: encounter.level,
+    individualValue: encounter.individualValue,
+    traitValue: encounter.traitValue,
+    ivs: encounter.ivs,
+    gender: encounter.gender,
+    nature: encounter.nature,
+    shiny: encounter.shiny,
+    moves: encounter.moves,
     ball,
     caughtAt,
     effortValues: zeroEffortValues(),
     origin: {
-      timestamp: instance.timestamp,
-      x: instance.x,
-      y: instance.y,
-      biome: instance.biome,
+      timestamp: encounter.timestamp,
+      x: encounter.x,
+      y: encounter.y,
+      biome: encounter.biome,
     },
   });
-  batch.set(doc(db, ABILITIES_COLLECTION, ref.id), { abilities: [instance.ability] });
+  batch.set(doc(db, ABILITIES_COLLECTION, ref.id), { abilities: [encounter.ability] });
   batch.set(doc(db, ITEMS_COLLECTION, ref.id), { items: [] });
   batch.set(doc(db, OWNERS_COLLECTION, ref.id), {
     history: [{ owner: user.uid, acquiredAt: caughtAt }],

@@ -1,3 +1,4 @@
+import AleaRNG from '../core/alea';
 import { Stats } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -10,10 +11,36 @@ import type ChunkSnapshot from './chunk-snapshot';
 import type { Spawn } from './chunk-snapshot';
 
 /**
+ * How a pokemon came to be encountered
+ */
+export const enum EncounterType {
+  /**
+   * Met in the overworld through a chunk snapshot's spawns
+   */
+  Wild = 0,
+  /**
+   * Hatched from an egg
+   */
+  Hatched = 1,
+  /**
+   * Fought and caught in a raid lobby
+   */
+  Raid = 2,
+  /**
+   * Distributed by an event or mystery gift
+   */
+  Fateful = 3,
+}
+
+/**
  * A concrete wild pokemon derived from a spawn roll: everything a
  * battle or capture needs to materialize the unit
  */
-export interface SpawnInstance {
+export interface Encounter {
+  /**
+   * How the pokemon was encountered
+   */
+  type: EncounterType;
   species: Species;
   level: number;
   /**
@@ -38,6 +65,11 @@ export interface SpawnInstance {
    * A pure gender-ratio roll from its dedicated spawn value
    */
   gender: Genders;
+  /**
+   * Whether this spawn sparkles for the observing user; the same
+   * wild pokemon can be shiny for one trainer and plain for another
+   */
+  shiny: boolean;
   /**
    * The last (up to) four level-up moves learnable at this level
    */
@@ -80,12 +112,44 @@ const HIDDEN_ABILITY_BAND = TRAIT_RANGE / 8;
 const MOVE_LIMIT = 4;
 
 /**
- * Derive the concrete instance behind a snapshot's spawn tuple. The
+ * XOR results under this sparkle: 16 in 65536, i.e. the modern
+ * 1/4096 shiny odds
+ */
+const SHINY_THRESHOLD = 16;
+
+const HALF_BITS = 16;
+const HALF_MASK = 0xffff;
+
+/**
+ * The mainline shiny formula, adapted: the user id hashes into a
+ * stable 32-bit "trainer value" whose 16-bit halves XOR against the
+ * individual value's halves — shininess is a resonance between
+ * trainer and pokemon, so each trainer sees their own shinies
+ */
+export function isShinyFor(userId: string, individualValue: number): boolean {
+  const trainerValue = new AleaRNG(userId).int32();
+  const shininess =
+    (trainerValue >>> HALF_BITS) ^
+    (trainerValue & HALF_MASK) ^
+    (individualValue >>> HALF_BITS) ^
+    (individualValue & HALF_MASK);
+
+  return shininess < SHINY_THRESHOLD;
+}
+
+/**
+ * Derive the concrete encounter behind a snapshot's spawn tuple. The
  * individual value maps to the six 5-bit IVs directly; the level,
  * gender, ability and nature each read their own 8-bit slice of the
- * trait value, so every derivation of the same tuple agrees
+ * trait value, so every derivation of the same tuple agrees.
+ * Shininess is personal: it needs the observing user's id, and
+ * anonymous derivations never sparkle
  */
-export default function deriveSpawnInstance(snapshot: ChunkSnapshot, spawn: Spawn): SpawnInstance {
+export default function deriveEncounter(
+  snapshot: ChunkSnapshot,
+  spawn: Spawn,
+  userId?: string,
+): Encounter {
   const [species, individualValue, traitValue] = spawn;
 
   // Slices in trait order: level, gender, ability, nature
@@ -148,6 +212,8 @@ export default function deriveSpawnInstance(snapshot: ChunkSnapshot, spawn: Spaw
   const nature = Math.floor((natureSlice / TRAIT_RANGE) * NATURE_COUNT) as Natures;
 
   return {
+    // A snapshot spawn is always a wild meeting
+    type: EncounterType.Wild,
     species,
     level,
     individualValue,
@@ -156,6 +222,7 @@ export default function deriveSpawnInstance(snapshot: ChunkSnapshot, spawn: Spaw
     nature,
     ability,
     gender,
+    shiny: userId != null && isShinyFor(userId, individualValue),
     moves,
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,

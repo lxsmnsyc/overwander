@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import AleaRNG from '../../src/core/alea';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns from '../../src/data/biome';
 import type Biome from '../../src/data/ids/biome';
@@ -6,7 +7,7 @@ import { getTimeOfDay } from '../../src/data/ids/biome';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
-import deriveSpawnInstance from '../../src/overworld/spawn-instance';
+import deriveEncounter, { EncounterType, isShinyFor } from '../../src/overworld/encounter';
 import World from '../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools
@@ -200,15 +201,16 @@ describe('chunk snapshot', () => {
     expect(packed.getSpawns(1000)).toHaveLength(256 - chunk.getLandmarkCells().size);
   });
 
-  it('derives concrete spawn instances from spawn tuples', () => {
+  it('derives concrete encounters from spawn tuples', () => {
     const world = new World('overworld');
     const chunk = world.getChunk(3, -7);
     const NOON = 12 * 60 * 60 * 1000;
     const snapshot = new ChunkSnapshot(chunk, NOON);
 
     const spawn = snapshot.getSpawns(1)[0];
-    const instance = deriveSpawnInstance(snapshot, spawn);
+    const instance = deriveEncounter(snapshot, spawn);
 
+    expect(instance.type).toBe(EncounterType.Wild);
     expect(instance.species).toBe(spawn[0]);
     expect(instance.individualValue).toBe(spawn[1]);
     expect(instance.traitValue).toBe(spawn[2]);
@@ -248,27 +250,47 @@ describe('chunk snapshot', () => {
     expect(instance.biome).toBe(chunk.biome);
 
     // Same tuple, same instance
-    expect(deriveSpawnInstance(snapshot, spawn)).toEqual(instance);
+    expect(deriveEncounter(snapshot, spawn)).toEqual(instance);
 
     // An all-ones individual value maxes every IV slice
-    const maxed = deriveSpawnInstance(snapshot, [spawn[0], 0xffffffff, 0]);
+    const maxed = deriveEncounter(snapshot, [spawn[0], 0xffffffff, 0]);
     expect(Object.values(maxed.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
 
     // A zero trait value bottoms out the level; all-ones caps it
     expect(maxed.level).toBe(5);
-    expect(deriveSpawnInstance(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(100);
+    expect(deriveEncounter(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(100);
 
     // Sex-locked species never roll the other gender, whatever the
     // gender slice (byte 1) holds
     for (const traits of [0 << 8, 128 << 8, 255 << 8]) {
-      expect(deriveSpawnInstance(snapshot, [Species.Chansey, 0, traits]).gender).toBe(
-        Genders.Female,
-      );
-      expect(deriveSpawnInstance(snapshot, [Species.Tauros, 0, traits]).gender).toBe(Genders.Male);
-      expect(deriveSpawnInstance(snapshot, [Species.Ditto, 0, traits]).gender).toBe(
-        Genders.Genderless,
-      );
+      expect(deriveEncounter(snapshot, [Species.Chansey, 0, traits]).gender).toBe(Genders.Female);
+      expect(deriveEncounter(snapshot, [Species.Tauros, 0, traits]).gender).toBe(Genders.Male);
+      expect(deriveEncounter(snapshot, [Species.Ditto, 0, traits]).gender).toBe(Genders.Genderless);
     }
+  });
+
+  it('sparkles per trainer via the halved XOR resonance', () => {
+    // Reproduce the trainer hash and craft a resonant individual
+    // value: high half = trainer halves' XOR, low half = 0
+    const trainerValue = new AleaRNG('trainer-red').int32();
+    const halves = (trainerValue >>> 16) ^ (trainerValue & 0xffff);
+    const shinyValue = (halves << 16) >>> 0;
+    const plainValue = (((halves ^ 16) << 16) >>> 0) | 0xffff;
+
+    expect(isShinyFor('trainer-red', shinyValue)).toBe(true);
+    expect(isShinyFor('trainer-red', plainValue)).toBe(false);
+
+    // The same pokemon is plain in another trainer's eyes
+    expect(isShinyFor('trainer-blue', shinyValue)).toBe(false);
+
+    // The instance carries the personal verdict; anonymous
+    // derivations never sparkle
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    const species = snapshot.getSpawns(1)[0][0];
+
+    expect(deriveEncounter(snapshot, [species, shinyValue, 0], 'trainer-red').shiny).toBe(true);
+    expect(deriveEncounter(snapshot, [species, shinyValue, 0]).shiny).toBe(false);
   });
 
   it('rolls hidden abilities at their rarer odds', () => {
@@ -283,7 +305,7 @@ describe('chunk snapshot', () => {
     let hidden = 0;
     const SAMPLES = 256;
     for (let slice = 0; slice < SAMPLES; slice++) {
-      const instance = deriveSpawnInstance(snapshot, [species, 0, slice << 16]);
+      const instance = deriveEncounter(snapshot, [species, 0, slice << 16]);
 
       if (instance.ability === hiddenAbility) {
         hidden += 1;

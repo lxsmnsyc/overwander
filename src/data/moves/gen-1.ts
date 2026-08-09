@@ -1414,4 +1414,74 @@ export default function registerGen1Moves(): void {
     flags: 0,
     delay: PROJECTILE_DELAY,
   });
+  registerMove(Moves.CometPunch, {
+    name: 'Comet Punch',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 18,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.FirePunch, {
+    name: 'Fire Punch',
+    type: Types.Fire,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 75,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.IcePunch, {
+    name: 'Ice Punch',
+    type: Types.Ice,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 75,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.ThunderPunch, {
+    name: 'Thunder Punch',
+    type: Types.Electric,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 75,
+    accuracy: 100,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.RollingKick, {
+    name: 'Rolling Kick',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 60,
+    accuracy: 85,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.JumpKick, {
+    name: 'Jump Kick',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 100,
+    accuracy: 95,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
+  registerMove(Moves.HiJumpKick, {
+    name: 'High Jump Kick',
+    type: Types.Fighting,
+    category: MoveCategories.Physical,
+    pp: 10,
+    power: 130,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+  });
 }

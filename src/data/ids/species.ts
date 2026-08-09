@@ -113,4 +113,6 @@ export const enum Species {
   Exeggutor = 105,
   Cubone = 106,
   Marowak = 107,
+  Hitmonlee = 108,
+  Hitmonchan = 109,
 }

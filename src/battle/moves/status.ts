@@ -54,6 +54,10 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Sludge]: { status: Statuses.Poisoned, chance: 30 },
   [Moves.Lick]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.BoneClub]: { status: Statuses.Flinched, chance: 10 },
+  [Moves.FirePunch]: { status: Statuses.Burned, chance: 10 },
+  [Moves.IcePunch]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.ThunderPunch]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.RollingKick]: { status: Statuses.Flinched, chance: 30 },
 };
 
 const EFFECT_STAGE_MOVES: {

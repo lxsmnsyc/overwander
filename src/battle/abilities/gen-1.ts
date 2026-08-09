@@ -3,7 +3,13 @@ import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../data/ids/items';
-import { DamageFlags, MoveAttackFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveFlags,
+  Moves,
+} from '../../data/ids/moves';
 import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
@@ -16,7 +22,9 @@ import {
   type UnitAttackEvent,
   type UnitDamageEvent,
 } from '../events';
+import { CRASH_MOVES } from '../moves/crash';
 import { OHKO_MOVES } from '../moves/fixed-damage';
+import { RECOIL_MOVES } from '../moves/recoil';
 import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { hasAttackEffect } from '../moves/status';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
@@ -2238,6 +2246,84 @@ const setupAbilities = [
 
   // Cubone
   createShellArmorAbility(Abilities.BattleArmor),
+
+  // Tyrogue (Hitmonlee)
+  // https://bulbapedia.bulbagarden.net/wiki/Reckless_(Ability)
+  createAbility(Abilities.Reckless, (battle) => {
+    const FACTOR = 1.2;
+
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(Abilities.Reckless) &&
+        (RECOIL_MOVES[event.move] != null || CRASH_MOVES.has(event.move))
+      ) {
+        event.power *= FACTOR;
+      }
+    });
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Unburden_(Ability)
+  createAbility(Abilities.Unburden, (battle) => {
+    /**
+     * Holders whose item is gone: the boost lasts until they leave
+     * the field or pick up a new item
+     */
+    const activated = new Set<Unit>();
+
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Unburden) && !holdsAnyItem(event.source)) {
+          activated.add(event.source);
+
+          // For visual cues
+          event.source.triggerAbility(Abilities.Unburden);
+        }
+      }),
+      battle.on(BattleEvents.UnitAddItem, EventPriority.Post, (event) => {
+        activated.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        activated.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        activated.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+        if (event.ability === Abilities.Unburden) {
+          activated.delete(event.source);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (event.stat === Stats.Speed && activated.has(event.source)) {
+          event.value *= 2;
+        }
+      }),
+    ]);
+  }),
+
+  // Tyrogue (Hitmonchan)
+  // https://bulbapedia.bulbagarden.net/wiki/Iron_Fist_(Ability)
+  createAbility(Abilities.IronFist, (battle) => {
+    const PUNCH_MOVES = new Set<Moves>([
+      Moves.MegaPunch,
+      Moves.CometPunch,
+      Moves.FirePunch,
+      Moves.IcePunch,
+      Moves.ThunderPunch,
+    ]);
+    const FACTOR = 1.2;
+
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(Abilities.IronFist) &&
+        PUNCH_MOVES.has(event.move)
+      ) {
+        event.power *= FACTOR;
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

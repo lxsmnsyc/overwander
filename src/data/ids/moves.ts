@@ -253,4 +253,11 @@ export const enum Moves {
   EggBomb = 142,
   BoneClub = 143,
   Bonemerang = 144,
+  CometPunch = 145,
+  FirePunch = 146,
+  IcePunch = 147,
+  ThunderPunch = 148,
+  RollingKick = 149,
+  JumpKick = 150,
+  HiJumpKick = 151,
 }

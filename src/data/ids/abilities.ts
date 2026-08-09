@@ -131,6 +131,10 @@ const enum Abilities {
   Harvest = 85,
   // Cubone
   BattleArmor = 86,
+  // Tyrogue (Hitmonlee/Hitmonchan)
+  Reckless = 87,
+  Unburden = 88,
+  IronFist = 89,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

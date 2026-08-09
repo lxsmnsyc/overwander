@@ -4,6 +4,7 @@ import setupBide from './bide';
 import setupBodySlam from './body-slam';
 import setupChargeMoves from './charge';
 import setupCounter from './counter';
+import setupCrashMoves from './crash';
 import setupDisable from './disable';
 import setupFixedDamageMoves from './fixed-damage';
 import setupHaze from './haze';
@@ -40,6 +41,7 @@ export default function setupMoves(battle: Battle): void {
   setupPowderMoves(battle);
   setupIncreasedCriticalHitRatioMoves(battle);
   setupRecoilMoves(battle);
+  setupCrashMoves(battle);
   setupRechargeMoves(battle);
   setupChargeMoves(battle);
   setupSemiInvulnerableMoves(battle);

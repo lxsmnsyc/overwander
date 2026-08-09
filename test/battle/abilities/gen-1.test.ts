@@ -2073,3 +2073,79 @@ describe('Shadow', () => {
     expect(resolveDamage(battle, attack, 40)).toBeCloseTo(baseline * 1.44);
   });
 });
+
+describe('Reckless', () => {
+  it('boosts recoil and crash move power', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addAbility(Abilities.Reckless);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(unit.checkMovePower(Moves.TakeDown, target)).toBeCloseTo(90 * 1.2);
+    expect(unit.checkMovePower(Moves.JumpKick, target)).toBeCloseTo(100 * 1.2);
+    expect(unit.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Iron Fist', () => {
+  it('boosts punching move power', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addAbility(Abilities.IronFist);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(unit.checkMovePower(Moves.FirePunch, target)).toBeCloseTo(75 * 1.2);
+    expect(unit.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Unburden', () => {
+  it('doubles speed after losing its item until it leaves', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.addAbility(Abilities.Unburden);
+    unit.addItem(Items.OranBerry);
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(105);
+
+    unit.removeItem(Items.OranBerry, {
+      type: EffectType.Item,
+      item: Items.OranBerry,
+      unit,
+    });
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(210);
+
+    unit.leave();
+
+    expect(unit.checkStat(Stats.Speed, 0)).toBe(105);
+  });
+});
+
+describe('crash moves', () => {
+  it('hurt the user for half its max health on a miss', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.JumpKick);
+
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: unit,
+        move: Moves.JumpKick,
+        target: { type: MoveTargetType.Unit, unit: enemy },
+        steps: 0,
+      },
+    });
+
+    expect(unit.health).toBe(80);
+  });
+});

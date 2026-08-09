@@ -25,6 +25,7 @@ const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.SpikeCannon]: { min: 2, max: 5 },
   [Moves.Barrage]: { min: 2, max: 5 },
   [Moves.Bonemerang]: { min: 2, max: 2 },
+  [Moves.CometPunch]: { min: 2, max: 5 },
 };
 
 // Delay between strikes

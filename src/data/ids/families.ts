@@ -31,6 +31,7 @@ const enum Families {
   Tentacool = 29,
   Geodude = 30,
   Ponyta = 31,
+  Slowpoke = 32,
 }
 
 export default Families;

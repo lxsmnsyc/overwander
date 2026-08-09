@@ -96,6 +96,10 @@ const enum Abilities {
   Sturdy = 63,
   // Ponyta
   FlameBody = 64,
+  // Slowpoke
+  Oblivious = 65,
+  OwnTempo = 66,
+  Regenerator = 67,
 }
 
 export default Abilities;

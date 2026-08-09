@@ -23,6 +23,7 @@ import registerPsyduckSpecies from './psyduck';
 import registerPikachuSpecies from './pikachu';
 import registerRattataSpecies from './rattata';
 import registerSandshrewSpecies from './sandshrew';
+import registerSlowpokeSpecies from './slowpoke';
 import registerSpearowSpecies from './spearow';
 import registerSquirtleSpecies from './squirtle';
 import registerTentacoolSpecies from './tentacool';
@@ -66,4 +67,5 @@ export function registerSpecies(): void {
   registerTentacoolSpecies();
   registerGeodudeSpecies();
   registerPonytaSpecies();
+  registerSlowpokeSpecies();
 }

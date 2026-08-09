@@ -86,4 +86,6 @@ export const enum Species {
   Golem = 78,
   Ponyta = 79,
   Rapidash = 80,
+  Slowpoke = 81,
+  Slowbro = 82,
 }

@@ -1633,6 +1633,113 @@ const setupAbilities = [
       }
     });
   }),
+
+  // Slowpoke
+  // https://bulbapedia.bulbagarden.net/wiki/Oblivious_(Ability)
+  createAbility(
+    Abilities.Oblivious,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot be infatuated
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Infatuated &&
+            event.source.hasAbility(Abilities.Oblivious)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (
+            event.status === Statuses.Infatuated &&
+            event.source.hasAbility(Abilities.Oblivious)
+          ) {
+            event.source.triggerAbility(Abilities.Oblivious);
+          }
+        }),
+        // Unfazed by Intimidate (modern mechanics)
+        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            event.value < 0 &&
+            event.cause.type === EffectType.Ability &&
+            event.cause.ability === Abilities.Intimidate &&
+            event.source.hasAbility(Abilities.Oblivious)
+          ) {
+            event.success = false;
+            event.source.triggerAbility(Abilities.Oblivious);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Own_Tempo_(Ability)
+  createAbility(
+    Abilities.OwnTempo,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Pure query: cannot be confused
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Confused &&
+            event.source.hasAbility(Abilities.OwnTempo)
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was blocked
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Confused && event.source.hasAbility(Abilities.OwnTempo)) {
+            event.source.triggerAbility(Abilities.OwnTempo);
+          }
+        }),
+        // Unfazed by Intimidate (modern mechanics)
+        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            event.value < 0 &&
+            event.cause.type === EffectType.Ability &&
+            event.cause.ability === Abilities.Intimidate &&
+            event.source.hasAbility(Abilities.OwnTempo)
+          ) {
+            event.success = false;
+            event.source.triggerAbility(Abilities.OwnTempo);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Regenerator_(Ability)
+  createAbility(
+    Abilities.Regenerator,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Detection: the holder withdraws from the field alive
+        battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+          if (event.source.alive && event.source.hasAbility(Abilities.Regenerator)) {
+            event.source.triggerAbility(Abilities.Regenerator);
+          }
+        }),
+        // Effect: the third-of-max-health heal rides the trigger
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Regenerator) {
+            event.source.heal(
+              {
+                type: EffectType.Ability,
+                ability: Abilities.Regenerator,
+                unit: event.source,
+              },
+              event.source,
+              event.source.checkStat(Stats.HP, 0) / 3,
+              0,
+            );
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

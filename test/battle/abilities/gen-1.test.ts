@@ -1368,3 +1368,51 @@ describe('Flame Body', () => {
     expect(attacker.status[Statuses.Burned]).toBeDefined();
   });
 });
+
+describe('Oblivious', () => {
+  it('cannot be infatuated and shrugs off Intimidate', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Oblivious);
+    holder.setGender(Genders.Male);
+    enemy.setGender(Genders.Female);
+    enemy.addAbility(Abilities.Intimidate);
+
+    holder.addStatus(Statuses.Infatuated, {
+      type: EffectType.Ability,
+      ability: Abilities.CuteCharm,
+      unit: enemy,
+    });
+    expect(holder.status[Statuses.Infatuated]).toBeUndefined();
+
+    enemy.enter();
+    expect(holder.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Own Tempo', () => {
+  it('cannot be confused', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.OwnTempo);
+
+    holder.addStatus(Statuses.Confused, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Confused]).toBeUndefined();
+  });
+});
+
+describe('Regenerator', () => {
+  it('restores a third of max health on withdrawing', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Regenerator);
+    holder.enter();
+    holder.setHealth(60);
+
+    holder.leave();
+
+    expect(holder.health).toBeCloseTo(60 + 160 / 3);
+  });
+});

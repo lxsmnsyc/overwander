@@ -219,4 +219,5 @@ export const enum Moves {
   SelfDestruct = 122,
   Explosion = 123,
   Stomp = 124,
+  Headbutt = 125,
 }

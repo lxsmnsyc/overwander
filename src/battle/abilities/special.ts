@@ -94,6 +94,12 @@ const setupAbilities = [
           event.target.triggerAbility(Abilities.Boss);
         }
       }),
+      // Recoil never comes back to a boss (Rock Head style)
+      battle.on(BattleEvents.CheckUnitRecoil, EventPriority.Post, (event) => {
+        if (event.recoil && event.parent.source.hasAbility(Abilities.Boss)) {
+          event.recoil = false;
+        }
+      }),
       // Pure query: trapping and disruption statuses cannot land
       // unless the boss inflicted them on itself (e.g. Rest)
       battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {

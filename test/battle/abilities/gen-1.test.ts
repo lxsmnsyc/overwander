@@ -1967,6 +1967,19 @@ describe('Boss', () => {
     expect(boss.casting).toBeDefined();
   });
 
+  it('takes no recoil damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const boss = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    boss.triggerMoveEffect(Moves.TakeDown, { type: MoveTargetType.Unit, unit: enemy }, 0);
+
+    expect(enemy.health).toBeLessThan(160);
+    expect(boss.health).toBe(160); // no recoil (stored health unchanged)
+  });
+
   it('lies dormant for five seconds on its first entry only', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);

@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveTargetFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveTargetFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, MoveTargetType } from '../events';
@@ -136,6 +136,29 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  /**
+   * Shadow: a glass-cannon aura — attack damage dealt and received
+   * both rise by 20% (stacking to 44% when both sides carry it).
+   * Pure attacks (fixed damage) stay exact.
+   */
+  createAbility(Abilities.Shadow, (battle) => {
+    const FACTOR = 1.2;
+
+    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      if (event.parent.flags & MoveAttackFlags.Pure) {
+        return;
+      }
+
+      if (event.parent.source.hasAbility(Abilities.Shadow)) {
+        event.value *= FACTOR;
+      }
+
+      if (event.parent.target.hasAbility(Abilities.Shadow)) {
+        event.value *= FACTOR;
+      }
+    });
+  }),
 ];
 
 export default function setupSpecialAbilities(battle: Battle): void {

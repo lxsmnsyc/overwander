@@ -131,6 +131,7 @@ const enum Abilities {
   Harvest = 85,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
+  Shadow = 100002,
 }
 
 export default Abilities;

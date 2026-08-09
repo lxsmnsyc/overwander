@@ -1947,3 +1947,61 @@ describe('Boss', () => {
     expect(ally.health).toBe(160);
   });
 });
+
+describe('Shadow', () => {
+  function resolveDamage(battle: Battle, parent: UnitAttackEvent, value: number): number {
+    const event = {
+      id: 'UnitAttackResolveDamage',
+      disabled: false,
+      parent,
+      value,
+    } as const;
+
+    battle.emit(BattleEvents.UnitAttackResolveDamage, event);
+
+    return event.value;
+  }
+
+  it('amplifies damage dealt and received by 20%', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const shadow = createUnit(battle, teamA);
+    const other = createUnit(battle, teamB);
+    const plainA = createUnit(battle, teamA);
+    const plainB = createUnit(battle, teamB);
+    shadow.addAbility(Abilities.Shadow);
+
+    const baseline = resolveDamage(
+      battle,
+      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
+      40,
+    );
+
+    const dealt = makeAttack(shadow, other, Moves.Tackle, Types.Normal, MoveCategories.Physical);
+    expect(resolveDamage(battle, dealt, 40)).toBeCloseTo(baseline * 1.2);
+
+    const received = makeAttack(other, shadow, Moves.Tackle, Types.Normal, MoveCategories.Physical);
+    expect(resolveDamage(battle, received, 40)).toBeCloseTo(baseline * 1.2);
+  });
+
+  it('stacks between two shadow units', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const shadow = createUnit(battle, teamA);
+    const mirror = createUnit(battle, teamB);
+    const plainA = createUnit(battle, teamA);
+    const plainB = createUnit(battle, teamB);
+    shadow.addAbility(Abilities.Shadow);
+    mirror.addAbility(Abilities.Shadow);
+
+    const baseline = resolveDamage(
+      battle,
+      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
+      40,
+    );
+
+    const attack = makeAttack(shadow, mirror, Moves.Tackle, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveDamage(battle, attack, 40)).toBeCloseTo(baseline * 1.44);
+  });
+});

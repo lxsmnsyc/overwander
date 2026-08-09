@@ -53,6 +53,7 @@ const enum Families {
   Chansey = 50,
   Tangela = 51,
   Kangaskhan = 52,
+  Horsea = 53,
 }
 
 export default Families;

@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import PerlinNoise from '../../src/core/perlin';
+import registerBiomeSpawns from '../../src/data/biome';
 import type Biome from '../../src/data/ids/biome';
+import { getTimeOfDay } from '../../src/data/ids/biome';
+import { getSpeciesData, registerSpecies } from '../../src/data/species';
+import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import World from '../../src/overworld/world';
+
+// Spawn rolls read the species registry and the biome spawn pools
+registerSpecies();
+registerBiomeSpawns();
 
 describe('perlin noise', () => {
   it('is deterministic for a seed', () => {
@@ -63,5 +71,67 @@ describe('world', () => {
     }
 
     expect(biomes.size).toBeGreaterThan(1);
+  });
+});
+
+describe('chunk snapshot', () => {
+  it('floors timestamps to the last 5-minute boundary', () => {
+    const world = new World('overworld');
+    const chunk = world.getChunk(0, 0);
+    const MINUTE = 60 * 1000;
+
+    // Anywhere inside a window snaps back; boundaries stay put
+    expect(new ChunkSnapshot(chunk, 722 * MINUTE).timestamp).toBe(720 * MINUTE);
+    expect(new ChunkSnapshot(chunk, 724 * MINUTE).timestamp).toBe(720 * MINUTE);
+    expect(new ChunkSnapshot(chunk, 725 * MINUTE).timestamp).toBe(725 * MINUTE);
+
+    // Observers within one window share an identity
+    const first = new ChunkSnapshot(chunk, 721 * MINUTE);
+    const second = new ChunkSnapshot(chunk, 722 * MINUTE);
+    expect(first.timestamp).toBe(second.timestamp);
+    expect(first.chunk).toBe(chunk);
+  });
+
+  it('rolls the same sequence for the same chunk and window', () => {
+    const world = new World('overworld');
+    const chunk = world.getChunk(0, 0);
+    const MINUTE = 60 * 1000;
+
+    const first = new ChunkSnapshot(chunk, 721 * MINUTE);
+    const second = new ChunkSnapshot(chunk, 724 * MINUTE);
+    expect(first.rng.random()).toBe(second.rng.random());
+
+    // A new window or another chunk reseeds the roll
+    const later = new ChunkSnapshot(chunk, 726 * MINUTE);
+    const elsewhere = new ChunkSnapshot(world.getChunk(1, 0), 721 * MINUTE);
+    expect(later.rng.random()).not.toBe(new ChunkSnapshot(chunk, 721 * MINUTE).rng.random());
+    expect(elsewhere.rng.random()).not.toBe(new ChunkSnapshot(chunk, 721 * MINUTE).rng.random());
+  });
+
+  it('rolls cached, biome-appropriate spawns', () => {
+    const world = new World('overworld');
+    const chunk = world.getChunk(0, 0);
+    const NOON = 12 * 60 * 60 * 1000;
+    const snapshot = new ChunkSnapshot(chunk, NOON);
+
+    const spawns = snapshot.getSpawns(4);
+    expect(spawns).toHaveLength(4);
+    for (const [species, seed, level] of spawns) {
+      // The rolled species lives here and is awake in this window
+      expect(getSpeciesData(species).biomes).toContain(chunk.biome);
+      expect(getSpeciesData(species).activeTimes & getTimeOfDay(NOON)).not.toBe(0);
+      expect(Number.isInteger(seed)).toBe(true);
+      expect(seed).toBeGreaterThanOrEqual(0);
+      expect(seed).toBeLessThan(2 ** 32);
+      expect(Number.isInteger(level)).toBe(true);
+      expect(level).toBeGreaterThanOrEqual(5);
+      expect(level).toBeLessThanOrEqual(100);
+    }
+
+    // The first roll is fixed for the snapshot's life
+    expect(snapshot.getSpawns(4)).toBe(spawns);
+
+    // Any observer of the same chunk and window sees the same roll
+    expect(new ChunkSnapshot(chunk, NOON + 60 * 1000).getSpawns(4)).toEqual(spawns);
   });
 });

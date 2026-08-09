@@ -51,7 +51,7 @@ export default function registerZubatSpecies(): void {
     genderRatio: [1, 1],
     catchRate: 255,
     biomes: [Biome.Mountain, Biome.MontaneForest],
-    activeTimes: TimeOfDay.Night,
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.LeechLife],
@@ -85,7 +85,7 @@ export default function registerZubatSpecies(): void {
     genderRatio: [1, 1],
     catchRate: 90,
     biomes: [Biome.Mountain, Biome.MontaneForest],
-    activeTimes: TimeOfDay.Night,
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Screech, Moves.LeechLife, Moves.Bite],

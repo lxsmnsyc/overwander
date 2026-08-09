@@ -1,0 +1,41 @@
+import Biome, { TimeOfDay } from '../ids/biome';
+import { Species } from '../ids/species';
+import { registerSpawnPool } from './__create';
+
+/**
+ * Tundra spawn pool, grouped by day-cycle period and rarity band
+ */
+export default function registerTundraSpawns(): void {
+  registerSpawnPool(Biome.Tundra, {
+    [TimeOfDay.Morning]: {
+      base: [],
+      uncommon: [],
+      rare: [{ species: Species.Dewgong, weight: 10 }],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [],
+      uncommon: [],
+      rare: [{ species: Species.Dewgong, weight: 10 }],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [],
+      uncommon: [],
+      rare: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Jynx, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [],
+      uncommon: [],
+      rare: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Jynx, weight: 5 },
+      ],
+      special: [],
+    },
+  });
+}

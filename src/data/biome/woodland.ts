@@ -1,0 +1,137 @@
+import Biome, { TimeOfDay } from '../ids/biome';
+import { Species } from '../ids/species';
+import { registerSpawnPool } from './__create';
+
+/**
+ * Woodland spawn pool, grouped by day-cycle period and rarity band
+ */
+export default function registerWoodlandSpawns(): void {
+  registerSpawnPool(Biome.Woodland, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Bulbasaur, weight: 2 },
+        { species: Species.Caterpie, weight: 30 },
+        { species: Species.Weedle, weight: 30 },
+        { species: Species.Pidgey, weight: 30 },
+        { species: Species.Rattata, weight: 30 },
+        { species: Species.Pikachu, weight: 5 },
+        { species: Species.NidoranF, weight: 20 },
+        { species: Species.NidoranM, weight: 20 },
+        { species: Species.Eevee, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Ivysaur, weight: 1 },
+        { species: Species.Metapod, weight: 15 },
+        { species: Species.Kakuna, weight: 15 },
+        { species: Species.Pidgeotto, weight: 5 },
+        { species: Species.Nidorina, weight: 5 },
+        { species: Species.Nidorino, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Venusaur, weight: 2 },
+        { species: Species.Butterfree, weight: 10 },
+        { species: Species.Beedrill, weight: 10 },
+        { species: Species.Pidgeot, weight: 5 },
+        { species: Species.Raticate, weight: 10 },
+        { species: Species.Raichu, weight: 5 },
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
+        { species: Species.Chansey, weight: 2 },
+        { species: Species.Scyther, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Bulbasaur, weight: 2 },
+        { species: Species.Caterpie, weight: 30 },
+        { species: Species.Weedle, weight: 30 },
+        { species: Species.Pidgey, weight: 30 },
+        { species: Species.Rattata, weight: 30 },
+        { species: Species.Pikachu, weight: 5 },
+        { species: Species.NidoranF, weight: 20 },
+        { species: Species.NidoranM, weight: 20 },
+        { species: Species.Eevee, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Ivysaur, weight: 1 },
+        { species: Species.Metapod, weight: 15 },
+        { species: Species.Kakuna, weight: 15 },
+        { species: Species.Pidgeotto, weight: 5 },
+        { species: Species.Nidorina, weight: 5 },
+        { species: Species.Nidorino, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Venusaur, weight: 2 },
+        { species: Species.Butterfree, weight: 10 },
+        { species: Species.Beedrill, weight: 10 },
+        { species: Species.Pidgeot, weight: 5 },
+        { species: Species.Raticate, weight: 10 },
+        { species: Species.Raichu, weight: 5 },
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
+        { species: Species.Chansey, weight: 2 },
+        { species: Species.Scyther, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Evening]: {
+      base: [
+        { species: Species.Rattata, weight: 30 },
+        { species: Species.Pikachu, weight: 5 },
+        { species: Species.NidoranF, weight: 20 },
+        { species: Species.NidoranM, weight: 20 },
+        { species: Species.Vulpix, weight: 10 },
+        { species: Species.Jigglypuff, weight: 10 },
+        { species: Species.Oddish, weight: 20 },
+        { species: Species.Eevee, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Nidorina, weight: 5 },
+        { species: Species.Nidorino, weight: 5 },
+        { species: Species.Gloom, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Raticate, weight: 10 },
+        { species: Species.Raichu, weight: 5 },
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Wigglytuff, weight: 5 },
+        { species: Species.Vileplume, weight: 5 },
+      ],
+      special: [],
+    },
+    [TimeOfDay.Night]: {
+      base: [
+        { species: Species.Rattata, weight: 30 },
+        { species: Species.Pikachu, weight: 5 },
+        { species: Species.NidoranF, weight: 20 },
+        { species: Species.NidoranM, weight: 20 },
+        { species: Species.Vulpix, weight: 10 },
+        { species: Species.Jigglypuff, weight: 10 },
+        { species: Species.Oddish, weight: 20 },
+        { species: Species.Meowth, weight: 20 },
+        { species: Species.Drowzee, weight: 20 },
+        { species: Species.Eevee, weight: 2 },
+      ],
+      uncommon: [
+        { species: Species.Nidorina, weight: 5 },
+        { species: Species.Nidorino, weight: 5 },
+        { species: Species.Gloom, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Raticate, weight: 10 },
+        { species: Species.Raichu, weight: 5 },
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Wigglytuff, weight: 5 },
+        { species: Species.Vileplume, weight: 5 },
+        { species: Species.Persian, weight: 10 },
+        { species: Species.Hypno, weight: 10 },
+      ],
+      special: [],
+    },
+  });
+}

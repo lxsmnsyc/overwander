@@ -57,7 +57,7 @@ export default function registerEkansSpecies(): void {
     genderRatio: [1, 1],
     catchRate: 255,
     biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
-    activeTimes: TimeOfDay.Day | TimeOfDay.Evening,
+    activeTimes: TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Wrap, Moves.Leer],
@@ -91,7 +91,7 @@ export default function registerEkansSpecies(): void {
     genderRatio: [1, 1],
     catchRate: 90,
     biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
-    activeTimes: TimeOfDay.Day | TimeOfDay.Evening,
+    activeTimes: TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Wrap, Moves.Leer, Moves.PoisonSting],

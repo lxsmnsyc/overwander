@@ -1,4 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import registerBiomeSpawns, {
+  SpawnRarity,
+  getSpawnPool,
+  getSpawnRarity,
+  pickSpawn,
+} from '../src/data/biome';
 import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import { Items } from '../src/data/ids/items';
@@ -12,6 +18,7 @@ import { getSpeciesAbilities, getSpeciesData, registerSpecies } from '../src/dat
 registerGen1Moves();
 registerSpecies();
 registerItems();
+registerBiomeSpawns();
 
 describe('species abilities', () => {
   it('evolved species learn their pre-evolutions abilities', () => {
@@ -87,8 +94,8 @@ describe('biome data', () => {
   });
 
   it('assigns day-cycle preferences to species', () => {
-    // Nocturnal species avoid daylight entirely
-    expect(getSpeciesData(Species.Zubat).activeTimes).toBe(TimeOfDay.Night);
+    // Cave dwellers wake at dusk and avoid daylight entirely
+    expect(getSpeciesData(Species.Zubat).activeTimes).toBe(TimeOfDay.Evening | TimeOfDay.Night);
     expect(getSpeciesData(Species.Zubat).activeTimes & TimeOfDay.Day).toBe(0);
 
     // Crepuscular species span evening into night
@@ -99,5 +106,63 @@ describe('biome data', () => {
 
     // Time-agnostic species cover the full cycle
     expect(getSpeciesData(Species.Magikarp).activeTimes).toBe(AnyTimeOfDay);
+  });
+
+  it('classifies spawn rarity tiers', () => {
+    // Unevolved, can still evolve
+    expect(getSpawnRarity(Species.Pidgey)).toBe(SpawnRarity.Base);
+    expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Base);
+
+    // Middle evolutions
+    expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Uncommon);
+
+    // Fully evolved and single-line
+    expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Rare);
+    expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Rare);
+
+    // One-per-world class
+    expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Special);
+  });
+
+  it('groups biome spawn pools by time of day and rarity', () => {
+    const morning = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    expect(morning.base).toContainEqual({ species: Species.Pidgey, weight: 30 });
+
+    // Sections agree with the rarity classification
+    expect(morning.rare.every((entry) => getSpawnRarity(entry.species) === SpawnRarity.Rare)).toBe(
+      true,
+    );
+
+    // Diurnal fliers sleep through the night; prowlers come out
+    const night = getSpawnPool(Biome.Grassland, TimeOfDay.Night);
+    expect(night.base.some((entry) => entry.species === Species.Pidgey)).toBe(false);
+    expect(night.base.some((entry) => entry.species === Species.Meowth)).toBe(true);
+
+    // Legendaries sit in their own section
+    const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
+    expect(peak.special.some((entry) => entry.species === Species.Zapdos)).toBe(true);
+  });
+
+  it('rolls spawns through the rarity bands', () => {
+    const pool = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+
+    // A sub-1/4096 band roll lands in the special section
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Special);
+
+    // A sub-1/64 band roll lands in the rare section
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Rare);
+
+    // A sub-1/8 band roll lands in the uncommon section
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Uncommon);
+
+    // Everything else lands in the base section
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.5, 0]))!)).toBe(SpawnRarity.Base);
+
+    // An empty pool cannot roll
+    expect(
+      pickSpawn({ base: [], uncommon: [], rare: [], special: [] }, rolls([0.5, 0])),
+    ).toBeNull();
   });
 });

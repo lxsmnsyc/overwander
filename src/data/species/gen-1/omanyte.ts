@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // RBY TM/HM moves shared by the whole family
@@ -33,6 +33,13 @@ const FAMILY_ABILITIES = [Abilities.WeakArmor, Abilities.SwiftSwim, Abilities.Sh
 export default function registerOmanyteSpecies(): void {
   registerSpecies(Species.Omanyte, {
     dexNumber: 138,
+    evolvesInto: [
+      {
+        species: Species.Omastar,
+        method: EvolutionMethod.Level,
+        level: 40,
+      },
+    ],
     name: 'Omanyte',
     category: 'Spiral Pokemon',
     family: Families.Omanyte,

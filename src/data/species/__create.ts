@@ -108,8 +108,38 @@ export interface SpeciesData {
 
 const SPECIES_MAP = new Map<Species, SpeciesData>();
 
+/**
+ * Lazily built biome -> species index; registration invalidates it
+ * so re-registration cannot double-count
+ */
+let biomeIndex: Map<Biome, Species[]> | null = null;
+
 export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
+  biomeIndex = null;
+}
+
+/**
+ * Every registered species that naturally spawns in the biome, in
+ * registration (dex) order
+ */
+export function getSpeciesByBiome(biome: Biome): Species[] {
+  if (biomeIndex == null) {
+    biomeIndex = new Map();
+
+    for (const [species, data] of SPECIES_MAP) {
+      for (const home of data.biomes) {
+        const list = biomeIndex.get(home);
+
+        if (list) {
+          list.push(species);
+        } else {
+          biomeIndex.set(home, [species]);
+        }
+      }
+    }
+  }
+  return biomeIndex.get(biome) ?? [];
 }
 
 export function getSpeciesData(species: Species): SpeciesData {

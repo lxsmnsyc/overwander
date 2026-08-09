@@ -64,6 +64,28 @@ export const enum TimeOfDay {
  */
 export const AnyTimeOfDay = TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night;
 
+const HOUR = 3_600_000;
+const DAY = 24 * HOUR;
+
+/**
+ * The day-cycle period a timestamp falls in, per the documented
+ * hour ranges
+ */
+export function getTimeOfDay(timestamp: number): TimeOfDay {
+  const hour = (timestamp % DAY) / HOUR;
+
+  if (hour >= 4 && hour < 10) {
+    return TimeOfDay.Morning;
+  }
+  if (hour >= 10 && hour < 17) {
+    return TimeOfDay.Day;
+  }
+  if (hour >= 17 && hour < 20) {
+    return TimeOfDay.Evening;
+  }
+  return TimeOfDay.Night;
+}
+
 export interface BiomeConfig {
   /**
    * Moisture level, -1 (arid) to 1 (saturated)

@@ -1,0 +1,118 @@
+import Biome, { TimeOfDay } from '../ids/biome';
+import { Species } from '../ids/species';
+import { registerSpawnPool } from './__create';
+
+/**
+ * Mountain spawn pool, grouped by day-cycle period and rarity band
+ */
+export default function registerMountainSpawns(): void {
+  registerSpawnPool(Biome.Mountain, {
+    [TimeOfDay.Morning]: {
+      base: [
+        { species: Species.Charmander, weight: 2 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Geodude, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Charmeleon, weight: 1 },
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Graveler, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Charizard, weight: 2 },
+        { species: Species.Dugtrio, weight: 10 },
+        { species: Species.Primeape, weight: 10 },
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Magmar, weight: 5 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
+      special: [
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
+    },
+    [TimeOfDay.Day]: {
+      base: [
+        { species: Species.Charmander, weight: 2 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Geodude, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Charmeleon, weight: 1 },
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Graveler, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Charizard, weight: 2 },
+        { species: Species.Dugtrio, weight: 10 },
+        { species: Species.Primeape, weight: 10 },
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Magmar, weight: 5 },
+        { species: Species.Aerodactyl, weight: 2 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
+      special: [
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
+    },
+    [TimeOfDay.Evening]: {
+      base: [
+        { species: Species.Zubat, weight: 30 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Geodude, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      rare: [
+        { species: Species.Golbat, weight: 10 },
+        { species: Species.Dugtrio, weight: 10 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Magmar, weight: 5 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
+      special: [
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
+    },
+    [TimeOfDay.Night]: {
+      base: [
+        { species: Species.Clefairy, weight: 5 },
+        { species: Species.Zubat, weight: 30 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Geodude, weight: 20 },
+        { species: Species.Gastly, weight: 20 },
+        { species: Species.Cubone, weight: 20 },
+      ],
+      uncommon: [
+        { species: Species.Graveler, weight: 5 },
+        { species: Species.Haunter, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Clefable, weight: 5 },
+        { species: Species.Golbat, weight: 10 },
+        { species: Species.Dugtrio, weight: 10 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Gengar, weight: 5 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Marowak, weight: 10 },
+        { species: Species.Magmar, weight: 5 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
+      special: [
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Mewtwo, weight: 10 },
+      ],
+    },
+  });
+}

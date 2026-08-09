@@ -156,6 +156,8 @@ const enum Abilities {
   MoldBreaker = 100,
   // Magikarp
   Rattled = 101,
+  // Ditto
+  Imposter = 102,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

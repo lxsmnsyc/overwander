@@ -65,6 +65,7 @@ const enum Families {
   Tauros = 62,
   Magikarp = 63,
   Lapras = 64,
+  Ditto = 65,
 }
 
 export default Families;

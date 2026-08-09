@@ -2478,3 +2478,23 @@ describe('Rattled', () => {
     expect(karp.stages[Stages.Speed]).toBe(2);
   });
 });
+
+describe('Imposter', () => {
+  it('copies the strongest enemy on entry', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const weak = createUnit(battle, teamB);
+    const strong = createUnit(battle, teamB);
+    weak.types.add(Types.Water);
+    weak.setHealth(20);
+    strong.types.add(Types.Fire);
+    strong.addMove(Moves.Ember);
+
+    const ditto = createUnit(battle, teamA);
+    ditto.addAbility(Abilities.Imposter);
+    ditto.enter();
+
+    expect(ditto.types.has(Types.Fire)).toBe(true);
+    expect(ditto.types.has(Types.Water)).toBe(false);
+    expect(ditto.moves[Moves.Ember]).toBeDefined();
+  });
+});

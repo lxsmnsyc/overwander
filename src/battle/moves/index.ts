@@ -27,6 +27,7 @@ import setupSolarBeam from './solar-beam';
 import setupStageMoves from './stage';
 import { setupStatusMoves } from './status';
 import setupSubstitute from './substitute';
+import setupTransform from './transform';
 import setupTriAttack from './tri-attack';
 import setupSwitchOutMoves from './switch-out';
 import setupWeatherAccuracyMoves from './weather-accuracy';
@@ -42,6 +43,7 @@ export default function setupMoves(battle: Battle): void {
   setupIncreasedCriticalHitRatioMoves(battle);
   setupRecoilMoves(battle);
   setupCrashMoves(battle);
+  setupTransform(battle);
   setupRechargeMoves(battle);
   setupChargeMoves(battle);
   setupSemiInvulnerableMoves(battle);

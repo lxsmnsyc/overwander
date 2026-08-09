@@ -1549,4 +1549,12 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Team | MoveTargetFlags.Own,
     flags: 0,
   });
+  registerMove(Moves.Transform, {
+    name: 'Transform',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+  });
 }

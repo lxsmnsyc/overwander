@@ -18,6 +18,7 @@ import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
+import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import {
   BattleEvents,
@@ -31,6 +32,7 @@ import { OHKO_MOVES } from '../moves/fixed-damage';
 import { RECOIL_MOVES } from '../moves/recoil';
 import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { hasAttackEffect } from '../moves/status';
+import { transformUnit } from '../moves/transform';
 import { PROTECTED_ABILITIES } from './special';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
@@ -2510,6 +2512,48 @@ const setupAbilities = [
             ability: Abilities.Rattled,
             unit: event.source,
           });
+        }
+      }),
+    ]);
+  }),
+
+  // Ditto
+  // https://bulbapedia.bulbagarden.net/wiki/Imposter_(Ability)
+  createAbility(Abilities.Imposter, (battle) => {
+    function strongestEnemy(source: Unit): Unit | undefined {
+      let best: Unit | undefined;
+      let bestRating = Number.NEGATIVE_INFINITY;
+
+      for (const enemy of battle.units(source.team.alliance)) {
+        if (enemy.alive) {
+          const rating = checkUnitRating(battle, enemy);
+
+          if (rating > bestRating) {
+            best = enemy;
+            bestRating = rating;
+          }
+        }
+      }
+
+      return best;
+    }
+
+    return new MergedAbilityLifecycle([
+      // Detection: entering the field with an enemy to copy
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Imposter) && strongestEnemy(event.source) != null) {
+          event.source.triggerAbility(Abilities.Imposter);
+        }
+      }),
+      // Effect: the copy rides the trigger (the target re-derives to
+      // the same strongest enemy)
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.Imposter) {
+          const target = strongestEnemy(event.source);
+
+          if (target) {
+            transformUnit(event.source, target);
+          }
         }
       }),
     ]);

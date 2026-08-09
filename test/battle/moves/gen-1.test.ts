@@ -3,7 +3,7 @@ import { AttackPriority } from '../../../src/core/event-emitter';
 import type Battle from '../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { Stages } from '../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
@@ -890,5 +890,30 @@ describe('Tri Attack', () => {
 
     expect(defender.health).toBeLessThan(160);
     expect(defender.status[Statuses.Burned]).toBeDefined();
+  });
+});
+
+describe('Transform', () => {
+  it('copies the target and reverts on leaving', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ditto = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    ditto.addMove(Moves.Transform);
+    target.addMove(Moves.Ember);
+    target.types.add(Types.Fire);
+    target.setStat(StatsKind.Base, Stats.Attack, 130);
+
+    ditto.triggerMoveEffect(Moves.Transform, unitTarget(target), 0);
+
+    expect(ditto.types.has(Types.Fire)).toBe(true);
+    expect(ditto.stats[StatsKind.Base][Stats.Attack]).toBe(130);
+    expect(ditto.moves[Moves.Ember]).toBeDefined();
+    expect(ditto.moves[Moves.Transform]).toBeUndefined();
+
+    ditto.leave();
+
+    expect(ditto.types.has(Types.Fire)).toBe(false);
+    expect(ditto.moves[Moves.Ember]).toBeUndefined();
+    expect(ditto.moves[Moves.Transform]).toBeDefined();
   });
 });

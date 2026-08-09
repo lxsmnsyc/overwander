@@ -8,6 +8,7 @@ import registerClefairySpecies from './clefairy';
 import registerCuboneSpecies from './cubone';
 import registerDoduoSpecies from './doduo';
 import registerDiglettSpecies from './diglett';
+import registerDittoSpecies from './ditto';
 import registerDrowzeeSpecies from './drowzee';
 import registerEkansSpecies from './ekans';
 import registerElectabuzzSpecies from './electabuzz';
@@ -132,4 +133,5 @@ export function registerSpecies(): void {
   registerTaurosSpecies();
   registerMagikarpSpecies();
   registerLaprasSpecies();
+  registerDittoSpecies();
 }

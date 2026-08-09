@@ -100,6 +100,9 @@ const enum Abilities {
   Oblivious = 65,
   OwnTempo = 66,
   Regenerator = 67,
+  // Magnemite
+  MagnetPull = 68,
+  Analytic = 69,
 }
 
 export default Abilities;

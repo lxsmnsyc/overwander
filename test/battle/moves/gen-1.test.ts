@@ -841,3 +841,16 @@ describe('Stomp vs Minimize', () => {
     expect((160 - minimized.health) / (160 - plain.health)).toBeCloseTo(2);
   });
 });
+
+describe('Sonic Boom', () => {
+  it('always deals a flat 20 damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMoveEffect(Moves.SonicBoom, unitTarget(defender), 0);
+
+    expect(defender.health).toBe(140);
+  });
+});

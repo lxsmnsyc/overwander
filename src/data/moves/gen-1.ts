@@ -1223,4 +1223,14 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
   });
+  registerMove(Moves.SonicBoom, {
+    name: 'Sonic Boom',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 20,
+    accuracy: 90,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+  });
 }

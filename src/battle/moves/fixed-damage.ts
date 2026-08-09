@@ -24,6 +24,8 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.SeismicToss]: (source) => source.level,
   // https://bulbapedia.bulbagarden.net/wiki/Dragon_Rage_(move)
   [Moves.DragonRage]: () => 40,
+  // https://bulbapedia.bulbagarden.net/wiki/Sonic_Boom_(move)
+  [Moves.SonicBoom]: () => 20,
   // https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)
   [Moves.Fissure]: (_, target) => target.health,
   // https://bulbapedia.bulbagarden.net/wiki/Horn_Drill_(move)

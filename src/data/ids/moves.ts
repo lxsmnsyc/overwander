@@ -220,4 +220,5 @@ export const enum Moves {
   Explosion = 123,
   Stomp = 124,
   Headbutt = 125,
+  SonicBoom = 126,
 }

@@ -1416,3 +1416,35 @@ describe('Regenerator', () => {
     expect(holder.health).toBeCloseTo(60 + 160 / 3);
   });
 });
+
+describe('Magnet Pull', () => {
+  it('traps Steel-type enemies only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const magnet = createUnit(battle, teamA);
+    magnet.addAbility(Abilities.MagnetPull);
+
+    const steel = createUnit(battle, teamB, [Types.Steel]);
+    const plain = createUnit(battle, teamB);
+
+    expect(steel.checkEscape()).toBe(false);
+    expect(plain.checkEscape()).toBe(true);
+  });
+});
+
+describe('Analytic', () => {
+  it('boosts power against targets committed to a move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Analytic);
+    enemy.addMove(Moves.Tackle);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+
+    enemy.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder });
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(40 * 1.3);
+  });
+});

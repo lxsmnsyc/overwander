@@ -1107,9 +1107,8 @@ const setupAbilities = [
         if (unit.alive && unit.hasAbility(Abilities.ArenaTrap)) {
           event.success = false;
 
-          // For visual cues
+          // For visual cues: every holder reacts, not just the first
           unit.triggerAbility(Abilities.ArenaTrap);
-          return;
         }
       }
     }),
@@ -1740,6 +1739,53 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Magnemite
+  // https://bulbapedia.bulbagarden.net/wiki/Magnet_Pull_(Ability)
+  createAbility(Abilities.MagnetPull, (battle) =>
+    battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        !event.success ||
+        // Only Steel types stick to the magnet; Ghost types and Run
+        // Away escape regardless (the explicit check keeps the cue
+        // from firing spuriously)
+        !source.types.has(Types.Steel) ||
+        source.types.has(Types.Ghost) ||
+        source.hasAbility(Abilities.RunAway)
+      ) {
+        return;
+      }
+
+      for (const unit of battle.units(source.team.alliance)) {
+        if (unit.alive && unit.hasAbility(Abilities.MagnetPull)) {
+          event.success = false;
+
+          // For visual cues: every holder reacts, not just the first
+          unit.triggerAbility(Abilities.MagnetPull);
+        }
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Analytic_(Ability)
+  createAbility(Abilities.Analytic, (battle) => {
+    const FACTOR = 1.3;
+
+    // Real-time analog of "moves last": the boost applies while the
+    // target is already committed to its own move
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(Abilities.Analytic) &&
+        event.target.type === MoveTargetType.Unit &&
+        (event.target.unit.casting != null || event.target.unit.channeling != null)
+      ) {
+        event.power *= FACTOR;
+      }
+    });
+  }),
 ];
 
 export default function setupGen1Abilities(battle: Battle): void {

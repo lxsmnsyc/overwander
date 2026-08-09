@@ -10,6 +10,7 @@ import registerGeodudeSpecies from './geodude';
 import registerGrowlitheSpecies from './growlithe';
 import registerJigglypuffSpecies from './jigglypuff';
 import registerMachopSpecies from './machop';
+import registerMagnemiteSpecies from './magnemite';
 import registerMankeySpecies from './mankey';
 import registerMeowthSpecies from './meowth';
 import registerNidoranFSpecies from './nidoran-f';
@@ -68,4 +69,5 @@ export function registerSpecies(): void {
   registerGeodudeSpecies();
   registerPonytaSpecies();
   registerSlowpokeSpecies();
+  registerMagnemiteSpecies();
 }

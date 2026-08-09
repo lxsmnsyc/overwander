@@ -88,4 +88,6 @@ export const enum Species {
   Rapidash = 80,
   Slowpoke = 81,
   Slowbro = 82,
+  Magnemite = 83,
+  Magneton = 84,
 }

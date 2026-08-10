@@ -118,9 +118,28 @@ const SPECIES_MAP = new Map<Species, SpeciesData>();
  */
 let biomeIndex: Map<Biome, Species[]> | null = null;
 
+/**
+ * Lazily built list of every family that has a registered species;
+ * registration invalidates it alongside the biome index
+ */
+let familyIndex: Families[] | null = null;
+
 export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
+  familyIndex = null;
+}
+
+/**
+ * Every family with at least one registered species, in ascending
+ * family order. The species day cycles through this list, so a
+ * family with nothing behind it is never featured
+ */
+export function getRegisteredFamilies(): Families[] {
+  familyIndex ??= [...new Set([...SPECIES_MAP.values()].map((data) => data.family))].sort(
+    (left, right) => left - right,
+  );
+  return familyIndex;
 }
 
 /**

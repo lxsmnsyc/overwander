@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   SpawnRarity,
+  boostFamilyWeights,
   getSpawnPool,
   getSpawnRarity,
   pickSpawn,
 } from '../src/data/biome';
+import Families from '../src/data/ids/families';
 import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import { BALL_ITEMS, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
@@ -13,11 +15,15 @@ import registerItems, { getItemData } from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import {
+  SPECIES_DAY_WEIGHT_BOOST,
   getAvailableEvolutions,
   getConsumedItem,
+  getDayOfYear,
+  getFeaturedFamily,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
   getSpeciesData,
+  isFeaturedSpecies,
   registerSpecies,
 } from '../src/data/species';
 
@@ -136,6 +142,51 @@ describe('evolution data', () => {
         item: Items.FireStone,
       }),
     ).toBeNull();
+  });
+});
+
+describe('species day', () => {
+  const DAY = 24 * 60 * 60 * 1000;
+  const YEAR_START = Date.UTC(2026, 0, 1);
+
+  it('counts the day of the year from the first of January in UTC', () => {
+    expect(getDayOfYear(YEAR_START)).toBe(0);
+    expect(getDayOfYear(YEAR_START + 40 * DAY)).toBe(40);
+    expect(getDayOfYear(YEAR_START + 364 * DAY)).toBe(364);
+  });
+
+  it('features the family whose number is the day of the year', () => {
+    // Family 0 is Bulbasaur's, so it opens the year; family 1 is
+    // Charmander's, and so on
+    expect(getFeaturedFamily(YEAR_START)).toBe(Families.Bulbasaur);
+    expect(getFeaturedFamily(YEAR_START + DAY)).toBe(Families.Charmander);
+    expect(getFeaturedFamily(YEAR_START + Families.Mewtwo * DAY)).toBe(Families.Mewtwo);
+
+    // Family numbers run far short of a year, so most days feature
+    // nobody at all
+    expect(getFeaturedFamily(YEAR_START + 200 * DAY)).toBeNull();
+
+    // The whole family is featured, not just one stage
+    expect(isFeaturedSpecies(Species.Venusaur, YEAR_START)).toBe(true);
+    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START)).toBe(true);
+    expect(isFeaturedSpecies(Species.Charmander, YEAR_START)).toBe(false);
+    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + 200 * DAY)).toBe(false);
+  });
+
+  it('weights the featured family four times as heavily', () => {
+    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    const boosted = boostFamilyWeights(pool, Families.Pidgey, SPECIES_DAY_WEIGHT_BOOST);
+
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+      pool[band].forEach((entry, index) => {
+        const factor = getSpeciesData(entry.species).family === Families.Pidgey ? 4 : 1;
+
+        expect(boosted[band][index].weight).toBe(entry.weight * factor);
+      });
+    }
+
+    // The original pool is left alone
+    expect(pool).toEqual(getSpawnPool(Biome.Grassland, TimeOfDay.Morning));
   });
 });
 

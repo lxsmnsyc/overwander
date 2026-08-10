@@ -1,5 +1,7 @@
 import AleaRNG from '../core/alea';
-import { getSpawnPool, isLegendarySpecies, pickSpawn } from '../data/biome';
+import { boostFamilyWeights, getSpawnPool, isLegendarySpecies, pickSpawn } from '../data/biome';
+import type { SpawnRarityGroups } from '../data/biome';
+import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
@@ -74,6 +76,18 @@ export default class ChunkSnapshot {
   private readonly cells: (Spawn | null)[] = new Array<Spawn | null>(CELL_COUNT).fill(null);
 
   /**
+   * The window's spawn pool with the species day applied: the day's
+   * featured family carries four times its usual weight, so its
+   * members crowd the rolls wherever they live
+   */
+  private getBoostedPool(): SpawnRarityGroups {
+    const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
+    const featured = getFeaturedFamily(this.timestamp);
+
+    return featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
+  }
+
+  /**
    * Roll the snapshot's spawns from the biome's spawn pool for this
    * window's time of day, honoring the rarity bands and weights, and
    * place each on its own free cell within the central 12x12 — the
@@ -85,7 +99,7 @@ export default class ChunkSnapshot {
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
+      const pool = this.getBoostedPool();
       const spawns: Spawn[] = [];
       const occupied = this.chunk.getLandmarkCells();
       const free = centeredCells(SPAWN_AREA).filter((cell) => !occupied.has(cell));
@@ -222,7 +236,12 @@ export default class ChunkSnapshot {
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.HiddenGrotto) {
           const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}grotto${cell}`);
-          const reward = resolveHiddenGrotto(this.chunk.biome, time, () => rng.random());
+          const reward = resolveHiddenGrotto(
+            this.chunk.biome,
+            time,
+            () => rng.random(),
+            getFeaturedFamily(this.timestamp),
+          );
 
           if (reward != null) {
             grottos.set(cell, reward);

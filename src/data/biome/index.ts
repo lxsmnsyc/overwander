@@ -24,6 +24,7 @@ import registerTundraSpawns from './tundra';
 import registerWoodlandSpawns from './woodland';
 
 export {
+  boostFamilyWeights,
   getSpawnPool,
   getSpawnRarity,
   isLegendarySpecies,
@@ -33,7 +34,7 @@ export {
   SPECIAL_SPAWN_ODDS,
   SpawnRarity,
 } from './__create';
-export type { SpawnEntry, SpawnPool } from './__create';
+export type { SpawnEntry, SpawnPool, SpawnRarityGroups } from './__create';
 export { BIOME_COLORS, BIOME_NAMES, TIME_OF_DAY_NAMES } from './names';
 
 export default function registerBiomeSpawns(): void {

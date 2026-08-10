@@ -1,11 +1,13 @@
 import type { SpawnEntry } from '../data/biome';
-import { getSpawnPool } from '../data/biome';
+import { boostFamilyWeights, getSpawnPool } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import type { TimeOfDay } from '../data/ids/biome';
+import type Families from '../data/ids/families';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { ItemBandOdds } from '../data/overworld/item-pool';
 import { ITEM_POOL, pickItem } from '../data/overworld/item-pool';
+import { SPECIES_DAY_WEIGHT_BOOST } from '../data/species';
 
 /**
  * Half the grottos hold a cache, the other half a pokemon
@@ -40,12 +42,15 @@ export function resolveItemCache(random: () => number, odds?: ItemBandOdds): Ite
 
 /**
  * A hidden grotto landmark: either an uncommon/rare pokemon from
- * the biome's current pool, or an item cache of better rarity
+ * the biome's current pool, or an item cache of better rarity. The
+ * day's featured family, when one is given, crowds the grotto's pool
+ * exactly as it crowds the overworld's
  */
 export function resolveHiddenGrotto(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
+  featured: Families | null = null,
 ): GrottoReward | null {
   if (random() < GROTTO_CACHE_CHANCE) {
     const item = resolveItemCache(random, GROTTO_ITEM_ODDS);
@@ -53,7 +58,11 @@ export function resolveHiddenGrotto(
     return item == null ? null : { kind: 'item', item };
   }
 
-  const pool = getSpawnPool(biome, time);
+  const biomePool = getSpawnPool(biome, time);
+  const pool =
+    featured == null
+      ? biomePool
+      : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
   // The rare band owns one draw in eight; the rest is uncommon, and
   // either band stands in for the other when it comes up empty
   const rare = random() < GROTTO_RARE_CHANCE;

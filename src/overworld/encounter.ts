@@ -6,7 +6,12 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
-import { getSpeciesAbilityPools, getSpeciesData } from '../data/species';
+import {
+  SPECIES_DAY_SHINY_BOOST,
+  getSpeciesAbilityPools,
+  getSpeciesData,
+  isFeaturedSpecies,
+} from '../data/species';
 import type ChunkSnapshot from './chunk-snapshot';
 import type { Spawn } from './chunk-snapshot';
 
@@ -126,7 +131,7 @@ const HALF_MASK = 0xffff;
  * individual value's halves — shininess is a resonance between
  * trainer and pokemon, so each trainer sees their own shinies
  */
-export function isShinyFor(userId: string, individualValue: number): boolean {
+export function isShinyFor(userId: string, individualValue: number, boost = 1): boolean {
   const trainerValue = new AleaRNG(userId).int32();
   const shininess =
     (trainerValue >>> HALF_BITS) ^
@@ -134,7 +139,9 @@ export function isShinyFor(userId: string, individualValue: number): boolean {
     (individualValue >>> HALF_BITS) ^
     (individualValue & HALF_MASK);
 
-  return shininess < SHINY_THRESHOLD;
+  // A boost widens the band that sparkles: at 8x the odds go from
+  // 1/4096 to 1/512, which is the species day's shiny bonus
+  return shininess < SHINY_THRESHOLD * boost;
 }
 
 /**
@@ -247,7 +254,14 @@ export default function deriveEncounter(
     nature,
     ability,
     gender,
-    shiny: userId != null && isShinyFor(userId, individualValue),
+    // The day's featured family sparkles eight times as often
+    shiny:
+      userId != null &&
+      isShinyFor(
+        userId,
+        individualValue,
+        isFeaturedSpecies(species, snapshot.timestamp) ? SPECIES_DAY_SHINY_BOOST : 1,
+      ),
     moves,
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,

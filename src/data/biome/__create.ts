@@ -1,5 +1,6 @@
 import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
+import type Families from '../ids/families';
 import { Species } from '../ids/species';
 import { getSpeciesData } from '../species';
 
@@ -36,6 +37,34 @@ export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
 
 export function getSpawnPool(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
   return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
+}
+
+function boostBand(entries: SpawnEntry[], family: Families, factor: number): SpawnEntry[] {
+  return entries.map((entry) =>
+    getSpeciesData(entry.species).family === family
+      ? { species: entry.species, weight: entry.weight * factor }
+      : entry,
+  );
+}
+
+/**
+ * The same pool with one family's entries weighted more heavily —
+ * how the species day crowds its family into the spawns. The bands
+ * themselves do not move: a featured rare stays rare, it just wins
+ * its band more often. Returns the pool untouched when nothing of
+ * the family lives here
+ */
+export function boostFamilyWeights(
+  groups: SpawnRarityGroups,
+  family: Families,
+  factor: number,
+): SpawnRarityGroups {
+  return {
+    base: boostBand(groups.base, family, factor),
+    uncommon: boostBand(groups.uncommon, family, factor),
+    rare: boostBand(groups.rare, family, factor),
+    special: boostBand(groups.special, family, factor),
+  };
 }
 
 export const enum SpawnRarity {

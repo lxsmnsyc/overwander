@@ -16,7 +16,11 @@ import {
 } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
-import { giveItem as giveOnServer, takeItem as takeOnServer } from '../server/caught';
+import {
+  giveItem as giveOnServer,
+  releaseCatch as releaseOnServerSide,
+  takeItem as takeOnServer,
+} from '../server/caught';
 import { requireUid } from '../server/firebase';
 import { type CaughtPokemon, asCaughtPokemon } from './caught-record';
 import { CAUGHT_COLLECTION } from './collections';
@@ -151,4 +155,20 @@ export async function takeItem(catchId: string, item: Items): Promise<boolean> {
 async function takeItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
   'use server';
   return takeOnServer(await requireUid(token), catchId, item);
+}
+
+/**
+ * Let one of the player's pokemon go. The record is deleted, whatever
+ * it was holding goes back to the bag, and a buddy record naming it
+ * is cleared with it. There is no undoing it.
+ *
+ * Resolves false when the catch is not the user's or is fighting
+ */
+export async function releaseCatch(catchId: string): Promise<boolean> {
+  return releaseOnServer(await getIdToken(), catchId);
+}
+
+async function releaseOnServer(token: string, catchId: string): Promise<boolean> {
+  'use server';
+  return releaseOnServerSide(await requireUid(token), catchId);
 }

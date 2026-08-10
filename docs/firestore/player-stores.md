@@ -78,7 +78,13 @@ companion changes; the planned walking feature follows the same record.
 own it. Ownership can still lapse afterwards — a trade leaves the buddy record
 pointing at someone else's pokemon — so `resolveBuddy` re-checks `owner` on
 read and resolves null when it no longer matches. `clearBuddy` deletes the
-document rather than blanking the field.
+document rather than blanking the field, and `releaseCatch` deletes it in the
+same transaction when the released pokemon was the one being followed — a buddy
+record naming a document that is gone would otherwise outlive it.
+
+An **egg** may be the buddy, and has to be: steps only count for what walks
+beside the player. `resolveBuddy` reports no field effects for one, though — it
+is carried, not accompanied. See [Eggs](catches.md#eggs).
 
 Private to the owning uid.
 

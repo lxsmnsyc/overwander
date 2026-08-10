@@ -70,6 +70,26 @@ holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limi
 This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
 of every encounter its owner starts.
 
+## Releasing
+
+`releaseCatch` ([`src/server/caught.ts`](../../src/server/caught.ts)) **deletes**
+the document rather than flagging it: a released pokemon is gone, and nothing in
+the game reads a catch its owner no longer has. Three things move with it, in the
+same transaction, so nothing is left pointing at a record that has vanished:
+
+- whatever it was holding goes back to the bag — the item was the player's, not
+  the pokemon's;
+- `buddies/{uid}` is deleted when it named the released catch;
+- a catch that is **locked** into a live battle is refused outright, since the
+  fight is running on a snapshot of a record that has to still be there when it
+  ends.
+
+Releasing pays no candy. Catching already pays `CANDY_PER_CATCH`, so paying
+again on the way out would make catch-and-release a way of farming candy from
+the same spawn rather than a way of clearing space.
+
+The dialog asks twice before calling it, and there is no undo.
+
 ## Eggs
 
 An egg is an ordinary catch record with `egg` still set. Everything about the

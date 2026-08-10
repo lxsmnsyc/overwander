@@ -143,7 +143,10 @@ export default class ChunkSnapshot {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
-      const occupied = this.chunk.getLandmarkCells();
+      // A landmark and the ring around it are both out: the ring is
+      // the room a player has to walk up to one, and a pokemon
+      // standing in it would be met on the way rather than chosen
+      const occupied = this.chunk.getLandmarkArea();
       const free = centeredCells(SPAWN_AREA).filter((cell) => !occupied.has(cell));
 
       for (let i = 0; i < count && free.length > 0; i++) {

@@ -40,6 +40,29 @@ const MIN_LANDMARKS = 3;
 const MAX_LANDMARKS = 5;
 
 /**
+ * The cells touching one, diagonals included, clipped to the chunk.
+ * A landmark keeps this ring clear of everything else, so there is
+ * always somewhere to stand beside it
+ */
+export function neighborCells(cell: number): number[] {
+  const x = cell % CHUNK_CELLS;
+  const y = Math.floor(cell / CHUNK_CELLS);
+  const cells: number[] = [];
+
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      const nx = x + dx;
+      const ny = y + dy;
+
+      if ((dx !== 0 || dy !== 0) && nx >= 0 && nx < CHUNK_CELLS && ny >= 0 && ny < CHUNK_CELLS) {
+        cells.push(ny * CHUNK_CELLS + nx);
+      }
+    }
+  }
+  return cells;
+}
+
+/**
  * One overworld cell: its coordinates, the biome its climate
  * resolved to, and the seed that deterministically drives everything
  * generated inside it
@@ -59,25 +82,59 @@ export default class Chunk {
    * cell within the central 8x8, keyed by row-major cell index.
    * Rolled from the chunk seed alone — no clock or snapshot
    * involved — so the same chunk yields the same landmarks on the
-   * same cells forever
+   * same cells forever.
+   *
+   * Every landmark also keeps the ring of cells around it clear: no
+   * two of them touch, and nothing else is placed there either, so a
+   * player always has room to walk up to one and step around it. A
+   * chunk that runs out of room takes fewer landmarks rather than
+   * crowding them
    */
   getLandmarkCells(): Map<number, Landmark> {
     if (this.landmarkCells == null) {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
-      const free = centeredCells(LANDMARK_AREA);
+      let free = centeredCells(LANDMARK_AREA);
       const cells = new Map<number, Landmark>();
 
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count && free.length > 0; i++) {
         // The draws land in pair order: the landmark, then its cell
         const landmark = LANDMARKS[Math.floor(rng.random() * LANDMARKS.length)];
         const [cell] = free.splice(Math.floor(rng.random() * free.length), 1);
 
         cells.set(cell, landmark);
+
+        // Its own approach is now spoken for, so the next landmark
+        // goes somewhere with room of its own
+        const taken = new Set(neighborCells(cell));
+
+        free = free.filter((candidate) => !taken.has(candidate));
       }
       this.landmarkCells = cells;
     }
     return this.landmarkCells;
+  }
+
+  private landmarkArea: Set<number> | null = null;
+
+  /**
+   * Every cell a landmark occupies or keeps clear: the landmarks
+   * themselves plus the ring around each. Nothing else in the chunk
+   * may stand here — it is what a player walks through to reach one
+   */
+  getLandmarkArea(): Set<number> {
+    if (this.landmarkArea == null) {
+      const area = new Set<number>();
+
+      for (const cell of this.getLandmarkCells().keys()) {
+        area.add(cell);
+        for (const neighbor of neighborCells(cell)) {
+          area.add(neighbor);
+        }
+      }
+      this.landmarkArea = area;
+    }
+    return this.landmarkArea;
   }
 
   /**

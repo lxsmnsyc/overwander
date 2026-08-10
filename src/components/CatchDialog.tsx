@@ -5,7 +5,14 @@ import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
 import { canHatch, stepsRemaining } from '../auth/egg';
 import { hatchEgg } from '../auth/eggs';
-import { type CaughtPokemon, HELD_ITEM_LIMIT, getCaught, giveItem, takeItem } from '../auth/caught';
+import {
+  type CaughtPokemon,
+  HELD_ITEM_LIMIT,
+  getCaught,
+  giveItem,
+  releaseCatch,
+  takeItem,
+} from '../auth/caught';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
@@ -303,6 +310,43 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * Whether the release button has been pressed once. Letting a
+   * pokemon go cannot be undone, so it takes two presses and the
+   * second one says what it is doing
+   */
+  const [releasing, setReleasing] = createSignal(false);
+
+  const release = (): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    if (!releasing()) {
+      setReleasing(true);
+      return;
+    }
+    setStatus(null);
+    releaseCatch(catchId)
+      .then((released) => {
+        setReleasing(false);
+
+        if (!released) {
+          setStatus('It could not be released.');
+          return;
+        }
+        // The record is gone, so there is nothing left for this
+        // dialog to show
+        props.onChange?.();
+        props.onClose();
+      })
+      .catch((caught: unknown) => {
+        setReleasing(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   const view = (): CaughtPokemon | null => {
     const loaded = detail();
 
@@ -316,6 +360,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       isOpen={props.catchId != null}
       onClose={() => {
         setStatus(null);
+        // A release half-confirmed is a release declined
+        setReleasing(false);
         props.onClose();
       }}
     >
@@ -547,6 +593,29 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       </Show>
                     </Show>
                   </Show>
+                  <h3>Release</h3>
+                  {/* There is no undoing it, so it takes two presses
+                      — and whatever it is holding comes back to the
+                      bag rather than going with it */}
+                  <p>
+                    <button type="button" disabled={fighting()} onClick={release}>
+                      {releasing()
+                        ? `Release ${loaded().egg ? 'this egg' : getSpeciesData(loaded().species).name} for good?`
+                        : 'Release'}
+                    </button>
+                    <Show when={releasing()}>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReleasing(false);
+                        }}
+                      >
+                        Keep
+                      </button>
+                    </Show>
+                  </p>
+
                   <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
                 </Show>
               </>
@@ -557,6 +626,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           type="button"
           onClick={() => {
             setStatus(null);
+            setReleasing(false);
             props.onClose();
           }}
         >

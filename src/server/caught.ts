@@ -1,6 +1,7 @@
 import 'server-only';
 import { HELD_ITEM_LIMIT } from '../auth/caught-record';
 import {
+  BUDDY_COLLECTION,
   CAUGHT_COLLECTION,
   ENCOUNTER_COLLECTION,
   INVENTORY_COLLECTION,
@@ -197,6 +198,63 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
     // still gives back exactly what it took
     transaction.update(caughtRef, { items: held.filter((_, at) => at !== index) });
     transaction.set(stackRef, { user: uid, item, amount: amount + 1 });
+    return true;
+  });
+}
+
+/**
+ * Let a pokemon go. The record is deleted outright rather than
+ * flagged: a released pokemon is gone, and nothing in the game reads
+ * a catch it no longer owns.
+ *
+ * Three things go with it, in the same transaction, so the record
+ * cannot vanish while something still points at it. Whatever it was
+ * holding goes back to the bag — the item was the player's, not the
+ * pokemon's. A buddy record naming it is cleared, so the player is
+ * not walking with a document that is gone. And a pokemon in a live
+ * battle is refused outright: the fight is running on a snapshot of a
+ * record that has to still be there when it ends.
+ *
+ * Resolves false when the catch is not the player's or is fighting
+ */
+export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
+  const db = getAdminFirestore();
+
+  return db.runTransaction(async (transaction) => {
+    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
+    const buddyRef = db.collection(BUDDY_COLLECTION).doc(uid);
+    const [caughtDoc, buddyDoc] = await transaction.getAll(caughtRef, buddyRef);
+    const caught = docData(caughtDoc);
+
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+      return false;
+    }
+
+    // One copy back per copy held, counted before anything is read:
+    // two of the same item share a stack, and reading that stack
+    // twice would give back only one of them
+    const returning = new Map<Items, number>();
+
+    for (const item of asHeldItems(caught.items)) {
+      returning.set(item, (returning.get(item) ?? 0) + 1);
+    }
+
+    const stacks = await Promise.all(
+      [...returning.keys()].map(async (item) => {
+        const ref = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
+
+        return [item, ref, asNumber(docData(await transaction.get(ref))?.amount)] as const;
+      }),
+    );
+
+    for (const [item, ref, amount] of stacks) {
+      transaction.set(ref, { user: uid, item, amount: amount + (returning.get(item) ?? 0) });
+    }
+
+    if (docData(buddyDoc)?.caught === catchId) {
+      transaction.delete(buddyRef);
+    }
+    transaction.delete(caughtRef);
     return true;
   });
 }

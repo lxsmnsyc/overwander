@@ -173,3 +173,11 @@ snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),
 so two players in the same zone and window compute identical results from the
 fields `snapshots/{chunkSeed}:{zone}` does store — and two players in different
 zones compute different ones.
+
+Placement leaves room to walk. A landmark keeps the ring of cells around it —
+diagonals included — clear of everything: no two landmarks touch, and
+`getSpawns` skips the whole `getLandmarkArea()` rather than only the landmark
+cells, so a pokemon is never standing in the way of one. Placing a landmark
+takes up to nine cells of the central 8x8's sixty-four, so the five a chunk may
+roll always fit; the loop stops early if a chunk ever does run out, taking fewer
+landmarks rather than crowding them.

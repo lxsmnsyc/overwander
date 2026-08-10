@@ -23,6 +23,7 @@ import {
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
+import { neighborCells } from '../../src/overworld/chunk';
 import ChunkSnapshot, {
   NEST_INTERVAL,
   RAID_INTERVAL,
@@ -965,6 +966,9 @@ describe('chunk snapshot', () => {
         if (occupant != null) {
           placed.push(occupant);
           expect(chunk.getLandmarkAt(x, y)).toBeNull();
+          // Nor beside one: the ring around a landmark is the room a
+          // player walks up to it through
+          expect(chunk.getLandmarkArea().has(y * 16 + x)).toBe(false);
           expect(x).toBeGreaterThanOrEqual(2);
           expect(x).toBeLessThanOrEqual(13);
           expect(y).toBeGreaterThanOrEqual(2);
@@ -987,9 +991,45 @@ describe('chunk snapshot', () => {
     }
 
     // A snapshot can never hold more spawns than free cells of the
-    // central 12x12
+    // central 12x12 — the landmarks and their rings are not free
+    const blocked = [...chunk.getLandmarkArea()].filter((cell) => {
+      const x = cell % 16;
+      const y = Math.floor(cell / 16);
+
+      return x >= 2 && x <= 13 && y >= 2 && y <= 13;
+    });
     const packed = new ChunkSnapshot(chunk, NOON);
-    expect(packed.getSpawns(1000)).toHaveLength(144 - chunk.getLandmarkCells().size);
+
+    expect(blocked.length).toBeGreaterThan(chunk.getLandmarkCells().size);
+    expect(packed.getSpawns(1000)).toHaveLength(144 - blocked.length);
+  });
+
+  it('leaves a cell of room around every landmark', () => {
+    const world = new World('overworld');
+
+    for (let y = -40; y < 40; y += 7) {
+      for (let x = -40; x < 40; x += 7) {
+        const chunk = world.getChunk(x, y);
+        const landmarks = chunk.getLandmarkCells();
+
+        // No two landmarks touch, diagonals included, so each is
+        // reachable from every side
+        for (const cell of landmarks.keys()) {
+          for (const neighbor of neighborCells(cell)) {
+            expect(landmarks.has(neighbor)).toBe(false);
+          }
+        }
+
+        // Nine cells at most per landmark, out of the central 8x8's
+        // sixty-four: the ring never costs a chunk one of its three
+        // to five
+        expect(landmarks.size).toBeGreaterThanOrEqual(3);
+        expect(landmarks.size).toBeLessThanOrEqual(5);
+        // The area is the landmarks plus their rings, and a ring
+        // inside the central 8x8 is never empty
+        expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);
+      }
+    }
   });
 
   it('derives concrete encounters from spawn tuples', () => {

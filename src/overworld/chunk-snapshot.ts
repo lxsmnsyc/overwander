@@ -3,7 +3,7 @@ import { getSpawnPool, pickSpawn } from '../data/biome';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Species } from '../data/ids/species';
 import type Chunk from './chunk';
-import { CELL_COUNT, CHUNK_CELLS } from './chunk';
+import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -16,12 +16,15 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * Snapshots quantize the day into 5-minute windows, so every
  * observer of a chunk within the same window shares one timestamp
  */
-const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
+export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
 /**
  * A chunk observed at a point in time: the timestamp snaps back to
  * the last 5-minute boundary, giving each chunk a stable identity
- * per time window
+ * per time window. The canonical timestamp comes from the shared
+ * snapshot store (fixed once server-side per window), never from a
+ * player's local clock — this class only derives deterministically
+ * from whatever window it is given
  */
 export default class ChunkSnapshot {
   /**
@@ -53,8 +56,10 @@ export default class ChunkSnapshot {
   /**
    * Roll the snapshot's spawns from the biome's spawn pool for this
    * window's time of day, honoring the rarity bands and weights, and
-   * place each on its own free cell — the chunk's landmark cells are
-   * pre-occupied and never receive spawns. The first call fixes the
+   * place each on its own free cell within the central 12x12 — the
+   * chunk's landmark cells are pre-occupied and never receive
+   * spawns, and the outer ring stays clear so a player entering
+   * from an edge meets nothing immediately. The first call fixes the
    * result for the snapshot's lifetime; later calls return the same
    * spawns regardless of count
    */
@@ -63,9 +68,7 @@ export default class ChunkSnapshot {
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
       const spawns: Spawn[] = [];
       const occupied = this.chunk.getLandmarkCells();
-      const free = Array.from({ length: CELL_COUNT }, (_, cell) => cell).filter(
-        (cell) => !occupied.has(cell),
-      );
+      const free = centeredCells(SPAWN_AREA).filter((cell) => !occupied.has(cell));
 
       for (let i = 0; i < count && free.length > 0; i++) {
         const species = pickSpawn(pool, () => this.rng.random());

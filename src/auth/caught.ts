@@ -22,7 +22,7 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type { Encounter, EncounterType } from '../overworld/encounter';
-import { asNumber, asNumberArray, asRecord, asString } from './__normalize';
+import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -93,19 +93,6 @@ const CAUGHT_COLLECTION = 'caught';
 const ABILITIES_COLLECTION = 'caughtAbilities';
 const ITEMS_COLLECTION = 'caughtItems';
 const OWNERS_COLLECTION = 'caughtOwners';
-
-function asStatRecord(value: unknown): Record<Stats, number> {
-  const source = asRecord(value);
-
-  return {
-    [Stats.HP]: asNumber(source[String(Stats.HP)]),
-    [Stats.Attack]: asNumber(source[String(Stats.Attack)]),
-    [Stats.Defense]: asNumber(source[String(Stats.Defense)]),
-    [Stats.SpecialAttack]: asNumber(source[String(Stats.SpecialAttack)]),
-    [Stats.SpecialDefense]: asNumber(source[String(Stats.SpecialDefense)]),
-    [Stats.Speed]: asNumber(source[String(Stats.Speed)]),
-  };
-}
 
 const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
   toFirestore: (caught) => caught,

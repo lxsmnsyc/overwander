@@ -11,6 +11,31 @@ export const CHUNK_CELLS = 16;
 
 export const CELL_COUNT = CHUNK_CELLS * CHUNK_CELLS;
 
+/**
+ * Landmarks keep to the central 8x8 and spawns to the central
+ * 12x12, so a player entering from a chunk edge never lands on an
+ * interactable immediately
+ */
+export const LANDMARK_AREA = 8;
+
+export const SPAWN_AREA = 12;
+
+/**
+ * Row-major cell indices of a size x size square centered on the
+ * chunk grid
+ */
+export function centeredCells(size: number): number[] {
+  const offset = (CHUNK_CELLS - size) / 2;
+  const cells: number[] = [];
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      cells.push((offset + y) * CHUNK_CELLS + (offset + x));
+    }
+  }
+  return cells;
+}
+
 const MIN_LANDMARKS = 3;
 const MAX_LANDMARKS = 5;
 
@@ -31,15 +56,16 @@ export default class Chunk {
 
   /**
    * The chunk's 3-5 landmarks (duplicates allowed), each on its own
-   * cell, keyed by row-major cell index. Rolled from the chunk seed
-   * alone — no clock or snapshot involved — so the same chunk yields
-   * the same landmarks on the same cells forever
+   * cell within the central 8x8, keyed by row-major cell index.
+   * Rolled from the chunk seed alone — no clock or snapshot
+   * involved — so the same chunk yields the same landmarks on the
+   * same cells forever
    */
   getLandmarkCells(): Map<number, Landmark> {
     if (this.landmarkCells == null) {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
-      const free = Array.from({ length: CELL_COUNT }, (_, cell) => cell);
+      const free = centeredCells(LANDMARK_AREA);
       const cells = new Map<number, Landmark>();
 
       for (let i = 0; i < count; i++) {

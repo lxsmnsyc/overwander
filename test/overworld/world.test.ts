@@ -74,8 +74,15 @@ describe('world', () => {
       expect(landmarks.length).toBeGreaterThanOrEqual(3);
       expect(landmarks.length).toBeLessThanOrEqual(5);
 
-      // One cell each: the cell map holds every landmark
+      // One cell each: the cell map holds every landmark, all
+      // within the central 8x8
       expect(chunk.getLandmarkCells().size).toBe(landmarks.length);
+      for (const cell of chunk.getLandmarkCells().keys()) {
+        expect(cell % 16).toBeGreaterThanOrEqual(4);
+        expect(cell % 16).toBeLessThanOrEqual(11);
+        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(4);
+        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(11);
+      }
 
       // Fixed forever: a fresh resolution of the chunk agrees
       const again = world.getChunk(x, 0);
@@ -169,8 +176,8 @@ describe('chunk snapshot', () => {
     const snapshot = new ChunkSnapshot(chunk, NOON);
     const spawns = snapshot.getSpawns(4);
 
-    // Scanning the grid recovers every spawn exactly once, and no
-    // spawn sits on a landmark's cell
+    // Scanning the grid recovers every spawn exactly once; no spawn
+    // sits on a landmark's cell or outside the central 12x12
     const placed: unknown[] = [];
     for (let y = 0; y < 16; y++) {
       for (let x = 0; x < 16; x++) {
@@ -179,6 +186,10 @@ describe('chunk snapshot', () => {
         if (occupant != null) {
           placed.push(occupant);
           expect(chunk.getLandmarkAt(x, y)).toBeNull();
+          expect(x).toBeGreaterThanOrEqual(2);
+          expect(x).toBeLessThanOrEqual(13);
+          expect(y).toBeGreaterThanOrEqual(2);
+          expect(y).toBeLessThanOrEqual(13);
         }
       }
     }
@@ -196,9 +207,10 @@ describe('chunk snapshot', () => {
       }
     }
 
-    // A snapshot can never hold more spawns than free cells
+    // A snapshot can never hold more spawns than free cells of the
+    // central 12x12
     const packed = new ChunkSnapshot(chunk, NOON);
-    expect(packed.getSpawns(1000)).toHaveLength(256 - chunk.getLandmarkCells().size);
+    expect(packed.getSpawns(1000)).toHaveLength(144 - chunk.getLandmarkCells().size);
   });
 
   it('derives concrete encounters from spawn tuples', () => {

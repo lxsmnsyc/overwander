@@ -3,6 +3,7 @@ import AleaRNG from '../../src/core/alea';
 import Abilities from '../../src/data/ids/abilities';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
+  BIOME_NAMES,
   SpawnRarity,
   getSpawnPool,
   getSpawnRarity,
@@ -13,11 +14,20 @@ import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import registerGen1Moves from '../../src/data/moves/gen-1';
 import { Genders, Species } from '../../src/data/ids/species';
-import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
+import {
+  getBaseSpecies,
+  getSpeciesAbilityPools,
+  getSpeciesData,
+  registerSpecies,
+} from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
-import ChunkSnapshot, { RAID_INTERVAL, SPAWN_COUNT } from '../../src/overworld/chunk-snapshot';
+import ChunkSnapshot, {
+  NEST_INTERVAL,
+  RAID_INTERVAL,
+  SPAWN_COUNT,
+} from '../../src/overworld/chunk-snapshot';
 import {
   BOSS_ALLIANCE,
   LEGENDARY_RAID_REWARD_LEVEL,
@@ -49,7 +59,7 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
-import { resolveBerryPatch, resolveHiddenGrotto } from '../../src/overworld/landmarks';
+import { resolveBerryPatch, resolveHiddenGrotto, resolveNest } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import type { Buddy } from '../../src/overworld/core';
 import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
@@ -722,6 +732,65 @@ describe('world', () => {
       shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getBerryPatches()]));
     }
     expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('holds one egg species in a nest for the whole local day', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.Nest),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const nests = snapshot.getNests();
+    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+    const ordinary = new Set(
+      [...pool.base, ...pool.uncommon, ...pool.rare].map((entry) => getBaseSpecies(entry.species)),
+    );
+
+    expect(nests.size).toBeGreaterThan(0);
+    for (const [cell, species] of nests) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Nest);
+      // What is lying there hatches, so it is the first stage of its
+      // line — and it is one of the biome's own
+      expect(getSpeciesData(species).evolvesFrom).toBeUndefined();
+      expect(ordinary.has(species)).toBe(true);
+      // A nest never holds a legendary or a mythical
+      expect(getSpawnRarity(species)).not.toBe(SpawnRarity.Special);
+    }
+
+    // A nest outlives every other landmark in the chunk: the spawns
+    // around it turn over all day and it holds the same egg
+    expect(snapshot.nestTimestamp).toBe(0);
+    expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).getNests()).toEqual(nests);
+    expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).nestTimestamp).toBe(0);
+    expect(new ChunkSnapshot(chunk, NEST_INTERVAL).nestTimestamp).toBe(NEST_INTERVAL);
+  });
+
+  it('keeps specials out of nests however the roll falls', () => {
+    // Both ends of the stream, on every biome that stages anything:
+    // whatever a nest draws is reduced to the stage that hatches, and
+    // the special tier is not in the draw at all
+    for (const key of Object.keys(BIOME_NAMES)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      const biome = Number(key) as Biome;
+
+      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
+        for (const roll of [0, 0.5, 0.999999]) {
+          const species = resolveNest(biome, time, () => roll);
+
+          if (species == null) {
+            continue;
+          }
+          expect(getSpawnRarity(species)).not.toBe(SpawnRarity.Special);
+          expect(getSpeciesData(species).evolvesFrom).toBeUndefined();
+        }
+      }
+    }
   });
 
   it('rolls the berry pool through its rarity bands', () => {

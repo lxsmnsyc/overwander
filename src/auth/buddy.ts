@@ -92,6 +92,12 @@ export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
 
   const [, caught] = buddy;
 
+  // An egg is carried rather than accompanied: what is written inside
+  // it changes nothing about the world until it hatches
+  if (caught.egg) {
+    return null;
+  }
+
   return {
     abilities: caught.abilities,
     items: caught.items,

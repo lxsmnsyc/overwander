@@ -30,15 +30,22 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
     async (player) => {
       const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
 
-      return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+      // An egg cannot be brought: it is shown, greyed, rather than
+      // hidden, so a player counting their six knows where it went
+      return owned.map(([id, caught]) => ({
+        id,
+        caught,
+        held: caught.egg || isLockLive(caught, now),
+        egg: caught.egg,
+      }));
     },
   );
   const [chosen, setChosen] = createSignal<string[]>([]);
 
-  const toggle = (id: string, fighting: boolean): void => {
+  const toggle = (id: string, held: boolean): void => {
     const current = chosen();
 
-    if (fighting) {
+    if (held) {
       return;
     }
     if (current.includes(id)) {
@@ -76,16 +83,20 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
                     <button
                       type="button"
                       aria-pressed={chosen().includes(entry.id)}
-                      disabled={entry.fighting}
+                      disabled={entry.held}
                       onClick={() => {
-                        toggle(entry.id, entry.fighting);
+                        toggle(entry.id, entry.held);
                       }}
                     >
                       {chosen().includes(entry.id) ? '✓ ' : ''}
-                      {getSpeciesData(entry.caught.species).name} · Lv. {entry.caught.level}
+                      {entry.egg
+                        ? 'Egg'
+                        : `${getSpeciesData(entry.caught.species).name} · Lv. ${entry.caught.level}`}
                       {/* One pokemon, one battle: it comes back when
-                          the raid it is in ends */}
-                      {entry.fighting ? ' · in a raid' : ''}
+                          the raid it is in ends. An egg never comes
+                          back, because it was never able to go */}
+                      {entry.egg ? ' · not hatched' : ''}
+                      {!entry.egg && entry.held ? ' · in a raid' : ''}
                     </button>
                   </li>
                 )}

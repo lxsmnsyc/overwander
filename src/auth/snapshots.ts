@@ -24,10 +24,11 @@ import {
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimHiddenGrotto as claimGrottoOnServerSide,
+  claimNest as claimNestOnServerSide,
   meetSpawn,
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
-import { asOffset, toLocalTime, toZoneKey } from './local-time';
+import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
 import { SNAPSHOT_COLLECTION, SPAWN_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
@@ -385,6 +386,44 @@ async function claimBerryOnServer(
     cell,
     await syncServerClock(),
     offset,
+  );
+}
+
+/**
+ * Take the egg a nest is holding. A nest refills once a local day
+ * rather than once a window, and the marker behind it is stamped with
+ * that day, so a nest gives each player one egg between midnights.
+ *
+ * Resolves the new egg's catch id, or null when the nest is empty
+ */
+export async function claimNest(snapshot: ChunkSnapshot, cell: number): Promise<string | null> {
+  return claimNestOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+    getLocale(),
+  );
+}
+
+async function claimNestOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  'use server';
+  return claimNestOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+    locale,
   );
 }
 

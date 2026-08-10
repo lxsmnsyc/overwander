@@ -29,6 +29,13 @@ export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
 
   const caught = asCaughtPokemon(stored);
 
+  // An egg is carried rather than accompanied: it has an ability and
+  // a nature written down already, and neither of them is out here
+  // doing anything until it hatches
+  if (caught.egg) {
+    return null;
+  }
+
   return {
     abilities: caught.abilities,
     nature: caught.nature,

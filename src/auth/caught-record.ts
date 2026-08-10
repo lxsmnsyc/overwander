@@ -97,6 +97,30 @@ export interface CaughtPokemon {
    */
   lockedAt: number;
   /**
+   * Whether it is still an egg. Everything about the pokemon inside
+   * is already written — the species, its rolls, its moves — but an
+   * egg shows none of it, cannot be edited, and cannot be fielded in
+   * a battle. Hatching is what takes the flag off
+   */
+  egg: boolean;
+  /**
+   * How far the egg has been carried. Only steps walked while it is
+   * the player's buddy count, and only at a walking pace
+   */
+  steps: number;
+  /**
+   * How far it has to be carried, frozen when the egg was found: a
+   * later change to what hatching costs cannot strand an egg somebody
+   * is already halfway through
+   */
+  hatchSteps: number;
+  /**
+   * When steps were last credited, on the server's clock. It is what
+   * the next report is measured against, so it is written by the
+   * server and never by the walker
+   */
+  steppedAt: number;
+  /**
    * The ball the catch was made with
    */
   ball: Balls;
@@ -179,6 +203,10 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     history: asOwnershipHistory(data.history),
     lock: data.lock === true,
     lockedAt: asNumber(data.lockedAt),
+    egg: data.egg === true,
+    steps: asNumber(data.steps),
+    hatchSteps: asNumber(data.hatchSteps),
+    steppedAt: asNumber(data.steppedAt),
     ball: asNumber(data.ball) as Balls,
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),

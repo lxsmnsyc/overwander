@@ -28,6 +28,10 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
 | `lock`                 | `boolean`               | Whether it is fielded in a battle right now               |
 | `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
+| `egg`                  | `boolean`               | Still an egg: shows nothing, does nothing, cannot fight   |
+| `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any       |
+| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found        |
+| `steppedAt`            | `number`                | Server instant steps were last credited at                |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
 | `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
@@ -65,6 +69,43 @@ between them. Only items flagged `Holdable` can be handed over, and a catch
 holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
 This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
 of every encounter its owner starts.
+
+## Eggs
+
+An egg is an ordinary catch record with `egg` still set. Everything about the
+pokemon inside it — species, rolls, the move it inherited — is written by
+`grantNestEgg` ([`src/server/eggs.ts`](../../src/server/eggs.ts)) the moment the
+nest is claimed, so hatching reveals rather than rolls: asking again cannot
+produce a better pokemon than the nest gave. Every egg starts at level 1 and
+holds nothing.
+
+What the record does not do is show it. The catch dialog hides everything read
+off the species — the name, gender, abilities, moves, size — until the flag comes
+off, and the list, the team picker and the buddy line all say only "Egg". This is
+presentation, not secrecy: catch documents are readable, so a determined player
+can read the species out of Firestore directly. Nothing is staked on them not
+doing so.
+
+An egg is refused everywhere a pokemon is expected: `giveItem`, `useCandy` and
+`evolveCatch` turn it down, `publishTeamSnapshot` leaves it out of the party it
+freezes, and `resolveBuddy` reports no buddy effects for one — it is carried, not
+accompanied, so its ability and nature change nothing in the overworld.
+
+### Walking
+
+Only the buddy walks. The client counts cells crossed and reports them in
+batches of eight through `walk` ([`src/auth/eggs.ts`](../../src/auth/eggs.ts));
+`recordSteps` credits them **against the server's own clock**, so a report buys
+no more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims —
+250 ms a pace, capped at 64 a report, and never past `hatchSteps`. The stamp
+moves on every report, credited or not, so a refused one banks no time for the
+next. That is why `steppedAt` lives on the catch document (server-written) rather
+than on `buddies/{uid}` (client-written).
+
+`hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
+family's candy, exactly as meeting the pokemon any other way would have. The
+shared rules both sides read — `EGG_HATCH_STEPS`, `canHatch`, `creditableSteps` —
+are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
 
 ## Catches are locked while they fight
 

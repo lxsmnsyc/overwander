@@ -218,6 +218,26 @@ export function getEggMoves(species: Species): Moves[] {
   return getSpeciesData(species).learnSet.egg ?? [];
 }
 
+/**
+ * The stage a line hatches at: the species itself when nothing
+ * evolves into it, and otherwise the far end of its `evolvesFrom`
+ * chain. An egg is always the first stage of its line, and a line's
+ * egg moves are listed there, so this is what a nest lays whatever
+ * the biome happened to roll
+ */
+export function getBaseSpecies(species: Species): Species {
+  let current = species;
+  let previous = getSpeciesData(current).evolvesFrom;
+
+  // A chain long enough to loop would be a data error rather than a
+  // species; the walk is bounded by the registry either way
+  while (previous != null && previous !== current) {
+    current = previous;
+    previous = getSpeciesData(current).evolvesFrom;
+  }
+  return current;
+}
+
 export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
   const regular = new Set<Abilities>();
   const hidden = new Set<Abilities>();

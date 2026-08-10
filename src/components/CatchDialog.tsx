@@ -1,7 +1,10 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
+import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
+import { canHatch, stepsRemaining } from '../auth/egg';
+import { hatchEgg } from '../auth/eggs';
 import { type CaughtPokemon, HELD_ITEM_LIMIT, getCaught, giveItem, takeItem } from '../auth/caught';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
@@ -227,6 +230,57 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * Which catch is currently walking with the player, so the button
+   * can say whether this is the one
+   */
+  const [buddy, { refetch: refetchBuddy }] = createResource(
+    () => owned(),
+    async (uid) => (await getBuddy(uid))?.caught ?? null,
+  );
+
+  const takeAlong = (): void => {
+    const uid = owned();
+    const catchId = props.catchId;
+
+    if (uid == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    setBuddy(uid, catchId)
+      .then(async (set) => {
+        setStatus(set ? 'Walking with you now.' : 'That one cannot come along.');
+        await refetchBuddy();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const hatch = (): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    hatchEgg(catchId)
+      .then(async (species) => {
+        setStatus(
+          species == null
+            ? 'It is not ready yet.'
+            : `It hatched into ${getSpeciesData(species).name}!`,
+        );
+        await refetch();
+        await refetchCandies();
+        await refetchEvolutions();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   const evolve = (into: Species): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -290,44 +344,56 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
             {(loaded) => (
               <>
                 <DialogTitle>
-                  {loaded().shiny ? '✦ ' : ''}
-                  {getSpeciesData(loaded().species).name}
+                  {/* An egg gives away nothing about what is inside
+                      it — not the species, not even whether it
+                      sparkles */}
+                  {loaded().egg
+                    ? 'Egg'
+                    : `${loaded().shiny ? '✦ ' : ''}${getSpeciesData(loaded().species).name}`}
                 </DialogTitle>
                 <dl>
                   <dt>Level</dt>
                   <dd>{loaded().level}</dd>
-                  <dt>Gender</dt>
-                  <dd>{GENDER_LABELS[loaded().gender]}</dd>
-                  <dt>Size</dt>
-                  <dd>{describeSize(loaded())}</dd>
-                  <dt>Nature</dt>
-                  <dd>#{loaded().nature}</dd>
-                  <dt>Abilities</dt>
-                  <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
+                  {/* Everything below this point is read off the
+                      species, so an egg has none of it to show */}
+                  <Show when={!loaded().egg}>
+                    <dt>Gender</dt>
+                    <dd>{GENDER_LABELS[loaded().gender]}</dd>
+                    <dt>Size</dt>
+                    <dd>{describeSize(loaded())}</dd>
+                    <dt>Nature</dt>
+                    <dd>#{loaded().nature}</dd>
+                    <dt>Abilities</dt>
+                    <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
+                  </Show>
                   <dt>Ball</dt>
                   <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
-                  <dt>Held items</dt>
-                  <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
-                  <dt>Moves</dt>
-                  <dd>
-                    {loaded()
-                      .moves.map((move) => getMoveData(move).name)
-                      .join(', ') || 'None'}
-                  </dd>
+                  <Show when={!loaded().egg}>
+                    <dt>Held items</dt>
+                    <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
+                    <dt>Moves</dt>
+                    <dd>
+                      {loaded()
+                        .moves.map((move) => getMoveData(move).name)
+                        .join(', ') || 'None'}
+                    </dd>
+                  </Show>
                   <dt>Individual values</dt>
                   <dd>
                     {STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${loaded().ivs[stat]}`).join(
                       ' · ',
                     )}
                   </dd>
-                  <dt>Caught</dt>
+                  <dt>{loaded().egg ? 'Found' : 'Caught'}</dt>
                   {/* The stamp is already in the catcher's own zone,
                       so the date it opens with is the day they had */}
                   <dd>{loaded().caughtAt.slice(0, 10)}</dd>
                   {/* Where it came from, not just where it was
                       standing: a grunt's drop is not a raid prize */}
-                  <dt>Met</dt>
-                  <dd>{ENCOUNTER_TYPE_NAMES[loaded().type]}</dd>
+                  <Show when={!loaded().egg}>
+                    <dt>Met</dt>
+                    <dd>{ENCOUNTER_TYPE_NAMES[loaded().type]}</dd>
+                  </Show>
                   <dt>Origin</dt>
                   <dd>
                     Chunk {loaded().origin.x}, {loaded().origin.y}
@@ -344,110 +410,141 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     </p>
                   </Show>
 
-                  <h3>Held items</h3>
-                  <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
-                    <ul>
-                      <For each={loaded().items}>
-                        {(item) => (
-                          <li>
-                            {describeItem(item)}{' '}
-                            <button
-                              type="button"
-                              disabled={fighting()}
-                              onClick={() => {
-                                moveItem(item, false);
-                              }}
-                            >
-                              Take back
-                            </button>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                  {/* A catch holds one item at a time, matching the
-                      battle's per-unit limit */}
-                  <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
-                    <Show when={bag()?.length} fallback={<p>Nothing holdable in the bag.</p>}>
-                      <ul>
-                        <For each={bag()}>
-                          {(entry) => (
-                            <li>
-                              <button
-                                type="button"
-                                disabled={fighting()}
-                                onClick={() => {
-                                  moveItem(entry.item, true);
-                                }}
-                              >
-                                Give {describeItem(entry.item)} × {entry.amount}
-                              </button>
-                            </li>
-                          )}
-                        </For>
-                      </ul>
-                    </Show>
-                  </Show>
-
-                  <h3>Candies</h3>
-                  {/* The stack is keyed by family, so every stage of
-                      the line draws on the same pile */}
+                  <h3>Buddy</h3>
+                  {/* Only what walks beside the player counts steps,
+                      so an egg has to be the buddy to get anywhere */}
                   <p>
-                    {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
-                    {getSpeciesData(loaded().species).name} family
-                  </p>
-                  <p>
-                    <button
-                      type="button"
-                      disabled={
-                        (candies() ?? 0) < getCandyCost(loaded()) ||
-                        loaded().level >= MAX_LEVEL ||
-                        fighting() === true
-                      }
-                      onClick={feedCandy}
-                    >
-                      {loaded().level >= MAX_LEVEL
-                        ? 'Already at the level cap'
-                        : `Level up for ${getCandyCost(loaded())} ${
-                            getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
-                          }`}
-                    </button>
-                    {/* A shadow keeps the Shadow ability, and pays
-                        for it at every level */}
-                    <Show when={loaded().shadow}>
-                      {' '}
-                      <span>A shadow costs twice as much to raise.</span>
-                    </Show>
-                  </p>
-
-                  <h3>Evolution</h3>
-                  <Show when={!evolutions.loading} fallback={<p>Checking evolutions…</p>}>
                     <Show
-                      when={evolutions()?.length}
-                      fallback={<p>No evolution is available right now.</p>}
+                      when={buddy() !== props.catchId}
+                      fallback={<span>Walking with you.</span>}
                     >
+                      <button type="button" onClick={takeAlong}>
+                        {loaded().egg ? 'Carry this egg' : 'Walk with this one'}
+                      </button>
+                    </Show>
+                  </p>
+
+                  <Show when={loaded().egg}>
+                    <h3>Egg</h3>
+                    <p>
+                      {loaded().steps} / {loaded().hatchSteps} steps
+                      {buddy() === props.catchId
+                        ? '.'
+                        : ' — it only moves while it is the one being carried.'}
+                    </p>
+                    <p>
+                      <button type="button" disabled={!canHatch(loaded())} onClick={hatch}>
+                        {canHatch(loaded()) ? 'Hatch' : `${stepsRemaining(loaded())} steps to go`}
+                      </button>
+                    </p>
+                  </Show>
+
+                  <Show when={!loaded().egg}>
+                    <h3>Held items</h3>
+                    <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
                       <ul>
-                        <For each={evolutions()}>
-                          {(evolution) => (
+                        <For each={loaded().items}>
+                          {(item) => (
                             <li>
+                              {describeItem(item)}{' '}
                               <button
                                 type="button"
                                 disabled={fighting()}
                                 onClick={() => {
-                                  evolve(evolution.species);
+                                  moveItem(item, false);
                                 }}
                               >
-                                Evolve into {getSpeciesData(evolution.species).name}
-                                {/* Item id 0 is a real item, so test for
-                                    absence rather than falsiness */}
-                                <Show when={getConsumedItem(evolution) ?? undefined} keyed>
-                                  {(item) => <> (uses {describeItem(item)})</>}
-                                </Show>
+                                Take back
                               </button>
                             </li>
                           )}
                         </For>
                       </ul>
+                    </Show>
+                    {/* A catch holds one item at a time, matching the
+                      battle's per-unit limit */}
+                    <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
+                      <Show when={bag()?.length} fallback={<p>Nothing holdable in the bag.</p>}>
+                        <ul>
+                          <For each={bag()}>
+                            {(entry) => (
+                              <li>
+                                <button
+                                  type="button"
+                                  disabled={fighting()}
+                                  onClick={() => {
+                                    moveItem(entry.item, true);
+                                  }}
+                                >
+                                  Give {describeItem(entry.item)} × {entry.amount}
+                                </button>
+                              </li>
+                            )}
+                          </For>
+                        </ul>
+                      </Show>
+                    </Show>
+
+                    <h3>Candies</h3>
+                    {/* The stack is keyed by family, so every stage of
+                      the line draws on the same pile */}
+                    <p>
+                      {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
+                      {getSpeciesData(loaded().species).name} family
+                    </p>
+                    <p>
+                      <button
+                        type="button"
+                        disabled={
+                          (candies() ?? 0) < getCandyCost(loaded()) ||
+                          loaded().level >= MAX_LEVEL ||
+                          fighting() === true
+                        }
+                        onClick={feedCandy}
+                      >
+                        {loaded().level >= MAX_LEVEL
+                          ? 'Already at the level cap'
+                          : `Level up for ${getCandyCost(loaded())} ${
+                              getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
+                            }`}
+                      </button>
+                      {/* A shadow keeps the Shadow ability, and pays
+                        for it at every level */}
+                      <Show when={loaded().shadow}>
+                        {' '}
+                        <span>A shadow costs twice as much to raise.</span>
+                      </Show>
+                    </p>
+
+                    <h3>Evolution</h3>
+                    <Show when={!evolutions.loading} fallback={<p>Checking evolutions…</p>}>
+                      <Show
+                        when={evolutions()?.length}
+                        fallback={<p>No evolution is available right now.</p>}
+                      >
+                        <ul>
+                          <For each={evolutions()}>
+                            {(evolution) => (
+                              <li>
+                                <button
+                                  type="button"
+                                  disabled={fighting()}
+                                  onClick={() => {
+                                    evolve(evolution.species);
+                                  }}
+                                >
+                                  Evolve into {getSpeciesData(evolution.species).name}
+                                  {/* Item id 0 is a real item, so test for
+                                    absence rather than falsiness */}
+                                  <Show when={getConsumedItem(evolution) ?? undefined} keyed>
+                                    {(item) => <> (uses {describeItem(item)})</>}
+                                  </Show>
+                                </button>
+                              </li>
+                            )}
+                          </For>
+                        </ul>
+                      </Show>
                     </Show>
                   </Show>
                   <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>

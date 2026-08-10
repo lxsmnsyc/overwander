@@ -5,6 +5,7 @@ import {
   ENCOUNTER_COLLECTION,
   FLED_COLLECTION,
   GROTTO_CLAIM_COLLECTION,
+  NEST_CLAIM_COLLECTION,
   SNAPSHOT_COLLECTION,
   SPAWN_COLLECTION,
 } from '../auth/collections';
@@ -22,6 +23,7 @@ import deriveEncounter, { type EncounterOptions } from '../overworld/encounter';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
+import { grantNestEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
 import { asNumber, asStringArray, docData } from './read';
@@ -146,6 +148,40 @@ export async function claimBerryPatch(
   }
   await grantItem(uid, berry);
   return berry;
+}
+
+/**
+ * Take the egg a nest is holding. A nest keeps to its own day-long
+ * window rather than the five-minute one the chunk turns over on, so
+ * the claim marker is stamped with the nest day: one egg per nest,
+ * per player, per local day.
+ *
+ * The player still has to be standing in the chunk's live window to
+ * reach it, which is what the snapshot resolves. Resolves the new
+ * egg's catch id, or null when there is nothing lying there
+ */
+export async function claimNest(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const species = snapshot?.getNests().get(cell);
+
+  if (snapshot == null || species == null) {
+    return null;
+  }
+
+  const id = `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}:${uid}`;
+
+  if (!(await claim(NEST_CLAIM_COLLECTION, id, { player: uid, species }))) {
+    return null;
+  }
+  return grantNestEgg(uid, snapshot, cell, species, now, offset, locale);
 }
 
 /**

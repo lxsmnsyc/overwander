@@ -16,7 +16,7 @@ deployed as-is before the game is exposed to real players.
 | Page                                              | What it covers                                                             |
 | ------------------------------------------------- | -------------------------------------------------------------------------- |
 | [Player-owned stores](firestore/player-stores.md) | `profiles`, `inventories`, `candies`, `buddies`, `fled`                    |
-| [Catch records](firestore/catches.md)             | `caught`, and the lock that holds a pokemon still while it fights          |
+| [Catch records](firestore/catches.md)             | `caught`, the battle lock, and eggs waiting to be walked                   |
 | [Shared overworld stores](firestore/overworld.md) | `snapshots`, `spawns`, `encounters`, the landmark claim markers            |
 | [Raids and battles](firestore/raids.md)           | `raids`, `teams`, `teamSnapshots`, `battles`, `rocketStops`, `raidRewards` |
 | [Encounter kinds](firestore/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as         |

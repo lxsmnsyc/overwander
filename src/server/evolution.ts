@@ -3,6 +3,7 @@ import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../au
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
+import { isEggRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
@@ -29,8 +30,10 @@ export default async function evolveCatch(
     const caught = docData(await transaction.get(caughtRef));
 
     // A pokemon in a live battle fights as the species its snapshot
-    // froze, so it evolves once the fight is over and not before
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+    // froze, so it evolves once the fight is over and not before —
+    // and an egg has to become a pokemon before it can become a
+    // different one
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
       return null;
     }
 

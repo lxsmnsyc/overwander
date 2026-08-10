@@ -51,7 +51,12 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               <dt>Buddy</dt>
               <dd>
                 <Show when={buddy()} fallback="None">
-                  {(pair) => `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`}
+                  {/* An egg walks along without saying what it is */}
+                  {(pair) =>
+                    pair()[1].egg
+                      ? `Egg · ${pair()[1].steps} / ${pair()[1].hatchSteps} steps`
+                      : `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`
+                  }
                 </Show>
               </dd>
             </dl>

@@ -8,6 +8,7 @@ import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 import {
   SPECIES_DAY_SHINY_BOOST,
+  getEggMoves,
   getSpeciesAbilityPools,
   getSpeciesData,
   isFeaturedSpecies,
@@ -341,6 +342,28 @@ export function deriveMoves(species: Species, level: number): Moves[] {
     .flatMap((threshold) => data.learnSet.level[threshold]);
 
   return learned.slice(-MOVE_LIMIT);
+}
+
+/**
+ * The moves a hatchling comes out knowing: what its species has
+ * learned by the level it hatches at, and one move off its line's egg
+ * list, which is what a nest guarantees.
+ *
+ * The inherited move goes first so it survives the four-move limit —
+ * it is the reason to walk an egg at all — and a line with nothing to
+ * inherit hatches knowing only its own
+ */
+export function deriveEggMoves(species: Species, level: number, random: () => number): Moves[] {
+  const learned = deriveMoves(species, level);
+  const inheritable = getEggMoves(species);
+
+  if (inheritable.length === 0) {
+    return learned;
+  }
+
+  const inherited = inheritable[Math.floor(random() * inheritable.length)];
+
+  return [inherited, ...learned.filter((move) => move !== inherited)].slice(0, MOVE_LIMIT);
 }
 
 /**

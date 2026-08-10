@@ -8,6 +8,12 @@ import CatchDialog from './CatchDialog';
  * that separate two of the same species at a glance
  */
 function describeCatch(caught: CaughtPokemon): string {
+  // An egg is listed as an egg and nothing more: the species inside
+  // is already decided, and showing it here would give it away
+  if (caught.egg) {
+    return `Egg · ${caught.steps} / ${caught.hatchSteps} steps`;
+  }
+
   const { name } = getSpeciesData(caught.species);
   const shiny = caught.shiny ? '✦ ' : '';
 

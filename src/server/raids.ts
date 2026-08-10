@@ -42,6 +42,7 @@ import type { Items } from '../data/ids/items';
 import { getRaidSpecies } from '../data/items/raid-items';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
+import { isEggRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { consumeItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
@@ -460,8 +461,10 @@ export async function publishTeamSnapshot(
 
       // A pokemon already fighting is left behind rather than fielded
       // twice: a player may sit in two lobbies with the same party,
-      // and the first raid to start is the one that gets it
-      if (data?.owner === player && !isCatchLocked(data)) {
+      // and the first raid to start is the one that gets it. An egg
+      // is left behind for good — there is nothing in it to fight
+      // with until it hatches
+      if (data?.owner === player && !isCatchLocked(data) && !isEggRecord(data)) {
         fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
         locking.push(refs[at]);
       }

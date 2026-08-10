@@ -10,7 +10,7 @@ import Landmark from '../data/overworld/landmark';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
 import type { GrottoReward } from './landmarks';
-import { resolveBerryPatch, resolveHiddenGrotto, resolveItemCache } from './landmarks';
+import { resolveBerryPatch, resolveHiddenGrotto, resolveItemCache, resolveNest } from './landmarks';
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -38,6 +38,14 @@ export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
  * the spawns around it turn over twelve times
  */
 export const RAID_INTERVAL = 60 * 60 * 1000;
+
+/**
+ * A nest runs slower than anything else in a chunk: one egg per
+ * local day. Its window is the player's own calendar day, since the
+ * snapshot's clock is already local — a nest refills at midnight
+ * where the player is standing
+ */
+export const NEST_INTERVAL = 24 * 60 * 60 * 1000;
 
 /**
  * How often a shadow raid reaches past the biome's rare species and
@@ -367,6 +375,52 @@ export default class ChunkSnapshot {
       this.rocketStops = stops;
     }
     return this.rocketStops;
+  }
+
+  /**
+   * The day-long window the chunk's nests belong to. A nest outlives
+   * every other landmark in the chunk: the spawns around it turn over
+   * two hundred and eighty-eight times before it holds a new egg
+   */
+  get nestTimestamp(): number {
+    return Math.floor(this.timestamp / NEST_INTERVAL) * NEST_INTERVAL;
+  }
+
+  private nests: Map<number, Species> | null = null;
+
+  /**
+   * The day's nests, keyed by the landmark cell: the species whose
+   * egg is lying in each. It is drawn from the biome's ordinary bands
+   * for the nest day's time of day and reduced to the first stage of
+   * its line — a nest holds what hatches, not what it grows into —
+   * and the special tier is left out, so no nest ever holds a
+   * legendary
+   */
+  getNests(): Map<number, Species> {
+    if (this.nests == null) {
+      const nests = new Map<number, Species>();
+      const time = getTimeOfDay(this.nestTimestamp);
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.Nest) {
+          continue;
+        }
+
+        const rng = new AleaRNG(`${this.key}${this.nestTimestamp}nest${cell}`);
+        const species = resolveNest(
+          this.chunk.biome,
+          time,
+          () => rng.random(),
+          getFeaturedFamily(this.nestTimestamp),
+        );
+
+        if (species != null) {
+          nests.set(cell, species);
+        }
+      }
+      this.nests = nests;
+    }
+    return this.nests;
   }
 
   private hiddenGrottos: Map<number, GrottoReward> | null = null;

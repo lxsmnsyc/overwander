@@ -29,6 +29,12 @@ const enum Landmark {
    * and fights whoever accepts
    */
   TeamRocketStop = 5,
+  /**
+   * A nest: somewhere a species of the biome leaves an egg. It holds
+   * one for a full day rather than a window, so finding one is worth
+   * walking to
+   */
+  Nest = 6,
 }
 
 export default Landmark;
@@ -43,6 +49,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.ShadowRaid,
   Landmark.BerryPatch,
   Landmark.TeamRocketStop,
+  Landmark.Nest,
 ];
 
 /**
@@ -55,4 +62,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ShadowRaid]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',
   [Landmark.TeamRocketStop]: 'Team Rocket Stop',
+  [Landmark.Nest]: 'Nest',
 };

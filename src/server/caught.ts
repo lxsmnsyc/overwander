@@ -7,30 +7,16 @@ import {
   inventoryEntryId,
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
-import { Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Balls, Items } from '../data/ids/items';
 import { ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { grantCatchCandy } from './candy';
+import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
-
-/**
- * How long a locale tag is allowed to be. A real one is short; the
- * cap is there so a caller cannot write an essay into the record
- */
-const LOCALE_LIMIT = 35;
-
-/**
- * A locale tag as reported by a caller, kept to something that could
- * plausibly be one
- */
-function asLocale(value: unknown): string {
-  return typeof value === 'string' ? value.slice(0, LOCALE_LIMIT) : '';
-}
 
 /**
  * Catch records, written with admin credentials. A catch is the most
@@ -45,17 +31,6 @@ function asLocale(value: unknown): string {
  */
 // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
 const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[];
-
-function zeroEffortValues(): Record<Stats, number> {
-  return {
-    [Stats.HP]: 0,
-    [Stats.Attack]: 0,
-    [Stats.Defense]: 0,
-    [Stats.SpecialAttack]: 0,
-    [Stats.SpecialDefense]: 0,
-    [Stats.Speed]: 0,
-  };
-}
 
 /**
  * Whether the player owns any pokemon at all. A raid asks this of
@@ -129,6 +104,12 @@ export async function recordCatch(
     history: [{ owner: uid, acquiredAt: caughtAt }],
     // A fresh catch has fought nothing
     ...freeFields(),
+    // Something met in the world arrives already out of its shell,
+    // so it has nowhere to be walked to
+    egg: false,
+    steps: 0,
+    hatchSteps: 0,
+    steppedAt: 0,
     ball,
     caughtAt,
     locale: asLocale(locale),
@@ -163,7 +144,8 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+    // An egg has no hands: nothing is handed to one until it hatches
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
       return false;
     }
 

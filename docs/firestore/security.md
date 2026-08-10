@@ -29,6 +29,9 @@ a call is never trusted — only what the token proves.
 | `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |
 | `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
 | `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
+| `claimNest`                                                | A nest hands over one egg per player per local day, and what is inside it is decided as the server writes it                                                   |
+| `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one                                                         |
+| `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                        |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build
@@ -186,6 +189,12 @@ service cloud.firestore {
       allow write: if false;
     }
     match /berryClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // A nest claim is what an egg was written against, so it is the
+    // server's alone — the same as every other landmark marker
+    match /nestClaims/{claimId} {
       allow read: if signedIn();
       allow write: if false;
     }

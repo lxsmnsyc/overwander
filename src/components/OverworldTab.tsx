@@ -29,11 +29,13 @@ import {
   claimBerryPatch,
   claimHiddenGrotto,
   claimItemCache,
+  claimNest,
   startEncounter,
   visitChunk,
   watchSnapshotWindow,
   watchSpawns,
 } from '../auth/snapshots';
+import { type EggWalk, walk } from '../auth/eggs';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import { getTimeOfDay } from '../data/ids/biome';
@@ -69,6 +71,15 @@ const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
  * Where a player entering a chunk without a stored position starts
  */
 const START_CELL = CHUNK_CELLS / 2;
+
+/**
+ * How many paces are walked before the egg being carried is told
+ * about them. Reporting every cell would be a write per keypress;
+ * reporting in batches costs the walker nothing, since the server
+ * credits against the time that passed rather than the moment the
+ * report arrived
+ */
+const STEP_REPORT_SIZE = 8;
 
 const MOVES = new Map<string, [x: number, y: number]>([
   ['ArrowUp', [0, -1]],
@@ -312,6 +323,39 @@ export default function OverworldTab(): JSX.Element {
 
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
 
+  /**
+   * The egg walking with the player, as of the last report. Null
+   * while they carry none — which is most of the time, and costs
+   * nothing to keep asking about
+   */
+  const [carried, setCarried] = createSignal<EggWalk | null>(null);
+  /**
+   * Paces walked but not yet reported, and whether a report is in
+   * flight. Neither belongs in a signal: nothing renders from them
+   */
+  let pending = 0;
+  let reporting = false;
+
+  const reportSteps = (): void => {
+    if (reporting || pending < STEP_REPORT_SIZE) {
+      return;
+    }
+
+    const steps = pending;
+
+    pending = 0;
+    reporting = true;
+    walk(steps)
+      .then(setCarried)
+      .catch(() => {
+        // A dropped report is a few paces, not an error worth
+        // interrupting the walk over; the next one carries on
+      })
+      .finally(() => {
+        reporting = false;
+      });
+  };
+
   const move = (deltaX: number, deltaY: number): void => {
     let x = cellX() + deltaX;
     let y = cellY() + deltaY;
@@ -344,6 +388,10 @@ export default function OverworldTab(): JSX.Element {
     setChunkY(row);
     setCellX(x);
     setCellY(y);
+    // A cell crossed is a step walked, and an egg only moves while it
+    // is the one being carried
+    pending += 1;
+    reportSteps();
   };
 
   onMount(() => {
@@ -407,6 +455,15 @@ export default function OverworldTab(): JSX.Element {
       return berry == null
         ? 'The patch is bare until the next window.'
         : `Picked ${describeItem(berry)}.`;
+    }
+    if (landmark === Landmark.Nest) {
+      const egg = await claimNest(loaded.snapshot, at);
+
+      // What is in it is not on offer: an egg shows nothing about
+      // itself until it has been carried far enough to open
+      return egg == null
+        ? 'The nest is bare until tomorrow.'
+        : 'An egg is lying in the nest. Walk with it to hatch it.';
     }
     if (landmark === Landmark.HiddenGrotto) {
       const claim = await claimHiddenGrotto(loaded.snapshot, at);
@@ -545,6 +602,9 @@ export default function OverworldTab(): JSX.Element {
     if (landmark === Landmark.BerryPatch) {
       return 'B';
     }
+    if (landmark === Landmark.Nest) {
+      return 'N';
+    }
     return '';
   };
 
@@ -604,6 +664,17 @@ export default function OverworldTab(): JSX.Element {
             <p>
               Cell {cellX()}, {cellY()}
             </p>
+
+            {/* Only a buddy walks, and only an egg has anywhere to
+                walk to, so this appears when one is being carried */}
+            <Show when={carried()}>
+              {(egg) => (
+                <p>
+                  Egg · {egg().steps} / {egg().hatchSteps} steps
+                  {egg().steps >= egg().hatchSteps ? ' · ready to hatch' : ''}
+                </p>
+              )}
+            </Show>
 
             {/* A mythical stands on no landmark: the only way to
                 face one is to spend the relic that calls it, and it

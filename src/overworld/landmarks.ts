@@ -8,7 +8,7 @@ import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
 import type { ItemBandOdds } from '../data/overworld/item-pool';
 import { ITEM_POOL, pickItem } from '../data/overworld/item-pool';
-import { SPECIES_DAY_WEIGHT_BOOST } from '../data/species';
+import { SPECIES_DAY_WEIGHT_BOOST, getBaseSpecies } from '../data/species';
 
 /**
  * Half the grottos hold a cache, the other half a pokemon
@@ -33,6 +33,49 @@ export const GROTTO_ITEM_ODDS: ItemBandOdds = {
 export const GROTTO_RARE_CHANCE = 1 / 8;
 
 export type GrottoReward = { kind: 'pokemon'; species: Species } | { kind: 'item'; item: Items };
+
+/**
+ * A nest landmark: the species whose egg is lying in it.
+ *
+ * The three ordinary bands are drawn from together rather than in
+ * tiers — what a nest lays is reduced to the first stage of its line,
+ * so a rare draw and the base one below it would usually come to the
+ * same egg anyway. The special tier is left out entirely: a legendary
+ * has no nest, and a mythical is called with a relic or not at all.
+ *
+ * Answers null for a pool with nothing ordinary awake in it
+ */
+export function resolveNest(
+  biome: Biome,
+  time: TimeOfDay,
+  random: () => number,
+  featured: Families | null = null,
+): Species | null {
+  const biomePool = getSpawnPool(biome, time);
+  const pool =
+    featured == null
+      ? biomePool
+      : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
+  const entries: SpawnEntry[] = [...pool.base, ...pool.uncommon, ...pool.rare];
+
+  if (entries.length === 0) {
+    return null;
+  }
+
+  let total = 0;
+  for (const entry of entries) {
+    total += entry.weight;
+  }
+
+  let target = random() * total;
+  for (const entry of entries) {
+    target -= entry.weight;
+    if (target < 0) {
+      return getBaseSpecies(entry.species);
+    }
+  }
+  return getBaseSpecies(entries[entries.length - 1].species);
+}
 
 /**
  * An item cache landmark: one roll from the overworld item pool

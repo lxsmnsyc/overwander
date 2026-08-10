@@ -139,9 +139,35 @@ comes back as a spawn tuple whose two rolls derive from
 same individual; the caller passes it to `startEncounter` under the id
 `{chunkSeed}@{timestamp}$grotto{cell}`, which has no `spawns` document behind it.
 
+## `nestClaims/{chunkSeed}{zone}@{nestTimestamp}$nest{cell}:{uid}`
+
+Written by `claimNest` in
+[`src/server/overworld.ts`](../../src/server/overworld.ts), the same
+one-claim-per-window marker as an item cache — except that a nest's window is
+`NEST_INTERVAL`, a full **local day**. A nest refills at midnight where the
+player is standing, so it gives each of them one egg between midnights.
+
+| Field     | Type      | Notes                              |
+| --------- | --------- | ---------------------------------- |
+| `player`  | `string`  | Claiming uid                       |
+| `species` | `Species` | What the nest was holding that day |
+
+The player still has to be standing in the chunk's **live 5-minute window** to
+reach it; the day-long window only decides what is lying there and how often.
+The claim grants an egg by writing a `caught` document with `egg` set — see
+[Eggs](catches.md#eggs) — rather than an inventory item or an encounter.
+
+What a nest holds is drawn from the biome's base, uncommon and rare bands for
+that day's time of day and then reduced to the first stage of its line: a nest
+holds what hatches, not what it grows into. The special tier is left out
+entirely, so no nest ever holds a legendary, and a mythical is still called with
+a relic or not at all. The hatchling is guaranteed one move off its line's egg
+list, which is the reason to walk the egg at all.
+
 ## Derived, never stored
 
-Landmarks, item-cache rewards, berry patches, grotto rewards, the party a Team
+Landmarks, item-cache rewards, berry patches, grotto rewards, the species a nest
+is holding, the party a Team
 Rocket grunt fields and cell placement are **not** in Firestore. They re-derive from the chunk seed, the zone and the
 snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),
 so two players in the same zone and window compute identical results from the

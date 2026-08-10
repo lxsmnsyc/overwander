@@ -120,6 +120,36 @@ describe('safari session', () => {
     expect(night.getBallModifier(Balls.DuskBall)).toBe(3);
   });
 
+  it('guarantees the last ball of a well-stocked player', () => {
+    // Down to the last ball after walking in with more than a hundred
+    const pity = new SafariSession(makeEncounter(), rolls([0.9999]), { startingBalls: 101 });
+
+    pity.ballsLeft = 1;
+    expect(pity.isPityThrow()).toBe(true);
+    expect(pity.getCatchChance()).toBe(1);
+    expect(pity.throwBall()).toBe(ThrowResult.Caught);
+
+    // One ball earlier it is an ordinary throw
+    const earlier = new SafariSession(makeEncounter(), rolls([]), { startingBalls: 101 });
+
+    earlier.ballsLeft = 2;
+    expect(earlier.isPityThrow()).toBe(false);
+    expect(earlier.getCatchChance()).toBeCloseTo(45 / 255);
+
+    // A player who never carried a real stock earns no pity
+    const unstocked = new SafariSession(makeEncounter(), rolls([]), { startingBalls: 100 });
+
+    unstocked.ballsLeft = 1;
+    expect(unstocked.isPityThrow()).toBe(false);
+    expect(unstocked.getCatchChance()).toBeCloseTo(45 / 255);
+
+    // And a session told nothing about the bag behaves as before
+    const unknown = new SafariSession(makeEncounter(), rolls([]));
+
+    unknown.ballsLeft = 1;
+    expect(unknown.isPityThrow()).toBe(false);
+  });
+
   it('always catches with the Master Ball', () => {
     const session = new SafariSession(makeEncounter(), rolls([0.9999]));
 

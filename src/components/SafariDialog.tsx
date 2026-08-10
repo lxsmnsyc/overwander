@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import type { User } from 'firebase/auth';
 import { getInventory } from '../auth/inventory';
@@ -68,6 +68,21 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     revision();
     return props.session;
   };
+
+  // The session tracks the bag only through the persistence layer,
+  // so the view keeps its count in step — that is what makes the
+  // last-ball pity visible before the throw
+  createEffect(() => {
+    const active = props.session;
+    const carried = bag();
+
+    if (active != null && carried != null) {
+      active.ballsLeft = carried
+        .filter((entry) => BALLS_BY_ITEM.has(entry.item))
+        .reduce((total, entry) => total + entry.amount, 0);
+      setRevision((value) => value + 1);
+    }
+  });
 
   const balls = (): [Balls, number][] =>
     (bag() ?? [])
@@ -160,7 +175,10 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
               </DialogTitle>
               <dl>
                 <dt>Catch chance</dt>
-                <dd>{Math.round(active().getCatchChance() * 100)}%</dd>
+                <dd>
+                  {Math.round(active().getCatchChance() * 100)}%
+                  {active().isPityThrow() ? ' · last ball, it cannot miss' : ''}
+                </dd>
                 <dt>Flee chance</dt>
                 <dd>{Math.round(active().getFleeChance() * 100)}%</dd>
                 <dt>Feeding bonus</dt>

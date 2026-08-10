@@ -144,6 +144,14 @@ const DUSK_BALL_MODIFIER = 3;
 const DUSK_TIMES = TimeOfDay.Evening | TimeOfDay.Night;
 
 /**
+ * A player who came in well stocked and threw their way down to a
+ * single ball does not lose the encounter to one last bad roll: that
+ * final throw always lands. The stock has to have been real, hence
+ * the threshold — arriving with two balls earns no pity
+ */
+export const PITY_BALL_THRESHOLD = 100;
+
+/**
  * What a ball's condition is measured against beyond the encounter
  * itself
  */
@@ -153,6 +161,11 @@ export interface SafariContext {
    * reads it. Unknown counts as not owned
    */
   speciesCaught?: boolean;
+  /**
+   * How many balls the player carried when the session opened, all
+   * kinds counted together. The last-ball pity needs it
+   */
+  startingBalls?: number;
 }
 
 /**
@@ -221,6 +234,13 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
    */
   turn = 0;
 
+  /**
+   * How many balls the player carries right now, all kinds counted
+   * together. The persistence layer refreshes it before each throw,
+   * since the bag lives outside the session
+   */
+  ballsLeft = 0;
+
   constructor(
     public readonly encounter: Encounter,
     public readonly random: () => number,
@@ -284,10 +304,23 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
   }
 
   /**
+   * Whether the next throw is the pity throw: the player started
+   * well stocked and is down to their last ball, so it cannot miss
+   */
+  isPityThrow(): boolean {
+    return (this.context.startingBalls ?? 0) > PITY_BALL_THRESHOLD && this.ballsLeft === 1;
+  }
+
+  /**
    * The chance the next throw lands: species catch rate, ball
-   * modifier and accumulated feeding bonus
+   * modifier and accumulated feeding bonus — unless it is the pity
+   * throw, which is certain
    */
   getCatchChance(): number {
+    if (this.isPityThrow()) {
+      return 1;
+    }
+
     const rate = getSpeciesData(this.encounter.species).catchRate;
 
     return Math.min(1, (rate * this.getBallModifier() * this.catchBonus) / CATCH_RATE_SCALE);

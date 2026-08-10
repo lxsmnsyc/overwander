@@ -13,7 +13,7 @@ import { asStringArray } from './__normalize';
 import { hasCaughtSpecies, recordCatch } from './caught';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
-import { consumeItem } from './inventory';
+import { consumeItem, getInventory } from './inventory';
 
 /**
  * Per-user fled encounters at fled/{uid}: once an encounter flees
@@ -36,8 +36,28 @@ export async function createSafariSession(
   // The Repeat Ball needs to know whether this species is already in
   // the player's records; it is read once, when the session opens
   const speciesCaught = await hasCaughtSpecies(user.uid, encounter.species);
+  // The last-ball pity is measured against the stock the player
+  // walked in with, so it is read here and never again
+  const startingBalls = await countBalls(user.uid);
+  const session = new SafariSession(encounter, () => rng.random(), {
+    speciesCaught,
+    startingBalls,
+  });
 
-  return new SafariSession(encounter, () => rng.random(), { speciesCaught });
+  session.ballsLeft = startingBalls;
+  return session;
+}
+
+/**
+ * Every ball the player carries, all kinds counted together
+ */
+export async function countBalls(uid: string): Promise<number> {
+  const balls = new Set<Items>(Object.values(BALL_ITEMS));
+  const inventory = await getInventory(uid);
+
+  return inventory
+    .filter((entry) => balls.has(entry.item))
+    .reduce((total, entry) => total + entry.amount, 0);
 }
 
 export async function markFled(uid: string, encounter: Encounter): Promise<void> {
@@ -69,6 +89,11 @@ export async function throwBall(user: User, session: SafariSession): Promise<Thr
   if (session.state !== SafariState.Active) {
     return null;
   }
+
+  // Counted before the ball is spent, so "one left" means the ball
+  // about to be thrown is the last one
+  session.ballsLeft = await countBalls(user.uid);
+
   if (!(await consumeItem(user.uid, BALL_ITEMS[session.ball]))) {
     return null;
   }

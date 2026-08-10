@@ -34,7 +34,15 @@ import {
 import registerItems, { getItemData, getTeachableMoves } from '../src/data/items';
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
-import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import AleaRNG from '../src/core/alea';
+import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
+import {
+  ITEM_POOL,
+  MAX_KINDS,
+  MAX_STACK,
+  pickItem,
+  pickItems,
+} from '../src/data/overworld/item-pool';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
@@ -793,6 +801,131 @@ describe('biome data', () => {
     expect(
       pickItem(ITEM_POOL, rolls([0.99, 0]), { special: 1 / 64, rare: 1 / 8, uncommon: 1 }),
     ).toBe(Items.UltraBall);
+  });
+
+  it('digs a stash of several kinds rather than one item', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const inBand = (band: ItemPoolEntry[], item: Items): boolean =>
+      band.some((entry) => entry.item === item);
+
+    // The draws land in order: the ceiling, how many kinds, then per
+    // kind its band (all but the first, which is the ceiling's), the
+    // kind itself, and how many pieces of it
+    expect(pickItems(ITEM_POOL, rolls([0.5, 0, 0, 0]))).toEqual([
+      { item: Items.PokeBall, amount: 1 },
+    ]);
+
+    // Up to MAX_STACK pieces of each, off a draw of their own
+    expect(pickItems(ITEM_POOL, rolls([0.5, 0, 0, 0.999]))).toEqual([
+      { item: Items.PokeBall, amount: MAX_STACK },
+    ]);
+
+    // The opening draw is a ceiling rather than a slot: reaching the
+    // rare band guarantees one rare kind and leaves a later kind free
+    // to be a rare of its own — two of one rarity, which one-of-each
+    // could never produce
+    const rich = pickItems(ITEM_POOL, rolls([0.01, 0.5, 0, 0, 0.005, 0.5, 0]));
+
+    expect(rich).toHaveLength(2);
+    expect(rich[0].item).toBe(Items.FireStone);
+    for (const { item } of rich) {
+      expect(inBand(ITEM_POOL.rare, item)).toBe(true);
+    }
+
+    // A common ceiling stays common however many kinds it holds:
+    // nothing in a stash beats what the opening draw reached
+    const plain = pickItems(ITEM_POOL, rolls([0.5, 0.99, 0, 0, 0.001, 0.9, 0, 0.001, 0.4, 0]));
+
+    expect(plain.length).toBeGreaterThan(1);
+    for (const { item, amount } of plain) {
+      expect(inBand(ITEM_POOL.base, item)).toBe(true);
+      expect(amount).toBeLessThanOrEqual(MAX_STACK);
+    }
+
+    // Two kinds landing on the same item are one stack, and a stack
+    // never exceeds MAX_STACK however they merge
+    expect(pickItems(ITEM_POOL, rolls([0.5, 0.5, 0, 0.999, 0.5, 0, 0.999]))).toEqual([
+      { item: Items.PokeBall, amount: MAX_STACK },
+    ]);
+
+    // A special is a ceiling like any other band: one piece of it,
+    // and whatever the kind draw asks for buried alongside
+    expect(pickItems(ITEM_POOL, rolls([0, 0, 0, 0, 0]))).toEqual([
+      { item: Items.MasterBall, amount: 1 },
+    ]);
+
+    // Bands summing to 1 shut the base tier out of a stash the same
+    // way they shut it out of a single roll
+    const grotto = { special: 1 / 64, rare: 1 / 8, uncommon: 1 };
+    const dug = pickItems(ITEM_POOL, rolls([0.99, 0.99, 0, 0, 0.001, 0.5, 0, 0.9, 0.5, 0]), grotto);
+
+    expect(dug.length).toBeGreaterThan(0);
+    for (const { item } of dug) {
+      expect(inBand(ITEM_POOL.uncommon, item)).toBe(true);
+    }
+  });
+
+  it('buries the combinations a stash is meant to be able to hold', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const inBand = (band: ItemPoolEntry[], item: Items): boolean =>
+      band.some((entry) => entry.item === item);
+
+    // Two rares and a common: the ceiling's own kind, a second that
+    // rolled the rare band again, and a third that did not
+    const pair = pickItems(ITEM_POOL, rolls([0.01, 0.9, 0, 0, 0.005, 0.2, 0, 0.9, 0, 0]));
+
+    expect(pair).toHaveLength(3);
+    expect(inBand(ITEM_POOL.rare, pair[0].item)).toBe(true);
+    expect(inBand(ITEM_POOL.rare, pair[1].item)).toBe(true);
+    expect(inBand(ITEM_POOL.base, pair[2].item)).toBe(true);
+
+    // A special and two rares: the special is the ceiling, and what
+    // follows it is drawn the way anything under a ceiling is
+    const prize = pickItems(ITEM_POOL, rolls([0.0001, 0, 0.9, 0, 0, 0, 0.005, 0.2, 0]));
+
+    expect(prize).toHaveLength(3);
+    expect(inBand(ITEM_POOL.special, prize[0].item)).toBe(true);
+    expect(prize[0].amount).toBe(1);
+    expect(inBand(ITEM_POOL.rare, prize[1].item)).toBe(true);
+    expect(inBand(ITEM_POOL.rare, prize[2].item)).toBe(true);
+
+    // A rare and a common
+    const modest = pickItems(ITEM_POOL, rolls([0.01, 0.5, 0, 0, 0.9, 0, 0]));
+
+    expect(modest).toHaveLength(2);
+    expect(inBand(ITEM_POOL.rare, modest[0].item)).toBe(true);
+    expect(inBand(ITEM_POOL.base, modest[1].item)).toBe(true);
+
+    // Never two specials, however the stream falls: only the opening
+    // draw reaches that band, and everything after it is clamped to
+    // rare at best
+    const specials = new Set(ITEM_POOL.special.map((entry) => entry.item));
+    // Odds that make the special band an everyday find, so the sweep
+    // is actually testing the rule rather than never reaching it
+    const generous = { special: 0.5, rare: 0.25, uncommon: 0.2 };
+    let carried = 0;
+
+    for (let seed = 0; seed < 2000; seed++) {
+      for (const odds of [undefined, generous]) {
+        const rng = new AleaRNG(`stash-${seed}-${odds == null ? 'usual' : 'generous'}`);
+        const stash = pickItems(ITEM_POOL, () => rng.random(), odds);
+        const found = stash.filter((stack) => specials.has(stack.item));
+
+        carried += found.length;
+        expect(found.length).toBeLessThanOrEqual(1);
+        // And a special that is found is one piece of it
+        for (const stack of found) {
+          expect(stack.amount).toBe(1);
+        }
+        expect(stash.length).toBeLessThanOrEqual(MAX_KINDS);
+        for (const stack of stash) {
+          expect(stack.amount).toBeLessThanOrEqual(MAX_STACK);
+        }
+      }
+    }
+
+    // Half the generous rolls open on one, so the sweep saw plenty
+    expect(carried).toBeGreaterThan(500);
   });
 
   it('rolls spawns through the rarity bands', () => {

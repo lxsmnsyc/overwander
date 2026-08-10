@@ -14,7 +14,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import type { Items } from '../data/ids/items';
+import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
@@ -322,13 +322,17 @@ export async function visitChunk(
  */
 
 /**
- * Interact with an item cache landmark: the window's reward lands in
- * the player's bag. A claim marker (cache cell + window + player)
- * guards the grant, so each cache pays a player once per window — an
- * expired window's cache regenerates and can be claimed anew.
- * Resolves the granted item, or null when there is nothing to claim
+ * Interact with an item cache landmark: everything buried there lands
+ * in the player's bag — up to three kinds of up to three pieces, or a
+ * single special. A claim marker (cache cell + window + player) guards
+ * the grant, so each cache pays a player once per window — an expired
+ * window's cache regenerates and can be claimed anew.
+ * Resolves the whole stash, or null when there is nothing to claim
  */
-export async function claimItemCache(snapshot: ChunkSnapshot, cell: number): Promise<Items | null> {
+export async function claimItemCache(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<ItemStack[] | null> {
   return claimCacheOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -344,7 +348,7 @@ async function claimCacheOnServer(
   y: number,
   cell: number,
   offset: number,
-): Promise<Items | null> {
+): Promise<ItemStack[] | null> {
   'use server';
   return claimCacheOnServerSide(
     await requireUid(token),
@@ -357,13 +361,14 @@ async function claimCacheOnServer(
 }
 
 /**
- * Pick a berry patch: the window's berry lands in the player's bag,
- * once per window, guarded the same way a cache is
+ * Pick a berry patch: everything on the bush lands in the player's
+ * bag — a handful of one kind — once per window, guarded the same way
+ * a cache is
  */
 export async function claimBerryPatch(
   snapshot: ChunkSnapshot,
   cell: number,
-): Promise<Items | null> {
+): Promise<ItemStack | null> {
   return claimBerryOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -379,7 +384,7 @@ async function claimBerryOnServer(
   y: number,
   cell: number,
   offset: number,
-): Promise<Items | null> {
+): Promise<ItemStack | null> {
   'use server';
   return claimBerryOnServerSide(
     await requireUid(token),
@@ -434,7 +439,7 @@ async function claimNestOnServer(
  * the bag, or the encounter the player now stands in
  */
 export type GrottoClaim =
-  | { kind: 'item'; item: Items }
+  | { kind: 'item'; items: ItemStack[] }
   | { kind: 'encounter'; encounter: EncounterRecord };
 
 /**

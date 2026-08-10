@@ -98,10 +98,29 @@ same to everyone, and the level-up moves follow that level.
 Written by `claimItemCache` inside a transaction; its existence is the claim
 marker that stops a player collecting the same cache twice in one window.
 
-| Field    | Type     | Notes                     |
-| -------- | -------- | ------------------------- |
-| `player` | `string` | Claiming uid              |
-| `item`   | `Items`  | The item that was granted |
+| Field    | Type          | Notes                                |
+| -------- | ------------- | ------------------------------------ |
+| `player` | `string`      | Claiming uid                         |
+| `items`  | `ItemStack[]` | The whole stash: `{ item, amount }`  |
+
+A cache holds a **stash**, not an item. `pickItems` reads the band roll as a
+_ceiling_ rather than a choice: it is the best thing in the stash, and one kind
+of it is guaranteed. How many kinds is a separate draw (up to `MAX_KINDS`, 3),
+and every kind after the first rolls its own band on the same odds, clamped to
+that ceiling — so a stash may hold two rares and a base, or three commons, or one
+of each. Rarity and count are independent, which is what stops a good dig from
+being the same three slots every time. Each kind carries up to `MAX_STACK` (3)
+pieces, on a draw of its own; two kinds landing on the same item merge into one
+stack that still never exceeds `MAX_STACK`.
+
+A special is a ceiling like any other band, so a stash may well be a Master Ball
+and two stones. Two things it may never be: **two specials** — only the opening
+draw reaches that band, and every kind after it is clamped to rare at best — and
+more than one piece of a special, since a Master Ball found three at a time
+would stop being a Master Ball.
+
+The whole stash is granted stack by stack and recorded on the marker, so what a
+cache paid is readable afterwards rather than only that it paid.
 
 Claims are never updated or deleted — an expired window simply produces a new
 document id. Only the named player may create one.
@@ -112,16 +131,23 @@ Written by `claimBerryPatch`, the same one-claim-per-window marker as an item
 cache. A berry patch fruits on the 5-minute snapshot window: picked or not, the
 next window grows something new.
 
-| Field    | Type     | Notes                     |
-| -------- | -------- | ------------------------- |
-| `player` | `string` | Claiming uid              |
-| `item`   | `Items`  | The berry that was picked |
+| Field    | Type     | Notes                              |
+| -------- | -------- | ---------------------------------- |
+| `player` | `string` | Claiming uid                       |
+| `item`   | `Items`  | The berry that was picked          |
+| `amount` | `number` | How many came off the bush         |
 
 What grows comes from the berry pool in
 [`src/data/overworld/berry-pool.ts`](../../src/data/overworld/berry-pool.ts),
 rolled on the same rarity bands as a spawn pool — the single-status cures are
 everyday finds, the restoring berries scarcer, Lum rare and Sitrus one-per-world
 class.
+
+A patch is a bush rather than a buried box, so it bears **one kind** and
+`MIN_BERRY_PICK`-`MAX_BERRY_PICK` (3-5) pieces of it: the rarity is the
+interesting draw and the count is only how good a season it had. That is the
+difference from a cache, which rolls several kinds but rarely more than one or
+two of each.
 
 ## `grottoClaims/{chunkSeed}@{timestamp}$grotto{cell}:{uid}`
 
@@ -133,7 +159,9 @@ cache.
 | `player` | `string`  | Claiming uid |                                         |
 | `kind`   | `'item' \ | 'pokemon'`   | Which branch of the grotto reward fired |
 
-An item reward lands in the inventory as part of the claim. A pokemon reward
+An item reward is a stash, landing in the inventory as part of the claim — the
+same `pickItems` roll a cache uses, on the grotto's own bands, which shut the
+base tier out, so nothing common is ever in one. A pokemon reward
 comes back as a spawn tuple whose two rolls derive from
 `{seed}{timestamp}grotto{cell}spawn`, so every observer of that grotto meets the
 same individual; the caller passes it to `startEncounter` under the id
@@ -215,7 +243,7 @@ pokemon or a landmark and **clicks** it; passing through a cell springs nothing.
 That is a client rule — the game stores no player position, so the server cannot
 check how far away a caller was standing. What it does check is that the cell
 really holds the thing, in a live window, which is what keeps a claim honest:
-reach decides what a player *bothers* to walk to, not what they are allowed to
+reach decides what a player _bothers_ to walk to, not what they are allowed to
 claim.
 
 Placement leaves room to walk. A landmark keeps the ring of cells around it —

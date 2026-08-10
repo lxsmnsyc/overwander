@@ -4,7 +4,7 @@ import { boostFamilyWeights, getSpawnPool, isLegendarySpecies, pickSpawn } from 
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { getTimeOfDay } from '../data/ids/biome';
-import type { Items } from '../data/ids/items';
+import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
 import Landmark from '../data/overworld/landmark';
 import type Npc from '../data/overworld/npc';
@@ -198,25 +198,28 @@ export default class ChunkSnapshot {
     return placed;
   }
 
-  private itemCaches: Map<number, Items> | null = null;
+  private itemCaches: Map<number, ItemStack[]> | null = null;
 
   /**
-   * The window's item-cache rewards, keyed by the landmark cell.
-   * Each ItemCache landmark rolls its reward from the chunk seed
+   * The window's item-cache stashes, keyed by the landmark cell. Each
+   * ItemCache landmark rolls what it is holding from the chunk seed
    * and the window, so a cache is only acquirable while the window
-   * lives — once expired, the next window regenerates a new reward
+   * lives — once expired, the next window buries something else.
+   *
+   * A stash is up to three kinds of up to three pieces; a cell that
+   * rolled nothing is left out entirely
    */
-  getItemCaches(): Map<number, Items> {
+  getItemCaches(): Map<number, ItemStack[]> {
     if (this.itemCaches == null) {
-      const caches = new Map<number, Items>();
+      const caches = new Map<number, ItemStack[]>();
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
           const rng = new AleaRNG(`${this.key}${this.timestamp}cache${cell}`);
-          const item = resolveItemCache(() => rng.random());
+          const stash = resolveItemCache(() => rng.random());
 
-          if (item != null) {
-            caches.set(cell, item);
+          if (stash.length > 0) {
+            caches.set(cell, stash);
           }
         }
       }
@@ -225,16 +228,17 @@ export default class ChunkSnapshot {
     return this.itemCaches;
   }
 
-  private berryPatches: Map<number, Items> | null = null;
+  private berryPatches: Map<number, ItemStack> | null = null;
 
   /**
-   * The window's ripe berries, keyed by the landmark cell. A patch
-   * fruits on the same 5-minute clock as an item cache: picked or
-   * not, the next window grows something new
+   * The window's ripe berries, keyed by the landmark cell: the kind
+   * each patch grew and how much of it is on the bush. A patch fruits
+   * on the same 5-minute clock as an item cache: picked or not, the
+   * next window grows something new
    */
-  getBerryPatches(): Map<number, Items> {
+  getBerryPatches(): Map<number, ItemStack> {
     if (this.berryPatches == null) {
-      const patches = new Map<number, Items>();
+      const patches = new Map<number, ItemStack>();
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.BerryPatch) {

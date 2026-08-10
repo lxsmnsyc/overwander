@@ -3,11 +3,10 @@ import { boostFamilyWeights, getSpawnPool } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import type { TimeOfDay } from '../data/ids/biome';
 import type Families from '../data/ids/families';
-import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
-import type { ItemBandOdds } from '../data/overworld/item-pool';
-import { ITEM_POOL, pickItem } from '../data/overworld/item-pool';
+import type { ItemBandOdds, ItemStack } from '../data/overworld/item-pool';
+import { ITEM_POOL, pickItem, pickItems } from '../data/overworld/item-pool';
 import { SPECIES_DAY_WEIGHT_BOOST, getBaseSpecies } from '../data/species';
 
 /**
@@ -32,7 +31,9 @@ export const GROTTO_ITEM_ODDS: ItemBandOdds = {
  */
 export const GROTTO_RARE_CHANCE = 1 / 8;
 
-export type GrottoReward = { kind: 'pokemon'; species: Species } | { kind: 'item'; item: Items };
+export type GrottoReward =
+  | { kind: 'pokemon'; species: Species }
+  | { kind: 'item'; items: ItemStack[] };
 
 /**
  * A nest landmark: the species whose egg is lying in it.
@@ -78,18 +79,43 @@ export function resolveNest(
 }
 
 /**
- * An item cache landmark: one roll from the overworld item pool
+ * An item cache landmark: a stash from the overworld item pool. It
+ * holds up to three kinds — one rare, one uncommon, one base — of up
+ * to `MAX_STACK` pieces each, or a single piece of one special when
+ * the roll reaches that far. Answers an empty list for a cache that
+ * came up with nothing
  */
-export function resolveItemCache(random: () => number, odds?: ItemBandOdds): Items | null {
-  return pickItem(ITEM_POOL, random, odds);
+export function resolveItemCache(random: () => number, odds?: ItemBandOdds): ItemStack[] {
+  return pickItems(ITEM_POOL, random, odds);
 }
 
 /**
- * A berry patch landmark: one roll from the berry pool, on the same
- * bands the spawn pool uses — the better berries are the rarer ones
+ * How much a patch bears when it fruits. A patch is a bush rather
+ * than a buried box: whatever it grew, it grew a handful of, so the
+ * pick is never a single berry
  */
-export function resolveBerryPatch(random: () => number): Items | null {
-  return pickItem(BERRY_POOL, random);
+export const MIN_BERRY_PICK = 3;
+export const MAX_BERRY_PICK = 5;
+
+/**
+ * A berry patch landmark: one roll from the berry pool, on the same
+ * bands the spawn pool uses — the better berries are the rarer ones —
+ * and then how many of it the bush is carrying.
+ *
+ * One kind, `MIN_BERRY_PICK` to `MAX_BERRY_PICK` pieces: a patch
+ * grows what it grows, so the rarity is the interesting draw and the
+ * count is only how good a season it had
+ */
+export function resolveBerryPatch(random: () => number): ItemStack | null {
+  const item = pickItem(BERRY_POOL, random);
+
+  if (item == null) {
+    return null;
+  }
+  return {
+    item,
+    amount: MIN_BERRY_PICK + Math.floor(random() * (MAX_BERRY_PICK - MIN_BERRY_PICK + 1)),
+  };
 }
 
 /**
@@ -105,9 +131,9 @@ export function resolveHiddenGrotto(
   featured: Families | null = null,
 ): GrottoReward | null {
   if (random() < GROTTO_CACHE_CHANCE) {
-    const item = resolveItemCache(random, GROTTO_ITEM_ODDS);
+    const items = resolveItemCache(random, GROTTO_ITEM_ODDS);
 
-    return item == null ? null : { kind: 'item', item };
+    return items.length === 0 ? null : { kind: 'item', items };
   }
 
   const biomePool = getSpawnPool(biome, time);

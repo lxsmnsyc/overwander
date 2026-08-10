@@ -60,8 +60,15 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
+import { MAX_STACK } from '../../src/data/overworld/item-pool';
 import { NPCS } from '../../src/data/overworld/npc';
-import { resolveBerryPatch, resolveHiddenGrotto, resolveNest } from '../../src/overworld/landmarks';
+import {
+  MAX_BERRY_PICK,
+  MIN_BERRY_PICK,
+  resolveBerryPatch,
+  resolveHiddenGrotto,
+  resolveNest,
+} from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
@@ -788,11 +795,14 @@ describe('world', () => {
     const WINDOW = 5 * 60 * 1000;
     const patches = new ChunkSnapshot(chunk, 0).getBerryPatches();
 
-    // Every berry sits on a patch cell, and every one is a berry
+    // Every pick sits on a patch cell, is a berry, and is a handful
+    // of one rather than a single berry
     expect(patches.size).toBeGreaterThan(0);
-    for (const [cell, berry] of patches) {
+    for (const [cell, picked] of patches) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.BerryPatch);
-      expect(getItemData(berry).type).toBe(ItemTypes.Berry);
+      expect(getItemData(picked.item).type).toBe(ItemTypes.Berry);
+      expect(picked.amount).toBeGreaterThanOrEqual(MIN_BERRY_PICK);
+      expect(picked.amount).toBeLessThanOrEqual(MAX_BERRY_PICK);
     }
 
     // The same window agrees for every observer
@@ -903,28 +913,51 @@ describe('world', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
     // Same bands as the spawn pool: the better the berry, the rarer
-    expect(resolveBerryPatch(rolls([0, 0]))).toBe(Items.SitrusBerry);
-    expect(resolveBerryPatch(rolls([0.01, 0]))).toBe(Items.LumBerry);
-    expect(resolveBerryPatch(rolls([0.05, 0]))).toBe(Items.LeppaBerry);
-    expect(resolveBerryPatch(rolls([0.5, 0]))).toBe(Items.CheriBerry);
+    expect(resolveBerryPatch(rolls([0, 0, 0]))?.item).toBe(Items.SitrusBerry);
+    expect(resolveBerryPatch(rolls([0.01, 0, 0]))?.item).toBe(Items.LumBerry);
+    expect(resolveBerryPatch(rolls([0.05, 0, 0]))?.item).toBe(Items.LeppaBerry);
+    expect(resolveBerryPatch(rolls([0.5, 0, 0]))?.item).toBe(Items.CheriBerry);
+
+    // A bush bears a handful: the third draw is how many, between
+    // MIN_BERRY_PICK and MAX_BERRY_PICK inclusive
+    expect(resolveBerryPatch(rolls([0.5, 0, 0]))).toEqual({
+      item: Items.CheriBerry,
+      amount: MIN_BERRY_PICK,
+    });
+    expect(resolveBerryPatch(rolls([0.5, 0, 0.999]))).toEqual({
+      item: Items.CheriBerry,
+      amount: MAX_BERRY_PICK,
+    });
+    expect(resolveBerryPatch(rolls([0.5, 0, 0.5]))?.amount).toBe(4);
   });
 
   it('resolves hidden grottos into rare finds', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
     // The cache branch rolls the grotto bands: 1/64 special, 1/8
-    // rare, uncommon otherwise — the base tier never shows up
-    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0, 0]))).toEqual({
+    // rare, uncommon otherwise — the base tier never shows up, so a
+    // grotto stash is two kinds at most
+    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0, 0, 0]))).toEqual({
       kind: 'item',
-      item: Items.MasterBall,
+      // A special is always a single piece, and here the kind draw
+      // asked for nothing else to be buried with it
+      items: [{ item: Items.MasterBall, amount: 1 }],
     });
-    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.05, 0]))).toEqual({
+    // The opening draw is the best thing in the stash, and one kind
+    // of it is guaranteed
+    expect(
+      resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.05, 0, 0, 0])),
+    ).toEqual({
       kind: 'item',
-      item: Items.FireStone,
+      items: [{ item: Items.FireStone, amount: 1 }],
     });
-    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.99, 0]))).toEqual({
+    // A band roll past the rare threshold reaches no further than
+    // uncommon, and the pieces come off their own draw
+    expect(
+      resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.99, 0, 0, 0.99])),
+    ).toEqual({
       kind: 'item',
-      item: Items.UltraBall,
+      items: [{ item: Items.UltraBall, amount: MAX_STACK }],
     });
 
     // The pokemon branch is 1/8 rare, the rest uncommon, and never

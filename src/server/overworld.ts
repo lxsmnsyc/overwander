@@ -11,7 +11,7 @@ import {
 } from '../auth/collections';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import AleaRNG from '../core/alea';
-import type { Items } from '../data/ids/items';
+import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
@@ -97,7 +97,9 @@ async function claim(
 }
 
 /**
- * Interact with an item cache: the window's reward lands in the bag
+ * Interact with an item cache: everything the window buried there
+ * lands in the bag. A stash is up to three kinds of up to three
+ * pieces, so the whole of it is granted rather than one item
  */
 export async function claimItemCache(
   uid: string,
@@ -106,25 +108,37 @@ export async function claimItemCache(
   cell: number,
   now: number,
   offset: number,
-): Promise<Items | null> {
+): Promise<ItemStack[] | null> {
   const snapshot = await resolveSnapshot(x, y, now, offset);
-  const item = snapshot?.getItemCaches().get(cell);
+  const stash = snapshot?.getItemCaches().get(cell);
 
-  if (snapshot == null || item == null) {
+  if (snapshot == null || stash == null) {
     return null;
   }
 
   const id = `${snapshot.key}@${snapshot.timestamp}$${cell}:${uid}`;
 
-  if (!(await claim(CACHE_CLAIM_COLLECTION, id, { player: uid, item }))) {
+  // The marker records the whole stash, so what a cache paid is
+  // readable afterwards rather than only that it paid
+  if (!(await claim(CACHE_CLAIM_COLLECTION, id, { player: uid, items: stash }))) {
     return null;
   }
-  await grantItem(uid, item);
-  return item;
+  await grantStash(uid, stash);
+  return stash;
 }
 
 /**
- * Pick a berry patch: the window's berry lands in the bag
+ * Put a whole stash in the bag, one stack at a time
+ */
+async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
+  for (const { item, amount } of stash) {
+    await grantItem(uid, item, amount);
+  }
+}
+
+/**
+ * Pick a berry patch: everything on the bush lands in the bag. A
+ * patch bears a handful of one kind rather than a single berry
  */
 export async function claimBerryPatch(
   uid: string,
@@ -133,21 +147,27 @@ export async function claimBerryPatch(
   cell: number,
   now: number,
   offset: number,
-): Promise<Items | null> {
+): Promise<ItemStack | null> {
   const snapshot = await resolveSnapshot(x, y, now, offset);
-  const berry = snapshot?.getBerryPatches().get(cell);
+  const berries = snapshot?.getBerryPatches().get(cell);
 
-  if (snapshot == null || berry == null) {
+  if (snapshot == null || berries == null) {
     return null;
   }
 
   const id = `${snapshot.key}@${snapshot.timestamp}$berry${cell}:${uid}`;
 
-  if (!(await claim(BERRY_CLAIM_COLLECTION, id, { player: uid, item: berry }))) {
+  if (
+    !(await claim(BERRY_CLAIM_COLLECTION, id, {
+      player: uid,
+      item: berries.item,
+      amount: berries.amount,
+    }))
+  ) {
     return null;
   }
-  await grantItem(uid, berry);
-  return berry;
+  await grantItem(uid, berries.item, berries.amount);
+  return berries;
 }
 
 /**
@@ -189,11 +209,11 @@ export async function claimNest(
  * the bag, or the encounter the player now stands in
  */
 export type GrottoClaim =
-  | { kind: 'item'; item: Items }
+  | { kind: 'item'; items: ItemStack[] }
   | { kind: 'encounter'; encounter: EncounterRecord };
 
 /**
- * Interact with a hidden grotto. An item lands in the bag here; a
+ * Interact with a hidden grotto. A stash lands in the bag here; a
  * pokemon is staged as an encounter of its own, with the spawn rolled
  * from the chunk, window and cell — so the grotto's pokemon is the
  * one the world hid there, not one the caller named
@@ -222,8 +242,8 @@ export async function claimHiddenGrotto(
   }
 
   if (reward.kind === 'item') {
-    await grantItem(uid, reward.item);
-    return { kind: 'item', item: reward.item };
+    await grantStash(uid, reward.items);
+    return { kind: 'item', items: reward.items };
   }
 
   // The grotto's pokemon needs the two rolls a snapshot spawn would

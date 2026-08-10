@@ -41,6 +41,7 @@ import type Biome from '../data/ids/biome';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
+import type { ItemStack } from '../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
 import type Npc from '../data/overworld/npc';
 import { NPC_NAMES } from '../data/overworld/npc';
@@ -103,6 +104,22 @@ function describeItem(item: Items): string {
   }
 }
 
+/**
+ * What a stash came to, read out: "3 Poke Ball, 2 Ultra Ball and a
+ * Fire Stone". A single piece is named without a count, since one of
+ * something is what a cache used to always be
+ */
+function describeStash(stash: ItemStack[]): string {
+  const parts = stash.map(({ item, amount }) =>
+    amount === 1 ? describeItem(item) : `${amount} × ${describeItem(item)}`,
+  );
+
+  if (parts.length <= 1) {
+    return parts[0] ?? 'nothing';
+  }
+  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
 interface ChunkView {
   x: number;
   y: number;
@@ -115,7 +132,7 @@ interface ChunkView {
    * observer sees
    */
   spawns: Map<number, { id: string; spawn: Spawn }>;
-  caches: Map<number, Items>;
+  caches: Map<number, ItemStack[]>;
 }
 
 /**
@@ -451,18 +468,18 @@ export default function OverworldTab(): JSX.Element {
     const landmark = loaded.landmarks.get(at);
 
     if (landmark === Landmark.ItemCache) {
-      const item = await claimItemCache(loaded.snapshot, at);
+      const stash = await claimItemCache(loaded.snapshot, at);
 
-      return item == null
+      return stash == null
         ? 'The cache is empty until the next window.'
-        : `Found ${describeItem(item)}.`;
+        : `Found ${describeStash(stash)}.`;
     }
     if (landmark === Landmark.BerryPatch) {
-      const berry = await claimBerryPatch(loaded.snapshot, at);
+      const berries = await claimBerryPatch(loaded.snapshot, at);
 
-      return berry == null
+      return berries == null
         ? 'The patch is bare until the next window.'
-        : `Picked ${describeItem(berry)}.`;
+        : `Picked ${describeStash([berries])}.`;
     }
     if (landmark === Landmark.WanderingNpc) {
       const standing = loaded.snapshot.getWanderingNpcs().get(at);
@@ -491,7 +508,7 @@ export default function OverworldTab(): JSX.Element {
         return 'The grotto is quiet until the next window.';
       }
       if (claim.kind === 'item') {
-        return `The grotto held ${describeItem(claim.item)}.`;
+        return `The grotto held ${describeStash(claim.items)}.`;
       }
       return meet(user, claim.encounter);
     }

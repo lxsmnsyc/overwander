@@ -121,7 +121,7 @@ export async function createTeamSnapshot(team: TeamRecord, alliance: number): Pr
   return publishTeamSnapshot({
     player: team.player,
     alliance,
-    catches: catches.filter((entry) => entry != null),
+    catches: catches.filter((entry): entry is CatchSnapshot => entry != null),
   });
 }
 

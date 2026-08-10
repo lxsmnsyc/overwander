@@ -8,7 +8,7 @@ import {
   startRaid,
   watchRaid,
 } from '../auth/raids';
-import { getTeam } from '../auth/teams';
+import { type TeamRecord, getTeam } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 import TeamPickerDialog from './TeamPickerDialog';
 import { useGame } from './game-context';
@@ -38,7 +38,8 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
 
   const [teams] = createResource(
     () => raid()?.teams ?? null,
-    async (ids) => (await Promise.all(ids.map(getTeam))).filter((team) => team != null),
+    async (ids) =>
+      (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
   );
 
   const isHost = (): boolean => raid()?.host === props.user.uid;

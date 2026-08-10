@@ -321,9 +321,26 @@ two players joining at once cannot overwrite each other. `startRaid` writes
 `battle` inside a transaction, so a second start finds it taken.
 
 `listLiveRaids(raidTimestamp)` queries `where('timestamp', '==', …)` and keeps
-the lobbies that are neither started nor cleared — that is the Raids tab. A
-cleared raid also shuts its landmark: `enterRaid` resolves null for the rest of
-the hour, and the next hour rolls a new raid at the same cell.
+the lobbies that are neither started nor cleared — that is the Raids tab.
+
+The hour gives the boss one defeat, not one fight:
+
+- **Cleared.** `clearRaid` sets `cleared` when the boss goes down, and the
+  landmark shuts: `enterRaid` resolves null for the rest of the hour, and the
+  next hour rolls a new raid at the same cell.
+- **Lost.** `enterRaid` reads the lobby's battle in the same transaction. A
+  battle recorded as `Lost`, one whose document is gone, or one still
+  `Unfinished` more than `RAID_BATTLE_TIMEOUT` (10 minutes) after its
+  `startedAt` counts as failed — an abandoned party is not a beaten boss. The
+  arrival restages the lobby in place: same id, same `species` and `traitValue`,
+  a new host, no teams and no battle. It reappears in the live listing on its
+  own, since the watcher keeps whatever has `battle == null`.
+- **Under way.** A battle that is neither won nor timed out is what the arrival
+  walks into, and walking in on a running raid is spectating it.
+
+Restaging keeps the id, so `raidRewards/{raidId}:{uid}` still pays each player
+once: a claim is checked against the raid's _current_ battle, which only a
+winning party appears in.
 
 ### `teams/{teamId}`
 
@@ -378,10 +395,10 @@ identically and awards nothing.
 
 ### `raidRewards/{raidId}:{uid}`
 
-| Field    | Type     | Notes                    |
-| -------- | -------- | ------------------------ |
-| `player` | `string` | Claiming uid             |
-| `raid`   | `string` | The raid collected from  |
+| Field    | Type     | Notes                   |
+| -------- | -------- | ----------------------- |
+| `player` | `string` | Claiming uid            |
+| `raid`   | `string` | The raid collected from |
 
 `claimRaidReward(user, raidId)` hands over the legendary a cleared raid owes.
 It refuses unless the battle was **won** and the uid appears in

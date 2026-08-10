@@ -1,14 +1,23 @@
 import registerBalls from './balls';
 import registerBattleBerries from './berries';
 import registerKeyItems from './key-items';
+import registerMachines from './machines';
 import registerEvolutionStones from './stones';
+import registerValuables from './valuables';
 
 export { getItemData, registerItem } from './__create';
 export type { ItemData } from './__create';
+export { getTeachableMoves } from './machines';
 
+/**
+ * The machines are generated from the species learn sets, so the
+ * species and their moves have to be registered before this runs
+ */
 export default function registerItems(): void {
   registerBalls();
   registerBattleBerries();
   registerEvolutionStones();
   registerKeyItems();
+  registerValuables();
+  registerMachines();
 }

@@ -21,10 +21,17 @@ export interface ItemRarityGroups {
 }
 
 /**
- * The overworld item pool: for now the balls, the evolution items
- * and the Shiny Charm, with plain balls as the commons, utility
- * balls uncommon, evolution stones rare, and the Master Ball and
- * Shiny Charm in the one-per-world class
+ * The overworld item pool: the balls, the evolution stones, the
+ * valuables the ground hides and the Shiny Charm. Plain balls and
+ * the smaller valuables are the commons, utility balls and the
+ * bigger valuables uncommon, stones and the Nugget rare, and the
+ * Master Ball and Shiny Charm the one-per-world class.
+ *
+ * The valuables sit a band below what they are worth: they are a
+ * steady trickle of gold rather than a jackpot, so the rarest bands
+ * stay for the things gold cannot buy.
+ *
+ * Machines are deliberately absent: they are bought, never found.
  */
 export const ITEM_POOL: ItemRarityGroups = {
   base: [
@@ -33,6 +40,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.PremierBall, weight: 5 },
     { item: Items.HealBall, weight: 5 },
     { item: Items.LuxuryBall, weight: 5 },
+    { item: Items.Pearl, weight: 8 },
+    { item: Items.Stardust, weight: 8 },
   ],
   uncommon: [
     { item: Items.UltraBall, weight: 15 },
@@ -43,6 +52,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.TimerBall, weight: 10 },
     { item: Items.QuickBall, weight: 10 },
     { item: Items.DuskBall, weight: 10 },
+    { item: Items.BigPearl, weight: 8 },
+    { item: Items.StarPiece, weight: 8 },
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },
@@ -50,6 +61,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ThunderStone, weight: 10 },
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
+    { item: Items.Nugget, weight: 8 },
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },

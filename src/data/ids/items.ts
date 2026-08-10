@@ -1,3 +1,5 @@
+import type { Moves } from './moves';
+
 export const enum ItemTypes {
   Medicine = 0,
   PokeBall = 1,
@@ -6,6 +8,11 @@ export const enum ItemTypes {
   Machine = 4,
   KeyItem = 5,
   Evolution = 6,
+  /**
+   * Carried only to be sold: a nugget does nothing in a battle or
+   * on a pokemon
+   */
+  Valuable = 7,
 }
 
 export const enum ItemFlags {
@@ -21,6 +28,12 @@ export const enum ItemFlags {
    * Can be actively used on a unit (e.g. potions, medicine)
    */
   Usable = 0b100,
+  /**
+   * Stocked by the item market. What the overworld grows or hides —
+   * berries, nuggets, pearls — is found rather than bought, and
+   * carries no market listing however well it sells
+   */
+  Marketable = 0b1000,
 }
 
 /**
@@ -78,6 +91,45 @@ export const enum Items {
   DuskBall = 28,
   // Key items
   ShinyCharm = 29,
+  // Valuables: found in the overworld, worth only what they sell for
+  Nugget = 30,
+  Pearl = 31,
+  BigPearl = 32,
+  Stardust = 33,
+  StarPiece = 34,
+}
+
+/**
+ * Technical machines are not written out one by one: there is one
+ * per teachable move, so the item id is the move's id lifted into a
+ * reserved range. New moves bring their own machine along, and the
+ * enum above stays a list of hand-written items
+ */
+export const MACHINE_ITEM_BASE = 10_000;
+
+/**
+ * The machine that teaches the move
+ */
+export function getMachineItem(move: Moves): Items {
+  // tsc needs the assertion to treat the offset id as an Items;
+  // tsgolint resolves the const enum to number and disagrees
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  return (MACHINE_ITEM_BASE + move) as Items;
+}
+
+/**
+ * The move a machine teaches, or null when the item is not one
+ */
+export function getMachineMove(item: Items): Moves | null {
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  return isMachineItem(item) ? ((item - MACHINE_ITEM_BASE) as Moves) : null;
+}
+
+export function isMachineItem(item: Items): boolean {
+  // The comparison is against the reserved range, not against
+  // another member of the enum
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+  return item >= MACHINE_ITEM_BASE;
 }
 
 /**

@@ -10,7 +10,16 @@ import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
-import { BALL_ITEMS, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
+import {
+  BALL_ITEMS,
+  ItemFlags,
+  ItemTypes,
+  Items,
+  getMachineItem,
+  getMachineMove,
+  isMachineItem,
+} from '../src/data/ids/items';
+import { Moves } from '../src/data/ids/moves';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
 import {
   CANDY_PER_CATCH,
@@ -19,7 +28,8 @@ import {
   SPECIES_DAY_CANDY_BOOST,
   getCandyCost,
 } from '../src/auth/candy';
-import registerItems, { getItemData } from '../src/data/items';
+import registerItems, { getItemData, getTeachableMoves } from '../src/data/items';
+import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import {
@@ -259,6 +269,82 @@ describe('item data', () => {
     expect(getItemData(Items.UltraBall).flags & ItemFlags.Holdable).toBe(0);
   });
 
+  it('generates one machine per teachable move', () => {
+    const teachable = getTeachableMoves();
+
+    expect(teachable.length).toBeGreaterThan(10);
+
+    for (const move of teachable) {
+      const item = getMachineItem(move);
+
+      expect(isMachineItem(item)).toBe(true);
+      expect(getMachineMove(item)).toBe(move);
+      expect(getItemData(item).type).toBe(ItemTypes.Machine);
+      expect(getItemData(item).name).toBe(`TM ${getMoveData(move).name}`);
+    }
+
+    // The hand-written items are not machines
+    expect(isMachineItem(Items.MasterBall)).toBe(false);
+    expect(getMachineMove(Items.MasterBall)).toBeNull();
+  });
+
+  it('keeps machines out of the overworld and in the market', () => {
+    // A machine is bought, never found: no band of the pool holds one
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+      expect(ITEM_POOL[band].some((entry) => isMachineItem(entry.item))).toBe(false);
+    }
+
+    // Their price follows the move they teach, and selling one back
+    // fetches half
+    const cheap = getItemData(getMachineItem(Moves.Toxic));
+    const solid = getItemData(getMachineItem(Moves.BodySlam));
+    const strong = getItemData(getMachineItem(Moves.HyperBeam));
+
+    expect(cheap.buy).toBeLessThan(solid.buy);
+    expect(solid.buy).toBeLessThan(strong.buy);
+    expect(strong.sell).toBe(strong.buy / 2);
+
+    // Every machine is stocked
+    expect(strong.flags & ItemFlags.Marketable).not.toBe(0);
+  });
+
+  it('prices the valuables to sell and never to buy', () => {
+    const nugget = getItemData(Items.Nugget);
+
+    expect(nugget.type).toBe(ItemTypes.Valuable);
+    expect(nugget.sell).toBeGreaterThan(0);
+    expect(nugget.buy).toBe(0);
+
+    // A found item carries no market listing, however well it sells
+    for (const item of [
+      Items.Nugget,
+      Items.Pearl,
+      Items.BigPearl,
+      Items.Stardust,
+      Items.StarPiece,
+    ]) {
+      expect(getItemData(item).flags & ItemFlags.Marketable).toBe(0);
+    }
+    expect(getItemData(Items.OranBerry).flags & ItemFlags.Marketable).toBe(0);
+    expect(getItemData(Items.OranBerry).sell).toBeGreaterThan(0);
+
+    // Balls and stones are what the market stocks
+    expect(getItemData(Items.UltraBall).flags & ItemFlags.Marketable).not.toBe(0);
+    expect(getItemData(Items.FireStone).buy).toBeGreaterThan(0);
+
+    // The valuables are hidden in the overworld instead, a band
+    // below what they are worth: gold trickles rather than drops
+    expect(ITEM_POOL.base.some((entry) => entry.item === Items.Pearl)).toBe(true);
+    expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.StarPiece)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.Nugget)).toBe(true);
+
+    // The rarest band stays for what gold cannot buy
+    expect(ITEM_POOL.special.map((entry) => entry.item)).toEqual([
+      Items.MasterBall,
+      Items.ShinyCharm,
+    ]);
+  });
+
   it('registers the Shiny Charm as a holdable key item', () => {
     const charm = getItemData(Items.ShinyCharm);
 
@@ -359,9 +445,12 @@ describe('biome data', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
     // Band thresholds mirror the spawn pool's; the special tier now
-    // holds the Shiny Charm alongside the Master Ball
+    // holds the Shiny Charm and the strongest machines alongside the
+    // Master Ball, so the within-band draw is taken by weight
+    const specialTotal = ITEM_POOL.special.reduce((total, entry) => total + entry.weight, 0);
+
     expect(pickItem(ITEM_POOL, rolls([0, 0]))).toBe(Items.MasterBall);
-    expect(pickItem(ITEM_POOL, rolls([0, 0.99]))).toBe(Items.ShinyCharm);
+    expect(pickItem(ITEM_POOL, rolls([0, 10.5 / specialTotal]))).toBe(Items.ShinyCharm);
     expect(pickItem(ITEM_POOL, rolls([0.01, 0]))).toBe(Items.FireStone);
     expect(pickItem(ITEM_POOL, rolls([0.05, 0]))).toBe(Items.UltraBall);
     expect(pickItem(ITEM_POOL, rolls([0.5, 0]))).toBe(Items.PokeBall);

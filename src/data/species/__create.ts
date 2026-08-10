@@ -131,6 +131,13 @@ export function registerSpecies(species: Species, data: SpeciesData): void {
 }
 
 /**
+ * Every registered species, in registration (dex) order
+ */
+export function getRegisteredSpecies(): Species[] {
+  return [...SPECIES_MAP.keys()];
+}
+
+/**
  * Every family with at least one registered species, in ascending
  * family order. The species day cycles through this list, so a
  * family with nothing behind it is never featured

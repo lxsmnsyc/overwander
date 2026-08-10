@@ -10,6 +10,7 @@ import registerBiomeSpawns, {
 import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
+import registerGen1Moves from '../../src/data/moves/gen-1';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
@@ -35,7 +36,9 @@ import { resolveBerryPatch, resolveHiddenGrotto } from '../../src/overworld/land
 import World from '../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools;
-// the berry patch reads the item registry to name what it grew
+// the berry patch reads the item registry to name what it grew, and
+// the machines that registry generates read the move data
+registerGen1Moves();
 registerSpecies();
 registerItems();
 registerBiomeSpawns();

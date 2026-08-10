@@ -1,4 +1,5 @@
 import {
+  type DocumentReference,
   type FirestoreDataConverter,
   type Unsubscribe,
   addDoc,
@@ -75,6 +76,14 @@ const converter: FirestoreDataConverter<BattleRecord> = {
     };
   },
 };
+
+/**
+ * A typed handle on one battle document, for callers that have to
+ * read it inside a transaction of their own
+ */
+export function getBattleRef(id: string): DocumentReference<BattleRecord> {
+  return doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
+}
 
 export async function createBattle(record: BattleRecord): Promise<string> {
   const battles = collection(getFirebaseFirestore(), BATTLE_COLLECTION).withConverter(converter);
@@ -153,5 +162,5 @@ export async function listBattleHistory(player: string): Promise<[string, Battle
 export async function listBattleTeams(record: BattleRecord): Promise<TeamSnapshotRecord[]> {
   const teams = await Promise.all(record.teams.map(getTeamSnapshot));
 
-  return teams.filter((team) => team != null);
+  return teams.filter((team): team is TeamSnapshotRecord => team != null);
 }

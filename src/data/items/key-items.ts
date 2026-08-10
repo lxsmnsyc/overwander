@@ -9,9 +9,12 @@ import { registerItem } from './__create';
 export default function registerKeyItems(): void {
   // Held by the player's buddy, it sharpens every encounter's shiny
   // odds eightfold
+  // Found, never stocked, and never worth parting with
   registerItem(Items.ShinyCharm, {
     name: 'Shiny Charm',
     type: ItemTypes.KeyItem,
     flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: 0,
   });
 }

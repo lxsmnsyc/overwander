@@ -6,6 +6,7 @@ import type { User } from 'firebase/auth';
 import {
   type DocumentReference,
   type FirestoreDataConverter,
+  type Transaction,
   type Unsubscribe,
   arrayRemove,
   arrayUnion,
@@ -35,11 +36,17 @@ import {
   createRaidBossSnapshot,
 } from '../overworld/raid';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
-import { BattleOutcome, createBattle, getBattle } from './battles';
+import { BattleOutcome, createBattle, getBattle, getBattleRef } from './battles';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 import { startEncounter } from './snapshots';
-import { createTeam, createTeamSnapshot, getTeam, publishTeamSnapshot } from './teams';
+import {
+  type TeamRecord,
+  createTeam,
+  createTeamSnapshot,
+  getTeam,
+  publishTeamSnapshot,
+} from './teams';
 
 /**
  * What a lobby is staging
@@ -186,10 +193,46 @@ export function watchLiveRaids(
 }
 
 /**
+ * How long an unsettled raid battle holds its landmark. A fight is
+ * over in minutes; one still unfinished after this was walked out on,
+ * and an abandoned party is not a beaten boss
+ */
+export const RAID_BATTLE_TIMEOUT = 10 * 60 * 1000;
+
+/**
+ * Whether a raid's battle ended without the boss going down — lost
+ * outright, or abandoned long enough that nobody is coming back to
+ * settle it. A raid that was won never reaches here: clearing it
+ * shuts the landmark first
+ */
+async function isRaidLost(
+  transaction: Transaction,
+  battleId: string,
+  now: number,
+): Promise<boolean> {
+  const battle = (await transaction.get(getBattleRef(battleId))).data();
+
+  if (battle == null) {
+    return true;
+  }
+  if (battle.outcome === BattleOutcome.Unfinished) {
+    return now - battle.startedAt >= RAID_BATTLE_TIMEOUT;
+  }
+  return battle.outcome !== BattleOutcome.Won;
+}
+
+/**
  * Walk into a raid landmark: the first player to arrive in the hour
  * opens the lobby and hosts it, everyone after joins the one already
- * standing. Resolves the lobby id and its record, or null when the
- * cell stages no raid this hour
+ * standing.
+ *
+ * The hour gives the boss one defeat, not one fight. A raid the party
+ * lost — or walked out on — leaves the landmark open, and the next
+ * arrival restages the lobby against the same roll to try again. Only
+ * beating the boss shuts the cell, for the rest of the hour.
+ *
+ * Resolves the lobby id and its record, or null when the cell stages
+ * no raid this hour or its raid has already been cleared
  */
 export async function enterRaid(
   user: User,
@@ -209,7 +252,11 @@ export async function enterRaid(
   const id = raidId(snapshot.chunk, snapshot.raidTimestamp, cell, kind);
   const db = getFirebaseFirestore();
 
-  // One landmark stages one raid per hour: the arrival that finds no
+  // A failed raid reopens against the same clock the battle was
+  // stamped with, so an abandoned fight cannot hold the landmark
+  const now = await syncServerClock();
+
+  // One landmark stages one raid at a time: the arrival that finds no
   // lobby opens it and hosts, and every arrival after adopts what is
   // already standing. The read and the create share a transaction,
   // so two players walking in together cannot each open their own
@@ -217,13 +264,7 @@ export async function enterRaid(
     const ref = getRaidRef(id);
     const existing = (await transaction.get(ref)).data();
 
-    if (existing != null) {
-      // A cleared lobby stays shut until the hour turns over and the
-      // landmark rolls a new raid
-      return existing.cleared ? null : ([id, existing] as [string, RaidRecord]);
-    }
-
-    const record: RaidRecord = {
+    const fresh: RaidRecord = {
       kind,
       species: roll.species,
       traitValue: roll.traitValue,
@@ -236,8 +277,25 @@ export async function enterRaid(
       cleared: false,
     };
 
-    transaction.set(ref, record);
-    return [id, record] as [string, RaidRecord];
+    if (existing != null) {
+      // A cleared lobby stays shut until the hour turns over and the
+      // landmark rolls a new raid: the boss has been met
+      if (existing.cleared) {
+        return null;
+      }
+      // A raid still gathering, or one being fought right now, is
+      // what the arrival walks into
+      if (existing.battle == null || !(await isRaidLost(transaction, existing.battle, now))) {
+        return [id, existing] as [string, RaidRecord];
+      }
+      // The boss survived, so the landmark is open again: the lobby
+      // is restaged for the arrival, on the hour's same roll
+      transaction.set(ref, fresh);
+      return [id, fresh] as [string, RaidRecord];
+    }
+
+    transaction.set(ref, fresh);
+    return [id, fresh] as [string, RaidRecord];
   });
 }
 
@@ -410,7 +468,9 @@ export async function startRaid(user: User, id: string): Promise<string | null> 
     return null;
   }
 
-  const teams = (await Promise.all(raid.teams.map(getTeam))).filter((team) => team != null);
+  const teams = (await Promise.all(raid.teams.map(getTeam))).filter(
+    (team): team is TeamRecord => team != null,
+  );
   const snapshots = await Promise.all(
     teams.map(async (team) => createTeamSnapshot(team, PLAYER_ALLIANCE)),
   );

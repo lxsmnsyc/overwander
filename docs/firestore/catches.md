@@ -1,0 +1,106 @@
+# Catch records
+
+Written by `recordCatch` in [`src/server/caught.ts`](../../src/server/caught.ts). A
+catch is **one document** with a Firestore auto-id, so recording one is a single
+write. Its abilities, held items and ownership history were once three side
+stores keyed by that same id (`caughtAbilities`, `caughtItems`, `caughtOwners`);
+they are fields now, which turned showing a pokemon from four reads into one and
+removed the three rule blocks that had to `get()` the parent to find an owner.
+
+## `caught/{catchId}`
+
+| Field                  | Type                    | Notes                                                     |
+| ---------------------- | ----------------------- | --------------------------------------------------------- |
+| `owner`                | `string`                | Current owner's uid; changes on trade                     |
+| `type`                 | `EncounterType`         | How it was originally met                                 |
+| `species`              | `Species`               |                                                           |
+| `level`                | `number`                |                                                           |
+| `individualValue`      | `number`                | 32-bit roll the IVs slice from                            |
+| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature        |
+| `ivs`                  | `Record<Stats, number>` | 0-31 per stat, stored explicitly so records are queryable |
+| `gender`               | `Genders`               |                                                           |
+| `nature`               | `Natures`               |                                                           |
+| `shiny`                | `boolean`               | Frozen at catch time; trades cannot change it             |
+| `shadow`               | `boolean`               | From a shadow raid; keeps Shadow, costs double candy      |
+| `moves`                | `Moves[]`               |                                                           |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch        |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`         |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
+| `lock`                 | `boolean`               | Whether it is fielded in a battle right now               |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
+| `ball`                 | `Balls`                 | Ball the catch was made with                              |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
+| `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                           |
+| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                     |
+| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                         |
+| `origin.biome`         | `Biome`                 |                                                           |
+
+Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
+single-field index on `owner` — Firestore provides that automatically.
+
+`species` and `level` are the two mutable fields: `useCandy` raises the level,
+and `evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps
+the species. An evolution that uses an item decrements
+`inventories/{uid}:{item}` in the same transaction, so the stone and the new
+species land together or not at all. Criteria are re-checked against the stored
+documents inside that transaction, never trusted from the caller.
+
+Which evolutions are offered comes from
+[`src/data/species/evolution.ts`](../../src/data/species/evolution.ts): only the
+`Level`, `UsedItem` and `HeldItem` methods can be verified against what is
+stored today, so an evolution carrying any other flag — trade, friendship,
+weather — is never offered rather than waved through. A held item is required
+but not consumed; only a used item is spent.
+
+Catch records are readable by any signed-in player (other players inspect a
+pokemon before a trade) and writable only by the owner the document itself
+names.
+
+Held items move through `giveItem` and `takeItem` in
+[`src/server/caught.ts`](../../src/server/caught.ts): each reads the catch and the
+inventory stack, then writes the stack and the catch's `items` **in one
+transaction**, so an item is never in the bag and on a pokemon at once, nor lost
+between them. Only items flagged `Holdable` can be handed over, and a catch
+holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
+This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
+of every encounter its owner starts.
+
+## Catches are locked while they fight
+
+A battle runs on a **frozen** snapshot of the party, so a record that moved
+underneath it would leave the two describing different pokemon — and the worst
+case is not cosmetic: a player who pulls a berry back into the bag mid-raid
+would have it eaten in the battle and still be holding it afterwards.
+
+So `startRaid` sets `lock` as it freezes each team, in the **same transaction**
+as the snapshot, and every write that edits a catch — `giveItem`, `takeItem`,
+`useCandy`, `evolveCatch`, and `joinRaid`, which will not field a pokemon
+already fighting elsewhere — refuses while the lock holds. Trading will ask the
+same question: a locked pokemon is not up for trade.
+
+`isCatchLocked` ([`src/server/locks.ts`](../../src/server/locks.ts)) answers from
+the two fields alone, against the server's own clock — no document is fetched.
+Two things end a lock:
+
+- **The fight.** `finishBattle` stamps the outcome and then calls
+  `releaseBattleLocks`, which frees every catch its team snapshots name.
+- **The clock.** A lock is ignored once `BATTLE_TIMEOUT` (10 minutes) has passed
+  since `lockedAt`, so a battle nobody ever reports — a closed tab, a party that
+  walked out — does not hold pokemon forever. It is the same window that decides
+  an abandoned raid may be restaged.
+
+`lockedAt` is the battle's own `startedAt`, which is what keeps the release
+honest: it frees only catches whose lock still carries **that** stamp, so a late
+report cannot unlock a pokemon that has since been taken by a newer fight.
+
+Because freezing a team locks it, `startRaid` **claims the raid first** and
+freezes afterwards — a start that loses the race to another host holds nothing.
+A claim whose teams then field nothing leaves the raid pointing at a battle
+document that was never written, which reads as lost and restages.
+
+The client asks the same question through `isLockLive`
+([`src/auth/battle-lock.ts`](../../src/auth/battle-lock.ts)) so the catch dialog
+can grey its buttons out and say why; the refusal itself is the server's.
+
+[time]: time.md#local-time

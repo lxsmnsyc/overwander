@@ -1,5 +1,6 @@
 import { RARE_SPAWN_ODDS, SPECIAL_SPAWN_ODDS, UNCOMMON_SPAWN_ODDS } from '../biome/__create';
 import { Items } from '../ids/items';
+import { PLATES } from '../items/plates';
 
 /**
  * One weighted slot of an item pool
@@ -68,6 +69,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ThickClub, weight: 4 },
     { item: Items.MetalPowder, weight: 4 },
     { item: Items.QuickPowder, weight: 4 },
+    // The plates, buried where they fell. Each is a single thin slot
+    // — seventeen of them share about what one stone is worth, so
+    // digging one up stays an event
+    ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },

@@ -183,6 +183,27 @@ export const enum Items {
   FlameOrb = 90,
   ToxicOrb = 91,
   LifeOrb = 92,
+
+  /**
+   * The plates: old stone tablets, one for every type but Normal
+   */
+  FistPlate = 93,
+  SkyPlate = 94,
+  ToxicPlate = 95,
+  EarthPlate = 96,
+  StonePlate = 97,
+  InsectPlate = 98,
+  SpookyPlate = 99,
+  IronPlate = 100,
+  FlamePlate = 101,
+  SplashPlate = 102,
+  MeadowPlate = 103,
+  ZapPlate = 104,
+  MindPlate = 105,
+  IciclePlate = 106,
+  DracoPlate = 107,
+  DreadPlate = 108,
+  PixiePlate = 109,
 }
 
 /**

@@ -218,6 +218,26 @@ describe('incenses', () => {
     expect(attacker.checkMovePower(Moves.Ember, target)).toBe(getMoveData(Moves.Ember).power ?? 0);
   });
 
+  it('lifts a type the same whichever family the item came from', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    const fire = getMoveData(Moves.Ember).power ?? 0;
+    const lifted = fire * TYPE_BOOSTER_FACTOR;
+
+    // A Charcoal is bought, a Flame Plate is dug up, and an Ember is
+    // worth exactly the same to either
+    for (const item of [Items.Charcoal, Items.FlamePlate]) {
+      const holder = createUnit(battle, teamA);
+
+      holder.addItem(item);
+      expect(holder.checkMovePower(Moves.Ember, target)).toBeCloseTo(lifted, 5);
+      expect(holder.checkMovePower(Moves.WaterGun, target)).toBe(
+        getMoveData(Moves.WaterGun).power ?? 0,
+      );
+    }
+  });
+
   it('makes its holder harder to hit and slower to act', () => {
     const { battle, teamA, teamB } = createBattle();
     const attacker = createUnit(battle, teamA);

@@ -38,6 +38,7 @@ import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
+import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -545,6 +546,39 @@ describe('type-enhancing items', () => {
       expect(data.buy).toBeLessThan(TYPE_BOOSTER_PRICE);
       expect(new Set(TYPE_BOOSTERS.values()).has(type)).toBe(true);
     }
+  });
+
+  it('buries a plate for every type but Normal', () => {
+    const covered = new Set(PLATES.values());
+
+    // Every attacking type has one except Normal, which the tablets
+    // never had
+    expect(covered.size).toBe(new Set(TYPE_BOOSTERS.values()).size - 1);
+    expect(covered.has(Types.Normal)).toBe(false);
+
+    for (const [item, type] of PLATES) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Held for as long as it is carried, and never spent
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      // Dug up rather than bought: no listing, only what a shop will
+      // pay to take one off a player's hands
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBe(PLATE_RESALE);
+      // Found in the ground, at a thin slot each
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+      expect(new Set(TYPE_BOOSTERS.values()).has(type)).toBe(true);
+    }
+
+    // Seventeen thin slots together weigh about what one stone does
+    const plated = ITEM_POOL.rare
+      .filter((entry) => PLATES.has(entry.item))
+      .reduce((total, entry) => total + entry.weight, 0);
+
+    expect(plated).toBeLessThanOrEqual(20);
   });
 
   it('registers the orbs as held costs rather than consumables', () => {

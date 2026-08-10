@@ -5,6 +5,7 @@ import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
 import registerOrbs from './orbs';
+import registerPlates from './plates';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
@@ -28,6 +29,7 @@ export default function registerItems(): void {
   registerIncenses();
   registerGems();
   registerOrbs();
+  registerPlates();
   registerKeyItems();
   registerRaidItems();
   registerValuables();

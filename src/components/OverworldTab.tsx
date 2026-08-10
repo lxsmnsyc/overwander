@@ -14,6 +14,7 @@ import { RaidKind, claimRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   type SpawnRecord,
+  claimBerryPatch,
   claimHiddenGrotto,
   claimItemCache,
   startEncounter,
@@ -291,6 +292,13 @@ export default function OverworldTab(): JSX.Element {
         ? 'The cache is empty until the next window.'
         : `Found ${describeItem(item)}.`;
     }
+    if (landmark === Landmark.BerryPatch) {
+      const berry = await claimBerryPatch(user, loaded.snapshot, at);
+
+      return berry == null
+        ? 'The patch is bare until the next window.'
+        : `Picked ${describeItem(berry)}.`;
+    }
     if (landmark === Landmark.HiddenGrotto) {
       const claim = await claimHiddenGrotto(user, loaded.snapshot, at);
 
@@ -396,6 +404,9 @@ export default function OverworldTab(): JSX.Element {
     }
     if (landmark === Landmark.ShadowRaid) {
       return 'S';
+    }
+    if (landmark === Landmark.BerryPatch) {
+      return 'B';
     }
     return '';
   };

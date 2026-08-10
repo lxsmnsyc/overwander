@@ -9,7 +9,7 @@ import Landmark from '../data/overworld/landmark';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
 import type { GrottoReward } from './landmarks';
-import { resolveHiddenGrotto, resolveItemCache } from './landmarks';
+import { resolveBerryPatch, resolveHiddenGrotto, resolveItemCache } from './landmarks';
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -183,6 +183,32 @@ export default class ChunkSnapshot {
       this.itemCaches = caches;
     }
     return this.itemCaches;
+  }
+
+  private berryPatches: Map<number, Items> | null = null;
+
+  /**
+   * The window's ripe berries, keyed by the landmark cell. A patch
+   * fruits on the same 5-minute clock as an item cache: picked or
+   * not, the next window grows something new
+   */
+  getBerryPatches(): Map<number, Items> {
+    if (this.berryPatches == null) {
+      const patches = new Map<number, Items>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.BerryPatch) {
+          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}berry${cell}`);
+          const berry = resolveBerryPatch(() => rng.random());
+
+          if (berry != null) {
+            patches.set(cell, berry);
+          }
+        }
+      }
+      this.berryPatches = patches;
+    }
+    return this.berryPatches;
   }
 
   /**

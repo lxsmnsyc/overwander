@@ -247,6 +247,23 @@ marker that stops a player collecting the same cache twice in one window.
 Claims are never updated or deleted — an expired window simply produces a new
 document id. Only the named player may create one.
 
+### `berryClaims/{chunkSeed}@{timestamp}$berry{cell}:{uid}`
+
+Written by `claimBerryPatch`, the same one-claim-per-window marker as an item
+cache. A berry patch fruits on the 5-minute snapshot window: picked or not, the
+next window grows something new.
+
+| Field    | Type     | Notes                     |
+| -------- | -------- | ------------------------- |
+| `player` | `string` | Claiming uid              |
+| `item`   | `Items`  | The berry that was picked |
+
+What grows comes from the berry pool in
+[`src/data/overworld/berry-pool.ts`](../src/data/overworld/berry-pool.ts),
+rolled on the same rarity bands as a spawn pool — the single-status cures are
+everyday finds, the restoring berries scarcer, Lum rare and Sitrus one-per-world
+class.
+
 ### `grottoClaims/{chunkSeed}@{timestamp}$grotto{cell}:{uid}`
 
 Written by `claimHiddenGrotto`, the same one-claim-per-window marker as an item
@@ -385,8 +402,8 @@ owed nothing.
 
 ## Derived, never stored
 
-Landmarks, item-cache rewards, grotto rewards and cell placement are **not** in
-Firestore. They re-derive from the chunk seed plus the snapshot window
+Landmarks, item-cache rewards, berry patches, grotto rewards and cell placement
+are **not** in Firestore. They re-derive from the chunk seed plus the snapshot window
 (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`), so two players in
 the same window compute identical results from the two fields that
 `snapshots/{chunkSeed}` does store.
@@ -545,6 +562,13 @@ service cloud.firestore {
       allow delete: if false;
     }
     match /grottoClaims/{claimId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && claimId.split(':')[1] == request.auth.uid
+        && request.resource.data.player == request.auth.uid;
+      allow update, delete: if false;
+    }
+    match /berryClaims/{claimId} {
       allow read: if signedIn();
       allow create: if signedIn()
         && claimId.split(':')[1] == request.auth.uid

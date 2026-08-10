@@ -83,6 +83,7 @@ const SPAWN_COLLECTION = 'spawns';
 const ENCOUNTER_COLLECTION = 'encounters';
 const CACHE_CLAIM_COLLECTION = 'cacheClaims';
 const GROTTO_CLAIM_COLLECTION = 'grottoClaims';
+const BERRY_CLAIM_COLLECTION = 'berryClaims';
 
 const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   toFirestore: (record) => record,
@@ -354,6 +355,44 @@ export async function claimItemCache(
   }
   await grantItem(user.uid, item);
   return item;
+}
+
+/**
+ * Pick a berry patch: the window's berry lands in the player's bag.
+ * A claim marker (patch cell + window + player) guards the grant, so
+ * each patch feeds a player once per window and fruits again with
+ * the next one. Resolves the berry, or null when there is nothing to
+ * pick (no patch on the cell, or already picked this window)
+ */
+export async function claimBerryPatch(
+  user: User,
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<Items | null> {
+  const berry = snapshot.getBerryPatches().get(cell);
+
+  if (berry == null) {
+    return null;
+  }
+
+  const db = getFirebaseFirestore();
+  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$berry${cell}:${user.uid}`;
+  const ref = doc(db, BERRY_CLAIM_COLLECTION, id);
+  const claimed = await runTransaction(db, async (transaction) => {
+    const existing = await transaction.get(ref);
+
+    if (existing.exists()) {
+      return false;
+    }
+    transaction.set(ref, { player: user.uid, item: berry });
+    return true;
+  });
+
+  if (!claimed) {
+    return null;
+  }
+  await grantItem(user.uid, berry);
+  return berry;
 }
 
 /**

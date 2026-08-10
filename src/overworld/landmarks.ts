@@ -5,6 +5,7 @@ import type { TimeOfDay } from '../data/ids/biome';
 import type Families from '../data/ids/families';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
+import BERRY_POOL from '../data/overworld/berry-pool';
 import type { ItemBandOdds } from '../data/overworld/item-pool';
 import { ITEM_POOL, pickItem } from '../data/overworld/item-pool';
 import { SPECIES_DAY_WEIGHT_BOOST } from '../data/species';
@@ -38,6 +39,14 @@ export type GrottoReward = { kind: 'pokemon'; species: Species } | { kind: 'item
  */
 export function resolveItemCache(random: () => number, odds?: ItemBandOdds): Items | null {
   return pickItem(ITEM_POOL, random, odds);
+}
+
+/**
+ * A berry patch landmark: one roll from the berry pool, on the same
+ * bands the spawn pool uses — the better berries are the rarer ones
+ */
+export function resolveBerryPatch(random: () => number): Items | null {
+  return pickItem(BERRY_POOL, random);
 }
 
 /**

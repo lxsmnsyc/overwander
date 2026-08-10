@@ -8,7 +8,8 @@ import registerBiomeSpawns, {
   getSpawnRarity,
 } from '../../src/data/biome';
 import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
-import { Items } from '../../src/data/ids/items';
+import { ItemTypes, Items } from '../../src/data/ids/items';
+import registerItems, { getItemData } from '../../src/data/items';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
@@ -30,11 +31,13 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
-import { resolveHiddenGrotto } from '../../src/overworld/landmarks';
+import { resolveBerryPatch, resolveHiddenGrotto } from '../../src/overworld/landmarks';
 import World from '../../src/overworld/world';
 
-// Spawn rolls read the species registry and the biome spawn pools
+// Spawn rolls read the species registry and the biome spawn pools;
+// the berry patch reads the item registry to name what it grew
 registerSpecies();
+registerItems();
 registerBiomeSpawns();
 
 describe('perlin noise', () => {
@@ -354,6 +357,49 @@ describe('world', () => {
     // different players spread out
     expect(pickStartPosition(world, 'player-uid')).toEqual(start);
     expect(pickStartPosition(world, 'other-uid')).not.toEqual(start);
+  });
+
+  it('ripens berry patches on the snapshot window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.BerryPatch),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const WINDOW = 5 * 60 * 1000;
+    const patches = new ChunkSnapshot(chunk, 0).getBerryPatches();
+
+    // Every berry sits on a patch cell, and every one is a berry
+    expect(patches.size).toBeGreaterThan(0);
+    for (const [cell, berry] of patches) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.BerryPatch);
+      expect(getItemData(berry).type).toBe(ItemTypes.Berry);
+    }
+
+    // The same window agrees for every observer
+    expect(new ChunkSnapshot(chunk, 60 * 1000).getBerryPatches()).toEqual(patches);
+
+    // Expired windows grow something new
+    const shapes = new Set<string>();
+
+    for (let window = 0; window <= 10; window++) {
+      shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getBerryPatches()]));
+    }
+    expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('rolls the berry pool through its rarity bands', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+
+    // Same bands as the spawn pool: the better the berry, the rarer
+    expect(resolveBerryPatch(rolls([0, 0]))).toBe(Items.SitrusBerry);
+    expect(resolveBerryPatch(rolls([0.01, 0]))).toBe(Items.LumBerry);
+    expect(resolveBerryPatch(rolls([0.05, 0]))).toBe(Items.LeppaBerry);
+    expect(resolveBerryPatch(rolls([0.5, 0]))).toBe(Items.CheriBerry);
   });
 
   it('resolves hidden grottos into rare finds', () => {

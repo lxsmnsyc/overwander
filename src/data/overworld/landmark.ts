@@ -20,6 +20,10 @@ const enum Landmark {
    * occasionally a legendary, and always a shadow boss
    */
   ShadowRaid = 3,
+  /**
+   * A patch of berries, ripe once per snapshot window
+   */
+  BerryPatch = 4,
 }
 
 export default Landmark;
@@ -32,6 +36,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.HiddenGrotto,
   Landmark.LegendaryRaid,
   Landmark.ShadowRaid,
+  Landmark.BerryPatch,
 ];
 
 /**
@@ -42,4 +47,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.HiddenGrotto]: 'Hidden Grotto',
   [Landmark.LegendaryRaid]: 'Legendary Raid',
   [Landmark.ShadowRaid]: 'Shadow Raid',
+  [Landmark.BerryPatch]: 'Berry Patch',
 };

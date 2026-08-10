@@ -106,9 +106,12 @@ Private to the owning uid. Entries are only ever appended.
 
 ## Catch records
 
-Written atomically as one batch by `recordCatch` in
-[`src/auth/caught.ts`](../src/auth/caught.ts). The catch document gets a
-Firestore auto-id, and the three side stores are keyed by that same id.
+Written by `recordCatch` in [`src/auth/caught.ts`](../src/auth/caught.ts). A
+catch is **one document** with a Firestore auto-id, so recording one is a single
+write. Its abilities, held items and ownership history were once three side
+stores keyed by that same id (`caughtAbilities`, `caughtItems`, `caughtOwners`);
+they are fields now, which turned showing a pokemon from four reads into one and
+removed the three rule blocks that had to `get()` the parent to find an owner.
 
 ### `caught/{catchId}`
 
@@ -126,6 +129,9 @@ Firestore auto-id, and the three side stores are keyed by that same id.
 | `shiny`                | `boolean`               | Frozen at catch time; trades cannot change it             |
 | `shadow`               | `boolean`               | From a shadow raid; keeps Shadow, costs double candy      |
 | `moves`                | `Moves[]`               |                                                           |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch        |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`         |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `number`                | Server-clock milliseconds (see below)                     |
 | `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                           |
@@ -150,22 +156,13 @@ stored today, so an evolution carrying any other flag — trade, friendship,
 weather — is never offered rather than waved through. A held item is required
 but not consumed; only a used item is spent.
 
-### `caughtAbilities/{catchId}`, `caughtItems/{catchId}`, `caughtOwners/{catchId}`
-
-| Collection        | Field       | Type                | Notes                                                |
-| ----------------- | ----------- | ------------------- | ---------------------------------------------------- |
-| `caughtAbilities` | `abilities` | `Abilities[]`       | The rolled ability, plus Shadow for a shadow catch   |
-| `caughtItems`     | `items`     | `Items[]`           | Held items; starts empty, up to `HELD_ITEM_LIMIT`    |
-| `caughtOwners`    | `history`   | `OwnershipRecord[]` | `{ owner, acquiredAt }`, oldest first; trades append |
-
-Catch records are world-readable (other players inspect a pokemon before a
-trade) and writable only by the current owner named in `caught/{catchId}.owner`.
-Because the side stores do not carry an owner field of their own, their rules
-have to `get()` the parent catch document.
+Catch records are readable by any signed-in player (other players inspect a
+pokemon before a trade) and writable only by the owner the document itself
+names.
 
 Held items move through `giveItem` and `takeItem` in
-[`src/auth/caught.ts`](../src/auth/caught.ts): each reads the catch, its held
-list and the inventory stack, then writes the stack and the list **in one
+[`src/auth/caught.ts`](../src/auth/caught.ts): each reads the catch and the
+inventory stack, then writes the stack and the catch's `items` **in one
 transaction**, so an item is never in the bag and on a pokemon at once, nor lost
 between them. Only items flagged `Holdable` can be handed over, and a catch
 holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
@@ -226,7 +223,7 @@ are multiplied by the species day (×8 for the featured family) and by the Shiny
 Charm (×8) when the player's buddy is holding it — `startEncounter` checks
 `buddies/{uid}` and that catch's held items before deriving. `shadow`
 marks a shadow raid's reward: `recordCatch` then writes `Abilities.Shadow` into
-`caughtAbilities` alongside the rolled one, so the catch keeps it for good.
+the catch's `abilities` alongside the rolled one, so it keeps it for good.
 
 A raid reward derived on its family's own day floors every IV at
 `RAID_FAMILY_DAY_MIN_IV` (6); rolls above the floor are left alone. Its level is
@@ -535,11 +532,6 @@ service cloud.firestore {
       allow create: if isOwner(request.resource.data.owner);
       allow update, delete: if isOwner(resource.data.owner);
     }
-    match /{store}/{catchId} where store in ['caughtAbilities', 'caughtItems', 'caughtOwners'] {
-      allow read: if signedIn();
-      allow write: if signedIn()
-        && request.auth.uid == get(/databases/$(database)/documents/caught/$(catchId)).data.owner;
-    }
 
     // Shared overworld state: everyone reads, signed-in players publish
     match /snapshots/{chunkSeed} {
@@ -623,10 +615,9 @@ service cloud.firestore {
 }
 ```
 
-Firestore has no `where` clause on `match` paths, so the grouped
-`caughtAbilities` / `caughtItems` / `caughtOwners` block above has to be
-expanded into three identical `match` statements when the rules are actually
-deployed.
+Firestore has no `where` clause on `match` paths, so any grouped block above has
+to be expanded into one `match` statement per collection when the rules are
+actually deployed.
 
 ## Required indexes
 

@@ -14,8 +14,8 @@ import {
   limit,
   query,
   runTransaction,
+  setDoc,
   where,
-  writeBatch,
 } from 'firebase/firestore';
 import { Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
@@ -34,9 +34,14 @@ import { getEntryRef } from './inventory';
 /**
  * A caught encounter, permanently recorded. The IVs, gender and
  * nature are stored explicitly (even though they re-derive from the
- * individual and trait values) so records are readable and
- * queryable on their own. Abilities, held items and ownership
- * history live in their own stores keyed by the same id
+ * individual and trait values) so records are readable and queryable
+ * on their own.
+ *
+ * Everything about one catch lives in this one document: its
+ * abilities, what it holds and whose hands it has passed through were
+ * once three side stores keyed by the same id, which meant four reads
+ * to show a pokemon and four documents to keep in step. They are
+ * fields now, and a catch is read, written and secured as a whole
  */
 export interface CaughtPokemon {
   /**
@@ -68,6 +73,21 @@ export interface CaughtPokemon {
    */
   shadow: boolean;
   moves: Moves[];
+  /**
+   * The abilities the catch has: the rolled one, plus Shadow for a
+   * shadow catch, which it keeps for good
+   */
+  abilities: Abilities[];
+  /**
+   * What it is holding, up to HELD_ITEM_LIMIT; a fresh catch holds
+   * nothing
+   */
+  items: Items[];
+  /**
+   * Whose hands it has passed through, oldest first: the catcher, and
+   * an entry per trade
+   */
+  history: OwnershipRecord[];
   /**
    * The ball the catch was made with
    */
@@ -101,9 +121,20 @@ export interface OwnershipRecord {
 }
 
 const CAUGHT_COLLECTION = 'caught';
-const ABILITIES_COLLECTION = 'caughtAbilities';
-const ITEMS_COLLECTION = 'caughtItems';
-const OWNERS_COLLECTION = 'caughtOwners';
+
+/**
+ * Restore an ownership history from an untyped Firestore value
+ */
+function asOwnershipHistory(value: unknown): OwnershipRecord[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.map((entry) => {
+    const record = asRecord(entry);
+
+    return { owner: asString(record.owner), acquiredAt: asNumber(record.acquiredAt) };
+  });
+}
 
 const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
   toFirestore: (caught) => caught,
@@ -124,6 +155,9 @@ const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
       shiny: data.shiny === true,
       shadow: data.shadow === true,
       moves: asNumberArray(data.moves) as Moves[],
+      abilities: asNumberArray(data.abilities) as Abilities[],
+      items: asNumberArray(data.items) as Items[],
+      history: asOwnershipHistory(data.history),
       ball: asNumber(data.ball) as Balls,
       caughtAt: asNumber(data.caughtAt),
       effortValues: asStatRecord(data.effortValues),
@@ -158,9 +192,8 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
- * Record a catch for the signed-in user: the main record plus its
- * ability, held-item and ownership stores, written atomically.
- * Returns the new catch id
+ * Record a catch for the signed-in user. The whole pokemon is one
+ * document, so it lands in a single write. Returns the new catch id
  */
 export async function recordCatch(
   user: User,
@@ -174,9 +207,8 @@ export async function recordCatch(
   const caughtAt = stamp ?? (await syncServerClock());
   const db = getFirebaseFirestore();
   const ref = doc(collection(db, CAUGHT_COLLECTION)).withConverter(caughtConverter);
-  const batch = writeBatch(db);
 
-  batch.set(ref, {
+  await setDoc(ref, {
     owner: user.uid,
     type: encounter.type,
     species: encounter.species,
@@ -189,6 +221,11 @@ export async function recordCatch(
     shiny: encounter.shiny,
     shadow: encounter.shadow,
     moves: encounter.moves,
+    // A shadow raid's reward keeps its Shadow ability for good, on
+    // top of the one it rolled
+    abilities: encounter.shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
+    items: [],
+    history: [{ owner: user.uid, acquiredAt: caughtAt }],
     ball,
     caughtAt,
     effortValues: zeroEffortValues(),
@@ -199,16 +236,6 @@ export async function recordCatch(
       biome: encounter.biome,
     },
   });
-  // A shadow raid's reward keeps its Shadow ability for good, on top
-  // of the one it rolled
-  batch.set(doc(db, ABILITIES_COLLECTION, ref.id), {
-    abilities: encounter.shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
-  });
-  batch.set(doc(db, ITEMS_COLLECTION, ref.id), { items: [] });
-  batch.set(doc(db, OWNERS_COLLECTION, ref.id), {
-    history: [{ owner: user.uid, acquiredAt: caughtAt }],
-  });
-  await batch.commit();
 
   return ref.id;
 }
@@ -291,34 +318,6 @@ export async function hasCaughtSpecies(owner: string, species: Species): Promise
 }
 
 /**
- * The catch's enabled abilities; starts as the spawn's rolled
- * ability
- */
-export async function getCaughtAbilities(id: string): Promise<Abilities[]> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), ABILITIES_COLLECTION, id));
-
-  return asNumberArray(snapshot.data()?.abilities) as Abilities[];
-}
-
-/**
- * The held-item document's reference. Exported so a store that needs
- * the held items mid-transaction (evolution, say) can read them
- * without a second round trip
- */
-export function getCaughtItemsRef(id: string): DocumentReference {
-  return doc(getFirebaseFirestore(), ITEMS_COLLECTION, id);
-}
-
-/**
- * The catch's held items; starts empty
- */
-export async function getCaughtItems(id: string): Promise<Items[]> {
-  const snapshot = await getDoc(getCaughtItemsRef(id));
-
-  return asNumberArray(snapshot.data()?.items) as Items[];
-}
-
-/**
  * How many items one pokemon can hold at a time, matching the
  * battle's per-unit item limit
  */
@@ -339,16 +338,13 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
   const db = getFirebaseFirestore();
 
   return runTransaction(db, async (transaction) => {
-    const caught = (await transaction.get(getCaughtRef(catchId))).data();
+    const caughtRef = getCaughtRef(catchId);
+    const caught = (await transaction.get(caughtRef)).data();
 
     if (caught == null || caught.owner !== uid) {
       return false;
     }
-
-    const itemsRef = getCaughtItemsRef(catchId);
-    const held = asNumberArray((await transaction.get(itemsRef)).data()?.items) as Items[];
-
-    if (held.length >= HELD_ITEM_LIMIT) {
+    if (caught.items.length >= HELD_ITEM_LIMIT) {
       return false;
     }
 
@@ -360,7 +356,7 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
     }
 
     transaction.set(stackRef, { user: uid, item, amount: amount - 1 });
-    transaction.set(itemsRef, { items: [...held, item] });
+    transaction.update(caughtRef, { items: [...caught.items, item] });
     return true;
   });
 }
@@ -373,15 +369,14 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
   const db = getFirebaseFirestore();
 
   return runTransaction(db, async (transaction) => {
-    const caught = (await transaction.get(getCaughtRef(catchId))).data();
+    const caughtRef = getCaughtRef(catchId);
+    const caught = (await transaction.get(caughtRef)).data();
 
     if (caught == null || caught.owner !== uid) {
       return false;
     }
 
-    const itemsRef = getCaughtItemsRef(catchId);
-    const held = asNumberArray((await transaction.get(itemsRef)).data()?.items) as Items[];
-    const index = held.indexOf(item);
+    const index = caught.items.indexOf(item);
 
     if (index < 0) {
       return false;
@@ -392,25 +387,8 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
 
     // Only the one copy comes off, so a future stack of duplicates
     // still gives back exactly what it took
-    transaction.set(itemsRef, { items: held.filter((_, at) => at !== index) });
+    transaction.update(caughtRef, { items: caught.items.filter((_, at) => at !== index) });
     transaction.set(stackRef, { user: uid, item, amount: amount + 1 });
     return true;
-  });
-}
-
-/**
- * The catch's ownership history, oldest first; trades append here
- */
-export async function getOwnershipHistory(id: string): Promise<OwnershipRecord[]> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), OWNERS_COLLECTION, id));
-  const history: unknown = snapshot.data()?.history;
-
-  if (!Array.isArray(history)) {
-    return [];
-  }
-  return history.map((entry) => {
-    const record = asRecord(entry);
-
-    return { owner: asString(record.owner), acquiredAt: asNumber(record.acquiredAt) };
   });
 }

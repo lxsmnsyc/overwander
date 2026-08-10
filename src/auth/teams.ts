@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import { asNumber, asString, asStringArray } from './__normalize';
 import { type CatchSnapshot, asCatchSnapshot, createCatchSnapshot } from './catch-snapshot';
-import { getCaught, getCaughtAbilities, getCaughtItems, listOwned } from './caught';
+import { getCaught, listOwned } from './caught';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -137,15 +137,11 @@ export async function createTeamSnapshot(
 ): Promise<string | null> {
   const catches = await Promise.all(
     team.catches.map(async (id) => {
-      const [caught, abilities, items] = await Promise.all([
-        getCaught(id),
-        getCaughtAbilities(id),
-        getCaughtItems(id),
-      ]);
+      const caught = await getCaught(id);
 
       return caught == null || caught.owner !== team.player
         ? null
-        : createCatchSnapshot(id, caught, abilities, items);
+        : createCatchSnapshot(id, caught);
     }),
   );
   const fielded = catches.filter((entry): entry is CatchSnapshot => entry != null);

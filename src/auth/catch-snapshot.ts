@@ -45,14 +45,9 @@ export interface CatchSnapshot {
 }
 
 /**
- * Copy a catch and its side stores into a snapshot
+ * Copy a catch into a snapshot
  */
-export function createCatchSnapshot(
-  id: string,
-  caught: CaughtPokemon,
-  abilities: Abilities[],
-  items: Items[],
-): CatchSnapshot {
+export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSnapshot {
   // Size is derived from the trait value against the species standing
   // now, so an evolution taken before the raid is already reflected
   const size = deriveSize(caught.species, caught.traitValue);
@@ -69,8 +64,8 @@ export function createCatchSnapshot(
     weight: size.weight,
     shiny: caught.shiny,
     moves: caught.moves,
-    abilities,
-    items,
+    abilities: caught.abilities,
+    items: caught.items,
   };
 }
 

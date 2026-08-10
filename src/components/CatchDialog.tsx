@@ -1,14 +1,6 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
-import {
-  type CaughtPokemon,
-  HELD_ITEM_LIMIT,
-  getCaught,
-  getCaughtAbilities,
-  getCaughtItems,
-  giveItem,
-  takeItem,
-} from '../auth/caught';
+import { type CaughtPokemon, HELD_ITEM_LIMIT, getCaught, giveItem, takeItem } from '../auth/caught';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
@@ -48,23 +40,12 @@ const STAT_ORDER: Stats[] = [
   Stats.Speed,
 ];
 
-interface CatchDetail {
-  caught: CaughtPokemon;
-  abilities: number[];
-  items: Items[];
-}
-
-async function loadDetail(catchId: string): Promise<CatchDetail | null> {
-  const [caught, abilities, items] = await Promise.all([
-    getCaught(catchId),
-    getCaughtAbilities(catchId),
-    getCaughtItems(catchId),
-  ]);
-
-  if (caught == null) {
-    return null;
-  }
-  return { caught, abilities, items };
+/**
+ * A catch is one document — abilities, held items and ownership
+ * history included — so the dialog opens on a single read
+ */
+async function loadDetail(catchId: string): Promise<CaughtPokemon | null> {
+  return getCaught(catchId);
 }
 
 /**
@@ -148,9 +129,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       const uid = owned();
       const catchId = props.catchId;
 
-      return uid == null || catchId == null
-        ? null
-        : ([uid, catchId, detail()?.caught.species] as const);
+      return uid == null || catchId == null ? null : ([uid, catchId, detail()?.species] as const);
     },
     async ([uid, catchId]) => listEvolutions(uid, catchId),
   );
@@ -161,7 +140,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    */
   const [candies, { refetch: refetchCandies }] = createResource(
     () => {
-      const species = detail()?.caught.species;
+      const species = detail()?.species;
 
       return species == null ? null : ([props.player, getSpeciesData(species).family] as const);
     },
@@ -257,12 +236,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
-  const view = (): CatchDetail | null => {
+  const view = (): CaughtPokemon | null => {
     const loaded = detail();
 
     // A catch belongs to exactly one player; one opened under
     // someone else's list is a wrong address, not a peek
-    return loaded != null && loaded.caught.owner === props.player ? loaded : null;
+    return loaded != null && loaded.owner === props.player ? loaded : null;
   };
 
   return (
@@ -298,41 +277,41 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
             {(loaded) => (
               <>
                 <DialogTitle>
-                  {loaded().caught.shiny ? '✦ ' : ''}
-                  {getSpeciesData(loaded().caught.species).name}
+                  {loaded().shiny ? '✦ ' : ''}
+                  {getSpeciesData(loaded().species).name}
                 </DialogTitle>
                 <dl>
                   <dt>Level</dt>
-                  <dd>{loaded().caught.level}</dd>
+                  <dd>{loaded().level}</dd>
                   <dt>Gender</dt>
-                  <dd>{GENDER_LABELS[loaded().caught.gender]}</dd>
+                  <dd>{GENDER_LABELS[loaded().gender]}</dd>
                   <dt>Size</dt>
-                  <dd>{describeSize(loaded().caught)}</dd>
+                  <dd>{describeSize(loaded())}</dd>
                   <dt>Nature</dt>
-                  <dd>#{loaded().caught.nature}</dd>
+                  <dd>#{loaded().nature}</dd>
                   <dt>Abilities</dt>
                   <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
                   <dt>Ball</dt>
-                  <dd>{describeItem(BALL_ITEMS[loaded().caught.ball])}</dd>
+                  <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
                   <dt>Held items</dt>
                   <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
                   <dt>Moves</dt>
                   <dd>
                     {loaded()
-                      .caught.moves.map((move) => getMoveData(move).name)
+                      .moves.map((move) => getMoveData(move).name)
                       .join(', ') || 'None'}
                   </dd>
                   <dt>Individual values</dt>
                   <dd>
-                    {STAT_ORDER.map(
-                      (stat) => `${STAT_LABELS[stat]} ${loaded().caught.ivs[stat]}`,
-                    ).join(' · ')}
+                    {STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${loaded().ivs[stat]}`).join(
+                      ' · ',
+                    )}
                   </dd>
                   <dt>Caught</dt>
-                  <dd>{new Date(loaded().caught.caughtAt).toISOString().slice(0, 10)}</dd>
+                  <dd>{new Date(loaded().caughtAt).toISOString().slice(0, 10)}</dd>
                   <dt>Origin</dt>
                   <dd>
-                    Chunk {loaded().caught.origin.x}, {loaded().caught.origin.y}
+                    Chunk {loaded().origin.x}, {loaded().origin.y}
                   </dd>
                 </dl>
 
@@ -385,26 +364,25 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       the line draws on the same pile */}
                   <p>
                     {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
-                    {getSpeciesData(loaded().caught.species).name} family
+                    {getSpeciesData(loaded().species).name} family
                   </p>
                   <p>
                     <button
                       type="button"
                       disabled={
-                        (candies() ?? 0) < getCandyCost(loaded().caught) ||
-                        loaded().caught.level >= MAX_LEVEL
+                        (candies() ?? 0) < getCandyCost(loaded()) || loaded().level >= MAX_LEVEL
                       }
                       onClick={feedCandy}
                     >
-                      {loaded().caught.level >= MAX_LEVEL
+                      {loaded().level >= MAX_LEVEL
                         ? 'Already at the level cap'
-                        : `Level up for ${getCandyCost(loaded().caught)} ${
-                            getCandyCost(loaded().caught) === 1 ? 'candy' : 'candies'
+                        : `Level up for ${getCandyCost(loaded())} ${
+                            getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
                           }`}
                     </button>
                     {/* A shadow keeps the Shadow ability, and pays
                         for it at every level */}
-                    <Show when={loaded().caught.shadow}>
+                    <Show when={loaded().shadow}>
                       {' '}
                       <span>A shadow costs twice as much to raise.</span>
                     </Show>

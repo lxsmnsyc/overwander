@@ -8,7 +8,7 @@ import {
 } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import { asString } from './__normalize';
-import { type CaughtPokemon, getCaught, getCaughtItems } from './caught';
+import { type CaughtPokemon, getCaught } from './caught';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -85,10 +85,7 @@ export async function clearBuddy(uid: string): Promise<void> {
 export async function isBuddyHolding(uid: string, item: Items): Promise<boolean> {
   const buddy = await resolveBuddy(uid);
 
-  if (buddy == null) {
-    return false;
-  }
-  return (await getCaughtItems(buddy[0])).includes(item);
+  return buddy != null && new Set(buddy[1].items).has(item);
 }
 
 /**

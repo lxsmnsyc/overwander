@@ -1,14 +1,9 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
-// oxlint-disable typescript/no-unnecessary-type-assertion
 import { runTransaction } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import type { EvolutionData } from '../data/species';
-import { asNumberArray } from './__normalize';
-import { getCaught, getCaughtItems, getCaughtItemsRef, getCaughtRef } from './caught';
+import { getCaught, getCaughtRef } from './caught';
 import { getFirebaseFirestore } from './firebase';
 import { getInventory, getEntryRef as getInventoryEntryRef } from './inventory';
 
@@ -19,11 +14,7 @@ import { getInventory, getEntryRef as getInventoryEntryRef } from './inventory';
  * is not the user's or nothing qualifies
  */
 export async function listEvolutions(uid: string, catchId: string): Promise<EvolutionData[]> {
-  const [caught, held, inventory] = await Promise.all([
-    getCaught(catchId),
-    getCaughtItems(catchId),
-    getInventory(uid),
-  ]);
+  const [caught, inventory] = await Promise.all([getCaught(catchId), getInventory(uid)]);
 
   if (caught == null || caught.owner !== uid) {
     return [];
@@ -32,7 +23,7 @@ export async function listEvolutions(uid: string, catchId: string): Promise<Evol
   return getAvailableEvolutions(caught.species, {
     level: caught.level,
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
-    held: new Set(held),
+    held: new Set(caught.items),
   });
 }
 
@@ -66,7 +57,6 @@ export async function evolveCatch(
       return null;
     }
 
-    const held = asNumberArray((await transaction.get(getCaughtItemsRef(catchId))).data()?.items);
     const consumed = getConsumedItem(evolution);
     // Only the item this evolution actually needs is read; the rest
     // of the bag has no bearing on the criteria
@@ -84,7 +74,9 @@ export async function evolveCatch(
     const context = {
       level: caught.level,
       carried,
-      held: new Set(held as Items[]),
+      // The catch carries what it holds, so the criteria read the
+      // same document the species change is written back to
+      held: new Set(caught.items),
     };
 
     if (!getAvailableEvolutions(caught.species, context).some((entry) => entry.species === into)) {

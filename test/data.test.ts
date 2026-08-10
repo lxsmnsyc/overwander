@@ -11,6 +11,13 @@ import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import { BALL_ITEMS, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
+import {
+  CANDY_PER_CATCH,
+  CANDY_PER_LEVEL,
+  SHADOW_CANDY_MULTIPLIER,
+  SPECIES_DAY_CANDY_BOOST,
+  getCandyCost,
+} from '../src/auth/candy';
 import registerItems, { getItemData } from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
@@ -171,6 +178,24 @@ describe('species day', () => {
     expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START)).toBe(true);
     expect(isFeaturedSpecies(Species.Charmander, YEAR_START)).toBe(false);
     expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + 200 * DAY)).toBe(false);
+  });
+
+  it('charges a shadow twice the candy per level', () => {
+    expect(getCandyCost({ shadow: false })).toBe(CANDY_PER_LEVEL);
+    expect(getCandyCost({ shadow: true })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
+    expect(getCandyCost({ shadow: true })).toBe(2);
+  });
+
+  it('pays four candies for a catch on the family day', () => {
+    // The catch reward and the spawn weight share the same fourfold
+    // bonus, so a family day is worth the same wherever it lands
+    expect(SPECIES_DAY_CANDY_BOOST).toBe(SPECIES_DAY_WEIGHT_BOOST);
+    expect(CANDY_PER_CATCH * SPECIES_DAY_CANDY_BOOST).toBe(4);
+
+    // Bulbasaur's family opens the year, so its line pays the bonus
+    // that day and nothing else does
+    expect(isFeaturedSpecies(Species.Ivysaur, YEAR_START)).toBe(true);
+    expect(isFeaturedSpecies(Species.Ivysaur, YEAR_START + 200 * DAY)).toBe(false);
   });
 
   it('weights the featured family four times as heavily', () => {

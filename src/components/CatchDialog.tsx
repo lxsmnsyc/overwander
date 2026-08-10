@@ -1,8 +1,10 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { type CaughtPokemon, getCaught, getCaughtAbilities, getCaughtItems } from '../auth/caught';
+import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
+import { MAX_LEVEL } from '../data/constants/levels';
 import { Stats } from '../data/constants/stats';
 import { BALL_ITEMS, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
@@ -113,6 +115,40 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     async ([uid, catchId]) => listEvolutions(uid, catchId),
   );
 
+  /**
+   * The candies behind this catch: the stack is keyed by family, so
+   * every stage of the line spends the same pile
+   */
+  const [candies, { refetch: refetchCandies }] = createResource(
+    () => {
+      const species = detail()?.caught.species;
+
+      return species == null ? null : ([props.player, getSpeciesData(species).family] as const);
+    },
+    async ([player, family]) => getCandyCount(player, family),
+  );
+
+  const feedCandy = (): void => {
+    const uid = owned();
+    const catchId = props.catchId;
+
+    if (uid == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    useCandy(uid, catchId)
+      .then(async (level) => {
+        setStatus(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+        await refetch();
+        await refetchCandies();
+        await refetchEvolutions();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   const evolve = (into: Species): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -217,6 +253,36 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 </dl>
 
                 <Show when={owned()}>
+                  <h3>Candies</h3>
+                  {/* The stack is keyed by family, so every stage of
+                      the line draws on the same pile */}
+                  <p>
+                    {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
+                    {getSpeciesData(loaded().caught.species).name} family
+                  </p>
+                  <p>
+                    <button
+                      type="button"
+                      disabled={
+                        (candies() ?? 0) < getCandyCost(loaded().caught) ||
+                        loaded().caught.level >= MAX_LEVEL
+                      }
+                      onClick={feedCandy}
+                    >
+                      {loaded().caught.level >= MAX_LEVEL
+                        ? 'Already at the level cap'
+                        : `Level up for ${getCandyCost(loaded().caught)} ${
+                            getCandyCost(loaded().caught) === 1 ? 'candy' : 'candies'
+                          }`}
+                    </button>
+                    {/* A shadow keeps the Shadow ability, and pays
+                        for it at every level */}
+                    <Show when={loaded().caught.shadow}>
+                      {' '}
+                      <span>A shadow costs twice as much to raise.</span>
+                    </Show>
+                  </p>
+
                   <h3>Evolution</h3>
                   <Show when={!evolutions.loading} fallback={<p>Checking evolutions…</p>}>
                     <Show

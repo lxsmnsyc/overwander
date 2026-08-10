@@ -16,7 +16,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { Stats } from '../data/constants/stats';
-import type Abilities from '../data/ids/abilities';
+import Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -58,6 +58,11 @@ export interface CaughtPokemon {
    * catch time so trades cannot change it
    */
   shiny: boolean;
+  /**
+   * Whether it came out of a shadow raid. A shadow keeps its Shadow
+   * ability and costs twice the candy to raise
+   */
+  shadow: boolean;
   moves: Moves[];
   /**
    * The ball the catch was made with
@@ -113,6 +118,7 @@ const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
       gender: asNumber(data.gender) as Genders,
       nature: asNumber(data.nature) as Natures,
       shiny: data.shiny === true,
+      shadow: data.shadow === true,
       moves: asNumberArray(data.moves) as Moves[],
       ball: asNumber(data.ball) as Balls,
       caughtAt: asNumber(data.caughtAt),
@@ -177,6 +183,7 @@ export async function recordCatch(
     gender: encounter.gender,
     nature: encounter.nature,
     shiny: encounter.shiny,
+    shadow: encounter.shadow,
     moves: encounter.moves,
     ball,
     caughtAt,
@@ -188,7 +195,11 @@ export async function recordCatch(
       biome: encounter.biome,
     },
   });
-  batch.set(doc(db, ABILITIES_COLLECTION, ref.id), { abilities: [encounter.ability] });
+  // A shadow raid's reward keeps its Shadow ability for good, on top
+  // of the one it rolled
+  batch.set(doc(db, ABILITIES_COLLECTION, ref.id), {
+    abilities: encounter.shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
+  });
   batch.set(doc(db, ITEMS_COLLECTION, ref.id), { items: [] });
   batch.set(doc(db, OWNERS_COLLECTION, ref.id), {
     history: [{ owner: user.uid, acquiredAt: caughtAt }],

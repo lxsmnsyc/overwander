@@ -59,7 +59,8 @@ rather than species, because a candy feeds any catch in its family.
 | `family` | `Families` | Numeric family id from the `Families` enum    |
 | `count`  | `number`   | How many are held; never goes below zero      |
 
-`useCandy(uid, catchId)` spends one candy to raise a catch by a level. It reads
+`useCandy(uid, catchId)` spends `getCandyCost(caught)` candies to raise a catch
+by a level — one for an ordinary catch, two for a shadow. It reads
 the catch and the stack, then writes both **inside one transaction**, so a candy
 can never be spent without the level landing. It resolves the new level, or null
 when the catch is not the user's, its species' family does not match a stack the
@@ -123,6 +124,7 @@ Firestore auto-id, and the three side stores are keyed by that same id.
 | `gender`               | `Genders`               |                                                           |
 | `nature`               | `Natures`               |                                                           |
 | `shiny`                | `boolean`               | Frozen at catch time; trades cannot change it             |
+| `shadow`               | `boolean`               | From a shadow raid; keeps Shadow, costs double candy      |
 | `moves`                | `Moves[]`               |                                                           |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `number`                | Server-clock milliseconds (see below)                     |
@@ -207,6 +209,18 @@ gender, ability, nature, moves, …) derived once and reused afterwards.
 
 Holds every field of `Encounter` plus `spawn` (the spawn document id) and
 `player` (the uid). Only the named player may read or write it.
+
+Two fields are worth calling out. `shiny` is a resonance between the trainer id
+and the **trait** value, so shininess is independent of the IVs a pokemon
+rolled and the same spawn can sparkle for one player and not another. `shadow`
+marks a shadow raid's reward: `recordCatch` then writes `Abilities.Shadow` into
+`caughtAbilities` alongside the rolled one, so the catch keeps it for good.
+
+A raid reward derived on its family's own day floors every IV at
+`RAID_FAMILY_DAY_MIN_IV` (6); rolls above the floor are left alone. Its level is
+fixed rather than rolled — `LEGENDARY_RAID_REWARD_LEVEL` (50) or
+`SHADOW_RAID_REWARD_LEVEL` (25) — so clearing the same kind of raid is worth the
+same to everyone, and the level-up moves follow that level.
 
 ### `cacheClaims/{chunkSeed}@{timestamp}${cell}:{uid}`
 

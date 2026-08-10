@@ -15,9 +15,10 @@ import {
 } from 'firebase/firestore';
 import { MAX_LEVEL } from '../data/constants/levels';
 import type Families from '../data/ids/families';
-import { getSpeciesData } from '../data/species';
+import type { Species } from '../data/ids/species';
+import { getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { asNumber, asString } from './__normalize';
-import { getCaughtRef } from './caught';
+import { type CaughtPokemon, getCaughtRef } from './caught';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -88,6 +89,32 @@ export async function getCandyCount(uid: string, family: Families): Promise<numb
 }
 
 /**
+ * What one catch is worth in candies, and what the family's own day
+ * multiplies that to — the same fourfold bonus the species day gives
+ * the spawn pool
+ */
+export const CANDY_PER_CATCH = 1;
+export const SPECIES_DAY_CANDY_BOOST = 4;
+
+/**
+ * Reward a catch with its family's candy. Catching on the family's
+ * own day pays four times as much
+ */
+export async function grantCatchCandy(
+  uid: string,
+  species: Species,
+  timestamp: number,
+): Promise<number> {
+  const { family } = getSpeciesData(species);
+  const count = isFeaturedSpecies(species, timestamp)
+    ? CANDY_PER_CATCH * SPECIES_DAY_CANDY_BOOST
+    : CANDY_PER_CATCH;
+
+  await grantCandy(uid, family, count);
+  return count;
+}
+
+/**
  * Add candies to a family's stack, creating it on first acquisition
  */
 export async function grantCandy(uid: string, family: Families, count = 1): Promise<void> {
@@ -100,12 +127,27 @@ export async function grantCandy(uid: string, family: Families, count = 1): Prom
 }
 
 /**
- * Spend one candy to raise a catch of the same family by a level.
+ * What one level costs in candies. A shadow is harder to raise: the
+ * Shadow ability it keeps is paid for twice over at every level
+ */
+export const CANDY_PER_LEVEL = 1;
+export const SHADOW_CANDY_MULTIPLIER = 2;
+
+/**
+ * What raising this catch by one level costs
+ */
+export function getCandyCost(caught: Pick<CaughtPokemon, 'shadow'>): number {
+  return caught.shadow ? CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER : CANDY_PER_LEVEL;
+}
+
+/**
+ * Spend candies to raise a catch of the same family by a level — one
+ * for an ordinary catch, two for a shadow.
  * The candy and the level move together in one transaction, so a
  * candy can never be spent without the level landing. Resolves the
  * new level, or null when the feeding is refused: the catch is not
- * the user's, the family does not match the stack, the user holds no
- * candy of that family, or the catch already sits at MAX_LEVEL
+ * the user's, the family does not match the stack, the user cannot
+ * cover the cost, or the catch already sits at MAX_LEVEL
  */
 export async function useCandy(uid: string, catchId: string): Promise<number | null> {
   return runTransaction(getFirebaseFirestore(), async (transaction) => {
@@ -119,14 +161,15 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
     const { family } = getSpeciesData(caught.species);
     const stackRef = getStackRef(uid, family);
     const count = (await transaction.get(stackRef)).data()?.count ?? 0;
+    const cost = getCandyCost(caught);
 
-    if (count < 1) {
+    if (count < cost) {
       return null;
     }
 
     const level = caught.level + 1;
 
-    transaction.set(stackRef, { user: uid, family, count: count - 1 });
+    transaction.set(stackRef, { user: uid, family, count: count - cost });
     transaction.set(caughtRef, { ...caught, level });
     return level;
   });

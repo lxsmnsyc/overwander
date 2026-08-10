@@ -8,7 +8,7 @@ import {
   onCleanup,
 } from 'solid-js';
 import { BattleOutcome, finishBattle, getBattle, listBattleTeams } from '../auth/battles';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid } from '../auth/raids';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
 import { type RaidBattle, createRaidBattle, isAllianceDown } from '../overworld/raid';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
@@ -127,7 +127,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         // The legendary is met back in the overworld, where the
         // player is standing
         if (raid != null) {
-          game.setReward({ raid: raidId, species: raid.species });
+          game.setReward({
+            raid: raidId,
+            species: raid.species,
+            shadow: raid.kind === RaidKind.Shadow,
+          });
         }
       }
     })().catch((caught: unknown) => {

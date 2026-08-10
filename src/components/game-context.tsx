@@ -40,6 +40,10 @@ export interface ActiveBattle {
 export interface PendingReward {
   raid: string;
   species: Species;
+  /**
+   * A shadow raid's reward keeps the Shadow ability once caught
+   */
+  shadow: boolean;
 }
 
 export interface GameState {

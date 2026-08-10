@@ -21,9 +21,10 @@ export interface ItemRarityGroups {
 }
 
 /**
- * The overworld item pool: for now the balls and the evolution
- * items, with plain balls as the commons, utility balls uncommon,
- * evolution stones rare and the Master Ball one-per-world class
+ * The overworld item pool: for now the balls, the evolution items
+ * and the Shiny Charm, with plain balls as the commons, utility
+ * balls uncommon, evolution stones rare, and the Master Ball and
+ * Shiny Charm in the one-per-world class
  */
 export const ITEM_POOL: ItemRarityGroups = {
   base: [
@@ -50,7 +51,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
   ],
-  special: [{ item: Items.MasterBall, weight: 10 }],
+  special: [
+    { item: Items.MasterBall, weight: 10 },
+    { item: Items.ShinyCharm, weight: 10 },
+  ],
 };
 
 /**

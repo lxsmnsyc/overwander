@@ -19,6 +19,15 @@ import { deriveAbility, deriveMoves, deriveNature } from './encounter';
 export const RAID_BOSS_LEVEL = MAX_LEVEL;
 
 /**
+ * The reward comes at a fixed level rather than a rolled one, so
+ * clearing the same raid is worth the same to everyone. A legendary
+ * arrives half-grown; a shadow, being the commoner prize, arrives
+ * lower still
+ */
+export const LEGENDARY_RAID_REWARD_LEVEL = 50;
+export const SHADOW_RAID_REWARD_LEVEL = 25;
+
+/**
  * The highest an individual value goes; a raid boss has them all
  */
 export const PERFECT_IV = 31;

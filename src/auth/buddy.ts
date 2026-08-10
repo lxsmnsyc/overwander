@@ -6,8 +6,9 @@ import {
   getDoc,
   setDoc,
 } from 'firebase/firestore';
+import type { Items } from '../data/ids/items';
 import { asString } from './__normalize';
-import { type CaughtPokemon, getCaught } from './caught';
+import { type CaughtPokemon, getCaught, getCaughtItems } from './caught';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -74,6 +75,20 @@ export async function setBuddy(uid: string, catchId: string): Promise<boolean> {
  */
 export async function clearBuddy(uid: string): Promise<void> {
   await deleteDoc(getBuddyRef(uid));
+}
+
+/**
+ * Whether the player's buddy is holding the item. Overworld item
+ * effects read it — the Shiny Charm's boost, for one — so a buddy
+ * that has changed hands or been sent back answers false
+ */
+export async function isBuddyHolding(uid: string, item: Items): Promise<boolean> {
+  const buddy = await resolveBuddy(uid);
+
+  if (buddy == null) {
+    return false;
+  }
+  return (await getCaughtItems(buddy[0])).includes(item);
 }
 
 /**

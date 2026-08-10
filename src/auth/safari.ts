@@ -10,6 +10,7 @@ import SafariSession, {
   encounterKey,
 } from '../overworld/safari';
 import { asStringArray } from './__normalize';
+import { grantCatchCandy } from './candy';
 import { hasCaughtSpecies, recordCatch } from './caught';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
@@ -101,7 +102,12 @@ export async function throwBall(user: User, session: SafariSession): Promise<Thr
   const result = session.throwBall();
 
   if (result === ThrowResult.Caught) {
-    await recordCatch(user, session.encounter, session.ball);
+    const caughtAt = await syncServerClock();
+
+    await recordCatch(user, session.encounter, session.ball, caughtAt);
+    // Every catch pays its family's candy, fourfold on the family's
+    // own day
+    await grantCatchCandy(user.uid, session.encounter.species, caughtAt);
   } else if (result === ThrowResult.Fled) {
     await markFled(user.uid, session.encounter);
   }

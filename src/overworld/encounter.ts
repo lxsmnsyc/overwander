@@ -76,6 +76,11 @@ export interface Encounter {
    */
   shiny: boolean;
   /**
+   * Whether the pokemon is shadowed: a shadow raid's reward carries
+   * the Shadow ability for good, alongside its own
+   */
+  shadow: boolean;
+  /**
    * The last (up to) four level-up moves learnable at this level
    */
   moves: Moves[];
@@ -117,6 +122,18 @@ const HIDDEN_ABILITY_BAND = TRAIT_RANGE / 8;
 const MOVE_LIMIT = 4;
 
 /**
+ * A raid cleared on the featured family's own day hands over a
+ * pokemon with no hopeless stat: every individual value starts here
+ */
+export const RAID_FAMILY_DAY_MIN_IV = 6;
+
+/**
+ * What the Shiny Charm is worth when the player's buddy is holding
+ * it: every encounter sparkles eight times as readily
+ */
+export const SHINY_CHARM_BOOST = 8;
+
+/**
  * XOR results under this sparkle: 16 in 65536, i.e. the modern
  * 1/4096 shiny odds
  */
@@ -128,16 +145,18 @@ const HALF_MASK = 0xffff;
 /**
  * The mainline shiny formula, adapted: the user id hashes into a
  * stable 32-bit "trainer value" whose 16-bit halves XOR against the
- * individual value's halves — shininess is a resonance between
- * trainer and pokemon, so each trainer sees their own shinies
+ * trait value's halves — shininess is a resonance between trainer
+ * and pokemon, so each trainer sees their own shinies. It reads the
+ * trait value rather than the individual one, keeping the sparkle
+ * independent of the IVs a pokemon rolled
  */
-export function isShinyFor(userId: string, individualValue: number, boost = 1): boolean {
+export function isShinyFor(userId: string, traitValue: number, boost = 1): boolean {
   const trainerValue = new AleaRNG(userId).int32();
   const shininess =
     (trainerValue >>> HALF_BITS) ^
     (trainerValue & HALF_MASK) ^
-    (individualValue >>> HALF_BITS) ^
-    (individualValue & HALF_MASK);
+    (traitValue >>> HALF_BITS) ^
+    (traitValue & HALF_MASK);
 
   // A boost widens the band that sparkles: at 8x the odds go from
   // 1/4096 to 1/512, which is the species day's shiny bonus
@@ -199,12 +218,45 @@ export function deriveMoves(species: Species, level: number): Moves[] {
   return learned.slice(-MOVE_LIMIT);
 }
 
+/**
+ * What the meeting was, beyond the spawn tuple itself
+ */
+export interface EncounterOptions {
+  /**
+   * How the pokemon is being met; a snapshot spawn is a wild meeting
+   */
+  type?: EncounterType;
+  /**
+   * A fixed level, overriding the one the trait value would roll.
+   * Raid rewards come this way, so the prize is the same for every
+   * player who cleared the same kind of raid
+   */
+  level?: number;
+  /**
+   * Whether it comes out of a shadow raid, and so keeps the Shadow
+   * ability for good
+   */
+  shadow?: boolean;
+  /**
+   * An extra multiplier on the shiny odds, from whatever the player
+   * brought along — the Shiny Charm, for one. It stacks with the
+   * species day's own boost
+   */
+  shinyBoost?: number;
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
   userId?: string,
+  options: EncounterOptions = {},
 ): Encounter {
   const [species, individualValue, traitValue] = spawn;
+  const type = options.type ?? EncounterType.Wild;
+  const featured = isFeaturedSpecies(species, snapshot.timestamp);
+  // A raid staged on the family's own day hands over a pokemon worth
+  // keeping: no stat comes out of it hopeless
+  const minimumIV = type === EncounterType.Raid && featured ? RAID_FAMILY_DAY_MIN_IV : 0;
 
   // Slices in trait order: level, gender, ability, nature — the last
   // two are read by deriveAbility and deriveNature
@@ -212,16 +264,20 @@ export default function deriveEncounter(
   const genderSlice = (traitValue >>> TRAIT_BITS) & TRAIT_MASK;
 
   const level =
+    options.level ??
     MIN_SPAWN_LEVEL +
-    Math.floor((levelSlice / TRAIT_RANGE) * (MAX_SPAWN_LEVEL - MIN_SPAWN_LEVEL + 1));
+      Math.floor((levelSlice / TRAIT_RANGE) * (MAX_SPAWN_LEVEL - MIN_SPAWN_LEVEL + 1));
+
+  const sliceIV = (index: number): number =>
+    Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);
 
   const ivs: Record<Stats, number> = {
-    [Stats.HP]: individualValue & IV_MASK,
-    [Stats.Attack]: (individualValue >>> IV_BITS) & IV_MASK,
-    [Stats.Defense]: (individualValue >>> (IV_BITS * 2)) & IV_MASK,
-    [Stats.SpecialAttack]: (individualValue >>> (IV_BITS * 3)) & IV_MASK,
-    [Stats.SpecialDefense]: (individualValue >>> (IV_BITS * 4)) & IV_MASK,
-    [Stats.Speed]: (individualValue >>> (IV_BITS * 5)) & IV_MASK,
+    [Stats.HP]: sliceIV(0),
+    [Stats.Attack]: sliceIV(1),
+    [Stats.Defense]: sliceIV(2),
+    [Stats.SpecialAttack]: sliceIV(3),
+    [Stats.SpecialDefense]: sliceIV(4),
+    [Stats.Speed]: sliceIV(5),
   };
 
   const data = getSpeciesData(species);
@@ -244,8 +300,7 @@ export default function deriveEncounter(
   const nature = deriveNature(traitValue);
 
   return {
-    // A snapshot spawn is always a wild meeting
-    type: EncounterType.Wild,
+    type,
     species,
     level,
     individualValue,
@@ -254,14 +309,16 @@ export default function deriveEncounter(
     nature,
     ability,
     gender,
-    // The day's featured family sparkles eight times as often
+    // The day's featured family sparkles eight times as often, and
+    // whatever the player carries multiplies that further
     shiny:
       userId != null &&
       isShinyFor(
         userId,
-        individualValue,
-        isFeaturedSpecies(species, snapshot.timestamp) ? SPECIES_DAY_SHINY_BOOST : 1,
+        traitValue,
+        (featured ? SPECIES_DAY_SHINY_BOOST : 1) * (options.shinyBoost ?? 1),
       ),
+    shadow: options.shadow === true,
     moves,
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,

@@ -13,11 +13,17 @@ import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import type Chunk from '../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../src/overworld/chunk-snapshot';
-import { RAID_BOSS_LEVEL, createRaidBossSnapshot } from '../../src/overworld/raid';
+import {
+  LEGENDARY_RAID_REWARD_LEVEL,
+  RAID_BOSS_LEVEL,
+  SHADOW_RAID_REWARD_LEVEL,
+  createRaidBossSnapshot,
+} from '../../src/overworld/raid';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import deriveEncounter, {
   EncounterType,
   deriveAbility,
+  deriveMoves,
   deriveNature,
   isShinyFor,
 } from '../../src/overworld/encounter';
@@ -548,8 +554,9 @@ describe('chunk snapshot', () => {
   });
 
   it('sparkles per trainer via the halved XOR resonance', () => {
-    // Reproduce the trainer hash and craft a resonant individual
-    // value: high half = trainer halves' XOR, low half = 0
+    // Reproduce the trainer hash and craft a resonant trait value:
+    // high half = trainer halves' XOR, low half = 0. Shininess reads
+    // the trait value, so the IVs have no say in it
     const trainerValue = new AleaRNG('trainer-red').int32();
     const halves = (trainerValue >>> 16) ^ (trainerValue & 0xffff);
     const shinyValue = (halves << 16) >>> 0;
@@ -567,8 +574,91 @@ describe('chunk snapshot', () => {
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
     const species = snapshot.getSpawns(1)[0][0];
 
-    expect(deriveEncounter(snapshot, [species, shinyValue, 0], 'trainer-red').shiny).toBe(true);
-    expect(deriveEncounter(snapshot, [species, shinyValue, 0]).shiny).toBe(false);
+    expect(deriveEncounter(snapshot, [species, 0, shinyValue], 'trainer-red').shiny).toBe(true);
+    expect(deriveEncounter(snapshot, [species, 0, shinyValue]).shiny).toBe(false);
+
+    // Two pokemon sharing a trait value sparkle alike however their
+    // individual values differ
+    expect(deriveEncounter(snapshot, [species, 0xffffffff, shinyValue], 'trainer-red').shiny).toBe(
+      true,
+    );
+  });
+
+  it('floors a family-day raid reward at six in every IV', () => {
+    const world = new World('overworld');
+    // The first day of the year features Bulbasaur's family
+    const day = Date.UTC(2026, 0, 1);
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), day);
+    // Every IV slice zero, so nothing but the floor can lift them
+    const spawn = [Species.Bulbasaur, 0, 0] as const;
+
+    const raid = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+      type: EncounterType.Raid,
+    });
+
+    expect(Object.values(raid.ivs)).toEqual([6, 6, 6, 6, 6, 6]);
+
+    // Only raids on the family's own day get the floor
+    const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
+
+    expect(Object.values(wild.ivs)).toEqual([0, 0, 0, 0, 0, 0]);
+
+    const offDay = new ChunkSnapshot(world.getChunk(0, 0), day + 200 * 24 * 60 * 60 * 1000);
+
+    expect(
+      Object.values(
+        deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.Raid }).ivs,
+      ),
+    ).toEqual([0, 0, 0, 0, 0, 0]);
+
+    // A rolled value above the floor is left alone
+    const rolled = deriveEncounter(snapshot, [Species.Bulbasaur, 0xffffffff, 0], 'trainer-red', {
+      type: EncounterType.Raid,
+    });
+
+    expect(Object.values(rolled.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
+  });
+
+  it('marks a shadow raid reward as shadowed', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    const spawn = [Species.Gyarados, 0, 0] as const;
+
+    expect(
+      deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+        type: EncounterType.Raid,
+        shadow: true,
+      }).shadow,
+    ).toBe(true);
+
+    // Everything else is an ordinary meeting
+    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').shadow).toBe(false);
+  });
+
+  it('hands raid rewards over at a fixed level', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    // A trait value that would otherwise roll a high level
+    const spawn = [Species.Gyarados, 0, 0xffffffff] as const;
+
+    const legendary = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+      type: EncounterType.Raid,
+      level: LEGENDARY_RAID_REWARD_LEVEL,
+    });
+    const shadow = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+      type: EncounterType.Raid,
+      level: SHADOW_RAID_REWARD_LEVEL,
+      shadow: true,
+    });
+
+    expect(legendary.level).toBe(50);
+    expect(shadow.level).toBe(25);
+
+    // The moves follow the fixed level, not the rolled one
+    expect(legendary.moves).toEqual(deriveMoves(Species.Gyarados, 50));
+
+    // A wild meeting still rolls its level from the trait value
+    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').level).not.toBe(50);
   });
 
   it('rolls hidden abilities at their rarer odds', () => {

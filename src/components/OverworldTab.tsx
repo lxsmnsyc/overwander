@@ -32,6 +32,7 @@ import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import pickStartPosition from '../overworld/start';
 import { EncounterType } from '../overworld/encounter';
+import { LEGENDARY_RAID_REWARD_LEVEL, SHADOW_RAID_REWARD_LEVEL } from '../overworld/raid';
 import type SafariSession from '../overworld/safari';
 import SafariDialog from './SafariDialog';
 import { GameTab, type PendingReward, useGame } from './game-context';
@@ -276,13 +277,11 @@ export default function OverworldTab(): JSX.Element {
     reward: PendingReward,
   ): Promise<void> => {
     const [spawnId, spawn] = deriveRaidReward(reward.raid, user.uid, reward.species);
-    const encounter = await startEncounter(
-      user,
-      loaded.snapshot,
-      `${spawnId}:${user.uid}`,
-      spawn,
-      EncounterType.Raid,
-    );
+    const encounter = await startEncounter(user, loaded.snapshot, `${spawnId}:${user.uid}`, spawn, {
+      type: EncounterType.Raid,
+      shadow: reward.shadow,
+      level: reward.shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
+    });
 
     setSession(await createSafariSession(user, encounter));
   };

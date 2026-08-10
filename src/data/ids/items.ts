@@ -76,6 +76,8 @@ export const enum Items {
   TimerBall = 26,
   QuickBall = 27,
   DuskBall = 28,
+  // Key items
+  ShinyCharm = 29,
 }
 
 /**

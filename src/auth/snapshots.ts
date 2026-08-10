@@ -23,9 +23,15 @@ import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
-import deriveEncounter, { type Encounter, EncounterType } from '../overworld/encounter';
-import type { Items } from '../data/ids/items';
+import deriveEncounter, {
+  type Encounter,
+  type EncounterOptions,
+  type EncounterType,
+  SHINY_CHARM_BOOST,
+} from '../overworld/encounter';
+import { Items } from '../data/ids/items';
 import { asNumber, asNumberArray, asStatRecord, asString } from './__normalize';
+import { isBuddyHolding } from './buddy';
 import { serverNow, syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 import { grantItem } from './inventory';
@@ -118,6 +124,7 @@ const encounterConverter: FirestoreDataConverter<EncounterRecord> = {
       ability: asNumber(data.ability) as Abilities,
       gender: asNumber(data.gender) as Genders,
       shiny: data.shiny === true,
+      shadow: data.shadow === true,
       moves: asNumberArray(data.moves) as Moves[],
       timestamp: asNumber(data.timestamp),
       x: asNumber(data.x),
@@ -380,7 +387,7 @@ export async function startEncounter(
   snapshot: ChunkSnapshot,
   id: string,
   spawn: Spawn,
-  type = EncounterType.Wild,
+  options: EncounterOptions = {},
 ): Promise<Encounter> {
   const ref = doc(getFirebaseFirestore(), ENCOUNTER_COLLECTION, `${id}:${user.uid}`).withConverter(
     encounterConverter,
@@ -392,8 +399,14 @@ export async function startEncounter(
   }
 
   // Snapshot spawns are wild meetings; a raid reward carries its own
-  // type, which the safari session reads (raid encounters never flee)
-  const encounter = { ...deriveEncounter(snapshot, spawn, user.uid), type };
+  // type (raid encounters never flee) and, from a shadow raid, its
+  // permanent Shadow ability. A buddy holding the Shiny Charm lifts
+  // the odds of every meeting the player has
+  const charm = await isBuddyHolding(user.uid, Items.ShinyCharm);
+  const encounter = deriveEncounter(snapshot, spawn, user.uid, {
+    ...options,
+    shinyBoost: (options.shinyBoost ?? 1) * (charm ? SHINY_CHARM_BOOST : 1),
+  });
 
   await setDoc(ref, { ...encounter, spawn: id, player: user.uid });
   return encounter;

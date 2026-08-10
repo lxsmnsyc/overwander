@@ -22,6 +22,13 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * Snapshots quantize the day into 5-minute windows, so every
  * observer of a chunk within the same window shares one timestamp
  */
+/**
+ * How many pokemon a window holds for an ordinary walker. A lure adds
+ * LURE_SPAWN_BONUS more on top, which the window always rolls so that
+ * every player of the chunk shares one set of rolls
+ */
+export const SPAWN_COUNT = 6;
+
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
 /**
@@ -87,7 +94,7 @@ export default class ChunkSnapshot {
    * featured family carries four times its usual weight, so its
    * members crowd the rolls wherever they live
    */
-  private getBoostedPool(): SpawnRarityGroups {
+  private getPool(): SpawnRarityGroups {
     const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
     const featured = getFeaturedFamily(this.timestamp);
 
@@ -106,7 +113,7 @@ export default class ChunkSnapshot {
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
-      const pool = this.getBoostedPool();
+      const pool = this.getPool();
       const spawns: Spawn[] = [];
       const occupied = this.chunk.getLandmarkCells();
       const free = centeredCells(SPAWN_AREA).filter((cell) => !occupied.has(cell));

@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
+import type Chunk from '../overworld/chunk';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
 
@@ -90,6 +91,20 @@ export function asRaidRecord(value: unknown): RaidRecord {
     cell: asNumber(data.cell),
     cleared: data.cleared === true,
   };
+}
+/**
+ * The lobby id of a raid landmark in a given raid hour. The kind is
+ * part of it, so the two landmark types never collide on a cell
+ */
+export function raidId(
+  chunk: Chunk,
+  raidTimestamp: number,
+  cell: number,
+  kind: RaidKind = RaidKind.Legendary,
+): string {
+  const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
+
+  return `${chunk.seed}@${raidTimestamp}$${tag}${cell}`;
 }
 /**
  * The reward for clearing a raid: the legendary as a meetable spawn.

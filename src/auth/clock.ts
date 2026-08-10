@@ -5,7 +5,14 @@
  * is in. Everything time-bound reads the server's clock through
  * here: one round trip measures the offset between the two clocks,
  * and every later read derives from it locally until the offset goes
- * stale
+ * stale.
+ *
+ * The times themselves are epoch milliseconds, which carry no
+ * timezone. Where a calendar is read out of one — the day of the year
+ * the species day turns on, a catch date — it is read in UTC, which
+ * the server pins for its own process (`src/server/timezone.ts`), so
+ * every player's day begins at the same instant whatever the host
+ * machine is set to
  */
 
 /**

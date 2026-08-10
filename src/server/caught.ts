@@ -42,6 +42,21 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
+ * Whether the player owns any pokemon at all. A raid asks this of
+ * everyone who walks in, and the answer is a yes or no, so it reads a
+ * single document
+ */
+export async function hasAnyCaught(uid: string): Promise<boolean> {
+  const owned = await getAdminFirestore()
+    .collection(CAUGHT_COLLECTION)
+    .where('owner', '==', uid)
+    .limit(1)
+    .get();
+
+  return !owned.empty;
+}
+
+/**
  * Record the catch of an encounter the player is already in. The
  * encounter is read from `encounters/{spawnId}:{uid}` — the document
  * the server itself wrote when the meeting started — so the species,

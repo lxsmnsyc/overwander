@@ -35,6 +35,16 @@ export const LEGENDARY_RAID_REWARD_LEVEL = 50;
 export const SHADOW_RAID_REWARD_LEVEL = 25;
 
 /**
+ * What clearing one pays, on top of the pokemon. A raid is the only
+ * thing in the game that hands out gold so far, and it pays each
+ * fighter the same purse — the boss decides the amount, not who
+ * landed the last hit. The shadow raid, being the commoner of the
+ * two, pays half
+ */
+export const LEGENDARY_RAID_GOLD = 2000;
+export const SHADOW_RAID_GOLD = 1000;
+
+/**
  * The highest an individual value goes; a raid boss has them all
  */
 export const PERFECT_IV = 31;

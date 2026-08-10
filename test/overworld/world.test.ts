@@ -8,6 +8,7 @@ import registerBiomeSpawns, {
   getSpawnRarity,
 } from '../../src/data/biome';
 import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
+import Natures from '../../src/data/ids/natures';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import registerGen1Moves from '../../src/data/moves/gen-1';
@@ -15,7 +16,7 @@ import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import type Chunk from '../../src/overworld/chunk';
-import ChunkSnapshot, { RAID_INTERVAL } from '../../src/overworld/chunk-snapshot';
+import ChunkSnapshot, { RAID_INTERVAL, SPAWN_COUNT } from '../../src/overworld/chunk-snapshot';
 import {
   BOSS_ALLIANCE,
   LEGENDARY_RAID_REWARD_LEVEL,
@@ -30,7 +31,6 @@ import deriveEncounter, {
   EncounterType,
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
-  SHINY_CHARM_BOOST,
   deriveAbility,
   deriveMoves,
   deriveNature,
@@ -40,7 +40,17 @@ import deriveEncounter, {
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
 import { resolveBerryPatch, resolveHiddenGrotto } from '../../src/overworld/landmarks';
-import World from '../../src/overworld/world';
+import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import type { Buddy } from '../../src/overworld/core';
+import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
+import createOverworld from '../../src/overworld/setup';
+import World, {
+  WORLD_MAX,
+  WORLD_MIN,
+  WORLD_SIZE,
+  clampToWorld,
+  isInWorld,
+} from '../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools;
 // the berry patch reads the item registry to name what it grew, and
@@ -89,6 +99,14 @@ function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | nu
     }
   }
   return null;
+}
+
+/**
+ * A buddy that has the given abilities and nothing else notable: an
+ * Adamant male carrying nothing
+ */
+function buddyWith(abilities: Abilities[]): Buddy {
+  return { abilities, items: [], nature: Natures.Adamant, gender: Genders.Male };
 }
 
 describe('world', () => {
@@ -401,6 +419,88 @@ describe('world', () => {
     // different players spread out
     expect(pickStartPosition(world, 'player-uid')).toEqual(start);
     expect(pickStartPosition(world, 'other-uid')).not.toEqual(start);
+  });
+
+  it('draws two more spawns out for a buddy that lures', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkSpawnCount(SPAWN_COUNT)).toBe(SPAWN_COUNT);
+    expect(createOverworld('player-uid', buddyWith([])).checkSpawnCount(SPAWN_COUNT)).toBe(
+      SPAWN_COUNT,
+    );
+
+    // Each of the three lures is worth the same two
+    for (const lure of [Abilities.ArenaTrap, Abilities.Illuminate, Abilities.NoGuard]) {
+      expect(createOverworld('player-uid', buddyWith([lure])).checkSpawnCount(SPAWN_COUNT)).toBe(
+        SPAWN_COUNT + LURE_SPAWN_BONUS,
+      );
+    }
+  });
+
+  it('talks an encounter into a nature and a gender', () => {
+    const buddy = buddyWith([Abilities.Synchronize, Abilities.CuteCharm]);
+    const overworld = createOverworld('player-uid', buddy);
+    const spawns = Array.from({ length: 60 }, (_, index) => `sync@0#${index}`);
+
+    const natures = spawns.map((spawn) => overworld.checkEncounterNature(spawn, Natures.Timid));
+    const genders = spawns.map((spawn) => overworld.checkEncounterGender(spawn, Genders.Male));
+
+    // Some of each, and never anything but the buddy's nature or the
+    // opposite of its gender
+    expect(natures.filter((nature) => nature === buddy.nature).length).toBeGreaterThan(0);
+    expect(natures.filter((nature) => nature === Natures.Timid).length).toBeGreaterThan(0);
+    expect(new Set(natures)).toEqual(new Set([Natures.Timid, buddy.nature]));
+
+    expect(genders.filter((gender) => gender === Genders.Female).length).toBeGreaterThan(0);
+    expect(new Set(genders)).toEqual(new Set([Genders.Male, Genders.Female]));
+
+    // A buddy with neither ability changes nothing, and a genderless
+    // one has nothing to charm
+    const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
+
+    expect(plain.checkEncounterNature(spawns[0], Natures.Timid)).toBe(Natures.Timid);
+    expect(plain.checkEncounterGender(spawns[0], Genders.Male)).toBe(Genders.Male);
+
+    const genderless = createOverworld('player-uid', {
+      ...buddy,
+      gender: Genders.Genderless,
+    });
+
+    expect(genderless.checkEncounterGender(spawns[0], Genders.Male)).toBe(Genders.Male);
+    expect(overworld.checkEncounterGender(spawns[0], Genders.Genderless)).toBe(Genders.Genderless);
+  });
+
+  it('lifts the shiny odds for a buddy holding the charm', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const charmed = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.ShinyCharm],
+    });
+
+    expect(createOverworld('player-uid', null).checkEncounterShiny('spawn#0')).toBe(1);
+    expect(plain.checkEncounterShiny('spawn#0')).toBe(1);
+    expect(charmed.checkEncounterShiny('spawn#0')).toBe(SHINY_CHARM_BOOST);
+  });
+
+  it('bounds the world at 4096 chunks a side', () => {
+    const world = new World('overworld');
+
+    expect(WORLD_MAX - WORLD_MIN + 1).toBe(WORLD_SIZE);
+    expect(isInWorld(WORLD_MIN, WORLD_MAX)).toBe(true);
+    expect(isInWorld(WORLD_MIN - 1, 0)).toBe(false);
+    expect(isInWorld(0, WORLD_MAX + 1)).toBe(false);
+
+    // Past the edge there is no new ground: the outermost chunk is
+    // what a coordinate beyond it resolves to
+    expect(clampToWorld(WORLD_MAX + 500)).toBe(WORLD_MAX);
+    expect(world.getChunk(WORLD_MIN - 7, 0).seed).toBe(world.getChunk(WORLD_MIN, 0).seed);
+
+    // A player always starts inside it
+    for (const uid of ['player-uid', 'other-uid', 'third-uid']) {
+      const start = pickStartPosition(world, uid);
+
+      expect(isInWorld(start.chunkX, start.chunkY)).toBe(true);
+    }
   });
 
   it('ripens berry patches on the snapshot window', () => {

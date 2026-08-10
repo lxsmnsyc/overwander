@@ -1,31 +1,38 @@
 import 'server-only';
+import { asCaughtPokemon } from '../auth/caught-record';
 import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
-import type { Items } from '../data/ids/items';
+import type { Buddy } from '../overworld/core';
 import { getAdminFirestore } from './firebase';
-import { asNumberArray, docData } from './read';
+import { docData } from './read';
 
 /**
- * Whether the player's buddy is holding the item. Overworld effects
- * read it — the Shiny Charm's boost, for one — and they run on the
- * server, where the answer decides what a meeting is worth.
- *
- * Ownership is re-checked: a trade leaves the buddy record pointing
- * at someone else's pokemon, and a charm held by a pokemon the player
- * no longer owns is not theirs to benefit from
+ * The buddy's abilities, nature, gender and held items — everything
+ * the overworld reads off the pokemon at a player's side. Resolves
+ * null when they have no buddy, or when the record points at one they
+ * no longer own: a trade leaves the buddy record behind, and this is
+ * where that is caught
  */
-export default async function isBuddyHolding(uid: string, item: Items): Promise<boolean> {
+export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
   const db = getAdminFirestore();
   const buddy = docData(await db.collection(BUDDY_COLLECTION).doc(uid).get());
   const catchId = buddy?.caught;
 
   if (typeof catchId !== 'string' || catchId === '') {
-    return false;
+    return null;
   }
 
-  const caught = docData(await db.collection(CAUGHT_COLLECTION).doc(catchId).get());
+  const stored = docData(await db.collection(CAUGHT_COLLECTION).doc(catchId).get());
 
-  if (caught == null || caught.owner !== uid) {
-    return false;
+  if (stored == null || stored.owner !== uid) {
+    return null;
   }
-  return new Set(asNumberArray(caught.items)).has(item);
+
+  const caught = asCaughtPokemon(stored);
+
+  return {
+    abilities: caught.abilities,
+    nature: caught.nature,
+    gender: caught.gender,
+    items: caught.items,
+  };
 }

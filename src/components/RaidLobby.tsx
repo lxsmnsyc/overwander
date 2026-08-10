@@ -77,7 +77,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   const back = (): void => {
     // Leaving takes the player's teams out of the lobby, so a raid
     // they walked away from does not start with their party in it
-    leaveRaid(props.user, props.raidId).catch(() => undefined);
+    leaveRaid(props.raidId).catch(() => undefined);
     game.setRaid(null);
   };
 

@@ -1,5 +1,7 @@
 // @refresh reload
 import { StartServer, createHandler } from '@solidjs/start/server';
+// The server keeps UTC, whatever the host machine is set to
+import './server/timezone';
 
 export default createHandler(() => (
   <StartServer

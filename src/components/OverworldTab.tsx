@@ -4,11 +4,13 @@ import {
   type JSX,
   Show,
   createEffect,
+  createResource,
   createSignal,
   from,
   onCleanup,
   onMount,
 } from 'solid-js';
+import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
@@ -31,18 +33,24 @@ import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
 import { getItemData } from '../data/items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
-import ChunkSnapshot from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
+import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
+import type { Buddy } from '../overworld/core';
+import createOverworld from '../overworld/setup';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
+import { isInWorld } from '../overworld/world';
 import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
 import SafariDialog from './SafariDialog';
 import { GameTab, useGame } from './game-context';
 
 /**
- * How many spawns a visit publishes for the chunk's window
+ * How many spawns a visit publishes: the ordinary six plus the two a
+ * lure draws in, rolled for every window so that a lure changes who
+ * can see them rather than whether they exist
  */
-const SPAWN_COUNT = 6;
+const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
 
 /**
  * Where a player entering a chunk without a stored position starts
@@ -94,27 +102,35 @@ function buildChunkView(
   y: number,
   timestamp: number,
   published: [string, SpawnRecord][],
+  player: string | null,
+  buddy: Buddy | null,
 ): ChunkView {
   const chunk = getWorld().getChunk(x, y);
   const snapshot = new ChunkSnapshot(chunk, timestamp);
   // Rolling locally reproduces the published placement — same seed,
   // same window, same count — and is what pins each spawn to a cell
-  snapshot.getSpawns(SPAWN_COUNT);
+  snapshot.getSpawns(PUBLISHED_SPAWNS);
 
   const spawns = new Map<number, { id: string; spawn: Spawn }>();
   const cells = [...snapshot.getSpawnCells()];
+  // The same engine the server stages encounters with: a lure decides
+  // how many of the window's rolls are there for this player
+  const overworld = createOverworld(player ?? '', player == null ? null : buddy);
+  const visible = overworld.checkSpawnCount(SPAWN_COUNT);
 
   cells.forEach(([cell], index) => {
     // Roll order and publication order are the same, so the nth
     // placed cell carries the nth published spawn
-    if (index < published.length) {
-      const [id, stored] = published[index];
-
-      spawns.set(cell, {
-        id,
-        spawn: [stored.species, stored.individualValue, stored.traitValue],
-      });
+    if (index >= visible || index >= published.length) {
+      return;
     }
+
+    const [id, stored] = published[index];
+
+    spawns.set(cell, {
+      id,
+      spawn: [stored.species, stored.individualValue, stored.traitValue],
+    });
   });
 
   return {
@@ -179,7 +195,9 @@ export default function OverworldTab(): JSX.Element {
   createEffect(() => {
     const chunk = getWorld().getChunk(chunkX(), chunkY());
 
-    visitChunk(chunk, SPAWN_COUNT).catch((caught: unknown) => {
+    // The window always rolls the lure's extras, so every player of
+    // the chunk shares one set of rolls whoever publishes them
+    visitChunk(chunk, PUBLISHED_SPAWNS).catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));
     });
   });
@@ -201,12 +219,26 @@ export default function OverworldTab(): JSX.Element {
     });
   });
 
+  // What walks beside the player changes what the chunk holds, so the
+  // view waits on it the same way it waits on the window
+  const [buddy] = createResource(
+    () => auth.user()?.uid ?? null,
+    async (uid) => getBuddyEffects(uid),
+  );
+
   const view = (): ChunkView | null => {
     const timestamp = snapshotWindow();
 
     return timestamp == null
       ? null
-      : buildChunkView(chunkX(), chunkY(), timestamp, published() ?? []);
+      : buildChunkView(
+          chunkX(),
+          chunkY(),
+          timestamp,
+          published() ?? [],
+          auth.user()?.uid ?? null,
+          buddy() ?? null,
+        );
   };
 
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
@@ -214,23 +246,33 @@ export default function OverworldTab(): JSX.Element {
   const move = (deltaX: number, deltaY: number): void => {
     let x = cellX() + deltaX;
     let y = cellY() + deltaY;
+    let chunk = chunkX();
+    let row = chunkY();
 
     // Walking off an edge carries into the neighboring chunk, and
     // the player re-enters it from the opposite edge
     if (x < 0) {
-      setChunkX(chunkX() - 1);
+      chunk -= 1;
       x = CHUNK_CELLS - 1;
     } else if (x >= CHUNK_CELLS) {
-      setChunkX(chunkX() + 1);
+      chunk += 1;
       x = 0;
     }
     if (y < 0) {
-      setChunkY(chunkY() - 1);
+      row -= 1;
       y = CHUNK_CELLS - 1;
     } else if (y >= CHUNK_CELLS) {
-      setChunkY(chunkY() + 1);
+      row += 1;
       y = 0;
     }
+
+    // The world is finite: its outermost chunks have no neighbor to
+    // step into, so a walk into the edge goes nowhere
+    if (!isInWorld(chunk, row)) {
+      return;
+    }
+    setChunkX(chunk);
+    setChunkY(row);
     setCellX(x);
     setCellY(y);
   };
@@ -310,7 +352,7 @@ export default function OverworldTab(): JSX.Element {
     }
     if (landmark === Landmark.LegendaryRaid || landmark === Landmark.ShadowRaid) {
       const kind = landmark === Landmark.ShadowRaid ? RaidKind.Shadow : RaidKind.Legendary;
-      const lobby = await enterRaid(user, loaded.snapshot, at, kind);
+      const lobby = await enterRaid(loaded.snapshot, at, kind);
 
       if (lobby == null) {
         // Nothing to walk into: either the hour stages no raid here,
@@ -347,12 +389,15 @@ export default function OverworldTab(): JSX.Element {
     }
     game.setReward(null);
     claimRaidReward(reward.raid)
-      .then(async (encounter) => {
-        if (encounter == null) {
+      .then(async (collected) => {
+        if (collected == null) {
           setStatus('That raid has nothing left to collect.');
           return;
         }
-        setSession(await createSafariSession(user, encounter));
+        // The purse lands in the profile straight away; the pokemon
+        // is still to be met
+        setStatus(`The raid paid ${collected.gold} gold.`);
+        setSession(await createSafariSession(user, collected.encounter));
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

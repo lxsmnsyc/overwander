@@ -2,44 +2,38 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import type { User } from 'firebase/auth';
 import {
   type DocumentReference,
   type FirestoreDataConverter,
-  type Transaction,
   type Unsubscribe,
-  arrayRemove,
   collection,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
   query,
-  runTransaction,
-  updateDoc,
   where,
 } from 'firebase/firestore';
-import type Chunk from '../overworld/chunk';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { asString } from './__normalize';
 import { RaidKind, type RaidRecord, asRaidRecord } from './raid-record';
-import { BattleOutcome, getBattleRef } from './battles';
 import { hasAnyCaught } from './caught';
 import { requireUid } from '../server/firebase';
+import type { RaidReward } from '../server/raids';
 import {
   claimRaidReward as claimRewardOnServerSide,
   clearRaid as clearOnServer,
+  enterRaid as enterOnServer,
   joinRaid as joinOnServer,
+  leaveRaid as leaveOnServer,
   startRaid as startOnServer,
 } from '../server/raids';
 import { RAID_COLLECTION, RAID_REWARD_COLLECTION } from './collections';
 import { syncServerClock } from './clock';
-import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
-import { getTeam } from './teams';
 
-export { RaidKind, asRaidRecord, deriveRaidReward } from './raid-record';
+export { RaidKind, asRaidRecord, deriveRaidReward, raidId } from './raid-record';
 export type { RaidRecord } from './raid-record';
 
 /**
@@ -51,21 +45,6 @@ const converter: FirestoreDataConverter<RaidRecord> = {
   toFirestore: (record) => record,
   fromFirestore: (snapshot) => asRaidRecord(snapshot.data()),
 };
-
-/**
- * The lobby id of a raid landmark in a given raid hour. The kind is
- * part of it, so the two landmark types never collide on a cell
- */
-export function raidId(
-  chunk: Chunk,
-  raidTimestamp: number,
-  cell: number,
-  kind: RaidKind = RaidKind.Legendary,
-): string {
-  const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
-
-  return `${chunk.seed}@${raidTimestamp}$${tag}${cell}`;
-}
 
 function getRaidRef(id: string): DocumentReference<RaidRecord> {
   return doc(getFirebaseFirestore(), RAID_COLLECTION, id).withConverter(converter);
@@ -116,120 +95,32 @@ export async function canJoinRaids(uid: string): Promise<boolean> {
 }
 
 /**
- * How long an unsettled raid battle holds its landmark. A fight is
- * over in minutes; one still unfinished after this was walked out on,
- * and an abandoned party is not a beaten boss
- */
-export const RAID_BATTLE_TIMEOUT = 10 * 60 * 1000;
-
-/**
- * Whether a raid's battle ended without the boss going down — lost
- * outright, or abandoned long enough that nobody is coming back to
- * settle it. A raid that was won never reaches here: clearing it
- * shuts the landmark first
- */
-async function isRaidLost(
-  transaction: Transaction,
-  battleId: string,
-  now: number,
-): Promise<boolean> {
-  const battle = (await transaction.get(getBattleRef(battleId))).data();
-
-  if (battle == null) {
-    return true;
-  }
-  if (battle.outcome === BattleOutcome.Unfinished) {
-    return now - battle.startedAt >= RAID_BATTLE_TIMEOUT;
-  }
-  return battle.outcome !== BattleOutcome.Won;
-}
-
-/**
- * Walk into a raid landmark: the first player to arrive in the hour
- * opens the lobby and hosts it, everyone after joins the one already
- * standing.
- *
- * The hour gives the boss one defeat, not one fight. A raid the party
- * lost — or walked out on — leaves the landmark open, and the next
- * arrival restages the lobby against the same roll to try again. Only
- * beating the boss shuts the cell, for the rest of the hour.
+ * Walk into a raid landmark. What is staged there — and whether it is
+ * open, being fought, or shut for the hour — is decided by the
+ * server against the chunk's own seed and its clock, so an arrival
+ * cannot conjure a lobby on a cell the world staged nothing on.
  *
  * Resolves the lobby id and its record, or null when the cell stages
- * no raid this hour or its raid has already been cleared
+ * no raid this hour, its raid has been cleared, or the player owns no
+ * pokemon and there is nothing standing to watch
  */
 export async function enterRaid(
-  user: User,
   snapshot: ChunkSnapshot,
   cell: number,
   kind: RaidKind = RaidKind.Legendary,
 ): Promise<[string, RaidRecord] | null> {
-  const roll =
-    kind === RaidKind.Shadow
-      ? snapshot.getShadowRaids().get(cell)
-      : snapshot.getLegendaryRaids().get(cell);
+  return enterRaidOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell, kind);
+}
 
-  if (roll == null) {
-    return null;
-  }
-
-  const id = raidId(snapshot.chunk, snapshot.raidTimestamp, cell, kind);
-  const db = getFirebaseFirestore();
-
-  // A failed raid reopens against the same clock the battle was
-  // stamped with, so an abandoned fight cannot hold the landmark
-  const now = await syncServerClock();
-  // A player with no pokemon of their own stages nothing: they take
-  // whatever lobby is already standing, as a spectator
-  const staging = await canJoinRaids(user.uid);
-
-  // One landmark stages one raid at a time: the arrival that finds no
-  // lobby opens it and hosts, and every arrival after adopts what is
-  // already standing. The read and the create share a transaction,
-  // so two players walking in together cannot each open their own
-  return runTransaction(db, async (transaction) => {
-    const ref = getRaidRef(id);
-    const existing = (await transaction.get(ref)).data();
-
-    const fresh: RaidRecord = {
-      kind,
-      species: roll.species,
-      traitValue: roll.traitValue,
-      host: user.uid,
-      teams: [],
-      battle: null,
-      timestamp: snapshot.raidTimestamp,
-      chunk: { seed: snapshot.chunk.seed, x: snapshot.chunk.x, y: snapshot.chunk.y },
-      cell,
-      cleared: false,
-    };
-
-    if (existing != null) {
-      // A cleared lobby stays shut until the hour turns over and the
-      // landmark rolls a new raid: the boss has been met
-      if (existing.cleared) {
-        return null;
-      }
-      // A raid still gathering, or one being fought right now, is
-      // what the arrival walks into
-      if (existing.battle == null || !(await isRaidLost(transaction, existing.battle, now))) {
-        return [id, existing] as [string, RaidRecord];
-      }
-      // The boss survived, so the landmark is open again: the lobby
-      // is restaged for the arrival, on the hour's same roll. A
-      // spectator restages nothing and watches the fight that failed
-      if (!staging) {
-        return [id, existing] as [string, RaidRecord];
-      }
-      transaction.set(ref, fresh);
-      return [id, fresh] as [string, RaidRecord];
-    }
-
-    if (!staging) {
-      return null;
-    }
-    transaction.set(ref, fresh);
-    return [id, fresh] as [string, RaidRecord];
-  });
+async function enterRaidOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  kind: RaidKind,
+): Promise<[string, RaidRecord] | null> {
+  'use server';
+  return enterOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock());
 }
 
 /**
@@ -247,27 +138,17 @@ export async function listLiveRaids(raidTimestamp: number): Promise<[string, Rai
 
 /**
  * Walk out of a lobby: the player's teams come out with them, so a
- * raid they left does not start with their party in it. A started
- * raid is already frozen into snapshots and is left alone
+ * raid they left does not start with their party in it. The server
+ * pulls only the teams that name them as owner, and leaves a started
+ * raid alone — it is already frozen into snapshots
  */
-export async function leaveRaid(user: User, id: string): Promise<void> {
-  const raid = await getRaid(id);
+export async function leaveRaid(id: string): Promise<void> {
+  await leaveRaidOnServer(await getIdToken(), id);
+}
 
-  if (raid == null || raid.battle != null) {
-    return;
-  }
-
-  const teams = await Promise.all(
-    raid.teams.map(async (teamId) => [teamId, await getTeam(teamId)] as const),
-  );
-  const mine = teams.filter(([, team]) => team?.player === user.uid).map(([teamId]) => teamId);
-
-  if (mine.length === 0) {
-    return;
-  }
-  await updateDoc(doc(getFirebaseFirestore(), RAID_COLLECTION, id), {
-    teams: arrayRemove(...mine),
-  });
+async function leaveRaidOnServer(token: string, id: string): Promise<void> {
+  'use server';
+  await leaveOnServer(await requireUid(token), id);
 }
 
 /**
@@ -317,11 +198,11 @@ async function joinRaidOnServer(
  * exactly what the raid staged. Resolves null when the raid was not
  * won by this player, or when they already claimed it
  */
-export async function claimRaidReward(id: string): Promise<EncounterRecord | null> {
+export async function claimRaidReward(id: string): Promise<RaidReward | null> {
   return claimRewardOnServer(await getIdToken(), id);
 }
 
-async function claimRewardOnServer(token: string, id: string): Promise<EncounterRecord | null> {
+async function claimRewardOnServer(token: string, id: string): Promise<RaidReward | null> {
   'use server';
   return claimRewardOnServerSide(await requireUid(token), id);
 }

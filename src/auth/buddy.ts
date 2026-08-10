@@ -6,7 +6,7 @@ import {
   getDoc,
   setDoc,
 } from 'firebase/firestore';
-import type { Items } from '../data/ids/items';
+import type { Buddy } from '../overworld/core';
 import { asString } from './__normalize';
 import { type CaughtPokemon, getCaught } from './caught';
 import { getFirebaseFirestore } from './firebase';
@@ -78,14 +78,26 @@ export async function clearBuddy(uid: string): Promise<void> {
 }
 
 /**
- * Whether the player's buddy is holding the item. Overworld item
- * effects read it — the Shiny Charm's boost, for one — so a buddy
- * that has changed hands or been sent back answers false
+ * The buddy as the overworld's field effects read it, or null when
+ * the player walks alone. The client needs this to show what its
+ * abilities change — which pokemon the chunk is holding, and how many
+ * of them — before the player walks up to any of them
  */
-export async function isBuddyHolding(uid: string, item: Items): Promise<boolean> {
+export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
   const buddy = await resolveBuddy(uid);
 
-  return buddy != null && new Set(buddy[1].items).has(item);
+  if (buddy == null) {
+    return null;
+  }
+
+  const [, caught] = buddy;
+
+  return {
+    abilities: caught.abilities,
+    items: caught.items,
+    nature: caught.nature,
+    gender: caught.gender,
+  };
 }
 
 /**

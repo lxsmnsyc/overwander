@@ -1,10 +1,11 @@
 # Firestore
 
 Every store the game writes to today, the document shape it holds, the id
-scheme that addresses it, and the access each one needs. All access currently
-goes through the Firebase **client** SDK from `src/auth/*` — there is no
-privileged server-side admin path, so every rule below has to hold against a
-signed-in player writing directly.
+scheme that addresses it, and the access each one needs. Reads go through the
+Firebase **client** SDK from `src/auth/*`; everything that creates or moves
+value is written by the **Admin** SDK from `src/server/*`, behind a verified
+caller. The rules below have to hold against a signed-in player writing
+directly, which is why most collections are read-only to clients.
 
 There is no `firestore.rules` file in the repository yet; the rules at the end
 of this document are the ones the code assumes and should be deployed as-is
@@ -23,19 +24,21 @@ from whatever the auth provider knows.
 | `avatar`   | `string \| null` | Avatar URL, `null` when unset           |
 | `gold`     | `number`         | Currency balance; starts at zero        |
 
-Read by anyone (other players see nicknames and avatars), written only by the
-owning uid.
+Read by anyone (other players see nicknames and avatars). The owner writes
+their own `nickname` and `avatar`; `saveProfile` takes only those two and
+merges.
 
-The balance moves through `grantGold` and `spendGold`, each of which reads and
-writes inside a transaction so concurrent rewards cannot clobber each other.
-`saveProfile` takes only `ProfileDetails` (`nickname` and `avatar`) and merges,
-so the profile editor has no path to the balance.
+The balance is not theirs to write: `grantGold` and `spendGold` live in
+[`src/server/profile.ts`](../src/server/profile.ts), each reading and writing
+inside a transaction so concurrent rewards cannot clobber each other. The rules
+pin `gold` on update and require a new profile to open at zero.
 
 ### `inventories/{uid}:{item}`
 
-Set by [`src/auth/inventory.ts`](../src/auth/inventory.ts). One document per
-user and item pair, so a grant or a spend touches a single small document and
-the same item can never split across two records. Both mutations run inside a
+Read through [`src/auth/inventory.ts`](../src/auth/inventory.ts) and written by
+[`src/server/inventory.ts`](../src/server/inventory.ts). One document per user
+and item pair, so a grant or a spend touches a single small document and the
+same item can never split across two records. Both mutations run inside a
 transaction.
 
 | Field    | Type     | Notes                                         |
@@ -44,13 +47,15 @@ transaction.
 | `item`   | `Items`  | Numeric item id from the `Items` enum         |
 | `amount` | `number` | How many are carried; never goes below zero   |
 
-Private: only the owning uid may read or write. `getInventory` queries
-`where('user', '==', uid)` and filters out stacks that have been spent to zero —
-those documents stay behind rather than being deleted.
+Private: only the owning uid may read, and only the server may write.
+`getInventory` queries `where('user', '==', uid)` and filters out stacks that
+have been spent to zero — those documents stay behind rather than being
+deleted.
 
 ### `candies/{uid}:{family}`
 
-Set by [`src/auth/candy.ts`](../src/auth/candy.ts). Keyed by evolution family
+Read through [`src/auth/candy.ts`](../src/auth/candy.ts), written by
+[`src/server/candy.ts`](../src/server/candy.ts). Keyed by evolution family
 rather than species, because a candy feeds any catch in its family.
 
 | Field    | Type       | Notes                                         |
@@ -67,10 +72,8 @@ when the catch is not the user's, its species' family does not match a stack the
 user holds, the stack is empty, or the catch already sits at `MAX_LEVEL`
 (`src/data/constants/levels.ts`).
 
-Because the transaction writes `caught/{catchId}`, the security rules for that
-collection have to keep allowing the owner to update it — see below.
-
-Private: only the owning uid may read or write the stacks.
+Private: only the owning uid may read the stacks, and only the server may
+write them or the catch the level lands on.
 
 ### `buddies/{uid}`
 
@@ -94,15 +97,18 @@ Private to the owning uid.
 
 ### `fled/{uid}`
 
-Set by [`src/auth/safari.ts`](../src/auth/safari.ts).
+Written by `markFled` in [`src/server/overworld.ts`](../src/server/overworld.ts),
+read through [`src/auth/safari.ts`](../src/auth/safari.ts). The key is
+recomputed from the stored encounter, so a player cannot retire a meeting they
+never had.
 
-| Field  | Type       | Notes                                                             |
-| ------ | ---------- | ----------------------------------------------------------------- |
-| `keys` | `string[]` | Encounter keys the user has scared off, appended via `arrayUnion` |
+| Field  | Type       | Notes                                                      |
+| ------ | ---------- | ---------------------------------------------------------- |
+| `keys` | `string[]` | Encounter keys the user has scared off; only ever appended |
 
 An encounter key is `` `${x},${y}@${timestamp}:${individualValue}` `` (see
 `encounterKey` in [`src/overworld/safari.ts`](../src/overworld/safari.ts)).
-Private to the owning uid. Entries are only ever appended.
+Private to the owning uid, and read-only to them.
 
 ## Catch records
 
@@ -201,6 +207,13 @@ over.
 | `individualValue` | `number`  |                 |
 | `traitValue`      | `number`  |                 |
 
+A window publishes `SPAWN_COUNT` (6) spawns plus `LURE_SPAWN_BONUS` (2) more:
+the extras are rolled for every chunk so that all its visitors share one set of
+rolls, and a **lure** buddy — Arena Trap, Illuminate or No Guard — decides who
+can see them rather than whether they exist. A player without one neither sees
+the last two on the map nor may meet them: `meetSpawn` reads the index off the
+spawn id and refuses anything past `visibleSpawnCount`.
+
 The id is deterministic, so concurrent publishers write identical documents
 rather than duplicates. `listSpawns` queries
 `where('chunk', '==', seed)` and `where('timestamp', '==', window)` together,
@@ -215,6 +228,24 @@ gender, ability, nature, moves, …) derived once and reused afterwards.
 
 Holds every field of `Encounter` plus `spawn` (the spawn document id) and
 `player` (the uid). Only the named player may read or write it.
+
+The buddy at the player's side shapes this document, the way a party leader
+shapes a wild encounter in the mainline. The overworld asks for each of these
+through an event engine of its own
+([`src/overworld/core.ts`](../src/overworld/core.ts)), built the same way the
+battle engine is: every field ability and held-item effect is written once, in
+[`src/overworld/abilities/gen-1.ts`](../src/overworld/abilities/gen-1.ts) or
+[`src/overworld/items/key-items.ts`](../src/overworld/items/key-items.ts), and
+registers itself against the questions it has an opinion about. Nothing that
+stages a spawn or an encounter names an ability. **Synchronize** passes its own
+nature on half the time, and **Cute Charm** brings out the opposite gender two
+draws in three; a buddy holding the **Shiny Charm** lifts the odds eightfold.
+Each rolls on a stream seeded by the spawn id and the uid, so the client shows
+the player exactly what the server will stage, and two players on one cell get
+their own.
+
+What a chunk holds is the same for everyone standing in it: no field effect
+changes which species turned up, only how many of them a player can see.
 
 Two fields are worth calling out. `shiny` is a resonance between the trainer id
 and the **trait** value, so shininess is independent of the IVs a pokemon
@@ -423,11 +454,15 @@ identically and awards nothing.
 | -------- | -------- | ----------------------- |
 | `player` | `string` | Claiming uid            |
 | `raid`   | `string` | The raid collected from |
+| `gold`   | `number` | The purse it paid       |
 
-`claimRaidReward(user, raidId)` hands over the legendary a cleared raid owes.
-It refuses unless the battle was **won** and the uid appears in
-`battles/{battleId}.players`, and the marker above guards it so each fighter
-collects once. The reward waits rather than expiring: a player who ran from the
+`claimRaidReward(raidId)` hands over what a cleared raid owes: the legendary,
+and a purse of gold — `LEGENDARY_RAID_GOLD` (2000), or `SHADOW_RAID_GOLD`
+(1000) for the commoner of the two. Every fighter is paid the same; the boss
+decides the amount, not who landed the last hit. It refuses unless the battle
+was **won** and the uid appears in `battles/{battleId}.players`, and the marker
+above guards both halves, so neither the gold nor the pokemon is collected
+twice. The reward waits rather than expiring: a player who ran from the
 encounter or left the battle early claims it later from their battle history.
 
 The encounter itself is not stored as a reward — `deriveRaidReward` rolls a
@@ -454,7 +489,14 @@ the same window compute identical results from the two fields that
 Anything time-bound reads the server clock through
 [`src/auth/clock.ts`](../src/auth/clock.ts) rather than `Date.now()`: a
 `'use server'` function returns the server's time, the client measures the
-offset once and derives locally for the next minute. This covers snapshot
+offset once and derives locally for the next minute.
+
+Timestamps are epoch milliseconds and carry no timezone, but anything that
+reads a _calendar_ out of one does — the species day counts days of the year,
+and a catch date is shown as a date. The server pins its process to **UTC**
+([`src/server/timezone.ts`](../src/server/timezone.ts)), so two deploys on
+differently-configured machines agree about which day it is, and the featured
+family turns over at one instant for everybody. This covers snapshot
 window expiry, safari session seeds and `caughtAt` stamps, so a skewed device
 cannot shift the window it sees or the timestamps it writes.
 
@@ -501,7 +543,10 @@ Two things stay client-side by design, and the rules carry them:
   client recomputes the same set and a dishonest one only lies to itself: the
   server re-derives every reward from the seed regardless.
 - **Profile details** — nickname and avatar are the player's to set. The
-  balance in the same document is not, so the rules pin `gold`.
+  balance in the same document is not: the rules pin `gold` on update and
+  require it to open at zero on create.
+- **Buddies** — setting one is a preference, and the rule `get()`s the catch to
+  confirm the player owns it.
 
 ## Required security rules
 
@@ -524,7 +569,9 @@ service cloud.firestore {
     // moves only on the server, so it may not change from a client
     match /profiles/{uid} {
       allow read: if signedIn();
-      allow create: if isOwner(uid);
+      // A profile opens empty-handed; gold only ever moves on the
+      // server, so a first write cannot name its own balance
+      allow create: if isOwner(uid) && request.resource.data.gold == 0;
       allow update: if isOwner(uid)
         && request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['nickname', 'avatar']);
@@ -590,15 +637,13 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
-    // Raid lobbies: a player opens one and walks out of one, which
-    // is why create and the teams array stay client-writable. Joining
-    // (which forms a team), starting, and clearing are the server's
+    // Raid lobbies: opening one, joining, leaving, starting and
+    // clearing are all the server's. What a landmark stages, and
+    // whether a failed raid may be restaged, depend on world state
+    // and a battle's outcome — neither is a client's to assert
     match /raids/{raidId} {
       allow read: if signedIn();
-      allow create: if signedIn() && request.resource.data.host == request.auth.uid;
-      allow update: if signedIn()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teams']);
-      allow delete: if false;
+      allow write: if false;
     }
     match /raidRewards/{claimId} {
       allow read: if signedIn();

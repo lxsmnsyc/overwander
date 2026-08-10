@@ -10,14 +10,19 @@ import {
 } from '../auth/collections';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import AleaRNG from '../core/alea';
-import { Items } from '../data/ids/items';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, {
+  SNAPSHOT_INTERVAL,
+  SPAWN_COUNT,
+  type Spawn,
+} from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
-import deriveEncounter, { type EncounterOptions, SHINY_CHARM_BOOST } from '../overworld/encounter';
+import deriveEncounter, { type EncounterOptions } from '../overworld/encounter';
 import { encounterKey } from '../overworld/safari';
-import isBuddyHolding from './buddy';
+import createOverworld from '../overworld/setup';
+import resolveBuddy from './buddy';
 import { getAdminFirestore } from './firebase';
 import { asNumber, asStringArray, docData } from './read';
 import { grantItem } from './inventory';
@@ -203,14 +208,19 @@ export async function startEncounter(
 
   // Snapshot spawns are wild meetings; a raid reward carries its own
   // type (raid encounters never flee) and, from a shadow raid, its
-  // permanent Shadow ability. A buddy holding the Shiny Charm lifts
-  // the odds of every meeting the player has
-  const charm = await isBuddyHolding(uid, Items.ShinyCharm);
+  // permanent Shadow ability. What the buddy changes about the
+  // meeting — the shiny odds it carries, the nature it passes on, the
+  // gender it draws out — is asked of the overworld rather than
+  // spelled out here
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const derived = deriveEncounter(snapshot, spawn, uid, {
+    ...options,
+    shinyBoost: (options.shinyBoost ?? 1) * overworld.checkEncounterShiny(id),
+  });
   const record: EncounterRecord = {
-    ...deriveEncounter(snapshot, spawn, uid, {
-      ...options,
-      shinyBoost: (options.shinyBoost ?? 1) * (charm ? SHINY_CHARM_BOOST : 1),
-    }),
+    ...derived,
+    nature: overworld.checkEncounterNature(id, derived.nature),
+    gender: overworld.checkEncounterGender(id, derived.gender),
     spawn: id,
     player: uid,
   };
@@ -246,11 +256,30 @@ export async function meetSpawn(
     return null;
   }
 
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+
+  // The extras a lure draws in are only there for the player whose
+  // buddy drew them: the window publishes them for everyone, and a
+  // player walking without a lure cannot meet what they cannot see
+  if (spawnIndex(spawnId) >= overworld.checkSpawnCount(SPAWN_COUNT)) {
+    return null;
+  }
+
   // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
   const species = asNumber(data.species) as Species;
   const spawn: Spawn = [species, asNumber(data.individualValue), asNumber(data.traitValue)];
 
   return startEncounter(uid, snapshot, spawnId, spawn);
+}
+
+/**
+ * Which roll of the window a published spawn was: the id carries it
+ * after the '#', and the extras a lure adds are the last of them
+ */
+function spawnIndex(spawnId: string): number {
+  const index = Number(spawnId.slice(spawnId.lastIndexOf('#') + 1));
+
+  return Number.isFinite(index) ? index : Number.POSITIVE_INFINITY;
 }
 
 /**

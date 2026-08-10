@@ -30,6 +30,37 @@ function spreadNoise(value: number): number {
 }
 
 /**
+ * How wide the world is, in chunks. It is square and finite: at
+ * 4096 chunks a side, with 16 cells to a chunk, that is 65,536 cells
+ * across — far more ground than a population can wear out, but
+ * bounded, so every coordinate the game stores has a known range
+ */
+export const WORLD_SIZE = 4096;
+
+/**
+ * The world is centered on the origin, so the coordinates run from
+ * -2048 to 2047 on both axes
+ */
+export const WORLD_MIN = -WORLD_SIZE / 2;
+export const WORLD_MAX = WORLD_SIZE / 2 - 1;
+
+/**
+ * Whether the chunk coordinates name a chunk inside the world
+ */
+export function isInWorld(x: number, y: number): boolean {
+  return x >= WORLD_MIN && x <= WORLD_MAX && y >= WORLD_MIN && y <= WORLD_MAX;
+}
+
+/**
+ * The nearest coordinate inside the world. The edge is a wall rather
+ * than a seam: wrapping would put chunk -2048 next to chunk 2047,
+ * whose climate is unrelated, and the join would show
+ */
+export function clampToWorld(value: number): number {
+  return Math.min(WORLD_MAX, Math.max(WORLD_MIN, Math.trunc(value)));
+}
+
+/**
  * The overworld: one seed deterministically fans out into three
  * climate noise channels. The derivation draw order (humidity,
  * elevation, temperature) is part of the world format — reordering
@@ -51,9 +82,17 @@ export default class World {
   /**
    * Resolve the chunk at the given chunk coordinates: its climate
    * sample classifies into a biome, and its seed extends the world
-   * seed with the coordinates
+   * seed with the coordinates.
+   *
+   * Coordinates outside the world resolve to the nearest edge chunk
+   * rather than to a chunk of their own, so a request for one — a
+   * hand-written server call, say — cannot generate ground that does
+   * not exist
    */
-  getChunk(x: number, y: number): Chunk {
+  getChunk(chunkX: number, chunkY: number): Chunk {
+    const x = clampToWorld(chunkX);
+    const y = clampToWorld(chunkY);
+
     const sampleX = (x + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
     const sampleY = (y + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
 

@@ -1,4 +1,5 @@
 import 'server-only';
+import './timezone';
 import { type App, cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 import { type Auth, getAuth } from 'firebase-admin/auth';
 import { asRecord, asString } from '../auth/__normalize';

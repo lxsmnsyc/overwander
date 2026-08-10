@@ -128,12 +128,6 @@ const MOVE_LIMIT = 4;
 export const RAID_FAMILY_DAY_MIN_IV = 6;
 
 /**
- * What the Shiny Charm is worth when the player's buddy is holding
- * it: every encounter sparkles eight times as readily
- */
-export const SHINY_CHARM_BOOST = 8;
-
-/**
  * XOR results under this sparkle: 16 in 65536, i.e. the modern
  * 1/4096 shiny odds
  */

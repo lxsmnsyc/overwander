@@ -35,7 +35,9 @@ import registerItems, { getItemData, getTeachableMoves } from '../src/data/items
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
+import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -521,6 +523,41 @@ describe('type-enhancing items', () => {
 
     for (const item of TYPE_BOOSTERS.keys()) {
       expect(pooled.has(item)).toBe(false);
+    }
+  });
+
+  it('gives every attacking type a gem, spent on the hit it lifts', () => {
+    // One per attacking type, the same coverage the plain boosters
+    // have — the two are the permanent and the one-shot of the same
+    // idea
+    expect(new Set(GEMS.values()).size).toBe(new Set(TYPE_BOOSTERS.values()).size);
+
+    for (const [item, type] of GEMS) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // The one type item that is spent using it
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.buy).toBe(GEM_PRICE);
+      // Cheaper than the booster it out-hits, because it only has the
+      // one hit in it
+      expect(data.buy).toBeLessThan(TYPE_BOOSTER_PRICE);
+      expect(new Set(TYPE_BOOSTERS.values()).has(type)).toBe(true);
+    }
+  });
+
+  it('registers the orbs as held costs rather than consumables', () => {
+    for (const [item, name] of ORBS) {
+      const data = getItemData(item);
+
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // An orb is never spent: it keeps costing its holder, which is
+      // the point of it
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.buy).toBe(ORB_PRICE);
     }
   });
 

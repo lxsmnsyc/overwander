@@ -153,6 +153,36 @@ export const enum Items {
   RoseIncense = 69,
   SeaIncense = 70,
   WaveIncense = 71,
+
+  /**
+   * The gems: one per attacking type, each spent the moment its
+   * holder lands a move of that type
+   */
+  NormalGem = 72,
+  FightingGem = 73,
+  FlyingGem = 74,
+  PoisonGem = 75,
+  GroundGem = 76,
+  RockGem = 77,
+  BugGem = 78,
+  GhostGem = 79,
+  SteelGem = 80,
+  FireGem = 81,
+  WaterGem = 82,
+  GrassGem = 83,
+  ElectricGem = 84,
+  PsychicGem = 85,
+  IceGem = 86,
+  DragonGem = 87,
+  DarkGem = 88,
+  FairyGem = 89,
+
+  /**
+   * The orbs: held for what they do to their own holder
+   */
+  FlameOrb = 90,
+  ToxicOrb = 91,
+  LifeOrb = 92,
 }
 
 /**

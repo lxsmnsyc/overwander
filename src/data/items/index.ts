@@ -1,8 +1,10 @@
 import registerBalls from './balls';
 import registerBattleBerries from './berries';
+import registerGems from './gems';
 import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
+import registerOrbs from './orbs';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
@@ -24,6 +26,8 @@ export default function registerItems(): void {
   registerTypeBoosters();
   registerStatBoosters();
   registerIncenses();
+  registerGems();
+  registerOrbs();
   registerKeyItems();
   registerRaidItems();
   registerValuables();

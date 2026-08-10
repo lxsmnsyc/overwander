@@ -12,20 +12,23 @@ import {
   getDocs,
   limit,
   query,
+  runTransaction,
   where,
   writeBatch,
 } from 'firebase/firestore';
 import { Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
-import type { Balls, Items } from '../data/ids/items';
+import { type Balls, ItemFlags, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import { getItemData } from '../data/items';
 import type { Encounter, EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
+import { getEntryRef } from './inventory';
 
 /**
  * A caught encounter, permanently recorded. The IVs, gender and
@@ -269,6 +272,86 @@ export async function getCaughtItems(id: string): Promise<Items[]> {
   const snapshot = await getDoc(getCaughtItemsRef(id));
 
   return asNumberArray(snapshot.data()?.items) as Items[];
+}
+
+/**
+ * How many items one pokemon can hold at a time, matching the
+ * battle's per-unit item limit
+ */
+export const HELD_ITEM_LIMIT = 1;
+
+/**
+ * Hand an item from the player's bag to one of their catches. The
+ * stack and the held list move in one transaction, so an item is
+ * never in both places or neither. Resolves false when the catch is
+ * not the user's, the item is not carried, the catch already holds
+ * its limit, or the item is not holdable
+ */
+export async function giveItem(uid: string, catchId: string, item: Items): Promise<boolean> {
+  if ((getItemData(item).flags & ItemFlags.Holdable) === 0) {
+    return false;
+  }
+
+  const db = getFirebaseFirestore();
+
+  return runTransaction(db, async (transaction) => {
+    const caught = (await transaction.get(getCaughtRef(catchId))).data();
+
+    if (caught == null || caught.owner !== uid) {
+      return false;
+    }
+
+    const itemsRef = getCaughtItemsRef(catchId);
+    const held = asNumberArray((await transaction.get(itemsRef)).data()?.items) as Items[];
+
+    if (held.length >= HELD_ITEM_LIMIT) {
+      return false;
+    }
+
+    const stackRef = getEntryRef(uid, item);
+    const amount = (await transaction.get(stackRef)).data()?.amount ?? 0;
+
+    if (amount < 1) {
+      return false;
+    }
+
+    transaction.set(stackRef, { user: uid, item, amount: amount - 1 });
+    transaction.set(itemsRef, { items: [...held, item] });
+    return true;
+  });
+}
+
+/**
+ * Take a held item back into the bag. Resolves false when the catch
+ * is not the user's or is not holding that item
+ */
+export async function takeItem(uid: string, catchId: string, item: Items): Promise<boolean> {
+  const db = getFirebaseFirestore();
+
+  return runTransaction(db, async (transaction) => {
+    const caught = (await transaction.get(getCaughtRef(catchId))).data();
+
+    if (caught == null || caught.owner !== uid) {
+      return false;
+    }
+
+    const itemsRef = getCaughtItemsRef(catchId);
+    const held = asNumberArray((await transaction.get(itemsRef)).data()?.items) as Items[];
+    const index = held.indexOf(item);
+
+    if (index < 0) {
+      return false;
+    }
+
+    const stackRef = getEntryRef(uid, item);
+    const amount = (await transaction.get(stackRef)).data()?.amount ?? 0;
+
+    // Only the one copy comes off, so a future stack of duplicates
+    // still gives back exactly what it took
+    transaction.set(itemsRef, { items: held.filter((_, at) => at !== index) });
+    transaction.set(stackRef, { user: uid, item, amount: amount + 1 });
+    return true;
+  });
 }
 
 /**

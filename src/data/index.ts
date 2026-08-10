@@ -1,3 +1,4 @@
+import registerAbilities from './abilities';
 import registerBiomeSpawns from './biome';
 import registerItems from './items';
 import { registerMoves } from './moves';
@@ -11,6 +12,7 @@ import { registerSpecies } from './species';
  */
 export default function registerGameData(): void {
   registerMoves();
+  registerAbilities();
   registerSpecies();
   registerItems();
   registerBiomeSpawns();

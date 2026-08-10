@@ -1,12 +1,23 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
-import { type CaughtPokemon, getCaught, getCaughtAbilities, getCaughtItems } from '../auth/caught';
+import {
+  type CaughtPokemon,
+  HELD_ITEM_LIMIT,
+  getCaught,
+  getCaughtAbilities,
+  getCaughtItems,
+  giveItem,
+  takeItem,
+} from '../auth/caught';
+import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
+import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { Stats } from '../data/constants/stats';
-import { BALL_ITEMS, type Items } from '../data/ids/items';
+import type Abilities from '../data/ids/abilities';
+import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
@@ -53,6 +64,18 @@ async function loadDetail(catchId: string): Promise<CatchDetail | null> {
     return null;
   }
   return { caught, abilities, items };
+}
+
+/**
+ * An ability with no registered data shows as its id rather than a
+ * guess; every Gen 1 ability is registered
+ */
+function describeAbility(ability: Abilities): string {
+  try {
+    return getAbilityData(ability).name;
+  } catch {
+    return `Ability #${ability}`;
+  }
 }
 
 /**
@@ -149,6 +172,52 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * The holdable items in the player's bag; a catch can only be
+   * handed something it is allowed to hold
+   */
+  const [bag, { refetch: refetchBag }] = createResource(
+    () => owned(),
+    async (uid) => {
+      const carried = await getInventory(uid);
+
+      return carried.filter((entry) => {
+        try {
+          return (getItemData(entry.item).flags & ItemFlags.Holdable) !== 0;
+        } catch {
+          // An unregistered item has no flags to read, so it is not
+          // offered rather than assumed holdable
+          return false;
+        }
+      });
+    },
+  );
+
+  const moveItem = (item: Items, give: boolean): void => {
+    const uid = owned();
+    const catchId = props.catchId;
+
+    if (uid == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    (give ? giveItem(uid, catchId, item) : takeItem(uid, catchId, item))
+      .then(async (moved) => {
+        setStatus(
+          moved
+            ? `${describeItem(item)} ${give ? 'handed over' : 'taken back'}.`
+            : `${describeItem(item)} could not be ${give ? 'handed over' : 'taken back'}.`,
+        );
+        await refetch();
+        await refetchBag();
+        await refetchEvolutions();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   const evolve = (into: Species): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -223,11 +292,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   <dt>Nature</dt>
                   <dd>#{loaded().caught.nature}</dd>
                   <dt>Abilities</dt>
-                  <dd>
-                    {loaded()
-                      .abilities.map((ability) => `#${ability}`)
-                      .join(', ') || 'None'}
-                  </dd>
+                  <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
                   <dt>Ball</dt>
                   <dd>{describeItem(BALL_ITEMS[loaded().caught.ball])}</dd>
                   <dt>Held items</dt>
@@ -253,6 +318,49 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 </dl>
 
                 <Show when={owned()}>
+                  <h3>Held items</h3>
+                  <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
+                    <ul>
+                      <For each={loaded().items}>
+                        {(item) => (
+                          <li>
+                            {describeItem(item)}{' '}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                moveItem(item, false);
+                              }}
+                            >
+                              Take back
+                            </button>
+                          </li>
+                        )}
+                      </For>
+                    </ul>
+                  </Show>
+                  {/* A catch holds one item at a time, matching the
+                      battle's per-unit limit */}
+                  <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
+                    <Show when={bag()?.length} fallback={<p>Nothing holdable in the bag.</p>}>
+                      <ul>
+                        <For each={bag()}>
+                          {(entry) => (
+                            <li>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  moveItem(entry.item, true);
+                                }}
+                              >
+                                Give {describeItem(entry.item)} × {entry.amount}
+                              </button>
+                            </li>
+                          )}
+                        </For>
+                      </ul>
+                    </Show>
+                  </Show>
+
                   <h3>Candies</h3>
                   {/* The stack is keyed by family, so every stage of
                       the line draws on the same pile */}

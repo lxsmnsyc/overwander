@@ -1,16 +1,8 @@
-import {
-  For,
-  type JSX,
-  Show,
-  createEffect,
-  createResource,
-  createSignal,
-  onCleanup,
-} from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js';
 import { BattleOutcome, finishBattle, getBattle, listBattleTeams } from '../auth/battles';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid } from '../auth/raids';
-import { getSpeciesData } from '../data/species';
-import { type RaidBattle, createRaidBattle, isAllianceDown } from '../overworld/raid';
+import { type RaidBattle, createRaidBattle } from '../overworld/raid';
+import BattleField from './BattleField';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
 
 /**
@@ -36,7 +28,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   // The units mutate in place, so the view re-reads them on a timer
   const [revision, setRevision] = createSignal(0);
-  const [settled, setSettled] = createSignal(false);
+  const [recorded, setRecorded] = createSignal(false);
 
   createEffect(() => {
     const loaded = record();
@@ -87,18 +79,26 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     instance()?.battle.end();
   });
 
-  const bossDown = (): boolean => {
+  /**
+   * How the battle ended, once the engine says it has. The outcome
+   * mechanics settle it when nothing can act any more, so the view
+   * only has to read the verdict
+   */
+  const outcome = (): 'won' | 'lost' | 'draw' | null => {
     revision();
     const built = instance();
 
-    return built != null && isAllianceDown(built.units.get(BOSS_ALLIANCE) ?? []);
-  };
-
-  const partyDown = (): boolean => {
-    revision();
-    const built = instance();
-
-    return built != null && isAllianceDown(built.units.get(PLAYER_ALLIANCE) ?? []);
+    if (built == null || !built.battle.settled) {
+      return null;
+    }
+    if (built.battle.winner === built.alliances.get(PLAYER_ALLIANCE)) {
+      return 'won';
+    }
+    if (built.battle.winner === built.alliances.get(BOSS_ALLIANCE)) {
+      return 'lost';
+    }
+    // Nobody left standing, or a stalemate neither side can break
+    return 'draw';
   };
 
   const leave = (): void => {
@@ -107,16 +107,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     game.setBattle(null);
   };
 
-  // A raid battle is settled once, by whoever is watching it end
+  // A raid battle is recorded once, by whoever is watching it end
   createEffect(() => {
-    const won = bossDown();
-    const lost = partyDown();
+    const result = outcome();
     const raidId = props.active.raid;
 
-    if (props.active.replay || settled() || (!won && !lost)) {
+    if (props.active.replay || recorded() || result == null) {
       return;
     }
-    setSettled(true);
+
+    const won = result === 'won';
+
+    setRecorded(true);
     (async () => {
       await finishBattle(props.active.id, won ? BattleOutcome.Won : BattleOutcome.Lost);
 
@@ -148,39 +150,25 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
       <Show when={instance()} fallback={<p>Building the battle…</p>}>
         {(built) => (
-          <For each={[...built().units]}>
-            {([alliance, units]) => (
-              <>
-                <h2>{alliance === BOSS_ALLIANCE ? 'Boss' : 'Party'}</h2>
-                <ul>
-                  <For each={units}>
-                    {(unit) => (
-                      <li>
-                        {getSpeciesData(unit.species).name} · Lv. {unit.level} ·{' '}
-                        {(() => {
-                          revision();
-                          return Math.max(0, unit.health);
-                        })()}{' '}
-                        HP
-                      </li>
-                    )}
-                  </For>
-                </ul>
-              </>
-            )}
-          </For>
+          <BattleField
+            battle={built().battle}
+            label={(alliance) => (alliance.boss ? 'Boss' : 'Party')}
+          />
         )}
       </Show>
 
-      <Show when={bossDown()}>
+      <Show when={outcome() === 'won'}>
         <p role="status">
           {props.active.replay
             ? 'The boss went down.'
             : 'The raid boss is down — it is waiting in the overworld.'}
         </p>
       </Show>
-      <Show when={partyDown()}>
+      <Show when={outcome() === 'lost'}>
         <p role="status">The party fainted.</p>
+      </Show>
+      <Show when={outcome() === 'draw'}>
+        <p role="status">The battle ground to a halt with nobody able to act.</p>
       </Show>
       <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
 
@@ -188,7 +176,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         <button
           type="button"
           onClick={() => {
-            const collect = !props.active.replay && bossDown();
+            const collect = !props.active.replay && outcome() === 'won';
 
             leave();
             // A cleared raid sends the player back to where the

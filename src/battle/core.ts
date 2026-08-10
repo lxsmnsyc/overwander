@@ -95,6 +95,19 @@ export default class Battle extends EventEngine<BattleEventMap> {
     });
   }
 
+  /**
+   * Whether the battle has reached its terminal state. The outcome
+   * mechanics set it once nothing can act any more
+   */
+  settled = false;
+
+  /**
+   * The alliance left standing, once the battle settles. Null when
+   * it settled with nobody standing (a mutual knockout) or with more
+   * than one side still on the field (a stalemate)
+   */
+  winner: Alliance | null = null;
+
   alliances = new Set<Alliance>();
 
   addAlliance(alliance: Alliance): void {

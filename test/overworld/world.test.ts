@@ -22,6 +22,7 @@ import {
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import deriveEncounter, {
   EncounterType,
+  SHINY_CHARM_BOOST,
   deriveAbility,
   deriveMoves,
   deriveNature,
@@ -582,6 +583,27 @@ describe('chunk snapshot', () => {
     expect(deriveEncounter(snapshot, [species, 0xffffffff, shinyValue], 'trainer-red').shiny).toBe(
       true,
     );
+  });
+
+  it('multiplies the shiny odds by whatever the player carries', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    // A trait value that misses the plain 1/4096 band but lands
+    // inside the eightfold one
+    const trainerValue = new AleaRNG('trainer-red').int32();
+    const halves = (trainerValue >>> 16) ^ (trainerValue & 0xffff);
+    const nearMiss = (((halves ^ 64) << 16) >>> 0) | 0;
+
+    expect(isShinyFor('trainer-red', nearMiss)).toBe(false);
+    expect(isShinyFor('trainer-red', nearMiss, SHINY_CHARM_BOOST)).toBe(true);
+
+    // The Shiny Charm rides in as a boost on the derivation
+    const spawn = [Species.Magikarp, 0, nearMiss] as const;
+
+    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').shiny).toBe(false);
+    expect(
+      deriveEncounter(snapshot, [...spawn], 'trainer-red', { shinyBoost: SHINY_CHARM_BOOST }).shiny,
+    ).toBe(true);
   });
 
   it('floors a family-day raid reward at six in every IV', () => {

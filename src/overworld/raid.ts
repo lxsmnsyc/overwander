@@ -19,6 +19,13 @@ import { deriveAbility, deriveMoves, deriveNature } from './encounter';
 export const RAID_BOSS_LEVEL = MAX_LEVEL;
 
 /**
+ * The alliance the raid boss fights under; every player team shares
+ * the other one, so the whole lobby is allied against it
+ */
+export const BOSS_ALLIANCE = 0;
+export const PLAYER_ALLIANCE = 1;
+
+/**
  * The reward comes at a fixed level rather than a rolled one, so
  * clearing the same raid is worth the same to everyone. A legendary
  * arrives half-grown; a shadow, being the commoner prize, arrives
@@ -135,6 +142,11 @@ export interface RaidBattle {
    * The units of every team, keyed by the alliance they fight under
    */
   units: Map<number, Unit[]>;
+  /**
+   * The alliances themselves, so a caller can tell which side the
+   * settled battle named as its winner
+   */
+  alliances: Map<number, Alliance>;
 }
 
 /**
@@ -158,7 +170,9 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
     let alliance = alliances.get(record.alliance);
 
     if (alliance == null) {
-      alliance = new Alliance(battle);
+      // The boss side is marked, so a raid that ends with nobody
+      // standing still resolves in the party's favor
+      alliance = new Alliance(battle, record.alliance === BOSS_ALLIANCE);
       alliances.set(record.alliance, alliance);
     }
 
@@ -174,7 +188,7 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
     units.set(record.alliance, fielded);
   }
 
-  return { battle, units };
+  return { battle, units, alliances };
 }
 
 /**

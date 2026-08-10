@@ -23,7 +23,7 @@ import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
-import { createRaidBossSnapshot } from '../overworld/raid';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../overworld/raid';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
 import { BattleOutcome, createBattle } from './battles';
 import { syncServerClock } from './clock';
@@ -90,11 +90,9 @@ export interface RaidRecord {
 const RAID_COLLECTION = 'raids';
 
 /**
- * The alliance the raid boss fights under; every player team shares
- * the other one, so the whole lobby is allied against it
+ * The alliance numbers live with the battle builder that reads them
  */
-export const BOSS_ALLIANCE = 0;
-export const PLAYER_ALLIANCE = 1;
+export { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../overworld/raid';
 
 const converter: FirestoreDataConverter<RaidRecord> = {
   toFirestore: (record) => record,

@@ -154,14 +154,23 @@ but not consumed; only a used item is spent.
 
 | Collection        | Field       | Type                | Notes                                                |
 | ----------------- | ----------- | ------------------- | ---------------------------------------------------- |
-| `caughtAbilities` | `abilities` | `Abilities[]`       | Starts as the spawn's rolled ability                 |
-| `caughtItems`     | `items`     | `Items[]`           | Held items; starts empty                             |
+| `caughtAbilities` | `abilities` | `Abilities[]`       | The rolled ability, plus Shadow for a shadow catch   |
+| `caughtItems`     | `items`     | `Items[]`           | Held items; starts empty, up to `HELD_ITEM_LIMIT`    |
 | `caughtOwners`    | `history`   | `OwnershipRecord[]` | `{ owner, acquiredAt }`, oldest first; trades append |
 
 Catch records are world-readable (other players inspect a pokemon before a
 trade) and writable only by the current owner named in `caught/{catchId}.owner`.
 Because the side stores do not carry an owner field of their own, their rules
 have to `get()` the parent catch document.
+
+Held items move through `giveItem` and `takeItem` in
+[`src/auth/caught.ts`](../src/auth/caught.ts): each reads the catch, its held
+list and the inventory stack, then writes the stack and the list **in one
+transaction**, so an item is never in the bag and on a pokemon at once, nor lost
+between them. Only items flagged `Holdable` can be handed over, and a catch
+holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
+This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
+of every encounter its owner starts.
 
 ## Shared overworld stores
 
@@ -212,7 +221,10 @@ Holds every field of `Encounter` plus `spawn` (the spawn document id) and
 
 Two fields are worth calling out. `shiny` is a resonance between the trainer id
 and the **trait** value, so shininess is independent of the IVs a pokemon
-rolled and the same spawn can sparkle for one player and not another. `shadow`
+rolled and the same spawn can sparkle for one player and not another. The odds
+are multiplied by the species day (×8 for the featured family) and by the Shiny
+Charm (×8) when the player's buddy is holding it — `startEncounter` checks
+`buddies/{uid}` and that catch's held items before deriving. `shadow`
 marks a shadow raid's reward: `recordCatch` then writes `Abilities.Shadow` into
 `caughtAbilities` alongside the rolled one, so the catch keeps it for good.
 

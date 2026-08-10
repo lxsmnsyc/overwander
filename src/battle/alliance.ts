@@ -5,7 +5,16 @@ import type Team from './team';
 export default class Alliance {
   teams = new Set<Team>();
 
-  constructor(public battle: Battle) {
+  /**
+   * Whether this side is the raid boss rather than a party of
+   * players. A raid is meant to be beatable: when a raid ends with
+   * nobody standing, the victory goes to the side that is not this
+   * one
+   */
+  constructor(
+    public battle: Battle,
+    public readonly boss = false,
+  ) {
     this.battle.addAlliance(this);
   }
 

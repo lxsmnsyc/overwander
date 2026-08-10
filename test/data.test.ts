@@ -7,6 +7,7 @@ import registerBiomeSpawns, {
   pickSpawn,
 } from '../src/data/biome';
 import Families from '../src/data/ids/families';
+import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import { BALL_ITEMS, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
@@ -29,6 +30,7 @@ import {
   getFeaturedFamily,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
+  getSpeciesByBiome,
   getSpeciesData,
   isFeaturedSpecies,
   registerSpecies,
@@ -37,6 +39,7 @@ import {
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
 registerGen1Moves();
+registerAbilities();
 registerSpecies();
 registerItems();
 registerBiomeSpawns();
@@ -77,6 +80,31 @@ describe('species abilities', () => {
 
     expect(pools.regular).toEqual([Abilities.Chlorophyll]);
     expect(pools.hidden).toEqual([Abilities.EffectSpore, Abilities.Stench, Abilities.RunAway]);
+  });
+});
+
+describe('ability data', () => {
+  it('names every ability a species can roll', () => {
+    // The UI reads these names, so an unregistered ability would
+    // show up as a bare id in the battle field and the catch dialog
+    const seen = new Set<Abilities>();
+
+    for (let biome = Biome.DeepOcean; biome <= Biome.PolarOcean; biome++) {
+      for (const species of getSpeciesByBiome(biome)) {
+        for (const ability of getSpeciesAbilities(species)) {
+          seen.add(ability);
+          expect(getAbilityData(ability).name.length).toBeGreaterThan(0);
+        }
+      }
+    }
+    expect(seen.size).toBeGreaterThan(50);
+
+    expect(getAbilityData(Abilities.Chlorophyll).name).toBe('Chlorophyll');
+    expect(getAbilityData(Abilities.CompoundEyes).name).toBe('Compound Eyes');
+
+    // The raid abilities are registered alongside the rolled ones
+    expect(getAbilityData(Abilities.Boss).name).toBe('Boss');
+    expect(getAbilityData(Abilities.Shadow).name).toBe('Shadow');
   });
 });
 
@@ -230,6 +258,17 @@ describe('item data', () => {
     expect(getItemData(Items.UltraBall).flags & ItemFlags.Consumable).not.toBe(0);
     expect(getItemData(Items.UltraBall).flags & ItemFlags.Holdable).toBe(0);
   });
+
+  it('registers the Shiny Charm as a holdable key item', () => {
+    const charm = getItemData(Items.ShinyCharm);
+
+    expect(charm.name).toBe('Shiny Charm');
+    expect(charm.type).toBe(ItemTypes.KeyItem);
+
+    // A buddy holds it; nothing ever consumes it
+    expect(charm.flags & ItemFlags.Holdable).not.toBe(0);
+    expect(charm.flags & ItemFlags.Consumable).toBe(0);
+  });
 });
 
 describe('biome data', () => {
@@ -319,8 +358,10 @@ describe('biome data', () => {
   it('rolls the item pool through the rarity bands', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
-    // Band thresholds mirror the spawn pool's
+    // Band thresholds mirror the spawn pool's; the special tier now
+    // holds the Shiny Charm alongside the Master Ball
     expect(pickItem(ITEM_POOL, rolls([0, 0]))).toBe(Items.MasterBall);
+    expect(pickItem(ITEM_POOL, rolls([0, 0.99]))).toBe(Items.ShinyCharm);
     expect(pickItem(ITEM_POOL, rolls([0.01, 0]))).toBe(Items.FireStone);
     expect(pickItem(ITEM_POOL, rolls([0.05, 0]))).toBe(Items.UltraBall);
     expect(pickItem(ITEM_POOL, rolls([0.5, 0]))).toBe(Items.PokeBall);

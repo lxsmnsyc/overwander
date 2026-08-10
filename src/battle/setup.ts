@@ -14,6 +14,7 @@ import {
   setupMoveMechanics,
   setupTriggerMoveMechanics,
 } from './mechanics/move';
+import setupOutcomeMechanics from './mechanics/outcome';
 import setupTeamMechanics from './mechanics/team';
 import setupUnitMechanics from './mechanics/unit';
 import setupWeatherMechanics from './mechanics/weather';
@@ -49,6 +50,8 @@ export default function createBattle(
   setupAbilities(battle);
   setupItems(battle);
   setupAI(battle);
+  // Last, so the scan sees a tick's actions already settled
+  setupOutcomeMechanics(battle);
 
   if (options?.realtime === true) {
     setupBattleMechanics(battle);

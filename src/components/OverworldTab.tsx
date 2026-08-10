@@ -10,6 +10,7 @@ import {
   onMount,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
+import { deriveRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   claimHiddenGrotto,
@@ -29,8 +30,11 @@ import { CHUNK_CELLS } from '../overworld/chunk';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
+import pickStartPosition from '../overworld/start';
+import { EncounterType } from '../overworld/encounter';
 import type SafariSession from '../overworld/safari';
 import SafariDialog from './SafariDialog';
+import { GameTab, type PendingReward, useGame } from './game-context';
 
 /**
  * How many spawns a visit publishes for the chunk's window
@@ -122,11 +126,33 @@ export default function OverworldTab(): JSX.Element {
   const [cellY, setCellY] = createSignal(START_CELL);
   const [status, setStatus] = createSignal<string | null>(null);
   const [session, setSession] = createSignal<SafariSession | null>(null);
+  const game = useGame();
   /**
    * The cell whose interaction already fired, so standing still (or
    * closing a dialog) does not trigger it again
    */
   const [visited, setVisited] = createSignal<string | null>(null);
+  const [placed, setPlaced] = createSignal(false);
+
+  // A player who has not walked anywhere yet starts somewhere in the
+  // starting region rather than at the origin. The draw is seeded by
+  // their uid, so it is the same place every time until a position
+  // is actually stored
+  createEffect(() => {
+    const user = auth.user();
+
+    if (user == null || placed()) {
+      return;
+    }
+
+    const start = pickStartPosition(getWorld(), user.uid);
+
+    setPlaced(true);
+    setChunkX(start.chunkX);
+    setChunkY(start.chunkY);
+    setCellX(start.cellX);
+    setCellY(start.cellY);
+  });
 
   const [view, { refetch }] = createResource(() => [chunkX(), chunkY()] as const, loadChunk);
 
@@ -226,10 +252,55 @@ export default function OverworldTab(): JSX.Element {
       return meet(user, loaded.snapshot, claim.id, claim.spawn);
     }
     if (landmark === Landmark.LegendaryRaid) {
-      return 'A raid lobby stands here. Raids are not in yet.';
+      const lobby = await enterRaid(user, loaded.snapshot, at);
+
+      if (lobby == null) {
+        return 'The raid lobby is empty this hour.';
+      }
+      // The lobby itself lives in the Raids tab
+      game.setRaid(lobby[0]);
+      game.setTab(GameTab.Raids);
+      return null;
     }
     return null;
   };
+
+  /**
+   * A cleared raid hands the legendary over as a meeting: the chunk,
+   * biome and window are the raid's, the individual is the player's
+   */
+  const claimRaidReward = async (
+    user: User,
+    loaded: ChunkView,
+    reward: PendingReward,
+  ): Promise<void> => {
+    const [spawnId, spawn] = deriveRaidReward(reward.raid, user.uid, reward.species);
+    const encounter = await startEncounter(
+      user,
+      loaded.snapshot,
+      `${spawnId}:${user.uid}`,
+      spawn,
+      EncounterType.Raid,
+    );
+
+    setSession(await createSafariSession(user, encounter));
+  };
+
+  // A raid cleared elsewhere leaves its legendary waiting; it is met
+  // the moment the player is back in the overworld
+  createEffect(() => {
+    const reward = game.reward();
+    const loaded = view();
+    const user = auth.user();
+
+    if (reward == null || loaded == null || user == null) {
+      return;
+    }
+    game.setReward(null);
+    claimRaidReward(user, loaded, reward).catch((caught: unknown) => {
+      setStatus(caught instanceof Error ? caught.message : String(caught));
+    });
+  });
 
   // Every arrival at a new cell resolves its interaction once the
   // chunk it belongs to has loaded

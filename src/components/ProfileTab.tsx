@@ -3,12 +3,14 @@ import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { resolveBuddy } from '../auth/buddy';
 import { getProfile } from '../auth/profile';
 import { getSpeciesData } from '../data/species';
+import BattleHistory from './BattleHistory';
 import CatchesList from './CatchesList';
 import InventoryList from './InventoryList';
 
 const enum InnerTab {
   Catches = 0,
   Inventory = 1,
+  Battles = 2,
 }
 
 export interface ProfileTabProps {
@@ -57,6 +59,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         <TabList>
           <Tab value={InnerTab.Catches}>Catches</Tab>
           <Tab value={InnerTab.Inventory}>Inventory</Tab>
+          <Tab value={InnerTab.Battles}>Battles</Tab>
         </TabList>
         <TabPanel value={InnerTab.Catches}>
           <h3>Catches</h3>
@@ -65,6 +68,10 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         <TabPanel value={InnerTab.Inventory}>
           <h3>Inventory</h3>
           <InventoryList player={props.player} />
+        </TabPanel>
+        <TabPanel value={InnerTab.Battles}>
+          <h3>Battles</h3>
+          <BattleHistory player={props.player} />
         </TabPanel>
       </TabGroup>
     </section>

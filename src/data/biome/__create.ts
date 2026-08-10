@@ -67,13 +67,32 @@ export const SPECIAL_SPAWN_ODDS = 1 / 4096;
  * add their legendaries, mythicals, unowns, ultra beasts and
  * paradoxes here
  */
-const SPECIAL_SPECIES = new Set<Species>([
+/**
+ * Legendaries: the special-tier species a raid can stage. Mythicals
+ * are deliberately not here — they are gifts, not encounters
+ */
+const LEGENDARY_SPECIES = new Set<Species>([
   Species.Articuno,
   Species.Zapdos,
   Species.Moltres,
   Species.Mewtwo,
-  Species.Mew,
 ]);
+
+/**
+ * Mythicals: special-tier, but never raidable
+ */
+const MYTHICAL_SPECIES = new Set<Species>([Species.Mew]);
+
+const SPECIAL_SPECIES = new Set<Species>([...LEGENDARY_SPECIES, ...MYTHICAL_SPECIES]);
+
+/**
+ * Whether the species is a legendary, the only kind a legendary raid
+ * will stage. Placeholders (Missingno, Egg, Substitute) and
+ * mythicals answer false
+ */
+export function isLegendarySpecies(species: Species): boolean {
+  return LEGENDARY_SPECIES.has(species);
+}
 
 /**
  * Babies can still evolve yet spawn at Rare odds; Gen 1 has none,

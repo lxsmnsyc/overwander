@@ -26,6 +26,7 @@ import registerWoodlandSpawns from './woodland';
 export {
   getSpawnPool,
   getSpawnRarity,
+  isLegendarySpecies,
   pickSpawn,
   RARE_SPAWN_ODDS,
   registerSpawnPool,

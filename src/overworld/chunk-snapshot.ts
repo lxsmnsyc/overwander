@@ -1,5 +1,5 @@
 import AleaRNG from '../core/alea';
-import { getSpawnPool, pickSpawn } from '../data/biome';
+import { getSpawnPool, isLegendarySpecies, pickSpawn } from '../data/biome';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
@@ -21,6 +21,22 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * observer of a chunk within the same window shares one timestamp
  */
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
+
+/**
+ * Legendary raids run on their own, far slower clock: a raid stands
+ * for a full hour, long enough for players to gather a party, while
+ * the spawns around it turn over twelve times
+ */
+export const RAID_INTERVAL = 60 * 60 * 1000;
+
+/**
+ * The legendary a raid lobby is staging, and the 32-bit trait value
+ * its nature and ability derive from
+ */
+export interface RaidRoll {
+  species: Species;
+  traitValue: number;
+}
 
 /**
  * A chunk observed at a point in time: the timestamp snaps back to
@@ -146,6 +162,47 @@ export default class ChunkSnapshot {
       this.itemCaches = caches;
     }
     return this.itemCaches;
+  }
+
+  /**
+   * The hour-long window the chunk's raids belong to. Raids outlive
+   * the 5-minute spawn window, so every snapshot taken within the
+   * same hour stages the same legendary
+   */
+  get raidTimestamp(): number {
+    return Math.floor(this.timestamp / RAID_INTERVAL) * RAID_INTERVAL;
+  }
+
+  private raids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The hour's legendary raids, keyed by the landmark cell. The
+   * legendary is drawn from the biome's special tier for the raid
+   * hour's time of day, so a chunk only stages what belongs there —
+   * mythicals never appear, and a biome whose special tier holds no
+   * legendary stages no raid at all
+   */
+  getLegendaryRaids(): Map<number, RaidRoll> {
+    if (this.raids == null) {
+      const raids = new Map<number, RaidRoll>();
+      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
+      const legendaries = pool.special.filter((entry) => isLegendarySpecies(entry.species));
+
+      if (legendaries.length > 0) {
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark === Landmark.LegendaryRaid) {
+            const rng = new AleaRNG(`${this.chunk.seed}${this.raidTimestamp}raid${cell}`);
+            // The draws land in order: the legendary, then the trait
+            // value its nature and ability derive from
+            const entry = legendaries[Math.floor(rng.random() * legendaries.length)];
+
+            raids.set(cell, { species: entry.species, traitValue: rng.int32() });
+          }
+        }
+      }
+      this.raids = raids;
+    }
+    return this.raids;
   }
 
   private hiddenGrottos: Map<number, GrottoReward> | null = null;

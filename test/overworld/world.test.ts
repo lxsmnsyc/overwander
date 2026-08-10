@@ -1,13 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
+import Abilities from '../../src/data/ids/abilities';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
 import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
-import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
-import deriveEncounter, { EncounterType, isShinyFor } from '../../src/overworld/encounter';
+import type Chunk from '../../src/overworld/chunk';
+import ChunkSnapshot, { RAID_INTERVAL } from '../../src/overworld/chunk-snapshot';
+import { RAID_BOSS_LEVEL, createRaidBossSnapshot } from '../../src/overworld/raid';
+import pickStartPosition, { START_AREA } from '../../src/overworld/start';
+import deriveEncounter, {
+  EncounterType,
+  deriveAbility,
+  deriveNature,
+  isShinyFor,
+} from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
 import { resolveHiddenGrotto } from '../../src/overworld/landmarks';
 import World from '../../src/overworld/world';
@@ -39,6 +48,23 @@ describe('perlin noise', () => {
     }
   });
 });
+
+/**
+ * Biomes span whole regions, so a search for a specific one has to
+ * cover far more ground than a handful of chunks
+ */
+function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | null {
+  for (let y = -200; y < 200; y += 4) {
+    for (let x = -200; x < 200; x += 4) {
+      const candidate = world.getChunk(x, y);
+
+      if (matches(candidate)) {
+        return candidate;
+      }
+    }
+  }
+  return null;
+}
 
 describe('world', () => {
   it('derives independent climate channels from one seed', () => {
@@ -163,6 +189,92 @@ describe('world', () => {
       shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getHiddenGrottos()]));
     }
     expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('stages legendary raids on the hour', () => {
+    const world = new World('overworld');
+    // Alpine tundra stages Articuno; the raid roll only reads the
+    // biome's special tier, so the chunk just has to sit in one
+    const chunk = findChunk(
+      world,
+      (candidate) =>
+        candidate.biome === Biome.AlpineTundra &&
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.LegendaryRaid),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const raids = new ChunkSnapshot(chunk, 0).getLegendaryRaids();
+
+    expect(raids.size).toBeGreaterThan(0);
+    for (const [cell, roll] of raids) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.LegendaryRaid);
+      expect(roll.species).toBe(Species.Articuno);
+    }
+
+    // Every 5-minute window inside the hour stages the same raid,
+    // even as the spawns around it turn over
+    const later = new ChunkSnapshot(chunk, 55 * 60 * 1000);
+
+    expect(later.raidTimestamp).toBe(0);
+    expect([...later.getLegendaryRaids()]).toEqual([...raids]);
+
+    // The next hour rolls again
+    const next = new ChunkSnapshot(chunk, RAID_INTERVAL);
+
+    expect(next.raidTimestamp).toBe(RAID_INTERVAL);
+  });
+
+  it('never stages a mythical raid', () => {
+    const world = new World('overworld');
+
+    // The tropical rainforest's special tier is Mew alone, so its
+    // raid landmarks stage nothing at all
+    const chunk = findChunk(world, (candidate) => candidate.biome === Biome.TropicalRainforest);
+
+    expect(chunk).not.toBeNull();
+    expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryRaids().size).toBe(0);
+  });
+
+  it('builds the raid boss with perfect IVs and no items', () => {
+    const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+
+    expect(boss.level).toBe(RAID_BOSS_LEVEL);
+    expect(Object.values(boss.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
+    expect(Object.values(boss.effortValues)).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(boss.items).toEqual([]);
+    expect(boss.caught).toBe('');
+
+    // Nature and ability follow the raid's trait value, so every
+    // player in the lobby fights the same boss — and the Boss
+    // ability rides alongside the species' own
+    expect(boss.nature).toBe(deriveNature(0x12345678));
+    expect(boss.abilities).toEqual([Abilities.Boss, deriveAbility(Species.Articuno, 0x12345678)]);
+  });
+
+  it('starts a player in a free cell of the starting region', () => {
+    const world = new World('overworld');
+    const start = pickStartPosition(world, 'player-uid');
+
+    // Somewhere in the 1000x1000 square centered on the origin
+    expect(start.chunkX).toBeGreaterThanOrEqual(-START_AREA / 2);
+    expect(start.chunkX).toBeLessThan(START_AREA / 2);
+    expect(start.chunkY).toBeGreaterThanOrEqual(-START_AREA / 2);
+    expect(start.chunkY).toBeLessThan(START_AREA / 2);
+
+    // Never on a landmark: nobody opens the game already standing on
+    // a raid
+    const chunk = world.getChunk(start.chunkX, start.chunkY);
+
+    expect(chunk.getLandmarkAt(start.cellX, start.cellY)).toBeNull();
+
+    // The same player lands in the same place every time, and
+    // different players spread out
+    expect(pickStartPosition(world, 'player-uid')).toEqual(start);
+    expect(pickStartPosition(world, 'other-uid')).not.toEqual(start);
   });
 
   it('resolves hidden grottos into rare finds', () => {

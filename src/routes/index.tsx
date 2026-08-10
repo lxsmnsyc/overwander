@@ -1,35 +1,72 @@
 import { Title } from '@solidjs/meta';
+import type { User } from 'firebase/auth';
 import { For, type JSX, Show } from 'solid-js';
 import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { useAuth } from '../auth/context';
+import BattleView from '../components/BattleView';
+import GameProvider, { GameTab, useGame } from '../components/game-context';
 import LoginForm from '../components/LoginForm';
 import OverworldTab from '../components/OverworldTab';
 import ProfileTab from '../components/ProfileTab';
+import RaidsTab from '../components/RaidsTab';
 import WorldMapTab from '../components/WorldMapTab';
 
-const enum HomeTab {
-  Profile = 0,
-  Overworld = 1,
-  WorldMap = 2,
-  Raids = 3,
-}
-
 interface TabDefinition {
-  tab: HomeTab;
+  tab: GameTab;
   label: string;
-  /**
-   * Tabs whose feature does not exist yet stay unselectable rather
-   * than opening on an empty panel
-   */
-  todo?: boolean;
 }
 
 const TABS: TabDefinition[] = [
-  { tab: HomeTab.Profile, label: 'Profile' },
-  { tab: HomeTab.Overworld, label: 'Overworld' },
-  { tab: HomeTab.WorldMap, label: 'World Map' },
-  { tab: HomeTab.Raids, label: 'Raids', todo: true },
+  { tab: GameTab.Profile, label: 'Profile' },
+  { tab: GameTab.Overworld, label: 'Overworld' },
+  { tab: GameTab.WorldMap, label: 'World Map' },
+  { tab: GameTab.Raids, label: 'Raids' },
 ];
+
+/**
+ * The signed-in view: the tabs, unless a battle has taken the page
+ */
+function GameView(props: { user: User }): JSX.Element {
+  const game = useGame();
+
+  return (
+    <Show
+      when={game.battle()}
+      fallback={
+        <TabGroup
+          horizontal
+          value={game.tab()}
+          onChange={(value) => {
+            if (value != null) {
+              game.setTab(value);
+            }
+          }}
+          toggleable={false}
+        >
+          <TabList>
+            <For each={TABS}>
+              {(definition) => <Tab value={definition.tab}>{definition.label}</Tab>}
+            </For>
+          </TabList>
+          <TabPanel value={GameTab.Profile}>
+            <ProfileTab player={props.user.uid} />
+          </TabPanel>
+          <TabPanel value={GameTab.Overworld}>
+            <OverworldTab />
+          </TabPanel>
+          <TabPanel value={GameTab.WorldMap}>
+            <WorldMapTab />
+          </TabPanel>
+          <TabPanel value={GameTab.Raids}>
+            <RaidsTab user={props.user} />
+          </TabPanel>
+        </TabGroup>
+      }
+    >
+      {(active) => <BattleView active={active()} />}
+    </Show>
+  );
+}
 
 export default function Home(): JSX.Element {
   const auth = useAuth();
@@ -48,27 +85,9 @@ export default function Home(): JSX.Element {
         }
       >
         {(user) => (
-          <TabGroup horizontal defaultValue={HomeTab.Profile} toggleable={false}>
-            <TabList>
-              <For each={TABS}>
-                {(definition) => (
-                  <Tab value={definition.tab} disabled={definition.todo}>
-                    {definition.label}
-                    {definition.todo ? ' (TODO)' : ''}
-                  </Tab>
-                )}
-              </For>
-            </TabList>
-            <TabPanel value={HomeTab.Profile}>
-              <ProfileTab player={user().uid} />
-            </TabPanel>
-            <TabPanel value={HomeTab.Overworld}>
-              <OverworldTab />
-            </TabPanel>
-            <TabPanel value={HomeTab.WorldMap}>
-              <WorldMapTab />
-            </TabPanel>
-          </TabGroup>
+          <GameProvider>
+            <GameView user={user()} />
+          </GameProvider>
         )}
       </Show>
     </main>

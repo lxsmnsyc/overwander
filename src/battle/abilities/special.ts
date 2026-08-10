@@ -16,6 +16,19 @@ import { MergedAbilityLifecycle, createAbility } from './__create';
 export const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
 
 /**
+ * A Boss' health is a flat raid pool plus a tenfold multiple of what
+ * the species would otherwise have, so even a frail legendary takes
+ * a party to bring down
+ */
+export const BOSS_BASE_HEALTH = 5000;
+export const BOSS_HEALTH_SCALE = 10;
+
+/**
+ * Every other stat simply doubles
+ */
+export const BOSS_STAT_SCALE = 2;
+
+/**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest)
  */
 const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
@@ -31,12 +44,12 @@ function isSelfInflicted(cause: EffectCause, source: unknown): boolean {
 
 const setupAbilities = [
   /**
-   * Boss: a raid-style stat wall — tenfold HP, doubled everything
-   * else, immune to negative stage applications, health-scaling
-   * damage (OHKO moves, Super Fang, residual max-HP fractions),
-   * forced switch-outs, trapping, and disruption statuses (unless
-   * self-inflicted). Its single-target enemy moves strike every
-   * enemy instead.
+   * Boss: a raid-style stat wall — a flat health pool on top of
+   * tenfold HP, doubled everything else, immune to negative stage
+   * applications, health-scaling damage (OHKO moves, Super Fang,
+   * residual max-HP fractions), forced switch-outs, trapping, and
+   * disruption statuses (unless self-inflicted). Its single-target
+   * enemy moves strike every enemy instead.
    */
   createAbility(Abilities.Boss, (battle) => {
     // Units that already went through their first-entry dormancy
@@ -45,7 +58,12 @@ const setupAbilities = [
     return new MergedAbilityLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
-          event.value *= event.stat === Stats.HP ? 10 : 2;
+          // The flat term is what keeps an early raid from being
+          // burst down: a frail species still has a raid-sized pool
+          event.value =
+            event.stat === Stats.HP
+              ? BOSS_BASE_HEALTH + event.value * BOSS_HEALTH_SCALE
+              : event.value * BOSS_STAT_SCALE;
         }
       }),
       // The first time a Boss takes the field it lies dormant,

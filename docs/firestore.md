@@ -226,16 +226,106 @@ document id. Only the named player may create one.
 Written by `claimHiddenGrotto`, the same one-claim-per-window marker as an item
 cache.
 
-| Field    | Type                  | Notes                                   |
-| -------- | --------------------- | --------------------------------------- |
-| `player` | `string`              | Claiming uid                            |
-| `kind`   | `'item' \| 'pokemon'` | Which branch of the grotto reward fired |
+| Field    | Type      | Notes        |                                         |
+| -------- | --------- | ------------ | --------------------------------------- |
+| `player` | `string`  | Claiming uid |                                         |
+| `kind`   | `'item' \ | 'pokemon'`   | Which branch of the grotto reward fired |
 
 An item reward lands in the inventory as part of the claim. A pokemon reward
 comes back as a spawn tuple whose two rolls derive from
 `{seed}{timestamp}grotto{cell}spawn`, so every observer of that grotto meets the
 same individual; the caller passes it to `startEncounter` under the id
 `{chunkSeed}@{timestamp}$grotto{cell}`, which has no `spawns` document behind it.
+
+## Raids and battles
+
+A legendary raid runs on its own hour-long clock (`RAID_INTERVAL` in
+[`src/overworld/chunk-snapshot.ts`](../src/overworld/chunk-snapshot.ts)) rather
+than the 5-minute spawn window, so a lobby stands long enough to gather a party.
+The legendary is drawn from the chunk biome's special tier for the raid hour's
+time of day, filtered to legendaries — mythicals are never staged.
+
+### `raids/{chunkSeed}@{raidTimestamp}$raid{cell}`
+
+Written by `enterRaid` in [`src/auth/raids.ts`](../src/auth/raids.ts). The id is
+derived, so every player who walks onto the landmark in the same hour joins the
+lobby that is already standing; the first to arrive hosts it.
+
+| Field        | Type             | Notes                                                       |
+| ------------ | ---------------- | ----------------------------------------------------------- |
+| `species`    | `Species`        | The legendary being staged                                  |
+| `traitValue` | `number`         | 32-bit roll the boss' nature and ability derive from        |
+| `host`       | `string`         | Only this uid may start the raid                            |
+| `teams`      | `string[]`       | `teams/{teamId}` ids, appended via `arrayUnion`             |
+| `battle`     | `string \| null` | The battle the host started, null while gathering           |
+| `timestamp`  | `number`         | The raid hour, for listing the live lobbies                 |
+| `chunk`      | `{ seed, x, y }` | Where the lobby stands, for a listing with no chunk in hand |
+| `cell`       | `number`         | The landmark cell                                           |
+| `cleared`    | `boolean`        | Set when the boss goes down                                 |
+
+`joinRaid` writes the party as its own team document and appends only the id, so
+two players joining at once cannot overwrite each other. `startRaid` writes
+`battle` inside a transaction, so a second start finds it taken.
+
+`listLiveRaids(raidTimestamp)` queries `where('timestamp', '==', …)` and keeps
+the lobbies that are neither started nor cleared — that is the Raids tab. A
+cleared raid also shuts its landmark: `enterRaid` resolves null for the rest of
+the hour, and the next hour rolls a new raid at the same cell.
+
+### `teams/{teamId}`
+
+| Field     | Type       | Notes                                        |
+| --------- | ---------- | -------------------------------------------- |
+| `player`  | `string`   | Owning uid                                   |
+| `catches` | `string[]` | Up to `TEAM_SIZE` (6) `caught/{catchId}` ids |
+
+A team holds ids, so it follows whatever those catches become — until a battle
+freezes them.
+
+### `teamSnapshots/{snapshotId}`
+
+| Field      | Type              | Notes                                        |
+| ---------- | ----------------- | -------------------------------------------- |
+| `player`   | `string`          | Owning uid; empty for the raid boss          |
+| `alliance` | `number`          | Teams sharing a number fight side by side    |
+| `catches`  | `CatchSnapshot[]` | The party frozen as it stood at battle start |
+
+A **catch snapshot** ([`src/auth/catch-snapshot.ts`](../src/auth/catch-snapshot.ts))
+copies `caught` (the source id), `species`, `level`, `ivs`, `effortValues`,
+`nature`, `gender`, `shiny`, `moves`, `abilities` and `items`. It is never
+rewritten: levelling, evolving or handing an item over mid-raid must not change
+units already fighting.
+
+The raid boss gets a snapshot of its own — perfect (31) IVs, zero effort values,
+no held items, level `RAID_BOSS_LEVEL`, with nature and ability derived from the
+raid's `traitValue` and an empty `caught` id. It fights alone under
+`BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
+
+### `battles/{battleId}`
+
+| Field       | Type            | Notes                                        |
+| ----------- | --------------- | -------------------------------------------- |
+| `teams`     | `string[]`      | `teamSnapshots/{snapshotId}` ids, boss first |
+| `players`   | `string[]`      | Every uid that fielded a team                |
+| `raid`      | `string`        | The raid it was fought for; empty for PvP    |
+| `species`   | `Species`       | What was fought, so a listing can name it    |
+| `outcome`   | `BattleOutcome` | Unfinished (0), Won (1), Lost (2)            |
+| `startedAt` | `number`        | Server-clock milliseconds                    |
+
+The document id doubles as the battle's RNG seed, so every participant and
+spectator replays the same rolls from the same frozen teams.
+
+`finishBattle` stamps the outcome once the fight settles; every participant
+computes the same one, since the fight is deterministic. The profile's battle
+history queries `where('players', 'array-contains', uid)` and drops anything
+still `Unfinished` — an abandoned fight is not a result. Replaying a history
+entry rebuilds the battle from that seed and those snapshots, so it plays out
+identically and awards nothing.
+
+Clearing a raid does not store the reward: `deriveRaidReward` rolls a spawn
+tuple from the raid id and the player's uid, so everyone in the lobby meets
+their own individual of the same legendary, in the raid's chunk and window,
+through the usual `encounters/{spawnId}:{uid}` path with `EncounterType.Raid`.
 
 ## Derived, never stored
 
@@ -359,6 +449,38 @@ service cloud.firestore {
         && request.resource.data.player == request.auth.uid;
       allow update, delete: if false;
     }
+    // Raid lobbies and the records a fight freezes. Everything here
+    // is readable by the lobby, and the rules can only check the
+    // shape — the host check on starting lives in application code
+    match /raids/{raidId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.host == request.auth.uid;
+      allow update: if signedIn();
+      allow delete: if false;
+    }
+    match /teams/{teamId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.player == request.auth.uid
+        && request.resource.data.catches.size() <= 6;
+      allow update, delete: if signedIn() && resource.data.player == request.auth.uid;
+    }
+    match /teamSnapshots/{snapshotId} {
+      allow read: if signedIn();
+      allow create: if signedIn();
+      // A snapshot is frozen: rewriting it would change units that
+      // are already fighting
+      allow update, delete: if false;
+    }
+    match /battles/{battleId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid in request.resource.data.players;
+      // Only the outcome ever moves, and only for a participant
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.players
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['outcome']);
+      allow delete: if false;
+    }
     match /grottoClaims/{claimId} {
       allow read: if signedIn();
       allow create: if signedIn()
@@ -377,11 +499,14 @@ deployed.
 
 ## Required indexes
 
-| Collection    | Fields                       | Reason                                       |
-| ------------- | ---------------------------- | -------------------------------------------- |
-| `spawns`      | `chunk` ASC, `timestamp` ASC | `listSpawns` filters on both                 |
-| `caught`      | `owner` ASC                  | `listCaught`; automatic single-field index   |
-| `spawns`      | `chunk` ASC                  | `clearStaleSpawns`; automatic                |
-| `caught`      | `owner` ASC, `species` ASC   | `hasCaughtSpecies`, the Repeat Ball's check  |
-| `inventories` | `user` ASC                   | `getInventory`; automatic single-field index |
-| `candies`     | `user` ASC                   | `getCandies`; automatic single-field index   |
+| Collection    | Fields                       | Reason                                        |
+| ------------- | ---------------------------- | --------------------------------------------- |
+| `spawns`      | `chunk` ASC, `timestamp` ASC | `listSpawns` filters on both                  |
+| `caught`      | `owner` ASC                  | `listCaught`; automatic single-field index    |
+| `spawns`      | `chunk` ASC                  | `clearStaleSpawns`; automatic                 |
+| `caught`      | `owner` ASC, `species` ASC   | `hasCaughtSpecies`, the Repeat Ball's check   |
+| `inventories` | `user` ASC                   | `getInventory`; automatic single-field index  |
+| `candies`     | `user` ASC                   | `getCandies`; automatic single-field index    |
+| `teams`       | `player` ASC                 | `listTeams`; automatic single-field index     |
+| `raids`       | `timestamp` ASC              | `listLiveRaids`; automatic single-field index |
+| `battles`     | `players` ARRAY              | `listBattleHistory`; automatic array index    |

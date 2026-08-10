@@ -145,6 +145,53 @@ export function isShinyFor(userId: string, individualValue: number): boolean {
  * Shininess is personal: it needs the observing user's id, and
  * anonymous derivations never sparkle
  */
+/**
+ * The ability a trait value picks for the species: the slice's band
+ * chooses between the hidden and regular pools, its position within
+ * the band chooses the entry
+ */
+export function deriveAbility(species: Species, traitValue: number): Abilities {
+  const abilitySlice = (traitValue >>> (TRAIT_BITS * 2)) & TRAIT_MASK;
+  const pools = getSpeciesAbilityPools(species);
+
+  if (pools.hidden.length > 0 && abilitySlice < HIDDEN_ABILITY_BAND) {
+    const fraction = abilitySlice / HIDDEN_ABILITY_BAND;
+
+    return pools.hidden[Math.floor(fraction * pools.hidden.length)];
+  }
+
+  const start = pools.hidden.length > 0 ? HIDDEN_ABILITY_BAND : 0;
+  const fraction = (abilitySlice - start) / (TRAIT_RANGE - start);
+
+  return pools.regular[Math.floor(fraction * pools.regular.length)];
+}
+
+/**
+ * The nature a trait value picks, from its own slice
+ */
+export function deriveNature(traitValue: number): Natures {
+  const natureSlice = (traitValue >>> (TRAIT_BITS * 3)) & TRAIT_MASK;
+
+  // tsc requires the assertion to treat the scaled slice as a
+  // Natures; tsgolint resolves the const enum to number and disagrees
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  return Math.floor((natureSlice / TRAIT_RANGE) * NATURE_COUNT) as Natures;
+}
+
+/**
+ * The last four level-up moves the species knows at that level
+ */
+export function deriveMoves(species: Species, level: number): Moves[] {
+  const data = getSpeciesData(species);
+  const learned = Object.keys(data.learnSet.level)
+    .map(Number)
+    .filter((threshold) => threshold <= level)
+    .sort((a, b) => a - b)
+    .flatMap((threshold) => data.learnSet.level[threshold]);
+
+  return learned.slice(-MOVE_LIMIT);
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -152,11 +199,10 @@ export default function deriveEncounter(
 ): Encounter {
   const [species, individualValue, traitValue] = spawn;
 
-  // Slices in trait order: level, gender, ability, nature
+  // Slices in trait order: level, gender, ability, nature — the last
+  // two are read by deriveAbility and deriveNature
   const levelSlice = traitValue & TRAIT_MASK;
   const genderSlice = (traitValue >>> TRAIT_BITS) & TRAIT_MASK;
-  const abilitySlice = (traitValue >>> (TRAIT_BITS * 2)) & TRAIT_MASK;
-  const natureSlice = (traitValue >>> (TRAIT_BITS * 3)) & TRAIT_MASK;
 
   const level =
     MIN_SPAWN_LEVEL +
@@ -172,21 +218,9 @@ export default function deriveEncounter(
   };
 
   const data = getSpeciesData(species);
-  const pools = getSpeciesAbilityPools(species);
-
   // The ability slice serves twice: its band picks the pool, and its
   // position within the band picks the pool index
-  let ability: Abilities;
-  if (pools.hidden.length > 0 && abilitySlice < HIDDEN_ABILITY_BAND) {
-    const fraction = abilitySlice / HIDDEN_ABILITY_BAND;
-
-    ability = pools.hidden[Math.floor(fraction * pools.hidden.length)];
-  } else {
-    const start = pools.hidden.length > 0 ? HIDDEN_ABILITY_BAND : 0;
-    const fraction = (abilitySlice - start) / (TRAIT_RANGE - start);
-
-    ability = pools.regular[Math.floor(fraction * pools.regular.length)];
-  }
+  const ability = deriveAbility(species, traitValue);
 
   // Modern mechanics: gender is a pure ratio roll independent of any
   // stat, from its own dedicated slice
@@ -199,17 +233,8 @@ export default function deriveEncounter(
   }
 
   // The last four level-up moves learnable at this level
-  const learned = Object.keys(data.learnSet.level)
-    .map(Number)
-    .filter((threshold) => threshold <= level)
-    .sort((a, b) => a - b)
-    .flatMap((threshold) => data.learnSet.level[threshold]);
-  const moves = learned.slice(-MOVE_LIMIT);
-
-  // tsc requires the assertion to treat the scaled slice as a
-  // Natures; tsgolint resolves the const enum to number and disagrees
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  const nature = Math.floor((natureSlice / TRAIT_RANGE) * NATURE_COUNT) as Natures;
+  const moves = deriveMoves(species, level);
+  const nature = deriveNature(traitValue);
 
   return {
     // A snapshot spawn is always a wild meeting

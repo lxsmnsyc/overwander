@@ -2,48 +2,67 @@
 // const-enum members, which Object.keys hands back as strings; the
 // assertions below put the enum type back on them
 // oxlint-disable typescript/no-unsafe-type-assertion
-import { For, type JSX, Show, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  type Accessor,
+  For,
+  type JSX,
+  type Setter,
+  Show,
+  batch,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import type Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleEvents } from '../battle/events';
-import type Unit from '../battle/unit';
-import { EventPriority } from '../core/event-emitter';
+import Unit from '../battle/unit';
+import { type BaseEvent, EventPriority } from '../core/event-emitter';
 import { Stages, Stats } from '../data/constants/stats';
 import { getAbilityData } from '../data/abilities';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import { Statuses } from '../data/ids/status';
+import { Statuses, Weathers } from '../data/ids/status';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
 import { getSpeciesData } from '../data/species';
 
 /**
- * Every event that changes something the field draws. The battle
+ * Everything that changes what one unit looks like. The battle
  * mutates its units in place, so the view cannot observe them
- * directly — it re-reads them when the battle says they moved.
- * Progress bars ride the engine's own update events, which only
- * fire while something is actually casting, channeling or cooling
+ * directly — each card re-reads its own unit when the battle says
+ * that unit moved, and nobody else's card redraws. The progress
+ * bars ride the engine's own update events, which only fire while
+ * something is actually casting, channeling or cooling
  */
-const FIELD_EVENTS = [
+const UNIT_EVENTS = [
   BattleEvents.UnitSetHealth,
   BattleEvents.UnitSetMaxHealth,
+  BattleEvents.UnitSetStat,
   BattleEvents.UnitDamage,
   BattleEvents.UnitHeal,
+  BattleEvents.UnitCure,
   BattleEvents.UnitFaints,
   BattleEvents.UnitAddStatus,
   BattleEvents.UnitRemoveStatus,
+  BattleEvents.UnitTriggerStatus,
   BattleEvents.UnitUpdateStatusTimer,
   BattleEvents.UnitAddStage,
   BattleEvents.UnitRemoveStage,
   BattleEvents.UnitResetStages,
+  BattleEvents.UnitAddType,
+  BattleEvents.UnitRemoveType,
   BattleEvents.UnitAddAbility,
   BattleEvents.UnitRemoveAbility,
   BattleEvents.UnitEnableAbility,
   BattleEvents.UnitDisableAbility,
+  BattleEvents.UnitTriggerAbility,
   BattleEvents.UnitAddItem,
   BattleEvents.UnitRemoveItem,
   BattleEvents.UnitEnableItem,
   BattleEvents.UnitDisableItem,
+  BattleEvents.UnitTriggerItem,
   BattleEvents.UnitAddMove,
   BattleEvents.UnitRemoveMove,
   BattleEvents.UnitEnableMove,
@@ -55,19 +74,41 @@ const FIELD_EVENTS = [
   BattleEvents.UnitUpdateCast,
   BattleEvents.UnitFinishCast,
   BattleEvents.UnitStopCast,
+  BattleEvents.UnitInterrupt,
   BattleEvents.UnitChannel,
   BattleEvents.UnitUpdateChannel,
   BattleEvents.UnitFinishChannel,
   BattleEvents.UnitStopChannel,
+  BattleEvents.UnitTriggerMove,
+  BattleEvents.UnitTriggerMoveEnd,
   BattleEvents.UnitSetLevel,
+  BattleEvents.UnitSetNature,
+  BattleEvents.UnitSetGender,
   BattleEvents.UnitSetSpecies,
+  BattleEvents.UnitSetAppearance,
+] as const;
+
+/**
+ * Everything that changes who is on the field, rather than how one
+ * of them looks. These rebuild the roster the field walks
+ */
+const ROSTER_EVENTS = [
+  BattleEvents.UnitCreated,
   BattleEvents.UnitEntersField,
   BattleEvents.UnitLeavesField,
+  BattleEvents.UnitSwitch,
   BattleEvents.TeamAddUnit,
   BattleEvents.TeamRemoveUnit,
   BattleEvents.AllianceAddTeam,
   BattleEvents.AllianceRemoveTeam,
+  BattleEvents.AddAlliance,
+  BattleEvents.RemoveAlliance,
 ] as const;
+
+/**
+ * The weather line, battle-wide and per team
+ */
+const WEATHER_EVENTS = [BattleEvents.SetWeather, BattleEvents.TeamSetWeather] as const;
 
 /**
  * How many trigger lines the log keeps
@@ -125,6 +166,53 @@ function describeItem(item: Items): string {
   }
 }
 
+const WEATHER_NAMES: Record<Weathers, string> = {
+  [Weathers.None]: 'Clear',
+  [Weathers.Sunny]: 'Sunny',
+  [Weathers.Rain]: 'Rain',
+  [Weathers.Sandstorm]: 'Sandstorm',
+  [Weathers.Hail]: 'Hail',
+  [Weathers.Snow]: 'Snow',
+  [Weathers.Fog]: 'Fog',
+  [Weathers.ExtremeSunny]: 'Harsh sunlight',
+  [Weathers.HeavyRain]: 'Heavy rain',
+  [Weathers.StrongWinds]: 'Strong winds',
+};
+
+/**
+ * One alliance flattened into plain arrays. The battle keeps its
+ * roster in Sets that mutate in place, so the field takes a copy it
+ * can render and rebuilds it when the roster changes
+ */
+interface AllianceView {
+  alliance: Alliance;
+  teams: Unit[][];
+}
+
+/**
+ * The units an event concerns: the one that acted, and the one it
+ * landed on when there is one. A few of the listed events carry
+ * neither, and simply redraw nothing
+ */
+function unitsOf(event: BaseEvent): Unit[] {
+  const units: Unit[] = [];
+
+  if ('source' in event && event.source instanceof Unit) {
+    units.push(event.source);
+  }
+  if ('target' in event && event.target instanceof Unit) {
+    units.push(event.target);
+  }
+  return units;
+}
+
+function readRoster(battle: Battle): AllianceView[] {
+  return [...battle.alliances].map((alliance) => ({
+    alliance,
+    teams: [...alliance.teams].map((team) => [...team.units]),
+  }));
+}
+
 const CARD_STYLE = {
   border: '1px solid #ddd',
   'border-radius': '0.4rem',
@@ -170,18 +258,17 @@ function Meter(props: { value: number; max: number; color: string }): JSX.Elemen
  * One unit as it stands right now: health, what it is in the middle
  * of, what is stuck to it, and what it brought
  */
-function UnitCard(props: { unit: Unit; revision: number }): JSX.Element {
+function UnitCard(props: { unit: Unit; revision: () => number }): JSX.Element {
   /**
-   * One reading of the unit. The battle mutates it in place, so the
-   * card recomputes whenever the poller bumps the revision — that
-   * dependency is the whole point of reading it here
+   * One reading of the unit, recomputed when the battle reports that
+   * this unit moved — reading its revision is what subscribes the
+   * card to its own unit and nobody else's
    */
   const view = createMemo(() => {
     const unit = props.unit;
 
     return {
-      // Reading the revision is the dependency that re-runs the memo
-      at: props.revision,
+      at: props.revision(),
       unit,
       maxHealth: unit.checkStat(Stats.HP, 0),
       statuses: (Object.keys(unit.status) as unknown as Statuses[]).filter(
@@ -306,23 +393,61 @@ export interface BattleFieldProps {
  * units, plus a running log of the abilities and items that fired
  */
 export default function BattleField(props: BattleFieldProps): JSX.Element {
-  const [revision, setRevision] = createSignal(0);
   const [log, setLog] = createSignal<string[]>([]);
+  const [roster, setRoster] = createSignal<AllianceView[]>(readRoster(props.battle));
+  const [weather, setWeather] = createSignal(props.battle.weather.current);
+  /**
+   * One revision per unit, so an event about one pokemon redraws
+   * that card alone. Cards register their own signal the first time
+   * they read it, and units that never appear cost nothing
+   */
+  const revisions = new Map<Unit, [Accessor<number>, Setter<number>]>();
+
+  const revisionOf = (unit: Unit): Accessor<number> => {
+    let entry = revisions.get(unit);
+
+    if (entry == null) {
+      entry = createSignal(0);
+      revisions.set(unit, entry);
+    }
+    return entry[0];
+  };
+
+  const touch = (unit: Unit): void => {
+    revisions.get(unit)?.[1]((value) => value + 1);
+  };
 
   onMount(() => {
-    // Several events land per battle frame; the re-read is coalesced
-    // to one per animation frame rather than one per event
-    let frame: number | null = null;
-
-    const bump = (): void => {
-      frame ??= requestAnimationFrame(() => {
-        frame = null;
-        setRevision((value) => value + 1);
+    /**
+     * Unit events name the unit they concern: `source` acts, and the
+     * ones that land on somebody else carry a `target` too. Both are
+     * redrawn, in one batch, so a hit updates attacker and defender
+     * together rather than in two renders
+     */
+    const onUnitEvent = (event: BaseEvent): void => {
+      batch(() => {
+        for (const unit of unitsOf(event)) {
+          touch(unit);
+        }
       });
     };
 
-    for (const event of FIELD_EVENTS) {
-      props.battle.on(event, EventPriority.Post, bump);
+    const onRosterEvent = (): void => {
+      setRoster(readRoster(props.battle));
+    };
+
+    const onWeatherEvent = (): void => {
+      setWeather(props.battle.weather.current);
+    };
+
+    for (const event of UNIT_EVENTS) {
+      props.battle.on(event, EventPriority.Post, onUnitEvent);
+    }
+    for (const event of ROSTER_EVENTS) {
+      props.battle.on(event, EventPriority.Post, onRosterEvent);
+    }
+    for (const event of WEATHER_EVENTS) {
+      props.battle.on(event, EventPriority.Post, onWeatherEvent);
     }
 
     const push = (line: string): void => {
@@ -348,11 +473,14 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
     });
 
     onCleanup(() => {
-      if (frame != null) {
-        cancelAnimationFrame(frame);
+      for (const event of UNIT_EVENTS) {
+        props.battle.off(event, EventPriority.Post, onUnitEvent);
       }
-      for (const event of FIELD_EVENTS) {
-        props.battle.off(event, EventPriority.Post, bump);
+      for (const event of ROSTER_EVENTS) {
+        props.battle.off(event, EventPriority.Post, onRosterEvent);
+      }
+      for (const event of WEATHER_EVENTS) {
+        props.battle.off(event, EventPriority.Post, onWeatherEvent);
       }
       ability.stop();
       item.stop();
@@ -360,26 +488,25 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
     });
   });
 
-  // Teams and units can join mid-fight and the sets are not
-  // reactive, so the roster is re-read whenever the battle reports a
-  // change. Reading the revision is what makes that happen
-  const alliances = createMemo(() => (revision() >= 0 ? [...props.battle.alliances] : []));
-
   return (
     <div>
-      <For each={alliances()}>
+      <Show when={weather() !== Weathers.None}>
+        <p>Weather: {WEATHER_NAMES[weather()]}</p>
+      </Show>
+
+      <For each={roster()}>
         {(alliance, index) => (
           <section>
-            <h2>{props.label?.(alliance, index()) ?? `Alliance ${index() + 1}`}</h2>
-            <For each={[...alliance.teams]}>
+            <h2>{props.label?.(alliance.alliance, index()) ?? `Alliance ${index() + 1}`}</h2>
+            <For each={alliance.teams}>
               {(team, teamIndex) => (
                 <>
-                  <Show when={alliance.teams.size > 1}>
+                  <Show when={alliance.teams.length > 1}>
                     <h3>Team {teamIndex() + 1}</h3>
                   </Show>
                   <ul style={{ 'list-style': 'none', padding: '0' }}>
-                    <For each={[...team.units]}>
-                      {(unit) => <UnitCard unit={unit} revision={revision()} />}
+                    <For each={team}>
+                      {(unit) => <UnitCard unit={unit} revision={revisionOf(unit)} />}
                     </For>
                   </ul>
                 </>

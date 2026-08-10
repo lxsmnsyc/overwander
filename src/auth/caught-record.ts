@@ -51,7 +51,10 @@ export interface CaughtPokemon {
   individualValue: number;
   traitValue: number;
   /**
-   * Individual values per stat (0-31)
+   * Individual values per stat (0-31). These are what every reader
+   * uses: for a wild catch they are slices of `individualValue`, but
+   * a bred egg inherits three of them from its parents, so the two
+   * fields disagree and the stored values are the ones that count
    */
   ivs: Record<Stats, number>;
   gender: Genders;

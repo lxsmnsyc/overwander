@@ -33,6 +33,8 @@ a call is never trusted — only what the token proves.
 | `claimNest`                                                | A nest hands over one egg per player per local day, and what is inside it is decided as the server writes it                                                   |
 | `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one                                                         |
 | `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                        |
+| `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                      |
+| `boostEgg`                                                 | The daycare lady is re-derived from the hour, and the half a walk she adds is measured against the stored egg                                                  |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build

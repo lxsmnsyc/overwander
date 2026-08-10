@@ -166,7 +166,12 @@ const MAX_SPAWN_LEVEL = 100;
  */
 const HIDDEN_ABILITY_BAND = TRAIT_RANGE / 8;
 
-const MOVE_LIMIT = 4;
+/**
+ * How many moves one pokemon carries. Anything that assembles a move
+ * list — a level-up derivation, a hatchling's inheritance — cuts to
+ * this
+ */
+export const MOVE_LIMIT = 4;
 
 /**
  * A raid cleared on the featured family's own day hands over a

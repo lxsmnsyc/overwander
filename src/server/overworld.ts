@@ -52,7 +52,7 @@ import { grantItem } from './inventory';
  * claim markers — is scoped by it, so a client that invents a zone
  * gets that zone's world rather than a second helping of its own
  */
-async function resolveSnapshot(
+export async function resolveSnapshot(
   x: number,
   y: number,
   now: number,

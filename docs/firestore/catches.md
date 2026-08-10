@@ -111,6 +111,30 @@ An egg is refused everywhere a pokemon is expected: `giveItem`, `useCandy` and
 freezes, and `resolveBuddy` reports no buddy effects for one — it is carried, not
 accompanied, so its ability and nature change nothing in the overworld.
 
+### Bred eggs
+
+A breeder's egg is written the same way a nest's is, by `grantBredEgg`, and
+differs only in where the pokemon inside comes from. Three of its six individual
+values are copied straight off one parent or the other and the rest are rolled;
+the moves its line can only inherit are passed on by whichever parent actually
+knows them, which is what makes breeding a way to *teach* a move rather than
+roll one. Its nature, ability and gender are its own.
+
+A shadow parent may pass the shadow on — a coin toss, so breeding two of them is
+no more certain than one. An egg that inherits it is written `shadow: true`,
+hatches with the Shadow ability for good, costs double candy to raise
+afterwards, and takes `SHADOW_HATCH_FACTOR` (2×) the usual steps to open: what
+is in there should not be, and it takes longer to come out.
+
+The stream is seeded by the pair, the hour, the player and the instant, so the
+same two left with the breeder again are a different egg — and no egg can be
+re-rolled by asking twice.
+
+One thing to know about the record: a bred egg's `ivs` are the **inheritance**,
+so they are no longer slices of its `individualValue`. Everything that matters —
+the battle snapshot, the dialog — reads the stored `ivs`, and nothing re-derives
+them from the roll.
+
 ### Walking
 
 Only the buddy walks. The client counts cells crossed and reports them in

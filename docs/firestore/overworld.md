@@ -164,6 +164,40 @@ entirely, so no nest ever holds a legendary, and a mythical is still called with
 a relic or not at all. The hatchling is guaranteed one move off its line's egg
 list, which is the reason to walk the egg at all.
 
+## Wandering NPCs
+
+A `WanderingNpc` landmark has **no store of its own**. The cell is fixed by the
+chunk seed like any landmark, but who is standing on it is drawn afresh each
+raid hour from `getWanderingNpcs` — the same hour-long window a raid or a Team
+Rocket grunt runs on. A player who needs a breeder waits an hour or walks to
+another one.
+
+Both services are paid for in gold, and neither trusts the caller about who they
+are talking to: `src/server/npcs.ts` re-derives the chunk, the zone and the hour
+and checks the NPC standing there **before** charging anything. Gold is spent
+first and handed back if the write behind it fails, so a player is never charged
+for nothing.
+
+- **Breeder** — takes two of the player's pokemon and `BREEDING_FEE` gold, and
+  writes an egg. Neither parent is consumed, held or locked: they are handed
+  back the moment the egg exists. What the pair may produce is decided by
+  [`src/overworld/breeding.ts`](../../src/overworld/breeding.ts) from the
+  **stored** records: shared egg group, opposite genders (or a Ditto standing in
+  for one, but not for two), nothing from the undiscovered group, and no eggs.
+  The egg is the first stage of the mother's line — the non-Ditto parent's when
+  a Ditto stands in.
+- **Daycare Lady** — takes an egg and `DAYCARE_FEE` gold and adds `hatchSteps /
+  2` to wherever it already stood (`boostedSteps`), so an egg a quarter of the
+  way along comes out three quarters of the way. It is a share of the
+  requirement rather than a place on it, which means one past the half-way mark
+  is finished by a single boost and any egg is finished by two — the fee is what
+  paces it. Only an egg already ready to hatch is refused. `steppedAt` moves
+  with the jump, since those steps were not walked and the time they would have
+  taken must not be banked for the next report.
+
+What a bred egg inherits — and what it does not — is in
+[Eggs](catches.md#eggs).
+
 ## Derived, never stored
 
 Landmarks, item-cache rewards, berry patches, grotto rewards, the species a nest

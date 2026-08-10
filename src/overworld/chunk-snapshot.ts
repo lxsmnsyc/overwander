@@ -7,6 +7,8 @@ import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import Landmark from '../data/overworld/landmark';
+import type Npc from '../data/overworld/npc';
+import { NPCS } from '../data/overworld/npc';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
 import type { GrottoReward } from './landmarks';
@@ -424,6 +426,32 @@ export default class ChunkSnapshot {
       this.nests = nests;
     }
     return this.nests;
+  }
+
+  private wanderers: Map<number, Npc> | null = null;
+
+  /**
+   * Who is standing at each wandering-NPC cell this hour. The cell is
+   * the chunk's own, fixed forever like every landmark, but the
+   * person on it is drawn afresh each raid hour — so a player who
+   * needs a breeder waits for one, or goes looking somewhere else
+   */
+  getWanderingNpcs(): Map<number, Npc> {
+    if (this.wanderers == null) {
+      const wanderers = new Map<number, Npc>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.WanderingNpc) {
+          continue;
+        }
+
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}npc${cell}`);
+
+        wanderers.set(cell, NPCS[Math.floor(rng.random() * NPCS.length)]);
+      }
+      this.wanderers = wanderers;
+    }
+    return this.wanderers;
   }
 
   private hiddenGrottos: Map<number, GrottoReward> | null = null;

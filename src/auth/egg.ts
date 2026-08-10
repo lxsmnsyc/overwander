@@ -69,6 +69,17 @@ export function canHatch(caught: EggProgress): boolean {
 }
 
 /**
+ * Where an egg stands after the daycare lady has warmed it: half of
+ * what hatching costs, added to wherever it already was. An egg a
+ * quarter of the way along comes out three quarters of the way, and
+ * one already near the end simply finishes — the boost is a share of
+ * the requirement, not a place to move it to
+ */
+export function boostedSteps(caught: EggProgress): number {
+  return Math.min(caught.hatchSteps, caught.steps + Math.floor(caught.hatchSteps / 2));
+}
+
+/**
  * How many of the reported steps actually count: no more than were
  * reported, no more than the elapsed time could have been walked in,
  * and no more than the egg still has left to go

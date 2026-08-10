@@ -4,8 +4,19 @@ import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
 import { EGG_HATCH_STEPS, EGG_LEVEL, creditableSteps, stepsRemaining } from '../auth/egg';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
+import type { Stats } from '../data/constants/stats';
+import Abilities from '../data/ids/abilities';
 import { Balls } from '../data/ids/items';
-import type { Species } from '../data/ids/species';
+import type { Moves } from '../data/ids/moves';
+import type Natures from '../data/ids/natures';
+import type { Genders, Species } from '../data/ids/species';
+import {
+  type BreedingParent,
+  SHADOW_HATCH_FACTOR,
+  inheritIVs,
+  inheritMoves,
+  inheritsShadow,
+} from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
@@ -44,6 +55,93 @@ export interface EggWalk {
 }
 
 /**
+ * What one egg is, beyond the parts every egg shares
+ */
+interface EggFields {
+  species: Species;
+  ivs: Record<Stats, number>;
+  gender: Genders;
+  nature: Natures;
+  shiny: boolean;
+  /**
+   * Whether it carries a shadow. One that does hatches with the
+   * Shadow ability for good, and takes twice as long to open
+   */
+  shadow: boolean;
+  moves: Moves[];
+  ability: Abilities;
+  individualValue: number;
+  traitValue: number;
+  hatchSteps: number;
+  /**
+   * The window the egg belongs to, recorded as its origin
+   */
+  timestamp: number;
+}
+
+/**
+ * Write an egg into the player's collection. Everything about the
+ * pokemon inside is settled by the caller — a nest rolls it, a
+ * breeder inherits it — and everything an egg has in common with
+ * every other egg is here
+ */
+async function writeEgg(
+  uid: string,
+  snapshot: ChunkSnapshot,
+  fields: EggFields,
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<string> {
+  const db = getAdminFirestore();
+  const ref = db.collection(CAUGHT_COLLECTION).doc();
+  const foundAt = toLocalISO(now, asOffset(offset));
+
+  await ref.set({
+    owner: uid,
+    type: EncounterType.Hatched,
+    species: fields.species,
+    level: EGG_LEVEL,
+    individualValue: fields.individualValue,
+    traitValue: fields.traitValue,
+    ivs: fields.ivs,
+    gender: fields.gender,
+    nature: fields.nature,
+    shiny: fields.shiny,
+    shadow: fields.shadow,
+    moves: fields.moves,
+    // A shadow keeps its Shadow ability for good, the way a shadow
+    // raid's prize does
+    abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
+    // An egg holds nothing, and cannot be handed anything until it
+    // has hatched
+    items: [],
+    history: [{ owner: uid, acquiredAt: foundAt }],
+    ...freeFields(),
+    egg: true,
+    steps: 0,
+    // Frozen here, so a later change to what hatching costs cannot
+    // move the finish line on an egg already being carried
+    hatchSteps: fields.hatchSteps,
+    steppedAt: now,
+    // An egg was never thrown at; the ball it is recorded under is
+    // the one named for where eggs come from
+    ball: Balls.NestBall,
+    caughtAt: foundAt,
+    locale: asLocale(locale),
+    effortValues: zeroEffortValues(),
+    origin: {
+      timestamp: fields.timestamp,
+      x: snapshot.chunk.x,
+      y: snapshot.chunk.y,
+      biome: snapshot.chunk.biome,
+    },
+  });
+
+  return ref.id;
+}
+
+/**
  * Lay a nest's egg into the player's collection. The species is the
  * one the nest is holding; everything else is rolled from the nest,
  * the day and the player, so the egg is theirs alone and re-deriving
@@ -60,10 +158,6 @@ export async function grantNestEgg(
   offset: number,
   locale: string,
 ): Promise<string> {
-  const db = getAdminFirestore();
-  const ref = db.collection(CAUGHT_COLLECTION).doc();
-  const zone = asOffset(offset);
-  const foundAt = toLocalISO(now, zone);
   // The draws land in order: the individual value, the trait value,
   // then the move the hatchling inherits
   const rng = new AleaRNG(`${snapshot.key}${snapshot.nestTimestamp}nest${cell}egg:${uid}`);
@@ -73,49 +167,90 @@ export async function grantNestEgg(
     level: EGG_LEVEL,
   });
 
-  await ref.set({
-    owner: uid,
-    type: EncounterType.Hatched,
-    species,
-    level: EGG_LEVEL,
-    individualValue: hatchling.individualValue,
-    traitValue: hatchling.traitValue,
-    ivs: hatchling.ivs,
-    gender: hatchling.gender,
-    nature: hatchling.nature,
-    shiny: hatchling.shiny,
-    // Nothing shadowed comes out of a nest
-    shadow: false,
-    // A nest guarantees the inherited move; the rest is what the
-    // species knows at the level it hatches
-    moves: deriveEggMoves(species, EGG_LEVEL, () => rng.random()),
-    abilities: [hatchling.ability],
-    // An egg holds nothing, and cannot be handed anything until it
-    // has hatched
-    items: [],
-    history: [{ owner: uid, acquiredAt: foundAt }],
-    ...freeFields(),
-    egg: true,
-    steps: 0,
-    // Frozen here, so a later change to what hatching costs cannot
-    // move the finish line on an egg already being carried
-    hatchSteps: EGG_HATCH_STEPS,
-    steppedAt: now,
-    // A nest egg was never thrown at; the ball it is recorded under
-    // is the one named for where it came from
-    ball: Balls.NestBall,
-    caughtAt: foundAt,
-    locale: asLocale(locale),
-    effortValues: zeroEffortValues(),
-    origin: {
+  return writeEgg(
+    uid,
+    snapshot,
+    {
+      species,
+      ivs: hatchling.ivs,
+      gender: hatchling.gender,
+      nature: hatchling.nature,
+      shiny: hatchling.shiny,
+      // Nothing shadowed comes out of a nest
+      shadow: false,
+      // A nest guarantees the inherited move; the rest is what the
+      // species knows at the level it hatches
+      moves: deriveEggMoves(species, EGG_LEVEL, () => rng.random()),
+      ability: hatchling.ability,
+      individualValue: hatchling.individualValue,
+      traitValue: hatchling.traitValue,
+      hatchSteps: EGG_HATCH_STEPS,
       timestamp: snapshot.nestTimestamp,
-      x: snapshot.chunk.x,
-      y: snapshot.chunk.y,
-      biome: snapshot.chunk.biome,
     },
-  });
+    now,
+    offset,
+    locale,
+  );
+}
 
-  return ref.id;
+/**
+ * Lay the egg a breeder made of two pokemon. What it inherits is
+ * decided in [`src/overworld/breeding.ts`](../overworld/breeding.ts)
+ * and passed in; what it rolls for itself — its nature, its ability,
+ * whether it sparkles — comes from the same trait value any hatchling
+ * would have.
+ *
+ * The stream is seeded by the pair and the hour, so the egg is this
+ * visit's egg rather than one a player can re-roll by asking again.
+ *
+ * Resolves the new catch id
+ */
+export async function grantBredEgg(
+  uid: string,
+  snapshot: ChunkSnapshot,
+  seed: string,
+  species: Species,
+  parents: [BreedingParent, BreedingParent],
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<string> {
+  const rng = new AleaRNG(seed);
+  // The draws land in order: the individual value the egg would have
+  // rolled, its trait value, the inheritance, then the shadow
+  const spawn: Spawn = [species, rng.int32(), rng.int32()];
+  const hatchling = deriveEncounter(snapshot, spawn, uid, {
+    type: EncounterType.Hatched,
+    level: EGG_LEVEL,
+  });
+  const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
+  const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
+
+  return writeEgg(
+    uid,
+    snapshot,
+    {
+      species,
+      // Three of the six come off the parents; the rest are the
+      // egg's own
+      ivs,
+      gender: hatchling.gender,
+      nature: hatchling.nature,
+      shiny: hatchling.shiny,
+      shadow,
+      moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
+      ability: hatchling.ability,
+      individualValue: hatchling.individualValue,
+      traitValue: hatchling.traitValue,
+      // Something that should not be in there takes twice as long to
+      // come out
+      hatchSteps: shadow ? EGG_HATCH_STEPS * SHADOW_HATCH_FACTOR : EGG_HATCH_STEPS,
+      timestamp: snapshot.raidTimestamp,
+    },
+    now,
+    offset,
+    locale,
+  );
 }
 
 /**

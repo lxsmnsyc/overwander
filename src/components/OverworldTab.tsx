@@ -42,6 +42,8 @@ import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
+import type Npc from '../data/overworld/npc';
+import { NPC_NAMES } from '../data/overworld/npc';
 import { getItemData } from '../data/items';
 import { getInventory } from '../auth/inventory';
 import { getRaidSpecies } from '../data/items/raid-items';
@@ -56,6 +58,7 @@ import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
 import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
+import NpcDialog from './NpcDialog';
 import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
 import { GameTab, useGame } from './game-context';
@@ -203,6 +206,12 @@ export default function OverworldTab(): JSX.Element {
    * challenge is taken or declined
    */
   const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
+  /**
+   * The passer-by the player has stopped at: the cell they are
+   * standing on and who is on it this hour, until their business is
+   * done or declined
+   */
+  const [wanderer, setWanderer] = createSignal<[number, Npc] | null>(null);
 
   /**
    * The raid items the player carries, each with what it calls. They
@@ -456,6 +465,17 @@ export default function OverworldTab(): JSX.Element {
         ? 'The patch is bare until the next window.'
         : `Picked ${describeItem(berry)}.`;
     }
+    if (landmark === Landmark.WanderingNpc) {
+      const standing = loaded.snapshot.getWanderingNpcs().get(at);
+
+      if (standing == null) {
+        return 'Nobody is passing through this hour.';
+      }
+      // What they want is put to the player rather than taken from
+      // them; the dialog is where the fee is agreed to
+      setWanderer([at, standing]);
+      return null;
+    }
     if (landmark === Landmark.Nest) {
       const egg = await claimNest(loaded.snapshot, at);
 
@@ -605,6 +625,9 @@ export default function OverworldTab(): JSX.Element {
     if (landmark === Landmark.Nest) {
       return 'N';
     }
+    if (landmark === Landmark.WanderingNpc) {
+      return 'P';
+    }
     return '';
   };
 
@@ -616,7 +639,19 @@ export default function OverworldTab(): JSX.Element {
     if (spawn != null) {
       return getSpeciesData(spawn.spawn[0]).name;
     }
-    return landmark == null ? '' : LANDMARK_NAMES[landmark];
+    if (landmark == null) {
+      return '';
+    }
+
+    // A wandering cell is named for whoever is on it this hour, so a
+    // player can see from across the chunk whether it is worth the
+    // walk
+    const standing =
+      landmark === Landmark.WanderingNpc
+        ? loaded?.snapshot.getWanderingNpcs().get(index)
+        : undefined;
+
+    return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
   };
 
   return (
@@ -719,6 +754,14 @@ export default function OverworldTab(): JSX.Element {
               challenge={challenge()}
               onClose={() => {
                 setChallenge(null);
+              }}
+            />
+            <NpcDialog
+              player={user().uid}
+              snapshot={view()?.snapshot ?? null}
+              standing={wanderer()}
+              onClose={() => {
+                setWanderer(null);
               }}
             />
           </>

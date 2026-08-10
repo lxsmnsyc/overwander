@@ -60,6 +60,7 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
+import { NPCS } from '../../src/data/overworld/npc';
 import { resolveBerryPatch, resolveHiddenGrotto, resolveNest } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import type { Buddy } from '../../src/overworld/core';
@@ -770,6 +771,39 @@ describe('world', () => {
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).getNests()).toEqual(nests);
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).nestTimestamp).toBe(0);
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL).nestTimestamp).toBe(NEST_INTERVAL);
+  });
+
+  it('puts a different passer-by on a wandering cell each hour', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const wanderers = new ChunkSnapshot(chunk, 0).getWanderingNpcs();
+
+    expect(wanderers.size).toBeGreaterThan(0);
+    for (const [cell, npc] of wanderers) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.WanderingNpc);
+      expect(new Set(NPCS).has(npc)).toBe(true);
+    }
+
+    // Whoever it is stands for the hour, and the hours are not all
+    // the same person
+    expect(new ChunkSnapshot(chunk, 30 * 60 * 1000).getWanderingNpcs()).toEqual(wanderers);
+
+    const shapes = new Set<string>();
+
+    for (let hour = 0; hour < 24; hour++) {
+      shapes.add(
+        JSON.stringify([...new ChunkSnapshot(chunk, hour * RAID_INTERVAL).getWanderingNpcs()]),
+      );
+    }
+    expect(shapes.size).toBeGreaterThan(1);
   });
 
   it('keeps specials out of nests however the roll falls', () => {

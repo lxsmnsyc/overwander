@@ -35,6 +35,12 @@ const enum Landmark {
    * walking to
    */
   Nest = 6,
+  /**
+   * A spot people pass through: which of them is standing there
+   * changes every hour, and each has their own business with a
+   * player who stops
+   */
+  WanderingNpc = 7,
 }
 
 export default Landmark;
@@ -50,6 +56,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.BerryPatch,
   Landmark.TeamRocketStop,
   Landmark.Nest,
+  Landmark.WanderingNpc,
 ];
 
 /**
@@ -63,4 +70,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.BerryPatch]: 'Berry Patch',
   [Landmark.TeamRocketStop]: 'Team Rocket Stop',
   [Landmark.Nest]: 'Nest',
+  [Landmark.WanderingNpc]: 'Wandering NPC',
 };

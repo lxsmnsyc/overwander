@@ -17,9 +17,12 @@ import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import type Chunk from '../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../src/overworld/chunk-snapshot';
 import {
+  BOSS_ALLIANCE,
   LEGENDARY_RAID_REWARD_LEVEL,
+  PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
+  createRaidBattle,
   createRaidBossSnapshot,
 } from '../../src/overworld/raid';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
@@ -291,6 +294,35 @@ describe('world', () => {
     // ability rides alongside the species' own
     expect(boss.nature).toBe(deriveNature(0x12345678));
     expect(boss.abilities).toEqual([Abilities.Boss, deriveAbility(Species.Articuno, 0x12345678)]);
+  });
+
+  it('carries the player and the catch id into the battle', () => {
+    const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+    const { battle, units } = createRaidBattle('raid-battle-seed', [
+      { player: '', alliance: BOSS_ALLIANCE, catches: [boss] },
+      {
+        player: 'trainer-uid',
+        alliance: PLAYER_ALLIANCE,
+        catches: [
+          { ...boss, caught: 'catch-a', abilities: [] },
+          { ...boss, caught: 'catch-b', abilities: [] },
+        ],
+      },
+    ]);
+
+    battle.initialize();
+
+    const party = units.get(PLAYER_ALLIANCE) ?? [];
+    const bossUnits = units.get(BOSS_ALLIANCE) ?? [];
+
+    // A unit knows the record it was built from, and its team knows
+    // whose party it is
+    expect(party.map((unit) => unit.caught)).toEqual(['catch-a', 'catch-b']);
+    expect(new Set(party.map((unit) => unit.team.player))).toEqual(new Set(['trainer-uid']));
+
+    // The boss stands for no record and belongs to nobody
+    expect(bossUnits.map((unit) => unit.caught)).toEqual(['']);
+    expect(bossUnits[0].team.player).toBe('');
   });
 
   it('stages shadow raids from the rare and legendary pools', () => {

@@ -10,6 +10,12 @@ export default class Team {
   constructor(
     public battle: Battle,
     public alliance: Alliance,
+    /**
+     * The player whose party this is, empty for a side no player
+     * owns — the raid boss, and any team a test or a future AI
+     * trainer fields
+     */
+    public player = '',
   ) {}
 
   addUnit(unit: Unit): void {

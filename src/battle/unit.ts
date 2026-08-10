@@ -49,6 +49,12 @@ export default class Unit {
   constructor(
     public battle: Battle,
     public team: Team,
+    /**
+     * The caught/{catchId} this unit was built from, empty when it
+     * stands for no record — the raid boss, and units a test or a
+     * future AI trainer builds outright
+     */
+    public caught = '',
   ) {}
 
   level = 0;

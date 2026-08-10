@@ -361,6 +361,17 @@ winning party appears in.
 A team holds ids, so it follows whatever those catches become — until a battle
 freezes them.
 
+Catch ids are readable by any signed-in player, so a submitted party cannot be
+trusted on its word. `createTeam` rejects one that repeats a catch or names a
+catch the player does not own, checking the ids through `listOwned` in
+[`src/auth/caught.ts`](../src/auth/caught.ts) (a single `documentId() in […]`
+read). Because a client can also write a team document directly, ownership is
+checked **again** where it matters: `createTeamSnapshot` leaves out any catch
+whose `owner` no longer matches `team.player` — which also covers a catch traded
+away between joining the lobby and the host starting the raid — and resolves
+null when nothing survives, so `startRaid` drops that team rather than fielding
+an empty side, and its player is not listed among the battle's `players`.
+
 ### `teamSnapshots/{snapshotId}`
 
 | Field      | Type              | Notes                                        |

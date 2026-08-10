@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import { asNumber, asString, asStringArray } from './__normalize';
 import { type CatchSnapshot, asCatchSnapshot, createCatchSnapshot } from './catch-snapshot';
-import { getCaught, getCaughtAbilities, getCaughtItems } from './caught';
+import { getCaught, getCaughtAbilities, getCaughtItems, listOwned } from './caught';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -70,11 +70,30 @@ const snapshotConverter: FirestoreDataConverter<TeamSnapshotRecord> = {
 };
 
 /**
- * Form a team from the player's catches. Resolves the new team id,
- * or null when the party is empty or larger than TEAM_SIZE
+ * Form a team from the player's catches. Every id is checked against
+ * its catch's owner: catch ids are readable by any signed-in player,
+ * so a party submitted from the client would otherwise be able to
+ * field someone else's pokemon. The same catch cannot be listed
+ * twice either — a party of six copies of one pokemon is not a party.
+ *
+ * Resolves the new team id, or null when the party is empty, larger
+ * than TEAM_SIZE, repeats a catch, or names one the player does not
+ * own
  */
 export async function createTeam(player: string, catches: string[]): Promise<string | null> {
   if (catches.length === 0 || catches.length > TEAM_SIZE) {
+    return null;
+  }
+
+  const unique = new Set(catches);
+
+  if (unique.size !== catches.length) {
+    return null;
+  }
+
+  const owned = await listOwned(player, catches);
+
+  if (owned.size !== catches.length) {
     return null;
   }
 
@@ -103,9 +122,19 @@ export async function listTeams(player: string): Promise<[string, TeamRecord][]>
 /**
  * Freeze a team for a battle: every catch is copied as it stands,
  * side stores included. Catches that have since vanished are left
- * out. Resolves the team snapshot id
+ * out, and so are any the team's player no longer owns — the team
+ * document only holds ids, and a client can write one directly, so
+ * ownership is checked again at the moment it matters rather than
+ * trusted from when the team was formed. A catch traded away between
+ * joining the lobby and starting the raid drops out the same way.
+ *
+ * Resolves the team snapshot id, or null when nothing survived: a
+ * team that fields no pokemon must not stand as an empty side
  */
-export async function createTeamSnapshot(team: TeamRecord, alliance: number): Promise<string> {
+export async function createTeamSnapshot(
+  team: TeamRecord,
+  alliance: number,
+): Promise<string | null> {
   const catches = await Promise.all(
     team.catches.map(async (id) => {
       const [caught, abilities, items] = await Promise.all([
@@ -114,15 +143,17 @@ export async function createTeamSnapshot(team: TeamRecord, alliance: number): Pr
         getCaughtItems(id),
       ]);
 
-      return caught == null ? null : createCatchSnapshot(id, caught, abilities, items);
+      return caught == null || caught.owner !== team.player
+        ? null
+        : createCatchSnapshot(id, caught, abilities, items);
     }),
   );
+  const fielded = catches.filter((entry): entry is CatchSnapshot => entry != null);
 
-  return publishTeamSnapshot({
-    player: team.player,
-    alliance,
-    catches: catches.filter((entry): entry is CatchSnapshot => entry != null),
-  });
+  if (fielded.length === 0) {
+    return null;
+  }
+  return publishTeamSnapshot({ player: team.player, alliance, catches: fielded });
 }
 
 /**

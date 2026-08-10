@@ -109,7 +109,9 @@ export function createRaidBossSnapshot(
  * Build one battle unit from a frozen catch
  */
 function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
-  const unit = new Unit(battle, team);
+  // The boss' snapshot carries no catch id, so its unit stands for no
+  // record — the empty string travels through unchanged
+  const unit = new Unit(battle, team, snapshot.caught);
 
   team.addUnit(unit);
   // Species first: it seeds the base stats and types the rest builds on
@@ -176,7 +178,9 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
       alliances.set(record.alliance, alliance);
     }
 
-    const team = new Team(battle, alliance);
+    // The boss' snapshot is published with an empty player, so its
+    // team belongs to nobody
+    const team = new Team(battle, alliance, record.player);
 
     alliance.addTeam(team);
 

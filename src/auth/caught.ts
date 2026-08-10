@@ -8,6 +8,7 @@ import {
   type FirestoreDataConverter,
   collection,
   doc,
+  documentId,
   getDoc,
   getDocs,
   limit,
@@ -228,6 +229,35 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
   const snapshot = await getDocs(query(caught, where('owner', '==', owner)));
 
   return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/**
+ * The most ids `listOwned` will look up at once — Firestore caps a
+ * `documentId() in [...]` query, and a party is smaller than this
+ * anyway
+ */
+export const OWNERSHIP_QUERY_LIMIT = 30;
+
+/**
+ * Which of the given catch ids the user actually owns. Client code
+ * hands catch ids around freely — a team is a list of them — and the
+ * ids of other players' pokemon are readable, so anything that acts
+ * on a submitted id has to check it against the owner rather than
+ * trust the caller. Resolves the subset that is really theirs
+ */
+export async function listOwned(owner: string, ids: string[]): Promise<Set<string>> {
+  if (ids.length === 0 || ids.length > OWNERSHIP_QUERY_LIMIT) {
+    return new Set();
+  }
+
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
+    caughtConverter,
+  );
+  const snapshot = await getDocs(query(caught, where(documentId(), 'in', ids)));
+
+  return new Set(
+    snapshot.docs.filter((entry) => entry.data().owner === owner).map((entry) => entry.id),
+  );
 }
 
 /**

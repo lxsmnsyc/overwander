@@ -494,13 +494,24 @@ export async function startRaid(user: User, id: string): Promise<string | null> 
   const teams = (await Promise.all(raid.teams.map(getTeam))).filter(
     (team): team is TeamRecord => team != null,
   );
-  const snapshots = await Promise.all(
-    teams.map(async (team) => createTeamSnapshot(team, PLAYER_ALLIANCE)),
-  );
+  // A team that fields nothing — every catch traded away, or a party
+  // written straight to the store naming pokemon its player does not
+  // own — drops out here, and its player is not counted among the
+  // fighters
+  const fielded = (
+    await Promise.all(
+      teams.map(async (team) => {
+        const snapshot = await createTeamSnapshot(team, PLAYER_ALLIANCE);
 
-  if (snapshots.length === 0) {
+        return snapshot == null ? null : ([team, snapshot] as [TeamRecord, string]);
+      }),
+    )
+  ).filter((entry): entry is [TeamRecord, string] => entry != null);
+
+  if (fielded.length === 0) {
     return null;
   }
+  const snapshots = fielded.map(([, snapshot]) => snapshot);
 
   // The boss stands alone: one perfect-IV catch snapshot, no owner
   const boss = await publishTeamSnapshot({
@@ -510,7 +521,7 @@ export async function startRaid(user: User, id: string): Promise<string | null> 
   });
   const battle = await createBattle({
     teams: [boss, ...snapshots],
-    players: [...new Set(teams.map((team) => team.player))],
+    players: [...new Set(fielded.map(([team]) => team.player))],
     raid: id,
     species: raid.species,
     outcome: BattleOutcome.Unfinished,

@@ -1,10 +1,12 @@
 import {
   type FirestoreDataConverter,
+  type Unsubscribe,
   addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   updateDoc,
   where,
@@ -85,6 +87,41 @@ export async function getBattle(id: string): Promise<BattleRecord | null> {
   const ref = doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
 
   return (await getDoc(ref)).data() ?? null;
+}
+
+/**
+ * Follow a battle record: the outcome is stamped by whoever watches
+ * the fight settle, and every other participant should see it
+ */
+export function watchBattle(
+  id: string,
+  onChange: (battle: BattleRecord | null) => void,
+): Unsubscribe {
+  const ref = doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
+
+  return onSnapshot(ref, (snapshot) => {
+    onChange(snapshot.data() ?? null);
+  });
+}
+
+/**
+ * Follow the player's finished battles, so a raid they just fought
+ * shows up in the history without a reload
+ */
+export function watchBattleHistory(
+  player: string,
+  onChange: (battles: [string, BattleRecord][]) => void,
+): Unsubscribe {
+  const battles = collection(getFirebaseFirestore(), BATTLE_COLLECTION).withConverter(converter);
+
+  return onSnapshot(query(battles, where('players', 'array-contains', player)), (result) => {
+    onChange(
+      result.docs
+        .map((entry): [string, BattleRecord] => [entry.id, entry.data()])
+        .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
+        .sort((left, right) => right[1].startedAt - left[1].startedAt),
+    );
+  });
 }
 
 /**

@@ -4,8 +4,8 @@ import {
   type JSX,
   Show,
   createEffect,
-  createResource,
   createSignal,
+  from,
   onCleanup,
   onMount,
 } from 'solid-js';
@@ -13,11 +13,13 @@ import { useAuth } from '../auth/context';
 import { RaidKind, deriveRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
+  type SpawnRecord,
   claimHiddenGrotto,
   claimItemCache,
-  getChunkSnapshot,
   startEncounter,
   visitChunk,
+  watchSnapshotWindow,
+  watchSpawns,
 } from '../auth/snapshots';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
@@ -27,7 +29,7 @@ import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
 import { getItemData } from '../data/items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
-import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import pickStartPosition from '../overworld/start';
@@ -81,12 +83,20 @@ interface ChunkView {
   caches: Map<number, Items>;
 }
 
-async function loadChunk([x, y]: readonly [number, number]): Promise<ChunkView> {
+/**
+ * Build the chunk's view from the window and the spawns the store
+ * currently holds. Everything else — landmarks, caches, grottos,
+ * raids — re-derives from the chunk seed and the window, so the
+ * subscription only has to carry those two
+ */
+function buildChunkView(
+  x: number,
+  y: number,
+  timestamp: number,
+  published: [string, SpawnRecord][],
+): ChunkView {
   const chunk = getWorld().getChunk(x, y);
-  // The visit publishes (or adopts) the window's spawns before the
-  // snapshot is read, so the two agree
-  const published = await visitChunk(chunk, SPAWN_COUNT);
-  const snapshot = await getChunkSnapshot(chunk);
+  const snapshot = new ChunkSnapshot(chunk, timestamp);
   // Rolling locally reproduces the published placement — same seed,
   // same window, same count — and is what pins each spawn to a cell
   snapshot.getSpawns(SPAWN_COUNT);
@@ -94,11 +104,16 @@ async function loadChunk([x, y]: readonly [number, number]): Promise<ChunkView> 
   const spawns = new Map<number, { id: string; spawn: Spawn }>();
   const cells = [...snapshot.getSpawnCells()];
 
-  cells.forEach(([cell, spawn], index) => {
+  cells.forEach(([cell], index) => {
     // Roll order and publication order are the same, so the nth
-    // placed spawn carries the nth published id
+    // placed cell carries the nth published spawn
     if (index < published.length) {
-      spawns.set(cell, { id: published[index][0], spawn });
+      const [id, stored] = published[index];
+
+      spawns.set(cell, {
+        id,
+        spawn: [stored.species, stored.individualValue, stored.traitValue],
+      });
     }
   });
 
@@ -155,7 +170,44 @@ export default function OverworldTab(): JSX.Element {
     setCellY(start.cellY);
   });
 
-  const [view, { refetch }] = createResource(() => [chunkX(), chunkY()] as const, loadChunk);
+  /**
+   * Walking into a chunk publishes (or adopts) the window's spawns;
+   * everything after that arrives through the subscriptions below,
+   * so a window rolling over or a spawn another player caught shows
+   * up without a reload
+   */
+  createEffect(() => {
+    const chunk = getWorld().getChunk(chunkX(), chunkY());
+
+    visitChunk(chunk, SPAWN_COUNT).catch((caught: unknown) => {
+      setStatus(caught instanceof Error ? caught.message : String(caught));
+    });
+  });
+
+  const snapshotWindow = from<number | null>((set) =>
+    watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), (timestamp) => {
+      set(timestamp);
+    }),
+  );
+
+  const published = from<[string, SpawnRecord][]>((set) => {
+    const timestamp = snapshotWindow();
+
+    if (timestamp == null) {
+      return () => undefined;
+    }
+    return watchSpawns(getWorld().getChunk(chunkX(), chunkY()), timestamp, (spawns) => {
+      set(spawns);
+    });
+  });
+
+  const view = (): ChunkView | null => {
+    const timestamp = snapshotWindow();
+
+    return timestamp == null
+      ? null
+      : buildChunkView(chunkX(), chunkY(), timestamp, published() ?? []);
+  };
 
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
 
@@ -369,53 +421,49 @@ export default function OverworldTab(): JSX.Element {
       <h2>Overworld</h2>
       <p>Move with the arrow keys or WASD. Stepping off an edge crosses into the next chunk.</p>
 
-      <Show when={!view.loading} fallback={<p>Loading chunk…</p>}>
-        <Show when={view.error == null} fallback={<p>Could not reach the chunk.</p>}>
-          <Show when={view()}>
-            {(loaded) => (
-              <>
-                <p>
-                  Chunk {loaded().x}, {loaded().y} · {BIOME_NAMES[loaded().biome]} ·{' '}
-                  {new Date(loaded().snapshot.timestamp).toISOString().slice(11, 16)} UTC ·{' '}
-                  {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
-                </p>
+      <Show when={view()} fallback={<p>Loading chunk…</p>}>
+        {(loaded) => (
+          <>
+            <p>
+              Chunk {loaded().x}, {loaded().y} · {BIOME_NAMES[loaded().biome]} ·{' '}
+              {new Date(loaded().snapshot.timestamp).toISOString().slice(11, 16)} UTC ·{' '}
+              {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
+            </p>
 
-                <div
-                  style={{
-                    display: 'grid',
-                    'grid-template-columns': `repeat(${CHUNK_CELLS}, 1fr)`,
-                    width: 'min(100%, 24rem)',
-                    margin: '0 auto',
-                    'font-family': 'monospace',
-                  }}
-                >
-                  <For each={[...new Array<number>(CHUNK_CELLS * CHUNK_CELLS).keys()]}>
-                    {(index) => (
-                      <div
-                        title={titleOf(index)}
-                        style={{
-                          'aspect-ratio': '1',
-                          display: 'flex',
-                          'align-items': 'center',
-                          'justify-content': 'center',
-                          border: '1px solid #eee',
-                          background: index === cell() ? '#ffe08a' : 'transparent',
-                        }}
-                      >
-                        {contentOf(index)}
-                      </div>
-                    )}
-                  </For>
-                </div>
+            <div
+              style={{
+                display: 'grid',
+                'grid-template-columns': `repeat(${CHUNK_CELLS}, 1fr)`,
+                width: 'min(100%, 24rem)',
+                margin: '0 auto',
+                'font-family': 'monospace',
+              }}
+            >
+              <For each={[...new Array<number>(CHUNK_CELLS * CHUNK_CELLS).keys()]}>
+                {(index) => (
+                  <div
+                    title={titleOf(index)}
+                    style={{
+                      'aspect-ratio': '1',
+                      display: 'flex',
+                      'align-items': 'center',
+                      'justify-content': 'center',
+                      border: '1px solid #eee',
+                      background: index === cell() ? '#ffe08a' : 'transparent',
+                    }}
+                  >
+                    {contentOf(index)}
+                  </div>
+                )}
+              </For>
+            </div>
 
-                <p>
-                  Cell {cellX()}, {cellY()}
-                </p>
-                <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-              </>
-            )}
-          </Show>
-        </Show>
+            <p>
+              Cell {cellX()}, {cellY()}
+            </p>
+            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+          </>
+        )}
       </Show>
 
       <Show when={auth.user()}>
@@ -425,9 +473,6 @@ export default function OverworldTab(): JSX.Element {
             session={session()}
             onClose={() => {
               setSession(null);
-              // A caught or fled encounter leaves the window's spawn
-              // list stale for this player
-              Promise.resolve(refetch()).catch(() => undefined);
             }}
           />
         )}

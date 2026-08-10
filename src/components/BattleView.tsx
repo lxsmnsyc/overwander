@@ -1,5 +1,11 @@
-import { type JSX, Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js';
-import { BattleOutcome, finishBattle, getBattle, listBattleTeams } from '../auth/battles';
+import { type JSX, Show, createEffect, createSignal, from, onCleanup } from 'solid-js';
+import {
+  BattleOutcome,
+  type BattleRecord,
+  finishBattle,
+  listBattleTeams,
+  watchBattle,
+} from '../auth/battles';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid } from '../auth/raids';
 import { type RaidBattle, createRaidBattle } from '../overworld/raid';
 import BattleField from './BattleField';
@@ -23,7 +29,13 @@ export interface BattleViewProps {
  */
 export default function BattleView(props: BattleViewProps): JSX.Element {
   const game = useGame();
-  const [record] = createResource(() => props.active.id, getBattle);
+  // Followed rather than read once: the outcome is stamped by
+  // whoever watches the fight settle, and that may not be this player
+  const record = from<BattleRecord | null>((set) =>
+    watchBattle(props.active.id, (battle) => {
+      set(battle);
+    }),
+  );
   const [instance, setInstance] = createSignal<RaidBattle | null>(null);
   const [status, setStatus] = createSignal<string | null>(null);
   // The units mutate in place, so the view re-reads them on a timer

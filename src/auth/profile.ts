@@ -2,8 +2,10 @@ import type { User } from 'firebase/auth';
 import {
   type DocumentReference,
   type FirestoreDataConverter,
+  type Unsubscribe,
   doc,
   getDoc,
+  onSnapshot,
   runTransaction,
   setDoc,
 } from 'firebase/firestore';
@@ -54,6 +56,19 @@ export async function getProfile(uid: string): Promise<Profile | null> {
   const snapshot = await getDoc(getProfileRef(uid));
 
   return snapshot.data() ?? null;
+}
+
+/**
+ * Follow the profile as it changes. Gold moves whenever the player
+ * earns or spends, and the balance should not wait for a reload
+ */
+export function watchProfile(
+  uid: string,
+  onChange: (profile: Profile | null) => void,
+): Unsubscribe {
+  return onSnapshot(getProfileRef(uid), (snapshot) => {
+    onChange(snapshot.data() ?? null);
+  });
 }
 
 /**

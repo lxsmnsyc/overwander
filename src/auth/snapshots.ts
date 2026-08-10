@@ -5,10 +5,12 @@
 import type { User } from 'firebase/auth';
 import {
   type FirestoreDataConverter,
+  type Unsubscribe,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   runTransaction,
   setDoc,
@@ -181,6 +183,43 @@ export async function getChunkSnapshot(chunk: Chunk): Promise<ChunkSnapshot> {
   const { timestamp } = await resolveSnapshotWindow(chunk);
 
   return new ChunkSnapshot(chunk, timestamp);
+}
+
+/**
+ * Follow the chunk's window as the shared store rolls it over, so
+ * every observer of the chunk turns to the new 5-minute window the
+ * moment somebody refreshes it
+ */
+export function watchSnapshotWindow(
+  chunk: Chunk,
+  onChange: (timestamp: number | null) => void,
+): Unsubscribe {
+  const ref = doc(getFirebaseFirestore(), SNAPSHOT_COLLECTION, chunk.seed).withConverter(
+    snapshotConverter,
+  );
+
+  return onSnapshot(ref, (snapshot) => {
+    onChange(snapshot.data()?.timestamp ?? null);
+  });
+}
+
+/**
+ * Follow the chunk's published spawns for one window: a spawn caught
+ * or cleared by another player disappears from every screen at once
+ */
+export function watchSpawns(
+  chunk: Chunk,
+  timestamp: number,
+  onChange: (spawns: [string, SpawnRecord][]) => void,
+): Unsubscribe {
+  const spawns = collection(getFirebaseFirestore(), SPAWN_COLLECTION).withConverter(spawnConverter);
+
+  return onSnapshot(
+    query(spawns, where('chunk', '==', chunk.seed), where('timestamp', '==', timestamp)),
+    (result) => {
+      onChange(result.docs.map((entry) => [entry.id, entry.data()]));
+    },
+  );
 }
 
 /**

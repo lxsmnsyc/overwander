@@ -1,6 +1,13 @@
 import type { User } from 'firebase/auth';
-import { For, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
-import { RaidKind, getRaid, joinRaid, leaveRaid, startRaid } from '../auth/raids';
+import { For, type JSX, Show, createEffect, createResource, createSignal, from } from 'solid-js';
+import {
+  RaidKind,
+  type RaidRecord,
+  joinRaid,
+  leaveRaid,
+  startRaid,
+  watchRaid,
+} from '../auth/raids';
 import { getTeam } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 import TeamPickerDialog from './TeamPickerDialog';
@@ -19,7 +26,13 @@ export interface RaidLobbyProps {
  */
 export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   const game = useGame();
-  const [raid, { refetch }] = createResource(() => props.raidId, getRaid);
+  // The lobby is shared: parties join and leave it while the player
+  // is looking at it, and the host's start lands here too
+  const raid = from<RaidRecord | null>((set) =>
+    watchRaid(props.raidId, (record) => {
+      set(record);
+    }),
+  );
   const [picking, setPicking] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
 
@@ -33,9 +46,9 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   const act = (action: () => Promise<string | null>, failure: string): void => {
     setStatus(null);
     action()
-      .then(async (result) => {
+      // The lobby subscription carries the result back on its own
+      .then((result) => {
         setStatus(result == null ? failure : null);
-        await refetch();
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

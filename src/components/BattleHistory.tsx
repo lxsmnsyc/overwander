@@ -1,5 +1,5 @@
-import { For, type JSX, Show, createResource } from 'solid-js';
-import { BattleOutcome, listBattleHistory } from '../auth/battles';
+import { For, type JSX, Show, from } from 'solid-js';
+import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../auth/battles';
 import { getSpeciesData } from '../data/species';
 import { useGame } from './game-context';
 
@@ -21,10 +21,15 @@ export interface BattleHistoryProps {
  */
 export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
   const game = useGame();
-  const [battles] = createResource(() => props.player, listBattleHistory);
+  // A raid fought just now should land in the history on its own
+  const battles = from<[string, BattleRecord][]>((set) =>
+    watchBattleHistory(props.player, (records) => {
+      set(records);
+    }),
+  );
 
   return (
-    <Show when={!battles.loading} fallback={<p>Loading battles…</p>}>
+    <Show when={battles()} fallback={<p>Loading battles…</p>}>
       <Show when={battles()?.length} fallback={<p>No battles fought yet.</p>}>
         <ul>
           <For each={battles()}>

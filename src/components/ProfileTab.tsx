@@ -1,7 +1,7 @@
-import { type JSX, Show, createResource } from 'solid-js';
+import { type JSX, Show, createResource, from } from 'solid-js';
 import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { resolveBuddy } from '../auth/buddy';
-import { getProfile } from '../auth/profile';
+import { type Profile, watchProfile } from '../auth/profile';
 import { getSpeciesData } from '../data/species';
 import BattleHistory from './BattleHistory';
 import CatchesList from './CatchesList';
@@ -23,36 +23,40 @@ export interface ProfileTabProps {
  * carry
  */
 export default function ProfileTab(props: ProfileTabProps): JSX.Element {
-  const [profile] = createResource(() => props.player, getProfile);
+  // The balance moves whenever the player earns or spends, so the
+  // profile is followed rather than read once
+  const profile = from<Profile | null>((set) =>
+    watchProfile(props.player, (record) => {
+      set(record);
+    }),
+  );
   const [buddy] = createResource(() => props.player, resolveBuddy);
 
   return (
     <section>
       <h2>Profile</h2>
-      <Show when={!profile.loading} fallback={<p>Loading profile…</p>}>
-        <Show when={profile()} fallback={<p>No profile yet.</p>}>
-          {(loaded) => (
-            <>
-              <Show when={loaded().avatar}>
-                {(avatar) => <img src={avatar()} alt="Avatar" width={64} height={64} />}
-              </Show>
-              <dl>
-                <dt>Nickname</dt>
-                <dd>{loaded().nickname}</dd>
-                <dt>Player id</dt>
-                <dd>{props.player}</dd>
-                <dt>Gold</dt>
-                <dd>{loaded().gold}</dd>
-                <dt>Buddy</dt>
-                <dd>
-                  <Show when={buddy()} fallback="None">
-                    {(pair) => `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`}
-                  </Show>
-                </dd>
-              </dl>
-            </>
-          )}
-        </Show>
+      <Show when={profile()} fallback={<p>Loading profile…</p>}>
+        {(loaded) => (
+          <>
+            <Show when={loaded().avatar}>
+              {(avatar) => <img src={avatar()} alt="Avatar" width={64} height={64} />}
+            </Show>
+            <dl>
+              <dt>Nickname</dt>
+              <dd>{loaded().nickname}</dd>
+              <dt>Player id</dt>
+              <dd>{props.player}</dd>
+              <dt>Gold</dt>
+              <dd>{loaded().gold}</dd>
+              <dt>Buddy</dt>
+              <dd>
+                <Show when={buddy()} fallback="None">
+                  {(pair) => `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`}
+                </Show>
+              </dd>
+            </dl>
+          </>
+        )}
       </Show>
 
       <TabGroup horizontal defaultValue={InnerTab.Catches} toggleable={false}>

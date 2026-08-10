@@ -6,12 +6,14 @@ import type { User } from 'firebase/auth';
 import {
   type DocumentReference,
   type FirestoreDataConverter,
+  type Unsubscribe,
   arrayRemove,
   arrayUnion,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   runTransaction,
   setDoc,
@@ -137,6 +139,35 @@ function getRaidRef(id: string): DocumentReference<RaidRecord> {
 
 export async function getRaid(id: string): Promise<RaidRecord | null> {
   return (await getDoc(getRaidRef(id))).data() ?? null;
+}
+
+/**
+ * Follow a lobby: teams join and leave it, and the host's start
+ * writes the battle id everyone else is waiting on
+ */
+export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unsubscribe {
+  return onSnapshot(getRaidRef(id), (snapshot) => {
+    onChange(snapshot.data() ?? null);
+  });
+}
+
+/**
+ * Follow the hour's live lobbies, so a raid opened or started
+ * elsewhere appears and disappears on its own
+ */
+export function watchLiveRaids(
+  raidTimestamp: number,
+  onChange: (raids: [string, RaidRecord][]) => void,
+): Unsubscribe {
+  const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
+
+  return onSnapshot(query(raids, where('timestamp', '==', raidTimestamp)), (result) => {
+    onChange(
+      result.docs
+        .map((entry): [string, RaidRecord] => [entry.id, entry.data()])
+        .filter(([, raid]) => raid.battle == null && !raid.cleared),
+    );
+  });
 }
 
 /**

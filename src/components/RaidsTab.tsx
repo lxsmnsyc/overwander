@@ -1,7 +1,7 @@
 import type { User } from 'firebase/auth';
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, type JSX, Show, createResource, from } from 'solid-js';
 import { syncServerClock } from '../auth/clock';
-import { RaidKind, listLiveRaids } from '../auth/raids';
+import { RaidKind, type RaidRecord, watchLiveRaids } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
 import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
@@ -18,14 +18,24 @@ export interface RaidsTabProps {
  */
 export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   const game = useGame();
-  const [raids, { refetch }] = createResource(
-    () => (game.raid() == null ? 'list' : null),
-    async () => {
-      const now = await syncServerClock();
+  // The raid hour comes from the server's clock; the listing then
+  // follows every lobby that opens, fills, starts or clears
+  const [hour] = createResource(async () => {
+    const now = await syncServerClock();
 
-      return listLiveRaids(Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL);
-    },
-  );
+    return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
+  });
+
+  const raids = from<[string, RaidRecord][]>((set) => {
+    const raidHour = hour();
+
+    if (raidHour == null) {
+      return () => undefined;
+    }
+    return watchLiveRaids(raidHour, (live) => {
+      set(live);
+    });
+  });
 
   return (
     <section>
@@ -35,16 +45,8 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
         fallback={
           <>
             <p>Every lobby still gathering in the current hour.</p>
-            <button
-              type="button"
-              onClick={() => {
-                Promise.resolve(refetch()).catch(() => undefined);
-              }}
-            >
-              Refresh
-            </button>
 
-            <Show when={!raids.loading} fallback={<p>Loading raids…</p>}>
+            <Show when={raids()} fallback={<p>Loading raids…</p>}>
               <Show when={raids()?.length} fallback={<p>No raids are gathering right now.</p>}>
                 <ul>
                   <For each={raids()}>

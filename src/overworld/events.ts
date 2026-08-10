@@ -1,5 +1,6 @@
 import type { BaseEvent, EventPriority } from '../core/event-emitter';
 import type { EventMap } from '../core/event-engine';
+import type Families from '../data/ids/families';
 import type Natures from '../data/ids/natures';
 import type { Genders } from '../data/ids/species';
 import type Overworld from './core';
@@ -39,6 +40,11 @@ export const enum OverworldEvents {
    * What a reward pays out. A Luck Incense doubles it
    */
   CheckGoldReward = 4,
+  /**
+   * What a catch pays in candy beyond its own. An Exp. Share pays the
+   * buddy's family, a Lucky Egg the caught one's
+   */
+  CheckCatchCandy = 5,
 }
 
 /**
@@ -81,10 +87,30 @@ export interface CheckGoldRewardEvent extends OverworldEvent {
   gold: number;
 }
 
+export interface CheckCatchCandyEvent extends OverworldEvent {
+  /**
+   * The family of the pokemon that was just caught
+   */
+  caught: Families;
+  /**
+   * The family of the pokemon walking beside the player, or null when
+   * they walk alone
+   */
+  buddy: Families | null;
+  /**
+   * What each family is owed on top of the catch's own candy, by the
+   * family it goes to. It is a map rather than a count because the
+   * two items pay different families — and the same one when the
+   * buddy is of the caught pokemon's line
+   */
+  bonus: Map<Families, number>;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
   [OverworldEvents.CheckEncounterGender]: [CheckEncounterGenderEvent, EventPriority];
   [OverworldEvents.CheckEncounterShiny]: [CheckEncounterShinyEvent, EventPriority];
   [OverworldEvents.CheckGoldReward]: [CheckGoldRewardEvent, EventPriority];
+  [OverworldEvents.CheckCatchCandy]: [CheckCatchCandyEvent, EventPriority];
 }

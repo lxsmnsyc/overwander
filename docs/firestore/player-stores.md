@@ -62,6 +62,26 @@ user holds, the stack is empty, or the catch already sits at `MAX_LEVEL`
 Private: only the owning uid may read the stacks, and only the server may
 write them or the catch the level lands on.
 
+### What a catch pays
+
+Every catch pays `CANDY_PER_CATCH` of its own family, four times over on the
+family's own day. On top of that, `recordCatch` asks the overworld engine
+`checkCatchCandy` what the player was **carrying** at the time — two held items
+answer it, each paying one candy half the time:
+
+- **Exp. Share** pays the _buddy's_ family, so everything caught feeds the one
+  pokemon being raised.
+- **Lucky Egg** pays the _caught_ pokemon's family, so it fills out a dex faster.
+
+Neither is touched by the species day: it already pays four times over on the
+catch itself, and a bonus that multiplied with it would make one day worth a
+week of ordinary ones. They are paid through `grantCandy` (flat) rather than
+`grantCatchCandy` (boosted), and each is one candy however many families are
+owed. A catch holds one item at a time, so the two are a choice, not a stack.
+The effects live in
+[`src/overworld/items/candy-items.ts`](../../src/overworld/items/candy-items.ts)
+and register themselves the way every other buddy effect does.
+
 ## `buddies/{uid}`
 
 Set by [`src/auth/buddy.ts`](../../src/auth/buddy.ts). One buddy per player, so the

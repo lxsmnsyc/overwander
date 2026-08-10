@@ -37,6 +37,7 @@ export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
   }
 
   return {
+    species: caught.species,
     abilities: caught.abilities,
     nature: caught.nature,
     gender: caught.gender,

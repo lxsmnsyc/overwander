@@ -12,7 +12,10 @@ import Abilities from '../data/ids/abilities';
 import type { Balls, Items } from '../data/ids/items';
 import { ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
-import { grantCatchCandy } from './candy';
+import { getSpeciesData } from '../data/species';
+import createOverworld from '../overworld/setup';
+import resolveBuddy from './buddy';
+import { grantCandy, grantCatchCandy } from './candy';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -123,6 +126,17 @@ export async function recordCatch(
     },
   });
   await grantCatchCandy(uid, encounter.species, toLocalTime(now, zone));
+
+  // And then whatever the player was carrying when they caught it.
+  // These are paid flat: the species day is already worth four times
+  // the catch's own candy, and a bonus that multiplied with it would
+  // make one day worth a week of them
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const family = getSpeciesData(encounter.species).family;
+
+  for (const [owed, count] of overworld.checkCatchCandy(spawnId, family)) {
+    await grantCandy(uid, owed, count);
+  }
 
   return ref.id;
 }

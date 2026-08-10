@@ -99,6 +99,7 @@ export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
   }
 
   return {
+    species: caught.species,
     abilities: caught.abilities,
     items: caught.items,
     nature: caught.nature,

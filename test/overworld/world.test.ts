@@ -63,7 +63,9 @@ import Landmark from '../../src/data/overworld/landmark';
 import { NPCS } from '../../src/data/overworld/npc';
 import { resolveBerryPatch, resolveHiddenGrotto, resolveNest } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
+import { CANDY_ITEM_BONUS } from '../../src/overworld/items/candy-items';
 import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
 import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
@@ -129,7 +131,13 @@ function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | nu
  * Adamant male carrying nothing
  */
 function buddyWith(abilities: Abilities[]): Buddy {
-  return { abilities, items: [], nature: Natures.Adamant, gender: Genders.Male };
+  return {
+    species: Species.Bulbasaur,
+    abilities,
+    items: [],
+    nature: Natures.Adamant,
+    gender: Genders.Male,
+  };
 }
 
 describe('world', () => {
@@ -654,6 +662,69 @@ describe('world', () => {
     expect(createOverworld('player-uid', null).checkEncounterShiny('spawn#0')).toBe(1);
     expect(plain.checkEncounterShiny('spawn#0')).toBe(1);
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(SHINY_CHARM_BOOST);
+  });
+
+  it('pays candy for what a buddy is carrying, to the right family', () => {
+    // The buddy is a Bulbasaur; the pokemon being caught is not
+    const buddyFamily = getSpeciesData(Species.Bulbasaur).family;
+    const caughtFamily = getSpeciesData(Species.Rattata).family;
+
+    expect(buddyFamily).not.toBe(caughtFamily);
+
+    const carrying = (item: Items): Overworld =>
+      createOverworld('player-uid', { ...buddyWith([]), items: [item] });
+    const shared = carrying(Items.ExpShare);
+    const lucky = carrying(Items.LuckyEgg);
+    let sharedPaid = 0;
+    let luckyPaid = 0;
+    let plainPaid = 0;
+
+    // Half the catches, so a run of them shows both outcomes; every
+    // payment is one candy, and it always goes to the same family
+    for (let index = 0; index < 40; index++) {
+      const spawn = `spawn#${index}`;
+
+      for (const [family, count] of shared.checkCatchCandy(spawn, caughtFamily)) {
+        expect(family).toBe(buddyFamily);
+        expect(count).toBe(CANDY_ITEM_BONUS);
+        sharedPaid += 1;
+      }
+      for (const [family, count] of lucky.checkCatchCandy(spawn, caughtFamily)) {
+        expect(family).toBe(caughtFamily);
+        expect(count).toBe(CANDY_ITEM_BONUS);
+        luckyPaid += 1;
+      }
+      // Carrying nothing pays nothing, and neither does walking alone
+      plainPaid += createOverworld('player-uid', buddyWith([])).checkCatchCandy(
+        spawn,
+        caughtFamily,
+      ).size;
+      plainPaid += createOverworld('player-uid', null).checkCatchCandy(spawn, caughtFamily).size;
+    }
+
+    expect(plainPaid).toBe(0);
+    // Neither certain nor never: both land somewhere inside the run
+    expect(sharedPaid).toBeGreaterThan(0);
+    expect(sharedPaid).toBeLessThan(40);
+    expect(luckyPaid).toBeGreaterThan(0);
+    expect(luckyPaid).toBeLessThan(40);
+  });
+
+  it('pays an Exp. Share buddy of the caught line from both sides', () => {
+    // The one case where the two items would meet: the buddy is of
+    // the family being caught, so an Exp. Share pays the same stack
+    // a Lucky Egg would
+    const family = getSpeciesData(Species.Bulbasaur).family;
+    const shared = createOverworld('player-uid', { ...buddyWith([]), items: [Items.ExpShare] });
+
+    for (let index = 0; index < 20; index++) {
+      const bonus = shared.checkCatchCandy(`spawn#${index}`, family);
+
+      // One item, so one candy at most — never doubled by the two
+      // families happening to be the same
+      expect([...bonus.values()].every((count) => count === CANDY_ITEM_BONUS)).toBe(true);
+      expect(bonus.size).toBeLessThanOrEqual(1);
+    }
   });
 
   it('doubles a purse and quiets a chunk for a buddy burning incense', () => {

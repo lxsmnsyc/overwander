@@ -1,10 +1,13 @@
 import AleaRNG from '../core/alea';
 import { EventEngine } from '../core/event-engine';
 import type Abilities from '../data/ids/abilities';
+import type Families from '../data/ids/families';
 import type { Items } from '../data/ids/items';
 import type Natures from '../data/ids/natures';
-import type { Genders } from '../data/ids/species';
+import type { Genders, Species } from '../data/ids/species';
+import { getSpeciesData } from '../data/species';
 import {
+  type CheckCatchCandyEvent,
   type CheckEncounterGenderEvent,
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
@@ -19,6 +22,12 @@ import {
  * it. Null means they walk alone
  */
 export interface Buddy {
+  /**
+   * What it is. The field effects mostly do not care, but an Exp.
+   * Share pays this one's family rather than the caught pokemon's,
+   * and only the species says which family that is
+   */
+  species: Species;
   abilities: Abilities[];
   items: Items[];
   nature: Natures;
@@ -160,5 +169,29 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckGoldReward, event);
     return event.gold;
+  }
+
+  /**
+   * What a catch pays in candy on top of its own, by the family it
+   * goes to. The catch's own reward is the candy rules' business —
+   * this is only what the player was carrying at the time, so nothing
+   * here is touched by the species day: a bonus is one candy whatever
+   * day it falls on.
+   *
+   * Answers an empty map for a player carrying nothing that pays
+   */
+  checkCatchCandy(spawn: string, caught: Families): Map<Families, number> {
+    const event: CheckCatchCandyEvent = {
+      id: 'CheckCatchCandy',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'candy'),
+      caught,
+      buddy: this.buddy == null ? null : getSpeciesData(this.buddy.species).family,
+      bonus: new Map(),
+    };
+
+    this.emit(OverworldEvents.CheckCatchCandy, event);
+    return event.bonus;
   }
 }

@@ -1,6 +1,7 @@
 import type { Buddy } from './core';
 import Overworld from './core';
 import setupOverworldAbilities from './abilities/gen-1';
+import setupOverworldCandyItems from './items/candy-items';
 import setupOverworldIncenses from './items/incenses';
 import setupOverworldItems from './items/key-items';
 
@@ -21,6 +22,7 @@ export default function createOverworld(player: string, buddy: Buddy | null): Ov
   setupOverworldAbilities(overworld);
   setupOverworldItems(overworld);
   setupOverworldIncenses(overworld);
+  setupOverworldCandyItems(overworld);
 
   return overworld;
 }

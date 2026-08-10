@@ -1,5 +1,6 @@
 import registerBalls from './balls';
 import registerBattleBerries from './berries';
+import registerCandyItems from './candy-items';
 import registerGems from './gems';
 import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
@@ -30,6 +31,7 @@ export default function registerItems(): void {
   registerGems();
   registerOrbs();
   registerPlates();
+  registerCandyItems();
   registerKeyItems();
   registerRaidItems();
   registerValuables();

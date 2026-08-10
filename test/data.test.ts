@@ -35,6 +35,7 @@ import registerItems, { getItemData, getTeachableMoves } from '../src/data/items
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
@@ -407,6 +408,30 @@ describe('item data', () => {
 
     // Every machine is stocked
     expect(strong.flags & ItemFlags.Marketable).not.toBe(0);
+  });
+
+  it('stocks the candy items as ordinary held goods', () => {
+    for (const item of [Items.ExpShare, Items.LuckyEgg]) {
+      const data = getItemData(item);
+
+      // Both are bought rather than found, held rather than used,
+      // and neither is ever spent: what they pay, they pay on every
+      // catch for as long as the buddy carries one
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.buy).toBe(CANDY_ITEM_PRICE);
+      expect(data.sell).toBeLessThan(data.buy);
+    }
+    expect(getItemData(Items.ExpShare).name).toBe('Exp. Share');
+    expect(getItemData(Items.LuckyEgg).name).toBe('Lucky Egg');
+
+    // Neither is hidden in the world: they are what gold is for
+    for (const band of [ITEM_POOL.base, ITEM_POOL.uncommon, ITEM_POOL.rare, ITEM_POOL.special]) {
+      expect(band.some((entry) => entry.item === Items.ExpShare)).toBe(false);
+      expect(band.some((entry) => entry.item === Items.LuckyEgg)).toBe(false);
+    }
   });
 
   it('prices the valuables to sell and never to buy', () => {

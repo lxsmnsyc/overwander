@@ -204,6 +204,10 @@ export const enum Items {
   DracoPlate = 107,
   DreadPlate = 108,
   PixiePlate = 109,
+
+  // Candy items: carried by the buddy, paid out on a catch
+  ExpShare = 110,
+  LuckyEgg = 111,
 }
 
 /**

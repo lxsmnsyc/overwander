@@ -208,6 +208,16 @@ so two players in the same zone and window compute identical results from the
 fields `snapshots/{chunkSeed}:{zone}` does store — and two players in different
 zones compute different ones.
 
+### Reaching, not treading
+
+Nothing triggers by being walked over. A player steps within the 3x3 around a
+pokemon or a landmark and **clicks** it; passing through a cell springs nothing.
+That is a client rule — the game stores no player position, so the server cannot
+check how far away a caller was standing. What it does check is that the cell
+really holds the thing, in a live window, which is what keeps a claim honest:
+reach decides what a player *bothers* to walk to, not what they are allowed to
+claim.
+
 Placement leaves room to walk. A landmark keeps the ring of cells around it —
 diagonals included — clear of everything: no two landmarks touch, and
 `getSpawns` skips the whole `getLandmarkArea()` rather than only the landmark

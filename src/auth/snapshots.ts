@@ -312,8 +312,10 @@ export async function visitChunk(
  * What a landmark or a spawn is worth is decided by the server: the
  * reward derives from the chunk seed and the shared window, and both
  * of those are read there rather than described by the caller. A
- * client that asks for a cell it is nowhere near, or a window that
- * has passed, is told there is nothing to claim.
+ * client that asks for a cell holding nothing, or for a window that
+ * has passed, is told there is nothing to claim. How near the player
+ * was standing is not part of it: no position is stored, so reach is
+ * a rule the map enforces rather than the server.
  *
  * Each of the wrappers below carries the player's token; the uid is
  * whatever that token proves, never what the call says.

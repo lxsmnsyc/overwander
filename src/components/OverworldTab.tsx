@@ -188,10 +188,10 @@ export default function OverworldTab(): JSX.Element {
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
   /**
-   * The cell whose interaction already fired, so standing still (or
-   * closing a dialog) does not trigger it again
+   * Whether an interaction is in flight, so a second click on the
+   * same cell does not open the same thing twice
    */
-  const [visited, setVisited] = createSignal<string | null>(null);
+  const [busy, setBusy] = createSignal(false);
   const [placed, setPlaced] = createSignal(false);
   /**
    * The player's own offset from UTC. The world's instants come from
@@ -437,8 +437,7 @@ export default function OverworldTab(): JSX.Element {
     return null;
   };
 
-  const interact = async (loaded: ChunkView, user: User): Promise<string | null> => {
-    const at = cell();
+  const interact = async (loaded: ChunkView, user: User, at: number): Promise<string | null> => {
     const spawn = loaded.spawns.get(at);
 
     if (spawn != null) {
@@ -571,26 +570,45 @@ export default function OverworldTab(): JSX.Element {
       });
   });
 
-  // Every arrival at a new cell resolves its interaction once the
-  // chunk it belongs to has loaded
-  createEffect(() => {
+  /**
+   * Whether the cell holds anything to interact with. A landmark or
+   * a spawn is a thing; empty ground is not
+   */
+  const holdsSomething = (loaded: ChunkView | null, index: number): boolean =>
+    loaded != null && (loaded.spawns.has(index) || loaded.landmarks.has(index));
+
+  /**
+   * Whether the player can reach the cell from where they stand: the
+   * 3x3 they are in the middle of. Walking *onto* a pokemon or a
+   * landmark is not how anything is triggered — a player steps up
+   * beside it and reaches out, so passing through a cell never
+   * springs it on them
+   */
+  const withinReach = (index: number): boolean => {
+    const x = index % CHUNK_CELLS;
+    const y = Math.floor(index / CHUNK_CELLS);
+
+    return Math.abs(x - cellX()) <= 1 && Math.abs(y - cellY()) <= 1;
+  };
+
+  const reach = (index: number): void => {
     const loaded = view();
     const user = auth.user();
-    const key = `${chunkX()},${chunkY()}:${cell()}`;
 
-    if (loaded == null || user == null || loaded.x !== chunkX() || loaded.y !== chunkY()) {
+    if (loaded == null || user == null || busy() || !withinReach(index)) {
       return;
     }
-    if (visited() === key) {
-      return;
-    }
-    setVisited(key);
-    interact(loaded, user)
+    setStatus(null);
+    setBusy(true);
+    interact(loaded, user, index)
       .then(setStatus)
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
+      })
+      .finally(() => {
+        setBusy(false);
       });
-  });
+  };
 
   const contentOf = (index: number): string => {
     const loaded = view();
@@ -657,7 +675,11 @@ export default function OverworldTab(): JSX.Element {
   return (
     <section>
       <h2>Overworld</h2>
-      <p>Move with the arrow keys or WASD. Stepping off an edge crosses into the next chunk.</p>
+      <p>
+        Move with the arrow keys or WASD. Stepping off an edge crosses into the next chunk. Step
+        within a cell of a pokemon or a landmark — anywhere in the ring around it — and click it to
+        deal with it; walking over one does nothing on its own.
+      </p>
 
       <Show when={view()} fallback={<p>Loading chunk…</p>}>
         {(loaded) => (
@@ -678,21 +700,47 @@ export default function OverworldTab(): JSX.Element {
               }}
             >
               <For each={[...new Array<number>(CHUNK_CELLS * CHUNK_CELLS).keys()]}>
-                {(index) => (
-                  <div
-                    title={titleOf(index)}
-                    style={{
-                      'aspect-ratio': '1',
-                      display: 'flex',
-                      'align-items': 'center',
-                      'justify-content': 'center',
-                      border: '1px solid #eee',
-                      background: index === cell() ? '#ffe08a' : 'transparent',
-                    }}
-                  >
-                    {contentOf(index)}
-                  </div>
-                )}
+                {(index) => {
+                  // Anything within arm's length is a button; the
+                  // rest of the chunk is scenery until it is walked
+                  // nearer to
+                  const reachable = (): boolean =>
+                    holdsSomething(loaded(), index) && withinReach(index);
+
+                  // The player's own cell, then what they can reach
+                  // from it, then everything else
+                  const shade = (): string => {
+                    if (index === cell()) {
+                      return '#ffe08a';
+                    }
+                    return reachable() ? '#d6f5d6' : 'transparent';
+                  };
+
+                  return (
+                    <button
+                      type="button"
+                      title={titleOf(index)}
+                      disabled={!reachable() || busy()}
+                      onClick={() => {
+                        reach(index);
+                      }}
+                      style={{
+                        'aspect-ratio': '1',
+                        display: 'flex',
+                        'align-items': 'center',
+                        'justify-content': 'center',
+                        border: '1px solid #eee',
+                        padding: '0',
+                        font: 'inherit',
+                        color: 'inherit',
+                        cursor: reachable() ? 'pointer' : 'default',
+                        background: shade(),
+                      }}
+                    >
+                      {contentOf(index)}
+                    </button>
+                  );
+                }}
               </For>
             </div>
 

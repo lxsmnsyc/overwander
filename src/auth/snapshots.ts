@@ -27,16 +27,21 @@ import {
   meetSpawn,
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
+import { asOffset, toLocalTime, toZoneKey } from './local-time';
 import { SNAPSHOT_COLLECTION, SPAWN_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
 /**
- * One shared snapshot record per chunk at snapshots/{chunkSeed}:
- * whoever finds the record missing or expired refreshes it, and the
- * stored window timestamp is canonical for every player — nobody
- * derives spawns from their own clock
+ * One shared snapshot record per chunk **and zone** at
+ * snapshots/{chunkSeed}:{zone}: whoever finds the record missing or
+ * expired refreshes it, and the stored window is canonical for every
+ * player in that zone — nobody derives spawns from their own clock.
+ *
+ * The zone is part of the key because the window is local: players an
+ * ocean apart are in different hours of the day, so they walk
+ * different worlds rather than fighting over one window
  */
 export interface SnapshotRecord {
   /**
@@ -44,7 +49,11 @@ export interface SnapshotRecord {
    */
   seed: string;
   /**
-   * The 5-minute window the snapshot covers
+   * Minutes east of UTC the window was read in
+   */
+  offset: number;
+  /**
+   * The 5-minute local window the snapshot covers
    */
   timestamp: number;
 }
@@ -52,10 +61,11 @@ export interface SnapshotRecord {
 /**
  * One synchronized spawn at spawns/{snapshotKey#index}: the raw
  * roll (species, individual value, trait value) shared by every
- * player viewing the chunk
+ * player viewing the chunk from the same zone
  */
 export interface SpawnRecord {
   chunk: string;
+  offset: number;
   timestamp: number;
   species: Species;
   individualValue: number;
@@ -67,7 +77,11 @@ const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   fromFirestore: (snapshot) => {
     const data = snapshot.data();
 
-    return { seed: asString(data.seed), timestamp: asNumber(data.timestamp) };
+    return {
+      seed: asString(data.seed),
+      offset: asNumber(data.offset),
+      timestamp: asNumber(data.timestamp),
+    };
   },
 };
 
@@ -78,6 +92,7 @@ const spawnConverter: FirestoreDataConverter<SpawnRecord> = {
 
     return {
       chunk: asString(data.chunk),
+      offset: asNumber(data.offset),
       timestamp: asNumber(data.timestamp),
       species: asNumber(data.species) as Species,
       individualValue: asNumber(data.individualValue),
@@ -86,33 +101,40 @@ const spawnConverter: FirestoreDataConverter<SpawnRecord> = {
   },
 };
 
-function snapshotKey(chunk: Chunk, timestamp: number): string {
-  return `${chunk.seed}@${timestamp}`;
+/**
+ * The document a chunk's window lives at, one per zone
+ */
+function windowId(chunk: Chunk, offset: number): string {
+  return `${chunk.seed}:${toZoneKey(offset)}`;
 }
 
-function spawnId(chunk: Chunk, timestamp: number, index: number): string {
-  return `${snapshotKey(chunk, timestamp)}#${index}`;
+function spawnId(snapshot: ChunkSnapshot, index: number): string {
+  return `${snapshot.key}@${snapshot.timestamp}#${index}`;
 }
 
 /**
  * Fix the chunk's current window in the shared store: the first
  * player to find it missing or expired writes the new one and is
- * told they refreshed it; everyone else adopts the stored timestamp
+ * told they refreshed it; everyone else in the same zone adopts the
+ * stored timestamp
  */
 async function resolveSnapshotWindow(
   chunk: Chunk,
+  offset: number,
 ): Promise<{ timestamp: number; refreshed: boolean }> {
   const db = getFirebaseFirestore();
-  const ref = doc(db, SNAPSHOT_COLLECTION, chunk.seed).withConverter(snapshotConverter);
+  const ref = doc(db, SNAPSHOT_COLLECTION, windowId(chunk, offset)).withConverter(
+    snapshotConverter,
+  );
 
-  // The window must come from the server's clock: a player whose
+  // The instant must come from the server's clock: a player whose
   // device is skewed would otherwise refresh a live window early or
-  // hold an expired one
+  // hold an expired one. Only the zone it is read in is the player's
   await syncServerClock();
 
   return runTransaction(db, async (transaction) => {
     const existing = (await transaction.get(ref)).data();
-    const now = serverNow();
+    const now = toLocalTime(serverNow(), offset);
 
     if (existing != null && now < existing.timestamp + SNAPSHOT_INTERVAL) {
       return { timestamp: existing.timestamp, refreshed: false };
@@ -120,19 +142,19 @@ async function resolveSnapshotWindow(
 
     const window = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
 
-    transaction.set(ref, { seed: chunk.seed, timestamp: window });
+    transaction.set(ref, { seed: chunk.seed, offset: asOffset(offset), timestamp: window });
     return { timestamp: window, refreshed: true };
   });
 }
 
 /**
  * Resolve the chunk's current snapshot from the shared store, so
- * all players derive the exact same snapshot
+ * every player of that chunk in that zone derives the same one
  */
-export async function getChunkSnapshot(chunk: Chunk): Promise<ChunkSnapshot> {
-  const { timestamp } = await resolveSnapshotWindow(chunk);
+export async function getChunkSnapshot(chunk: Chunk, offset: number): Promise<ChunkSnapshot> {
+  const { timestamp } = await resolveSnapshotWindow(chunk, offset);
 
-  return new ChunkSnapshot(chunk, timestamp);
+  return new ChunkSnapshot(chunk, timestamp, offset);
 }
 
 /**
@@ -142,11 +164,14 @@ export async function getChunkSnapshot(chunk: Chunk): Promise<ChunkSnapshot> {
  */
 export function watchSnapshotWindow(
   chunk: Chunk,
+  offset: number,
   onChange: (timestamp: number | null) => void,
 ): Unsubscribe {
-  const ref = doc(getFirebaseFirestore(), SNAPSHOT_COLLECTION, chunk.seed).withConverter(
-    snapshotConverter,
-  );
+  const ref = doc(
+    getFirebaseFirestore(),
+    SNAPSHOT_COLLECTION,
+    windowId(chunk, offset),
+  ).withConverter(snapshotConverter);
 
   return onSnapshot(ref, (snapshot) => {
     onChange(snapshot.data()?.timestamp ?? null);
@@ -159,13 +184,19 @@ export function watchSnapshotWindow(
  */
 export function watchSpawns(
   chunk: Chunk,
+  offset: number,
   timestamp: number,
   onChange: (spawns: [string, SpawnRecord][]) => void,
 ): Unsubscribe {
   const spawns = collection(getFirebaseFirestore(), SPAWN_COLLECTION).withConverter(spawnConverter);
 
   return onSnapshot(
-    query(spawns, where('chunk', '==', chunk.seed), where('timestamp', '==', timestamp)),
+    query(
+      spawns,
+      where('chunk', '==', chunk.seed),
+      where('offset', '==', asOffset(offset)),
+      where('timestamp', '==', timestamp),
+    ),
     (result) => {
       onChange(result.docs.map((entry) => [entry.id, entry.data()]));
     },
@@ -173,13 +204,16 @@ export function watchSpawns(
 }
 
 /**
- * Drop every stored spawn of the chunk that belongs to a window
- * other than the current one
+ * Drop every stored spawn of the chunk **in this zone** that belongs
+ * to a window other than the current one. Another zone's spawns are
+ * left where they are: its window turns over on its own clock
  */
-async function clearStaleSpawns(chunk: Chunk, timestamp: number): Promise<void> {
+async function clearStaleSpawns(chunk: Chunk, offset: number, timestamp: number): Promise<void> {
   const db = getFirebaseFirestore();
   const spawns = collection(db, SPAWN_COLLECTION).withConverter(spawnConverter);
-  const result = await getDocs(query(spawns, where('chunk', '==', chunk.seed)));
+  const result = await getDocs(
+    query(spawns, where('chunk', '==', chunk.seed), where('offset', '==', asOffset(offset))),
+  );
   const batch = writeBatch(db);
 
   for (const entry of result.docs) {
@@ -207,11 +241,12 @@ export async function publishSpawns(
   const pairs: [string, Spawn][] = [];
 
   spawns.forEach((spawn, index) => {
-    const id = spawnId(snapshot.chunk, snapshot.timestamp, index);
+    const id = spawnId(snapshot, index);
     const [species, individualValue, traitValue] = spawn;
 
     batch.set(doc(db, SPAWN_COLLECTION, id).withConverter(spawnConverter), {
       chunk: snapshot.chunk.seed,
+      offset: asOffset(snapshot.offset),
       timestamp: snapshot.timestamp,
       species,
       individualValue,
@@ -233,6 +268,7 @@ export async function listSpawns(snapshot: ChunkSnapshot): Promise<[string, Spaw
     query(
       spawns,
       where('chunk', '==', snapshot.chunk.seed),
+      where('offset', '==', asOffset(snapshot.offset)),
       where('timestamp', '==', snapshot.timestamp),
     ),
   );
@@ -247,12 +283,16 @@ export async function listSpawns(snapshot: ChunkSnapshot): Promise<[string, Spaw
  * new window's spawns published; within a live window the stored
  * set is reused (published by whoever arrives first)
  */
-export async function visitChunk(chunk: Chunk, count: number): Promise<[string, Spawn][]> {
-  const { timestamp, refreshed } = await resolveSnapshotWindow(chunk);
-  const snapshot = new ChunkSnapshot(chunk, timestamp);
+export async function visitChunk(
+  chunk: Chunk,
+  count: number,
+  offset: number,
+): Promise<[string, Spawn][]> {
+  const { timestamp, refreshed } = await resolveSnapshotWindow(chunk, offset);
+  const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
 
   if (refreshed) {
-    await clearStaleSpawns(chunk, timestamp);
+    await clearStaleSpawns(chunk, offset, timestamp);
     return publishSpawns(snapshot, count);
   }
 
@@ -286,7 +326,13 @@ export async function visitChunk(chunk: Chunk, count: number): Promise<[string, 
  * Resolves the granted item, or null when there is nothing to claim
  */
 export async function claimItemCache(snapshot: ChunkSnapshot, cell: number): Promise<Items | null> {
-  return claimCacheOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+  return claimCacheOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
 }
 
 async function claimCacheOnServer(
@@ -294,9 +340,17 @@ async function claimCacheOnServer(
   x: number,
   y: number,
   cell: number,
+  offset: number,
 ): Promise<Items | null> {
   'use server';
-  return claimCacheOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
+  return claimCacheOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -307,7 +361,13 @@ export async function claimBerryPatch(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<Items | null> {
-  return claimBerryOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+  return claimBerryOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
 }
 
 async function claimBerryOnServer(
@@ -315,9 +375,17 @@ async function claimBerryOnServer(
   x: number,
   y: number,
   cell: number,
+  offset: number,
 ): Promise<Items | null> {
   'use server';
-  return claimBerryOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
+  return claimBerryOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -338,7 +406,13 @@ export async function claimHiddenGrotto(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<GrottoClaim | null> {
-  return claimGrottoOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+  return claimGrottoOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
 }
 
 async function claimGrottoOnServer(
@@ -346,9 +420,17 @@ async function claimGrottoOnServer(
   x: number,
   y: number,
   cell: number,
+  offset: number,
 ): Promise<GrottoClaim | null> {
   'use server';
-  return claimGrottoOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
+  return claimGrottoOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**
@@ -365,7 +447,13 @@ export async function startEncounter(
   snapshot: ChunkSnapshot,
   spawn: string,
 ): Promise<EncounterRecord | null> {
-  return meetSpawnOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, spawn);
+  return meetSpawnOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    spawn,
+    snapshot.offset,
+  );
 }
 
 async function meetSpawnOnServer(
@@ -373,7 +461,8 @@ async function meetSpawnOnServer(
   x: number,
   y: number,
   spawn: string,
+  offset: number,
 ): Promise<EncounterRecord | null> {
   'use server';
-  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock());
+  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset);
 }

@@ -7,6 +7,7 @@ import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
+import { toZoneKey } from './local-time';
 
 /**
  * What a raid lobby is, how a stored one is read back, and what
@@ -60,6 +61,12 @@ export interface RaidRecord {
    */
   timestamp: number;
   /**
+   * Minutes east of UTC the hour was read in. A raid hour is local,
+   * so a lobby belongs to the zone that staged it — another zone's
+   * landmark rolls its own boss at its own hour
+   */
+  offset: number;
+  /**
    * Where the lobby stands, for a listing that has no chunk in hand
    */
   chunk: { seed: string; x: number; y: number };
@@ -87,6 +94,7 @@ export function asRaidRecord(value: unknown): RaidRecord {
     teams: asStringArray(data.teams),
     battle: typeof data.battle === 'string' ? data.battle : null,
     timestamp: asNumber(data.timestamp),
+    offset: asNumber(data.offset),
     chunk: { seed: asString(chunk.seed), x: asNumber(chunk.x), y: asNumber(chunk.y) },
     cell: asNumber(data.cell),
     cleared: data.cleared === true,
@@ -101,10 +109,14 @@ export function raidId(
   raidTimestamp: number,
   cell: number,
   kind: RaidKind = RaidKind.Legendary,
+  offset = 0,
 ): string {
   const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
 
-  return `${chunk.seed}@${raidTimestamp}$${tag}${cell}`;
+  // The zone is part of the id because the hour is local: two zones
+  // can floor to the same hour, and what they stage there is not the
+  // same boss
+  return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
 }
 /**
  * The reward for clearing a raid: the legendary as a meetable spawn.

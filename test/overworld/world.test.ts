@@ -668,6 +668,44 @@ describe('chunk snapshot', () => {
     expect(elsewhere.rng.random()).not.toBe(new ChunkSnapshot(chunk, 721 * MINUTE).rng.random());
   });
 
+  it('rolls a different world for every zone', () => {
+    const world = new World('overworld');
+    const chunk = world.getChunk(0, 0);
+    const NOON = 12 * 60 * 60 * 1000;
+
+    const utc = new ChunkSnapshot(chunk, NOON, 0);
+    const manila = new ChunkSnapshot(chunk, NOON, 480);
+    const lima = new ChunkSnapshot(chunk, NOON, -300);
+
+    // The same chunk in the same window, but the zone is part of the
+    // seed: nobody can read another zone's spawns off their own
+    expect(utc.rng.random()).not.toBe(manila.rng.random());
+    expect(utc.rng.random()).not.toBe(lima.rng.random());
+    expect(manila.getSpawns(4)).not.toEqual(utc.getSpawns(4));
+
+    // Landmark rewards are zoned the same way. One window can collide
+    // — a cache has few things to hold — so the run of them is what
+    // has to differ
+    const stocked =
+      findChunk(world, (candidate) =>
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.ItemCache),
+      ) ?? chunk;
+    const WINDOW = 5 * 60 * 1000;
+    const caches = (offset: number): string =>
+      JSON.stringify(
+        Array.from({ length: 6 }, (_, at) => [
+          ...new ChunkSnapshot(stocked, NOON + at * WINDOW, offset).getItemCaches(),
+        ]),
+      );
+
+    expect(new Set([0, 480, -300].map(caches)).size).toBe(3);
+
+    // Within one zone it stays deterministic
+    expect(new ChunkSnapshot(chunk, NOON + 60 * 1000, 480).getSpawns(4)).toEqual(
+      new ChunkSnapshot(chunk, NOON, 480).getSpawns(4),
+    );
+  });
+
   it('rolls cached, biome-appropriate spawns', () => {
     const world = new World('overworld');
     const chunk = world.getChunk(0, 0);
@@ -967,6 +1005,7 @@ describe('chunk snapshot', () => {
       teams: [],
       battle: 'battle-id',
       timestamp: 0,
+      offset: 0,
       chunk: { seed: 'chunk', x: 0, y: 0 },
       cell: 0,
       cleared: true,

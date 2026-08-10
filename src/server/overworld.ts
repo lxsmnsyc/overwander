@@ -12,7 +12,6 @@ import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-recor
 import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
-import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
@@ -24,6 +23,7 @@ import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { getAdminFirestore } from './firebase';
+import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
 import { asNumber, asStringArray, docData } from './read';
 import { grantItem } from './inventory';
 
@@ -39,27 +39,37 @@ import { grantItem } from './inventory';
  * usually nothing
  */
 
-function snapshotKey(chunk: Chunk, timestamp: number): string {
-  return `${chunk.seed}@${timestamp}`;
-}
-
 /**
- * The chunk's live window, as stored. A window nobody has opened yet,
- * or one that has expired, pays nothing: refreshing it is the
- * client's shared-world business, and a claim against a stale window
- * is a claim against a landmark that is no longer there
+ * The chunk's live window in one zone, as stored. A window nobody has
+ * opened yet, or one that has expired, pays nothing: refreshing it is
+ * the client's shared-world business, and a claim against a stale
+ * window is a claim against a landmark that is no longer there.
+ *
+ * The instant is the server's; the zone is the caller's, and
+ * everything derived from it — the window document, the rolls, the
+ * claim markers — is scoped by it, so a client that invents a zone
+ * gets that zone's world rather than a second helping of its own
  */
-async function resolveSnapshot(x: number, y: number, now: number): Promise<ChunkSnapshot | null> {
+async function resolveSnapshot(
+  x: number,
+  y: number,
+  now: number,
+  offset: number,
+): Promise<ChunkSnapshot | null> {
   const chunk = getWorld().getChunk(x, y);
+  const zone = asOffset(offset);
   const stored = docData(
-    await getAdminFirestore().collection(SNAPSHOT_COLLECTION).doc(chunk.seed).get(),
+    await getAdminFirestore()
+      .collection(SNAPSHOT_COLLECTION)
+      .doc(`${chunk.seed}:${toZoneKey(zone)}`)
+      .get(),
   );
   const timestamp = asNumber(stored?.timestamp);
 
-  if (timestamp === 0 || now >= timestamp + SNAPSHOT_INTERVAL) {
+  if (timestamp === 0 || toLocalTime(now, zone) >= timestamp + SNAPSHOT_INTERVAL) {
     return null;
   }
-  return new ChunkSnapshot(chunk, timestamp);
+  return new ChunkSnapshot(chunk, timestamp, zone);
 }
 
 /**
@@ -93,15 +103,16 @@ export async function claimItemCache(
   y: number,
   cell: number,
   now: number,
+  offset: number,
 ): Promise<Items | null> {
-  const snapshot = await resolveSnapshot(x, y, now);
+  const snapshot = await resolveSnapshot(x, y, now, offset);
   const item = snapshot?.getItemCaches().get(cell);
 
   if (snapshot == null || item == null) {
     return null;
   }
 
-  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.timestamp}$${cell}:${uid}`;
 
   if (!(await claim(CACHE_CLAIM_COLLECTION, id, { player: uid, item }))) {
     return null;
@@ -119,15 +130,16 @@ export async function claimBerryPatch(
   y: number,
   cell: number,
   now: number,
+  offset: number,
 ): Promise<Items | null> {
-  const snapshot = await resolveSnapshot(x, y, now);
+  const snapshot = await resolveSnapshot(x, y, now, offset);
   const berry = snapshot?.getBerryPatches().get(cell);
 
   if (snapshot == null || berry == null) {
     return null;
   }
 
-  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$berry${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.timestamp}$berry${cell}:${uid}`;
 
   if (!(await claim(BERRY_CLAIM_COLLECTION, id, { player: uid, item: berry }))) {
     return null;
@@ -156,15 +168,16 @@ export async function claimHiddenGrotto(
   y: number,
   cell: number,
   now: number,
+  offset: number,
 ): Promise<GrottoClaim | null> {
-  const snapshot = await resolveSnapshot(x, y, now);
+  const snapshot = await resolveSnapshot(x, y, now, offset);
   const reward = snapshot?.getHiddenGrottos().get(cell);
 
   if (snapshot == null || reward == null) {
     return null;
   }
 
-  const key = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$grotto${cell}`;
+  const key = `${snapshot.key}@${snapshot.timestamp}$grotto${cell}`;
 
   if (
     !(await claim(GROTTO_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))
@@ -180,7 +193,7 @@ export async function claimHiddenGrotto(
   // The grotto's pokemon needs the two rolls a snapshot spawn would
   // have; they derive from the same chunk, window and cell, so every
   // observer of this grotto meets the same individual
-  const rng = new AleaRNG(`${snapshot.chunk.seed}${snapshot.timestamp}grotto${cell}spawn`);
+  const rng = new AleaRNG(`${snapshot.key}${snapshot.timestamp}grotto${cell}spawn`);
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
   return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };
@@ -240,9 +253,10 @@ export async function meetSpawn(
   y: number,
   spawnId: string,
   now: number,
+  offset: number,
 ): Promise<EncounterRecord | null> {
   const data = docData(await getAdminFirestore().collection(SPAWN_COLLECTION).doc(spawnId).get());
-  const snapshot = await resolveSnapshot(x, y, now);
+  const snapshot = await resolveSnapshot(x, y, now, offset);
 
   // The spawn has to belong to the chunk the player is standing in,
   // in its live window: one from a window that has turned over, or
@@ -251,6 +265,7 @@ export async function meetSpawn(
     data == null ||
     snapshot == null ||
     data.chunk !== snapshot.chunk.seed ||
+    data.offset !== snapshot.offset ||
     data.timestamp !== snapshot.timestamp
   ) {
     return null;

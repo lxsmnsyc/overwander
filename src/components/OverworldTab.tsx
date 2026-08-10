@@ -12,6 +12,7 @@ import {
 } from 'solid-js';
 import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
+import { getLocalOffset } from '../auth/local-time';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
@@ -101,12 +102,13 @@ function buildChunkView(
   x: number,
   y: number,
   timestamp: number,
+  offset: number,
   published: [string, SpawnRecord][],
   player: string | null,
   buddy: Buddy | null,
 ): ChunkView {
   const chunk = getWorld().getChunk(x, y);
-  const snapshot = new ChunkSnapshot(chunk, timestamp);
+  const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
   // Rolling locally reproduces the published placement — same seed,
   // same window, same count — and is what pins each spawn to a cell
   snapshot.getSpawns(PUBLISHED_SPAWNS);
@@ -165,6 +167,13 @@ export default function OverworldTab(): JSX.Element {
    */
   const [visited, setVisited] = createSignal<string | null>(null);
   const [placed, setPlaced] = createSignal(false);
+  /**
+   * The player's own offset from UTC. The world's instants come from
+   * the server, but which hour of the day they fall in is theirs —
+   * and it scopes everything they see, so a player in another zone
+   * walks a chunk of their own
+   */
+  const zone = getLocalOffset();
 
   // A player who has not walked anywhere yet starts somewhere in the
   // starting region rather than at the origin. The draw is seeded by
@@ -197,13 +206,13 @@ export default function OverworldTab(): JSX.Element {
 
     // The window always rolls the lure's extras, so every player of
     // the chunk shares one set of rolls whoever publishes them
-    visitChunk(chunk, PUBLISHED_SPAWNS).catch((caught: unknown) => {
+    visitChunk(chunk, PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));
     });
   });
 
   const snapshotWindow = from<number | null>((set) =>
-    watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), (timestamp) => {
+    watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (timestamp) => {
       set(timestamp);
     }),
   );
@@ -214,7 +223,7 @@ export default function OverworldTab(): JSX.Element {
     if (timestamp == null) {
       return () => undefined;
     }
-    return watchSpawns(getWorld().getChunk(chunkX(), chunkY()), timestamp, (spawns) => {
+    return watchSpawns(getWorld().getChunk(chunkX(), chunkY()), zone, timestamp, (spawns) => {
       set(spawns);
     });
   });
@@ -235,6 +244,7 @@ export default function OverworldTab(): JSX.Element {
           chunkX(),
           chunkY(),
           timestamp,
+          zone,
           published() ?? [],
           auth.user()?.uid ?? null,
           buddy() ?? null,

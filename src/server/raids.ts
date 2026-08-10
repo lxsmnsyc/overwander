@@ -10,6 +10,7 @@ import {
 } from '../auth/collections';
 import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
+import { asOffset, toLocalTime } from '../auth/local-time';
 import { asCaughtPokemon } from '../auth/caught-record';
 
 import type { EncounterRecord } from '../auth/encounter-record';
@@ -113,9 +114,11 @@ export async function enterRaid(
   cell: number,
   kind: RaidKind,
   now: number,
+  offset: number,
 ): Promise<[string, RaidRecord] | null> {
   const chunk = getWorld().getChunk(x, y);
-  const snapshot = new ChunkSnapshot(chunk, now);
+  const zone = asOffset(offset);
+  const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
     kind === RaidKind.Shadow
       ? snapshot.getShadowRaids().get(cell)
@@ -126,7 +129,7 @@ export async function enterRaid(
   }
 
   const db = getAdminFirestore();
-  const id = raidId(chunk, snapshot.raidTimestamp, cell, kind);
+  const id = raidId(chunk, snapshot.raidTimestamp, cell, kind, zone);
   const staging = await hasAnyCaught(uid);
 
   // One landmark stages one raid at a time: the read and the create
@@ -145,6 +148,7 @@ export async function enterRaid(
       teams: [],
       battle: null,
       timestamp: snapshot.raidTimestamp,
+      offset: zone,
       chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
       cell,
       cleared: false,
@@ -582,7 +586,8 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   await grantGold(uid, gold);
 
   const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
-  const snapshot = new ChunkSnapshot(chunk, raid.timestamp);
+  // The raid's own hour and zone, not wherever the claimant is now
+  const snapshot = new ChunkSnapshot(chunk, raid.timestamp, raid.offset);
   const [spawnId, spawn] = deriveRaidReward(raid, lobby, uid);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {
     type: EncounterType.Raid,

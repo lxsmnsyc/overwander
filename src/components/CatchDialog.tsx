@@ -321,7 +321,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     )}
                   </dd>
                   <dt>Caught</dt>
-                  <dd>{new Date(loaded().caughtAt).toISOString().slice(0, 10)}</dd>
+                  {/* The stamp is already in the catcher's own zone,
+                      so the date it opens with is the day they had */}
+                  <dd>{loaded().caughtAt.slice(0, 10)}</dd>
                   <dt>Origin</dt>
                   <dd>
                     Chunk {loaded().origin.x}, {loaded().origin.y}

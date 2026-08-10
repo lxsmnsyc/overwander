@@ -1,6 +1,7 @@
 import type { User } from 'firebase/auth';
 import { For, type JSX, Show, createResource, from } from 'solid-js';
 import { syncServerClock } from '../auth/clock';
+import { getLocalOffset, toLocalTime } from '../auth/local-time';
 import { RaidKind, type RaidRecord, watchLiveRaids } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
 import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
@@ -20,8 +21,12 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   const game = useGame();
   // The raid hour comes from the server's clock; the listing then
   // follows every lobby that opens, fills, starts or clears
+  // The hour is the player's own: the instant comes from the server,
+  // read in their zone, so a lobby they see is one staged where they
+  // are standing in the day
+  const zone = getLocalOffset();
   const [hour] = createResource(async () => {
-    const now = await syncServerClock();
+    const now = toLocalTime(await syncServerClock(), zone);
 
     return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
   });
@@ -32,7 +37,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
     if (raidHour == null) {
       return () => undefined;
     }
-    return watchLiveRaids(raidHour, (live) => {
+    return watchLiveRaids(raidHour, zone, (live) => {
       set(live);
     });
   });

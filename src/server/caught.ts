@@ -14,8 +14,23 @@ import { ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { grantCatchCandy } from './candy';
 import { getAdminFirestore } from './firebase';
+import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
+
+/**
+ * How long a locale tag is allowed to be. A real one is short; the
+ * cap is there so a caller cannot write an essay into the record
+ */
+const LOCALE_LIMIT = 35;
+
+/**
+ * A locale tag as reported by a caller, kept to something that could
+ * plausibly be one
+ */
+function asLocale(value: unknown): string {
+  return typeof value === 'string' ? value.slice(0, LOCALE_LIMIT) : '';
+}
 
 /**
  * Catch records, written with admin credentials. A catch is the most
@@ -75,7 +90,9 @@ export async function recordCatch(
   uid: string,
   spawnId: string,
   ball: Balls,
-  caughtAt: number,
+  now: number,
+  offset: number,
+  locale: string,
 ): Promise<string | null> {
   const db = getAdminFirestore();
   const stored = docData(await db.collection(ENCOUNTER_COLLECTION).doc(`${spawnId}:${uid}`).get());
@@ -86,6 +103,11 @@ export async function recordCatch(
 
   const encounter = asEncounterRecord(stored);
   const ref = db.collection(CAUGHT_COLLECTION).doc();
+  // The instant is the server's, the calendar the catcher's: the
+  // stamp is written in their zone, and the species day is the day it
+  // was where they were standing
+  const zone = asOffset(offset);
+  const caughtAt = toLocalISO(now, zone);
 
   await ref.set({
     owner: uid,
@@ -109,6 +131,7 @@ export async function recordCatch(
     ...freeFields(),
     ball,
     caughtAt,
+    locale: asLocale(locale),
     effortValues: zeroEffortValues(),
     origin: {
       timestamp: encounter.timestamp,
@@ -117,7 +140,7 @@ export async function recordCatch(
       biome: encounter.biome,
     },
   });
-  await grantCatchCandy(uid, encounter.species, caughtAt);
+  await grantCatchCandy(uid, encounter.species, toLocalTime(now, zone));
 
   return ref.id;
 }

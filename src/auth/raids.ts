@@ -30,6 +30,7 @@ import {
 } from '../server/raids';
 import { RAID_COLLECTION, RAID_REWARD_COLLECTION } from './collections';
 import { syncServerClock } from './clock';
+import { asOffset } from './local-time';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
@@ -70,17 +71,23 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
  */
 export function watchLiveRaids(
   raidTimestamp: number,
+  offset: number,
   onChange: (raids: [string, RaidRecord][]) => void,
 ): Unsubscribe {
   const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
 
-  return onSnapshot(query(raids, where('timestamp', '==', raidTimestamp)), (result) => {
-    onChange(
-      result.docs
-        .map((entry): [string, RaidRecord] => [entry.id, entry.data()])
-        .filter(([, raid]) => raid.battle == null && !raid.cleared),
-    );
-  });
+  // The hour is local, so two zones can floor to the same one; the
+  // offset is what keeps a listing to the lobbies of its own world
+  return onSnapshot(
+    query(raids, where('timestamp', '==', raidTimestamp), where('offset', '==', asOffset(offset))),
+    (result) => {
+      onChange(
+        result.docs
+          .map((entry): [string, RaidRecord] => [entry.id, entry.data()])
+          .filter(([, raid]) => raid.battle == null && !raid.cleared),
+      );
+    },
+  );
 }
 
 /**
@@ -109,7 +116,14 @@ export async function enterRaid(
   cell: number,
   kind: RaidKind = RaidKind.Legendary,
 ): Promise<[string, RaidRecord] | null> {
-  return enterRaidOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell, kind);
+  return enterRaidOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    kind,
+    snapshot.offset,
+  );
 }
 
 async function enterRaidOnServer(
@@ -118,18 +132,24 @@ async function enterRaidOnServer(
   y: number,
   cell: number,
   kind: RaidKind,
+  offset: number,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
-  return enterOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock());
+  return enterOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock(), offset);
 }
 
 /**
  * Every lobby still gathering in the current raid hour: started and
  * cleared raids drop out, and a lobby from a past hour is dead
  */
-export async function listLiveRaids(raidTimestamp: number): Promise<[string, RaidRecord][]> {
+export async function listLiveRaids(
+  raidTimestamp: number,
+  offset: number,
+): Promise<[string, RaidRecord][]> {
   const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
-  const result = await getDocs(query(raids, where('timestamp', '==', raidTimestamp)));
+  const result = await getDocs(
+    query(raids, where('timestamp', '==', raidTimestamp), where('offset', '==', asOffset(offset))),
+  );
 
   return result.docs
     .map((entry): [string, RaidRecord] => [entry.id, entry.data()])

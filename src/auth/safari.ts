@@ -15,6 +15,7 @@ import { markFled } from '../server/overworld';
 import { asStringArray } from './__normalize';
 import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
+import { getLocalOffset, getLocale } from './local-time';
 import { FLED_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
@@ -94,9 +95,15 @@ async function spendFeed(token: string, item: Items): Promise<boolean> {
  * record is the one the overworld staged — a client can report a
  * catch it did not earn, but not a better pokemon than it met
  */
-async function keepCatch(token: string, spawn: string, ball: Balls): Promise<string | null> {
+async function keepCatch(
+  token: string,
+  spawn: string,
+  ball: Balls,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
   'use server';
-  return recordCatch(await requireUid(token), spawn, ball, await syncServerClock());
+  return recordCatch(await requireUid(token), spawn, ball, await syncServerClock(), offset, locale);
 }
 
 /**
@@ -136,7 +143,9 @@ export async function throwBall(
   const spawn = session.encounter.spawn;
 
   if (result === ThrowResult.Caught) {
-    await keepCatch(token, spawn, session.ball);
+    // The catch is stamped in the catcher's own zone and carries the
+    // locale it was made in, so its date reads as the day they had
+    await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale());
   } else if (result === ThrowResult.Fled) {
     await retireEncounter(token, spawn);
   }

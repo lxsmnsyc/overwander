@@ -1,3 +1,4 @@
+import { toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import { boostFamilyWeights, getSpawnPool, isLegendarySpecies, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
@@ -57,29 +58,48 @@ export interface RaidRoll {
 /**
  * A chunk observed at a point in time: the timestamp snaps back to
  * the last 5-minute boundary, giving each chunk a stable identity
- * per time window. The canonical timestamp comes from the shared
- * snapshot store (fixed once server-side per window), never from a
- * player's local clock — this class only derives deterministically
- * from whatever window it is given
+ * per time window. The window is **local** — the instant behind it
+ * comes from the server, but it is read in the observer's own zone,
+ * so a player walking at night meets what the night pool holds.
+ *
+ * The zone is part of the seed as well as the window, so a chunk is
+ * not one world seen from several clocks but one per zone: what a
+ * player in UTC+8 finds there says nothing about what a player in
+ * UTC-5 will find, however the two line up their hours. The canonical
+ * window still comes from the shared snapshot store rather than a
+ * device's own reading; this class only derives deterministically
+ * from whatever window and offset it is given
  */
 export default class ChunkSnapshot {
   /**
-   * Milliseconds, floored to the last 5-minute boundary
+   * Local milliseconds, floored to the last 5-minute boundary
    */
   readonly timestamp: number;
 
   /**
-   * Seeded by chunk and window, so every observer of the same chunk
-   * in the same window rolls the same sequence
+   * Seeded by chunk, zone and window, so every observer of the same
+   * chunk in the same zone and window rolls the same sequence — and
+   * no observer outside that zone rolls it at all
    */
   readonly rng: AleaRNG;
+
+  /**
+   * The chunk and zone together, which is what every seed and stored
+   * key in this world is scoped by
+   */
+  readonly key: string;
 
   constructor(
     public readonly chunk: Chunk,
     timestamp: number,
+    /**
+     * Minutes east of UTC; zero is the world as UTC sees it
+     */
+    public readonly offset = 0,
   ) {
     this.timestamp = Math.floor(timestamp / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
-    this.rng = new AleaRNG(`${chunk.seed}${this.timestamp}`);
+    this.key = `${chunk.seed}${toZoneKey(offset)}`;
+    this.rng = new AleaRNG(`${this.key}${this.timestamp}`);
   }
 
   private spawns: Spawn[] | null = null;
@@ -179,7 +199,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
-          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}cache${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.timestamp}cache${cell}`);
           const item = resolveItemCache(() => rng.random());
 
           if (item != null) {
@@ -205,7 +225,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.BerryPatch) {
-          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}berry${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.timestamp}berry${cell}`);
           const berry = resolveBerryPatch(() => rng.random());
 
           if (berry != null) {
@@ -245,7 +265,7 @@ export default class ChunkSnapshot {
       if (legendaries.length > 0) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
           if (landmark === Landmark.LegendaryRaid) {
-            const rng = new AleaRNG(`${this.chunk.seed}${this.raidTimestamp}raid${cell}`);
+            const rng = new AleaRNG(`${this.key}${this.raidTimestamp}raid${cell}`);
             // The draws land in order: the legendary, then the trait
             // value its nature and ability derive from
             const entry = legendaries[Math.floor(rng.random() * legendaries.length)];
@@ -279,7 +299,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const rng = new AleaRNG(`${this.chunk.seed}${this.raidTimestamp}shadow${cell}`);
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
         // The draws land in order: the pool, the species within it,
         // then the trait value its nature and ability derive from
         const legendary = rng.random() < SHADOW_RAID_LEGENDARY_CHANCE;
@@ -314,7 +334,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.HiddenGrotto) {
-          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}grotto${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.timestamp}grotto${cell}`);
           const reward = resolveHiddenGrotto(
             this.chunk.biome,
             time,

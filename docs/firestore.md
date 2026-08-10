@@ -141,7 +141,8 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `lock`                 | `boolean`               | Whether it is fielded in a battle right now               |
 | `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
-| `caughtAt`             | `number`                | Server-clock milliseconds (see below)                     |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset, e.g. `…+08:00` (see below)    |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
 | `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                           |
 | `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                     |
 | `origin.x`, `origin.y` | `number`                | Chunk coordinates                                         |
@@ -219,32 +220,39 @@ can grey its buttons out and say why; the refusal itself is the server's.
 These are the synchronization surface: every player observing a chunk must
 derive the same spawns, so the rolls are published once and read by everyone.
 
-### `snapshots/{chunkSeed}`
+### `snapshots/{chunkSeed}:{zone}`
 
 Written by `resolveSnapshotWindow` in
 [`src/auth/snapshots.ts`](../src/auth/snapshots.ts), inside a transaction.
 
-| Field       | Type     | Notes                                               |
-| ----------- | -------- | --------------------------------------------------- |
-| `seed`      | `string` | The chunk seed, matching the document id            |
-| `timestamp` | `number` | The 5-minute window, floored to `SNAPSHOT_INTERVAL` |
+| Field       | Type     | Notes                                                     |
+| ----------- | -------- | --------------------------------------------------------- |
+| `seed`      | `string` | The chunk seed, matching the first half of the id         |
+| `offset`    | `number` | Minutes east of UTC the window was read in                |
+| `timestamp` | `number` | The 5-minute **local** window, floored to `SNAPSHOT_INTERVAL` |
 
 Whoever finds the record missing or expired writes the new window and is told
-they refreshed it; everyone else adopts the stored timestamp. The `now` used to
-judge expiry comes from the server clock (see below), never the device.
+they refreshed it; everyone else **in the same zone** adopts the stored
+timestamp. The instant used to judge expiry comes from the server clock (see
+below), never the device — only the zone it is read in is the player's.
 
-### `spawns/{chunkSeed}@{timestamp}#{index}`
+The zone is part of the key because the window is local: a chunk is not one
+world seen from several clocks but one per zone. See
+[Local time](#local-time).
+
+### `spawns/{chunkSeed}{zone}@{timestamp}#{index}`
 
 Written by `publishSpawns`, deleted by `clearStaleSpawns` when a window rolls
 over.
 
-| Field             | Type      | Notes           |
-| ----------------- | --------- | --------------- |
-| `chunk`           | `string`  | Chunk seed      |
-| `timestamp`       | `number`  | Snapshot window |
-| `species`         | `Species` |                 |
-| `individualValue` | `number`  |                 |
-| `traitValue`      | `number`  |                 |
+| Field             | Type      | Notes                        |
+| ----------------- | --------- | ---------------------------- |
+| `chunk`           | `string`  | Chunk seed                   |
+| `offset`          | `number`  | Minutes east of UTC          |
+| `timestamp`       | `number`  | Local snapshot window        |
+| `species`         | `Species` |                              |
+| `individualValue` | `number`  |                              |
+| `traitValue`      | `number`  |                              |
 
 A window publishes `SPAWN_COUNT` (6) spawns plus `LURE_SPAWN_BONUS` (2) more:
 the extras are rolled for every chunk so that all its visitors share one set of
@@ -254,11 +262,11 @@ the last two on the map nor may meet them: `meetSpawn` reads the index off the
 spawn id and refuses anything past `visibleSpawnCount`.
 
 The id is deterministic, so concurrent publishers write identical documents
-rather than duplicates. `listSpawns` queries
-`where('chunk', '==', seed)` and `where('timestamp', '==', window)` together,
-which **requires a composite index** on `(chunk, timestamp)`.
-`clearStaleSpawns` queries on `chunk` alone, covered by the automatic
-single-field index.
+rather than duplicates. `listSpawns` queries `chunk`, `offset` and `timestamp`
+together, which **requires a composite index** on `(chunk, offset, timestamp)`.
+`clearStaleSpawns` queries `chunk` and `offset` — it clears its own zone's
+stale windows and leaves every other zone's alone, since those turn over on
+their own clocks.
 
 ### `encounters/{spawnId}:{uid}`
 
@@ -378,7 +386,8 @@ together — a player either opens the lobby or joins the one already there.
 | `host`       | `string`         | Only this uid may start the raid                            |
 | `teams`      | `string[]`       | `teams/{teamId}` ids, appended via `arrayUnion`             |
 | `battle`     | `string \| null` | The battle the host started, null while gathering           |
-| `timestamp`  | `number`         | The raid hour, for listing the live lobbies                 |
+| `timestamp`  | `number`         | The **local** raid hour, for listing the live lobbies        |
+| `offset`     | `number`         | Minutes east of UTC the hour was read in                    |
 | `chunk`      | `{ seed, x, y }` | Where the lobby stands, for a listing with no chunk in hand |
 | `cell`       | `number`         | The landmark cell                                           |
 | `cleared`    | `boolean`        | Set when the boss goes down                                 |
@@ -396,8 +405,11 @@ walking in on a running raid opens it as a replay, which settles nothing and
 pays nothing. Hosting counts as taking part — an empty lobby nobody can start is
 worse than no lobby.
 
-`listLiveRaids(raidTimestamp)` queries `where('timestamp', '==', …)` and keeps
-the lobbies that are neither started nor cleared — that is the Raids tab.
+`listLiveRaids(raidTimestamp, offset)` queries `timestamp` and `offset` together
+— **a composite index** — and keeps the lobbies that are neither started nor
+cleared; that is the Raids tab. Both are needed: the hour is local, so two zones
+can floor to the same one, and what they stage at a landmark is not the same
+boss. The lobby id carries the zone for the same reason.
 
 The hour gives the boss one defeat, not one fight:
 
@@ -563,10 +575,11 @@ owed nothing.
 ## Derived, never stored
 
 Landmarks, item-cache rewards, berry patches, grotto rewards and cell placement
-are **not** in Firestore. They re-derive from the chunk seed plus the snapshot window
-(`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`), so two players in
-the same window compute identical results from the two fields that
-`snapshots/{chunkSeed}` does store.
+are **not** in Firestore. They re-derive from the chunk seed, the zone and the
+snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),
+so two players in the same zone and window compute identical results from the
+fields `snapshots/{chunkSeed}:{zone}` does store — and two players in different
+zones compute different ones.
 
 ## Clock
 
@@ -575,14 +588,45 @@ Anything time-bound reads the server clock through
 `'use server'` function returns the server's time, the client measures the
 offset once and derives locally for the next minute.
 
-Timestamps are epoch milliseconds and carry no timezone, but anything that
-reads a _calendar_ out of one does — the species day counts days of the year,
-and a catch date is shown as a date. The server pins its process to **UTC**
-([`src/server/timezone.ts`](../src/server/timezone.ts)), so two deploys on
-differently-configured machines agree about which day it is, and the featured
-family turns over at one instant for everybody. This covers snapshot
-window expiry, safari session seeds and `caughtAt` stamps, so a skewed device
-cannot shift the window it sees or the timestamps it writes.
+Timestamps are epoch milliseconds and carry no timezone. The server pins its
+process to **UTC** ([`src/server/timezone.ts`](../src/server/timezone.ts)), so
+two deploys on differently-configured machines agree about what instant it is.
+A skewed device cannot shift the instants it is given, only how they are read.
+
+## Local time
+
+Which *day and hour* an instant falls in is the player's own, and
+[`src/auth/local-time.ts`](../src/auth/local-time.ts) is where that is decided.
+The offset is minutes east of UTC (`+480` for UTC+8), reported by the client
+from its own zone and normalized with `asOffset` to something a zone can
+actually be.
+
+Two things ride on it:
+
+- **The window is local**, so a player walking at night meets what the night
+  pool holds wherever they are. The instant behind it is still the server's;
+  only the reading is theirs.
+- **The zone is in the seed** (`ChunkSnapshot.key` is `chunkSeed` + zone), so a
+  chunk is one world per zone rather than one world on several clocks. What a
+  player in UTC+8 finds there says nothing about what a player in UTC-5 will
+  find, however the two line up their hours — spawns, item caches, berry
+  patches, grottos and raid rolls all move with it.
+
+A client can misreport its zone. Everything derived from the offset is
+therefore **scoped by** it — the window document, the spawn ids, the claim
+markers, the raid lobby ids — so inventing a zone yields that zone's world, not
+a second helping of one's own. The ceiling on that is the ~27 offsets a day
+holds: a determined client can re-claim a landmark once per zone it invents, at
+the cost of walking a different world each time. Locking the offset to the
+profile is the fix if that ever matters.
+
+Dates a player reads are stored the way they read them: `caughtAt` and each
+`history[].acquiredAt` are ISO 8601 strings **with the offset**
+(`2026-08-10T22:14:03.123+08:00`), written by `toLocalISO` from the server's
+instant and the catcher's zone. The local date is the first ten characters, and
+`Date.parse` gives the instant back. The species-day candy bonus is judged on
+the same local reading, so the featured family turns over at midnight where the
+player is standing rather than at midnight UTC.
 
 ## Privileged writes
 
@@ -700,10 +744,11 @@ service cloud.firestore {
     }
 
     // Shared overworld state: everyone reads, signed-in players publish
-    match /snapshots/{chunkSeed} {
+    match /snapshots/{windowId} {
       allow read: if signedIn();
       allow write: if signedIn()
-        && request.resource.data.seed == chunkSeed
+        && request.resource.data.seed == windowId.split(':')[0]
+        && request.resource.data.offset is int
         && request.resource.data.timestamp is int;
     }
     match /spawns/{spawnId} {
@@ -773,16 +818,16 @@ actually deployed.
 
 ## Required indexes
 
-| Collection    | Fields                        | Reason                                        |
-| ------------- | ----------------------------- | --------------------------------------------- |
-| `spawns`      | `chunk` ASC, `timestamp` ASC  | `listSpawns` filters on both                  |
-| `caught`      | `owner` ASC                   | `listCaught`; automatic single-field index    |
-| `spawns`      | `chunk` ASC                   | `clearStaleSpawns`; automatic                 |
-| `caught`      | `owner` ASC, `species` ASC    | `hasCaughtSpecies`, the Repeat Ball's check   |
-| `inventories` | `user` ASC                    | `getInventory`; automatic single-field index  |
-| `candies`     | `user` ASC                    | `getCandies`; automatic single-field index    |
-| `teams`       | `player` ASC                  | `listTeams`; automatic single-field index     |
-| `teams`       | `player` ASC, `catches` ARRAY | `isAnyCatchQueued` filters on both            |
-| `raids`       | `timestamp` ASC               | `listLiveRaids`; automatic single-field index |
-| `battles`     | `players` ARRAY               | `listBattleHistory`; automatic array index    |
-| `raidRewards` | `player` ASC                  | `listClaimedRaids`; automatic single-field    |
+| Collection    | Fields                                     | Reason                                       |
+| ------------- | ------------------------------------------ | -------------------------------------------- |
+| `spawns`      | `chunk` ASC, `offset` ASC, `timestamp` ASC | `listSpawns` filters on all three            |
+| `caught`      | `owner` ASC                                | `listCaught`; automatic single-field index   |
+| `spawns`      | `chunk` ASC, `offset` ASC                  | `clearStaleSpawns` clears its own zone       |
+| `caught`      | `owner` ASC, `species` ASC                 | `hasCaughtSpecies`, the Repeat Ball's check  |
+| `inventories` | `user` ASC                                 | `getInventory`; automatic single-field index |
+| `candies`     | `user` ASC                                 | `getCandies`; automatic single-field index   |
+| `teams`       | `player` ASC                               | `listTeams`; automatic single-field index    |
+| `teams`       | `player` ASC, `catches` ARRAY              | `isAnyCatchQueued` filters on both           |
+| `raids`       | `timestamp` ASC, `offset` ASC              | `listLiveRaids` filters on both              |
+| `battles`     | `players` ARRAY                            | `listBattleHistory`; automatic array index   |
+| `raidRewards` | `player` ASC                               | `listClaimedRaids`; automatic single-field   |

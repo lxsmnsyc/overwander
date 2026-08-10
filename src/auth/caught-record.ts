@@ -101,9 +101,18 @@ export interface CaughtPokemon {
    */
   ball: Balls;
   /**
-   * Catch date, milliseconds since the epoch
+   * When it was caught, as an ISO 8601 string in the catcher's own
+   * zone — `2026-08-10T22:14:03.123+08:00`. The local date is what a
+   * player means by "when I caught it", and the offset keeps the
+   * instant behind it recoverable
    */
-  caughtAt: number;
+  caughtAt: string;
+  /**
+   * The catcher's locale tag, e.g. `en-PH`. A record carries where it
+   * came from, so a date or a number shown alongside it can be read
+   * the way its catcher would read it
+   */
+  locale: string;
   /**
    * Effort values per stat; a fresh catch starts at zero
    */
@@ -123,9 +132,10 @@ export interface OwnershipRecord {
   owner: string;
   /**
    * When this owner obtained the pokemon (catch date for the first
-   * entry, trade date for later ones)
+   * entry, trade date for later ones), as a local ISO 8601 string in
+   * that owner's own zone
    */
-  acquiredAt: number;
+  acquiredAt: string;
 }
 
 /**
@@ -138,7 +148,7 @@ function asOwnershipHistory(value: unknown): OwnershipRecord[] {
   return value.map((entry) => {
     const record = asRecord(entry);
 
-    return { owner: asString(record.owner), acquiredAt: asNumber(record.acquiredAt) };
+    return { owner: asString(record.owner), acquiredAt: asString(record.acquiredAt) };
   });
 }
 
@@ -170,7 +180,8 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     lock: data.lock === true,
     lockedAt: asNumber(data.lockedAt),
     ball: asNumber(data.ball) as Balls,
-    caughtAt: asNumber(data.caughtAt),
+    caughtAt: asString(data.caughtAt),
+    locale: asString(data.locale),
     effortValues: asStatRecord(data.effortValues),
     origin: {
       timestamp: asNumber(origin.timestamp),

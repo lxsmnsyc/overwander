@@ -10,6 +10,8 @@ import {
 import { useAuth } from '../auth/context';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid } from '../auth/raids';
 import { type RaidBattle, collectConsumedItems, createRaidBattle } from '../overworld/raid';
+import type Alliance from '../battle/alliance';
+import { createRocketBattle } from '../overworld/rocket';
 import BattleField from './BattleField';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
 
@@ -52,6 +54,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return;
     }
 
+    const fighting = props.active.rocket != null;
     let cancelled = false;
 
     listBattleTeams(loaded)
@@ -60,7 +63,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           return;
         }
 
-        const built = createRaidBattle(props.active.id, teams);
+        // A stop's fight is an ordinary trainer battle; a raid runs
+        // under raid rules, with the boss side marked
+        const built = fighting
+          ? createRocketBattle(props.active.id, teams)
+          : createRaidBattle(props.active.id, teams);
 
         built.battle.initialize();
         built.battle.start();
@@ -116,6 +123,40 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return 'draw';
   };
 
+  /**
+   * What the fight is called: a raid names itself, a stop names the
+   * grunt standing in the way
+   */
+  const title = (): string => (props.active.rocket == null ? 'Raid Battle' : 'Team Rocket');
+
+  /**
+   * What to call a side. A raid has a boss to name; a trainer fight
+   * has an opponent, which is whichever side is not the player's
+   */
+  const sideOf = (built: RaidBattle, alliance: Alliance): string => {
+    if (alliance.boss) {
+      return 'Boss';
+    }
+    if (props.active.rocket != null && alliance !== built.alliances.get(PLAYER_ALLIANCE)) {
+      return 'Team Rocket';
+    }
+    return 'Party';
+  };
+
+  /**
+   * What a win says. A replay settles nothing, so it only reports
+   * what happened; a fight that counted says where the prize went
+   */
+  const victory = (): string => {
+    if (props.active.replay) {
+      return 'The other side went down.';
+    }
+    if (props.active.rocket != null) {
+      return 'The grunt is beaten — what they dropped is waiting in the overworld.';
+    }
+    return 'The raid boss is down — it is waiting in the overworld.';
+  };
+
   const leave = (): void => {
     instance()?.battle.end();
     setInstance(null);
@@ -143,6 +184,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
 
     const won = result === 'won';
+    const stop = props.active.rocket;
     const built = instance();
     const user = auth.user();
 
@@ -169,6 +211,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         await clearRaid(raidId);
         game.setReward({ raid: raidId });
       }
+      // A beaten grunt keeps what they owe on their own stop, so it
+      // is collected back in the overworld — and only a win closes
+      // the stop; losing leaves them standing there
+      if (won && stop != null) {
+        game.setReward({ stop });
+      }
     })().catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));
     });
@@ -176,26 +224,19 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   return (
     <section>
-      <h1>{props.active.replay ? 'Replay' : 'Raid Battle'}</h1>
+      <h1>{props.active.replay ? 'Replay' : title()}</h1>
       <Show when={props.active.replay}>
         <p>A replay awards nothing — the result already stands.</p>
       </Show>
 
       <Show when={instance()} fallback={<p>Building the battle…</p>}>
         {(built) => (
-          <BattleField
-            battle={built().battle}
-            label={(alliance) => (alliance.boss ? 'Boss' : 'Party')}
-          />
+          <BattleField battle={built().battle} label={(alliance) => sideOf(built(), alliance)} />
         )}
       </Show>
 
       <Show when={outcome() === 'won'}>
-        <p role="status">
-          {props.active.replay
-            ? 'The boss went down.'
-            : 'The raid boss is down — it is waiting in the overworld.'}
-        </p>
+        <p role="status">{victory()}</p>
       </Show>
       <Show when={outcome() === 'lost'}>
         <p role="status">The party fainted.</p>

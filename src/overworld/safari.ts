@@ -5,7 +5,7 @@ import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { SPECIES_DAY_CATCH_BOOST, getSpeciesData, isFeaturedSpecies } from '../data/species';
-import { type Encounter, EncounterType } from './encounter';
+import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
 export const enum SafariState {
   Active = 0,
@@ -339,10 +339,11 @@ export default class SafariSession<
 
   /**
    * The chance the encounter flees after a failed throw: faster
-   * species bolt more readily, raid encounters never do
+   * species bolt more readily. What was fought for — a raid's
+   * legendary, a beaten grunt's parting gift — never bolts
    */
   getFleeChance(): number {
-    if (this.encounter.type === EncounterType.Raid) {
+    if (isRaidEncounter(this.encounter.type) || this.encounter.type === EncounterType.Rocket) {
       return 0;
     }
 

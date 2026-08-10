@@ -16,7 +16,7 @@ import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
-import { deriveSize } from '../overworld/encounter';
+import { ENCOUNTER_TYPE_NAMES, deriveSize } from '../overworld/encounter';
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -324,6 +324,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   {/* The stamp is already in the catcher's own zone,
                       so the date it opens with is the day they had */}
                   <dd>{loaded().caughtAt.slice(0, 10)}</dd>
+                  {/* Where it came from, not just where it was
+                      standing: a grunt's drop is not a raid prize */}
+                  <dt>Met</dt>
+                  <dd>{ENCOUNTER_TYPE_NAMES[loaded().type]}</dd>
                   <dt>Origin</dt>
                   <dd>
                     Chunk {loaded().origin.x}, {loaded().origin.y}

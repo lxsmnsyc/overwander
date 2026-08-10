@@ -19,8 +19,9 @@ export const enum GameTab {
 
 /**
  * A battle the player is watching. A raid battle settles the raid it
- * was fought for; a replay settles nothing — it re-runs a finished
- * battle from its seed and frozen teams for the record alone
+ * was fought for and a Team Rocket fight settles its stop; a replay
+ * settles nothing — it re-runs a finished battle from its seed and
+ * frozen teams for the record alone
  */
 export interface ActiveBattle {
   id: string;
@@ -29,20 +30,21 @@ export interface ActiveBattle {
    * The raid the battle belongs to, for a raid battle
    */
   raid?: string;
+  /**
+   * The Team Rocket stop the battle was accepted at
+   */
+  rocket?: string;
 }
 
 /**
- * A cleared raid waiting to be collected: the overworld turns it
- * into a safari encounter the next time the player is standing there
+ * Something won and not yet collected: the overworld turns it into a
+ * safari encounter the next time the player is standing there.
+ *
+ * Nothing about the prize travels in it — the species, the level,
+ * whether it is shadowed, the chunk and hour it comes from are all
+ * read off the raid or the stop when it is claimed
  */
-export interface PendingReward {
-  /**
-   * The raid to collect from. Everything about the encounter — the
-   * species, its level, whether it is shadowed, the chunk and window
-   * it comes from — is read off the raid itself when it is claimed
-   */
-  raid: string;
-}
+export type PendingReward = { raid: string; stop?: undefined } | { stop: string; raid?: undefined };
 
 export interface GameState {
   tab: Accessor<GameTab>;

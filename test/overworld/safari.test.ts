@@ -203,15 +203,20 @@ describe('safari session', () => {
     expect(stayed.state).toBe(SafariState.Active);
   });
 
-  it('never lets raid encounters flee', () => {
-    const session = new SafariSession(
-      makeEncounter(Species.Tauros, EncounterType.Raid),
-      rolls([0.99, 0]),
-    );
+  it('never lets what was fought for flee', () => {
+    // A legendary raid's prize, a shadow raid's and a beaten grunt's
+    // drop are three kinds of meeting, and none of them bolts
+    for (const type of [
+      EncounterType.LegendaryRaid,
+      EncounterType.ShadowRaid,
+      EncounterType.Rocket,
+    ]) {
+      const session = new SafariSession(makeEncounter(Species.Tauros, type), rolls([0.99, 0]));
 
-    expect(session.getFleeChance()).toBe(0);
-    expect(session.throwBall()).toBe(ThrowResult.BrokeFree);
-    expect(session.state).toBe(SafariState.Active);
+      expect(session.getFleeChance()).toBe(0);
+      expect(session.throwBall()).toBe(ThrowResult.BrokeFree);
+      expect(session.state).toBe(SafariState.Active);
+    }
   });
 
   it('exits on run away without burning the encounter', () => {

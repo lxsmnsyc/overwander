@@ -28,14 +28,51 @@ export const enum EncounterType {
    */
   Hatched = 1,
   /**
-   * Fought and caught in a raid lobby
+   * Fought and caught in a legendary raid lobby
    */
-  Raid = 2,
+  LegendaryRaid = 2,
   /**
    * Distributed by an event or mystery gift
    */
   Fateful = 3,
+  /**
+   * Taken off a beaten Team Rocket grunt. It is its own kind rather
+   * than a raid: a grunt is fought alone, pays a commoner at a fixed
+   * low level, and hands over a shadow, so a record that says "raid"
+   * of one would be saying the wrong thing about where it came from
+   */
+  Rocket = 4,
+  /**
+   * Fought and caught in a shadow raid lobby. It is kept apart from a
+   * legendary raid because the two are not the same prize: a shadow
+   * raid usually stages one of the biome's rare species rather than a
+   * legendary, hands it over lower, and its catch keeps the Shadow
+   * ability for good
+   */
+  ShadowRaid = 5,
 }
+
+/**
+ * Whether the meeting was a raid of either kind. What a raid gives —
+ * the species-day IV floor, a prize that never bolts — belongs to
+ * both, so the two kinds are told apart in records without having to
+ * be listed separately everywhere they are alike
+ */
+export function isRaidEncounter(type: EncounterType): boolean {
+  return type === EncounterType.LegendaryRaid || type === EncounterType.ShadowRaid;
+}
+
+/**
+ * What each kind is called where a record is shown
+ */
+export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
+  [EncounterType.Wild]: 'Wild',
+  [EncounterType.Hatched]: 'Hatched',
+  [EncounterType.LegendaryRaid]: 'Legendary Raid',
+  [EncounterType.Fateful]: 'Event',
+  [EncounterType.Rocket]: 'Team Rocket',
+  [EncounterType.ShadowRaid]: 'Shadow Raid',
+};
 
 /**
  * A concrete wild pokemon derived from a spawn roll: everything a
@@ -335,7 +372,7 @@ export default function deriveEncounter(
   const featured = isFeaturedSpecies(species, snapshot.timestamp);
   // A raid staged on the family's own day hands over a pokemon worth
   // keeping: no stat comes out of it hopeless
-  const minimumIV = type === EncounterType.Raid && featured ? RAID_FAMILY_DAY_MIN_IV : 0;
+  const minimumIV = isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0;
 
   // Slices in trait order: level, gender, ability, nature — all but
   // the level are read by the derive helpers above

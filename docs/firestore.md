@@ -368,6 +368,10 @@ There are two landmark kinds:
   (`SHADOW_RAID_LEGENDARY_CHANCE`) which reaches the legendary pool instead.
   Their boss carries the `Shadow` ability alongside `Boss`.
 
+A third landmark runs on the same hour without being a raid at all: the **Team
+Rocket Stop**, a solo trainer fight described under
+[`rocketStops`](#rocketstopsstopiduid).
+
 ### `raids/{chunkSeed}@{raidTimestamp}${kind}{cell}`
 
 Written by `enterRaid` in [`src/auth/raids.ts`](../src/auth/raids.ts). The id is
@@ -544,6 +548,57 @@ while the battle is live (see above), and stamping the outcome is what frees
 them, so reporting afterwards would leave a window in which a berry could be
 pulled back into the bag and kept.
 
+### `rocketStops/{stopId}:{uid}`
+
+A **Team Rocket Stop** is a landmark that stands a grunt on a cell for the raid
+hour. Unlike a raid it is not a lobby: the grunt fights each passer-by on their
+own, so the state is **per player** and one player's victory closes nothing for
+anybody else.
+
+The stop id is `{chunkSeed}{zone}@{raidTimestamp}$rocket{cell}` and the document
+appends the uid.
+
+| Field       | Type              | Notes                                                     |
+| ----------- | ----------------- | --------------------------------------------------------- |
+| `player`    | `string`          | The uid this state belongs to                             |
+| `party`     | `RocketPokemon[]` | `{ species, individualValue, traitValue }`, weakest first |
+| `battle`    | `string \| null`  | The fight under way, or the last one fought               |
+| `timestamp` | `number`          | The local raid hour                                       |
+| `offset`    | `number`          | Minutes east of UTC                                       |
+| `chunk`     | `{ seed, x, y }`  | Where the stop stands                                     |
+| `cell`      | `number`          | The landmark cell                                         |
+| `defeated`  | `boolean`         | Set when the grunt goes down                              |
+
+`enterRocketStop` rolls the party from the chunk itself — one from the biome's
+**base**, **uncommon** and **rare** bands for the hour, each with its own
+individual and trait values, and a band the hour leaves empty borrows from the
+commonest one that is not. The record is written on first approach.
+
+`startRocketBattle` freezes the player's party exactly as `startRaid` does —
+same snapshot, same lock, same refusal of a pokemon already fighting or waiting
+in a lobby — freezes the grunt's three beside it at `ROCKET_PARTY_LEVEL` (50),
+all shadowed, and writes a battle whose `raid` is empty. It is an ordinary
+trainer battle: `BattleModes.PvP`, and **no side is flagged as a boss**, so a
+mutual knockout is a draw rather than a win.
+
+The party is stored rather than re-derived because Firestore holds no array of
+arrays, and because a party frozen at the fight should stay what it was.
+
+The prize is recorded as **`EncounterType.Rocket`**: a grunt is fought alone,
+pays a fixed low-level commoner and hands over a shadow, so a catch record that
+called it a raid prize would be saying the wrong thing about where it came from.
+See [Encounter kinds](#encounter-kinds).
+
+Losing changes nothing: the grunt is still standing, and the stop can be fought
+again until the hour turns over. Winning is what closes it —
+`claimRocketReward` pays `ROCKET_STOP_GOLD` (500) and stages one of the grunt's
+two **commoner** species as an encounter (the rare one is never handed over),
+shadowed, at a fixed `ROCKET_REWARD_LEVEL` (10) — so the same grunt is worth the
+same to everyone who put them down, and what is handed over is a commoner taken
+off a thief rather than anything like the level-50 party it came from. The `defeated` flag is
+both the record of the win and the marker guarding it: it is set inside a
+transaction, and only the call that sets it pays.
+
 ### `raidRewards/{raidId}:{uid}`
 
 | Field    | Type     | Notes                   |
@@ -572,10 +627,41 @@ set, and a player who walks onto the landmark then is sent into the battle as a
 **replay** — they watch the same deterministic fight, settle nothing, and are
 owed nothing.
 
+## Encounter kinds
+
+`EncounterType` ([`src/overworld/encounter.ts`](../src/overworld/encounter.ts))
+is stored on both the encounter and the catch it becomes, and every way of
+meeting a pokemon is its own kind — a record should say where it actually came
+from:
+
+| Kind             | Id  | Shown as         | Where it comes from                       |
+| ---------------- | --- | ---------------- | ----------------------------------------- |
+| `Wild`           | 0   | Wild             | A chunk snapshot's spawns                 |
+| `Hatched`        | 1   | Hatched          | An egg                                    |
+| `LegendaryRaid`  | 2   | Legendary Raid   | A cleared legendary raid                  |
+| `Fateful`        | 3   | Event            | An event or mystery gift                  |
+| `Rocket`         | 4   | Team Rocket      | A beaten Team Rocket grunt                |
+| `ShadowRaid`     | 5   | Shadow Raid      | A cleared shadow raid                     |
+
+The two raids are kept apart because they are not the same prize: a legendary
+raid stages a legendary and hands it over at level 50, while a shadow raid
+usually stages one of the biome's **rare** species, hands it over at 25, and its
+catch keeps the `Shadow` ability for good. Where the two are alike —
+the species-day IV floor (`RAID_FAMILY_DAY_MIN_IV`), and a prize that never
+bolts from a safari throw — `isRaidEncounter` covers both, so nothing has to
+list them separately to treat them the same.
+
+`ENCOUNTER_TYPE_NAMES` is what the catch dialog's **Met** row shows.
+
+> Records written before the split carry `type: 2`, which now reads as
+> *Legendary Raid*. A catch that actually came from a shadow raid can be told by
+> its `shadow: true`, so a backfill is possible if the distinction matters
+> retroactively.
+
 ## Derived, never stored
 
-Landmarks, item-cache rewards, berry patches, grotto rewards and cell placement
-are **not** in Firestore. They re-derive from the chunk seed, the zone and the
+Landmarks, item-cache rewards, berry patches, grotto rewards, the party a Team
+Rocket grunt fields and cell placement are **not** in Firestore. They re-derive from the chunk seed, the zone and the
 snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),
 so two players in the same zone and window compute identical results from the
 fields `snapshots/{chunkSeed}:{zone}` does store — and two players in different
@@ -651,6 +737,8 @@ a call is never trusted — only what the token proves.
 | `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                  |
 | `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
 | `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
+| `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the hour, and the fight freezes the player's party the way a raid does                                            |
+| `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                           |
 | `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |
 | `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
 | `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
@@ -776,6 +864,12 @@ service cloud.firestore {
       allow write: if false;
     }
     match /raidRewards/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // A grunt's party, and whether they have been put down: what one
+    // pays out is the server's to decide
+    match /rocketStops/{stopId} {
       allow read: if signedIn();
       allow write: if false;
     }

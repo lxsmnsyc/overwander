@@ -318,6 +318,57 @@ export default class ChunkSnapshot {
     return this.shadowRaids;
   }
 
+  private rocketStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The hour's Team Rocket stops, keyed by the landmark cell: the
+   * three pokemon the grunt standing there fights with, drawn one
+   * from each of the biome's base, uncommon and rare bands for the
+   * raid hour's time of day.
+   *
+   * A band the biome leaves empty at this hour falls back to the
+   * nearest one that has anything — a grunt three pokemon short is no
+   * grunt at all, and somewhere thin should still be patrolled. Only
+   * a pool with nothing awake in it stages nobody.
+   *
+   * Each draw carries its own individual and trait values, so the
+   * grunt's team is as varied as any wild pokemon; what it does not
+   * carry is a level, which the fight fixes for all three
+   */
+  getRocketStops(): Map<number, Spawn[]> {
+    if (this.rocketStops == null) {
+      const stops = new Map<number, Spawn[]>();
+      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
+      const bands = [pool.base, pool.uncommon, pool.rare];
+      // Weakest first, so the party reads the way it is fought; a
+      // thin band borrows from the commonest one that is not empty
+      const stocked = bands.find((band) => band.length > 0);
+
+      if (stocked != null) {
+        const fielded = bands.map((band) => (band.length > 0 ? band : stocked));
+
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocketStop) {
+            continue;
+          }
+
+          const rng = new AleaRNG(`${this.key}${this.raidTimestamp}rocket${cell}`);
+
+          stops.set(
+            cell,
+            fielded.map((band): Spawn => {
+              const entry = band[Math.floor(rng.random() * band.length)];
+
+              return [entry.species, rng.int32(), rng.int32()];
+            }),
+          );
+        }
+      }
+      this.rocketStops = stops;
+    }
+    return this.rocketStops;
+  }
+
   private hiddenGrottos: Map<number, GrottoReward> | null = null;
 
   /**

@@ -172,6 +172,51 @@ export interface RaidBattle {
 }
 
 /**
+ * Field the stored team snapshots in a battle already built: teams
+ * sharing an alliance number fight side by side, and each unit
+ * carries the catch record it was copied from.
+ *
+ * It is shared because a raid is not the only fight assembled this
+ * way — a Team Rocket grunt's party is frozen and fielded exactly
+ * like a player's, only under a battle of its own kind
+ */
+export function fieldTeams(
+  battle: Battle,
+  teams: TeamSnapshotRecord[],
+  bossAlliance: number | null,
+): Omit<RaidBattle, 'battle'> {
+  const alliances = new Map<number, Alliance>();
+  const units = new Map<number, Unit[]>();
+
+  for (const record of teams) {
+    let alliance = alliances.get(record.alliance);
+
+    if (alliance == null) {
+      // The boss side is marked, so a raid that ends with nobody
+      // standing still resolves in the party's favor. A trainer
+      // fight marks nobody: a mutual knockout is a draw there
+      alliance = new Alliance(battle, record.alliance === bossAlliance);
+      alliances.set(record.alliance, alliance);
+    }
+
+    // A snapshot published with an empty player — the boss, a
+    // grunt's party — belongs to nobody
+    const team = new Team(battle, alliance, record.player);
+
+    alliance.addTeam(team);
+
+    const fielded = units.get(record.alliance) ?? [];
+
+    for (const snapshot of record.catches) {
+      fielded.push(addUnit(battle, team, snapshot));
+    }
+    units.set(record.alliance, fielded);
+  }
+
+  return { units, alliances };
+}
+
+/**
  * Assemble a raid battle from its stored team snapshots. The battle
  * id seeds the RNG, so every participant and spectator replays the
  * same rolls, and teams sharing an alliance number fight side by
@@ -185,34 +230,8 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
     realtime: true,
     limits: { abilities: 3 },
   });
-  const alliances = new Map<number, Alliance>();
-  const units = new Map<number, Unit[]>();
 
-  for (const record of teams) {
-    let alliance = alliances.get(record.alliance);
-
-    if (alliance == null) {
-      // The boss side is marked, so a raid that ends with nobody
-      // standing still resolves in the party's favor
-      alliance = new Alliance(battle, record.alliance === BOSS_ALLIANCE);
-      alliances.set(record.alliance, alliance);
-    }
-
-    // The boss' snapshot is published with an empty player, so its
-    // team belongs to nobody
-    const team = new Team(battle, alliance, record.player);
-
-    alliance.addTeam(team);
-
-    const fielded = units.get(record.alliance) ?? [];
-
-    for (const snapshot of record.catches) {
-      fielded.push(addUnit(battle, team, snapshot));
-    }
-    units.set(record.alliance, fielded);
-  }
-
-  return { battle, units, alliances };
+  return { battle, ...fieldTeams(battle, teams, BOSS_ALLIANCE) };
 }
 
 /**

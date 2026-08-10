@@ -15,6 +15,7 @@ import registerGen1Moves from '../../src/data/moves/gen-1';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
+import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL, SPAWN_COUNT } from '../../src/overworld/chunk-snapshot';
 import {
@@ -27,8 +28,14 @@ import {
   createRaidBattle,
   createRaidBossSnapshot,
 } from '../../src/overworld/raid';
+import {
+  ROCKET_PARTY_LEVEL,
+  ROCKET_REWARD_LEVEL,
+  createRocketParty,
+} from '../../src/overworld/rocket';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import deriveEncounter, {
+  ENCOUNTER_TYPE_NAMES,
   EncounterType,
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
@@ -37,6 +44,7 @@ import deriveEncounter, {
   deriveNature,
   deriveSize,
   deriveSizeScale,
+  isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
@@ -391,6 +399,117 @@ describe('world', () => {
     ]);
     // The boss stands for no record, so nothing it spends is billed
     expect(collectConsumedItems(built, '')).toEqual([]);
+  });
+
+  it('stands a Team Rocket grunt on one band of each rarity', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.TeamRocketStop),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const stops = snapshot.getRocketStops();
+    const pool = getSpawnPool(chunk.biome, getTimeOfDay(0));
+
+    expect(stops.size).toBeGreaterThan(0);
+    for (const [cell, party] of stops) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocketStop);
+
+      // Three pokemon, weakest first: one from each of the biome's
+      // base, uncommon and rare bands — a band the hour leaves empty
+      // borrows from the commonest one that is not
+      expect(party).toHaveLength(3);
+      for (const [at, band] of [pool.base, pool.uncommon, pool.rare].entries()) {
+        const drawn = band.length > 0 ? band : [pool.base, pool.uncommon, pool.rare].flat();
+
+        expect(new Set(drawn.map((entry) => entry.species)).has(party[at][0])).toBe(true);
+      }
+    }
+
+    // The hour fixes them, and the next hour rolls somebody else
+    expect(new ChunkSnapshot(chunk, 30 * 60 * 1000).getRocketStops()).toEqual(stops);
+    expect(new ChunkSnapshot(chunk, RAID_INTERVAL).getRocketStops()).not.toEqual(stops);
+  });
+
+  it('fields a grunt at a fixed level, shadowed, with rolled traits', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.TeamRocketStop),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const [spawns] = [...snapshot.getRocketStops().values()];
+    const party = createRocketParty(snapshot, spawns);
+
+    expect(party).toHaveLength(3);
+    for (const [at, member] of party.entries()) {
+      // Every one of them stands at the same level whatever its
+      // trait value would have rolled, and every one is a shadow
+      expect(member.level).toBe(ROCKET_PARTY_LEVEL);
+      expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(true);
+      expect(member.species).toBe(spawns[at][0]);
+      // It belongs to no catch record, and never sparkles
+      expect(member.caught).toBe('');
+      expect(member.shiny).toBe(false);
+      expect(member.items).toEqual([]);
+    }
+
+    // The traits are the spawn's own, so the three are not clones of
+    // one build
+    expect(new Set(party.map((member) => member.nature)).size).toBeGreaterThanOrEqual(1);
+    expect(party.map((member) => member.ivs)).not.toEqual([]);
+  });
+
+  it('pays a beaten grunt out in one of its two commoner species', () => {
+    const record: RocketRecord = {
+      player: 'red',
+      party: [
+        { species: Species.Rattata, individualValue: 1, traitValue: 2 },
+        { species: Species.Pidgey, individualValue: 3, traitValue: 4 },
+        { species: Species.Kangaskhan, individualValue: 5, traitValue: 6 },
+      ],
+      battle: 'battle-id',
+      timestamp: 0,
+      offset: 0,
+      chunk: { seed: 'chunk', x: 0, y: 0 },
+      cell: 0,
+      defeated: false,
+    };
+
+    const offered = new Set<Species>();
+
+    for (const uid of ['red', 'blue', 'green', 'yellow', 'gold', 'silver']) {
+      const [id, [species, individualValue, traitValue]] = deriveRocketReward(
+        record,
+        'stop-id',
+        uid,
+      );
+
+      // Never the rare one: a grunt does not hand over its best
+      expect(species).not.toBe(Species.Kangaskhan);
+      offered.add(species);
+      expect(id).toBe('stop-id$reward');
+      // Each winner meets their own individual of it
+      expect(individualValue).not.toBe(traitValue);
+    }
+
+    // Both commoners come up across enough winners
+    expect(offered.size).toBe(2);
+
+    // A player's own reward is the same however often it is derived
+    expect(deriveRocketReward(record, 'stop-id', 'red')).toEqual(
+      deriveRocketReward(record, 'stop-id', 'red'),
+    );
   });
 
   it('stages shadow raids from the rare and legendary pools', () => {
@@ -954,7 +1073,7 @@ describe('chunk snapshot', () => {
     const spawn = [Species.Bulbasaur, 0, 0] as const;
 
     const raid = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
-      type: EncounterType.Raid,
+      type: EncounterType.LegendaryRaid,
     });
 
     expect(Object.values(raid.ivs)).toEqual([6, 6, 6, 6, 6, 6]);
@@ -968,13 +1087,14 @@ describe('chunk snapshot', () => {
 
     expect(
       Object.values(
-        deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.Raid }).ivs,
+        deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.LegendaryRaid })
+          .ivs,
       ),
     ).toEqual([0, 0, 0, 0, 0, 0]);
 
     // A rolled value above the floor is left alone
     const rolled = deriveEncounter(snapshot, [Species.Bulbasaur, 0xffffffff, 0], 'trainer-red', {
-      type: EncounterType.Raid,
+      type: EncounterType.LegendaryRaid,
     });
 
     expect(Object.values(rolled.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
@@ -987,7 +1107,7 @@ describe('chunk snapshot', () => {
 
     expect(
       deriveEncounter(snapshot, [...spawn], 'trainer-red', {
-        type: EncounterType.Raid,
+        type: EncounterType.LegendaryRaid,
         shadow: true,
       }).shadow,
     ).toBe(true);
@@ -1040,14 +1160,22 @@ describe('chunk snapshot', () => {
     const spawn = [Species.Gyarados, 0, 0xffffffff] as const;
 
     const legendary = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
-      type: EncounterType.Raid,
+      type: EncounterType.LegendaryRaid,
       level: LEGENDARY_RAID_REWARD_LEVEL,
     });
     const shadow = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
-      type: EncounterType.Raid,
+      type: EncounterType.ShadowRaid,
       level: SHADOW_RAID_REWARD_LEVEL,
       shadow: true,
     });
+
+    // The two lobbies hand over different prizes, and a record says
+    // which one it came out of
+    expect(legendary.type).toBe(EncounterType.LegendaryRaid);
+    expect(shadow.type).toBe(EncounterType.ShadowRaid);
+    expect(legendary.type).not.toBe(shadow.type);
+    expect(ENCOUNTER_TYPE_NAMES[legendary.type]).toBe('Legendary Raid');
+    expect(ENCOUNTER_TYPE_NAMES[shadow.type]).toBe('Shadow Raid');
 
     expect(legendary.level).toBe(50);
     expect(shadow.level).toBe(25);
@@ -1057,6 +1185,33 @@ describe('chunk snapshot', () => {
 
     // A wild meeting still rolls its level from the trait value
     expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').level).not.toBe(50);
+  });
+
+  it('drops what a grunt owes at its own level, under its own kind', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    // A trait value that would otherwise roll a high level
+    const spawn = [Species.Gyarados, 0, 0xffffffff] as const;
+
+    const dropped = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+      type: EncounterType.Rocket,
+      level: ROCKET_REWARD_LEVEL,
+      shadow: true,
+    });
+
+    expect(dropped.level).toBe(10);
+    expect(dropped.moves).toEqual(deriveMoves(Species.Gyarados, 10));
+    expect(dropped.shadow).toBe(true);
+
+    // A grunt's drop is its own kind of meeting, not a raid prize:
+    // the record says where it actually came from
+    expect(dropped.type).toBe(EncounterType.Rocket);
+    expect(isRaidEncounter(dropped.type)).toBe(false);
+    expect(ENCOUNTER_TYPE_NAMES[dropped.type]).toBe('Team Rocket');
+    // Both raids count as raids where they are alike, and neither is
+    // what a grunt hands over
+    expect(isRaidEncounter(EncounterType.LegendaryRaid)).toBe(true);
+    expect(isRaidEncounter(EncounterType.ShadowRaid)).toBe(true);
   });
 
   it('rolls hidden abilities at their rarer odds', () => {

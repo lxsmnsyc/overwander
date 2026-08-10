@@ -25,6 +25,12 @@ export const TEAM_COLLECTION = 'teams';
 export const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
 export const BATTLE_COLLECTION = 'battles';
 export const RAID_COLLECTION = 'raids';
+/**
+ * One document per Team Rocket stop **and player**, id
+ * "{stopId}:{uid}": a grunt fights each passer-by on their own, so
+ * what one player did to it says nothing about anybody else's
+ */
+export const ROCKET_COLLECTION = 'rocketStops';
 export const RAID_REWARD_COLLECTION = 'raidRewards';
 /**
  * One marker per battle and player, so a fight can only take a

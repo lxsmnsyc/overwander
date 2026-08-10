@@ -24,6 +24,11 @@ const enum Landmark {
    * A patch of berries, ripe once per snapshot window
    */
   BerryPatch = 4,
+  /**
+   * A Team Rocket checkpoint: a grunt who bars the way for an hour
+   * and fights whoever accepts
+   */
+  TeamRocketStop = 5,
 }
 
 export default Landmark;
@@ -37,6 +42,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.LegendaryRaid,
   Landmark.ShadowRaid,
   Landmark.BerryPatch,
+  Landmark.TeamRocketStop,
 ];
 
 /**
@@ -48,4 +54,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.LegendaryRaid]: 'Legendary Raid',
   [Landmark.ShadowRaid]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',
+  [Landmark.TeamRocketStop]: 'Team Rocket Stop',
 };

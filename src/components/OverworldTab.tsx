@@ -15,6 +15,8 @@ import { useAuth } from '../auth/context';
 import { getLocalOffset } from '../auth/local-time';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
+import { claimRocketReward, enterRocketStop } from '../auth/rockets';
+import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   type SpawnRecord,
@@ -43,6 +45,7 @@ import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
 import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
+import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
 import { GameTab, useGame } from './game-context';
 
@@ -174,6 +177,12 @@ export default function OverworldTab(): JSX.Element {
    * walks a chunk of their own
    */
   const zone = getLocalOffset();
+  /**
+   * The grunt standing in the player's way, once they have walked
+   * into one: the stop's id and what it is fielding, until the
+   * challenge is taken or declined
+   */
+  const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
 
   // A player who has not walked anywhere yet starts somewhere in the
   // starting region rather than at the origin. The draw is seeded by
@@ -360,6 +369,22 @@ export default function OverworldTab(): JSX.Element {
       }
       return meet(user, claim.encounter);
     }
+    if (landmark === Landmark.TeamRocketStop) {
+      const stop = await enterRocketStop(loaded.snapshot, at);
+
+      if (stop == null) {
+        // Either the hour stages no grunt here, or this player has
+        // already put the one it stages on the ground
+        return 'The stop is deserted this hour.';
+      }
+      if (!(await canJoinRaids(user.uid))) {
+        return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';
+      }
+      // The challenge is put to the player rather than taken for
+      // them; the dialog is what accepts it
+      setChallenge(stop);
+      return null;
+    }
     if (landmark === Landmark.LegendaryRaid || landmark === Landmark.ShadowRaid) {
       const kind = landmark === Landmark.ShadowRaid ? RaidKind.Shadow : RaidKind.Legendary;
       const lobby = await enterRaid(loaded.snapshot, at, kind);
@@ -388,8 +413,9 @@ export default function OverworldTab(): JSX.Element {
     return null;
   };
 
-  // A cleared raid leaves its legendary waiting; it is met the moment
-  // the player is back in the overworld
+  // A cleared raid leaves its legendary waiting, and a beaten grunt
+  // what they dropped; both are met the moment the player is back in
+  // the overworld
   createEffect(() => {
     const reward = game.reward();
     const user = auth.user();
@@ -398,15 +424,19 @@ export default function OverworldTab(): JSX.Element {
       return;
     }
     game.setReward(null);
-    claimRaidReward(reward.raid)
+    (reward.stop == null ? claimRaidReward(reward.raid) : claimRocketReward(reward.stop))
       .then(async (collected) => {
         if (collected == null) {
-          setStatus('That raid has nothing left to collect.');
+          setStatus('There is nothing left to collect.');
           return;
         }
         // The purse lands in the profile straight away; the pokemon
         // is still to be met
-        setStatus(`The raid paid ${collected.gold} gold.`);
+        setStatus(
+          reward.stop == null
+            ? `The raid paid ${collected.gold} gold.`
+            : `The grunt dropped ${collected.gold} gold and fled.`,
+        );
         setSession(await createSafariSession(user, collected.encounter));
       })
       .catch((caught: unknown) => {
@@ -531,13 +561,22 @@ export default function OverworldTab(): JSX.Element {
 
       <Show when={auth.user()}>
         {(user) => (
-          <SafariDialog
-            user={user()}
-            session={session()}
-            onClose={() => {
-              setSession(null);
-            }}
-          />
+          <>
+            <SafariDialog
+              user={user()}
+              session={session()}
+              onClose={() => {
+                setSession(null);
+              }}
+            />
+            <RocketStopDialog
+              user={user()}
+              challenge={challenge()}
+              onClose={() => {
+                setChallenge(null);
+              }}
+            />
+          </>
         )}
       </Show>
     </section>

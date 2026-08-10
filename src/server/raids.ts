@@ -229,7 +229,7 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
  * on the way out do not count — those pokemon are free (or locked,
  * which is a different question)
  */
-async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
+export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
   const db = getAdminFirestore();
   const teams = await db
     .collection(TEAM_COLLECTION)
@@ -330,7 +330,7 @@ export async function joinRaid(
  * Resolves the snapshot id, or null when the team fields nothing — an
  * empty side must not stand in a battle
  */
-async function publishTeamSnapshot(
+export async function publishTeamSnapshot(
   player: string,
   catches: string[],
   alliance: number,
@@ -590,7 +590,9 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   const snapshot = new ChunkSnapshot(chunk, raid.timestamp, raid.offset);
   const [spawnId, spawn] = deriveRaidReward(raid, lobby, uid);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {
-    type: EncounterType.Raid,
+    // The two raids hand over different prizes, so a catch says which
+    // lobby it came out of
+    type: shadow ? EncounterType.ShadowRaid : EncounterType.LegendaryRaid,
     shadow,
     level: shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
   });

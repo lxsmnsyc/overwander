@@ -9,6 +9,7 @@ import registerBiomeSpawns, {
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
+import { Types } from '../src/data/constants/types';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import {
   BALL_ITEMS,
@@ -32,6 +33,7 @@ import registerItems, { getItemData, getTeachableMoves } from '../src/data/items
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   getAvailableEvolutions,
@@ -384,6 +386,46 @@ describe('item data', () => {
     // A buddy holds it; nothing ever consumes it
     expect(charm.flags & ItemFlags.Holdable).not.toBe(0);
     expect(charm.flags & ItemFlags.Consumable).toBe(0);
+  });
+});
+
+describe('type-enhancing items', () => {
+  it('gives every attacking type one booster', () => {
+    const boosted = [...TYPE_BOOSTERS.values()];
+
+    // One item per type, and no type twice
+    expect(new Set(boosted).size).toBe(boosted.length);
+    // Every type a move can be, except the two that never attack
+    for (let type = Types.Normal; type <= Types.Fairy; type++) {
+      expect(new Set(boosted).has(type)).toBe(true);
+    }
+  });
+
+  it('holds them rather than using them, and stocks them', () => {
+    for (const item of TYPE_BOOSTERS.keys()) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Nothing consumes one: a Charcoal burns as long as it is held
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.flags & ItemFlags.Usable).toBe(0);
+      // Bought, not found
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(TYPE_BOOSTER_PRICE);
+      expect(data.sell).toBeLessThan(data.buy);
+    }
+
+    // They are stocked, never hidden in the ground
+    const pooled = new Set(
+      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const item of TYPE_BOOSTERS.keys()) {
+      expect(pooled.has(item)).toBe(false);
+    }
   });
 });
 

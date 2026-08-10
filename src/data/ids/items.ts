@@ -97,6 +97,25 @@ export const enum Items {
   BigPearl = 32,
   Stardust = 33,
   StarPiece = 34,
+  // Type-enhancing held items: one per attacking type
+  SilkScarf = 35,
+  BlackBelt = 36,
+  SharpBeak = 37,
+  PoisonBarb = 38,
+  SoftSand = 39,
+  HardStone = 40,
+  SilverPowder = 41,
+  SpellTag = 42,
+  MetalCoat = 43,
+  Charcoal = 44,
+  MysticWater = 45,
+  MiracleSeed = 46,
+  Magnet = 47,
+  TwistedSpoon = 48,
+  NeverMeltIce = 49,
+  DragonFang = 50,
+  BlackGlasses = 51,
+  FairyFeather = 52,
 }
 
 /**

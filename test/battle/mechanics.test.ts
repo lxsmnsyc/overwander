@@ -11,6 +11,8 @@ import Natures from '../../src/data/ids/natures';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Weathers } from '../../src/data/ids/status';
+import { getMoveData } from '../../src/data/moves';
+import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
 import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -169,6 +171,30 @@ describe('species mechanics', () => {
     unit.setAppearance(Species.Charmander);
     expect(unit.appearance).toBe(Species.Charmander);
     expect(unit.species).toBe(Species.Bulbasaur);
+  });
+});
+
+describe('type-enhancing held items', () => {
+  it('lifts the power of its own type and nothing else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    // Ember is Fire, Tackle is Normal
+    const fire = getMoveData(Moves.Ember).power ?? 0;
+    const normal = getMoveData(Moves.Tackle).power ?? 0;
+
+    expect(attacker.checkMovePower(Moves.Ember, target)).toBe(fire);
+
+    attacker.addItem(Items.Charcoal);
+
+    // The Fire move burns a fifth hotter; the Normal one is untouched
+    expect(attacker.checkMovePower(Moves.Ember, target)).toBeCloseTo(fire * TYPE_BOOSTER_FACTOR, 5);
+    expect(attacker.checkMovePower(Moves.Tackle, target)).toBe(normal);
+
+    // An item that has been disabled is still held and does nothing
+    attacker.disableItem(Items.Charcoal);
+    expect(attacker.checkMovePower(Moves.Ember, target)).toBe(fire);
   });
 });
 

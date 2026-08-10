@@ -69,6 +69,7 @@ export default function registerParasSpecies(): void {
         41: [Moves.Growth],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Screech, Moves.Counter, Moves.Psybeam, Moves.LightScreen],
     },
   });
 

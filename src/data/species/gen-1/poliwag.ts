@@ -84,6 +84,7 @@ export default function registerPoliwagSpecies(): void {
         45: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Mist, Moves.Splash],
     },
   });
 

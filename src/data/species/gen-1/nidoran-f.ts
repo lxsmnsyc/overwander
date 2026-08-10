@@ -89,6 +89,7 @@ export default function registerNidoranFSpecies(): void {
         43: [Moves.DoubleKick],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Supersonic, Moves.Disable, Moves.TakeDown],
     },
   });
 

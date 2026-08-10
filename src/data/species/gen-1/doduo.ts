@@ -69,6 +69,7 @@ export default function registerDoduoSpecies(): void {
         44: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.QuickAttack, Moves.Supersonic, Moves.Haze],
     },
   });
 

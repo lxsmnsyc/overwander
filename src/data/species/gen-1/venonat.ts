@@ -68,6 +68,7 @@ export default function registerVenonatSpecies(): void {
         43: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Screech],
     },
   });
 

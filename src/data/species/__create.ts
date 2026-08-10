@@ -35,7 +35,21 @@ export interface EvolutionData {
 export interface LearnSetData {
   level: Record<number, Moves[]>;
   teachable: Moves[];
-  // TODO Breeding
+  /**
+   * Moves a hatchling can only come by from its parents — the ones it
+   * never learns by levelling and no machine teaches.
+   *
+   * Breeding arrived a generation after these species did, so the
+   * lists are the ones their lines were first given, kept to the
+   * moves this registry actually holds: an egg move belonging to a
+   * later generation has nothing here to name.
+   *
+   * A line's moves sit on its **base stage**, the way the games list
+   * them — an evolution inherits what it hatched with rather than
+   * having a list of its own — and a species that cannot breed has
+   * none at all
+   */
+  egg?: Moves[];
 }
 
 export interface SpeciesData {
@@ -195,6 +209,15 @@ export interface SpeciesAbilityPools {
  * The species' rollable ability pools: its own regular and hidden
  * abilities plus its pre-evolutions', deduplicated in chain order
  */
+/**
+ * The moves a species can only inherit. Answers an empty list for the
+ * many that inherit nothing — an evolution, a legendary, a species
+ * with no known eggs
+ */
+export function getEggMoves(species: Species): Moves[] {
+  return getSpeciesData(species).learnSet.egg ?? [];
+}
+
 export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
   const regular = new Set<Abilities>();
   const hidden = new Set<Abilities>();

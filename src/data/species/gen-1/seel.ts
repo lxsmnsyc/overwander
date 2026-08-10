@@ -75,6 +75,7 @@ export default function registerSeelSpecies(): void {
         50: [Moves.IceBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Lick, Moves.Peck, Moves.Disable, Moves.Slam],
     },
   });
 

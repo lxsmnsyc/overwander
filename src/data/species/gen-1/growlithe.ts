@@ -69,6 +69,7 @@ export default function registerGrowlitheSpecies(): void {
         50: [Moves.Flamethrower],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.BodySlam, Moves.Thrash],
     },
   });
 

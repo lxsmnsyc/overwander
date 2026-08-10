@@ -73,6 +73,7 @@ export default function registerSandshrewSpecies(): void {
         38: [Moves.FurySwipes],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Counter, Moves.Swift],
     },
   });
 

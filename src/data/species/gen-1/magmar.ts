@@ -66,6 +66,7 @@ export default function registerMagmarSpecies(): void {
         Moves.Substitute,
         Moves.Strength,
       ],
+      egg: [Moves.KarateChop, Moves.MegaPunch, Moves.Barrier, Moves.Screech],
     },
   });
 }

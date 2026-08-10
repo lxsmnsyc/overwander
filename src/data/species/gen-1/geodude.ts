@@ -80,6 +80,7 @@ export default function registerGeodudeSpecies(): void {
         36: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.MegaPunch, Moves.RockSlide],
     },
   });
 

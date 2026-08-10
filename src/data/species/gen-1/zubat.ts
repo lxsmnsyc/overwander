@@ -65,6 +65,7 @@ export default function registerZubatSpecies(): void {
         36: [Moves.Haze],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.QuickAttack, Moves.Gust],
     },
   });
 

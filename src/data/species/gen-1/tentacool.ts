@@ -76,6 +76,7 @@ export default function registerTentacoolSpecies(): void {
         48: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.AuroraBeam, Moves.Haze, Moves.ConfuseRay],
     },
   });
 

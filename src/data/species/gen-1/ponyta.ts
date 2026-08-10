@@ -70,6 +70,7 @@ export default function registerPonytaSpecies(): void {
         48: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.DoubleKick, Moves.Thrash, Moves.Hypnosis],
     },
   });
 

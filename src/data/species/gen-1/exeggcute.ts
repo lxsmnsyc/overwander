@@ -75,6 +75,7 @@ export default function registerExeggcuteSpecies(): void {
         48: [Moves.SleepPowder],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Reflect],
     },
   });
 

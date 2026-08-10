@@ -1,6 +1,7 @@
 import registerGen1Species from './gen-1';
 
 export {
+  getEggMoves,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,

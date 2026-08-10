@@ -67,6 +67,7 @@ export default function registerDiglettSpecies(): void {
         40: [Moves.Earthquake],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Screech],
     },
   });
 

@@ -83,6 +83,7 @@ export default function registerAbraSpecies(): void {
         1: [Moves.Teleport],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Barrier, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
     },
   });
 

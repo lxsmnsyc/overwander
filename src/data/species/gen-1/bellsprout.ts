@@ -72,6 +72,7 @@ export default function registerBellsproutSpecies(): void {
         42: [Moves.Slam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.SwordsDance, Moves.Reflect],
     },
   });
 

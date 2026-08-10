@@ -62,6 +62,7 @@ export default function registerOnixSpecies(): void {
         Moves.Dig,
         Moves.Strength,
       ],
+      egg: [Moves.RockSlide],
     },
   });
 }

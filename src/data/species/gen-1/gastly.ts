@@ -85,6 +85,7 @@ export default function registerGastlySpecies(): void {
         35: [Moves.DreamEater],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Psywave, Moves.Haze, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
     },
   });
 

@@ -68,6 +68,7 @@ export default function registerOddishSpecies(): void {
         46: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.SwordsDance, Moves.RazorLeaf],
     },
   });
 

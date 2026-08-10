@@ -73,6 +73,7 @@ export default function registerRhyhornSpecies(): void {
         55: [Moves.TakeDown],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.RockSlide, Moves.Thrash, Moves.Counter],
     },
   });
 

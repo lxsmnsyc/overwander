@@ -72,6 +72,7 @@ export default function registerGoldeenSpecies(): void {
         54: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Psybeam, Moves.Haze, Moves.HydroPump],
     },
   });
 

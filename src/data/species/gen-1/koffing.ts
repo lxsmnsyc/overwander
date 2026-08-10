@@ -67,6 +67,7 @@ export default function registerKoffingSpecies(): void {
         48: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Psywave, Moves.Screech],
     },
   });
 

@@ -7,6 +7,7 @@ import registerBiomeSpawns, {
   isMythicalSpecies,
   pickSpawn,
 } from '../src/data/biome';
+import EggGroups from '../src/data/ids/egg-groups';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
@@ -41,6 +42,7 @@ import {
   getAvailableEvolutions,
   getConsumedItem,
   getDayOfYear,
+  getEggMoves,
   getFeaturedFamily,
   getRegisteredSpecies,
   getSpeciesAbilities,
@@ -124,6 +126,62 @@ describe('species measurements', () => {
     expect(getSpeciesData(Species.Charizard).weight).toBeGreaterThan(
       getSpeciesData(Species.Charmeleon).weight,
     );
+  });
+});
+
+describe('egg moves', () => {
+  it('names moves this registry actually holds', () => {
+    let carried = 0;
+
+    for (const species of getRegisteredSpecies()) {
+      const egg = getEggMoves(species);
+
+      carried += egg.length > 0 ? 1 : 0;
+      for (const move of egg) {
+        // A later generation's egg move has nothing here to name, so
+        // the lists are kept to what a Gen 1 battle can actually cast
+        expect(() => getMoveData(move)).not.toThrow();
+      }
+      // A line's list is a set: inheriting the same move twice is
+      // nothing
+      expect(new Set(egg).size).toBe(egg.length);
+    }
+
+    expect(carried).toBeGreaterThan(0);
+  });
+
+  it('gives them to the base stage, and to nothing that cannot breed', () => {
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      if (getEggMoves(species).length === 0) {
+        continue;
+      }
+
+      // What hatches is what inherits: an evolution carries what it
+      // hatched with rather than a list of its own
+      for (const evolution of data.evolvesInto ?? []) {
+        expect(getEggMoves(evolution.species)).toEqual([]);
+      }
+      // Nothing with no eggs to discover inherits anything
+      expect(new Set(data.eggGroups).has(EggGroups.NoEggsDiscovered)).toBe(false);
+    }
+  });
+
+  it('keeps the moves a line is known for passing down', () => {
+    // The elemental punches are the classic inheritance: an Abra or a
+    // Gastly never learns one on its own
+    for (const species of [Species.Abra, Species.Gastly]) {
+      const egg = new Set(getEggMoves(species));
+
+      expect(egg.has(Moves.FirePunch)).toBe(true);
+      expect(egg.has(Moves.IcePunch)).toBe(true);
+      expect(egg.has(Moves.ThunderPunch)).toBe(true);
+    }
+
+    // A legendary has nobody to inherit from
+    expect(getEggMoves(Species.Mewtwo)).toEqual([]);
+    expect(getEggMoves(Species.Articuno)).toEqual([]);
   });
 });
 

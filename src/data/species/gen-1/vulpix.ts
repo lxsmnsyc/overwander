@@ -68,6 +68,7 @@ export default function registerVulpixSpecies(): void {
         42: [Moves.FireSpin],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Hypnosis, Moves.Disable],
     },
   });
 

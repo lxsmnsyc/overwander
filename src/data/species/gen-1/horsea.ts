@@ -69,6 +69,7 @@ export default function registerHorseaSpecies(): void {
         45: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.AuroraBeam, Moves.Disable, Moves.Splash, Moves.DragonRage],
     },
   });
 

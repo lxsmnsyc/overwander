@@ -73,6 +73,7 @@ export default function registerShellderSpecies(): void {
         50: [Moves.IceBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.BubbleBeam, Moves.TakeDown, Moves.Barrier, Moves.Screech],
     },
   });
 

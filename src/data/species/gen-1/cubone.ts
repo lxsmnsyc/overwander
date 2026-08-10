@@ -79,6 +79,7 @@ export default function registerCuboneSpecies(): void {
         46: [Moves.Rage],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Screech, Moves.SkullBash, Moves.RockSlide],
     },
   });
 

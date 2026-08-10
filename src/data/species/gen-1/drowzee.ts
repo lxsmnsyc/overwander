@@ -79,6 +79,7 @@ export default function registerDrowzeeSpecies(): void {
         37: [Moves.Meditate],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Barrier],
     },
   });
 

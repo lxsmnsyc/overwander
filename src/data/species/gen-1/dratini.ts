@@ -74,6 +74,7 @@ export default function registerDratiniSpecies(): void {
         50: [Moves.HyperBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.LightScreen, Moves.Mist, Moves.Haze, Moves.Supersonic],
     },
   });
 

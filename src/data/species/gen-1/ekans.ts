@@ -71,6 +71,7 @@ export default function registerEkansSpecies(): void {
         38: [Moves.Acid],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Slam],
     },
   });
 

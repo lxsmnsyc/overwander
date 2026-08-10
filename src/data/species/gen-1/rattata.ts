@@ -70,6 +70,7 @@ export default function registerRattataSpecies(): void {
         34: [Moves.SuperFang],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Screech],
     },
   });
 

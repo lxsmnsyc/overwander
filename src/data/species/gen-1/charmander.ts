@@ -77,6 +77,7 @@ export default function registerCharmanderSpecies(): void {
         46: [Moves.FireSpin],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.RockSlide, Moves.Bite],
     },
   });
 

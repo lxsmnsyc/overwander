@@ -73,6 +73,7 @@ export default function registerKrabbySpecies(): void {
         40: [Moves.Harden],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Dig, Moves.Haze, Moves.Amnesia, Moves.Slam],
     },
   });
 

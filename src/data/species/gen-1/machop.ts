@@ -77,6 +77,7 @@ export default function registerMachopSpecies(): void {
         46: [Moves.Submission],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.LightScreen, Moves.Meditate, Moves.RollingKick],
     },
   });
 

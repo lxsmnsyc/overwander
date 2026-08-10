@@ -76,6 +76,7 @@ export default function registerPsyduckSpecies(): void {
         52: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Hypnosis, Moves.Psybeam, Moves.LightScreen],
     },
   });
 

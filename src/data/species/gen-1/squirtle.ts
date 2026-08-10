@@ -79,6 +79,7 @@ export default function registerSquirtleSpecies(): void {
         42: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Haze, Moves.Mist],
     },
   });
 

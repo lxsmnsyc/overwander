@@ -71,6 +71,7 @@ export default function registerGrimerSpecies(): void {
         48: [Moves.Screech],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Haze],
     },
   });
 

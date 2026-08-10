@@ -76,6 +76,7 @@ export default function registerMankeySpecies(): void {
         39: [Moves.Thrash],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.RockSlide, Moves.Meditate],
     },
   });
 

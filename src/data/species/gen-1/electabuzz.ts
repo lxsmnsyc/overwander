@@ -68,6 +68,7 @@ export default function registerElectabuzzSpecies(): void {
         Moves.Strength,
         Moves.Flash,
       ],
+      egg: [Moves.KarateChop, Moves.Barrier, Moves.RollingKick, Moves.Meditate],
     },
   });
 }

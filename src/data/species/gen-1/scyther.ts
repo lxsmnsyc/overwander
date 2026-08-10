@@ -56,6 +56,7 @@ export default function registerScytherSpecies(): void {
         Moves.Substitute,
         Moves.Cut,
       ],
+      egg: [Moves.Counter, Moves.LightScreen],
     },
   });
 }

@@ -69,6 +69,7 @@ export default function registerMeowthSpecies(): void {
         44: [Moves.Slash],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Hypnosis, Moves.Amnesia],
     },
   });
 

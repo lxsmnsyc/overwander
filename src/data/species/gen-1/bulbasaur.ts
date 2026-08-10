@@ -70,6 +70,7 @@ export default function registerBulbasaurSpecies(): void {
         48: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.LightScreen, Moves.SkullBash, Moves.PetalDance],
     },
   });
 

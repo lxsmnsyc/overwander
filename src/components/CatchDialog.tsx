@@ -4,7 +4,7 @@ import { type CaughtPokemon, getCaught, getCaughtAbilities, getCaughtItems } fro
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
 import { Stats } from '../data/constants/stats';
-import type { Items } from '../data/ids/items';
+import { BALL_ITEMS, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
@@ -192,6 +192,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       .abilities.map((ability) => `#${ability}`)
                       .join(', ') || 'None'}
                   </dd>
+                  <dt>Ball</dt>
+                  <dd>{describeItem(BALL_ITEMS[loaded().caught.ball])}</dd>
                   <dt>Held items</dt>
                   <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
                   <dt>Moves</dt>

@@ -10,6 +10,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   query,
   where,
   writeBatch,
@@ -213,6 +214,22 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
   const snapshot = await getDocs(query(caught, where('owner', '==', owner)));
 
   return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/**
+ * Whether the user already owns a pokemon of the species. Reads a
+ * single document, since the answer is a yes or no — the Repeat
+ * Ball's condition
+ */
+export async function hasCaughtSpecies(owner: string, species: Species): Promise<boolean> {
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
+    caughtConverter,
+  );
+  const snapshot = await getDocs(
+    query(caught, where('owner', '==', owner), where('species', '==', species), limit(1)),
+  );
+
+  return !snapshot.empty;
 }
 
 /**

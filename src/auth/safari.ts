@@ -10,7 +10,7 @@ import SafariSession, {
   encounterKey,
 } from '../overworld/safari';
 import { asStringArray } from './__normalize';
-import { recordCatch } from './caught';
+import { hasCaughtSpecies, recordCatch } from './caught';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 import { consumeItem } from './inventory';
@@ -33,8 +33,11 @@ export async function createSafariSession(
 ): Promise<SafariSession> {
   const now = await syncServerClock();
   const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${now}`);
+  // The Repeat Ball needs to know whether this species is already in
+  // the player's records; it is read once, when the session opens
+  const speciesCaught = await hasCaughtSpecies(user.uid, encounter.species);
 
-  return new SafariSession(encounter, () => rng.random());
+  return new SafariSession(encounter, () => rng.random(), { speciesCaught });
 }
 
 export async function markFled(uid: string, encounter: Encounter): Promise<void> {

@@ -7,9 +7,9 @@ import registerBiomeSpawns, {
 } from '../src/data/biome';
 import Abilities from '../src/data/ids/abilities';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
-import { Items } from '../src/data/ids/items';
+import { BALL_ITEMS, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
-import registerItems from '../src/data/items';
+import registerItems, { getItemData } from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import {
@@ -136,6 +136,23 @@ describe('evolution data', () => {
         item: Items.FireStone,
       }),
     ).toBeNull();
+  });
+});
+
+describe('item data', () => {
+  it('registers every ball a catch can be made with', () => {
+    // The catch record stores a ball, and the UI names it through
+    // the item registry, so every variant has to be registered
+    for (const item of Object.values(BALL_ITEMS)) {
+      expect(getItemData(item).type).toBe(ItemTypes.PokeBall);
+    }
+
+    expect(getItemData(Items.PokeBall).name).toBe('Poke Ball');
+    expect(getItemData(Items.DuskBall).name).toBe('Dusk Ball');
+
+    // A ball is spent by the throw, never held
+    expect(getItemData(Items.UltraBall).flags & ItemFlags.Consumable).not.toBe(0);
+    expect(getItemData(Items.UltraBall).flags & ItemFlags.Holdable).toBe(0);
   });
 });
 

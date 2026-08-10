@@ -86,6 +86,28 @@ export function getTimeOfDay(timestamp: number): TimeOfDay {
   return TimeOfDay.Night;
 }
 
+/**
+ * The biomes a player is in or on the water in: the open sea, the
+ * reefs and the waterlogged wetlands. The beach is the shoreline
+ * beside them, not water itself, so it stays out
+ */
+const WATER_BIOMES = new Set<Biome>([
+  Biome.DeepOcean,
+  Biome.Ocean,
+  Biome.CoralReef,
+  Biome.PolarOcean,
+  Biome.Mangrove,
+  Biome.Swamp,
+]);
+
+/**
+ * Whether the biome is water, for the mechanics that only apply
+ * there (the Dive Ball, say)
+ */
+export function isWaterBiome(biome: Biome): boolean {
+  return WATER_BIOMES.has(biome);
+}
+
 export interface BiomeConfig {
   /**
    * Moisture level, -1 (arid) to 1 (saturated)

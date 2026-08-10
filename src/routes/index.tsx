@@ -2,6 +2,7 @@ import { Title } from '@solidjs/meta';
 import { For, type JSX, Show } from 'solid-js';
 import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { useAuth } from '../auth/context';
+import LoginForm from '../components/LoginForm';
 import OverworldTab from '../components/OverworldTab';
 import ProfileTab from '../components/ProfileTab';
 import WorldMapTab from '../components/WorldMapTab';
@@ -41,9 +42,8 @@ export default function Home(): JSX.Element {
         fallback={
           <Show when={!auth.loading()} fallback={<p>Loading session…</p>}>
             <h1>Poketerra</h1>
-            <p>
-              Sign in to walk the overworld. <a href="/login">Sign in</a>
-            </p>
+            <p>Sign in to walk the overworld.</p>
+            <LoginForm />
           </Show>
         }
       >

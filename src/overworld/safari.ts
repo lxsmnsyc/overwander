@@ -1,6 +1,8 @@
 import { type BaseEvent, EventPriority } from '../core/event-emitter';
 import { EventEngine } from '../core/event-engine';
 import { Stats } from '../data/constants/stats';
+import { Types } from '../data/constants/types';
+import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { getSpeciesData } from '../data/species';
 import { type Encounter, EncounterType } from './encounter';
@@ -70,10 +72,13 @@ export type SafariEventMap = {
 };
 
 /**
- * Flat catch multipliers per ball; the Quick and Timer Balls hold a
- * neutral 1 here because their real modifier is turn-dependent and
- * resolves in getBallModifier. The Master Ball's infinity saturates
- * the catch chance to certainty
+ * Flat catch multipliers per ball. Every conditional ball holds a
+ * neutral 1 here — their real modifier depends on the encounter or
+ * the safari clock and resolves in getBallModifier. The Master
+ * Ball's infinity saturates the catch chance to certainty. The
+ * Premier, Heal and Luxury Balls catch like a plain Poke Ball; their
+ * mainline perks (a commemorative ball, a healed catch, faster
+ * friendship) have nothing to act on yet
  */
 export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.PokeBall]: 1,
@@ -89,7 +94,7 @@ export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.RepeatBall]: 1,
   [Balls.TimerBall]: 1,
   [Balls.QuickBall]: 1,
-  [Balls.DuskBall]: 1.5,
+  [Balls.DuskBall]: 1,
 };
 
 /**
@@ -103,6 +108,52 @@ const QUICK_BALL_MODIFIER = 5;
  */
 const TIMER_BALL_RATE = 1229 / 4096;
 const TIMER_BALL_CAP = 4;
+
+/**
+ * Mainline Net Ball: shines on Bug and Water types
+ */
+const NET_BALL_MODIFIER = 3.5;
+
+/**
+ * The Dive Ball's home is the water. The mainline condition is
+ * being underwater, surfing or fishing; here the encounter's biome
+ * stands in for all three
+ */
+const DIVE_BALL_MODIFIER = 3.5;
+
+/**
+ * Mainline Nest Ball: (41 - level) / 10, strongest against the
+ * weakest encounters and never worse than a plain ball
+ */
+const NEST_BALL_LEVEL_BASE = 41;
+const NEST_BALL_SCALE = 10;
+const NEST_BALL_CAP = 4;
+
+/**
+ * Mainline Repeat Ball: a species the player already owns comes
+ * along more readily
+ */
+const REPEAT_BALL_MODIFIER = 3.5;
+
+/**
+ * Mainline Dusk Ball: darkness helps. Caves have no biome of their
+ * own here, so the day cycle carries the condition alone
+ */
+const DUSK_BALL_MODIFIER = 3;
+
+const DUSK_TIMES = TimeOfDay.Evening | TimeOfDay.Night;
+
+/**
+ * What a ball's condition is measured against beyond the encounter
+ * itself
+ */
+export interface SafariContext {
+  /**
+   * Whether the player already owns this species; the Repeat Ball
+   * reads it. Unknown counts as not owned
+   */
+  speciesCaught?: boolean;
+}
 
 /**
  * Items an encounter can be fed and the catch multiplier each
@@ -173,6 +224,7 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
   constructor(
     public readonly encounter: Encounter,
     public readonly random: () => number,
+    public readonly context: SafariContext = {},
   ) {
     super();
     setupSafariMechanics(this);
@@ -188,23 +240,53 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
   }
 
   /**
+   * The effective modifier of a ball right now. The conditional
+   * balls each read the encounter or the safari clock: the Quick
+   * Ball only shines on the opening turn, the Timer Ball rewards
+   * patience, the Net Ball answers Bug and Water types, the Dive
+   * Ball the water biomes, the Nest Ball low levels, the Repeat Ball
+   * a species already owned, and the Dusk Ball the dark hours.
+   * Everything else takes its flat multiplier
+   */
+  getBallModifier(ball = this.ball): number {
+    switch (ball) {
+      case Balls.QuickBall:
+        return this.turn === 0 ? QUICK_BALL_MODIFIER : 1;
+      case Balls.TimerBall:
+        return Math.min(TIMER_BALL_CAP, 1 + this.turn * TIMER_BALL_RATE);
+      case Balls.NetBall: {
+        const { types } = getSpeciesData(this.encounter.species);
+
+        return types.includes(Types.Bug) || types.includes(Types.Water) ? NET_BALL_MODIFIER : 1;
+      }
+      case Balls.DiveBall:
+        return isWaterBiome(this.encounter.biome) ? DIVE_BALL_MODIFIER : 1;
+      case Balls.NestBall:
+        return Math.max(
+          1,
+          Math.min(NEST_BALL_CAP, (NEST_BALL_LEVEL_BASE - this.encounter.level) / NEST_BALL_SCALE),
+        );
+      case Balls.RepeatBall:
+        return this.context.speciesCaught === true ? REPEAT_BALL_MODIFIER : 1;
+      case Balls.DuskBall:
+        return (getTimeOfDay(this.encounter.timestamp) & DUSK_TIMES) === 0 ? 1 : DUSK_BALL_MODIFIER;
+      // The unconditional balls: their multiplier never moves
+      case Balls.PokeBall:
+      case Balls.GreatBall:
+      case Balls.UltraBall:
+      case Balls.MasterBall:
+      case Balls.PremierBall:
+      case Balls.HealBall:
+      case Balls.LuxuryBall:
+      default:
+        return BALL_MODIFIERS[ball];
+    }
+  }
+
+  /**
    * The chance the next throw lands: species catch rate, ball
    * modifier and accumulated feeding bonus
    */
-  /**
-   * The effective modifier of a ball right now: the Quick Ball only
-   * shines on the opening turn, the Timer Ball rewards patience
-   */
-  getBallModifier(ball = this.ball): number {
-    if (ball === Balls.QuickBall) {
-      return this.turn === 0 ? QUICK_BALL_MODIFIER : 1;
-    }
-    if (ball === Balls.TimerBall) {
-      return Math.min(TIMER_BALL_CAP, 1 + this.turn * TIMER_BALL_RATE);
-    }
-    return BALL_MODIFIERS[ball];
-  }
-
   getCatchChance(): number {
     const rate = getSpeciesData(this.encounter.species).catchRate;
 

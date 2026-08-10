@@ -382,5 +382,6 @@ deployed.
 | `spawns`      | `chunk` ASC, `timestamp` ASC | `listSpawns` filters on both                 |
 | `caught`      | `owner` ASC                  | `listCaught`; automatic single-field index   |
 | `spawns`      | `chunk` ASC                  | `clearStaleSpawns`; automatic                |
+| `caught`      | `owner` ASC, `species` ASC   | `hasCaughtSpecies`, the Repeat Ball's check  |
 | `inventories` | `user` ASC                   | `getInventory`; automatic single-field index |
 | `candies`     | `user` ASC                   | `getCandies`; automatic single-field index   |

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import Biome from '../../src/data/ids/biome';
 import { Balls, Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import { registerSpecies } from '../../src/data/species';
@@ -15,12 +16,14 @@ import World from '../../src/overworld/world';
 
 registerSpecies();
 
-// Tauros: catch rate 45, base speed 110
-function makeEncounter(type = EncounterType.Wild): Encounter {
+const HOUR = 3_600_000;
+
+// Tauros: catch rate 45, base speed 110, Normal type
+function makeEncounter(species = Species.Tauros, type = EncounterType.Wild): Encounter {
   const world = new World('overworld');
   const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
 
-  return { ...deriveEncounter(snapshot, [Species.Tauros, 0, 0]), type };
+  return { ...deriveEncounter(snapshot, [species, 0, 0]), type };
 }
 
 const rolls = (values: number[]) => () => values.shift() ?? 0.999;
@@ -66,6 +69,57 @@ describe('safari session', () => {
     expect(session.getBallModifier()).toBe(4);
   });
 
+  it('answers the Net Ball to Bug and Water types', () => {
+    const bug = new SafariSession(makeEncounter(Species.Caterpie), rolls([]));
+    const water = new SafariSession(makeEncounter(Species.Magikarp), rolls([]));
+    const neither = new SafariSession(makeEncounter(), rolls([]));
+
+    expect(bug.getBallModifier(Balls.NetBall)).toBe(3.5);
+    expect(water.getBallModifier(Balls.NetBall)).toBe(3.5);
+    expect(neither.getBallModifier(Balls.NetBall)).toBe(1);
+  });
+
+  it('gives the Dive Ball its edge in water biomes', () => {
+    const land = new SafariSession(makeEncounter(), rolls([]));
+    const sea = new SafariSession({ ...makeEncounter(), biome: Biome.Ocean }, rolls([]));
+    const swamp = new SafariSession({ ...makeEncounter(), biome: Biome.Swamp }, rolls([]));
+    // The shoreline is not water itself
+    const beach = new SafariSession({ ...makeEncounter(), biome: Biome.Beach }, rolls([]));
+
+    expect(land.getBallModifier(Balls.DiveBall)).toBe(1);
+    expect(sea.getBallModifier(Balls.DiveBall)).toBe(3.5);
+    expect(swamp.getBallModifier(Balls.DiveBall)).toBe(3.5);
+    expect(beach.getBallModifier(Balls.DiveBall)).toBe(1);
+  });
+
+  it('scales the Nest Ball by level and the Repeat Ball by ownership', () => {
+    const weak = new SafariSession({ ...makeEncounter(), level: 5 }, rolls([]));
+    const middling = new SafariSession({ ...makeEncounter(), level: 21 }, rolls([]));
+    const strong = new SafariSession({ ...makeEncounter(), level: 60 }, rolls([]));
+
+    // (41 - level) / 10, capped at 4 and never below a plain ball
+    expect(weak.getBallModifier(Balls.NestBall)).toBe(3.6);
+    expect(middling.getBallModifier(Balls.NestBall)).toBeCloseTo(2);
+    expect(strong.getBallModifier(Balls.NestBall)).toBe(1);
+
+    // The Repeat Ball only knows what the session was told
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.RepeatBall)).toBe(1);
+    expect(
+      new SafariSession(makeEncounter(), rolls([]), {
+        speciesCaught: true,
+      }).getBallModifier(Balls.RepeatBall),
+    ).toBe(3.5);
+  });
+
+  it('keeps the Dusk Ball to the dark hours', () => {
+    // Windows are milliseconds into the day: 12:00 and 22:00
+    const noon = new SafariSession({ ...makeEncounter(), timestamp: 12 * HOUR }, rolls([]));
+    const night = new SafariSession({ ...makeEncounter(), timestamp: 22 * HOUR }, rolls([]));
+
+    expect(noon.getBallModifier(Balls.DuskBall)).toBe(1);
+    expect(night.getBallModifier(Balls.DuskBall)).toBe(3);
+  });
+
   it('always catches with the Master Ball', () => {
     const session = new SafariSession(makeEncounter(), rolls([0.9999]));
 
@@ -94,7 +148,10 @@ describe('safari session', () => {
   });
 
   it('never lets raid encounters flee', () => {
-    const session = new SafariSession(makeEncounter(EncounterType.Raid), rolls([0.99, 0]));
+    const session = new SafariSession(
+      makeEncounter(Species.Tauros, EncounterType.Raid),
+      rolls([0.99, 0]),
+    );
 
     expect(session.getFleeChance()).toBe(0);
     expect(session.throwBall()).toBe(ThrowResult.BrokeFree);

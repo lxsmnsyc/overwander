@@ -1,6 +1,5 @@
 import {
   type FirestoreDataConverter,
-  addDoc,
   collection,
   doc,
   getDoc,
@@ -9,8 +8,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { asNumber, asString, asStringArray } from './__normalize';
-import { type CatchSnapshot, asCatchSnapshot, createCatchSnapshot } from './catch-snapshot';
-import { getCaught, listOwned } from './caught';
+import { type CatchSnapshot, asCatchSnapshot } from './catch-snapshot';
+import { TEAM_COLLECTION, TEAM_SNAPSHOT_COLLECTION } from './collections';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -43,9 +42,6 @@ export interface TeamSnapshotRecord {
   catches: CatchSnapshot[];
 }
 
-const TEAM_COLLECTION = 'teams';
-const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
-
 const teamConverter: FirestoreDataConverter<TeamRecord> = {
   toFirestore: (record) => record,
   fromFirestore: (snapshot) => {
@@ -70,38 +66,13 @@ const snapshotConverter: FirestoreDataConverter<TeamSnapshotRecord> = {
 };
 
 /**
- * Form a team from the player's catches. Every id is checked against
- * its catch's owner: catch ids are readable by any signed-in player,
- * so a party submitted from the client would otherwise be able to
- * field someone else's pokemon. The same catch cannot be listed
- * twice either — a party of six copies of one pokemon is not a party.
- *
- * Resolves the new team id, or null when the party is empty, larger
- * than TEAM_SIZE, repeats a catch, or names one the player does not
- * own
+ * Teams are written by the server: a party names catch ids, and the
+ * ids of other players' pokemon are readable, so the ownership check
+ * has to happen somewhere a client cannot skip. Forming one goes
+ * through `joinRaid`, and freezing one into a battle happens when the
+ * host starts the raid — both in
+ * [`src/server/raids.ts`](../server/raids.ts)
  */
-export async function createTeam(player: string, catches: string[]): Promise<string | null> {
-  if (catches.length === 0 || catches.length > TEAM_SIZE) {
-    return null;
-  }
-
-  const unique = new Set(catches);
-
-  if (unique.size !== catches.length) {
-    return null;
-  }
-
-  const owned = await listOwned(player, catches);
-
-  if (owned.size !== catches.length) {
-    return null;
-  }
-
-  const teams = collection(getFirebaseFirestore(), TEAM_COLLECTION).withConverter(teamConverter);
-  const ref = await addDoc(teams, { player, catches });
-
-  return ref.id;
-}
 
 export async function getTeam(id: string): Promise<TeamRecord | null> {
   const ref = doc(getFirebaseFirestore(), TEAM_COLLECTION, id).withConverter(teamConverter);
@@ -117,52 +88,6 @@ export async function listTeams(player: string): Promise<[string, TeamRecord][]>
   const result = await getDocs(query(teams, where('player', '==', player)));
 
   return result.docs.map((entry) => [entry.id, entry.data()]);
-}
-
-/**
- * Freeze a team for a battle: every catch is copied as it stands,
- * side stores included. Catches that have since vanished are left
- * out, and so are any the team's player no longer owns — the team
- * document only holds ids, and a client can write one directly, so
- * ownership is checked again at the moment it matters rather than
- * trusted from when the team was formed. A catch traded away between
- * joining the lobby and starting the raid drops out the same way.
- *
- * Resolves the team snapshot id, or null when nothing survived: a
- * team that fields no pokemon must not stand as an empty side
- */
-export async function createTeamSnapshot(
-  team: TeamRecord,
-  alliance: number,
-): Promise<string | null> {
-  const catches = await Promise.all(
-    team.catches.map(async (id) => {
-      const caught = await getCaught(id);
-
-      return caught == null || caught.owner !== team.player
-        ? null
-        : createCatchSnapshot(id, caught);
-    }),
-  );
-  const fielded = catches.filter((entry): entry is CatchSnapshot => entry != null);
-
-  if (fielded.length === 0) {
-    return null;
-  }
-  return publishTeamSnapshot({ player: team.player, alliance, catches: fielded });
-}
-
-/**
- * Store an already-built team snapshot — the raid boss' party comes
- * this way, since it has no catches behind it
- */
-export async function publishTeamSnapshot(record: TeamSnapshotRecord): Promise<string> {
-  const snapshots = collection(getFirebaseFirestore(), TEAM_SNAPSHOT_COLLECTION).withConverter(
-    snapshotConverter,
-  );
-  const ref = await addDoc(snapshots, record);
-
-  return ref.id;
 }
 
 export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | null> {

@@ -10,6 +10,7 @@ import {
   onMount,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
+import type { EncounterRecord } from '../auth/encounter-record';
 import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
@@ -140,7 +141,7 @@ export default function OverworldTab(): JSX.Element {
   const [cellX, setCellX] = createSignal(START_CELL);
   const [cellY, setCellY] = createSignal(START_CELL);
   const [status, setStatus] = createSignal<string | null>(null);
-  const [session, setSession] = createSignal<SafariSession | null>(null);
+  const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
   /**
    * The cell whose interaction already fired, so standing still (or
@@ -260,14 +261,7 @@ export default function OverworldTab(): JSX.Element {
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
    * once per player and the safari session opens over it
    */
-  const meet = async (
-    user: User,
-    snapshot: ChunkSnapshot,
-    id: string,
-    spawn: Spawn,
-  ): Promise<string | null> => {
-    const encounter = await startEncounter(user, snapshot, id, spawn);
-
+  const meet = async (user: User, encounter: EncounterRecord): Promise<string | null> => {
     if (await isEncounterFled(user.uid, encounter)) {
       return 'Nothing here — it already fled from you.';
     }
@@ -280,27 +274,31 @@ export default function OverworldTab(): JSX.Element {
     const spawn = loaded.spawns.get(at);
 
     if (spawn != null) {
-      return meet(user, loaded.snapshot, spawn.id, spawn.spawn);
+      // The server decides what is standing there: a spawn from a
+      // window that has turned over is no longer met
+      const encounter = await startEncounter(loaded.snapshot, spawn.id);
+
+      return encounter == null ? 'It is gone — the chunk has moved on.' : meet(user, encounter);
     }
 
     const landmark = loaded.landmarks.get(at);
 
     if (landmark === Landmark.ItemCache) {
-      const item = await claimItemCache(user, loaded.snapshot, at);
+      const item = await claimItemCache(loaded.snapshot, at);
 
       return item == null
         ? 'The cache is empty until the next window.'
         : `Found ${describeItem(item)}.`;
     }
     if (landmark === Landmark.BerryPatch) {
-      const berry = await claimBerryPatch(user, loaded.snapshot, at);
+      const berry = await claimBerryPatch(loaded.snapshot, at);
 
       return berry == null
         ? 'The patch is bare until the next window.'
         : `Picked ${describeItem(berry)}.`;
     }
     if (landmark === Landmark.HiddenGrotto) {
-      const claim = await claimHiddenGrotto(user, loaded.snapshot, at);
+      const claim = await claimHiddenGrotto(loaded.snapshot, at);
 
       if (claim == null) {
         return 'The grotto is quiet until the next window.';
@@ -308,7 +306,7 @@ export default function OverworldTab(): JSX.Element {
       if (claim.kind === 'item') {
         return `The grotto held ${describeItem(claim.item)}.`;
       }
-      return meet(user, loaded.snapshot, claim.id, claim.spawn);
+      return meet(user, claim.encounter);
     }
     if (landmark === Landmark.LegendaryRaid || landmark === Landmark.ShadowRaid) {
       const kind = landmark === Landmark.ShadowRaid ? RaidKind.Shadow : RaidKind.Legendary;
@@ -348,7 +346,7 @@ export default function OverworldTab(): JSX.Element {
       return;
     }
     game.setReward(null);
-    claimRaidReward(user, reward.raid)
+    claimRaidReward(reward.raid)
       .then(async (encounter) => {
         if (encounter == null) {
           setStatus('That raid has nothing left to collect.');

@@ -10,11 +10,11 @@ import {
   getDoc,
   getDocs,
   query,
-  runTransaction,
   where,
 } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import { asNumber, asString } from './__normalize';
+import { INVENTORY_COLLECTION, inventoryEntryId } from './collections';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -39,8 +39,6 @@ export interface InventoryEntry {
   amount: number;
 }
 
-const INVENTORY_COLLECTION = 'inventories';
-
 const converter: FirestoreDataConverter<InventoryEntry> = {
   toFirestore: (entry) => entry,
   fromFirestore: (snapshot) => {
@@ -55,22 +53,14 @@ const converter: FirestoreDataConverter<InventoryEntry> = {
 };
 
 /**
- * The stack's document id: one per user and item pair, so the same
- * item can never split across two documents
+ * The stack's document reference, converter attached
  */
-function entryId(uid: string, item: Items): string {
-  return `${uid}:${item}`;
-}
-
-/**
- * The stack's document reference, converter attached. Exported so
- * stores that spend an item alongside their own writes (evolution,
- * say) can join it in one transaction
- */
-export function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
-  return doc(getFirebaseFirestore(), INVENTORY_COLLECTION, entryId(uid, item)).withConverter(
-    converter,
-  );
+function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
+  return doc(
+    getFirebaseFirestore(),
+    INVENTORY_COLLECTION,
+    inventoryEntryId(uid, item),
+  ).withConverter(converter);
 }
 
 /**
@@ -94,32 +84,9 @@ export async function getItemCount(uid: string, item: Items): Promise<number> {
 }
 
 /**
- * Add items to the user's inventory, creating the stack on first
- * acquisition
+ * The bag is read here and written only by the server: items are
+ * value, so `grantItem` and `consumeItem` live in
+ * [`src/server/inventory.ts`](../server/inventory.ts) behind a
+ * verified caller, and the rules leave this collection read-only to
+ * clients
  */
-export async function grantItem(uid: string, item: Items, count = 1): Promise<void> {
-  await runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getEntryRef(uid, item);
-    const current = (await transaction.get(ref)).data()?.amount ?? 0;
-
-    transaction.set(ref, { user: uid, item, amount: current + count });
-  });
-}
-
-/**
- * Consume items; resolves false (and changes nothing) when the user
- * does not carry enough. A stack spent to zero stays as a zero
- * document and is filtered out on read
- */
-export async function consumeItem(uid: string, item: Items, count = 1): Promise<boolean> {
-  return runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getEntryRef(uid, item);
-    const current = (await transaction.get(ref)).data()?.amount ?? 0;
-
-    if (current < count) {
-      return false;
-    }
-    transaction.set(ref, { user: uid, item, amount: current - count });
-    return true;
-  });
-}

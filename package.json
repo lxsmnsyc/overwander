@@ -31,7 +31,9 @@
     "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.0",
     "firebase": "^12.17.1",
+    "firebase-admin": "^14.2.0",
     "nitro": "^3.0.260610-beta",
+    "server-only": "^0.0.1",
     "solid-js": "^1.9.14",
     "terracotta": "^1.1.1",
     "vite": "^8.0.0"

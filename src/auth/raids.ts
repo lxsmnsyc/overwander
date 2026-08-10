@@ -9,7 +9,6 @@ import {
   type Transaction,
   type Unsubscribe,
   arrayRemove,
-  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -20,99 +19,28 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import AleaRNG from '../core/alea';
-import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
-import ChunkSnapshot from '../overworld/chunk-snapshot';
-import type { Spawn } from '../overworld/chunk-snapshot';
-import getWorld from '../overworld/current';
-import type { Encounter } from '../overworld/encounter';
-import { EncounterType } from '../overworld/encounter';
-import {
-  BOSS_ALLIANCE,
-  LEGENDARY_RAID_REWARD_LEVEL,
-  PLAYER_ALLIANCE,
-  SHADOW_RAID_REWARD_LEVEL,
-  createRaidBossSnapshot,
-} from '../overworld/raid';
-import { asNumber, asRecord, asString, asStringArray } from './__normalize';
-import { BattleOutcome, createBattle, getBattle, getBattleRef } from './battles';
+import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { asString } from './__normalize';
+import { RaidKind, type RaidRecord, asRaidRecord } from './raid-record';
+import { BattleOutcome, getBattleRef } from './battles';
 import { hasAnyCaught } from './caught';
-import { syncServerClock } from './clock';
-import { getFirebaseFirestore } from './firebase';
-import { startEncounter } from './snapshots';
+import { requireUid } from '../server/firebase';
 import {
-  type TeamRecord,
-  createTeam,
-  createTeamSnapshot,
-  getTeam,
-  publishTeamSnapshot,
-} from './teams';
+  claimRaidReward as claimRewardOnServerSide,
+  clearRaid as clearOnServer,
+  joinRaid as joinOnServer,
+  startRaid as startOnServer,
+} from '../server/raids';
+import { RAID_COLLECTION, RAID_REWARD_COLLECTION } from './collections';
+import { syncServerClock } from './clock';
+import type { EncounterRecord } from './encounter-record';
+import { getFirebaseFirestore } from './firebase';
+import getIdToken from './session';
+import { getTeam } from './teams';
 
-/**
- * What a lobby is staging
- */
-export const enum RaidKind {
-  /**
-   * The biome's legendary, from a LegendaryRaid landmark
-   */
-  Legendary = 0,
-  /**
-   * A shadow boss — usually one of the biome's rare species, one
-   * draw in eight a legendary
-   */
-  Shadow = 1,
-}
-
-/**
- * One raid lobby at raids/{raidId}. The id is derived from the chunk,
- * the raid hour, the landmark cell and the kind, so every player who
- * walks into the same lobby in the same hour joins one raid
- */
-export interface RaidRecord {
-  kind: RaidKind;
-  species: Species;
-  /**
-   * The 32-bit roll the boss' nature and ability derive from
-   */
-  traitValue: number;
-  /**
-   * The player who opened the lobby; only they may start it
-   */
-  host: string;
-  /**
-   * teams/{teamId} ids that have joined, host first
-   */
-  teams: string[];
-  /**
-   * The battles/{battleId} the host started, or null while the lobby
-   * is still gathering
-   */
-  battle: string | null;
-  /**
-   * The raid hour this lobby belongs to; a listing of live raids
-   * matches on it, and the landmark reopens when the hour turns over
-   */
-  timestamp: number;
-  /**
-   * Where the lobby stands, for a listing that has no chunk in hand
-   */
-  chunk: { seed: string; x: number; y: number };
-  cell: number;
-  /**
-   * Set once the boss goes down. A cleared raid keeps its landmark
-   * shut for the rest of the hour — the legendary has been met
-   */
-  cleared: boolean;
-}
-
-const RAID_COLLECTION = 'raids';
-
-/**
- * One marker per player per cleared raid, so the legendary is
- * handed over once however late it is collected
- */
-const RAID_REWARD_COLLECTION = 'raidRewards';
+export { RaidKind, asRaidRecord, deriveRaidReward } from './raid-record';
+export type { RaidRecord } from './raid-record';
 
 /**
  * The alliance numbers live with the battle builder that reads them
@@ -121,24 +49,7 @@ export { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../overworld/raid';
 
 const converter: FirestoreDataConverter<RaidRecord> = {
   toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    const chunk = asRecord(data.chunk);
-
-    return {
-      kind: asNumber(data.kind) as RaidKind,
-      species: asNumber(data.species) as Species,
-      traitValue: asNumber(data.traitValue),
-      host: asString(data.host),
-      teams: asStringArray(data.teams),
-      battle: typeof data.battle === 'string' ? data.battle : null,
-      timestamp: asNumber(data.timestamp),
-      chunk: { seed: asString(chunk.seed), x: asNumber(chunk.x), y: asNumber(chunk.y) },
-      cell: asNumber(data.cell),
-      cleared: data.cleared === true,
-    };
-  },
+  fromFirestore: (snapshot) => asRaidRecord(snapshot.data()),
 };
 
 /**
@@ -361,11 +272,17 @@ export async function leaveRaid(user: User, id: string): Promise<void> {
 
 /**
  * Mark the raid cleared, shutting its landmark for the rest of the
- * hour. Every player who fought reports it; the first write wins and
- * the rest are harmless repeats
+ * hour. Every player who fought reports it; the server clears it only
+ * once the battle is recorded as won by a player who was in it, so a
+ * landmark cannot be shut with a victory that never happened
  */
-export async function clearRaid(id: string): Promise<void> {
-  await updateDoc(doc(getFirebaseFirestore(), RAID_COLLECTION, id), { cleared: true });
+export async function clearRaid(id: string): Promise<boolean> {
+  return clearRaidOnServer(await getIdToken(), id);
+}
+
+async function clearRaidOnServer(token: string, id: string): Promise<boolean> {
+  'use server';
+  return clearOnServer(await requireUid(token), id);
 }
 
 /**
@@ -375,35 +292,17 @@ export async function clearRaid(id: string): Promise<void> {
  * has already started, the player owns no pokemon to field, or the
  * party is not a legal team
  */
-export async function joinRaid(user: User, id: string, catches: string[]): Promise<string | null> {
-  const raid = await getRaid(id);
-
-  if (raid == null || raid.battle != null || !(await canJoinRaids(user.uid))) {
-    return null;
-  }
-
-  const teamId = await createTeam(user.uid, catches);
-
-  if (teamId == null) {
-    return null;
-  }
-  await updateDoc(doc(getFirebaseFirestore(), RAID_COLLECTION, id), { teams: arrayUnion(teamId) });
-  return teamId;
+export async function joinRaid(id: string, catches: string[]): Promise<string | null> {
+  return joinRaidOnServer(await getIdToken(), id, catches);
 }
 
-/**
- * The reward for clearing a raid: the legendary as a meetable spawn.
- * The chunk, biome and window are the raid's, but the two rolls are
- * seeded per player, so everyone in the lobby meets their own
- * individual — different IVs, different traits, its own shiny odds
- */
-export function deriveRaidReward(raid: RaidRecord, id: string, uid: string): [string, Spawn] {
-  // The raid's own seed material — the lobby it was staged in and the
-  // trait value it rolled — mixed with the player, so every fighter
-  // walks away with their own individual of the same legendary
-  const rng = new AleaRNG(`${id}:${raid.traitValue}:reward:${uid}`);
-
-  return [`${id}$reward`, [raid.species, rng.int32(), rng.int32()]];
+async function joinRaidOnServer(
+  token: string,
+  id: string,
+  catches: string[],
+): Promise<string | null> {
+  'use server';
+  return joinOnServer(await requireUid(token), id, catches);
 }
 
 /**
@@ -418,52 +317,13 @@ export function deriveRaidReward(raid: RaidRecord, id: string, uid: string): [st
  * exactly what the raid staged. Resolves null when the raid was not
  * won by this player, or when they already claimed it
  */
-export async function claimRaidReward(user: User, id: string): Promise<Encounter | null> {
-  const raid = await getRaid(id);
+export async function claimRaidReward(id: string): Promise<EncounterRecord | null> {
+  return claimRewardOnServer(await getIdToken(), id);
+}
 
-  if (raid?.battle == null) {
-    return null;
-  }
-
-  const battle = await getBattle(raid.battle);
-
-  // Only the players who actually fielded a team are owed anything,
-  // and only from a raid that was won
-  if (
-    battle == null ||
-    battle.outcome !== BattleOutcome.Won ||
-    !battle.players.includes(user.uid)
-  ) {
-    return null;
-  }
-
-  const db = getFirebaseFirestore();
-  const ref = doc(db, RAID_REWARD_COLLECTION, `${id}:${user.uid}`);
-  const claimed = await runTransaction(db, async (transaction) => {
-    const existing = await transaction.get(ref);
-
-    if (existing.exists()) {
-      return false;
-    }
-    transaction.set(ref, { player: user.uid, raid: id });
-    return true;
-  });
-
-  if (!claimed) {
-    return null;
-  }
-
-  const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
-  const snapshot = new ChunkSnapshot(chunk, raid.timestamp);
-  // startEncounter keys the stored encounter by the player already,
-  // so the spawn id stays the raid's own
-  const [spawnId, spawn] = deriveRaidReward(raid, id, user.uid);
-
-  return startEncounter(user, snapshot, spawnId, spawn, {
-    type: EncounterType.Raid,
-    shadow: raid.kind === RaidKind.Shadow,
-    level: raid.kind === RaidKind.Shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
-  });
+async function claimRewardOnServer(token: string, id: string): Promise<EncounterRecord | null> {
+  'use server';
+  return claimRewardOnServerSide(await requireUid(token), id);
 }
 
 /**
@@ -484,63 +344,11 @@ export async function listClaimedRaids(uid: string): Promise<Set<string>> {
  * start finds it taken. Resolves the battle id, or null when the
  * caller is not the host, the raid already started, or nobody joined
  */
-export async function startRaid(user: User, id: string): Promise<string | null> {
-  const raid = await getRaid(id);
+export async function startRaid(id: string): Promise<string | null> {
+  return startRaidOnServer(await getIdToken(), id);
+}
 
-  if (raid == null || raid.host !== user.uid || raid.battle != null || raid.teams.length === 0) {
-    return null;
-  }
-
-  const teams = (await Promise.all(raid.teams.map(getTeam))).filter(
-    (team): team is TeamRecord => team != null,
-  );
-  // A team that fields nothing — every catch traded away, or a party
-  // written straight to the store naming pokemon its player does not
-  // own — drops out here, and its player is not counted among the
-  // fighters
-  const fielded = (
-    await Promise.all(
-      teams.map(async (team) => {
-        const snapshot = await createTeamSnapshot(team, PLAYER_ALLIANCE);
-
-        return snapshot == null ? null : ([team, snapshot] as [TeamRecord, string]);
-      }),
-    )
-  ).filter((entry): entry is [TeamRecord, string] => entry != null);
-
-  if (fielded.length === 0) {
-    return null;
-  }
-  const snapshots = fielded.map(([, snapshot]) => snapshot);
-
-  // The boss stands alone: one perfect-IV catch snapshot, no owner
-  const boss = await publishTeamSnapshot({
-    player: '',
-    alliance: BOSS_ALLIANCE,
-    catches: [createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow)],
-  });
-  const battle = await createBattle({
-    teams: [boss, ...snapshots],
-    players: [...new Set(fielded.map(([team]) => team.player))],
-    raid: id,
-    species: raid.species,
-    outcome: BattleOutcome.Unfinished,
-    startedAt: await syncServerClock(),
-  });
-  const db = getFirebaseFirestore();
-  const claimed = await runTransaction(db, async (transaction) => {
-    const ref = getRaidRef(id);
-    const current = (await transaction.get(ref)).data();
-
-    if (current == null || current.battle != null) {
-      return false;
-    }
-    transaction.set(ref, { ...current, battle });
-    return true;
-  });
-
-  if (!claimed) {
-    return (await getRaid(id))?.battle ?? null;
-  }
-  return battle;
+async function startRaidOnServer(token: string, id: string): Promise<string | null> {
+  'use server';
+  return startOnServer(await requireUid(token), id, await syncServerClock());
 }

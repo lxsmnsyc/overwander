@@ -1,26 +1,25 @@
 import type { User } from 'firebase/auth';
-import { arrayUnion, doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import AleaRNG from '../core/alea';
-import { BALL_ITEMS, type Items } from '../data/ids/items';
-import type { Encounter } from '../overworld/encounter';
+import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
   FEED_CATCH_BONUS,
   SafariState,
   ThrowResult,
   encounterKey,
 } from '../overworld/safari';
+import { recordCatch } from '../server/caught';
+import { requireUid } from '../server/firebase';
+import { consumeItem } from '../server/inventory';
+import { markFled } from '../server/overworld';
 import { asStringArray } from './__normalize';
-import { grantCatchCandy } from './candy';
-import { hasCaughtSpecies, recordCatch } from './caught';
+import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
+import { FLED_COLLECTION } from './collections';
+import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
-import { consumeItem, getInventory } from './inventory';
-
-/**
- * Per-user fled encounters at fled/{uid}: once an encounter flees
- * it disappears for that user and cannot be engaged again
- */
-const FLED_COLLECTION = 'fled';
+import { getInventory } from './inventory';
+import getIdToken from './session';
 
 /**
  * Open a safari session on an encounter for the signed-in user. The
@@ -30,8 +29,8 @@ const FLED_COLLECTION = 'fled';
  */
 export async function createSafariSession(
   user: User,
-  encounter: Encounter,
-): Promise<SafariSession> {
+  encounter: EncounterRecord,
+): Promise<SafariSession<EncounterRecord>> {
   const now = await syncServerClock();
   const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${now}`);
   // The Repeat Ball needs to know whether this species is already in
@@ -61,19 +60,11 @@ export async function countBalls(uid: string): Promise<number> {
     .reduce((total, entry) => total + entry.amount, 0);
 }
 
-export async function markFled(uid: string, encounter: Encounter): Promise<void> {
-  await setDoc(
-    doc(getFirebaseFirestore(), FLED_COLLECTION, uid),
-    { keys: arrayUnion(encounterKey(encounter)) },
-    { merge: true },
-  );
-}
-
 /**
  * Whether the encounter already fled from this user; the overworld
  * must not offer it again when true
  */
-export async function isEncounterFled(uid: string, encounter: Encounter): Promise<boolean> {
+export async function isEncounterFled(uid: string, encounter: EncounterRecord): Promise<boolean> {
   const snapshot = await getDoc(doc(getFirebaseFirestore(), FLED_COLLECTION, uid));
   const keys = new Set(asStringArray(snapshot.data()?.keys));
 
@@ -81,53 +72,91 @@ export async function isEncounterFled(uid: string, encounter: Encounter): Promis
 }
 
 /**
- * Throw the session's preferred ball: consumes one from the
- * inventory, rolls the catch, records a success into the catch
- * record and persists a flee. Resolves null when the session is
- * over or no ball of the preferred kind is carried
+ * Spend one ball of the kind the session is throwing. Resolves false
+ * when none is carried, in which case nothing is thrown
  */
-export async function throwBall(user: User, session: SafariSession): Promise<ThrowResult | null> {
+async function spendBall(token: string, ball: Balls): Promise<boolean> {
+  'use server';
+  return consumeItem(await requireUid(token), BALL_ITEMS[ball]);
+}
+
+/**
+ * Spend one feeding item. Resolves false when it is not carried
+ */
+async function spendFeed(token: string, item: Items): Promise<boolean> {
+  'use server';
+  return consumeItem(await requireUid(token), item);
+}
+
+/**
+ * Write down a successful catch. The server reads the encounter the
+ * player was actually shown and records that, so the pokemon in the
+ * record is the one the overworld staged — a client can report a
+ * catch it did not earn, but not a better pokemon than it met
+ */
+async function keepCatch(token: string, spawn: string, ball: Balls): Promise<string | null> {
+  'use server';
+  return recordCatch(await requireUid(token), spawn, ball, await syncServerClock());
+}
+
+/**
+ * Retire an encounter that fled. The key is recomputed server-side
+ * from the stored encounter
+ */
+async function retireEncounter(token: string, spawn: string): Promise<void> {
+  'use server';
+  await markFled(await requireUid(token), spawn);
+}
+
+/**
+ * Throw the session's preferred ball: spends one from the bag, rolls
+ * the catch, and has the server write down a success or a flight.
+ * Resolves null when the session is over or no ball of the preferred
+ * kind is carried
+ */
+export async function throwBall(
+  user: User,
+  session: SafariSession<EncounterRecord>,
+): Promise<ThrowResult | null> {
   if (session.state !== SafariState.Active) {
     return null;
   }
+
+  const token = await getIdToken(user);
 
   // Counted before the ball is spent, so "one left" means the ball
   // about to be thrown is the last one
   session.ballsLeft = await countBalls(user.uid);
 
-  if (!(await consumeItem(user.uid, BALL_ITEMS[session.ball]))) {
+  if (!(await spendBall(token, session.ball))) {
     return null;
   }
 
   const result = session.throwBall();
+  const spawn = session.encounter.spawn;
 
   if (result === ThrowResult.Caught) {
-    const caughtAt = await syncServerClock();
-
-    await recordCatch(user, session.encounter, session.ball, caughtAt);
-    // Every catch pays its family's candy, fourfold on the family's
-    // own day
-    await grantCatchCandy(user.uid, session.encounter.species, caughtAt);
+    await keepCatch(token, spawn, session.ball);
   } else if (result === ThrowResult.Fled) {
-    await markFled(user.uid, session.encounter);
+    await retireEncounter(token, spawn);
   }
   return result;
 }
 
 /**
- * Feed the encounter a catch-improving item from the inventory;
- * resolves false (consuming nothing) when the item has no feeding
- * effect or is not carried
+ * Feed the encounter a catch-improving item from the bag; resolves
+ * false (spending nothing) when the item has no feeding effect or is
+ * not carried
  */
 export async function feedEncounter(
   user: User,
-  session: SafariSession,
+  session: SafariSession<EncounterRecord>,
   item: Items,
 ): Promise<boolean> {
   if (session.state !== SafariState.Active || FEED_CATCH_BONUS[item] == null) {
     return false;
   }
-  if (!(await consumeItem(user.uid, item))) {
+  if (!(await spendFeed(await getIdToken(user), item))) {
     return false;
   }
   return session.feed(item);

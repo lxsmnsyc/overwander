@@ -2,32 +2,26 @@ import {
   type DocumentReference,
   type FirestoreDataConverter,
   type Unsubscribe,
-  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
   query,
-  updateDoc,
   where,
 } from 'firebase/firestore';
 import type { Species } from '../data/ids/species';
 import { asNumber, asString, asStringArray } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
+import { requireUid } from '../server/firebase';
+import BattleOutcome from './battle-outcome';
+import { finishBattle as finishOnServer } from '../server/raids';
+import { BATTLE_COLLECTION } from './collections';
+
+import getIdToken from './session';
 import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
 
-/**
- * How a battle ended
- */
-export const enum BattleOutcome {
-  /**
-   * Still being fought, or abandoned before it settled
-   */
-  Unfinished = 0,
-  Won = 1,
-  Lost = 2,
-}
+export { default as BattleOutcome } from './battle-outcome';
 
 /**
  * One fought battle at battles/{battleId}: the team snapshots that
@@ -57,8 +51,6 @@ export interface BattleRecord {
   startedAt: number;
 }
 
-const BATTLE_COLLECTION = 'battles';
-
 const converter: FirestoreDataConverter<BattleRecord> = {
   toFirestore: (record) => record,
   fromFirestore: (snapshot) => {
@@ -85,12 +77,11 @@ export function getBattleRef(id: string): DocumentReference<BattleRecord> {
   return doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
 }
 
-export async function createBattle(record: BattleRecord): Promise<string> {
-  const battles = collection(getFirebaseFirestore(), BATTLE_COLLECTION).withConverter(converter);
-  const ref = await addDoc(battles, record);
-
-  return ref.id;
-}
+/**
+ * Battles are created by the server when a raid starts — see
+ * [`src/server/raids.ts`](../server/raids.ts) — so the teams that
+ * enter one are the teams that were actually frozen for it
+ */
 
 export async function getBattle(id: string): Promise<BattleRecord | null> {
   const ref = doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
@@ -134,11 +125,23 @@ export function watchBattleHistory(
 }
 
 /**
- * Record how a battle ended. Every participant reports it; the
+ * Record how a battle ended. Every participant reports it and the
  * outcome they compute is the same, since the fight is deterministic
+ * — so the server takes the first report from someone who actually
+ * fielded a team and refuses every later one. A spectator settles
+ * nothing, and a stamped outcome cannot be rewritten
  */
-export async function finishBattle(id: string, outcome: BattleOutcome): Promise<void> {
-  await updateDoc(doc(getFirebaseFirestore(), BATTLE_COLLECTION, id), { outcome });
+export async function finishBattle(id: string, outcome: BattleOutcome): Promise<boolean> {
+  return finishBattleOnServer(await getIdToken(), id, outcome);
+}
+
+async function finishBattleOnServer(
+  token: string,
+  id: string,
+  outcome: BattleOutcome,
+): Promise<boolean> {
+  'use server';
+  return finishOnServer(await requireUid(token), id, outcome);
 }
 
 /**

@@ -6,7 +6,6 @@ import {
   doc,
   getDoc,
   onSnapshot,
-  runTransaction,
   setDoc,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from './firebase';
@@ -95,34 +94,11 @@ export function deriveProfileDefaults(user: User): Profile {
 }
 
 /**
- * Add gold to the user's balance. The read and the write share a
- * transaction so concurrent rewards cannot clobber each other
+ * The balance is currency, so it never moves from a browser: gold is
+ * granted and spent by the server in
+ * [`src/server/profile.ts`](../server/profile.ts), and the rules let
+ * a player write only their own nickname and avatar
  */
-export async function grantGold(uid: string, amount: number): Promise<void> {
-  await runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getProfileRef(uid);
-    const gold = (await transaction.get(ref)).data()?.gold ?? 0;
-
-    transaction.set(ref, { gold: gold + amount }, { merge: true });
-  });
-}
-
-/**
- * Spend gold; resolves false (and changes nothing) when the balance
- * cannot cover the amount
- */
-export async function spendGold(uid: string, amount: number): Promise<boolean> {
-  return runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getProfileRef(uid);
-    const gold = (await transaction.get(ref)).data()?.gold ?? 0;
-
-    if (gold < amount) {
-      return false;
-    }
-    transaction.set(ref, { gold: gold - amount }, { merge: true });
-    return true;
-  });
-}
 
 /**
  * The user's profile, created from the auth method's details on

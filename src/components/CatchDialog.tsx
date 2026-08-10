@@ -155,7 +155,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     setStatus(null);
-    useCandy(uid, catchId)
+    useCandy(catchId)
       .then(async (level) => {
         setStatus(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
         await refetch();
@@ -197,7 +197,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     setStatus(null);
-    (give ? giveItem(uid, catchId, item) : takeItem(uid, catchId, item))
+    (give ? giveItem(catchId, item) : takeItem(catchId, item))
       .then(async (moved) => {
         setStatus(
           moved
@@ -222,7 +222,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     setStatus(null);
-    evolveCatch(uid, catchId, into)
+    evolveCatch(catchId, into)
       .then(async (species) => {
         setStatus(
           species == null ? 'That evolution is no longer available.' : 'Evolution complete.',

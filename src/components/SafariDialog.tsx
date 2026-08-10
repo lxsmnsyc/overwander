@@ -2,6 +2,7 @@ import { For, type JSX, Show, createEffect, createResource, createSignal } from 
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import type { User } from 'firebase/auth';
 import { getInventory } from '../auth/inventory';
+import type { EncounterRecord } from '../auth/encounter-record';
 import { feedEncounter, throwBall } from '../auth/safari';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
@@ -43,7 +44,7 @@ export interface SafariDialogProps {
   /**
    * The open session, or null when no encounter is being met
    */
-  session: SafariSession | null;
+  session: SafariSession<EncounterRecord> | null;
   onClose: () => void;
 }
 
@@ -64,7 +65,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   // every action to re-read its state, turn count and bonus
   const [revision, setRevision] = createSignal(0);
 
-  const session = (): SafariSession | null => {
+  const session = (): SafariSession<EncounterRecord> | null => {
     revision();
     return props.session;
   };

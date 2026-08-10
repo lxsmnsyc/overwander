@@ -126,10 +126,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                   type="button"
                   disabled={record().teams.length === 0}
                   onClick={() => {
-                    act(
-                      async () => startRaid(props.user, props.raidId),
-                      'The raid could not be started.',
-                    );
+                    act(async () => startRaid(props.raidId), 'The raid could not be started.');
                   }}
                 >
                   Start
@@ -153,7 +150,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
         }}
         onSubmit={(catches) => {
           setPicking(false);
-          act(async () => joinRaid(props.user, props.raidId, catches), 'That team could not join.');
+          act(async () => joinRaid(props.raidId, catches), 'That team could not join.');
         }}
       />
     </>

@@ -59,7 +59,7 @@ rather than species, because a candy feeds any catch in its family.
 | `family` | `Families` | Numeric family id from the `Families` enum    |
 | `count`  | `number`   | How many are held; never goes below zero      |
 
-`useCandy(uid, catchId)` spends `getCandyCost(caught)` candies to raise a catch
+`useCandy(catchId)` spends `getCandyCost(caught)` candies to raise a catch
 by a level — one for an ordinary catch, two for a shadow. It reads
 the catch and the stack, then writes both **inside one transaction**, so a candy
 can never be spent without the level landing. It resolves the new level, or null
@@ -106,7 +106,7 @@ Private to the owning uid. Entries are only ever appended.
 
 ## Catch records
 
-Written by `recordCatch` in [`src/auth/caught.ts`](../src/auth/caught.ts). A
+Written by `recordCatch` in [`src/server/caught.ts`](../src/server/caught.ts). A
 catch is **one document** with a Firestore auto-id, so recording one is a single
 write. Its abilities, held items and ownership history were once three side
 stores keyed by that same id (`caughtAbilities`, `caughtItems`, `caughtOwners`);
@@ -161,7 +161,7 @@ pokemon before a trade) and writable only by the owner the document itself
 names.
 
 Held items move through `giveItem` and `takeItem` in
-[`src/auth/caught.ts`](../src/auth/caught.ts): each reads the catch and the
+[`src/server/caught.ts`](../src/server/caught.ts): each reads the catch and the
 inventory stack, then writes the stack and the catch's `items` **in one
 transaction**, so an item is never in the bag and on a pokemon at once, nor lost
 between them. Only items flagged `Holdable` can be handed over, and a catch
@@ -359,11 +359,11 @@ A team holds ids, so it follows whatever those catches become — until a battle
 freezes them.
 
 Catch ids are readable by any signed-in player, so a submitted party cannot be
-trusted on its word. `createTeam` rejects one that repeats a catch or names a
-catch the player does not own, checking the ids through `listOwned` in
-[`src/auth/caught.ts`](../src/auth/caught.ts) (a single `documentId() in […]`
-read). Because a client can also write a team document directly, ownership is
-checked **again** where it matters: `createTeamSnapshot` leaves out any catch
+trusted on its word. `joinRaid` in
+[`src/server/raids.ts`](../src/server/raids.ts) rejects one that repeats a catch
+or names a catch the player does not own — and the rules make `teams`
+server-only, so there is no way around that check. Ownership is still
+re-checked where it matters: freezing a team leaves out any catch
 whose `owner` no longer matches `team.player` — which also covers a catch traded
 away between joining the lobby and the host starting the raid — and resolves
 null when nothing survives, so `startRaid` drops that team rather than fielding
@@ -458,23 +458,55 @@ offset once and derives locally for the next minute. This covers snapshot
 window expiry, safari session seeds and `caughtAt` stamps, so a skewed device
 cannot shift the window it sees or the timestamps it writes.
 
+## Privileged writes
+
+Anything that creates or moves value is written by the server, not the browser.
+[`src/server/*`](../src/server) runs under the Firebase **Admin** SDK, whose
+writes bypass the rules; the client reaches it through `'use server'` functions
+that take the caller's Firebase ID token and resolve it with `requireUid`
+([`src/server/firebase.ts`](../src/server/firebase.ts)). A uid passed alongside
+a call is never trusted — only what the token proves.
+
+| Written on the server                                      | What the rules could not enforce                                                                                                                               |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `recordCatch`                                              | The record is built from `encounters/{spawnId}:{uid}`, so the pokemon written down is the one that was staged, not one the caller describes                    |
+| `grantItem` / `consumeItem`                                | Item stacks are currency; a client that could write them could mint Master Balls                                                                               |
+| `grantGold` / `spendGold`                                  | The same, for the balance                                                                                                                                      |
+| `grantCandy` / `useCandy`                                  | A candy buys a level, so minting candy mints levels                                                                                                            |
+| `giveItem` / `takeItem`                                    | The bag and the catch have to move together, in one transaction                                                                                                |
+| `evolveCatch`                                              | The criteria — level, held item, carried item — are cross-document                                                                                             |
+| `claimItemCache` / `claimBerryPatch` / `claimHiddenGrotto` | The reward derives from the chunk seed and the **stored** window; a claim against a cell the player is nowhere near, or a window that has passed, pays nothing |
+| `startEncounter` / `meetSpawn`                             | The spawn is read from the shared store and has to belong to the chunk's live window                                                                           |
+| `markFled`                                                 | The key is recomputed from the stored encounter                                                                                                                |
+| `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                  |
+| `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
+| `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
+| `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
+| `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
+
+Every module under `src/server` opens with `import 'server-only'`. SolidStart
+resolves that marker itself: an empty module on the server, and a **build
+failure** in the client bundle naming the file that reached across. The boundary
+is enforced by the build rather than by remembering where an import came from.
+
+Deploying needs `FIREBASE_SERVICE_ACCOUNT` (the service-account JSON) or
+application default credentials — see `.env.example`. Without it every
+privileged write refuses rather than falling back to an unauthenticated one.
+
+Two things stay client-side by design, and the rules carry them:
+
+- **Shared-world publishing** — the snapshot window and the spawn documents.
+  Any signed-in player may write them and the rules can only check shape, but
+  the rolls are deterministic from the chunk seed and the window, so an honest
+  client recomputes the same set and a dishonest one only lies to itself: the
+  server re-derives every reward from the seed regardless.
+- **Profile details** — nickname and avatar are the player's to set. The
+  balance in the same document is not, so the rules pin `gold`.
+
 ## Required security rules
 
-The client SDK holds every write path, so these rules are the only thing
-enforcing ownership. Two weak spots follow from that:
-
-- Any signed-in player can write a snapshot window or a spawn document, and the
-  rules can only check shape, not that the roll was honest.
-- Gold, item stacks and candy stacks are client-written, so the rules can only
-  confirm a player is editing their own, not that they earned them.
-  `profiles.gold`, `inventories.amount` and `candies.count` are therefore
-  player-settable in practice — and since a candy buys a level and an
-  evolution rewrites a species, so are `caught.level` and `caught.species`.
-  The evolution criteria are enforced in application code inside the
-  transaction, which a hand-rolled write bypasses.
-
-Moving currency, inventory and spawn publication behind server functions with
-the Admin SDK is the real fix; until then the rules below are the floor.
+With the writes above moved, the rules below are what the client is still
+allowed to do.
 
 ```txt
 rules_version = '2';
@@ -488,33 +520,33 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
-    // Public to read, owner writes only
+    // Public to read. A player sets their own details; the balance
+    // moves only on the server, so it may not change from a client
     match /profiles/{uid} {
       allow read: if signedIn();
-      allow write: if isOwner(uid);
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['nickname', 'avatar']);
+      allow delete: if false;
     }
 
-    // Private to the owner. The stack id is "{uid}:{item}", so the
-    // owner check reads the uid straight off the document id
+    // Item stacks, id "{uid}:{item}". Read by the owner, written only
+    // by the server: these are currency
     match /inventories/{stackId} {
       allow read: if signedIn() && stackId.split(':')[0] == request.auth.uid;
-      allow write: if signedIn()
-        && stackId.split(':')[0] == request.auth.uid
-        && request.resource.data.user == request.auth.uid
-        && request.resource.data.amount >= 0;
+      allow write: if false;
     }
-    // Candy stacks, id "{uid}:{family}". The level a candy buys is
-    // written to caught/{catchId} by the same transaction, which the
-    // caught rules already permit for the owner
+    // Candy stacks, id "{uid}:{family}" — the same, since a candy
+    // buys a level
     match /candies/{stackId} {
       allow read: if signedIn() && stackId.split(':')[0] == request.auth.uid;
-      allow write: if signedIn()
-        && stackId.split(':')[0] == request.auth.uid
-        && request.resource.data.user == request.auth.uid
-        && request.resource.data.count >= 0;
+      allow write: if false;
     }
+    // Fled encounters are recomputed from the stored encounter
     match /fled/{uid} {
-      allow read, write: if isOwner(uid);
+      allow read: if isOwner(uid);
+      allow write: if false;
     }
     match /buddies/{uid} {
       allow read: if isOwner(uid);
@@ -526,11 +558,13 @@ service cloud.firestore {
         ).data.owner;
     }
 
-    // Catch records: readable by all, mutable by the current owner
+    // Catch records: readable by every signed-in player (a trade
+    // starts with looking), written only by the server. Catching,
+    // levelling, evolving and handing an item over all go through
+    // src/server/*
     match /caught/{catchId} {
       allow read: if signedIn();
-      allow create: if isOwner(request.resource.data.owner);
-      allow update, delete: if isOwner(resource.data.owner);
+      allow write: if false;
     }
 
     // Shared overworld state: everyone reads, signed-in players publish
@@ -545,71 +579,53 @@ service cloud.firestore {
       allow write: if signedIn();
     }
 
-    // Per-player derivations, keyed by "{parentId}:{uid}"
+    // Per-player derivations and claim markers, keyed by
+    // "{parentId}:{uid}". The player reads their own; only the server
+    // writes them, since each one is a reward changing hands
     match /encounters/{encounterId} {
-      allow read, write: if signedIn()
-        && encounterId.split(':')[1] == request.auth.uid
-        && request.resource.data.player == request.auth.uid;
+      allow read: if signedIn() && encounterId.split(':')[1] == request.auth.uid;
+      allow write: if false;
     }
     match /cacheClaims/{claimId} {
       allow read: if signedIn();
-      allow create: if signedIn()
-        && claimId.split(':')[1] == request.auth.uid
-        && request.resource.data.player == request.auth.uid;
-      allow update, delete: if false;
+      allow write: if false;
     }
-    // Raid lobbies and the records a fight freezes. Everything here
-    // is readable by the lobby, and the rules can only check the
-    // shape — the host check on starting lives in application code
+    // Raid lobbies: a player opens one and walks out of one, which
+    // is why create and the teams array stay client-writable. Joining
+    // (which forms a team), starting, and clearing are the server's
     match /raids/{raidId} {
       allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.host == request.auth.uid;
-      allow update: if signedIn();
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teams']);
       allow delete: if false;
     }
     match /raidRewards/{claimId} {
       allow read: if signedIn();
-      allow create: if signedIn()
-        && claimId.split(':')[1] == request.auth.uid
-        && request.resource.data.player == request.auth.uid;
-      allow update, delete: if false;
+      allow write: if false;
     }
+    // Teams, the snapshots a fight freezes, and the battles
+    // themselves are all written by the server: a party names catch
+    // ids, and an outcome decides who is owed a legendary
     match /teams/{teamId} {
       allow read: if signedIn();
-      allow create: if signedIn()
-        && request.resource.data.player == request.auth.uid
-        && request.resource.data.catches.size() <= 6;
-      allow update, delete: if signedIn() && resource.data.player == request.auth.uid;
+      allow write: if false;
     }
     match /teamSnapshots/{snapshotId} {
       allow read: if signedIn();
-      allow create: if signedIn();
-      // A snapshot is frozen: rewriting it would change units that
-      // are already fighting
-      allow update, delete: if false;
+      allow write: if false;
     }
     match /battles/{battleId} {
       allow read: if signedIn();
-      allow create: if signedIn() && request.auth.uid in request.resource.data.players;
-      // Only the outcome ever moves, and only for a participant
-      allow update: if signedIn()
-        && request.auth.uid in resource.data.players
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['outcome']);
-      allow delete: if false;
+      allow write: if false;
     }
     match /grottoClaims/{claimId} {
       allow read: if signedIn();
-      allow create: if signedIn()
-        && claimId.split(':')[1] == request.auth.uid
-        && request.resource.data.player == request.auth.uid;
-      allow update, delete: if false;
+      allow write: if false;
     }
     match /berryClaims/{claimId} {
       allow read: if signedIn();
-      allow create: if signedIn()
-        && claimId.split(':')[1] == request.auth.uid
-        && request.resource.data.player == request.auth.uid;
-      allow update, delete: if false;
+      allow write: if false;
     }
   }
 }

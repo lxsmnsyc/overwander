@@ -214,7 +214,9 @@ export function encounterKey(encounter: Encounter): string {
  * hooks in at Post. Inventory and persistence live elsewhere, and
  * the random source is injected so every roll is reproducible
  */
-export default class SafariSession extends EventEngine<SafariEventMap> {
+export default class SafariSession<
+  E extends Encounter = Encounter,
+> extends EventEngine<SafariEventMap> {
   state = SafariState.Active;
 
   /**
@@ -242,7 +244,7 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
   ballsLeft = 0;
 
   constructor(
-    public readonly encounter: Encounter,
+    public readonly encounter: E,
     public readonly random: () => number,
     public readonly context: SafariContext = {},
   ) {

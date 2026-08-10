@@ -2,41 +2,35 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import type { User } from 'firebase/auth';
 import {
   type FirestoreDataConverter,
   type Unsubscribe,
   collection,
   doc,
-  getDoc,
   getDocs,
   onSnapshot,
   query,
   runTransaction,
-  setDoc,
   where,
   writeBatch,
 } from 'firebase/firestore';
-import AleaRNG from '../core/alea';
-import type Abilities from '../data/ids/abilities';
-import type Biome from '../data/ids/biome';
-import type { Moves } from '../data/ids/moves';
-import type Natures from '../data/ids/natures';
-import type { Genders, Species } from '../data/ids/species';
+import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
-import deriveEncounter, {
-  type Encounter,
-  type EncounterOptions,
-  type EncounterType,
-  SHINY_CHARM_BOOST,
-} from '../overworld/encounter';
-import { Items } from '../data/ids/items';
-import { asNumber, asNumberArray, asStatRecord, asString } from './__normalize';
-import { isBuddyHolding } from './buddy';
+import { asNumber, asString } from './__normalize';
+import { requireUid } from '../server/firebase';
+import {
+  claimBerryPatch as claimBerryOnServerSide,
+  claimItemCache as claimCacheOnServerSide,
+  claimHiddenGrotto as claimGrottoOnServerSide,
+  meetSpawn,
+} from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
+import { SNAPSHOT_COLLECTION, SPAWN_COLLECTION } from './collections';
+import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
-import { grantItem } from './inventory';
+import getIdToken from './session';
 
 /**
  * One shared snapshot record per chunk at snapshots/{chunkSeed}:
@@ -68,23 +62,6 @@ export interface SpawnRecord {
   traitValue: number;
 }
 
-/**
- * A player's view of a spawn at encounters/{spawnId:playerId}: the
- * derived traits (shininess, gender, ability, ...) that differ per
- * player live here
- */
-export interface EncounterRecord extends Encounter {
-  spawn: string;
-  player: string;
-}
-
-const SNAPSHOT_COLLECTION = 'snapshots';
-const SPAWN_COLLECTION = 'spawns';
-const ENCOUNTER_COLLECTION = 'encounters';
-const CACHE_CLAIM_COLLECTION = 'cacheClaims';
-const GROTTO_CLAIM_COLLECTION = 'grottoClaims';
-const BERRY_CLAIM_COLLECTION = 'berryClaims';
-
 const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   toFirestore: (record) => record,
   fromFirestore: (snapshot) => {
@@ -105,34 +82,6 @@ const spawnConverter: FirestoreDataConverter<SpawnRecord> = {
       species: asNumber(data.species) as Species,
       individualValue: asNumber(data.individualValue),
       traitValue: asNumber(data.traitValue),
-    };
-  },
-};
-
-const encounterConverter: FirestoreDataConverter<EncounterRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return {
-      spawn: asString(data.spawn),
-      player: asString(data.player),
-      type: asNumber(data.type) as EncounterType,
-      species: asNumber(data.species) as Species,
-      level: asNumber(data.level),
-      individualValue: asNumber(data.individualValue),
-      traitValue: asNumber(data.traitValue),
-      ivs: asStatRecord(data.ivs),
-      nature: asNumber(data.nature) as Natures,
-      ability: asNumber(data.ability) as Abilities,
-      gender: asNumber(data.gender) as Genders,
-      shiny: data.shiny === true,
-      shadow: data.shadow === true,
-      moves: asNumberArray(data.moves) as Moves[],
-      timestamp: asNumber(data.timestamp),
-      x: asNumber(data.x),
-      y: asNumber(data.y),
-      biome: asNumber(data.biome) as Biome,
     };
   },
 };
@@ -319,173 +268,112 @@ export async function visitChunk(chunk: Chunk, count: number): Promise<[string, 
 }
 
 /**
- * Interact with an item cache landmark: the window's reward lands
- * in the player's inventory. A claim marker (cache cell + window +
- * player) guards the grant, so each cache pays a player once per
- * window — an expired window's cache regenerates and can be claimed
- * anew. Resolves the granted item, or null when there is nothing to
- * claim (no cache on the cell, or already claimed this window)
+ * What a landmark or a spawn is worth is decided by the server: the
+ * reward derives from the chunk seed and the shared window, and both
+ * of those are read there rather than described by the caller. A
+ * client that asks for a cell it is nowhere near, or a window that
+ * has passed, is told there is nothing to claim.
+ *
+ * Each of the wrappers below carries the player's token; the uid is
+ * whatever that token proves, never what the call says.
  */
-export async function claimItemCache(
-  user: User,
-  snapshot: ChunkSnapshot,
+
+/**
+ * Interact with an item cache landmark: the window's reward lands in
+ * the player's bag. A claim marker (cache cell + window + player)
+ * guards the grant, so each cache pays a player once per window — an
+ * expired window's cache regenerates and can be claimed anew.
+ * Resolves the granted item, or null when there is nothing to claim
+ */
+export async function claimItemCache(snapshot: ChunkSnapshot, cell: number): Promise<Items | null> {
+  return claimCacheOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+}
+
+async function claimCacheOnServer(
+  token: string,
+  x: number,
+  y: number,
   cell: number,
 ): Promise<Items | null> {
-  const item = snapshot.getItemCaches().get(cell);
-
-  if (item == null) {
-    return null;
-  }
-
-  const db = getFirebaseFirestore();
-  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$${cell}:${user.uid}`;
-  const ref = doc(db, CACHE_CLAIM_COLLECTION, id);
-  const claimed = await runTransaction(db, async (transaction) => {
-    const existing = await transaction.get(ref);
-
-    if (existing.exists()) {
-      return false;
-    }
-    transaction.set(ref, { player: user.uid, item });
-    return true;
-  });
-
-  if (!claimed) {
-    return null;
-  }
-  await grantItem(user.uid, item);
-  return item;
+  'use server';
+  return claimCacheOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
 }
 
 /**
- * Pick a berry patch: the window's berry lands in the player's bag.
- * A claim marker (patch cell + window + player) guards the grant, so
- * each patch feeds a player once per window and fruits again with
- * the next one. Resolves the berry, or null when there is nothing to
- * pick (no patch on the cell, or already picked this window)
+ * Pick a berry patch: the window's berry lands in the player's bag,
+ * once per window, guarded the same way a cache is
  */
 export async function claimBerryPatch(
-  user: User,
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<Items | null> {
-  const berry = snapshot.getBerryPatches().get(cell);
+  return claimBerryOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+}
 
-  if (berry == null) {
-    return null;
-  }
-
-  const db = getFirebaseFirestore();
-  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$berry${cell}:${user.uid}`;
-  const ref = doc(db, BERRY_CLAIM_COLLECTION, id);
-  const claimed = await runTransaction(db, async (transaction) => {
-    const existing = await transaction.get(ref);
-
-    if (existing.exists()) {
-      return false;
-    }
-    transaction.set(ref, { player: user.uid, item: berry });
-    return true;
-  });
-
-  if (!claimed) {
-    return null;
-  }
-  await grantItem(user.uid, berry);
-  return berry;
+async function claimBerryOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+): Promise<Items | null> {
+  'use server';
+  return claimBerryOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
 }
 
 /**
- * What a hidden grotto yielded: either an item that already landed
- * in the inventory, or a pokemon to meet — the spawn tuple and the
- * id an encounter would be stored under
+ * What a hidden grotto yielded: either an item that already landed in
+ * the bag, or the encounter the player now stands in
  */
 export type GrottoClaim =
   | { kind: 'item'; item: Items }
-  | { kind: 'encounter'; id: string; spawn: Spawn };
+  | { kind: 'encounter'; encounter: EncounterRecord };
 
 /**
- * Interact with a hidden grotto landmark. Like an item cache, a
- * claim marker (grotto cell + window + player) guards it, so each
- * grotto yields to a player once per window and regenerates with the
- * next one. An item reward lands in the inventory here; a pokemon
- * reward comes back as a spawn tuple for the caller to meet through
- * startEncounter. Resolves null when there is nothing to claim
+ * Interact with a hidden grotto landmark. An item lands in the bag;
+ * a pokemon is staged as an encounter of its own, rolled from the
+ * chunk, window and cell so every visitor of that grotto meets the
+ * same individual. Resolves null when there is nothing to claim
  */
 export async function claimHiddenGrotto(
-  user: User,
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<GrottoClaim | null> {
-  const reward = snapshot.getHiddenGrottos().get(cell);
+  return claimGrottoOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, cell);
+}
 
-  if (reward == null) {
-    return null;
-  }
-
-  const db = getFirebaseFirestore();
-  const key = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$grotto${cell}`;
-  const ref = doc(db, GROTTO_CLAIM_COLLECTION, `${key}:${user.uid}`);
-  const claimed = await runTransaction(db, async (transaction) => {
-    const existing = await transaction.get(ref);
-
-    if (existing.exists()) {
-      return false;
-    }
-    transaction.set(ref, { player: user.uid, kind: reward.kind });
-    return true;
-  });
-
-  if (!claimed) {
-    return null;
-  }
-
-  if (reward.kind === 'item') {
-    await grantItem(user.uid, reward.item);
-    return { kind: 'item', item: reward.item };
-  }
-
-  // The grotto's pokemon needs the two rolls a snapshot spawn would
-  // have; they derive from the same chunk, window and cell, so every
-  // observer of this grotto meets the same individual
-  const rng = new AleaRNG(`${snapshot.chunk.seed}${snapshot.timestamp}grotto${cell}spawn`);
-
-  return { kind: 'encounter', id: key, spawn: [reward.species, rng.int32(), rng.int32()] };
+async function claimGrottoOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+): Promise<GrottoClaim | null> {
+  'use server';
+  return claimGrottoOnServerSide(await requireUid(token), x, y, cell, await syncServerClock());
 }
 
 /**
- * Interact with a spawn: it becomes this player's encounter. The
- * per-player derivation (shininess, gender, ability, nature, ...)
- * is stored at encounters/{spawnId:playerId} on first interaction
- * and returned as-is afterwards, so each player meets their own
- * version of the same spawn
+ * Interact with one of the chunk's published spawns: it becomes this
+ * player's encounter. The per-player derivation (shininess, gender,
+ * ability, nature, ...) is stored at encounters/{spawnId}:{playerId}
+ * on first interaction and returned as-is afterwards, so a meeting
+ * cannot be re-rolled into a better one by re-entering it.
+ *
+ * Resolves null when the spawn is not standing in that chunk's live
+ * window
  */
 export async function startEncounter(
-  user: User,
   snapshot: ChunkSnapshot,
-  id: string,
-  spawn: Spawn,
-  options: EncounterOptions = {},
-): Promise<Encounter> {
-  const ref = doc(getFirebaseFirestore(), ENCOUNTER_COLLECTION, `${id}:${user.uid}`).withConverter(
-    encounterConverter,
-  );
-  const existing = (await getDoc(ref)).data();
+  spawn: string,
+): Promise<EncounterRecord | null> {
+  return meetSpawnOnServer(await getIdToken(), snapshot.chunk.x, snapshot.chunk.y, spawn);
+}
 
-  if (existing != null) {
-    return existing;
-  }
-
-  // Snapshot spawns are wild meetings; a raid reward carries its own
-  // type (raid encounters never flee) and, from a shadow raid, its
-  // permanent Shadow ability. A buddy holding the Shiny Charm lifts
-  // the odds of every meeting the player has
-  const charm = await isBuddyHolding(user.uid, Items.ShinyCharm);
-  const encounter = deriveEncounter(snapshot, spawn, user.uid, {
-    ...options,
-    shinyBoost: (options.shinyBoost ?? 1) * (charm ? SHINY_CHARM_BOOST : 1),
-  });
-
-  await setDoc(ref, { ...encounter, spawn: id, player: user.uid });
-  return encounter;
+async function meetSpawnOnServer(
+  token: string,
+  x: number,
+  y: number,
+  spawn: string,
+): Promise<EncounterRecord | null> {
+  'use server';
+  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock());
 }

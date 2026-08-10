@@ -10,7 +10,7 @@ import {
   onMount,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
-import { RaidKind, claimRaidReward, enterRaid } from '../auth/raids';
+import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   type SpawnRecord,
@@ -315,7 +315,11 @@ export default function OverworldTab(): JSX.Element {
       const lobby = await enterRaid(user, loaded.snapshot, at, kind);
 
       if (lobby == null) {
-        return 'The raid lobby is empty this hour.';
+        // Nothing to walk into: either the hour stages no raid here,
+        // or the player has no pokemon to stage one with
+        return (await canJoinRaids(user.uid))
+          ? 'The raid lobby is empty this hour.'
+          : 'You need a pokemon of your own to raid — you can only watch a raid already under way.';
       }
       const [id, record] = lobby;
 

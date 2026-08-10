@@ -231,6 +231,20 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
 }
 
 /**
+ * Whether the user owns any pokemon at all. Reads a single document
+ * rather than the whole collection — a raid asks this of everyone who
+ * walks in, and the answer is a yes or no
+ */
+export async function hasAnyCaught(owner: string): Promise<boolean> {
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
+    caughtConverter,
+  );
+  const snapshot = await getDocs(query(caught, where('owner', '==', owner), limit(1)));
+
+  return !snapshot.empty;
+}
+
+/**
  * Whether the user already owns a pokemon of the species. Reads a
  * single document, since the answer is a yes or no — the Repeat
  * Ball's condition

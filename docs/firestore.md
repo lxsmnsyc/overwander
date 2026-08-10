@@ -320,6 +320,15 @@ together — a player either opens the lobby or joins the one already there.
 two players joining at once cannot overwrite each other. `startRaid` writes
 `battle` inside a transaction, so a second start finds it taken.
 
+A raid is fought with pokemon of one's own, so `canJoinRaids(uid)` —
+`hasAnyCaught` in [`src/auth/caught.ts`](../src/auth/caught.ts), a single
+`limit(1)` read — gates taking part. A player who owns nothing neither opens a
+lobby nor restages a failed one (`enterRaid` resolves the standing lobby, or
+null when there is none) and `joinRaid` refuses their team. They may still watch:
+walking in on a running raid opens it as a replay, which settles nothing and
+pays nothing. Hosting counts as taking part — an empty lobby nobody can start is
+worse than no lobby.
+
 `listLiveRaids(raidTimestamp)` queries `where('timestamp', '==', …)` and keeps
 the lobbies that are neither started nor cleared — that is the Raids tab.
 

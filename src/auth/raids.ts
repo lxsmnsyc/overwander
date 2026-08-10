@@ -37,6 +37,7 @@ import {
 } from '../overworld/raid';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
 import { BattleOutcome, createBattle, getBattle, getBattleRef } from './battles';
+import { hasAnyCaught } from './caught';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 import { startEncounter } from './snapshots';
@@ -193,6 +194,17 @@ export function watchLiveRaids(
 }
 
 /**
+ * Whether the player may bring a party into a raid at all. A raid is
+ * fought with pokemon of one's own, so a player who owns none has
+ * nothing to field: they may watch a raid, and nothing more. Hosting
+ * counts as taking part — an empty lobby nobody can start is worse
+ * than no lobby
+ */
+export async function canJoinRaids(uid: string): Promise<boolean> {
+  return hasAnyCaught(uid);
+}
+
+/**
  * How long an unsettled raid battle holds its landmark. A fight is
  * over in minutes; one still unfinished after this was walked out on,
  * and an abandoned party is not a beaten boss
@@ -255,6 +267,9 @@ export async function enterRaid(
   // A failed raid reopens against the same clock the battle was
   // stamped with, so an abandoned fight cannot hold the landmark
   const now = await syncServerClock();
+  // A player with no pokemon of their own stages nothing: they take
+  // whatever lobby is already standing, as a spectator
+  const staging = await canJoinRaids(user.uid);
 
   // One landmark stages one raid at a time: the arrival that finds no
   // lobby opens it and hosts, and every arrival after adopts what is
@@ -289,11 +304,18 @@ export async function enterRaid(
         return [id, existing] as [string, RaidRecord];
       }
       // The boss survived, so the landmark is open again: the lobby
-      // is restaged for the arrival, on the hour's same roll
+      // is restaged for the arrival, on the hour's same roll. A
+      // spectator restages nothing and watches the fight that failed
+      if (!staging) {
+        return [id, existing] as [string, RaidRecord];
+      }
       transaction.set(ref, fresh);
       return [id, fresh] as [string, RaidRecord];
     }
 
+    if (!staging) {
+      return null;
+    }
     transaction.set(ref, fresh);
     return [id, fresh] as [string, RaidRecord];
   });
@@ -350,12 +372,13 @@ export async function clearRaid(id: string): Promise<void> {
  * Bring a party into the lobby. The team is stored on its own and
  * its id appended to the raid, so two players joining at once cannot
  * overwrite each other. Resolves the team id, or null when the raid
- * has already started or the party is not a legal team
+ * has already started, the player owns no pokemon to field, or the
+ * party is not a legal team
  */
 export async function joinRaid(user: User, id: string, catches: string[]): Promise<string | null> {
   const raid = await getRaid(id);
 
-  if (raid == null || raid.battle != null) {
+  if (raid == null || raid.battle != null || !(await canJoinRaids(user.uid))) {
     return null;
   }
 

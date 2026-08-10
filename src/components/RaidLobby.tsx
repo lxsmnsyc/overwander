@@ -3,6 +3,7 @@ import { For, type JSX, Show, createEffect, createResource, createSignal, from }
 import {
   RaidKind,
   type RaidRecord,
+  canJoinRaids,
   joinRaid,
   leaveRaid,
   startRaid,
@@ -40,6 +41,13 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     () => raid()?.teams ?? null,
     async (ids) =>
       (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
+  );
+
+  // A player with no pokemon of their own can stand in the lobby and
+  // watch, but has nothing to field
+  const [canJoin] = createResource(
+    () => props.user.uid,
+    async (uid) => canJoinRaids(uid),
   );
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
@@ -98,15 +106,21 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
               </ul>
             </Show>
 
+            <Show when={canJoin() === false}>
+              <p>You need a pokemon of your own to fight — you can only watch this one.</p>
+            </Show>
+
             <p>
-              <button
-                type="button"
-                onClick={() => {
-                  setPicking(true);
-                }}
-              >
-                Form a team
-              </button>
+              <Show when={canJoin() !== false}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPicking(true);
+                  }}
+                >
+                  Form a team
+                </button>
+              </Show>
               <Show when={isHost()}>
                 <button
                   type="button"

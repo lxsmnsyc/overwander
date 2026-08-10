@@ -59,9 +59,14 @@ function zeroEffortValues(): Record<Stats, number> {
  * same shape as a player's party. Its individual values are perfect
  * and its effort values zero; the nature and ability come from the
  * raid's trait value, which every player in the lobby shares. It
- * belongs to no catch record, so its `caught` id is empty
+ * belongs to no catch record, so its `caught` id is empty. A shadow
+ * boss carries the Shadow ability on top of the Boss one
  */
-export function createRaidBossSnapshot(species: Species, traitValue: number): CatchSnapshot {
+export function createRaidBossSnapshot(
+  species: Species,
+  traitValue: number,
+  shadow = false,
+): CatchSnapshot {
   return {
     caught: '',
     species,
@@ -77,7 +82,9 @@ export function createRaidBossSnapshot(species: Species, traitValue: number): Ca
     // The Boss ability is what makes it a raid: the health pool, the
     // stage immunities and the sweeping single-target moves all ride
     // on it, alongside the species' own rolled ability
-    abilities: [Abilities.Boss, deriveAbility(species, traitValue)],
+    abilities: shadow
+      ? [Abilities.Boss, Abilities.Shadow, deriveAbility(species, traitValue)]
+      : [Abilities.Boss, deriveAbility(species, traitValue)],
     items: [],
   };
 }
@@ -128,12 +135,12 @@ export interface RaidBattle {
  * side — the boss stands in its own
  */
 export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]): RaidBattle {
-  // The boss carries the Boss ability alongside its own rolled one,
-  // so the per-unit ability limit has to leave room for both
+  // The boss carries Boss (and, in a shadow raid, Shadow) alongside
+  // its own rolled ability, so the per-unit limit has to fit all three
   const battle = createBattle(battleId, {
     mode: BattleModes.Raid,
     realtime: true,
-    limits: { abilities: 2 },
+    limits: { abilities: 3 },
   });
   const alliances = new Map<number, Alliance>();
   const units = new Map<number, Unit[]>();

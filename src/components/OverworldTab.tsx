@@ -10,7 +10,7 @@ import {
   onMount,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
-import { deriveRaidReward, enterRaid } from '../auth/raids';
+import { RaidKind, deriveRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   claimHiddenGrotto,
@@ -251,8 +251,9 @@ export default function OverworldTab(): JSX.Element {
       }
       return meet(user, loaded.snapshot, claim.id, claim.spawn);
     }
-    if (landmark === Landmark.LegendaryRaid) {
-      const lobby = await enterRaid(user, loaded.snapshot, at);
+    if (landmark === Landmark.LegendaryRaid || landmark === Landmark.ShadowRaid) {
+      const kind = landmark === Landmark.ShadowRaid ? RaidKind.Shadow : RaidKind.Legendary;
+      const lobby = await enterRaid(user, loaded.snapshot, at, kind);
 
       if (lobby == null) {
         return 'The raid lobby is empty this hour.';
@@ -346,6 +347,9 @@ export default function OverworldTab(): JSX.Element {
     }
     if (landmark === Landmark.LegendaryRaid) {
       return 'R';
+    }
+    if (landmark === Landmark.ShadowRaid) {
+      return 'S';
     }
     return '';
   };

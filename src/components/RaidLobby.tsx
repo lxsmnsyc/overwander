@@ -1,6 +1,6 @@
 import type { User } from 'firebase/auth';
 import { For, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
-import { getRaid, joinRaid, leaveRaid, startRaid } from '../auth/raids';
+import { RaidKind, getRaid, joinRaid, leaveRaid, startRaid } from '../auth/raids';
 import { getTeam } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 import TeamPickerDialog from './TeamPickerDialog';
@@ -64,7 +64,10 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
       <Show when={raid()} fallback={<p>Loading raid…</p>}>
         {(record) => (
           <>
-            <h3>{getSpeciesData(record().species).name} Raid</h3>
+            <h3>
+              {record().kind === RaidKind.Shadow ? 'Shadow ' : ''}
+              {getSpeciesData(record().species).name} Raid
+            </h3>
             <p>{isHost() ? 'You are hosting this raid.' : 'Waiting for the host.'}</p>
 
             <h4>Teams</h4>

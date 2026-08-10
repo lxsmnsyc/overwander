@@ -1,7 +1,7 @@
 import type { User } from 'firebase/auth';
 import { For, type JSX, Show, createResource } from 'solid-js';
 import { syncServerClock } from '../auth/clock';
-import { listLiveRaids } from '../auth/raids';
+import { RaidKind, listLiveRaids } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
 import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
@@ -56,6 +56,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
                             game.setRaid(id);
                           }}
                         >
+                          {raid.kind === RaidKind.Shadow ? 'Shadow ' : ''}
                           {getSpeciesData(raid.species).name} · chunk {raid.chunk.x}, {raid.chunk.y}{' '}
                           · {raid.teams.length} team
                           {raid.teams.length === 1 ? '' : 's'}

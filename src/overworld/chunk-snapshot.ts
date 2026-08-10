@@ -32,6 +32,13 @@ export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 export const RAID_INTERVAL = 60 * 60 * 1000;
 
 /**
+ * How often a shadow raid reaches past the biome's rare species and
+ * stages a legendary instead — one draw in eight, the same odds the
+ * rarer spawn bands run on
+ */
+export const SHADOW_RAID_LEGENDARY_CHANCE = 1 / 8;
+
+/**
  * The legendary a raid lobby is staging, and the 32-bit trait value
  * its nature and ability derive from
  */
@@ -217,6 +224,45 @@ export default class ChunkSnapshot {
       this.raids = raids;
     }
     return this.raids;
+  }
+
+  private shadowRaids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The hour's shadow raids, keyed by the landmark cell. A shadow
+   * raid usually stages one of the biome's rare species, but one
+   * draw in eight reaches the legendary pool instead — the same odds
+   * the rarer bands use everywhere else. A cell with nothing to
+   * stage in either pool holds no raid this hour
+   */
+  getShadowRaids(): Map<number, RaidRoll> {
+    if (this.shadowRaids == null) {
+      const raids = new Map<number, RaidRoll>();
+      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
+      const legendaries = pool.special.filter((entry) => isLegendarySpecies(entry.species));
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.ShadowRaid) {
+          continue;
+        }
+
+        const rng = new AleaRNG(`${this.chunk.seed}${this.raidTimestamp}shadow${cell}`);
+        // The draws land in order: the pool, the species within it,
+        // then the trait value its nature and ability derive from
+        const legendary = rng.random() < SHADOW_RAID_LEGENDARY_CHANCE;
+        const entries = legendary && legendaries.length > 0 ? legendaries : pool.rare;
+
+        if (entries.length === 0) {
+          continue;
+        }
+
+        const entry = entries[Math.floor(rng.random() * entries.length)];
+
+        raids.set(cell, { species: entry.species, traitValue: rng.int32() });
+      }
+      this.shadowRaids = raids;
+    }
+    return this.shadowRaids;
   }
 
   private hiddenGrottos: Map<number, GrottoReward> | null = null;

@@ -13,9 +13,13 @@ const enum Landmark {
   HiddenGrotto = 1,
   /**
    * A lobby that stages legendary raid encounters
-   * TODO: behavior
    */
   LegendaryRaid = 2,
+  /**
+   * A lobby staging a shadow raid: usually a rare local species,
+   * occasionally a legendary, and always a shadow boss
+   */
+  ShadowRaid = 3,
 }
 
 export default Landmark;
@@ -27,6 +31,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.ItemCache,
   Landmark.HiddenGrotto,
   Landmark.LegendaryRaid,
+  Landmark.ShadowRaid,
 ];
 
 /**
@@ -36,4 +41,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'Item Cache',
   [Landmark.HiddenGrotto]: 'Hidden Grotto',
   [Landmark.LegendaryRaid]: 'Legendary Raid',
+  [Landmark.ShadowRaid]: 'Shadow Raid',
 };

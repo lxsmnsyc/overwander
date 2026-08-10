@@ -239,21 +239,29 @@ same individual; the caller passes it to `startEncounter` under the id
 
 ## Raids and battles
 
-A legendary raid runs on its own hour-long clock (`RAID_INTERVAL` in
+Raids run on their own hour-long clock (`RAID_INTERVAL` in
 [`src/overworld/chunk-snapshot.ts`](../src/overworld/chunk-snapshot.ts)) rather
 than the 5-minute spawn window, so a lobby stands long enough to gather a party.
-The legendary is drawn from the chunk biome's special tier for the raid hour's
-time of day, filtered to legendaries — mythicals are never staged.
+There are two landmark kinds:
 
-### `raids/{chunkSeed}@{raidTimestamp}$raid{cell}`
+- **Legendary raids** draw from the chunk biome's special tier for the raid
+  hour's time of day, filtered to legendaries — mythicals are never staged.
+- **Shadow raids** draw from the biome's rare band, except one draw in eight
+  (`SHADOW_RAID_LEGENDARY_CHANCE`) which reaches the legendary pool instead.
+  Their boss carries the `Shadow` ability alongside `Boss`.
+
+### `raids/{chunkSeed}@{raidTimestamp}${kind}{cell}`
 
 Written by `enterRaid` in [`src/auth/raids.ts`](../src/auth/raids.ts). The id is
 derived, so every player who walks onto the landmark in the same hour joins the
-lobby that is already standing; the first to arrive hosts it.
+lobby that is already standing; the first to arrive hosts it. The kind tag is
+`raid` for a legendary raid and `shadow` for a shadow one, so the two landmark
+types never collide on a cell.
 
 | Field        | Type             | Notes                                                       |
 | ------------ | ---------------- | ----------------------------------------------------------- |
-| `species`    | `Species`        | The legendary being staged                                  |
+| `kind`       | `RaidKind`       | Legendary (0) or Shadow (1)                                 |
+| `species`    | `Species`        | What is being staged                                        |
 | `traitValue` | `number`         | 32-bit roll the boss' nature and ability derive from        |
 | `host`       | `string`         | Only this uid may start the raid                            |
 | `teams`      | `string[]`       | `teams/{teamId}` ids, appended via `arrayUnion`             |
@@ -298,8 +306,9 @@ units already fighting.
 
 The raid boss gets a snapshot of its own — perfect (31) IVs, zero effort values,
 no held items, level `RAID_BOSS_LEVEL`, with nature and ability derived from the
-raid's `traitValue` and an empty `caught` id. It fights alone under
-`BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
+raid's `traitValue` and an empty `caught` id. Its abilities are `Boss` plus the
+rolled one, and a shadow boss carries `Shadow` between them. It fights alone
+under `BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
 
 ### `battles/{battleId}`
 

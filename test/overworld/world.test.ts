@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import Abilities from '../../src/data/ids/abilities';
 import PerlinNoise from '../../src/core/perlin';
-import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
+import registerBiomeSpawns, {
+  SpawnRarity,
+  getSpawnPool,
+  getSpawnRarity,
+} from '../../src/data/biome';
 import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { Genders, Species } from '../../src/data/ids/species';
@@ -253,6 +257,53 @@ describe('world', () => {
     // ability rides alongside the species' own
     expect(boss.nature).toBe(deriveNature(0x12345678));
     expect(boss.abilities).toEqual([Abilities.Boss, deriveAbility(Species.Articuno, 0x12345678)]);
+  });
+
+  it('stages shadow raids from the rare and legendary pools', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.ShadowRaid),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const time = getTimeOfDay(0);
+    const pool = getSpawnPool(chunk.biome, time);
+    const raids = new ChunkSnapshot(chunk, 0).getShadowRaids();
+
+    expect(raids.size).toBeGreaterThan(0);
+    for (const [cell, roll] of raids) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ShadowRaid);
+
+      // Every shadow boss comes from the biome's rare band or, one
+      // draw in eight, its legendaries
+      const rare = pool.rare.some((entry) => entry.species === roll.species);
+      const legendary = getSpawnRarity(roll.species) === SpawnRarity.Special;
+
+      expect(rare || legendary).toBe(true);
+    }
+
+    // The hour holds the roll, the same way legendary raids do
+    expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowRaids()]).toEqual([...raids]);
+  });
+
+  it('gives a shadow boss both the Boss and Shadow abilities', () => {
+    const shadow = createRaidBossSnapshot(Species.Gyarados, 0x12345678, true);
+    const plain = createRaidBossSnapshot(Species.Gyarados, 0x12345678);
+
+    expect(shadow.abilities).toEqual([
+      Abilities.Boss,
+      Abilities.Shadow,
+      deriveAbility(Species.Gyarados, 0x12345678),
+    ]);
+    expect(plain.abilities).not.toContain(Abilities.Shadow);
+
+    // Everything else about the boss is unchanged
+    expect(shadow.level).toBe(plain.level);
+    expect(shadow.ivs).toEqual(plain.ivs);
   });
 
   it('starts a player in a free cell of the starting region', () => {

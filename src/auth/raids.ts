@@ -31,11 +31,27 @@ import { getFirebaseFirestore } from './firebase';
 import { createTeam, createTeamSnapshot, getTeam, publishTeamSnapshot } from './teams';
 
 /**
+ * What a lobby is staging
+ */
+export const enum RaidKind {
+  /**
+   * The biome's legendary, from a LegendaryRaid landmark
+   */
+  Legendary = 0,
+  /**
+   * A shadow boss — usually one of the biome's rare species, one
+   * draw in eight a legendary
+   */
+  Shadow = 1,
+}
+
+/**
  * One raid lobby at raids/{raidId}. The id is derived from the chunk,
- * the raid hour and the landmark cell, so every player who walks into
- * the same lobby in the same hour joins one raid
+ * the raid hour, the landmark cell and the kind, so every player who
+ * walks into the same lobby in the same hour joins one raid
  */
 export interface RaidRecord {
+  kind: RaidKind;
   species: Species;
   /**
    * The 32-bit roll the boss' nature and ability derive from
@@ -88,6 +104,7 @@ const converter: FirestoreDataConverter<RaidRecord> = {
     const chunk = asRecord(data.chunk);
 
     return {
+      kind: asNumber(data.kind) as RaidKind,
       species: asNumber(data.species) as Species,
       traitValue: asNumber(data.traitValue),
       host: asString(data.host),
@@ -102,10 +119,18 @@ const converter: FirestoreDataConverter<RaidRecord> = {
 };
 
 /**
- * The lobby id of a raid landmark in a given raid hour
+ * The lobby id of a raid landmark in a given raid hour. The kind is
+ * part of it, so the two landmark types never collide on a cell
  */
-export function raidId(chunk: Chunk, raidTimestamp: number, cell: number): string {
-  return `${chunk.seed}@${raidTimestamp}$raid${cell}`;
+export function raidId(
+  chunk: Chunk,
+  raidTimestamp: number,
+  cell: number,
+  kind: RaidKind = RaidKind.Legendary,
+): string {
+  const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
+
+  return `${chunk.seed}@${raidTimestamp}$${tag}${cell}`;
 }
 
 function getRaidRef(id: string): DocumentReference<RaidRecord> {
@@ -126,14 +151,18 @@ export async function enterRaid(
   user: User,
   snapshot: ChunkSnapshot,
   cell: number,
+  kind: RaidKind = RaidKind.Legendary,
 ): Promise<[string, RaidRecord] | null> {
-  const roll = snapshot.getLegendaryRaids().get(cell);
+  const roll =
+    kind === RaidKind.Shadow
+      ? snapshot.getShadowRaids().get(cell)
+      : snapshot.getLegendaryRaids().get(cell);
 
   if (roll == null) {
     return null;
   }
 
-  const id = raidId(snapshot.chunk, snapshot.raidTimestamp, cell);
+  const id = raidId(snapshot.chunk, snapshot.raidTimestamp, cell, kind);
   const ref = getRaidRef(id);
   const existing = (await getDoc(ref)).data();
 
@@ -144,6 +173,7 @@ export async function enterRaid(
   }
 
   const record: RaidRecord = {
+    kind,
     species: roll.species,
     traitValue: roll.traitValue,
     host: user.uid,
@@ -268,7 +298,7 @@ export async function startRaid(user: User, id: string): Promise<string | null> 
   const boss = await publishTeamSnapshot({
     player: '',
     alliance: BOSS_ALLIANCE,
-    catches: [createRaidBossSnapshot(raid.species, raid.traitValue)],
+    catches: [createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow)],
   });
   const battle = await createBattle({
     teams: [boss, ...snapshots],

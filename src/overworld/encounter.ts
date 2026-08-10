@@ -224,6 +224,72 @@ export function deriveNature(traitValue: number): Natures {
 }
 
 /**
+ * How far an individual may fall short of, or overshoot, its species'
+ * listed height. The band is deliberately narrow: a pokemon is still
+ * recognizably its species, and weight follows the cube of it
+ */
+export const MIN_SIZE_SCALE = 0.85;
+export const MAX_SIZE_SCALE = 1.15;
+
+/**
+ * The measurements of one individual
+ */
+export interface Size {
+  /**
+   * Meters, to the centimeter
+   */
+  height: number;
+  /**
+   * Kilograms, to the hectogram
+   */
+  weight: number;
+}
+
+/**
+ * The scale one individual is built at, between MIN_SIZE_SCALE and
+ * MAX_SIZE_SCALE. The four trait slices are already spoken for —
+ * level, gender, ability, nature — so the value is mixed first
+ * (xorshift) and read as two bytes that are then averaged. Averaging
+ * two rolls makes the distribution triangular: most of a species
+ * comes out near its listed size and the extremes are rare, which is
+ * what makes a giant worth showing off
+ */
+export function deriveSizeScale(traitValue: number): number {
+  let mixed = traitValue >>> 0;
+
+  mixed ^= mixed << 13;
+  mixed >>>= 0;
+  mixed ^= mixed >>> 17;
+  mixed ^= mixed << 5;
+  mixed >>>= 0;
+
+  const rolls = ((mixed & TRAIT_MASK) + ((mixed >>> TRAIT_BITS) & TRAIT_MASK)) / 2;
+
+  return MIN_SIZE_SCALE + (rolls / TRAIT_MASK) * (MAX_SIZE_SCALE - MIN_SIZE_SCALE);
+}
+
+/**
+ * The measurements a trait value gives an individual of the species.
+ * Height scales directly; weight scales with the cube of it, the way
+ * volume does — so a tenth taller is a third heavier. Both are
+ * rounded the way a dex prints them, and neither can round to
+ * nothing.
+ *
+ * It is derived rather than stored, so evolving grows the pokemon:
+ * the trait value keeps the individual's proportions while the
+ * species supplies the size those proportions apply to
+ */
+export function deriveSize(species: Species, traitValue: number): Size {
+  const data = getSpeciesData(species);
+  const scale = deriveSizeScale(traitValue);
+
+  return {
+    height: Math.max(0.01, Math.round(data.height * scale * 100) / 100),
+    weight: Math.max(0.1, Math.round(data.weight * scale ** 3 * 10) / 10),
+  };
+}
+
+/**
  * The last four level-up moves the species knows at that level
  */
 export function deriveMoves(species: Species, level: number): Moves[] {

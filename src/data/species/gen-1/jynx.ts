@@ -13,6 +13,8 @@ export default function registerJynxSpecies(): void {
     dexNumber: 124,
     name: 'Jynx',
     category: 'Human Shape Pokemon',
+    height: 1.4,
+    weight: 40.6,
     family: Families.Jynx,
     stats: {
       [Stats.HP]: 65,

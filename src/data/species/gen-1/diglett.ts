@@ -38,6 +38,8 @@ export default function registerDiglettSpecies(): void {
     ],
     name: 'Diglett',
     category: 'Mole Pokemon',
+    height: 0.2,
+    weight: 0.8,
     family: Families.Diglett,
     stats: {
       [Stats.HP]: 10,
@@ -72,6 +74,8 @@ export default function registerDiglettSpecies(): void {
     dexNumber: 51,
     name: 'Dugtrio',
     category: 'Mole Pokemon',
+    height: 0.7,
+    weight: 33.3,
     family: Families.Diglett,
     evolvesFrom: Species.Diglett,
     stats: {

@@ -66,6 +66,8 @@ export default function registerAbraSpecies(): void {
     ],
     name: 'Abra',
     category: 'Psi Pokemon',
+    height: 0.9,
+    weight: 19.5,
     family: Families.Abra,
     stats: ABRA_STATS,
     types: [Types.Psychic],
@@ -94,6 +96,8 @@ export default function registerAbraSpecies(): void {
     ],
     name: 'Kadabra',
     category: 'Psi Pokemon',
+    height: 1.3,
+    weight: 56.5,
     family: Families.Abra,
     evolvesFrom: Species.Abra,
     stats: {
@@ -122,6 +126,8 @@ export default function registerAbraSpecies(): void {
     dexNumber: 65,
     name: 'Alakazam',
     category: 'Psi Pokemon',
+    height: 1.5,
+    weight: 48,
     family: Families.Abra,
     evolvesFrom: Species.Kadabra,
     stats: {

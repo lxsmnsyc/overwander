@@ -13,6 +13,8 @@ export default function registerChanseySpecies(): void {
     dexNumber: 113,
     name: 'Chansey',
     category: 'Egg Pokemon',
+    height: 1.1,
+    weight: 34.6,
     family: Families.Chansey,
     stats: {
       [Stats.HP]: 250,

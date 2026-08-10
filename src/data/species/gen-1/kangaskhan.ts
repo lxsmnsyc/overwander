@@ -13,6 +13,8 @@ export default function registerKangaskhanSpecies(): void {
     dexNumber: 115,
     name: 'Kangaskhan',
     category: 'Parent Pokemon',
+    height: 2.2,
+    weight: 80,
     family: Families.Kangaskhan,
     stats: {
       [Stats.HP]: 105,

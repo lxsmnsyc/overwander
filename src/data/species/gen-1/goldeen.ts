@@ -42,6 +42,8 @@ export default function registerGoldeenSpecies(): void {
     ],
     name: 'Goldeen',
     category: 'Goldfish Pokemon',
+    height: 0.6,
+    weight: 15,
     family: Families.Goldeen,
     stats: {
       [Stats.HP]: 45,
@@ -77,6 +79,8 @@ export default function registerGoldeenSpecies(): void {
     dexNumber: 119,
     name: 'Seaking',
     category: 'Goldfish Pokemon',
+    height: 1.3,
+    weight: 39,
     family: Families.Goldeen,
     evolvesFrom: Species.Goldeen,
     stats: {

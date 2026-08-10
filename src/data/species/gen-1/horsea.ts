@@ -40,6 +40,8 @@ export default function registerHorseaSpecies(): void {
     ],
     name: 'Horsea',
     category: 'Dragon Pokemon',
+    height: 0.4,
+    weight: 8,
     family: Families.Horsea,
     stats: {
       [Stats.HP]: 30,
@@ -74,6 +76,8 @@ export default function registerHorseaSpecies(): void {
     dexNumber: 117,
     name: 'Seadra',
     category: 'Dragon Pokemon',
+    height: 1.2,
+    weight: 25,
     family: Families.Horsea,
     evolvesFrom: Species.Horsea,
     stats: {

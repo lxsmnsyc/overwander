@@ -48,6 +48,8 @@ export default function registerEeveeSpecies(): void {
     ],
     name: 'Eevee',
     category: 'Evolution Pokemon',
+    height: 0.3,
+    weight: 6.5,
     family: Families.Eevee,
     stats: {
       [Stats.HP]: 55,
@@ -81,6 +83,8 @@ export default function registerEeveeSpecies(): void {
     dexNumber: 134,
     name: 'Vaporeon',
     category: 'Bubble Jet Pokemon',
+    height: 1,
+    weight: 29,
     family: Families.Eevee,
     evolvesFrom: Species.Eevee,
     stats: {
@@ -126,6 +130,8 @@ export default function registerEeveeSpecies(): void {
     dexNumber: 135,
     name: 'Jolteon',
     category: 'Lightning Pokemon',
+    height: 0.8,
+    weight: 24.5,
     family: Families.Eevee,
     evolvesFrom: Species.Eevee,
     stats: {
@@ -170,6 +176,8 @@ export default function registerEeveeSpecies(): void {
     dexNumber: 136,
     name: 'Flareon',
     category: 'Flame Pokemon',
+    height: 0.9,
+    weight: 25,
     family: Families.Eevee,
     evolvesFrom: Species.Eevee,
     stats: {

@@ -13,6 +13,8 @@ export default function registerPorygonSpecies(): void {
     dexNumber: 137,
     name: 'Porygon',
     category: 'Virtual Pokemon',
+    height: 0.8,
+    weight: 36.5,
     family: Families.Porygon,
     stats: {
       [Stats.HP]: 65,

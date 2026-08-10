@@ -43,6 +43,8 @@ export default function registerRhyhornSpecies(): void {
     ],
     name: 'Rhyhorn',
     category: 'Spikes Pokemon',
+    height: 1,
+    weight: 115,
     family: Families.Rhyhorn,
     stats: {
       [Stats.HP]: 80,
@@ -78,6 +80,8 @@ export default function registerRhyhornSpecies(): void {
     dexNumber: 112,
     name: 'Rhydon',
     category: 'Drill Pokemon',
+    height: 1.9,
+    weight: 120,
     family: Families.Rhyhorn,
     evolvesFrom: Species.Rhyhorn,
     stats: {

@@ -42,6 +42,8 @@ export default function registerEkansSpecies(): void {
     ],
     name: 'Ekans',
     category: 'Snake Pokemon',
+    height: 2,
+    weight: 6.9,
     family: Families.Ekans,
     stats: {
       [Stats.HP]: 35,
@@ -76,6 +78,8 @@ export default function registerEkansSpecies(): void {
     dexNumber: 24,
     name: 'Arbok',
     category: 'Cobra Pokemon',
+    height: 3.5,
+    weight: 65,
     family: Families.Ekans,
     evolvesFrom: Species.Ekans,
     stats: {

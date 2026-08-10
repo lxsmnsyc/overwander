@@ -172,6 +172,31 @@ describe('species mechanics', () => {
   });
 });
 
+describe('unit measurements', () => {
+  it('carries the individual size the builder sets', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    // A unit is measured by whoever builds it, not by its species:
+    // two Snorlax of the same species differ
+    unit.setSpecies(Species.Snorlax);
+    unit.setHeight(2.35);
+    unit.setWeight(514.7);
+
+    expect(unit.height).toBe(2.35);
+    expect(unit.weight).toBe(514.7);
+
+    // An effect that shrinks or lightens a unit writes through the
+    // same setters, and neither may reach zero — a weightless unit
+    // would break the weight-driven moves
+    unit.setHeight(0);
+    unit.setWeight(-10);
+
+    expect(unit.height).toBe(0.01);
+    expect(unit.weight).toBe(0.1);
+  });
+});
+
 describe('casting flow', () => {
   it('casts, resolves the move, and starts the cooldown', () => {
     const { battle, teamA, teamB } = createBattle();

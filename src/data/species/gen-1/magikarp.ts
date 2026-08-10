@@ -20,6 +20,8 @@ export default function registerMagikarpSpecies(): void {
     ],
     name: 'Magikarp',
     category: 'Fish Pokemon',
+    height: 0.9,
+    weight: 10,
     family: Families.Magikarp,
     stats: {
       [Stats.HP]: 20,
@@ -51,6 +53,8 @@ export default function registerMagikarpSpecies(): void {
     dexNumber: 130,
     name: 'Gyarados',
     category: 'Atrocious Pokemon',
+    height: 6.5,
+    weight: 235,
     family: Families.Magikarp,
     evolvesFrom: Species.Magikarp,
     stats: {

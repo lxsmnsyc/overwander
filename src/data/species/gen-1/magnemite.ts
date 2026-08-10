@@ -42,6 +42,8 @@ export default function registerMagnemiteSpecies(): void {
     ],
     name: 'Magnemite',
     category: 'Magnet Pokemon',
+    height: 0.3,
+    weight: 6,
     family: Families.Magnemite,
     stats: {
       [Stats.HP]: 25,
@@ -77,6 +79,8 @@ export default function registerMagnemiteSpecies(): void {
     dexNumber: 82,
     name: 'Magneton',
     category: 'Magnet Pokemon',
+    height: 1,
+    weight: 60,
     family: Families.Magnemite,
     evolvesFrom: Species.Magnemite,
     stats: {

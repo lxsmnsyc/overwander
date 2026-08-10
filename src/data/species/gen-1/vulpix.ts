@@ -39,6 +39,8 @@ export default function registerVulpixSpecies(): void {
     ],
     name: 'Vulpix',
     category: 'Fox Pokemon',
+    height: 0.6,
+    weight: 9.9,
     family: Families.Vulpix,
     stats: {
       [Stats.HP]: 38,
@@ -73,6 +75,8 @@ export default function registerVulpixSpecies(): void {
     dexNumber: 38,
     name: 'Ninetales',
     category: 'Fox Pokemon',
+    height: 1.1,
+    weight: 19.9,
     family: Families.Vulpix,
     evolvesFrom: Species.Vulpix,
     stats: {

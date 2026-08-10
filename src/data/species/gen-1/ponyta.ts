@@ -40,6 +40,8 @@ export default function registerPonytaSpecies(): void {
     ],
     name: 'Ponyta',
     category: 'Fire Horse Pokemon',
+    height: 1,
+    weight: 30,
     family: Families.Ponyta,
     stats: {
       [Stats.HP]: 50,
@@ -75,6 +77,8 @@ export default function registerPonytaSpecies(): void {
     dexNumber: 78,
     name: 'Rapidash',
     category: 'Fire Horse Pokemon',
+    height: 1.7,
+    weight: 95,
     family: Families.Ponyta,
     evolvesFrom: Species.Ponyta,
     stats: {

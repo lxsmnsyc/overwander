@@ -44,6 +44,8 @@ export default function registerSandshrewSpecies(): void {
     ],
     name: 'Sandshrew',
     category: 'Mouse Pokemon',
+    height: 0.6,
+    weight: 12,
     family: Families.Sandshrew,
     stats: {
       [Stats.HP]: 50,
@@ -78,6 +80,8 @@ export default function registerSandshrewSpecies(): void {
     dexNumber: 28,
     name: 'Sandslash',
     category: 'Mouse Pokemon',
+    height: 1,
+    weight: 29.5,
     family: Families.Sandshrew,
     evolvesFrom: Species.Sandshrew,
     stats: {

@@ -13,6 +13,8 @@ export default function registerTaurosSpecies(): void {
     dexNumber: 128,
     name: 'Tauros',
     category: 'Wild Bull Pokemon',
+    height: 1.4,
+    weight: 88.4,
     family: Families.Tauros,
     stats: {
       [Stats.HP]: 75,

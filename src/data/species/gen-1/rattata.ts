@@ -42,6 +42,8 @@ export default function registerRattataSpecies(): void {
     ],
     name: 'Rattata',
     category: 'Mouse Pokemon',
+    height: 0.3,
+    weight: 3.5,
     family: Families.Rattata,
     stats: {
       [Stats.HP]: 30,
@@ -75,6 +77,8 @@ export default function registerRattataSpecies(): void {
     dexNumber: 20,
     name: 'Raticate',
     category: 'Mouse Pokemon',
+    height: 0.7,
+    weight: 18.5,
     family: Families.Rattata,
     evolvesFrom: Species.Rattata,
     stats: {

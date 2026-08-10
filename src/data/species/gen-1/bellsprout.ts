@@ -41,6 +41,8 @@ export default function registerBellsproutSpecies(): void {
     ],
     name: 'Bellsprout',
     category: 'Flower Pokemon',
+    height: 0.7,
+    weight: 4,
     family: Families.Bellsprout,
     stats: {
       [Stats.HP]: 50,
@@ -84,6 +86,8 @@ export default function registerBellsproutSpecies(): void {
     ],
     name: 'Weepinbell',
     category: 'Flycatcher Pokemon',
+    height: 1,
+    weight: 6.4,
     family: Families.Bellsprout,
     evolvesFrom: Species.Bellsprout,
     stats: {
@@ -121,6 +125,8 @@ export default function registerBellsproutSpecies(): void {
     dexNumber: 71,
     name: 'Victreebel',
     category: 'Flycatcher Pokemon',
+    height: 1.7,
+    weight: 15.5,
     family: Families.Bellsprout,
     evolvesFrom: Species.Weepinbell,
     stats: {

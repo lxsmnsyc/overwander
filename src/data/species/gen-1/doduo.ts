@@ -39,6 +39,8 @@ export default function registerDoduoSpecies(): void {
     ],
     name: 'Doduo',
     category: 'Twin Bird Pokemon',
+    height: 1.4,
+    weight: 39.2,
     family: Families.Doduo,
     stats: {
       [Stats.HP]: 35,
@@ -74,6 +76,8 @@ export default function registerDoduoSpecies(): void {
     dexNumber: 85,
     name: 'Dodrio',
     category: 'Triple Bird Pokemon',
+    height: 1.8,
+    weight: 85.2,
     family: Families.Doduo,
     evolvesFrom: Species.Doduo,
     stats: {

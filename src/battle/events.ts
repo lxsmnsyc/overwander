@@ -192,6 +192,8 @@ export const enum BattleEvents {
   UnitSetWeather = 127,
   CheckUnitAbility = 128,
   UnitSetNature = 129,
+  UnitSetHeight = 130,
+  UnitSetWeight = 131,
 }
 
 export const enum MoveTargetType {
@@ -790,6 +792,10 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitSetAppearance]: [UnitSpeciesEvent, EventPriority];
   [BattleEvents.UnitSetGender]: [UnitSetGenderEvent, EventPriority];
   [BattleEvents.UnitSetNature]: [UnitSetNatureEvent, EventPriority];
+  // Meters and kilograms: weight-driven moves read them, and a move
+  // that shrinks or lightens a unit goes through the same setters
+  [BattleEvents.UnitSetHeight]: [UnitSetValueEvent, EventPriority];
+  [BattleEvents.UnitSetWeight]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.UnitResetStages]: [UnitResetStagesEvent, EventPriority];
 
   // Team events

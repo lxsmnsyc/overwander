@@ -56,6 +56,8 @@ export default function registerClefairySpecies(): void {
     ],
     name: 'Clefairy',
     category: 'Fairy Pokemon',
+    height: 0.6,
+    weight: 7.5,
     family: Families.Clefairy,
     stats: {
       [Stats.HP]: 70,
@@ -91,6 +93,8 @@ export default function registerClefairySpecies(): void {
     dexNumber: 36,
     name: 'Clefable',
     category: 'Fairy Pokemon',
+    height: 1.3,
+    weight: 40,
     family: Families.Clefairy,
     evolvesFrom: Species.Clefairy,
     stats: {

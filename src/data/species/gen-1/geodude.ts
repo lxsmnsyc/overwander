@@ -50,6 +50,8 @@ export default function registerGeodudeSpecies(): void {
     ],
     name: 'Geodude',
     category: 'Rock Pokemon',
+    height: 0.4,
+    weight: 20,
     family: Families.Geodude,
     stats: {
       [Stats.HP]: 40,
@@ -91,6 +93,8 @@ export default function registerGeodudeSpecies(): void {
     ],
     name: 'Graveler',
     category: 'Rock Pokemon',
+    height: 1,
+    weight: 105,
     family: Families.Geodude,
     evolvesFrom: Species.Geodude,
     stats: {
@@ -126,6 +130,8 @@ export default function registerGeodudeSpecies(): void {
     dexNumber: 76,
     name: 'Golem',
     category: 'Megaton Pokemon',
+    height: 1.4,
+    weight: 300,
     family: Families.Geodude,
     evolvesFrom: Species.Graveler,
     stats: {

@@ -49,6 +49,8 @@ export default function registerSquirtleSpecies(): void {
     ],
     name: 'Squirtle',
     category: 'Tiny Turtle Pokemon',
+    height: 0.5,
+    weight: 9,
     family: Families.Squirtle,
     stats: {
       [Stats.HP]: 44,
@@ -91,6 +93,8 @@ export default function registerSquirtleSpecies(): void {
     ],
     name: 'Wartortle',
     category: 'Turtle Pokemon',
+    height: 1,
+    weight: 22.5,
     family: Families.Squirtle,
     evolvesFrom: Species.Squirtle,
     stats: {
@@ -127,6 +131,8 @@ export default function registerSquirtleSpecies(): void {
     dexNumber: 9,
     name: 'Blastoise',
     category: 'Shellfish Pokemon',
+    height: 1.6,
+    weight: 85.5,
     family: Families.Squirtle,
     evolvesFrom: Species.Wartortle,
     stats: {

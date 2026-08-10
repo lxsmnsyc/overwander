@@ -22,6 +22,7 @@ import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
+import { deriveSize } from '../overworld/encounter';
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -88,6 +89,22 @@ function describeItem(item: Items): string {
   } catch {
     return `Item #${item}`;
   }
+}
+
+/**
+ * This individual's own measurements, the way a dex prints them:
+ * meters to the centimeter, kilograms to one decimal. Size is derived
+ * from the trait value against the species as it stands, so evolving
+ * grows the pokemon while keeping its proportions
+ */
+function describeSize(caught: CaughtPokemon): string {
+  const { height, weight } = deriveSize(caught.species, caught.traitValue);
+  const listed = getSpeciesData(caught.species);
+  // Where it falls against the species' listed height, so a giant is
+  // recognizable without a chart
+  const share = Math.round((height / listed.height) * 100);
+
+  return `${height.toFixed(2)} m · ${weight.toFixed(1)} kg (${share}% of average)`;
 }
 
 export interface CatchDialogProps {
@@ -289,6 +306,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   <dd>{loaded().caught.level}</dd>
                   <dt>Gender</dt>
                   <dd>{GENDER_LABELS[loaded().caught.gender]}</dd>
+                  <dt>Size</dt>
+                  <dd>{describeSize(loaded().caught)}</dd>
                   <dt>Nature</dt>
                   <dd>#{loaded().caught.nature}</dd>
                   <dt>Abilities</dt>

@@ -44,6 +44,8 @@ export default function registerTentacoolSpecies(): void {
     ],
     name: 'Tentacool',
     category: 'Jellyfish Pokemon',
+    height: 0.9,
+    weight: 45.5,
     family: Families.Tentacool,
     stats: {
       [Stats.HP]: 40,
@@ -81,6 +83,8 @@ export default function registerTentacoolSpecies(): void {
     dexNumber: 73,
     name: 'Tentacruel',
     category: 'Jellyfish Pokemon',
+    height: 1.6,
+    weight: 55,
     family: Families.Tentacool,
     evolvesFrom: Species.Tentacool,
     stats: {

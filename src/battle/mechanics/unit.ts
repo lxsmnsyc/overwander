@@ -241,6 +241,18 @@ function setupUnitSpeciesMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitSetNature, EventPriority.Exact, (event) => {
     event.source.nature = event.nature;
   });
+
+  // Measurements are per-individual, so nothing derives them here:
+  // whoever builds the unit supplies them, and an effect that shrinks
+  // or lightens one writes through the same setter. Neither may reach
+  // zero — a weightless unit would break the weight-driven moves
+  battle.on(BattleEvents.UnitSetHeight, EventPriority.Exact, (event) => {
+    event.source.height = Math.max(0.01, event.value);
+  });
+
+  battle.on(BattleEvents.UnitSetWeight, EventPriority.Exact, (event) => {
+    event.source.weight = Math.max(0.1, event.value);
+  });
 }
 
 function setupUnitSwitchMechanics(battle: Battle): void {

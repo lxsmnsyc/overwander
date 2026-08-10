@@ -13,6 +13,8 @@ export default function registerDittoSpecies(): void {
     dexNumber: 132,
     name: 'Ditto',
     category: 'Transform Pokemon',
+    height: 0.3,
+    weight: 4,
     family: Families.Ditto,
     stats: {
       [Stats.HP]: 48,

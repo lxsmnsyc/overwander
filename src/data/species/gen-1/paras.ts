@@ -40,6 +40,8 @@ export default function registerParasSpecies(): void {
     ],
     name: 'Paras',
     category: 'Mushroom Pokemon',
+    height: 0.3,
+    weight: 5.4,
     family: Families.Paras,
     stats: {
       [Stats.HP]: 35,
@@ -74,6 +76,8 @@ export default function registerParasSpecies(): void {
     dexNumber: 47,
     name: 'Parasect',
     category: 'Mushroom Pokemon',
+    height: 1,
+    weight: 29.5,
     family: Families.Paras,
     evolvesFrom: Species.Paras,
     stats: {

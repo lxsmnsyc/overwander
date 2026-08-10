@@ -38,6 +38,7 @@ import {
   getConsumedItem,
   getDayOfYear,
   getFeaturedFamily,
+  getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
   getSpeciesByBiome,
@@ -90,6 +91,35 @@ describe('species abilities', () => {
 
     expect(pools.regular).toEqual([Abilities.Chlorophyll]);
     expect(pools.hidden).toEqual([Abilities.EffectSpore, Abilities.Stench, Abilities.RunAway]);
+  });
+});
+
+describe('species measurements', () => {
+  it('measures every species', () => {
+    // Weight-driven moves read these, so a species registered
+    // without them would fight as a weightless zero
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      expect(data.height).toBeGreaterThan(0);
+      expect(data.weight).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps the sizes each species is known for', () => {
+    // The extremes, in meters and kilograms: Onix is the long one,
+    // Snorlax the heavy one, and a Gastly is very nearly nothing
+    expect(getSpeciesData(Species.Onix).height).toBe(8.8);
+    expect(getSpeciesData(Species.Snorlax).weight).toBe(460);
+    expect(getSpeciesData(Species.Gastly).weight).toBe(0.1);
+
+    // Evolving is growing: every stage outweighs the one before it
+    expect(getSpeciesData(Species.Charmeleon).weight).toBeGreaterThan(
+      getSpeciesData(Species.Charmander).weight,
+    );
+    expect(getSpeciesData(Species.Charizard).weight).toBeGreaterThan(
+      getSpeciesData(Species.Charmeleon).weight,
+    );
   });
 });
 

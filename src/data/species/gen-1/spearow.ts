@@ -39,6 +39,8 @@ export default function registerSpearowSpecies(): void {
     ],
     name: 'Spearow',
     category: 'Tiny Bird Pokemon',
+    height: 0.3,
+    weight: 2,
     family: Families.Spearow,
     stats: {
       [Stats.HP]: 40,
@@ -73,6 +75,8 @@ export default function registerSpearowSpecies(): void {
     dexNumber: 22,
     name: 'Fearow',
     category: 'Beak Pokemon',
+    height: 1.2,
+    weight: 38,
     family: Families.Spearow,
     evolvesFrom: Species.Spearow,
     stats: {

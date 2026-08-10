@@ -47,6 +47,8 @@ export default function registerMankeySpecies(): void {
     ],
     name: 'Mankey',
     category: 'Pig Monkey Pokemon',
+    height: 0.5,
+    weight: 28,
     family: Families.Mankey,
     stats: {
       [Stats.HP]: 40,
@@ -81,6 +83,8 @@ export default function registerMankeySpecies(): void {
     dexNumber: 57,
     name: 'Primeape',
     category: 'Pig Monkey Pokemon',
+    height: 1,
+    weight: 32,
     family: Families.Mankey,
     evolvesFrom: Species.Mankey,
     stats: {

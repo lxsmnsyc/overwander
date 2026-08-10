@@ -13,6 +13,8 @@ export default function registerLaprasSpecies(): void {
     dexNumber: 131,
     name: 'Lapras',
     category: 'Transport Pokemon',
+    height: 2.5,
+    weight: 220,
     family: Families.Lapras,
     stats: {
       [Stats.HP]: 130,

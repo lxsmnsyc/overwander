@@ -42,6 +42,8 @@ export default function registerKabutoSpecies(): void {
     ],
     name: 'Kabuto',
     category: 'Shellfish Pokemon',
+    height: 0.5,
+    weight: 11.5,
     family: Families.Kabuto,
     stats: {
       [Stats.HP]: 30,
@@ -75,6 +77,8 @@ export default function registerKabutoSpecies(): void {
     dexNumber: 141,
     name: 'Kabutops',
     category: 'Shellfish Pokemon',
+    height: 1.3,
+    weight: 40.5,
     family: Families.Kabuto,
     evolvesFrom: Species.Kabuto,
     stats: {

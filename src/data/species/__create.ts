@@ -52,6 +52,16 @@ export interface SpeciesData {
    */
   category: string;
   /**
+   * How tall the pokemon stands, in meters
+   */
+  height: number;
+  /**
+   * How heavy the pokemon is, in kilograms. Weight-driven moves read
+   * it — a light target takes more from Low Kick, a heavy one more
+   * from Grass Knot — so it is a battle number, not a dex flavor one
+   */
+  weight: number;
+  /**
    * Family this pokemon belongs to
    */
   family: Families;
@@ -104,10 +114,6 @@ export interface SpeciesData {
    * Learn Set
    */
   learnSet: LearnSetData;
-
-  // TODO
-  // Height
-  // Weight
 }
 
 const SPECIES_MAP = new Map<Species, SpeciesData>();

@@ -61,6 +61,8 @@ export default function registerSlowpokeSpecies(): void {
     ],
     name: 'Slowpoke',
     category: 'Dopey Pokemon',
+    height: 1.2,
+    weight: 36,
     family: Families.Slowpoke,
     stats: {
       [Stats.HP]: 90,
@@ -96,6 +98,8 @@ export default function registerSlowpokeSpecies(): void {
     dexNumber: 80,
     name: 'Slowbro',
     category: 'Hermit Crab Pokemon',
+    height: 1.6,
+    weight: 78.5,
     family: Families.Slowpoke,
     evolvesFrom: Species.Slowpoke,
     stats: {

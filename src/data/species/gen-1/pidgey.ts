@@ -39,6 +39,8 @@ export default function registerPidgeySpecies(): void {
     ],
     name: 'Pidgey',
     category: 'Tiny Bird Pokemon',
+    height: 0.3,
+    weight: 1.8,
     family: Families.Pidgey,
     stats: {
       [Stats.HP]: 40,
@@ -81,6 +83,8 @@ export default function registerPidgeySpecies(): void {
     ],
     name: 'Pidgeotto',
     category: 'Bird Pokemon',
+    height: 1.1,
+    weight: 30,
     family: Families.Pidgey,
     evolvesFrom: Species.Pidgey,
     stats: {
@@ -117,6 +121,8 @@ export default function registerPidgeySpecies(): void {
     dexNumber: 18,
     name: 'Pidgeot',
     category: 'Bird Pokemon',
+    height: 1.5,
+    weight: 39.5,
     family: Families.Pidgey,
     evolvesFrom: Species.Pidgeotto,
     stats: {

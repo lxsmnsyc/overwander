@@ -10,7 +10,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import { Stats, StatsKind } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Species } from '../data/ids/species';
-import { deriveAbility, deriveGender, deriveMoves, deriveNature } from './encounter';
+import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
  * A raid boss is a maxed legendary: the fight is meant to need a
@@ -83,6 +83,10 @@ export function createRaidBossSnapshot(
   traitValue: number,
   shadow = false,
 ): CatchSnapshot {
+  // The lobby shares the raid's trait value, so every player fights a
+  // boss of exactly the same build
+  const size = deriveSize(species, traitValue);
+
   return {
     caught: '',
     species,
@@ -93,6 +97,8 @@ export function createRaidBossSnapshot(
     // The boss reads its own gender ratio, the same way a spawn
     // does; only a genderless species comes out genderless
     gender: deriveGender(species, traitValue),
+    height: size.height,
+    weight: size.weight,
     shiny: false,
     moves: deriveMoves(species, RAID_BOSS_LEVEL),
     // The Boss ability is what makes it a raid: the health pool, the
@@ -119,6 +125,9 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   unit.setLevel(snapshot.level);
   unit.setNature(snapshot.nature);
   unit.setGender(snapshot.gender);
+  // The individual's own measurements, not the species' listed ones
+  unit.setHeight(snapshot.height);
+  unit.setWeight(snapshot.weight);
 
   for (const stat of ALL_STATS) {
     unit.setStat(StatsKind.Individual, stat, snapshot.ivs[stat]);

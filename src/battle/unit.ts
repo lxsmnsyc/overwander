@@ -116,6 +116,35 @@ export default class Unit {
     });
   }
 
+  /**
+   * How tall this individual stands, in meters
+   */
+  height = 0;
+
+  setHeight(value: number): void {
+    this.battle.emit(BattleEvents.UnitSetHeight, {
+      id: 'UnitSetHeight',
+      disabled: false,
+      source: this,
+      value,
+    });
+  }
+
+  /**
+   * How heavy this individual is, in kilograms. Weight-driven moves
+   * read it, and effects that lighten a unit set it
+   */
+  weight = 0;
+
+  setWeight(value: number): void {
+    this.battle.emit(BattleEvents.UnitSetWeight, {
+      id: 'UnitSetWeight',
+      disabled: false,
+      source: this,
+      value,
+    });
+  }
+
   health = 0;
 
   setHealth(value: number): void {

@@ -36,6 +36,8 @@ export default function registerZubatSpecies(): void {
     ],
     name: 'Zubat',
     category: 'Bat Pokemon',
+    height: 0.8,
+    weight: 7.5,
     family: Families.Zubat,
     stats: {
       [Stats.HP]: 40,
@@ -70,6 +72,8 @@ export default function registerZubatSpecies(): void {
     dexNumber: 42,
     name: 'Golbat',
     category: 'Bat Pokemon',
+    height: 1.6,
+    weight: 55,
     family: Families.Zubat,
     evolvesFrom: Species.Zubat,
     stats: {

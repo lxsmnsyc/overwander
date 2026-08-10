@@ -13,6 +13,8 @@ export default function registerLickitungSpecies(): void {
     dexNumber: 108,
     name: 'Lickitung',
     category: 'Licking Pokemon',
+    height: 1.2,
+    weight: 65.5,
     family: Families.Lickitung,
     stats: {
       [Stats.HP]: 90,

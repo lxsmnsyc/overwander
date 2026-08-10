@@ -47,6 +47,8 @@ export default function registerPsyduckSpecies(): void {
     ],
     name: 'Psyduck',
     category: 'Duck Pokemon',
+    height: 0.8,
+    weight: 19.6,
     family: Families.Psyduck,
     stats: {
       [Stats.HP]: 50,
@@ -81,6 +83,8 @@ export default function registerPsyduckSpecies(): void {
     dexNumber: 55,
     name: 'Golduck',
     category: 'Duck Pokemon',
+    height: 1.7,
+    weight: 76.6,
     family: Families.Psyduck,
     evolvesFrom: Species.Psyduck,
     stats: {

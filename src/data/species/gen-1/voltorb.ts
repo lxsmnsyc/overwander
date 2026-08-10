@@ -43,6 +43,8 @@ export default function registerVoltorbSpecies(): void {
     ],
     name: 'Voltorb',
     category: 'Ball Pokemon',
+    height: 0.5,
+    weight: 10.4,
     family: Families.Voltorb,
     stats: {
       [Stats.HP]: 40,
@@ -77,6 +79,8 @@ export default function registerVoltorbSpecies(): void {
     dexNumber: 101,
     name: 'Electrode',
     category: 'Ball Pokemon',
+    height: 1.2,
+    weight: 66.6,
     family: Families.Voltorb,
     evolvesFrom: Species.Voltorb,
     stats: {

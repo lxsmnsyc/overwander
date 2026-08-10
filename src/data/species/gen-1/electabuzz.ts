@@ -13,6 +13,8 @@ export default function registerElectabuzzSpecies(): void {
     dexNumber: 125,
     name: 'Electabuzz',
     category: 'Electric Pokemon',
+    height: 1.1,
+    weight: 30,
     family: Families.Electabuzz,
     stats: {
       [Stats.HP]: 65,

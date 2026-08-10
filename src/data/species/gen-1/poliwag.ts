@@ -54,6 +54,8 @@ export default function registerPoliwagSpecies(): void {
     ],
     name: 'Poliwag',
     category: 'Tadpole Pokemon',
+    height: 0.6,
+    weight: 12.4,
     family: Families.Poliwag,
     stats: {
       [Stats.HP]: 40,
@@ -96,6 +98,8 @@ export default function registerPoliwagSpecies(): void {
     ],
     name: 'Poliwhirl',
     category: 'Tadpole Pokemon',
+    height: 1,
+    weight: 20,
     family: Families.Poliwag,
     evolvesFrom: Species.Poliwag,
     stats: {
@@ -132,6 +136,8 @@ export default function registerPoliwagSpecies(): void {
     dexNumber: 62,
     name: 'Poliwrath',
     category: 'Tadpole Pokemon',
+    height: 1.3,
+    weight: 54,
     family: Families.Poliwag,
     evolvesFrom: Species.Poliwhirl,
     stats: {

@@ -8,6 +8,7 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import { deriveSize } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import type { CaughtPokemon } from './caught';
 
@@ -30,6 +31,13 @@ export interface CatchSnapshot {
   effortValues: Record<Stats, number>;
   nature: Natures;
   gender: Genders;
+  /**
+   * This individual's own measurements, in meters and kilograms.
+   * They are frozen like everything else: evolving mid-raid must not
+   * make the unit already fighting heavier
+   */
+  height: number;
+  weight: number;
   shiny: boolean;
   moves: Moves[];
   abilities: Abilities[];
@@ -45,6 +53,10 @@ export function createCatchSnapshot(
   abilities: Abilities[],
   items: Items[],
 ): CatchSnapshot {
+  // Size is derived from the trait value against the species standing
+  // now, so an evolution taken before the raid is already reflected
+  const size = deriveSize(caught.species, caught.traitValue);
+
   return {
     caught: id,
     species: caught.species,
@@ -53,6 +65,8 @@ export function createCatchSnapshot(
     effortValues: caught.effortValues,
     nature: caught.nature,
     gender: caught.gender,
+    height: size.height,
+    weight: size.weight,
     shiny: caught.shiny,
     moves: caught.moves,
     abilities,
@@ -74,6 +88,8 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     effortValues: asStatRecord(data.effortValues),
     nature: asNumber(data.nature) as Natures,
     gender: asNumber(data.gender) as Genders,
+    height: asNumber(data.height),
+    weight: asNumber(data.weight),
     shiny: data.shiny === true,
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],

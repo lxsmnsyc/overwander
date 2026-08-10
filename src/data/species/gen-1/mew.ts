@@ -13,6 +13,8 @@ export default function registerMewSpecies(): void {
     dexNumber: 151,
     name: 'Mew',
     category: 'New Species Pokemon',
+    height: 0.4,
+    weight: 4,
     family: Families.Mew,
     stats: {
       [Stats.HP]: 100,

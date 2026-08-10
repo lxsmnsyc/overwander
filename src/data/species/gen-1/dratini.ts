@@ -45,6 +45,8 @@ export default function registerDratiniSpecies(): void {
     ],
     name: 'Dratini',
     category: 'Dragon Pokemon',
+    height: 1.8,
+    weight: 3.3,
     family: Families.Dratini,
     stats: {
       [Stats.HP]: 41,
@@ -86,6 +88,8 @@ export default function registerDratiniSpecies(): void {
     ],
     name: 'Dragonair',
     category: 'Dragon Pokemon',
+    height: 4,
+    weight: 16.5,
     family: Families.Dratini,
     evolvesFrom: Species.Dratini,
     stats: {
@@ -120,6 +124,8 @@ export default function registerDratiniSpecies(): void {
     dexNumber: 149,
     name: 'Dragonite',
     category: 'Dragon Pokemon',
+    height: 2.2,
+    weight: 210,
     family: Families.Dratini,
     evolvesFrom: Species.Dragonair,
     stats: {

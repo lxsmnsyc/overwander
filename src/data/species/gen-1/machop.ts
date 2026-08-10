@@ -48,6 +48,8 @@ export default function registerMachopSpecies(): void {
     ],
     name: 'Machop',
     category: 'Superpower Pokemon',
+    height: 0.8,
+    weight: 19.5,
     family: Families.Machop,
     stats: {
       [Stats.HP]: 70,
@@ -88,6 +90,8 @@ export default function registerMachopSpecies(): void {
     ],
     name: 'Machoke',
     category: 'Superpower Pokemon',
+    height: 1.5,
+    weight: 70.5,
     family: Families.Machop,
     evolvesFrom: Species.Machop,
     stats: {
@@ -123,6 +127,8 @@ export default function registerMachopSpecies(): void {
     dexNumber: 68,
     name: 'Machamp',
     category: 'Superpower Pokemon',
+    height: 1.6,
+    weight: 130,
     family: Families.Machop,
     evolvesFrom: Species.Machoke,
     stats: {

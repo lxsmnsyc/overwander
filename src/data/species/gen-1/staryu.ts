@@ -51,6 +51,8 @@ export default function registerStaryuSpecies(): void {
     ],
     name: 'Staryu',
     category: 'Star Shape Pokemon',
+    height: 0.8,
+    weight: 34.5,
     family: Families.Staryu,
     stats: {
       [Stats.HP]: 30,
@@ -87,6 +89,8 @@ export default function registerStaryuSpecies(): void {
     dexNumber: 121,
     name: 'Starmie',
     category: 'Mysterious Pokemon',
+    height: 1.1,
+    weight: 80,
     family: Families.Staryu,
     evolvesFrom: Species.Staryu,
     stats: {

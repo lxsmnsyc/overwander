@@ -46,6 +46,8 @@ export default function registerSeelSpecies(): void {
     ],
     name: 'Seel',
     category: 'Sea Lion Pokemon',
+    height: 1.1,
+    weight: 90,
     family: Families.Seel,
     stats: {
       [Stats.HP]: 65,
@@ -80,6 +82,8 @@ export default function registerSeelSpecies(): void {
     dexNumber: 87,
     name: 'Dewgong',
     category: 'Sea Lion Pokemon',
+    height: 1.7,
+    weight: 120,
     family: Families.Seel,
     evolvesFrom: Species.Seel,
     stats: {

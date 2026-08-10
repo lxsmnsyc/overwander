@@ -44,6 +44,8 @@ export default function registerKrabbySpecies(): void {
     ],
     name: 'Krabby',
     category: 'River Crab Pokemon',
+    height: 0.4,
+    weight: 6.5,
     family: Families.Krabby,
     stats: {
       [Stats.HP]: 30,
@@ -78,6 +80,8 @@ export default function registerKrabbySpecies(): void {
     dexNumber: 99,
     name: 'Kingler',
     category: 'Pincer Pokemon',
+    height: 1.3,
+    weight: 60,
     family: Families.Krabby,
     evolvesFrom: Species.Krabby,
     stats: {

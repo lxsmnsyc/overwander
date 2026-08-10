@@ -13,6 +13,8 @@ export default function registerTangelaSpecies(): void {
     dexNumber: 114,
     name: 'Tangela',
     category: 'Vine Pokemon',
+    height: 1,
+    weight: 35,
     family: Families.Tangela,
     stats: {
       [Stats.HP]: 65,

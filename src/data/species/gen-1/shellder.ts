@@ -44,6 +44,8 @@ export default function registerShellderSpecies(): void {
     ],
     name: 'Shellder',
     category: 'Bivalve Pokemon',
+    height: 0.3,
+    weight: 4,
     family: Families.Shellder,
     stats: {
       [Stats.HP]: 30,
@@ -78,6 +80,8 @@ export default function registerShellderSpecies(): void {
     dexNumber: 91,
     name: 'Cloyster',
     category: 'Bivalve Pokemon',
+    height: 1.5,
+    weight: 132.5,
     family: Families.Shellder,
     evolvesFrom: Species.Shellder,
     stats: {

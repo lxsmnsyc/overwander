@@ -13,6 +13,8 @@ export default function registerAerodactylSpecies(): void {
     dexNumber: 142,
     name: 'Aerodactyl',
     category: 'Fossil Pokemon',
+    height: 1.8,
+    weight: 59,
     family: Families.Aerodactyl,
     stats: {
       [Stats.HP]: 80,

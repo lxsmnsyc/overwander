@@ -46,6 +46,8 @@ export default function registerPikachuSpecies(): void {
     ],
     name: 'Pikachu',
     category: 'Mouse Pokemon',
+    height: 0.4,
+    weight: 6,
     family: Families.Pikachu,
     stats: {
       [Stats.HP]: 35,
@@ -80,6 +82,8 @@ export default function registerPikachuSpecies(): void {
     dexNumber: 26,
     name: 'Raichu',
     category: 'Mouse Pokemon',
+    height: 0.8,
+    weight: 30,
     family: Families.Pikachu,
     evolvesFrom: Species.Pikachu,
     stats: {

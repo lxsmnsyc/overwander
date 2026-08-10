@@ -28,10 +28,14 @@ import {
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import deriveEncounter, {
   EncounterType,
+  MAX_SIZE_SCALE,
+  MIN_SIZE_SCALE,
   SHINY_CHARM_BOOST,
   deriveAbility,
   deriveMoves,
   deriveNature,
+  deriveSize,
+  deriveSizeScale,
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
@@ -323,6 +327,11 @@ describe('world', () => {
     // The boss stands for no record and belongs to nobody
     expect(bossUnits.map((unit) => unit.caught)).toEqual(['']);
     expect(bossUnits[0].team.player).toBe('');
+
+    // Units fight at their own measurements, frozen into the snapshot
+    expect(bossUnits[0].height).toBe(boss.height);
+    expect(bossUnits[0].weight).toBe(boss.weight);
+    expect(boss.weight).toBe(deriveSize(Species.Articuno, 0x12345678).weight);
   });
 
   it('stages shadow raids from the rare and legendary pools', () => {
@@ -706,6 +715,55 @@ describe('chunk snapshot', () => {
     expect(
       deriveEncounter(snapshot, [...spawn], 'trainer-red', { shinyBoost: SHINY_CHARM_BOOST }).shiny,
     ).toBe(true);
+  });
+
+  it('sizes an individual from its trait value', () => {
+    const listed = getSpeciesData(Species.Snorlax);
+
+    for (const traitValue of [0, 1, 0x1234, 0xabcdef, 0xffffffff]) {
+      const size = deriveSize(Species.Snorlax, traitValue);
+
+      // Inside the band, and the same trait value always measures the
+      // same — nothing about size is rolled at read time
+      expect(size.height).toBeGreaterThanOrEqual(listed.height * MIN_SIZE_SCALE - 0.01);
+      expect(size.height).toBeLessThanOrEqual(listed.height * MAX_SIZE_SCALE + 0.01);
+      expect(deriveSize(Species.Snorlax, traitValue)).toEqual(size);
+    }
+
+    // Weight follows the cube of the height, the way volume does
+    const scale = deriveSizeScale(0xabcdef);
+
+    expect(deriveSize(Species.Snorlax, 0xabcdef).weight).toBeCloseTo(listed.weight * scale ** 3, 1);
+
+    // Individuals actually differ, and most land near the middle: the
+    // scale averages two rolls, so the band's edges are rare
+    const scales = Array.from({ length: 400 }, (_, seed) => deriveSizeScale(seed * 2654435761));
+    const middle = (MIN_SIZE_SCALE + MAX_SIZE_SCALE) / 2;
+    const spread = (MAX_SIZE_SCALE - MIN_SIZE_SCALE) / 4;
+
+    expect(new Set(scales).size).toBeGreaterThan(100);
+    expect(scales.filter((value) => Math.abs(value - middle) < spread).length).toBeGreaterThan(
+      scales.length / 2,
+    );
+  });
+
+  it('grows a pokemon when it evolves, keeping its proportions', () => {
+    // Size is derived, not stored, so the same individual measured
+    // against its evolution is bigger — but sits at the same point of
+    // its species' band
+    const traitValue = 0x5eed1234;
+    const charmander = deriveSize(Species.Charmander, traitValue);
+    const charizard = deriveSize(Species.Charizard, traitValue);
+
+    expect(charizard.height).toBeGreaterThan(charmander.height);
+    expect(charizard.weight).toBeGreaterThan(charmander.weight);
+    expect(charmander.height / getSpeciesData(Species.Charmander).height).toBeCloseTo(
+      charizard.height / getSpeciesData(Species.Charizard).height,
+      2,
+    );
+
+    // The lightest species in the dex still weighs something
+    expect(deriveSize(Species.Gastly, traitValue).weight).toBeGreaterThan(0);
   });
 
   it('floors a family-day raid reward at six in every IV', () => {

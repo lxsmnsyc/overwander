@@ -35,6 +35,8 @@ export default function registerTyrogueSpecies(): void {
     dexNumber: 106,
     name: 'Hitmonlee',
     category: 'Kicking Pokemon',
+    height: 1.5,
+    weight: 49.8,
     family: Families.Tyrogue,
     stats: {
       [Stats.HP]: 50,
@@ -69,6 +71,8 @@ export default function registerTyrogueSpecies(): void {
     dexNumber: 107,
     name: 'Hitmonchan',
     category: 'Punching Pokemon',
+    height: 1.4,
+    weight: 50.2,
     family: Families.Tyrogue,
     stats: {
       [Stats.HP]: 50,

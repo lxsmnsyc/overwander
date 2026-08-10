@@ -13,6 +13,8 @@ export default function registerMewtwoSpecies(): void {
     dexNumber: 150,
     name: 'Mewtwo',
     category: 'Genetic Pokemon',
+    height: 2,
+    weight: 122,
     family: Families.Mewtwo,
     stats: {
       [Stats.HP]: 106,

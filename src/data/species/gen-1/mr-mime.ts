@@ -13,6 +13,8 @@ export default function registerMrMimeSpecies(): void {
     dexNumber: 122,
     name: 'Mr. Mime',
     category: 'Barrier Pokemon',
+    height: 1.3,
+    weight: 54.5,
     family: Families.MrMime,
     stats: {
       [Stats.HP]: 40,

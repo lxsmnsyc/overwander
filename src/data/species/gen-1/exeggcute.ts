@@ -45,6 +45,8 @@ export default function registerExeggcuteSpecies(): void {
     ],
     name: 'Exeggcute',
     category: 'Egg Pokemon',
+    height: 0.4,
+    weight: 2.5,
     family: Families.Exeggcute,
     stats: {
       [Stats.HP]: 60,
@@ -80,6 +82,8 @@ export default function registerExeggcuteSpecies(): void {
     dexNumber: 103,
     name: 'Exeggutor',
     category: 'Coconut Pokemon',
+    height: 2,
+    weight: 120,
     family: Families.Exeggcute,
     evolvesFrom: Species.Exeggcute,
     stats: {

@@ -20,6 +20,8 @@ export default function registerWeedleSpecies(): void {
     ],
     name: 'Weedle',
     category: 'Hairy Bug Pokemon',
+    height: 0.3,
+    weight: 3.2,
     family: Families.Weedle,
     stats: {
       [Stats.HP]: 40,
@@ -56,6 +58,8 @@ export default function registerWeedleSpecies(): void {
     ],
     name: 'Kakuna',
     category: 'Cocoon Pokemon',
+    height: 0.6,
+    weight: 10,
     family: Families.Weedle,
     evolvesFrom: Species.Weedle,
     stats: {
@@ -86,6 +90,8 @@ export default function registerWeedleSpecies(): void {
     dexNumber: 15,
     name: 'Beedrill',
     category: 'Poison Bee Pokemon',
+    height: 1,
+    weight: 29.5,
     family: Families.Weedle,
     evolvesFrom: Species.Kakuna,
     stats: {

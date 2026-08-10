@@ -40,6 +40,8 @@ export default function registerMeowthSpecies(): void {
     ],
     name: 'Meowth',
     category: 'Scratch Cat Pokemon',
+    height: 0.4,
+    weight: 4.2,
     family: Families.Meowth,
     stats: {
       [Stats.HP]: 40,
@@ -74,6 +76,8 @@ export default function registerMeowthSpecies(): void {
     dexNumber: 53,
     name: 'Persian',
     category: 'Classy Cat Pokemon',
+    height: 1,
+    weight: 32,
     family: Families.Meowth,
     evolvesFrom: Species.Meowth,
     stats: {

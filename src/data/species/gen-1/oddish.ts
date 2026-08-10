@@ -38,6 +38,8 @@ export default function registerOddishSpecies(): void {
     ],
     name: 'Oddish',
     category: 'Weed Pokemon',
+    height: 0.5,
+    weight: 5.4,
     family: Families.Oddish,
     stats: {
       [Stats.HP]: 45,
@@ -80,6 +82,8 @@ export default function registerOddishSpecies(): void {
     ],
     name: 'Gloom',
     category: 'Weed Pokemon',
+    height: 0.8,
+    weight: 8.6,
     family: Families.Oddish,
     evolvesFrom: Species.Oddish,
     stats: {
@@ -114,6 +118,8 @@ export default function registerOddishSpecies(): void {
     dexNumber: 45,
     name: 'Vileplume',
     category: 'Flower Pokemon',
+    height: 1.2,
+    weight: 18.6,
     family: Families.Oddish,
     evolvesFrom: Species.Gloom,
     stats: {

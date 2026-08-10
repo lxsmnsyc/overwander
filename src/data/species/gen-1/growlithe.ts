@@ -40,6 +40,8 @@ export default function registerGrowlitheSpecies(): void {
     ],
     name: 'Growlithe',
     category: 'Puppy Pokemon',
+    height: 0.7,
+    weight: 19,
     family: Families.Growlithe,
     stats: {
       [Stats.HP]: 55,
@@ -74,6 +76,8 @@ export default function registerGrowlitheSpecies(): void {
     dexNumber: 59,
     name: 'Arcanine',
     category: 'Legendary Pokemon',
+    height: 1.9,
+    weight: 155,
     family: Families.Growlithe,
     evolvesFrom: Species.Growlithe,
     stats: {

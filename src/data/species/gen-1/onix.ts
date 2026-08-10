@@ -13,6 +13,8 @@ export default function registerOnixSpecies(): void {
     dexNumber: 95,
     name: 'Onix',
     category: 'Rock Snake Pokemon',
+    height: 8.8,
+    weight: 210,
     family: Families.Onix,
     stats: {
       [Stats.HP]: 35,

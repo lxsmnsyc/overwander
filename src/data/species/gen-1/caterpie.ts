@@ -20,6 +20,8 @@ export default function registerCaterpieSpecies(): void {
     ],
     name: 'Caterpie',
     category: 'Worm Pokemon',
+    height: 0.3,
+    weight: 2.9,
     family: Families.Caterpie,
     stats: {
       [Stats.HP]: 45,
@@ -56,6 +58,8 @@ export default function registerCaterpieSpecies(): void {
     ],
     name: 'Metapod',
     category: 'Cocoon Pokemon',
+    height: 0.7,
+    weight: 9.9,
     family: Families.Caterpie,
     evolvesFrom: Species.Caterpie,
     stats: {
@@ -86,6 +90,8 @@ export default function registerCaterpieSpecies(): void {
     dexNumber: 12,
     name: 'Butterfree',
     category: 'Butterfly Pokemon',
+    height: 1.1,
+    weight: 32,
     family: Families.Caterpie,
     evolvesFrom: Species.Metapod,
     stats: {

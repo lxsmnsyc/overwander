@@ -38,6 +38,8 @@ export default function registerKoffingSpecies(): void {
     ],
     name: 'Koffing',
     category: 'Poison Gas Pokemon',
+    height: 0.6,
+    weight: 1,
     family: Families.Koffing,
     stats: {
       [Stats.HP]: 40,
@@ -72,6 +74,8 @@ export default function registerKoffingSpecies(): void {
     dexNumber: 110,
     name: 'Weezing',
     category: 'Poison Gas Pokemon',
+    height: 1.2,
+    weight: 9.5,
     family: Families.Koffing,
     evolvesFrom: Species.Koffing,
     stats: {

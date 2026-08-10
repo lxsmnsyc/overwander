@@ -59,6 +59,8 @@ export default function registerNidoranFSpecies(): void {
     ],
     name: 'Nidoran F',
     category: 'Poison Pin Pokemon',
+    height: 0.4,
+    weight: 7,
     family: Families.NidoranF,
     stats: {
       [Stats.HP]: 55,
@@ -101,6 +103,8 @@ export default function registerNidoranFSpecies(): void {
     ],
     name: 'Nidorina',
     category: 'Poison Pin Pokemon',
+    height: 0.8,
+    weight: 20,
     family: Families.NidoranF,
     evolvesFrom: Species.NidoranF,
     stats: {
@@ -137,6 +141,8 @@ export default function registerNidoranFSpecies(): void {
     dexNumber: 31,
     name: 'Nidoqueen',
     category: 'Drill Pokemon',
+    height: 1.3,
+    weight: 60,
     family: Families.NidoranF,
     evolvesFrom: Species.Nidorina,
     stats: {

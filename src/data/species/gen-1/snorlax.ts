@@ -13,6 +13,8 @@ export default function registerSnorlaxSpecies(): void {
     dexNumber: 143,
     name: 'Snorlax',
     category: 'Sleeping Pokemon',
+    height: 2.1,
+    weight: 460,
     family: Families.Snorlax,
     stats: {
       [Stats.HP]: 160,

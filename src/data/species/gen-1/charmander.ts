@@ -47,6 +47,8 @@ export default function registerCharmanderSpecies(): void {
     ],
     name: 'Charmander',
     category: 'Lizard Pokemon',
+    height: 0.6,
+    weight: 8.5,
     family: Families.Charmander,
     stats: {
       [Stats.HP]: 39,
@@ -89,6 +91,8 @@ export default function registerCharmanderSpecies(): void {
     ],
     name: 'Charmeleon',
     category: 'Flame Pokemon',
+    height: 1.1,
+    weight: 19,
     family: Families.Charmander,
     evolvesFrom: Species.Charmander,
     stats: {
@@ -125,6 +129,8 @@ export default function registerCharmanderSpecies(): void {
     dexNumber: 6,
     name: 'Charizard',
     category: 'Flame Pokemon',
+    height: 1.7,
+    weight: 90.5,
     family: Families.Charmander,
     evolvesFrom: Species.Charmeleon,
     stats: {

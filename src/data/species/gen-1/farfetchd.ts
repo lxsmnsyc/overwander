@@ -33,6 +33,8 @@ export default function registerFarfetchdSpecies(): void {
     dexNumber: 83,
     name: "Farfetch'd",
     category: 'Wild Duck Pokemon',
+    height: 0.8,
+    weight: 15,
     family: Families.Farfetchd,
     stats: {
       [Stats.HP]: 52,

@@ -33,6 +33,8 @@ export default function registerLegendaryBirdSpecies(): void {
     dexNumber: 144,
     name: 'Articuno',
     category: 'Freeze Pokemon',
+    height: 1.7,
+    weight: 55.4,
     family: Families.Articuno,
     stats: {
       [Stats.HP]: 90,
@@ -72,6 +74,8 @@ export default function registerLegendaryBirdSpecies(): void {
     dexNumber: 145,
     name: 'Zapdos',
     category: 'Electric Pokemon',
+    height: 1.6,
+    weight: 52.6,
     family: Families.Zapdos,
     stats: {
       [Stats.HP]: 90,
@@ -110,6 +114,8 @@ export default function registerLegendaryBirdSpecies(): void {
     dexNumber: 146,
     name: 'Moltres',
     category: 'Flame Pokemon',
+    height: 2,
+    weight: 60,
     family: Families.Moltres,
     stats: {
       [Stats.HP]: 90,

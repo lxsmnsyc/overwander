@@ -13,6 +13,8 @@ export default function registerMagmarSpecies(): void {
     dexNumber: 126,
     name: 'Magmar',
     category: 'Spitfire Pokemon',
+    height: 1.3,
+    weight: 44.5,
     family: Families.Magmar,
     stats: {
       [Stats.HP]: 65,

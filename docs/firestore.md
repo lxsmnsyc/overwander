@@ -382,9 +382,16 @@ an empty side, and its player is not listed among the battle's `players`.
 
 A **catch snapshot** ([`src/auth/catch-snapshot.ts`](../src/auth/catch-snapshot.ts))
 copies `caught` (the source id), `species`, `level`, `ivs`, `effortValues`,
-`nature`, `gender`, `shiny`, `moves`, `abilities` and `items`. It is never
-rewritten: levelling, evolving or handing an item over mid-raid must not change
-units already fighting.
+`nature`, `gender`, `height`, `weight`, `shiny`, `moves`, `abilities` and
+`items`. It is never rewritten: levelling, evolving or handing an item over
+mid-raid must not change units already fighting.
+
+`height` and `weight` are the individual's own, not the species' listed ones.
+They are **not** stored on `caught/{catchId}`: `deriveSize(species, traitValue)`
+in [`src/overworld/encounter.ts`](../src/overworld/encounter.ts) reads them off
+the trait value against the species as it stands, so evolving grows the pokemon
+while keeping its place in the band. The snapshot freezes the result at battle
+start, and the battle unit carries it through `setHeight` / `setWeight`.
 
 The raid boss gets a snapshot of its own — perfect (31) IVs, zero effort values,
 no held items, level `RAID_BOSS_LEVEL`, with nature and ability derived from the

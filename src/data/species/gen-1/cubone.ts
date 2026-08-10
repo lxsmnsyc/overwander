@@ -50,6 +50,8 @@ export default function registerCuboneSpecies(): void {
     ],
     name: 'Cubone',
     category: 'Lonely Pokemon',
+    height: 0.4,
+    weight: 6.5,
     family: Families.Cubone,
     stats: {
       [Stats.HP]: 50,
@@ -84,6 +86,8 @@ export default function registerCuboneSpecies(): void {
     dexNumber: 105,
     name: 'Marowak',
     category: 'Bone Keeper Pokemon',
+    height: 1,
+    weight: 45,
     family: Families.Cubone,
     evolvesFrom: Species.Cubone,
     stats: {

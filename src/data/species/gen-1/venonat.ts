@@ -38,6 +38,8 @@ export default function registerVenonatSpecies(): void {
     ],
     name: 'Venonat',
     category: 'Insect Pokemon',
+    height: 1,
+    weight: 30,
     family: Families.Venonat,
     stats: {
       [Stats.HP]: 60,
@@ -73,6 +75,8 @@ export default function registerVenonatSpecies(): void {
     dexNumber: 49,
     name: 'Venomoth',
     category: 'Poison Moth Pokemon',
+    height: 1.5,
+    weight: 12.5,
     family: Families.Venonat,
     evolvesFrom: Species.Venonat,
     stats: {

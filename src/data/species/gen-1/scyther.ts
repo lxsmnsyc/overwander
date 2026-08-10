@@ -13,6 +13,8 @@ export default function registerScytherSpecies(): void {
     dexNumber: 123,
     name: 'Scyther',
     category: 'Mantis Pokemon',
+    height: 1.5,
+    weight: 56,
     family: Families.Scyther,
     stats: {
       [Stats.HP]: 70,

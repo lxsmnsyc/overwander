@@ -42,6 +42,8 @@ export default function registerOmanyteSpecies(): void {
     ],
     name: 'Omanyte',
     category: 'Spiral Pokemon',
+    height: 0.4,
+    weight: 7.5,
     family: Families.Omanyte,
     stats: {
       [Stats.HP]: 35,
@@ -75,6 +77,8 @@ export default function registerOmanyteSpecies(): void {
     dexNumber: 139,
     name: 'Omastar',
     category: 'Spiral Pokemon',
+    height: 1,
+    weight: 35,
     family: Families.Omanyte,
     evolvesFrom: Species.Omanyte,
     stats: {

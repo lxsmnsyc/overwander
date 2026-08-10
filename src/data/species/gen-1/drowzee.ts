@@ -49,6 +49,8 @@ export default function registerDrowzeeSpecies(): void {
     ],
     name: 'Drowzee',
     category: 'Hypnosis Pokemon',
+    height: 1,
+    weight: 32.4,
     family: Families.Drowzee,
     stats: {
       [Stats.HP]: 60,
@@ -84,6 +86,8 @@ export default function registerDrowzeeSpecies(): void {
     dexNumber: 97,
     name: 'Hypno',
     category: 'Hypnosis Pokemon',
+    height: 1.6,
+    weight: 75.6,
     family: Families.Drowzee,
     evolvesFrom: Species.Drowzee,
     stats: {

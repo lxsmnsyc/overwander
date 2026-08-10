@@ -42,6 +42,8 @@ export default function registerGrimerSpecies(): void {
     ],
     name: 'Grimer',
     category: 'Sludge Pokemon',
+    height: 0.9,
+    weight: 30,
     family: Families.Grimer,
     stats: {
       [Stats.HP]: 80,
@@ -76,6 +78,8 @@ export default function registerGrimerSpecies(): void {
     dexNumber: 89,
     name: 'Muk',
     category: 'Sludge Pokemon',
+    height: 1.2,
+    weight: 30,
     family: Families.Grimer,
     evolvesFrom: Species.Grimer,
     stats: {

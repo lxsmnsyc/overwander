@@ -13,6 +13,8 @@ export default function registerPinsirSpecies(): void {
     dexNumber: 127,
     name: 'Pinsir',
     category: 'Stag Beetle Pokemon',
+    height: 1.5,
+    weight: 55,
     family: Families.Pinsir,
     stats: {
       [Stats.HP]: 65,

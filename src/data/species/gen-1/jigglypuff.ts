@@ -55,6 +55,8 @@ export default function registerJigglypuffSpecies(): void {
     ],
     name: 'Jigglypuff',
     category: 'Balloon Pokemon',
+    height: 0.5,
+    weight: 5.5,
     family: Families.Jigglypuff,
     stats: {
       [Stats.HP]: 115,
@@ -91,6 +93,8 @@ export default function registerJigglypuffSpecies(): void {
     dexNumber: 40,
     name: 'Wigglytuff',
     category: 'Balloon Pokemon',
+    height: 1,
+    weight: 12,
     family: Families.Jigglypuff,
     evolvesFrom: Species.Jigglypuff,
     stats: {

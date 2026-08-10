@@ -4,6 +4,7 @@ import registerBiomeSpawns, {
   boostFamilyWeights,
   getSpawnPool,
   getSpawnRarity,
+  isMythicalSpecies,
   pickSpawn,
 } from '../src/data/biome';
 import Families from '../src/data/ids/families';
@@ -33,6 +34,7 @@ import registerItems, { getItemData, getTeachableMoves } from '../src/data/items
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
@@ -374,7 +376,37 @@ describe('item data', () => {
     expect(ITEM_POOL.special.map((entry) => entry.item)).toEqual([
       Items.MasterBall,
       Items.ShinyCharm,
+      Items.OldSeaMap,
     ]);
+  });
+
+  it('keeps the raid items to the special band and out of the market', () => {
+    const relic = getItemData(Items.OldSeaMap);
+
+    expect(relic.name).toBe('Old Sea Map');
+    expect(relic.type).toBe(ItemTypes.KeyItem);
+    // Used to call a mythical, and spent in the calling
+    expect(relic.flags & ItemFlags.Usable).not.toBe(0);
+    expect(relic.flags & ItemFlags.Consumable).not.toBe(0);
+    // Nobody buys or sells one: found in the pool or not at all
+    expect(relic.flags & ItemFlags.Marketable).toBe(0);
+    expect(relic.buy).toBe(0);
+    expect(relic.sell).toBe(0);
+
+    for (const [item, species] of RAID_ITEMS) {
+      // Every relic names a mythical, and only the special band
+      // carries it
+      expect(getRaidSpecies(item)).toBe(species);
+      expect(isMythicalSpecies(species)).toBe(true);
+      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(true);
+      for (const band of ['base', 'uncommon', 'rare'] as const) {
+        expect(ITEM_POOL[band].some((entry) => entry.item === item)).toBe(false);
+      }
+    }
+
+    // A relic that named a legendary would call nothing: the world
+    // stages those itself
+    expect(getRaidSpecies(Items.MasterBall)).toBeNull();
   });
 
   it('registers the Shiny Charm as a holdable key item', () => {

@@ -46,6 +46,20 @@ export const LEGENDARY_RAID_GOLD = 2000;
 export const SHADOW_RAID_GOLD = 1000;
 
 /**
+ * A mythical raid pays the most of the three. The relic that opened
+ * it is spent whether or not the boss went down, so what is on the
+ * table has to be worth spending one on
+ */
+export const MYTHICAL_RAID_GOLD = 3000;
+
+/**
+ * The level a mythical arrives at. Lower than a legendary's, the way
+ * the games have always handed mythicals over — the prize is the
+ * pokemon itself, not what it comes ready to do
+ */
+export const MYTHICAL_RAID_REWARD_LEVEL = 30;
+
+/**
  * The highest an individual value goes; a raid boss has them all
  */
 export const PERFECT_IV = 31;

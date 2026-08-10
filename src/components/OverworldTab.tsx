@@ -14,7 +14,13 @@ import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
 import { getLocalOffset } from '../auth/local-time';
 import type { EncounterRecord } from '../auth/encounter-record';
-import { RaidKind, canJoinRaids, claimRaidReward, enterRaid } from '../auth/raids';
+import {
+  RaidKind,
+  canJoinRaids,
+  claimRaidReward,
+  enterRaid,
+  hostMythicalRaid,
+} from '../auth/raids';
 import { claimRocketReward, enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
@@ -32,8 +38,11 @@ import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
 import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
 import { getItemData } from '../data/items';
+import { getInventory } from '../auth/inventory';
+import { getRaidSpecies } from '../data/items/raid-items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
 import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
@@ -183,6 +192,47 @@ export default function OverworldTab(): JSX.Element {
    * challenge is taken or declined
    */
   const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
+
+  /**
+   * The raid items the player carries, each with what it calls. They
+   * are used where the player stands, so they live here rather than
+   * in the bag listing
+   */
+  const [relics, { refetch: refetchRelics }] = createResource(
+    () => auth.user()?.uid ?? null,
+    async (uid) => {
+      const carried = await getInventory(uid);
+
+      return carried
+        .map((entry) => ({ ...entry, species: getRaidSpecies(entry.item) }))
+        .filter(
+          (entry): entry is typeof entry & { species: Species } =>
+            entry.species != null && entry.amount > 0,
+        );
+    },
+  );
+
+  /**
+   * Spend a relic: the lobby opens where the player is standing, and
+   * the Raids tab is where it is fought from
+   */
+  const callMythical = (snapshot: ChunkSnapshot, item: Items): void => {
+    setStatus(null);
+    hostMythicalRaid(snapshot, item)
+      .then(async (lobby) => {
+        await refetchRelics();
+
+        if (lobby == null) {
+          setStatus('That relic called nothing.');
+          return;
+        }
+        game.setRaid(lobby[0]);
+        game.setTab(GameTab.Raids);
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
 
   // A player who has not walked anywhere yet starts somewhere in the
   // starting region rather than at the origin. The draw is seeded by
@@ -554,6 +604,30 @@ export default function OverworldTab(): JSX.Element {
             <p>
               Cell {cellX()}, {cellY()}
             </p>
+
+            {/* A mythical stands on no landmark: the only way to
+                face one is to spend the relic that calls it, and it
+                is spent whatever the raid comes to */}
+            <Show when={relics()?.length}>
+              <h4>Raid items</h4>
+              <ul>
+                <For each={relics()}>
+                  {(entry) => (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          callMythical(loaded().snapshot, entry.item);
+                        }}
+                      >
+                        Use {describeItem(entry.item)} × {entry.amount}
+                      </button>{' '}
+                      — calls {getSpeciesData(entry.species).name}, and is spent doing it
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </Show>
             <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
           </>
         )}

@@ -28,6 +28,7 @@ export {
   getSpawnPool,
   getSpawnRarity,
   isLegendarySpecies,
+  isMythicalSpecies,
   pickSpawn,
   RARE_SPAWN_ODDS,
   registerSpawnPool,

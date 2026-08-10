@@ -116,6 +116,12 @@ export const enum Items {
   DragonFang = 50,
   BlackGlasses = 51,
   FairyFeather = 52,
+
+  /**
+   * Raid items: a relic that calls a mythical out to be fought once.
+   * Each names the species it stages
+   */
+  OldSeaMap = 53,
 }
 
 /**

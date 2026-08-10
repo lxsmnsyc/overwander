@@ -108,7 +108,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
 ]);
 
 /**
- * Mythicals: special-tier, but never raidable
+ * Mythicals: special-tier, and never staged by the world. A landmark
+ * will not roll one — the only way to face a mythical is to carry the
+ * relic that calls it, which is what a raid item is
  */
 const MYTHICAL_SPECIES = new Set<Species>([Species.Mew]);
 
@@ -121,6 +123,14 @@ const SPECIAL_SPECIES = new Set<Species>([...LEGENDARY_SPECIES, ...MYTHICAL_SPEC
  */
 export function isLegendarySpecies(species: Species): boolean {
   return LEGENDARY_SPECIES.has(species);
+}
+
+/**
+ * Whether the species is a mythical — the only kind a raid item may
+ * call. A legendary answers false: those are the world's to stage
+ */
+export function isMythicalSpecies(species: Species): boolean {
+  return MYTHICAL_SPECIES.has(species);
 }
 
 /**

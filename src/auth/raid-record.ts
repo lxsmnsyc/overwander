@@ -3,6 +3,7 @@
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import AleaRNG from '../core/alea';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import type { Spawn } from '../overworld/chunk-snapshot';
@@ -28,6 +29,12 @@ export const enum RaidKind {
    * draw in eight a legendary
    */
   Shadow = 1,
+  /**
+   * A mythical called out by a raid item. It stands on no landmark:
+   * the relic that opened it is what staged it, and the relic is
+   * spent, so the lobby is fought once whatever the outcome
+   */
+  Mythical = 2,
 }
 
 /**
@@ -118,6 +125,23 @@ export function raidId(
   // same boss
   return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
 }
+/**
+ * The lobby id of a mythical raid: the hour, the zone, the relic that
+ * called it and whoever spent it. A mythical stands on no landmark,
+ * so there is no cell to name — what identifies it is the item and
+ * the player who used it, which also means one relic opens one lobby
+ * an hour rather than a lobby per attempt
+ */
+export function mythicalRaidId(
+  chunk: Chunk,
+  raidTimestamp: number,
+  item: Items,
+  uid: string,
+  offset = 0,
+): string {
+  return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
+}
+
 /**
  * The reward for clearing a raid: the legendary as a meetable spawn.
  * The chunk, biome and window are the raid's, but the two rolls are

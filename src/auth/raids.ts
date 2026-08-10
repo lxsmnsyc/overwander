@@ -14,6 +14,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
+import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { asString } from './__normalize';
 import { RaidKind, type RaidRecord, asRaidRecord } from './raid-record';
@@ -24,6 +25,7 @@ import {
   claimRaidReward as claimRewardOnServerSide,
   clearRaid as clearOnServer,
   enterRaid as enterOnServer,
+  hostMythicalRaid as hostMythicalOnServerSide,
   joinRaid as joinOnServer,
   leaveRaid as leaveOnServer,
   startRaid as startOnServer,
@@ -136,6 +138,47 @@ async function enterRaidOnServer(
 ): Promise<[string, RaidRecord] | null> {
   'use server';
   return enterOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock(), offset);
+}
+
+/**
+ * Open a mythical raid with a raid item, where the player is
+ * standing. The relic is spent in the calling — a mythical raid is
+ * fought once, won or lost — so the server checks that it is carried
+ * and takes it before the lobby exists.
+ *
+ * Resolves the lobby id and its record, or null when the item calls
+ * nothing, is not carried, the player owns no pokemon to field, or
+ * the relic has already been spent on this hour's lobby
+ */
+export async function hostMythicalRaid(
+  snapshot: ChunkSnapshot,
+  item: Items,
+): Promise<[string, RaidRecord] | null> {
+  return hostMythicalOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    item,
+    snapshot.offset,
+  );
+}
+
+async function hostMythicalOnServer(
+  token: string,
+  x: number,
+  y: number,
+  item: Items,
+  offset: number,
+): Promise<[string, RaidRecord] | null> {
+  'use server';
+  return hostMythicalOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    item,
+    await syncServerClock(),
+    offset,
+  );
 }
 
 /**

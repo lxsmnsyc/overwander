@@ -50,6 +50,10 @@ export const enum EncounterType {
    * ability for good
    */
   ShadowRaid = 5,
+  /**
+   * Fought and caught in a mythical raid — the one a raid item called
+   */
+  MythicalRaid = 6,
 }
 
 /**
@@ -59,7 +63,11 @@ export const enum EncounterType {
  * be listed separately everywhere they are alike
  */
 export function isRaidEncounter(type: EncounterType): boolean {
-  return type === EncounterType.LegendaryRaid || type === EncounterType.ShadowRaid;
+  return (
+    type === EncounterType.LegendaryRaid ||
+    type === EncounterType.ShadowRaid ||
+    type === EncounterType.MythicalRaid
+  );
 }
 
 /**
@@ -72,6 +80,7 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.Fateful]: 'Event',
   [EncounterType.Rocket]: 'Team Rocket',
   [EncounterType.ShadowRaid]: 'Shadow Raid',
+  [EncounterType.MythicalRaid]: 'Mythical Raid',
 };
 
 /**

@@ -14,6 +14,16 @@ import { getSpeciesData } from '../data/species';
 import TeamPickerDialog from './TeamPickerDialog';
 import { useGame } from './game-context';
 
+/**
+ * What a lobby calls itself. A legendary raid says nothing extra —
+ * it is the ordinary kind
+ */
+const RAID_KIND_NAMES: Record<RaidKind, string> = {
+  [RaidKind.Legendary]: '',
+  [RaidKind.Shadow]: 'Shadow',
+  [RaidKind.Mythical]: 'Mythical',
+};
+
 export interface RaidLobbyProps {
   user: User;
   raidId: string;
@@ -87,10 +97,14 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
         {(record) => (
           <>
             <h3>
-              {record().kind === RaidKind.Shadow ? 'Shadow ' : ''}
-              {getSpeciesData(record().species).name} Raid
+              {RAID_KIND_NAMES[record().kind]} {getSpeciesData(record().species).name} Raid
             </h3>
             <p>{isHost() ? 'You are hosting this raid.' : 'Waiting for the host.'}</p>
+            {/* The relic that opened it is already spent, so there is
+                no second attempt to fall back on */}
+            <Show when={record().kind === RaidKind.Mythical}>
+              <p>The relic is spent. Whatever this raid comes to, it comes to it once.</p>
+            </Show>
 
             <h4>Teams</h4>
             <Show when={teams()?.length} fallback={<p>No teams have joined yet.</p>}>

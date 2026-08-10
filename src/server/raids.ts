@@ -19,6 +19,7 @@ import {
   type RaidRecord,
   asRaidRecord,
   deriveRaidReward,
+  mythicalRaidId,
   raidId,
 } from '../auth/raid-record';
 import { TEAM_SIZE } from '../auth/teams';
@@ -29,17 +30,44 @@ import {
   BOSS_ALLIANCE,
   LEGENDARY_RAID_GOLD,
   LEGENDARY_RAID_REWARD_LEVEL,
+  MYTHICAL_RAID_GOLD,
+  MYTHICAL_RAID_REWARD_LEVEL,
   PLAYER_ALLIANCE,
   SHADOW_RAID_GOLD,
   SHADOW_RAID_REWARD_LEVEL,
   createRaidBossSnapshot,
 } from '../overworld/raid';
+import AleaRNG from '../core/alea';
+import type { Items } from '../data/ids/items';
+import { getRaidSpecies } from '../data/items/raid-items';
 import { getAdminFirestore } from './firebase';
+import { consumeItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
 import { asNumber, asString, asStringArray, docData } from './read';
 import { hasAnyCaught } from './caught';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
+
+/**
+ * What each kind of lobby pays, hands over, and records itself as
+ */
+const RAID_GOLD: Record<RaidKind, number> = {
+  [RaidKind.Legendary]: LEGENDARY_RAID_GOLD,
+  [RaidKind.Shadow]: SHADOW_RAID_GOLD,
+  [RaidKind.Mythical]: MYTHICAL_RAID_GOLD,
+};
+
+const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
+  [RaidKind.Legendary]: LEGENDARY_RAID_REWARD_LEVEL,
+  [RaidKind.Shadow]: SHADOW_RAID_REWARD_LEVEL,
+  [RaidKind.Mythical]: MYTHICAL_RAID_REWARD_LEVEL,
+};
+
+const RAID_ENCOUNTER_TYPES: Record<RaidKind, EncounterType> = {
+  [RaidKind.Legendary]: EncounterType.LegendaryRaid,
+  [RaidKind.Shadow]: EncounterType.ShadowRaid,
+  [RaidKind.Mythical]: EncounterType.MythicalRaid,
+};
 
 /**
  * A stored outcome, restored as the enum the rest of the code
@@ -180,6 +208,82 @@ export async function enterRaid(
     transaction.set(ref, fresh);
     return [id, fresh];
   });
+}
+
+/**
+ * Open a mythical raid with a raid item. The relic names the species
+ * — the world never stages a mythical of its own — and it is **spent
+ * in the calling**: the stack comes down by one before the lobby is
+ * written, so a mythical is fought once whether the boss goes down or
+ * walks away. Nothing restages it, unlike a landmark raid a party
+ * failed.
+ *
+ * The lobby stands where the player was standing, for the hour they
+ * were standing there in, and is joinable by anyone the way any other
+ * lobby is.
+ *
+ * Resolves the lobby id and its record, or null when the item calls
+ * nothing, is not carried, or has already been spent on this hour's
+ * lobby
+ */
+export async function hostMythicalRaid(
+  uid: string,
+  x: number,
+  y: number,
+  item: Items,
+  now: number,
+  offset: number,
+): Promise<[string, RaidRecord] | null> {
+  const species = getRaidSpecies(item);
+
+  if (species == null) {
+    return null;
+  }
+
+  const chunk = getWorld().getChunk(x, y);
+  const zone = asOffset(offset);
+  const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
+  const db = getAdminFirestore();
+  const id = mythicalRaidId(chunk, snapshot.raidTimestamp, item, uid, zone);
+  const ref = db.collection(RAID_COLLECTION).doc(id);
+  const stored = docData(await ref.get());
+
+  // The relic was already spent on this hour's lobby: whatever became
+  // of it — gathering, fought, lost — is what there is
+  if (stored != null) {
+    const existing = asRaidRecord(stored);
+
+    return existing.cleared ? null : [id, existing];
+  }
+  // A player with nothing of their own cannot host: an empty lobby
+  // would spend the relic on a raid nobody can start
+  if (!(await hasAnyCaught(uid))) {
+    return null;
+  }
+  // Spent before the lobby exists, so a relic can never open two
+  if (!(await consumeItem(uid, item))) {
+    return null;
+  }
+
+  // The boss' nature and ability come from the lobby itself, so every
+  // player who joins fights the same mythical
+  const fresh: RaidRecord = {
+    kind: RaidKind.Mythical,
+    species,
+    traitValue: new AleaRNG(`${id}:mythical`).int32(),
+    host: uid,
+    teams: [],
+    battle: null,
+    timestamp: snapshot.raidTimestamp,
+    offset: zone,
+    chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
+    // A mythical stands on no landmark cell
+    cell: -1,
+    cleared: false,
+  };
+
+  await ref.set(fresh);
+  return [id, fresh];
 }
 
 /**
@@ -570,7 +674,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   }
 
   const shadow = raid.kind === RaidKind.Shadow;
-  const gold = shadow ? SHADOW_RAID_GOLD : LEGENDARY_RAID_GOLD;
+  const gold = RAID_GOLD[raid.kind];
   const ref = db.collection(RAID_REWARD_COLLECTION).doc(`${lobby}:${uid}`);
   const claimed = await db.runTransaction(async (transaction) => {
     if ((await transaction.get(ref)).exists) {
@@ -590,11 +694,11 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   const snapshot = new ChunkSnapshot(chunk, raid.timestamp, raid.offset);
   const [spawnId, spawn] = deriveRaidReward(raid, lobby, uid);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {
-    // The two raids hand over different prizes, so a catch says which
-    // lobby it came out of
-    type: shadow ? EncounterType.ShadowRaid : EncounterType.LegendaryRaid,
+    // The three raids hand over different prizes, so a catch says
+    // which lobby it came out of
+    type: RAID_ENCOUNTER_TYPES[raid.kind],
     shadow,
-    level: shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
+    level: RAID_REWARD_LEVELS[raid.kind],
   });
 
   return { encounter, gold };

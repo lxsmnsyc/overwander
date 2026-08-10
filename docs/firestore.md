@@ -368,7 +368,28 @@ There are two landmark kinds:
   (`SHADOW_RAID_LEGENDARY_CHANCE`) which reaches the legendary pool instead.
   Their boss carries the `Shadow` ability alongside `Boss`.
 
-A third landmark runs on the same hour without being a raid at all: the **Team
+A third kind is not staged by the world at all. A **mythical raid** is opened by
+spending a **raid item**, and stands on no landmark:
+
+- **Mythical raids** are called out by a relic — `RAID_ITEMS` in
+  [`src/data/items/raid-items.ts`](../src/data/items/raid-items.ts) maps each to
+  the species it calls, e.g. the Old Sea Map to Mew. The world never rolls a
+  mythical of its own (`isMythicalSpecies` is excluded from every landmark
+  roll), so carrying the relic is the only way to face one. A raid item is found
+  in the **special** band of the overworld item pool and nowhere else: it cannot
+  be bought or sold.
+
+`hostMythicalRaid` spends the relic **before** the lobby is written, so a raid
+item opens exactly one lobby and is gone whether the boss falls or the party
+does. Nothing restages it — the landmark rule that reopens a failed raid has no
+lobby to reopen, since the id is `{chunkSeed}{zone}@{raidTimestamp}$mythical{item}:{uid}`
+and its record already exists. Hosting also refuses a player with no pokemon,
+rather than spending the relic on a lobby nobody can start.
+
+Once open it is an ordinary lobby: it appears in the hour's listing, anyone may
+join it, and it is fought, cleared and claimed through the same calls.
+
+A fourth landmark runs on the same hour without being a raid at all: the **Team
 Rocket Stop**, a solo trainer fight described under
 [`rocketStops`](#rocketstopsstopiduid).
 
@@ -642,11 +663,13 @@ from:
 | `Fateful`        | 3   | Event            | An event or mystery gift                  |
 | `Rocket`         | 4   | Team Rocket      | A beaten Team Rocket grunt                |
 | `ShadowRaid`     | 5   | Shadow Raid      | A cleared shadow raid                     |
+| `MythicalRaid`   | 6   | Mythical Raid    | A cleared mythical raid                   |
 
-The two raids are kept apart because they are not the same prize: a legendary
-raid stages a legendary and hands it over at level 50, while a shadow raid
-usually stages one of the biome's **rare** species, hands it over at 25, and its
-catch keeps the `Shadow` ability for good. Where the two are alike —
+The three raids are kept apart because they are not the same prize: a legendary
+raid stages a legendary and hands it over at level 50; a shadow raid usually
+stages one of the biome's **rare** species, hands it over at 25, and its catch
+keeps the `Shadow` ability for good; a mythical raid stages what a relic called
+and hands it over at 30, once. Where the two are alike —
 the species-day IV floor (`RAID_FAMILY_DAY_MIN_IV`), and a prize that never
 bolts from a safari throw — `isRaidEncounter` covers both, so nothing has to
 list them separately to treat them the same.
@@ -737,6 +760,7 @@ a call is never trusted — only what the token proves.
 | `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                  |
 | `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
 | `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
+| `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                     |
 | `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the hour, and the fight freezes the player's party the way a raid does                                            |
 | `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                           |
 | `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |

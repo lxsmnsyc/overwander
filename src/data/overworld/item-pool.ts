@@ -66,6 +66,9 @@ export const ITEM_POOL: ItemRarityGroups = {
   special: [
     { item: Items.MasterBall, weight: 10 },
     { item: Items.ShinyCharm, weight: 10 },
+    // The only way a mythical is ever fought: the relic is found
+    // here or not at all
+    { item: Items.OldSeaMap, weight: 6 },
   ],
 };
 

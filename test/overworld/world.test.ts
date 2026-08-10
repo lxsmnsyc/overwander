@@ -21,6 +21,7 @@ import ChunkSnapshot, { RAID_INTERVAL, SPAWN_COUNT } from '../../src/overworld/c
 import {
   BOSS_ALLIANCE,
   LEGENDARY_RAID_REWARD_LEVEL,
+  MYTHICAL_RAID_REWARD_LEVEL,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
@@ -1177,8 +1178,23 @@ describe('chunk snapshot', () => {
     expect(ENCOUNTER_TYPE_NAMES[legendary.type]).toBe('Legendary Raid');
     expect(ENCOUNTER_TYPE_NAMES[shadow.type]).toBe('Shadow Raid');
 
+    const mythical = deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+      type: EncounterType.MythicalRaid,
+      level: MYTHICAL_RAID_REWARD_LEVEL,
+    });
+
     expect(legendary.level).toBe(50);
     expect(shadow.level).toBe(25);
+    expect(mythical.level).toBe(30);
+
+    // All three are raids where raids are alike, and none of them is
+    // recorded as another
+    expect(mythical.type).toBe(EncounterType.MythicalRaid);
+    expect(ENCOUNTER_TYPE_NAMES[mythical.type]).toBe('Mythical Raid');
+    expect(new Set([legendary.type, shadow.type, mythical.type]).size).toBe(3);
+    for (const kind of [legendary.type, shadow.type, mythical.type]) {
+      expect(isRaidEncounter(kind)).toBe(true);
+    }
 
     // The moves follow the fixed level, not the rolled one
     expect(legendary.moves).toEqual(deriveMoves(Species.Gyarados, 50));

@@ -8,6 +8,7 @@ import {
   type CheckEncounterGenderEvent,
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
+  type CheckGoldRewardEvent,
   type CheckSpawnCountEvent,
   type OverworldEventMap,
   OverworldEvents,
@@ -140,5 +141,24 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckEncounterShiny, event);
     return event.boost;
+  }
+
+  /**
+   * What a reward actually pays this player. The purse a raid or a
+   * beaten grunt owes is decided by what was fought; what the player
+   * walks away with is that, plus whatever they brought along
+   */
+  checkGoldReward(subject: string, base: number): number {
+    const event: CheckGoldRewardEvent = {
+      id: 'CheckGoldReward',
+      disabled: false,
+      overworld: this,
+      random: this.random(subject, 'gold'),
+      base,
+      gold: base,
+    };
+
+    this.emit(OverworldEvents.CheckGoldReward, event);
+    return event.gold;
   }
 }

@@ -140,6 +140,19 @@ export const enum Items {
   ThickClub = 60,
   MetalPowder = 61,
   QuickPowder = 62,
+
+  /**
+   * The incenses: held smokes, each one a small edge somewhere
+   */
+  FullIncense = 63,
+  LaxIncense = 64,
+  LuckIncense = 65,
+  OddIncense = 66,
+  PureIncense = 67,
+  RockIncense = 68,
+  RoseIncense = 69,
+  SeaIncense = 70,
+  WaveIncense = 71,
 }
 
 /**

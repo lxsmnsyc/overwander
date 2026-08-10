@@ -1,0 +1,83 @@
+import { Types } from '../constants/types';
+import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { registerItem } from './__create';
+
+/**
+ * The incenses: held smokes, each one a small edge somewhere.
+ *
+ * Five of them are type boosters by another name — an Odd Incense
+ * does for Psychic exactly what a Twisted Spoon does — and the other
+ * four each touch something else entirely: how easily their holder is
+ * hit, how late it acts, how much a reward pays, how crowded the
+ * world around it is.
+ *
+ * The battle side lives in
+ * [`src/battle/items/incenses.ts`](../../battle/items/incenses.ts) and
+ * [`src/battle/items/type-boosters.ts`](../../battle/items/type-boosters.ts);
+ * what a buddy's incense changes about the overworld lives in
+ * [`src/overworld/items/incenses.ts`](../../overworld/items/incenses.ts).
+ */
+
+/**
+ * The incenses that lift a type, and the type each lifts. Two of them
+ * lift Water: the sea and the waves are the same water
+ */
+export const INCENSE_TYPES = new Map<Items, Types>([
+  [Items.OddIncense, Types.Psychic],
+  [Items.RockIncense, Types.Rock],
+  [Items.RoseIncense, Types.Grass],
+  [Items.SeaIncense, Types.Water],
+  [Items.WaveIncense, Types.Water],
+]);
+
+/**
+ * The incenses that do something other than lift a type
+ */
+export const FIELD_INCENSES = new Set<Items>([
+  Items.FullIncense,
+  Items.LaxIncense,
+  Items.LuckIncense,
+  Items.PureIncense,
+]);
+
+const NAMES: { [key in Items]?: string } = {
+  [Items.FullIncense]: 'Full Incense',
+  [Items.LaxIncense]: 'Lax Incense',
+  [Items.LuckIncense]: 'Luck Incense',
+  [Items.OddIncense]: 'Odd Incense',
+  [Items.PureIncense]: 'Pure Incense',
+  [Items.RockIncense]: 'Rock Incense',
+  [Items.RoseIncense]: 'Rose Incense',
+  [Items.SeaIncense]: 'Sea Incense',
+  [Items.WaveIncense]: 'Wave Incense',
+};
+
+/**
+ * An incense costs less than the plain item it stands beside: a Sea
+ * Incense and a Mystic Water do the same thing, and the incense is
+ * the cheaper way to it
+ */
+export const INCENSE_PRICE = 3000;
+
+const INCENSE_RESALE = 0.5;
+
+/**
+ * Every incense, for callers that only care that it is one
+ */
+export const INCENSES: Items[] = [...INCENSE_TYPES.keys(), ...FIELD_INCENSES];
+
+/**
+ * Register the incenses. All of them are held and none is spent: an
+ * incense burns for as long as its holder carries it
+ */
+export default function registerIncenses(): void {
+  for (const item of INCENSES) {
+    registerItem(item, {
+      name: NAMES[item] ?? `Item #${item}`,
+      type: ItemTypes.Held,
+      flags: ItemFlags.Holdable | ItemFlags.Marketable,
+      buy: INCENSE_PRICE,
+      sell: INCENSE_PRICE * INCENSE_RESALE,
+    });
+  }
+}

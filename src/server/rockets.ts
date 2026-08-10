@@ -25,6 +25,8 @@ import {
   ROCKET_STOP_GOLD,
   createRocketParty,
 } from '../overworld/rocket';
+import createOverworld from '../overworld/setup';
+import resolveBuddy from './buddy';
 import { getAdminFirestore } from './firebase';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
@@ -261,7 +263,13 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   if (!claimed) {
     return null;
   }
-  await grantGold(uid, ROCKET_STOP_GOLD);
+
+  // What the grunt is worth, and then what the winner brought along:
+  // a buddy burning a Luck Incense doubles the purse
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const gold = overworld.checkGoldReward(stop, ROCKET_STOP_GOLD);
+
+  await grantGold(uid, gold);
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
@@ -275,5 +283,5 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     shadow: true,
   });
 
-  return { encounter, gold: ROCKET_STOP_GOLD };
+  return { encounter, gold };
 }

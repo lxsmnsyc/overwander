@@ -35,6 +35,7 @@ import registerItems, { getItemData, getTeachableMoves } from '../src/data/items
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
+import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -520,6 +521,41 @@ describe('type-enhancing items', () => {
 
     for (const item of TYPE_BOOSTERS.keys()) {
       expect(pooled.has(item)).toBe(false);
+    }
+  });
+
+  it('registers every incense as a held, stocked smoke', () => {
+    const pooled = new Set(
+      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const item of INCENSES) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // An incense burns for as long as it is carried
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.flags & ItemFlags.Usable).toBe(0);
+      // Bought, and cheaper than the plain item it stands beside
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(INCENSE_PRICE);
+      expect(data.buy).toBeLessThan(TYPE_BOOSTER_PRICE);
+      expect(pooled.has(item)).toBe(false);
+    }
+
+    // Five of them lift a type, and two of those lift the same one:
+    // the sea and the waves are the same water
+    expect(INCENSE_TYPES.get(Items.SeaIncense)).toBe(Types.Water);
+    expect(INCENSE_TYPES.get(Items.WaveIncense)).toBe(Types.Water);
+    expect(INCENSE_TYPES.get(Items.OddIncense)).toBe(Types.Psychic);
+
+    // The type ones stand apart from the plain boosters, which are
+    // still one per attacking type
+    for (const item of INCENSE_TYPES.keys()) {
+      expect(TYPE_BOOSTERS.has(item)).toBe(false);
     }
   });
 

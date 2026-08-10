@@ -12,6 +12,7 @@ import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/id
 import { Species } from '../../src/data/ids/species';
 import { Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
+import { FULL_INCENSE_PRIORITY, LAX_INCENSE_EVASION } from '../../src/battle/items/incenses';
 import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
 import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
 import { createBattle, createUnit, pinRandom } from './harness';
@@ -196,6 +197,53 @@ describe('type-enhancing held items', () => {
     // An item that has been disabled is still held and does nothing
     attacker.disableItem(Items.Charcoal);
     expect(attacker.checkMovePower(Moves.Ember, target)).toBe(fire);
+  });
+});
+
+describe('incenses', () => {
+  it('lifts its own type the way the plain item does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    const water = getMoveData(Moves.WaterGun).power ?? 0;
+
+    attacker.addItem(Items.SeaIncense);
+
+    // A Sea Incense is a Mystic Water by another name
+    expect(attacker.checkMovePower(Moves.WaterGun, target)).toBeCloseTo(
+      water * TYPE_BOOSTER_FACTOR,
+      5,
+    );
+    expect(attacker.checkMovePower(Moves.Ember, target)).toBe(getMoveData(Moves.Ember).power ?? 0);
+  });
+
+  it('makes its holder harder to hit and slower to act', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const target = unitTarget(holder);
+    const accuracy = attacker.checkMoveAccuracy(Moves.Tackle, target) ?? 0;
+
+    expect(accuracy).toBeGreaterThan(0);
+
+    holder.addItem(Items.LaxIncense);
+
+    // Read off whoever is being aimed at, not whoever is aiming
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(
+      accuracy * LAX_INCENSE_EVASION,
+      5,
+    );
+
+    const priority = holder.checkMovePriority(Moves.Tackle, unitTarget(attacker));
+
+    holder.removeItem(Items.LaxIncense, { type: EffectType.None });
+    holder.addItem(Items.FullIncense);
+
+    // A bracket later than it would otherwise have acted
+    expect(holder.checkMovePriority(Moves.Tackle, unitTarget(attacker))).toBe(
+      priority - FULL_INCENSE_PRIORITY,
+    );
   });
 });
 

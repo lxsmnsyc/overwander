@@ -35,6 +35,10 @@ export const enum OverworldEvents {
    * — the Shiny Charm eightfold
    */
   CheckEncounterShiny = 3,
+  /**
+   * What a reward pays out. A Luck Incense doubles it
+   */
+  CheckGoldReward = 4,
 }
 
 /**
@@ -68,9 +72,19 @@ export interface CheckEncounterShinyEvent extends OverworldEvent {
   boost: number;
 }
 
+export interface CheckGoldRewardEvent extends OverworldEvent {
+  /**
+   * What the raid or the beaten trainer pays before anything the
+   * player brought along has its say
+   */
+  base: number;
+  gold: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
   [OverworldEvents.CheckEncounterGender]: [CheckEncounterGenderEvent, EventPriority];
   [OverworldEvents.CheckEncounterShiny]: [CheckEncounterShinyEvent, EventPriority];
+  [OverworldEvents.CheckGoldReward]: [CheckGoldRewardEvent, EventPriority];
 }

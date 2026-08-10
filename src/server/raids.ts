@@ -40,6 +40,8 @@ import {
 import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import { getRaidSpecies } from '../data/items/raid-items';
+import createOverworld from '../overworld/setup';
+import resolveBuddy from './buddy';
 import { getAdminFirestore } from './firebase';
 import { consumeItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
@@ -674,7 +676,10 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   }
 
   const shadow = raid.kind === RaidKind.Shadow;
-  const gold = RAID_GOLD[raid.kind];
+  // What the boss is worth, and then what the claimant brought along:
+  // a buddy burning a Luck Incense doubles the purse
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const gold = overworld.checkGoldReward(lobby, RAID_GOLD[raid.kind]);
   const ref = db.collection(RAID_REWARD_COLLECTION).doc(`${lobby}:${uid}`);
   const claimed = await db.runTransaction(async (transaction) => {
     if ((await transaction.get(ref)).exists) {

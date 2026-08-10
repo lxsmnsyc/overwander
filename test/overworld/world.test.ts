@@ -52,6 +52,7 @@ import Landmark from '../../src/data/overworld/landmark';
 import { resolveBerryPatch, resolveHiddenGrotto } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import type { Buddy } from '../../src/overworld/core';
+import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
 import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
 import World, {
@@ -641,6 +642,32 @@ describe('world', () => {
     expect(createOverworld('player-uid', null).checkEncounterShiny('spawn#0')).toBe(1);
     expect(plain.checkEncounterShiny('spawn#0')).toBe(1);
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(SHINY_CHARM_BOOST);
+  });
+
+  it('doubles a purse and quiets a chunk for a buddy burning incense', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const lucky = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.LuckIncense],
+    });
+    const quiet = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.PureIncense],
+    });
+
+    // What the raid owes, and then what the claimant brought along
+    expect(plain.checkGoldReward('raid-id', 2000)).toBe(2000);
+    expect(lucky.checkGoldReward('raid-id', 2000)).toBe(2000 * LUCK_INCENSE_BONUS);
+
+    // The mirror of a lure: the window rolls what it rolls, and the
+    // player carrying one meets fewer of them
+    expect(plain.checkSpawnCount(SPAWN_COUNT)).toBe(SPAWN_COUNT);
+    expect(quiet.checkSpawnCount(SPAWN_COUNT)).toBe(SPAWN_COUNT - PURE_INCENSE_QUIET);
+    // It can never quiet a chunk below nothing
+    expect(quiet.checkSpawnCount(1)).toBe(0);
+
+    // A player walking alone carries nothing
+    expect(createOverworld('player-uid', null).checkGoldReward('raid-id', 2000)).toBe(2000);
   });
 
   it('bounds the world at 4096 chunks a side', () => {

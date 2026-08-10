@@ -1,0 +1,45 @@
+import { EventPriority } from '../../core/event-emitter';
+import { Items } from '../../data/ids/items';
+import type Battle from '../core';
+import { BattleEvents, MoveTargetType } from '../events';
+
+/**
+ * The incenses that do something in a battle other than lift a type.
+ * The five that lift one ride the type-booster listener instead, in
+ * [`./type-boosters.ts`](./type-boosters.ts).
+ */
+
+/**
+ * What a Lax Incense takes off the accuracy of anything aimed at its
+ * holder. Small, and it applies to every attack rather than a chosen
+ * one, which is what makes it worth a held slot
+ */
+export const LAX_INCENSE_EVASION = 0.95;
+
+/**
+ * What a Full Incense costs its holder in priority. A move a bracket
+ * slower is a move that lands after the answer to it, which is the
+ * price of whatever the holder is carrying it for
+ */
+export const FULL_INCENSE_PRIORITY = 1;
+
+export default function setupIncenses(battle: Battle): void {
+  // Lax Incense: harder to hit, so it is read off the unit being
+  // aimed at rather than the one aiming
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+    if (event.accuracy == null || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+    if (event.target.unit.items[Items.LaxIncense] === true) {
+      event.accuracy *= LAX_INCENSE_EVASION;
+    }
+  });
+
+  // Full Incense: its holder acts a bracket later than it otherwise
+  // would, which in a real-time fight is a longer wind-up
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+    if (event.source.items[Items.FullIncense] === true) {
+      event.priority -= FULL_INCENSE_PRIORITY;
+    }
+  });
+}

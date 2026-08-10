@@ -138,6 +138,8 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch        |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`         |
 | `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
+| `lock`                 | `boolean`               | Whether it is fielded in a battle right now               |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `number`                | Server-clock milliseconds (see below)                     |
 | `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                           |
@@ -174,6 +176,43 @@ between them. Only items flagged `Holdable` can be handed over, and a catch
 holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
 This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
 of every encounter its owner starts.
+
+### Catches are locked while they fight
+
+A battle runs on a **frozen** snapshot of the party, so a record that moved
+underneath it would leave the two describing different pokemon — and the worst
+case is not cosmetic: a player who pulls a berry back into the bag mid-raid
+would have it eaten in the battle and still be holding it afterwards.
+
+So `startRaid` sets `lock` as it freezes each team, in the **same transaction**
+as the snapshot, and every write that edits a catch — `giveItem`, `takeItem`,
+`useCandy`, `evolveCatch`, and `joinRaid`, which will not field a pokemon
+already fighting elsewhere — refuses while the lock holds. Trading will ask the
+same question: a locked pokemon is not up for trade.
+
+`isCatchLocked` ([`src/server/locks.ts`](../src/server/locks.ts)) answers from
+the two fields alone, against the server's own clock — no document is fetched.
+Two things end a lock:
+
+- **The fight.** `finishBattle` stamps the outcome and then calls
+  `releaseBattleLocks`, which frees every catch its team snapshots name.
+- **The clock.** A lock is ignored once `BATTLE_TIMEOUT` (10 minutes) has passed
+  since `lockedAt`, so a battle nobody ever reports — a closed tab, a party that
+  walked out — does not hold pokemon forever. It is the same window that decides
+  an abandoned raid may be restaged.
+
+`lockedAt` is the battle's own `startedAt`, which is what keeps the release
+honest: it frees only catches whose lock still carries **that** stamp, so a late
+report cannot unlock a pokemon that has since been taken by a newer fight.
+
+Because freezing a team locks it, `startRaid` **claims the raid first** and
+freezes afterwards — a start that loses the race to another host holds nothing.
+A claim whose teams then field nothing leaves the raid pointing at a battle
+document that was never written, which reads as lost and restages.
+
+The client asks the same question through `isLockLive`
+([`src/auth/battle-lock.ts`](../src/auth/battle-lock.ts)) so the catch dialog
+can grey its buttons out and say why; the refusal itself is the server's.
 
 ## Shared overworld stores
 
@@ -384,6 +423,7 @@ winning party appears in.
 | Field     | Type       | Notes                                        |
 | --------- | ---------- | -------------------------------------------- |
 | `player`  | `string`   | Owning uid                                   |
+| `raid`    | `string`   | The `raids/{raidId}` it was brought to       |
 | `catches` | `string[]` | Up to `TEAM_SIZE` (6) `caught/{catchId}` ids |
 
 A team holds ids, so it follows whatever those catches become — until a battle
@@ -399,6 +439,24 @@ whose `owner` no longer matches `team.player` — which also covers a catch trad
 away between joining the lobby and the host starting the raid — and resolves
 null when nothing survives, so `startRaid` drops that team rather than fielding
 an empty side, and its player is not listed among the battle's `players`.
+
+**One pokemon, one fight.** A catch cannot be brought to a raid while it is
+already committed elsewhere, and that is checked in three places:
+
+- `joinRaid` refuses a party holding a **locked** catch — one in a live battle.
+- `joinRaid` also refuses one already **queued**: `isAnyCatchQueued` reads the
+  player's own teams (`player ==` uid, `catches array-contains-any` the party)
+  and blocks when any of them is still listed by a raid that has not started.
+  This is why a team names its `raid` — without it, answering would mean reading
+  every lobby in the world. Teams of raids that started, were cleared, or were
+  left behind do not count.
+- Freezing drops a catch that is locked by the time the host starts, so a player
+  sitting in two lobbies with the same party has it fielded by whichever raid
+  started first and simply left out of the other.
+
+The team picker greys out anything it can see is fighting (`isLockLive`, from
+the two lock fields it already has), so the refusal is usually visible before
+the join is attempted.
 
 ### `teamSnapshots/{snapshotId}`
 
@@ -447,6 +505,32 @@ history queries `where('players', 'array-contains', uid)` and drops anything
 still `Unfinished` — an abandoned fight is not a result. Replaying a history
 entry rebuilds the battle from that seed and those snapshots, so it plays out
 identically and awards nothing.
+
+### `battleConsumptions/{battleId}:{uid}`
+
+| Field    | Type     | Notes                  |
+| -------- | -------- | ---------------------- |
+| `player` | `string` | The uid billed         |
+| `battle` | `string` | The battle it paid for |
+
+An item a unit spends in battle is spent for good: a berry eaten in a raid comes
+off the catch record when the fight ends, the way it does in the mainline games.
+Every removal during the battle is remembered on the unit (`Unit.consumed`), and
+`consumeHeldItems(battleId, consumed)` reports what the player's **own** party
+lost — the outcome is stamped once by whoever sees the fight settle, but the
+items come off per player, since nobody else's catches are theirs to empty.
+
+The server checks the report against the team snapshots it froze itself: an item
+that was not fielded by that catch cannot be stripped, and a catch that has
+changed hands since is left alone. The marker above bills each player once per
+battle, so a repeated report takes nothing further. It applies whichever way the
+fight went — a berry eaten against a boss that survived is still eaten — and a
+replay reports nothing at all.
+
+The bill is settled **before** the outcome is stamped: the catches are locked
+while the battle is live (see above), and stamping the outcome is what frees
+them, so reporting afterwards would leave a window in which a berry could be
+pulled back into the bag and kept.
 
 ### `raidRewards/{raidId}:{uid}`
 
@@ -523,6 +607,7 @@ a call is never trusted — only what the token proves.
 | `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                  |
 | `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
 | `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
+| `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |
 | `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
 | `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
 
@@ -664,6 +749,12 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
+    // A battle's bill for spent items: written by the server, since
+    // it takes items off catch records
+    match /battleConsumptions/{markerId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
     match /grottoClaims/{claimId} {
       allow read: if signedIn();
       allow write: if false;
@@ -682,15 +773,16 @@ actually deployed.
 
 ## Required indexes
 
-| Collection    | Fields                       | Reason                                        |
-| ------------- | ---------------------------- | --------------------------------------------- |
-| `spawns`      | `chunk` ASC, `timestamp` ASC | `listSpawns` filters on both                  |
-| `caught`      | `owner` ASC                  | `listCaught`; automatic single-field index    |
-| `spawns`      | `chunk` ASC                  | `clearStaleSpawns`; automatic                 |
-| `caught`      | `owner` ASC, `species` ASC   | `hasCaughtSpecies`, the Repeat Ball's check   |
-| `inventories` | `user` ASC                   | `getInventory`; automatic single-field index  |
-| `candies`     | `user` ASC                   | `getCandies`; automatic single-field index    |
-| `teams`       | `player` ASC                 | `listTeams`; automatic single-field index     |
-| `raids`       | `timestamp` ASC              | `listLiveRaids`; automatic single-field index |
-| `battles`     | `players` ARRAY              | `listBattleHistory`; automatic array index    |
-| `raidRewards` | `player` ASC                 | `listClaimedRaids`; automatic single-field    |
+| Collection    | Fields                        | Reason                                        |
+| ------------- | ----------------------------- | --------------------------------------------- |
+| `spawns`      | `chunk` ASC, `timestamp` ASC  | `listSpawns` filters on both                  |
+| `caught`      | `owner` ASC                   | `listCaught`; automatic single-field index    |
+| `spawns`      | `chunk` ASC                   | `clearStaleSpawns`; automatic                 |
+| `caught`      | `owner` ASC, `species` ASC    | `hasCaughtSpecies`, the Repeat Ball's check   |
+| `inventories` | `user` ASC                    | `getInventory`; automatic single-field index  |
+| `candies`     | `user` ASC                    | `getCandies`; automatic single-field index    |
+| `teams`       | `player` ASC                  | `listTeams`; automatic single-field index     |
+| `teams`       | `player` ASC, `catches` ARRAY | `isAnyCatchQueued` filters on both            |
+| `raids`       | `timestamp` ASC               | `listLiveRaids`; automatic single-field index |
+| `battles`     | `players` ARRAY               | `listBattleHistory`; automatic array index    |
+| `raidRewards` | `player` ASC                  | `listClaimedRaids`; automatic single-field    |

@@ -150,7 +150,12 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
         }}
         onSubmit={(catches) => {
           setPicking(false);
-          act(async () => joinRaid(props.raidId, catches), 'That team could not join.');
+          act(
+            async () => joinRaid(props.raidId, catches),
+            // The usual cause is a pokemon that is already fighting
+            // or already waiting in another lobby
+            'That team could not join — one of them may already be in another raid.',
+          );
         }}
       />
     </>

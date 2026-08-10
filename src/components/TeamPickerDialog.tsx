@@ -1,6 +1,8 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
+import { isLockLive } from '../auth/battle-lock';
 import { listCaught } from '../auth/caught';
+import { syncServerClock } from '../auth/clock';
 import { TEAM_SIZE } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 
@@ -18,12 +20,27 @@ export interface TeamPickerDialogProps {
  * Pick up to six catches to bring into a raid
  */
 export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Element {
-  const [catches] = createResource(() => (props.isOpen ? props.player : null), listCaught);
+  /**
+   * The player's catches, each marked with whether it is fighting
+   * somewhere already. A raid that starts leaves it behind, so it is
+   * shown but cannot be picked
+   */
+  const [catches] = createResource(
+    () => (props.isOpen ? props.player : null),
+    async (player) => {
+      const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
+
+      return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+    },
+  );
   const [chosen, setChosen] = createSignal<string[]>([]);
 
-  const toggle = (id: string): void => {
+  const toggle = (id: string, fighting: boolean): void => {
     const current = chosen();
 
+    if (fighting) {
+      return;
+    }
     if (current.includes(id)) {
       setChosen(current.filter((entry) => entry !== id));
     } else if (current.length < TEAM_SIZE) {
@@ -54,17 +71,21 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
           <Show when={catches()?.length} fallback={<p>No catches to bring.</p>}>
             <ul>
               <For each={catches()}>
-                {([id, caught]) => (
+                {(entry) => (
                   <li>
                     <button
                       type="button"
-                      aria-pressed={chosen().includes(id)}
+                      aria-pressed={chosen().includes(entry.id)}
+                      disabled={entry.fighting}
                       onClick={() => {
-                        toggle(id);
+                        toggle(entry.id, entry.fighting);
                       }}
                     >
-                      {chosen().includes(id) ? '✓ ' : ''}
-                      {getSpeciesData(caught.species).name} · Lv. {caught.level}
+                      {chosen().includes(entry.id) ? '✓ ' : ''}
+                      {getSpeciesData(entry.caught.species).name} · Lv. {entry.caught.level}
+                      {/* One pokemon, one battle: it comes back when
+                          the raid it is in ends */}
+                      {entry.fighting ? ' · in a raid' : ''}
                     </button>
                   </li>
                 )}

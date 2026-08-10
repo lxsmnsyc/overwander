@@ -23,6 +23,7 @@ import {
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
+  collectConsumedItems,
   createRaidBattle,
   createRaidBossSnapshot,
 } from '../../src/overworld/raid';
@@ -350,6 +351,46 @@ describe('world', () => {
     expect(bossUnits[0].height).toBe(boss.height);
     expect(bossUnits[0].weight).toBe(boss.weight);
     expect(boss.weight).toBe(deriveSize(Species.Articuno, 0x12345678).weight);
+  });
+
+  it('reports only the reporting player’s own spent items', () => {
+    const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+    const built = createRaidBattle('raid-consumption-seed', [
+      { player: '', alliance: BOSS_ALLIANCE, catches: [boss] },
+      {
+        player: 'trainer-uid',
+        alliance: PLAYER_ALLIANCE,
+        catches: [
+          { ...boss, caught: 'catch-a', abilities: [] },
+          { ...boss, caught: 'catch-b', abilities: [] },
+        ],
+      },
+      {
+        player: 'other-uid',
+        alliance: PLAYER_ALLIANCE,
+        catches: [{ ...boss, caught: 'catch-c', abilities: [] }],
+      },
+    ]);
+
+    built.battle.initialize();
+
+    const party = built.units.get(PLAYER_ALLIANCE) ?? [];
+    const bossUnits = built.units.get(BOSS_ALLIANCE) ?? [];
+
+    // One of the player's catches spends a berry, the other keeps
+    // its own; a teammate and the boss spend one each too
+    party[0].consumed.add(Items.CheriBerry);
+    party[2].consumed.add(Items.OranBerry);
+    bossUnits[0].consumed.add(Items.SitrusBerry);
+
+    expect(collectConsumedItems(built, 'trainer-uid')).toEqual([
+      { caught: 'catch-a', items: [Items.CheriBerry] },
+    ]);
+    expect(collectConsumedItems(built, 'other-uid')).toEqual([
+      { caught: 'catch-c', items: [Items.OranBerry] },
+    ]);
+    // The boss stands for no record, so nothing it spends is billed
+    expect(collectConsumedItems(built, '')).toEqual([]);
   });
 
   it('stages shadow raids from the rare and legendary pools', () => {

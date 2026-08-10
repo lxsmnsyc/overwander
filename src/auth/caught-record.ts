@@ -83,6 +83,20 @@ export interface CaughtPokemon {
    */
   history: OwnershipRecord[];
   /**
+   * Whether the catch is fielded in a battle. While it holds, the
+   * record cannot be edited — the fight runs on a frozen snapshot, so
+   * an item handed back or a level taken mid-battle would leave the
+   * two disagreeing
+   */
+  lock: boolean;
+  /**
+   * The `startedAt` of the battle that locked it, zero when free. The
+   * lock expires on its own `BATTLE_TIMEOUT` after this, so a party
+   * walked out on is not held forever, and the stamp tells one
+   * battle's lock from a later one's when the fight releases it
+   */
+  lockedAt: number;
+  /**
    * The ball the catch was made with
    */
   ball: Balls;
@@ -153,6 +167,8 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
     history: asOwnershipHistory(data.history),
+    lock: data.lock === true,
+    lockedAt: asNumber(data.lockedAt),
     ball: asNumber(data.ball) as Balls,
     caughtAt: asNumber(data.caughtAt),
     effortValues: asStatRecord(data.effortValues),

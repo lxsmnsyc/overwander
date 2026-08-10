@@ -24,6 +24,12 @@ export const TEAM_SIZE = 6;
  */
 export interface TeamRecord {
   player: string;
+  /**
+   * The raids/{raidId} it was brought to. A team names its lobby so
+   * that a catch can be asked whether it is already queued somewhere
+   * without reading every raid in the world
+   */
+  raid: string;
   catches: string[];
 }
 
@@ -47,7 +53,11 @@ const teamConverter: FirestoreDataConverter<TeamRecord> = {
   fromFirestore: (snapshot) => {
     const data = snapshot.data();
 
-    return { player: asString(data.player), catches: asStringArray(data.catches) };
+    return {
+      player: asString(data.player),
+      raid: asString(data.raid),
+      catches: asStringArray(data.catches),
+    };
   },
 };
 

@@ -26,6 +26,11 @@ export const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
 export const BATTLE_COLLECTION = 'battles';
 export const RAID_COLLECTION = 'raids';
 export const RAID_REWARD_COLLECTION = 'raidRewards';
+/**
+ * One marker per battle and player, so a fight can only take a
+ * party's spent items off the catch records once
+ */
+export const BATTLE_CONSUMPTION_COLLECTION = 'battleConsumptions';
 
 /**
  * One stack per user and item pair, so the same item can never split

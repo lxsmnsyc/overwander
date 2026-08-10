@@ -9,6 +9,7 @@ import {
   TEAM_SNAPSHOT_COLLECTION,
 } from '../auth/collections';
 import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot';
+import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { asCaughtPokemon } from '../auth/caught-record';
 
 import type { EncounterRecord } from '../auth/encounter-record';
@@ -33,6 +34,7 @@ import {
   createRaidBossSnapshot,
 } from '../overworld/raid';
 import { getAdminFirestore } from './firebase';
+import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
 import { asNumber, asString, asStringArray, docData } from './read';
 import { hasAnyCaught } from './caught';
 import { startEncounter } from './overworld';
@@ -53,11 +55,13 @@ const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOu
  */
 
 /**
- * How long an unsettled raid battle holds its landmark. A fight is
- * over in minutes; one still unfinished after this was walked out on,
- * and an abandoned party is not a beaten boss
+ * How long an unsettled raid battle holds its landmark: the same
+ * window that decides how long it holds its party
+ * ([`src/server/locks.ts`](./locks.ts)). A fight is over in minutes;
+ * one still unfinished after this was walked out on, and an abandoned
+ * party is not a beaten boss
  */
-export const RAID_BATTLE_TIMEOUT = 10 * 60 * 1000;
+export const RAID_BATTLE_TIMEOUT = BATTLE_TIMEOUT;
 
 /**
  * Whether a raid's battle ended without the boss going down — lost
@@ -212,10 +216,56 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
 }
 
 /**
+ * Whether any of the catches is already queued in a lobby. A team
+ * names the raid it joined, so the player's own teams are enough to
+ * answer it: a team still listed by a raid that has not started is a
+ * party waiting to fight, and what it holds is spoken for.
+ *
+ * Teams of raids that have started, been cleared, or dropped the team
+ * on the way out do not count — those pokemon are free (or locked,
+ * which is a different question)
+ */
+async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
+  const db = getAdminFirestore();
+  const teams = await db
+    .collection(TEAM_COLLECTION)
+    .where('player', '==', uid)
+    .where('catches', 'array-contains-any', catches)
+    .get();
+
+  // A team written before teams named their raid has nothing to check
+  // against, and its raid is long over either way
+  const joined = teams.docs
+    .map((entry) => ({ team: entry.id, lobby: asString(docData(entry)?.raid) }))
+    .filter((entry) => entry.lobby !== '');
+
+  if (joined.length === 0) {
+    return false;
+  }
+
+  const ids = [...new Set(joined.map((entry) => entry.lobby))];
+  const lobbies = await db.getAll(...ids.map((id) => db.collection(RAID_COLLECTION).doc(id)));
+  const waiting = new Set<string>();
+
+  for (const entry of lobbies) {
+    const raid = docData(entry);
+
+    if (raid != null && raid.battle == null && raid.cleared !== true) {
+      for (const team of asStringArray(raid.teams)) {
+        waiting.add(team);
+      }
+    }
+  }
+
+  return joined.some((entry) => waiting.has(entry.team));
+}
+
+/**
  * Bring a party into a lobby. The catch ids are checked against their
- * owners, so a party cannot field pokemon the player does not own,
- * and no catch can be listed twice. Resolves the team id, or null
- * when the party is not a legal one or the raid has started
+ * owners, so a party cannot field pokemon the player does not own, no
+ * catch can be listed twice, and none of them may already be fighting
+ * or waiting in another lobby. Resolves the team id, or null when the
+ * party is not a legal one or the raid has started
  */
 export async function joinRaid(
   uid: string,
@@ -240,10 +290,21 @@ export async function joinRaid(
   if (!owned.every((entry) => docData(entry)?.owner === uid)) {
     return null;
   }
+  // A pokemon already fighting elsewhere cannot be brought along: one
+  // catch, one live battle
+  if (isAnyCatchLocked(owned.map((entry) => docData(entry)))) {
+    return null;
+  }
+  // Nor one already waiting in another lobby, or in this one: a party
+  // that queues the same pokemon twice would have it dropped from
+  // whichever raid started second, without ever being told
+  if (await isAnyCatchQueued(uid, catches)) {
+    return null;
+  }
 
   const team = db.collection(TEAM_COLLECTION).doc();
 
-  await team.set({ player: uid, catches });
+  await team.set({ player: uid, raid: lobby, catches });
   await db
     .collection(RAID_COLLECTION)
     .doc(lobby)
@@ -253,38 +314,59 @@ export async function joinRaid(
 }
 
 /**
- * Freeze one team for the battle, dropping catches that have vanished
- * or changed hands. Resolves the snapshot id, or null when the team
- * fields nothing — an empty side must not stand in a battle
+ * Freeze one team for the battle, dropping catches that have vanished,
+ * changed hands or are already fighting somewhere else, and lock what
+ * it fields into that battle. The
+ * freeze and the lock share a transaction, so an item cannot be
+ * handed back in the moment between them — the snapshot the fight
+ * runs on and the record it came from stay the same pokemon. The lock
+ * is stamped with the battle's `startedAt`, which is what lets the
+ * fight release its own party and nobody else's.
+ *
+ * Resolves the snapshot id, or null when the team fields nothing — an
+ * empty side must not stand in a battle
  */
 async function publishTeamSnapshot(
   player: string,
   catches: string[],
   alliance: number,
+  startedAt: number,
 ): Promise<string | null> {
-  const db = getAdminFirestore();
-  const stored =
-    catches.length === 0
-      ? []
-      : await db.getAll(...catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id)));
-  const fielded: CatchSnapshot[] = [];
-
-  for (const entry of stored) {
-    const data = docData(entry);
-
-    if (data?.owner === player) {
-      fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
-    }
-  }
-
-  if (fielded.length === 0) {
+  if (catches.length === 0) {
     return null;
   }
 
+  const db = getAdminFirestore();
   const ref = db.collection(TEAM_SNAPSHOT_COLLECTION).doc();
 
-  await ref.set({ player, alliance, catches: fielded });
-  return ref.id;
+  return db.runTransaction(async (transaction) => {
+    const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
+    const stored = await transaction.getAll(...refs);
+    const fielded: CatchSnapshot[] = [];
+    const locking: FirebaseFirestore.DocumentReference[] = [];
+
+    for (const [at, entry] of stored.entries()) {
+      const data = docData(entry);
+
+      // A pokemon already fighting is left behind rather than fielded
+      // twice: a player may sit in two lobbies with the same party,
+      // and the first raid to start is the one that gets it
+      if (data?.owner === player && !isCatchLocked(data)) {
+        fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
+        locking.push(refs[at]);
+      }
+    }
+
+    if (fielded.length === 0) {
+      return null;
+    }
+
+    transaction.set(ref, { player, alliance, catches: fielded });
+    for (const caught of locking) {
+      transaction.update(caught, lockFields(startedAt));
+    }
+    return ref.id;
+  });
 }
 
 /**
@@ -308,6 +390,28 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     return null;
   }
 
+  // The raid is claimed before anything is frozen, since freezing
+  // locks the parties: a start that loses the race must not hold
+  // pokemon for a battle it is not going to run. A claim whose teams
+  // then field nothing leaves the raid pointing at a battle that was
+  // never written, which reads as lost and restages
+  const battle = db.collection(BATTLE_COLLECTION).doc();
+  const claimed = await db.runTransaction(async (transaction) => {
+    const current = docData(await transaction.get(raidRef));
+
+    if (current == null || current.battle != null) {
+      return false;
+    }
+    transaction.update(raidRef, { battle: battle.id });
+    return true;
+  });
+
+  if (!claimed) {
+    const current = docData(await raidRef.get())?.battle;
+
+    return typeof current === 'string' ? current : null;
+  }
+
   const teams = await db.getAll(...raid.teams.map((id) => db.collection(TEAM_COLLECTION).doc(id)));
   const fielded: [string, string][] = [];
 
@@ -323,6 +427,7 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
       player,
       asStringArray(team.catches),
       PLAYER_ALLIANCE,
+      now,
     );
 
     if (snapshot != null) {
@@ -343,8 +448,6 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     catches: [createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow)],
   });
 
-  const battle = db.collection(BATTLE_COLLECTION).doc();
-
   await battle.set({
     teams: [boss.id, ...fielded.map(([, snapshot]) => snapshot)],
     players: [...new Set(fielded.map(([player]) => player))],
@@ -354,28 +457,17 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     startedAt: now,
   });
 
-  const claimed = await db.runTransaction(async (transaction) => {
-    const current = docData(await transaction.get(raidRef));
-
-    if (current == null || current.battle != null) {
-      return false;
-    }
-    transaction.update(raidRef, { battle: battle.id });
-    return true;
-  });
-
-  if (!claimed) {
-    const current = docData(await raidRef.get())?.battle;
-
-    return typeof current === 'string' ? current : null;
-  }
   return battle.id;
 }
 
 /**
  * Record how a battle ended. Only a player who fielded a team may
  * report it, and only once: an outcome already stamped stands, so the
- * first honest report cannot be overwritten by a later one
+ * first honest report cannot be overwritten by a later one.
+ *
+ * The end of the fight is also what frees its party — every catch it
+ * froze goes back to being editable. A battle nobody ever reports
+ * releases its own by timing out instead
  */
 export async function finishBattle(
   uid: string,
@@ -384,8 +476,7 @@ export async function finishBattle(
 ): Promise<boolean> {
   const db = getAdminFirestore();
   const ref = db.collection(BATTLE_COLLECTION).doc(battleId);
-
-  return db.runTransaction(async (transaction) => {
+  const stamped = await db.runTransaction(async (transaction) => {
     const battle = docData(await transaction.get(ref));
 
     if (battle == null || !new Set(asStringArray(battle.players)).has(uid)) {
@@ -397,6 +488,11 @@ export async function finishBattle(
     transaction.update(ref, { outcome });
     return true;
   });
+
+  if (stamped) {
+    await releaseBattleLocks(battleId);
+  }
+  return stamped;
 }
 
 /**

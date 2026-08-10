@@ -14,6 +14,7 @@ import { ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { grantCatchCandy } from './candy';
 import { getAdminFirestore } from './firebase';
+import { freeFields, isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
 
 /**
@@ -104,6 +105,8 @@ export async function recordCatch(
     abilities: encounter.shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
     items: [],
     history: [{ owner: uid, acquiredAt: caughtAt }],
+    // A fresh catch has fought nothing
+    ...freeFields(),
     ball,
     caughtAt,
     effortValues: zeroEffortValues(),
@@ -137,7 +140,7 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid) {
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return false;
     }
 
@@ -171,7 +174,7 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid) {
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return false;
     }
 

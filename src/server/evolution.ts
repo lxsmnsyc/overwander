@@ -4,6 +4,7 @@ import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { getAdminFirestore } from './firebase';
+import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
 
 /**
@@ -27,7 +28,9 @@ export default async function evolveCatch(
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid) {
+    // A pokemon in a live battle fights as the species its snapshot
+    // froze, so it evolves once the fight is over and not before
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return null;
     }
 

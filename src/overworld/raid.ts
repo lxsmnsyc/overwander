@@ -1,4 +1,5 @@
 import type { CatchSnapshot } from '../auth/catch-snapshot';
+import type ConsumedItems from '../auth/consumed-items';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
@@ -212,6 +213,26 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
   }
 
   return { battle, units, alliances };
+}
+
+/**
+ * What one player's party spent during the battle, catch by catch. A
+ * unit standing for no record is skipped, and so is every unit
+ * belonging to somebody else: a player reports their own losses, never
+ * a teammate's
+ */
+export function collectConsumedItems(built: RaidBattle, player: string): ConsumedItems[] {
+  const spent: ConsumedItems[] = [];
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.caught !== '' && unit.team.player === player && unit.consumed.size > 0) {
+        spent.push({ caught: unit.caught, items: [...unit.consumed] });
+      }
+    }
+  }
+
+  return spent;
 }
 
 /**

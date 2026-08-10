@@ -98,6 +98,36 @@ describe('Leppa Berry', () => {
   });
 });
 
+describe('spent items', () => {
+  it('remembers what left the unit and nothing it still holds', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const eater = createUnit(battle, teamB);
+    const keeper = createUnit(battle, teamB);
+    eater.addItem(Items.CheriBerry);
+    keeper.addItem(Items.CheriBerry);
+
+    eater.addStatus(Statuses.Paralyzed, moveCause(attacker));
+
+    expect([...eater.consumed]).toStrictEqual([Items.CheriBerry]);
+    expect(keeper.consumed.size).toBe(0);
+  });
+
+  it('leaves a berry that could not be eaten unspent', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unnerver = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    unnerver.addAbility(Abilities.Unnerve);
+    unnerver.enter();
+    holder.addItem(Items.CheriBerry);
+
+    holder.addStatus(Statuses.Paralyzed, moveCause(unnerver));
+
+    expect(holder.items[Items.CheriBerry]).toBe(true);
+    expect(holder.consumed.size).toBe(0);
+  });
+});
+
 describe('Unnerve', () => {
   it('prevents enemies from eating berries while up', () => {
     const { battle, teamA, teamB } = createBattle();

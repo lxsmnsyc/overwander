@@ -6,6 +6,7 @@ import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { getAdminFirestore } from './firebase';
+import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
 
 /**
@@ -72,7 +73,14 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid || asNumber(caught.level) >= MAX_LEVEL) {
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      asNumber(caught.level) >= MAX_LEVEL ||
+      // A pokemon in a live battle fights at the level its snapshot
+      // froze; raising it now would only disagree with the fight
+      isCatchLocked(caught)
+    ) {
       return null;
     }
 

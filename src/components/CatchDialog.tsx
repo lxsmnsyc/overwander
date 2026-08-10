@@ -1,5 +1,7 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
+import { isLockLive } from '../auth/battle-lock';
+import { syncServerClock } from '../auth/clock';
 import { type CaughtPokemon, HELD_ITEM_LIMIT, getCaught, giveItem, takeItem } from '../auth/caught';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
@@ -132,6 +134,17 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return uid == null || catchId == null ? null : ([uid, catchId, detail()?.species] as const);
     },
     async ([uid, catchId]) => listEvolutions(uid, catchId),
+  );
+
+  /**
+   * Whether this pokemon is fighting right now. A battle runs on a
+   * frozen snapshot of the party, so the record it was copied from
+   * holds still until the fight ends — the server refuses the writes
+   * either way; this is only so the buttons say so first
+   */
+  const [fighting] = createResource(
+    () => detail() ?? null,
+    async (caught) => isLockLive(caught, await syncServerClock()),
   );
 
   /**
@@ -316,6 +329,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 </dl>
 
                 <Show when={owned()}>
+                  {/* Everything below changes the record, and a
+                      pokemon in a live battle is fighting as the
+                      snapshot froze it */}
+                  <Show when={fighting()}>
+                    <p role="status">
+                      In a raid right now — nothing about it can be changed until the battle ends.
+                    </p>
+                  </Show>
+
                   <h3>Held items</h3>
                   <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
                     <ul>
@@ -325,6 +347,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             {describeItem(item)}{' '}
                             <button
                               type="button"
+                              disabled={fighting()}
                               onClick={() => {
                                 moveItem(item, false);
                               }}
@@ -346,6 +369,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             <li>
                               <button
                                 type="button"
+                                disabled={fighting()}
                                 onClick={() => {
                                   moveItem(entry.item, true);
                                 }}
@@ -370,7 +394,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <button
                       type="button"
                       disabled={
-                        (candies() ?? 0) < getCandyCost(loaded()) || loaded().level >= MAX_LEVEL
+                        (candies() ?? 0) < getCandyCost(loaded()) ||
+                        loaded().level >= MAX_LEVEL ||
+                        fighting() === true
                       }
                       onClick={feedCandy}
                     >
@@ -400,6 +426,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             <li>
                               <button
                                 type="button"
+                                disabled={fighting()}
                                 onClick={() => {
                                   evolve(evolution.species);
                                 }}

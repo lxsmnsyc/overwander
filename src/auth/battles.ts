@@ -15,8 +15,10 @@ import { asNumber, asString, asStringArray } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
 import { requireUid } from '../server/firebase';
 import BattleOutcome from './battle-outcome';
+import consumeOnServer from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import { BATTLE_COLLECTION } from './collections';
+import type ConsumedItems from './consumed-items';
 
 import getIdToken from './session';
 import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
@@ -142,6 +144,29 @@ async function finishBattleOnServer(
 ): Promise<boolean> {
   'use server';
   return finishOnServer(await requireUid(token), id, outcome);
+}
+
+/**
+ * Report what the player's party spent in the battle, so a berry
+ * eaten in a raid is gone from the catch record afterwards. Each
+ * fighter reports their own party — the outcome is stamped once by
+ * whoever sees the fight settle, but the items come off per player,
+ * since nobody else's catches are theirs to empty.
+ *
+ * The server checks the report against the team snapshots it froze
+ * itself, and bills each player once per battle
+ */
+export async function consumeHeldItems(id: string, consumed: ConsumedItems[]): Promise<boolean> {
+  return consumeHeldItemsOnServer(await getIdToken(), id, consumed);
+}
+
+async function consumeHeldItemsOnServer(
+  token: string,
+  id: string,
+  consumed: ConsumedItems[],
+): Promise<boolean> {
+  'use server';
+  return consumeOnServer(await requireUid(token), id, consumed);
 }
 
 /**

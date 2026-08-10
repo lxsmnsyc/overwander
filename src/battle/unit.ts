@@ -458,6 +458,14 @@ export default class Unit {
 
   items: { [key in Items]?: boolean } = {};
 
+  /**
+   * Every item that has left this unit's grip during the battle — a
+   * berry it ate, or anything else a removal took away. The battle
+   * itself does nothing with the set; it is what the fight reports
+   * afterwards, so a consumed item comes off the catch record too
+   */
+  consumed = new Set<Items>();
+
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',

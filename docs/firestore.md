@@ -221,8 +221,21 @@ marker that stops a player collecting the same cache twice in one window.
 Claims are never updated or deleted — an expired window simply produces a new
 document id. Only the named player may create one.
 
-Hidden grottos have no claim store yet; `getHiddenGrottos` on `ChunkSnapshot`
-derives the rewards, but no server-side claim path exists.
+### `grottoClaims/{chunkSeed}@{timestamp}$grotto{cell}:{uid}`
+
+Written by `claimHiddenGrotto`, the same one-claim-per-window marker as an item
+cache.
+
+| Field    | Type                  | Notes                                   |
+| -------- | --------------------- | --------------------------------------- |
+| `player` | `string`              | Claiming uid                            |
+| `kind`   | `'item' \| 'pokemon'` | Which branch of the grotto reward fired |
+
+An item reward lands in the inventory as part of the claim. A pokemon reward
+comes back as a spawn tuple whose two rolls derive from
+`{seed}{timestamp}grotto{cell}spawn`, so every observer of that grotto meets the
+same individual; the caller passes it to `startEncounter` under the id
+`{chunkSeed}@{timestamp}$grotto{cell}`, which has no `spawns` document behind it.
 
 ## Derived, never stored
 
@@ -340,6 +353,13 @@ service cloud.firestore {
         && request.resource.data.player == request.auth.uid;
     }
     match /cacheClaims/{claimId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && claimId.split(':')[1] == request.auth.uid
+        && request.resource.data.player == request.auth.uid;
+      allow update, delete: if false;
+    }
+    match /grottoClaims/{claimId} {
       allow read: if signedIn();
       allow create: if signedIn()
         && claimId.split(':')[1] == request.auth.uid

@@ -15,6 +15,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
+import AleaRNG from '../core/alea';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
@@ -73,6 +74,7 @@ const SNAPSHOT_COLLECTION = 'snapshots';
 const SPAWN_COLLECTION = 'spawns';
 const ENCOUNTER_COLLECTION = 'encounters';
 const CACHE_CLAIM_COLLECTION = 'cacheClaims';
+const GROTTO_CLAIM_COLLECTION = 'grottoClaims';
 
 const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   toFirestore: (record) => record,
@@ -306,6 +308,64 @@ export async function claimItemCache(
   }
   await grantItem(user.uid, item);
   return item;
+}
+
+/**
+ * What a hidden grotto yielded: either an item that already landed
+ * in the inventory, or a pokemon to meet — the spawn tuple and the
+ * id an encounter would be stored under
+ */
+export type GrottoClaim =
+  | { kind: 'item'; item: Items }
+  | { kind: 'encounter'; id: string; spawn: Spawn };
+
+/**
+ * Interact with a hidden grotto landmark. Like an item cache, a
+ * claim marker (grotto cell + window + player) guards it, so each
+ * grotto yields to a player once per window and regenerates with the
+ * next one. An item reward lands in the inventory here; a pokemon
+ * reward comes back as a spawn tuple for the caller to meet through
+ * startEncounter. Resolves null when there is nothing to claim
+ */
+export async function claimHiddenGrotto(
+  user: User,
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<GrottoClaim | null> {
+  const reward = snapshot.getHiddenGrottos().get(cell);
+
+  if (reward == null) {
+    return null;
+  }
+
+  const db = getFirebaseFirestore();
+  const key = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$grotto${cell}`;
+  const ref = doc(db, GROTTO_CLAIM_COLLECTION, `${key}:${user.uid}`);
+  const claimed = await runTransaction(db, async (transaction) => {
+    const existing = await transaction.get(ref);
+
+    if (existing.exists()) {
+      return false;
+    }
+    transaction.set(ref, { player: user.uid, kind: reward.kind });
+    return true;
+  });
+
+  if (!claimed) {
+    return null;
+  }
+
+  if (reward.kind === 'item') {
+    await grantItem(user.uid, reward.item);
+    return { kind: 'item', item: reward.item };
+  }
+
+  // The grotto's pokemon needs the two rolls a snapshot spawn would
+  // have; they derive from the same chunk, window and cell, so every
+  // observer of this grotto meets the same individual
+  const rng = new AleaRNG(`${snapshot.chunk.seed}${snapshot.timestamp}grotto${cell}spawn`);
+
+  return { kind: 'encounter', id: key, spawn: [reward.species, rng.int32(), rng.int32()] };
 }
 
 /**

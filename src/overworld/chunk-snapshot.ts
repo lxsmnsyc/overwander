@@ -102,6 +102,25 @@ export default class ChunkSnapshot {
     return this.cells[cellY * CHUNK_CELLS + cellX] ?? null;
   }
 
+  /**
+   * The rolled spawns keyed by the cell they landed on, in roll
+   * order — the same order getSpawns returns, so a caller can pair a
+   * cell with the published spawn of that index. Empty until the
+   * spawns roll
+   */
+  getSpawnCells(): Map<number, Spawn> {
+    const placed = new Map<number, Spawn>();
+
+    for (const spawn of this.spawns ?? []) {
+      const cell = this.cells.indexOf(spawn);
+
+      if (cell >= 0) {
+        placed.set(cell, spawn);
+      }
+    }
+    return placed;
+  }
+
   private itemCaches: Map<number, Items> | null = null;
 
   /**

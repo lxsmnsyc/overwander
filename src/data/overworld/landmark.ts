@@ -28,3 +28,12 @@ export const LANDMARKS: Landmark[] = [
   Landmark.HiddenGrotto,
   Landmark.LegendaryRaid,
 ];
+
+/**
+ * Display names for the landmarks
+ */
+export const LANDMARK_NAMES: Record<Landmark, string> = {
+  [Landmark.ItemCache]: 'Item Cache',
+  [Landmark.HiddenGrotto]: 'Hidden Grotto',
+  [Landmark.LegendaryRaid]: 'Legendary Raid',
+};

@@ -33,6 +33,7 @@ export {
   SpawnRarity,
 } from './__create';
 export type { SpawnEntry, SpawnPool } from './__create';
+export { BIOME_COLORS, BIOME_NAMES, TIME_OF_DAY_NAMES } from './names';
 
 export default function registerBiomeSpawns(): void {
   registerAlpineTundraSpawns();

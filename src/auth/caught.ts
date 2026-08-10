@@ -226,10 +226,19 @@ export async function getCaughtAbilities(id: string): Promise<Abilities[]> {
 }
 
 /**
+ * The held-item document's reference. Exported so a store that needs
+ * the held items mid-transaction (evolution, say) can read them
+ * without a second round trip
+ */
+export function getCaughtItemsRef(id: string): DocumentReference {
+  return doc(getFirebaseFirestore(), ITEMS_COLLECTION, id);
+}
+
+/**
  * The catch's held items; starts empty
  */
 export async function getCaughtItems(id: string): Promise<Items[]> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), ITEMS_COLLECTION, id));
+  const snapshot = await getDoc(getCaughtItemsRef(id));
 
   return asNumberArray(snapshot.data()?.items) as Items[];
 }

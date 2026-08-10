@@ -62,7 +62,12 @@ function entryId(uid: string, item: Items): string {
   return `${uid}:${item}`;
 }
 
-function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
+/**
+ * The stack's document reference, converter attached. Exported so
+ * stores that spend an item alongside their own writes (evolution,
+ * say) can join it in one transaction
+ */
+export function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
   return doc(getFirebaseFirestore(), INVENTORY_COLLECTION, entryId(uid, item)).withConverter(
     converter,
   );

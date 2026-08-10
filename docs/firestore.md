@@ -134,6 +134,20 @@ Firestore auto-id, and the three side stores are keyed by that same id.
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
 
+`species` and `level` are the two mutable fields: `useCandy` raises the level,
+and `evolveCatch` in [`src/auth/evolution.ts`](../src/auth/evolution.ts) swaps
+the species. An evolution that uses an item decrements
+`inventories/{uid}:{item}` in the same transaction, so the stone and the new
+species land together or not at all. Criteria are re-checked against the stored
+documents inside that transaction, never trusted from the caller.
+
+Which evolutions are offered comes from
+[`src/data/species/evolution.ts`](../src/data/species/evolution.ts): only the
+`Level`, `UsedItem` and `HeldItem` methods can be verified against what is
+stored today, so an evolution carrying any other flag — trade, friendship,
+weather — is never offered rather than waved through. A held item is required
+but not consumed; only a used item is spent.
+
 ### `caughtAbilities/{catchId}`, `caughtItems/{catchId}`, `caughtOwners/{catchId}`
 
 | Collection        | Field       | Type                | Notes                                                |
@@ -237,8 +251,10 @@ enforcing ownership. Two weak spots follow from that:
 - Gold, item stacks and candy stacks are client-written, so the rules can only
   confirm a player is editing their own, not that they earned them.
   `profiles.gold`, `inventories.amount` and `candies.count` are therefore
-  player-settable in practice — and since a candy buys a level, so is
-  `caught.level`.
+  player-settable in practice — and since a candy buys a level and an
+  evolution rewrites a species, so are `caught.level` and `caught.species`.
+  The evolution criteria are enforced in application code inside the
+  transaction, which a hand-rolled write bypasses.
 
 Moving currency, inventory and spawn publication behind server functions with
 the Admin SDK is the real fix; until then the rules below are the floor.

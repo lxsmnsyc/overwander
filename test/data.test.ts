@@ -13,6 +13,8 @@ import registerItems from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import {
+  getAvailableEvolutions,
+  getConsumedItem,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
   getSpeciesData,
@@ -84,6 +86,56 @@ describe('evolution data', () => {
 
     // Final stages have none
     expect(getSpeciesData(Species.Venusaur).evolvesInto).toBeUndefined();
+  });
+
+  it('offers level evolutions once the threshold is reached', () => {
+    const context = { carried: new Set<Items>(), held: new Set<Items>() };
+
+    expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 15 })).toEqual([]);
+    expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 16 })).toEqual([
+      { species: Species.Charmeleon, method: EvolutionMethod.Level, level: 16 },
+    ]);
+  });
+
+  it('offers stone evolutions only while the stone is carried', () => {
+    const context = { level: 50, held: new Set<Items>() };
+
+    expect(getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set() })).toEqual([]);
+    expect(
+      getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set([Items.LeafStone]) }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set([Items.FireStone]) }),
+    ).toEqual([
+      { species: Species.Ninetales, method: EvolutionMethod.UsedItem, item: Items.FireStone },
+    ]);
+  });
+
+  it('never offers evolutions it cannot verify', () => {
+    // Trade evolutions have no stored counterpart yet, so Machoke
+    // stays a Machoke however high its level runs
+    expect(
+      getAvailableEvolutions(Species.Machoke, {
+        level: 100,
+        carried: new Set(),
+        held: new Set(),
+      }),
+    ).toEqual([]);
+  });
+
+  it('spends the used item and leaves a held one alone', () => {
+    const [stone] = getSpeciesData(Species.Vulpix).evolvesInto ?? [];
+    const [level] = getSpeciesData(Species.Charmander).evolvesInto ?? [];
+
+    expect(getConsumedItem(stone)).toBe(Items.FireStone);
+    expect(getConsumedItem(level)).toBeNull();
+    expect(
+      getConsumedItem({
+        species: Species.Ninetales,
+        method: EvolutionMethod.HeldItem,
+        item: Items.FireStone,
+      }),
+    ).toBeNull();
   });
 });
 

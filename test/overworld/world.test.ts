@@ -11,6 +11,7 @@ import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
+import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import type Chunk from '../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../src/overworld/chunk-snapshot';
 import {
@@ -248,6 +249,26 @@ describe('world', () => {
 
     expect(chunk).not.toBeNull();
     expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryRaids().size).toBe(0);
+  });
+
+  it('gives a raid boss the gender its species rolls', () => {
+    // Nidoran-F is female-only, Nidoran-M male-only: a boss reads
+    // the same ratio a spawn does rather than coming out genderless
+    expect(createRaidBossSnapshot(Species.NidoranF, 0x12345678).gender).toBe(Genders.Female);
+    expect(createRaidBossSnapshot(Species.NidoranM, 0x12345678).gender).toBe(Genders.Male);
+
+    // A species with no ratio still has no gender
+    expect(createRaidBossSnapshot(Species.Articuno, 0x12345678).gender).toBe(Genders.Genderless);
+
+    // And the roll follows the trait value, so a mixed-ratio species
+    // can come out either way
+    const genders = new Set(
+      [0, 0x1000, 0x4000, 0xff00, 0xabcdef].map(
+        (traitValue) => createRaidBossSnapshot(Species.Gyarados, traitValue).gender,
+      ),
+    );
+
+    expect(genders.size).toBeGreaterThan(1);
   });
 
   it('builds the raid boss with perfect IVs and no items', () => {
@@ -655,6 +676,42 @@ describe('chunk snapshot', () => {
 
     // Everything else is an ordinary meeting
     expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').shadow).toBe(false);
+  });
+
+  it('rolls a raid reward per player from the raid seed', () => {
+    const raid = {
+      kind: RaidKind.Legendary,
+      species: Species.Articuno,
+      traitValue: 0x12345678,
+      host: 'red',
+      teams: [],
+      battle: 'battle-id',
+      timestamp: 0,
+      chunk: { seed: 'chunk', x: 0, y: 0 },
+      cell: 0,
+      cleared: true,
+    };
+
+    const [redId, red] = deriveRaidReward(raid, 'raid-id', 'red');
+    const [blueId, blue] = deriveRaidReward(raid, 'raid-id', 'blue');
+
+    // The same legendary, but a different individual for each player
+    expect(red[0]).toBe(Species.Articuno);
+    expect(blue[0]).toBe(Species.Articuno);
+    expect(red[1]).not.toBe(blue[1]);
+    expect(red[2]).not.toBe(blue[2]);
+
+    // The spawn id is the raid's; startEncounter keys the stored
+    // encounter by the player
+    expect(redId).toBe(blueId);
+
+    // A player's own reward is the same however often it is derived
+    expect(deriveRaidReward(raid, 'raid-id', 'red')[1]).toEqual(red);
+
+    // Another raid of the same species pays something else again
+    const other = deriveRaidReward({ ...raid, traitValue: 0x87654321 }, 'raid-id', 'red');
+
+    expect(other[1][1]).not.toBe(red[1]);
   });
 
   it('hands raid rewards over at a fixed level', () => {

@@ -7,8 +7,6 @@ import {
   createSignal,
   useContext,
 } from 'solid-js';
-import type { Species } from '../data/ids/species';
-
 /**
  * The panels the signed-in view can be showing
  */
@@ -38,12 +36,12 @@ export interface ActiveBattle {
  * into a safari encounter the next time the player is standing there
  */
 export interface PendingReward {
-  raid: string;
-  species: Species;
   /**
-   * A shadow raid's reward keeps the Shadow ability once caught
+   * The raid to collect from. Everything about the encounter — the
+   * species, its level, whether it is shadowed, the chunk and window
+   * it comes from — is read off the raid itself when it is claimed
    */
-  shadow: boolean;
+  raid: string;
 }
 
 export interface GameState {

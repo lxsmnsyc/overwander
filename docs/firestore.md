@@ -282,7 +282,9 @@ Written by `enterRaid` in [`src/auth/raids.ts`](../src/auth/raids.ts). The id is
 derived, so every player who walks onto the landmark in the same hour joins the
 lobby that is already standing; the first to arrive hosts it. The kind tag is
 `raid` for a legendary raid and `shadow` for a shadow one, so the two landmark
-types never collide on a cell.
+types never collide on a cell. The read and the create share a transaction, so
+one landmark stages exactly one raid per hour even when two players walk in
+together — a player either opens the lobby or joins the one already there.
 
 | Field        | Type             | Notes                                                       |
 | ------------ | ---------------- | ----------------------------------------------------------- |
@@ -357,10 +359,29 @@ still `Unfinished` — an abandoned fight is not a result. Replaying a history
 entry rebuilds the battle from that seed and those snapshots, so it plays out
 identically and awards nothing.
 
-Clearing a raid does not store the reward: `deriveRaidReward` rolls a spawn
-tuple from the raid id and the player's uid, so everyone in the lobby meets
-their own individual of the same legendary, in the raid's chunk and window,
-through the usual `encounters/{spawnId}:{uid}` path with `EncounterType.Raid`.
+### `raidRewards/{raidId}:{uid}`
+
+| Field    | Type     | Notes                    |
+| -------- | -------- | ------------------------ |
+| `player` | `string` | Claiming uid             |
+| `raid`   | `string` | The raid collected from  |
+
+`claimRaidReward(user, raidId)` hands over the legendary a cleared raid owes.
+It refuses unless the battle was **won** and the uid appears in
+`battles/{battleId}.players`, and the marker above guards it so each fighter
+collects once. The reward waits rather than expiring: a player who ran from the
+encounter or left the battle early claims it later from their battle history.
+
+The encounter itself is not stored as a reward — `deriveRaidReward` rolls a
+spawn tuple from the raid id and the player's uid, and the encounter is derived
+against the **raid's own** chunk and window (not wherever the player is
+standing), so a late claim meets exactly what the raid staged. It lands through
+the usual `encounters/{spawnId}:{uid}` path with `EncounterType.Raid`.
+
+A raid already under way cannot be joined: `joinRaid` refuses once `battle` is
+set, and a player who walks onto the landmark then is sent into the battle as a
+**replay** — they watch the same deterministic fight, settle nothing, and are
+owed nothing.
 
 ## Derived, never stored
 
@@ -493,6 +514,13 @@ service cloud.firestore {
       allow update: if signedIn();
       allow delete: if false;
     }
+    match /raidRewards/{claimId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && claimId.split(':')[1] == request.auth.uid
+        && request.resource.data.player == request.auth.uid;
+      allow update, delete: if false;
+    }
     match /teams/{teamId} {
       allow read: if signedIn();
       allow create: if signedIn()
@@ -545,3 +573,4 @@ deployed.
 | `teams`       | `player` ASC                 | `listTeams`; automatic single-field index     |
 | `raids`       | `timestamp` ASC              | `listLiveRaids`; automatic single-field index |
 | `battles`     | `players` ARRAY              | `listBattleHistory`; automatic array index    |
+| `raidRewards` | `player` ASC                 | `listClaimedRaids`; automatic single-field    |

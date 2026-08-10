@@ -9,8 +9,8 @@ import Unit from '../battle/unit';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { Stats, StatsKind } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
-import { Genders, type Species } from '../data/ids/species';
-import { deriveAbility, deriveMoves, deriveNature } from './encounter';
+import type { Species } from '../data/ids/species';
+import { deriveAbility, deriveGender, deriveMoves, deriveNature } from './encounter';
 
 /**
  * A raid boss is a maxed legendary: the fight is meant to need a
@@ -90,9 +90,9 @@ export function createRaidBossSnapshot(
     ivs: perfectIVs(),
     effortValues: zeroEffortValues(),
     nature: deriveNature(traitValue),
-    // Legendaries are genderless in Gen 1; a gendered boss would
-    // still read its ratio through the encounter derivation
-    gender: Genders.Genderless,
+    // The boss reads its own gender ratio, the same way a spawn
+    // does; only a genderless species comes out genderless
+    gender: deriveGender(species, traitValue),
     shiny: false,
     moves: deriveMoves(species, RAID_BOSS_LEVEL),
     // The Boss ability is what makes it a raid: the health pool, the

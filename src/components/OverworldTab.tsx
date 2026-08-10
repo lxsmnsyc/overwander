@@ -10,7 +10,7 @@ import {
   onMount,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
-import { RaidKind, deriveRaidReward, enterRaid } from '../auth/raids';
+import { RaidKind, claimRaidReward, enterRaid } from '../auth/raids';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   type SpawnRecord,
@@ -33,11 +33,9 @@ import ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import pickStartPosition from '../overworld/start';
-import { EncounterType } from '../overworld/encounter';
-import { LEGENDARY_RAID_REWARD_LEVEL, SHADOW_RAID_REWARD_LEVEL } from '../overworld/raid';
 import type SafariSession from '../overworld/safari';
 import SafariDialog from './SafariDialog';
-import { GameTab, type PendingReward, useGame } from './game-context';
+import { GameTab, useGame } from './game-context';
 
 /**
  * How many spawns a visit publishes for the chunk's window
@@ -311,47 +309,44 @@ export default function OverworldTab(): JSX.Element {
       if (lobby == null) {
         return 'The raid lobby is empty this hour.';
       }
+      const [id, record] = lobby;
+
+      // A raid already under way cannot be joined; walking in on one
+      // is watching it, and a watched raid pays nothing
+      if (record.battle != null) {
+        game.setBattle({ id: record.battle, replay: true });
+        return 'The raid has already started — you can only watch.';
+      }
+
       // The lobby itself lives in the Raids tab
-      game.setRaid(lobby[0]);
+      game.setRaid(id);
       game.setTab(GameTab.Raids);
       return null;
     }
     return null;
   };
 
-  /**
-   * A cleared raid hands the legendary over as a meeting: the chunk,
-   * biome and window are the raid's, the individual is the player's
-   */
-  const claimRaidReward = async (
-    user: User,
-    loaded: ChunkView,
-    reward: PendingReward,
-  ): Promise<void> => {
-    const [spawnId, spawn] = deriveRaidReward(reward.raid, user.uid, reward.species);
-    const encounter = await startEncounter(user, loaded.snapshot, `${spawnId}:${user.uid}`, spawn, {
-      type: EncounterType.Raid,
-      shadow: reward.shadow,
-      level: reward.shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
-    });
-
-    setSession(await createSafariSession(user, encounter));
-  };
-
-  // A raid cleared elsewhere leaves its legendary waiting; it is met
-  // the moment the player is back in the overworld
+  // A cleared raid leaves its legendary waiting; it is met the moment
+  // the player is back in the overworld
   createEffect(() => {
     const reward = game.reward();
-    const loaded = view();
     const user = auth.user();
 
-    if (reward == null || loaded == null || user == null) {
+    if (reward == null || user == null) {
       return;
     }
     game.setReward(null);
-    claimRaidReward(user, loaded, reward).catch((caught: unknown) => {
-      setStatus(caught instanceof Error ? caught.message : String(caught));
-    });
+    claimRaidReward(user, reward.raid)
+      .then(async (encounter) => {
+        if (encounter == null) {
+          setStatus('That raid has nothing left to collect.');
+          return;
+        }
+        setSession(await createSafariSession(user, encounter));
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
   });
 
   // Every arrival at a new cell resolves its interaction once the

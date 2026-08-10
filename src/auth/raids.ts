@@ -16,20 +16,29 @@ import {
   onSnapshot,
   query,
   runTransaction,
-  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
-import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../overworld/raid';
+import getWorld from '../overworld/current';
+import type { Encounter } from '../overworld/encounter';
+import { EncounterType } from '../overworld/encounter';
+import {
+  BOSS_ALLIANCE,
+  LEGENDARY_RAID_REWARD_LEVEL,
+  PLAYER_ALLIANCE,
+  SHADOW_RAID_REWARD_LEVEL,
+  createRaidBossSnapshot,
+} from '../overworld/raid';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
-import { BattleOutcome, createBattle } from './battles';
+import { BattleOutcome, createBattle, getBattle } from './battles';
 import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
+import { startEncounter } from './snapshots';
 import { createTeam, createTeamSnapshot, getTeam, publishTeamSnapshot } from './teams';
 
 /**
@@ -90,6 +99,12 @@ export interface RaidRecord {
 }
 
 const RAID_COLLECTION = 'raids';
+
+/**
+ * One marker per player per cleared raid, so the legendary is
+ * handed over once however late it is collected
+ */
+const RAID_REWARD_COLLECTION = 'raidRewards';
 
 /**
  * The alliance numbers live with the battle builder that reads them
@@ -192,30 +207,38 @@ export async function enterRaid(
   }
 
   const id = raidId(snapshot.chunk, snapshot.raidTimestamp, cell, kind);
-  const ref = getRaidRef(id);
-  const existing = (await getDoc(ref)).data();
+  const db = getFirebaseFirestore();
 
-  if (existing != null) {
-    // A cleared lobby stays shut until the hour turns over and the
-    // landmark rolls a new raid
-    return existing.cleared ? null : [id, existing];
-  }
+  // One landmark stages one raid per hour: the arrival that finds no
+  // lobby opens it and hosts, and every arrival after adopts what is
+  // already standing. The read and the create share a transaction,
+  // so two players walking in together cannot each open their own
+  return runTransaction(db, async (transaction) => {
+    const ref = getRaidRef(id);
+    const existing = (await transaction.get(ref)).data();
 
-  const record: RaidRecord = {
-    kind,
-    species: roll.species,
-    traitValue: roll.traitValue,
-    host: user.uid,
-    teams: [],
-    battle: null,
-    timestamp: snapshot.raidTimestamp,
-    chunk: { seed: snapshot.chunk.seed, x: snapshot.chunk.x, y: snapshot.chunk.y },
-    cell,
-    cleared: false,
-  };
+    if (existing != null) {
+      // A cleared lobby stays shut until the hour turns over and the
+      // landmark rolls a new raid
+      return existing.cleared ? null : ([id, existing] as [string, RaidRecord]);
+    }
 
-  await setDoc(ref, record);
-  return [id, record];
+    const record: RaidRecord = {
+      kind,
+      species: roll.species,
+      traitValue: roll.traitValue,
+      host: user.uid,
+      teams: [],
+      battle: null,
+      timestamp: snapshot.raidTimestamp,
+      chunk: { seed: snapshot.chunk.seed, x: snapshot.chunk.x, y: snapshot.chunk.y },
+      cell,
+      cleared: false,
+    };
+
+    transaction.set(ref, record);
+    return [id, record] as [string, RaidRecord];
+  });
 }
 
 /**
@@ -293,10 +316,83 @@ export async function joinRaid(user: User, id: string, catches: string[]): Promi
  * seeded per player, so everyone in the lobby meets their own
  * individual — different IVs, different traits, its own shiny odds
  */
-export function deriveRaidReward(id: string, uid: string, species: Species): [string, Spawn] {
-  const rng = new AleaRNG(`${id}reward${uid}`);
+export function deriveRaidReward(raid: RaidRecord, id: string, uid: string): [string, Spawn] {
+  // The raid's own seed material — the lobby it was staged in and the
+  // trait value it rolled — mixed with the player, so every fighter
+  // walks away with their own individual of the same legendary
+  const rng = new AleaRNG(`${id}:${raid.traitValue}:reward:${uid}`);
 
-  return [`${id}$reward`, [species, rng.int32(), rng.int32()]];
+  return [`${id}$reward`, [raid.species, rng.int32(), rng.int32()]];
+}
+
+/**
+ * Collect the legendary a cleared raid owes the player. The reward
+ * waits rather than expiring: a player who ran from the encounter,
+ * closed the tab or left the battle early claims it later from their
+ * battle history. A claim marker at raidRewards/{raidId}:{uid}
+ * guards it, so the raid pays each fighter once.
+ *
+ * The encounter is derived from the raid's own chunk and hour, not
+ * from wherever the player is standing now, so a late claim meets
+ * exactly what the raid staged. Resolves null when the raid was not
+ * won by this player, or when they already claimed it
+ */
+export async function claimRaidReward(user: User, id: string): Promise<Encounter | null> {
+  const raid = await getRaid(id);
+
+  if (raid?.battle == null) {
+    return null;
+  }
+
+  const battle = await getBattle(raid.battle);
+
+  // Only the players who actually fielded a team are owed anything,
+  // and only from a raid that was won
+  if (
+    battle == null ||
+    battle.outcome !== BattleOutcome.Won ||
+    !battle.players.includes(user.uid)
+  ) {
+    return null;
+  }
+
+  const db = getFirebaseFirestore();
+  const ref = doc(db, RAID_REWARD_COLLECTION, `${id}:${user.uid}`);
+  const claimed = await runTransaction(db, async (transaction) => {
+    const existing = await transaction.get(ref);
+
+    if (existing.exists()) {
+      return false;
+    }
+    transaction.set(ref, { player: user.uid, raid: id });
+    return true;
+  });
+
+  if (!claimed) {
+    return null;
+  }
+
+  const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
+  const snapshot = new ChunkSnapshot(chunk, raid.timestamp);
+  // startEncounter keys the stored encounter by the player already,
+  // so the spawn id stays the raid's own
+  const [spawnId, spawn] = deriveRaidReward(raid, id, user.uid);
+
+  return startEncounter(user, snapshot, spawnId, spawn, {
+    type: EncounterType.Raid,
+    shadow: raid.kind === RaidKind.Shadow,
+    level: raid.kind === RaidKind.Shadow ? SHADOW_RAID_REWARD_LEVEL : LEGENDARY_RAID_REWARD_LEVEL,
+  });
+}
+
+/**
+ * The raids this player has already collected from
+ */
+export async function listClaimedRaids(uid: string): Promise<Set<string>> {
+  const claims = collection(getFirebaseFirestore(), RAID_REWARD_COLLECTION);
+  const result = await getDocs(query(claims, where('player', '==', uid)));
+
+  return new Set(result.docs.map((entry) => asString(entry.data().raid)));
 }
 
 /**

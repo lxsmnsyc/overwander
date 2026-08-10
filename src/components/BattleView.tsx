@@ -6,7 +6,8 @@ import {
   listBattleTeams,
   watchBattle,
 } from '../auth/battles';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid } from '../auth/raids';
+import { useAuth } from '../auth/context';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid } from '../auth/raids';
 import { type RaidBattle, createRaidBattle } from '../overworld/raid';
 import BattleField from './BattleField';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
@@ -29,6 +30,7 @@ export interface BattleViewProps {
  */
 export default function BattleView(props: BattleViewProps): JSX.Element {
   const game = useGame();
+  const auth = useAuth();
   // Followed rather than read once: the outcome is stamped by
   // whoever watches the fight settle, and that may not be this player
   const record = from<BattleRecord | null>((set) =>
@@ -119,12 +121,23 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     game.setBattle(null);
   };
 
-  // A raid battle is recorded once, by whoever is watching it end
+  /**
+   * Whether the signed-in player fought in this battle. A spectator
+   * — anyone who walked in on a raid already under way — watches the
+   * same deterministic fight but settles nothing and is owed nothing
+   */
+  const fought = (): boolean => {
+    const user = auth.user();
+
+    return user != null && record()?.players.includes(user.uid) === true;
+  };
+
+  // A raid battle is recorded once, by whichever fighter sees it end
   createEffect(() => {
     const result = outcome();
     const raidId = props.active.raid;
 
-    if (props.active.replay || recorded() || result == null) {
+    if (props.active.replay || !fought() || recorded() || result == null) {
       return;
     }
 
@@ -135,18 +148,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       await finishBattle(props.active.id, won ? BattleOutcome.Won : BattleOutcome.Lost);
 
       if (won && raidId != null) {
-        const raid = await getRaid(raidId);
-
+        // The legendary waits on the raid itself, so it can be
+        // collected here or from the battle history later
         await clearRaid(raidId);
-        // The legendary is met back in the overworld, where the
-        // player is standing
-        if (raid != null) {
-          game.setReward({
-            raid: raidId,
-            species: raid.species,
-            shadow: raid.kind === RaidKind.Shadow,
-          });
-        }
+        game.setReward({ raid: raidId });
       }
     })().catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));

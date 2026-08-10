@@ -193,6 +193,25 @@ export function deriveAbility(species: Species, traitValue: number): Abilities {
 }
 
 /**
+ * The gender a trait value picks for the species: a pure ratio roll
+ * from its own slice, independent of any stat. A species with no
+ * ratio is genderless
+ */
+export function deriveGender(species: Species, traitValue: number): Genders {
+  const { genderRatio } = getSpeciesData(species);
+
+  if (genderRatio == null) {
+    return Genders.Genderless;
+  }
+
+  const genderSlice = (traitValue >>> TRAIT_BITS) & TRAIT_MASK;
+  const [male, female] = genderRatio;
+  const femaleShare = female / (male + female);
+
+  return genderSlice < femaleShare * TRAIT_RANGE ? Genders.Female : Genders.Male;
+}
+
+/**
  * The nature a trait value picks, from its own slice
  */
 export function deriveNature(traitValue: number): Natures {
@@ -258,10 +277,9 @@ export default function deriveEncounter(
   // keeping: no stat comes out of it hopeless
   const minimumIV = type === EncounterType.Raid && featured ? RAID_FAMILY_DAY_MIN_IV : 0;
 
-  // Slices in trait order: level, gender, ability, nature — the last
-  // two are read by deriveAbility and deriveNature
+  // Slices in trait order: level, gender, ability, nature — all but
+  // the level are read by the derive helpers above
   const levelSlice = traitValue & TRAIT_MASK;
-  const genderSlice = (traitValue >>> TRAIT_BITS) & TRAIT_MASK;
 
   const level =
     options.level ??
@@ -280,20 +298,13 @@ export default function deriveEncounter(
     [Stats.Speed]: sliceIV(5),
   };
 
-  const data = getSpeciesData(species);
   // The ability slice serves twice: its band picks the pool, and its
   // position within the band picks the pool index
   const ability = deriveAbility(species, traitValue);
 
   // Modern mechanics: gender is a pure ratio roll independent of any
   // stat, from its own dedicated slice
-  let gender = Genders.Genderless;
-  if (data.genderRatio != null) {
-    const [male, female] = data.genderRatio;
-    const femaleShare = female / (male + female);
-
-    gender = genderSlice < femaleShare * TRAIT_RANGE ? Genders.Female : Genders.Male;
-  }
+  const gender = deriveGender(species, traitValue);
 
   // The last four level-up moves learnable at this level
   const moves = deriveMoves(species, level);

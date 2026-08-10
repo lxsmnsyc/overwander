@@ -177,6 +177,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 <dt>Catch chance</dt>
                 <dd>
                   {Math.round(active().getCatchChance() * 100)}%
+                  {active().isFeatured() ? " · it's their family's day" : ''}
                   {active().isPityThrow() ? ' · last ball, it cannot miss' : ''}
                 </dd>
                 <dt>Flee chance</dt>

@@ -120,6 +120,32 @@ describe('safari session', () => {
     expect(night.getBallModifier(Balls.DuskBall)).toBe(3);
   });
 
+  it('is twice as catchable on its family day', () => {
+    // The window sits at the epoch, whose day of the year is zero —
+    // Bulbasaur's family number, so its line is the day's feature
+    const featured = new SafariSession(makeEncounter(Species.Bulbasaur), rolls([]));
+
+    expect(featured.isFeatured()).toBe(true);
+    // Bulbasaur's catch rate is 45
+    expect(featured.getCatchChance()).toBeCloseTo((45 * 2) / 255);
+
+    // Tauros shares the window but not the family
+    const plain = new SafariSession(makeEncounter(), rolls([]));
+
+    expect(plain.isFeatured()).toBe(false);
+    expect(plain.getCatchChance()).toBeCloseTo(45 / 255);
+
+    // The bonus stacks with the ball and the feeding, and the chance
+    // still caps at certainty rather than running past it
+    const stacked = new SafariSession(makeEncounter(Species.Bulbasaur), rolls([]));
+
+    stacked.feed(Items.OranBerry);
+    expect(stacked.getCatchChance()).toBeCloseTo((45 * 1.25 * 2) / 255);
+
+    stacked.chooseBall(Balls.UltraBall);
+    expect(stacked.getCatchChance()).toBeCloseTo((45 * 2 * 1.25 * 2) / 255);
+  });
+
   it('guarantees the last ball of a well-stocked player', () => {
     // Down to the last ball after walking in with more than a hundred
     const pity = new SafariSession(makeEncounter(), rolls([0.9999]), { startingBalls: 101 });

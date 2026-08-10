@@ -4,7 +4,7 @@ import { Stats } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
-import { getSpeciesData } from '../data/species';
+import { SPECIES_DAY_CATCH_BOOST, getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { type Encounter, EncounterType } from './encounter';
 
 export const enum SafariState {
@@ -312,9 +312,17 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
   }
 
   /**
+   * Whether the encounter belongs to the day's featured family, which
+   * comes along four times as readily
+   */
+  isFeatured(): boolean {
+    return isFeaturedSpecies(this.encounter.species, this.encounter.timestamp);
+  }
+
+  /**
    * The chance the next throw lands: species catch rate, ball
-   * modifier and accumulated feeding bonus — unless it is the pity
-   * throw, which is certain
+   * modifier, accumulated feeding bonus and the family day's own
+   * bonus — unless it is the pity throw, which is certain
    */
   getCatchChance(): number {
     if (this.isPityThrow()) {
@@ -322,8 +330,9 @@ export default class SafariSession extends EventEngine<SafariEventMap> {
     }
 
     const rate = getSpeciesData(this.encounter.species).catchRate;
+    const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
 
-    return Math.min(1, (rate * this.getBallModifier() * this.catchBonus) / CATCH_RATE_SCALE);
+    return Math.min(1, (rate * this.getBallModifier() * this.catchBonus * day) / CATCH_RATE_SCALE);
   }
 
   /**

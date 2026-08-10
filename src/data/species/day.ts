@@ -8,9 +8,16 @@ import { getRegisteredFamilies, getSpeciesData } from './__create';
 export const SPECIES_DAY_SHINY_BOOST = 8;
 
 /**
- * ...and its members crowd the spawn pool four times as heavily
+ * ...its members crowd the spawn pool four times as heavily...
  */
 export const SPECIES_DAY_WEIGHT_BOOST = 4;
+
+/**
+ * ...and they come along twice as readily when a ball lands — a
+ * lighter touch than the rest, since the catch chance is already
+ * stacked with the ball and whatever the encounter has been fed
+ */
+export const SPECIES_DAY_CATCH_BOOST = 2;
 
 const DAY = 24 * 60 * 60 * 1000;
 

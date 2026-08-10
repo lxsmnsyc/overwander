@@ -8,6 +8,7 @@ export {
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
 export {
+  SPECIES_DAY_CATCH_BOOST,
   SPECIES_DAY_SHINY_BOOST,
   SPECIES_DAY_WEIGHT_BOOST,
   getDayOfYear,

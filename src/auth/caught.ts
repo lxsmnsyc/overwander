@@ -23,6 +23,7 @@ import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type { Encounter, EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 
 /**
@@ -125,7 +126,12 @@ const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
   },
 };
 
-function getCaughtRef(id: string): DocumentReference<CaughtPokemon> {
+/**
+ * The catch's document reference, converter attached. Exported so
+ * stores that mutate a catch alongside their own documents (candies,
+ * say) can join it in one transaction
+ */
+export function getCaughtRef(id: string): DocumentReference<CaughtPokemon> {
   return doc(getFirebaseFirestore(), CAUGHT_COLLECTION, id).withConverter(caughtConverter);
 }
 
@@ -149,8 +155,12 @@ export async function recordCatch(
   user: User,
   encounter: Encounter,
   ball: Balls,
-  caughtAt = Date.now(),
+  stamp?: number,
 ): Promise<string> {
+  // The catch is stamped by the server's clock unless the caller
+  // supplies one, so ownership history stays comparable across
+  // players regardless of their devices
+  const caughtAt = stamp ?? (await syncServerClock());
   const db = getFirebaseFirestore();
   const ref = doc(collection(db, CAUGHT_COLLECTION)).withConverter(caughtConverter);
   const batch = writeBatch(db);

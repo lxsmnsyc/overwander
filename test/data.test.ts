@@ -11,6 +11,7 @@ import { Items } from '../src/data/ids/items';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
 import registerItems from '../src/data/items';
 import registerGen1Moves from '../src/data/moves/gen-1';
+import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import {
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -168,6 +169,22 @@ describe('biome data', () => {
     // Legendaries sit in their own section
     const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
     expect(peak.special.some((entry) => entry.species === Species.Zapdos)).toBe(true);
+  });
+
+  it('rolls the item pool through the rarity bands', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+
+    // Band thresholds mirror the spawn pool's
+    expect(pickItem(ITEM_POOL, rolls([0, 0]))).toBe(Items.MasterBall);
+    expect(pickItem(ITEM_POOL, rolls([0.01, 0]))).toBe(Items.FireStone);
+    expect(pickItem(ITEM_POOL, rolls([0.05, 0]))).toBe(Items.UltraBall);
+    expect(pickItem(ITEM_POOL, rolls([0.5, 0]))).toBe(Items.PokeBall);
+
+    // Custom bands replace the defaults: bands summing to 1 shut the
+    // base tier out, so even a terrible band roll stays uncommon
+    expect(
+      pickItem(ITEM_POOL, rolls([0.99, 0]), { special: 1 / 64, rare: 1 / 8, uncommon: 1 }),
+    ).toBe(Items.UltraBall);
   });
 
   it('rolls spawns through the rarity bands', () => {

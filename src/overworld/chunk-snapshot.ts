@@ -1,9 +1,13 @@
 import AleaRNG from '../core/alea';
 import { getSpawnPool, pickSpawn } from '../data/biome';
 import { getTimeOfDay } from '../data/ids/biome';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
+import Landmark from '../data/overworld/landmark';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
+import type { GrottoReward } from './landmarks';
+import { resolveHiddenGrotto, resolveItemCache } from './landmarks';
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -96,5 +100,61 @@ export default class ChunkSnapshot {
    */
   getSpawnAt(cellX: number, cellY: number): Spawn | null {
     return this.cells[cellY * CHUNK_CELLS + cellX] ?? null;
+  }
+
+  private itemCaches: Map<number, Items> | null = null;
+
+  /**
+   * The window's item-cache rewards, keyed by the landmark cell.
+   * Each ItemCache landmark rolls its reward from the chunk seed
+   * and the window, so a cache is only acquirable while the window
+   * lives — once expired, the next window regenerates a new reward
+   */
+  getItemCaches(): Map<number, Items> {
+    if (this.itemCaches == null) {
+      const caches = new Map<number, Items>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.ItemCache) {
+          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}cache${cell}`);
+          const item = resolveItemCache(() => rng.random());
+
+          if (item != null) {
+            caches.set(cell, item);
+          }
+        }
+      }
+      this.itemCaches = caches;
+    }
+    return this.itemCaches;
+  }
+
+  private hiddenGrottos: Map<number, GrottoReward> | null = null;
+
+  /**
+   * The window's hidden-grotto rewards, keyed by the landmark cell.
+   * Each HiddenGrotto landmark rolls its reward from the chunk seed
+   * and the window — the pokemon branch draws from the biome's pool
+   * for this window's time of day — so a grotto only yields while
+   * the window lives; the next window regenerates a new reward
+   */
+  getHiddenGrottos(): Map<number, GrottoReward> {
+    if (this.hiddenGrottos == null) {
+      const grottos = new Map<number, GrottoReward>();
+      const time = getTimeOfDay(this.timestamp);
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.HiddenGrotto) {
+          const rng = new AleaRNG(`${this.chunk.seed}${this.timestamp}grotto${cell}`);
+          const reward = resolveHiddenGrotto(this.chunk.biome, time, () => rng.random());
+
+          if (reward != null) {
+            grottos.set(cell, reward);
+          }
+        }
+      }
+      this.hiddenGrottos = grottos;
+    }
+    return this.hiddenGrottos;
   }
 }

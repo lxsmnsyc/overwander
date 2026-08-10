@@ -1,137 +1,120 @@
 // Firestore returns untyped documents; the converter below restores
-// const-enum keys via assertions that tsc requires but tsgolint
+// const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import {
   type DocumentReference,
   type FirestoreDataConverter,
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
   runTransaction,
+  where,
 } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
-import { asNumber, asRecord } from './__normalize';
+import { asNumber, asString } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
 
 /**
- * A user's belongings: their gold balance and how many of each item
- * they carry. Stored at inventories/{uid}; Firestore security rules
- * must restrict writes to the owning uid
+ * One item stack a user carries, stored per item at
+ * inventories/{uid}:{item} so a grant or a spend touches one small
+ * document instead of rewriting the whole bag. Firestore security
+ * rules must restrict writes to the owning uid. Gold is not here —
+ * the balance lives on the user's profile
  */
-export interface Inventory {
+export interface InventoryEntry {
   /**
-   * The in-game currency balance
+   * The owning uid
    */
-  gold: number;
+  user: string;
   /**
-   * Item counts; absent means none
+   * Which item the stack holds
    */
-  items: Partial<Record<Items, number>>;
+  item: Items;
+  /**
+   * How many are carried; entries never drop below zero
+   */
+  amount: number;
 }
 
 const INVENTORY_COLLECTION = 'inventories';
 
-function asItemCounts(value: unknown): Partial<Record<Items, number>> {
-  const source = asRecord(value);
-  const items: Partial<Record<Items, number>> = {};
-
-  for (const [key, count] of Object.entries(source)) {
-    if (typeof count === 'number' && count > 0) {
-      items[Number(key) as Items] = count;
-    }
-  }
-  return items;
-}
-
-const converter: FirestoreDataConverter<Inventory> = {
-  toFirestore: (inventory) => inventory,
+const converter: FirestoreDataConverter<InventoryEntry> = {
+  toFirestore: (entry) => entry,
   fromFirestore: (snapshot) => {
     const data = snapshot.data();
 
     return {
-      gold: asNumber(data.gold),
-      items: asItemCounts(data.items),
+      user: asString(data.user),
+      item: asNumber(data.item) as Items,
+      amount: asNumber(data.amount),
     };
   },
 };
 
-function getInventoryRef(uid: string): DocumentReference<Inventory> {
-  return doc(getFirebaseFirestore(), INVENTORY_COLLECTION, uid).withConverter(converter);
-}
-
-function emptyInventory(): Inventory {
-  return { gold: 0, items: {} };
-}
-
-export async function getInventory(uid: string): Promise<Inventory> {
-  const snapshot = await getDoc(getInventoryRef(uid));
-
-  return snapshot.data() ?? emptyInventory();
-}
-
 /**
- * Add gold to the user's balance
+ * The stack's document id: one per user and item pair, so the same
+ * item can never split across two documents
  */
-export async function grantGold(uid: string, amount: number): Promise<void> {
-  await runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getInventoryRef(uid);
-    const inventory = (await transaction.get(ref)).data() ?? emptyInventory();
+function entryId(uid: string, item: Items): string {
+  return `${uid}:${item}`;
+}
 
-    transaction.set(ref, { ...inventory, gold: inventory.gold + amount });
-  });
+function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
+  return doc(getFirebaseFirestore(), INVENTORY_COLLECTION, entryId(uid, item)).withConverter(
+    converter,
+  );
 }
 
 /**
- * Spend gold; resolves false (and changes nothing) when the balance
- * cannot cover the amount
+ * Every stack the user carries, as stored. Stacks that fell to zero
+ * are left out
  */
-export async function spendGold(uid: string, amount: number): Promise<boolean> {
-  return runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getInventoryRef(uid);
-    const inventory = (await transaction.get(ref)).data() ?? emptyInventory();
+export async function getInventory(uid: string): Promise<InventoryEntry[]> {
+  const entries = collection(getFirebaseFirestore(), INVENTORY_COLLECTION).withConverter(converter);
+  const result = await getDocs(query(entries, where('user', '==', uid)));
 
-    if (inventory.gold < amount) {
-      return false;
-    }
-    transaction.set(ref, { ...inventory, gold: inventory.gold - amount });
-    return true;
-  });
+  return result.docs.map((entry) => entry.data()).filter((entry) => entry.amount > 0);
 }
 
 /**
- * Add items to the user's inventory
+ * How many of one item the user carries
+ */
+export async function getItemCount(uid: string, item: Items): Promise<number> {
+  const snapshot = await getDoc(getEntryRef(uid, item));
+
+  return snapshot.data()?.amount ?? 0;
+}
+
+/**
+ * Add items to the user's inventory, creating the stack on first
+ * acquisition
  */
 export async function grantItem(uid: string, item: Items, count = 1): Promise<void> {
   await runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getInventoryRef(uid);
-    const inventory = (await transaction.get(ref)).data() ?? emptyInventory();
-    const current = inventory.items[item] ?? 0;
+    const ref = getEntryRef(uid, item);
+    const current = (await transaction.get(ref)).data()?.amount ?? 0;
 
-    transaction.set(ref, {
-      ...inventory,
-      items: { ...inventory.items, [item]: current + count },
-    });
+    transaction.set(ref, { user: uid, item, amount: current + count });
   });
 }
 
 /**
- * Consume items; resolves false (and changes nothing) when the
- * user does not carry enough. Entries consumed to zero are dropped
- * by the read-side normalization
+ * Consume items; resolves false (and changes nothing) when the user
+ * does not carry enough. A stack spent to zero stays as a zero
+ * document and is filtered out on read
  */
 export async function consumeItem(uid: string, item: Items, count = 1): Promise<boolean> {
   return runTransaction(getFirebaseFirestore(), async (transaction) => {
-    const ref = getInventoryRef(uid);
-    const inventory = (await transaction.get(ref)).data() ?? emptyInventory();
-    const current = inventory.items[item] ?? 0;
+    const ref = getEntryRef(uid, item);
+    const current = (await transaction.get(ref)).data()?.amount ?? 0;
 
     if (current < count) {
       return false;
     }
-    transaction.set(ref, {
-      ...inventory,
-      items: { ...inventory.items, [item]: current - count },
-    });
+    transaction.set(ref, { user: uid, item, amount: current - count });
     return true;
   });
 }

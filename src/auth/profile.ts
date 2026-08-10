@@ -4,14 +4,15 @@ import {
   type FirestoreDataConverter,
   doc,
   getDoc,
+  runTransaction,
   setDoc,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from './firebase';
 
 /**
- * The minimal personal details a player can set. Stored per user at
- * profiles/{uid}; Firestore security rules must restrict writes to
- * the owning uid
+ * The minimal personal details a player can set, plus their gold
+ * balance. Stored per user at profiles/{uid}; Firestore security
+ * rules must restrict writes to the owning uid
  */
 export interface Profile {
   /**
@@ -22,6 +23,10 @@ export interface Profile {
    * Avatar image URL; null when unset
    */
   avatar: string | null;
+  /**
+   * The in-game currency balance
+   */
+  gold: number;
 }
 
 const PROFILE_COLLECTION = 'profiles';
@@ -36,6 +41,7 @@ const converter: FirestoreDataConverter<Profile> = {
     return {
       nickname: typeof data.nickname === 'string' ? data.nickname : 'Trainer',
       avatar: typeof data.avatar === 'string' ? data.avatar : null,
+      gold: typeof data.gold === 'number' ? data.gold : 0,
     };
   },
 };
@@ -50,8 +56,14 @@ export async function getProfile(uid: string): Promise<Profile | null> {
   return snapshot.data() ?? null;
 }
 
-export async function saveProfile(uid: string, profile: Profile): Promise<void> {
-  return setDoc(getProfileRef(uid), profile, { merge: true });
+/**
+ * The fields a player edits themselves; the balance is off limits
+ * here and only moves through grantGold and spendGold
+ */
+export type ProfileDetails = Pick<Profile, 'nickname' | 'avatar'>;
+
+export async function saveProfile(uid: string, details: ProfileDetails): Promise<void> {
+  return setDoc(getProfileRef(uid), details, { merge: true });
 }
 
 /**
@@ -63,7 +75,38 @@ export function deriveProfileDefaults(user: User): Profile {
   return {
     nickname: user.displayName ?? user.email?.split('@')[0] ?? 'Trainer',
     avatar: user.photoURL,
+    gold: 0,
   };
+}
+
+/**
+ * Add gold to the user's balance. The read and the write share a
+ * transaction so concurrent rewards cannot clobber each other
+ */
+export async function grantGold(uid: string, amount: number): Promise<void> {
+  await runTransaction(getFirebaseFirestore(), async (transaction) => {
+    const ref = getProfileRef(uid);
+    const gold = (await transaction.get(ref)).data()?.gold ?? 0;
+
+    transaction.set(ref, { gold: gold + amount }, { merge: true });
+  });
+}
+
+/**
+ * Spend gold; resolves false (and changes nothing) when the balance
+ * cannot cover the amount
+ */
+export async function spendGold(uid: string, amount: number): Promise<boolean> {
+  return runTransaction(getFirebaseFirestore(), async (transaction) => {
+    const ref = getProfileRef(uid);
+    const gold = (await transaction.get(ref)).data()?.gold ?? 0;
+
+    if (gold < amount) {
+      return false;
+    }
+    transaction.set(ref, { gold: gold - amount }, { merge: true });
+    return true;
+  });
 }
 
 /**
@@ -79,6 +122,8 @@ export async function ensureProfile(user: User): Promise<Profile> {
 
   const defaults = deriveProfileDefaults(user);
 
-  await saveProfile(user.uid, defaults);
+  // The whole document, balance included: saveProfile deliberately
+  // cannot write gold
+  await setDoc(getProfileRef(user.uid), defaults);
   return defaults;
 }

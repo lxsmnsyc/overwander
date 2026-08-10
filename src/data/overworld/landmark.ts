@@ -3,37 +3,19 @@
  */
 const enum Landmark {
   /**
-   * A tucked-away hollow with rarer-than-usual spawns
+   * A hidden item stash rolled from the item pool
    */
-  HiddenGrotto = 0,
+  ItemCache = 0,
+  /**
+   * A tucked-away hollow: yields either an uncommon/rare pokemon or
+   * a luckier item cache
+   */
+  HiddenGrotto = 1,
   /**
    * A lobby that stages legendary raid encounters
+   * TODO: behavior
    */
-  RaidLobby = 1,
-  /**
-   * A trainer standing in the overworld, ready to battle
-   */
-  NpcTrainer = 2,
-  /**
-   * A hidden item stash
-   */
-  ItemCache = 3,
-  /**
-   * A harvestable patch of berries
-   */
-  BerryPatch = 4,
-  /**
-   * A spot where water encounters can be fished up
-   */
-  FishingSpot = 5,
-  /**
-   * A shrine tied to mythical encounters
-   */
-  Shrine = 6,
-  /**
-   * A nest that periodically drives outbreak spawns of one species
-   */
-  Nest = 7,
+  LegendaryRaid = 2,
 }
 
 export default Landmark;
@@ -42,12 +24,7 @@ export default Landmark;
  * Every landmark, for uniform rolls over the variants
  */
 export const LANDMARKS: Landmark[] = [
-  Landmark.HiddenGrotto,
-  Landmark.RaidLobby,
-  Landmark.NpcTrainer,
   Landmark.ItemCache,
-  Landmark.BerryPatch,
-  Landmark.FishingSpot,
-  Landmark.Shrine,
-  Landmark.Nest,
+  Landmark.HiddenGrotto,
+  Landmark.LegendaryRaid,
 ];

@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import PerlinNoise from '../../src/core/perlin';
-import registerBiomeSpawns from '../../src/data/biome';
-import type Biome from '../../src/data/ids/biome';
-import { getTimeOfDay } from '../../src/data/ids/biome';
+import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
+import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
+import { Items } from '../../src/data/ids/items';
 import { Genders, Species } from '../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../src/data/species';
 import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, isShinyFor } from '../../src/overworld/encounter';
+import Landmark from '../../src/data/overworld/landmark';
+import { resolveHiddenGrotto } from '../../src/overworld/landmarks';
 import World from '../../src/overworld/world';
 
 // Spawn rolls read the species registry and the biome spawn pools
@@ -93,6 +95,107 @@ describe('world', () => {
 
     // Different chunks roll different landmark sets
     expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('rolls window-scoped item cache rewards', () => {
+    const world = new World('overworld');
+    let chunk = world.getChunk(0, 0);
+
+    // Find a chunk hosting at least one item cache landmark
+    for (let x = 0; x < 20; x++) {
+      const candidate = world.getChunk(x, 0);
+
+      if (new Set(candidate.getLandmarkCells().values()).has(Landmark.ItemCache)) {
+        chunk = candidate;
+        break;
+      }
+    }
+
+    const WINDOW = 5 * 60 * 1000;
+    const caches = new ChunkSnapshot(chunk, 0).getItemCaches();
+
+    // Every reward sits on an ItemCache landmark cell
+    expect(caches.size).toBeGreaterThan(0);
+    for (const cell of caches.keys()) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ItemCache);
+    }
+
+    // The same window agrees for every observer
+    expect(new ChunkSnapshot(chunk, 60 * 1000).getItemCaches()).toEqual(caches);
+
+    // Expired windows regenerate: rewards vary across windows
+    const shapes = new Set<string>();
+    for (let window = 0; window <= 10; window++) {
+      shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getItemCaches()]));
+    }
+    expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('rolls window-scoped hidden grotto rewards', () => {
+    const world = new World('overworld');
+    let chunk = world.getChunk(0, 0);
+
+    // Find a chunk hosting at least one hidden grotto landmark
+    for (let x = 0; x < 20; x++) {
+      const candidate = world.getChunk(x, 0);
+
+      if (new Set(candidate.getLandmarkCells().values()).has(Landmark.HiddenGrotto)) {
+        chunk = candidate;
+        break;
+      }
+    }
+
+    const WINDOW = 5 * 60 * 1000;
+    const grottos = new ChunkSnapshot(chunk, 0).getHiddenGrottos();
+
+    // Every reward sits on a HiddenGrotto landmark cell
+    expect(grottos.size).toBeGreaterThan(0);
+    for (const cell of grottos.keys()) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.HiddenGrotto);
+    }
+
+    // The same window agrees for every observer
+    expect(new ChunkSnapshot(chunk, 60 * 1000).getHiddenGrottos()).toEqual(grottos);
+
+    // Expired windows regenerate: rewards vary across windows
+    const shapes = new Set<string>();
+    for (let window = 0; window <= 10; window++) {
+      shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getHiddenGrottos()]));
+    }
+    expect(shapes.size).toBeGreaterThan(1);
+  });
+
+  it('resolves hidden grottos into rare finds', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+
+    // The cache branch rolls the grotto bands: 1/64 special, 1/8
+    // rare, uncommon otherwise — the base tier never shows up
+    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0, 0]))).toEqual({
+      kind: 'item',
+      item: Items.MasterBall,
+    });
+    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.05, 0]))).toEqual({
+      kind: 'item',
+      item: Items.FireStone,
+    });
+    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.99, 0]))).toEqual({
+      kind: 'item',
+      item: Items.UltraBall,
+    });
+
+    // The pokemon branch is 1/8 rare, the rest uncommon, and never
+    // reaches the legendary tier
+    const rare = resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0, 0]));
+    const uncommon = resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0.5, 0]));
+
+    expect(rare?.kind).toBe('pokemon');
+    if (rare?.kind === 'pokemon') {
+      expect(getSpawnRarity(rare.species)).toBe(SpawnRarity.Rare);
+    }
+    expect(uncommon?.kind).toBe('pokemon');
+    if (uncommon?.kind === 'pokemon') {
+      expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Uncommon);
+    }
   });
 
   it('produces varied biomes across a region', () => {

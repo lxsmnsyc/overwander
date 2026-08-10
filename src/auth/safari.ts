@@ -11,6 +11,7 @@ import SafariSession, {
 } from '../overworld/safari';
 import { asStringArray } from './__normalize';
 import { recordCatch } from './caught';
+import { syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
 import { consumeItem } from './inventory';
 
@@ -22,11 +23,16 @@ const FLED_COLLECTION = 'fled';
 
 /**
  * Open a safari session on an encounter for the signed-in user. The
- * roll stream mixes in the clock so re-engaging the same encounter
- * does not replay the previous attempt
+ * roll stream mixes in the server clock so re-engaging the same
+ * encounter does not replay the previous attempt, and a player
+ * cannot steer the seed by moving their own clock
  */
-export function createSafariSession(user: User, encounter: Encounter): SafariSession {
-  const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${Date.now()}`);
+export async function createSafariSession(
+  user: User,
+  encounter: Encounter,
+): Promise<SafariSession> {
+  const now = await syncServerClock();
+  const rng = new AleaRNG(`${user.uid}${encounterKey(encounter)}${now}`);
 
   return new SafariSession(encounter, () => rng.random());
 }

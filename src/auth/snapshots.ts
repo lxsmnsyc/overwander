@@ -23,8 +23,11 @@ import type { Genders, Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
 import deriveEncounter, { type Encounter, type EncounterType } from '../overworld/encounter';
+import type { Items } from '../data/ids/items';
 import { asNumber, asNumberArray, asStatRecord, asString } from './__normalize';
+import { serverNow, syncServerClock } from './clock';
 import { getFirebaseFirestore } from './firebase';
+import { grantItem } from './inventory';
 
 /**
  * One shared snapshot record per chunk at snapshots/{chunkSeed}:
@@ -69,6 +72,7 @@ export interface EncounterRecord extends Encounter {
 const SNAPSHOT_COLLECTION = 'snapshots';
 const SPAWN_COLLECTION = 'spawns';
 const ENCOUNTER_COLLECTION = 'encounters';
+const CACHE_CLAIM_COLLECTION = 'cacheClaims';
 
 const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   toFirestore: (record) => record,
@@ -140,9 +144,14 @@ async function resolveSnapshotWindow(
   const db = getFirebaseFirestore();
   const ref = doc(db, SNAPSHOT_COLLECTION, chunk.seed).withConverter(snapshotConverter);
 
+  // The window must come from the server's clock: a player whose
+  // device is skewed would otherwise refresh a live window early or
+  // hold an expired one
+  await syncServerClock();
+
   return runTransaction(db, async (transaction) => {
     const existing = (await transaction.get(ref)).data();
-    const now = Date.now();
+    const now = serverNow();
 
     if (existing != null && now < existing.timestamp + SNAPSHOT_INTERVAL) {
       return { timestamp: existing.timestamp, refreshed: false };
@@ -258,6 +267,45 @@ export async function visitChunk(chunk: Chunk, count: number): Promise<[string, 
     ]);
   }
   return publishSpawns(snapshot, count);
+}
+
+/**
+ * Interact with an item cache landmark: the window's reward lands
+ * in the player's inventory. A claim marker (cache cell + window +
+ * player) guards the grant, so each cache pays a player once per
+ * window — an expired window's cache regenerates and can be claimed
+ * anew. Resolves the granted item, or null when there is nothing to
+ * claim (no cache on the cell, or already claimed this window)
+ */
+export async function claimItemCache(
+  user: User,
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<Items | null> {
+  const item = snapshot.getItemCaches().get(cell);
+
+  if (item == null) {
+    return null;
+  }
+
+  const db = getFirebaseFirestore();
+  const id = `${snapshotKey(snapshot.chunk, snapshot.timestamp)}$${cell}:${user.uid}`;
+  const ref = doc(db, CACHE_CLAIM_COLLECTION, id);
+  const claimed = await runTransaction(db, async (transaction) => {
+    const existing = await transaction.get(ref);
+
+    if (existing.exists()) {
+      return false;
+    }
+    transaction.set(ref, { player: user.uid, item });
+    return true;
+  });
+
+  if (!claimed) {
+    return null;
+  }
+  await grantItem(user.uid, item);
+  return item;
 }
 
 /**

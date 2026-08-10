@@ -3,6 +3,7 @@ import registerBattleBerries from './berries';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
 import registerRaidItems from './raid-items';
+import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
 import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
@@ -20,6 +21,7 @@ export default function registerItems(): void {
   registerBattleBerries();
   registerEvolutionStones();
   registerTypeBoosters();
+  registerStatBoosters();
   registerKeyItems();
   registerRaidItems();
   registerValuables();

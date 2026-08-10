@@ -36,6 +36,11 @@ import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { ITEM_POOL, pickItem } from '../src/data/overworld/item-pool';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
+import {
+  GENERAL_STAT_BOOSTERS,
+  RELIC_STAT_BOOSTERS,
+  STAT_BOOSTER_PRICE,
+} from '../src/data/items/stat-boosters';
 import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
@@ -515,6 +520,40 @@ describe('type-enhancing items', () => {
 
     for (const item of TYPE_BOOSTERS.keys()) {
       expect(pooled.has(item)).toBe(false);
+    }
+  });
+
+  it('stocks the general stat items and hides the relics', () => {
+    const pooled = new Set(
+      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const item of GENERAL_STAT_BOOSTERS.keys()) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Held for as long as it is carried: nothing spends one
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.flags & ItemFlags.Usable).toBe(0);
+      // Bought, and dear: each is worth half of a stat
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(STAT_BOOSTER_PRICE);
+      expect(pooled.has(item)).toBe(false);
+    }
+
+    for (const item of RELIC_STAT_BOOSTERS.keys()) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Found rather than stocked: no listing, only a resale price
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBeGreaterThan(0);
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
     }
   });
 });

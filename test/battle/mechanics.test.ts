@@ -12,6 +12,7 @@ import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/id
 import { Species } from '../../src/data/ids/species';
 import { Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
+import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
 import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -195,6 +196,118 @@ describe('type-enhancing held items', () => {
     // An item that has been disabled is still held and does nothing
     attacker.disableItem(Items.Charcoal);
     expect(attacker.checkMovePower(Moves.Ember, target)).toBe(fire);
+  });
+});
+
+describe('stat-enhancing held items', () => {
+  it('buys half a stat with a lock on the move it opened with', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = unitTarget(enemy);
+    const attack = holder.checkStat(Stats.Attack, 0);
+
+    holder.addMove(Moves.Tackle);
+    holder.addMove(Moves.Ember);
+    holder.addItem(Items.ChoiceBand);
+
+    // The stat it buys, and nothing else
+    expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(attack * STAT_BOOST_FACTOR, 5);
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBe(
+      createUnit(battle, teamA).checkStat(Stats.SpecialAttack, 0),
+    );
+
+    // Anything may be cast until something is
+    expect(holder.checkCanCast(Moves.Ember, target)).toBe(true);
+
+    holder.cast(Moves.Tackle, target);
+    // The cast itself has to finish before anything else is castable
+    // at all — that is the move mechanics' rule, not the item's
+    holder.stopCast();
+    holder.finishCooldown(Moves.Tackle);
+
+    // From then on it is that move or nothing, while the item lasts
+    expect(holder.checkCanCast(Moves.Tackle, target)).toBe(true);
+    expect(holder.checkCanCast(Moves.Ember, target)).toBe(false);
+
+    // The lock belongs to the item, so a disabled one frees it — and
+    // takes the stat back with it
+    holder.disableItem(Items.ChoiceBand);
+    expect(holder.checkCanCast(Moves.Ember, target)).toBe(true);
+    expect(holder.checkStat(Stats.Attack, 0)).toBe(attack);
+  });
+
+  it('trades every status move for half a special defense', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = unitTarget(enemy);
+    const defense = holder.checkStat(Stats.SpecialDefense, 0);
+
+    holder.addMove(Moves.Tackle);
+    holder.addMove(Moves.Growl);
+
+    expect(holder.checkCanCast(Moves.Growl, target)).toBe(true);
+
+    holder.addItem(Items.AssaultVest);
+
+    expect(holder.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(defense * STAT_BOOST_FACTOR, 5);
+    // Growl is a status move; Tackle is not
+    expect(holder.checkCanCast(Moves.Growl, target)).toBe(false);
+    expect(holder.checkCanCast(Moves.Tackle, target)).toBe(true);
+  });
+
+  it('gives an Eviolite only to what is still growing', () => {
+    const { battle, teamA } = createBattle();
+    const growing = createUnit(battle, teamA);
+    const finished = createUnit(battle, teamA);
+
+    growing.setSpecies(Species.Cubone);
+    finished.setSpecies(Species.Marowak);
+
+    const before = [growing.checkStat(Stats.Defense, 0), finished.checkStat(Stats.Defense, 0)];
+
+    growing.addItem(Items.Eviolite);
+    finished.addItem(Items.Eviolite);
+
+    // A Cubone has somewhere left to evolve to; a Marowak does not
+    expect(growing.checkStat(Stats.Defense, 0)).toBeCloseTo(before[0] * STAT_BOOST_FACTOR, 5);
+    expect(growing.checkStat(Stats.SpecialDefense, 0)).toBeGreaterThan(0);
+    expect(finished.checkStat(Stats.Defense, 0)).toBe(before[1]);
+  });
+
+  it('doubles a relic stat for its own species and nobody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cubone = createUnit(battle, teamA);
+    const stranger = createUnit(battle, teamB);
+
+    cubone.setSpecies(Species.Cubone);
+    stranger.setSpecies(Species.Pikachu);
+
+    const boned = cubone.checkStat(Stats.Attack, 0);
+    const borrowed = stranger.checkStat(Stats.Attack, 0);
+
+    cubone.addItem(Items.ThickClub);
+    stranger.addItem(Items.ThickClub);
+
+    // A bone to a Cubone, a stick to everyone else
+    expect(cubone.checkStat(Stats.Attack, 0)).toBeCloseTo(boned * RELIC_BOOST_FACTOR, 5);
+    expect(stranger.checkStat(Stats.Attack, 0)).toBe(borrowed);
+
+    // A Light Ball doubles both of a Pikachu's attacking stats
+    const charge = [
+      stranger.checkStat(Stats.Attack, 0),
+      stranger.checkStat(Stats.SpecialAttack, 0),
+    ];
+
+    stranger.removeItem(Items.ThickClub, { type: EffectType.None });
+    stranger.addItem(Items.LightBall);
+
+    expect(stranger.checkStat(Stats.Attack, 0)).toBeCloseTo(charge[0] * RELIC_BOOST_FACTOR, 5);
+    expect(stranger.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+      charge[1] * RELIC_BOOST_FACTOR,
+      5,
+    );
   });
 });
 

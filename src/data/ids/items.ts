@@ -122,6 +122,24 @@ export const enum Items {
    * Each names the species it stages
    */
   OldSeaMap = 53,
+
+  /**
+   * Stat-enhancing held items: what a pokemon carries to be stronger
+   * than it is, rather than to hit one type harder
+   */
+  ChoiceBand = 54,
+  ChoiceSpecs = 55,
+  ChoiceScarf = 56,
+  AssaultVest = 57,
+  Eviolite = 58,
+  /**
+   * The relics: worth nothing to anything but the one species that
+   * knows what to do with them
+   */
+  LightBall = 59,
+  ThickClub = 60,
+  MetalPowder = 61,
+  QuickPowder = 62,
 }
 
 /**

@@ -62,6 +62,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
+    // The relics: a Cubone's bone, a Ditto's dust. Found, never
+    // stocked, and worth nothing to anything but their own species
+    { item: Items.LightBall, weight: 4 },
+    { item: Items.ThickClub, weight: 4 },
+    { item: Items.MetalPowder, weight: 4 },
+    { item: Items.QuickPowder, weight: 4 },
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },

@@ -79,7 +79,7 @@ export async function resolveSnapshot(
  * landmark, window and player, so a landmark pays each player once
  * per window and regenerates with the next one
  */
-async function claim(
+export async function claim(
   collection: string,
   id: string,
   record: Record<string, unknown>,

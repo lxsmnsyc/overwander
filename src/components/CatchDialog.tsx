@@ -23,6 +23,7 @@ import {
   isFainted,
 } from '../auth/health';
 import useBottleCap from '../auth/bottle-caps';
+import usePurifyingGem from '../auth/purify';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
@@ -35,6 +36,7 @@ import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
+import { PURIFY_IV_BOOST, isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
@@ -304,6 +306,29 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           state == null
             ? `${describeItem(item)} would do nothing for it.`
             : `${describeItem(item)} used — ${state.health} HP.`,
+        );
+        await refetch();
+        await refetchBag();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const purify = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    usePurifyingGem(catchId, item)
+      .then(async (ivs) => {
+        setStatus(
+          ivs == null
+            ? `${describeItem(item)} could not be used.`
+            : `The shadow is gone — ${describeIVs(ivs)}.`,
         );
         await refetch();
         await refetchBag();
@@ -680,6 +705,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         onPick={(item) => {
                           if (item != null) {
                             polish(item);
+                          }
+                        }}
+                      />
+                    </Show>
+
+                    {/* A gem is only ever offered to a shadow, since a
+                        shadow is the only thing it does anything to */}
+                    <Show when={isShadow(loaded())}>
+                      <p>
+                        A shadow. A Purifying Gem takes it off for good: the Shadow ability becomes
+                        Purified, it costs no more to raise than anything else, and every value goes
+                        up by {PURIFY_IV_BOOST}.
+                      </p>
+                      <InventoryPicker
+                        inline
+                        entries={bag()}
+                        disabled={fighting()}
+                        confirm
+                        value={null}
+                        verb="Use"
+                        empty="No purifying gems in the bag."
+                        filter={(entry) => isPurifyingGem(entry.item)}
+                        onPick={(item) => {
+                          if (item != null) {
+                            purify(item);
                           }
                         }}
                       />

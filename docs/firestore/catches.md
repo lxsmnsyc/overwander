@@ -240,6 +240,44 @@ hatches.
 from, and the stored per-stat values are what every reader uses — the same
 reason a bred egg's `ivs` can disagree with it.
 
+## Purifying a shadow
+
+A shadow catch comes out of a shadow raid carrying the `Shadow` ability for good
+and paying twice the candy at every level. The **Purifying Gem** — a rare find
+in the overworld item pool, never stocked — undoes that trade, and the rules for
+it live in
+[`src/data/items/purifying-gem.ts`](../../src/data/items/purifying-gem.ts).
+
+Three fields move, in one transaction with the gem leaving the bag
+([`src/server/purify.ts`](../../src/server/purify.ts)):
+
+| Field       | Before             | After                                   |
+| ----------- | ------------------ | --------------------------------------- |
+| `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                    |
+| `flags`     | `Shadow` bit set   | `Shadow` bit clear — candy cost reverts |
+| `ivs`       | as rolled          | every value `+PURIFY_IV_BOOST`, capped  |
+
+`Purified` is **entirely cosmetic**: no listener reads it, nothing in a battle
+changes. It is the mark left where the `Shadow` ability was, so a pokemon that
+came out of a shadow raid still says so afterwards — purifying changes what it
+costs, not what it was.
+
+The doubled levelling cost is read off the `Shadow` **flag** rather than the
+ability (`getCandyCost` in
+[`src/auth/candy-rules.ts`](../../src/auth/candy-rules.ts)), so clearing that bit
+is what reverts it. Nothing else in the flags is touched: a shiny shadow is
+still shiny.
+
+Health is rescaled with the change, since two more HP points is a bigger pool
+and the share of it the pokemon was carrying is what it keeps. A pokemon that is
+not a shadow is refused outright — a gem spent on nothing would be a rare item
+wasted — as is one that is not the player's, is locked into a battle, or is
+still an egg.
+
+The gem is not the only way. **Nurse Joy** purifies for free, along with the
+healing, once per NPC window — see
+[Wandering NPCs](overworld.md#wandering-npcs).
+
 ## Releasing
 
 `releaseCatch` ([`src/server/caught.ts`](../../src/server/caught.ts)) **deletes**

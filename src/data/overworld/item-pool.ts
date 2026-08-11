@@ -84,6 +84,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // the find of a walk, common enough to be worth saving for the
     // pokemon that deserves it
     { item: Items.BottleCap, weight: 6 },
+    // The only way a shadow is ever put right. Thin, because a shadow
+    // raid is not an everyday thing either
+    { item: Items.PurifyingGem, weight: 4 },
     // The relics: a Cubone's bone, a Ditto's dust. Found, never
     // stocked, and worth nothing to anything but their own species
     { item: Items.LightBall, weight: 4 },

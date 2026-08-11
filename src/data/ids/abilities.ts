@@ -180,6 +180,14 @@ const enum Abilities {
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,
+  /**
+   * What a shadow becomes when a Purifying Gem is spent on it. It does
+   * nothing at all — no listener reads it — and that is the point: it
+   * is the mark left where the Shadow ability was, so a pokemon that
+   * came out of a shadow raid still says so after it has been put
+   * right
+   */
+  Purified = 100003,
 }
 
 export default Abilities;

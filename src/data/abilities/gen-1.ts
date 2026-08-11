@@ -254,4 +254,5 @@ export default function registerGen1Abilities(): void {
   // Special (non-standard abilities outside the regular pool)
   registerAbility(Abilities.Boss, { name: 'Boss' });
   registerAbility(Abilities.Shadow, { name: 'Shadow' });
+  registerAbility(Abilities.Purified, { name: 'Purified' });
 }

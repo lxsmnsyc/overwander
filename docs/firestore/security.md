@@ -40,6 +40,8 @@ a call is never trusted — only what the token proves.
 | `openAuction`                                              | The lot leaves the seller's hands as the listing is written, and the seller document is what holds them to one auction at a time                                |
 | `placeBid`                                                 | Gold moves as the bid lands: the outbid one is refunded and the new one taken in the same transaction, so a standing bid is money already paid                  |
 | `claimAuction`                                             | Who won, whether bidding has closed, and the one-claim `settled` flag are all read where a client cannot skip them — and the seller is paid from the same claim |
+| `usePurifyingGem`                                          | The shadow bit, the ability and the values move together with the gem leaving the bag, so a rare item is never spent on a pokemon that did not change           |
+| `visitNurse`                                               | Who is standing at the cell is re-derived, and the once-a-window marker is taken only once she has actually done something                                      |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build
@@ -225,6 +227,13 @@ service cloud.firestore {
     // A nest claim is what an egg was written against, so it is the
     // server's alone — the same as every other landmark marker
     match /nestClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // What Nurse Joy costs is the window rather than gold, so the
+    // marker is the whole of the limit: a client that could write it
+    // could be healed and purified as often as it liked
+    match /npcClaims/{claimId} {
       allow read: if signedIn();
       allow write: if false;
     }

@@ -1,6 +1,10 @@
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/firebase';
-import { boostEgg as boostOnServerSide, breedCatches as breedOnServerSide } from '../server/npcs';
+import {
+  boostEgg as boostOnServerSide,
+  breedCatches as breedOnServerSide,
+  visitNurse as visitNurseOnServerSide,
+} from '../server/npcs';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
@@ -101,6 +105,55 @@ async function boostOnServer(
     y,
     cell,
     catchId,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Hand a party to Nurse Joy. Up to `NURSE_CARE_LIMIT` of them come
+ * back at full health with nothing left on them, and any shadow among
+ * them comes back purified — the Shadow ability replaced, the doubled
+ * candy cost gone, every value two higher.
+ *
+ * She takes nothing for it. What she asks instead is that it be once:
+ * the server marks the visit against her window, and a party that
+ * needed nothing is turned away without spending it.
+ *
+ * Resolves the ids she actually tended, or null when she is not
+ * standing there, there was nothing to do, or this window's visit has
+ * already been made
+ */
+export async function visitNurse(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catches: string[],
+): Promise<string[] | null> {
+  return visitNurseOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catches,
+    snapshot.offset,
+  );
+}
+
+async function visitNurseOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catches: string[],
+  offset: number,
+): Promise<string[] | null> {
+  'use server';
+  return visitNurseOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    catches,
     await syncServerClock(),
     offset,
   );

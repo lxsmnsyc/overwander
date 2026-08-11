@@ -230,11 +230,11 @@ chunk stages, so a raid rolling over changes nothing about who is at the cell. A
 player who needs a breeder and finds a daycare lady waits for the afternoon or
 walks to another one.
 
-Both services are paid for in gold, and neither trusts the caller about who they
-are talking to: `src/server/npcs.ts` re-derives the chunk, the zone and the
-window and checks the NPC standing there **before** charging anything. Gold is spent
-first and handed back if the write behind it fails, so a player is never charged
-for nothing.
+None of them trusts the caller about who they are talking to:
+`src/server/npcs.ts` re-derives the chunk, the zone and the window and checks
+the NPC standing there **before** doing anything. The two that charge spend the
+gold first and hand it back if the write behind it fails, so a player is never
+charged for nothing.
 
 - **Breeder** — takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed
@@ -252,6 +252,16 @@ for nothing.
   paces it. Only an egg already ready to hatch is refused. `steppedAt` moves
   with the jump, since those steps were not walked and the time they would have
   taken must not be banked for the next report.
+
+- **Nurse Joy** — takes up to `NURSE_CARE_LIMIT` (6) of the player's pokemon and
+  charges **nothing**. Every one of them comes back at full health with its
+  statuses cleared, and any shadow among them is
+  [purified](catches.md#purifying-a-shadow) on the way. What paces her is the
+  window rather than a fee: a marker at `npcClaims/{cell key}:{uid}` is taken
+  once she has actually done something, so it is one visit per player per
+  `NPC_INTERVAL`. A party that needed nothing is handed straight back and the
+  visit is **not** spent — the marker is only written where there was work, and
+  it is deleted again if the write behind it throws.
 
 What a bred egg inherits — and what it does not — is in
 [Eggs](catches.md#eggs).

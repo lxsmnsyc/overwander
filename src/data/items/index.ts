@@ -9,6 +9,7 @@ import registerMachines from './machines';
 import registerMedicines from './medicine';
 import registerOrbs from './orbs';
 import registerPlates from './plates';
+import registerPurifyingGem from './purifying-gem';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
@@ -36,6 +37,7 @@ export default function registerItems(): void {
   registerPlates();
   registerCandyItems();
   registerBottleCaps();
+  registerPurifyingGem();
   registerKeyItems();
   registerRaidItems();
   registerValuables();

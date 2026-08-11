@@ -65,6 +65,14 @@ import {
   unpackIVs,
 } from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
+import {
+  PURIFY_IV_BOOST,
+  isPurifiable,
+  isPurifyingGem,
+  purifyAbilities,
+  purifyFlags,
+  purifyIVs,
+} from '../src/data/items/purifying-gem';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { MEDICINES, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
@@ -546,6 +554,63 @@ describe('item data', () => {
     for (const band of ['base', 'uncommon', 'special'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.BottleCap)).toBe(false);
     }
+  });
+
+  it('puts a shadow right with a purifying gem', () => {
+    const gem = getItemData(Items.PurifyingGem);
+
+    expect(gem.name).toBe('Purifying Gem');
+    expect(gem.type).toBe(ItemTypes.Training);
+    expect(gem.flags & ItemFlags.Usable).toBeGreaterThan(0);
+    expect(gem.flags & ItemFlags.Consumable).toBeGreaterThan(0);
+    // Found, never stocked, and only ever in the rare band
+    expect(gem.buy).toBe(0);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.PurifyingGem)).toBe(true);
+    for (const band of ['base', 'uncommon', 'special'] as const) {
+      expect(ITEM_POOL[band].some((entry) => entry.item === Items.PurifyingGem)).toBe(false);
+    }
+    expect(isPurifyingGem(Items.PurifyingGem)).toBe(true);
+    expect(isPurifyingGem(Items.BottleCap)).toBe(false);
+
+    // Only a shadow is worth spending one on
+    expect(isPurifiable({ flags: withFlag(0, PokemonFlags.Shadow, true) })).toBe(true);
+    expect(isPurifiable({ flags: withFlag(0, PokemonFlags.Shiny, true) })).toBe(false);
+
+    // The shadow comes off the flags, which is what puts the candy
+    // cost back down — and nothing else in them moves
+    const shadowed = withFlag(withFlag(0, PokemonFlags.Shadow, true), PokemonFlags.Shiny, true);
+    const purified = purifyFlags(shadowed);
+
+    expect(getCandyCost({ flags: shadowed })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
+    expect(getCandyCost({ flags: purified })).toBe(CANDY_PER_LEVEL);
+    expect(hasFlag(purified, PokemonFlags.Shiny)).toBe(true);
+
+    // The ability is replaced where it stands; the rolled one is left
+    // exactly where it was
+    expect(purifyAbilities([Abilities.Overgrow, Abilities.Shadow])).toEqual([
+      Abilities.Overgrow,
+      Abilities.Purified,
+    ]);
+    expect(getAbilityData(Abilities.Purified).name).toBe('Purified');
+
+    // Two on every stat, and never past the cap
+    const values = purifyIVs(
+      packIVs({
+        [Stats.HP]: 0,
+        [Stats.Attack]: 5,
+        [Stats.Defense]: 30,
+        [Stats.SpecialAttack]: MAX_IV,
+        [Stats.SpecialDefense]: 15,
+        [Stats.Speed]: 29,
+      }),
+    );
+
+    expect(getIV(values, Stats.HP)).toBe(PURIFY_IV_BOOST);
+    expect(getIV(values, Stats.Attack)).toBe(5 + PURIFY_IV_BOOST);
+    expect(getIV(values, Stats.Defense)).toBe(MAX_IV);
+    expect(getIV(values, Stats.SpecialAttack)).toBe(MAX_IV);
+    expect(getIV(values, Stats.Speed)).toBe(MAX_IV);
+    expect(purifyIVs(PERFECT_IVS)).toBe(PERFECT_IVS);
   });
 
   it('packs what is true about a pokemon into one field', () => {

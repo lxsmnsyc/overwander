@@ -240,6 +240,12 @@ export const enum Items {
   FullHeal = 124,
   Revive = 125,
   MaxRevive = 126,
+
+  /**
+   * Spent on a shadow pokemon to put it right: the shadow comes off,
+   * and what it cost to raise comes back down with it
+   */
+  PurifyingGem = 127,
 }
 
 /**

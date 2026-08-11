@@ -82,7 +82,7 @@ import deriveEncounter, {
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
 import { MAX_STACK } from '../../src/data/overworld/item-pool';
-import { NPCS } from '../../src/data/overworld/npc';
+import Npc, { NPCS } from '../../src/data/overworld/npc';
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
@@ -1200,13 +1200,20 @@ describe('world', () => {
     expect(new ChunkSnapshot(chunk, NPC_INTERVAL).npcTimestamp).toBe(NPC_INTERVAL);
 
     const shapes = new Set<string>();
+    const met = new Set<Npc>();
 
     for (let window = 0; window < 24; window++) {
-      shapes.add(
-        JSON.stringify([...new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs()]),
-      );
+      const standing = new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs();
+
+      shapes.add(JSON.stringify([...standing]));
+      for (const npc of standing.values()) {
+        met.add(npc);
+      }
     }
     expect(shapes.size).toBeGreaterThan(1);
+    // Everyone who wanders turns up: the nurse is drawn from the same
+    // pool as the two who charge for what they do
+    expect(met.has(Npc.NurseJoy)).toBe(true);
   });
 
   it('keeps specials out of nests however the roll falls', () => {

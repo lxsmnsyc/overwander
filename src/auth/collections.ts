@@ -46,6 +46,13 @@ export const AUCTION_SELLER_COLLECTION = 'auctionSellers';
  */
 export const BID_COLLECTION = 'bids';
 
+/**
+ * One marker per wandering-NPC cell, window and player. Only Nurse Joy
+ * uses it: what she does is free, so what stops it being asked for
+ * twice is the marker rather than a fee
+ */
+export const NPC_CLAIM_COLLECTION = 'npcClaims';
+
 export const TEAM_COLLECTION = 'teams';
 export const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
 export const BATTLE_COLLECTION = 'battles';

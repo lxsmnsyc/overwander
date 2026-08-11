@@ -1,17 +1,20 @@
 import 'server-only';
 import { asCaughtPokemon, isShadow } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
+import { CAUGHT_COLLECTION, NPC_CLAIM_COLLECTION } from '../auth/collections';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
-import Npc, { BREEDING_FEE, DAYCARE_FEE } from '../data/overworld/npc';
+import { getMaxHealth } from '../auth/health';
+import Npc, { BREEDING_FEE, DAYCARE_FEE, NURSE_CARE_LIMIT } from '../data/overworld/npc';
 import type { Species } from '../data/ids/species';
+import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { isEggRecord } from './catch-fields';
 import { grantBredEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
-import { resolveSnapshot } from './overworld';
+import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
+import { purifiedFields } from './purify';
 import { docData } from './read';
 
 /**
@@ -137,6 +140,115 @@ export async function breedCatches(
     await grantGold(uid, BREEDING_FEE);
     throw error;
   }
+}
+
+/**
+ * What Nurse Joy did to one pokemon, or null when there was nothing
+ * of hers to do for it
+ */
+function tended(caught: Record<string, unknown>, uid: string): Record<string, unknown> | null {
+  if (caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+    return null;
+  }
+
+  const record = asCaughtPokemon(caught);
+  const whole = getMaxHealth(record);
+  // A shadow is put right as well as patched up, which is the reason
+  // to walk to her with one rather than with a potion in hand
+  const purified = isPurifiable(record) ? purifiedFields(caught) : null;
+  const healed = record.health < whole || record.statuses !== 0;
+
+  if (purified == null && !healed) {
+    return null;
+  }
+  // Purifying raises the pool, and she fills whatever the pool ends up
+  // being: the two are one visit, so the order they are written in
+  // must not leave the pokemon short
+  return {
+    ...purified,
+    health: getMaxHealth({ ...record, ivs: purifyIVs(record.ivs) }),
+    statuses: 0,
+  };
+}
+
+/**
+ * Walk a party up to Nurse Joy. She takes up to `NURSE_CARE_LIMIT` of
+ * them, hands every one back at full health with nothing left on it,
+ * and purifies any shadow among them — all of it for nothing.
+ *
+ * What she charges instead is the window: the claim marker at
+ * npcClaims/{cell key}:{uid} is taken once she has actually done
+ * something, so a player gets one visit per NPC window and an empty
+ * ask — a party already whole — costs them nothing.
+ *
+ * Resolves the ids she tended, or null when she is not standing there,
+ * none of them are the player's to hand over, there was nothing to do,
+ * or this window's visit has already been made
+ */
+export async function visitNurse(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catches: string[],
+  now: number,
+  offset: number,
+): Promise<string[] | null> {
+  if (catches.length === 0 || catches.length > NURSE_CARE_LIMIT) {
+    return null;
+  }
+  // The same pokemon twice would be one write racing another
+  if (new Set(catches).size !== catches.length) {
+    return null;
+  }
+
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.NurseJoy);
+
+  if (snapshot == null) {
+    return null;
+  }
+
+  const db = getAdminFirestore();
+  const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
+  const stored = await db.getAll(...refs);
+  const care: [FirebaseFirestore.DocumentReference, Record<string, unknown>][] = [];
+
+  for (const [at, entry] of stored.entries()) {
+    const caught = docData(entry);
+    const fields = caught == null ? null : tended(caught, uid);
+
+    if (fields != null) {
+      care.push([refs[at], fields]);
+    }
+  }
+
+  // Nothing of hers to do, so the visit is not spent on it
+  if (care.length === 0) {
+    return null;
+  }
+
+  const id = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`;
+
+  if (!(await claim(NPC_CLAIM_COLLECTION, id, { player: uid, catches }))) {
+    return null;
+  }
+
+  const batch = db.batch();
+
+  for (const [ref, fields] of care) {
+    batch.update(ref, fields);
+  }
+
+  try {
+    await batch.commit();
+  } catch (error) {
+    // She was asked and did nothing; the window is given back rather
+    // than spent on a write that never landed
+    await db.collection(NPC_CLAIM_COLLECTION).doc(id).delete();
+    throw error;
+  }
+
+  return care.map(([ref]) => ref.id);
 }
 
 /**

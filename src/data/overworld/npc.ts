@@ -14,6 +14,12 @@ const enum Npc {
    * along than it already was
    */
   DaycareLady = 1,
+  /**
+   * Looks a party over and hands it back whole: health, statuses and
+   * — for a shadow — the shadow itself. She charges nothing, and she
+   * does it once per window
+   */
+  NurseJoy = 2,
 }
 
 export default Npc;
@@ -21,11 +27,12 @@ export default Npc;
 /**
  * Everyone who wanders, for uniform rolls over the variants
  */
-export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady];
+export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy];
 
 export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Breeder]: 'Breeder',
   [Npc.DaycareLady]: 'Daycare Lady',
+  [Npc.NurseJoy]: 'Nurse Joy',
 };
 
 /**
@@ -39,3 +46,10 @@ export const BREEDING_FEE = 5000;
  * What the daycare lady charges to push an egg along
  */
 export const DAYCARE_FEE = 2500;
+
+/**
+ * How many pokemon Nurse Joy looks at in one visit. It is a party's
+ * worth: she is what a player walks to between raids, not a way to put
+ * a whole box right in one stop
+ */
+export const NURSE_CARE_LIMIT = 6;

@@ -5,8 +5,8 @@ import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { isShadow } from '../auth/caught-record';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
-import { boostEgg, breed } from '../auth/npcs';
-import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES } from '../data/overworld/npc';
+import { boostEgg, breed, visitNurse } from '../auth/npcs';
+import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES, NURSE_CARE_LIMIT } from '../data/overworld/npc';
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
@@ -46,8 +46,9 @@ export interface NpcDialogProps {
 
 /**
  * The person a player has walked up to. A breeder wants two pokemon
- * and a fee; a daycare lady wants an egg and a fee. Either can be
- * walked away from
+ * and a fee; a daycare lady wants an egg and a fee; Nurse Joy wants
+ * nothing at all, and gives a party back whole once a window. Any of
+ * them can be walked away from
  */
 export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
@@ -112,6 +113,32 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         }
         setChosen([]);
         setStatus(`An egg. It is yours — carry it as your buddy and walk. (−${BREEDING_FEE} gold)`);
+        await refetch();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setBusy(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const tendParty = (picked: string[]): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null || picked.length === 0) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    visitNurse(snapshot, standing[0], picked)
+      .then(async (tended) => {
+        setBusy(false);
+        setStatus(
+          tended == null
+            ? 'She looked them over and handed them straight back — there was nothing to do, or she has already seen you this while.'
+            : `She looked after ${tended.length} of them. Right as rain.`,
+        );
         await refetch();
         props.onChange?.();
       })
@@ -202,6 +229,30 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                     Leave them ({BREEDING_FEE} gold)
                   </button>
                 </p>
+              </Show>
+
+              <Show when={standing()[1] === Npc.NurseJoy}>
+                <p>
+                  "Leave them with me — all of them, if you like. No charge. And if one of them is
+                  carrying a shadow, I will see to that too."
+                </p>
+                {/* She is free, so what keeps her from being a tap is
+                    the window: one visit per player while she is
+                    standing here */}
+                <CatchPicker
+                  inline
+                  multiple
+                  max={NURSE_CARE_LIMIT}
+                  options={catches()}
+                  value={[]}
+                  verb="Hand over"
+                  empty="You have nothing for her to look at."
+                  filter={(option) => !isEgg(option.caught) && !option.fighting}
+                  note={(option) =>
+                    isShadow(option.caught) ? 'shadow — she would purify it' : null
+                  }
+                  onPick={tendParty}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.DaycareLady}>

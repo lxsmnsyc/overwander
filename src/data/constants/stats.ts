@@ -99,6 +99,29 @@ export const PERFECT_IVS = packIVs({
   [Stats.Speed]: MAX_IV,
 });
 
+/**
+ * How good a pokemon's individual values are, coarsely: one star per
+ * `MAX_IV` points across all six, so a flawless pokemon shows six and
+ * an average one shows three.
+ *
+ * It is deliberately lossy. Somewhere a pokemon is being *offered* to
+ * somebody — an auction lot, a trade — the six exact numbers turn the
+ * decision into arithmetic done for the buyer; a rating says how good
+ * it is without saying which stat carries it, so what is left is a
+ * judgement rather than a lookup. Anything the player owns still shows
+ * the values themselves
+ */
+export const MAX_IV_STARS = 6;
+
+export function getIVStars(packed: number): number {
+  let total = 0;
+
+  for (const stat of STAT_ORDER) {
+    total += getIV(packed, stat);
+  }
+  return Math.min(MAX_IV_STARS, Math.floor(total / MAX_IV));
+}
+
 export const enum StatsKind {
   Base = 0,
   Individual = 1,

@@ -37,6 +37,7 @@ import { MAX_EFFORT_PER_STAT, STAT_ORDER, Stats, getIV } from '../data/constants
 import { BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
+import { NATURE_NAMES } from '../data/ids/natures';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
@@ -94,10 +95,11 @@ const GENDER_LABELS: Record<Genders, string> = {
 };
 
 /**
- * The six values as a dex prints them, used both in the record and in
- * what a bottle cap reports back
+ * The six values as a dex prints them, used in the record, in what a
+ * bottle cap reports back, and on an auction lot — a bidder is buying
+ * these more than they are buying the species
  */
-function describeIVs(ivs: number): string {
+export function describeIVs(ivs: number): string {
   return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${getIV(ivs, stat)}`).join(' · ');
 }
 
@@ -137,7 +139,7 @@ async function loadDetail(catchId: string): Promise<CaughtPokemon | null> {
  * An ability with no registered data shows as its id rather than a
  * guess; every Gen 1 ability is registered
  */
-function describeAbility(ability: Abilities): string {
+export function describeAbility(ability: Abilities): string {
   try {
     return getAbilityData(ability).name;
   } catch {
@@ -177,6 +179,20 @@ export interface CatchDialogProps {
    * behind the dialog can refresh
    */
   onChange?: () => void;
+  /**
+   * Show the record and offer nothing.
+   *
+   * It is for looking at a pokemon that is not the reader's: an
+   * auction lot, and a trade when there is one. Two things change.
+   * The owner check is dropped — a lot in escrow is owned by nobody,
+   * so requiring a match would show an empty dialog — and every
+   * section that writes is left out, which is the same switch the
+   * dialog already throws for a catch belonging to somebody else.
+   *
+   * Nothing here is a permission: the server refuses all of it anyway.
+   * This is so the buttons are not offered in the first place
+   */
+  readOnly?: boolean;
 }
 
 /**
@@ -190,9 +206,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const view = (): CaughtPokemon | null => {
     const loaded = detail();
 
+    if (loaded == null) {
+      return null;
+    }
     // A catch belongs to exactly one player; one opened under
-    // someone else's list is a wrong address, not a peek
-    return loaded != null && loaded.owner === props.player ? loaded : null;
+    // someone else's list is a wrong address, not a peek. Looking at
+    // one on the block is the exception: it is owned by nobody while
+    // it is there, and being able to look is the point of a board
+    return props.readOnly === true || loaded.owner === props.player ? loaded : null;
   };
 
   /**
@@ -202,6 +223,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const owned = (): string | null => {
     const user = auth.user();
 
+    if (props.readOnly === true) {
+      return null;
+    }
     return user != null && user.uid === props.player ? user.uid : null;
   };
 
@@ -633,8 +657,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onClose();
       }}
       title={named()}
-      description="One pokemon in full: what it is, what it is carrying, and everything that can
-        be done to it while it is not fighting."
+      description={
+        props.readOnly === true
+          ? 'One pokemon in full, as it stands. Nothing here can be changed — it is not yours to change.'
+          : `One pokemon in full: what it is, what it is carrying, and everything that can be
+            done to it while it is not fighting.`
+      }
     >
       <Show when={!detail.loading} fallback={<Note>Loading catch…</Note>}>
         <Show when={view()} fallback={<Note>No such catch.</Note>}>
@@ -686,7 +714,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   <dt>Size</dt>
                   <dd>{describeSize(loaded())}</dd>
                   <dt>Nature</dt>
-                  <dd>#{loaded().nature}</dd>
+                  <dd>{NATURE_NAMES[loaded().nature]}</dd>
                   <dt>Abilities</dt>
                   <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
                 </Show>

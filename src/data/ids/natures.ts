@@ -30,6 +30,39 @@ const enum Natures {
 
 export default Natures;
 
+/**
+ * What each nature is called. A nature is a name to a player — nobody
+ * has ever asked what a pokemon's nature number is — so anything that
+ * shows one reads it from here rather than printing the id
+ */
+export const NATURE_NAMES: Record<Natures, string> = {
+  [Natures.Hardy]: 'Hardy',
+  [Natures.Lonely]: 'Lonely',
+  [Natures.Brave]: 'Brave',
+  [Natures.Adamant]: 'Adamant',
+  [Natures.Naughty]: 'Naughty',
+  [Natures.Bold]: 'Bold',
+  [Natures.Docile]: 'Docile',
+  [Natures.Relaxed]: 'Relaxed',
+  [Natures.Impish]: 'Impish',
+  [Natures.Lax]: 'Lax',
+  [Natures.Timid]: 'Timid',
+  [Natures.Hasty]: 'Hasty',
+  [Natures.Serious]: 'Serious',
+  [Natures.Jolly]: 'Jolly',
+  [Natures.Naive]: 'Naive',
+  [Natures.Modest]: 'Modest',
+  [Natures.Mild]: 'Mild',
+  [Natures.Quiet]: 'Quiet',
+  [Natures.Bashful]: 'Bashful',
+  [Natures.Rash]: 'Rash',
+  [Natures.Calm]: 'Calm',
+  [Natures.Gentle]: 'Gentle',
+  [Natures.Sassy]: 'Sassy',
+  [Natures.Careful]: 'Careful',
+  [Natures.Quirky]: 'Quirky',
+};
+
 export interface NatureEffect {
   up: Stats;
   down: Stats;

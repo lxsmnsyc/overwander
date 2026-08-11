@@ -18,10 +18,13 @@ import {
   watchOpenAuctions,
 } from '../auth/auctions';
 import { getBuddy } from '../auth/buddy';
-import { getCaught } from '../auth/caught';
+import { type CaughtPokemon, getCaught } from '../auth/caught';
 import { isEgg } from '../auth/egg';
-import { type Profile, watchProfile } from '../auth/profile';
+import { type Profile, getProfile, watchProfile } from '../auth/profile';
+import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
+import { NATURE_NAMES } from '../data/ids/natures';
+import CatchDialog, { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './CatchesList';
 import InventoryPicker, { describeItem } from './InventoryPicker';
@@ -37,6 +40,7 @@ import {
   Note,
   Panel,
   Row,
+  RowButton,
   SEARCH_FROM,
   Search,
   Status,
@@ -209,17 +213,47 @@ function BidRow(props: {
   player: string;
   gold: number;
   name?: string;
+  /**
+   * What the pokemon on the block actually is — its values, nature and
+   * abilities. Absent for an item lot, and for an egg
+   */
+  detail?: string | null;
+  seller: string;
+  /**
+   * Open the pokemon on the block in full. Absent for an item lot,
+   * which is already entirely described by its name
+   */
+  onInspect?: () => void;
   onBid: (amount: number) => void;
 }): JSX.Element {
   return (
     <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
       <div class="flex grow flex-col gap-0.5">
-        <span class="font-medium">
-          <AuctionLotLabel auction={props.auction} name={props.name} />
-        </span>
+        {/* A pokemon is worth looking at before bidding on, so its
+            name is the way in; an item lot has nothing further to
+            show and stays plain text */}
+        <Show
+          when={props.onInspect}
+          fallback={
+            <span class="font-medium">
+              <AuctionLotLabel auction={props.auction} name={props.name} />
+            </span>
+          }
+        >
+          {(inspect) => (
+            <RowButton class="font-medium" onClick={inspect()}>
+              <AuctionLotLabel auction={props.auction} name={props.name} />
+            </RowButton>
+          )}
+        </Show>
         <Meta>
-          {describeBid(props.auction)} · {describeRemaining(props.auction.endsAt, now())}
+          {describeBid(props.auction)} · {describeRemaining(props.auction.endsAt, now())} · listed
+          by {props.seller}
         </Meta>
+        {/* What is worth paying for, on a line of its own: it is
+            longer than everything above it and read differently —
+            a bidder scans it once and then decides */}
+        <Show when={props.detail}>{(said) => <Meta>{said()}</Meta>}</Show>
       </div>
       <BidControls
         auction={props.auction}
@@ -286,8 +320,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       ]
         .sort()
         .join(','),
-    async (key): Promise<Map<string, string>> => {
-      const named = new Map<string, string>();
+    async (key): Promise<Map<string, CaughtPokemon>> => {
+      const found = new Map<string, CaughtPokemon>();
 
       await Promise.all(
         key
@@ -297,7 +331,33 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             const caught = await getCaught(id);
 
             if (caught != null) {
-              named.set(id, describeCatch(caught));
+              found.set(id, caught);
+            }
+          }),
+      );
+      return found;
+    },
+  );
+
+  /**
+   * Everyone who has a lot on the board, by what they are called.
+   * Profiles are readable by every signed-in player, and a board of
+   * lots with no sellers on it is a shop with the labels torn off
+   */
+  const [sellers] = createResource(
+    () => [...new Set((auctions() ?? []).map(([, auction]) => auction.seller))].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const named = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const seller = await getProfile(uid);
+
+            if (seller != null) {
+              named.set(uid, seller.nickname);
             }
           }),
       );
@@ -306,10 +366,61 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   /**
+   * Who listed it. The reader is "you" rather than their own nickname,
+   * and a seller whose profile has gone is still a seller
+   */
+  const describeSeller = (auction: AuctionRecord): string =>
+    auction.seller === props.player ? 'you' : (sellers()?.get(auction.seller) ?? 'a trainer');
+
+  /**
    * What a lot is called, for searching and for the row itself
    */
-  const nameOf = (auction: AuctionRecord): string | undefined =>
-    nameItemLot(auction) ?? lots()?.get(auction.caught);
+  const nameOf = (auction: AuctionRecord): string | undefined => {
+    const caught = lots()?.get(auction.caught);
+
+    return nameItemLot(auction) ?? (caught == null ? undefined : describeCatch(caught));
+  };
+
+  /**
+   * What a bidder is actually buying, for a pokemon: how good its
+   * values are, its nature and its abilities. None of it can be
+   * changed by the seller and none of it is visible from the name, so
+   * a lot without it is a bid placed on a species and a level.
+   *
+   * The values are a **rating** rather than the six numbers. A board
+   * that prints them does the buyer's arithmetic for them and turns
+   * bidding into a lookup; a row of stars says how good the pokemon is
+   * without saying which stat carries it, so the bid stays a judgement
+   * and the last of what is worth knowing is learned by winning it.
+   *
+   * An egg says nothing at all — what is inside one is hidden from
+   * everybody but its owner, and the board is not the place to give it
+   * away
+   */
+  const detailOf = (auction: AuctionRecord): string | null => {
+    const caught = lots()?.get(auction.caught);
+
+    if (caught == null || isEgg(caught)) {
+      return null;
+    }
+
+    const stars = getIVStars(caught.ivs);
+
+    return [
+      `${'★'.repeat(stars)}${'☆'.repeat(MAX_IV_STARS - stars)}`,
+      NATURE_NAMES[caught.nature],
+      caught.abilities.map(describeAbility).join(', '),
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  };
+
+  /**
+   * The lot being looked at in full, if any. A pokemon on the block is
+   * somebody else's, so it opens read-only: the dialog shows the whole
+   * record and offers nothing to do to it
+   */
+  const [inspecting, setInspecting] = createSignal<string | null>(null);
 
   /**
    * What was typed. A board is somebody else's shelf — a player comes
@@ -546,6 +657,15 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
                     player={props.player}
                     gold={gold()}
                     name={nameOf(auction)}
+                    detail={detailOf(auction)}
+                    seller={describeSeller(auction)}
+                    onInspect={
+                      auction.lot === AuctionLot.Catch
+                        ? () => {
+                            setInspecting(auction.caught);
+                          }
+                        : undefined
+                    }
                     onBid={(amount) => {
                       bid(id, amount);
                     }}
@@ -568,7 +688,9 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
                   <span class="grow font-medium">
                     <AuctionLotLabel auction={auction} name={nameOf(auction)} />
                   </span>
-                  <Meta>won for {auction.bid} gold</Meta>
+                  <Meta>
+                    won for {auction.bid} gold · from {describeSeller(auction)}
+                  </Meta>
                   <Button
                     tone="primary"
                     onClick={() => {
@@ -700,6 +822,18 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       </Card>
 
       <Status message={status()} />
+
+      {/* A lot opened in full. It is somebody else's pokemon — in
+          escrow it is nobody's — so the dialog is read-only: the whole
+          record, and nothing to press */}
+      <CatchDialog
+        readOnly
+        player={props.player}
+        catchId={inspecting()}
+        onClose={() => {
+          setInspecting(null);
+        }}
+      />
     </Panel>
   );
 }

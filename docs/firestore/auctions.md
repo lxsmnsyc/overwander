@@ -77,6 +77,39 @@ seller whose lot is still on the block is refused, whatever zone they report.
 Private to the owning uid, and read-only to them: the sell form asks it before
 offering to list anything.
 
+## What the board shows
+
+A lot on the block is named, priced, timed and **attributed**: who listed it,
+read from `profiles/{uid}` — the reader is "you" rather than their own nickname,
+and a seller whose profile has gone is still "a trainer".
+
+A **catch** lot carries a second line with the three things a bidder is actually
+buying and cannot change afterwards: how good its individual values are, its
+nature and its abilities. They are read straight off the escrowed record, which
+is exactly why escrow keeps the document readable instead of copying a name into
+the listing. Health and status are not shown as anything but the name's own
+condition — both are cosmetic the moment the pokemon changes hands.
+
+The values are shown as a **rating**, not as six numbers: `getIVStars` gives one
+star per `MAX_IV` (31) points across all six, so ★★★★★★ is flawless and ★★★☆☆☆ is
+ordinary. It is deliberately lossy. Printing the numbers does the buyer's
+arithmetic for them and turns a bid into a lookup; a rating says how good the
+pokemon is without saying which stat carries it, so the bid stays a judgement and
+the rest is learned by winning. A pokemon the player already owns still shows all
+six.
+
+Clicking a catch lot opens the **catch dialog read-only** (`readOnly`): the whole
+record — values, nature, abilities, moves, friendship, origin and the ownership
+chain — and nothing to press. The prop drops the dialog's owner check, since a
+lot in escrow is owned by nobody and requiring a match would show an empty
+dialog, and leaves out every section that writes. It is not a permission: the
+server refuses all of those writes anyway. It is so the buttons are never
+offered.
+
+An **egg** lot shows none of it. What is inside one is hidden from everybody but
+its owner, and a board is not the place to give it away — which is also why
+`openAuction` refuses to list one at all.
+
 ## What a bid does
 
 `placeBid` runs in one transaction:

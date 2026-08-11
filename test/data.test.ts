@@ -73,10 +73,12 @@ import {
 import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
 import {
   MAX_IV,
+  MAX_IV_STARS,
   PERFECT_IVS,
   STAT_ORDER,
   Stats,
   getIV,
+  getIVStars,
   packIVs,
   setIV,
   unpackIVs,
@@ -724,6 +726,48 @@ describe('item data', () => {
     // A perfect pokemon is one value, whichever way it is reached
     expect(PERFECT_IVS).toBe(packIVs(unpackIVs(PERFECT_IVS)));
     expect(isPerfectIVs(PERFECT_IVS)).toBe(true);
+  });
+
+  it('rates the six values coarsely, for a pokemon being offered', () => {
+    const evenly = (value: number): number =>
+      packIVs({
+        [Stats.HP]: value,
+        [Stats.Attack]: value,
+        [Stats.Defense]: value,
+        [Stats.SpecialAttack]: value,
+        [Stats.SpecialDefense]: value,
+        [Stats.Speed]: value,
+      });
+
+    // One star per MAX_IV points across all six: flawless is six,
+    // hopeless is none, and average is half
+    expect(getIVStars(PERFECT_IVS)).toBe(MAX_IV_STARS);
+    expect(getIVStars(evenly(0))).toBe(0);
+    expect(getIVStars(evenly(16))).toBe(3);
+
+    // Lossy on purpose: where the points sit does not change the
+    // rating, so a rating says how good rather than which stat
+    const lopsided = packIVs({
+      [Stats.HP]: MAX_IV,
+      [Stats.Attack]: MAX_IV,
+      [Stats.Defense]: MAX_IV,
+      [Stats.SpecialAttack]: 0,
+      [Stats.SpecialDefense]: 0,
+      [Stats.Speed]: 0,
+    });
+    // The same ninety-three points, spread flat instead of stacked
+    const spread = packIVs({
+      [Stats.HP]: 16,
+      [Stats.Attack]: 16,
+      [Stats.Defense]: 16,
+      [Stats.SpecialAttack]: 15,
+      [Stats.SpecialDefense]: 15,
+      [Stats.Speed]: 15,
+    });
+
+    expect(getIVStars(lopsided)).toBe(getIVStars(spread));
+    // And it never overflows the row of stars it is drawn as
+    expect(getIVStars(evenly(MAX_IV))).toBeLessThanOrEqual(MAX_IV_STARS);
   });
 
   it('polishes individual values with a bottle cap', () => {

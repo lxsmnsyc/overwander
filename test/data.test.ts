@@ -798,6 +798,30 @@ describe('item data', () => {
     expect(hasFlag(released, PokemonFlags.Shadow)).toBe(true);
   });
 
+  it('gives every teachable move a machine of its own', () => {
+    // The machines are generated from the learn sets rather than
+    // written out, so a move any species can be taught has one — and
+    // the item id is the move's own, lifted into the reserved range
+    const teachable = getTeachableMoves();
+
+    expect(teachable.length).toBeGreaterThan(0);
+    for (const move of teachable) {
+      const item = getMachineItem(move);
+
+      expect(isMachineItem(item)).toBe(true);
+      expect(getMachineMove(item)).toBe(move);
+      expect(getItemData(item).name).toBe(`TM ${getMoveData(move).name}`);
+      // A machine is used on a pokemon and spent teaching it, which is
+      // what makes teaching a decision rather than a menu
+      expect(getItemData(item).flags & ItemFlags.Consumable).not.toBe(0);
+      expect(getItemData(item).flags & ItemFlags.Usable).not.toBe(0);
+    }
+
+    // Nothing hand-written strays into the machine range
+    expect(isMachineItem(Items.Potion)).toBe(false);
+    expect(getMachineMove(Items.Potion)).toBeNull();
+  });
+
   it('names and colours every type and move kind', () => {
     // Both maps are read by the badges rather than matched on, so a
     // type added without either would draw as a blank chip. The enum

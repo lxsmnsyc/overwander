@@ -51,7 +51,13 @@ import { BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
 import { NATURE_NAMES, getNatureFactor } from '../data/ids/natures';
-import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
+import {
+  BALL_ITEMS,
+  ItemFlags,
+  type Items,
+  getMachineMove,
+  isMachineItem,
+} from '../data/ids/items';
 import { Genders, Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
@@ -59,7 +65,7 @@ import { isHerbal } from '../data/items/medicine';
 import { isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
-import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES } from '../data/ids/moves';
+import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/ids/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
 import { BIOME_NAMES } from '../data/biome';
 import Biome from '../data/ids/biome';
@@ -72,6 +78,7 @@ import {
 } from '../overworld/encounter';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
+import TeachMoveDialog from './TeachMoveDialog';
 import TypeBadge from './TypeBadge';
 import { TabGroup, TabPanel } from 'terracotta';
 import {
@@ -751,6 +758,11 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * opens it, spends something, and is back to looking at the pokemon
    */
   const [panel, setPanel] = createSignal<'items' | null>(null);
+  /**
+   * The move a machine is about to teach, if one has been used. The
+   * dialog it opens decides whether anything is forgotten for it
+   */
+  const [teaching, setTeaching] = createSignal<Moves | null>(null);
 
   /**
    * One stat as the pokemon actually has it: the species' base, the
@@ -787,6 +799,17 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (isPurifyingGem(item)) {
       return isShadow(caught);
     }
+    // A machine is offered only where it would teach something: one
+    // this species can learn and does not know already
+    if (isMachineItem(item)) {
+      const move = getMachineMove(item);
+
+      return (
+        move != null &&
+        new Set(getSpeciesData(caught.species).learnSet.teachable).has(move) &&
+        !new Set(caught.moves).has(move)
+      );
+    }
     return isRemedy(item) || isWing(item) || BERRY_EFFORT_DROPS.has(item);
   };
 
@@ -796,6 +819,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    */
   const useOn = (item: Items): void => {
     setPanel(null);
+
+    // A machine is the one item that asks a question back: what a
+    // pokemon gives up for it depends on how full its move list is,
+    // and that is the teaching dialog's business
+    const move = isMachineItem(item) ? getMachineMove(item) : null;
+
+    if (move != null) {
+      setTeaching(move);
+      return;
+    }
     if (isBottleCap(item)) {
       polish(item);
     } else if (isPurifyingGem(item)) {
@@ -865,516 +898,541 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   ];
 
   return (
-    <Dialog
-      width="wide"
-      isOpen={props.catchId != null}
-      onClose={() => {
-        setStatus(null);
-        // A release half-confirmed is a release declined
-        setReleasing(false);
-        setPanel(null);
-        props.onClose();
-      }}
-      title={named()}
-      description={
-        props.readOnly === true
-          ? 'One pokemon in full, as it stands. Nothing here can be changed — it is not yours to change.'
-          : `One pokemon in full: what it is, what it is carrying, and everything that can be
+    <>
+      <Dialog
+        width="wide"
+        // The sheet steps aside while the teaching dialog is up rather
+        // than sitting open behind it: two modals at once fight for the
+        // click that closes them, and the sheet is what the player comes
+        // back to afterwards
+        isOpen={props.catchId != null && teaching() == null}
+        onClose={() => {
+          setStatus(null);
+          // A release half-confirmed is a release declined
+          setReleasing(false);
+          setPanel(null);
+          props.onClose();
+        }}
+        title={named()}
+        description={
+          props.readOnly === true
+            ? 'One pokemon in full, as it stands. Nothing here can be changed — it is not yours to change.'
+            : `One pokemon in full: what it is, what it is carrying, and everything that can be
             done to it while it is not fighting.`
-      }
-    >
-      <Show when={!detail.loading} fallback={<Note>Loading catch…</Note>}>
-        <Show when={view()} fallback={<Note>No such catch.</Note>}>
-          {(loaded) => (
-            <>
-              {/* The sheet is long enough to scroll, so what can be
+        }
+      >
+        <Show when={!detail.loading} fallback={<Note>Loading catch…</Note>}>
+          <Show when={view()} fallback={<Note>No such catch.</Note>}>
+            {(loaded) => (
+              <>
+                {/* The sheet is long enough to scroll, so what can be
                   done to the pokemon rides along at the top rather
                   than being scrolled away from */}
-              <Show when={owned()}>
-                <div
-                  class="sticky -top-4 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b
+                <Show when={owned()}>
+                  <div
+                    class="sticky -top-4 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b
                     border-line-soft bg-paper px-4 py-2 sm:-top-5 sm:-mx-5 sm:px-5"
-                >
-                  <Menu label="Actions" actions={actions(loaded())} />
-                  <Show when={fighting()}>
-                    <Meta>In a raid — nothing about it can be changed.</Meta>
-                  </Show>
-                  <Show when={!fighting() && isGuarded(loaded())}>
-                    <Meta>Locked: it stays exactly as it is.</Meta>
-                  </Show>
-                  <Show when={!fighting() && isFavorite(loaded())}>
-                    <Meta>A favorite — it cannot be released or auctioned.</Meta>
-                  </Show>
-                </div>
+                  >
+                    <Menu label="Actions" actions={actions(loaded())} />
+                    <Show when={fighting()}>
+                      <Meta>In a raid — nothing about it can be changed.</Meta>
+                    </Show>
+                    <Show when={!fighting() && isGuarded(loaded())}>
+                      <Meta>Locked: it stays exactly as it is.</Meta>
+                    </Show>
+                    <Show when={!fighting() && isFavorite(loaded())}>
+                      <Meta>A favorite — it cannot be released or auctioned.</Meta>
+                    </Show>
+                  </div>
 
-                {/* Anything the bag can be spent on this pokemon: a
+                  {/* Anything the bag can be spent on this pokemon: a
                     remedy, a cap, a gem for a shadow, a wing, a bitter
                     berry. One list rather than five, since the answer
                     to "what would this do for it" is the same question
                     every time */}
-                <Show when={panel() === 'items'}>
-                  <DialogSection title="Use item">
-                    <InventoryPicker
-                      inline
-                      entries={bag()}
-                      disabled={frozen()}
-                      confirm
-                      value={null}
-                      verb="Use"
-                      empty="Nothing in the bag would do it any good."
-                      filter={(entry) => isUsable(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          useOn(item);
-                        }
-                      }}
-                    />
-                  </DialogSection>
+                  <Show when={panel() === 'items'}>
+                    <DialogSection title="Use item">
+                      <InventoryPicker
+                        inline
+                        entries={bag()}
+                        disabled={frozen()}
+                        confirm
+                        value={null}
+                        verb="Use"
+                        empty="Nothing in the bag would do it any good."
+                        filter={(entry) => isUsable(entry.item)}
+                        onPick={(item) => {
+                          if (item != null) {
+                            useOn(item);
+                          }
+                        }}
+                      />
+                    </DialogSection>
+                  </Show>
                 </Show>
-              </Show>
 
-              {/* The sheet itself, read down the middle: the pokemon
+                {/* The sheet itself, read down the middle: the pokemon
                   first, then what it is, then what it can do, then
                   where it has been */}
-              <div class="flex flex-col items-center gap-4 text-center">
-                {/* What the record is about, walking. An egg is drawn
+                <div class="flex flex-col items-center gap-4 text-center">
+                  {/* What the record is about, walking. An egg is drawn
                     as an egg: what is inside it is not the player's to
                     see until it hatches */}
-                <SpriteDisplay
-                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
-                  shiny={!isEgg(loaded()) && isShiny(loaded())}
-                  animation="Walk"
-                  direction="down-right"
-                  scale={4}
-                  label={named()}
-                />
+                  <SpriteDisplay
+                    species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                    shiny={!isEgg(loaded()) && isShiny(loaded())}
+                    animation="Walk"
+                    direction="down-right"
+                    scale={4}
+                    label={named()}
+                  />
 
-                <div class="flex flex-col items-center gap-0.5">
-                  <h3>{named()}</h3>
-                  {/* Both of the rolls it was made from, drawn rather
+                  <div class="flex flex-col items-center gap-0.5">
+                    <h3>{named()}</h3>
+                    {/* Both of the rolls it was made from, drawn rather
                       than printed. Two of the same species with the
                       same sigil are the same individual */}
-                  <Meta class="font-mono tracking-[0.2em]">
-                    {getSigil(loaded().individualValue, loaded().traitValue)}
-                  </Meta>
-                </div>
+                    <Meta class="font-mono tracking-[0.2em]">
+                      {getSigil(loaded().individualValue, loaded().traitValue)}
+                    </Meta>
+                  </div>
 
-                {/* What it is: the species it belongs to and the
+                  {/* What it is: the species it belongs to and the
                     types it fights as. An egg is none of that yet */}
-                <Show when={!isEgg(loaded())}>
-                  <Row class="justify-center">
-                    <span class="font-medium">{getSpeciesData(loaded().species).name}</span>
-                    <For each={getSpeciesData(loaded().species).types}>
-                      {(type) => <TypeBadge type={type} />}
-                    </For>
-                  </Row>
-                </Show>
-
-                <Row class="justify-center">
-                  <Badge tone="leaf">Lv. {loaded().level}</Badge>
                   <Show when={!isEgg(loaded())}>
-                    <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
+                    <Row class="justify-center">
+                      <span class="font-medium">{getSpeciesData(loaded().species).name}</span>
+                      <For each={getSpeciesData(loaded().species).types}>
+                        {(type) => <TypeBadge type={type} />}
+                      </For>
+                    </Row>
                   </Show>
-                  <Badge tone="gold">
-                    {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'}
-                  </Badge>
-                  <Show when={owned() != null && !isEgg(loaded())}>
-                    <Button
-                      tone="primary"
-                      disabled={
-                        (candies() ?? 0) < getCandyCost(loaded()) ||
-                        loaded().level >= MAX_LEVEL ||
-                        frozen()
-                      }
-                      onClick={feedCandy}
-                    >
-                      {loaded().level >= MAX_LEVEL
-                        ? 'At the cap'
-                        : `Level up (${getCandyCost(loaded())})`}
-                    </Button>
+
+                  <Row class="justify-center">
+                    <Badge tone="leaf">Lv. {loaded().level}</Badge>
+                    <Show when={!isEgg(loaded())}>
+                      <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
+                    </Show>
+                    <Badge tone="gold">
+                      {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'}
+                    </Badge>
+                    <Show when={owned() != null && !isEgg(loaded())}>
+                      <Button
+                        tone="primary"
+                        disabled={
+                          (candies() ?? 0) < getCandyCost(loaded()) ||
+                          loaded().level >= MAX_LEVEL ||
+                          frozen()
+                        }
+                        onClick={feedCandy}
+                      >
+                        {loaded().level >= MAX_LEVEL
+                          ? 'At the cap'
+                          : `Level up (${getCandyCost(loaded())})`}
+                      </Button>
+                    </Show>
+                  </Row>
+
+                  <Show when={!isEgg(loaded())}>
+                    <Meta>
+                      {describeSize(loaded())} · {GENDER_LABELS[loaded().gender]}
+                    </Meta>
                   </Show>
-                </Row>
 
-                <Show when={!isEgg(loaded())}>
-                  <Meta>
-                    {describeSize(loaded())} · {GENDER_LABELS[loaded().gender]}
-                  </Meta>
-                </Show>
-
-                {/* An egg has no evolution to offer, so the section
+                  {/* An egg has no evolution to offer, so the section
                     that would hold one holds the way out of the shell
                     instead: how far along the walk is, and the button
                     that ends it */}
-                <Show when={isEgg(loaded())}>
-                  <DialogSection title="Hatching">
-                    <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                      <div
-                        class="h-full rounded-full bg-leaf transition-[width]"
-                        style={{
-                          width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    <Note>
-                      {loaded().steps} / {loaded().hatchSteps} steps
-                      {buddy() === props.catchId
-                        ? '.'
-                        : ' — it only moves while it is the one being carried.'}
-                    </Note>
-                    <Show when={owned()}>
-                      <Row class="justify-center">
-                        <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                          Hatch it
-                        </Button>
-                      </Row>
-                    </Show>
-                  </DialogSection>
-                </Show>
+                  <Show when={isEgg(loaded())}>
+                    <DialogSection title="Hatching">
+                      <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                        <div
+                          class="h-full rounded-full bg-leaf transition-[width]"
+                          style={{
+                            width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <Note>
+                        {loaded().steps} / {loaded().hatchSteps} steps
+                        {buddy() === props.catchId
+                          ? '.'
+                          : ' — it only moves while it is the one being carried.'}
+                      </Note>
+                      <Show when={owned()}>
+                        <Row class="justify-center">
+                          <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
+                            Hatch it
+                          </Button>
+                        </Row>
+                      </Show>
+                    </DialogSection>
+                  </Show>
 
-                <Show when={!isEgg(loaded())}>
-                  <DialogSection title="Evolution">
-                    <Show when={!evolutions.loading} fallback={<Note>Checking evolutions…</Note>}>
-                      <Show
-                        when={evolutions()?.length}
-                        fallback={<Note>No evolution is available right now.</Note>}
+                  <Show when={!isEgg(loaded())}>
+                    <DialogSection title="Evolution">
+                      <Show when={!evolutions.loading} fallback={<Note>Checking evolutions…</Note>}>
+                        <Show
+                          when={evolutions()?.length}
+                          fallback={<Note>No evolution is available right now.</Note>}
+                        >
+                          <List>
+                            <For each={evolutions()}>
+                              {(evolution) => (
+                                <ListRow>
+                                  <Show
+                                    when={owned() != null}
+                                    fallback={
+                                      <span class="grow font-medium">
+                                        Evolves into {getSpeciesData(evolution.species).name}
+                                      </span>
+                                    }
+                                  >
+                                    <RowButton
+                                      class="font-medium"
+                                      disabled={frozen()}
+                                      onClick={() => {
+                                        evolve(evolution.species);
+                                      }}
+                                    >
+                                      Evolve into {getSpeciesData(evolution.species).name}
+                                    </RowButton>
+                                  </Show>
+                                  {/* Item id 0 is a real item, so test for
+                                    absence rather than falsiness */}
+                                  <Show when={getConsumedItem(evolution) ?? undefined} keyed>
+                                    {(item) => <Meta>uses {describeItem(item)}</Meta>}
+                                  </Show>
+                                </ListRow>
+                              )}
+                            </For>
+                          </List>
+                        </Show>
+                      </Show>
+                    </DialogSection>
+
+                    {/* Three readings of the same six numbers: what the
+                      pokemon has, what it was born with, and what has
+                      been trained into it. They are tabs rather than
+                      three lists, because a player compares one stat
+                      across them rather than reading all eighteen */}
+                    <DialogSection title="Stats">
+                      <TabGroup
+                        horizontal
+                        defaultValue={StatView.Total}
+                        toggleable={false}
+                        class="flex flex-col gap-2"
                       >
+                        <TabBar>
+                          <TabButton value={StatView.Total}>Total</TabButton>
+                          <TabButton value={StatView.IV}>IV</TabButton>
+                          <TabButton value={StatView.EV}>EV</TabButton>
+                        </TabBar>
+
+                        <TabPanel value={StatView.Total}>
+                          <List>
+                            <ListRow>
+                              <span class="w-28 shrink-0 text-left">Health</span>
+                              <span class="grow text-left tabular-nums">
+                                {loaded().health} / {getMaxHealth(loaded())}
+                                {isFainted(loaded()) ? ' · fainted' : ''}
+                              </span>
+                            </ListRow>
+                            <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
+                              {(stat) => (
+                                <ListRow>
+                                  <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                  <span class="grow text-left tabular-nums">
+                                    {totalOf(loaded(), stat)}
+                                  </span>
+                                  {/* What the nature is doing to it, where
+                                    it is doing anything */}
+                                  <Show when={getNatureFactor(loaded().nature, stat) !== 1}>
+                                    <Meta>
+                                      {getNatureFactor(loaded().nature, stat) > 1 ? '▲' : '▼'}
+                                    </Meta>
+                                  </Show>
+                                </ListRow>
+                              )}
+                            </For>
+                          </List>
+                          <Show when={loaded().statuses !== 0}>
+                            <Meta>
+                              {unpackStatuses(loaded().statuses)
+                                .map((carried) => STATUS_NAMES[carried])
+                                .join(' · ')}
+                            </Meta>
+                          </Show>
+                          <Meta>
+                            {describeFriendship(loaded().friendship)} · {loaded().friendship} / 255
+                          </Meta>
+                        </TabPanel>
+
+                        <TabPanel value={StatView.IV}>
+                          <List>
+                            <For each={STAT_ORDER}>
+                              {(stat) => (
+                                <ListRow>
+                                  <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                                    <div
+                                      class="h-full rounded-full bg-gold"
+                                      style={{
+                                        width: `${(getIV(loaded().ivs, stat) / MAX_IV) * 100}%`,
+                                      }}
+                                    />
+                                  </div>
+                                  <Meta class="w-12 text-right tabular-nums">
+                                    {getIV(loaded().ivs, stat)}
+                                  </Meta>
+                                </ListRow>
+                              )}
+                            </For>
+                          </List>
+                          <Meta>What it was born with. Only a bottle cap moves these.</Meta>
+                        </TabPanel>
+
+                        <TabPanel value={StatView.EV}>
+                          <Row class="justify-center">
+                            <Badge tone={unusedEffort(loaded()) > 0 ? 'gold' : 'neutral'}>
+                              {unusedEffort(loaded())} to spend
+                            </Badge>
+                            <Meta>
+                              {effortSpent(loaded())} / {effortBudget(loaded())} trained
+                              {loaded().effortBonus > 0
+                                ? ` · ${loaded().effortBonus} from wings`
+                                : ''}
+                            </Meta>
+                          </Row>
+                          <List>
+                            <For each={STAT_ORDER}>
+                              {(stat) => (
+                                <ListRow>
+                                  <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                                    <div
+                                      class="h-full rounded-full bg-leaf"
+                                      style={{
+                                        width: `${(loaded().effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
+                                      }}
+                                    />
+                                  </div>
+                                  <Meta class="w-12 text-right tabular-nums">
+                                    {loaded().effortValues[stat]}
+                                  </Meta>
+                                  <Show when={owned() != null}>
+                                    <Button
+                                      disabled={frozen() || loaded().effortValues[stat] <= 0}
+                                      onClick={() => {
+                                        train(stat, -EFFORT_STEP);
+                                      }}
+                                    >
+                                      −{EFFORT_STEP}
+                                    </Button>
+                                    <Button
+                                      tone="primary"
+                                      disabled={
+                                        frozen() || assignableEffort(loaded(), stat) < EFFORT_STEP
+                                      }
+                                      onClick={() => {
+                                        train(stat, EFFORT_STEP);
+                                      }}
+                                    >
+                                      +{EFFORT_STEP}
+                                    </Button>
+                                  </Show>
+                                </ListRow>
+                              )}
+                            </For>
+                          </List>
+                        </TabPanel>
+                      </TabGroup>
+                    </DialogSection>
+
+                    <DialogSection title="Moves">
+                      <Show when={loaded().moves.length} fallback={<Note>It knows nothing.</Note>}>
                         <List>
-                          <For each={evolutions()}>
-                            {(evolution) => (
+                          <For each={loaded().moves}>
+                            {(move) => (
+                              <ListRow class="justify-between">
+                                <span class="flex items-center gap-2">
+                                  <TypeBadge type={getMoveData(move).type} />
+                                  {/* Which of the three kinds it is, as a
+                                    mark rather than a word: the word is
+                                    the title, so nothing rests on the
+                                    colour alone */}
+                                  <span
+                                    class="size-3 shrink-0 rounded-sm"
+                                    style={{
+                                      'background-color':
+                                        MOVE_CATEGORY_COLORS[getMoveData(move).category],
+                                    }}
+                                    title={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
+                                    aria-label={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
+                                    role="img"
+                                  />
+                                  <span class="font-medium">{getMoveData(move).name}</span>
+                                </span>
+                                <Meta>
+                                  {getMoveData(move).power == null
+                                    ? ''
+                                    : `${getMoveData(move).power} power · `}
+                                  {getMoveData(move).pp} PP
+                                </Meta>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                      </Show>
+                    </DialogSection>
+
+                    <DialogSection title="Abilities">
+                      <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
+                        <List>
+                          <For each={loaded().abilities}>
+                            {(ability) => (
                               <ListRow>
-                                <Show
-                                  when={owned() != null}
-                                  fallback={
-                                    <span class="grow font-medium">
-                                      Evolves into {getSpeciesData(evolution.species).name}
-                                    </span>
-                                  }
-                                >
-                                  <RowButton
-                                    class="font-medium"
+                                <span class="grow text-left font-medium">
+                                  {describeAbility(ability)}
+                                </span>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                      </Show>
+                    </DialogSection>
+
+                    <DialogSection title="Held items">
+                      <Show when={loaded().items.length} fallback={<Note>Holding nothing.</Note>}>
+                        <List>
+                          <For each={loaded().items}>
+                            {(item) => (
+                              <ListRow>
+                                <span class="grow text-left">{describeItem(item)}</span>
+                                <Show when={owned() != null}>
+                                  <Button
                                     disabled={frozen()}
                                     onClick={() => {
-                                      evolve(evolution.species);
+                                      moveItem(item, false);
                                     }}
                                   >
-                                    Evolve into {getSpeciesData(evolution.species).name}
-                                  </RowButton>
-                                </Show>
-                                {/* Item id 0 is a real item, so test for
-                                    absence rather than falsiness */}
-                                <Show when={getConsumedItem(evolution) ?? undefined} keyed>
-                                  {(item) => <Meta>uses {describeItem(item)}</Meta>}
+                                    Take back
+                                  </Button>
                                 </Show>
                               </ListRow>
                             )}
                           </For>
                         </List>
                       </Show>
-                    </Show>
-                  </DialogSection>
+                      {/* A catch holds one item at a time, matching the
+                        battle's per-unit limit */}
+                      <Show when={owned() != null && loaded().items.length < HELD_ITEM_LIMIT}>
+                        <InventoryPicker
+                          inline
+                          entries={bag()}
+                          disabled={frozen()}
+                          value={null}
+                          verb="Give"
+                          empty="Nothing holdable in the bag."
+                          filter={(entry) => isHoldable(entry.item)}
+                          onPick={(item) => {
+                            if (item != null) {
+                              moveItem(item, true);
+                            }
+                          }}
+                        />
+                      </Show>
+                    </DialogSection>
+                  </Show>
 
-                  {/* Three readings of the same six numbers: what the
-                      pokemon has, what it was born with, and what has
-                      been trained into it. They are tabs rather than
-                      three lists, because a player compares one stat
-                      across them rather than reading all eighteen */}
-                  <DialogSection title="Stats">
-                    <TabGroup
-                      horizontal
-                      defaultValue={StatView.Total}
-                      toggleable={false}
-                      class="flex flex-col gap-2"
-                    >
-                      <TabBar>
-                        <TabButton value={StatView.Total}>Total</TabButton>
-                        <TabButton value={StatView.IV}>IV</TabButton>
-                        <TabButton value={StatView.EV}>EV</TabButton>
-                      </TabBar>
-
-                      <TabPanel value={StatView.Total}>
-                        <List>
-                          <ListRow>
-                            <span class="w-28 shrink-0 text-left">Health</span>
-                            <span class="grow text-left tabular-nums">
-                              {loaded().health} / {getMaxHealth(loaded())}
-                              {isFainted(loaded()) ? ' · fainted' : ''}
-                            </span>
-                          </ListRow>
-                          <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
-                            {(stat) => (
-                              <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                                <span class="grow text-left tabular-nums">
-                                  {totalOf(loaded(), stat)}
-                                </span>
-                                {/* What the nature is doing to it, where
-                                    it is doing anything */}
-                                <Show when={getNatureFactor(loaded().nature, stat) !== 1}>
-                                  <Meta>
-                                    {getNatureFactor(loaded().nature, stat) > 1 ? '▲' : '▼'}
-                                  </Meta>
-                                </Show>
-                              </ListRow>
-                            )}
-                          </For>
-                        </List>
-                        <Show when={loaded().statuses !== 0}>
-                          <Meta>
-                            {unpackStatuses(loaded().statuses)
-                              .map((carried) => STATUS_NAMES[carried])
-                              .join(' · ')}
-                          </Meta>
-                        </Show>
-                        <Meta>
-                          {describeFriendship(loaded().friendship)} · {loaded().friendship} / 255
-                        </Meta>
-                      </TabPanel>
-
-                      <TabPanel value={StatView.IV}>
-                        <List>
-                          <For each={STAT_ORDER}>
-                            {(stat) => (
-                              <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                                <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                                  <div
-                                    class="h-full rounded-full bg-gold"
-                                    style={{
-                                      width: `${(getIV(loaded().ivs, stat) / MAX_IV) * 100}%`,
-                                    }}
-                                  />
-                                </div>
-                                <Meta class="w-12 text-right tabular-nums">
-                                  {getIV(loaded().ivs, stat)}
-                                </Meta>
-                              </ListRow>
-                            )}
-                          </For>
-                        </List>
-                        <Meta>What it was born with. Only a bottle cap moves these.</Meta>
-                      </TabPanel>
-
-                      <TabPanel value={StatView.EV}>
-                        <Row class="justify-center">
-                          <Badge tone={unusedEffort(loaded()) > 0 ? 'gold' : 'neutral'}>
-                            {unusedEffort(loaded())} to spend
-                          </Badge>
-                          <Meta>
-                            {effortSpent(loaded())} / {effortBudget(loaded())} trained
-                            {loaded().effortBonus > 0
-                              ? ` · ${loaded().effortBonus} from wings`
-                              : ''}
-                          </Meta>
-                        </Row>
-                        <List>
-                          <For each={STAT_ORDER}>
-                            {(stat) => (
-                              <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-                                <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                                  <div
-                                    class="h-full rounded-full bg-leaf"
-                                    style={{
-                                      width: `${(loaded().effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
-                                    }}
-                                  />
-                                </div>
-                                <Meta class="w-12 text-right tabular-nums">
-                                  {loaded().effortValues[stat]}
-                                </Meta>
-                                <Show when={owned() != null}>
-                                  <Button
-                                    disabled={frozen() || loaded().effortValues[stat] <= 0}
-                                    onClick={() => {
-                                      train(stat, -EFFORT_STEP);
-                                    }}
-                                  >
-                                    −{EFFORT_STEP}
-                                  </Button>
-                                  <Button
-                                    tone="primary"
-                                    disabled={
-                                      frozen() || assignableEffort(loaded(), stat) < EFFORT_STEP
-                                    }
-                                    onClick={() => {
-                                      train(stat, EFFORT_STEP);
-                                    }}
-                                  >
-                                    +{EFFORT_STEP}
-                                  </Button>
-                                </Show>
-                              </ListRow>
-                            )}
-                          </For>
-                        </List>
-                      </TabPanel>
-                    </TabGroup>
-                  </DialogSection>
-
-                  <DialogSection title="Moves">
-                    <Show when={loaded().moves.length} fallback={<Note>It knows nothing.</Note>}>
+                  {/* Whose hands it has passed through, oldest first, and
+                    where it came from before any of them */}
+                  <DialogSection title="History">
+                    <Show when={loaded().history.length}>
                       <List>
-                        <For each={loaded().moves}>
-                          {(move) => (
-                            <ListRow class="justify-between">
-                              <span class="flex items-center gap-2">
-                                <TypeBadge type={getMoveData(move).type} />
-                                {/* Which of the three kinds it is, as a
-                                    mark rather than a word: the word is
-                                    the title, so nothing rests on the
-                                    colour alone */}
-                                <span
-                                  class="size-3 shrink-0 rounded-sm"
-                                  style={{
-                                    'background-color':
-                                      MOVE_CATEGORY_COLORS[getMoveData(move).category],
-                                  }}
-                                  title={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
-                                  aria-label={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
-                                  role="img"
-                                />
-                                <span class="font-medium">{getMoveData(move).name}</span>
+                        <For each={loaded().history}>
+                          {(entry) => (
+                            <ListRow>
+                              <span class="grow text-left font-medium">
+                                {describeOwner(entry.owner)}
                               </span>
                               <Meta>
-                                {getMoveData(move).power == null
-                                  ? ''
-                                  : `${getMoveData(move).power} power · `}
-                                {getMoveData(move).pp} PP
+                                {ACQUISITION_NAMES[entry.kind]} · {entry.acquiredAt.slice(0, 10)}
                               </Meta>
                             </ListRow>
                           )}
                         </For>
                       </List>
                     </Show>
+                    <Meta>
+                      {isEgg(loaded()) ? 'Found' : describeMet(loaded())} ·{' '}
+                      {loaded().caughtAt.slice(0, 10)} · {describeOrigin(loaded())} ·{' '}
+                      {describeItem(BALL_ITEMS[loaded().ball])}
+                    </Meta>
                   </DialogSection>
 
-                  <DialogSection title="Abilities">
-                    <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
-                      <List>
-                        <For each={loaded().abilities}>
-                          {(ability) => (
-                            <ListRow>
-                              <span class="grow text-left font-medium">
-                                {describeAbility(ability)}
-                              </span>
-                            </ListRow>
-                          )}
-                        </For>
-                      </List>
-                    </Show>
-                  </DialogSection>
-
-                  <DialogSection title="Held items">
-                    <Show when={loaded().items.length} fallback={<Note>Holding nothing.</Note>}>
-                      <List>
-                        <For each={loaded().items}>
-                          {(item) => (
-                            <ListRow>
-                              <span class="grow text-left">{describeItem(item)}</span>
-                              <Show when={owned() != null}>
-                                <Button
-                                  disabled={frozen()}
-                                  onClick={() => {
-                                    moveItem(item, false);
-                                  }}
-                                >
-                                  Take back
-                                </Button>
-                              </Show>
-                            </ListRow>
-                          )}
-                        </For>
-                      </List>
-                    </Show>
-                    {/* A catch holds one item at a time, matching the
-                        battle's per-unit limit */}
-                    <Show when={owned() != null && loaded().items.length < HELD_ITEM_LIMIT}>
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={frozen()}
-                        value={null}
-                        verb="Give"
-                        empty="Nothing holdable in the bag."
-                        filter={(entry) => isHoldable(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            moveItem(item, true);
-                          }
-                        }}
-                      />
-                    </Show>
-                  </DialogSection>
-                </Show>
-
-                {/* Whose hands it has passed through, oldest first, and
-                    where it came from before any of them */}
-                <DialogSection title="History">
-                  <Show when={loaded().history.length}>
-                    <List>
-                      <For each={loaded().history}>
-                        {(entry) => (
-                          <ListRow>
-                            <span class="grow text-left font-medium">
-                              {describeOwner(entry.owner)}
-                            </span>
-                            <Meta>
-                              {ACQUISITION_NAMES[entry.kind]} · {entry.acquiredAt.slice(0, 10)}
-                            </Meta>
-                          </ListRow>
-                        )}
-                      </For>
-                    </List>
-                  </Show>
-                  <Meta>
-                    {isEgg(loaded()) ? 'Found' : describeMet(loaded())} ·{' '}
-                    {loaded().caughtAt.slice(0, 10)} · {describeOrigin(loaded())} ·{' '}
-                    {describeItem(BALL_ITEMS[loaded().ball])}
-                  </Meta>
-                </DialogSection>
-
-                {/* There is no undoing it, so it takes two presses —
+                  {/* There is no undoing it, so it takes two presses —
                     and whatever it is holding comes back to the bag */}
-                <Show when={owned()}>
-                  <DialogSection title="Release">
-                    <Row class="justify-center">
-                      <Button tone="danger" disabled={fighting()} onClick={release}>
-                        {releasing() ? 'Let it go for good?' : 'Release'}
-                      </Button>
-                      <Show when={releasing()}>
-                        <Button
-                          onClick={() => {
-                            setReleasing(false);
-                          }}
-                        >
-                          Keep it
+                  <Show when={owned()}>
+                    <DialogSection title="Release">
+                      <Row class="justify-center">
+                        <Button tone="danger" disabled={fighting()} onClick={release}>
+                          {releasing() ? 'Let it go for good?' : 'Release'}
                         </Button>
+                        <Show when={releasing()}>
+                          <Button
+                            onClick={() => {
+                              setReleasing(false);
+                            }}
+                          >
+                            Keep it
+                          </Button>
+                        </Show>
+                      </Row>
+                      <Show when={isFavorite(loaded())}>
+                        <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
                       </Show>
-                    </Row>
-                    <Show when={isFavorite(loaded())}>
-                      <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
-                    </Show>
-                  </DialogSection>
-                </Show>
-              </div>
+                    </DialogSection>
+                  </Show>
+                </div>
 
-              <Status message={status()} />
-            </>
-          )}
+                <Status message={status()} />
+              </>
+            )}
+          </Show>
         </Show>
-      </Show>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            setStatus(null);
-            setReleasing(false);
-            setPanel(null);
-            props.onClose();
-          }}
-        >
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setStatus(null);
+              setReleasing(false);
+              setPanel(null);
+              props.onClose();
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Teaching is its own dialog because what it costs is a
+          question — which move is given up — and a machine used on a
+          pokemon with room asks nothing at all */}
+      <TeachMoveDialog
+        catchId={teaching() == null ? null : props.catchId}
+        move={teaching()}
+        onClose={() => {
+          setTeaching(null);
+        }}
+        onTaught={() => {
+          setStatus('Taught.');
+          Promise.all([refetch(), refetchBag()])
+            .then(() => {
+              props.onChange?.();
+            })
+            .catch(() => undefined);
+        }}
+      />
+    </>
   );
 }

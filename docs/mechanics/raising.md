@@ -176,6 +176,28 @@ for free along with the healing:
 is the mark left where the ability was, so a pokemon that came out of a shadow
 raid still says so. Purifying changes what it costs, not what it was.
 
+## Teaching a move
+
+A **technical machine** is the only thing that changes what a pokemon knows after
+it has been met — everything else about a move list is decided at the catch or
+inherited from a parent. There is one machine per teachable move, generated from
+the species learn sets, so a move any species can learn brings its machine along.
+
+Using one is the same call whichever way it goes
+([`src/server/moves.ts`](../../src/server/moves.ts)), and what it costs depends
+on how full the list is:
+
+| The pokemon knows | What happens                                |
+| ----------------- | ------------------------------------------- |
+| Fewer than 4      | It learns a fourth; nothing is given up     |
+| 4                 | The player chooses which one it **forgets** |
+
+The machine leaves the bag and the move list is written in **one transaction**,
+so a machine is never spent on a move that was not learned. Four things are
+refused before either happens: a species that cannot learn the move, a pokemon
+that knows it already, an egg, and a **locked** pokemon — teaching is exactly the
+kind of rewriting a lock is for.
+
 ## Putting a pokemon right
 
 Three things heal, and all of them run through one call so that what an item is

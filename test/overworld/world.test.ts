@@ -1212,9 +1212,10 @@ describe('world', () => {
       }
     }
     expect(shapes.size).toBeGreaterThan(1);
-    // Everyone who wanders turns up: the nurse is drawn from the same
-    // pool as the two who charge for what they do
+    // Everyone who wanders turns up: the nurse and the groomer are
+    // drawn from the same pool as the two who came first
     expect(met.has(Npc.NurseJoy)).toBe(true);
+    expect(met.has(Npc.Groomer)).toBe(true);
   });
 
   it('opens a portal onto the nearest portal of the biome asked for', () => {

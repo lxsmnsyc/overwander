@@ -3,7 +3,13 @@ import { asCaughtPokemon, isShadow } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, NPC_CLAIM_COLLECTION } from '../auth/collections';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
-import Npc, { BREEDING_FEE, DAYCARE_FEE, NURSE_CARE_LIMIT } from '../data/overworld/npc';
+import { groomedFriendship } from '../data/constants/friendship';
+import Npc, {
+  BREEDING_FEE,
+  DAYCARE_FEE,
+  GROOMING_FEE,
+  NURSE_CARE_LIMIT,
+} from '../data/overworld/npc';
 import type { Species } from '../data/ids/species';
 import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
@@ -364,4 +370,71 @@ export async function boostEgg(
     throw error;
   }
   return warmed;
+}
+
+/**
+ * Have the groomer see to a pokemon: half of whatever friendship it
+ * had left to give is added to what it already thinks of its owner.
+ *
+ * It is the daycare lady's bargain moved from the egg to the pokemon.
+ * A share of the remainder rather than a place on it means the first
+ * grooming is worth a great deal to a pokemon fresh out of a ball and
+ * almost nothing to one that is already inseparable — gold buys the
+ * early half of a friendship and can never buy the last of it.
+ *
+ * Resolves what the pokemon now thinks, or null when it is not the
+ * player's, is still an egg, is fighting, already thinks as well of
+ * them as it can, or no groomer is standing there
+ */
+export async function groomCatch(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  now: number,
+  offset: number,
+): Promise<number | null> {
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Groomer);
+
+  if (snapshot == null) {
+    return null;
+  }
+
+  const db = getAdminFirestore();
+  const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
+  const stored = docData(await ref.get());
+
+  // An egg thinks nothing of anybody yet: what is inside it has not
+  // met the player, and the shell is what the daycare lady is for
+  if (stored == null || stored.owner !== uid || isEggRecord(stored) || isCatchLocked(stored)) {
+    return null;
+  }
+
+  const caught = asCaughtPokemon(stored);
+  const groomed = groomedFriendship(caught.friendship);
+
+  // Nothing left to buy, so nothing is charged
+  if (groomed === caught.friendship) {
+    return null;
+  }
+
+  const visit = await takeVisit(snapshot, 'groom', cell, uid, { caught: catchId });
+
+  if (visit == null) {
+    return null;
+  }
+  if (!(await spendGold(uid, GROOMING_FEE))) {
+    await releaseVisit(visit);
+    return null;
+  }
+
+  try {
+    await ref.update({ friendship: groomed });
+  } catch (error) {
+    await grantGold(uid, GROOMING_FEE);
+    await releaseVisit(visit);
+    throw error;
+  }
+  return groomed;
 }

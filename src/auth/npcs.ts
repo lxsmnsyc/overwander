@@ -3,6 +3,7 @@ import { requireUid } from '../server/firebase';
 import {
   boostEgg as boostOnServerSide,
   breedCatches as breedOnServerSide,
+  groomCatch as groomOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
 import { syncServerClock } from './clock';
@@ -160,6 +161,50 @@ async function visitNurseOnServer(
     y,
     cell,
     catches,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Have the groomer see to a pokemon: half of whatever friendship it
+ * had left to give, bought rather than walked for. A pokemon that
+ * already thinks as well of the player as it can is refused, and so is
+ * a second pokemon brought to the same cell in the same window.
+ *
+ * Resolves what the pokemon now thinks of its owner, or null when the
+ * groomer refuses
+ */
+export async function groomCatch(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+): Promise<number | null> {
+  return groomOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    snapshot.offset,
+  );
+}
+
+async function groomOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  offset: number,
+): Promise<number | null> {
+  'use server';
+  return groomOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    catchId,
     await syncServerClock(),
     offset,
   );

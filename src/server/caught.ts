@@ -19,6 +19,7 @@ import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { grantCandy, grantCatchCandy } from './candy';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
@@ -134,6 +135,8 @@ export async function recordCatch(
     caughtAt,
     locale: asLocale(locale),
     effortValues: zeroEffortValues(),
+    effortBonus: 0,
+    friendship: BASE_FRIENDSHIP,
     origin: {
       timestamp: encounter.timestamp,
       x: encounter.x,

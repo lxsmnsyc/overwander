@@ -2,6 +2,7 @@ import 'server-only';
 import { CANDY_COLLECTION, CAUGHT_COLLECTION, candyStackId } from '../auth/collections';
 import getCandyCost, { CANDY_PER_CATCH, SPECIES_DAY_CANDY_BOOST } from '../auth/candy-rules';
 import { asCaughtPokemon } from '../auth/caught-record';
+import { gainFriendship } from '../data/constants/friendship';
 import { getMaxHealth } from '../auth/health';
 import { MAX_LEVEL } from '../data/constants/levels';
 import type Families from '../data/ids/families';
@@ -115,6 +116,11 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
       // A level restores what the last fight took, status and all
       health: getMaxHealth({ ...record, level }),
       statuses: 0,
+      // Growing up together is the surest way a pokemon comes to
+      // think well of somebody — and the level pays for five more
+      // points of effort, which the sheet works out from the level
+      // itself rather than storing twice
+      friendship: gainFriendship(record.friendship, 'level'),
     });
     return level;
   });

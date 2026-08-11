@@ -27,9 +27,14 @@ import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
+import { assignableEffort, effortBudget, effortSpent, unusedEffort } from '../auth/effort';
+import { type TrainingResult, feedEffortBerry, trainEffort, useWing } from '../auth/training';
 import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { STAT_ORDER, Stats, getIV } from '../data/constants/stats';
+import { describeFriendship } from '../data/constants/friendship';
+import { MAX_EFFORT_PER_STAT, STAT_ORDER, Stats, getIV } from '../data/constants/stats';
+import { BERRY_EFFORT_DROPS } from '../data/items/berries';
+import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
@@ -63,6 +68,13 @@ import {
   RowButton,
   Status,
 } from './styled';
+
+/**
+ * How much training one press moves. Four points buy one point of the
+ * stat itself, so anything smaller would be a button that sometimes
+ * does nothing visible
+ */
+const EFFORT_STEP = 4;
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -347,6 +359,71 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * Everything that moves a pokemon's training lands the same way:
+   * the server decides it against the stored record and hands back
+   * what the pokemon now has, and the sheet re-reads rather than
+   * trusting its own arithmetic
+   */
+  const settleTraining = (
+    running: Promise<TrainingResult | null>,
+    refused: string,
+    landed: (result: TrainingResult) => string,
+  ): void => {
+    setStatus(null);
+    running
+      .then(async (result) => {
+        setStatus(result == null ? refused : landed(result));
+        await refetch();
+        await refetchBag();
+        props.onChange?.();
+      })
+      .catch((thrown: unknown) => {
+        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+      });
+  };
+
+  const train = (stat: Stats, amount: number): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    settleTraining(
+      trainEffort(catchId, stat, amount),
+      'Those points could not be moved.',
+      (result) =>
+        `${STAT_LABELS[stat]} trained to ${result.effortValues[stat]} — ${result.unused} left to spend.`,
+    );
+  };
+
+  const trainWithWing = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    settleTraining(
+      useWing(catchId, item),
+      `${describeItem(item)} could not be used.`,
+      () => `${describeItem(item)} — three points it did not have to earn.`,
+    );
+  };
+
+  const feedBitterBerry = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    settleTraining(
+      feedEffortBerry(catchId, item),
+      `${describeItem(item)} could not be fed.`,
+      (result) =>
+        `Bitter, and good for it — ${result.unused} points back to spend, and it thinks the better of you.`,
+    );
+  };
+
   const purify = (item: Items): void => {
     const catchId = props.catchId;
 
@@ -569,6 +646,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       .join(', ') || 'None'}
                   </dd>
                 </Show>
+                <dt>Friendship</dt>
+                <dd>
+                  {describeFriendship(loaded().friendship)} · {loaded().friendship} / 255
+                </dd>
                 <dt>Individual values</dt>
                 <dd>{describeIVs(loaded().ivs)}</dd>
                 <dt>{isEgg(loaded()) ? 'Found' : 'Caught'}</dt>
@@ -760,6 +841,99 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       />
                     </DialogSection>
                   </Show>
+
+                  <DialogSection title="Training">
+                    {/* Five points a level, spent wherever the player
+                        wants them: four of them buy one point of the
+                        stat itself, which is why the buttons move in
+                        fours */}
+                    <Row>
+                      <Badge tone={unusedEffort(loaded()) > 0 ? 'gold' : 'neutral'}>
+                        {unusedEffort(loaded())} to spend
+                      </Badge>
+                      <Meta>
+                        {effortSpent(loaded())} / {effortBudget(loaded())} trained
+                        {loaded().effortBonus > 0 ? ` · ${loaded().effortBonus} from wings` : ''}
+                      </Meta>
+                    </Row>
+
+                    <List>
+                      <For each={STAT_ORDER}>
+                        {(stat) => (
+                          <ListRow>
+                            <span class="w-28 shrink-0">{STAT_LABELS[stat]}</span>
+                            {/* How far along this stat is, drawn
+                                against what one stat can hold */}
+                            <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                              <div
+                                class="h-full rounded-full bg-leaf"
+                                style={{
+                                  width: `${(loaded().effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
+                                }}
+                              />
+                            </div>
+                            <Meta class="w-12 text-right tabular-nums">
+                              {loaded().effortValues[stat]}
+                            </Meta>
+                            <Button
+                              disabled={fighting() === true || loaded().effortValues[stat] <= 0}
+                              onClick={() => {
+                                train(stat, -EFFORT_STEP);
+                              }}
+                            >
+                              −{EFFORT_STEP}
+                            </Button>
+                            <Button
+                              tone="primary"
+                              disabled={
+                                fighting() === true ||
+                                assignableEffort(loaded(), stat) < EFFORT_STEP
+                              }
+                              onClick={() => {
+                                train(stat, EFFORT_STEP);
+                              }}
+                            >
+                              +{EFFORT_STEP}
+                            </Button>
+                          </ListRow>
+                        )}
+                      </For>
+                    </List>
+
+                    {/* A wing is three points nobody had to earn */}
+                    <h4>Wings</h4>
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      value={null}
+                      verb="Use"
+                      empty="No wings in the bag."
+                      filter={(entry) => isWing(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          trainWithWing(item);
+                        }
+                      }}
+                    />
+
+                    {/* And a bitter berry is ten points handed back */}
+                    <h4>Bitter berries</h4>
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      value={null}
+                      verb="Feed"
+                      empty="No berries in the bag that would untrain anything."
+                      filter={(entry) => BERRY_EFFORT_DROPS.has(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          feedBitterBerry(item);
+                        }
+                      }}
+                    />
+                  </DialogSection>
 
                   <DialogSection title="Candies">
                     {/* The stack is keyed by family, so every stage of

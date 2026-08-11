@@ -313,6 +313,29 @@ export const enum Items {
   MarangaBerry = 163,
   JabocaBerry = 164,
   RowapBerry = 165,
+
+  /**
+   * The wings: a feather's worth of training in one stat, and the only
+   * effort a pokemon ever gets that its levels did not pay for
+   */
+  HealthWing = 166,
+  MuscleWing = 167,
+  ResistWing = 168,
+  GeniusWing = 169,
+  CleverWing = 170,
+  SwiftWing = 171,
+
+  /**
+   * The bitter berries a pokemon is fed to take training back off one
+   * stat. They taste terrible and are good for it, which is why a
+   * pokemon thinks better of whoever feeds it one
+   */
+  PomegBerry = 172,
+  KelpsyBerry = 173,
+  QualotBerry = 174,
+  HondewBerry = 175,
+  GrepaBerry = 176,
+  TamatoBerry = 177,
 }
 
 /**

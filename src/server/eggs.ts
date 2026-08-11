@@ -1,7 +1,13 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
-import { EGG_HATCH_STEPS, EGG_LEVEL, creditableSteps, stepsRemaining } from '../auth/egg';
+import {
+  EGG_HATCH_STEPS,
+  EGG_LEVEL,
+  MAX_STEP_REPORT,
+  creditableSteps,
+  stepsRemaining,
+} from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -24,6 +30,12 @@ import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/enc
 import { grantCatchCandy } from './candy';
 import { getAdminFirestore } from './firebase';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
+import {
+  BASE_FRIENDSHIP,
+  FRIENDSHIP_STEP_INTERVAL,
+  HATCHED_FRIENDSHIP,
+  gainFriendship,
+} from '../data/constants/friendship';
 import { freeFields, isCatchLocked } from './locks';
 import { docData } from './read';
 
@@ -147,6 +159,8 @@ async function writeEgg(
     caughtAt: foundAt,
     locale: asLocale(locale),
     effortValues: zeroEffortValues(),
+    effortBonus: 0,
+    friendship: BASE_FRIENDSHIP,
     origin: {
       timestamp: fields.timestamp,
       x: snapshot.chunk.x,
@@ -301,11 +315,34 @@ export async function recordSteps(
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
-    if (stored == null || stored.owner !== uid || !isEggRecord(stored)) {
+    if (stored == null || stored.owner !== uid) {
       return null;
     }
 
     const caught = asCaughtPokemon(stored);
+
+    /**
+     * A hatched buddy has nowhere to walk to, but it is still walking
+     * with somebody: the same steps that would have opened an egg buy
+     * a point of friendship every `FRIENDSHIP_STEP_INTERVAL`. What is
+     * walked past a point is kept, so a player who reports in small
+     * handfuls is not quietly robbed of the remainder
+     */
+    if (!isEggRecord(stored)) {
+      const credited = creditableSteps(reported, now - caught.steppedAt, MAX_STEP_REPORT);
+      const walked = caught.walked + credited;
+      const earned =
+        Math.floor(walked / FRIENDSHIP_STEP_INTERVAL) -
+        Math.floor(caught.walked / FRIENDSHIP_STEP_INTERVAL);
+
+      transaction.update(ref, {
+        walked,
+        steppedAt: now,
+        ...(earned > 0 ? { friendship: gainFriendship(caught.friendship, 'walk', earned) } : {}),
+      });
+      return null;
+    }
+
     const credited = creditableSteps(reported, now - caught.steppedAt, stepsRemaining(caught));
     const steps = caught.steps + credited;
 
@@ -353,6 +390,12 @@ export async function hatchEgg(
     transaction.update(ref, {
       flags: withFlag(caught.flags, PokemonFlags.Egg, false),
       steps: caught.hatchSteps,
+      // Everything that hatches has already been carried every step
+      // of the way, and thinks of whoever carried it accordingly
+      friendship: HATCHED_FRIENDSHIP,
+      // The walking starts over: what it did in the shell bought the
+      // hatching, and what it does now buys friendship
+      walked: 0,
     });
     return caught.species;
   });

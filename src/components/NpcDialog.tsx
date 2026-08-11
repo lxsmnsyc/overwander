@@ -4,8 +4,15 @@ import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { isShadow } from '../auth/caught-record';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
-import { boostEgg, breed, visitNurse } from '../auth/npcs';
-import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES, NURSE_CARE_LIMIT } from '../data/overworld/npc';
+import { describeFriendship, groomedFriendship } from '../data/constants/friendship';
+import { boostEgg, breed, groomCatch, visitNurse } from '../auth/npcs';
+import Npc, {
+  BREEDING_FEE,
+  DAYCARE_FEE,
+  GROOMING_FEE,
+  NPC_NAMES,
+  NURSE_CARE_LIMIT,
+} from '../data/overworld/npc';
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
@@ -195,6 +202,32 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       });
   };
 
+  const groom = (id: string): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    groomCatch(snapshot, standing[0], id)
+      .then(async (friendship) => {
+        setBusy(false);
+        setStatus(
+          friendship == null
+            ? 'He would not take it — it may think as well of you as it can already, or he has already seen you this while.'
+            : `Brushed, fussed over and handed back ${describeFriendship(friendship)}. (−${GROOMING_FEE} gold)`,
+        );
+        await refetch();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setBusy(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   return (
     <Dialog
       isOpen={props.standing != null}
@@ -296,6 +329,39 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                   onPick={(id) => {
                     if (id != null) {
                       pushEgg(id);
+                    }
+                  }}
+                />
+              </DialogSection>
+            </Show>
+
+            <Show when={standing()[1] === Npc.Groomer}>
+              <DialogSection>
+                <Says>
+                  "Leave one with me — {GROOMING_FEE} gold — and I will see to it properly. It will
+                  think half again as much of you when I hand it back."
+                </Says>
+                {/* The note is what the fee actually buys this
+                    pokemon: half of what it has left to give, which is
+                    a great deal to one just out of its ball and next
+                    to nothing to one that already adores its owner */}
+                <CatchPicker
+                  inline
+                  options={catches()}
+                  value={null}
+                  verb="Groom"
+                  empty="You have nothing for him to see to."
+                  filter={(option) =>
+                    !isEgg(option.caught) &&
+                    !option.fighting &&
+                    groomedFriendship(option.caught.friendship) > option.caught.friendship
+                  }
+                  note={(option) =>
+                    `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
+                  }
+                  onPick={(id) => {
+                    if (id != null) {
+                      groom(id);
                     }
                   }}
                 />

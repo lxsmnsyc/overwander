@@ -281,6 +281,16 @@ behind them fails.
   window alone, since there is no fee to pace her: a party that needed nothing is
   handed straight back without spending the visit.
 
+- **Groomer** — takes one of the player's pokemon and `GROOMING_FEE` gold, and
+  hands it back thinking half again as well of them: `groomedFriendship` adds
+  half of whatever is *left* to give, the same bargain the daycare lady makes
+  with an egg. It is worth a great deal to a pokemon fresh out of a ball and
+  almost nothing to one that is already inseparable, and because it is always
+  half of the remainder it can never buy the last of a friendship — that part
+  is walked for. A pokemon that can gain nothing is refused before anything is
+  charged, and an egg is refused outright: what is inside one has not met
+  anybody yet.
+
 What a bred egg inherits — and what it does not — is in
 [Eggs](catches.md#eggs).
 

@@ -105,6 +105,25 @@ export const enum StatsKind {
   Effort = 2,
 }
 
+/**
+ * The most effort one stat can be trained to. Four points buy one
+ * point of the stat itself, so 252 is the last multiple of four worth
+ * spending — the four above it would buy nothing
+ */
+export const MAX_EFFORT_PER_STAT = 252;
+
+/**
+ * How much effort a pokemon has to spend per level it has taken.
+ *
+ * The mainline earns effort a species at a time, from whatever a
+ * pokemon happens to have fought; here it comes with the level and the
+ * player decides where it goes. It is the same total either way — a
+ * hundred levels is five hundred points — but it is spent deliberately
+ * rather than accumulated by grinding the right opponents, which is
+ * the part of the mainline's design that never survived being played
+ */
+export const EFFORT_PER_LEVEL = 5;
+
 export function createStatsField(): StatsField {
   return {
     [Stats.HP]: 0,

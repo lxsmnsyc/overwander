@@ -189,6 +189,32 @@ export const BERRY_BRACE_STAGES = new Map<Items, Stages>([
 ]);
 
 /**
+ * The berries a pokemon is fed to take training back off one stat.
+ *
+ * They are the other half of the wings: a wing puts three points into
+ * a stat, and one of these takes ten out of one. What that is for is
+ * changing your mind — effort spent on Attack is not lost when a
+ * pokemon turns out to want Speed, it is fed back out ten at a time.
+ *
+ * A pokemon that eats one thinks better of the player for it, the way
+ * the mainline has it: the berry is bitter, and being looked after is
+ * being looked after
+ */
+export const BERRY_EFFORT_DROPS = new Map<Items, Stats>([
+  [Items.PomegBerry, Stats.HP],
+  [Items.KelpsyBerry, Stats.Attack],
+  [Items.QualotBerry, Stats.Defense],
+  [Items.HondewBerry, Stats.SpecialAttack],
+  [Items.GrepaBerry, Stats.SpecialDefense],
+  [Items.TamatoBerry, Stats.Speed],
+]);
+
+/**
+ * How much training one of them takes back off
+ */
+export const BERRY_EFFORT_DROP = 10;
+
+/**
  * The berries that answer to no table: each one is the only thing
  * that does what it does
  */
@@ -255,6 +281,12 @@ const BERRY_NAMES = new Map<Items, string>([
   [Items.MarangaBerry, 'Maranga Berry'],
   [Items.JabocaBerry, 'Jaboca Berry'],
   [Items.RowapBerry, 'Rowap Berry'],
+  [Items.PomegBerry, 'Pomeg Berry'],
+  [Items.KelpsyBerry, 'Kelpsy Berry'],
+  [Items.QualotBerry, 'Qualot Berry'],
+  [Items.HondewBerry, 'Hondew Berry'],
+  [Items.GrepaBerry, 'Grepa Berry'],
+  [Items.TamatoBerry, 'Tamato Berry'],
 ]);
 
 /**
@@ -268,6 +300,7 @@ export function isBerry(item: Items): boolean {
     BERRY_PINCH_STAGES.has(item) ||
     BERRY_NATURE_HEALS.has(item) ||
     BERRY_BRACE_STAGES.has(item) ||
+    BERRY_EFFORT_DROPS.has(item) ||
     OTHER_BERRIES.has(item)
   );
 }

@@ -9,39 +9,86 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 
 ## `caught/{catchId}`
 
-| Field                  | Type                    | Notes                                                    |
-| ---------------------- | ----------------------- | -------------------------------------------------------- |
-| `owner`                | `string`                | Current owner's uid; changes on trade                    |
-| `type`                 | `EncounterType`         | How it was originally met                                |
-| `species`              | `Species`               |                                                          |
-| `level`                | `number`                |                                                          |
-| `individualValue`      | `number`                | 32-bit roll the IVs slice from                           |
-| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature       |
-| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order       |
-| `gender`               | `Genders`               |                                                          |
-| `nature`               | `Natures`               |                                                          |
-| `moves`                | `Moves[]`               |                                                          |
-| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch       |
-| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`        |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append     |
-| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked          |
-| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free        |
-| `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any      |
-| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found       |
-| `steppedAt`            | `number`                | Server instant steps were last credited at               |
-| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived        |
-| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying         |
-| `lair`                 | `Lairs \| null`         | The lair a raid prize was won in; null for anything else |
-| `ball`                 | `Balls`                 | Ball the catch was made with                             |
-| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                |
-| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                   |
-| `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                          |
-| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                    |
-| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                        |
-| `origin.biome`         | `Biome`                 |                                                          |
+| Field                  | Type                    | Notes                                                 |
+| ---------------------- | ----------------------- | ----------------------------------------------------- |
+| `owner`                | `string`                | Current owner's uid; changes on trade                 |
+| `type`                 | `EncounterType`         | How it was originally met                             |
+| `species`              | `Species`               |                                                       |
+| `level`                | `number`                |                                                       |
+| `individualValue`      | `number`                | 32-bit roll the IVs slice from                        |
+| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature    |
+| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order    |
+| `gender`               | `Genders`               |                                                       |
+| `nature`               | `Natures`               |                                                       |
+| `moves`                | `Moves[]`               |                                                       |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch    |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`     |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append  |
+| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked       |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free     |
+| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any       |
+| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship |
+| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found    |
+| `steppedAt`            | `number`                | Server instant steps were last credited at            |
+| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived     |
+| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying      |
+| `ball`                 | `Balls`                 | Ball the catch was made with                          |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])             |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                |
+| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero           |
+| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance     |
+| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`     |
+| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                 |
+| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                     |
+| `origin.biome`         | `Biome`                 |                                                       |
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
+
+## Training and friendship
+
+Effort is not earned from what a pokemon happened to fight. Every level pays
+`EFFORT_PER_LEVEL` (5) points into a pool the player spends where they like, so
+a freshly caught level 20 pokemon arrives with 100 points nobody has assigned.
+The arithmetic is in [`src/auth/effort.ts`](../../src/auth/effort.ts) and both
+sides read it: the catch sheet to say what is possible, the server to decide it
+again against the stored record.
+
+| Quantity | How it is worked out                        |
+| -------- | ------------------------------------------- |
+| budget   | `level * EFFORT_PER_LEVEL + effortBonus`    |
+| spent    | The six `effortValues` added up             |
+| unused   | `budget - spent`, never below zero          |
+| per stat | Never more than `MAX_EFFORT_PER_STAT` (252) |
+
+Three server calls in [`src/server/training.ts`](../../src/server/training.ts)
+move it, each in one transaction:
+
+- **`trainEffort`** spends unused points into a stat, or takes them back out
+  with a negative amount. Nothing is consumed — the points came with the levels.
+- **`useWing`** spends a wing for `WING_EFFORT` (3) points in the wing's own
+  stat and raises `effortBonus` by the same, so a wing grants training rather
+  than spending the pool. That is what makes one worth the same at level 5 as at
+  100.
+- **`feedEffortBerry`** spends a bitter berry to take `BERRY_EFFORT_DROP` (10)
+  points off one stat. They return to the pool rather than being lost, and the
+  pokemon thinks better of the player for it.
+
+Every one of them rescales `health` the way a bottle cap does: a bigger pool
+keeps the share the pokemon was carrying.
+
+Friendship follows the mainline's Gen 4 rules, tiered so that every gain shrinks
+as the number grows ([`src/data/constants/friendship.ts`](../../src/data/constants/friendship.ts)):
+
+| What happened    | Where it is written                   | 0-99 | 100-199 | 200-255 |
+| ---------------- | ------------------------------------- | ---- | ------- | ------- |
+| Level taken      | `useCandy`                            | +5   | +3      | +2      |
+| 256 steps walked | `recordSteps`, for a hatched buddy    | +2   | +2      | +1      |
+| Bitter berry fed | `feedEffortBerry`                     | +10  | +5      | +2      |
+| Knocked out      | `recordAftermath`, when health hits 0 | -1   | -1      | -1      |
+
+A catch starts at `BASE_FRIENDSHIP` (70) and something hatched starts at
+`HATCHED_FRIENDSHIP` (120) — the carrying has already happened.
 
 ### Packed fields
 
@@ -51,11 +98,11 @@ reader wants, and each is one call away in either direction
 [`stats.ts`](../../src/data/constants/stats.ts),
 [`status.ts`](../../src/data/ids/status.ts)):
 
-| Stored          | Was                                | Read with                        |
-| --------------- | ---------------------------------- | -------------------------------- |
-| `flags`         | `shiny`, `shadow`, `egg`, `lock`   | `hasFlag` / `withFlag`           |
-| `ivs`           | `Record<Stats, number>` of six     | `getIV` / `setIV` / `unpackIVs`  |
-| `statuses`      | `Statuses[]`                       | `statusFlag` / `unpackStatuses`  |
+| Stored     | Was                              | Read with                       |
+| ---------- | -------------------------------- | ------------------------------- |
+| `flags`    | `shiny`, `shadow`, `egg`, `lock` | `hasFlag` / `withFlag`          |
+| `ivs`      | `Record<Stats, number>` of six   | `getIV` / `setIV` / `unpackIVs` |
+| `statuses` | `Statuses[]`                     | `statusFlag` / `unpackStatuses` |
 
 `statuses` is a bitfield of its own — `StatusFlags`, six flags starting at the
 first bit — rather than shifts of the battle engine's `Statuses` enum. A stored

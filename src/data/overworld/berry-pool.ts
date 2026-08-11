@@ -1,5 +1,5 @@
 import { Items } from '../ids/items';
-import { BERRY_RESIST_TYPES } from '../items/berries';
+import { BERRY_EFFORT_DROPS, BERRY_RESIST_TYPES } from '../items/berries';
 import type { ItemRarityGroups } from './item-pool';
 
 /**
@@ -25,6 +25,10 @@ const BERRY_POOL: ItemRarityGroups = {
     { item: Items.LeppaBerry, weight: 10 },
     { item: Items.OranBerry, weight: 10 },
     { item: Items.PersimBerry, weight: 10 },
+    // The bitter ones a pokemon is fed to take training back off a
+    // stat. They are how a player changes their mind about where a
+    // pokemon's effort went, so they grow where they will be found
+    ...[...BERRY_EFFORT_DROPS.keys()].map((item) => ({ item, weight: 4 })),
     // A third of the holder's health back is worth more than any of
     // the cures, and the ones whose nature cannot stand the taste pay
     // for it in confusion

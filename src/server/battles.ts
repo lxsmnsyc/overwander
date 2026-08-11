@@ -9,6 +9,7 @@ import {
   TEAM_SNAPSHOT_COLLECTION,
 } from '../auth/collections';
 import { carriedStatuses, getMaxHealth } from '../auth/health';
+import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { getAdminFirestore } from './firebase';
 import { asNumberArray, asStringArray, docData } from './read';
@@ -164,6 +165,11 @@ export default async function recordAftermath(
         health,
         statuses,
         ...(taken.size > 0 ? { items: remaining } : {}),
+        // A pokemon that was carried out of the fight thinks a little
+        // less of whoever took it in there. It is one point, and the
+        // walk back buys it again — losing a pokemon's trust should
+        // take more than losing a raid
+        ...(health <= 0 ? { friendship: gainFriendship(record.friendship, 'faint') } : {}),
       });
     }
 

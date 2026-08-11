@@ -3,6 +3,7 @@
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { PokemonFlags, hasFlag } from '../data/constants/flags';
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { Stats } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -154,9 +155,38 @@ export interface CaughtPokemon {
    */
   locale: string;
   /**
-   * Effort values per stat; a fresh catch starts at zero
+   * Effort values per stat; a fresh catch starts at zero.
+   *
+   * What may be put here is not free: a pokemon has
+   * `EFFORT_PER_LEVEL` points per level it has taken, plus whatever
+   * wings have added to `effortBonus`, and the six values together
+   * never come to more than that. See
+   * [`src/auth/effort.ts`](./effort.ts) for the arithmetic both sides
+   * read
    */
   effortValues: Record<Stats, number>;
+  /**
+   * Effort granted by wings rather than by levels. It is kept apart
+   * from the values themselves because it is what a pokemon may spend
+   * rather than what it has spent — a wing is three more points, and
+   * feeding a berry to take training back off a stat hands those
+   * points back to be spent again
+   */
+  effortBonus: number;
+  /**
+   * How far this pokemon has walked as somebody's buddy since it came
+   * out of its shell — or since it was caught, for one that was never
+   * in one. It buys friendship rather than hatching anything, which is
+   * why it is counted apart from `steps`
+   */
+  walked: number;
+  /**
+   * What the pokemon thinks of its owner, 0 to `MAX_FRIENDSHIP`. It
+   * rises with levels taken and walks shared and falls when the
+   * pokemon is knocked out; see
+   * [`src/data/constants/friendship.ts`](../data/constants/friendship.ts)
+   */
+  friendship: number;
   /**
    * Where and when the spawn appeared
    */
@@ -253,6 +283,13 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),
     effortValues,
+    effortBonus: asNumber(data.effortBonus),
+    walked: asNumber(data.walked),
+    // A record written before a pokemon could think anything of
+    // anybody starts where a fresh catch starts, rather than at the
+    // zero a missing field would read as: those pokemon were caught
+    // and kept, not neglected
+    friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
     origin: {
       timestamp: asNumber(origin.timestamp),
       x: asNumber(origin.x),

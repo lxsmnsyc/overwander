@@ -16,11 +16,13 @@ import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
 import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
+import registerWings from './wings';
 
 export { getItemData, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
+export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
 /**
  * The machines are generated from the species learn sets, so the
@@ -44,5 +46,6 @@ export default function registerItems(): void {
   registerKeyItems();
   registerRaidItems();
   registerValuables();
+  registerWings();
   registerMachines();
 }

@@ -1,6 +1,7 @@
 import { RARE_SPAWN_ODDS, SPECIAL_SPAWN_ODDS, UNCOMMON_SPAWN_ODDS } from '../biome/__create';
 import { Items } from '../ids/items';
 import { PLATES } from '../items/plates';
+import { WING_STATS } from '../items/wings';
 
 /**
  * One weighted slot of an item pool
@@ -66,6 +67,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.SuperPotion, weight: 10 },
     { item: Items.HyperPotion, weight: 6 },
     { item: Items.FullHeal, weight: 6 },
+    // The wings, blown along the ground: three points of training
+    // each, and the only effort a pokemon gets that its levels did
+    // not pay for. Thin slots, because they are the one thing in the
+    // game that raises a stat past what a level allows
+    ...[...WING_STATS.keys()].map((item) => ({ item, weight: 3 })),
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },

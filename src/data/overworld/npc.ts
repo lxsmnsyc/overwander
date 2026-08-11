@@ -20,6 +20,12 @@ const enum Npc {
    * does it once per window
    */
   NurseJoy = 2,
+  /**
+   * Takes one pokemon and a fee, and hands it back thinking half
+   * again as well of its owner as it did. The daycare lady's trade,
+   * done on the pokemon rather than on the egg
+   */
+  Groomer = 3,
 }
 
 export default Npc;
@@ -27,12 +33,13 @@ export default Npc;
 /**
  * Everyone who wanders, for uniform rolls over the variants
  */
-export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy];
+export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy, Npc.Groomer];
 
 export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Breeder]: 'Breeder',
   [Npc.DaycareLady]: 'Daycare Lady',
   [Npc.NurseJoy]: 'Nurse Joy',
+  [Npc.Groomer]: 'Groomer',
 };
 
 /**
@@ -46,6 +53,13 @@ export const BREEDING_FEE = 5000;
  * What the daycare lady charges to push an egg along
  */
 export const DAYCARE_FEE = 2500;
+
+/**
+ * What the groomer charges. It is the daycare lady's price for the
+ * daycare lady's trade: half of what is left, bought rather than
+ * walked for
+ */
+export const GROOMING_FEE = 2500;
 
 /**
  * How many pokemon Nurse Joy looks at in one visit. It is a party's

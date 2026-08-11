@@ -47,8 +47,10 @@ import registerItems, {
   getItemData,
   getTeachableMoves,
 } from '../src/data/items';
+import { WING_STATS, isWing } from '../src/data/items/wings';
 import {
   BERRY_BRACE_STAGES,
+  BERRY_EFFORT_DROPS,
   BERRY_NATURE_HEALS,
   BERRY_PINCH_STAGES,
   BERRY_RESIST_TYPES,
@@ -925,6 +927,45 @@ describe('item data', () => {
       Items.RowapBerry,
     ]) {
       expect(grown.has(item)).toBe(true);
+    }
+  });
+
+  it('registers one wing per stat, and puts them where they can be found', () => {
+    const stats = [...WING_STATS.values()];
+
+    expect(new Set(stats).size).toBe(stats.length);
+    expect(stats.length).toBe(STAT_ORDER.length);
+
+    const pooled = new Set(
+      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const item of WING_STATS.keys()) {
+      const data = getItemData(item);
+
+      expect(isWing(item)).toBe(true);
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.name.endsWith('Wing')).toBe(true);
+      // Spent on a pokemon, and gone once it is
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      // Found on the wind rather than stocked
+      expect(data.buy).toBe(0);
+      expect(pooled.has(item)).toBe(true);
+    }
+  });
+
+  it('grows one bitter berry per stat', () => {
+    const stats = [...BERRY_EFFORT_DROPS.values()];
+
+    expect(new Set(stats).size).toBe(stats.length);
+    expect(stats.length).toBe(STAT_ORDER.length);
+
+    for (const item of BERRY_EFFORT_DROPS.keys()) {
+      expect(isBerry(item)).toBe(true);
+      expect(getItemData(item).type).toBe(ItemTypes.Berry);
     }
   });
 

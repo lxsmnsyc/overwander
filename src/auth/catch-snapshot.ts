@@ -8,8 +8,10 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import type { Statuses } from '../data/ids/status';
 import { deriveSize } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import { getMaxHealth } from './health';
 import type { CaughtPokemon } from './caught';
 
 /**
@@ -42,6 +44,16 @@ export interface CatchSnapshot {
   moves: Moves[];
   abilities: Abilities[];
   items: Items[];
+  /**
+   * The health it walks in with. A fight picks up where the last one
+   * left off, so a pokemon hurt yesterday is hurt at the start of
+   * today's raid rather than quietly mended by being fielded
+   */
+  health: number;
+  /**
+   * The non-volatile statuses it walks in with, all of them
+   */
+  statuses: Statuses[];
 }
 
 /**
@@ -66,6 +78,8 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     moves: caught.moves,
     abilities: caught.abilities,
     items: caught.items,
+    health: caught.health,
+    statuses: caught.statuses,
   };
 }
 
@@ -89,5 +103,27 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
+    // A snapshot written before a fight could hurt anything carries
+    // no health, and a unit fielded at zero would be down before the
+    // first turn: missing means whole
+    health: data.health == null ? getMaxHealth(asHealthSource(data)) : asNumber(data.health),
+    statuses: asNumberArray(data.statuses) as Statuses[],
+  };
+}
+
+/**
+ * What maximum health is derived from, read off an untyped snapshot
+ */
+function asHealthSource(data: Record<string, unknown>): {
+  species: Species;
+  level: number;
+  ivs: Record<Stats, number>;
+  effortValues: Record<Stats, number>;
+} {
+  return {
+    species: asNumber(data.species) as Species,
+    level: asNumber(data.level),
+    ivs: asStatRecord(data.ivs),
+    effortValues: asStatRecord(data.effortValues),
   };
 }

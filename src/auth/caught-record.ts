@@ -9,8 +9,10 @@ import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import type { Statuses } from '../data/ids/status';
 import type { EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import { getMaxHealth } from './health';
 
 /**
  * What a catch is, and how a stored one is read back. It lives apart
@@ -124,6 +126,25 @@ export interface CaughtPokemon {
    */
   steppedAt: number;
   /**
+   * How much health it has left. A battle leaves it where it left it,
+   * so a party is looked after between fights rather than reset
+   * between them; zero means fainted, and a fainted pokemon cannot be
+   * fielded until something heals it.
+   *
+   * The maximum is derived rather than stored — see
+   * [`src/auth/health.ts`](./health.ts) — so anything that changes the
+   * maximum moves this in proportion
+   */
+  health: number;
+  /**
+   * The non-volatile statuses it walked out of its last battle with.
+   * A pokemon can carry several at once — poisoned and asleep is an
+   * ordinary way to come out of a raid — while everything else a
+   * fight does (confusion, flinching, a substitute) belongs to the
+   * fight and ends with it
+   */
+  statuses: Statuses[];
+  /**
    * The ball the catch was made with
    */
   ball: Balls;
@@ -187,15 +208,19 @@ function asOwnershipHistory(value: unknown): OwnershipRecord[] {
 export function asCaughtPokemon(value: unknown): CaughtPokemon {
   const data = asRecord(value);
   const origin = asRecord(data.origin);
+  const species = asNumber(data.species) as Species;
+  const level = asNumber(data.level);
+  const ivs = asStatRecord(data.ivs);
+  const effortValues = asStatRecord(data.effortValues);
 
   return {
     owner: asString(data.owner),
     type: asNumber(data.type) as EncounterType,
-    species: asNumber(data.species) as Species,
-    level: asNumber(data.level),
+    species,
+    level,
     individualValue: asNumber(data.individualValue),
     traitValue: asNumber(data.traitValue),
-    ivs: asStatRecord(data.ivs),
+    ivs,
     gender: asNumber(data.gender) as Genders,
     nature: asNumber(data.nature) as Natures,
     shiny: data.shiny === true,
@@ -210,10 +235,19 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     steps: asNumber(data.steps),
     hatchSteps: asNumber(data.hatchSteps),
     steppedAt: asNumber(data.steppedAt),
+    // A record written before a fight could hurt anything has no
+    // health field, and reading that as zero would faint every
+    // pokemon caught until now. Missing means whole, which is what
+    // those records meant
+    health:
+      data.health == null
+        ? getMaxHealth({ species, level, ivs, effortValues })
+        : asNumber(data.health),
+    statuses: asNumberArray(data.statuses) as Statuses[],
     ball: asNumber(data.ball) as Balls,
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),
-    effortValues: asStatRecord(data.effortValues),
+    effortValues,
     origin: {
       timestamp: asNumber(origin.timestamp),
       x: asNumber(origin.x),

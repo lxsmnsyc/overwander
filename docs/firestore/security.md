@@ -27,7 +27,7 @@ a call is never trusted — only what the token proves.
 | `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                     |
 | `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                          |
 | `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                           |
-| `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |
+| `recordAftermath`                                          | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                    |
 | `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
 | `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
 | `claimNest`                                                | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                    |
@@ -36,6 +36,7 @@ a call is never trusted — only what the token proves.
 | `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                      |
 | `boostEgg`                                                 | The daycare lady is re-derived from the window, and the half a walk she adds is measured against the stored egg                                                |
 | `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                    |
+| `feedBerry`                                                | A berry leaves the bag and the health it restores lands on the catch in one transaction, and only a berry that would do something is spent                     |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build
@@ -182,9 +183,10 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
-    // A battle's bill for spent items: written by the server, since
-    // it takes items off catch records
-    match /battleConsumptions/{markerId} {
+    // What a battle left the party with — items spent, health lost,
+    // status carried: written by the server, since it writes to
+    // catch records
+    match /battleAftermaths/{markerId} {
       allow read: if signedIn();
       allow write: if false;
     }

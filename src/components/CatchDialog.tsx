@@ -13,6 +13,8 @@ import {
   releaseCatch,
   takeItem,
 } from '../auth/caught';
+import feedBerry from '../auth/berries';
+import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import useBottleCap from '../auth/bottle-caps';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
@@ -25,6 +27,7 @@ import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
+import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
@@ -127,6 +130,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
   const [status, setStatus] = createSignal<string | null>(null);
 
+  const view = (): CaughtPokemon | null => {
+    const loaded = detail();
+
+    // A catch belongs to exactly one player; one opened under
+    // someone else's list is a wrong address, not a peek
+    return loaded != null && loaded.owner === props.player ? loaded : null;
+  };
+
   /**
    * Evolutions are only offered to the owner: they depend on what
    * the signed-in player carries, and only they can act on them
@@ -225,6 +236,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    */
   const caps = (): InventoryEntry[] => (bag() ?? []).filter((entry) => isBottleCap(entry.item));
 
+  /**
+   * The berries in the bag that would do this pokemon some good: one
+   * that restores health it is missing, or cures the status it is
+   * carrying. A berry that would change nothing is not offered,
+   * because using it would spend it
+   */
+  const berries = (): InventoryEntry[] => {
+    const caught = view();
+
+    if (caught == null) {
+      return [];
+    }
+
+    const hurt = caught.health < getMaxHealth(caught);
+
+    return (bag() ?? []).filter((entry) => {
+      const cures = BERRY_STATUS_CURES.get(entry.item);
+
+      return (
+        (hurt && BERRY_HEALS.has(entry.item)) ||
+        (cures != null && caught.statuses.some((carried) => cures.has(carried)))
+      );
+    });
+  };
+
   const moveItem = (item: Items, give: boolean): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -243,6 +279,29 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         await refetch();
         await refetchBag();
         await refetchEvolutions();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const feed = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    feedBerry(catchId, item)
+      .then(async (state) => {
+        setStatus(
+          state == null
+            ? `${describeItem(item)} would do nothing for it.`
+            : `${describeItem(item)} eaten — ${state.health} HP left.`,
+        );
+        await refetch();
+        await refetchBag();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -383,14 +442,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
-  const view = (): CaughtPokemon | null => {
-    const loaded = detail();
-
-    // A catch belongs to exactly one player; one opened under
-    // someone else's list is a wrong address, not a peek
-    return loaded != null && loaded.owner === props.player ? loaded : null;
-  };
-
   return (
     <Dialog
       isOpen={props.catchId != null}
@@ -436,6 +487,24 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 <dl>
                   <dt>Level</dt>
                   <dd>{loaded().level}</dd>
+                  {/* What it walked out of its last fight with. An egg
+                      has fought nothing, but it still has a pool —
+                      the one the hatchling will have */}
+                  <dt>Health</dt>
+                  <dd>
+                    {loaded().health} / {getMaxHealth(loaded())}
+                    {isFainted(loaded()) ? ' · fainted' : ''}
+                  </dd>
+                  {/* A pokemon can carry several at once, so all of
+                      them are listed rather than the worst */}
+                  <Show when={loaded().statuses.length}>
+                    <dt>Status</dt>
+                    <dd>
+                      {loaded()
+                        .statuses.map((carried) => STATUS_NAMES[carried])
+                        .join(' · ')}
+                    </dd>
+                  </Show>
                   {/* Everything below this point is read off the
                       species, so an egg has none of it to show */}
                   <Show when={!loaded().egg}>
@@ -561,6 +630,41 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           </For>
                         </ul>
                       </Show>
+                    </Show>
+
+                    <h3>Berries</h3>
+                    {/* A fight leaves what it leaves, and nothing
+                        mends on its own: a berry is the quick way
+                        back, a level the slow one. Only berries that
+                        would actually do something are offered —
+                        using one spends it */}
+                    <Show
+                      when={berries().length}
+                      fallback={
+                        <p>
+                          {isFainted(loaded())
+                            ? 'It is down. A restoring berry brings it back; a level does too.'
+                            : 'Nothing in the bag would do it any good.'}
+                        </p>
+                      }
+                    >
+                      <ul>
+                        <For each={berries()}>
+                          {(entry) => (
+                            <li>
+                              <button
+                                type="button"
+                                disabled={fighting()}
+                                onClick={() => {
+                                  feed(entry.item);
+                                }}
+                              >
+                                Feed {describeItem(entry.item)} × {entry.amount}
+                              </button>
+                            </li>
+                          )}
+                        </For>
+                      </ul>
                     </Show>
 
                     <h3>Use item</h3>

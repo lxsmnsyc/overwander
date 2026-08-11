@@ -188,28 +188,41 @@ still `Unfinished` — an abandoned fight is not a result. Replaying a history
 entry rebuilds the battle from that seed and those snapshots, so it plays out
 identically and awards nothing.
 
-## `battleConsumptions/{battleId}:{uid}`
+## `battleAftermaths/{battleId}:{uid}`
 
-| Field    | Type     | Notes                  |
-| -------- | -------- | ---------------------- |
-| `player` | `string` | The uid billed         |
-| `battle` | `string` | The battle it paid for |
+| Field    | Type     | Notes                     |
+| -------- | -------- | ------------------------- |
+| `player` | `string` | The uid settled           |
+| `battle` | `string` | The battle it settled for |
 
-An item a unit spends in battle is spent for good: a berry eaten in a raid comes
-off the catch record when the fight ends, the way it does in the mainline games.
-Every removal during the battle is remembered on the unit (`Unit.consumed`), and
-`consumeHeldItems(battleId, consumed)` reports what the player's **own** party
-lost — the outcome is stamped once by whoever sees the fight settle, but the
-items come off per player, since nobody else's catches are theirs to empty.
+A battle costs a party three things, and all three stick: the items it spent,
+the health it lost and the statuses it walked out with. A berry eaten in a raid
+comes off the catch record the way it does in the mainline games, and a pokemon
+that finished the fight on two hit points starts the next one there — see
+[Health and status](catches.md#health-and-status).
 
-The server checks the report against the team snapshots it froze itself: an item
-that was not fielded by that catch cannot be stripped, and a catch that has
-changed hands since is left alone. The marker above bills each player once per
-battle, so a repeated report takes nothing further. It applies whichever way the
-fight went — a berry eaten against a boss that survived is still eaten — and a
-replay reports nothing at all.
+They are reported together because they are one fight: a Sitrus Berry gone and
+the health it restored describe the same moment. Every removal during the battle
+is remembered on the unit (`Unit.consumed`), the health and the carried status
+are read off it at the end, and `recordAftermath(battleId, aftermath)` reports
+the player's **own** party — the outcome is stamped once by whoever sees the
+fight settle, but the aftermath lands per player, since nobody else's catches
+are theirs to write.
 
-The bill is settled **before** the outcome is stamped: the catches are
+Every one of the player's units is reported, not only the ones that spent
+something: health is owed either way.
+
+What the server can check, it checks against the team snapshots it froze itself:
+an item that was not fielded by that catch cannot be stripped, a catch that has
+changed hands since is left alone, health is clamped to what the record can
+actually hold, and the statuses are kept to the ones a pokemon carries out of a
+fight, one of each. What it cannot check is the number itself — nothing replays a live
+battle — so health is trusted exactly as far as the outcome is. The marker above
+settles each player once per battle, so a repeated report changes nothing
+further. It applies whichever way the fight went — a berry eaten against a boss
+that survived is still eaten — and a replay reports nothing at all.
+
+The aftermath is written **before** the outcome is stamped: the catches are
 [locked](catches.md#catches-are-locked-while-they-fight) while the battle is
 live, and stamping the outcome is what frees
 them, so reporting afterwards would leave a window in which a berry could be

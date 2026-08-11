@@ -46,6 +46,39 @@ export function createStatsField(): StatsField {
   };
 }
 
+/**
+ * What a level, a base stat, an individual value and an effort value
+ * come to before the per-stat part of the formula. The three
+ * functions below are the whole of how a pokemon's numbers are
+ * derived, and they live here rather than in the battle because the
+ * overworld asks the same question: how much health a catch has when
+ * it is not fighting is the same figure the fight would give it
+ */
+function getSharedStat(level: number, base: number, iv: number, ev: number): number {
+  return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100);
+}
+
+/**
+ * A pokemon's maximum health
+ */
+export function getHealthStat(level: number, base: number, iv: number, ev: number): number {
+  // TODO make the pokemon's tankier?
+  return getSharedStat(level, base, iv, ev) + level + 10;
+}
+
+/**
+ * Any stat but health, with the nature's factor applied
+ */
+export function getOtherStat(
+  level: number,
+  base: number,
+  iv: number,
+  ev: number,
+  nature: number,
+): number {
+  return Math.floor((getSharedStat(level, base, iv, ev) + 5) * nature);
+}
+
 export const enum Stages {
   Attack = 0,
   Defense = 1,

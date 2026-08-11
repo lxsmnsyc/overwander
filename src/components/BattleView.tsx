@@ -2,14 +2,14 @@ import { type JSX, Show, createEffect, createSignal, from, onCleanup } from 'sol
 import {
   BattleOutcome,
   type BattleRecord,
-  consumeHeldItems,
   finishBattle,
   listBattleTeams,
+  recordAftermath,
   watchBattle,
 } from '../auth/battles';
 import { useAuth } from '../auth/context';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid } from '../auth/raids';
-import { type RaidBattle, collectConsumedItems, createRaidBattle } from '../overworld/raid';
+import { type RaidBattle, collectAftermath, createRaidBattle } from '../overworld/raid';
 import type Alliance from '../battle/alliance';
 import { createRocketBattle } from '../overworld/rocket';
 import BattleField from './BattleField';
@@ -190,16 +190,17 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     setRecorded(true);
     (async () => {
-      // What the party spent is spent whichever way the fight went: a
-      // berry eaten against a boss that survived is still eaten. Only
-      // this player's own catches are reported, and the bill is
-      // settled before the outcome is stamped — stamping it frees the
-      // party, and a freed pokemon can have its berry pulled back
+      // What the fight cost is owed whichever way it went: a berry
+      // eaten against a boss that survived is still eaten, and health
+      // it took off is still gone. Only this player's own catches are
+      // reported, and the aftermath is written before the outcome is
+      // stamped — stamping it frees the party, and a freed pokemon
+      // can have its berry pulled back
       if (built != null && user != null) {
-        const consumed = collectConsumedItems(built, user.uid);
+        const aftermath = collectAftermath(built, user.uid);
 
-        if (consumed.length > 0) {
-          await consumeHeldItems(props.active.id, consumed);
+        if (aftermath.length > 0) {
+          await recordAftermath(props.active.id, aftermath);
         }
       }
 

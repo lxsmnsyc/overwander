@@ -12,6 +12,7 @@ import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot'
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import { asCaughtPokemon } from '../auth/caught-record';
+import { isFainted } from '../auth/health';
 
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
@@ -374,9 +375,13 @@ export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<
 /**
  * Bring a party into a lobby. The catch ids are checked against their
  * owners, so a party cannot field pokemon the player does not own, no
- * catch can be listed twice, and none of them may already be fighting
- * or waiting in another lobby. Resolves the team id, or null when the
- * party is not a legal one or the raid has started
+ * catch can be listed twice, none of them may already be fighting or
+ * waiting in another lobby, and none of them may be fainted.
+ *
+ * The freeze at the start of the fight would drop a fainted pokemon
+ * anyway; refusing here is so a player finds out while they can still
+ * do something about it. Resolves the team id, or null when the party
+ * is not a legal one or the raid has started
  */
 export async function joinRaid(
   uid: string,
@@ -406,6 +411,11 @@ export async function joinRaid(
   if (isAnyCatchLocked(owned.map((entry) => docData(entry)))) {
     return null;
   }
+  // Nor one that is down. Nothing revives on its own, so it is a
+  // berry or a level before that pokemon fights again
+  if (owned.some((entry) => isFainted(asCaughtPokemon(docData(entry))))) {
+    return null;
+  }
   // Nor one already waiting in another lobby, or in this one: a party
   // that queues the same pokemon twice would have it dropped from
   // whichever raid started second, without ever being told
@@ -426,7 +436,7 @@ export async function joinRaid(
 
 /**
  * Freeze one team for the battle, dropping catches that have vanished,
- * changed hands or are already fighting somewhere else, and lock what
+ * changed hands, fainted or are already fighting somewhere else, and lock what
  * it fields into that battle. The
  * freeze and the lock share a transaction, so an item cannot be
  * handed back in the moment between them — the snapshot the fight
@@ -463,8 +473,14 @@ export async function publishTeamSnapshot(
       // twice: a player may sit in two lobbies with the same party,
       // and the first raid to start is the one that gets it. An egg
       // is left behind for good — there is nothing in it to fight
-      // with until it hatches
-      if (data?.owner === player && !isCatchLocked(data) && !isEggRecord(data)) {
+      // with until it hatches — and so is a pokemon that is down,
+      // which has to be healed before it fights again
+      if (
+        data?.owner === player &&
+        !isCatchLocked(data) &&
+        !isEggRecord(data) &&
+        !isFainted(asCaughtPokemon(data))
+      ) {
         fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
         locking.push(refs[at]);
       }

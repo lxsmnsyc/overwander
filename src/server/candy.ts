@@ -1,6 +1,8 @@
 import 'server-only';
 import { CANDY_COLLECTION, CAUGHT_COLLECTION, candyStackId } from '../auth/collections';
 import getCandyCost, { CANDY_PER_CATCH, SPECIES_DAY_CANDY_BOOST } from '../auth/candy-rules';
+import { asCaughtPokemon } from '../auth/caught-record';
+import { getMaxHealth } from '../auth/health';
 import { MAX_LEVEL } from '../data/constants/levels';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
@@ -63,9 +65,16 @@ export async function grantCatchCandy(
 /**
  * Spend candies to raise a catch of the same family by a level. The
  * candy and the level move in one transaction, so a candy can never
- * be spent without the level landing. Resolves the new level, or null
- * when the feeding is refused: the catch is not the player's, the
- * stack cannot cover the cost, or the catch already sits at MAX_LEVEL
+ * be spent without the level landing.
+ *
+ * Growing is also mending: the level comes with full health and a
+ * clean slate, which is what a candy is for beyond the number. It is
+ * the slow way to put a party right — a berry is the quick one — and
+ * it is the only thing that lifts a fainted pokemon without an item.
+ *
+ * Resolves the new level, or null when the feeding is refused: the
+ * catch is not the player's, the stack cannot cover the cost, or the
+ * catch already sits at MAX_LEVEL
  */
 export async function useCandy(uid: string, catchId: string): Promise<number | null> {
   const db = getAdminFirestore();
@@ -97,10 +106,16 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
       return null;
     }
 
-    const level = asNumber(caught.level) + 1;
+    const record = asCaughtPokemon(caught);
+    const level = record.level + 1;
 
     transaction.set(stackRef, { user: uid, family, count: count - cost });
-    transaction.update(caughtRef, { level });
+    transaction.update(caughtRef, {
+      level,
+      // A level restores what the last fight took, status and all
+      health: getMaxHealth({ ...record, level }),
+      statuses: [],
+    });
     return level;
   });
 }

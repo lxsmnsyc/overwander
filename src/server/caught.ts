@@ -8,6 +8,7 @@ import {
   inventoryEntryId,
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
+import { getMaxHealth } from '../auth/health';
 import Abilities from '../data/ids/abilities';
 import type { Balls, Items } from '../data/ids/items';
 import { ItemFlags } from '../data/ids/items';
@@ -108,6 +109,15 @@ export async function recordCatch(
     history: [{ owner: uid, acquiredAt: caughtAt }],
     // A fresh catch has fought nothing
     ...freeFields(),
+    // ...so it arrives whole, whatever the throw took out of it: an
+    // encounter is not a battle, and nothing in one carries over
+    health: getMaxHealth({
+      species: encounter.species,
+      level: encounter.level,
+      ivs: encounter.ivs,
+      effortValues: zeroEffortValues(),
+    }),
+    statuses: [],
     // Something met in the world arrives already out of its shell,
     // so it has nowhere to be walked to
     egg: false,

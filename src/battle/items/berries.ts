@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
-import { Statuses } from '../../data/ids/status';
+import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../data/items/berries';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
@@ -12,38 +12,15 @@ import type Unit from '../unit';
  * enemy Unnerve) keeps the berry for later.
  */
 
-const STATUS_CURE_BERRIES: { [key in Items]?: Set<Statuses> } = {
-  [Items.CheriBerry]: new Set([Statuses.Paralyzed]),
-  [Items.ChestoBerry]: new Set([Statuses.Sleeping]),
-  [Items.PechaBerry]: new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]),
-  [Items.RawstBerry]: new Set([Statuses.Burned]),
-  [Items.AspearBerry]: new Set([Statuses.Frozen]),
-  [Items.PersimBerry]: new Set([Statuses.Confused]),
-  [Items.LumBerry]: new Set([
-    Statuses.Paralyzed,
-    Statuses.Sleeping,
-    Statuses.Poisoned,
-    Statuses.BadlyPoisoned,
-    Statuses.Burned,
-    Statuses.Frozen,
-    Statuses.Confused,
-  ]),
-};
-
-interface HealBerryConfig {
-  /**
-   * Fraction of max health at (or below) which the berry triggers;
-   * the base value of the CheckUnitItemThreshold event (abilities
-   * like Gluttony adjust it there)
-   */
-  threshold: number;
-  heal: (maxHealth: number) => number;
-}
-
-const HEAL_BERRIES: { [key in Items]?: HealBerryConfig } = {
-  [Items.OranBerry]: { threshold: 0.5, heal: () => 10 },
-  [Items.SitrusBerry]: { threshold: 0.5, heal: (max) => max / 4 },
-};
+/**
+ * What a berry cures and what it restores is the berry's own
+ * business, written once in
+ * [`src/data/items/berries.ts`](../../data/items/berries.ts) and read
+ * here as well as by the player handing one over between fights. The
+ * threshold in a heal is a battle rule: it is what the
+ * CheckUnitItemThreshold event opens with, and abilities like
+ * Gluttony adjust it there
+ */
 
 export default function setupBerries(battle: Battle): void {
   function eat(unit: Unit, item: Items): EffectCause | undefined {
@@ -82,7 +59,7 @@ export default function setupBerries(battle: Battle): void {
   // covered status lands
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     for (const item of heldBerries(event.source)) {
-      if (STATUS_CURE_BERRIES[item]?.has(event.status) && eat(event.source, item)) {
+      if (BERRY_STATUS_CURES.get(item)?.has(event.status) === true && eat(event.source, item)) {
         return;
       }
     }
@@ -100,7 +77,7 @@ export default function setupBerries(battle: Battle): void {
     const maxHealth = unit.checkStat(Stats.HP, 0);
 
     for (const item of heldBerries(unit)) {
-      const config = HEAL_BERRIES[item];
+      const config = BERRY_HEALS.get(item);
 
       if (
         config != null &&
@@ -115,7 +92,7 @@ export default function setupBerries(battle: Battle): void {
   // Effect: the cure rides the trigger, clearing every covered
   // status the unit currently has
   battle.on(BattleEvents.UnitTriggerItem, EventPriority.Exact, (event) => {
-    const cures = STATUS_CURE_BERRIES[event.item];
+    const cures = BERRY_STATUS_CURES.get(event.item);
 
     if (cures) {
       const cause = { type: EffectType.Item, item: event.item, unit: event.source } as const;
@@ -130,7 +107,7 @@ export default function setupBerries(battle: Battle): void {
 
   // Effect: the heal rides the trigger
   battle.on(BattleEvents.UnitTriggerItem, EventPriority.Exact, (event) => {
-    const config = HEAL_BERRIES[event.item];
+    const config = BERRY_HEALS.get(event.item);
 
     if (config) {
       const maxHealth = event.source.checkStat(Stats.HP, 0);

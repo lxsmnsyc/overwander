@@ -2,6 +2,7 @@ import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
 import { EGG_HATCH_STEPS, EGG_LEVEL, creditableSteps, stepsRemaining } from '../auth/egg';
+import { getMaxHealth } from '../auth/health';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import type { Stats } from '../data/constants/stats';
@@ -118,6 +119,16 @@ async function writeEgg(
     items: [],
     history: [{ owner: uid, acquiredAt: foundAt }],
     ...freeFields(),
+    // Whole and clean: nothing has fought with it, and an egg cannot
+    // be fought with. The figure is what the hatchling will have,
+    // since an egg is already the pokemon inside it
+    health: getMaxHealth({
+      species: fields.species,
+      level: EGG_LEVEL,
+      ivs: fields.ivs,
+      effortValues: zeroEffortValues(),
+    }),
+    statuses: [],
     egg: true,
     steps: 0,
     // Frozen here, so a later change to what hatching costs cannot

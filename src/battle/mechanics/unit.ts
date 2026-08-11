@@ -1,5 +1,12 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats, StatsKind, createStagesField, getStageFromStat } from '../../data/constants/stats';
+import {
+  Stats,
+  StatsKind,
+  createStagesField,
+  getHealthStat,
+  getOtherStat,
+  getStageFromStat,
+} from '../../data/constants/stats';
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
@@ -102,25 +109,6 @@ function setupUnitDamageMechanics(battle: Battle): void {
   });
 }
 
-function checkSharedStat(level: number, base: number, iv: number, ev: number): number {
-  return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * level) / 100);
-}
-
-function checkHPStat(level: number, base: number, iv: number, ev: number): number {
-  // TODO make the pokemon's tankier?
-  return checkSharedStat(level, base, iv, ev) + level + 10;
-}
-
-function checkOtherStat(
-  level: number,
-  base: number,
-  iv: number,
-  ev: number,
-  nature: number,
-): number {
-  return Math.floor((checkSharedStat(level, base, iv, ev) + 5) * nature);
-}
-
 function setupUnitStatMechancis(battle: Battle): void {
   battle.on(BattleEvents.UnitSetLevel, EventPriority.Exact, (event) => {
     event.source.level = event.value;
@@ -143,14 +131,14 @@ function setupUnitStatMechancis(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, (event) => {
     // TODO apply level formula
     if (event.stat === Stats.HP) {
-      event.value = checkHPStat(
+      event.value = getHealthStat(
         event.source.level,
         event.source.stats[StatsKind.Base][event.stat],
         event.source.stats[StatsKind.Individual][event.stat],
         event.source.stats[StatsKind.Effort][event.stat],
       );
     } else {
-      event.value = checkOtherStat(
+      event.value = getOtherStat(
         event.source.level,
         event.source.stats[StatsKind.Base][event.stat],
         event.source.stats[StatsKind.Individual][event.stat],

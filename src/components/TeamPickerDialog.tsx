@@ -3,6 +3,7 @@ import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
+import { getMaxHealth, isFainted } from '../auth/health';
 import { TEAM_SIZE } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 
@@ -30,12 +31,14 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
     async (player) => {
       const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
 
-      // An egg cannot be brought: it is shown, greyed, rather than
-      // hidden, so a player counting their six knows where it went
+      // An egg cannot be brought, and neither can a pokemon that is
+      // down: both are shown, greyed, rather than hidden, so a player
+      // counting their six knows where it went
       return owned.map(([id, caught]) => ({
         id,
         caught,
-        held: caught.egg || isLockLive(caught, now),
+        fainted: !caught.egg && isFainted(caught),
+        held: caught.egg || isFainted(caught) || isLockLive(caught, now),
         egg: caught.egg,
       }));
     },
@@ -92,11 +95,19 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
                       {entry.egg
                         ? 'Egg'
                         : `${getSpeciesData(entry.caught.species).name} · Lv. ${entry.caught.level}`}
+                      {/* What each of them is carrying out of the last
+                          fight, so a party is picked on its state
+                          rather than on its levels alone */}
+                      {entry.egg
+                        ? ''
+                        : ` · ${entry.caught.health}/${getMaxHealth(entry.caught)} HP`}
                       {/* One pokemon, one battle: it comes back when
                           the raid it is in ends. An egg never comes
-                          back, because it was never able to go */}
+                          back, because it was never able to go, and a
+                          fainted one waits for a berry or a level */}
                       {entry.egg ? ' · not hatched' : ''}
-                      {!entry.egg && entry.held ? ' · in a raid' : ''}
+                      {entry.fainted ? ' · fainted' : ''}
+                      {!entry.egg && !entry.fainted && entry.held ? ' · in a raid' : ''}
                     </button>
                   </li>
                 )}

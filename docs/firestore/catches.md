@@ -32,6 +32,8 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any       |
 | `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found        |
 | `steppedAt`            | `number`                | Server instant steps were last credited at                |
+| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived         |
+| `statuses`             | `Statuses[]`            | Non-volatile statuses carried out of the last battle      |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
 | `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
@@ -43,7 +45,7 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
 
-`species`, `level` and `ivs` are the mutable fields: `useCandy` raises the level,
+`species`, `level`, `ivs`, `health` and `statuses` are the mutable fields: `useCandy` raises the level,
 `evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps the
 species, and a bottle cap polishes the values (see [Bottle
 caps](#bottle-caps)). An evolution that uses an item decrements
@@ -70,6 +72,66 @@ between them. Only items flagged `Holdable` can be handed over, and a catch
 holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
 This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
 of every encounter its owner starts.
+
+## Health and status
+
+A battle leaves a party where it left it. A pokemon walks out of a raid at
+whatever health it had when the boss fell, still burned if it was burned, and
+walks into the next fight that way — which is what makes a party something a
+player looks after rather than a row of levels. The report that writes it is
+[`battleAftermaths`](raids.md#battleaftermathsbattleiduid); the rules both sides
+read are in [`src/auth/health.ts`](../../src/auth/health.ts).
+
+**Maximum health is derived, never stored.** It comes from the same formula the
+battle fights on (`getHealthStat` in
+[`src/data/constants/stats.ts`](../../src/data/constants/stats.ts)), so it follows
+a level, an evolution or a polished value on its own. Only the current figure is
+a field.
+
+**When the maximum moves, the share moves with it.** A pokemon at 50 of 100
+comes out of an evolution at 60 of 120, and out of a bottle cap the same way.
+Two edges are deliberate: a pokemon that was down stays down — an evolution is
+not a revival — and one that was up never falls to zero on a rounding step.
+
+The same rescaling happens **into** a battle. An ability can change what a
+unit's pool is worth — a `Boss` carries a raid-sized one — and the record it was
+copied from knows nothing about that, so the stored health is read against the
+stored maximum and applied against the pool the unit actually fights with. A
+boss at full takes the field at full rather than at a tenth of itself, and a
+half-hurt pokemon stays half hurt whatever its pool turns out to be.
+
+**Only non-volatile statuses survive, and all of them do.** Poison, bad poison,
+sleep, paralysis, a burn and ice are carried out; confusion, flinching, a
+substitute and the field's own effects end with the battle. A unit can hold
+several at once — poisoned and asleep is an ordinary way to come out of a raid —
+so the record keeps the whole list, and a berry clears everything it covers
+rather than the first thing it finds. Stored statuses are applied to the unit
+when it is fielded, through the ordinary path — so an immunity refuses one, and
+a held Rawst Berry eats itself to cure the burn before the first turn.
+
+**A fainted pokemon cannot fight.** `joinRaid` refuses a party holding one, and
+`publishTeamSnapshot` drops one from the freeze; a team that fields nothing is
+no team, so a party of fainted pokemon cannot start a battle at all.
+
+Three things put a pokemon right:
+
+- **A berry**, through `feedBerry` — the quick way. What each one restores or
+  cures is the berry's own table in
+  [`src/data/items/berries.ts`](../../src/data/items/berries.ts), shared with the
+  battle, so an Oran Berry is worth ten points on either side of a fight. The
+  battle's threshold is a battle rule only: out of one, the player decides when
+  it is worth it. A berry that would change nothing — the wrong cure, a pokemon
+  already whole, a Leppa or a Persim, whose effects nothing stores — is refused
+  rather than spent.
+- **A level**, through `useCandy` — the slow way. Growing is also mending: a
+  level comes with full health and a clean slate.
+- Nothing else. There are no revives, which is why a **restoring berry works on
+  a pokemon that is down**: it is the way back up rather than a dead end.
+
+A record written before these fields existed has neither, and reading a missing
+`health` as zero would faint every pokemon caught until now. Missing means
+whole: `asCaughtPokemon` derives the maximum for those records, which is what
+they meant.
 
 ## Bottle caps
 

@@ -21,6 +21,11 @@ import {
   registerSpecies,
 } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
+import { BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
+import { EffectType } from '../../src/battle/events';
+import { getMaxHealth } from '../../src/auth/health';
+import { Stats } from '../../src/data/constants/stats';
+import { Statuses } from '../../src/data/ids/status';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
 import { neighborCells } from '../../src/overworld/chunk';
@@ -40,7 +45,7 @@ import {
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
-  collectConsumedItems,
+  collectAftermath,
   createRaidBattle,
   createRaidBossSnapshot,
 } from '../../src/overworld/raid';
@@ -400,7 +405,45 @@ describe('world', () => {
     expect(boss.weight).toBe(deriveSize(Species.Articuno, 0x12345678).weight);
   });
 
-  it('reports only the reporting player’s own spent items', () => {
+  it('fields a party at the share of health its records kept', () => {
+    const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+    const whole = { ...boss, caught: 'catch-a', abilities: [] };
+    const { battle, units } = createRaidBattle('raid-health-seed', [
+      { player: '', alliance: BOSS_ALLIANCE, catches: [boss] },
+      {
+        player: 'trainer-uid',
+        alliance: PLAYER_ALLIANCE,
+        catches: [
+          whole,
+          // Half hurt, out of some earlier fight
+          { ...whole, caught: 'catch-b', health: Math.floor(getMaxHealth(whole) / 2) },
+        ],
+      },
+    ]);
+
+    battle.initialize();
+
+    const party = units.get(PLAYER_ALLIANCE) ?? [];
+    const bossUnits = units.get(BOSS_ALLIANCE) ?? [];
+
+    // An ordinary pokemon fights on the pool its record describes, so
+    // the stored figure travels unchanged
+    expect(party[0].health).toBe(party[0].checkStat(Stats.HP, 0));
+    expect(party[0].checkStat(Stats.HP, 0)).toBe(getMaxHealth(whole));
+    expect(party[1].health).toBe(Math.floor(getMaxHealth(whole) / 2));
+
+    // A Boss carries a raid-sized pool its record knows nothing
+    // about, so the stored figure is read as a share and applied to
+    // the pool it actually fights with — a boss at full is at full,
+    // not at a tenth of itself
+    const pool = bossUnits[0].checkStat(Stats.HP, 0);
+
+    expect(pool).toBeGreaterThan(BOSS_BASE_HEALTH);
+    expect(pool).toBeGreaterThan(getMaxHealth(boss) * 2);
+    expect(bossUnits[0].health).toBe(pool);
+  });
+
+  it('reports only the reporting player’s own party, health and all', () => {
     const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
     const built = createRaidBattle('raid-consumption-seed', [
       { player: '', alliance: BOSS_ALLIANCE, catches: [boss] },
@@ -430,14 +473,32 @@ describe('world', () => {
     party[2].consumed.add(Items.OranBerry);
     bossUnits[0].consumed.add(Items.SitrusBerry);
 
-    expect(collectConsumedItems(built, 'trainer-uid')).toEqual([
-      { caught: 'catch-a', items: [Items.CheriBerry] },
+    // One of them walks out hurt, burned and poisoned — a unit can
+    // be several things at once — the other untouched
+    party[1].setHealth(12);
+    party[1].addStatus(Statuses.Burned, { type: EffectType.None });
+    party[1].addStatus(Statuses.Poisoned, { type: EffectType.None });
+    // Confusion ends with the battle, so it is never carried out
+    party[0].addStatus(Statuses.Confused, { type: EffectType.None });
+
+    const reported = collectAftermath(built, 'trainer-uid');
+
+    // Every one of the player's own catches is reported, spent or
+    // not: health is owed either way
+    expect(reported).toEqual([
+      { caught: 'catch-a', items: [Items.CheriBerry], health: party[0].health, statuses: [] },
+      {
+        caught: 'catch-b',
+        items: [],
+        health: 12,
+        statuses: [Statuses.Poisoned, Statuses.Burned],
+      },
     ]);
-    expect(collectConsumedItems(built, 'other-uid')).toEqual([
-      { caught: 'catch-c', items: [Items.OranBerry] },
+    expect(collectAftermath(built, 'other-uid')).toEqual([
+      { caught: 'catch-c', items: [Items.OranBerry], health: party[2].health, statuses: [] },
     ]);
-    // The boss stands for no record, so nothing it spends is billed
-    expect(collectConsumedItems(built, '')).toEqual([]);
+    // The boss stands for no record, so nothing it did is written
+    expect(collectAftermath(built, '')).toEqual([]);
   });
 
   it('stands a Team Rocket grunt on one band of each rarity', () => {

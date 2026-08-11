@@ -1,9 +1,11 @@
 import type { CatchSnapshot } from '../auth/catch-snapshot';
-import type ConsumedItems from '../auth/consumed-items';
+import { NON_VOLATILE_STATUSES, getMaxHealth, rescaleHealth } from '../auth/health';
+import type BattleAftermath from '../auth/battle-aftermath';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
+import { EffectType } from '../battle/events';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
@@ -11,6 +13,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import { Stats, StatsKind } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Species } from '../data/ids/species';
+import type { Statuses } from '../data/ids/status';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -133,6 +136,15 @@ export function createRaidBossSnapshot(
       ? [Abilities.Boss, Abilities.Shadow, deriveAbility(species, traitValue)]
       : [Abilities.Boss, deriveAbility(species, traitValue)],
     items: [],
+    // A boss stands for no record either, and every lobby faces it at
+    // full strength
+    health: getMaxHealth({
+      species,
+      level: RAID_BOSS_LEVEL,
+      ivs: perfectIVs(),
+      effortValues: zeroEffortValues(),
+    }),
+    statuses: [],
   };
 }
 
@@ -167,7 +179,27 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   for (const item of snapshot.items) {
     unit.addItem(item);
   }
-  unit.setHealth(unit.checkStat(Stats.HP, 0));
+  // The unit walks in as the record left it: the share of health it
+  // kept out of its last fight, and the statuses it did not shake off.
+  //
+  // The share, not the number. An ability can change what a unit's
+  // pool is worth — a Boss carries a raid-sized one — and the record
+  // it was copied from knows nothing about that, so the stored health
+  // is read against the stored maximum and applied against the one
+  // the unit actually fights with. A boss at full comes out at full;
+  // a half-hurt pokemon that turns out to have a bigger pool here is
+  // still half hurt
+  unit.setHealth(
+    rescaleHealth(snapshot.health, getMaxHealth(snapshot), unit.checkStat(Stats.HP, 0)),
+  );
+
+  // The cause is nothing in particular — the burn came from a battle
+  // that is over. Adding them through the ordinary path is deliberate:
+  // an immunity refuses one, and a held berry eats itself to cure it
+  // before the first turn, both of which are the right answers
+  for (const status of snapshot.statuses) {
+    unit.addStatus(status, { type: EffectType.None });
+  }
 
   return unit;
 }
@@ -249,23 +281,45 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
 }
 
 /**
- * What one player's party spent during the battle, catch by catch. A
- * unit standing for no record is skipped, and so is every unit
- * belonging to somebody else: a player reports their own losses, never
- * a teammate's
+ * What the battle did to one player's party, catch by catch: the
+ * items it spent, the health it has left and the status it is still
+ * carrying.
+ *
+ * Every one of the player's units is reported, not only the ones that
+ * lost something — a pokemon that ate nothing still walks out of the
+ * fight at whatever health it has. A unit standing for no record is
+ * skipped, and so is every unit belonging to somebody else: a player
+ * reports their own party, never a teammate's
  */
-export function collectConsumedItems(built: RaidBattle, player: string): ConsumedItems[] {
-  const spent: ConsumedItems[] = [];
+export function collectAftermath(built: RaidBattle, player: string): BattleAftermath[] {
+  const report: BattleAftermath[] = [];
 
   for (const fielded of built.units.values()) {
     for (const unit of fielded) {
-      if (unit.caught !== '' && unit.team.player === player && unit.consumed.size > 0) {
-        spent.push({ caught: unit.caught, items: [...unit.consumed] });
+      if (unit.caught === '' || unit.team.player !== player) {
+        continue;
       }
+      report.push({
+        caught: unit.caught,
+        items: [...unit.consumed],
+        health: Math.max(0, Math.floor(unit.health)),
+        statuses: carriedStatuses(unit),
+      });
     }
   }
 
-  return spent;
+  return report;
+}
+
+/**
+ * The statuses the unit carries out of the fight. A unit can hold
+ * several at once — poisoned and asleep is an ordinary way to come
+ * out of a raid — so all of them travel, in the order the list names
+ * them. Everything volatile (confusion, a substitute, the field's own
+ * effects) ends with the battle
+ */
+function carriedStatuses(unit: Unit): Statuses[] {
+  return NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null);
 }
 
 /**

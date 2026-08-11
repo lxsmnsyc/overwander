@@ -15,10 +15,10 @@ import { asNumber, asString, asStringArray } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
 import { requireUid } from '../server/firebase';
 import BattleOutcome from './battle-outcome';
-import consumeOnServer from '../server/battles';
+import recordOnServer from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import { BATTLE_COLLECTION } from './collections';
-import type ConsumedItems from './consumed-items';
+import type BattleAftermath from './battle-aftermath';
 
 import getIdToken from './session';
 import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
@@ -147,26 +147,29 @@ async function finishBattleOnServer(
 }
 
 /**
- * Report what the player's party spent in the battle, so a berry
- * eaten in a raid is gone from the catch record afterwards. Each
- * fighter reports their own party — the outcome is stamped once by
- * whoever sees the fight settle, but the items come off per player,
- * since nobody else's catches are theirs to empty.
+ * Report what the battle did to the player's party: the items it
+ * spent, the health it has left and the status it is still carrying.
+ * A berry eaten in a raid is gone from the catch record afterwards,
+ * and a pokemon that came out on two hit points stays on two.
+ *
+ * Each fighter reports their own party — the outcome is stamped once
+ * by whoever sees the fight settle, but the aftermath lands per
+ * player, since nobody else's catches are theirs to write.
  *
  * The server checks the report against the team snapshots it froze
- * itself, and bills each player once per battle
+ * itself, and settles each player once per battle
  */
-export async function consumeHeldItems(id: string, consumed: ConsumedItems[]): Promise<boolean> {
-  return consumeHeldItemsOnServer(await getIdToken(), id, consumed);
+export async function recordAftermath(id: string, aftermath: BattleAftermath[]): Promise<boolean> {
+  return recordAftermathOnServer(await getIdToken(), id, aftermath);
 }
 
-async function consumeHeldItemsOnServer(
+async function recordAftermathOnServer(
   token: string,
   id: string,
-  consumed: ConsumedItems[],
+  aftermath: BattleAftermath[],
 ): Promise<boolean> {
   'use server';
-  return consumeOnServer(await requireUid(token), id, consumed);
+  return recordOnServer(await requireUid(token), id, aftermath);
 }
 
 /**

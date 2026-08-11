@@ -4,6 +4,7 @@ import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../au
 import AleaRNG from '../core/alea';
 import type { Stats } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
+import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
 import { isEggRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
@@ -68,8 +69,9 @@ export default async function useBottleCap(
 
     // Seeded by the catch, the cap and the instant, so the same cap
     // used twice on the same pokemon picks its own stat each time
+    const record = asCaughtPokemon(caught);
     const rng = new AleaRNG(`${uid}:${catchId}:${item}:${now}`);
-    const polished = polishIVs(asCaughtPokemon(caught).ivs, polishes, () => rng.random());
+    const polished = polishIVs(record.ivs, polishes, () => rng.random());
 
     // Nothing left to polish, so nothing is spent
     if (polished == null) {
@@ -81,7 +83,16 @@ export default async function useBottleCap(
     // encounter was staged from and stays the record of it — the
     // stored stats are what every reader uses, which is what lets a
     // bred egg and a capped pokemon differ from their own roll
-    transaction.update(caughtRef, { ivs: polished });
+    transaction.update(caughtRef, {
+      ivs: polished,
+      // A polished health value is a bigger pool, and the share of it
+      // the pokemon was carrying is what it keeps
+      health: rescaleHealth(
+        record.health,
+        getMaxHealth(record),
+        getMaxHealth({ ...record, ivs: polished }),
+      ),
+    });
     return polished;
   });
 }

@@ -1,5 +1,7 @@
 import 'server-only';
+import { asCaughtPokemon } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
@@ -83,7 +85,19 @@ export default async function evolveCatch(
         amount: stock - 1,
       });
     }
-    transaction.update(caughtRef, { species: into });
+    // An evolution is a bigger pokemon, not a healed one: the share
+    // of health it had is what it keeps, so a Charmander at half
+    // stays a Charmeleon at half
+    const record = asCaughtPokemon(caught);
+
+    transaction.update(caughtRef, {
+      species: into,
+      health: rescaleHealth(
+        record.health,
+        getMaxHealth(record),
+        getMaxHealth({ ...record, species: into }),
+      ),
+    });
     return into;
   });
 }

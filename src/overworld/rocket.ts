@@ -1,4 +1,5 @@
 import type { CatchSnapshot } from '../auth/catch-snapshot';
+import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
@@ -95,6 +96,15 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
     moves: grunt.moves,
     abilities: [grunt.ability, Abilities.Shadow],
     items: [],
+    // A grunt's pokemon has no record to have been hurt on: it is
+    // made for this fight and arrives whole
+    health: getMaxHealth({
+      species: grunt.species,
+      level: grunt.level,
+      ivs: grunt.ivs,
+      effortValues: zeroEffortValues(),
+    }),
+    statuses: [],
   };
 }
 

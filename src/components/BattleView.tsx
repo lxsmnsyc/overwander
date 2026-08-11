@@ -12,6 +12,7 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid } from '../auth/raids';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../overworld/raid';
 import type Alliance from '../battle/alliance';
 import { createRocketBattle } from '../overworld/rocket';
+import BattleCanvas from './BattleCanvas';
 import BattleField from './BattleField';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
 
@@ -232,7 +233,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
       <Show when={instance()} fallback={<p>Building the battle…</p>}>
         {(built) => (
-          <BattleField battle={built().battle} label={(alliance) => sideOf(built(), alliance)} />
+          <>
+            {/* The field at a glance — who is up, what is coming —
+                over the readout that says the rest of it */}
+            <BattleCanvas battle={built().battle} player={auth.user()?.uid ?? ''} />
+            <BattleField battle={built().battle} label={(alliance) => sideOf(built(), alliance)} />
+          </>
         )}
       </Show>
 

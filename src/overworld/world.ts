@@ -1,5 +1,6 @@
 import AleaRNG from '../core/alea';
 import PerlinNoise from '../core/perlin';
+import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
 import Chunk from './chunk';
 
@@ -66,10 +67,23 @@ export function clampToWorld(value: number): number {
  * elevation, temperature) is part of the world format — reordering
  * it reshapes every world
  */
+/**
+ * How many sampled chunks are remembered before the lot is dropped. A
+ * map view is sixteen thousand of them, so this is a good many views'
+ * worth
+ */
+const BIOME_CACHE_LIMIT = 1 << 20;
+
 export default class World {
   readonly humidity: PerlinNoise;
   readonly elevation: PerlinNoise;
   readonly temperature: PerlinNoise;
+  /**
+   * Chunk coordinates to the biome their climate classified as. A
+   * biome is a pure function of the seed and the coordinates, so a
+   * remembered one can never go stale
+   */
+  private readonly biomes = new Map<number, Biome>();
 
   constructor(public seed: string) {
     const rng = new AleaRNG(seed);
@@ -89,19 +103,49 @@ export default class World {
    * hand-written server call, say — cannot generate ground that does
    * not exist
    */
-  getChunk(chunkX: number, chunkY: number): Chunk {
+  /**
+   * What a chunk's climate classifies as, without building the chunk.
+   *
+   * The map draws tens of thousands of these at once and wants nothing
+   * else about any of them; going through `getChunk` would allocate a
+   * chunk and a seed string per pixel of it.
+   *
+   * The answers are kept. Three noise samples is not much on its own,
+   * but a map view is sixteen thousand chunks and panning it by one
+   * asks for all of them again — of which all but a row are the ones
+   * it just had. The cache is dropped whole when it grows past
+   * `BIOME_CACHE_LIMIT` rather than evicting cleverly: a player who
+   * has looked at a million chunks has moved on from the first of them
+   */
+  getChunkBiome(chunkX: number, chunkY: number): Biome {
     const x = clampToWorld(chunkX);
     const y = clampToWorld(chunkY);
+    const key = (x - WORLD_MIN) * WORLD_SIZE + (y - WORLD_MIN);
+    const known = this.biomes.get(key);
+
+    if (known != null) {
+      return known;
+    }
 
     const sampleX = (x + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
     const sampleY = (y + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
-
     const biome = getBiome(
       spreadNoise(this.humidity.noise(sampleX, sampleY)),
       spreadNoise(this.temperature.noise(sampleX, sampleY)),
       spreadNoise(this.elevation.noise(sampleX, sampleY)),
     );
 
-    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, biome);
+    if (this.biomes.size >= BIOME_CACHE_LIMIT) {
+      this.biomes.clear();
+    }
+    this.biomes.set(key, biome);
+    return biome;
+  }
+
+  getChunk(chunkX: number, chunkY: number): Chunk {
+    const x = clampToWorld(chunkX);
+    const y = clampToWorld(chunkY);
+
+    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, this.getChunkBiome(x, y));
   }
 }

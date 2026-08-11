@@ -51,6 +51,14 @@ export interface GameState {
   tab: Accessor<GameTab>;
   setTab: Setter<GameTab>;
   /**
+   * Which chunk the player is standing in. The game stores no
+   * position — walking is a client-side signal in the Overworld tab —
+   * but the world map needs somewhere to point its camera, so where
+   * they are is published here rather than guessed at
+   */
+  chunk: Accessor<[x: number, y: number]>;
+  setChunk: Setter<[x: number, y: number]>;
+  /**
    * The raid lobby the player is in, shown inside the Raids tab
    */
   raid: Accessor<string | null>;
@@ -84,13 +92,14 @@ export function useGame(): GameState {
  */
 export default function GameProvider(props: ParentProps): JSX.Element {
   const [tab, setTab] = createSignal(GameTab.Profile);
+  const [chunk, setChunk] = createSignal<[number, number]>([0, 0]);
   const [raid, setRaid] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
 
   return (
     <GameContext.Provider
-      value={{ tab, setTab, raid, setRaid, battle, setBattle, reward, setReward }}
+      value={{ tab, setTab, chunk, setChunk, raid, setRaid, battle, setBattle, reward, setReward }}
     >
       {props.children}
     </GameContext.Provider>

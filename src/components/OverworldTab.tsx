@@ -60,6 +60,7 @@ import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
 import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
+import ChunkCanvas from './ChunkCanvas';
 import NpcDialog from './NpcDialog';
 import RaidDialog from './RaidDialog';
 import RocketStopDialog from './RocketStopDialog';
@@ -206,6 +207,14 @@ export default function OverworldTab(): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
+
+  // Where the player is walking is theirs alone — the game stores no
+  // position — but the world map needs a place to point its camera, so
+  // it is published as they move
+  createEffect(() => {
+    game.setChunk([chunkX(), chunkY()]);
+  });
+
   /**
    * Whether an interaction is in flight, so a second click on the
    * same cell does not open the same thing twice
@@ -627,45 +636,6 @@ export default function OverworldTab(): JSX.Element {
       });
   };
 
-  const contentOf = (index: number): string => {
-    const loaded = view();
-
-    if (index === cell()) {
-      return '@';
-    }
-    if (loaded == null) {
-      return '';
-    }
-    if (loaded.spawns.has(index)) {
-      return '•';
-    }
-
-    const landmark = loaded.landmarks.get(index);
-
-    if (landmark === Landmark.ItemCache) {
-      return 'C';
-    }
-    if (landmark === Landmark.HiddenGrotto) {
-      return 'G';
-    }
-    if (landmark === Landmark.LegendaryLair) {
-      return 'R';
-    }
-    if (landmark === Landmark.ShadowLair) {
-      return 'S';
-    }
-    if (landmark === Landmark.BerryPatch) {
-      return 'B';
-    }
-    if (landmark === Landmark.Nest) {
-      return 'N';
-    }
-    if (landmark === Landmark.WanderingNpc) {
-      return 'P';
-    }
-    return '';
-  };
-
   const titleOf = (index: number): string => {
     const loaded = view();
     const landmark = loaded?.landmarks.get(index);
@@ -707,59 +677,20 @@ export default function OverworldTab(): JSX.Element {
               {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
             </p>
 
-            <div
-              style={{
-                display: 'grid',
-                'grid-template-columns': `repeat(${CHUNK_CELLS}, 1fr)`,
-                width: 'min(100%, 24rem)',
-                margin: '0 auto',
-                'font-family': 'monospace',
-              }}
-            >
-              <For each={[...new Array<number>(CHUNK_CELLS * CHUNK_CELLS).keys()]}>
-                {(index) => {
-                  // Anything within arm's length is a button; the
-                  // rest of the chunk is scenery until it is walked
-                  // nearer to
-                  const reachable = (): boolean =>
-                    holdsSomething(loaded(), index) && withinReach(index);
-
-                  // The player's own cell, then what they can reach
-                  // from it, then everything else
-                  const shade = (): string => {
-                    if (index === cell()) {
-                      return '#ffe08a';
-                    }
-                    return reachable() ? '#d6f5d6' : 'transparent';
-                  };
-
-                  return (
-                    <button
-                      type="button"
-                      title={titleOf(index)}
-                      disabled={!reachable() || busy()}
-                      onClick={() => {
-                        reach(index);
-                      }}
-                      style={{
-                        'aspect-ratio': '1',
-                        display: 'flex',
-                        'align-items': 'center',
-                        'justify-content': 'center',
-                        border: '1px solid #eee',
-                        padding: '0',
-                        font: 'inherit',
-                        color: 'inherit',
-                        cursor: reachable() ? 'pointer' : 'default',
-                        background: shade(),
-                      }}
-                    >
-                      {contentOf(index)}
-                    </button>
-                  );
-                }}
-              </For>
-            </div>
+            {/* The chunk is drawn rather than laid out: one element
+                instead of 256, and the ring the player can act on is
+                shaded rather than left to be guessed at */}
+            <ChunkCanvas
+              biome={loaded().biome}
+              player={cell()}
+              landmarks={loaded().landmarks}
+              spawns={new Set(loaded().spawns.keys())}
+              reachable={(index) =>
+                !busy() && holdsSomething(loaded(), index) && withinReach(index)
+              }
+              label={titleOf}
+              onReach={reach}
+            />
 
             <p>
               Cell {cellX()}, {cellY()}

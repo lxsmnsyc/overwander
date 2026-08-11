@@ -1,119 +1,116 @@
-import { For, type JSX, createMemo, createSignal } from 'solid-js';
+import { For, type JSX, createEffect, createMemo, createSignal } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import getWorld from '../overworld/current';
+import { WORLD_MAX, WORLD_MIN, isInWorld } from '../overworld/world';
+import WorldMapCanvas from './WorldMapCanvas';
+import { useGame } from './game-context';
 
 /**
- * How many chunks the map spans on each side; an odd span keeps the
- * center chunk on the middle tile
+ * How many chunks the view spans on each side. It is a window on the
+ * world rather than the world: four thousand chunks across cannot be
+ * looked at, and sixty-four is about as much ground as a player could
+ * plausibly walk in a sitting — wide enough to plan a route across,
+ * near enough that a chunk on it is still a place rather than a speck
  */
-const SPAN = 25;
+const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
 
-interface Tile {
-  x: number;
-  y: number;
-  biome: Biome;
-}
-
 /**
- * The world's biomes as they fall around a center chunk. Biomes come
- * from the climate noise alone, so the whole map derives locally —
- * no snapshot, no store, no clock
+ * The world around the player. Biomes come from the climate noise
+ * alone, so the whole map derives locally — no snapshot, no store, no
+ * clock — and the camera is free to look wherever it likes
  */
 export default function WorldMapTab(): JSX.Element {
-  const [centerX, setCenterX] = createSignal(0);
-  const [centerY, setCenterY] = createSignal(0);
+  const game = useGame();
+  // The camera starts where the player is and goes back to them
+  // whenever they move; panning is a look around from there
+  const [centerX, setCenterX] = createSignal(game.chunk()[0]);
+  const [centerY, setCenterY] = createSignal(game.chunk()[1]);
 
-  const tiles = createMemo(() => {
+  createEffect(() => {
+    const [x, y] = game.chunk();
+
+    setCenterX(x);
+    setCenterY(y);
+  });
+
+  const pan = (dx: number, dy: number): void => {
+    setCenterX((x) => Math.min(WORLD_MAX, Math.max(WORLD_MIN, x + dx)));
+    setCenterY((y) => Math.min(WORLD_MAX, Math.max(WORLD_MIN, y + dy)));
+  };
+
+  /**
+   * One biome per chunk of the view, flat and row-major. Sixteen
+   * thousand chunks are not sixteen thousand objects: the map wants a
+   * colour per chunk and nothing else, so that is all that is built
+   */
+  const biomes = createMemo(() => {
     const world = getWorld();
-    const rows: Tile[][] = [];
+    const values: (Biome | null)[] = [];
 
     for (let row = 0; row < SPAN; row++) {
       const y = centerY() - HALF + row;
-      const tileRow: Tile[] = [];
 
       for (let column = 0; column < SPAN; column++) {
         const x = centerX() - HALF + column;
 
-        tileRow.push({ x, y, biome: world.getChunk(x, y).biome });
+        values.push(isInWorld(x, y) ? world.getChunkBiome(x, y) : null);
       }
-      rows.push(tileRow);
     }
-    return rows;
+    return values;
   });
 
   /**
-   * Which biomes the visible region holds, and how much of it each
-   * one covers
+   * Which biomes the visible region holds, and how much of it each one
+   * covers. Ground beyond the world's edge is not ground, and is left
+   * out of the reckoning
    */
   const legend = createMemo(() => {
     const counts = new Map<Biome, number>();
+    let ground = 0;
 
-    for (const row of tiles()) {
-      for (const tile of row) {
-        counts.set(tile.biome, (counts.get(tile.biome) ?? 0) + 1);
+    for (const biome of biomes()) {
+      if (biome == null) {
+        continue;
       }
+      ground += 1;
+      counts.set(biome, (counts.get(biome) ?? 0) + 1);
     }
-    return [...counts].sort((left, right) => right[1] - left[1]);
+    return { ground, entries: [...counts].sort((left, right) => right[1] - left[1]) };
   });
-
-  const total = SPAN * SPAN;
 
   return (
     <section>
       <h2>World Map</h2>
       <p>
-        <label>
-          Center X
-          <input
-            type="number"
-            value={centerX()}
-            onChange={(event) => {
-              setCenterX(Math.trunc(Number(event.currentTarget.value) || 0));
-            }}
-          />
-        </label>
-        <label>
-          Center Y
-          <input
-            type="number"
-            value={centerY()}
-            onChange={(event) => {
-              setCenterY(Math.trunc(Number(event.currentTarget.value) || 0));
-            }}
-          />
-        </label>
+        {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
+        arrow keys — hold shift to cross it faster, or press Home to come back to where you are
+        standing.
       </p>
 
-      <div
-        style={{
-          display: 'grid',
-          'grid-template-columns': `repeat(${SPAN}, 1fr)`,
-          width: 'min(100%, 30rem)',
-          margin: '0 auto',
+      <WorldMapCanvas
+        span={SPAN}
+        originX={centerX() - HALF}
+        originY={centerY() - HALF}
+        biomes={biomes()}
+        playerX={game.chunk()[0]}
+        playerY={game.chunk()[1]}
+        onPan={pan}
+        onRecenter={() => {
+          setCenterX(game.chunk()[0]);
+          setCenterY(game.chunk()[1]);
         }}
-      >
-        <For each={tiles()}>
-          {(row) => (
-            <For each={row}>
-              {(tile) => (
-                <div
-                  title={`${BIOME_NAMES[tile.biome]} · ${tile.x}, ${tile.y}`}
-                  style={{
-                    'aspect-ratio': '1',
-                    background: BIOME_COLORS[tile.biome],
-                  }}
-                />
-              )}
-            </For>
-          )}
-        </For>
-      </div>
+      />
+
+      <p>
+        You are standing in chunk {game.chunk()[0]}, {game.chunk()[1]} — ringed on the map while it
+        is in view.
+      </p>
 
       <ul>
-        <For each={legend()}>
+        <For each={legend().entries}>
           {([biome, count]) => (
             <li>
               <span
@@ -125,7 +122,7 @@ export default function WorldMapTab(): JSX.Element {
                   'margin-right': '0.5rem',
                 }}
               />
-              {BIOME_NAMES[biome]} — {Math.round((count / total) * 100)}%
+              {BIOME_NAMES[biome]} — {Math.round((count / Math.max(1, legend().ground)) * 100)}%
             </li>
           )}
         </For>

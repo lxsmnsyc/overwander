@@ -135,6 +135,52 @@ export const ITEM_POOL: ItemRarityGroups = {
 };
 
 /**
+ * Which band of the pool something is drawn from
+ */
+export type ItemBand = keyof ItemRarityGroups;
+
+let bands: Map<Items, ItemBand> | null = null;
+
+/**
+ * The band the ground hides this item in, or null for something the
+ * ground never hides at all — a machine, a berry off a bush, anything
+ * only a vendor sells.
+ *
+ * Built on the first ask rather than at import, and cached, since the
+ * pool is a module constant and the answer cannot change under it. An
+ * item listed in two bands answers with the rarest, which is the one
+ * that decides how hard it was to come by
+ */
+export function getItemBand(item: Items): ItemBand | null {
+  if (bands == null) {
+    bands = new Map();
+    // Commonest first, so a rarer listing overwrites it
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+      for (const entry of ITEM_POOL[band]) {
+        bands.set(entry.item, band);
+      }
+    }
+  }
+  return bands.get(item) ?? null;
+}
+
+/**
+ * Whether the item is one of the finds worth stopping a player over:
+ * the rare and special bands — the caps, the Purifying Gem, the
+ * revives, the Master Ball.
+ *
+ * It is what decides whether spending one is asked about twice. A
+ * Potion asked about twice is a click for nothing; a Golden Bottle Cap
+ * spent on the wrong pokemon is a walk wasted, and there is no getting
+ * it back
+ */
+export function isPreciousItem(item: Items): boolean {
+  const band = getItemBand(item);
+
+  return band === 'rare' || band === 'special';
+}
+
+/**
  * Cumulative band thresholds for an item roll: the special band owns
  * the first slice of the draw, the rare band the next, the uncommon
  * band the next, and whatever remains falls to base

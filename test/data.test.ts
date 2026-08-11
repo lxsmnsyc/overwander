@@ -73,6 +73,8 @@ import {
   ITEM_POOL,
   MAX_KINDS,
   MAX_STACK,
+  getItemBand,
+  isPreciousItem,
   pickItem,
   pickItems,
 } from '../src/data/overworld/item-pool';
@@ -1644,6 +1646,40 @@ describe('biome data', () => {
     // Legendaries sit in their own section
     const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
     expect(peak.special.some((entry) => entry.species === Species.Zapdos)).toBe(true);
+  });
+
+  it('knows which finds are worth stopping a player over', () => {
+    // The band an item is hidden in is what decides whether spending
+    // it is asked about twice
+    expect(getItemBand(Items.MasterBall)).toBe('special');
+    expect(getItemBand(Items.BottleCap)).toBe('rare');
+    expect(getItemBand(Items.HeartScale)).toBe('uncommon');
+    expect(getItemBand(Items.Potion)).toBe('base');
+    // Nothing hides a machine or a berry off a bush
+    expect(getItemBand(getMachineItem(Moves.Tackle))).toBeNull();
+    expect(getItemBand(Items.OranBerry)).toBeNull();
+
+    // A walk's worth of luck that does not come back
+    for (const item of [
+      Items.GoldenBottleCap,
+      Items.BottleCap,
+      Items.PurifyingGem,
+      Items.MaxRevive,
+      Items.FullRestore,
+    ]) {
+      expect(isPreciousItem(item)).toBe(true);
+    }
+    // And the everyday things, spent a dozen times a session
+    for (const item of [Items.Potion, Items.Antidote, Items.HealthWing, Items.PomegBerry]) {
+      expect(isPreciousItem(item)).toBe(false);
+    }
+
+    // Every band listing agrees with the pool it was built from
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+      for (const entry of ITEM_POOL[band]) {
+        expect(getItemBand(entry.item)).toBe(band);
+      }
+    }
   });
 
   it('rolls the item pool through the rarity bands', () => {

@@ -70,6 +70,7 @@ import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/i
 import { getConsumedItem, getMovesLearnedAt, getSpeciesData } from '../data/species';
 import { BIOME_NAMES } from '../data/biome';
 import Biome from '../data/ids/biome';
+import { isPreciousItem } from '../data/overworld/item-pool';
 import { getLairTitle } from '../data/overworld/lair';
 import {
   ENCOUNTER_TYPE_NAMES,
@@ -1017,7 +1018,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         inline
                         entries={bag()}
                         disabled={frozen()}
-                        confirm
+                        // Only the finds worth stopping over ask
+                        // twice. A Potion or a wing is spent a dozen
+                        // times a session and asking about each is a
+                        // click for nothing; a cap, a Purifying Gem or
+                        // a Max Revive is a walk's worth of luck that
+                        // does not come back
+                        confirm={(entry) => isPreciousItem(entry.item)}
                         value={null}
                         verb="Use"
                         empty="Nothing in the bag would do it any good."

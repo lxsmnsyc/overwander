@@ -126,9 +126,12 @@ interface InventoryPickerCommonProps {
   empty?: string;
   /**
    * Ask once more before handing the pick back. Worth it wherever the
-   * pick spends the item
+   * pick spends the item — but only where the item is worth the
+   * second press, which is why a caller may answer per row instead of
+   * for the whole list: a Potion asked about twice is a click for
+   * nothing, and a Golden Bottle Cap is not
    */
-  confirm?: boolean;
+  confirm?: boolean | ((entry: InventoryEntry) => boolean);
   /**
    * Whether the list is showing but not taking picks — a catch in a
    * live battle, say, where every row is refused for the same reason
@@ -289,24 +292,32 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   };
 
   /**
+   * Whether this row is one the caller wants asked about twice. A
+   * caller that said `confirm` outright means every row; one that
+   * passed a rule means the rows the rule picks out
+   */
+  const asksTwice = (entry: InventoryEntry): boolean =>
+    typeof props.confirm === 'function' ? props.confirm(entry) : props.confirm === true;
+
+  /**
    * One row pressed. A single pick is the answer itself; a pick out of
    * many only marks the row, and the caller hears about it when the
    * list is done
    */
-  const press = (item: Items): void => {
+  const press = (entry: InventoryEntry): void => {
     if (props.multiple === true) {
       setDraft(
-        amountOf(item) > 0
-          ? draft().filter(([picked]) => picked !== item)
-          : [...draft(), [item, 1]],
+        amountOf(entry.item) > 0
+          ? draft().filter(([picked]) => picked !== entry.item)
+          : [...draft(), [entry.item, 1]],
       );
       return;
     }
-    if (props.confirm === true && pending() !== item) {
-      setPending(item);
+    if (asksTwice(entry) && pending() !== entry.item) {
+      setPending(entry.item);
       return;
     }
-    pickOne(item);
+    pickOne(entry.item);
   };
 
   const setAmount = (item: Items, amount: number, stock: number): void => {
@@ -315,8 +326,18 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     setDraft(draft().map((entry) => (entry[0] === item ? [item, kept] : entry)));
   };
 
+  /**
+   * A basket is asked about twice when anything in it is: the
+   * question is about the trade, and one thing worth a second look
+   * makes the whole of it worth one
+   */
   const finish = (): void => {
-    if (props.confirm === true && !confirming()) {
+    const drafted = draft().map(([item]) => item);
+    const asked = offered()
+      .filter((entry) => new Set(drafted).has(entry.item))
+      .some(asksTwice);
+
+    if (asked && !confirming()) {
       setConfirming(true);
       return;
     }
@@ -381,7 +402,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
                       }
                       disabled={props.disabled}
                       onClick={() => {
-                        press(entry.item);
+                        press(entry);
                       }}
                     >
                       {amountOf(entry.item) > 0 ? '✓ ' : ''}

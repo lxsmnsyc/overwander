@@ -27,6 +27,15 @@ The plates and the wings each take a single thin slot, so seventeen plates
 together are worth about one stone: digging up the plate you wanted stays luck
 rather than shopping.
 
+The bands are read for one thing besides the digging. Spending an item **on a
+pokemon** asks a second time only where the item is `isPreciousItem` — the rare
+and special bands. A Potion or a wing is spent a dozen times a session and asking
+about each is a click for nothing; a Bottle Cap, a Purifying Gem or a Max Revive
+is a walk's worth of luck that does not come back, and the wrong pokemon is the
+wrong pokemon for good. The rarity that decided how hard it was to find is the
+same fact that decides how hard it should be to spend, so there is no second list
+to keep in step.
+
 The **Heart Scale** is the one thing in the pool that gold cannot substitute for.
 No vendor stocks one and no vendor takes one, so it is neither bought nor sold:
 what a scale is worth is exactly one forgotten move, put back by the

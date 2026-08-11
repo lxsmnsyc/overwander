@@ -140,6 +140,18 @@ export const ITEM_BAND_ODDS: ItemBandOdds = {
 };
 
 /**
+ * What a Pickup buddy turns up: the ordinary bands with the special
+ * one shut out entirely. What it finds is what was lying about — a
+ * ball, a potion, now and then a stone — and a Master Ball scuffed up
+ * off a path by a Meowth would make the rarest band worth nothing
+ */
+export const PICKUP_BAND_ODDS: ItemBandOdds = {
+  special: 0,
+  rare: RARE_SPAWN_ODDS,
+  uncommon: UNCOMMON_SPAWN_ODDS,
+};
+
+/**
  * Some of one kind of item: what a stash actually holds
  */
 export interface ItemStack {

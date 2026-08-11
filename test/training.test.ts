@@ -11,12 +11,15 @@ import {
   BASE_FRIENDSHIP,
   FRIENDSHIP_STEP_INTERVAL,
   HATCHED_FRIENDSHIP,
+  LUXURY_FRIENDSHIP_FACTOR,
   MAX_FRIENDSHIP,
   describeFriendship,
+  friendshipFactor,
   gainFriendship,
   groomedFriendship,
 } from '../src/data/constants/friendship';
 import { EFFORT_PER_LEVEL, MAX_EFFORT_PER_STAT, Stats } from '../src/data/constants/stats';
+import { Balls } from '../src/data/ids/items';
 
 function trained(
   level: number,
@@ -155,5 +158,25 @@ describe('friendship', () => {
     // What a buddy's report is worth: one point per interval walked
     expect(gainFriendship(50, 'walk', 3)).toBe(56);
     expect(FRIENDSHIP_STEP_INTERVAL).toBeGreaterThan(0);
+  });
+
+  it('brings a pokemon caught in a Luxury Ball round twice as fast', () => {
+    expect(friendshipFactor(Balls.LuxuryBall)).toBe(LUXURY_FRIENDSHIP_FACTOR);
+    expect(friendshipFactor(Balls.PokeBall)).toBe(1);
+    expect(friendshipFactor(Balls.MasterBall)).toBe(1);
+
+    const factor = friendshipFactor(Balls.LuxuryBall);
+
+    expect(gainFriendship(50, 'level', 1, factor)).toBe(60);
+    expect(gainFriendship(150, 'level', 1, factor)).toBe(156);
+    // It multiplies the points a walk buys, not the walk itself
+    expect(gainFriendship(50, 'walk', 3, factor)).toBe(62);
+    expect(gainFriendship(MAX_FRIENDSHIP, 'berry', 1, factor)).toBe(MAX_FRIENDSHIP);
+  });
+
+  it('never makes a comfortable ball hurt more', () => {
+    // A faint is a faint: the ball is a reason to think better of
+    // somebody, not to take a knockout harder
+    expect(gainFriendship(50, 'faint', 1, friendshipFactor(Balls.LuxuryBall))).toBe(49);
   });
 });

@@ -13,7 +13,8 @@ import {
   takeItem,
 } from '../auth/caught';
 import useHealingItem from '../auth/healing';
-import { isShadow, isShiny } from '../auth/caught-record';
+import { ACQUISITION_NAMES, isShadow, isShiny } from '../auth/caught-record';
+import { getProfile } from '../auth/profile';
 import {
   type HealthState,
   STATUS_NAMES,
@@ -202,6 +203,46 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     const user = auth.user();
 
     return user != null && user.uid === props.player ? user.uid : null;
+  };
+
+  /**
+   * What everyone who has owned it is called. Profiles are readable by
+   * every signed-in player — that is what nicknames are for — and the
+   * chain is short, so they are read once for the whole of it and
+   * looked up by uid as the rows draw
+   */
+  const [owners] = createResource(
+    () => [...new Set(detail()?.history.map((entry) => entry.owner) ?? [])].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const named = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const profile = await getProfile(uid);
+
+            if (profile != null) {
+              named.set(uid, profile.nickname);
+            }
+          }),
+      );
+      return named;
+    },
+  );
+
+  /**
+   * Who an entry names. The player reading it is "you" rather than
+   * their own nickname, and a trainer whose profile has gone is still
+   * somebody — an owner is a fact about the pokemon, so a missing
+   * profile must not take the entry off the list
+   */
+  const describeOwner = (uid: string): string => {
+    if (uid === auth.user()?.uid) {
+      return 'You';
+    }
+    return owners()?.get(uid) ?? 'A trainer';
   };
 
   const [evolutions, { refetch: refetchEvolutions }] = createResource(
@@ -680,6 +721,27 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 <dt>Origin</dt>
                 <dd>{describeOrigin(loaded())}</dd>
               </dl>
+
+              {/* Whose hands it has passed through, oldest first. Each
+                  entry says how that owner came by it and the day they
+                  did, in their own zone — so a pokemon that has been
+                  sold reads as a life rather than as a current owner */}
+              <Show when={loaded().history.length}>
+                <DialogSection title="Owners">
+                  <List>
+                    <For each={loaded().history}>
+                      {(entry) => (
+                        <ListRow>
+                          <span class="grow font-medium">{describeOwner(entry.owner)}</span>
+                          <Meta>
+                            {ACQUISITION_NAMES[entry.kind]} · {entry.acquiredAt.slice(0, 10)}
+                          </Meta>
+                        </ListRow>
+                      )}
+                    </For>
+                  </List>
+                </DialogSection>
+              </Show>
 
               <Show when={owned()}>
                 {/* Everything below changes the record, and a

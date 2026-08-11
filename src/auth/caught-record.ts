@@ -12,7 +12,7 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type Lairs from '../data/overworld/lair';
-import type { EncounterType } from '../overworld/encounter';
+import { EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { getMaxHealth } from './health';
 
@@ -213,27 +213,84 @@ export function isShadow(caught: { flags: number }): boolean {
   return hasFlag(caught.flags, PokemonFlags.Shadow);
 }
 
-export interface OwnershipRecord {
-  owner: string;
+/**
+ * How a pokemon came into one owner's hands.
+ *
+ * It is not the same question as `EncounterType`, which says how the
+ * pokemon was first met and never changes. This says how it reached
+ * *this* owner, so a Mewtwo can be a legendary raid prize that its
+ * second owner bought at auction — the record keeps both, and a chain
+ * of them reads as the pokemon's life rather than as a list of uids
+ */
+export const enum Acquisition {
   /**
-   * When this owner obtained the pokemon (catch date for the first
-   * entry, trade date for later ones), as a local ISO 8601 string in
-   * that owner's own zone
+   * They caught it themselves
    */
-  acquiredAt: string;
+  Caught = 0,
+  /**
+   * It came to them as an egg, out of a nest or a breeder's hands.
+   * The pokemon was never anybody else's — it began here
+   */
+  Egg = 1,
+  /**
+   * They won it at auction
+   */
+  Auction = 2,
+  /**
+   * They took it in a trade. Nothing writes this yet: trading does not
+   * exist, and the member is here so the day it does, old records do
+   * not have to be told apart from new ones by their shape
+   */
+  Trade = 3,
 }
 
 /**
- * Restore an ownership history from an untyped Firestore value
+ * What each is called where a history is shown
  */
-function asOwnershipHistory(value: unknown): OwnershipRecord[] {
+export const ACQUISITION_NAMES: Record<Acquisition, string> = {
+  [Acquisition.Caught]: 'Caught',
+  [Acquisition.Egg]: 'Received as an egg',
+  [Acquisition.Auction]: 'Won at auction',
+  [Acquisition.Trade]: 'Traded for',
+};
+
+export interface OwnershipRecord {
+  owner: string;
+  /**
+   * When this owner obtained the pokemon, as a local ISO 8601 string
+   * in that owner's own zone
+   */
+  acquiredAt: string;
+  /**
+   * How they came by it
+   */
+  kind: Acquisition;
+}
+
+/**
+ * Restore an ownership history from an untyped Firestore value.
+ *
+ * `origin` is what the first entry means for a record written before
+ * this field existed — the caller knows whether the pokemon was caught
+ * or hatched, and the history does not
+ */
+function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecord[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value.map((entry) => {
+  return value.map((entry, at) => {
     const record = asRecord(entry);
+    // An older entry says nothing about how it changed hands, but both
+    // cases are knowable: the first is where the pokemon began, and
+    // every entry after it can only be a sale, since the auction house
+    // has been the one thing that ever appended one
+    const older = at === 0 ? origin : Acquisition.Auction;
 
-    return { owner: asString(record.owner), acquiredAt: asString(record.acquiredAt) };
+    return {
+      owner: asString(record.owner),
+      acquiredAt: asString(record.acquiredAt),
+      kind: record.kind == null ? older : (asNumber(record.kind) as Acquisition),
+    };
   });
 }
 
@@ -245,6 +302,7 @@ function asOwnershipHistory(value: unknown): OwnershipRecord[] {
 export function asCaughtPokemon(value: unknown): CaughtPokemon {
   const data = asRecord(value);
   const origin = asRecord(data.origin);
+  const type = asNumber(data.type) as EncounterType;
   const species = asNumber(data.species) as Species;
   const level = asNumber(data.level);
   const ivs = asNumber(data.ivs);
@@ -252,7 +310,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
 
   return {
     owner: asString(data.owner),
-    type: asNumber(data.type) as EncounterType,
+    type,
     species,
     level,
     individualValue: asNumber(data.individualValue),
@@ -264,7 +322,12 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
-    history: asOwnershipHistory(data.history),
+    // Something hatched began as an egg in its first owner's hands;
+    // everything else was caught by them
+    history: asOwnershipHistory(
+      data.history,
+      type === EncounterType.Hatched ? Acquisition.Egg : Acquisition.Caught,
+    ),
     lockedAt: asNumber(data.lockedAt),
     steps: asNumber(data.steps),
     hatchSteps: asNumber(data.hatchSteps),

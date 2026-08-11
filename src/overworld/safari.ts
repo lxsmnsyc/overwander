@@ -75,10 +75,14 @@ export type SafariEventMap = {
  * Flat catch multipliers per ball. Every conditional ball holds a
  * neutral 1 here — their real modifier depends on the encounter or
  * the safari clock and resolves in getBallModifier. The Master
- * Ball's infinity saturates the catch chance to certainty. The
- * Premier, Heal and Luxury Balls catch like a plain Poke Ball; their
- * mainline perks (a commemorative ball, a healed catch, faster
- * friendship) have nothing to act on yet
+ * Ball's infinity saturates the catch chance to certainty.
+ *
+ * The Premier, Heal and Luxury Balls catch like a plain Poke Ball.
+ * That is the whole of the Premier Ball, which is a commemorative
+ * ball and nothing else; the other two are worth throwing for what
+ * happens after the catch rather than for the catch itself — a Heal
+ * Ball mends whatever is walking beside the player, and a pokemon
+ * caught in a Luxury Ball warms to them twice as fast
  */
 export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.PokeBall]: 1,

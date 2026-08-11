@@ -23,7 +23,7 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `moves`                | `Moves[]`               |                                                       |
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch    |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`     |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append  |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first           |
 | `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked       |
 | `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free     |
 | `steps`                | `number`                | Steps walked in the shell; only eggs accrue any       |
@@ -89,6 +89,11 @@ as the number grows ([`src/data/constants/friendship.ts`](../../src/data/constan
 
 A catch starts at `BASE_FRIENDSHIP` (70) and something hatched starts at
 `HATCHED_FRIENDSHIP` (120) — the carrying has already happened.
+
+Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**
+(`friendshipFactor`); the loss is not. The ball is a field of the record, so the
+bonus is decided at the catch and holds for good, and no writer has to look
+anything else up to apply it.
 
 ### Packed fields
 
@@ -230,6 +235,41 @@ A record written before these fields existed has neither, and reading a missing
 whole: `asCaughtPokemon` derives the maximum for those records, which is what
 they meant.
 
+## Whose hands it has passed through
+
+`history` is one entry per owner, oldest first, and each says **when** that owner
+received it — a local ISO 8601 string in *their* own zone, the way a catch date
+is — and **how**:
+
+| `Acquisition` | Written by     | What it means                              |
+| ------------- | -------------- | ------------------------------------------ |
+| `Caught`      | `recordCatch`  | They threw the ball                        |
+| `Egg`         | `writeEgg`     | It came to them as an egg, nest or breeder |
+| `Auction`     | `claimAuction` | They won it on the block                   |
+| `Trade`       | nothing yet    | Reserved for trading                       |
+
+It is a different question from the record's own `type`
+([Encounter kinds](encounters.md#encounter-kinds)), which says how the pokemon
+was first met and never changes. A Mewtwo can be a legendary raid prize *and*
+something its second owner bought, and the two fields say so separately.
+
+`Trade` exists before trading does on purpose: a member added later would leave
+old records needing to be told apart from new ones by their shape.
+
+A record written before the field existed still reads correctly, because both
+cases are knowable. The **first** entry is where the pokemon began, which the
+record's `type` already says — `Hatched` means an egg, anything else means a
+catch — and every entry **after** it can only be a sale, since the auction house
+has been the one thing that ever appended one. `reclaimAuction` appends nothing:
+an unsold lot came back to the same person.
+
+The catch dialog shows the chain under **Owners**, oldest first: who, how they
+came by it, and the day they did. Names come from `profiles/{uid}`, which every
+signed-in player can read — that is what a nickname is for — and the reader is
+"You" rather than their own nickname. A trainer whose profile has since gone
+still holds their place in the list as "A trainer": an owner is a fact about the
+pokemon, and a missing profile must not quietly shorten its history.
+
 ## Where it came from
 
 `type` says how a pokemon was met — see
@@ -353,9 +393,11 @@ write that touches a catch asks whether the caller is its `owner`, and a uid is
 never empty, so an escrowed pokemon is refused to the seller, the bidders and
 everyone else by the checks that were already there — while staying **readable**,
 which is what lets a bidder see what they are bidding on. Collecting the lot
-writes the winner's uid into `owner` and appends the sale to `history`; a lot
-nobody bid on goes back to the seller instead, which restores `owner` and leaves
-`history` alone — it never changed hands. See [Auctions](auctions.md).
+writes the winner's uid into `owner`, appends the sale to `history` and resets
+`friendship` to `BASE_FRIENDSHIP` — the pokemon has just met its new trainer, and
+what it thought of the last one was theirs. A lot nobody bid on goes back to the
+seller instead, which restores `owner` and leaves both `history` and `friendship`
+alone — it never changed hands. See [Auctions](auctions.md).
 
 ## Eggs
 
@@ -374,9 +416,11 @@ can read the species out of Firestore directly. Nothing is staked on them not
 doing so.
 
 An egg is refused everywhere a pokemon is expected: `giveItem`, `useCandy` and
-`evolveCatch` turn it down, `publishTeamSnapshot` leaves it out of the party it
-freezes, and `resolveBuddy` reports no buddy effects for one — it is carried, not
-accompanied, so its ability and nature change nothing in the overworld.
+`evolveCatch` turn it down, `openAuction` will not put one on the block — a
+bidder cannot see into one and the seller can — `publishTeamSnapshot` leaves it
+out of the party it freezes, and `resolveBuddy` reports no buddy effects for one
+— it is carried, not accompanied, so its ability and nature change nothing in
+the overworld.
 
 ### Bred eggs
 
@@ -412,6 +456,16 @@ no more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims �
 moves on every report, credited or not, so a refused one banks no time for the
 next. That is why `steppedAt` lives on the catch document (server-written) rather
 than on `buddies/{uid}` (client-written).
+
+`hatchSteps` is settled when the egg is written, and two things move it: a shadow
+egg doubles it, and a **Flame Body** buddy standing beside the player at the
+pick-up halves it. Both are frozen onto the record rather than asked again during
+the walk — once an egg is being carried it *is* the buddy, so there is nothing
+beside the player left to ask.
+
+A report also credits whatever a **Pickup** buddy found along the way: the same
+call rolls it from the item pool and writes the stack in the same transaction, so
+a find cannot be reported twice or lost between the walk and the bag.
 
 `hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
 family's candy, exactly as meeting the pokemon any other way would have. The

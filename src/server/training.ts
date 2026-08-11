@@ -4,7 +4,7 @@ import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../au
 import { assignEffort as assignedValues, unusedEffort } from '../auth/effort';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
-import { gainFriendship } from '../data/constants/friendship';
+import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
@@ -220,7 +220,7 @@ export async function feedEffortBerry(
     }
 
     const effortValues = { ...record.effortValues, [stat]: trainedTo };
-    const friendship = gainFriendship(record.friendship, 'berry');
+    const friendship = gainFriendship(record.friendship, 'berry', 1, friendshipFactor(record.ball));
     const trained = { ...record, effortValues, friendship };
 
     transaction.set(stackRef, { user: uid, item, amount: stock - 1 });

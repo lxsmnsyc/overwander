@@ -117,14 +117,27 @@ come quickly and the last fifty are a long walk.
 A catch starts at `BASE_FRIENDSHIP` (70); something hatched starts at
 `HATCHED_FRIENDSHIP` (120), because the carrying has already happened.
 
+**A pokemon caught in a Luxury Ball gains twice as much from all of it.** It is
+read off the ball the record was made with rather than anything the player still
+carries, so it is decided once, at the catch, and holds for the pokemon's whole
+life. The factor multiplies what it *gains* and never what it loses: a
+comfortable ball is a reason to think better of somebody, not a reason to take a
+knockout harder.
+
 A **groomer** — one of the wandering NPCs — adds half of whatever is *left* to
 give for `GROOMING_FEE` (2,500) gold. It is worth a great deal to a pokemon fresh
 out of a ball and almost nothing to one that is already inseparable, and because
 it is always half of the remainder it can never buy the last of a friendship.
 That part is walked for.
 
-Friendship is a record of how a pokemon has been kept. What reads it can grow;
-what moves it is settled.
+Friendship is a record of how a pokemon has been kept **by somebody**, so it does
+not survive a sale: a pokemon collected from an auction starts again at
+`BASE_FRIENDSHIP` for its new trainer. Otherwise an inseparable pokemon would be
+a thing that could be bought, and the walking that earned it would be worth gold
+rather than worth doing. A lot that goes back unsold to the seller keeps what it
+had — it never changed hands.
+
+What reads friendship can grow; what moves it is settled.
 
 ## Bottle caps
 
@@ -178,6 +191,9 @@ worth to a given pokemon is decided in one place:
   whole one. None of it is holdable: a potion cannot be drunk mid-raid, which is
   what keeps a berry worth carrying into one.
 - **A level**, the slow way.
+- **A Heal Ball thrown at something else.** Catching with one mends the pokemon
+  walking beside the player — full health, statuses cleared, for nothing beyond
+  the ball. See [Catching](catching.md#ball-modifiers).
 
 Two rules cut across all of it. **A revive is the only thing that reaches a
 fainted pokemon**, and the only thing that does nothing to one still standing.

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { asCaughtPokemon } from '../src/auth/caught-record';
+import { ACQUISITION_NAMES, Acquisition, asCaughtPokemon } from '../src/auth/caught-record';
 import type { HealthSource, HealthState } from '../src/auth/health';
 import {
   NON_VOLATILE_STATUSES,
@@ -16,6 +16,7 @@ import { Items } from '../src/data/ids/items';
 import { Species } from '../src/data/ids/species';
 import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
 import registerGen1Moves from '../src/data/moves/gen-1';
+import { EncounterType } from '../src/overworld/encounter';
 import { getSpeciesData, registerSpecies } from '../src/data/species';
 
 beforeAll(() => {
@@ -267,6 +268,17 @@ describe('medicine', () => {
 });
 
 describe('stored records', () => {
+  /**
+   * The fields every stored record needs before it can be read back:
+   * the maximum health is derived, so a record has to name a species
+   */
+  const bulbasaur = {
+    species: Species.Bulbasaur,
+    level: 50,
+    ivs: packIVs(evenly(31)),
+    effortValues: evenly(0),
+  };
+
   it('reads a record written before health as whole', () => {
     // Nothing backfills the field, and reading a missing one as zero
     // would faint every pokemon caught until now
@@ -287,5 +299,47 @@ describe('stored records', () => {
     const carried = packStatuses([Statuses.Burned, Statuses.Poisoned]);
 
     expect(asCaughtPokemon({ ...stored, statuses: carried }).statuses).toBe(carried);
+  });
+
+  it('says how each owner came by the pokemon', () => {
+    const owned = asCaughtPokemon({
+      ...bulbasaur,
+      owner: 'buyer',
+      type: EncounterType.Wild,
+      history: [
+        { owner: 'catcher', acquiredAt: '2026-01-01T00:00:00+08:00', kind: Acquisition.Caught },
+        { owner: 'buyer', acquiredAt: '2026-02-01T00:00:00+08:00', kind: Acquisition.Auction },
+      ],
+    });
+
+    expect(owned.history.map((entry) => entry.kind)).toEqual([
+      Acquisition.Caught,
+      Acquisition.Auction,
+    ]);
+    // Every kind has something to call it, including the one nothing
+    // writes yet
+    expect(ACQUISITION_NAMES[Acquisition.Trade]).not.toBe('');
+  });
+
+  it('reads a history written before the kind existed', () => {
+    // The first entry is where the pokemon began, which the record's
+    // own type knows; anything after it can only be a sale, since the
+    // auction house is the one thing that has ever appended an entry
+    const entries = [
+      { owner: 'first', acquiredAt: '2026-01-01T00:00:00+08:00' },
+      { owner: 'second', acquiredAt: '2026-02-01T00:00:00+08:00' },
+    ];
+
+    expect(
+      asCaughtPokemon({ ...bulbasaur, type: EncounterType.Wild, history: entries }).history.map(
+        (one) => one.kind,
+      ),
+    ).toEqual([Acquisition.Caught, Acquisition.Auction]);
+
+    expect(
+      asCaughtPokemon({ ...bulbasaur, type: EncounterType.Hatched, history: entries }).history.map(
+        (one) => one.kind,
+      ),
+    ).toEqual([Acquisition.Egg, Acquisition.Auction]);
   });
 });

@@ -8,11 +8,13 @@ import type { Genders, Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import {
   type CheckCatchCandyEvent,
+  type CheckEggStepsEvent,
   type CheckEncounterGenderEvent,
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
   type CheckGoldRewardEvent,
   type CheckSpawnCountEvent,
+  type CheckWalkPickupEvent,
   type OverworldEventMap,
   OverworldEvents,
 } from './events';
@@ -193,5 +195,50 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckCatchCandy, event);
     return event.bonus;
+  }
+
+  /**
+   * How far an egg has to be carried before it opens.
+   *
+   * It is asked once, as the egg comes into the player's hands, and
+   * the answer is frozen onto the record — the same field a shadow egg
+   * has already doubled. That is deliberate: what warms an egg is
+   * whatever was walking beside the player when they picked it up, and
+   * once they are carrying the egg itself there is nothing beside them
+   * to warm it
+   */
+  checkEggSteps(subject: string, base: number): number {
+    const event: CheckEggStepsEvent = {
+      id: 'CheckEggSteps',
+      disabled: false,
+      overworld: this,
+      random: this.random(subject, 'egg'),
+      base,
+      steps: base,
+    };
+
+    this.emit(OverworldEvents.CheckEggSteps, event);
+    return Math.max(1, Math.ceil(event.steps));
+  }
+
+  /**
+   * What the buddy picked up over the stretch just walked, counted in
+   * whole finds. It is asked with where the walk stood before and
+   * after, so an effect that fires every so many paces counts the
+   * marks it crossed rather than trusting the size of the report
+   */
+  checkWalkPickup(subject: string, from: number, to: number): number {
+    const event: CheckWalkPickupEvent = {
+      id: 'CheckWalkPickup',
+      disabled: false,
+      overworld: this,
+      random: this.random(subject, 'pickup'),
+      from,
+      to,
+      found: 0,
+    };
+
+    this.emit(OverworldEvents.CheckWalkPickup, event);
+    return Math.max(0, Math.floor(event.found));
   }
 }

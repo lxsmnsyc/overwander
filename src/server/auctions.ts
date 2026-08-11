@@ -25,7 +25,9 @@ import {
   canReclaim,
 } from '../auth/auction-record';
 import { asOffset, toLocalISO } from '../auth/local-time';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
+import { isEggRecord } from './catch-fields';
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
@@ -87,7 +89,8 @@ function getProfileRef(uid: string): FirebaseFirestore.DocumentReference {
  *
  * Resolves the auction id, or null when the seller already has one
  * running, does not carry the item, does not own the pokemon, or the
- * pokemon is spoken for — fighting, or waiting in a raid lobby
+ * pokemon is not one to sell — an egg, the buddy at their side, one
+ * fighting, or one waiting in a raid lobby
  */
 export async function openAuction(
   uid: string,
@@ -152,11 +155,19 @@ export async function openAuction(
       if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
         return null;
       }
-      // A buddy record naming a pokemon the player no longer owns
-      // would be walking with somebody else's, so it goes the way a
-      // release takes it
+      // An egg is refused outright. Nobody can see what is in one, so a
+      // bidder would be bidding on a sealed box — and the seller knows
+      // exactly what is in it, which is not an auction but a shell game
+      if (isEggRecord(caught)) {
+        return null;
+      }
+      // So is the buddy. Selling the pokemon at your side out from
+      // under yourself is the kind of thing a player does by
+      // misreading a list, and a lot cannot be taken back off the
+      // block; sending it home first is one press and makes the sale
+      // deliberate
       if (docData(buddyDoc)?.caught === offer.caught) {
-        transaction.delete(buddyRef);
+        return null;
       }
       // Whatever it is holding goes with it: the item was handed to
       // the pokemon, and the pokemon is what is being sold
@@ -302,10 +313,21 @@ export async function claimAuction(
       }
       // A pokemon carries who it has passed through, so a sale is an
       // entry in it — written in the new owner's own zone, the way a
-      // catch date is
+      // catch date is.
+      //
+      // And it arrives thinking of the winner exactly what a fresh
+      // catch thinks of whoever caught it. Friendship is a record of
+      // how a pokemon has been kept by *somebody*, and the somebody
+      // has just changed: whatever it walked, levelled and was groomed
+      // for belonged to the seller, and carrying that over would make
+      // an inseparable pokemon a thing that could be bought
       transaction.update(caughtRef, {
         owner: uid,
-        history: [...record.history, { owner: uid, acquiredAt: toLocalISO(now, offset) }],
+        history: [
+          ...record.history,
+          { owner: uid, acquiredAt: toLocalISO(now, offset), kind: Acquisition.Auction },
+        ],
+        friendship: BASE_FRIENDSHIP,
       });
     }
 
@@ -320,8 +342,9 @@ export async function claimAuction(
  *
  * Nothing was sold, so nothing is paid: the item goes back into the
  * seller's stack and the pokemon comes out of escrow into their records
- * exactly as it went in. Its ownership history is left alone, because
- * it did not change hands — it sat on a shelf for a day and came back.
+ * exactly as it went in. Its ownership history and its friendship are
+ * both left alone, because it did not change hands — it sat on a shelf
+ * for a day and came back to the same person.
  *
  * `settled` is the same marker a collection writes, so a lot is handed
  * over once whichever end it goes out of, and a reclaim cannot race a
@@ -370,6 +393,9 @@ export async function reclaimAuction(
       if (asCaughtPokemon(caught).owner !== AUCTION_ESCROW) {
         return false;
       }
+      // Only the owner field moves. It did not change hands, so
+      // nothing about how it has been kept changes either: the
+      // friendship a sale resets is still the seller's own
       transaction.update(caughtRef, { owner: uid });
     }
 

@@ -85,6 +85,16 @@ to count. The client counts cells crossed and reports them in batches of eight.
 | `MIN_STEP_INTERVAL` | 250 ms — the fastest a step can be credited |
 | `MAX_STEP_REPORT`   | 64 steps in one report                      |
 
+**Flame Body halves the walk.** An egg picked up while a Flame Body pokemon was
+walking beside the player needs half the steps, and the halving is written into
+`hatchSteps` there and then — the same field a shadow egg has already doubled.
+
+It has to be settled at the pick-up rather than while the egg is walked, because
+walking an egg means carrying *the egg* as the buddy: from that moment there is
+nothing beside the player to keep it warm. So the choice is a real one — walk to
+the nest with the Ponyta, and swap for the egg once it is in hand — and picking
+up a Ponyta afterwards does nothing for an egg already being carried.
+
 The server credits steps **against its own clock**: a report buys no more than
 `(now − steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims. The stamp moves
 on every report, credited or not, so a refused one banks no time for the next.

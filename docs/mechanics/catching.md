@@ -41,10 +41,21 @@ moment of the throw rather than when the ball was chosen:
 | **Great Ball**                     | ×1.5     | Always                                     |
 | **Poke / Premier / Heal / Luxury** | ×1       | Always                                     |
 
-The Premier, Heal and Luxury Balls catch exactly like a Poke Ball. Their mainline
-perks — a commemorative ball, a healed catch, faster friendship — have nothing to
-act on here yet, and giving them a made-up catch bonus instead would be worse
-than leaving them plain.
+The Premier, Heal and Luxury Balls catch exactly like a Poke Ball. Two of the
+three are worth throwing for what happens *after* the catch rather than for the
+throw itself:
+
+- A **Heal Ball** mends whatever is walking beside the player — full health,
+  statuses cleared, for nothing. The mainline ball heals what is caught in it,
+  and that is already true of every catch here (an encounter is not a battle, so
+  a catch always arrives whole), so the ball's field goes where there is
+  something to mend. A buddy already whole, an egg, or one locked into a live
+  battle is left alone.
+- A **Luxury Ball** makes the pokemon caught in it warm to its trainer **twice as
+  fast**, for the rest of its life. See [Friendship](raising.md#friendship).
+
+The Premier Ball is a commemorative ball and nothing else, which is the whole of
+what it is in the mainline too.
 
 ### Feeding
 

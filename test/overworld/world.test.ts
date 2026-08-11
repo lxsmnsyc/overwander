@@ -92,6 +92,8 @@ import {
   resolveNest,
 } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import { FLAME_BODY_FACTOR, PICKUP_STEP_INTERVAL } from '../../src/overworld/abilities/gen-1';
+import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
 import { CANDY_ITEM_BONUS } from '../../src/overworld/items/candy-items';
@@ -1015,6 +1017,40 @@ describe('world', () => {
       expect([...bonus.values()].every((count) => count === CANDY_ITEM_BONUS)).toBe(true);
       expect(bonus.size).toBeLessThanOrEqual(1);
     }
+  });
+
+  it('warms an egg picked up beside a Flame Body buddy', () => {
+    const warm = createOverworld('player-uid', buddyWith([Abilities.FlameBody]));
+    const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
+
+    expect(warm.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS * FLAME_BODY_FACTOR);
+    expect(plain.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS);
+    expect(createOverworld('player-uid', null).checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(
+      EGG_HATCH_STEPS,
+    );
+
+    // However short the walk gets, there is always one step of it
+    expect(warm.checkEggSteps('egg', 1)).toBe(1);
+  });
+
+  it('turns something up every so far for a Pickup buddy', () => {
+    const finder = createOverworld('player-uid', buddyWith([Abilities.Pickup]));
+    const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
+    const far = PICKUP_STEP_INTERVAL * 3;
+
+    expect(finder.checkWalkPickup('buddy', 0, far)).toBe(3);
+    expect(plain.checkWalkPickup('buddy', 0, far)).toBe(0);
+    // Short of the first mark is nothing at all
+    expect(finder.checkWalkPickup('buddy', 0, PICKUP_STEP_INTERVAL - 1)).toBe(0);
+
+    // It counts marks crossed rather than steps reported, so walking
+    // the same distance in handfuls finds exactly as much
+    let piecemeal = 0;
+
+    for (let at = 0; at < far; at += 64) {
+      piecemeal += finder.checkWalkPickup('buddy', at, Math.min(far, at + 64));
+    }
+    expect(piecemeal).toBe(3);
   });
 
   it('doubles a purse and quiets a chunk for a buddy burning incense', () => {

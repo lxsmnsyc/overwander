@@ -152,9 +152,13 @@ the winner comes back for the lot. `claimAuction` checks `canClaim` (bidding
 closed, unsettled, and the caller is the last bidder), then in one transaction:
 
 - an **item** lot lands in the winner's stack;
-- a **catch** lot comes out of escrow: `owner` becomes the winner's uid and a
-  `{ owner, acquiredAt }` entry is appended to its history, written in the new
-  owner's own zone the way a catch date is;
+- a **catch** lot comes out of escrow: `owner` becomes the winner's uid, an
+  `Acquisition.Auction` entry is appended to its history — stamped in the new
+  owner's own zone the way a catch date is, so the record says both when and how
+  it changed hands — and its `friendship` is **reset to
+  `BASE_FRIENDSHIP`** — what it walked, levelled and was groomed for belonged to
+  the seller, and a pokemon that arrives inseparable would make being loved a
+  thing that can be bought;
 - the seller is paid the winning bid;
 - `settled` is set, which is the claim marker — the lot is collected once and
   the purse is paid once.
@@ -167,8 +171,9 @@ the lot goes back where it came from. `reclaimAuction` checks `canReclaim`
 transaction, returns the item to the seller's stack or the pokemon to their
 records, then sets `settled`.
 
-Nothing is paid, because nothing was sold, and the catch's ownership `history` is
-left alone: it did not change hands, it sat on a shelf for a day and came back.
+Nothing is paid, because nothing was sold, and the catch's ownership `history`
+and `friendship` are both left alone: it did not change hands, it sat on a shelf
+for a day and came back to the same person.
 
 Reclaiming and collecting are the same handover seen from either end, and they
 share the one marker — `canClaim` needs a bidder and `canReclaim` needs none, so
@@ -190,11 +195,26 @@ bidder see what they are bidding on.
 Escrow always ends: the winner collects it, or — if nobody bid — the seller takes
 it back. Nothing stays ownerless once the day is up and somebody has come for it.
 
-Listing a pokemon is refused when it is fighting (`isCatchLocked`) or waiting in
-a raid lobby (`isAnyCatchQueued`) — the lobby holds its id rather than the
-record, so selling it out from under a party would have it silently dropped when
-the raid started. A `buddies/{uid}` document naming it is deleted in the same
-transaction, the way a release takes it.
+Four pokemon are refused a listing outright, all of them inside the same
+transaction that would have written it:
+
+| Refused            | Checked with       | Why                                                                           |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------- |
+| Fighting           | `isCatchLocked`    | The battle runs on a frozen copy of a record that has to still be there       |
+| Waiting in a lobby | `isAnyCatchQueued` | The lobby holds its id, so it would be silently dropped when the raid started |
+| An egg             | `isEggRecord`      | A bidder cannot see into one and the seller can                               |
+| The player's buddy | `buddies/{uid}`    | Not something to sell by misreading a list, and a lot cannot be taken back    |
+
+The egg rule is about what an auction *is*. A catch lot is readable precisely so
+that a bidder can look at what they are bidding on; an egg shows nothing but the
+word "Egg" to everyone except the person selling it, who has known what is inside
+since the moment it was found.
+
+The buddy rule replaces something the code used to do: listing the buddy deleted
+`buddies/{uid}` in the same transaction, the way a release does. Refusing is
+better than tidying up after — a lot cannot be taken off the block, so a
+mis-click sold the pokemon the player walks with. Sending it home first is one
+press, and it makes the sale deliberate.
 
 Whatever it is holding goes with it. The item was handed to the pokemon, and the
 pokemon is what is being sold.

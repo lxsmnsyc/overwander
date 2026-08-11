@@ -416,7 +416,16 @@ export default function OverworldTab(): JSX.Element {
     pending = 0;
     reporting = true;
     walk(steps)
-      .then(setCarried)
+      .then((report) => {
+        setCarried(report?.egg ?? null);
+
+        // A find is worth saying out loud: it lands in the bag while
+        // the player is looking at the map rather than at their
+        // inventory, and nothing else would tell them
+        if (report != null && report.picked.length > 0) {
+          setStatus(`Your buddy picked up ${describeStash(report.picked)}.`);
+        }
+      })
       .catch(() => {
         // A dropped report is a few paces, not an error worth
         // interrupting the walk over; the next one carries on

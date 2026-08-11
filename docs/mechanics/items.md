@@ -64,6 +64,18 @@ A grotto gives either a stash on its own bands — which **shut the base tier ou
 so nothing common is ever in one — or a pokemon, derived so that every observer
 of that grotto meets the same individual.
 
+### A buddy with Pickup
+
+The one source that is not a landmark. A **Pickup** buddy turns something up
+every `PICKUP_STEP_INTERVAL` (512) steps walked, drawn from the ordinary item
+pool with the **special band shut out** — a ball, a potion, now and then a stone,
+but never a Master Ball scuffed off a path.
+
+What it counts is the marks the walk crossed rather than the steps in a report,
+so a player who reports in small handfuls finds exactly as much as one who
+reports in large ones. The find lands in the bag as the steps are credited, and
+the walk is told about it.
+
 ## What a berry does
 
 Berries are the one item class that is worth carrying into a fight, since a
@@ -147,6 +159,15 @@ time**, which — since a lot runs a full day — is one a day. The seller may n
 bid, and the standing bidder may not bid against themselves until somebody
 outbids them. There is no ceiling: the increment is the floor on a raise, not its
 size, so a lot worth having can be put out of reach in one bid.
+
+A pokemon that changes hands arrives as a stranger: its friendship resets to
+`BASE_FRIENDSHIP`, so gold buys the pokemon and never the walking behind it.
+
+Four pokemon cannot be listed at all: one **fighting**, one **waiting in a raid
+lobby**, an **egg** — a bidder cannot see into one and the seller can — and the
+**buddy** at the player's side. A lot cannot be taken back off the block, so the
+buddy is refused rather than quietly sent home: making that sale takes one
+deliberate press first.
 
 Nothing happens when bidding closes, because there is no job to run — somebody
 comes back for the lot. Usually that is the winner; a lot **nobody bid on** has

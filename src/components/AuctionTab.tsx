@@ -17,10 +17,12 @@ import {
   reclaimAuction,
   watchOpenAuctions,
 } from '../auth/auctions';
+import { getBuddy } from '../auth/buddy';
 import { getCaught } from '../auth/caught';
+import { isEgg } from '../auth/egg';
 import { type Profile, watchProfile } from '../auth/profile';
 import type { Items } from '../data/ids/items';
-import CatchPicker from './CatchPicker';
+import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './CatchesList';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import matches from '../core/search';
@@ -367,6 +369,31 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     setRevision(revision() + 1);
   };
 
+  /**
+   * The pokemon at the player's side, which is not for sale. It is
+   * re-read on the same revision the pickers are, since sending the
+   * buddy home is how a player makes that one sellable
+   */
+  const [buddy] = createResource(
+    () => [props.player, revision()] as const,
+    async ([player]) => getBuddy(player),
+  );
+
+  /**
+   * Why a pokemon in the list cannot be put up. The server decides all
+   * three again when the listing actually arrives; this is so a player
+   * is told before they press rather than after
+   */
+  const sellingReason = (option: CatchOption): string | null => {
+    if (option.fighting) {
+      return 'in a raid';
+    }
+    if (isEgg(option.caught)) {
+      return 'still an egg';
+    }
+    return buddy()?.caught === option.id ? 'your buddy' : null;
+  };
+
   const [item, setItem] = createSignal<Items | null>(null);
   const [caught, setCaught] = createSignal<string | null>(null);
   const [startingBid, setStartingBid] = createSignal(MIN_STARTING_BID);
@@ -611,16 +638,19 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           />
 
           <h4>From the records</h4>
-          {/* A pokemon in a raid is fighting on a frozen copy of a
-              record that has to still be there when the battle ends, so
-              it cannot be sold out from under it */}
+          {/* Three kinds of pokemon are refused rather than hidden, so
+              a player looking for one of them is told why: a raid is
+              fighting on a frozen copy of a record that has to still be
+              there when it ends, an egg is a sealed box only its owner
+              can see into, and the buddy is not something to sell by
+              misreading a list */}
           <CatchPicker
             inline
             revision={revision()}
             value={caught()}
             verb="Sell"
             empty="No pokemon to sell."
-            reason={(option) => (option.fighting ? 'in a raid' : null)}
+            reason={sellingReason}
             onPick={pickCatch}
           />
 

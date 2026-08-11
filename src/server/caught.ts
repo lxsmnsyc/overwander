@@ -1,5 +1,5 @@
 import 'server-only';
-import { HELD_ITEM_LIMIT } from '../auth/caught-record';
+import { Acquisition, HELD_ITEM_LIMIT, asCaughtPokemon } from '../auth/caught-record';
 import {
   BUDDY_COLLECTION,
   CAUGHT_COLLECTION,
@@ -8,15 +8,15 @@ import {
   inventoryEntryId,
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
-import { getMaxHealth } from '../auth/health';
+import { getMaxHealth, needsCare } from '../auth/health';
 import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import Abilities from '../data/ids/abilities';
-import type { Balls, Items } from '../data/ids/items';
-import { ItemFlags } from '../data/ids/items';
+import type { Items } from '../data/ids/items';
+import { Balls, ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
-import resolveBuddy from './buddy';
+import resolveBuddy, { resolveBuddyCatch } from './buddy';
 import { grantCandy, grantCatchCandy } from './candy';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
@@ -108,7 +108,7 @@ export async function recordCatch(
       ? [encounter.ability, Abilities.Shadow]
       : [encounter.ability],
     items: [],
-    history: [{ owner: uid, acquiredAt: caughtAt }],
+    history: [{ owner: uid, acquiredAt: caughtAt, kind: Acquisition.Caught }],
     // Whatever was true of the meeting is true of the record — it
     // sparkled for this player, or it came out of a shadow raid — and
     // a fresh catch has fought nothing, so the lock bit comes off the
@@ -156,8 +156,51 @@ export async function recordCatch(
   for (const [owed, count] of overworld.checkCatchCandy(spawnId, family)) {
     await grantCandy(uid, owed, count);
   }
+  await mendWithHealBall(uid, ball);
 
   return ref.id;
+}
+
+/**
+ * What a Heal Ball does here.
+ *
+ * The mainline ball mends what is caught in it, and here that is
+ * already true of everything: an encounter is not a battle, so a catch
+ * arrives whole however long it was fed and thrown at. What the ball's
+ * field does have something to mend is the pokemon standing beside the
+ * player — often the one that walked out of the last raid on two hit
+ * points — so that is where the healing goes.
+ *
+ * It is free and it is quiet: a buddy already whole is left alone
+ * rather than written to, an egg has nothing to mend, and a buddy
+ * locked into a live battle is left to fight it
+ */
+async function mendWithHealBall(uid: string, ball: Balls): Promise<void> {
+  if (ball !== Balls.HealBall) {
+    return;
+  }
+
+  const resolved = await resolveBuddyCatch(uid);
+
+  if (resolved == null) {
+    return;
+  }
+
+  const [catchId, stored] = resolved;
+
+  if (isCatchLocked(stored) || isEggRecord(stored)) {
+    return;
+  }
+
+  const buddy = asCaughtPokemon(stored);
+
+  if (!needsCare(buddy)) {
+    return;
+  }
+  await getAdminFirestore()
+    .collection(CAUGHT_COLLECTION)
+    .doc(catchId)
+    .update({ health: getMaxHealth(buddy), statuses: 0 });
 }
 
 /**

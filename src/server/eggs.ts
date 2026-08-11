@@ -1,6 +1,11 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
-import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
+import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
+import {
+  BUDDY_COLLECTION,
+  CAUGHT_COLLECTION,
+  INVENTORY_COLLECTION,
+  inventoryEntryId,
+} from '../auth/collections';
 import {
   EGG_HATCH_STEPS,
   EGG_LEVEL,
@@ -13,7 +18,8 @@ import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
-import { Balls } from '../data/ids/items';
+import { Balls, type Items } from '../data/ids/items';
+import { ITEM_POOL, type ItemStack, PICKUP_BAND_ODDS, pickItem } from '../data/overworld/item-pool';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
@@ -34,10 +40,13 @@ import {
   BASE_FRIENDSHIP,
   FRIENDSHIP_STEP_INTERVAL,
   HATCHED_FRIENDSHIP,
+  friendshipFactor,
   gainFriendship,
 } from '../data/constants/friendship';
+import createOverworld from '../overworld/setup';
+import resolveBuddy from './buddy';
 import { freeFields, isCatchLocked } from './locks';
-import { docData } from './read';
+import { asNumber, docData } from './read';
 
 /**
  * Eggs, written with admin credentials.
@@ -65,6 +74,24 @@ export interface EggWalk {
   caught: string;
   steps: number;
   hatchSteps: number;
+}
+
+/**
+ * Everything one report of walking was worth: how far along the egg
+ * is, and whatever the buddy scuffed up off the path while it walked.
+ * The two travel together because they come out of the same steps
+ */
+export interface WalkReport {
+  /**
+   * The egg being carried, or null when the buddy is a pokemon rather
+   * than an egg — that walk buys friendship instead
+   */
+  egg: EggWalk | null;
+  /**
+   * What Pickup found, ready to be shown. Empty for every buddy that
+   * does not have it, which is nearly all of them
+   */
+  picked: ItemStack[];
 }
 
 /**
@@ -112,6 +139,15 @@ async function writeEgg(
   const db = getAdminFirestore();
   const ref = db.collection(CAUGHT_COLLECTION).doc();
   const foundAt = toLocalISO(now, asOffset(offset));
+  // Whatever was walking beside the player when they picked it up has
+  // its say on how far it has to be carried — a Flame Body buddy warms
+  // it. It is asked here, once, because from now on the egg is what
+  // walks beside them
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const hatchSteps = overworld.checkEggSteps(
+    `${snapshot.key}${fields.timestamp}egg`,
+    fields.hatchSteps,
+  );
 
   await ref.set({
     owner: uid,
@@ -132,7 +168,9 @@ async function writeEgg(
     // An egg holds nothing, and cannot be handed anything until it
     // has hatched
     items: [],
-    history: [{ owner: uid, acquiredAt: foundAt }],
+    // It was never anybody else's: this owner is where the pokemon
+    // begins, egg and all
+    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg }],
     // An egg on top of whatever the pokemon inside is, and never
     // locked: an egg cannot be fielded
     ...freeFields(fields.flags | PokemonFlags.Egg),
@@ -150,8 +188,9 @@ async function writeEgg(
     lair: null,
     steps: 0,
     // Frozen here, so a later change to what hatching costs cannot
-    // move the finish line on an egg already being carried
-    hatchSteps: fields.hatchSteps,
+    // move the finish line on an egg already being carried — nor can
+    // picking up a Ponyta afterwards
+    hatchSteps,
     steppedAt: now,
     // An egg was never thrown at; the ball it is recorded under is
     // the one named for where eggs come from
@@ -286,22 +325,42 @@ export async function grantBredEgg(
 }
 
 /**
+ * What a Pickup buddy actually found, rolled from the walk it found
+ * them on. Which item is luck; how many were found is not, and that
+ * part was already decided by the ability
+ */
+function pickedUp(uid: string, walked: number, finds: number): Map<Items, number> {
+  const rng = new AleaRNG(`${uid}pickup${walked}`);
+  const found = new Map<Items, number>();
+
+  for (let at = 0; at < finds; at++) {
+    const item = pickItem(ITEM_POOL, () => rng.random(), PICKUP_BAND_ODDS);
+
+    if (item != null) {
+      found.set(item, (found.get(item) ?? 0) + 1);
+    }
+  }
+  return found;
+}
+
+/**
  * Credit steps walked with the buddy. Only the buddy walks, and only
- * an egg has anywhere to walk to, so a player with no buddy — or one
- * whose buddy has already hatched — reports into nothing.
+ * an egg has anywhere to walk to, so a player whose buddy has already
+ * hatched walks for friendship instead — and, with the right buddy,
+ * for whatever is lying on the path.
  *
  * The report is measured against the stamp the last one left: a
  * client that saves steps up, or invents them, is credited whatever
  * the elapsed time could really have been walked in and no more.
  *
- * Resolves how far along the egg now is, or null when nothing was
- * being carried
+ * Resolves what the walk came to, or null when nothing was being
+ * walked with at all
  */
 export async function recordSteps(
   uid: string,
   reported: number,
   now: number,
-): Promise<EggWalk | null> {
+): Promise<WalkReport | null> {
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
@@ -334,13 +393,56 @@ export async function recordSteps(
       const earned =
         Math.floor(walked / FRIENDSHIP_STEP_INTERVAL) -
         Math.floor(caught.walked / FRIENDSHIP_STEP_INTERVAL);
+      // The same walk, asked of whatever is doing it: a Pickup buddy
+      // turns something up every so many paces, and everything else
+      // answers nothing
+      const overworld = createOverworld(uid, {
+        species: caught.species,
+        abilities: caught.abilities,
+        items: caught.items,
+        nature: caught.nature,
+        gender: caught.gender,
+      });
+      const found = pickedUp(
+        uid,
+        walked,
+        overworld.checkWalkPickup(catchId, caught.walked, walked),
+      );
+      // Every stack is read before anything is written, the way a
+      // transaction requires
+      const stacks = await Promise.all(
+        [...found.keys()].map(async (item) =>
+          transaction.get(db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item))),
+        ),
+      );
 
       transaction.update(ref, {
         walked,
         steppedAt: now,
-        ...(earned > 0 ? { friendship: gainFriendship(caught.friendship, 'walk', earned) } : {}),
+        // A Luxury Ball's comfort is what the pokemon remembers the
+        // walk by, so it warms to the player twice as fast
+        ...(earned > 0
+          ? {
+              friendship: gainFriendship(
+                caught.friendship,
+                'walk',
+                earned,
+                friendshipFactor(caught.ball),
+              ),
+            }
+          : {}),
       });
-      return null;
+
+      for (const [at, item] of [...found.keys()].entries()) {
+        const amount = found.get(item) ?? 0;
+
+        transaction.set(stacks[at].ref, {
+          user: uid,
+          item,
+          amount: asNumber(docData(stacks[at])?.amount) + amount,
+        });
+      }
+      return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
     }
 
     const credited = creditableSteps(reported, now - caught.steppedAt, stepsRemaining(caught));
@@ -350,7 +452,9 @@ export async function recordSteps(
     // what the next report is measured from, and a refused report
     // should not leave time banked for the one after it
     transaction.update(ref, { steps, steppedAt: now });
-    return { caught: catchId, steps, hatchSteps: caught.hatchSteps };
+    // An egg finds nothing: whatever is inside it is not out here
+    // looking at the ground
+    return { egg: { caught: catchId, steps, hatchSteps: caught.hatchSteps }, picked: [] };
   });
 }
 

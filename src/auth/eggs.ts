@@ -1,11 +1,11 @@
 import type { Species } from '../data/ids/species';
-import { type EggWalk, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
+import { type WalkReport, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
 import { requireUid } from '../server/firebase';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';
 
-export type { EggWalk } from '../server/eggs';
+export type { EggWalk, WalkReport } from '../server/eggs';
 
 /**
  * Walking, and what walking is for.
@@ -19,18 +19,17 @@ export type { EggWalk } from '../server/eggs';
  */
 
 /**
- * Report steps walked. They go to the player's buddy, and only an egg
- * has anywhere to put them, so this quietly comes to nothing for a
- * player walking with a pokemon or alone.
+ * Report steps walked. They go to the player's buddy: an egg is
+ * carried closer to hatching, a hatched buddy warms to the player, and
+ * a buddy with Pickup turns something up off the path every so often.
  *
- * Resolves how far along the egg now is, or null when nothing was
- * being carried
+ * Resolves what the walk came to, or null when the player walks alone
  */
-export async function walk(steps: number): Promise<EggWalk | null> {
+export async function walk(steps: number): Promise<WalkReport | null> {
   return walkOnServer(await getIdToken(), steps);
 }
 
-async function walkOnServer(token: string, steps: number): Promise<EggWalk | null> {
+async function walkOnServer(token: string, steps: number): Promise<WalkReport | null> {
   'use server';
   return recordSteps(await requireUid(token), steps, await syncServerClock());
 }

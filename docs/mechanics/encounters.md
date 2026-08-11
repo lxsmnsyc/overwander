@@ -111,6 +111,8 @@ written once and listens for the questions it has an opinion about.
 | **Synchronize**                              | Ability    | Half of all encounters share the buddy's nature     |
 | **Cute Charm**                               | Ability    | Two draws in three come out the opposite gender     |
 | **Arena Trap**, **Illuminate**, **No Guard** | Ability    | The two extra spawns become visible and meetable    |
+| **Flame Body**                               | Ability    | An egg picked up beside it has half as far to go    |
+| **Pickup**                                   | Ability    | Finds something on the path every 512 steps walked  |
 | **Shiny Charm**                              | Held item  | Eight times the shiny odds                          |
 | **Exp. Share**                               | Held item  | Half of catches pay a candy to the *buddy's* family |
 | **Lucky Egg**                                | Held item  | Half of catches pay a candy to the *caught* family  |

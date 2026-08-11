@@ -45,6 +45,16 @@ export const enum OverworldEvents {
    * buddy's family, a Lucky Egg the caught one's
    */
   CheckCatchCandy = 5,
+  /**
+   * How far an egg the player is picking up has to be carried. Flame
+   * Body warms it, so it comes out sooner
+   */
+  CheckEggSteps = 6,
+  /**
+   * What the buddy found on the ground over the steps just walked.
+   * Pickup is the only thing that answers it
+   */
+  CheckWalkPickup = 7,
 }
 
 /**
@@ -106,6 +116,31 @@ export interface CheckCatchCandyEvent extends OverworldEvent {
   bonus: Map<Families, number>;
 }
 
+export interface CheckEggStepsEvent extends OverworldEvent {
+  /**
+   * What the egg would cost to hatch before anything the player was
+   * walking with has its say
+   */
+  base: number;
+  steps: number;
+}
+
+export interface CheckWalkPickupEvent extends OverworldEvent {
+  /**
+   * How far the buddy had walked before this report, and how far it
+   * has walked after it. An effect that fires every so many steps
+   * counts the marks between the two rather than being told how many
+   * steps were credited, so a report split in half is worth exactly
+   * what one report would have been
+   */
+  from: number;
+  to: number;
+  /**
+   * How many things were found along the way
+   */
+  found: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -113,4 +148,6 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckEncounterShiny]: [CheckEncounterShinyEvent, EventPriority];
   [OverworldEvents.CheckGoldReward]: [CheckGoldRewardEvent, EventPriority];
   [OverworldEvents.CheckCatchCandy]: [CheckCatchCandyEvent, EventPriority];
+  [OverworldEvents.CheckEggSteps]: [CheckEggStepsEvent, EventPriority];
+  [OverworldEvents.CheckWalkPickup]: [CheckWalkPickupEvent, EventPriority];
 }

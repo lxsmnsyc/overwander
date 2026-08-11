@@ -13,6 +13,8 @@
  * after rather than merely levelled.
  */
 
+import { Balls } from '../ids/items';
+
 export const MAX_FRIENDSHIP = 255;
 
 /**
@@ -58,13 +60,41 @@ function band(current: number): 0 | 1 | 2 {
 }
 
 /**
- * The friendship a pokemon has after something happened to it, held
- * inside what a friendship can be
+ * What a pokemon caught in a Luxury Ball makes of everything that
+ * happens to it afterwards. The mainline ball is a comfortable one to
+ * ride in, and a pokemon that travels comfortably warms to its trainer
+ * twice as fast
  */
-export function gainFriendship(current: number, cause: FriendshipCause, times = 1): number {
-  const step = GAINS[cause][band(current)];
+export const LUXURY_FRIENDSHIP_FACTOR = 2;
 
-  return Math.max(0, Math.min(MAX_FRIENDSHIP, current + step * Math.max(0, Math.floor(times))));
+/**
+ * How fast a pokemon caught in this ball comes round. It is the ball
+ * the record was made with rather than anything the player still
+ * carries, so it is decided once, at the catch, and holds for the
+ * pokemon's whole life
+ */
+export function friendshipFactor(ball: Balls): number {
+  return ball === Balls.LuxuryBall ? LUXURY_FRIENDSHIP_FACTOR : 1;
+}
+
+/**
+ * The friendship a pokemon has after something happened to it, held
+ * inside what a friendship can be.
+ *
+ * The factor multiplies what it **gains** and never what it loses: a
+ * comfortable ball is a reason to think better of somebody, not a
+ * reason to take a fainting harder
+ */
+export function gainFriendship(
+  current: number,
+  cause: FriendshipCause,
+  times = 1,
+  factor = 1,
+): number {
+  const step = GAINS[cause][band(current)];
+  const scaled = step > 0 ? step * Math.max(1, Math.floor(factor)) : step;
+
+  return Math.max(0, Math.min(MAX_FRIENDSHIP, current + scaled * Math.max(0, Math.floor(times))));
 }
 
 /**

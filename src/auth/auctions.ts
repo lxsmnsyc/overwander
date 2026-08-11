@@ -16,6 +16,7 @@ import {
   placeBid as bidOnServerSide,
   claimAuction as claimOnServerSide,
   openAuction as openOnServerSide,
+  reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
 import { requireUid } from '../server/firebase';
 import {
@@ -50,6 +51,7 @@ export {
   canBid,
   canClaim,
   canRebid,
+  canReclaim,
   getBidState,
   hasEnded,
   isBidOn,
@@ -207,8 +209,9 @@ export async function getSellerStanding(
 
 /**
  * Put an item up for auction. The item leaves the bag as the auction
- * opens and does not come back — a seller cannot take their own lot
- * off the block, and cannot bid on it either.
+ * opens — a seller cannot take their own lot off the block while it
+ * runs, and cannot bid on it either. It comes back only if the day
+ * ends with nobody having bid at all.
  *
  * Resolves the auction id, or null when the player already has one
  * running or does not carry the item
@@ -224,8 +227,8 @@ export async function openItemAuction(item: Items, terms: AuctionTerms): Promise
 
 /**
  * Put one of the player's pokemon up for auction. It leaves their
- * records as the auction opens — held items and all — and does not
- * come back.
+ * records as the auction opens — held items and all — and comes back
+ * only if the day ends with nobody having bid at all.
  *
  * Resolves the auction id, or null when the player already has one
  * running, does not own the pokemon, or it is fighting or waiting in a
@@ -286,4 +289,21 @@ export async function claimAuction(id: string): Promise<boolean> {
 async function claimAuctionOnServer(token: string, id: string, offset: number): Promise<boolean> {
   'use server';
   return claimOnServerSide(await requireUid(token), id, await syncServerClock(), offset);
+}
+
+/**
+ * Take back a lot that closed without a single bid on it. The item
+ * returns to the bag and the pokemon to the player's records, exactly
+ * as they left — nothing was sold, so nothing is paid.
+ *
+ * Resolves false when the caller is not the seller, bidding is still
+ * open, somebody did bid on it, or it has already been handed over
+ */
+export async function reclaimAuction(id: string): Promise<boolean> {
+  return reclaimAuctionOnServer(await getIdToken(), id);
+}
+
+async function reclaimAuctionOnServer(token: string, id: string): Promise<boolean> {
+  'use server';
+  return reclaimOnServerSide(await requireUid(token), id, await syncServerClock());
 }

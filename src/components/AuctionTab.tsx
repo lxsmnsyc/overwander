@@ -5,6 +5,7 @@ import {
   MIN_INCREMENT,
   MIN_STARTING_BID,
   canClaim,
+  canReclaim,
   claimAuction,
   getSellerStanding,
   isBidOn,
@@ -13,6 +14,7 @@ import {
   openCatchAuction,
   openItemAuction,
   placeBid,
+  reclaimAuction,
   watchOpenAuctions,
 } from '../auth/auctions';
 import { getCaught } from '../auth/caught';
@@ -235,9 +237,11 @@ export interface AuctionTabProps {
  * The auction house: what is on the block, what the player has won and
  * not collected, and the one lot they may put up themselves.
  *
- * Putting something up cannot be undone — the item leaves the bag and
- * the pokemon leaves the player's records there and then — so it takes
- * a second press, the way letting a pokemon go does
+ * Putting something up cannot be undone while the lot runs — the item
+ * leaves the bag and the pokemon leaves the player's records there and
+ * then — so it takes a second press, the way letting a pokemon go does.
+ * Only a lot the day ended on without a bid comes back, and it comes
+ * back here
  */
 export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
@@ -335,6 +339,13 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     (auctions() ?? []).filter(([, auction]) => canClaim(auction, props.player, now()));
 
   /**
+   * The player's own lots that ran their day out without a single bid.
+   * Nobody won them, so there is nobody to hand them to but the seller
+   */
+  const unsold = (): [string, AuctionRecord][] =>
+    (auctions() ?? []).filter(([, auction]) => canReclaim(auction, props.player, now()));
+
+  /**
    * The auction the player has running, if any. A seller runs one at a
    * time, so this is what the sell form asks before it offers anything
    */
@@ -387,7 +398,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         setStatus(
           id == null
             ? 'It could not be put up — you may already have an auction running.'
-            : 'It is on the block. It cannot be taken back.',
+            : 'It is on the block until the day is up.',
         );
         setItem(null);
         setCaught(null);
@@ -453,12 +464,24 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       });
   };
 
+  const reclaim = (id: string): void => {
+    setStatus(null);
+    reclaimAuction(id)
+      .then((taken) => {
+        setStatus(taken ? 'Taken back.' : 'That lot could not be taken back.');
+        refresh();
+      })
+      .catch((thrown: unknown) => {
+        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+      });
+  };
+
   return (
     <Panel
       title="Auctions"
       lede="Every lot runs for a day. Whatever is put up leaves its owner's hands there and then,
         and the last bidder standing collects it once bidding closes. A bid is paid as it is made
-        and handed back if somebody raises it."
+        and handed back if somebody raises it. A lot nobody bid on goes back to whoever listed it."
     >
       <Row>
         <Badge tone="gold">{gold()} gold</Badge>
@@ -534,6 +557,33 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Show>
       </Card>
 
+      {/* A lot the day ran out on without a bid has no winner to go to,
+          so it goes back where it came from */}
+      <Card title="Unsold">
+        <Show when={unsold().length} fallback={<Note>Nothing of yours went unsold.</Note>}>
+          <List>
+            <For each={unsold()}>
+              {([id, auction]) => (
+                <ListRow>
+                  <span class="grow font-medium">
+                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
+                  </span>
+                  <Meta>nobody bid</Meta>
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      reclaim(id);
+                    }}
+                  >
+                    Take it back
+                  </Button>
+                </ListRow>
+              )}
+            </For>
+          </List>
+        </Show>
+      </Card>
+
       <Card title="Sell">
         <Show
           when={running() == null}
@@ -546,7 +596,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         >
           <Note>
             One item — a single one, not the stack — or one pokemon. Whichever it is leaves your
-            hands the moment it goes up, and does not come back.
+            hands the moment it goes up and cannot be taken off the block; it only comes back if the
+            day ends with nobody having bid on it.
           </Note>
 
           <h4>From the bag</h4>
@@ -603,7 +654,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
                 press is the one that does it — and it is the one that
                 looks like it */}
             <Button tone={listing() ? 'danger' : 'primary'} onClick={list}>
-              {listing() ? 'Give it up for good?' : 'Put it up for auction'}
+              {listing() ? 'Put it out of reach for a day?' : 'Put it up for auction'}
             </Button>
             <Show when={listing()}>
               <Button

@@ -21,7 +21,7 @@ import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
-import { docData } from './read';
+import { type UpdateFields, docData } from './read';
 
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.
@@ -201,7 +201,7 @@ export async function breedCatches(
  * What Nurse Joy did to one pokemon, or null when there was nothing
  * of hers to do for it
  */
-function tended(caught: Record<string, unknown>, uid: string): Record<string, unknown> | null {
+function tended(caught: Record<string, unknown>, uid: string): UpdateFields | null {
   if (caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
     return null;
   }
@@ -266,7 +266,7 @@ export async function visitNurse(
   const db = getAdminFirestore();
   const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
   const stored = await db.getAll(...refs);
-  const care: [FirebaseFirestore.DocumentReference, Record<string, unknown>][] = [];
+  const care: [FirebaseFirestore.DocumentReference, UpdateFields][] = [];
 
   for (const [at, entry] of stored.entries()) {
     const caught = docData(entry);

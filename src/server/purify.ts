@@ -13,7 +13,7 @@ import {
 import { isEggRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { type UpdateFields, asNumber, docData } from './read';
 
 /**
  * Purifying, written with admin credentials.
@@ -34,7 +34,7 @@ import { asNumber, docData } from './read';
  * one place, because the nurse applies it to a party the same way the
  * gem applies it to one pokemon
  */
-export function purifiedFields(caught: Record<string, unknown>): Record<string, unknown> {
+export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
   const record = asCaughtPokemon(caught);
   const ivs = purifyIVs(record.ivs);
 

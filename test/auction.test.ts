@@ -16,6 +16,7 @@ import {
   canBid,
   canClaim,
   canRebid,
+  canReclaim,
   getBidState,
   hasEnded,
   isBidOn,
@@ -176,14 +177,49 @@ describe('collecting', () => {
     expect(canClaim(collected, 'buyer', ended)).toBe(false);
   });
 
-  it('leaves a lot nobody bid on where it was put', () => {
-    // The seller gave it up when they listed it, and there is no
-    // winner to hand it to: an unbid lot is simply gone
+  it('has nobody to collect a lot nobody bid on', () => {
+    // There is no winner, so the collect path answers no to everybody;
+    // it goes back to the seller instead
     const unbid = auction();
 
     expect(isBidOn(unbid)).toBe(false);
     expect(canClaim(unbid, 'seller', ended)).toBe(false);
     expect(canClaim(unbid, 'buyer', ended)).toBe(false);
+  });
+});
+
+describe('taking a lot back', () => {
+  const ended = OPENED + AUCTION_DURATION;
+
+  it('gives an unsold lot back to whoever listed it', () => {
+    const unbid = auction();
+
+    expect(canReclaim(unbid, 'seller', ended)).toBe(true);
+    expect(canReclaim(unbid, 'buyer', ended)).toBe(false);
+  });
+
+  it('holds the lot on the block for the whole day', () => {
+    // A listing a seller could pull is a listing a bidder cannot trust
+    const unbid = auction();
+
+    expect(canReclaim(unbid, 'seller', ended - 1)).toBe(false);
+    expect(canReclaim(unbid, 'seller', ended)).toBe(true);
+  });
+
+  it('refuses a lot somebody bid on, collected or not', () => {
+    // It belongs to whoever won it, whether or not they have come back
+    const sold = auction({ bid: 100, bidder: 'buyer' });
+
+    expect(canReclaim(sold, 'seller', ended)).toBe(false);
+    expect(canReclaim({ ...sold, settled: true }, 'seller', ended)).toBe(false);
+  });
+
+  it('hands the same lot back only once', () => {
+    // Reclaiming and collecting are the same handover from either end,
+    // and they share the one marker
+    const taken = auction({ settled: true });
+
+    expect(canReclaim(taken, 'seller', ended)).toBe(false);
   });
 });
 

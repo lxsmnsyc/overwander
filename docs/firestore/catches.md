@@ -353,8 +353,9 @@ write that touches a catch asks whether the caller is its `owner`, and a uid is
 never empty, so an escrowed pokemon is refused to the seller, the bidders and
 everyone else by the checks that were already there — while staying **readable**,
 which is what lets a bidder see what they are bidding on. Collecting the lot
-writes the winner's uid into `owner` and appends the sale to `history`. See
-[Auctions](auctions.md).
+writes the winner's uid into `owner` and appends the sale to `history`; a lot
+nobody bid on goes back to the seller instead, which restores `owner` and leaves
+`history` alone — it never changed hands. See [Auctions](auctions.md).
 
 ## Eggs
 

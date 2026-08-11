@@ -148,9 +148,10 @@ bid, and the standing bidder may not bid against themselves until somebody
 outbids them. There is no ceiling: the increment is the floor on a raise, not its
 size, so a lot worth having can be put out of reach in one bid.
 
-Nothing happens when bidding closes, because there is no job to run — the winner
-comes back for the lot. A lot that closes with no bidder hands nothing to
-anybody: the seller gave it up when they listed it, and there is no winner to
-give it to.
+Nothing happens when bidding closes, because there is no job to run — somebody
+comes back for the lot. Usually that is the winner; a lot **nobody bid on** has
+no winner, so the seller takes it back instead, unsold and unpaid for. What a
+seller cannot do is take it back *early*: a listing that could be pulled the
+moment a bid looked unlikely is not one anybody would bid on.
 
 The details are in [Auctions](../firestore/auctions.md).

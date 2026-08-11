@@ -201,8 +201,8 @@ export function isLive(auction: AuctionRecord, now: number): boolean {
 
 /**
  * Whether anybody has bid at all. An auction that closes without one
- * is a lot nobody claims: the seller cannot take it back, so it stays
- * where it was put
+ * has no winner to hand the lot to, so it goes back to the seller
+ * instead — see `canReclaim`
  */
 export function isBidOn(auction: AuctionRecord): boolean {
   return auction.bidder !== '';
@@ -252,6 +252,24 @@ export function canBid(auction: AuctionRecord, uid: string, amount: number, now:
  */
 export function canClaim(auction: AuctionRecord, uid: string, now: number): boolean {
   return !auction.settled && hasEnded(auction, now) && isBidOn(auction) && auction.bidder === uid;
+}
+
+/**
+ * Whether the seller may take their lot back.
+ *
+ * Only once bidding has closed with **nobody having bid at all**. A lot
+ * cannot be pulled off the block while it is running — that is what
+ * makes a listing something a bidder can trust, and it is why a seller
+ * who changes their mind waits the day out rather than cancelling — and
+ * a lot somebody bid on belongs to whoever won it, whether or not they
+ * have come back for it.
+ *
+ * It shares `settled` with a collection, which is what stops a lot
+ * being both reclaimed and collected: the two are the same handover
+ * seen from either end, and only one of them can ever apply
+ */
+export function canReclaim(auction: AuctionRecord, uid: string, now: number): boolean {
+  return !auction.settled && hasEnded(auction, now) && !isBidOn(auction) && auction.seller === uid;
 }
 
 /**

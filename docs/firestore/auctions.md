@@ -13,8 +13,11 @@ Two decisions carry the whole feature, and nothing has to sweep up after either:
 - **A lot is taken when it is listed.** The item leaves the bag and the pokemon
   leaves the seller's records at the moment the auction opens, so a seller
   cannot list what they have since spent, and nothing has to be checked again a
-  day later. It does not come back — a seller who changes their mind would have
-  to buy it, and they may not bid on their own lot.
+  day later. It cannot be pulled off the block either — a seller who changes
+  their mind waits the day out, and may not bid on their own lot — so a listing
+  is something a bidder can trust for as long as it runs. Only a lot the day
+  ended on with **no bid at all** goes back, and the seller has to come and take
+  it.
 - **A bid is paid when it is made.** The gold is taken as the bid lands and
   handed straight back to whoever it outbid, so the last bidder standing is by
   definition somebody whose gold is already in. Nothing can be won by a player
@@ -156,10 +159,24 @@ closed, unsettled, and the caller is the last bidder), then in one transaction:
 - `settled` is set, which is the claim marker — the lot is collected once and
   the purse is paid once.
 
-An auction that closes with **no bidder** hands nothing to anybody. The seller
-gave the lot up when they listed it and there is no winner to give it to, so it
-stays where it was put: an item lot is simply gone, and a catch lot stays in
-escrow.
+## Taking a lot back
+
+An auction that closes with **no bidder** has no winner to hand anything to, so
+the lot goes back where it came from. `reclaimAuction` checks `canReclaim`
+(bidding closed, unsettled, nobody bid, and the caller is the seller) and, in one
+transaction, returns the item to the seller's stack or the pokemon to their
+records, then sets `settled`.
+
+Nothing is paid, because nothing was sold, and the catch's ownership `history` is
+left alone: it did not change hands, it sat on a shelf for a day and came back.
+
+Reclaiming and collecting are the same handover seen from either end, and they
+share the one marker — `canClaim` needs a bidder and `canReclaim` needs none, so
+no auction can ever satisfy both, and `settled` stops either happening twice.
+
+Bidding closing is what unlocks it. A seller cannot take a lot back while it is
+still running: that would let a listing be pulled the moment a bid looked
+unlikely, and a board whose lots can vanish is not one anybody would bid on.
 
 ## Escrow
 
@@ -169,6 +186,9 @@ a catch asks whether the caller is its `owner`, and a uid is never empty, so an
 escrowed pokemon is refused to the seller, the bidders and everyone else by the
 checks that were already there. It stays **readable**, which is what lets a
 bidder see what they are bidding on.
+
+Escrow always ends: the winner collects it, or — if nobody bid — the seller takes
+it back. Nothing stays ownerless once the day is up and somebody has come for it.
 
 Listing a pokemon is refused when it is fighting (`isCatchLocked`) or waiting in
 a raid lobby (`isAnyCatchQueued`) — the lobby holds its id rather than the

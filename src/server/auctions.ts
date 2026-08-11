@@ -22,6 +22,7 @@ import {
   asGold,
   canBid,
   canClaim,
+  canReclaim,
 } from '../auth/auction-record';
 import { asOffset, toLocalISO } from '../auth/local-time';
 import { asCaughtPokemon } from '../auth/caught-record';
@@ -47,6 +48,12 @@ import { asNumber, docData } from './read';
  * to whoever it outbid, so the last bidder standing is by definition
  * somebody whose gold is already in.
  *
+ * What is taken still has somebody waiting for it either way: a lot
+ * that sells is collected by its winner, and one nobody bid on is taken
+ * back by the seller once the day is up. Both run through the same
+ * `settled` marker, so a lot is handed over exactly once whichever way
+ * it went.
+ *
  * The rules both sides read live in
  * [`src/auth/auction-record.ts`](../auth/auction-record.ts)
  */
@@ -68,9 +75,11 @@ function getProfileRef(uid: string): FirebaseFirestore.DocumentReference {
  * The lot is taken in the same transaction the auction is written in:
  * an item stack comes down by one, and a catch is moved into escrow —
  * still its own document, readable by everyone the way any catch is,
- * but owned by nobody. Neither comes back. A seller who changes their
- * mind has to bid on it like anybody else, and they cannot, so a lot
- * put up is a lot given up.
+ * but owned by nobody. Neither comes back while the auction runs: a
+ * seller who changes their mind cannot pull the lot off the block, and
+ * cannot bid on it either, so a listing is something a bidder can
+ * trust for the whole day. Only a lot the day ended with **nobody
+ * having bid on** goes back, through `reclaimAuction`.
  *
  * A player runs one auction at a time, which is one a day: the seller
  * document says when theirs closes, and another cannot be opened until
@@ -301,6 +310,69 @@ export async function claimAuction(
     }
 
     transaction.set(sellerRef, { gold: paid + auction.bid }, { merge: true });
+    transaction.update(ref, { settled: true });
+    return true;
+  });
+}
+
+/**
+ * Take back a lot the day ended without a single bid on.
+ *
+ * Nothing was sold, so nothing is paid: the item goes back into the
+ * seller's stack and the pokemon comes out of escrow into their records
+ * exactly as it went in. Its ownership history is left alone, because
+ * it did not change hands — it sat on a shelf for a day and came back.
+ *
+ * `settled` is the same marker a collection writes, so a lot is handed
+ * over once whichever end it goes out of, and a reclaim cannot race a
+ * claim: only one of the two can be true of any auction.
+ *
+ * Resolves false when the caller is not the seller, when bidding is
+ * still open, when somebody did bid — that lot belongs to whoever won
+ * it, collected or not — or when it has already been handed over
+ */
+export async function reclaimAuction(
+  uid: string,
+  auctionId: string,
+  now: number,
+): Promise<boolean> {
+  const db = getAdminFirestore();
+
+  return db.runTransaction(async (transaction) => {
+    const ref = db.collection(AUCTION_COLLECTION).doc(auctionId);
+    const stored = docData(await transaction.get(ref));
+
+    if (stored == null) {
+      return false;
+    }
+
+    const auction = asAuctionRecord(stored);
+
+    if (!canReclaim(auction, uid, now)) {
+      return false;
+    }
+
+    if (auction.lot === AuctionLot.Item && auction.item != null) {
+      const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, auction.item));
+      const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+
+      transaction.set(stackRef, { user: uid, item: auction.item, amount: stock + 1 });
+    } else {
+      const caughtRef = db.collection(CAUGHT_COLLECTION).doc(auction.caught);
+      const caught = docData(await transaction.get(caughtRef));
+
+      if (caught == null) {
+        return false;
+      }
+      // Escrow is where this auction put it, and nothing else can move
+      // it from there: anything else in that field is a record this
+      // auction has no claim on
+      if (asCaughtPokemon(caught).owner !== AUCTION_ESCROW) {
+        return false;
+      }
+      transaction.update(caughtRef, { owner: uid });
+    }
+
     transaction.update(ref, { settled: true });
     return true;
   });

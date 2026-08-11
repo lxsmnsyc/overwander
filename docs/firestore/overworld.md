@@ -232,9 +232,21 @@ walks to another one.
 
 None of them trusts the caller about who they are talking to:
 `src/server/npcs.ts` re-derives the chunk, the zone and the window and checks
-the NPC standing there **before** doing anything. The two that charge spend the
-gold first and hand it back if the write behind it fails, so a player is never
-charged for nothing.
+the NPC standing there **before** doing anything.
+
+**Each of them serves a player once per window.** A marker at
+`npcClaims/{npc}{cell}:{uid}`, stamped with the NPC window, records that this
+player has been seen; a second ask before the passer-by changes is turned away
+whatever they can pay. The marker is per cell, so walking to another wandering
+cell finds somebody who has not seen you yet — that walk is what a second egg
+costs.
+
+It is taken as late as each call can manage, once the visit is known to be one
+that will land: a pair that cannot breed, an egg already ready to hatch, or a
+party that needed nothing is refused without spending it. The two that charge
+claim the visit *before* taking the gold — a player already seen should not be
+charged to be told so — and both the gold and the visit go back if the write
+behind them fails.
 
 - **Breeder** — takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed
@@ -257,11 +269,8 @@ charged for nothing.
   charges **nothing**. Every one of them comes back at full health with its
   statuses cleared, and any shadow among them is
   [purified](catches.md#purifying-a-shadow) on the way. What paces her is the
-  window rather than a fee: a marker at `npcClaims/{cell key}:{uid}` is taken
-  once she has actually done something, so it is one visit per player per
-  `NPC_INTERVAL`. A party that needed nothing is handed straight back and the
-  visit is **not** spent — the marker is only written where there was work, and
-  it is deleted again if the write behind it throws.
+  window alone, since there is no fee to pace her: a party that needed nothing is
+  handed straight back without spending the visit.
 
 What a bred egg inherits — and what it does not — is in
 [Eggs](catches.md#eggs).

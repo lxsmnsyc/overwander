@@ -18,17 +18,24 @@ import { purifiedFields } from './purify';
 import { docData } from './read';
 
 /**
- * The people a player meets at a wandering-NPC cell, and what they
- * do for a fee.
+ * The people a player meets at a wandering-NPC cell, and what they do.
  *
  * Who is standing there is not the caller's to say: it is re-derived
- * from the chunk, the zone and the window before anything is charged,
- * so asking a breeder to push an egg along — or asking either of them
+ * from the chunk, the zone and the window before anything happens, so
+ * asking a breeder to push an egg along — or asking either of them
  * from a cell that has neither — is refused rather than paid for.
  *
- * Both services take gold first and hand over afterwards, and both
- * put the gold back if the write behind it fails. A player who is
- * charged and given nothing is worse off than one who is refused.
+ * **Each of them serves a player once per window.** Whoever is at the
+ * cell stands there for `NPC_INTERVAL`, and a marker in `npcClaims`
+ * records that this player has been seen; a second ask that window is
+ * turned away whatever they can pay. It is taken only where the visit
+ * actually lands — a pair that cannot breed, an egg already ready to
+ * hatch or a party that needed nothing costs nothing — and it is given
+ * back if the write behind it fails.
+ *
+ * The two that charge take the gold after the visit is claimed and put
+ * it back if what it bought was never written. A player who is charged
+ * and given nothing is worse off than one who is refused.
  */
 
 /**
@@ -48,6 +55,38 @@ async function resolveNpc(
   const standing = snapshot?.getWanderingNpcs().get(cell);
 
   return snapshot != null && standing === expected ? snapshot : null;
+}
+
+/**
+ * Take this window's visit with whoever is standing at the cell.
+ *
+ * The marker is per NPC, cell, window and player, so walking to
+ * another wandering cell finds somebody who has not seen you yet —
+ * that walk is what a second egg costs. It is taken as late as the
+ * call can manage, once the visit is known to be one that will land,
+ * so a refusal never spends it.
+ *
+ * Resolves the marker's id, or null when this player has already been
+ * seen here this window
+ */
+async function takeVisit(
+  snapshot: ChunkSnapshot,
+  tag: string,
+  cell: number,
+  uid: string,
+  record: Record<string, unknown> = {},
+): Promise<string | null> {
+  const id = `${snapshot.key}@${snapshot.npcTimestamp}$${tag}${cell}:${uid}`;
+
+  return (await claim(NPC_CLAIM_COLLECTION, id, { player: uid, ...record })) ? id : null;
+}
+
+/**
+ * Give the visit back. What it was taken for did not happen, so the
+ * window should not be spent on it
+ */
+async function releaseVisit(id: string): Promise<void> {
+  await getAdminFirestore().collection(NPC_CLAIM_COLLECTION).doc(id).delete();
 }
 
 /**
@@ -123,7 +162,16 @@ export async function breedCatches(
   if (species == null) {
     return null;
   }
+
+  // Claimed before the fee, since a player already seen this window
+  // should not be charged to be told so
+  const visit = await takeVisit(snapshot, 'breed', cell, uid, { parents: [left, right] });
+
+  if (visit == null) {
+    return null;
+  }
   if (!(await spendGold(uid, BREEDING_FEE))) {
+    await releaseVisit(visit);
     return null;
   }
 
@@ -136,8 +184,9 @@ export async function breedCatches(
     return await grantBredEgg(uid, snapshot, seed, species, [first, second], now, offset, locale);
   } catch (error) {
     // The fee bought an egg that was never written; the player keeps
-    // their gold rather than the breeder keeping both
+    // their gold and their visit rather than the breeder keeping both
     await grantGold(uid, BREEDING_FEE);
+    await releaseVisit(visit);
     throw error;
   }
 }
@@ -227,9 +276,9 @@ export async function visitNurse(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`;
+  const visit = await takeVisit(snapshot, 'nurse', cell, uid, { catches });
 
-  if (!(await claim(NPC_CLAIM_COLLECTION, id, { player: uid, catches }))) {
+  if (visit == null) {
     return null;
   }
 
@@ -244,7 +293,7 @@ export async function visitNurse(
   } catch (error) {
     // She was asked and did nothing; the window is given back rather
     // than spent on a write that never landed
-    await db.collection(NPC_CLAIM_COLLECTION).doc(id).delete();
+    await releaseVisit(visit);
     throw error;
   }
 
@@ -295,8 +344,13 @@ export async function boostEgg(
   }
 
   const warmed = boostedSteps(caught);
+  const visit = await takeVisit(snapshot, 'daycare', cell, uid, { caught: catchId });
 
+  if (visit == null) {
+    return null;
+  }
   if (!(await spendGold(uid, DAYCARE_FEE))) {
+    await releaseVisit(visit);
     return null;
   }
 
@@ -306,6 +360,7 @@ export async function boostEgg(
     await ref.update({ steps: warmed, steppedAt: now });
   } catch (error) {
     await grantGold(uid, DAYCARE_FEE);
+    await releaseVisit(visit);
     throw error;
   }
   return warmed;

@@ -26,8 +26,12 @@ import getIdToken from './session';
  * have to be compatible — the pairing rules are checked again on the
  * server, from the stored records.
  *
- * Resolves the new egg's catch id, or null when the breeder refuses
- * or the fee cannot be paid
+ * The breeder sees a player once per window: a second pair left at
+ * the same cell before the passer-by changes is turned away, whatever
+ * the player can pay.
+ *
+ * Resolves the new egg's catch id, or null when the breeder refuses,
+ * the fee cannot be paid, or this window's visit has already been made
  */
 export async function breed(
   snapshot: ChunkSnapshot,
@@ -71,7 +75,9 @@ async function breedOnServer(
  * Have the daycare lady warm an egg: half of what hatching costs is
  * added to wherever it already was, so an egg a quarter of the way
  * along comes out three quarters of the way. An egg already ready to
- * hatch is refused.
+ * hatch is refused, and so is a second egg brought to the same cell in
+ * the same window — she sees a player once, the way everyone who
+ * wanders does.
  *
  * Resolves the egg's new step count, or null when she refuses
  */

@@ -47,9 +47,10 @@ export const AUCTION_SELLER_COLLECTION = 'auctionSellers';
 export const BID_COLLECTION = 'bids';
 
 /**
- * One marker per wandering-NPC cell, window and player. Only Nurse Joy
- * uses it: what she does is free, so what stops it being asked for
- * twice is the marker rather than a fee
+ * One marker per wandering NPC, cell, window and player. Whoever is
+ * standing at a cell serves a given player once while they are there:
+ * the fee the breeder and the daycare lady charge paces what a visit
+ * costs, and this paces how often one can be had at all
  */
 export const NPC_CLAIM_COLLECTION = 'npcClaims';
 

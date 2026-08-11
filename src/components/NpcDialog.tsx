@@ -108,7 +108,9 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         setBusy(false);
 
         if (egg == null) {
-          setStatus('The breeder handed them back — that pair, or that price, was no good.');
+          setStatus(
+            'The breeder handed them back — that pair, that price, or you have already left a pair with him this while.',
+          );
           return;
         }
         setChosen([]);
@@ -162,7 +164,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         setBusy(false);
         setStatus(
           steps == null
-            ? 'She would not take it.'
+            ? 'She would not take it — it may be ready already, or she has already warmed one for you this while.'
             : `She warmed it along to ${steps} steps. (−${DAYCARE_FEE} gold)`,
         );
         await refetch();

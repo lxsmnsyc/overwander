@@ -1299,8 +1299,10 @@ describe('world', () => {
   it('rolls the berry pool through its rarity bands', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
-    // Same bands as the spawn pool: the better the berry, the rarer
-    expect(resolveBerryPatch(rolls([0, 0, 0]))?.item).toBe(Items.SitrusBerry);
+    // Same bands as the spawn pool: the better the berry, the rarer.
+    // The berries a fight turns on — the ones held against the moment
+    // the holder is nearly out — are the special band
+    expect(resolveBerryPatch(rolls([0, 0, 0]))?.item).toBe(Items.LiechiBerry);
     expect(resolveBerryPatch(rolls([0.01, 0, 0]))?.item).toBe(Items.LumBerry);
     expect(resolveBerryPatch(rolls([0.05, 0, 0]))?.item).toBe(Items.LeppaBerry);
     expect(resolveBerryPatch(rolls([0.5, 0, 0]))?.item).toBe(Items.CheriBerry);

@@ -167,9 +167,18 @@ next window grows something new.
 
 What grows comes from the berry pool in
 [`src/data/overworld/berry-pool.ts`](../../src/data/overworld/berry-pool.ts),
-rolled on the same rarity bands as a spawn pool — the single-status cures are
-everyday finds, the restoring berries scarcer, Lum rare and Sitrus one-per-world
-class.
+rolled on the same rarity bands as a spawn pool:
+
+| Band     | What grows there                                                              |
+| -------- | ----------------------------------------------------------------------------- |
+| base     | The five single-status cures                                                  |
+| uncommon | Leppa, Oran, Persim, and the five bitter berries that trade health for a risk |
+| rare     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists       |
+| special  | The pinch berries, held against the moment the holder is nearly out           |
+
+The eighteen type-resist berries share the rare band the way the plates share
+their slot in the item pool — one thin slot each, so digging up the one that
+answers what a party is about to walk into stays luck rather than shopping.
 
 A patch is a bush rather than a buried box, so it bears **one kind** and
 `MIN_BERRY_PICK`-`MAX_BERRY_PICK` (3-5) pieces of it: the rarity is the

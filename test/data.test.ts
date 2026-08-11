@@ -47,6 +47,16 @@ import registerItems, {
   getItemData,
   getTeachableMoves,
 } from '../src/data/items';
+import {
+  BERRY_BRACE_STAGES,
+  BERRY_NATURE_HEALS,
+  BERRY_PINCH_STAGES,
+  BERRY_RESIST_TYPES,
+  BERRY_STATUS_CURES,
+  PINCH_BERRIES,
+  isBerry,
+} from '../src/data/items/berries';
+import BERRY_POOL from '../src/data/overworld/berry-pool';
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import AleaRNG from '../src/core/alea';
@@ -846,6 +856,76 @@ describe('item data', () => {
     // A relic that named a legendary would call nothing: the world
     // stages those itself
     expect(getRaidSpecies(Items.MasterBall)).toBeNull();
+  });
+
+  it('registers every berry as a held, consumable berry', () => {
+    // A berry the tables know about but the registry does not would
+    // show in the bag as its own id
+    const berries = [
+      ...BERRY_STATUS_CURES.keys(),
+      ...BERRY_RESIST_TYPES.keys(),
+      ...BERRY_PINCH_STAGES.keys(),
+      ...BERRY_NATURE_HEALS.keys(),
+      ...BERRY_BRACE_STAGES.keys(),
+      ...PINCH_BERRIES,
+      Items.LeppaBerry,
+      Items.OranBerry,
+      Items.SitrusBerry,
+      Items.EnigmaBerry,
+      Items.JabocaBerry,
+      Items.RowapBerry,
+    ];
+
+    for (const item of berries) {
+      const data = getItemData(item);
+
+      expect(isBerry(item)).toBe(true);
+      expect(data.type).toBe(ItemTypes.Berry);
+      expect(data.name.endsWith('Berry')).toBe(true);
+      // Held to trigger on its own, and gone once it has
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      // Found in a patch, never stocked
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBeGreaterThan(0);
+    }
+  });
+
+  it('answers every attacking type with one resist berry', () => {
+    const answered = [...BERRY_RESIST_TYPES.values()];
+
+    // One berry per type and no type twice, Stellar aside — nothing
+    // in this game throws a Stellar move
+    expect(new Set(answered).size).toBe(answered.length);
+    expect(answered.length).toBe(18);
+    expect(new Set(answered).has(Types.Normal)).toBe(true);
+  });
+
+  it('grows every berry in a patch somewhere', () => {
+    const grown = new Set(
+      [...BERRY_POOL.base, ...BERRY_POOL.uncommon, ...BERRY_POOL.rare, ...BERRY_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    // A berry nothing grows is a berry nobody can ever hold: they are
+    // not stocked, dropped or given
+    for (const item of [
+      ...BERRY_STATUS_CURES.keys(),
+      ...BERRY_RESIST_TYPES.keys(),
+      ...BERRY_PINCH_STAGES.keys(),
+      ...BERRY_NATURE_HEALS.keys(),
+      ...BERRY_BRACE_STAGES.keys(),
+      ...PINCH_BERRIES,
+      Items.LeppaBerry,
+      Items.OranBerry,
+      Items.SitrusBerry,
+      Items.EnigmaBerry,
+      Items.JabocaBerry,
+      Items.RowapBerry,
+    ]) {
+      expect(grown.has(item)).toBe(true);
+    }
   });
 
   it('names every kind of item exactly once, in one order', () => {

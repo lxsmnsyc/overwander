@@ -7,10 +7,16 @@ import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
 import { GEM_FACTOR } from '../../src/battle/items/gems';
 import { LIFE_ORB_FACTOR, LIFE_ORB_RECOIL, ORB_DELAY } from '../../src/battle/items/orbs';
-import { Stats } from '../../src/data/constants/stats';
+import {
+  BERRY_PAYBACK_SHARE,
+  STARF_STAGES,
+  STARF_STAGE_AMOUNT,
+} from '../../src/data/items/berries';
+import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
+import Natures from '../../src/data/ids/natures';
 import { getMoveData } from '../../src/data/moves';
-import { createBattle, createUnit } from './harness';
+import { createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
 
@@ -264,5 +270,175 @@ describe('Gluttony', () => {
     expect(glutton.items[Items.SitrusBerry]).toBeUndefined(); // eaten
     expect(glutton.health).toBe(160); // 120 + 160 / 4
     expect(plain.items[Items.SitrusBerry]).toBe(true); // still held
+  });
+});
+
+describe('type-resist berries', () => {
+  /**
+   * The same blow twice: what it costs a holder, and what it costs
+   * somebody standing there without one. The engine's damage roll is
+   * pinned so the two are comparable
+   */
+  function hit(item: Items | null, type: Types, defending: Types[]): [number, boolean] {
+    const { battle, teamA, teamB } = createBattle();
+
+    pinRandom(battle, 0.5);
+
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB, defending);
+
+    if (item != null) {
+      holder.addItem(item);
+    }
+
+    const before = holder.health;
+
+    attacker.attack(holder, Moves.Ember, 60, type, MoveCategories.Special, 0);
+
+    return [before - holder.health, item != null && holder.items[item] === true];
+  }
+
+  it('halve a blow that is landing hard, and are eaten doing it', () => {
+    const [bare] = hit(null, Types.Fire, [Types.Grass]);
+    const [guarded, kept] = hit(Items.OccaBerry, Types.Fire, [Types.Grass]);
+
+    expect(bare).toBeGreaterThan(0);
+    expect(guarded).toBeCloseTo(bare / 2, 5);
+    expect(kept).toBe(false);
+  });
+
+  it('stay held against a blow that is not landing hard', () => {
+    const [bare] = hit(null, Types.Fire, [Types.Normal]);
+    const [guarded, kept] = hit(Items.OccaBerry, Types.Fire, [Types.Normal]);
+
+    expect(guarded).toBe(bare);
+    expect(kept).toBe(true);
+  });
+
+  it('answer only their own type', () => {
+    const [bare] = hit(null, Types.Fire, [Types.Grass]);
+    const [guarded, kept] = hit(Items.PasshoBerry, Types.Fire, [Types.Grass]);
+
+    expect(guarded).toBe(bare);
+    expect(kept).toBe(true);
+  });
+
+  it('Chilan answers any Normal move, since nothing is weak to one', () => {
+    const [bare] = hit(null, Types.Normal, [Types.Normal]);
+    const [guarded, kept] = hit(Items.ChilanBerry, Types.Normal, [Types.Normal]);
+
+    expect(guarded).toBeCloseTo(bare / 2, 5);
+    expect(kept).toBe(false);
+  });
+});
+
+describe('pinch berries', () => {
+  it('lift their stat at a quarter health', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addItem(Items.LiechiBerry);
+
+    holder.setHealth(60); // above a quarter of 160
+    expect(holder.items[Items.LiechiBerry]).toBe(true);
+
+    holder.setHealth(40);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+    expect(holder.items[Items.LiechiBerry]).toBeUndefined();
+  });
+
+  it('Starf lifts one stat by two', () => {
+    const { battle, teamA } = createBattle();
+
+    pinRandom(battle, 0);
+
+    const holder = createUnit(battle, teamA);
+    holder.addItem(Items.StarfBerry);
+
+    holder.setHealth(40);
+
+    expect(holder.stages[STARF_STAGES[0]]).toBe(STARF_STAGE_AMOUNT);
+    expect(holder.items[Items.StarfBerry]).toBeUndefined();
+  });
+});
+
+describe('bitter berries', () => {
+  it('give back a third at half health', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addItem(Items.WikiBerry);
+
+    holder.setHealth(80);
+
+    expect(holder.health).toBe(80 + Math.floor(160 / 3));
+    expect(holder.status[Statuses.Confused]).toBeUndefined();
+    expect(holder.items[Items.WikiBerry]).toBeUndefined();
+  });
+
+  it('confuse a holder whose nature cannot stand the taste', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    // Adamant lowers Special Attack, which is the flavour a Wiki is
+    holder.setNature(Natures.Adamant);
+    holder.addItem(Items.WikiBerry);
+
+    holder.setHealth(80);
+
+    expect(holder.status[Statuses.Confused]).toBeDefined();
+  });
+});
+
+describe('berries that answer a blow', () => {
+  it('Kee braces its holder against the physical', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addItem(Items.KeeBerry);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(1);
+    expect(holder.items[Items.KeeBerry]).toBeUndefined();
+  });
+
+  it('Kee ignores a special blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addItem(Items.KeeBerry);
+
+    attacker.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(0);
+    expect(holder.items[Items.KeeBerry]).toBe(true);
+  });
+
+  it('Jaboca takes an eighth out of whoever threw the punch', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addItem(Items.JabocaBerry);
+
+    const before = attacker.health;
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(before - attacker.health).toBe(Math.floor(160 * BERRY_PAYBACK_SHARE));
+    expect(holder.items[Items.JabocaBerry]).toBeUndefined();
+  });
+
+  it('Enigma gives back a quarter when the blow lands hard', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB, [Types.Grass]);
+    holder.addItem(Items.EnigmaBerry);
+    holder.setHealth(60);
+
+    attacker.attack(holder, Moves.Ember, 10, Types.Fire, MoveCategories.Special, 0);
+
+    // Whatever the blow cost, a quarter of the pool came back after it
+    expect(holder.health).toBeGreaterThan(60);
+    expect(holder.items[Items.EnigmaBerry]).toBeUndefined();
   });
 });

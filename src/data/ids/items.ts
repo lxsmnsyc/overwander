@@ -252,6 +252,67 @@ export const enum Items {
    * key at a time
    */
   PortalKey = 128,
+
+  /**
+   * The type-resist berries: one per type, eaten to take half off a
+   * blow of that type that would otherwise land hard. Chilan is the
+   * odd one — Normal is the type nothing resists, so it answers every
+   * Normal move rather than only the effective ones
+   */
+  OccaBerry = 129,
+  PasshoBerry = 130,
+  WacanBerry = 131,
+  RindoBerry = 132,
+  YacheBerry = 133,
+  ChopleBerry = 134,
+  KebiaBerry = 135,
+  ShucaBerry = 136,
+  CobaBerry = 137,
+  PayapaBerry = 138,
+  TangaBerry = 139,
+  ChartiBerry = 140,
+  KasibBerry = 141,
+  HabanBerry = 142,
+  ColburBerry = 143,
+  BabiriBerry = 144,
+  ChilanBerry = 145,
+  RoseliBerry = 146,
+
+  /**
+   * The pinch berries: held against the moment the holder is nearly
+   * out, and spent lifting one stat when it comes
+   */
+  LiechiBerry = 147,
+  GanlonBerry = 148,
+  SalacBerry = 149,
+  PetayaBerry = 150,
+  ApicotBerry = 151,
+  LansatBerry = 152,
+  StarfBerry = 153,
+  CustapBerry = 154,
+  MicleBerry = 155,
+
+  /**
+   * The bitter berries: a third of the holder's health back, and a
+   * turn of confusion for the ones whose nature cannot stand the
+   * taste
+   */
+  FigyBerry = 156,
+  WikiBerry = 157,
+  MagoBerry = 158,
+  AguavBerry = 159,
+  IapapaBerry = 160,
+
+  /**
+   * The berries that answer a blow rather than wait for one: what a
+   * holder gives back to whoever hit them, and what a hard hit gives
+   * back to the holder
+   */
+  EnigmaBerry = 161,
+  KeeBerry = 162,
+  MarangaBerry = 163,
+  JabocaBerry = 164,
+  RowapBerry = 165,
 }
 
 /**

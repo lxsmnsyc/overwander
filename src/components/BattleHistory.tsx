@@ -1,8 +1,21 @@
-import { For, type JSX, Show, createResource, from } from 'solid-js';
+import { For, type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../auth/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../auth/battles';
 import { listClaimedRaids } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
-import { Badge, type BadgeTone, Button, List, ListRow, Meta, Note, RowButton } from './styled';
+import {
+  Badge,
+  type BadgeTone,
+  Button,
+  Filter,
+  type FilterOption,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Row,
+  RowButton,
+} from './styled';
 import { GameTab, useGame } from './game-context';
 
 const OUTCOME_LABELS: Record<BattleOutcome, string> = {
@@ -16,6 +29,29 @@ const OUTCOME_TONES: Record<BattleOutcome, BadgeTone> = {
   [BattleOutcome.Won]: 'leaf',
   [BattleOutcome.Lost]: 'ember',
 };
+
+/**
+ * The history unfiltered
+ */
+const EVERY_KIND = 'all';
+
+type KindFilter = BattleKind | typeof EVERY_KIND;
+
+/**
+ * Which kinds there are to choose between: the ones this player has
+ * actually fought, in the order they were listed as kinds. A history
+ * of nothing but raids offers nothing to filter
+ */
+function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
+  const fought = new Set(records.map(getBattleKind));
+
+  return [
+    { value: EVERY_KIND, label: 'All' },
+    ...[BattleKind.Raid, BattleKind.Rocket, BattleKind.Player]
+      .filter((kind) => fought.has(kind))
+      .map((kind) => ({ value: kind, label: BATTLE_KIND_NAMES[kind] })),
+  ];
+}
 
 export interface BattleHistoryProps {
   player: string;
@@ -50,41 +86,84 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
     record.raid.length > 0 &&
     claimed()?.has(record.raid) === false;
 
+  /**
+   * Which kind of fight is being looked at. A raid and a grunt read
+   * much the same in a list — a species name and a result — so which
+   * one it was is worth being able to ask for
+   */
+  const [kind, setKind] = createSignal<KindFilter>(EVERY_KIND);
+
+  const kinds = (): FilterOption<KindFilter>[] =>
+    listKinds((battles() ?? []).map(([, record]) => record));
+
+  /**
+   * The kind being looked at, if it is still one this history has. The
+   * listing is followed rather than read once, so a kind can go out
+   * from under the filter — a filter pointing at nothing would read as
+   * a player who has fought nothing
+   */
+  const only = (): KindFilter =>
+    kinds().some((option) => option.value === kind()) ? kind() : EVERY_KIND;
+
+  const shown = (): [string, BattleRecord][] =>
+    (battles() ?? []).filter(
+      ([, record]) => only() === EVERY_KIND || getBattleKind(record) === only(),
+    );
+
   return (
     <Show when={battles()} fallback={<Note>Loading battles…</Note>}>
       <Show when={battles()?.length} fallback={<Note>No battles fought yet.</Note>}>
-        <List>
-          <For each={battles()}>
-            {([id, record]) => (
-              <ListRow>
-                <RowButton
-                  class="font-medium"
-                  onClick={() => {
-                    game.setBattle({ id, replay: true });
-                  }}
-                >
-                  {getSpeciesData(record.species).name}
-                </RowButton>
-                <Badge tone={OUTCOME_TONES[record.outcome]}>{OUTCOME_LABELS[record.outcome]}</Badge>
-                <Meta>{new Date(record.startedAt).toISOString().slice(0, 10)}</Meta>
-                <Show when={owes(record)}>
-                  <Button
-                    tone="primary"
+        {/* Nothing to narrow while every fight was the same kind */}
+        <Show when={kinds().length > 2}>
+          <Row class="mb-3">
+            <Filter
+              label="Kind"
+              value={only()}
+              options={kinds()}
+              onChange={(picked) => {
+                setKind(picked);
+              }}
+            />
+          </Row>
+        </Show>
+
+        <Show when={shown().length} fallback={<Note>None of those yet.</Note>}>
+          <List>
+            <For each={shown()}>
+              {([id, record]) => (
+                <ListRow>
+                  <RowButton
+                    class="font-medium"
                     onClick={() => {
-                      // The overworld meets it: the encounter derives
-                      // from the raid's own chunk and window
-                      game.setReward({ raid: record.raid });
-                      game.setTab(GameTab.Overworld);
-                      Promise.resolve(refetchClaimed()).catch(() => undefined);
+                      game.setBattle({ id, replay: true });
                     }}
                   >
-                    Claim {getSpeciesData(record.species).name}
-                  </Button>
-                </Show>
-              </ListRow>
-            )}
-          </For>
-        </List>
+                    {getSpeciesData(record.species).name}
+                  </RowButton>
+                  <Badge>{BATTLE_KIND_NAMES[getBattleKind(record)]}</Badge>
+                  <Badge tone={OUTCOME_TONES[record.outcome]}>
+                    {OUTCOME_LABELS[record.outcome]}
+                  </Badge>
+                  <Meta>{new Date(record.startedAt).toISOString().slice(0, 10)}</Meta>
+                  <Show when={owes(record)}>
+                    <Button
+                      tone="primary"
+                      onClick={() => {
+                        // The overworld meets it: the encounter derives
+                        // from the raid's own chunk and window
+                        game.setReward({ raid: record.raid });
+                        game.setTab(GameTab.Overworld);
+                        Promise.resolve(refetchClaimed()).catch(() => undefined);
+                      }}
+                    >
+                      Claim {getSpeciesData(record.species).name}
+                    </Button>
+                  </Show>
+                </ListRow>
+              )}
+            </For>
+          </List>
+        </Show>
       </Show>
     </Show>
   );

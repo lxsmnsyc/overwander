@@ -21,6 +21,7 @@ import type { Items } from '../data/ids/items';
 import CatchPicker from './CatchPicker';
 import { describeCatch } from './CatchesList';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import matches from '../core/search';
 import {
   Badge,
   Button,
@@ -32,6 +33,8 @@ import {
   Note,
   Panel,
   Row,
+  SEARCH_FROM,
+  Search,
   Status,
 } from './styled';
 
@@ -94,16 +97,25 @@ function CatchLot(props: { catchId: string }): JSX.Element {
 }
 
 /**
- * What is on the block, whichever kind of lot it is
+ * What an item lot is called. Item id 0 is a real item, so absence is
+ * tested rather than falsiness — and a catch lot is named by the
+ * record it is holding, which has to be read before it can be said
  */
-export function AuctionLotLabel(props: { auction: AuctionRecord }): JSX.Element {
-  // Item id 0 is a real item, so the name is resolved here rather than
-  // testing the id for truthiness in the JSX
-  const named = (): string | null => {
-    const { lot, item } = props.auction;
+export function nameItemLot(auction: AuctionRecord): string | null {
+  return auction.lot === AuctionLot.Item && auction.item != null
+    ? describeItem(auction.item)
+    : null;
+}
 
-    return lot === AuctionLot.Item && item != null ? describeItem(item) : null;
-  };
+/**
+ * What is on the block, whichever kind of lot it is.
+ *
+ * A caller that has already read the catch — the board does, since it
+ * searches by name — passes what it found rather than making the row
+ * read the same record a second time
+ */
+export function AuctionLotLabel(props: { auction: AuctionRecord; name?: string }): JSX.Element {
+  const named = (): string | null => props.name ?? nameItemLot(props.auction);
 
   return (
     <Show when={named()} fallback={<CatchLot catchId={props.auction.caught} />}>
@@ -192,13 +204,14 @@ function BidRow(props: {
   auction: AuctionRecord;
   player: string;
   gold: number;
+  name?: string;
   onBid: (amount: number) => void;
 }): JSX.Element {
   return (
     <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
       <div class="flex grow flex-col gap-0.5">
         <span class="font-medium">
-          <AuctionLotLabel auction={props.auction} />
+          <AuctionLotLabel auction={props.auction} name={props.name} />
         </span>
         <Meta>
           {describeBid(props.auction)} · {describeRemaining(props.auction.endsAt, now())}
@@ -249,10 +262,71 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   /**
-   * The lots still taking bids, soonest to close first
+   * The pokemon on the block, read once for the whole board.
+   *
+   * It is keyed on which catches are up rather than on the listings
+   * themselves, so a bid landing somewhere on the board — which
+   * rewrites a listing every time — does not send the board back to
+   * read every pokemon on it again
+   */
+  const [lots] = createResource(
+    () =>
+      [
+        ...new Set(
+          (auctions() ?? [])
+            .filter(([, auction]) => auction.lot === AuctionLot.Catch)
+            .map(([, auction]) => auction.caught),
+        ),
+      ]
+        .sort()
+        .join(','),
+    async (key): Promise<Map<string, string>> => {
+      const named = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (id) => {
+            const caught = await getCaught(id);
+
+            if (caught != null) {
+              named.set(id, describeCatch(caught));
+            }
+          }),
+      );
+      return named;
+    },
+  );
+
+  /**
+   * What a lot is called, for searching and for the row itself
+   */
+  const nameOf = (auction: AuctionRecord): string | undefined =>
+    nameItemLot(auction) ?? lots()?.get(auction.caught);
+
+  /**
+   * What was typed. A board is somebody else's shelf — a player comes
+   * to it looking for one thing, so it is searched by what the lot is
+   * rather than scrolled
+   */
+  const [query, setQuery] = createSignal('');
+
+  const open = (): [string, AuctionRecord][] =>
+    (auctions() ?? []).filter(([, auction]) => isLive(auction, now()));
+
+  /**
+   * The lots still taking bids, soonest to close first. A lot whose
+   * name has not arrived yet is left in: it is on the board, and
+   * hiding it until its pokemon loads would be a board that shrinks
+   * while it is being read
    */
   const live = (): [string, AuctionRecord][] =>
-    (auctions() ?? []).filter(([, auction]) => isLive(auction, now()));
+    open().filter(([, auction]) => {
+      const name = nameOf(auction);
+
+      return name == null || matches(name, query());
+    });
 
   /**
    * The ones this player won and has not come back for
@@ -390,9 +464,30 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         <Badge tone="gold">{gold()} gold</Badge>
       </Row>
 
-      <Card title="On the block">
+      <Card>
+        <Row>
+          <h3 class="grow">On the block</h3>
+          <Show when={open().length > SEARCH_FROM}>
+            <Search
+              placeholder="Search the lots"
+              value={query()}
+              onChange={(typed) => {
+                setQuery(typed);
+              }}
+            />
+          </Show>
+        </Row>
         <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
-          <Show when={live().length} fallback={<Note>Nothing is up for auction right now.</Note>}>
+          <Show
+            when={live().length}
+            fallback={
+              <Note>
+                {query().length === 0
+                  ? 'Nothing is up for auction right now.'
+                  : 'No lot on the block matches.'}
+              </Note>
+            }
+          >
             <List>
               <For each={live()}>
                 {([id, auction]) => (
@@ -400,6 +495,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
                     auction={auction}
                     player={props.player}
                     gold={gold()}
+                    name={nameOf(auction)}
                     onBid={(amount) => {
                       bid(id, amount);
                     }}
@@ -420,7 +516,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
               {([id, auction]) => (
                 <ListRow>
                   <span class="grow font-medium">
-                    <AuctionLotLabel auction={auction} />
+                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
                   </span>
                   <Meta>won for {auction.bid} gold</Meta>
                   <Button

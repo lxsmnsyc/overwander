@@ -4,6 +4,7 @@ import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { useAuth } from '../auth/context';
 import { describeCatch } from './CatchesList';
+import matches from '../core/search';
 import {
   Badge,
   Button,
@@ -15,6 +16,8 @@ import {
   Note,
   Row,
   RowButton,
+  SEARCH_FROM,
+  Search,
 } from './styled';
 
 /**
@@ -148,8 +151,21 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const loading = (): boolean => props.options == null && owned.loading;
 
-  const options = (): CatchOption[] =>
+  /**
+   * What the caller will accept, before the player narrows it further
+   */
+  const offered = (): CatchOption[] =>
     (props.options ?? owned() ?? []).filter((option) => props.filter?.(option) ?? true);
+
+  const [query, setQuery] = createSignal('');
+
+  /**
+   * A search hides rows rather than refusing them: a pokemon already
+   * drafted stays drafted while it is out of sight, so typing to find
+   * the sixth party member cannot quietly drop the other five
+   */
+  const options = (): CatchOption[] =>
+    offered().filter((option) => matches(describeCatch(option.caught), query()));
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
@@ -233,10 +249,28 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const list = (): JSX.Element => (
     <div class="flex flex-col gap-3">
+      <Show when={offered().length > SEARCH_FROM}>
+        <Row>
+          <Search
+            placeholder="Search your pokemon"
+            value={query()}
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
+        </Row>
+      </Show>
+
       <Show when={!loading()} fallback={<Note>Looking them over…</Note>}>
         <Show
           when={options().length}
-          fallback={<Note>{props.empty ?? 'You have nothing for this.'}</Note>}
+          fallback={
+            <Note>
+              {query().length === 0
+                ? (props.empty ?? 'You have nothing for this.')
+                : 'None of yours match that.'}
+            </Note>
+          }
         >
           <List>
             <For each={options()}>

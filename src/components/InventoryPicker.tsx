@@ -1,19 +1,24 @@
 import { For, type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
 import { useAuth } from '../auth/context';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
-import type { Items } from '../data/ids/items';
-import { getItemData } from '../data/items';
+import type { ItemTypes, Items } from '../data/ids/items';
+import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../data/items';
+import matches from '../core/search';
 import {
   Badge,
   Button,
   Dialog,
   DialogActions,
   Field,
+  Filter,
+  type FilterOption,
   List,
   ListRow,
   Note,
   Row,
   RowButton,
+  SEARCH_FROM,
+  Search,
 } from './styled';
 
 /**
@@ -46,6 +51,51 @@ export function describeItem(item: Items): string {
   } catch {
     return `Item #${item}`;
   }
+}
+
+/**
+ * The bag unfiltered. A category filter always offers this first,
+ * because a player who has narrowed the bag down needs the way back
+ */
+export const EVERY_CATEGORY = 'all';
+
+/**
+ * What the bag can be narrowed to: one kind of item, or all of them
+ */
+export type ItemCategory = ItemTypes | typeof EVERY_CATEGORY;
+
+/**
+ * Which shelf an item belongs on, or nothing for an item the registry
+ * does not know — an unknown item is shown under `All` and nowhere
+ * else, which is the honest place for it
+ */
+function categoryOf(item: Items): ItemTypes | null {
+  try {
+    return getItemData(item).type;
+  } catch {
+    return null;
+  }
+}
+
+export function isInCategory(item: Items, category: ItemCategory): boolean {
+  return category === EVERY_CATEGORY || categoryOf(item) === category;
+}
+
+/**
+ * The categories worth offering: the ones the player is actually
+ * carrying something from. A filter listing eight empty shelves is a
+ * filter that makes the bag harder to read rather than easier
+ */
+export function listCategories(items: Items[]): FilterOption<ItemCategory>[] {
+  const carried = new Set(items.map(categoryOf));
+
+  return [
+    { value: EVERY_CATEGORY, label: 'All' },
+    ...ITEM_TYPE_ORDER.filter((type) => carried.has(type)).map((type) => ({
+      value: type,
+      label: ITEM_TYPE_NAMES[type],
+    })),
+  ];
 }
 
 interface InventoryPickerCommonProps {
@@ -151,8 +201,36 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
 
   const loading = (): boolean => props.entries == null && bag.loading;
 
-  const stacks = (): InventoryEntry[] =>
+  /**
+   * What the caller will accept, before the player narrows it further.
+   * The two filters are kept apart on purpose: the caller's decides
+   * what could be picked at all, and the category only decides what is
+   * being looked at — so the shelves offered are the ones this list
+   * actually has something on
+   */
+  const offered = (): InventoryEntry[] =>
     (props.entries ?? bag() ?? []).filter((entry) => props.filter?.(entry) ?? true);
+
+  const [category, setCategory] = createSignal<ItemCategory>(EVERY_CATEGORY);
+
+  const categories = (): FilterOption<ItemCategory>[] =>
+    listCategories(offered().map((entry) => entry.item));
+
+  /**
+   * The shelf being looked at, if it is still a shelf this list has.
+   * What the caller accepts can change under the picker — a held item
+   * given away, a stack spent — and a filter left pointing at an empty
+   * shelf would read as an empty bag
+   */
+  const shelf = (): ItemCategory =>
+    categories().some((option) => option.value === category()) ? category() : EVERY_CATEGORY;
+
+  const [query, setQuery] = createSignal('');
+
+  const stacks = (): InventoryEntry[] =>
+    offered().filter(
+      (entry) => isInCategory(entry.item, shelf()) && matches(describeItem(entry.item), query()),
+    );
 
   const chosen = (): ItemAmount[] => (props.multiple === true ? props.value : []);
 
@@ -240,10 +318,43 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
 
   const list = (): JSX.Element => (
     <div class="flex flex-col gap-3">
+      {/* A shelf to choose between, or a bag too long to read down:
+          either is worth a way of narrowing it, and neither is worth
+          the room over a handful of rows */}
+      <Show when={categories().length > 2 || offered().length > SEARCH_FROM}>
+        <Row>
+          <Show when={offered().length > SEARCH_FROM}>
+            <Search
+              placeholder="Search the bag"
+              value={query()}
+              onChange={(typed) => {
+                setQuery(typed);
+              }}
+            />
+          </Show>
+          <Show when={categories().length > 2}>
+            <Filter
+              label="Category"
+              value={shelf()}
+              options={categories()}
+              onChange={(picked) => {
+                setCategory(picked);
+              }}
+            />
+          </Show>
+        </Row>
+      </Show>
+
       <Show when={!loading()} fallback={<Note>Looking through the bag…</Note>}>
         <Show
           when={stacks().length}
-          fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
+          fallback={
+            <Note>
+              {shelf() === EVERY_CATEGORY && query().length === 0
+                ? (props.empty ?? 'Nothing in the bag for this.')
+                : 'Nothing here matches.'}
+            </Note>
+          }
         >
           <List>
             <For each={stacks()}>

@@ -41,7 +41,12 @@ import {
   SPECIES_DAY_CANDY_BOOST,
   getCandyCost,
 } from '../src/auth/candy';
-import registerItems, { getItemData, getTeachableMoves } from '../src/data/items';
+import registerItems, {
+  ITEM_TYPE_NAMES,
+  ITEM_TYPE_ORDER,
+  getItemData,
+  getTeachableMoves,
+} from '../src/data/items';
 import { getMoveData } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import AleaRNG from '../src/core/alea';
@@ -841,6 +846,21 @@ describe('item data', () => {
     // A relic that named a legendary would call nothing: the world
     // stages those itself
     expect(getRaidSpecies(Items.MasterBall)).toBeNull();
+  });
+
+  it('names every kind of item exactly once, in one order', () => {
+    // The bag can be narrowed to one kind, and a kind with no name is
+    // a shelf the filter cannot offer
+    const named = Object.keys(ITEM_TYPE_NAMES).map(Number);
+
+    expect([...ITEM_TYPE_ORDER].sort((left, right) => left - right)).toEqual(
+      named.sort((left, right) => left - right),
+    );
+    expect(new Set(ITEM_TYPE_ORDER).size).toBe(ITEM_TYPE_ORDER.length);
+
+    for (const type of ITEM_TYPE_ORDER) {
+      expect(ITEM_TYPE_NAMES[type].length).toBeGreaterThan(0);
+    }
   });
 
   it('registers the Shiny Charm as a holdable key item', () => {

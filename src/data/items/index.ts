@@ -20,6 +20,7 @@ import registerValuables from './valuables';
 export { getItemData, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
+export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 
 /**
  * The machines are generated from the species learn sets, so the

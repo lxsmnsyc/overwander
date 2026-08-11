@@ -6,7 +6,8 @@ import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
 import CatchDialog from './CatchDialog';
-import { List, ListRow, Note, RowButton } from './styled';
+import matches from '../core/search';
+import { List, ListRow, Note, Row, RowButton, SEARCH_FROM, Search } from './styled';
 
 /**
  * A one-line summary of a catch: the species name plus the details
@@ -46,28 +47,54 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const [catches, { refetch }] = createResource(() => props.player, listCaught);
   const [selected, setSelected] = createSignal<string | null>(null);
 
+  /**
+   * What was typed. It is matched against the same line the row shows,
+   * so what a player can read they can search for: a species, a level,
+   * a status, or the mark on a shiny
+   */
+  const [query, setQuery] = createSignal('');
+
+  const shown = (): [string, CaughtPokemon][] =>
+    (catches() ?? []).filter(([, caught]) => matches(describeCatch(caught), query()));
+
   return (
     <>
+      {/* A handful of pokemon are read down; a box of them are looked
+          through */}
+      <Show when={(catches()?.length ?? 0) > SEARCH_FROM}>
+        <Row>
+          <Search
+            placeholder="Search your pokemon"
+            value={query()}
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
+        </Row>
+      </Show>
+
       <Show when={!catches.loading} fallback={<Note>Loading catches…</Note>}>
         <Show when={catches()?.length} fallback={<Note>No catches yet.</Note>}>
-          <List>
-            <For each={catches()}>
-              {([id, caught]) => (
-                // The whole row opens the catch: a name with a button
-                // beside it would be two places to press for one thing
-                <ListRow class="p-0">
-                  <RowButton
-                    class="rounded-lg px-3 py-2 hover:bg-leaf-soft hover:text-ink"
-                    onClick={() => {
-                      setSelected(id);
-                    }}
-                  >
-                    {describeCatch(caught)}
-                  </RowButton>
-                </ListRow>
-              )}
-            </For>
-          </List>
+          <Show when={shown().length} fallback={<Note>Nothing here matches.</Note>}>
+            <List>
+              <For each={shown()}>
+                {([id, caught]) => (
+                  // The whole row opens the catch: a name with a button
+                  // beside it would be two places to press for one thing
+                  <ListRow class="p-0">
+                    <RowButton
+                      class="rounded-lg px-3 py-2 hover:bg-leaf-soft hover:text-ink"
+                      onClick={() => {
+                        setSelected(id);
+                      }}
+                    >
+                      {describeCatch(caught)}
+                    </RowButton>
+                  </ListRow>
+                )}
+              </For>
+            </List>
+          </Show>
         </Show>
       </Show>
 

@@ -12,7 +12,19 @@ import {
 } from '../auth/raids';
 import { type TeamRecord, getTeam } from '../auth/teams';
 import TeamPickerDialog from './TeamPickerDialog';
-import { Badge, Button, Card, List, ListRow, Note, Row, Status } from './styled';
+import matches from '../core/search';
+import {
+  Badge,
+  Button,
+  Card,
+  List,
+  ListRow,
+  Note,
+  Row,
+  SEARCH_FROM,
+  Search,
+  Status,
+} from './styled';
 import { useGame } from './game-context';
 
 export interface RaidLobbyProps {
@@ -52,6 +64,18 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   );
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
+
+  /**
+   * Who is being looked for. A player is searched by the name the row
+   * shows them under, which for the player themselves is "You" — they
+   * are the one row somebody scrolling a full lobby wants to find
+   */
+  const [query, setQuery] = createSignal('');
+
+  const joined = (): TeamRecord[] =>
+    (teams() ?? []).filter((team) =>
+      matches(team.player === props.user.uid ? `You ${team.player}` : team.player, query()),
+    );
 
   const act = (action: () => Promise<string | null>, failure: string): void => {
     setStatus(null);
@@ -102,20 +126,35 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
               <Note>The relic is spent. Whatever this raid comes to, it comes to it once.</Note>
             </Show>
 
-            <h4>Teams</h4>
+            <Row>
+              <h4 class="grow">Teams</h4>
+              {/* A full lobby is a list of strangers' ids; finding one
+                  in it is worth typing for */}
+              <Show when={(teams()?.length ?? 0) > SEARCH_FROM}>
+                <Search
+                  placeholder="Search players"
+                  value={query()}
+                  onChange={(typed) => {
+                    setQuery(typed);
+                  }}
+                />
+              </Show>
+            </Row>
             <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
-              <List>
-                <For each={teams()}>
-                  {(team) => (
-                    <ListRow selected={team.player === props.user.uid}>
-                      <span class="grow">
-                        {team.player === props.user.uid ? 'You' : team.player}
-                      </span>
-                      <Badge>{team.catches.length} pokemon</Badge>
-                    </ListRow>
-                  )}
-                </For>
-              </List>
+              <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
+                <List>
+                  <For each={joined()}>
+                    {(team) => (
+                      <ListRow selected={team.player === props.user.uid}>
+                        <span class="grow">
+                          {team.player === props.user.uid ? 'You' : team.player}
+                        </span>
+                        <Badge>{team.catches.length} pokemon</Badge>
+                      </ListRow>
+                    )}
+                  </For>
+                </List>
+              </Show>
             </Show>
 
             <Show when={canJoin() === false}>

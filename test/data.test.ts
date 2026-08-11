@@ -74,6 +74,8 @@ import {
   purifyIVs,
 } from '../src/data/items/purifying-gem';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
+import { isPortalKey } from '../src/data/items/portal-key';
+import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import { MEDICINES, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
@@ -783,7 +785,33 @@ describe('item data', () => {
       Items.ShinyCharm,
       Items.OldSeaMap,
       Items.GoldenBottleCap,
+      Items.PortalKey,
     ]);
+  });
+
+  it('spends a portal key on the crossing', () => {
+    const key = getItemData(Items.PortalKey);
+
+    expect(key.name).toBe('Portal Key');
+    expect(key.type).toBe(ItemTypes.KeyItem);
+    // Used at a portal, and gone when it opens
+    expect(key.flags & ItemFlags.Usable).not.toBe(0);
+    expect(key.flags & ItemFlags.Consumable).not.toBe(0);
+    // Nothing holds one into a fight, and nothing sells one
+    expect(key.flags & ItemFlags.Holdable).toBe(0);
+    expect(key.flags & ItemFlags.Marketable).toBe(0);
+    expect(key.buy).toBe(0);
+    expect(key.sell).toBe(0);
+    expect(isPortalKey(Items.PortalKey)).toBe(true);
+    expect(isPortalKey(Items.OldSeaMap)).toBe(false);
+
+    // A portal is a landmark like any other, and the rarest band is
+    // the only place its key is found
+    expect(new Set(LANDMARKS).has(Landmark.Portal)).toBe(true);
+    expect(LANDMARK_NAMES[Landmark.Portal]).toBe('Portal');
+    for (const band of ['base', 'uncommon', 'rare'] as const) {
+      expect(ITEM_POOL[band].some((entry) => entry.item === Items.PortalKey)).toBe(false);
+    }
   });
 
   it('keeps the raid items to the special band and out of the market', () => {

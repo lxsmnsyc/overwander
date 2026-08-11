@@ -275,6 +275,33 @@ behind them fails.
 What a bred egg inherits — and what it does not — is in
 [Eggs](catches.md#eggs).
 
+## Portals
+
+A `Portal` landmark is a way through to another one. It does nothing on its own:
+opening it takes a **Portal Key**, the rarest band's newest entry, and the key is
+**spent in the crossing**.
+
+The traveller names a **biome**, never a destination. Where they come out is the
+nearest portal of that biome to the one they are standing in — derived in
+[`src/overworld/portal.ts`](../../src/overworld/portal.ts) from the chunk seeds
+alone, so the client lists every destination on offer without asking anything of
+the server, and the server re-derives the same answer when the crossing is
+asked for. There is nothing in the request to lie about except which way to go.
+
+`findPortals` walks outward ring by ring and answers for **every biome at once**:
+the first portal of a biome it meets is that biome's nearest, and a biome already
+answered for is not looked at again — so a chunk is only rolled for its landmarks
+where its biome is still wanted. It stops at `PORTAL_RANGE` (96 chunks) or once
+every biome the world grows has been found, whichever comes first. Measured, that
+is about 13ms cold from a standing start, and a fraction of that against a warm
+biome cache; roughly 24 of the 24 biomes are reachable from a typical portal.
+
+`usePortal` ([`src/server/portals.ts`](../../src/server/portals.ts)) checks that
+the cell really is a portal in a live window, derives the far end, and takes the
+key **last** — a player refused a destination keeps it. It cannot move anybody:
+the game stores no position, so it answers with the chunk and cell and the client
+walks through.
+
 ## Derived, never stored
 
 Landmarks, item-cache rewards, berry patches, grotto rewards, the species a nest
@@ -289,9 +316,12 @@ zones compute different ones.
 
 Nothing triggers by being walked over. A player steps within the 3x3 around a
 pokemon or a landmark and **clicks** it; passing through a cell springs nothing.
-That is a client rule — the game stores no player position, so the server cannot
-check how far away a caller was standing. What it does check is that the cell
-really holds the thing, in a live window, which is what keeps a claim honest:
+That is a client rule. A player's position *is* stored now
+([`positions/{uid}`](player-stores.md#positionsuid)), but it is their own report
+of themselves, written every second and a half rather than every step — there is
+no path in it, and nothing checks a claim against it. What the server does check
+is that the cell really holds the thing, in a live window, which is what keeps a
+claim honest:
 reach decides what a player _bothers_ to walk to, not what they are allowed to
 claim.
 

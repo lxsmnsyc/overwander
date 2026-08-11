@@ -108,6 +108,51 @@ is carried, not accompanied. See [Eggs](catches.md#eggs).
 
 Private to the owning uid.
 
+## `positions/{uid}`
+
+Read through [`src/auth/positions.ts`](../../src/auth/positions.ts), written by
+[`src/server/positions.ts`](../../src/server/positions.ts). One document per
+player, and **the only mutable record of anybody's place in the world** —
+everything else the overworld holds derives from a seed and a window.
+
+| Field     | Type     | Notes                                         |
+| --------- | -------- | --------------------------------------------- |
+| `player`  | `string` | Owning uid, matching the document id          |
+| `chunkX`  | `number` | Chunk coordinate, clamped to the world        |
+| `chunkY`  | `number` | The same                                      |
+| `cellX`   | `number` | Cell column within the chunk, 0 to 15         |
+| `cellY`   | `number` | Cell row within the chunk, 0 to 15            |
+| `movedAt` | `number` | When it was last written, on the server clock |
+
+It exists for one reason: a player who walked forty chunks, or spent a Portal
+Key crossing the world, should not be put back at their starting point by a page
+reload. A player with **no document yet** is dropped somewhere random in the
+starting region by `pickStartPosition`
+([`src/overworld/start.ts`](../../src/overworld/start.ts)) — the draw is a random
+seed rather than their uid, so two players who arrive together arrive in
+different places — and that position is **written immediately**, so the dice are
+rolled once and returning is returning.
+
+Steps and position settle **together**. The paces an egg has walked are reported
+in batches while a walk is in progress, and flushed — batch or not — at the
+moment the position is written, so a player never comes back further along the
+map than their egg is along its walk. A portal crossing settles the same way: the
+walk *to* the portal counts, the crossing itself is not a walk and adds no steps.
+The server bounds a step report by the time since the last one either way
+(`creditableSteps`), so nothing about moving a position can be turned into
+progress on an egg.
+
+It is **the client's word**, and deliberately so. The server clamps the
+coordinates to somewhere that exists and stamps the time; it does not check the
+walk, because positions are written every `SAVE_DELAY` (1.5s) rather than every
+step and there is no path in them to check. Nothing in the game trusts a
+position: reaching a landmark is checked against the landmark and its window, a
+spawn against the store, a portal against the chunk seed. A player who lies
+about where they are stands somewhere they are not and finds exactly what is
+there — see [Reaching, not treading](overworld.md#reaching-not-treading).
+
+Private to the owning uid, and read-only to them.
+
 ## `fled/{uid}`
 
 Written by `markFled` in [`src/server/overworld.ts`](../../src/server/overworld.ts),

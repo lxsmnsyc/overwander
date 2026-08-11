@@ -64,6 +64,7 @@ const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.TeamRocketStop]: 'T',
   [Landmark.Nest]: 'N',
   [Landmark.WanderingNpc]: 'P',
+  [Landmark.Portal]: 'O',
 };
 
 export interface ChunkCanvasProps {
@@ -90,14 +91,20 @@ export interface ChunkCanvasProps {
    */
   label: (index: number) => string;
   onReach: (index: number) => void;
+  /**
+   * A step, in cells. The chunk owns the walk keys because it owns the
+   * focus: a player typing into something else, or reading a dialog
+   * over the top of this, is not walking anywhere
+   */
+  onWalk: (deltaX: number, deltaY: number) => void;
 }
 
 /**
- * Where the keyboard is pointing, moved with shift and an arrow.
- * Plain arrows walk — that is the tab's, and the whole game's, first
- * key — so the cursor takes the modifier rather than fighting them
+ * The keys that move something, and which way. A plain one walks the
+ * player; the same key with shift moves the cursor, which is what
+ * Enter acts on
  */
-const CURSOR_KEYS = new Map<string, [number, number]>([
+const MOVE_KEYS = new Map<string, [number, number]>([
   ['ArrowUp', [0, -1]],
   ['ArrowDown', [0, 1]],
   ['ArrowLeft', [-1, 0]],
@@ -242,7 +249,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           context.lineWidth = 1;
         }
       }
+
+      // A border while the keyboard is in here. It is not decoration:
+      // the walk keys only work while this has focus, so whether it
+      // does is the difference between the arrows moving somebody and
+      // doing nothing at all
+      context.strokeStyle = focused() ? COLORS.cursor : COLORS.grid;
+      context.lineWidth = focused() ? 3 : 1;
+      context.strokeRect(1.5, 1.5, SIZE - 3, SIZE - 3);
+      context.lineWidth = 1;
     });
+
+    // The overworld is what the tab is for, so it takes the keyboard
+    // when it opens rather than waiting to be clicked
+    element.focus({ preventScroll: true });
   });
 
   return (
@@ -278,14 +298,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         setFocused(false);
       }}
       onKeyDown={(event) => {
-        const step = CURSOR_KEYS.get(event.key);
+        const step = MOVE_KEYS.get(event.key.length === 1 ? event.key.toLowerCase() : event.key);
 
-        // Plain arrows are the tab's, and walk the player. Only the
-        // shifted ones are the cursor's, so nothing is taken away from
-        // a player who tabbed here by accident
-        if (step != null && event.shiftKey) {
+        if (step != null) {
           event.preventDefault();
-          moveCursor(step);
+          // Shift points; without it, they walk
+          if (event.shiftKey) {
+            moveCursor(step);
+          } else {
+            props.onWalk(step[0], step[1]);
+          }
           return;
         }
         if (event.key === 'Enter' || event.key === ' ') {

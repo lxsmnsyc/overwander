@@ -1,5 +1,4 @@
 import { For, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
-import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import type { User } from 'firebase/auth';
 import { getInventory } from '../auth/inventory';
 import type { EncounterRecord } from '../auth/encounter-record';
@@ -10,6 +9,7 @@ import { isShiny } from '../auth/caught-record';
 import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
+import { Dialog, DialogTitle } from './styled';
 
 /**
  * The ball a carried item stands for, so the bag can be filtered
@@ -154,103 +154,88 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
 
   return (
     <Dialog isOpen={props.session != null} onClose={leave}>
-      <DialogOverlay style={{ position: 'fixed', inset: '0', background: 'rgba(0, 0, 0, 0.4)' }} />
-      <DialogPanel
-        style={{
-          position: 'fixed',
-          inset: '10% 50% auto auto',
-          transform: 'translateX(50%)',
-          'max-height': '80vh',
-          'overflow-y': 'auto',
-          background: '#fff',
-          padding: '1rem 2rem',
-          'border-radius': '0.5rem',
-          'text-align': 'left',
-        }}
-      >
-        <Show when={session()}>
-          {(active) => (
-            <>
-              <DialogTitle>
-                {isShiny(active().encounter) ? '✦ ' : ''}
-                {getSpeciesData(active().encounter.species).name} · Lv. {active().encounter.level}
-              </DialogTitle>
-              <dl>
-                <dt>Catch chance</dt>
-                <dd>
-                  {Math.round(active().getCatchChance() * 100)}%
-                  {active().isFeatured() ? " · it's their family's day" : ''}
-                  {active().isPityThrow() ? ' · last ball, it cannot miss' : ''}
-                </dd>
-                <dt>Flee chance</dt>
-                <dd>{Math.round(active().getFleeChance() * 100)}%</dd>
-                <dt>Feeding bonus</dt>
-                <dd>×{active().catchBonus.toFixed(2)}</dd>
-                <dt>Turn</dt>
-                <dd>{active().turn}</dd>
-              </dl>
+      <Show when={session()}>
+        {(active) => (
+          <>
+            <DialogTitle>
+              {isShiny(active().encounter) ? '✦ ' : ''}
+              {getSpeciesData(active().encounter.species).name} · Lv. {active().encounter.level}
+            </DialogTitle>
+            <dl>
+              <dt>Catch chance</dt>
+              <dd>
+                {Math.round(active().getCatchChance() * 100)}%
+                {active().isFeatured() ? " · it's their family's day" : ''}
+                {active().isPityThrow() ? ' · last ball, it cannot miss' : ''}
+              </dd>
+              <dt>Flee chance</dt>
+              <dd>{Math.round(active().getFleeChance() * 100)}%</dd>
+              <dt>Feeding bonus</dt>
+              <dd>×{active().catchBonus.toFixed(2)}</dd>
+              <dt>Turn</dt>
+              <dd>{active().turn}</dd>
+            </dl>
 
-              <Show
-                when={active().state === SafariState.Active}
-                fallback={<p role="status">{STATE_MESSAGES[active().state]}</p>}
-              >
-                <h3>Balls</h3>
-                <Show when={balls().length} fallback={<p>No balls to throw.</p>}>
-                  <ul>
-                    <For each={balls()}>
-                      {([ball, amount]) => (
-                        <li>
-                          <button
-                            type="button"
-                            aria-pressed={active().ball === ball}
-                            onClick={() => {
-                              choose(ball);
-                            }}
-                          >
-                            {describeItem(BALL_ITEMS[ball])} × {amount}
-                            {active().ball === ball ? ' (selected)' : ''}
-                          </button>
-                        </li>
-                      )}
-                    </For>
-                  </ul>
-                </Show>
-
-                <h3>Treats</h3>
-                <Show when={treats().length} fallback={<p>Nothing to feed.</p>}>
-                  <ul>
-                    <For each={treats()}>
-                      {([item, amount]) => (
-                        <li>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              feed(item);
-                            }}
-                          >
-                            Feed {describeItem(item)} × {amount}
-                          </button>
-                        </li>
-                      )}
-                    </For>
-                  </ul>
-                </Show>
-
-                <p>
-                  <button type="button" onClick={attempt}>
-                    Throw {describeItem(BALL_ITEMS[active().ball])}
-                  </button>
-                </p>
+            <Show
+              when={active().state === SafariState.Active}
+              fallback={<p role="status">{STATE_MESSAGES[active().state]}</p>}
+            >
+              <h3>Balls</h3>
+              <Show when={balls().length} fallback={<p>No balls to throw.</p>}>
+                <ul>
+                  <For each={balls()}>
+                    {([ball, amount]) => (
+                      <li>
+                        <button
+                          type="button"
+                          aria-pressed={active().ball === ball}
+                          onClick={() => {
+                            choose(ball);
+                          }}
+                        >
+                          {describeItem(BALL_ITEMS[ball])} × {amount}
+                          {active().ball === ball ? ' (selected)' : ''}
+                        </button>
+                      </li>
+                    )}
+                  </For>
+                </ul>
               </Show>
 
-              <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-            </>
-          )}
-        </Show>
-        <button type="button" onClick={leave}>
-          {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
-        </button>
-      </DialogPanel>
+              <h3>Treats</h3>
+              <Show when={treats().length} fallback={<p>Nothing to feed.</p>}>
+                <ul>
+                  <For each={treats()}>
+                    {([item, amount]) => (
+                      <li>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            feed(item);
+                          }}
+                        >
+                          Feed {describeItem(item)} × {amount}
+                        </button>
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              </Show>
+
+              <p>
+                <button type="button" onClick={attempt}>
+                  Throw {describeItem(BALL_ITEMS[active().ball])}
+                </button>
+              </p>
+            </Show>
+
+            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+          </>
+        )}
+      </Show>
+      <button type="button" onClick={leave}>
+        {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
+      </button>
     </Dialog>
   );
 }

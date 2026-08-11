@@ -8,7 +8,6 @@ import {
   createSignal,
   from,
   onCleanup,
-  onMount,
 } from 'solid-js';
 import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
@@ -22,6 +21,7 @@ import {
   hostMythicalRaid,
   peekRaid,
 } from '../auth/raids';
+import { savePosition } from '../auth/positions';
 import { claimRocketReward, enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
@@ -58,11 +58,12 @@ import createOverworld from '../overworld/setup';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
-import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
 import ChunkCanvas from './ChunkCanvas';
 import NpcDialog from './NpcDialog';
+import PortalDialog from './PortalDialog';
 import RaidDialog from './RaidDialog';
+import WorldMapDialog from './WorldMapDialog';
 import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
 import { GameTab, useGame } from './game-context';
@@ -80,6 +81,13 @@ const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
 const START_CELL = CHUNK_CELLS / 2;
 
 /**
+ * How long the game waits before writing down where somebody is. A
+ * walk is a run of keypresses, and what is worth keeping is where it
+ * ended
+ */
+const SAVE_DELAY = 1500;
+
+/**
  * How many paces are walked before the egg being carried is told
  * about them. Reporting every cell would be a write per keypress;
  * reporting in batches costs the walker nothing, since the server
@@ -87,17 +95,6 @@ const START_CELL = CHUNK_CELLS / 2;
  * report arrived
  */
 const STEP_REPORT_SIZE = 8;
-
-const MOVES = new Map<string, [x: number, y: number]>([
-  ['ArrowUp', [0, -1]],
-  ['ArrowDown', [0, 1]],
-  ['ArrowLeft', [-1, 0]],
-  ['ArrowRight', [1, 0]],
-  ['w', [0, -1]],
-  ['s', [0, 1]],
-  ['a', [-1, 0]],
-  ['d', [1, 0]],
-]);
 
 function describeItem(item: Items): string {
   try {
@@ -208,13 +205,6 @@ export default function OverworldTab(): JSX.Element {
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
 
-  // Where the player is walking is theirs alone — the game stores no
-  // position — but the world map needs a place to point its camera, so
-  // it is published as they move
-  createEffect(() => {
-    game.setChunk([chunkX(), chunkY()]);
-  });
-
   /**
    * Whether an interaction is in flight, so a second click on the
    * same cell does not open the same thing twice
@@ -240,6 +230,17 @@ export default function OverworldTab(): JSX.Element {
    * done or declined
    */
   const [wanderer, setWanderer] = createSignal<[number, Npc] | null>(null);
+  /**
+   * The portal cell the player is standing at, or null. What it opens
+   * onto is derived in the dialog rather than here
+   */
+  const [portal, setPortal] = createSignal<number | null>(null);
+  /**
+   * Whether the world map is open over the chunk. It is a look at
+   * where they are rather than a place to go, so it opens here rather
+   * than taking a tab of its own
+   */
+  const [mapping, setMapping] = createSignal(false);
   /**
    * The lair the player is standing in front of, and what it holds.
    * Looking at one stages nothing — the dialog's button is where a
@@ -288,24 +289,23 @@ export default function OverworldTab(): JSX.Element {
       });
   };
 
-  // A player who has not walked anywhere yet starts somewhere in the
-  // starting region rather than at the origin. The draw is seeded by
-  // their uid, so it is the same place every time until a position
-  // is actually stored
+  // Where they were put by the provider, which is the one place the
+  // position is worked out: a tab panel unmounts when it is left, so
+  // walking back into the Overworld is a remount, and it must pick up
+  // where the walk left off rather than start again
   createEffect(() => {
-    const user = auth.user();
+    const at = game.position();
 
-    if (user == null || placed()) {
+    if (at == null || placed()) {
       return;
     }
-
-    const start = pickStartPosition(getWorld(), user.uid);
-
+    setChunkX(at.chunkX);
+    setChunkY(at.chunkY);
+    setCellX(at.cellX);
+    setCellY(at.cellY);
+    // Last, so nothing that watches a chunk starts watching the wrong
+    // one: the whole overworld waits on being placed
     setPlaced(true);
-    setChunkX(start.chunkX);
-    setChunkY(start.chunkY);
-    setCellX(start.cellX);
-    setCellY(start.cellY);
   });
 
   /**
@@ -315,6 +315,10 @@ export default function OverworldTab(): JSX.Element {
    * up without a reload
    */
   createEffect(() => {
+    if (!placed()) {
+      return;
+    }
+
     const chunk = getWorld().getChunk(chunkX(), chunkY());
 
     // The window always rolls the lure's extras, so every player of
@@ -324,11 +328,17 @@ export default function OverworldTab(): JSX.Element {
     });
   });
 
-  const snapshotWindow = from<number | null>((set) =>
-    watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (timestamp) => {
+  const snapshotWindow = from<number | null>((set) => {
+    // Nothing is watched until the player has been put somewhere:
+    // chunk 0,0 is not where they are, and publishing its window
+    // would be a visit nobody made
+    if (!placed()) {
+      return () => undefined;
+    }
+    return watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (timestamp) => {
       set(timestamp);
-    }),
-  );
+    });
+  });
 
   const published = from<[string, SpawnRecord][]>((set) => {
     const timestamp = snapshotWindow();
@@ -342,11 +352,8 @@ export default function OverworldTab(): JSX.Element {
   });
 
   // What walks beside the player changes what the chunk holds, so the
-  // view waits on it the same way it waits on the window
-  const [buddy] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => getBuddyEffects(uid),
-  );
+  // buddy's effects are read alongside it
+  const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
 
   const view = (): ChunkView | null => {
     const timestamp = snapshotWindow();
@@ -379,8 +386,15 @@ export default function OverworldTab(): JSX.Element {
   let pending = 0;
   let reporting = false;
 
-  const reportSteps = (): void => {
-    if (reporting || pending < STEP_REPORT_SIZE) {
+  /**
+   * Hand the paces walked so far to the server. A walk in progress
+   * reports in batches of `STEP_REPORT_SIZE`; `force` is for the
+   * moments a walk **stops** — the same moments the position is
+   * written down — where the last few paces are worth keeping even
+   * though they are not a batch
+   */
+  const reportSteps = (force = false): void => {
+    if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
       return;
     }
 
@@ -398,6 +412,62 @@ export default function OverworldTab(): JSX.Element {
         reporting = false;
       });
   };
+
+  /**
+   * Where they stopped, and what it cost the egg they are carrying.
+   *
+   * The two settle together on purpose. A position saved without the
+   * paces that led to it would have a player come back further along
+   * than their egg — the walk would have happened to the map and not
+   * to the egg — so the steps go first and the position follows
+   */
+  const settle = (chunk: number, row: number, x: number, y: number): void => {
+    reportSteps(true);
+    // What the rest of the game is told, so the world map's camera is
+    // looking at the chunk the player is actually in — and so a
+    // remount of this tab picks the walk up rather than the record
+    game.setPosition({
+      player: auth.user()?.uid ?? '',
+      chunkX: chunk,
+      chunkY: row,
+      cellX: x,
+      cellY: y,
+      movedAt: Date.now(),
+    });
+    savePosition(chunk, row, x, y).catch((caught: unknown) => {
+      setStatus(caught instanceof Error ? caught.message : String(caught));
+    });
+  };
+
+  // ...and remembered as they walk. A step is a keypress, so the
+  // writes are held back to one every SAVE_DELAY: the effect re-runs
+  // on every move and clears the timer it set last time, so what
+  // lands is where they stopped rather than every square they crossed
+  createEffect(() => {
+    const user = auth.user();
+    const at = { chunkX: chunkX(), chunkY: chunkY(), cellX: cellX(), cellY: cellY() };
+
+    if (user == null || !placed()) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
+    }, SAVE_DELAY);
+
+    onCleanup(() => {
+      clearTimeout(timer);
+    });
+  });
+
+  // Leaving the tab unmounts it, which would drop a walk that had not
+  // reached the end of its delay — so the last of it is settled on the
+  // way out rather than thrown away
+  onCleanup(() => {
+    if (placed()) {
+      settle(chunkX(), chunkY(), cellX(), cellY());
+    }
+  });
 
   const move = (deltaX: number, deltaY: number): void => {
     let x = cellX() + deltaX;
@@ -436,28 +506,6 @@ export default function OverworldTab(): JSX.Element {
     pending += 1;
     reportSteps();
   };
-
-  onMount(() => {
-    const onKeyDown = (event: KeyboardEvent): void => {
-      // The dialogs own the keyboard while they are open
-      if (session() != null) {
-        return;
-      }
-
-      const delta = MOVES.get(event.key.length === 1 ? event.key.toLowerCase() : event.key);
-
-      if (delta == null) {
-        return;
-      }
-      event.preventDefault();
-      move(delta[0], delta[1]);
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    onCleanup(() => {
-      window.removeEventListener('keydown', onKeyDown);
-    });
-  });
 
   /**
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
@@ -543,6 +591,13 @@ export default function OverworldTab(): JSX.Element {
       // The challenge is put to the player rather than taken for
       // them; the dialog is what accepts it
       setChallenge(stop);
+      return null;
+    }
+    if (landmark === Landmark.Portal) {
+      // Where it goes is derived from the chunk it stands in, so the
+      // dialog can list every destination without asking anything of
+      // the server. The key is what the server is for
+      setPortal(at);
       return null;
     }
     if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
@@ -663,9 +718,12 @@ export default function OverworldTab(): JSX.Element {
     <section>
       <h2>Overworld</h2>
       <p>
-        Move with the arrow keys or WASD. Stepping off an edge crosses into the next chunk. Step
-        within a cell of a pokemon or a landmark — anywhere in the ring around it — and click it to
-        deal with it; walking over one does nothing on its own.
+        Click the chunk, then move with the arrow keys or WASD — the keys go wherever the focus is,
+        so a dialog over the top of it stops the walking rather than happening underneath it.
+        Stepping off an edge crosses into the next chunk. Step within a cell of a pokemon or a
+        landmark — anywhere in the ring around it — and click it to deal with it; walking over one
+        does nothing on its own. Shift and an arrow point at a cell without walking, and Enter deals
+        with whatever is pointed at.
       </p>
 
       <Show when={view()} fallback={<p>Loading chunk…</p>}>
@@ -690,10 +748,25 @@ export default function OverworldTab(): JSX.Element {
               }
               label={titleOf}
               onReach={reach}
+              onWalk={move}
             />
 
             <p>
               Cell {cellX()}, {cellY()}
+            </p>
+
+            {/* Where this chunk sits in the world. It opens over the
+                overworld rather than beside it: a player looks at the
+                map to decide which way to walk, and then walks */}
+            <p>
+              <button
+                type="button"
+                onClick={() => {
+                  setMapping(true);
+                }}
+              >
+                World map
+              </button>
             </p>
 
             {/* Only a buddy walks, and only an egg has anywhere to
@@ -765,6 +838,42 @@ export default function OverworldTab(): JSX.Element {
               lair={lair()}
               onClose={() => {
                 setLair(null);
+              }}
+            />
+            <WorldMapDialog
+              isOpen={mapping()}
+              onClose={() => {
+                setMapping(false);
+              }}
+            />
+            <PortalDialog
+              player={user().uid}
+              snapshot={view()?.snapshot ?? null}
+              cell={portal()}
+              onClose={() => {
+                setPortal(null);
+              }}
+              onTravel={(destination) => {
+                // Out of a portal and into the one it opened onto:
+                // the far side is a chunk away rather than a step, so
+                // the whole position moves at once
+                setChunkX(destination.x);
+                setChunkY(destination.y);
+                setCellX(destination.cell % CHUNK_CELLS);
+                setCellY(Math.floor(destination.cell / CHUNK_CELLS));
+                setStatus(
+                  `Through to ${BIOME_NAMES[destination.biome]} — chunk ${destination.x}, ${destination.y}.`,
+                );
+                // A key was spent getting here, so where it got them is
+                // written down now rather than in a second and a half.
+                // The paces that led to the portal go with it; the
+                // crossing itself is not a walk and adds none
+                settle(
+                  destination.x,
+                  destination.y,
+                  destination.cell % CHUNK_CELLS,
+                  Math.floor(destination.cell / CHUNK_CELLS),
+                );
               }}
             />
           </>

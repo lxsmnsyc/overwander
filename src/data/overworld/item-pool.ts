@@ -107,6 +107,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },
+    // One crossing of the world. It is spent in the crossing, which is
+    // what keeps the map worth walking
+    { item: Items.PortalKey, weight: 8 },
   ],
 };
 

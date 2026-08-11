@@ -1,5 +1,4 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
-import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
@@ -50,6 +49,7 @@ import {
   isRaidEncounter,
 } from '../overworld/encounter';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import { Dialog, DialogActions, DialogButton, DialogSection, DialogTitle } from './styled';
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -474,6 +474,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
 
   return (
     <Dialog
+      width="wide"
       isOpen={props.catchId != null}
       onClose={() => {
         setStatus(null);
@@ -482,361 +483,335 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onClose();
       }}
     >
-      <DialogOverlay
-        style={{
-          position: 'fixed',
-          inset: '0',
-          background: 'rgba(0, 0, 0, 0.4)',
-        }}
-      />
-      <DialogPanel
-        style={{
-          position: 'fixed',
-          inset: '10% 50% auto auto',
-          transform: 'translateX(50%)',
-          'max-height': '80vh',
-          'overflow-y': 'auto',
-          background: '#fff',
-          padding: '1rem 2rem',
-          'border-radius': '0.5rem',
-          'text-align': 'left',
-        }}
-      >
-        <Show when={!detail.loading} fallback={<p>Loading catch…</p>}>
-          <Show when={view()} fallback={<p>No such catch.</p>}>
-            {(loaded) => (
-              <>
-                <DialogTitle>
-                  {/* An egg gives away nothing about what is inside
+      <Show when={!detail.loading} fallback={<p>Loading catch…</p>}>
+        <Show when={view()} fallback={<p>No such catch.</p>}>
+          {(loaded) => (
+            <>
+              <DialogTitle>
+                {/* An egg gives away nothing about what is inside
                       it — not the species, not even whether it
                       sparkles */}
-                  {isEgg(loaded())
-                    ? 'Egg'
-                    : `${isShiny(loaded()) ? '✦ ' : ''}${getSpeciesData(loaded().species).name}`}
-                </DialogTitle>
-                <dl>
-                  <dt>Level</dt>
-                  <dd>{loaded().level}</dd>
-                  {/* What it walked out of its last fight with. An egg
+                {isEgg(loaded())
+                  ? 'Egg'
+                  : `${isShiny(loaded()) ? '✦ ' : ''}${getSpeciesData(loaded().species).name}`}
+              </DialogTitle>
+              <dl>
+                <dt>Level</dt>
+                <dd>{loaded().level}</dd>
+                {/* What it walked out of its last fight with. An egg
                       has fought nothing, but it still has a pool —
                       the one the hatchling will have */}
-                  <dt>Health</dt>
-                  <dd>
-                    {loaded().health} / {getMaxHealth(loaded())}
-                    {isFainted(loaded()) ? ' · fainted' : ''}
-                  </dd>
-                  {/* A pokemon can carry several at once, so all of
+                <dt>Health</dt>
+                <dd>
+                  {loaded().health} / {getMaxHealth(loaded())}
+                  {isFainted(loaded()) ? ' · fainted' : ''}
+                </dd>
+                {/* A pokemon can carry several at once, so all of
                       them are listed rather than the worst */}
-                  <Show when={loaded().statuses !== 0}>
-                    <dt>Status</dt>
-                    <dd>
-                      {unpackStatuses(loaded().statuses)
-                        .map((carried) => STATUS_NAMES[carried])
-                        .join(' · ')}
-                    </dd>
-                  </Show>
-                  {/* Everything below this point is read off the
+                <Show when={loaded().statuses !== 0}>
+                  <dt>Status</dt>
+                  <dd>
+                    {unpackStatuses(loaded().statuses)
+                      .map((carried) => STATUS_NAMES[carried])
+                      .join(' · ')}
+                  </dd>
+                </Show>
+                {/* Everything below this point is read off the
                       species, so an egg has none of it to show */}
-                  <Show when={!isEgg(loaded())}>
-                    <dt>Gender</dt>
-                    <dd>{GENDER_LABELS[loaded().gender]}</dd>
-                    <dt>Size</dt>
-                    <dd>{describeSize(loaded())}</dd>
-                    <dt>Nature</dt>
-                    <dd>#{loaded().nature}</dd>
-                    <dt>Abilities</dt>
-                    <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
-                  </Show>
-                  <dt>Ball</dt>
-                  <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
-                  <Show when={!isEgg(loaded())}>
-                    <dt>Held items</dt>
-                    <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
-                    <dt>Moves</dt>
-                    <dd>
-                      {loaded()
-                        .moves.map((move) => getMoveData(move).name)
-                        .join(', ') || 'None'}
-                    </dd>
-                  </Show>
-                  <dt>Individual values</dt>
-                  <dd>{describeIVs(loaded().ivs)}</dd>
-                  <dt>{isEgg(loaded()) ? 'Found' : 'Caught'}</dt>
-                  {/* The stamp is already in the catcher's own zone,
+                <Show when={!isEgg(loaded())}>
+                  <dt>Gender</dt>
+                  <dd>{GENDER_LABELS[loaded().gender]}</dd>
+                  <dt>Size</dt>
+                  <dd>{describeSize(loaded())}</dd>
+                  <dt>Nature</dt>
+                  <dd>#{loaded().nature}</dd>
+                  <dt>Abilities</dt>
+                  <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
+                </Show>
+                <dt>Ball</dt>
+                <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
+                <Show when={!isEgg(loaded())}>
+                  <dt>Held items</dt>
+                  <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
+                  <dt>Moves</dt>
+                  <dd>
+                    {loaded()
+                      .moves.map((move) => getMoveData(move).name)
+                      .join(', ') || 'None'}
+                  </dd>
+                </Show>
+                <dt>Individual values</dt>
+                <dd>{describeIVs(loaded().ivs)}</dd>
+                <dt>{isEgg(loaded()) ? 'Found' : 'Caught'}</dt>
+                {/* The stamp is already in the catcher's own zone,
                       so the date it opens with is the day they had */}
-                  <dd>{loaded().caughtAt.slice(0, 10)}</dd>
-                  {/* Where it came from, not just where it was
+                <dd>{loaded().caughtAt.slice(0, 10)}</dd>
+                {/* Where it came from, not just where it was
                       standing: a grunt's drop is not a raid prize */}
-                  <Show when={!isEgg(loaded())}>
-                    <dt>Met</dt>
-                    <dd>{describeMet(loaded())}</dd>
-                  </Show>
-                  <dt>Origin</dt>
-                  <dd>{describeOrigin(loaded())}</dd>
-                </dl>
+                <Show when={!isEgg(loaded())}>
+                  <dt>Met</dt>
+                  <dd>{describeMet(loaded())}</dd>
+                </Show>
+                <dt>Origin</dt>
+                <dd>{describeOrigin(loaded())}</dd>
+              </dl>
 
-                <Show when={owned()}>
-                  {/* Everything below changes the record, and a
+              <Show when={owned()}>
+                {/* Everything below changes the record, and a
                       pokemon in a live battle is fighting as the
                       snapshot froze it */}
-                  <Show when={fighting()}>
-                    <p role="status">
-                      In a raid right now — nothing about it can be changed until the battle ends.
-                    </p>
-                  </Show>
+                <Show when={fighting()}>
+                  <p role="status">
+                    In a raid right now — nothing about it can be changed until the battle ends.
+                  </p>
+                </Show>
 
-                  <h3>Buddy</h3>
+                <DialogSection title="Buddy">
                   {/* Only what walks beside the player counts steps,
                       so an egg has to be the buddy to get anywhere */}
+                  <Show when={buddy() !== props.catchId} fallback={<p>Walking with you.</p>}>
+                    <DialogButton onClick={takeAlong}>
+                      {isEgg(loaded()) ? 'Carry this egg' : 'Walk with this one'}
+                    </DialogButton>
+                  </Show>
+                </DialogSection>
+
+                <Show when={isEgg(loaded())}>
+                  <h3>Egg</h3>
                   <p>
-                    <Show
-                      when={buddy() !== props.catchId}
-                      fallback={<span>Walking with you.</span>}
+                    {loaded().steps} / {loaded().hatchSteps} steps
+                    {buddy() === props.catchId
+                      ? '.'
+                      : ' — it only moves while it is the one being carried.'}
+                  </p>
+                  <p>
+                    <button type="button" disabled={!canHatch(loaded())} onClick={hatch}>
+                      {canHatch(loaded()) ? 'Hatch' : `${stepsRemaining(loaded())} steps to go`}
+                    </button>
+                  </p>
+                </Show>
+
+                <Show when={!isEgg(loaded())}>
+                  <h3>Held items</h3>
+                  <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
+                    <ul>
+                      <For each={loaded().items}>
+                        {(item) => (
+                          <li>
+                            {describeItem(item)}{' '}
+                            <button
+                              type="button"
+                              disabled={fighting()}
+                              onClick={() => {
+                                moveItem(item, false);
+                              }}
+                            >
+                              Take back
+                            </button>
+                          </li>
+                        )}
+                      </For>
+                    </ul>
+                  </Show>
+                  {/* A catch holds one item at a time, matching the
+                      battle's per-unit limit */}
+                  <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      value={null}
+                      verb="Give"
+                      empty="Nothing holdable in the bag."
+                      filter={(entry) => isHoldable(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          moveItem(item, true);
+                        }
+                      }}
+                    />
+                  </Show>
+
+                  <h3>Healing</h3>
+                  {/* A fight leaves what it leaves, and nothing
+                        mends on its own: a berry or medicine is the
+                        quick way back, a level the slow one. Only what
+                        would actually do something is offered — using
+                        it spends it */}
+                  <InventoryPicker
+                    inline
+                    entries={bag()}
+                    disabled={fighting()}
+                    value={null}
+                    verb="Use"
+                    empty={
+                      isFainted(loaded())
+                        ? 'It is down. Only a revive brings it round — or a level.'
+                        : 'Nothing in the bag would do it any good.'
+                    }
+                    filter={(entry) => isRemedy(entry.item)}
+                    onPick={(item) => {
+                      if (item != null) {
+                        heal(item);
+                      }
+                    }}
+                  />
+
+                  <h3>Use item</h3>
+                  {/* A cap is the only thing that moves the values a
+                      pokemon was born with, and it is spent doing it —
+                      so one is never offered to a pokemon that has
+                      nothing left to gain from it */}
+                  <Show
+                    when={!isPerfectIVs(loaded().ivs)}
+                    fallback={<p>Every value is already as high as it goes.</p>}
+                  >
+                    {/* Every other usable item is used somewhere else
+                          — a ball on an encounter, a stone through the
+                          evolution it enables — so the caps are the
+                          only ones a catch itself offers */}
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      confirm
+                      value={null}
+                      verb="Use"
+                      empty="No bottle caps in the bag."
+                      filter={(entry) => isBottleCap(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          polish(item);
+                        }
+                      }}
+                    />
+                  </Show>
+
+                  {/* A gem is only ever offered to a shadow, since a
+                        shadow is the only thing it does anything to */}
+                  <Show when={isShadow(loaded())}>
+                    <p>
+                      A shadow. A Purifying Gem takes it off for good: the Shadow ability becomes
+                      Purified, it costs no more to raise than anything else, and every value goes
+                      up by {PURIFY_IV_BOOST}.
+                    </p>
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      confirm
+                      value={null}
+                      verb="Use"
+                      empty="No purifying gems in the bag."
+                      filter={(entry) => isPurifyingGem(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          purify(item);
+                        }
+                      }}
+                    />
+                  </Show>
+
+                  <h3>Candies</h3>
+                  {/* The stack is keyed by family, so every stage of
+                      the line draws on the same pile */}
+                  <p>
+                    {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
+                    {getSpeciesData(loaded().species).name} family
+                  </p>
+                  <p>
+                    <button
+                      type="button"
+                      disabled={
+                        (candies() ?? 0) < getCandyCost(loaded()) ||
+                        loaded().level >= MAX_LEVEL ||
+                        fighting() === true
+                      }
+                      onClick={feedCandy}
                     >
-                      <button type="button" onClick={takeAlong}>
-                        {isEgg(loaded()) ? 'Carry this egg' : 'Walk with this one'}
-                      </button>
+                      {loaded().level >= MAX_LEVEL
+                        ? 'Already at the level cap'
+                        : `Level up for ${getCandyCost(loaded())} ${
+                            getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
+                          }`}
+                    </button>
+                    {/* A shadow keeps the Shadow ability, and pays
+                        for it at every level */}
+                    <Show when={isShadow(loaded())}>
+                      {' '}
+                      <span>A shadow costs twice as much to raise.</span>
                     </Show>
                   </p>
 
-                  <Show when={isEgg(loaded())}>
-                    <h3>Egg</h3>
-                    <p>
-                      {loaded().steps} / {loaded().hatchSteps} steps
-                      {buddy() === props.catchId
-                        ? '.'
-                        : ' — it only moves while it is the one being carried.'}
-                    </p>
-                    <p>
-                      <button type="button" disabled={!canHatch(loaded())} onClick={hatch}>
-                        {canHatch(loaded()) ? 'Hatch' : `${stepsRemaining(loaded())} steps to go`}
-                      </button>
-                    </p>
-                  </Show>
-
-                  <Show when={!isEgg(loaded())}>
-                    <h3>Held items</h3>
-                    <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
+                  <h3>Evolution</h3>
+                  <Show when={!evolutions.loading} fallback={<p>Checking evolutions…</p>}>
+                    <Show
+                      when={evolutions()?.length}
+                      fallback={<p>No evolution is available right now.</p>}
+                    >
                       <ul>
-                        <For each={loaded().items}>
-                          {(item) => (
+                        <For each={evolutions()}>
+                          {(evolution) => (
                             <li>
-                              {describeItem(item)}{' '}
                               <button
                                 type="button"
                                 disabled={fighting()}
                                 onClick={() => {
-                                  moveItem(item, false);
+                                  evolve(evolution.species);
                                 }}
                               >
-                                Take back
+                                Evolve into {getSpeciesData(evolution.species).name}
+                                {/* Item id 0 is a real item, so test for
+                                    absence rather than falsiness */}
+                                <Show when={getConsumedItem(evolution) ?? undefined} keyed>
+                                  {(item) => <> (uses {describeItem(item)})</>}
+                                </Show>
                               </button>
                             </li>
                           )}
                         </For>
                       </ul>
                     </Show>
-                    {/* A catch holds one item at a time, matching the
-                      battle's per-unit limit */}
-                    <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={fighting()}
-                        value={null}
-                        verb="Give"
-                        empty="Nothing holdable in the bag."
-                        filter={(entry) => isHoldable(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            moveItem(item, true);
-                          }
-                        }}
-                      />
-                    </Show>
-
-                    <h3>Healing</h3>
-                    {/* A fight leaves what it leaves, and nothing
-                        mends on its own: a berry or medicine is the
-                        quick way back, a level the slow one. Only what
-                        would actually do something is offered — using
-                        it spends it */}
-                    <InventoryPicker
-                      inline
-                      entries={bag()}
-                      disabled={fighting()}
-                      value={null}
-                      verb="Use"
-                      empty={
-                        isFainted(loaded())
-                          ? 'It is down. Only a revive brings it round — or a level.'
-                          : 'Nothing in the bag would do it any good.'
-                      }
-                      filter={(entry) => isRemedy(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          heal(item);
-                        }
-                      }}
-                    />
-
-                    <h3>Use item</h3>
-                    {/* A cap is the only thing that moves the values a
-                      pokemon was born with, and it is spent doing it —
-                      so one is never offered to a pokemon that has
-                      nothing left to gain from it */}
-                    <Show
-                      when={!isPerfectIVs(loaded().ivs)}
-                      fallback={<p>Every value is already as high as it goes.</p>}
-                    >
-                      {/* Every other usable item is used somewhere else
-                          — a ball on an encounter, a stone through the
-                          evolution it enables — so the caps are the
-                          only ones a catch itself offers */}
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={fighting()}
-                        confirm
-                        value={null}
-                        verb="Use"
-                        empty="No bottle caps in the bag."
-                        filter={(entry) => isBottleCap(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            polish(item);
-                          }
-                        }}
-                      />
-                    </Show>
-
-                    {/* A gem is only ever offered to a shadow, since a
-                        shadow is the only thing it does anything to */}
-                    <Show when={isShadow(loaded())}>
-                      <p>
-                        A shadow. A Purifying Gem takes it off for good: the Shadow ability becomes
-                        Purified, it costs no more to raise than anything else, and every value goes
-                        up by {PURIFY_IV_BOOST}.
-                      </p>
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={fighting()}
-                        confirm
-                        value={null}
-                        verb="Use"
-                        empty="No purifying gems in the bag."
-                        filter={(entry) => isPurifyingGem(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            purify(item);
-                          }
-                        }}
-                      />
-                    </Show>
-
-                    <h3>Candies</h3>
-                    {/* The stack is keyed by family, so every stage of
-                      the line draws on the same pile */}
-                    <p>
-                      {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'} for the{' '}
-                      {getSpeciesData(loaded().species).name} family
-                    </p>
-                    <p>
-                      <button
-                        type="button"
-                        disabled={
-                          (candies() ?? 0) < getCandyCost(loaded()) ||
-                          loaded().level >= MAX_LEVEL ||
-                          fighting() === true
-                        }
-                        onClick={feedCandy}
-                      >
-                        {loaded().level >= MAX_LEVEL
-                          ? 'Already at the level cap'
-                          : `Level up for ${getCandyCost(loaded())} ${
-                              getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
-                            }`}
-                      </button>
-                      {/* A shadow keeps the Shadow ability, and pays
-                        for it at every level */}
-                      <Show when={isShadow(loaded())}>
-                        {' '}
-                        <span>A shadow costs twice as much to raise.</span>
-                      </Show>
-                    </p>
-
-                    <h3>Evolution</h3>
-                    <Show when={!evolutions.loading} fallback={<p>Checking evolutions…</p>}>
-                      <Show
-                        when={evolutions()?.length}
-                        fallback={<p>No evolution is available right now.</p>}
-                      >
-                        <ul>
-                          <For each={evolutions()}>
-                            {(evolution) => (
-                              <li>
-                                <button
-                                  type="button"
-                                  disabled={fighting()}
-                                  onClick={() => {
-                                    evolve(evolution.species);
-                                  }}
-                                >
-                                  Evolve into {getSpeciesData(evolution.species).name}
-                                  {/* Item id 0 is a real item, so test for
-                                    absence rather than falsiness */}
-                                  <Show when={getConsumedItem(evolution) ?? undefined} keyed>
-                                    {(item) => <> (uses {describeItem(item)})</>}
-                                  </Show>
-                                </button>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      </Show>
-                    </Show>
                   </Show>
-                  <h3>Release</h3>
-                  {/* There is no undoing it, so it takes two presses
-                      — and whatever it is holding comes back to the
-                      bag rather than going with it */}
-                  <p>
-                    <button type="button" disabled={fighting()} onClick={release}>
+                </Show>
+                <DialogSection title="Release">
+                  {/* There is no undoing it, so it takes two presses —
+                      and whatever it is holding comes back to the bag
+                      rather than going with it */}
+                  <DialogActions>
+                    <DialogButton tone="danger" disabled={fighting()} onClick={release}>
                       {releasing()
                         ? `Release ${isEgg(loaded()) ? 'this egg' : getSpeciesData(loaded().species).name} for good?`
                         : 'Release'}
-                    </button>
+                    </DialogButton>
                     <Show when={releasing()}>
-                      {' '}
-                      <button
-                        type="button"
+                      <DialogButton
                         onClick={() => {
                           setReleasing(false);
                         }}
                       >
                         Keep
-                      </button>
+                      </DialogButton>
                     </Show>
-                  </p>
+                  </DialogActions>
+                </DialogSection>
 
-                  <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-                </Show>
-              </>
-            )}
-          </Show>
+                <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+              </Show>
+            </>
+          )}
         </Show>
-        <button
-          type="button"
-          onClick={() => {
-            setStatus(null);
-            setReleasing(false);
-            props.onClose();
-          }}
-        >
-          Close
-        </button>
-      </DialogPanel>
+      </Show>
+      <button
+        type="button"
+        onClick={() => {
+          setStatus(null);
+          setReleasing(false);
+          props.onClose();
+        }}
+      >
+        Close
+      </button>
     </Dialog>
   );
 }

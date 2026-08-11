@@ -246,6 +246,12 @@ export const enum Items {
    * and what it cost to raise comes back down with it
    */
   PurifyingGem = 127,
+
+  /**
+   * Opens a portal, and is spent doing it: the network is walked one
+   * key at a time
+   */
+  PortalKey = 128,
 }
 
 /**

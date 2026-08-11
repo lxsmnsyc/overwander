@@ -3,7 +3,7 @@ import { RaidAction, RaidKind, type RaidView, enterRaid } from '../auth/raids';
 import { getLairTitle } from '../data/overworld/lair';
 import { getSpeciesData } from '../data/species';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import PickerDialog from './PickerDialog';
+import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
 import { GameTab, useGame } from './game-context';
 
 /**
@@ -138,7 +138,8 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   };
 
   return (
-    <PickerDialog isOpen={props.lair != null} title={title()} onClose={close}>
+    <Dialog isOpen={props.lair != null} onClose={close}>
+      <DialogTitle>{title()}</DialogTitle>
       <Show when={view()}>
         {(standing) => (
           <>
@@ -147,18 +148,16 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
               {standing().kind === RaidKind.Shadow ? ' · shadow' : ''}
             </p>
             <p>{describeAction(standing())}</p>
-            <p>
-              <button type="button" disabled={busy()} onClick={act}>
+            <DialogActions>
+              <DialogButton tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]}
-              </button>{' '}
-              <button type="button" onClick={close}>
-                Close
-              </button>
-            </p>
+              </DialogButton>
+              <DialogButton onClick={close}>Close</DialogButton>
+            </DialogActions>
           </>
         )}
       </Show>
       <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-    </PickerDialog>
+    </Dialog>
   );
 }

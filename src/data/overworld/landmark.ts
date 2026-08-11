@@ -44,6 +44,13 @@ const enum Landmark {
    * player who stops
    */
   WanderingNpc = 7,
+  /**
+   * A way through to somewhere else. It does nothing on its own — a
+   * Portal Key is what opens one — and where it goes is another portal
+   * of the biome the traveller names, which is what makes the network
+   * a network rather than a teleport
+   */
+  Portal = 8,
 }
 
 export default Landmark;
@@ -60,6 +67,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.TeamRocketStop,
   Landmark.Nest,
   Landmark.WanderingNpc,
+  Landmark.Portal,
 ];
 
 /**
@@ -74,4 +82,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.TeamRocketStop]: 'Team Rocket Stop',
   [Landmark.Nest]: 'Nest',
   [Landmark.WanderingNpc]: 'Wandering NPC',
+  [Landmark.Portal]: 'Portal',
 };

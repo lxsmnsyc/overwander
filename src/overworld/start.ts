@@ -18,11 +18,16 @@ export interface StartPosition {
 }
 
 /**
- * Where a player first steps into the overworld. The draw is seeded
- * by the player, so their starting point is fixed the first time and
- * every time they return before anything is stored — reloading does
- * not reshuffle them across the map. The cell is free: landmarks are
- * skipped, so nobody opens the game already standing on a raid
+ * Where a player first steps into the overworld.
+ *
+ * The draw is whatever seed the caller hands it, and the caller hands
+ * it a **random** one: two players who start on the same day start in
+ * different places, and one player's world is not a function of their
+ * name. It is drawn once — the position is written down as soon as it
+ * is picked, so returning is returning rather than being re-rolled.
+ *
+ * The cell is free: landmarks are skipped, so nobody opens the game
+ * already standing on a raid
  */
 export default function pickStartPosition(world: World, seed: string): StartPosition {
   const rng = new AleaRNG(`${seed}start`);

@@ -3,7 +3,7 @@ import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { useAuth } from '../auth/context';
-import PickerDialog from './PickerDialog';
+import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
 import { describeCatch } from './CatchesList';
 
 /**
@@ -281,24 +281,22 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       >
         {props.label ?? props.title ?? 'Pick a pokemon'}
       </button>
-      <PickerDialog isOpen={showing()} title={props.title ?? 'Your pokemon'} onClose={close}>
+      <Dialog isOpen={showing()} onClose={close}>
+        <DialogTitle>{props.title ?? 'Your pokemon'}</DialogTitle>
         {list()}
-        <p>
+        <DialogActions>
           <Show when={props.multiple !== true && props.value != null}>
-            <button
-              type="button"
+            <DialogButton
               onClick={() => {
                 pickOne(null);
               }}
             >
               Pick none
-            </button>{' '}
+            </DialogButton>
           </Show>
-          <button type="button" onClick={close}>
-            Close
-          </button>
-        </p>
-      </PickerDialog>
+          <DialogButton onClick={close}>Close</DialogButton>
+        </DialogActions>
+      </Dialog>
     </Show>
   );
 }

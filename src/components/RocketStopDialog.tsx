@@ -1,11 +1,11 @@
 import type { User } from 'firebase/auth';
 import { For, type JSX, Show, createSignal } from 'solid-js';
-import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import type { RocketRecord } from '../auth/rocket-record';
 import { startRocketBattle } from '../auth/rockets';
 import { getSpeciesData } from '../data/species';
 import { ROCKET_PARTY_LEVEL } from '../overworld/rocket';
 import TeamPickerDialog from './TeamPickerDialog';
+import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
 import { useGame } from './game-context';
 
 export interface RocketStopDialogProps {
@@ -55,58 +55,41 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   return (
     <>
       <Dialog isOpen={props.challenge != null && !picking()} onClose={props.onClose}>
-        <DialogOverlay
-          style={{ position: 'fixed', inset: '0', background: 'rgba(0, 0, 0, 0.4)' }}
-        />
-        <DialogPanel
-          style={{
-            position: 'fixed',
-            inset: '20% 50% auto auto',
-            transform: 'translateX(50%)',
-            background: '#fff',
-            padding: '1rem 2rem',
-            'border-radius': '0.5rem',
-            'text-align': 'left',
-          }}
-        >
-          <DialogTitle>Team Rocket</DialogTitle>
-          <Show when={props.challenge?.[1]}>
-            {(record) => (
-              <>
-                <p>
-                  A Team Rocket grunt blocks the way. “Three of mine against however many of yours.”
-                </p>
-                <ul>
-                  <For each={record().party}>
-                    {(entry) => (
-                      <li>
-                        Shadow {getSpeciesData(entry.species).name} · Lv. {ROCKET_PARTY_LEVEL}
-                      </li>
-                    )}
-                  </For>
-                </ul>
-                {/* Losing costs the window nothing: the grunt stays put
+        <DialogTitle>Team Rocket</DialogTitle>
+        <Show when={props.challenge?.[1]}>
+          {(record) => (
+            <>
+              <p>
+                A Team Rocket grunt blocks the way. “Three of mine against however many of yours.”
+              </p>
+              <ul>
+                <For each={record().party}>
+                  {(entry) => (
+                    <li>
+                      Shadow {getSpeciesData(entry.species).name} · Lv. {ROCKET_PARTY_LEVEL}
+                    </li>
+                  )}
+                </For>
+              </ul>
+              {/* Losing costs the window nothing: the grunt stays put
                     until they are beaten or the window turns over */}
-                <p>Lose and they will still be here. Win and they are gone for the window.</p>
-              </>
-            )}
-          </Show>
+              <p>Lose and they will still be here. Win and they are gone for the window.</p>
+            </>
+          )}
+        </Show>
 
-          <p>
-            <button
-              type="button"
-              onClick={() => {
-                setPicking(true);
-              }}
-            >
-              Battle
-            </button>
-            <button type="button" onClick={props.onClose}>
-              Walk away
-            </button>
-          </p>
-          <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-        </DialogPanel>
+        <DialogActions>
+          <DialogButton
+            tone="primary"
+            onClick={() => {
+              setPicking(true);
+            }}
+          >
+            Battle
+          </DialogButton>
+          <DialogButton onClick={props.onClose}>Walk away</DialogButton>
+        </DialogActions>
+        <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
       </Dialog>
 
       <TeamPickerDialog

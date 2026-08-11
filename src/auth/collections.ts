@@ -54,6 +54,13 @@ export const BID_COLLECTION = 'bids';
  */
 export const NPC_CLAIM_COLLECTION = 'npcClaims';
 
+/**
+ * Where each player last was, one document per uid. It is the only
+ * mutable record of a player in the world: everything else about the
+ * overworld derives from a seed and a window
+ */
+export const POSITION_COLLECTION = 'positions';
+
 export const TEAM_COLLECTION = 'teams';
 export const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
 export const BATTLE_COLLECTION = 'battles';

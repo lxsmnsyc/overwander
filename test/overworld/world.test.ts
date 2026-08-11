@@ -81,6 +81,7 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
+import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
 import { MAX_STACK } from '../../src/data/overworld/item-pool';
 import Npc, { NPCS } from '../../src/data/overworld/npc';
 import {
@@ -1214,6 +1215,63 @@ describe('world', () => {
     // Everyone who wanders turns up: the nurse is drawn from the same
     // pool as the two who charge for what they do
     expect(met.has(Npc.NurseJoy)).toBe(true);
+  });
+
+  it('opens a portal onto the nearest portal of the biome asked for', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.Portal),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    // A portal stands on a cell of its own, and that cell is where a
+    // traveller comes out
+    const cell = getPortalCell(chunk);
+
+    expect(cell).not.toBeNull();
+    expect(chunk.getLandmarkCells().get(cell ?? -1)).toBe(Landmark.Portal);
+
+    const destinations = findPortals(world, chunk.x, chunk.y);
+
+    expect(destinations.size).toBeGreaterThan(0);
+
+    for (const [biome, destination] of destinations) {
+      // Every destination is a portal, of the biome it was filed
+      // under, and somewhere other than here
+      expect(destination.biome).toBe(biome);
+      expect(world.getChunkBiome(destination.x, destination.y)).toBe(biome);
+      expect(getPortalCell(world.getChunk(destination.x, destination.y))).toBe(destination.cell);
+      expect(destination.x === chunk.x && destination.y === chunk.y).toBe(false);
+      expect(destination.distance).toBeGreaterThan(0);
+
+      // ...and it is the *nearest* one: nothing of that biome inside
+      // its ring has a portal
+      for (let radius = 1; radius < destination.distance; radius++) {
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) {
+              continue;
+            }
+
+            const x = chunk.x + dx;
+            const y = chunk.y + dy;
+
+            if (isInWorld(x, y) && world.getChunkBiome(x, y) === biome) {
+              expect(getPortalCell(world.getChunk(x, y))).toBeNull();
+            }
+          }
+        }
+      }
+    }
+
+    // Asked one biome at a time, the answer is the same one
+    for (const [biome, destination] of destinations) {
+      expect(findPortal(world, chunk.x, chunk.y, biome)).toEqual(destination);
+    }
   });
 
   it('keeps specials out of nests however the roll falls', () => {

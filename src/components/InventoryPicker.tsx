@@ -3,7 +3,7 @@ import { useAuth } from '../auth/context';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import type { Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
-import PickerDialog from './PickerDialog';
+import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
 
 /**
  * Picking something out of the bag.
@@ -302,26 +302,24 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
       >
         {props.label ?? props.title ?? 'Pick an item'}
       </button>
-      <PickerDialog isOpen={showing()} title={props.title ?? 'The bag'} onClose={close}>
+      <Dialog isOpen={showing()} onClose={close}>
+        <DialogTitle>{props.title ?? 'The bag'}</DialogTitle>
         {list()}
-        <p>
+        <DialogActions>
           {/* A single pick can also be no pick: the caller asked for an
               item, and "none" is an answer to that */}
           <Show when={props.multiple !== true && props.value != null}>
-            <button
-              type="button"
+            <DialogButton
               onClick={() => {
                 pickOne(null);
               }}
             >
               Pick none
-            </button>{' '}
+            </DialogButton>
           </Show>
-          <button type="button" onClick={close}>
-            Close
-          </button>
-        </p>
-      </PickerDialog>
+          <DialogButton onClick={close}>Close</DialogButton>
+        </DialogActions>
+      </Dialog>
     </Show>
   );
 }

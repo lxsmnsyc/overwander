@@ -10,7 +10,6 @@ import LoginForm from '../components/LoginForm';
 import OverworldTab from '../components/OverworldTab';
 import ProfileTab from '../components/ProfileTab';
 import RaidsTab from '../components/RaidsTab';
-import WorldMapTab from '../components/WorldMapTab';
 
 interface TabDefinition {
   tab: GameTab;
@@ -20,7 +19,6 @@ interface TabDefinition {
 const TABS: TabDefinition[] = [
   { tab: GameTab.Profile, label: 'Profile' },
   { tab: GameTab.Overworld, label: 'Overworld' },
-  { tab: GameTab.WorldMap, label: 'World Map' },
   { tab: GameTab.Raids, label: 'Raids' },
   { tab: GameTab.Auctions, label: 'Auctions' },
 ];
@@ -55,9 +53,6 @@ function GameView(props: { user: User }): JSX.Element {
           </TabPanel>
           <TabPanel value={GameTab.Overworld}>
             <OverworldTab />
-          </TabPanel>
-          <TabPanel value={GameTab.WorldMap}>
-            <WorldMapTab />
           </TabPanel>
           <TabPanel value={GameTab.Raids}>
             <RaidsTab user={props.user} />

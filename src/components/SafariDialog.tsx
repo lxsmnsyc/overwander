@@ -6,6 +6,7 @@ import type { EncounterRecord } from '../auth/encounter-record';
 import { feedEncounter, throwBall } from '../auth/safari';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
+import { isShiny } from '../auth/caught-record';
 import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
@@ -171,7 +172,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
           {(active) => (
             <>
               <DialogTitle>
-                {active().encounter.shiny ? '✦ ' : ''}
+                {isShiny(active().encounter) ? '✦ ' : ''}
                 {getSpeciesData(active().encounter.species).name} · Lv. {active().encounter.level}
               </DialogTitle>
               <dl>

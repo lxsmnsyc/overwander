@@ -1,3 +1,4 @@
+import { isEgg } from './egg';
 import {
   type DocumentReference,
   type FirestoreDataConverter,
@@ -94,7 +95,7 @@ export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
 
   // An egg is carried rather than accompanied: what is written inside
   // it changes nothing about the world until it hatches
-  if (caught.egg) {
+  if (isEgg(caught)) {
     return null;
   }
 

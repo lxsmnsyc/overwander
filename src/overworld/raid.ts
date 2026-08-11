@@ -1,5 +1,5 @@
 import type { CatchSnapshot } from '../auth/catch-snapshot';
-import { NON_VOLATILE_STATUSES, getMaxHealth, rescaleHealth } from '../auth/health';
+import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type BattleAftermath from '../auth/battle-aftermath';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
@@ -10,10 +10,11 @@ import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { Stats, StatsKind } from '../data/constants/stats';
+import { PokemonFlags } from '../data/constants/flags';
+import { MAX_IV, PERFECT_IVS, STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Species } from '../data/ids/species';
-import type { Statuses } from '../data/ids/status';
+import { NON_VOLATILE_STATUSES, packStatuses, unpackStatuses } from '../data/ids/status';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -65,27 +66,7 @@ export const MYTHICAL_RAID_REWARD_LEVEL = 30;
 /**
  * The highest an individual value goes; a raid boss has them all
  */
-export const PERFECT_IV = 31;
-
-const ALL_STATS = [
-  Stats.HP,
-  Stats.Attack,
-  Stats.Defense,
-  Stats.SpecialAttack,
-  Stats.SpecialDefense,
-  Stats.Speed,
-];
-
-function perfectIVs(): Record<Stats, number> {
-  return {
-    [Stats.HP]: PERFECT_IV,
-    [Stats.Attack]: PERFECT_IV,
-    [Stats.Defense]: PERFECT_IV,
-    [Stats.SpecialAttack]: PERFECT_IV,
-    [Stats.SpecialDefense]: PERFECT_IV,
-    [Stats.Speed]: PERFECT_IV,
-  };
-}
+export const PERFECT_IV = MAX_IV;
 
 function zeroEffortValues(): Record<Stats, number> {
   return {
@@ -119,7 +100,7 @@ export function createRaidBossSnapshot(
     caught: '',
     species,
     level: RAID_BOSS_LEVEL,
-    ivs: perfectIVs(),
+    ivs: PERFECT_IVS,
     effortValues: zeroEffortValues(),
     nature: deriveNature(traitValue),
     // The boss reads its own gender ratio, the same way a spawn
@@ -127,7 +108,9 @@ export function createRaidBossSnapshot(
     gender: deriveGender(species, traitValue),
     height: size.height,
     weight: size.weight,
-    shiny: false,
+    // A boss never sparkles, and a shadow one carries the bit its
+    // ability list already says it does
+    flags: shadow ? PokemonFlags.Shadow : 0,
     moves: deriveMoves(species, RAID_BOSS_LEVEL),
     // The Boss ability is what makes it a raid: the health pool, the
     // stage immunities and the sweeping single-target moves all ride
@@ -141,10 +124,10 @@ export function createRaidBossSnapshot(
     health: getMaxHealth({
       species,
       level: RAID_BOSS_LEVEL,
-      ivs: perfectIVs(),
+      ivs: PERFECT_IVS,
       effortValues: zeroEffortValues(),
     }),
-    statuses: [],
+    statuses: 0,
   };
 }
 
@@ -166,8 +149,8 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   unit.setHeight(snapshot.height);
   unit.setWeight(snapshot.weight);
 
-  for (const stat of ALL_STATS) {
-    unit.setStat(StatsKind.Individual, stat, snapshot.ivs[stat]);
+  for (const stat of STAT_ORDER) {
+    unit.setStat(StatsKind.Individual, stat, getIV(snapshot.ivs, stat));
     unit.setStat(StatsKind.Effort, stat, snapshot.effortValues[stat]);
   }
   for (const move of snapshot.moves) {
@@ -197,7 +180,7 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // that is over. Adding them through the ordinary path is deliberate:
   // an immunity refuses one, and a held berry eats itself to cure it
   // before the first turn, both of which are the right answers
-  for (const status of snapshot.statuses) {
+  for (const status of unpackStatuses(snapshot.statuses)) {
     unit.addStatus(status, { type: EffectType.None });
   }
 
@@ -318,8 +301,8 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
  * them. Everything volatile (confusion, a substitute, the field's own
  * effects) ends with the battle
  */
-function carriedStatuses(unit: Unit): Statuses[] {
-  return NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null);
+function carriedStatuses(unit: Unit): number {
+  return packStatuses(NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null));
 }
 
 /**

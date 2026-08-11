@@ -17,23 +17,20 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `level`                | `number`                |                                                           |
 | `individualValue`      | `number`                | 32-bit roll the IVs slice from                            |
 | `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature        |
-| `ivs`                  | `Record<Stats, number>` | 0-31 per stat, stored explicitly so records are queryable |
+| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order        |
 | `gender`               | `Genders`               |                                                           |
 | `nature`               | `Natures`               |                                                           |
-| `shiny`                | `boolean`               | Frozen at catch time; trades cannot change it             |
-| `shadow`               | `boolean`               | From a shadow raid; keeps Shadow, costs double candy      |
 | `moves`                | `Moves[]`               |                                                           |
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch        |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`         |
 | `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
-| `lock`                 | `boolean`               | Whether it is fielded in a battle right now               |
+| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked           |
 | `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
-| `egg`                  | `boolean`               | Still an egg: shows nothing, does nothing, cannot fight   |
 | `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any       |
 | `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found        |
 | `steppedAt`            | `number`                | Server instant steps were last credited at                |
 | `health`               | `number`                | Health left; 0 is fainted. The maximum is derived         |
-| `statuses`             | `Statuses[]`            | Non-volatile statuses carried out of the last battle      |
+| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying          |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
 | `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
@@ -44,6 +41,45 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
+
+### Packed fields
+
+Three groups of fields are stored as integers rather than as the shapes a
+reader wants, and each is one call away in either direction
+([`flags.ts`](../../src/data/constants/flags.ts),
+[`stats.ts`](../../src/data/constants/stats.ts),
+[`status.ts`](../../src/data/ids/status.ts)):
+
+| Stored          | Was                                | Read with                        |
+| --------------- | ---------------------------------- | -------------------------------- |
+| `flags`         | `shiny`, `shadow`, `egg`, `lock`   | `hasFlag` / `withFlag`           |
+| `ivs`           | `Record<Stats, number>` of six     | `getIV` / `setIV` / `unpackIVs`  |
+| `statuses`      | `Statuses[]`                       | `statusFlag` / `unpackStatuses`  |
+
+`statuses` is a bitfield of its own — `StatusFlags`, six flags starting at the
+first bit — rather than shifts of the battle engine's `Statuses` enum. A stored
+record should not have its layout decided by where a status happens to sit in an
+enum the engine owns, and a volatile status has no bit at all, so a report
+claiming a pokemon is confused cannot be written even by accident. `statusFlag`
+and `flagStatus` are the only place the two numberings meet.
+
+The reasons are the same in each case. A record that answers half a dozen
+yes-or-no questions answers them in one field; a snapshot copies one field
+instead of six; a set of named things compares, unions and masks as an integer
+(what a Full Heal takes off is one AND, not a filtered list); and the next
+question costs a bit rather than a migration.
+
+Two rules keep that honest. **A flag's bit is never reused** — a stored record
+carries no version number, and the day one bit means two things is the day old
+records start lying. And **a writer that cares about one bit passes the others
+through**: `lockFields(flags, startedAt)` takes the current flags and hands back
+the same ones with `Locked` set, so locking a pokemon cannot drop the fact that
+it sparkles.
+
+`individualValue` stays exactly where it was, beside the packed `ivs`. It is the
+32-bit roll the values were originally sliced from; the two agree for a wild
+catch and disagree for a bred egg or a polished one, which is the whole reason
+both are kept.
 
 `species`, `level`, `ivs`, `health` and `statuses` are the mutable fields: `useCandy` raises the level,
 `evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps the

@@ -3,7 +3,8 @@ import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
-import { boostedSteps, stepsRemaining } from '../auth/egg';
+import { isShadow } from '../auth/caught-record';
+import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { boostEgg, breed } from '../auth/npcs';
 import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES } from '../data/overworld/npc';
 import { getSpeciesData } from '../data/species';
@@ -29,13 +30,13 @@ function asParent(caught: CaughtPokemon): BreedingParent {
     gender: caught.gender,
     ivs: caught.ivs,
     moves: caught.moves,
-    shadow: caught.shadow,
-    egg: caught.egg,
+    shadow: isShadow(caught),
+    egg: isEgg(caught),
   };
 }
 
 function describe(caught: CaughtPokemon): string {
-  return caught.egg
+  return isEgg(caught)
     ? `Egg · ${caught.steps} / ${caught.hatchSteps} steps`
     : `${getSpeciesData(caught.species).name} · Lv. ${caught.level}`;
 }
@@ -79,14 +80,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   );
 
   const parents = (): Candidate[] =>
-    (catches() ?? []).filter((entry) => !entry.caught.egg && !entry.fighting);
+    (catches() ?? []).filter((entry) => !isEgg(entry.caught) && !entry.fighting);
 
   /**
    * The eggs she will take: any that still has walking left in it
    */
   const eggs = (): Candidate[] =>
     (catches() ?? []).filter(
-      (entry) => entry.caught.egg && !entry.fighting && stepsRemaining(entry.caught) > 0,
+      (entry) => isEgg(entry.caught) && !entry.fighting && stepsRemaining(entry.caught) > 0,
     );
 
   const pair = (): [Candidate, Candidate] | null => {
@@ -223,7 +224,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                             >
                               {chosen().includes(entry.id) ? '✓ ' : ''}
                               {describe(entry.caught)}
-                              {entry.caught.shadow ? ' · shadow' : ''}
+                              {isShadow(entry.caught) ? ' · shadow' : ''}
                             </button>
                           </li>
                         )}

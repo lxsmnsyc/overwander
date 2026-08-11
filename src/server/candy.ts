@@ -100,7 +100,7 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
     const { family } = getSpeciesData(asSpecies(caught.species));
     const stackRef = getStackRef(uid, family);
     const count = asNumber(docData(await transaction.get(stackRef))?.count);
-    const cost = getCandyCost({ shadow: caught.shadow === true });
+    const cost = getCandyCost({ flags: asNumber(caught.flags) });
 
     if (count < cost) {
       return null;
@@ -114,7 +114,7 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
       level,
       // A level restores what the last fight took, status and all
       health: getMaxHealth({ ...record, level }),
-      statuses: [],
+      statuses: 0,
     });
     return level;
   });

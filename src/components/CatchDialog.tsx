@@ -3,7 +3,7 @@ import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
-import { canHatch, stepsRemaining } from '../auth/egg';
+import { canHatch, isEgg, stepsRemaining } from '../auth/egg';
 import { hatchEgg } from '../auth/eggs';
 import {
   type CaughtPokemon,
@@ -14,6 +14,7 @@ import {
   takeItem,
 } from '../auth/caught';
 import useHealingItem from '../auth/healing';
+import { isShadow, isShiny } from '../auth/caught-record';
 import {
   type HealthState,
   STATUS_NAMES,
@@ -28,12 +29,13 @@ import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
 import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { STAT_ORDER, Stats } from '../data/constants/stats';
+import { STAT_ORDER, Stats, getIV } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
+import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
 import { ENCOUNTER_TYPE_NAMES, deriveSize } from '../overworld/encounter';
@@ -57,8 +59,8 @@ const GENDER_LABELS: Record<Genders, string> = {
  * The six values as a dex prints them, used both in the record and in
  * what a bottle cap reports back
  */
-function describeIVs(ivs: Record<Stats, number>): string {
-  return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${ivs[stat]}`).join(' · ');
+function describeIVs(ivs: number): string {
+  return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${getIV(ivs, stat)}`).join(' · ');
 }
 
 /**
@@ -475,9 +477,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   {/* An egg gives away nothing about what is inside
                       it — not the species, not even whether it
                       sparkles */}
-                  {loaded().egg
+                  {isEgg(loaded())
                     ? 'Egg'
-                    : `${loaded().shiny ? '✦ ' : ''}${getSpeciesData(loaded().species).name}`}
+                    : `${isShiny(loaded()) ? '✦ ' : ''}${getSpeciesData(loaded().species).name}`}
                 </DialogTitle>
                 <dl>
                   <dt>Level</dt>
@@ -492,17 +494,17 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   </dd>
                   {/* A pokemon can carry several at once, so all of
                       them are listed rather than the worst */}
-                  <Show when={loaded().statuses.length}>
+                  <Show when={loaded().statuses !== 0}>
                     <dt>Status</dt>
                     <dd>
-                      {loaded()
-                        .statuses.map((carried) => STATUS_NAMES[carried])
+                      {unpackStatuses(loaded().statuses)
+                        .map((carried) => STATUS_NAMES[carried])
                         .join(' · ')}
                     </dd>
                   </Show>
                   {/* Everything below this point is read off the
                       species, so an egg has none of it to show */}
-                  <Show when={!loaded().egg}>
+                  <Show when={!isEgg(loaded())}>
                     <dt>Gender</dt>
                     <dd>{GENDER_LABELS[loaded().gender]}</dd>
                     <dt>Size</dt>
@@ -514,7 +516,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   </Show>
                   <dt>Ball</dt>
                   <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
-                  <Show when={!loaded().egg}>
+                  <Show when={!isEgg(loaded())}>
                     <dt>Held items</dt>
                     <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
                     <dt>Moves</dt>
@@ -526,13 +528,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   </Show>
                   <dt>Individual values</dt>
                   <dd>{describeIVs(loaded().ivs)}</dd>
-                  <dt>{loaded().egg ? 'Found' : 'Caught'}</dt>
+                  <dt>{isEgg(loaded()) ? 'Found' : 'Caught'}</dt>
                   {/* The stamp is already in the catcher's own zone,
                       so the date it opens with is the day they had */}
                   <dd>{loaded().caughtAt.slice(0, 10)}</dd>
                   {/* Where it came from, not just where it was
                       standing: a grunt's drop is not a raid prize */}
-                  <Show when={!loaded().egg}>
+                  <Show when={!isEgg(loaded())}>
                     <dt>Met</dt>
                     <dd>{ENCOUNTER_TYPE_NAMES[loaded().type]}</dd>
                   </Show>
@@ -561,12 +563,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       fallback={<span>Walking with you.</span>}
                     >
                       <button type="button" onClick={takeAlong}>
-                        {loaded().egg ? 'Carry this egg' : 'Walk with this one'}
+                        {isEgg(loaded()) ? 'Carry this egg' : 'Walk with this one'}
                       </button>
                     </Show>
                   </p>
 
-                  <Show when={loaded().egg}>
+                  <Show when={isEgg(loaded())}>
                     <h3>Egg</h3>
                     <p>
                       {loaded().steps} / {loaded().hatchSteps} steps
@@ -581,7 +583,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     </p>
                   </Show>
 
-                  <Show when={!loaded().egg}>
+                  <Show when={!isEgg(loaded())}>
                     <h3>Held items</h3>
                     <Show when={loaded().items.length} fallback={<p>Holding nothing.</p>}>
                       <ul>
@@ -717,7 +719,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       </button>
                       {/* A shadow keeps the Shadow ability, and pays
                         for it at every level */}
-                      <Show when={loaded().shadow}>
+                      <Show when={isShadow(loaded())}>
                         {' '}
                         <span>A shadow costs twice as much to raise.</span>
                       </Show>
@@ -761,7 +763,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   <p>
                     <button type="button" disabled={fighting()} onClick={release}>
                       {releasing()
-                        ? `Release ${loaded().egg ? 'this egg' : getSpeciesData(loaded().species).name} for good?`
+                        ? `Release ${isEgg(loaded()) ? 'this egg' : getSpeciesData(loaded().species).name} for good?`
                         : 'Release'}
                     </button>
                     <Show when={releasing()}>

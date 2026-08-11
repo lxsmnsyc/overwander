@@ -1,5 +1,7 @@
 import 'server-only';
+import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import { Stats } from '../data/constants/stats';
+import { asNumber } from './read';
 
 /**
  * The parts of a catch record that are written the same way whichever
@@ -30,7 +32,7 @@ export function asLocale(value: unknown): string {
  * before it writes anything
  */
 export function isEggRecord(caught: Record<string, unknown>): boolean {
-  return caught.egg === true;
+  return hasFlag(asNumber(caught.flags), PokemonFlags.Egg);
 }
 
 /**

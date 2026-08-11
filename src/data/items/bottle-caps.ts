@@ -1,5 +1,4 @@
-import type { Stats } from '../constants/stats';
-import { MAX_IV, STAT_ORDER } from '../constants/stats';
+import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -41,8 +40,8 @@ export function isBottleCap(item: Items): boolean {
  * to do to a pokemon like this, so both sides refuse the use rather
  * than spending one on nothing
  */
-export function isPerfectIVs(ivs: Record<Stats, number>): boolean {
-  return STAT_ORDER.every((stat) => ivs[stat] >= MAX_IV);
+export function isPerfectIVs(ivs: number): boolean {
+  return STAT_ORDER.every((stat) => getIV(ivs, stat) >= MAX_IV);
 }
 
 /**
@@ -56,23 +55,19 @@ export function isPerfectIVs(ivs: Record<Stats, number>): boolean {
  *
  * Answers null when there was nothing left to polish
  */
-export function polishIVs(
-  ivs: Record<Stats, number>,
-  count: number,
-  random: () => number,
-): Record<Stats, number> | null {
-  const dull = STAT_ORDER.filter((stat) => ivs[stat] < MAX_IV);
+export function polishIVs(ivs: number, count: number, random: () => number): number | null {
+  const dull = STAT_ORDER.filter((stat) => getIV(ivs, stat) < MAX_IV);
 
   if (dull.length === 0) {
     return null;
   }
 
-  const polished = { ...ivs };
+  let polished = ivs;
 
   for (let taken = 0; taken < count && dull.length > 0; taken++) {
     const [stat] = dull.splice(Math.floor(random() * dull.length), 1);
 
-    polished[stat] = MAX_IV;
+    polished = setIV(polished, stat, MAX_IV);
   }
   return polished;
 }

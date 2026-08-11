@@ -1,5 +1,4 @@
 import type { Items } from '../data/ids/items';
-import type { Statuses } from '../data/ids/status';
 
 /**
  * What a battle did to one catch: what it spent, what it has left,
@@ -32,8 +31,9 @@ export default interface BattleAftermath {
    */
   health: number;
   /**
-   * Every non-volatile status it walked out with. A unit can carry
-   * several at once; everything volatile ended with the battle
+   * Every non-volatile status it walked out with, as a mask of
+   * `StatusFlags`. A unit can carry several at once; everything
+   * volatile ended with the battle
    */
-  statuses: Statuses[];
+  statuses: number;
 }

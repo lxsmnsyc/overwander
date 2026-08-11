@@ -1,3 +1,4 @@
+import { PokemonFlags, hasFlag } from '../data/constants/flags';
 /**
  * What candy is worth, apart from the store that holds it. The
  * privileged server pays candy out and spends it, and the client
@@ -23,6 +24,8 @@ export const SHADOW_CANDY_MULTIPLIER = 2;
 /**
  * What raising this catch by one level costs
  */
-export default function getCandyCost(caught: { shadow: boolean }): number {
-  return caught.shadow ? CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER : CANDY_PER_LEVEL;
+export default function getCandyCost(caught: { flags: number }): number {
+  return hasFlag(caught.flags, PokemonFlags.Shadow)
+    ? CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER
+    : CANDY_PER_LEVEL;
 }

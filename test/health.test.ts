@@ -11,10 +11,10 @@ import {
   needsCare,
   rescaleHealth,
 } from '../src/auth/health';
-import { STAT_ORDER, Stats, getHealthStat } from '../src/data/constants/stats';
+import { Stats, getHealthStat, packIVs } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
 import { Species } from '../src/data/ids/species';
-import { Statuses } from '../src/data/ids/status';
+import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
 import registerGen1Moves from '../src/data/moves/gen-1';
 import { getSpeciesData, registerSpecies } from '../src/data/species';
 
@@ -40,23 +40,14 @@ function evenly(value: number): Record<Stats, number> {
 /**
  * A pokemon as the health rules read one
  */
-function pokemon(
-  species: Species,
-  level: number,
-  iv = 31,
-): {
-  species: Species;
-  level: number;
-  ivs: Record<Stats, number>;
-  effortValues: Record<Stats, number>;
-} {
-  return { species, level, ivs: evenly(iv), effortValues: evenly(0) };
+function pokemon(species: Species, level: number, iv = 31): HealthSource {
+  return { species, level, ivs: packIVs(evenly(iv)), effortValues: evenly(0) };
 }
 
 describe('maximum health', () => {
   it('derives it from the same formula the battle fights on', () => {
     const bulbasaur = pokemon(Species.Bulbasaur, 50);
-    const base = getSpeciesData(Species.Bulbasaur).stats[STAT_ORDER[0]];
+    const base = getSpeciesData(Species.Bulbasaur).stats[Stats.HP];
 
     expect(getMaxHealth(bulbasaur)).toBe(getHealthStat(50, base, 31, 0));
 
@@ -101,19 +92,20 @@ describe('what a battle leaves behind', () => {
   it('keeps every carried status, and drops what ended with the fight', () => {
     // A unit can be several things at once — poisoned and asleep is
     // an ordinary way to come out of a raid — and all of it travels
-    expect(carriedStatuses([Statuses.Poisoned, Statuses.Sleeping])).toEqual([
-      Statuses.Poisoned,
-      Statuses.Sleeping,
-    ]);
-    // What ended with the battle is dropped, and one of each is kept
+    const both = packStatuses([Statuses.Poisoned, Statuses.Sleeping]);
+
+    expect(carriedStatuses(both)).toBe(both);
+    expect(unpackStatuses(both)).toEqual([Statuses.Poisoned, Statuses.Sleeping]);
+    // What ended with the battle is masked off, and a set has no
+    // room for the same thing twice
     expect(
-      carriedStatuses([Statuses.Burned, Statuses.Confused, Statuses.Burned, Statuses.Flinched]),
-    ).toEqual([Statuses.Burned]);
-    expect(carriedStatuses([])).toEqual([]);
+      carriedStatuses(packStatuses([Statuses.Burned, Statuses.Confused, Statuses.Flinched])),
+    ).toBe(packStatuses([Statuses.Burned]));
+    expect(carriedStatuses(0)).toBe(0);
   });
 
   it('calls a pokemon on nothing fainted', () => {
-    const whole = { ...pokemon(Species.Bulbasaur, 50), statuses: [] };
+    const whole = { ...pokemon(Species.Bulbasaur, 50), statuses: 0 };
     const max = getMaxHealth(whole);
 
     expect(isFainted({ ...whole, health: 0 })).toBe(true);
@@ -122,7 +114,9 @@ describe('what a battle leaves behind', () => {
     // Care is anything short of whole and clean
     expect(needsCare({ ...whole, health: max })).toBe(false);
     expect(needsCare({ ...whole, health: max - 1 })).toBe(true);
-    expect(needsCare({ ...whole, health: max, statuses: [Statuses.Burned] })).toBe(true);
+    expect(needsCare({ ...whole, health: max, statuses: packStatuses([Statuses.Burned]) })).toBe(
+      true,
+    );
   });
 });
 
@@ -130,20 +124,20 @@ describe('berries between battles', () => {
   const hurt = (health: number, statuses: Statuses[] = []): HealthState & HealthSource => ({
     ...pokemon(Species.Bulbasaur, 50),
     health,
-    statuses,
+    statuses: packStatuses(statuses),
   });
 
   it('restores what the berry is worth, and no more than the pool', () => {
     const max = getMaxHealth(pokemon(Species.Bulbasaur, 50));
 
-    expect(healedByItem(hurt(20), Items.OranBerry)).toEqual({ health: 30, statuses: [] });
+    expect(healedByItem(hurt(20), Items.OranBerry)).toEqual({ health: 30, statuses: 0 });
     expect(healedByItem(hurt(20), Items.SitrusBerry)).toEqual({
       health: 20 + Math.floor(max / 4),
-      statuses: [],
+      statuses: 0,
     });
     expect(healedByItem(hurt(max - 1), Items.SitrusBerry)).toEqual({
       health: max,
-      statuses: [],
+      statuses: 0,
     });
   });
 
@@ -160,15 +154,15 @@ describe('berries between battles', () => {
 
     expect(healedByItem(hurt(max, [Statuses.Poisoned]), Items.PechaBerry)).toEqual({
       health: max,
-      statuses: [],
+      statuses: 0,
     });
     expect(healedByItem(hurt(max, [Statuses.BadlyPoisoned]), Items.PechaBerry)).toEqual({
       health: max,
-      statuses: [],
+      statuses: 0,
     });
     expect(healedByItem(hurt(max, [Statuses.Burned]), Items.LumBerry)).toEqual({
       health: max,
-      statuses: [],
+      statuses: 0,
     });
 
     // The wrong cure does nothing, and a berry that does nothing is
@@ -188,10 +182,10 @@ describe('berries between battles', () => {
     // both; a Pecha beside it takes only the poison
     const ailing = hurt(20, [Statuses.Poisoned, Statuses.Paralyzed]);
 
-    expect(healedByItem(ailing, Items.LumBerry)).toEqual({ health: 20, statuses: [] });
+    expect(healedByItem(ailing, Items.LumBerry)).toEqual({ health: 20, statuses: 0 });
     expect(healedByItem(ailing, Items.PechaBerry)).toEqual({
       health: 20,
-      statuses: [Statuses.Paralyzed],
+      statuses: packStatuses([Statuses.Paralyzed]),
     });
   });
 });
@@ -200,30 +194,30 @@ describe('medicine', () => {
   const hurt = (health: number, statuses: Statuses[] = []): HealthState & HealthSource => ({
     ...pokemon(Species.Bulbasaur, 50),
     health,
-    statuses,
+    statuses: packStatuses(statuses),
   });
   const max = (): number => getMaxHealth(pokemon(Species.Bulbasaur, 50));
 
   it('pours a potion in by the flat figure it is worth', () => {
-    expect(healedByItem(hurt(20), Items.Potion)).toEqual({ health: 40, statuses: [] });
-    expect(healedByItem(hurt(20), Items.SuperPotion)).toEqual({ health: 80, statuses: [] });
+    expect(healedByItem(hurt(20), Items.Potion)).toEqual({ health: 40, statuses: 0 });
+    expect(healedByItem(hurt(20), Items.SuperPotion)).toEqual({ health: 80, statuses: 0 });
     // A Bulbasaur's pool is smaller than a Hyper Potion is worth, so
     // the pour stops at the brim
-    expect(healedByItem(hurt(20), Items.HyperPotion)).toEqual({ health: max(), statuses: [] });
+    expect(healedByItem(hurt(20), Items.HyperPotion)).toEqual({ health: max(), statuses: 0 });
 
     // A Max Potion is as much as the pool holds, and no potion
     // overfills one
-    expect(healedByItem(hurt(20), Items.MaxPotion)).toEqual({ health: max(), statuses: [] });
+    expect(healedByItem(hurt(20), Items.MaxPotion)).toEqual({ health: max(), statuses: 0 });
     expect(healedByItem(hurt(max() - 1), Items.HyperPotion)).toEqual({
       health: max(),
-      statuses: [],
+      statuses: 0,
     });
 
     // A potion carries no cure, and one poured over a whole pokemon
     // is one spent on nothing
     expect(healedByItem(hurt(max() - 5, [Statuses.Burned]), Items.Potion)).toEqual({
       health: max(),
-      statuses: [Statuses.Burned],
+      statuses: packStatuses([Statuses.Burned]),
     });
     expect(healedByItem(hurt(max()), Items.Potion)).toBeNull();
   });
@@ -233,26 +227,26 @@ describe('medicine', () => {
 
     expect(healedByItem(ailing, Items.Antidote)).toEqual({
       health: 20,
-      statuses: [Statuses.Paralyzed, Statuses.Burned],
+      statuses: packStatuses([Statuses.Paralyzed, Statuses.Burned]),
     });
     expect(healedByItem(ailing, Items.ParalyzeHeal)).toEqual({
       health: 20,
-      statuses: [Statuses.Poisoned, Statuses.Burned],
+      statuses: packStatuses([Statuses.Poisoned, Statuses.Burned]),
     });
     // Full Heal takes the lot; a cure that covers none of it is not
     // spent, and none of them gives health back
-    expect(healedByItem(ailing, Items.FullHeal)).toEqual({ health: 20, statuses: [] });
+    expect(healedByItem(ailing, Items.FullHeal)).toEqual({ health: 20, statuses: 0 });
     expect(healedByItem(hurt(20, [Statuses.Burned]), Items.Antidote)).toBeNull();
     expect(healedByItem(hurt(20, [Statuses.Sleeping]), Items.Awakening)).toEqual({
       health: 20,
-      statuses: [],
+      statuses: 0,
     });
   });
 
   it('does both halves of the job with a Full Restore', () => {
     expect(healedByItem(hurt(20, [Statuses.Frozen]), Items.FullRestore)).toEqual({
       health: max(),
-      statuses: [],
+      statuses: 0,
     });
   });
 
@@ -261,9 +255,9 @@ describe('medicine', () => {
     // statuses go with the faint
     expect(healedByItem(hurt(0, [Statuses.Burned]), Items.Revive)).toEqual({
       health: Math.round(max() / 2),
-      statuses: [],
+      statuses: 0,
     });
-    expect(healedByItem(hurt(0), Items.MaxRevive)).toEqual({ health: max(), statuses: [] });
+    expect(healedByItem(hurt(0), Items.MaxRevive)).toEqual({ health: max(), statuses: 0 });
 
     // A revive is worth nothing to a pokemon still standing, however
     // badly hurt it is
@@ -280,18 +274,18 @@ describe('stored records', () => {
       owner: 'trainer',
       species: Species.Bulbasaur,
       level: 50,
-      ivs: evenly(31),
+      ivs: packIVs(evenly(31)),
       effortValues: evenly(0),
     };
     const restored = asCaughtPokemon(stored);
 
     expect(restored.health).toBe(getMaxHealth(pokemon(Species.Bulbasaur, 50)));
-    expect(restored.statuses).toEqual([]);
+    expect(restored.statuses).toBe(0);
 
     // A stored zero is a fainted pokemon, not a missing field
     expect(asCaughtPokemon({ ...stored, health: 0 }).health).toBe(0);
-    expect(
-      asCaughtPokemon({ ...stored, statuses: [Statuses.Burned, Statuses.Poisoned] }).statuses,
-    ).toEqual([Statuses.Burned, Statuses.Poisoned]);
+    const carried = packStatuses([Statuses.Burned, Statuses.Poisoned]);
+
+    expect(asCaughtPokemon({ ...stored, statuses: carried }).statuses).toBe(carried);
   });
 });

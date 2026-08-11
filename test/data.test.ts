@@ -23,6 +23,16 @@ import {
   isMachineItem,
 } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
+import {
+  NON_VOLATILE_MASK,
+  NON_VOLATILE_STATUSES,
+  StatusFlags,
+  Statuses,
+  flagStatus,
+  packStatuses,
+  statusFlag,
+  unpackStatuses,
+} from '../src/data/ids/status';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
 import {
   CANDY_PER_CATCH,
@@ -43,7 +53,17 @@ import {
   pickItem,
   pickItems,
 } from '../src/data/overworld/item-pool';
-import { MAX_IV, STAT_ORDER, Stats } from '../src/data/constants/stats';
+import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
+import {
+  MAX_IV,
+  PERFECT_IVS,
+  STAT_ORDER,
+  Stats,
+  getIV,
+  packIVs,
+  setIV,
+  unpackIVs,
+} from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { MEDICINES, isMedicine, isRevive } from '../src/data/items/medicine';
@@ -332,9 +352,14 @@ describe('species day', () => {
   });
 
   it('charges a shadow twice the candy per level', () => {
-    expect(getCandyCost({ shadow: false })).toBe(CANDY_PER_LEVEL);
-    expect(getCandyCost({ shadow: true })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
-    expect(getCandyCost({ shadow: true })).toBe(2);
+    expect(getCandyCost({ flags: 0 })).toBe(CANDY_PER_LEVEL);
+    // The cost reads one bit of the record's flags, so a shiny that
+    // is not shadowed still pays the plain rate
+    expect(getCandyCost({ flags: PokemonFlags.Shiny })).toBe(CANDY_PER_LEVEL);
+    expect(getCandyCost({ flags: PokemonFlags.Shadow })).toBe(
+      CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER,
+    );
+    expect(getCandyCost({ flags: PokemonFlags.Shadow | PokemonFlags.Shiny })).toBe(2);
   });
 
   it('pays four candies for a catch on the family day', () => {
@@ -523,43 +548,137 @@ describe('item data', () => {
     }
   });
 
+  it('packs what is true about a pokemon into one field', () => {
+    // Four independent bits, and setting one leaves the rest alone —
+    // which is the whole reason the lock can be written without
+    // reading the shiny verdict back
+    const shiny = withFlag(0, PokemonFlags.Shiny, true);
+    const both = withFlag(shiny, PokemonFlags.Shadow, true);
+
+    expect(hasFlag(both, PokemonFlags.Shiny)).toBe(true);
+    expect(hasFlag(both, PokemonFlags.Shadow)).toBe(true);
+    expect(hasFlag(both, PokemonFlags.Egg)).toBe(false);
+    expect(withFlag(both, PokemonFlags.Shadow, false)).toBe(shiny);
+    expect(withFlag(shiny, PokemonFlags.Shiny, true)).toBe(shiny);
+
+    // No two flags share a bit, and none of them is zero: a record
+    // with no flags set is a plain pokemon, not a shiny one
+    const all = [PokemonFlags.Shiny, PokemonFlags.Shadow, PokemonFlags.Egg, PokemonFlags.Locked];
+
+    expect(new Set(all).size).toBe(all.length);
+    for (const flag of all) {
+      expect(hasFlag(0, flag)).toBe(false);
+      expect(flag & (flag - 1)).toBe(0);
+    }
+  });
+
+  it('packs the statuses a pokemon carries into one mask', () => {
+    const carried = packStatuses([Statuses.Poisoned, Statuses.Burned]);
+
+    // A set of named things is a bitfield: order does not matter,
+    // and the same status twice is once
+    expect(carried).toBe(packStatuses([Statuses.Burned, Statuses.Poisoned, Statuses.Burned]));
+    expect(unpackStatuses(carried)).toEqual([Statuses.Poisoned, Statuses.Burned]);
+    expect(packStatuses([])).toBe(0);
+    expect(unpackStatuses(0)).toEqual([]);
+
+    // What a fight leaves behind is one AND rather than a filtered
+    // list, and a volatile status has no bit to be written with:
+    // confusion cannot enter the mask at all
+    expect(NON_VOLATILE_MASK & statusFlag(Statuses.Burned)).not.toBe(0);
+    expect(statusFlag(Statuses.Confused)).toBe(0);
+    expect(packStatuses([Statuses.Confused])).toBe(0);
+
+    // The flags are their own numbering rather than shifts of the
+    // battle engine's, so they start at the first bit and stay there
+    // however the engine renumbers
+    expect(statusFlag(Statuses.Poisoned)).toBe(StatusFlags.Poisoned);
+    expect(StatusFlags.Poisoned).toBe(0b1);
+    expect(flagStatus(StatusFlags.Frozen)).toBe(Statuses.Frozen);
+    expect(NON_VOLATILE_MASK).toBe(0b11_1111);
+
+    // Six flags, one per status, no two sharing a bit
+    expect(NON_VOLATILE_STATUSES).toHaveLength(6);
+    expect(new Set(NON_VOLATILE_STATUSES.map(statusFlag)).size).toBe(6);
+    for (const status of NON_VOLATILE_STATUSES) {
+      const flag = statusFlag(status);
+
+      expect(flag & (flag - 1)).toBe(0);
+      expect(flagStatus(flag)).toBe(status);
+    }
+  });
+
+  it('packs the six individual values into one integer', () => {
+    const spread = {
+      [Stats.HP]: 31,
+      [Stats.Attack]: 0,
+      [Stats.Defense]: 17,
+      [Stats.SpecialAttack]: 4,
+      [Stats.SpecialDefense]: 30,
+      [Stats.Speed]: 9,
+    };
+    const packed = packIVs(spread);
+
+    // Thirty bits hold the lot, and every stat comes back the way it
+    // went in
+    expect(unpackIVs(packed)).toEqual(spread);
+    for (const stat of STAT_ORDER) {
+      expect(getIV(packed, stat)).toBe(spread[stat]);
+    }
+    expect(packed).toBeLessThan(2 ** 30);
+
+    // Writing one stat leaves its neighbours alone, and nothing can
+    // bleed past five bits
+    const raised = setIV(packed, Stats.Attack, MAX_IV);
+
+    expect(getIV(raised, Stats.Attack)).toBe(MAX_IV);
+    expect(getIV(raised, Stats.HP)).toBe(31);
+    expect(getIV(raised, Stats.Defense)).toBe(17);
+    expect(getIV(setIV(packed, Stats.Speed, 99), Stats.Speed)).toBe(MAX_IV);
+    expect(getIV(setIV(packed, Stats.Speed, -4), Stats.Speed)).toBe(0);
+
+    // A perfect pokemon is one value, whichever way it is reached
+    expect(PERFECT_IVS).toBe(packIVs(unpackIVs(PERFECT_IVS)));
+    expect(isPerfectIVs(PERFECT_IVS)).toBe(true);
+  });
+
   it('polishes individual values with a bottle cap', () => {
-    const evenly = (value: number): Record<Stats, number> => ({
-      [Stats.HP]: value,
-      [Stats.Attack]: value,
-      [Stats.Defense]: value,
-      [Stats.SpecialAttack]: value,
-      [Stats.SpecialDefense]: value,
-      [Stats.Speed]: value,
-    });
+    const evenly = (value: number): number =>
+      packIVs({
+        [Stats.HP]: value,
+        [Stats.Attack]: value,
+        [Stats.Defense]: value,
+        [Stats.SpecialAttack]: value,
+        [Stats.SpecialDefense]: value,
+        [Stats.Speed]: value,
+      });
 
     // A golden cap reaches every stat, whatever the stream says
     const golden = polishIVs(evenly(0), STAT_ORDER.length, () => 0);
 
-    expect(golden).toEqual(evenly(MAX_IV));
-    expect(isPerfectIVs(golden ?? evenly(0))).toBe(true);
+    expect(golden).toBe(PERFECT_IVS);
+    expect(isPerfectIVs(golden ?? 0)).toBe(true);
 
     // A plain cap raises exactly one, and leaves the rest as they were
-    const plain = polishIVs(evenly(5), 1, () => 0);
-    const raised = STAT_ORDER.filter((stat) => (plain ?? evenly(0))[stat] === MAX_IV);
+    const plain = polishIVs(evenly(5), 1, () => 0) ?? 0;
+    const raised = STAT_ORDER.filter((stat) => getIV(plain, stat) === MAX_IV);
 
     expect(raised).toHaveLength(1);
     for (const stat of STAT_ORDER) {
-      expect((plain ?? evenly(0))[stat]).toBe(raised[0] === stat ? MAX_IV : 5);
+      expect(getIV(plain, stat)).toBe(raised[0] === stat ? MAX_IV : 5);
     }
 
     // Only the stats that need it are drawn from: a cap that could
     // land on a stat already at the cap would be spent on nothing,
     // and would get worse the closer a pokemon came to perfect
-    const nearly = { ...evenly(MAX_IV), [Stats.Speed]: 0 };
+    const nearly = setIV(PERFECT_IVS, Stats.Speed, 0);
 
     for (const roll of [0, 0.5, 0.999]) {
-      expect(polishIVs(nearly, 1, () => roll)).toEqual(evenly(MAX_IV));
+      expect(polishIVs(nearly, 1, () => roll)).toBe(PERFECT_IVS);
     }
 
     // Nothing left to polish, so there is nothing to spend a cap on
-    expect(isPerfectIVs(evenly(MAX_IV))).toBe(true);
-    expect(polishIVs(evenly(MAX_IV), STAT_ORDER.length, () => 0)).toBeNull();
+    expect(polishIVs(PERFECT_IVS, STAT_ORDER.length, () => 0)).toBeNull();
     expect(isPerfectIVs(nearly)).toBe(false);
   });
 

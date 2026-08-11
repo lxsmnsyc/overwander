@@ -1,5 +1,8 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
+import { isShiny } from '../auth/caught-record';
+import { isEgg } from '../auth/egg';
+import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
 import CatchDialog from './CatchDialog';
@@ -11,17 +14,19 @@ import CatchDialog from './CatchDialog';
 function describeCatch(caught: CaughtPokemon): string {
   // An egg is listed as an egg and nothing more: the species inside
   // is already decided, and showing it here would give it away
-  if (caught.egg) {
+  if (isEgg(caught)) {
     return `Egg · ${caught.steps} / ${caught.hatchSteps} steps`;
   }
 
   const { name } = getSpeciesData(caught.species);
-  const shiny = caught.shiny ? '✦ ' : '';
+  const shiny = isShiny(caught) ? '✦ ' : '';
   // What it is carrying out of its last fight, since that is what
   // decides whether it can be brought into the next one
   const hurt =
     caught.health < getMaxHealth(caught) ? ` · ${caught.health}/${getMaxHealth(caught)} HP` : '';
-  const carried = caught.statuses.map((status) => ` · ${STATUS_NAMES[status]}`).join('');
+  const carried = unpackStatuses(caught.statuses)
+    .map((status) => ` · ${STATUS_NAMES[status]}`)
+    .join('');
   const condition = isFainted(caught) ? ' · fainted' : `${hurt}${carried}`;
 
   return `${shiny}${name} · Lv. ${caught.level}${condition}`;

@@ -2,6 +2,7 @@ import { type JSX, Show, createResource, from } from 'solid-js';
 import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { resolveBuddy } from '../auth/buddy';
 import { type Profile, watchProfile } from '../auth/profile';
+import { isEgg } from '../auth/egg';
 import { getSpeciesData } from '../data/species';
 import BattleHistory from './BattleHistory';
 import CatchesList from './CatchesList';
@@ -53,7 +54,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 <Show when={buddy()} fallback="None">
                   {/* An egg walks along without saying what it is */}
                   {(pair) =>
-                    pair()[1].egg
+                    isEgg(pair()[1])
                       ? `Egg · ${pair()[1].steps} / ${pair()[1].hatchSteps} steps`
                       : `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`
                   }

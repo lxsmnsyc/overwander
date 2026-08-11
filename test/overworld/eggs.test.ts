@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import type { EggProgress } from '../../src/auth/egg';
 import {
   EGG_HATCH_STEPS,
   EGG_LEVEL,
@@ -9,7 +10,8 @@ import {
   creditableSteps,
   stepsRemaining,
 } from '../../src/auth/egg';
-import { Stats } from '../../src/data/constants/stats';
+import { PokemonFlags } from '../../src/data/constants/flags';
+import { Stats, getIV, packIVs } from '../../src/data/constants/stats';
 import registerGen1Moves from '../../src/data/moves/gen-1';
 import type { Moves } from '../../src/data/ids/moves';
 import { Genders, Species } from '../../src/data/ids/species';
@@ -38,8 +40,8 @@ beforeAll(() => {
 /**
  * An egg part-way through, as the rules read one
  */
-function egg(steps: number): { egg: boolean; steps: number; hatchSteps: number } {
-  return { egg: true, steps, hatchSteps: EGG_HATCH_STEPS };
+function egg(steps: number): EggProgress {
+  return { flags: PokemonFlags.Egg, steps, hatchSteps: EGG_HATCH_STEPS };
 }
 
 describe('egg progress', () => {
@@ -52,7 +54,7 @@ describe('egg progress', () => {
     expect(stepsRemaining(egg(EGG_HATCH_STEPS + 100))).toBe(0);
 
     // Something already hatched has nowhere left to walk
-    const hatched = { egg: false, steps: 0, hatchSteps: EGG_HATCH_STEPS };
+    const hatched = { flags: 0, steps: 0, hatchSteps: EGG_HATCH_STEPS };
 
     expect(canHatch(hatched)).toBe(false);
     expect(stepsRemaining(hatched)).toBe(0);
@@ -116,14 +118,14 @@ function parent(
   return {
     species,
     gender,
-    ivs: {
+    ivs: packIVs({
       [Stats.HP]: iv,
       [Stats.Attack]: iv,
       [Stats.Defense]: iv,
       [Stats.SpecialAttack]: iv,
       [Stats.SpecialDefense]: iv,
       [Stats.Speed]: iv,
-    },
+    }),
     moves,
     shadow,
     egg: false,
@@ -203,19 +205,27 @@ describe('inherited stats', () => {
     // rolled comes out at the bottom of the range
     const low = inheritIVs(left, right, () => 0);
 
-    expect([low[Stats.HP], low[Stats.Attack], low[Stats.Defense]]).toEqual([31, 31, 31]);
-    expect([low[Stats.SpecialAttack], low[Stats.SpecialDefense], low[Stats.Speed]]).toEqual([
-      0, 0, 0,
+    expect([getIV(low, Stats.HP), getIV(low, Stats.Attack), getIV(low, Stats.Defense)]).toEqual([
+      31, 31, 31,
     ]);
+    expect([
+      getIV(low, Stats.SpecialAttack),
+      getIV(low, Stats.SpecialDefense),
+      getIV(low, Stats.Speed),
+    ]).toEqual([0, 0, 0]);
 
     // Pinned to its ceiling: the last three are inherited, from the
     // right parent, and the rolled ones top out
     const high = inheritIVs(left, right, () => 0.999_999);
 
-    expect([high[Stats.SpecialAttack], high[Stats.SpecialDefense], high[Stats.Speed]]).toEqual([
-      15, 15, 15,
+    expect([
+      getIV(high, Stats.SpecialAttack),
+      getIV(high, Stats.SpecialDefense),
+      getIV(high, Stats.Speed),
+    ]).toEqual([15, 15, 15]);
+    expect([getIV(high, Stats.HP), getIV(high, Stats.Attack), getIV(high, Stats.Defense)]).toEqual([
+      31, 31, 31,
     ]);
-    expect([high[Stats.HP], high[Stats.Attack], high[Stats.Defense]]).toEqual([31, 31, 31]);
   });
 });
 

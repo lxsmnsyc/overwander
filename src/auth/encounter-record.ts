@@ -8,7 +8,7 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type { Encounter, EncounterType } from '../overworld/encounter';
-import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import { asNumber, asNumberArray, asRecord, asString } from './__normalize';
 
 /**
  * A player's view of a spawn at encounters/{spawnId}:{playerId}. The
@@ -41,12 +41,11 @@ export function asEncounterRecord(value: unknown): EncounterRecord {
     level: asNumber(data.level),
     individualValue: asNumber(data.individualValue),
     traitValue: asNumber(data.traitValue),
-    ivs: asStatRecord(data.ivs),
+    ivs: asNumber(data.ivs),
     nature: asNumber(data.nature) as Natures,
     ability: asNumber(data.ability) as Abilities,
     gender: asNumber(data.gender) as Genders,
-    shiny: data.shiny === true,
-    shadow: data.shadow === true,
+    flags: asNumber(data.flags),
     moves: asNumberArray(data.moves) as Moves[],
     timestamp: asNumber(data.timestamp),
     x: asNumber(data.x),

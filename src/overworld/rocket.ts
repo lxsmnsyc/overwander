@@ -1,5 +1,6 @@
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
+import { PokemonFlags } from '../data/constants/flags';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
@@ -91,8 +92,9 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
     height: size.height,
     weight: size.weight,
     // A grunt's pokemon never sparkles: the prize is what it drops,
-    // not what it fields
-    shiny: false,
+    // not what it fields. Every one of them is a shadow, which its
+    // ability list carries too
+    flags: PokemonFlags.Shadow,
     moves: grunt.moves,
     abilities: [grunt.ability, Abilities.Shadow],
     items: [],
@@ -104,7 +106,7 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
       ivs: grunt.ivs,
       effortValues: zeroEffortValues(),
     }),
-    statuses: [],
+    statuses: 0,
   };
 }
 

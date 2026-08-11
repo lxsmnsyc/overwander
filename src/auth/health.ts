@@ -1,7 +1,6 @@
-import type { Stats } from '../data/constants/stats';
-import { STAT_ORDER, getHealthStat } from '../data/constants/stats';
+import { Stats, getHealthStat, getIV } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
-import { NON_VOLATILE_STATUSES, Statuses } from '../data/ids/status';
+import { NON_VOLATILE_MASK, NON_VOLATILE_STATUSES, Statuses, statusFlag } from '../data/ids/status';
 import type { Species } from '../data/ids/species';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
 import { MEDICINES } from '../data/items/medicine';
@@ -34,13 +33,11 @@ import { getSpeciesData } from '../data/species';
  */
 export { NON_VOLATILE_STATUSES };
 
-const NON_VOLATILE = new Set(NON_VOLATILE_STATUSES);
-
 /**
  * Whether the status is one a pokemon keeps after the fight
  */
 export function isNonVolatileStatus(status: Statuses): boolean {
-  return NON_VOLATILE.has(status);
+  return statusFlag(status) !== 0;
 }
 
 /**
@@ -78,7 +75,10 @@ export const STATUS_NAMES: Record<Statuses, string> = {
 export interface HealthSource {
   species: Species;
   level: number;
-  ivs: Record<Stats, number>;
+  /**
+   * The packed individual values; only the health slice is read
+   */
+  ivs: number;
   effortValues: Record<Stats, number>;
 }
 
@@ -88,13 +88,11 @@ export interface HealthSource {
  * polished value on its own
  */
 export function getMaxHealth(source: HealthSource): number {
-  const stat = STAT_ORDER[0];
-
   return getHealthStat(
     source.level,
-    getSpeciesData(source.species).stats[stat],
-    source.ivs[stat],
-    source.effortValues[stat],
+    getSpeciesData(source.species).stats[Stats.HP],
+    getIV(source.ivs, Stats.HP),
+    source.effortValues[Stats.HP],
   );
 }
 
@@ -120,10 +118,11 @@ export function rescaleHealth(health: number, from: number, to: number): number 
 export interface HealthState {
   health: number;
   /**
-   * Every non-volatile status it is carrying, in the order the
-   * fight left them. A pokemon can be several things at once
+   * Every non-volatile status it is carrying, as a mask of
+   * `StatusFlags`. A pokemon can be several things at once, so what it
+   * has is a set — and a set of named things is a bitfield
    */
-  statuses: Statuses[];
+  statuses: number;
 }
 
 /**
@@ -142,7 +141,7 @@ export function isFainted(caught: HealthState): boolean {
  * there is nothing for a berry to do to a pokemon in perfect shape
  */
 export function needsCare(caught: HealthState & HealthSource): boolean {
-  return caught.statuses.length > 0 || caught.health < getMaxHealth(caught);
+  return caught.statuses !== 0 || caught.health < getMaxHealth(caught);
 }
 
 /**
@@ -204,7 +203,7 @@ export function healedByItem(caught: HealthState & HealthSource, item: Items): H
   // on its share of the pool, and it is the only thing that reaches
   // one at zero
   if (effect.revives > 0) {
-    return down ? { health: Math.max(1, Math.round(max * effect.revives)), statuses: [] } : null;
+    return down ? { health: Math.max(1, Math.round(max * effect.revives)), statuses: 0 } : null;
   }
   if (down) {
     return null;
@@ -215,22 +214,21 @@ export function healedByItem(caught: HealthState & HealthSource, item: Items): H
   // An item takes off everything it covers rather than the first
   // thing it finds: a Lum on a pokemon that is poisoned *and*
   // paralyzed clears both, which is what it does in a battle too
-  const statuses =
-    effect.cures == null
-      ? caught.statuses
-      : caught.statuses.filter((carried) => effect.cures?.has(carried) !== true);
+  let statuses = caught.statuses;
 
-  return health === caught.health && statuses.length === caught.statuses.length
-    ? null
-    : { health, statuses };
+  for (const cured of effect.cures ?? []) {
+    statuses &= ~statusFlag(cured);
+  }
+
+  return health === caught.health && statuses === caught.statuses ? null : { health, statuses };
 }
 
 /**
  * The statuses of a pokemon, kept to the ones a fight can leave
- * behind and to one of each. It is what a report is put through
- * before it is written: a battle that says a pokemon is confused is
- * describing something that ended with it
+ * behind. It is what a report is put through before it is written: a
+ * battle that says a pokemon is confused is describing something that
+ * ended with it, and the mask makes that one AND
  */
-export function carriedStatuses(statuses: Statuses[]): Statuses[] {
-  return [...new Set(statuses.filter(isNonVolatileStatus))];
+export function carriedStatuses(statuses: number): number {
+  return statuses & NON_VOLATILE_MASK;
 }

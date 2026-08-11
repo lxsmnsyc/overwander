@@ -1,5 +1,6 @@
 import AleaRNG from '../core/alea';
-import { Stats } from '../data/constants/stats';
+import { PokemonFlags } from '../data/constants/flags';
+import { Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
@@ -105,9 +106,12 @@ export interface Encounter {
    */
   traitValue: number;
   /**
-   * Per-stat values (0-31), sliced from the individual value
+   * The six per-stat values (0-31) sliced from the individual value,
+   * packed five bits each into one integer. `individualValue` is the
+   * roll they came from and stays beside them: the two agree for a
+   * wild pokemon and disagree for a bred or polished one
    */
-  ivs: Record<Stats, number>;
+  ivs: number;
   nature: Natures;
   /**
    * One of the line's possible abilities, pre-evolutions included
@@ -118,15 +122,12 @@ export interface Encounter {
    */
   gender: Genders;
   /**
-   * Whether this spawn sparkles for the observing user; the same
-   * wild pokemon can be shiny for one trainer and plain for another
+   * What is true about it, as `PokemonFlags` bits: whether it
+   * sparkles for the observing user — the same wild pokemon can be
+   * shiny for one trainer and plain for another — and whether it is
+   * shadowed, which carries the Shadow ability for good
    */
-  shiny: boolean;
-  /**
-   * Whether the pokemon is shadowed: a shadow raid's reward carries
-   * the Shadow ability for good, alongside its own
-   */
-  shadow: boolean;
+  flags: number;
   /**
    * The last (up to) four level-up moves learnable at this level
    */
@@ -423,14 +424,14 @@ export default function deriveEncounter(
   const sliceIV = (index: number): number =>
     Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);
 
-  const ivs: Record<Stats, number> = {
+  const ivs = packIVs({
     [Stats.HP]: sliceIV(0),
     [Stats.Attack]: sliceIV(1),
     [Stats.Defense]: sliceIV(2),
     [Stats.SpecialAttack]: sliceIV(3),
     [Stats.SpecialDefense]: sliceIV(4),
     [Stats.Speed]: sliceIV(5),
-  };
+  });
 
   // The ability slice serves twice: its band picks the pool, and its
   // position within the band picks the pool index
@@ -456,14 +457,15 @@ export default function deriveEncounter(
     gender,
     // The day's featured family sparkles eight times as often, and
     // whatever the player carries multiplies that further
-    shiny:
-      userId != null &&
+    flags:
+      (userId != null &&
       isShinyFor(
         userId,
         traitValue,
         (featured ? SPECIES_DAY_SHINY_BOOST : 1) * (options.shinyBoost ?? 1),
-      ),
-    shadow: options.shadow === true,
+      )
+        ? PokemonFlags.Shiny
+        : 0) | (options.shadow === true ? PokemonFlags.Shadow : 0),
     moves,
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,

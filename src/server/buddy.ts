@@ -1,3 +1,4 @@
+import { isEgg } from '../auth/egg';
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
@@ -32,7 +33,7 @@ export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
   // An egg is carried rather than accompanied: it has an ability and
   // a nature written down already, and neither of them is out here
   // doing anything until it hatches
-  if (caught.egg) {
+  if (isEgg(caught)) {
     return null;
   }
 

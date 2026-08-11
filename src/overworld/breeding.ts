@@ -1,4 +1,4 @@
-import { MAX_IV, STAT_ORDER, Stats } from '../data/constants/stats';
+import { MAX_IV, STAT_ORDER, type Stats, getIV, setIV } from '../data/constants/stats';
 import EggGroups from '../data/ids/egg-groups';
 import type { Moves } from '../data/ids/moves';
 import { Genders, Species } from '../data/ids/species';
@@ -48,7 +48,10 @@ export const SHADOW_HATCH_FACTOR = 2;
 export interface BreedingParent {
   species: Species;
   gender: Genders;
-  ivs: Record<Stats, number>;
+  /**
+   * The packed individual values, as the record stores them
+   */
+  ivs: number;
   moves: Moves[];
   shadow: boolean;
   /**
@@ -158,7 +161,7 @@ export function inheritIVs(
   left: BreedingParent,
   right: BreedingParent,
   random: () => number,
-): Record<Stats, number> {
+): number {
   const pool = [...STAT_ORDER];
   const inherited = new Set<Stats>();
 
@@ -172,17 +175,15 @@ export function inheritIVs(
   // inherited stat, the value itself for a rolled one
   const valueOf = (stat: Stats): number =>
     inherited.has(stat)
-      ? (random() < 0.5 ? left : right).ivs[stat]
+      ? getIV((random() < 0.5 ? left : right).ivs, stat)
       : Math.floor(random() * (MAX_IV + 1));
 
-  return {
-    [Stats.HP]: valueOf(Stats.HP),
-    [Stats.Attack]: valueOf(Stats.Attack),
-    [Stats.Defense]: valueOf(Stats.Defense),
-    [Stats.SpecialAttack]: valueOf(Stats.SpecialAttack),
-    [Stats.SpecialDefense]: valueOf(Stats.SpecialDefense),
-    [Stats.Speed]: valueOf(Stats.Speed),
-  };
+  let ivs = 0;
+
+  for (const stat of STAT_ORDER) {
+    ivs = setIV(ivs, stat, valueOf(stat));
+  }
+  return ivs;
 }
 
 /**

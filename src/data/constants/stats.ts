@@ -29,6 +29,76 @@ export const STAT_ORDER: Stats[] = [
  */
 export const MAX_IV = 31;
 
+/**
+ * How the six individual values are stored: five bits each, in stat
+ * order, packed into one integer.
+ *
+ * Thirty bits hold the lot, which is why they travel as a number
+ * rather than a map of six. A stored record is smaller, a snapshot
+ * copies one field instead of six, and — the reason it is worth doing
+ * at all — comparing two pokemon's values is comparing two integers.
+ * The unpacked map is still what most readers want, so it is one call
+ * away in either direction
+ */
+const IV_BITS = 5;
+
+/**
+ * The value of one stat, read out of the packed integer
+ */
+export function getIV(packed: number, stat: Stats): number {
+  return (packed >>> (stat * IV_BITS)) & MAX_IV;
+}
+
+/**
+ * The packed integer with one stat replaced. Values are clamped to
+ * what five bits can hold, so nothing ever bleeds into its neighbour
+ */
+export function setIV(packed: number, stat: Stats, value: number): number {
+  const clamped = Math.max(0, Math.min(MAX_IV, Math.floor(value)));
+  const shift = stat * IV_BITS;
+
+  return ((packed & ~(MAX_IV << shift)) | (clamped << shift)) >>> 0;
+}
+
+/**
+ * Six values packed into one integer, in stat order
+ */
+export function packIVs(values: Record<Stats, number>): number {
+  let packed = 0;
+
+  for (const stat of STAT_ORDER) {
+    packed = setIV(packed, stat, values[stat]);
+  }
+  return packed;
+}
+
+/**
+ * The packed integer read back out as a map, which is what a battle,
+ * a dex line and the stat formula all want
+ */
+export function unpackIVs(packed: number): Record<Stats, number> {
+  return {
+    [Stats.HP]: getIV(packed, Stats.HP),
+    [Stats.Attack]: getIV(packed, Stats.Attack),
+    [Stats.Defense]: getIV(packed, Stats.Defense),
+    [Stats.SpecialAttack]: getIV(packed, Stats.SpecialAttack),
+    [Stats.SpecialDefense]: getIV(packed, Stats.SpecialDefense),
+    [Stats.Speed]: getIV(packed, Stats.Speed),
+  };
+}
+
+/**
+ * The packed value of a pokemon whose every stat is perfect
+ */
+export const PERFECT_IVS = packIVs({
+  [Stats.HP]: MAX_IV,
+  [Stats.Attack]: MAX_IV,
+  [Stats.Defense]: MAX_IV,
+  [Stats.SpecialAttack]: MAX_IV,
+  [Stats.SpecialDefense]: MAX_IV,
+  [Stats.Speed]: MAX_IV,
+});
+
 export const enum StatsKind {
   Base = 0,
   Individual = 1,

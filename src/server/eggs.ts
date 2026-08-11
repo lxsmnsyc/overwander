@@ -3,9 +3,9 @@ import { asCaughtPokemon } from '../auth/caught-record';
 import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
 import { EGG_HATCH_STEPS, EGG_LEVEL, creditableSteps, stepsRemaining } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
+import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import type { Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import { Balls } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -60,15 +60,18 @@ export interface EggWalk {
  */
 interface EggFields {
   species: Species;
-  ivs: Record<Stats, number>;
+  /**
+   * The packed individual values the hatchling will have
+   */
+  ivs: number;
   gender: Genders;
   nature: Natures;
-  shiny: boolean;
   /**
-   * Whether it carries a shadow. One that does hatches with the
+   * What is true of the pokemon inside, as `PokemonFlags` bits: it
+   * sparkles, or it carries a shadow. One that does hatches with the
    * Shadow ability for good, and takes twice as long to open
    */
-  shadow: boolean;
+  flags: number;
   moves: Moves[];
   ability: Abilities;
   individualValue: number;
@@ -108,17 +111,19 @@ async function writeEgg(
     ivs: fields.ivs,
     gender: fields.gender,
     nature: fields.nature,
-    shiny: fields.shiny,
-    shadow: fields.shadow,
     moves: fields.moves,
     // A shadow keeps its Shadow ability for good, the way a shadow
     // raid's prize does
-    abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
+    abilities: hasFlag(fields.flags, PokemonFlags.Shadow)
+      ? [fields.ability, Abilities.Shadow]
+      : [fields.ability],
     // An egg holds nothing, and cannot be handed anything until it
     // has hatched
     items: [],
     history: [{ owner: uid, acquiredAt: foundAt }],
-    ...freeFields(),
+    // An egg on top of whatever the pokemon inside is, and never
+    // locked: an egg cannot be fielded
+    ...freeFields(fields.flags | PokemonFlags.Egg),
     // Whole and clean: nothing has fought with it, and an egg cannot
     // be fought with. The figure is what the hatchling will have,
     // since an egg is already the pokemon inside it
@@ -128,8 +133,7 @@ async function writeEgg(
       ivs: fields.ivs,
       effortValues: zeroEffortValues(),
     }),
-    statuses: [],
-    egg: true,
+    statuses: 0,
     steps: 0,
     // Frozen here, so a later change to what hatching costs cannot
     // move the finish line on an egg already being carried
@@ -186,9 +190,9 @@ export async function grantNestEgg(
       ivs: hatchling.ivs,
       gender: hatchling.gender,
       nature: hatchling.nature,
-      shiny: hatchling.shiny,
-      // Nothing shadowed comes out of a nest
-      shadow: false,
+      // It sparkles if it was going to; nothing shadowed comes out of
+      // a nest
+      flags: withFlag(hatchling.flags, PokemonFlags.Shadow, false),
       // A nest guarantees the inherited move; the rest is what the
       // species knows at the level it hatches
       moves: deriveEggMoves(species, EGG_LEVEL, () => rng.random()),
@@ -247,8 +251,9 @@ export async function grantBredEgg(
       ivs,
       gender: hatchling.gender,
       nature: hatchling.nature,
-      shiny: hatchling.shiny,
-      shadow,
+      // It sparkles if it was going to, and carries the shadow if it
+      // inherited one
+      flags: withFlag(hatchling.flags, PokemonFlags.Shadow, shadow),
       moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
       ability: hatchling.ability,
       individualValue: hatchling.individualValue,

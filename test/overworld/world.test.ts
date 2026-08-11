@@ -24,8 +24,9 @@ import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
 import { BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
-import { Stats } from '../../src/data/constants/stats';
-import { Statuses } from '../../src/data/ids/status';
+import { isShadow, isShiny } from '../../src/auth/caught-record';
+import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
+import { Statuses, packStatuses } from '../../src/data/ids/status';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
 import { neighborCells } from '../../src/overworld/chunk';
@@ -359,7 +360,7 @@ describe('world', () => {
     const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
 
     expect(boss.level).toBe(RAID_BOSS_LEVEL);
-    expect(Object.values(boss.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
+    expect(boss.ivs).toBe(PERFECT_IVS);
     expect(Object.values(boss.effortValues)).toEqual([0, 0, 0, 0, 0, 0]);
     expect(boss.items).toEqual([]);
     expect(boss.caught).toBe('');
@@ -486,16 +487,16 @@ describe('world', () => {
     // Every one of the player's own catches is reported, spent or
     // not: health is owed either way
     expect(reported).toEqual([
-      { caught: 'catch-a', items: [Items.CheriBerry], health: party[0].health, statuses: [] },
+      { caught: 'catch-a', items: [Items.CheriBerry], health: party[0].health, statuses: 0 },
       {
         caught: 'catch-b',
         items: [],
         health: 12,
-        statuses: [Statuses.Poisoned, Statuses.Burned],
+        statuses: packStatuses([Statuses.Poisoned, Statuses.Burned]),
       },
     ]);
     expect(collectAftermath(built, 'other-uid')).toEqual([
-      { caught: 'catch-c', items: [Items.OranBerry], health: party[2].health, statuses: [] },
+      { caught: 'catch-c', items: [Items.OranBerry], health: party[2].health, statuses: 0 },
     ]);
     // The boss stands for no record, so nothing it did is written
     expect(collectAftermath(built, '')).toEqual([]);
@@ -562,7 +563,7 @@ describe('world', () => {
       expect(member.species).toBe(spawns[at][0]);
       // It belongs to no catch record, and never sparkles
       expect(member.caught).toBe('');
-      expect(member.shiny).toBe(false);
+      expect(isShiny(member)).toBe(false);
       expect(member.items).toEqual([]);
     }
 
@@ -658,7 +659,7 @@ describe('world', () => {
 
     // Everything else about the boss is unchanged
     expect(shadow.level).toBe(plain.level);
-    expect(shadow.ivs).toEqual(plain.ivs);
+    expect(shadow.ivs).toBe(plain.ivs);
   });
 
   it('starts a player in a free cell of the starting region', () => {
@@ -1299,7 +1300,7 @@ describe('chunk snapshot', () => {
     expect(Number.isInteger(instance.level)).toBe(true);
     expect(instance.level).toBeGreaterThanOrEqual(5);
     expect(instance.level).toBeLessThanOrEqual(100);
-    for (const iv of Object.values(instance.ivs)) {
+    for (const iv of Object.values(unpackIVs(instance.ivs))) {
       expect(iv).toBeGreaterThanOrEqual(0);
       expect(iv).toBeLessThanOrEqual(31);
     }
@@ -1336,7 +1337,7 @@ describe('chunk snapshot', () => {
 
     // An all-ones individual value maxes every IV slice
     const maxed = deriveEncounter(snapshot, [spawn[0], 0xffffffff, 0]);
-    expect(Object.values(maxed.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
+    expect(maxed.ivs).toBe(PERFECT_IVS);
 
     // A zero trait value bottoms out the level; all-ones caps it
     expect(maxed.level).toBe(5);
@@ -1372,14 +1373,14 @@ describe('chunk snapshot', () => {
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
     const species = snapshot.getSpawns(1)[0][0];
 
-    expect(deriveEncounter(snapshot, [species, 0, shinyValue], 'trainer-red').shiny).toBe(true);
-    expect(deriveEncounter(snapshot, [species, 0, shinyValue]).shiny).toBe(false);
+    expect(isShiny(deriveEncounter(snapshot, [species, 0, shinyValue], 'trainer-red'))).toBe(true);
+    expect(isShiny(deriveEncounter(snapshot, [species, 0, shinyValue]))).toBe(false);
 
     // Two pokemon sharing a trait value sparkle alike however their
     // individual values differ
-    expect(deriveEncounter(snapshot, [species, 0xffffffff, shinyValue], 'trainer-red').shiny).toBe(
-      true,
-    );
+    expect(
+      isShiny(deriveEncounter(snapshot, [species, 0xffffffff, shinyValue], 'trainer-red')),
+    ).toBe(true);
   });
 
   it('multiplies the shiny odds by whatever the player carries', () => {
@@ -1397,9 +1398,11 @@ describe('chunk snapshot', () => {
     // The Shiny Charm rides in as a boost on the derivation
     const spawn = [Species.Magikarp, 0, nearMiss] as const;
 
-    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').shiny).toBe(false);
+    expect(isShiny(deriveEncounter(snapshot, [...spawn], 'trainer-red'))).toBe(false);
     expect(
-      deriveEncounter(snapshot, [...spawn], 'trainer-red', { shinyBoost: SHINY_CHARM_BOOST }).shiny,
+      isShiny(
+        deriveEncounter(snapshot, [...spawn], 'trainer-red', { shinyBoost: SHINY_CHARM_BOOST }),
+      ),
     ).toBe(true);
   });
 
@@ -1464,28 +1467,27 @@ describe('chunk snapshot', () => {
       type: EncounterType.LegendaryRaid,
     });
 
-    expect(Object.values(raid.ivs)).toEqual([6, 6, 6, 6, 6, 6]);
+    expect(Object.values(unpackIVs(raid.ivs))).toEqual([6, 6, 6, 6, 6, 6]);
 
     // Only raids on the family's own day get the floor
     const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
 
-    expect(Object.values(wild.ivs)).toEqual([0, 0, 0, 0, 0, 0]);
+    // Every slice zero packs to zero, which is the whole point of
+    // the packing: six numbers are one
+    expect(wild.ivs).toBe(0);
 
     const offDay = new ChunkSnapshot(world.getChunk(0, 0), day + 200 * 24 * 60 * 60 * 1000);
 
     expect(
-      Object.values(
-        deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.LegendaryRaid })
-          .ivs,
-      ),
-    ).toEqual([0, 0, 0, 0, 0, 0]);
+      deriveEncounter(offDay, [...spawn], 'trainer-red', { type: EncounterType.LegendaryRaid }).ivs,
+    ).toBe(0);
 
     // A rolled value above the floor is left alone
     const rolled = deriveEncounter(snapshot, [Species.Bulbasaur, 0xffffffff, 0], 'trainer-red', {
       type: EncounterType.LegendaryRaid,
     });
 
-    expect(Object.values(rolled.ivs)).toEqual([31, 31, 31, 31, 31, 31]);
+    expect(rolled.ivs).toBe(PERFECT_IVS);
   });
 
   it('marks a shadow raid reward as shadowed', () => {
@@ -1494,14 +1496,16 @@ describe('chunk snapshot', () => {
     const spawn = [Species.Gyarados, 0, 0] as const;
 
     expect(
-      deriveEncounter(snapshot, [...spawn], 'trainer-red', {
-        type: EncounterType.LegendaryRaid,
-        shadow: true,
-      }).shadow,
+      isShadow(
+        deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+          type: EncounterType.LegendaryRaid,
+          shadow: true,
+        }),
+      ),
     ).toBe(true);
 
     // Everything else is an ordinary meeting
-    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').shadow).toBe(false);
+    expect(isShadow(deriveEncounter(snapshot, [...spawn], 'trainer-red'))).toBe(false);
   });
 
   it('rolls a raid reward per player from the raid seed', () => {
@@ -1604,7 +1608,7 @@ describe('chunk snapshot', () => {
 
     expect(dropped.level).toBe(10);
     expect(dropped.moves).toEqual(deriveMoves(Species.Gyarados, 10));
-    expect(dropped.shadow).toBe(true);
+    expect(isShadow(dropped)).toBe(true);
 
     // A grunt's drop is its own kind of meeting, not a raid prize:
     // the record says where it actually came from

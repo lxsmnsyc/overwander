@@ -1,7 +1,7 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon, isShadow } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
-import { boostedSteps, stepsRemaining } from '../auth/egg';
+import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import Npc, { BREEDING_FEE, DAYCARE_FEE } from '../data/overworld/npc';
 import type { Species } from '../data/ids/species';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
@@ -62,8 +62,8 @@ function asParent(caught: Record<string, unknown> | null, uid: string): Breeding
     gender: record.gender,
     ivs: record.ivs,
     moves: record.moves,
-    shadow: record.shadow,
-    egg: record.egg,
+    shadow: isShadow(record),
+    egg: isEgg(record),
   };
 }
 

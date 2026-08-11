@@ -1,4 +1,3 @@
-import type { Stats } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import useBottleCapOnServerSide from '../server/bottle-caps';
 import { requireUid } from '../server/firebase';
@@ -24,10 +23,7 @@ import getIdToken from './session';
  * fighting, it is still an egg, none of that cap is carried, or the
  * pokemon is already perfect
  */
-export default async function useBottleCap(
-  catchId: string,
-  item: Items,
-): Promise<Record<Stats, number> | null> {
+export default async function useBottleCap(catchId: string, item: Items): Promise<number | null> {
   return useBottleCapOnServer(await getIdToken(), catchId, item);
 }
 
@@ -35,7 +31,7 @@ async function useBottleCapOnServer(
   token: string,
   catchId: string,
   item: Items,
-): Promise<Record<Stats, number> | null> {
+): Promise<number | null> {
   'use server';
   return useBottleCapOnServerSide(await requireUid(token), catchId, item, await syncServerClock());
 }

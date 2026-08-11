@@ -9,6 +9,7 @@ import {
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth } from '../auth/health';
+import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import Abilities from '../data/ids/abilities';
 import type { Balls, Items } from '../data/ids/items';
 import { ItemFlags } from '../data/ids/items';
@@ -99,16 +100,19 @@ export async function recordCatch(
     ivs: encounter.ivs,
     gender: encounter.gender,
     nature: encounter.nature,
-    shiny: encounter.shiny,
-    shadow: encounter.shadow,
     moves: encounter.moves,
     // A shadow raid's reward keeps its Shadow ability for good, on
     // top of the one it rolled
-    abilities: encounter.shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
+    abilities: hasFlag(encounter.flags, PokemonFlags.Shadow)
+      ? [encounter.ability, Abilities.Shadow]
+      : [encounter.ability],
     items: [],
     history: [{ owner: uid, acquiredAt: caughtAt }],
-    // A fresh catch has fought nothing
-    ...freeFields(),
+    // Whatever was true of the meeting is true of the record — it
+    // sparkled for this player, or it came out of a shadow raid — and
+    // a fresh catch has fought nothing, so the lock bit comes off the
+    // same field
+    ...freeFields(encounter.flags),
     // ...so it arrives whole, whatever the throw took out of it: an
     // encounter is not a battle, and nothing in one carries over
     health: getMaxHealth({
@@ -117,10 +121,9 @@ export async function recordCatch(
       ivs: encounter.ivs,
       effortValues: zeroEffortValues(),
     }),
-    statuses: [],
+    statuses: 0,
     // Something met in the world arrives already out of its shell,
     // so it has nowhere to be walked to
-    egg: false,
     steps: 0,
     hatchSteps: 0,
     steppedAt: 0,

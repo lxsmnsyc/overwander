@@ -2,7 +2,6 @@ import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
 import AleaRNG from '../core/alea';
-import type { Stats } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
@@ -40,7 +39,7 @@ export default async function useBottleCap(
   catchId: string,
   item: Items,
   now: number,
-): Promise<Record<Stats, number> | null> {
+): Promise<number | null> {
   const polishes = BOTTLE_CAPS.get(item);
 
   if (polishes == null) {

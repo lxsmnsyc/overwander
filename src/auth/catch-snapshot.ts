@@ -8,7 +8,6 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
-import type { Statuses } from '../data/ids/status';
 import { deriveSize } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { getMaxHealth } from './health';
@@ -29,7 +28,10 @@ export interface CatchSnapshot {
   caught: string;
   species: Species;
   level: number;
-  ivs: Record<Stats, number>;
+  /**
+   * The packed individual values, exactly as the record had them
+   */
+  ivs: number;
   effortValues: Record<Stats, number>;
   nature: Natures;
   gender: Genders;
@@ -40,7 +42,11 @@ export interface CatchSnapshot {
    */
   height: number;
   weight: number;
-  shiny: boolean;
+  /**
+   * What was true about it when the snapshot was taken, as
+   * `PokemonFlags` bits
+   */
+  flags: number;
   moves: Moves[];
   abilities: Abilities[];
   items: Items[];
@@ -51,9 +57,10 @@ export interface CatchSnapshot {
    */
   health: number;
   /**
-   * The non-volatile statuses it walks in with, all of them
+   * The non-volatile statuses it walks in with, all of them, as a
+   * mask of `StatusFlags`
    */
-  statuses: Statuses[];
+  statuses: number;
 }
 
 /**
@@ -74,7 +81,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     gender: caught.gender,
     height: size.height,
     weight: size.weight,
-    shiny: caught.shiny,
+    flags: caught.flags,
     moves: caught.moves,
     abilities: caught.abilities,
     items: caught.items,
@@ -93,13 +100,13 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     caught: asString(data.caught),
     species: asNumber(data.species) as Species,
     level: asNumber(data.level),
-    ivs: asStatRecord(data.ivs),
+    ivs: asNumber(data.ivs),
     effortValues: asStatRecord(data.effortValues),
     nature: asNumber(data.nature) as Natures,
     gender: asNumber(data.gender) as Genders,
     height: asNumber(data.height),
     weight: asNumber(data.weight),
-    shiny: data.shiny === true,
+    flags: asNumber(data.flags),
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
@@ -107,7 +114,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // no health, and a unit fielded at zero would be down before the
     // first turn: missing means whole
     health: data.health == null ? getMaxHealth(asHealthSource(data)) : asNumber(data.health),
-    statuses: asNumberArray(data.statuses) as Statuses[],
+    statuses: asNumber(data.statuses),
   };
 }
 
@@ -117,13 +124,13 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
 function asHealthSource(data: Record<string, unknown>): {
   species: Species;
   level: number;
-  ivs: Record<Stats, number>;
+  ivs: number;
   effortValues: Record<Stats, number>;
 } {
   return {
     species: asNumber(data.species) as Species,
     level: asNumber(data.level),
-    ivs: asStatRecord(data.ivs),
+    ivs: asNumber(data.ivs),
     effortValues: asStatRecord(data.effortValues),
   };
 }

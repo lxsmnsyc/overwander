@@ -2,6 +2,7 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
+import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import type { Stats } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -9,7 +10,6 @@ import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
-import type { Statuses } from '../data/ids/status';
 import type { EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { getMaxHealth } from './health';
@@ -53,24 +53,22 @@ export interface CaughtPokemon {
   individualValue: number;
   traitValue: number;
   /**
-   * Individual values per stat (0-31). These are what every reader
-   * uses: for a wild catch they are slices of `individualValue`, but
-   * a bred egg inherits three of them from its parents, so the two
-   * fields disagree and the stored values are the ones that count
+   * Individual values, five bits per stat packed into one integer.
+   * These are what every reader uses: for a wild catch they are
+   * slices of `individualValue`, but a bred egg inherits three of
+   * them from its parents and a bottle cap raises them, so the two
+   * fields disagree and this one is what counts
    */
-  ivs: Record<Stats, number>;
+  ivs: number;
   gender: Genders;
   nature: Natures;
   /**
-   * The shiny verdict as seen by the original catcher, frozen at
-   * catch time so trades cannot change it
+   * What is true about it, as `PokemonFlags` bits: shiny, shadow,
+   * egg, locked. They were four fields; a record answers half a dozen
+   * yes-or-no questions in one now, and the next question costs a bit
+   * rather than a migration
    */
-  shiny: boolean;
-  /**
-   * Whether it came out of a shadow raid. A shadow keeps its Shadow
-   * ability and costs twice the candy to raise
-   */
-  shadow: boolean;
+  flags: number;
   moves: Moves[];
   /**
    * The abilities the catch has: the rolled one, plus Shadow for a
@@ -88,26 +86,12 @@ export interface CaughtPokemon {
    */
   history: OwnershipRecord[];
   /**
-   * Whether the catch is fielded in a battle. While it holds, the
-   * record cannot be edited — the fight runs on a frozen snapshot, so
-   * an item handed back or a level taken mid-battle would leave the
-   * two disagreeing
-   */
-  lock: boolean;
-  /**
    * The `startedAt` of the battle that locked it, zero when free. The
    * lock expires on its own `BATTLE_TIMEOUT` after this, so a party
    * walked out on is not held forever, and the stamp tells one
    * battle's lock from a later one's when the fight releases it
    */
   lockedAt: number;
-  /**
-   * Whether it is still an egg. Everything about the pokemon inside
-   * is already written — the species, its rolls, its moves — but an
-   * egg shows none of it, cannot be edited, and cannot be fielded in
-   * a battle. Hatching is what takes the flag off
-   */
-  egg: boolean;
   /**
    * How far the egg has been carried. Only steps walked while it is
    * the player's buddy count, and only at a walking pace
@@ -137,13 +121,13 @@ export interface CaughtPokemon {
    */
   health: number;
   /**
-   * The non-volatile statuses it walked out of its last battle with.
-   * A pokemon can carry several at once — poisoned and asleep is an
-   * ordinary way to come out of a raid — while everything else a
-   * fight does (confusion, flinching, a substitute) belongs to the
-   * fight and ends with it
+   * The non-volatile statuses it walked out of its last battle with,
+   * as a mask of `StatusFlags`. A pokemon can carry several at once —
+   * poisoned and asleep is an ordinary way to come out of a raid —
+   * while everything else a fight does (confusion, flinching, a
+   * substitute) belongs to the fight and ends with it
    */
-  statuses: Statuses[];
+  statuses: number;
   /**
    * The ball the catch was made with
    */
@@ -174,6 +158,21 @@ export interface CaughtPokemon {
     y: number;
     biome: Biome;
   };
+}
+
+/**
+ * Whether the catch sparkles, as its original catcher saw it
+ */
+export function isShiny(caught: { flags: number }): boolean {
+  return hasFlag(caught.flags, PokemonFlags.Shiny);
+}
+
+/**
+ * Whether it carries a shadow: the Shadow ability for good, and
+ * double candy at every level
+ */
+export function isShadow(caught: { flags: number }): boolean {
+  return hasFlag(caught.flags, PokemonFlags.Shadow);
 }
 
 export interface OwnershipRecord {
@@ -210,7 +209,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
   const origin = asRecord(data.origin);
   const species = asNumber(data.species) as Species;
   const level = asNumber(data.level);
-  const ivs = asStatRecord(data.ivs);
+  const ivs = asNumber(data.ivs);
   const effortValues = asStatRecord(data.effortValues);
 
   return {
@@ -223,15 +222,12 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     ivs,
     gender: asNumber(data.gender) as Genders,
     nature: asNumber(data.nature) as Natures,
-    shiny: data.shiny === true,
-    shadow: data.shadow === true,
+    flags: asNumber(data.flags),
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
     history: asOwnershipHistory(data.history),
-    lock: data.lock === true,
     lockedAt: asNumber(data.lockedAt),
-    egg: data.egg === true,
     steps: asNumber(data.steps),
     hatchSteps: asNumber(data.hatchSteps),
     steppedAt: asNumber(data.steppedAt),
@@ -243,7 +239,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
       data.health == null
         ? getMaxHealth({ species, level, ivs, effortValues })
         : asNumber(data.health),
-    statuses: asNumberArray(data.statuses) as Statuses[],
+    statuses: asNumber(data.statuses),
     ball: asNumber(data.ball) as Balls,
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),

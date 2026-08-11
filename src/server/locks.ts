@@ -6,6 +6,7 @@ import {
   CAUGHT_COLLECTION,
   TEAM_SNAPSHOT_COLLECTION,
 } from '../auth/collections';
+import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import { getAdminFirestore } from './firebase';
 import { asNumber, asStringArray, docData } from './read';
 
@@ -33,7 +34,10 @@ import { asNumber, asStringArray, docData } from './read';
  * lock into looking expired
  */
 export function isCatchLocked(caught: Record<string, unknown>): boolean {
-  return caught.lock === true && Date.now() - asNumber(caught.lockedAt) < BATTLE_TIMEOUT;
+  return (
+    hasFlag(asNumber(caught.flags), PokemonFlags.Locked) &&
+    Date.now() - asNumber(caught.lockedAt) < BATTLE_TIMEOUT
+  );
 }
 
 /**
@@ -45,19 +49,22 @@ export function isAnyCatchLocked(caught: (Record<string, unknown> | null)[]): bo
 }
 
 /**
- * What a catch document carries while it is fighting. The stamp is
- * the battle's own `startedAt`, which is what lets the release tell
- * this battle's lock from a later one's
+ * What a catch document carries while it is fighting. The lock is a
+ * bit of the record's flags, so the current ones are passed in and
+ * come back with that bit set — a writer that only cares about the
+ * lock cannot drop the shiny bit on its way past. The stamp is the
+ * battle's own `startedAt`, which is what lets the release tell this
+ * battle's lock from a later one's
  */
-export function lockFields(startedAt: number): { lock: boolean; lockedAt: number } {
-  return { lock: true, lockedAt: startedAt };
+export function lockFields(flags: number, startedAt: number): { flags: number; lockedAt: number } {
+  return { flags: withFlag(flags, PokemonFlags.Locked, true), lockedAt: startedAt };
 }
 
 /**
  * A free catch
  */
-export function freeFields(): { lock: boolean; lockedAt: number } {
-  return { lock: false, lockedAt: 0 };
+export function freeFields(flags = 0): { flags: number; lockedAt: number } {
+  return { flags: withFlag(flags, PokemonFlags.Locked, false), lockedAt: 0 };
 }
 
 /**
@@ -117,8 +124,10 @@ export async function releaseBattleLocks(battleId: string): Promise<void> {
   for (const [at, entry] of stored.entries()) {
     const data = docData(entry);
 
-    if (data?.lock === true && asNumber(data.lockedAt) === startedAt) {
-      batch.update(refs[at], freeFields());
+    const flags = asNumber(data?.flags);
+
+    if (hasFlag(flags, PokemonFlags.Locked) && asNumber(data?.lockedAt) === startedAt) {
+      batch.update(refs[at], freeFields(flags));
       releasing += 1;
     }
   }

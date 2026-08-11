@@ -3,6 +3,7 @@ import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
+import { isEgg } from '../auth/egg';
 import { getMaxHealth, isFainted } from '../auth/health';
 import { TEAM_SIZE } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
@@ -37,9 +38,9 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
       return owned.map(([id, caught]) => ({
         id,
         caught,
-        fainted: !caught.egg && isFainted(caught),
-        held: caught.egg || isFainted(caught) || isLockLive(caught, now),
-        egg: caught.egg,
+        fainted: !isEgg(caught) && isFainted(caught),
+        held: isEgg(caught) || isFainted(caught) || isLockLive(caught, now),
+        egg: isEgg(caught),
       }));
     },
   );

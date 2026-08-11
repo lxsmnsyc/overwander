@@ -464,7 +464,7 @@ export async function publishTeamSnapshot(
     const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
     const stored = await transaction.getAll(...refs);
     const fielded: CatchSnapshot[] = [];
-    const locking: FirebaseFirestore.DocumentReference[] = [];
+    const locking: [FirebaseFirestore.DocumentReference, number][] = [];
 
     for (const [at, entry] of stored.entries()) {
       const data = docData(entry);
@@ -482,7 +482,7 @@ export async function publishTeamSnapshot(
         !isFainted(asCaughtPokemon(data))
       ) {
         fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
-        locking.push(refs[at]);
+        locking.push([refs[at], asNumber(data.flags)]);
       }
     }
 
@@ -491,8 +491,8 @@ export async function publishTeamSnapshot(
     }
 
     transaction.set(ref, { player, alliance, catches: fielded });
-    for (const caught of locking) {
-      transaction.update(caught, lockFields(startedAt));
+    for (const [caught, flags] of locking) {
+      transaction.update(caught, lockFields(flags, startedAt));
     }
     return ref.id;
   });

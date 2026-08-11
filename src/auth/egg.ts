@@ -1,3 +1,4 @@
+import { PokemonFlags, hasFlag } from '../data/constants/flags';
 /**
  * What an egg is, and what hatching one costs.
  *
@@ -46,7 +47,10 @@ export const MAX_STEP_REPORT = 64;
  * The progress fields of a catch, which is all these rules read
  */
 export interface EggProgress {
-  egg: boolean;
+  /**
+   * The record's `PokemonFlags`; only the egg bit is read
+   */
+  flags: number;
   steps: number;
   hatchSteps: number;
 }
@@ -56,7 +60,7 @@ export interface EggProgress {
  * and zero for anything that is not an egg
  */
 export function stepsRemaining(caught: EggProgress): number {
-  return caught.egg ? Math.max(0, caught.hatchSteps - caught.steps) : 0;
+  return isEgg(caught) ? Math.max(0, caught.hatchSteps - caught.steps) : 0;
 }
 
 /**
@@ -65,7 +69,14 @@ export function stepsRemaining(caught: EggProgress): number {
  * the way an evolution waits for the button
  */
 export function canHatch(caught: EggProgress): boolean {
-  return caught.egg && caught.steps >= caught.hatchSteps;
+  return isEgg(caught) && caught.steps >= caught.hatchSteps;
+}
+
+/**
+ * Whether the record is still an egg
+ */
+export function isEgg(caught: { flags: number }): boolean {
+  return hasFlag(caught.flags, PokemonFlags.Egg);
 }
 
 /**

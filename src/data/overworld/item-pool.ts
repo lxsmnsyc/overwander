@@ -63,6 +63,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
+    // A dug-up cap fixes one stat of one pokemon: rare enough to be
+    // the find of a walk, common enough to be worth saving for the
+    // pokemon that deserves it
+    { item: Items.BottleCap, weight: 6 },
     // The relics: a Cubone's bone, a Ditto's dust. Found, never
     // stocked, and worth nothing to anything but their own species
     { item: Items.LightBall, weight: 4 },
@@ -80,6 +84,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The only way a mythical is ever fought: the relic is found
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },
+    // Six stats made perfect at once. Nothing else undoes a bad roll,
+    // so it belongs with the things gold cannot buy
+    { item: Items.GoldenBottleCap, weight: 8 },
   ],
 };
 

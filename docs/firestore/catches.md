@@ -43,9 +43,10 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
 
-`species` and `level` are the two mutable fields: `useCandy` raises the level,
-and `evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps
-the species. An evolution that uses an item decrements
+`species`, `level` and `ivs` are the mutable fields: `useCandy` raises the level,
+`evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps the
+species, and a bottle cap polishes the values (see [Bottle
+caps](#bottle-caps)). An evolution that uses an item decrements
 `inventories/{uid}:{item}` in the same transaction, so the stone and the new
 species land together or not at all. Criteria are re-checked against the stored
 documents inside that transaction, never trusted from the caller.
@@ -69,6 +70,43 @@ between them. Only items flagged `Holdable` can be handed over, and a catch
 holds at most `HELD_ITEM_LIMIT` (1) — matching the battle's per-unit item limit.
 This is the path the Shiny Charm needs: a buddy holding it lifts the shiny odds
 of every encounter its owner starts.
+
+## Bottle caps
+
+Individual values are rolled once, when the encounter is staged, and nothing
+else in the game moves them afterwards — which is what makes a bad roll on a
+pokemon somebody already raised worth an item of its own.
+
+`useBottleCap` ([`src/server/bottle-caps.ts`](../../src/server/bottle-caps.ts))
+spends one and writes `ivs` in the same transaction, so a cap is never spent on
+a pokemon that did not change and a pokemon never changes without one being
+spent. Which stats it raises is the **server's** roll, seeded by the catch, the
+item and the instant: a client that chose would simply choose the stat it
+wanted, and the cap would stop being a cap.
+
+| Item                  | Band    | What it does                                    |
+| --------------------- | ------- | ----------------------------------------------- |
+| **Golden Bottle Cap** | Special | Raises every value to `MAX_IV` (31)             |
+| **Bottle Cap**        | Rare    | Raises one value, drawn from the imperfect ones |
+
+Both are found in the overworld item pool and nowhere else: neither is stocked,
+neither is holdable, and each is consumed by the use. The rules both sides read
+live in [`src/data/items/bottle-caps.ts`](../../src/data/items/bottle-caps.ts).
+
+Only stats below `MAX_IV` are drawn from, so a plain cap never lands on a stat
+that needed nothing — the item is spent either way, and a pick that could waste
+it would make the cap worse the closer a pokemon came to perfect. A pokemon that
+is **already perfect** is refused outright, on both sides: the dialog hides the
+buttons and the server returns null without touching the bag.
+
+The use is refused for the same reasons every other catch write is: the catch is
+not the player's, it is locked into a live battle, or it is still an egg — what
+is inside an egg was decided when it was found and stays that way until it
+hatches.
+
+`individualValue` is not rewritten. It is the roll the encounter was staged
+from, and the stored per-stat values are what every reader uses — the same
+reason a bred egg's `ivs` can disagree with it.
 
 ## Releasing
 

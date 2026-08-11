@@ -1,4 +1,4 @@
-import { Stats } from '../data/constants/stats';
+import { MAX_IV, STAT_ORDER, Stats } from '../data/constants/stats';
 import EggGroups from '../data/ids/egg-groups';
 import type { Moves } from '../data/ids/moves';
 import { Genders, Species } from '../data/ids/species';
@@ -40,17 +40,6 @@ export const SHADOW_INHERITANCE_CHANCE = 0.5;
  * should not be there takes twice as long to open
  */
 export const SHADOW_HATCH_FACTOR = 2;
-
-const MAX_IV = 31;
-
-const STAT_ORDER: Stats[] = [
-  Stats.HP,
-  Stats.Attack,
-  Stats.Defense,
-  Stats.SpecialAttack,
-  Stats.SpecialDefense,
-  Stats.Speed,
-];
 
 /**
  * What breeding reads off a parent — a subset of a catch record, so

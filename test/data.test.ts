@@ -43,6 +43,8 @@ import {
   pickItem,
   pickItems,
 } from '../src/data/overworld/item-pool';
+import { MAX_IV, STAT_ORDER, Stats } from '../src/data/constants/stats';
+import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
@@ -442,6 +444,81 @@ describe('item data', () => {
     }
   });
 
+  it('buries the bottle caps rather than stocking them', () => {
+    for (const item of [Items.GoldenBottleCap, Items.BottleCap]) {
+      const data = getItemData(item);
+
+      // Spent on a pokemon and gone; never held, never sold, never
+      // listed — what a cap is worth is what it does
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBe(0);
+      expect(isBottleCap(item)).toBe(true);
+    }
+    expect(getItemData(Items.GoldenBottleCap).name).toBe('Golden Bottle Cap');
+    expect(getItemData(Items.BottleCap).name).toBe('Bottle Cap');
+    expect(isBottleCap(Items.Nugget)).toBe(false);
+
+    // The golden one perfects everything there is, the plain one a
+    // single stat
+    expect(BOTTLE_CAPS.get(Items.GoldenBottleCap)).toBe(STAT_ORDER.length);
+    expect(BOTTLE_CAPS.get(Items.BottleCap)).toBe(1);
+
+    // A one-per-world find and an ordinary dig, each in one band only
+    expect(ITEM_POOL.special.some((entry) => entry.item === Items.GoldenBottleCap)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.BottleCap)).toBe(true);
+    for (const band of ['base', 'uncommon', 'rare'] as const) {
+      expect(ITEM_POOL[band].some((entry) => entry.item === Items.GoldenBottleCap)).toBe(false);
+    }
+    for (const band of ['base', 'uncommon', 'special'] as const) {
+      expect(ITEM_POOL[band].some((entry) => entry.item === Items.BottleCap)).toBe(false);
+    }
+  });
+
+  it('polishes individual values with a bottle cap', () => {
+    const evenly = (value: number): Record<Stats, number> => ({
+      [Stats.HP]: value,
+      [Stats.Attack]: value,
+      [Stats.Defense]: value,
+      [Stats.SpecialAttack]: value,
+      [Stats.SpecialDefense]: value,
+      [Stats.Speed]: value,
+    });
+
+    // A golden cap reaches every stat, whatever the stream says
+    const golden = polishIVs(evenly(0), STAT_ORDER.length, () => 0);
+
+    expect(golden).toEqual(evenly(MAX_IV));
+    expect(isPerfectIVs(golden ?? evenly(0))).toBe(true);
+
+    // A plain cap raises exactly one, and leaves the rest as they were
+    const plain = polishIVs(evenly(5), 1, () => 0);
+    const raised = STAT_ORDER.filter((stat) => (plain ?? evenly(0))[stat] === MAX_IV);
+
+    expect(raised).toHaveLength(1);
+    for (const stat of STAT_ORDER) {
+      expect((plain ?? evenly(0))[stat]).toBe(raised[0] === stat ? MAX_IV : 5);
+    }
+
+    // Only the stats that need it are drawn from: a cap that could
+    // land on a stat already at the cap would be spent on nothing,
+    // and would get worse the closer a pokemon came to perfect
+    const nearly = { ...evenly(MAX_IV), [Stats.Speed]: 0 };
+
+    for (const roll of [0, 0.5, 0.999]) {
+      expect(polishIVs(nearly, 1, () => roll)).toEqual(evenly(MAX_IV));
+    }
+
+    // Nothing left to polish, so there is nothing to spend a cap on
+    expect(isPerfectIVs(evenly(MAX_IV))).toBe(true);
+    expect(polishIVs(evenly(MAX_IV), STAT_ORDER.length, () => 0)).toBeNull();
+    expect(isPerfectIVs(nearly)).toBe(false);
+  });
+
   it('prices the valuables to sell and never to buy', () => {
     const nugget = getItemData(Items.Nugget);
 
@@ -477,6 +554,7 @@ describe('item data', () => {
       Items.MasterBall,
       Items.ShinyCharm,
       Items.OldSeaMap,
+      Items.GoldenBottleCap,
     ]);
   });
 

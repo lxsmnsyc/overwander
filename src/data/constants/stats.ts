@@ -9,6 +9,26 @@ export const enum Stats {
 
 export type StatsField = { [key in Stats]: number };
 
+/**
+ * The six stats in the order they are read out: the order a dex
+ * prints them, an egg inherits them and a bottle cap polishes them
+ */
+export const STAT_ORDER: Stats[] = [
+  Stats.HP,
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+];
+
+/**
+ * The best an individual value can be. A pokemon is born with six of
+ * them somewhere between zero and this, and only a bottle cap moves
+ * one afterwards
+ */
+export const MAX_IV = 31;
+
 export const enum StatsKind {
   Base = 0,
   Individual = 1,

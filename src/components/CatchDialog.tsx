@@ -13,17 +13,19 @@ import {
   releaseCatch,
   takeItem,
 } from '../auth/caught';
-import { getInventory } from '../auth/inventory';
+import useBottleCap from '../auth/bottle-caps';
+import { type InventoryEntry, getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
 import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { Stats } from '../data/constants/stats';
+import { STAT_ORDER, Stats } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
+import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
 import { ENCOUNTER_TYPE_NAMES, deriveSize } from '../overworld/encounter';
@@ -43,14 +45,13 @@ const GENDER_LABELS: Record<Genders, string> = {
   [Genders.Female]: 'Female',
 };
 
-const STAT_ORDER: Stats[] = [
-  Stats.HP,
-  Stats.Attack,
-  Stats.Defense,
-  Stats.SpecialAttack,
-  Stats.SpecialDefense,
-  Stats.Speed,
-];
+/**
+ * The six values as a dex prints them, used both in the record and in
+ * what a bottle cap reports back
+ */
+function describeIVs(ivs: Record<Stats, number>): string {
+  return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${ivs[stat]}`).join(' · ');
+}
 
 /**
  * A catch is one document — abilities, held items and ownership
@@ -192,25 +193,37 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * The holdable items in the player's bag; a catch can only be
-   * handed something it is allowed to hold
+   * What the player is carrying. The bag is read once and split
+   * below: some of it can be handed over, some of it can be spent on
+   * the pokemon, and the two lists move together when either does
    */
   const [bag, { refetch: refetchBag }] = createResource(
     () => owned(),
-    async (uid) => {
-      const carried = await getInventory(uid);
-
-      return carried.filter((entry) => {
-        try {
-          return (getItemData(entry.item).flags & ItemFlags.Holdable) !== 0;
-        } catch {
-          // An unregistered item has no flags to read, so it is not
-          // offered rather than assumed holdable
-          return false;
-        }
-      });
-    },
+    async (uid) => getInventory(uid),
   );
+
+  /**
+   * The holdable items in the player's bag; a catch can only be
+   * handed something it is allowed to hold
+   */
+  const holdable = (): InventoryEntry[] =>
+    (bag() ?? []).filter((entry) => {
+      try {
+        return (getItemData(entry.item).flags & ItemFlags.Holdable) !== 0;
+      } catch {
+        // An unregistered item has no flags to read, so it is not
+        // offered rather than assumed holdable
+        return false;
+      }
+    });
+
+  /**
+   * The bottle caps in the bag. Every other usable item is used
+   * somewhere else — a ball on an encounter, a stone through the
+   * evolution it enables — so these are the only ones a catch itself
+   * has a button for
+   */
+  const caps = (): InventoryEntry[] => (bag() ?? []).filter((entry) => isBottleCap(entry.item));
 
   const moveItem = (item: Items, give: boolean): void => {
     const uid = owned();
@@ -230,6 +243,29 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         await refetch();
         await refetchBag();
         await refetchEvolutions();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const polish = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    useBottleCap(catchId, item)
+      .then(async (ivs) => {
+        setStatus(
+          ivs == null
+            ? `${describeItem(item)} could not be used.`
+            : `${describeItem(item)} polished it — ${describeIVs(ivs)}.`,
+        );
+        await refetch();
+        await refetchBag();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -425,11 +461,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     </dd>
                   </Show>
                   <dt>Individual values</dt>
-                  <dd>
-                    {STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${loaded().ivs[stat]}`).join(
-                      ' · ',
-                    )}
-                  </dd>
+                  <dd>{describeIVs(loaded().ivs)}</dd>
                   <dt>{loaded().egg ? 'Found' : 'Caught'}</dt>
                   {/* The stamp is already in the catcher's own zone,
                       so the date it opens with is the day they had */}
@@ -510,9 +542,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     {/* A catch holds one item at a time, matching the
                       battle's per-unit limit */}
                     <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
-                      <Show when={bag()?.length} fallback={<p>Nothing holdable in the bag.</p>}>
+                      <Show when={holdable().length} fallback={<p>Nothing holdable in the bag.</p>}>
                         <ul>
-                          <For each={bag()}>
+                          <For each={holdable()}>
                             {(entry) => (
                               <li>
                                 <button
@@ -523,6 +555,36 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                                   }}
                                 >
                                   Give {describeItem(entry.item)} × {entry.amount}
+                                </button>
+                              </li>
+                            )}
+                          </For>
+                        </ul>
+                      </Show>
+                    </Show>
+
+                    <h3>Use item</h3>
+                    {/* A cap is the only thing that moves the values a
+                      pokemon was born with, and it is spent doing it —
+                      so one is never offered to a pokemon that has
+                      nothing left to gain from it */}
+                    <Show
+                      when={!isPerfectIVs(loaded().ivs)}
+                      fallback={<p>Every value is already as high as it goes.</p>}
+                    >
+                      <Show when={caps().length} fallback={<p>No bottle caps in the bag.</p>}>
+                        <ul>
+                          <For each={caps()}>
+                            {(entry) => (
+                              <li>
+                                <button
+                                  type="button"
+                                  disabled={fighting()}
+                                  onClick={() => {
+                                    polish(entry.item);
+                                  }}
+                                >
+                                  Use {describeItem(entry.item)} × {entry.amount}
                                 </button>
                               </li>
                             )}

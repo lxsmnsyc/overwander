@@ -13,6 +13,12 @@ export const enum ItemTypes {
    * on a pokemon
    */
   Valuable = 7,
+  /**
+   * Spent on a pokemon to change what it is rather than what it can
+   * do: a bottle cap polishes individual values, which nothing else
+   * in the game can touch once a catch is made
+   */
+  Training = 8,
 }
 
 export const enum ItemFlags {
@@ -208,6 +214,13 @@ export const enum Items {
   // Candy items: carried by the buddy, paid out on a catch
   ExpShare = 110,
   LuckyEgg = 111,
+
+  /**
+   * The bottle caps: dug up, then spent on one pokemon to polish the
+   * values it was born with
+   */
+  GoldenBottleCap = 112,
+  BottleCap = 113,
 }
 
 /**

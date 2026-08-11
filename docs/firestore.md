@@ -7,6 +7,10 @@ value is written by the **Admin** SDK from `src/server/*`, behind a verified
 caller. The rules have to hold against a signed-in player writing directly,
 which is why most collections are read-only to clients.
 
+What the game _does_ with all of it — how a world is derived, what a thrown ball
+is worth, how a fight resolves — is in [Game mechanics](mechanics.md). These
+pages are the storage side of the same thing.
+
 There is no `firestore.rules` file in the repository yet; the rules in
 [Security](firestore/security.md) are the ones the code assumes and should be
 deployed as-is before the game is exposed to real players.

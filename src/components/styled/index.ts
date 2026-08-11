@@ -16,6 +16,8 @@ export type { FieldProps } from './field';
 export { default as Filter } from './filter';
 export type { FilterOption, FilterProps } from './filter';
 export { List, ListRow, Meta, RowButton } from './list';
+export { default as Menu } from './menu';
+export type { MenuAction, MenuProps } from './menu';
 export { default as Search, SEARCH_FROM } from './search';
 export type { SearchProps } from './search';
 export type { ListRowProps, RowButtonProps } from './list';

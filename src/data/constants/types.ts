@@ -21,6 +21,65 @@ export const enum Types {
   Stellar = 19,
 }
 
+/**
+ * What each type is called, for anywhere a type is read rather than
+ * matched: a move's line on a catch sheet, a species' line on a dex
+ * entry. `Unknown` is the type nothing is, and it says so
+ */
+export const TYPE_NAMES: Record<Types, string> = {
+  [Types.Unknown]: 'Unknown',
+  [Types.Normal]: 'Normal',
+  [Types.Fighting]: 'Fighting',
+  [Types.Flying]: 'Flying',
+  [Types.Poison]: 'Poison',
+  [Types.Ground]: 'Ground',
+  [Types.Rock]: 'Rock',
+  [Types.Bug]: 'Bug',
+  [Types.Ghost]: 'Ghost',
+  [Types.Steel]: 'Steel',
+  [Types.Fire]: 'Fire',
+  [Types.Water]: 'Water',
+  [Types.Grass]: 'Grass',
+  [Types.Electric]: 'Electric',
+  [Types.Psychic]: 'Psychic',
+  [Types.Ice]: 'Ice',
+  [Types.Dragon]: 'Dragon',
+  [Types.Dark]: 'Dark',
+  [Types.Fairy]: 'Fairy',
+  [Types.Stellar]: 'Stellar',
+};
+
+/**
+ * What each type is drawn in. They are the colours the series has used
+ * for them since the beginning: a player who knows what Water looks
+ * like should not have to read the word to know it.
+ *
+ * `Unknown` is deliberately the colour of nothing in particular — it
+ * is the type a move has when it has not decided
+ */
+export const TYPE_COLORS: Record<Types, string> = {
+  [Types.Unknown]: '#8a8a8a',
+  [Types.Normal]: '#9fa19f',
+  [Types.Fighting]: '#ff8000',
+  [Types.Flying]: '#81b9ef',
+  [Types.Poison]: '#9141cb',
+  [Types.Ground]: '#915121',
+  [Types.Rock]: '#afa981',
+  [Types.Bug]: '#91a119',
+  [Types.Ghost]: '#704170',
+  [Types.Steel]: '#60a1b8',
+  [Types.Fire]: '#e62829',
+  [Types.Water]: '#2980ef',
+  [Types.Grass]: '#3fa129',
+  [Types.Electric]: '#fac000',
+  [Types.Psychic]: '#ef4179',
+  [Types.Ice]: '#3dcef3',
+  [Types.Dragon]: '#5060e1',
+  [Types.Dark]: '#624d4e',
+  [Types.Fairy]: '#ef70ef',
+  [Types.Stellar]: '#40b5a5',
+};
+
 export const enum TypeEffectiveness {
   Effective = 0,
   Resistant = 1,

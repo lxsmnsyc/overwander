@@ -2,7 +2,7 @@ import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
 import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
-import { canHatch, isEgg, stepsRemaining } from '../auth/egg';
+import { canHatch, isEgg } from '../auth/egg';
 import { hatchEgg } from '../auth/eggs';
 import {
   type CaughtPokemon,
@@ -29,6 +29,13 @@ import {
 import useBottleCap from '../auth/bottle-caps';
 import usePurifyingGem from '../auth/purify';
 import { getInventory } from '../auth/inventory';
+import {
+  MAX_INCREMENT,
+  MAX_STARTING_BID,
+  MIN_INCREMENT,
+  MIN_STARTING_BID,
+  openCatchAuction,
+} from '../auth/auctions';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
@@ -37,19 +44,29 @@ import { type TrainingResult, feedEffortBerry, trainEffort, useWing } from '../a
 import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { describeFriendship } from '../data/constants/friendship';
-import { MAX_EFFORT_PER_STAT, STAT_ORDER, Stats, getIV } from '../data/constants/stats';
+import {
+  MAX_EFFORT_PER_STAT,
+  MAX_IV,
+  STAT_ORDER,
+  Stats,
+  getIV,
+  getOtherStat,
+} from '../data/constants/stats';
+import getSigil from '../data/constants/sigil';
+
 import { BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
-import { NATURE_NAMES } from '../data/ids/natures';
+import { NATURE_NAMES, getNatureFactor } from '../data/ids/natures';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { isHerbal } from '../data/items/medicine';
-import { PURIFY_IV_BOOST, isPurifyingGem } from '../data/items/purifying-gem';
+import { isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
+import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES } from '../data/ids/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
 import { BIOME_NAMES } from '../data/biome';
 import Biome from '../data/ids/biome';
@@ -62,20 +79,37 @@ import {
 } from '../overworld/encounter';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
+import TypeBadge from './TypeBadge';
+import { TabGroup, TabPanel } from 'terracotta';
 import {
   Badge,
   Button,
   Dialog,
   DialogActions,
   DialogSection,
+  Field,
   List,
   ListRow,
+  Menu,
+  type MenuAction,
   Meta,
   Note,
   Row,
   RowButton,
   Status,
+  TabBar,
+  TabButton,
 } from './styled';
+
+/**
+ * The three readings of one set of six numbers: what the pokemon has
+ * now, what it was born with, and what has been trained into it
+ */
+const enum StatView {
+  Total = 0,
+  IV = 1,
+  EV = 2,
+}
 
 /**
  * How much training one press moves. Four points buy one point of the
@@ -713,6 +747,144 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * Which of the menu's panels is open under the bar, if any. They are
+   * panels rather than sections because neither is part of reading the
+   * sheet: a player opens one, does the thing, and is back to looking
+   * at the pokemon
+   */
+  const [panel, setPanel] = createSignal<'items' | 'auction' | null>(null);
+  const [asking, setAsking] = createSignal(MIN_STARTING_BID);
+  const [raise, setRaise] = createSignal(MIN_INCREMENT);
+
+  /**
+   * One stat as the pokemon actually has it: the species' base, the
+   * value it was born with, the effort put into it, and — for
+   * everything but health — what its nature makes of that
+   */
+  const totalOf = (caught: CaughtPokemon, stat: Stats): number =>
+    stat === Stats.HP
+      ? getMaxHealth(caught)
+      : getOtherStat(
+          caught.level,
+          getSpeciesData(caught.species).stats[stat],
+          getIV(caught.ivs, stat),
+          caught.effortValues[stat],
+          getNatureFactor(caught.nature, stat),
+        );
+
+  /**
+   * Whether the item is one this pokemon could be given right now —
+   * a remedy, a cap it would gain from, a gem for a shadow, a wing, a
+   * bitter berry. It is the one question behind the whole Use item
+   * panel, so what is offered is never something that would be spent
+   * on nothing
+   */
+  const isUsable = (item: Items): boolean => {
+    const caught = view();
+
+    if (caught == null) {
+      return false;
+    }
+    if (isBottleCap(item)) {
+      return !isPerfectIVs(caught.ivs);
+    }
+    if (isPurifyingGem(item)) {
+      return isShadow(caught);
+    }
+    return isRemedy(item) || isWing(item) || BERRY_EFFORT_DROPS.has(item);
+  };
+
+  /**
+   * Spend it, whatever it is. Each kind already has its own call and
+   * its own message; this only decides which one the item belongs to
+   */
+  const useOn = (item: Items): void => {
+    setPanel(null);
+    if (isBottleCap(item)) {
+      polish(item);
+    } else if (isPurifyingGem(item)) {
+      purify(item);
+    } else if (isWing(item)) {
+      trainWithWing(item);
+    } else if (BERRY_EFFORT_DROPS.has(item)) {
+      feedBitterBerry(item);
+    } else {
+      heal(item);
+    }
+  };
+
+  /**
+   * Put it on the block. The lot leaves the player's records as the
+   * auction opens, so the dialog has nothing left to show and closes
+   * behind it
+   */
+  const sell = (): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    setStatus(null);
+    openCatchAuction(catchId, { startingBid: asking(), increment: raise() })
+      .then((id: string | null) => {
+        if (id == null) {
+          setStatus('It could not be listed — you may already have a lot running.');
+          return;
+        }
+        setPanel(null);
+        props.onChange?.();
+        props.onClose();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  /**
+   * What the menu offers. Everything in it is occasional — the things
+   * a player does to a pokemon now and then rather than every time
+   * they open its sheet — and every one of them is refused while it is
+   * fighting
+   */
+  const actions = (loaded: CaughtPokemon): MenuAction[] => [
+    {
+      label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
+      disabled: fighting() === true,
+      onSelect: () => {
+        favorite(!isFavorite(loaded));
+      },
+    },
+    {
+      label: isGuarded(loaded) ? 'Unlock' : 'Lock',
+      disabled: fighting() === true,
+      onSelect: () => {
+        guard(!isGuarded(loaded));
+      },
+    },
+    {
+      label: 'Use item',
+      disabled: frozen() || isEgg(loaded),
+      onSelect: () => {
+        setPanel((open) => (open === 'items' ? null : 'items'));
+      },
+    },
+    {
+      label: 'Auction',
+      // A favorite is not to be parted with, and a lot cannot be taken
+      // back off the block once it is on it
+      disabled: fighting() === true || isFavorite(loaded) || isEgg(loaded),
+      onSelect: () => {
+        setPanel((open) => (open === 'auction' ? null : 'auction'));
+      },
+    },
+    {
+      label: buddy() === props.catchId ? 'Walking with you' : 'Walk with this one',
+      disabled: buddy() === props.catchId,
+      onSelect: takeAlong,
+    },
+  ];
+
   return (
     <Dialog
       width="wide"
@@ -721,6 +893,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         setStatus(null);
         // A release half-confirmed is a release declined
         setReleasing(false);
+        setPanel(null);
         props.onClose();
       }}
       title={named()}
@@ -735,10 +908,108 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         <Show when={view()} fallback={<Note>No such catch.</Note>}>
           {(loaded) => (
             <>
-              {/* What the record is about, walking. An egg is drawn as
-                  an egg: what is inside it is not the player's to see
-                  until it hatches */}
-              <div class="flex justify-center">
+              {/* The sheet is long enough to scroll, so what can be
+                  done to the pokemon rides along at the top rather
+                  than being scrolled away from */}
+              <Show when={owned()}>
+                <div
+                  class="sticky -top-4 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b
+                    border-line-soft bg-paper px-4 py-2 sm:-top-5 sm:-mx-5 sm:px-5"
+                >
+                  <Menu label="Actions" actions={actions(loaded())} />
+                  <Show when={fighting()}>
+                    <Meta>In a raid — nothing about it can be changed.</Meta>
+                  </Show>
+                  <Show when={!fighting() && isGuarded(loaded())}>
+                    <Meta>Locked: it stays exactly as it is.</Meta>
+                  </Show>
+                  <Show when={!fighting() && isFavorite(loaded())}>
+                    <Meta>A favorite — it cannot be released or auctioned.</Meta>
+                  </Show>
+                </div>
+
+                {/* Anything the bag can be spent on this pokemon: a
+                    remedy, a cap, a gem for a shadow, a wing, a bitter
+                    berry. One list rather than five, since the answer
+                    to "what would this do for it" is the same question
+                    every time */}
+                <Show when={panel() === 'items'}>
+                  <DialogSection title="Use item">
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={frozen()}
+                      confirm
+                      value={null}
+                      verb="Use"
+                      empty="Nothing in the bag would do it any good."
+                      filter={(entry) => isUsable(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          useOn(item);
+                        }
+                      }}
+                    />
+                  </DialogSection>
+                </Show>
+
+                <Show when={panel() === 'auction'}>
+                  <DialogSection title="Auction">
+                    <Note>
+                      It leaves your records the moment the lot opens, held items and all, and comes
+                      back only if the day ends with nobody having bid.
+                    </Note>
+                    <Row>
+                      <Field label="Asking price">
+                        <input
+                          type="number"
+                          min={MIN_STARTING_BID}
+                          max={MAX_STARTING_BID}
+                          value={asking()}
+                          onInput={(event) => {
+                            setAsking(Number(event.currentTarget.value));
+                          }}
+                        />
+                      </Field>
+                      <Field label="Least raise">
+                        <input
+                          type="number"
+                          min={MIN_INCREMENT}
+                          max={MAX_INCREMENT}
+                          value={raise()}
+                          onInput={(event) => {
+                            setRaise(Number(event.currentTarget.value));
+                          }}
+                        />
+                      </Field>
+                    </Row>
+                    <Row>
+                      <Button
+                        tone="primary"
+                        disabled={asking() < MIN_STARTING_BID || raise() < MIN_INCREMENT}
+                        onClick={sell}
+                      >
+                        List it
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setPanel(null);
+                        }}
+                      >
+                        Never mind
+                      </Button>
+                    </Row>
+                  </DialogSection>
+                </Show>
+              </Show>
+
+              {/* The sheet itself, read down the middle: the pokemon
+                  first, then what it is, then what it can do, then
+                  where it has been */}
+              <div class="flex flex-col items-center gap-4 text-center">
+                {/* What the record is about, walking. An egg is drawn
+                    as an egg: what is inside it is not the player's to
+                    see until it hatches */}
                 <SpriteDisplay
                   species={isEgg(loaded()) ? Species.Egg : loaded().species}
                   shiny={!isEgg(loaded()) && isShiny(loaded())}
@@ -747,164 +1018,65 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   scale={4}
                   label={named()}
                 />
-              </div>
 
-              {/* The whole sheet, read down rather than across: it is
-                  a record of one pokemon, and every line of it is the
-                  same shape */}
-              <dl class="rounded-lg border border-line-soft bg-parchment px-3 py-2 text-sm">
-                <dt>Level</dt>
-                <dd>{loaded().level}</dd>
-                {/* What it walked out of its last fight with. An egg
-                      has fought nothing, but it still has a pool —
-                      the one the hatchling will have */}
-                <dt>Health</dt>
-                <dd>
-                  {loaded().health} / {getMaxHealth(loaded())}
-                  {isFainted(loaded()) ? ' · fainted' : ''}
-                </dd>
-                {/* A pokemon can carry several at once, so all of
-                      them are listed rather than the worst */}
-                <Show when={loaded().statuses !== 0}>
-                  <dt>Status</dt>
-                  <dd>
-                    {unpackStatuses(loaded().statuses)
-                      .map((carried) => STATUS_NAMES[carried])
-                      .join(' · ')}
-                  </dd>
-                </Show>
-                {/* Everything below this point is read off the
-                      species, so an egg has none of it to show */}
-                <Show when={!isEgg(loaded())}>
-                  <dt>Gender</dt>
-                  <dd>{GENDER_LABELS[loaded().gender]}</dd>
-                  <dt>Size</dt>
-                  <dd>{describeSize(loaded())}</dd>
-                  <dt>Nature</dt>
-                  <dd>{NATURE_NAMES[loaded().nature]}</dd>
-                  <dt>Abilities</dt>
-                  <dd>{loaded().abilities.map(describeAbility).join(', ') || 'None'}</dd>
-                </Show>
-                <dt>Ball</dt>
-                <dd>{describeItem(BALL_ITEMS[loaded().ball])}</dd>
-                <Show when={!isEgg(loaded())}>
-                  <dt>Held items</dt>
-                  <dd>{loaded().items.map(describeItem).join(', ') || 'None'}</dd>
-                  <dt>Moves</dt>
-                  <dd>
-                    {loaded()
-                      .moves.map((move) => getMoveData(move).name)
-                      .join(', ') || 'None'}
-                  </dd>
-                </Show>
-                <dt>Friendship</dt>
-                <dd>
-                  {describeFriendship(loaded().friendship)} · {loaded().friendship} / 255
-                </dd>
-                <dt>Individual values</dt>
-                <dd>{describeIVs(loaded().ivs)}</dd>
-                <dt>{isEgg(loaded()) ? 'Found' : 'Caught'}</dt>
-                {/* The stamp is already in the catcher's own zone,
-                      so the date it opens with is the day they had */}
-                <dd>{loaded().caughtAt.slice(0, 10)}</dd>
-                {/* Where it came from, not just where it was
-                      standing: a grunt's drop is not a raid prize */}
-                <Show when={!isEgg(loaded())}>
-                  <dt>Met</dt>
-                  <dd>{describeMet(loaded())}</dd>
-                </Show>
-                <dt>Origin</dt>
-                <dd>{describeOrigin(loaded())}</dd>
-              </dl>
+                <div class="flex flex-col items-center gap-0.5">
+                  <h3>{named()}</h3>
+                  {/* Both of the rolls it was made from, drawn rather
+                      than printed. Two of the same species with the
+                      same sigil are the same individual */}
+                  <Meta class="font-mono tracking-[0.2em]">
+                    {getSigil(loaded().individualValue, loaded().traitValue)}
+                  </Meta>
+                </div>
 
-              {/* Whose hands it has passed through, oldest first. Each
-                  entry says how that owner came by it and the day they
-                  did, in their own zone — so a pokemon that has been
-                  sold reads as a life rather than as a current owner */}
-              <Show when={loaded().history.length}>
-                <DialogSection title="Owners">
-                  <List>
-                    <For each={loaded().history}>
-                      {(entry) => (
-                        <ListRow>
-                          <span class="grow font-medium">{describeOwner(entry.owner)}</span>
-                          <Meta>
-                            {ACQUISITION_NAMES[entry.kind]} · {entry.acquiredAt.slice(0, 10)}
-                          </Meta>
-                        </ListRow>
-                      )}
+                {/* What it is: the species it belongs to and the
+                    types it fights as. An egg is none of that yet */}
+                <Show when={!isEgg(loaded())}>
+                  <Row class="justify-center">
+                    <span class="font-medium">{getSpeciesData(loaded().species).name}</span>
+                    <For each={getSpeciesData(loaded().species).types}>
+                      {(type) => <TypeBadge type={type} />}
                     </For>
-                  </List>
-                </DialogSection>
-              </Show>
-
-              <Show when={owned()}>
-                {/* Everything below changes the record, and a
-                      pokemon in a live battle is fighting as the
-                      snapshot froze it */}
-                <Show when={fighting()}>
-                  <p role="status">
-                    In a raid right now — nothing about it can be changed until the battle ends.
-                  </p>
+                  </Row>
                 </Show>
 
-                {/* The two the player sets themselves. A favorite is
-                    about parting with it; a lock is about disturbing
-                    it. Neither is a rule about the pokemon, so both
-                    come off the same way they went on */}
-                <DialogSection title="Keeping">
-                  <Row>
+                <Row class="justify-center">
+                  <Badge tone="leaf">Lv. {loaded().level}</Badge>
+                  <Show when={!isEgg(loaded())}>
+                    <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
+                  </Show>
+                  <Badge tone="gold">
+                    {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'}
+                  </Badge>
+                  <Show when={owned() != null && !isEgg(loaded())}>
                     <Button
-                      tone={isFavorite(loaded()) ? 'ghost' : 'primary'}
-                      disabled={fighting()}
-                      onClick={() => {
-                        favorite(!isFavorite(loaded()));
-                      }}
+                      tone="primary"
+                      disabled={
+                        (candies() ?? 0) < getCandyCost(loaded()) ||
+                        loaded().level >= MAX_LEVEL ||
+                        frozen()
+                      }
+                      onClick={feedCandy}
                     >
-                      {isFavorite(loaded()) ? 'Unfavorite' : 'Favorite'}
+                      {loaded().level >= MAX_LEVEL
+                        ? 'At the cap'
+                        : `Level up (${getCandyCost(loaded())})`}
                     </Button>
-                    <Button
-                      tone={isGuarded(loaded()) ? 'ghost' : 'primary'}
-                      disabled={fighting()}
-                      onClick={() => {
-                        guard(!isGuarded(loaded()));
-                      }}
-                    >
-                      {isGuarded(loaded()) ? 'Unlock' : 'Lock'}
-                    </Button>
-                  </Row>
-                  <Show when={isFavorite(loaded())}>
-                    <Meta>A favorite cannot be released, auctioned or traded away.</Meta>
                   </Show>
-                  <Show when={isGuarded(loaded())}>
-                    <Meta>
-                      Locked: it stays exactly as it is — no levels, no training, no evolution, no
-                      item given to it or taken back off it, and it is left out of fights, healing
-                      and purifying. It still walks with you, still comes to think more of you, and
-                      can still be left with the breeder.
-                    </Meta>
-                  </Show>
-                </DialogSection>
+                </Row>
 
-                <DialogSection title="Buddy">
-                  {/* Only what walks beside the player counts steps,
-                      so an egg has to be the buddy to get anywhere */}
-                  <Show
-                    when={buddy() !== props.catchId}
-                    fallback={<Badge tone="leaf">Walking with you</Badge>}
-                  >
-                    <Row>
-                      <Button tone="primary" onClick={takeAlong}>
-                        {isEgg(loaded()) ? 'Carry this egg' : 'Walk with this one'}
-                      </Button>
-                    </Row>
-                  </Show>
-                </DialogSection>
+                <Show when={!isEgg(loaded())}>
+                  <Meta>
+                    {describeSize(loaded())} · {GENDER_LABELS[loaded().gender]}
+                  </Meta>
+                </Show>
 
+                {/* An egg has no evolution to offer, so the section
+                    that would hold one holds the way out of the shell
+                    instead: how far along the walk is, and the button
+                    that ends it */}
                 <Show when={isEgg(loaded())}>
-                  <DialogSection title="Egg">
-                    {/* How far along it is, drawn rather than counted:
-                        an egg is a walk, and a walk has a length */}
+                  <DialogSection title="Hatching">
                     <div class="h-2 overflow-hidden rounded-full bg-line-soft">
                       <div
                         class="h-full rounded-full bg-leaf transition-[width]"
@@ -919,38 +1091,274 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         ? '.'
                         : ' — it only moves while it is the one being carried.'}
                     </Note>
-                    <Row>
-                      <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                        {canHatch(loaded()) ? 'Hatch' : `${stepsRemaining(loaded())} steps to go`}
-                      </Button>
-                    </Row>
+                    <Show when={owned()}>
+                      <Row class="justify-center">
+                        <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
+                          Hatch it
+                        </Button>
+                      </Row>
+                    </Show>
                   </DialogSection>
                 </Show>
 
                 <Show when={!isEgg(loaded())}>
+                  <DialogSection title="Evolution">
+                    <Show when={!evolutions.loading} fallback={<Note>Checking evolutions…</Note>}>
+                      <Show
+                        when={evolutions()?.length}
+                        fallback={<Note>No evolution is available right now.</Note>}
+                      >
+                        <List>
+                          <For each={evolutions()}>
+                            {(evolution) => (
+                              <ListRow>
+                                <Show
+                                  when={owned() != null}
+                                  fallback={
+                                    <span class="grow font-medium">
+                                      Evolves into {getSpeciesData(evolution.species).name}
+                                    </span>
+                                  }
+                                >
+                                  <RowButton
+                                    class="font-medium"
+                                    disabled={frozen()}
+                                    onClick={() => {
+                                      evolve(evolution.species);
+                                    }}
+                                  >
+                                    Evolve into {getSpeciesData(evolution.species).name}
+                                  </RowButton>
+                                </Show>
+                                {/* Item id 0 is a real item, so test for
+                                    absence rather than falsiness */}
+                                <Show when={getConsumedItem(evolution) ?? undefined} keyed>
+                                  {(item) => <Meta>uses {describeItem(item)}</Meta>}
+                                </Show>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                      </Show>
+                    </Show>
+                  </DialogSection>
+
+                  {/* Three readings of the same six numbers: what the
+                      pokemon has, what it was born with, and what has
+                      been trained into it. They are tabs rather than
+                      three lists, because a player compares one stat
+                      across them rather than reading all eighteen */}
+                  <DialogSection title="Stats">
+                    <TabGroup
+                      horizontal
+                      defaultValue={StatView.Total}
+                      toggleable={false}
+                      class="flex flex-col gap-2"
+                    >
+                      <TabBar>
+                        <TabButton value={StatView.Total}>Total</TabButton>
+                        <TabButton value={StatView.IV}>IV</TabButton>
+                        <TabButton value={StatView.EV}>EV</TabButton>
+                      </TabBar>
+
+                      <TabPanel value={StatView.Total}>
+                        <List>
+                          <ListRow>
+                            <span class="w-28 shrink-0 text-left">Health</span>
+                            <span class="grow text-left tabular-nums">
+                              {loaded().health} / {getMaxHealth(loaded())}
+                              {isFainted(loaded()) ? ' · fainted' : ''}
+                            </span>
+                          </ListRow>
+                          <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
+                            {(stat) => (
+                              <ListRow>
+                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                <span class="grow text-left tabular-nums">
+                                  {totalOf(loaded(), stat)}
+                                </span>
+                                {/* What the nature is doing to it, where
+                                    it is doing anything */}
+                                <Show when={getNatureFactor(loaded().nature, stat) !== 1}>
+                                  <Meta>
+                                    {getNatureFactor(loaded().nature, stat) > 1 ? '▲' : '▼'}
+                                  </Meta>
+                                </Show>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                        <Show when={loaded().statuses !== 0}>
+                          <Meta>
+                            {unpackStatuses(loaded().statuses)
+                              .map((carried) => STATUS_NAMES[carried])
+                              .join(' · ')}
+                          </Meta>
+                        </Show>
+                        <Meta>
+                          {describeFriendship(loaded().friendship)} · {loaded().friendship} / 255
+                        </Meta>
+                      </TabPanel>
+
+                      <TabPanel value={StatView.IV}>
+                        <List>
+                          <For each={STAT_ORDER}>
+                            {(stat) => (
+                              <ListRow>
+                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                                  <div
+                                    class="h-full rounded-full bg-gold"
+                                    style={{
+                                      width: `${(getIV(loaded().ivs, stat) / MAX_IV) * 100}%`,
+                                    }}
+                                  />
+                                </div>
+                                <Meta class="w-12 text-right tabular-nums">
+                                  {getIV(loaded().ivs, stat)}
+                                </Meta>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                        <Meta>What it was born with. Only a bottle cap moves these.</Meta>
+                      </TabPanel>
+
+                      <TabPanel value={StatView.EV}>
+                        <Row class="justify-center">
+                          <Badge tone={unusedEffort(loaded()) > 0 ? 'gold' : 'neutral'}>
+                            {unusedEffort(loaded())} to spend
+                          </Badge>
+                          <Meta>
+                            {effortSpent(loaded())} / {effortBudget(loaded())} trained
+                            {loaded().effortBonus > 0
+                              ? ` · ${loaded().effortBonus} from wings`
+                              : ''}
+                          </Meta>
+                        </Row>
+                        <List>
+                          <For each={STAT_ORDER}>
+                            {(stat) => (
+                              <ListRow>
+                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                                  <div
+                                    class="h-full rounded-full bg-leaf"
+                                    style={{
+                                      width: `${(loaded().effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
+                                    }}
+                                  />
+                                </div>
+                                <Meta class="w-12 text-right tabular-nums">
+                                  {loaded().effortValues[stat]}
+                                </Meta>
+                                <Show when={owned() != null}>
+                                  <Button
+                                    disabled={frozen() || loaded().effortValues[stat] <= 0}
+                                    onClick={() => {
+                                      train(stat, -EFFORT_STEP);
+                                    }}
+                                  >
+                                    −{EFFORT_STEP}
+                                  </Button>
+                                  <Button
+                                    tone="primary"
+                                    disabled={
+                                      frozen() || assignableEffort(loaded(), stat) < EFFORT_STEP
+                                    }
+                                    onClick={() => {
+                                      train(stat, EFFORT_STEP);
+                                    }}
+                                  >
+                                    +{EFFORT_STEP}
+                                  </Button>
+                                </Show>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                      </TabPanel>
+                    </TabGroup>
+                  </DialogSection>
+
+                  <DialogSection title="Moves">
+                    <Show when={loaded().moves.length} fallback={<Note>It knows nothing.</Note>}>
+                      <List>
+                        <For each={loaded().moves}>
+                          {(move) => (
+                            <ListRow class="justify-between">
+                              <span class="flex items-center gap-2">
+                                <TypeBadge type={getMoveData(move).type} />
+                                {/* Which of the three kinds it is, as a
+                                    mark rather than a word: the word is
+                                    the title, so nothing rests on the
+                                    colour alone */}
+                                <span
+                                  class="size-3 shrink-0 rounded-sm"
+                                  style={{
+                                    'background-color':
+                                      MOVE_CATEGORY_COLORS[getMoveData(move).category],
+                                  }}
+                                  title={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
+                                  aria-label={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
+                                  role="img"
+                                />
+                                <span class="font-medium">{getMoveData(move).name}</span>
+                              </span>
+                              <Meta>
+                                {getMoveData(move).power == null
+                                  ? ''
+                                  : `${getMoveData(move).power} power · `}
+                                {getMoveData(move).pp} PP
+                              </Meta>
+                            </ListRow>
+                          )}
+                        </For>
+                      </List>
+                    </Show>
+                  </DialogSection>
+
+                  <DialogSection title="Abilities">
+                    <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
+                      <List>
+                        <For each={loaded().abilities}>
+                          {(ability) => (
+                            <ListRow>
+                              <span class="grow text-left font-medium">
+                                {describeAbility(ability)}
+                              </span>
+                            </ListRow>
+                          )}
+                        </For>
+                      </List>
+                    </Show>
+                  </DialogSection>
+
                   <DialogSection title="Held items">
                     <Show when={loaded().items.length} fallback={<Note>Holding nothing.</Note>}>
                       <List>
                         <For each={loaded().items}>
                           {(item) => (
                             <ListRow>
-                              <span class="grow">{describeItem(item)}</span>
-                              <Button
-                                disabled={frozen()}
-                                onClick={() => {
-                                  moveItem(item, false);
-                                }}
-                              >
-                                Take back
-                              </Button>
+                              <span class="grow text-left">{describeItem(item)}</span>
+                              <Show when={owned() != null}>
+                                <Button
+                                  disabled={frozen()}
+                                  onClick={() => {
+                                    moveItem(item, false);
+                                  }}
+                                >
+                                  Take back
+                                </Button>
+                              </Show>
                             </ListRow>
                           )}
                         </For>
                       </List>
                     </Show>
                     {/* A catch holds one item at a time, matching the
-                      battle's per-unit limit */}
-                    <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
+                        battle's per-unit limit */}
+                    <Show when={owned() != null && loaded().items.length < HELD_ITEM_LIMIT}>
                       <InventoryPicker
                         inline
                         entries={bag()}
@@ -967,282 +1375,60 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       />
                     </Show>
                   </DialogSection>
+                </Show>
 
-                  <DialogSection title="Healing">
-                    {/* A fight leaves what it leaves, and nothing
-                        mends on its own: a berry or medicine is the
-                        quick way back, a level the slow one. Only what
-                        would actually do something is offered — using
-                        it spends it */}
-                    <InventoryPicker
-                      inline
-                      entries={bag()}
-                      disabled={frozen()}
-                      value={null}
-                      verb="Use"
-                      empty={
-                        isFainted(loaded())
-                          ? 'It is down. Only a revive brings it round — or a level.'
-                          : 'Nothing in the bag would do it any good.'
-                      }
-                      filter={(entry) => isRemedy(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          heal(item);
-                        }
-                      }}
-                    />
-                    {/* The herbal ones are cheaper than the bottle they
-                        stand next to and the pokemon pays the
-                        difference, so it is said before the press
-                        rather than after */}
-                    <Show
-                      when={bag()?.some((entry) => isHerbal(entry.item) && isRemedy(entry.item))}
-                    >
-                      <Meta>
-                        Herbal medicine is bitter: it works, and the pokemon will think less of you
-                        for it.
-                      </Meta>
-                    </Show>
-                  </DialogSection>
-
-                  <DialogSection title="Use item">
-                    {/* A cap is the only thing that moves the values a
-                      pokemon was born with, and it is spent doing it —
-                      so one is never offered to a pokemon that has
-                      nothing left to gain from it */}
-                    <Show
-                      when={!isPerfectIVs(loaded().ivs)}
-                      fallback={<Note>Every value is already as high as it goes.</Note>}
-                    >
-                      {/* Every other usable item is used somewhere else
-                          — a ball on an encounter, a stone through the
-                          evolution it enables — so the caps are the
-                          only ones a catch itself offers */}
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={frozen()}
-                        confirm
-                        value={null}
-                        verb="Use"
-                        empty="No bottle caps in the bag."
-                        filter={(entry) => isBottleCap(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            polish(item);
-                          }
-                        }}
-                      />
-                    </Show>
-                  </DialogSection>
-
-                  {/* A gem is only ever offered to a shadow, since a
-                        shadow is the only thing it does anything to */}
-                  <Show when={isShadow(loaded())}>
-                    <DialogSection title="Purify">
-                      <Note>
-                        A shadow. A Purifying Gem takes it off for good: the Shadow ability becomes
-                        Purified, it costs no more to raise than anything else, and every value goes
-                        up by {PURIFY_IV_BOOST}.
-                      </Note>
-                      <InventoryPicker
-                        inline
-                        entries={bag()}
-                        disabled={frozen()}
-                        confirm
-                        value={null}
-                        verb="Use"
-                        empty="No purifying gems in the bag."
-                        filter={(entry) => isPurifyingGem(entry.item)}
-                        onPick={(item) => {
-                          if (item != null) {
-                            purify(item);
-                          }
-                        }}
-                      />
-                    </DialogSection>
-                  </Show>
-
-                  <DialogSection title="Training">
-                    {/* Five points a level, spent wherever the player
-                        wants them: four of them buy one point of the
-                        stat itself, which is why the buttons move in
-                        fours */}
-                    <Row>
-                      <Badge tone={unusedEffort(loaded()) > 0 ? 'gold' : 'neutral'}>
-                        {unusedEffort(loaded())} to spend
-                      </Badge>
-                      <Meta>
-                        {effortSpent(loaded())} / {effortBudget(loaded())} trained
-                        {loaded().effortBonus > 0 ? ` · ${loaded().effortBonus} from wings` : ''}
-                      </Meta>
-                    </Row>
-
+                {/* Whose hands it has passed through, oldest first, and
+                    where it came from before any of them */}
+                <DialogSection title="History">
+                  <Show when={loaded().history.length}>
                     <List>
-                      <For each={STAT_ORDER}>
-                        {(stat) => (
+                      <For each={loaded().history}>
+                        {(entry) => (
                           <ListRow>
-                            <span class="w-28 shrink-0">{STAT_LABELS[stat]}</span>
-                            {/* How far along this stat is, drawn
-                                against what one stat can hold */}
-                            <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-                              <div
-                                class="h-full rounded-full bg-leaf"
-                                style={{
-                                  width: `${(loaded().effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
-                                }}
-                              />
-                            </div>
-                            <Meta class="w-12 text-right tabular-nums">
-                              {loaded().effortValues[stat]}
+                            <span class="grow text-left font-medium">
+                              {describeOwner(entry.owner)}
+                            </span>
+                            <Meta>
+                              {ACQUISITION_NAMES[entry.kind]} · {entry.acquiredAt.slice(0, 10)}
                             </Meta>
-                            <Button
-                              disabled={frozen() || loaded().effortValues[stat] <= 0}
-                              onClick={() => {
-                                train(stat, -EFFORT_STEP);
-                              }}
-                            >
-                              −{EFFORT_STEP}
-                            </Button>
-                            <Button
-                              tone="primary"
-                              disabled={frozen() || assignableEffort(loaded(), stat) < EFFORT_STEP}
-                              onClick={() => {
-                                train(stat, EFFORT_STEP);
-                              }}
-                            >
-                              +{EFFORT_STEP}
-                            </Button>
                           </ListRow>
                         )}
                       </For>
                     </List>
+                  </Show>
+                  <Meta>
+                    {isEgg(loaded()) ? 'Found' : describeMet(loaded())} ·{' '}
+                    {loaded().caughtAt.slice(0, 10)} · {describeOrigin(loaded())} ·{' '}
+                    {describeItem(BALL_ITEMS[loaded().ball])}
+                  </Meta>
+                </DialogSection>
 
-                    {/* A wing is three points nobody had to earn */}
-                    <h4>Wings</h4>
-                    <InventoryPicker
-                      inline
-                      entries={bag()}
-                      disabled={frozen()}
-                      value={null}
-                      verb="Use"
-                      empty="No wings in the bag."
-                      filter={(entry) => isWing(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          trainWithWing(item);
-                        }
-                      }}
-                    />
-
-                    {/* And a bitter berry is ten points handed back */}
-                    <h4>Bitter berries</h4>
-                    <InventoryPicker
-                      inline
-                      entries={bag()}
-                      disabled={frozen()}
-                      value={null}
-                      verb="Feed"
-                      empty="No berries in the bag that would untrain anything."
-                      filter={(entry) => BERRY_EFFORT_DROPS.has(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          feedBitterBerry(item);
-                        }
-                      }}
-                    />
-                  </DialogSection>
-
-                  <DialogSection title="Candies">
-                    {/* The stack is keyed by family, so every stage of
-                        the line draws on the same pile */}
-                    <Row>
-                      <Badge tone="gold">
-                        {candies() ?? 0} {(candies() ?? 0) === 1 ? 'candy' : 'candies'}
-                      </Badge>
-                      <Meta>for the {getSpeciesData(loaded().species).name} family</Meta>
-                    </Row>
-                    <Row>
-                      <Button
-                        tone="primary"
-                        disabled={
-                          (candies() ?? 0) < getCandyCost(loaded()) ||
-                          loaded().level >= MAX_LEVEL ||
-                          frozen()
-                        }
-                        onClick={feedCandy}
-                      >
-                        {loaded().level >= MAX_LEVEL
-                          ? 'Already at the level cap'
-                          : `Level up for ${getCandyCost(loaded())} ${
-                              getCandyCost(loaded()) === 1 ? 'candy' : 'candies'
-                            }`}
+                {/* There is no undoing it, so it takes two presses —
+                    and whatever it is holding comes back to the bag */}
+                <Show when={owned()}>
+                  <DialogSection title="Release">
+                    <Row class="justify-center">
+                      <Button tone="danger" disabled={fighting()} onClick={release}>
+                        {releasing() ? 'Let it go for good?' : 'Release'}
                       </Button>
-                      {/* A shadow keeps the Shadow ability, and pays
-                          for it at every level */}
-                      <Show when={isShadow(loaded())}>
-                        <Meta>A shadow costs twice as much to raise.</Meta>
+                      <Show when={releasing()}>
+                        <Button
+                          onClick={() => {
+                            setReleasing(false);
+                          }}
+                        >
+                          Keep it
+                        </Button>
                       </Show>
                     </Row>
-                  </DialogSection>
-
-                  <DialogSection title="Evolution">
-                    <Show when={!evolutions.loading} fallback={<Note>Checking evolutions…</Note>}>
-                      <Show
-                        when={evolutions()?.length}
-                        fallback={<Note>No evolution is available right now.</Note>}
-                      >
-                        <List>
-                          <For each={evolutions()}>
-                            {(evolution) => (
-                              <ListRow>
-                                <RowButton
-                                  class="font-medium"
-                                  disabled={frozen()}
-                                  onClick={() => {
-                                    evolve(evolution.species);
-                                  }}
-                                >
-                                  Evolve into {getSpeciesData(evolution.species).name}
-                                </RowButton>
-                                {/* Item id 0 is a real item, so test for
-                                    absence rather than falsiness */}
-                                <Show when={getConsumedItem(evolution) ?? undefined} keyed>
-                                  {(item) => <Meta>uses {describeItem(item)}</Meta>}
-                                </Show>
-                              </ListRow>
-                            )}
-                          </For>
-                        </List>
-                      </Show>
+                    <Show when={isFavorite(loaded())}>
+                      <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
                     </Show>
                   </DialogSection>
                 </Show>
-                <DialogSection title="Release">
-                  {/* There is no undoing it, so it takes two presses —
-                      and whatever it is holding comes back to the bag
-                      rather than going with it */}
-                  <DialogActions>
-                    <Button tone="danger" disabled={fighting()} onClick={release}>
-                      {releasing()
-                        ? `Release ${isEgg(loaded()) ? 'this egg' : getSpeciesData(loaded().species).name} for good?`
-                        : 'Release'}
-                    </Button>
-                    <Show when={releasing()}>
-                      <Button
-                        onClick={() => {
-                          setReleasing(false);
-                        }}
-                      >
-                        Keep
-                      </Button>
-                    </Show>
-                  </DialogActions>
-                </DialogSection>
+              </div>
 
-                <Status message={status()} />
-              </Show>
+              <Status message={status()} />
             </>
           )}
         </Show>
@@ -1252,6 +1438,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           onClick={() => {
             setStatus(null);
             setReleasing(false);
+            setPanel(null);
             props.onClose();
           }}
         >

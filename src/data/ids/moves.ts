@@ -4,6 +4,24 @@ export const enum MoveCategories {
   Status = 2,
 }
 
+export const MOVE_CATEGORY_NAMES: Record<MoveCategories, string> = {
+  [MoveCategories.Physical]: 'Physical',
+  [MoveCategories.Special]: 'Special',
+  [MoveCategories.Status]: 'Status',
+};
+
+/**
+ * What each kind of move is marked with. A move sheet is read at a
+ * glance — which of these a move is decides whether it reads Attack or
+ * Special Attack — so the mark is a colour rather than a word, with
+ * the word left to the label a reader can hover or hear
+ */
+export const MOVE_CATEGORY_COLORS: Record<MoveCategories, string> = {
+  [MoveCategories.Physical]: '#c92c2c',
+  [MoveCategories.Special]: '#4f5ad7',
+  [MoveCategories.Status]: '#8a8a8a',
+};
+
 export const enum MoveTargetFlags {
   // Target includes the source
   Self = 0b0000001,

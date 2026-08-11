@@ -12,7 +12,7 @@ import EggGroups from '../src/data/ids/egg-groups';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
-import { Types } from '../src/data/constants/types';
+import { TYPE_COLORS, TYPE_NAMES, Types } from '../src/data/constants/types';
 import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
 import {
   BALL_ITEMS,
@@ -23,7 +23,12 @@ import {
   getMachineMove,
   isMachineItem,
 } from '../src/data/ids/items';
-import { Moves } from '../src/data/ids/moves';
+import {
+  MOVE_CATEGORY_COLORS,
+  MOVE_CATEGORY_NAMES,
+  MoveCategories,
+  Moves,
+} from '../src/data/ids/moves';
 import {
   NON_VOLATILE_MASK,
   NON_VOLATILE_STATUSES,
@@ -78,6 +83,7 @@ import {
   isMarketable,
 } from '../src/data/overworld/vendor';
 import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
+import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../src/data/constants/sigil';
 import { isFavorite, isGuarded } from '../src/auth/caught-record';
 import {
   MAX_IV,
@@ -790,6 +796,60 @@ describe('item data', () => {
     expect(isGuarded({ flags: released })).toBe(false);
     expect(hasFlag(released, PokemonFlags.Shiny)).toBe(true);
     expect(hasFlag(released, PokemonFlags.Shadow)).toBe(true);
+  });
+
+  it('names and colours every type and move kind', () => {
+    // Both maps are read by the badges rather than matched on, so a
+    // type added without either would draw as a blank chip. The enum
+    // is const, so the keys of the name map stand in for it
+    const types: Types[] = Object.keys(TYPE_NAMES).map(Number);
+
+    expect(types.length).toBeGreaterThan(17);
+    for (const type of types) {
+      expect(TYPE_NAMES[type]).not.toBe('');
+      expect(TYPE_COLORS[type]).toMatch(/^#[0-9a-f]{6}$/);
+    }
+    expect(TYPE_NAMES[Types.Water]).toBe('Water');
+
+    // The three kinds a move can be, each with a mark of its own —
+    // and the word beside it, so nothing rests on the colour alone
+    for (const category of [
+      MoveCategories.Physical,
+      MoveCategories.Special,
+      MoveCategories.Status,
+    ]) {
+      expect(MOVE_CATEGORY_NAMES[category]).not.toBe('');
+      expect(MOVE_CATEGORY_COLORS[category]).toMatch(/^#[0-9a-f]{6}$/);
+    }
+    expect(new Set(Object.values(MOVE_CATEGORY_COLORS)).size).toBe(3);
+  });
+
+  it('draws both of a pokemon\u2019s rolls as eight braille cells', () => {
+    // Each cell is one byte of the roll, most significant first: the
+    // Unicode block puts dot n at bit n − 1 of the offset, so the two
+    // 32-bit numbers fit in eight characters with nothing dropped
+    expect(getSigil(0, 0)).toBe('\u2800'.repeat(SIGIL_CELLS));
+    expect(getSigil(0xff, 0)).toBe('\u2800\u2800\u2800\u28ff\u2800\u2800\u2800\u2800');
+    expect(getSigil(0, 0xff)).toBe('\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u28ff');
+    expect(getSigil(0xffff_ffff, 0xffff_ffff)).toBe('\u28ff'.repeat(SIGIL_CELLS));
+
+    // Every cell is a real braille cell, and the individual value is
+    // drawn before the trait value
+    const sigil = getSigil(0x0102_0304, 0x0506_0708);
+
+    expect(sigil.length).toBe(SIGIL_CELLS);
+    expect([...sigil].map((cell) => cell.codePointAt(0)! - BRAILLE_BASE)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8,
+    ]);
+
+    // The same roll always draws the same, and a different roll does
+    // not — which is the whole of what a sigil is for
+    expect(getSigil(0x0102_0304, 0x0506_0708)).toBe(sigil);
+    expect(getSigil(0x0102_0304, 0x0506_0709)).not.toBe(sigil);
+
+    // A roll that arrived as a signed number, or as nothing at all, is
+    // still eight cells rather than a thrown error
+    expect(getSigil(-1, Number.NaN)).toBe(`${'\u28ff'.repeat(4)}${'\u2800'.repeat(4)}`);
   });
 
   it('packs the statuses a pokemon carries into one mask', () => {

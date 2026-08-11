@@ -44,6 +44,12 @@ export default function setupSubstitutedStatus(battle: Battle): void {
    * Indirect damage (status conditions, recoil, Leech Seed) and sound-based
    * moves go through, matching the modern behavior. Excess damage beyond
    * the substitute's remaining HP is discarded.
+   *
+   * This one stays on the damage itself rather than answering
+   * CheckUnitCanDamage: a substitute does not refuse the hit, it eats
+   * it, and the eating has to happen exactly when the hit does. The
+   * blanket immunities are consulted before this runs, so a substitute
+   * never spends itself on damage its owner was never going to take.
    */
   battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
     const data = instances.get(event.target);

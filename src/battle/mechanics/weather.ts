@@ -13,7 +13,7 @@ const CHIP_INTERVAL = 1000;
 const CHIP_FRACTION = 1 / 16;
 
 // Damaging weathers, mapped to the types they cannot harm; ability
-// immunities (e.g. Sand Veil, Ice Body) veto the UnitDamage event in
+// immunities (e.g. Sand Veil, Ice Body) answer CheckUnitCanDamage in
 // their own modules instead
 const CHIP_IMMUNE_TYPES: { [key in Weathers]?: Set<Types> } = {
   [Weathers.Sandstorm]: new Set([Types.Rock, Types.Ground, Types.Steel]),

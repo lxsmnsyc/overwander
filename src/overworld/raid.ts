@@ -5,6 +5,7 @@ import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
+import { BANNED_BOSS_MOVES } from '../battle/abilities/special';
 import { EffectType } from '../battle/events';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
@@ -13,7 +14,8 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import { PokemonFlags } from '../data/constants/flags';
 import { MAX_IV, PERFECT_IVS, STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
-import type { Species } from '../data/ids/species';
+import type { Moves } from '../data/ids/moves';
+import { Species } from '../data/ids/species';
 import { NON_VOLATILE_STATUSES, packStatuses, unpackStatuses } from '../data/ids/status';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
@@ -80,6 +82,41 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
+ * The four moves a boss is staged with: what its species knows at
+ * `RAID_BOSS_LEVEL`, less the ones a boss may never have. The ban is
+ * applied before the four are taken, so a species with more to draw
+ * on still comes with a full set
+ */
+export function getBossMoves(species: Species): Moves[] {
+  return deriveMoves(species, RAID_BOSS_LEVEL, BANNED_BOSS_MOVES);
+}
+
+/**
+ * Species that are never staged as a boss, whatever the draw says.
+ *
+ * **Ditto** is the list. What it does is become something else, and a
+ * boss is the one thing in the game that must not: the copy would
+ * take a player's stats and throw away the raid-sized health pool the
+ * fight is built around. Banning Transform already stops the copying,
+ * but that leaves a Ditto with nothing at all to do — the answer is
+ * that Ditto is not a raid boss rather than that Ditto is a quiet one
+ */
+export const BANNED_BOSS_SPECIES = new Set<Species>([Species.Ditto]);
+
+/**
+ * Whether the species can be a boss at all: not one of the banned
+ * ones, and with something left to cast once the banned moves are
+ * taken off it.
+ *
+ * The second half is a rule rather than a list, so a later ban cannot
+ * quietly strand a species with an empty move list — it drops out of
+ * the draw on its own
+ */
+export function canStageBoss(species: Species): boolean {
+  return !BANNED_BOSS_SPECIES.has(species) && getBossMoves(species).length > 0;
+}
+
+/**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
  * and its effort values zero; the nature and ability come from the
@@ -111,7 +148,9 @@ export function createRaidBossSnapshot(
     // A boss never sparkles, and a shadow one carries the bit its
     // ability list already says it does
     flags: shadow ? PokemonFlags.Shadow : 0,
-    moves: deriveMoves(species, RAID_BOSS_LEVEL),
+    // A boss is staged without the moves a boss must not have: see
+    // BANNED_BOSS_MOVES for what is on that list and why
+    moves: getBossMoves(species),
     // The Boss ability is what makes it a raid: the health pool, the
     // stage immunities and the sweeping single-target moves all ride
     // on it, alongside the species' own rolled ability

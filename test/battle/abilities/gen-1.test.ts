@@ -650,6 +650,20 @@ describe('Magic Guard', () => {
     attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
     expect(holder.health).toBeCloseTo(160 - 19.6); // direct damage lands
   });
+
+  it('still pays what the holder spends on purpose', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.MagicGuard);
+
+    // A Substitute's price and an Explosion's own life are costs, not
+    // damage done to the holder: shrugging off indirect damage is no
+    // excuse for not paying
+    holder.triggerMoveEffect(Moves.Substitute, { type: MoveTargetType.None }, 0);
+
+    expect(holder.status[Statuses.Substituted]).toBeDefined();
+    expect(holder.health).toBe(160 - Math.floor(160 / 4));
+  });
 });
 
 describe('Friend Guard', () => {
@@ -1893,6 +1907,51 @@ describe('Boss', () => {
     // Plain damage still lands
     attacker.damage(NONE_CAUSE, boss, 10, 0);
     expect(boss.health).toBe(150);
+  });
+
+  it('is immune to indirect damage, crashes included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    // Whatever the source — a burn, a seed, the weather — nothing
+    // indirect takes health off a boss
+    attacker.damage(NONE_CAUSE, boss, 10, DamageFlags.Indirect);
+    expect(boss.health).toBe(160);
+
+    // A crash off a missed Jump Kick is its own damage, and it is
+    // refused the same way — a plain unit would be down to half here
+    boss.addMove(Moves.JumpKick);
+    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
+      id: 'UnitTriggerMoveMissed',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: boss,
+        move: Moves.JumpKick,
+        target: { type: MoveTargetType.Unit, unit: attacker },
+        steps: 0,
+      },
+    });
+    expect(boss.health).toBe(160);
+
+    // A drain rides the same event as a negative amount, so healing
+    // still reaches it — a boss' pool is far above the health these
+    // units are built with, so there is room to climb
+    boss.damage(NONE_CAUSE, boss, -10, DamageFlags.Indirect);
+    expect(boss.health).toBe(170);
+
+    // A hit still lands
+    attacker.damage(NONE_CAUSE, boss, 30, 0);
+    expect(boss.health).toBe(140);
+
+    // What a boss spends on purpose it still pays: a Substitute's
+    // price and an Explosion's own life are costs, not damage
+    boss.damage(NONE_CAUSE, boss, 20, DamageFlags.Indirect | DamageFlags.Cost);
+    expect(boss.health).toBe(120);
   });
 
   it('shrugs off disruption statuses unless self-inflicted', () => {

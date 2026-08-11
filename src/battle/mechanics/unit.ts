@@ -77,6 +77,16 @@ function setupUnitTypeMechanics(battle: Battle): void {
 }
 
 function setupUnitDamageMechanics(battle: Battle): void {
+  // The one place a blanket immunity is consulted. It runs before
+  // every regular listener, so damage that cannot land is stopped
+  // before anything acts on it — a substitute does not eat a hit its
+  // owner was never going to take
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Prepare, (event) => {
+    if (!event.target.checkCanDamage(event.cause, event.source, event.value, event.flags)) {
+      event.disabled = true;
+    }
+  });
+
   battle.on(BattleEvents.UnitHeal, EventPriority.Exact, (event) => {
     if (event.target.alive) {
       // setHealth clamps to the max HP

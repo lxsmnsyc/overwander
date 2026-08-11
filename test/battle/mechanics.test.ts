@@ -10,7 +10,7 @@ import { Items } from '../../src/data/ids/items';
 import Natures from '../../src/data/ids/natures';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
-import { Weathers } from '../../src/data/ids/status';
+import { Statuses, Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
 import { FULL_INCENSE_PRIORITY, LAX_INCENSE_EVASION } from '../../src/battle/items/incenses';
 import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
@@ -570,6 +570,58 @@ describe('weather chip damage', () => {
 
     expect(exposed.health).toBe(150);
     expect(sheltered.health).toBe(160);
+  });
+});
+
+describe('damage immunity', () => {
+  it('asks whether damage may land before anything acts on it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    // Nothing objects, so it lands
+    expect(target.checkCanDamage(cause, attacker, 10, 0)).toBe(true);
+    attacker.damage(cause, target, 10, 0);
+    expect(target.health).toBe(150);
+
+    // An immunity is a verdict on the query rather than a race to
+    // disable the damage: whatever answers false stops it outright
+    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      if (event.flags & DamageFlags.Indirect) {
+        event.success = false;
+      }
+    });
+
+    expect(target.checkCanDamage(cause, attacker, 10, DamageFlags.Indirect)).toBe(false);
+    attacker.damage(cause, target, 10, DamageFlags.Indirect);
+    expect(target.health).toBe(150);
+
+    // and leaves everything else alone
+    attacker.damage(cause, target, 10, 0);
+    expect(target.health).toBe(140);
+  });
+
+  it('refuses the hit before a substitute can eat it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.triggerMoveEffect(Moves.Substitute, { type: MoveTargetType.None }, 0);
+    expect(target.status[Statuses.Substituted]).toBeDefined();
+
+    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      event.success = false;
+    });
+
+    const paid = target.health;
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, target, 1000, 0);
+
+    // The substitute is still standing: it was never asked to spend
+    // itself on damage its owner was not going to take
+    expect(target.status[Statuses.Substituted]).toBeDefined();
+    expect(target.health).toBe(paid);
   });
 });
 

@@ -1,7 +1,7 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, MoveTargetFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveTargetFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
@@ -27,6 +27,31 @@ export const BOSS_HEALTH_SCALE = 10;
  * Every other stat simply doubles
  */
 export const BOSS_STAT_SCALE = 2;
+
+/**
+ * Moves a boss is never staged with.
+ *
+ * **Transform** is on the list because a boss that copies a player
+ * stops being a boss: the copy takes the opponent's stats, which
+ * throws away the raid-sized health pool the fight is built around.
+ *
+ * The other three are on it because they are ways back to the first.
+ * **Metronome** calls anything registered, **Mirror Move** casts back
+ * whatever the target last used, and **Mimic** takes a copy of it —
+ * so a boss holding one of them could reach Transform (or an
+ * Explosion, which it pays for like anything else) however carefully
+ * its own four were chosen. Banning the move is simpler than teaching
+ * three different copies what a boss may not become.
+ *
+ * A banned move is filtered out of the boss' learnset when the raid is
+ * staged, so the unit never has it to cast
+ */
+export const BANNED_BOSS_MOVES = new Set<Moves>([
+  Moves.Transform,
+  Moves.Metronome,
+  Moves.MirrorMove,
+  Moves.Mimic,
+]);
 
 /**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest)
@@ -113,10 +138,28 @@ const setupAbilities = [
           event.source.triggerAbility(Abilities.Boss);
         }
       }),
-      // Health-scaling damage never lands, direct or indirect
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-        if (event.flags & DamageFlags.HealthScaled && event.target.hasAbility(Abilities.Boss)) {
-          event.disabled = true;
+      // Nothing but a hit can take health off a boss: health-scaling
+      // damage never lands, direct or indirect, and neither does
+      // anything indirect — poison, a burn, a seed, the weather, a
+      // crash off a missed Jump Kick.
+      //
+      // Two things still get through, deliberately. A **cost** is
+      // paid whatever the payer is: a boss that explodes still dies
+      // by it, and one that puts up a Substitute still pays for it.
+      // And a negative amount is a heal — the drains ride this same
+      // event — so only damage is refused
+      battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+        const refused =
+          event.flags & (DamageFlags.HealthScaled | DamageFlags.Indirect) &&
+          !(event.flags & DamageFlags.Cost);
+
+        if (
+          event.success &&
+          refused &&
+          event.value > 0 &&
+          event.target.hasAbility(Abilities.Boss)
+        ) {
+          event.success = false;
 
           // For visual cues
           event.target.triggerAbility(Abilities.Boss);

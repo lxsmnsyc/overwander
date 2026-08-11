@@ -10,6 +10,7 @@ import Landmark from '../data/overworld/landmark';
 import type Npc from '../data/overworld/npc';
 import { NPCS } from '../data/overworld/npc';
 import type Chunk from './chunk';
+import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
 import type { GrottoReward } from './landmarks';
 import { resolveBerryPatch, resolveHiddenGrotto, resolveItemCache, resolveNest } from './landmarks';
@@ -321,7 +322,9 @@ export default class ChunkSnapshot {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const legendaries = pool.special.filter((entry) => isLegendarySpecies(entry.species));
+      const legendaries = pool.special.filter(
+        (entry) => isLegendarySpecies(entry.species) && canStageBoss(entry.species),
+      );
 
       if (legendaries.length > 0) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
@@ -353,7 +356,13 @@ export default class ChunkSnapshot {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const legendaries = pool.special.filter((entry) => isLegendarySpecies(entry.species));
+      // A species with nothing left to cast once the boss bans are
+      // applied is no boss: it is left out of both draws rather than
+      // staged with an empty move list
+      const legendaries = pool.special.filter(
+        (entry) => isLegendarySpecies(entry.species) && canStageBoss(entry.species),
+      );
+      const rare = pool.rare.filter((entry) => canStageBoss(entry.species));
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowRaid) {
@@ -364,7 +373,7 @@ export default class ChunkSnapshot {
         // The draws land in order: the pool, the species within it,
         // then the trait value its nature and ability derive from
         const legendary = rng.random() < SHADOW_RAID_LEGENDARY_CHANCE;
-        const entries = legendary && legendaries.length > 0 ? legendaries : pool.rare;
+        const entries = legendary && legendaries.length > 0 ? legendaries : rare;
 
         if (entries.length === 0) {
           continue;

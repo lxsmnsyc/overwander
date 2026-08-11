@@ -21,7 +21,7 @@ import {
   registerSpecies,
 } from '../../src/data/species';
 import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
-import { BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
+import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
@@ -40,15 +40,18 @@ import ChunkSnapshot, {
   SPAWN_COUNT,
 } from '../../src/overworld/chunk-snapshot';
 import {
+  BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
   LEGENDARY_RAID_REWARD_LEVEL,
   MYTHICAL_RAID_REWARD_LEVEL,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
+  canStageBoss,
   collectAftermath,
   createRaidBattle,
   createRaidBossSnapshot,
+  getBossMoves,
 } from '../../src/overworld/raid';
 import {
   ROCKET_PARTY_LEVEL,
@@ -56,11 +59,13 @@ import {
   createRocketParty,
 } from '../../src/overworld/rocket';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
+import { Moves } from '../../src/data/ids/moves';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,
   EncounterType,
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
+  MOVE_LIMIT,
   deriveAbility,
   deriveMoves,
   deriveNature,
@@ -404,6 +409,61 @@ describe('world', () => {
     expect(bossUnits[0].height).toBe(boss.height);
     expect(bossUnits[0].weight).toBe(boss.weight);
     expect(boss.weight).toBe(deriveSize(Species.Articuno, 0x12345678).weight);
+  });
+
+  it('stages a boss without the moves a boss must not have', () => {
+    // Transform is banned because a boss that copies a player throws
+    // away the raid-sized pool the whole fight is built around; the
+    // three copying moves are banned because each is a way back to it
+    for (const move of [Moves.Transform, Moves.Metronome, Moves.MirrorMove, Moves.Mimic]) {
+      expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
+    }
+
+    // Clefable would otherwise take Metronome, which can call
+    // anything registered — Transform included
+    expect(deriveMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
+    expect(createRaidBossSnapshot(Species.Clefable, 0x12345678).moves).not.toContain(
+      Moves.Metronome,
+    );
+
+    // The ban is applied before the four are taken, so a species with
+    // more to draw on still comes with a full set
+    const staged = createRaidBossSnapshot(Species.Pidgeot, 0x12345678);
+
+    expect(staged.moves).not.toContain(Moves.MirrorMove);
+    expect(staged.moves).toHaveLength(MOVE_LIMIT);
+  });
+
+  it('never stages a Ditto, or anything with nothing left to cast', () => {
+    // Ditto is barred by name: what it does is become something
+    // else, and a boss is the one thing that must not
+    expect(BANNED_BOSS_SPECIES.has(Species.Ditto)).toBe(true);
+    expect(canStageBoss(Species.Ditto)).toBe(false);
+
+    // It would have been barred by the second rule anyway — Transform
+    // is its whole learnset, so the ban leaves it with nothing — but
+    // the name is what keeps it out if it ever learns more
+    expect(deriveMoves(Species.Ditto, RAID_BOSS_LEVEL)).toEqual([Moves.Transform]);
+    expect(getBossMoves(Species.Ditto)).toEqual([]);
+    expect(canStageBoss(Species.Articuno)).toBe(true);
+
+    // And nothing the world actually stages is ever empty-handed
+    const world = new World('overworld');
+
+    for (let x = 0; x < 24; x++) {
+      const chunk = world.getChunk(x, 0);
+      const snapshot = new ChunkSnapshot(chunk, 0);
+
+      for (const roll of [
+        ...snapshot.getShadowRaids().values(),
+        ...snapshot.getLegendaryRaids().values(),
+      ]) {
+        expect(roll.species).not.toBe(Species.Ditto);
+        expect(createRaidBossSnapshot(roll.species, roll.traitValue).moves.length).toBeGreaterThan(
+          0,
+        );
+      }
+    }
   });
 
   it('fields a party at the share of health its records kept', () => {

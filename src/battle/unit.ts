@@ -15,6 +15,7 @@ import type {
   CheckUnitCanCastEvent,
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
+  CheckUnitCanDamageEvent,
   CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
   CheckUnitGroundedEvent,
@@ -1042,6 +1043,27 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveHits, event);
     return event.hits;
+  }
+
+  /**
+   * Whether damage may land on this unit at all. Asked once before
+   * the damage is emitted, so a blanket immunity answers a question
+   * rather than racing to disable the event
+   */
+  checkCanDamage(cause: EffectCause, source: Unit, value: number, flags: number): boolean {
+    const event: CheckUnitCanDamageEvent = {
+      id: 'CheckUnitCanDamage',
+      disabled: false,
+      source,
+      target: this,
+      value,
+      flags,
+      cause,
+      success: true,
+    };
+
+    this.battle.emit(BattleEvents.CheckUnitCanDamage, event);
+    return event.success;
   }
 
   checkStatusImmunity(status: Statuses, cause: EffectCause): boolean {

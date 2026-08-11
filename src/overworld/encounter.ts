@@ -339,13 +339,16 @@ export function deriveSize(species: Species, traitValue: number): Size {
 /**
  * The last four level-up moves the species knows at that level
  */
-export function deriveMoves(species: Species, level: number): Moves[] {
+export function deriveMoves(species: Species, level: number, banned?: Set<Moves>): Moves[] {
   const data = getSpeciesData(species);
   const learned = Object.keys(data.learnSet.level)
     .map(Number)
     .filter((threshold) => threshold <= level)
     .sort((a, b) => a - b)
-    .flatMap((threshold) => data.learnSet.level[threshold]);
+    .flatMap((threshold) => data.learnSet.level[threshold])
+    // Dropped before the four are taken rather than after, so a
+    // pokemon barred from one move still comes with four
+    .filter((move) => banned?.has(move) !== true);
 
   return learned.slice(-MOVE_LIMIT);
 }

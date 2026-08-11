@@ -194,6 +194,14 @@ export const enum BattleEvents {
   UnitSetNature = 129,
   UnitSetHeight = 130,
   UnitSetWeight = 131,
+  /**
+   * Whether damage may land on the unit at all. It is the question a
+   * blanket immunity answers — a Boss shrugging off everything
+   * indirect, Magic Guard, an ability that ignores its weather's chip
+   * — asked once before the damage is emitted, so an immunity is a
+   * verdict rather than a race to disable the event first
+   */
+  CheckUnitCanDamage = 132,
 }
 
 export const enum MoveTargetType {
@@ -416,6 +424,24 @@ export interface UnitUpdateStatusEvent extends UnitStatusEvent {
 
 export interface CheckUnitStatusImmunityEvent extends UnitUpdateStatusEvent {
   immune: boolean;
+}
+
+/**
+ * The speculative form of a damage event: same shape, asked before
+ * anything lands. A listener that says no stops the damage outright,
+ * so nothing here should change the battle — the damage may yet be
+ * refused by somebody else
+ */
+export interface CheckUnitCanDamageEvent extends UnitEvent {
+  target: Unit;
+  value: number;
+  flags: number;
+  cause: EffectCause;
+  /**
+   * Whether the damage may land. Opens true; a listener answering
+   * false is an immunity
+   */
+  success: boolean;
 }
 
 export interface UnitTriggerMoveChildEvent extends BaseEvent {
@@ -687,6 +713,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitStage]: [CheckUnitStageEvent, EventPriority];
   [BattleEvents.CheckUnitEscape]: [CheckUnitEscapeEvent, EventPriority];
   [BattleEvents.CheckUnitStatusImmunity]: [CheckUnitStatusImmunityEvent, EventPriority];
+  [BattleEvents.CheckUnitCanDamage]: [CheckUnitCanDamageEvent, EventPriority];
   [BattleEvents.CheckUnitRecoil]: [CheckUnitRecoilEvent, EventPriority];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];

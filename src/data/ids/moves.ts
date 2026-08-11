@@ -94,6 +94,14 @@ export const enum DamageFlags {
    * residual max-HP fractions)
    */
   HealthScaled = 0b1000,
+  /**
+   * Health the unit spends on purpose rather than loses: a
+   * Substitute's price, an Explosion's own life. It is indirect like
+   * any other cost, but nothing that shrugs off indirect damage gets
+   * to skip paying — an effect a unit chose is not something done to
+   * it
+   */
+  Cost = 0b1_0000,
 }
 
 export const enum StatFlags {

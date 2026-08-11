@@ -29,7 +29,9 @@ export default function setupSubstitute(battle: Battle): void {
     } as const;
 
     // Pay the HP cost first so the fresh substitute doesn't absorb it.
-    source.damage(cause, source, cost, DamageFlags.Indirect);
+    // It is a price rather than damage, so even a unit that shrugs
+    // off indirect damage pays it
+    source.damage(cause, source, cost, DamageFlags.Indirect | DamageFlags.Cost);
 
     source.addStatus(Statuses.Substituted, cause);
   });

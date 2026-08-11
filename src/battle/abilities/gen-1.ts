@@ -22,10 +22,10 @@ import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import {
   BattleEvents,
+  type CheckUnitCanDamageEvent,
   EffectType,
   MoveTargetType,
   type UnitAttackEvent,
-  type UnitDamageEvent,
 } from '../events';
 import { CRASH_MOVES } from '../moves/crash';
 import { OHKO_MOVES } from '../moves/fixed-damage';
@@ -64,14 +64,15 @@ function chipImmunity(
   battle: Battle,
   ability: Abilities,
   weather: Weathers,
-): EventListenerLifecycle<UnitDamageEvent> {
-  return battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+): EventListenerLifecycle<CheckUnitCanDamageEvent> {
+  return battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
     if (
+      event.success &&
       event.cause.type === EffectType.Weather &&
       event.cause.weather === weather &&
       event.target.hasAbility(ability)
     ) {
-      event.disabled = true;
+      event.success = false;
     }
   });
 }
@@ -714,10 +715,18 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
   createAbility(Abilities.MagicGuard, (battle) =>
-    battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-      // Only direct attack damage can hurt the holder
-      if (event.flags & DamageFlags.Indirect && event.target.hasAbility(Abilities.MagicGuard)) {
-        event.disabled = true;
+    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      // Only direct attack damage can hurt the holder — and what the
+      // holder spends on purpose, which is not damage done to it: a
+      // Substitute's price and an Explosion's own life are paid
+      // whoever pays them
+      if (
+        event.success &&
+        event.flags & DamageFlags.Indirect &&
+        !(event.flags & DamageFlags.Cost) &&
+        event.target.hasAbility(Abilities.MagicGuard)
+      ) {
+        event.success = false;
       }
     }),
   ),

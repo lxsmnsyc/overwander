@@ -30,7 +30,9 @@ export default function setupSelfDestructMoves(battle: Battle): void {
         { type: EffectType.Move, move: event.move, unit: event.source },
         event.source,
         getMoveData(event.move).power ?? 0,
-        DamageFlags.Indirect,
+        // The user's own life is what the move costs; nothing gets to
+        // explode and stay standing
+        DamageFlags.Indirect | DamageFlags.Cost,
       );
     }
   });

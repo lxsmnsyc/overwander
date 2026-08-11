@@ -167,6 +167,35 @@ raid's `traitValue` and an empty `caught` id. Its abilities are `Boss` plus the
 rolled one, and a shadow boss carries `Shadow` between them. It fights alone
 under `BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
 
+Its move list is filtered through `BANNED_BOSS_MOVES`
+([`src/battle/abilities/special.ts`](../../src/battle/abilities/special.ts)).
+**Transform** is on it because a boss that copies a player stops being a boss:
+the copy takes the opponent's stats and throws away the raid-sized health pool
+the fight is built around. **Metronome**, **Mirror Move** and **Mimic** are on it
+because each is a way back to the first — one calls anything registered, one
+casts back whatever the target last used, and one takes a copy of it — so
+banning them is simpler than teaching three different copies what a boss may not
+become.
+
+The ban is applied before the four moves are taken, so a boss barred from one
+still comes with a full set.
+
+Some species are not staged as bosses at all. `canStageBoss` keeps them out of
+both the legendary and the shadow draw, on two rules: it is not in
+`BANNED_BOSS_SPECIES`, and it has something left to cast once the banned moves
+are taken off it. **Ditto** is the whole of the first list — what it does is
+become something else, and a boss is the one thing that must not — and the
+second rule is a rule rather than a list, so a later move ban cannot quietly
+strand a species with an empty kit.
+
+What the `Boss` ability itself does to damage is worth stating plainly. Only a
+**hit** takes health off a boss: health-scaling damage never lands, and neither
+does anything indirect — poison, a burn, a seed, the weather, the crash off a
+missed Jump Kick. Two things still get through on purpose. A **cost**
+(`DamageFlags.Cost`) is paid whatever the payer is, so a boss that explodes still
+dies by it and one that puts up a Substitute still pays for it; and a negative
+amount is a heal, so drains reach it as they would anything else.
+
 ## `battles/{battleId}`
 
 | Field       | Type            | Notes                                        |

@@ -11,12 +11,14 @@ import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
 import Npc, { NPCS } from '../data/overworld/npc';
+import type Phenomenon from '../data/overworld/phenomenon';
+import { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
-import type { GrottoReward } from './landmarks';
-import { resolveBerryPatch, resolveHiddenGrotto, resolveItemCache, resolveNest } from './landmarks';
+import type { PhenomenonReward } from './landmarks';
+import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -50,9 +52,9 @@ export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
  */
 
 /**
- * What the ground gives up: item stashes, berry patches and hidden
- * grottos. Three spawn windows rather than one, so a lap of a chunk
- * is worth walking and a lap of the same landmark is not
+ * What the ground gives up: item stashes and berry patches. Three
+ * spawn windows rather than one, so a lap of a chunk is worth walking
+ * and a lap of the same landmark is not
  */
 export const LANDMARK_INTERVAL = 15 * 60 * 1000;
 
@@ -85,6 +87,15 @@ export const NPC_INTERVAL = 6 * 60 * 60 * 1000;
  * local, since the snapshot's clock already is
  */
 export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
+
+/**
+ * How long the same thing goes on at a phenomenon cell. An hour: long
+ * enough that a player who saw dust rising can walk to it, short
+ * enough that the cell is worth passing again on the way back — and
+ * twelve spawn windows, so what is happening there outlives the
+ * pokemon standing around it several times over
+ */
+export const PHENOMENON_INTERVAL = 60 * 60 * 1000;
 
 /**
  * How often a shadow raid reaches past the biome's rare species and
@@ -243,9 +254,9 @@ export default class ChunkSnapshot {
 
   /**
    * The quarter-hour window the chunk's ground belongs to: what a
-   * stash holds, what a patch grew, what a grotto hides. It outlives
-   * three spawn windows, so a landmark picked clean stays picked
-   * clean while the pokemon around it turn over
+   * stash holds and what a patch grew. It outlives three spawn
+   * windows, so a landmark picked clean stays picked clean while the
+   * pokemon around it turn over
    */
   get landmarkTimestamp(): number {
     return Math.floor(this.timestamp / LANDMARK_INTERVAL) * LANDMARK_INTERVAL;
@@ -568,37 +579,70 @@ export default class ChunkSnapshot {
     return rollVendorStock(() => rng.random());
   }
 
-  private hiddenGrottos: Map<number, GrottoReward> | null = null;
+  /**
+   * The hour a phenomenon belongs to. Every other landmark window is
+   * either the quarter-hour of the ground or a matter of hours; this
+   * one sits between them, because what is going on at a cell is an
+   * event rather than a thing lying there
+   */
+  get phenomenonTimestamp(): number {
+    return Math.floor(this.timestamp / PHENOMENON_INTERVAL) * PHENOMENON_INTERVAL;
+  }
+
+  private phenomena: Map<number, Phenomenon> | null = null;
 
   /**
-   * The window's hidden-grotto rewards, keyed by the landmark cell.
-   * Each HiddenGrotto landmark rolls its reward from the chunk seed
-   * and the landmark window — the pokemon branch draws from the
-   * biome's pool for that window's time of day — so a grotto only
-   * yields while the window lives; the next one hides something else
+   * What is going on at each phenomenon cell this hour, drawn from
+   * what the biome can host. The cell is the chunk's own and never
+   * moves; which of the four is happening on it is the window's, so a
+   * player who wants a dust cloud waits an hour or walks to drier
+   * ground
    */
-  getHiddenGrottos(): Map<number, GrottoReward> {
-    if (this.hiddenGrottos == null) {
-      const grottos = new Map<number, GrottoReward>();
-      const time = getTimeOfDay(this.landmarkTimestamp);
+  getPhenomena(): Map<number, Phenomenon> {
+    if (this.phenomena == null) {
+      const showing = new Map<number, Phenomenon>();
+      const kinds = BIOME_PHENOMENA[this.chunk.biome];
 
-      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark === Landmark.HiddenGrotto) {
-          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}grotto${cell}`);
-          const reward = resolveHiddenGrotto(
-            this.chunk.biome,
-            time,
-            () => rng.random(),
-            getFeaturedFamily(this.landmarkTimestamp),
-          );
-
-          if (reward != null) {
-            grottos.set(cell, reward);
+      if (kinds.length > 0) {
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.Phenomenon) {
+            continue;
           }
+
+          const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}phenomenon${cell}`);
+
+          showing.set(cell, kinds[Math.floor(rng.random() * kinds.length)]);
         }
       }
-      this.hiddenGrottos = grottos;
+      this.phenomena = showing;
     }
-    return this.hiddenGrottos;
+    return this.phenomena;
+  }
+
+  /**
+   * What the phenomenon at this cell turns out to be, or null when
+   * nothing is going on there — or when the biome had nothing in the
+   * bands it draws from.
+   *
+   * It is resolved per cell rather than for the whole chunk at once:
+   * a player only ever walks into one of them, and the roll is seeded
+   * so that every visitor of that cell this hour finds the same thing
+   */
+  getPhenomenonReward(cell: number): PhenomenonReward | null {
+    const phenomenon = this.getPhenomena().get(cell);
+
+    if (phenomenon == null) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}happening${cell}`);
+
+    return resolvePhenomenon(
+      phenomenon,
+      this.chunk.biome,
+      getTimeOfDay(this.phenomenonTimestamp),
+      () => rng.random(),
+      getFeaturedFamily(this.phenomenonTimestamp),
+    );
   }
 }

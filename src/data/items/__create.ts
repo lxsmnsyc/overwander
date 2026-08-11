@@ -30,6 +30,22 @@ export function registerItem(item: Items, data: ItemData): void {
   ITEM_DATA.set(item, data);
 }
 
+/**
+ * Every registered item of one kind. It is a scan of the registry
+ * rather than a list kept beside it, so a shelf cannot fall out of
+ * step with what is actually on it
+ */
+export function listItemsByType(type: ItemTypes): Items[] {
+  const found: Items[] = [];
+
+  for (const [item, data] of ITEM_DATA) {
+    if (data.type === type) {
+      found.push(item);
+    }
+  }
+  return found;
+}
+
 export function getItemData(item: Items): ItemData {
   const result = ITEM_DATA.get(item);
   if (result) {

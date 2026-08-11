@@ -29,7 +29,7 @@ Two things ride on it:
   chunk is one world per zone rather than one world on several clocks. What a
   player in UTC+8 finds there says nothing about what a player in UTC-5 will
   find, however the two line up their hours — spawns, item caches, berry
-  patches, grottos and raid rolls all move with it.
+  patches, phenomena and raid rolls all move with it.
 
 A client can misreport its zone. Everything derived from the offset is
 therefore **scoped by** it — the window document, the spawn ids, the claim

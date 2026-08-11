@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   SpawnRarity,
   boostFamilyWeights,
+  getEggPool,
   getSpawnPool,
   getSpawnRarity,
   isMythicalSpecies,
@@ -117,6 +118,7 @@ import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-booste
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   getAvailableEvolutions,
+  getBaseSpecies,
   getConsumedItem,
   getDayOfYear,
   getEggMoves,
@@ -424,6 +426,41 @@ describe('species day', () => {
 
     // The original pool is left alone
     expect(pool).toEqual(getSpawnPool(Biome.Grassland, TimeOfDay.Morning));
+  });
+
+  it('reduces a biome to the eggs a nest could be holding', () => {
+    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    const eggs = getEggPool(Biome.Grassland, TimeOfDay.Morning);
+
+    // Everything that hatches is a first stage, and nothing appears
+    // twice — that is the whole point of reducing the bands once
+    expect(eggs.length).toBeGreaterThan(0);
+    expect(new Set(eggs.map((entry) => entry.species)).size).toBe(eggs.length);
+    for (const entry of eggs) {
+      expect(getSpeciesData(entry.species).evolvesFrom).toBeUndefined();
+      expect(getSpawnRarity(entry.species)).not.toBe(SpawnRarity.Special);
+    }
+
+    // The weights are the three ordinary bands added up, species by
+    // species: a biome where four stages of one line spawn is a biome
+    // where that egg is four times as likely
+    const expected = new Map<Species, number>();
+
+    for (const band of [pool.base, pool.uncommon, pool.rare]) {
+      for (const entry of band) {
+        const egg = getBaseSpecies(entry.species);
+
+        expected.set(egg, (expected.get(egg) ?? 0) + entry.weight);
+      }
+    }
+    expect(new Map(eggs.map((entry) => [entry.species, entry.weight]))).toEqual(expected);
+
+    // Built once and kept: the pool is registered for the life of the
+    // process, so reducing it again would be work nobody asked for
+    expect(getEggPool(Biome.Grassland, TimeOfDay.Morning)).toBe(eggs);
+
+    // A biome with nothing awake in it has no eggs either
+    expect(getEggPool(Biome.Beyond, TimeOfDay.Day)).toEqual([]);
   });
 });
 

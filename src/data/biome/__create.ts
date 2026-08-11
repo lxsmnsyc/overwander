@@ -2,7 +2,7 @@ import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
 import { Species } from '../ids/species';
-import { getSpeciesData } from '../species';
+import { getBaseSpecies, getSpeciesData } from '../species';
 
 /**
  * One weighted slot of a biome's spawn pool
@@ -39,7 +39,16 @@ export function getSpawnPool(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
   return SPAWN_POOLS.get(biome)?.[time] ?? EMPTY_GROUPS;
 }
 
-function boostBand(entries: SpawnEntry[], family: Families, factor: number): SpawnEntry[] {
+/**
+ * One list of entries with a family's weighted more heavily. It is the
+ * whole of what a species day does to a pool, and it works the same on
+ * a rarity band as on the flat egg pool below
+ */
+export function boostFamilyEntries(
+  entries: SpawnEntry[],
+  family: Families,
+  factor: number,
+): SpawnEntry[] {
   return entries.map((entry) =>
     getSpeciesData(entry.species).family === family
       ? { species: entry.species, weight: entry.weight * factor }
@@ -60,11 +69,59 @@ export function boostFamilyWeights(
   factor: number,
 ): SpawnRarityGroups {
   return {
-    base: boostBand(groups.base, family, factor),
-    uncommon: boostBand(groups.uncommon, family, factor),
-    rare: boostBand(groups.rare, family, factor),
-    special: boostBand(groups.special, family, factor),
+    base: boostFamilyEntries(groups.base, family, factor),
+    uncommon: boostFamilyEntries(groups.uncommon, family, factor),
+    rare: boostFamilyEntries(groups.rare, family, factor),
+    special: boostFamilyEntries(groups.special, family, factor),
   };
+}
+
+/**
+ * Built once per pool and kept against the pool itself, since a pool
+ * is registered once and read for the life of the process. A
+ * re-registered biome hands back a new object and so gets a new egg
+ * pool with it
+ */
+const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
+
+/**
+ * What a nest in this biome may be holding, as a single weighted list.
+ *
+ * A nest lays the **first stage** of whatever line it drew, so the
+ * three ordinary bands are worth reducing once rather than at every
+ * roll: every entry is walked back to its base species and the weights
+ * of everything that walks back to the same egg are added together. A
+ * biome where four evolutions of one line spawn is a biome where that
+ * egg is four times as likely, which is what it already meant.
+ *
+ * The **special** band is left out entirely: a legendary has no nest,
+ * and a mythical is called with a relic or not at all.
+ *
+ * The distribution is exactly the merged bands' — only the shape is
+ * simpler, and the caller is left with one draw over one list
+ */
+export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
+  const groups = getSpawnPool(biome, time);
+  const built = EGG_POOLS.get(groups);
+
+  if (built != null) {
+    return built;
+  }
+
+  const weights = new Map<Species, number>();
+
+  for (const band of [groups.base, groups.uncommon, groups.rare]) {
+    for (const entry of band) {
+      const egg = getBaseSpecies(entry.species);
+
+      weights.set(egg, (weights.get(egg) ?? 0) + entry.weight);
+    }
+  }
+
+  const pool = [...weights].map(([species, weight]) => ({ species, weight }));
+
+  EGG_POOLS.set(groups, pool);
+  return pool;
 }
 
 export const enum SpawnRarity {
@@ -156,6 +213,30 @@ export function getSpawnRarity(species: Species): SpawnRarity {
 }
 
 /**
+ * One species out of a weighted list. Answers null for an empty one,
+ * so a caller can hand over whatever it has without checking first
+ */
+export function pickFromEntries(entries: SpawnEntry[], random: () => number): Species | null {
+  if (entries.length === 0) {
+    return null;
+  }
+
+  let total = 0;
+  for (const entry of entries) {
+    total += entry.weight;
+  }
+
+  let target = random() * total;
+  for (const entry of entries) {
+    target -= entry.weight;
+    if (target < 0) {
+      return entry.species;
+    }
+  }
+  return entries[entries.length - 1].species;
+}
+
+/**
  * Roll one spawn from a period's rarity groups: the first draw picks
  * the band (1/4096 special, 1/64 rare, 1/8 uncommon, base otherwise,
  * falling back to base when the rolled band is empty here), the
@@ -175,21 +256,5 @@ export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Spec
   ) {
     tier = groups.uncommon;
   }
-  if (tier.length === 0) {
-    return null;
-  }
-
-  let total = 0;
-  for (const entry of tier) {
-    total += entry.weight;
-  }
-
-  let target = random() * total;
-  for (const entry of tier) {
-    target -= entry.weight;
-    if (target < 0) {
-      return entry.species;
-    }
-  }
-  return tier[tier.length - 1].species;
+  return pickFromEntries(tier, random);
 }

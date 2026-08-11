@@ -11,14 +11,15 @@ ground they dig up is slower, and anything worth making a trip for outlives the
 trip. Every interval is a whole number of `SNAPSHOT_INTERVAL`s, so a landmark
 never rolls over halfway through the window a player is standing in.
 
-| Window               | Length     | What it turns over                          |
-| -------------------- | ---------- | ------------------------------------------- |
-| `SNAPSHOT_INTERVAL`  | 5 minutes  | The shared window document and its spawns   |
-| `LANDMARK_INTERVAL`  | 15 minutes | Item stashes, berry patches, hidden grottos |
-| `RAID_INTERVAL`      | 3 hours    | Legendary and shadow raid lobbies           |
-| `ROCKET_INTERVAL`    | 3 hours    | Team Rocket stops                           |
-| `NPC_INTERVAL`       | 6 hours    | Who is standing at a wandering-NPC cell     |
-| `NEST_INTERVAL`      | 12 hours   | The egg lying in a nest                     |
+| Window                | Length     | What it turns over                        |
+| --------------------- | ---------- | ----------------------------------------- |
+| `SNAPSHOT_INTERVAL`   | 5 minutes  | The shared window document and its spawns |
+| `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches            |
+| `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell     |
+| `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies         |
+| `ROCKET_INTERVAL`     | 3 hours    | Team Rocket stops                         |
+| `NPC_INTERVAL`        | 6 hours    | Who is standing at a wandering-NPC cell   |
+| `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                   |
 
 All six are derived from the one snapshot the player is standing in
 ([`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)):
@@ -186,24 +187,45 @@ interesting draw and the count is only how good a season it had. That is the
 difference from a cache, which rolls several kinds but rarely more than one or
 two of each.
 
-## `grottoClaims/{chunkSeed}@{landmarkTimestamp}$grotto{cell}:{uid}`
+## `phenomenonClaims/{chunkSeed}@{phenomenonTimestamp}$happening{cell}:{uid}`
 
-Written by `claimHiddenGrotto`, the same one-claim-per-window marker as an item
-cache.
+Written by `claimPhenomenon`, the same one-claim-per-window marker as an item
+cache — on the phenomenon's own **one-hour** window.
 
-| Field    | Type      | Notes        |                                         |
-| -------- | --------- | ------------ | --------------------------------------- |
-| `player` | `string`  | Claiming uid |                                         |
-| `kind`   | `'item' \ | 'pokemon'`   | Which branch of the grotto reward fired |
+| Field    | Type     | Notes                                          |
+| -------- | -------- | ---------------------------------------------- |
+| `player` | `string` | Claiming uid                                   |
+| `kind`   | `string` | `'item'`, `'pokemon'` or `'egg'` — which fired |
 
-An item reward is a stash, landing in the inventory as part of the claim — the
-same `pickItems` roll a cache uses, on the grotto's own bands, which shut the
-base tier out, so nothing common is ever in one. A pokemon reward
-comes back as a spawn tuple whose two rolls derive from
-`{seed}{timestamp}grotto{cell}spawn`, so every observer of that grotto meets the
-same individual; the caller passes it to `startEncounter` under the id
-`{chunkSeed}@{landmarkTimestamp}$grotto{cell}`, which has no `spawns` document
-behind it.
+A **phenomenon** is the one landmark whose kind is rolled rather than fixed. The
+cell is the chunk's own like any landmark; what is happening on it is drawn each
+hour from `BIOME_PHENOMENA[biome]`
+([`src/data/overworld/phenomenon.ts`](../../src/data/overworld/phenomenon.ts)),
+so water only ripples where there is water and dust only rises where there is
+dust. `getPhenomena()` says which one is showing; `getPhenomenonReward(cell)`
+resolves what it turns out to be, seeded by chunk, hour and cell so every visitor
+of that cell this hour finds the same thing.
+
+| Phenomenon         | Half the time                     | The other half                         |
+| ------------------ | --------------------------------- | -------------------------------------- |
+| **Hidden Grotto**  | — no item side at all             | A pokemon, or 1/64 an egg of the biome |
+| **Dust Cloud**     | One gem, stone, plate or valuable | A pokemon                              |
+| **Rippling Water** | One valuable                      | A pokemon                              |
+| **Flying Shadow**  | One wing                          | A pokemon                              |
+
+The pokemon is the biome's **uncommon** band, or its **rare** band one draw in
+eight (`PHENOMENON_RARE_CHANCE`), with either standing in for the other when it
+is empty. The base band is not in it — what a player can meet by walking is not
+worth stopping for — and neither is the special one, so no phenomenon ever stages
+a legendary.
+
+An item reward lands in the inventory as part of the claim, one piece: everything
+a phenomenon leaves is worth carrying home on its own. A pokemon reward comes back
+as a spawn tuple whose two rolls derive from
+`{seed}{phenomenonTimestamp}happening{cell}spawn`, passed to `startEncounter`
+under the id `{chunkSeed}@{phenomenonTimestamp}$happening{cell}`, which has no
+`spawns` document behind it. A grotto's egg is written by `grantNestEgg`, exactly
+as a nest's is.
 
 ## `nestClaims/{chunkSeed}{zone}@{nestTimestamp}$nest{cell}:{uid}`
 
@@ -223,12 +245,17 @@ reach it; the half-day window only decides what is lying there and how often.
 The claim grants an egg by writing a `caught` document with `egg` set — see
 [Eggs](catches.md#eggs) — rather than an inventory item or an encounter.
 
-What a nest holds is drawn from the biome's base, uncommon and rare bands for
-that window's time of day and then reduced to the first stage of its line: a nest
-holds what hatches, not what it grows into. The special tier is left out
-entirely, so no nest ever holds a legendary, and a mythical is still called with
-a relic or not at all. The hatchling is guaranteed one move off its line's egg
-list, which is the reason to walk the egg at all.
+What a nest holds is one draw on the biome's **egg pool** for that window's time
+of day (`getEggPool`): the base, uncommon and rare bands walked back to the first
+stage of each line and merged by species, since a nest holds what hatches rather
+than what it grows into. Merging is what makes it one list and one draw —
+`resolveNest` no longer flattens three bands at every roll — and the distribution
+is unchanged, because everything that reduces to the same egg has its weight
+added to that egg. The pool is built once per registered biome and kept against
+it. The special tier is not in it at all, so no nest ever holds a legendary, and
+a mythical is still called with a relic or not at all. The hatchling is
+guaranteed one move off its line's egg list, which is the reason to walk the egg
+at all.
 
 ## Wandering NPCs
 
@@ -347,7 +374,7 @@ walks through.
 
 ## Derived, never stored
 
-Landmarks, item-cache rewards, berry patches, grotto rewards, the species a nest
+Landmarks, item-cache rewards, berry patches, phenomena, the species a nest
 is holding, the party a Team
 Rocket grunt fields and cell placement are **not** in Firestore. They re-derive from the chunk seed, the zone and the
 snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),

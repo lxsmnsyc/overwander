@@ -4,8 +4,8 @@ import {
   CACHE_CLAIM_COLLECTION,
   ENCOUNTER_COLLECTION,
   FLED_COLLECTION,
-  GROTTO_CLAIM_COLLECTION,
   NEST_CLAIM_COLLECTION,
+  PHENOMENON_CLAIM_COLLECTION,
   SNAPSHOT_COLLECTION,
   SPAWN_COLLECTION,
 } from '../auth/collections';
@@ -205,38 +205,49 @@ export async function claimNest(
 }
 
 /**
- * What a hidden grotto yielded: either an item that already landed in
- * the bag, or the encounter the player now stands in
+ * What a phenomenon yielded: an item that already landed in the bag,
+ * the encounter the player now stands in, or — a grotto alone — the
+ * egg it was hiding
  */
-export type GrottoClaim =
+export type PhenomenonClaim =
   | { kind: 'item'; items: ItemStack[] }
-  | { kind: 'encounter'; encounter: EncounterRecord };
+  | { kind: 'encounter'; encounter: EncounterRecord }
+  | { kind: 'egg'; catchId: string };
 
 /**
- * Interact with a hidden grotto. A stash lands in the bag here; a
- * pokemon is staged as an encounter of its own, with the spawn rolled
- * from the chunk, window and cell — so the grotto's pokemon is the
- * one the world hid there, not one the caller named
+ * Walk into whatever is going on at a cell.
+ *
+ * What is happening there and what it turns out to be are both the
+ * world's, derived from the chunk, the hour and the cell — so the
+ * pokemon a phenomenon startles out is the one it hid, not one the
+ * caller named, and every visitor of that cell this hour meets the
+ * same individual.
+ *
+ * **One successful interaction per player per hour.** The marker is
+ * taken before anything is handed over and only where something is
+ * actually there to hand over, so a phenomenon the biome could not
+ * fill costs the player nothing
  */
-export async function claimHiddenGrotto(
+export async function claimPhenomenon(
   uid: string,
   x: number,
   y: number,
   cell: number,
   now: number,
   offset: number,
-): Promise<GrottoClaim | null> {
+  locale: string,
+): Promise<PhenomenonClaim | null> {
   const snapshot = await resolveSnapshot(x, y, now, offset);
-  const reward = snapshot?.getHiddenGrottos().get(cell);
+  const reward = snapshot?.getPhenomenonReward(cell) ?? null;
 
   if (snapshot == null || reward == null) {
     return null;
   }
 
-  const key = `${snapshot.key}@${snapshot.landmarkTimestamp}$grotto${cell}`;
+  const key = `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening${cell}`;
 
   if (
-    !(await claim(GROTTO_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))
+    !(await claim(PHENOMENON_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))
   ) {
     return null;
   }
@@ -246,10 +257,17 @@ export async function claimHiddenGrotto(
     return { kind: 'item', items: reward.items };
   }
 
-  // The grotto's pokemon needs the two rolls a snapshot spawn would
-  // have; they derive from the same chunk, window and cell, so every
-  // observer of this grotto meets the same individual
-  const rng = new AleaRNG(`${snapshot.key}${snapshot.landmarkTimestamp}grotto${cell}spawn`);
+  if (reward.kind === 'egg') {
+    return {
+      kind: 'egg',
+      catchId: await grantNestEgg(uid, snapshot, cell, reward.species, now, offset, locale),
+    };
+  }
+
+  // The pokemon needs the two rolls a snapshot spawn would have; they
+  // derive from the same chunk, hour and cell, so what the phenomenon
+  // startled out is one pokemon rather than one per player
+  const rng = new AleaRNG(`${snapshot.key}${snapshot.phenomenonTimestamp}happening${cell}spawn`);
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
   return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };

@@ -23,8 +23,8 @@ import { requireUid } from '../server/firebase';
 import {
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
-  claimHiddenGrotto as claimGrottoOnServerSide,
   claimNest as claimNestOnServerSide,
+  claimPhenomenon as claimPhenomenonOnServerSide,
   meetSpawn,
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
@@ -437,47 +437,55 @@ async function claimNestOnServer(
 }
 
 /**
- * What a hidden grotto yielded: either an item that already landed in
- * the bag, or the encounter the player now stands in
+ * What a phenomenon yielded: an item that already landed in the bag,
+ * the encounter the player now stands in, or the egg a grotto was
+ * hiding
  */
-export type GrottoClaim =
+export type PhenomenonClaim =
   | { kind: 'item'; items: ItemStack[] }
-  | { kind: 'encounter'; encounter: EncounterRecord };
+  | { kind: 'encounter'; encounter: EncounterRecord }
+  | { kind: 'egg'; catchId: string };
 
 /**
- * Interact with a hidden grotto landmark. An item lands in the bag;
- * a pokemon is staged as an encounter of its own, rolled from the
- * chunk, window and cell so every visitor of that grotto meets the
- * same individual. Resolves null when there is nothing to claim
+ * Walk into whatever is going on at a phenomenon cell. An item lands
+ * in the bag; a pokemon is staged as an encounter of its own, rolled
+ * from the chunk, hour and cell so every visitor meets the same
+ * individual; a grotto's egg is written like a nest's.
+ *
+ * A player gets **one** of these per cell per hour, and only where
+ * something was actually there. Resolves null otherwise
  */
-export async function claimHiddenGrotto(
+export async function claimPhenomenon(
   snapshot: ChunkSnapshot,
   cell: number,
-): Promise<GrottoClaim | null> {
-  return claimGrottoOnServer(
+): Promise<PhenomenonClaim | null> {
+  return claimPhenomenonOnServer(
     await getIdToken(),
     snapshot.chunk.x,
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    getLocale(),
   );
 }
 
-async function claimGrottoOnServer(
+async function claimPhenomenonOnServer(
   token: string,
   x: number,
   y: number,
   cell: number,
   offset: number,
-): Promise<GrottoClaim | null> {
+  locale: string,
+): Promise<PhenomenonClaim | null> {
   'use server';
-  return claimGrottoOnServerSide(
+  return claimPhenomenonOnServerSide(
     await requireUid(token),
     x,
     y,
     cell,
     await syncServerClock(),
     offset,
+    locale,
   );
 }
 

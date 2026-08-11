@@ -18,7 +18,7 @@ a call is never trusted — only what the token proves.
 | `giveItem` / `takeItem`                                    | The bag and the catch have to move together, in one transaction                                                                                                                                   |
 | `releaseCatch`                                             | The record is deleted, its held items go back to the bag and a buddy record naming it goes with it, all at once                                                                                   |
 | `evolveCatch`                                              | The criteria — level, held item, carried item — are cross-document                                                                                                                                |
-| `claimItemCache` / `claimBerryPatch` / `claimHiddenGrotto` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing                                            |
+| `claimItemCache` / `claimBerryPatch` / `claimPhenomenon` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing                                            |
 | `startEncounter` / `meetSpawn`                             | The spawn is read from the shared store and has to belong to the chunk's live window                                                                                                              |
 | `markFled`                                                 | The key is recomputed from the stored encounter                                                                                                                                                   |
 | `peekRaid`                                                 | Reads only, but reads what the world staged: what a lair holds — and whether this player may host, join or only watch — is not a client's to decide                                               |
@@ -227,7 +227,7 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
-    match /grottoClaims/{claimId} {
+    match /phenomenonClaims/{claimId} {
       allow read: if signedIn();
       allow write: if false;
     }

@@ -40,6 +40,7 @@ import ChunkSnapshot, {
   LANDMARK_INTERVAL,
   NEST_INTERVAL,
   NPC_INTERVAL,
+  PHENOMENON_INTERVAL,
   RAID_INTERVAL,
   ROCKET_INTERVAL,
   SNAPSHOT_INTERVAL,
@@ -82,15 +83,18 @@ import deriveEncounter, {
 } from '../../src/overworld/encounter';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
-import { MAX_STACK } from '../../src/data/overworld/item-pool';
 import Npc, { NPCS } from '../../src/data/overworld/npc';
+import Phenomenon, {
+  BIOME_PHENOMENA,
+  getPhenomenonItems,
+} from '../../src/data/overworld/phenomenon';
 import { VENDOR_STAPLES, VENDOR_STOCK_KINDS, isMarketable } from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
   resolveBerryPatch,
-  resolveHiddenGrotto,
   resolveNest,
+  resolvePhenomenon,
 } from '../../src/overworld/landmarks';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import { FLAME_BODY_FACTOR, PICKUP_STEP_INTERVAL } from '../../src/overworld/abilities/gen-1';
@@ -267,40 +271,63 @@ describe('world', () => {
     expect(shapes.size).toBeGreaterThan(1);
   });
 
-  it('rolls window-scoped hidden grotto rewards', () => {
+  it('shows one of the biome\u2019s own phenomena, an hour at a time', () => {
     const world = new World('overworld');
-    let chunk = world.getChunk(0, 0);
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.Phenomenon),
+    );
 
-    // Find a chunk hosting at least one hidden grotto landmark
-    for (let x = 0; x < 20; x++) {
-      const candidate = world.getChunk(x, 0);
-
-      if (new Set(candidate.getLandmarkCells().values()).has(Landmark.HiddenGrotto)) {
-        chunk = candidate;
-        break;
-      }
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
     }
 
-    const WINDOW = LANDMARK_INTERVAL;
-    const grottos = new ChunkSnapshot(chunk, 0).getHiddenGrottos();
+    const showing = new ChunkSnapshot(chunk, 0).getPhenomena();
 
-    // Every reward sits on a HiddenGrotto landmark cell
-    expect(grottos.size).toBeGreaterThan(0);
-    for (const cell of grottos.keys()) {
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.HiddenGrotto);
+    // Every one of them sits on a phenomenon cell and is something
+    // this biome can actually host
+    expect(showing.size).toBeGreaterThan(0);
+    for (const [cell, phenomenon] of showing) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Phenomenon);
+      expect(new Set(BIOME_PHENOMENA[chunk.biome]).has(phenomenon)).toBe(true);
     }
 
-    // The same window agrees for every observer, and a grotto keeps
-    // what it hides for the whole quarter hour
-    expect(new ChunkSnapshot(chunk, 60 * 1000).getHiddenGrottos()).toEqual(grottos);
-    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getHiddenGrottos()).toEqual(grottos);
+    // Whatever is going on there goes on for the whole hour, and
+    // every observer of that hour sees the same thing
+    expect(new ChunkSnapshot(chunk, 60 * 1000).getPhenomena()).toEqual(showing);
+    expect(new ChunkSnapshot(chunk, PHENOMENON_INTERVAL - 1).getPhenomena()).toEqual(showing);
+    for (const cell of showing.keys()) {
+      expect(new ChunkSnapshot(chunk, 60 * 1000).getPhenomenonReward(cell)).toEqual(
+        new ChunkSnapshot(chunk, 0).getPhenomenonReward(cell),
+      );
+    }
 
-    // Expired windows regenerate: rewards vary across windows
+    // And the hours are not all the same hour
     const shapes = new Set<string>();
-    for (let window = 0; window <= 10; window++) {
-      shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getHiddenGrottos()]));
+
+    for (let window = 0; window <= 24; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL);
+
+      shapes.add(
+        JSON.stringify([
+          [...snapshot.getPhenomena()],
+          [...snapshot.getPhenomena().keys()].map((cell) => snapshot.getPhenomenonReward(cell)),
+        ]),
+      );
     }
     expect(shapes.size).toBeGreaterThan(1);
+
+    // Nothing is startled out of the space beyond the map
+    const beyond = findChunk(
+      world,
+      (candidate) =>
+        candidate.biome === Biome.Beyond &&
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.Phenomenon),
+    );
+
+    if (beyond != null) {
+      expect(new ChunkSnapshot(beyond, 0).getPhenomena().size).toBe(0);
+    }
   });
 
   it('stages legendary raids on the raid window', () => {
@@ -1415,39 +1442,29 @@ describe('world', () => {
     expect(resolveBerryPatch(rolls([0.5, 0, 0.5]))?.amount).toBe(4);
   });
 
-  it('resolves hidden grottos into rare finds', () => {
+  it('resolves a phenomenon into a meeting, a find or an egg', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const grotto = Phenomenon.HiddenGrotto;
 
-    // The cache branch rolls the grotto bands: 1/64 special, 1/8
-    // rare, uncommon otherwise — the base tier never shows up, so a
-    // grotto stash is two kinds at most
-    expect(resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0, 0, 0]))).toEqual({
-      kind: 'item',
-      // A special is always a single piece, and here the kind draw
-      // asked for nothing else to be buried with it
-      items: [{ item: Items.MasterBall, amount: 1 }],
-    });
-    // The opening draw is the best thing in the stash, and one kind
-    // of it is guaranteed
-    expect(
-      resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.05, 0, 0, 0])),
-    ).toEqual({
-      kind: 'item',
-      items: [{ item: Items.FireStone, amount: 1 }],
-    });
-    // A band roll past the rare threshold reaches no further than
-    // uncommon, and the pieces come off their own draw
-    expect(
-      resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.2, 0.99, 0, 0, 0.99])),
-    ).toEqual({
-      kind: 'item',
-      items: [{ item: Items.UltraBall, amount: MAX_STACK }],
-    });
+    // A grotto has no item side at all: the opening draw is the egg,
+    // and everything past it is the pokemon it was hiding
+    const egg = resolvePhenomenon(grotto, Biome.Grassland, TimeOfDay.Morning, rolls([0, 0]));
+
+    expect(egg?.kind).toBe('egg');
+    if (egg?.kind === 'egg') {
+      // A nest's own rule: what hatches, not what it grows into
+      expect(getSpeciesData(egg.species).evolvesFrom).toBeUndefined();
+    }
 
     // The pokemon branch is 1/8 rare, the rest uncommon, and never
     // reaches the legendary tier
-    const rare = resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0, 0]));
-    const uncommon = resolveHiddenGrotto(Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0.5, 0]));
+    const rare = resolvePhenomenon(grotto, Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0, 0]));
+    const uncommon = resolvePhenomenon(
+      grotto,
+      Biome.Grassland,
+      TimeOfDay.Morning,
+      rolls([0.9, 0.5, 0]),
+    );
 
     expect(rare?.kind).toBe('pokemon');
     if (rare?.kind === 'pokemon') {
@@ -1457,6 +1474,44 @@ describe('world', () => {
     if (uncommon?.kind === 'pokemon') {
       expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Uncommon);
     }
+
+    // The other three are half a meeting and half a find, and what
+    // they leave behind is their own: dust turns up anything the
+    // ground held, water only what it keeps, a shadow only wings
+    for (const phenomenon of [
+      Phenomenon.DustCloud,
+      Phenomenon.RipplingWater,
+      Phenomenon.FlyingShadow,
+    ]) {
+      const found = resolvePhenomenon(
+        phenomenon,
+        Biome.Grassland,
+        TimeOfDay.Morning,
+        rolls([0, 0.5]),
+      );
+
+      expect(found?.kind).toBe('item');
+      if (found?.kind === 'item') {
+        expect(found.items.length).toBe(1);
+        // One piece: everything a phenomenon leaves is worth carrying
+        // home on its own
+        expect(found.items[0].amount).toBe(1);
+        expect(new Set(getPhenomenonItems(phenomenon)).has(found.items[0].item)).toBe(true);
+      }
+
+      // Past the item draw it is a pokemon, the same two bands
+      expect(
+        resolvePhenomenon(phenomenon, Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0.5, 0]))
+          ?.kind,
+      ).toBe('pokemon');
+    }
+
+    // A wing is the whole of what a shadow drops, and a ripple never
+    // turns up a stone
+    expect(new Set(getPhenomenonItems(Phenomenon.FlyingShadow)).has(Items.HealthWing)).toBe(true);
+    expect(new Set(getPhenomenonItems(Phenomenon.RipplingWater)).has(Items.FireStone)).toBe(false);
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FireStone)).toBe(true);
+    expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
   });
 
   it('produces varied biomes across a region', () => {

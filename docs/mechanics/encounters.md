@@ -136,7 +136,7 @@ no field effects at all: it is carried, not accompanied.
 
 | Kind               | Where it comes from                                            |
 | ------------------ | -------------------------------------------------------------- |
-| **Wild**           | A spawn standing in a chunk, or a hidden grotto's pokemon      |
+| **Wild**           | A spawn standing in a chunk, or a phenomenon's pokemon         |
 | **Hatched**        | An egg walked open                                             |
 | **Legendary Raid** | A cleared legendary raid, at level 50                          |
 | **Shadow Raid**    | A cleared shadow raid, at level 25, keeping the Shadow ability |

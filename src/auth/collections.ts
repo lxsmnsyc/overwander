@@ -18,7 +18,7 @@ export const SNAPSHOT_COLLECTION = 'snapshots';
 export const SPAWN_COLLECTION = 'spawns';
 export const ENCOUNTER_COLLECTION = 'encounters';
 export const CACHE_CLAIM_COLLECTION = 'cacheClaims';
-export const GROTTO_CLAIM_COLLECTION = 'grottoClaims';
+export const PHENOMENON_CLAIM_COLLECTION = 'phenomenonClaims';
 export const BERRY_CLAIM_COLLECTION = 'berryClaims';
 /**
  * One marker per nest, window and player: a nest holds one egg per

@@ -7,10 +7,12 @@ const enum Landmark {
    */
   ItemCache = 0,
   /**
-   * A tucked-away hollow: yields either an uncommon/rare pokemon or
-   * a luckier item cache
+   * Something happening rather than something buried: a grotto, a
+   * dust cloud, water rippling, a shadow overhead. Which of them the
+   * cell is showing depends on the biome and turns over every hour,
+   * and any of them may be a pokemon
    */
-  HiddenGrotto = 1,
+  Phenomenon = 1,
   /**
    * A legendary's lair: the place it lives rather than the pokemon
    * itself. Which lairs a chunk can hold comes from its biome, and
@@ -60,7 +62,7 @@ export default Landmark;
  */
 export const LANDMARKS: Landmark[] = [
   Landmark.ItemCache,
-  Landmark.HiddenGrotto,
+  Landmark.Phenomenon,
   Landmark.LegendaryLair,
   Landmark.ShadowLair,
   Landmark.BerryPatch,
@@ -75,7 +77,7 @@ export const LANDMARKS: Landmark[] = [
  */
 export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'Item Cache',
-  [Landmark.HiddenGrotto]: 'Hidden Grotto',
+  [Landmark.Phenomenon]: 'Phenomenon',
   [Landmark.LegendaryLair]: 'Legendary Raid',
   [Landmark.ShadowLair]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',

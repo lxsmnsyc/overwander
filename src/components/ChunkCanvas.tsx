@@ -68,7 +68,7 @@ const COLORS = {
  */
 const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'C',
-  [Landmark.HiddenGrotto]: 'G',
+  [Landmark.Phenomenon]: '!',
   [Landmark.LegendaryLair]: 'R',
   [Landmark.ShadowLair]: 'S',
   [Landmark.BerryPatch]: 'B',

@@ -22,10 +22,13 @@ A **Nest** landmark holds one egg per `NEST_INTERVAL` — **twelve local hours**
 so it refills at midnight and at noon where the player is standing, and each
 player may take one per half day.
 
-What is lying in it is drawn from the biome's base, uncommon and rare bands for
-that window's time of day and then **reduced to the first stage of its line**: a
-nest holds what hatches, not what it grows into. The special tier is left out
-entirely, so no nest ever holds a legendary.
+What is lying in it is drawn from the biome's **egg pool** for that window's time
+of day: the base, uncommon and rare bands **reduced to the first stage of each
+line** and merged, since a nest holds what hatches rather than what it grows
+into. A biome where four stages of one line spawn is a biome where that egg is
+four times as likely — which is what the three bands already came to, worked out
+once per biome instead of at every roll. The special tier is not in the pool at
+all, so no nest ever holds a legendary.
 
 The hatchling is guaranteed **one move off its line's egg list**, which is the
 reason to walk the egg at all. The inherited move goes first in the move list so
@@ -124,7 +127,6 @@ jump, since those steps were not walked and the time they would have taken must
 not be banked for the next report.
 
 Like every wandering NPC but the vendor she serves a player **once per six-hour
-window** per
-cell, so a second egg means walking to another wandering cell — and finding
-whoever happens to be standing on that one. See
+window** per cell, so a second egg means walking to another wandering cell — and
+finding whoever happens to be standing on that one. See
 [Wandering NPCs](../firestore/overworld.md#wandering-npcs).

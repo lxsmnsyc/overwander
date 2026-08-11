@@ -24,11 +24,14 @@ import registerTundraSpawns from './tundra';
 import registerWoodlandSpawns from './woodland';
 
 export {
+  boostFamilyEntries,
   boostFamilyWeights,
+  getEggPool,
   getSpawnPool,
   getSpawnRarity,
   isLegendarySpecies,
   isMythicalSpecies,
+  pickFromEntries,
   pickSpawn,
   RARE_SPAWN_ODDS,
   registerSpawnPool,

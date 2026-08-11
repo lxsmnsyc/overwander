@@ -58,11 +58,26 @@ next window grows something new.
 | **Rare**     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists |
 | **Special**  | The pinch berries, held against the moment the holder is nearly out     |
 
-### A hidden grotto
+### A phenomenon
 
-A grotto gives either a stash on its own bands — which **shut the base tier out**,
-so nothing common is ever in one — or a pokemon, derived so that every observer
-of that grotto meets the same individual.
+Something going on at a cell rather than something buried in it, and the only
+landmark whose **kind** is rolled: which of the four is happening depends on the
+biome and turns over every hour. Half the time it is something to pick up, half
+the time it is a pokemon — the uncommon band, or the rare one in eight — and
+either way a player gets **one** of them per cell per hour.
+
+| Phenomenon         | What it leaves behind                            | Where it happens                     |
+| ------------------ | ------------------------------------------------ | ------------------------------------ |
+| **Hidden Grotto**  | Nothing — a pokemon, or 1/64 an egg of the biome | Forests, swamps, scrub               |
+| **Dust Cloud**     | One gem, stone, plate or valuable                | Deserts, mountains, cold open ground |
+| **Rippling Water** | One valuable                                     | Anywhere with water in it            |
+| **Flying Shadow**  | One wing                                         | Open country and high ground         |
+
+The **dust cloud is the richest**: it is the only place a stone or a plate is
+found outside a cache, and the only ordinary source of gems. The **grotto pays in
+pokemon** instead — it never leaves an item at all, and one grotto in sixty-four
+holds an egg of the biome, which is the same egg a nest would have laid without
+the half-day wait or the walk.
 
 ### A buddy with Pickup
 

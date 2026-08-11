@@ -18,7 +18,7 @@ import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
 import registerWings from './wings';
 
-export { getItemData, registerItem } from './__create';
+export { getItemData, listItemsByType, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';

@@ -69,7 +69,7 @@ that somehow ran out takes fewer landmarks rather than crowding them.
 | -------------------- | -------------------------------------------------------------- |
 | **Item Cache**       | A buried stash, rolled from the item pool                      |
 | **Berry Patch**      | A bush bearing one kind of berry                               |
-| **Hidden Grotto**    | A hollow holding either a luckier stash or a pokemon           |
+| **Phenomenon**       | Something going on: a grotto, dust, ripples, a shadow overhead |
 | **Nest**             | An egg of a local species, one per half day                    |
 | **Legendary Lair**   | A place a legendary lives; the raid is named after the place   |
 | **Shadow Lair**      | A lair with something wrong in it                              |
@@ -87,14 +87,15 @@ is worth: the pokemon a player walks past are the fastest thing in the world, th
 ground they dig up is slower, and anything worth making a trip for outlives the
 trip.
 
-| Window              | Length     | What turns over                             |
-| ------------------- | ---------- | ------------------------------------------- |
-| `SNAPSHOT_INTERVAL` | 5 minutes  | The spawns standing in the chunk            |
-| `LANDMARK_INTERVAL` | 15 minutes | Item stashes, berry patches, hidden grottos |
-| `RAID_INTERVAL`     | 3 hours    | Legendary and shadow raid lobbies           |
-| `ROCKET_INTERVAL`   | 3 hours    | Team Rocket stops                           |
-| `NPC_INTERVAL`      | 6 hours    | Who is standing at a wandering-NPC cell     |
-| `NEST_INTERVAL`     | 12 hours   | The egg lying in a nest                     |
+| Window                | Length     | What turns over                         |
+| --------------------- | ---------- | --------------------------------------- |
+| `SNAPSHOT_INTERVAL`   | 5 minutes  | The spawns standing in the chunk        |
+| `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches          |
+| `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell   |
+| `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies       |
+| `ROCKET_INTERVAL`     | 3 hours    | Team Rocket stops                       |
+| `NPC_INTERVAL`        | 6 hours    | Who is standing at a wandering-NPC cell |
+| `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                 |
 
 Every interval is a whole number of snapshot windows, and all of them are floored
 from the same instant, so a landmark never turns over halfway through the window

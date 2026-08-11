@@ -28,9 +28,9 @@ import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
   type SpawnRecord,
   claimBerryPatch,
-  claimHiddenGrotto,
   claimItemCache,
   claimNest,
+  claimPhenomenon,
   startEncounter,
   visitChunk,
   watchSnapshotWindow,
@@ -46,6 +46,7 @@ import type { ItemStack } from '../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
 import type Npc from '../data/overworld/npc';
 import { NPC_NAMES } from '../data/overworld/npc';
+import { PHENOMENON_NAMES } from '../data/overworld/phenomenon';
 import { getItemData } from '../data/items';
 import { getInventory } from '../auth/inventory';
 import { getRaidSpecies } from '../data/items/raid-items';
@@ -588,14 +589,20 @@ export default function OverworldTab(): JSX.Element {
         ? 'The nest is bare until tomorrow.'
         : 'An egg is lying in the nest. Walk with it to hatch it.';
     }
-    if (landmark === Landmark.HiddenGrotto) {
-      const claim = await claimHiddenGrotto(loaded.snapshot, at);
+    if (landmark === Landmark.Phenomenon) {
+      const showing = loaded.snapshot.getPhenomena().get(at);
+      const claim = await claimPhenomenon(loaded.snapshot, at);
 
       if (claim == null) {
-        return 'The grotto is quiet until the next window.';
+        // Either the hour staged nothing here, or this player has
+        // already had what it staged
+        return `${showing == null ? 'It' : PHENOMENON_NAMES[showing]} — nothing there now.`;
       }
       if (claim.kind === 'item') {
-        return `The grotto held ${describeStash(claim.items)}.`;
+        return `Left behind: ${describeStash(claim.items)}.`;
+      }
+      if (claim.kind === 'egg') {
+        return 'An egg, tucked away in the grotto. Walk with it to hatch it.';
       }
       return meet(user, claim.encounter);
     }
@@ -725,15 +732,21 @@ export default function OverworldTab(): JSX.Element {
       return '';
     }
 
-    // A wandering cell is named for whoever is on it this window, so a
+    // A wandering cell is named for whoever is on it this window, and
+    // a phenomenon for whatever is going on there this hour, so a
     // player can see from across the chunk whether it is worth the
     // walk
-    const standing =
-      landmark === Landmark.WanderingNpc
-        ? loaded?.snapshot.getWanderingNpcs().get(index)
-        : undefined;
+    if (landmark === Landmark.WanderingNpc) {
+      const standing = loaded?.snapshot.getWanderingNpcs().get(index);
 
-    return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
+      return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
+    }
+    if (landmark === Landmark.Phenomenon) {
+      const showing = loaded?.snapshot.getPhenomena().get(index);
+
+      return showing == null ? LANDMARK_NAMES[landmark] : PHENOMENON_NAMES[showing];
+    }
+    return LANDMARK_NAMES[landmark];
   };
 
   return (

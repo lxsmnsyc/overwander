@@ -31,10 +31,13 @@ export {
   getSpawnRarity,
   isLegendarySpecies,
   isMythicalSpecies,
+  isPrizedSpecies,
   pickFromEntries,
   pickSpawn,
+  PRIZED_SPAWN_ODDS,
   RARE_SPAWN_ODDS,
   registerSpawnPool,
+  spawnBand,
   SPECIAL_SPAWN_ODDS,
   SpawnRarity,
 } from './__create';

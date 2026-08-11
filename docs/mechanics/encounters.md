@@ -22,16 +22,30 @@ Three abilities lure, and they are the ones the mainline games gave the job:
 
 Each roll picks a rarity band first and a species inside it second, by weight:
 
-| Band     | Odds     | What is in it                                         |
-| -------- | -------- | ----------------------------------------------------- |
-| Special  | 1/4096   | Legendaries and mythicals                             |
-| Rare     | 1/64     | Fully-evolved species, babies, and single-stage lines |
-| Uncommon | 1/8      | Middle evolutions                                     |
-| Base     | The rest | Unevolved species that can still evolve               |
+| Band     | Odds     | What is in it                           |
+| -------- | -------- | --------------------------------------- |
+| Special  | 1/4096   | Legendaries and mythicals               |
+| Prized   | 1/512    | Babies and unowns                       |
+| Rare     | 1/64     | Fully-evolved and single-stage species  |
+| Uncommon | 1/8      | Middle evolutions                       |
+| Base     | The rest | Unevolved species that can still evolve |
 
-The bands are a property of the species rather than a list somebody maintains:
-`getSpawnRarity` reads what a species evolves into and out of. A band the biome
-leaves empty at that hour falls back to base rather than producing nothing.
+The odds are **widths** rather than running totals, so the prized band takes its
+slice out of base and leaves every other band exactly as wide as it was.
+
+Most bands are a property of the species rather than a list somebody maintains:
+`getSpawnRarity` reads what a species evolves into and out of. The **prized band
+is the exception, and has to be** — a baby evolves like any other first stage and
+an unown evolves like any other single-stage species, so nothing about the shape
+of either line says what it is. Both are listed by hand in `BABY_SPECIES` and
+`UNOWN_SPECIES`, and Gen 1 has neither, so every pool in the game today leaves
+the band out. A roll landing in a band the biome keeps nothing in falls to the
+**next band down**, which is how those pools go on rolling their rares unchanged.
+
+The prized band exists because meeting one of these should be a story a player
+tells. A baby is not rare for any structural reason — it is an ordinary first
+stage — and an unown is worth hunting only if the letters take months to collect.
+Neither is one-per-world, though: unlike a special, a player may meet a second.
 
 Weights inside a band are the biome's own, which is where "Rattata everywhere,
 Chansey almost never" comes from. The species day multiplies one family's weights

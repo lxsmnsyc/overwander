@@ -266,10 +266,18 @@ than what it grows into. Merging is what makes it one list and one draw —
 `resolveNest` no longer flattens three bands at every roll — and the distribution
 is unchanged, because everything that reduces to the same egg has its weight
 added to that egg. The pool is built once per registered biome and kept against
-it. The special tier is not in it at all, so no nest ever holds a legendary, and
-a mythical is still called with a relic or not at all. The hatchling is
-guaranteed one move off its line's egg list, which is the reason to walk the egg
-at all.
+it.
+
+Two bands are left out, for different reasons. The **special** tier is not in it
+at all, so no nest ever holds a legendary, and a mythical is still called with a
+relic or not at all. The **prized** tier is left out because a baby is _already_
+in the list — it is the first stage of its line, so every ordinary entry of that
+line walks back to it, and adding the band would count it twice. What that leaves
+out is an unown, which has no line to be walked back along: it is met rather than
+hatched.
+
+The hatchling is guaranteed one move off its line's egg list, which is the reason
+to walk the egg at all.
 
 ## Wandering NPCs
 

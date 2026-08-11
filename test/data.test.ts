@@ -6,6 +6,7 @@ import registerBiomeSpawns, {
   getSpawnPool,
   getSpawnRarity,
   isMythicalSpecies,
+  isPrizedSpecies,
   pickSpawn,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
@@ -1633,6 +1634,46 @@ describe('biome data', () => {
 
     // One-per-world class
     expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Special);
+
+    // The prized band is between the two, and Gen 1 puts nothing in
+    // it: the babies and the unowns are a later gen's, and nothing
+    // about the shape of a Gen 1 line reads as either
+    expect(SpawnRarity.Prized).toBeGreaterThan(SpawnRarity.Rare);
+    expect(SpawnRarity.Prized).toBeLessThan(SpawnRarity.Special);
+    for (const species of getRegisteredSpecies()) {
+      expect(isPrizedSpecies(species)).toBe(false);
+      expect(getSpawnRarity(species)).not.toBe(SpawnRarity.Prized);
+    }
+  });
+
+  it('rolls a spawn through the rarity bands, prized band included', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const groups = {
+      base: [{ species: Species.Pidgey, weight: 10 }],
+      uncommon: [{ species: Species.Ivysaur, weight: 10 }],
+      rare: [{ species: Species.Ditto, weight: 10 }],
+      prized: [{ species: Species.Eevee, weight: 10 }],
+      special: [{ species: Species.Mew, weight: 10 }],
+    };
+
+    // Richest first, each slice as wide as its own odds: special owns
+    // the opening 1/4096, prized the 1/512 after it, then rare, then
+    // uncommon, and whatever is left falls to base
+    expect(pickSpawn(groups, rolls([0]))).toBe(Species.Mew);
+    expect(pickSpawn(groups, rolls([1 / 1024, 0]))).toBe(Species.Eevee);
+    expect(pickSpawn(groups, rolls([1 / 128, 0]))).toBe(Species.Ditto);
+    expect(pickSpawn(groups, rolls([1 / 16, 0]))).toBe(Species.Ivysaur);
+    expect(pickSpawn(groups, rolls([0.9, 0]))).toBe(Species.Pidgey);
+
+    // A pool that leaves the band out is every pool in the game
+    // today, and its rares are rolled exactly as they were: the
+    // prized slice falls to the band below rather than to base
+    const { prized, ...without } = groups;
+
+    expect(prized).toHaveLength(1);
+    expect(pickSpawn(without, rolls([1 / 1024, 0]))).toBe(Species.Ditto);
+    expect(pickSpawn(without, rolls([1 / 128, 0]))).toBe(Species.Ditto);
+    expect(pickSpawn(without, rolls([0.9, 0]))).toBe(Species.Pidgey);
   });
 
   it('groups biome spawn pools by time of day and rarity', () => {

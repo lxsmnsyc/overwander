@@ -17,3 +17,4 @@
 - [ ] egg move by parent
 - [ ] limit auction to prized/special items
 - [ ] limit auction to perfect IVs or specials
+- [ ] held item on encounter

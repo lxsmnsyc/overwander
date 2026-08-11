@@ -19,7 +19,24 @@ export interface SpawnRarityGroups {
   base: SpawnEntry[];
   uncommon: SpawnEntry[];
   rare: SpawnEntry[];
+  /**
+   * Between rare and special: the species a walk is lucky to meet but
+   * that are not one-per-world — the babies, and the unowns.
+   *
+   * It is **optional** on purpose. Gen 1 has neither, so every pool
+   * registered today would carry an empty line saying so; a biome
+   * that has nothing prized simply does not mention the band, and a
+   * later gen adds it to the pools it belongs in
+   */
+  prized?: SpawnEntry[];
   special: SpawnEntry[];
+}
+
+/**
+ * One band of a pool, whether or not the pool bothered to list it
+ */
+export function spawnBand(groups: SpawnRarityGroups, band: keyof SpawnRarityGroups): SpawnEntry[] {
+  return groups[band] ?? [];
 }
 
 /**
@@ -72,6 +89,7 @@ export function boostFamilyWeights(
     base: boostFamilyEntries(groups.base, family, factor),
     uncommon: boostFamilyEntries(groups.uncommon, family, factor),
     rare: boostFamilyEntries(groups.rare, family, factor),
+    prized: boostFamilyEntries(spawnBand(groups, 'prized'), family, factor),
     special: boostFamilyEntries(groups.special, family, factor),
   };
 }
@@ -96,6 +114,13 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  *
  * The **special** band is left out entirely: a legendary has no nest,
  * and a mythical is called with a relic or not at all.
+ *
+ * The **prized** band is left out for a different reason. A baby is
+ * the first stage of its line, so it is already in this list — every
+ * ordinary entry of its line walks back to it — and adding the band
+ * would count it a second time. What is left out by that is an unown,
+ * which has no line to be walked back along: it is met rather than
+ * hatched, which is the right answer for it.
  *
  * The distribution is exactly the merged bands' — only the shape is
  * simpler, and the caller is left with one draw over one list
@@ -135,17 +160,24 @@ export const enum SpawnRarity {
    */
   Uncommon = 1,
   /**
-   * Fully-evolved, baby and single-line species
+   * Fully-evolved and single-line species
    */
   Rare = 2,
   /**
+   * The babies and the unowns: species a walk is lucky to meet, but
+   * that a player may meet more than one of. Rarer than a fully-evolved
+   * spawn by eight, commoner than a legendary by eight
+   */
+  Prized = 3,
+  /**
    * Mythicals, legendaries and other one-per-world class species
    */
-  Special = 3,
+  Special = 4,
 }
 
 export const UNCOMMON_SPAWN_ODDS = 1 / 8;
 export const RARE_SPAWN_ODDS = 1 / 64;
+export const PRIZED_SPAWN_ODDS = 1 / 512;
 export const SPECIAL_SPAWN_ODDS = 1 / 4096;
 
 /**
@@ -191,19 +223,43 @@ export function isMythicalSpecies(species: Species): boolean {
 }
 
 /**
- * Babies can still evolve yet spawn at Rare odds; Gen 1 has none,
- * future gens register theirs here
+ * Babies: the first stage of a line that a later gen put in front of
+ * what used to be the first stage. They can still evolve, so nothing
+ * about the shape of their line would place them — a baby reads as an
+ * ordinary Base species — and meeting one in the wild is meant to be
+ * a story. Gen 1 has none; future gens register theirs here
  */
 const BABY_SPECIES = new Set<Species>();
+
+/**
+ * The unowns. One species wearing many faces, and the point of it is
+ * the hunt: a walk turns one up rarely enough that the letters are
+ * collected over months. Gen 1 has none; Gen 2 registers them here
+ */
+const UNOWN_SPECIES = new Set<Species>();
+
+/**
+ * Whether the species is one of the prized band's — a baby or an
+ * unown. Both are listed rather than derived, because neither is
+ * anything the shape of a line can be read off
+ */
+export function isPrizedSpecies(species: Species): boolean {
+  return BABY_SPECIES.has(species) || UNOWN_SPECIES.has(species);
+}
 
 export function getSpawnRarity(species: Species): SpawnRarity {
   if (SPECIAL_SPECIES.has(species)) {
     return SpawnRarity.Special;
   }
+  // Asked before the shape of the line is, since a baby evolves like
+  // any other first stage and would otherwise read as Base
+  if (isPrizedSpecies(species)) {
+    return SpawnRarity.Prized;
+  }
 
   const data = getSpeciesData(species);
 
-  if (BABY_SPECIES.has(species) || data.evolvesInto == null) {
+  if (data.evolvesInto == null) {
     return SpawnRarity.Rare;
   }
   if (data.evolvesFrom != null) {
@@ -237,24 +293,39 @@ export function pickFromEntries(entries: SpawnEntry[], random: () => number): Sp
 }
 
 /**
+ * The bands a spawn roll walks, richest first, with the width of each
+ * one's slice of the draw. They are widths rather than running
+ * totals, so a band added between two others takes its share out of
+ * **base** and leaves every other band as wide as it was
+ */
+const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
+  ['special', SPECIAL_SPAWN_ODDS],
+  ['prized', PRIZED_SPAWN_ODDS],
+  ['rare', RARE_SPAWN_ODDS],
+  ['uncommon', UNCOMMON_SPAWN_ODDS],
+];
+
+/**
  * Roll one spawn from a period's rarity groups: the first draw picks
- * the band (1/4096 special, 1/64 rare, 1/8 uncommon, base otherwise,
- * falling back to base when the rolled band is empty here), the
- * second draw picks within the band by weight
+ * the band (1/4096 special, 1/512 prized, 1/64 rare, 1/8 uncommon,
+ * base otherwise), the second draw picks within the band by weight.
+ *
+ * A roll landing in a band this biome keeps nothing in falls to the
+ * next band down rather than to base, which is what lets most biomes
+ * leave the prized band out altogether and still roll their rares
  */
 export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
-  const band = random();
-  let tier = groups.base;
+  const roll = random();
+  let edge = 0;
 
-  if (band < SPECIAL_SPAWN_ODDS && groups.special.length > 0) {
-    tier = groups.special;
-  } else if (band < SPECIAL_SPAWN_ODDS + RARE_SPAWN_ODDS && groups.rare.length > 0) {
-    tier = groups.rare;
-  } else if (
-    band < SPECIAL_SPAWN_ODDS + RARE_SPAWN_ODDS + UNCOMMON_SPAWN_ODDS &&
-    groups.uncommon.length > 0
-  ) {
-    tier = groups.uncommon;
+  for (const [band, odds] of SPAWN_BANDS) {
+    edge += odds;
+
+    const tier = spawnBand(groups, band);
+
+    if (roll < edge && tier.length > 0) {
+      return pickFromEntries(tier, random);
+    }
   }
-  return pickFromEntries(tier, random);
+  return pickFromEntries(groups.base, random);
 }

@@ -27,8 +27,14 @@ of day: the base, uncommon and rare bands **reduced to the first stage of each
 line** and merged, since a nest holds what hatches rather than what it grows
 into. A biome where four stages of one line spawn is a biome where that egg is
 four times as likely — which is what the three bands already came to, worked out
-once per biome instead of at every roll. The special tier is not in the pool at
-all, so no nest ever holds a legendary.
+once per biome instead of at every roll.
+
+Two bands are left out, for different reasons. The **special** tier is not in the
+pool at all, so no nest ever holds a legendary. The **prized** tier is left out
+because a baby is _already_ in the list: it is the first stage of its line, so
+every ordinary entry of that line walks back to it, and adding the band would
+count it twice. What that leaves out is an unown, which has no line to be walked
+back along — it is met rather than hatched, which is the right answer for it.
 
 The hatchling is guaranteed **one move off its line's egg list**, which is the
 reason to walk the egg at all. The inherited move goes first in the move list so

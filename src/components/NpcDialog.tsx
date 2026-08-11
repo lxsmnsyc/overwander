@@ -7,8 +7,17 @@ import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { describeFriendship, groomedFriendship } from '../data/constants/friendship';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import { getProfile } from '../auth/profile';
-import { boostEgg, breed, buyFromVendor, groomCatch, sellToVendor, visitNurse } from '../auth/npcs';
+import {
+  boostEgg,
+  breed,
+  buyFromVendor,
+  groomCatch,
+  remindMove,
+  sellToVendor,
+  visitNurse,
+} from '../auth/npcs';
 import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
 import { getItemData } from '../data/items';
 import Npc, {
   BREEDING_FEE,
@@ -16,12 +25,15 @@ import Npc, {
   GROOMING_FEE,
   NPC_NAMES,
   NURSE_CARE_LIMIT,
+  REMINDER_FEE,
+  getRecallableMoves,
 } from '../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT, isMarketable } from '../data/overworld/vendor';
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import InventoryPicker, { type ItemAmount, describeItem } from './InventoryPicker';
+import TeachMoveDialog, { MoveLine } from './TeachMoveDialog';
 import {
   Badge,
   Button,
@@ -31,7 +43,9 @@ import {
   List,
   ListRow,
   Meta,
+  Note,
   Row,
+  RowButton,
   Status,
 } from './styled';
 
@@ -130,6 +144,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   // Bumped after every trade, so the purse and the bag catch up with
   // what was just bought or sold
   const [traded, setTraded] = createSignal(0);
+  // What the Move Reminder has been told so far: which pokemon, and
+  // which of the moves it has lost. `reminding` is the two of them
+  // agreed to, and while it is set this dialog is closed — the
+  // teaching is a dialog of its own, and one modal over another
+  // fights it for the closing click
+  const [remindee, setRemindee] = createSignal<string | null>(null);
+  const [recall, setRecall] = createSignal<Moves | null>(null);
+  const [reminding, setReminding] = createSignal<[catchId: string, move: Moves] | null>(null);
 
   // Both lists are drawn from this one read: the pair the breeder
   // wants and the egg the daycare lady wants are the same records,
@@ -217,11 +239,45 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     return npc == null ? 'Somebody' : NPC_NAMES[npc];
   };
 
+  /**
+   * How many Heart Scales are in the bag. It is the reminder's whole
+   * price, and it is read off the same bag the vendor's picker reads
+   */
+  const scales = (): number =>
+    (bag() ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+
+  /**
+   * Which pokemon has been picked out for the reminder
+   */
+  const remembering = (): CatchOption | null =>
+    (catches() ?? []).find((option) => option.id === remindee()) ?? null;
+
+  /**
+   * What he could give this one back: everything its species learns by
+   * levelling up to its level, minus the moves it still knows. It is
+   * derived, so the client works it out for the list and the server
+   * works it out again from the stored record before taking the scale
+   */
+  const forgotten = (): Moves[] => {
+    const option = remembering();
+
+    return option == null
+      ? []
+      : getRecallableMoves(option.caught.species, option.caught.level, option.caught.moves);
+  };
+
+  const forget = (): void => {
+    setRemindee(null);
+    setRecall(null);
+  };
+
   const close = (): void => {
     setStatus(null);
     setChosen([]);
     setCounter(null);
     setBasket(null);
+    forget();
+    setReminding(null);
     props.onClose();
   };
 
@@ -386,292 +442,443 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * Hand the scale over and take the move back.
+   *
+   * It is the teaching dialog's `teach`, so what a player agreed to
+   * there is what is asked for here — and the scale leaves the bag in
+   * the same transaction the move list is written in, which is what
+   * makes a refusal cost nothing
+   */
+  const remind = async (
+    catchId: string,
+    move: Moves,
+    replaces: number,
+  ): Promise<Moves[] | null> => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return null;
+    }
+    return remindMove(snapshot, standing[0], catchId, move, replaces);
+  };
+
+  /**
+   * The scale is gone and the move is back. The bag is re-read the way
+   * a trade re-reads it, since that is where the scale went from
+   */
+  const remembered = (): void => {
+    forget();
+    setStatus('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
+    setTraded(traded() + 1);
+    Promise.resolve(refetch())
+      .then(() => {
+        props.onChange?.();
+      })
+      .catch(() => undefined);
+  };
+
   return (
-    <Dialog
-      isOpen={props.standing != null}
-      onClose={close}
-      title={who()}
-      description="Somebody standing out here with an offer. They will be gone when the window
+    <>
+      <Dialog
+        isOpen={props.standing != null && reminding() == null}
+        onClose={close}
+        title={who()}
+        description="Somebody standing out here with an offer. They will be gone when the window
         turns over, and each of them takes you up on it once while they are here — the vendor
         as often as your purse allows."
-    >
-      <Show when={props.standing}>
-        {(standing) => (
-          <>
-            <Show when={standing()[1] === Npc.Breeder}>
-              <DialogSection>
-                <Says>
-                  "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
-                  them. It takes after both."
-                </Says>
-                {/* The pair is picked with the same list every other
+      >
+        <Show when={props.standing}>
+          {(standing) => (
+            <>
+              <Show when={standing()[1] === Npc.Breeder}>
+                <DialogSection>
+                  <Says>
+                    "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
+                    them. It takes after both."
+                  </Says>
+                  {/* The pair is picked with the same list every other
                     part of the game picks a pokemon with; what makes
                     it a breeding pair is the two, and the rule about
                     what can be one */}
-                <CatchPicker
-                  inline
-                  multiple
-                  max={2}
-                  options={catches()}
-                  value={chosen()}
-                  verb="Leave"
-                  empty="You have nothing to leave."
-                  filter={(option) => !isEgg(option.caught) && !option.fighting}
-                  note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
-                  onPick={(picked) => {
-                    setStatus(null);
-                    setChosen(picked);
-                  }}
-                />
-                {/* The pairing is checked here only so the button can
+                  <CatchPicker
+                    inline
+                    multiple
+                    max={2}
+                    options={catches()}
+                    value={chosen()}
+                    verb="Leave"
+                    empty="You have nothing to leave."
+                    filter={(option) => !isEgg(option.caught) && !option.fighting}
+                    note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
+                    onPick={(picked) => {
+                      setStatus(null);
+                      setChosen(picked);
+                    }}
+                  />
+                  {/* The pairing is checked here only so the button can
                     say so first; the refusal itself is the server's */}
-                <Status
-                  message={
-                    chosen().length === 2 && !compatible()
-                      ? 'Those two will have nothing to do with each other.'
-                      : null
-                  }
-                />
-                <Row>
-                  <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
-                    Leave them ({BREEDING_FEE} gold)
-                  </Button>
-                </Row>
-              </DialogSection>
-            </Show>
+                  <Status
+                    message={
+                      chosen().length === 2 && !compatible()
+                        ? 'Those two will have nothing to do with each other.'
+                        : null
+                    }
+                  />
+                  <Row>
+                    <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
+                      Leave them ({BREEDING_FEE} gold)
+                    </Button>
+                  </Row>
+                </DialogSection>
+              </Show>
 
-            <Show when={standing()[1] === Npc.NurseJoy}>
-              <DialogSection>
-                <Says>
-                  "Leave them with me — all of them, if you like. No charge. And if one of them is
-                  carrying a shadow, I will see to that too."
-                </Says>
-                {/* She is free, so what keeps her from being a tap is
+              <Show when={standing()[1] === Npc.NurseJoy}>
+                <DialogSection>
+                  <Says>
+                    "Leave them with me — all of them, if you like. No charge. And if one of them is
+                    carrying a shadow, I will see to that too."
+                  </Says>
+                  {/* She is free, so what keeps her from being a tap is
                     the window: one visit per player while she is
                     standing here */}
-                <CatchPicker
-                  inline
-                  multiple
-                  max={NURSE_CARE_LIMIT}
-                  options={catches()}
-                  value={[]}
-                  verb="Hand over"
-                  empty="You have nothing for her to look at."
-                  filter={(option) => !isEgg(option.caught) && !option.fighting}
-                  reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-                  note={(option) =>
-                    isShadow(option.caught) ? 'shadow — she would purify it' : null
-                  }
-                  onPick={tendParty}
-                />
-              </DialogSection>
-            </Show>
+                  <CatchPicker
+                    inline
+                    multiple
+                    max={NURSE_CARE_LIMIT}
+                    options={catches()}
+                    value={[]}
+                    verb="Hand over"
+                    empty="You have nothing for her to look at."
+                    filter={(option) => !isEgg(option.caught) && !option.fighting}
+                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+                    note={(option) =>
+                      isShadow(option.caught) ? 'shadow — she would purify it' : null
+                    }
+                    onPick={tendParty}
+                  />
+                </DialogSection>
+              </Show>
 
-            <Show when={standing()[1] === Npc.DaycareLady}>
-              <DialogSection>
-                <Says>
-                  "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
-                  Wherever it is now, it will be that much further along."
-                </Says>
-                {/* The note on each row is what the fee actually buys
+              <Show when={standing()[1] === Npc.DaycareLady}>
+                <DialogSection>
+                  <Says>
+                    "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
+                    Wherever it is now, it will be that much further along."
+                  </Says>
+                  {/* The note on each row is what the fee actually buys
                     that egg: half of a long walk is further than half
                     of a short one */}
-                <CatchPicker
-                  inline
-                  options={catches()}
-                  value={null}
-                  verb="Warm"
-                  empty="You have no egg for her."
-                  filter={(option) =>
-                    isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
-                  }
-                  note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
-                  onPick={(id) => {
-                    if (id != null) {
-                      pushEgg(id);
+                  <CatchPicker
+                    inline
+                    options={catches()}
+                    value={null}
+                    verb="Warm"
+                    empty="You have no egg for her."
+                    filter={(option) =>
+                      isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
                     }
-                  }}
-                />
-              </DialogSection>
-            </Show>
+                    note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
+                    onPick={(id) => {
+                      if (id != null) {
+                        pushEgg(id);
+                      }
+                    }}
+                  />
+                </DialogSection>
+              </Show>
 
-            <Show when={standing()[1] === Npc.Groomer}>
-              <DialogSection>
-                <Says>
-                  "Leave one with me — {GROOMING_FEE} gold — and I will see to it properly. It will
-                  think half again as much of you when I hand it back."
-                </Says>
-                {/* The note is what the fee actually buys this
+              <Show when={standing()[1] === Npc.Groomer}>
+                <DialogSection>
+                  <Says>
+                    "Leave one with me — {GROOMING_FEE} gold — and I will see to it properly. It
+                    will think half again as much of you when I hand it back."
+                  </Says>
+                  {/* The note is what the fee actually buys this
                     pokemon: half of what it has left to give, which is
                     a great deal to one just out of its ball and next
                     to nothing to one that already adores its owner */}
-                <CatchPicker
-                  inline
-                  options={catches()}
-                  value={null}
-                  verb="Groom"
-                  empty="You have nothing for him to see to."
-                  filter={(option) =>
-                    !isEgg(option.caught) &&
-                    !option.fighting &&
-                    groomedFriendship(option.caught.friendship) > option.caught.friendship
-                  }
-                  note={(option) =>
-                    `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
-                  }
-                  onPick={(id) => {
-                    if (id != null) {
-                      groom(id);
+                  <CatchPicker
+                    inline
+                    options={catches()}
+                    value={null}
+                    verb="Groom"
+                    empty="You have nothing for him to see to."
+                    filter={(option) =>
+                      !isEgg(option.caught) &&
+                      !option.fighting &&
+                      groomedFriendship(option.caught.friendship) > option.caught.friendship
                     }
-                  }}
-                />
-              </DialogSection>
-            </Show>
+                    note={(option) =>
+                      `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
+                    }
+                    onPick={(id) => {
+                      if (id != null) {
+                        groom(id);
+                      }
+                    }}
+                  />
+                </DialogSection>
+              </Show>
 
-            <Show when={standing()[1] === Npc.Vendor}>
-              <DialogSection title="Trading">
-                <Says>
-                  "Balls and medicine, same price as anywhere. And I will take anything off you that
-                  is worth something — I am walking on either way."
-                </Says>
-                <Row>
-                  <Badge tone="gold">{gold() ?? 0} gold</Badge>
-                </Row>
+              <Show when={standing()[1] === Npc.MoveReminder}>
+                <DialogSection>
+                  <Says>
+                    "There is not a move in the world that is truly gone — only ones nobody has
+                    reminded them of. Bring me one of yours and a Heart Scale, and it will
+                    remember."
+                  </Says>
+                  <Row>
+                    <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
+                      {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
+                    </Badge>
+                  </Row>
 
-                {/* Two steps on purpose. The picker is where the player
+                  {/* Both inputs are on the counter the moment he is
+                    walked up to: the pokemon, and what that pokemon
+                    has lost. There is nothing to agree to first — what
+                    he offers *is* the two of them — so the button is
+                    the only step, and it stays dead until they are
+                    both filled in and a scale is in the bag.
+
+                    The pickers are inline rather than dialogs of their
+                    own, since this is already one */}
+                  <CatchPicker
+                    inline
+                    options={catches()}
+                    value={remindee()}
+                    verb="Remind"
+                    empty="You have nothing that has forgotten anything."
+                    filter={(option) =>
+                      !isEgg(option.caught) &&
+                      !option.fighting &&
+                      getRecallableMoves(
+                        option.caught.species,
+                        option.caught.level,
+                        option.caught.moves,
+                      ).length > 0
+                    }
+                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+                    note={(option) =>
+                      `${
+                        getRecallableMoves(
+                          option.caught.species,
+                          option.caught.level,
+                          option.caught.moves,
+                        ).length
+                      } forgotten`
+                    }
+                    onPick={(id) => {
+                      setStatus(null);
+                      setRecall(null);
+                      setRemindee(id);
+                    }}
+                  />
+
+                  {/* The second input only means anything once the
+                      first is answered: what has been forgotten is a
+                      question about a particular pokemon */}
+                  <Show when={remembering()} fallback={<Note>Choose one of yours first.</Note>}>
+                    <Meta>What it has learned and lost:</Meta>
+                    <List>
+                      <For each={forgotten()}>
+                        {(move) => (
+                          <ListRow selected={recall() === move}>
+                            <RowButton
+                              pressed={recall() === move}
+                              disabled={busy()}
+                              onClick={() => {
+                                setRecall(move);
+                              }}
+                            >
+                              <MoveLine move={move} />
+                            </RowButton>
+                          </ListRow>
+                        )}
+                      </For>
+                    </List>
+                  </Show>
+
+                  <Row>
+                    <Button
+                      tone="primary"
+                      disabled={busy() || scales() < 1 || remindee() == null || recall() == null}
+                      onClick={() => {
+                        const id = remindee();
+                        const move = recall();
+
+                        if (id != null && move != null) {
+                          setReminding([id, move]);
+                        }
+                      }}
+                    >
+                      Remind it (1 Heart Scale)
+                    </Button>
+                  </Row>
+                </DialogSection>
+              </Show>
+
+              <Show when={standing()[1] === Npc.Vendor}>
+                <DialogSection title="Trading">
+                  <Says>
+                    "Balls and medicine, same price as anywhere. And I will take anything off you
+                    that is worth something — I am walking on either way."
+                  </Says>
+                  <Row>
+                    <Badge tone="gold">{gold() ?? 0} gold</Badge>
+                  </Row>
+
+                  {/* Two steps on purpose. The picker is where the player
                     says what they want, and nothing is spent there; the
                     summary below is where they see what it comes to and
                     agree to it */}
-                <Show
-                  when={basket()}
-                  fallback={
-                    // Neither list is a dialog of its own: this one is
-                    // already a dialog, and a modal opened over a modal
-                    // fights it for the click that closes it. Pressing
-                    // Buy or Sell puts the list here instead
-                    <Show
-                      when={counter()}
-                      fallback={
-                        <Row>
-                          <Button
-                            tone="primary"
-                            disabled={busy()}
-                            onClick={() => {
-                              setStatus(null);
-                              setCounter('buy');
-                            }}
-                          >
-                            Buy
-                          </Button>
-                          <Button
-                            disabled={busy()}
-                            onClick={() => {
-                              setStatus(null);
-                              setCounter('sell');
-                            }}
-                          >
-                            Sell
-                          </Button>
-                        </Row>
-                      }
-                    >
-                      {(side) => (
-                        <>
-                          <InventoryPicker
-                            inline
-                            multiple
-                            player={props.player}
-                            verb={side() === 'buy' ? 'Buy' : 'Sell'}
-                            entries={side() === 'buy' ? crate() : bag()}
-                            disabled={busy()}
-                            value={[]}
-                            empty={
-                              side() === 'buy'
-                                ? 'Nothing in his crate is within your purse.'
-                                : 'Nothing in your bag is worth anything to him.'
-                            }
-                            filter={(entry) =>
-                              side() === 'buy' ||
-                              (isMarketable(entry.item) && priceOf(entry.item, false) > 0)
-                            }
-                            note={(entry) => `${priceOf(entry.item, side() === 'buy')} gold each`}
-                            onPick={(picks) => {
-                              setCounter(null);
-                              setBasket(
-                                picks.length === 0 ? null : { buying: side() === 'buy', picks },
-                              );
-                            }}
-                          />
+                  <Show
+                    when={basket()}
+                    fallback={
+                      // Neither list is a dialog of its own: this one is
+                      // already a dialog, and a modal opened over a modal
+                      // fights it for the click that closes it. Pressing
+                      // Buy or Sell puts the list here instead
+                      <Show
+                        when={counter()}
+                        fallback={
                           <Row>
+                            <Button
+                              tone="primary"
+                              disabled={busy()}
+                              onClick={() => {
+                                setStatus(null);
+                                setCounter('buy');
+                              }}
+                            >
+                              Buy
+                            </Button>
                             <Button
                               disabled={busy()}
                               onClick={() => {
-                                setCounter(null);
+                                setStatus(null);
+                                setCounter('sell');
                               }}
                             >
-                              Never mind
+                              Sell
                             </Button>
                           </Row>
-                        </>
-                      )}
-                    </Show>
-                  }
-                >
-                  {(deal) => (
-                    <>
-                      <List>
-                        <For each={deal().picks}>
-                          {([item, amount]) => (
-                            <ListRow>
-                              <span class="grow">
-                                {describeItem(item)} × {amount}
-                              </span>
-                              <Meta>{priceOf(item, deal().buying) * amount} gold</Meta>
-                            </ListRow>
-                          )}
-                        </For>
-                      </List>
-                      <Row>
-                        <Badge tone={deal().buying ? 'gold' : 'leaf'}>
-                          {deal().buying ? '−' : '+'}
-                          {totalOf(deal())} gold
-                        </Badge>
-                        <Meta>
-                          {deal().buying
-                            ? `Leaves you ${(gold() ?? 0) - totalOf(deal())}.`
-                            : `Leaves you ${(gold() ?? 0) + totalOf(deal())}.`}
-                        </Meta>
-                      </Row>
-                      <Row>
-                        <Button
-                          tone="primary"
-                          disabled={busy() || (deal().buying && totalOf(deal()) > (gold() ?? 0))}
-                          onClick={settle}
-                        >
-                          {deal().buying ? 'Buy them' : 'Sell them'}
-                        </Button>
-                        <Button
-                          disabled={busy()}
-                          onClick={() => {
-                            setBasket(null);
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                      </Row>
-                    </>
-                  )}
-                </Show>
-              </DialogSection>
-            </Show>
+                        }
+                      >
+                        {(side) => (
+                          <>
+                            <InventoryPicker
+                              inline
+                              multiple
+                              player={props.player}
+                              verb={side() === 'buy' ? 'Buy' : 'Sell'}
+                              entries={side() === 'buy' ? crate() : bag()}
+                              disabled={busy()}
+                              value={[]}
+                              empty={
+                                side() === 'buy'
+                                  ? 'Nothing in his crate is within your purse.'
+                                  : 'Nothing in your bag is worth anything to him.'
+                              }
+                              filter={(entry) =>
+                                side() === 'buy' ||
+                                (isMarketable(entry.item) && priceOf(entry.item, false) > 0)
+                              }
+                              note={(entry) => `${priceOf(entry.item, side() === 'buy')} gold each`}
+                              onPick={(picks) => {
+                                setCounter(null);
+                                setBasket(
+                                  picks.length === 0 ? null : { buying: side() === 'buy', picks },
+                                );
+                              }}
+                            />
+                            <Row>
+                              <Button
+                                disabled={busy()}
+                                onClick={() => {
+                                  setCounter(null);
+                                }}
+                              >
+                                Never mind
+                              </Button>
+                            </Row>
+                          </>
+                        )}
+                      </Show>
+                    }
+                  >
+                    {(deal) => (
+                      <>
+                        <List>
+                          <For each={deal().picks}>
+                            {([item, amount]) => (
+                              <ListRow>
+                                <span class="grow">
+                                  {describeItem(item)} × {amount}
+                                </span>
+                                <Meta>{priceOf(item, deal().buying) * amount} gold</Meta>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                        <Row>
+                          <Badge tone={deal().buying ? 'gold' : 'leaf'}>
+                            {deal().buying ? '−' : '+'}
+                            {totalOf(deal())} gold
+                          </Badge>
+                          <Meta>
+                            {deal().buying
+                              ? `Leaves you ${(gold() ?? 0) - totalOf(deal())}.`
+                              : `Leaves you ${(gold() ?? 0) + totalOf(deal())}.`}
+                          </Meta>
+                        </Row>
+                        <Row>
+                          <Button
+                            tone="primary"
+                            disabled={busy() || (deal().buying && totalOf(deal()) > (gold() ?? 0))}
+                            onClick={settle}
+                          >
+                            {deal().buying ? 'Buy them' : 'Sell them'}
+                          </Button>
+                          <Button
+                            disabled={busy()}
+                            onClick={() => {
+                              setBasket(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </Row>
+                      </>
+                    )}
+                  </Show>
+                </DialogSection>
+              </Show>
 
-            <Status message={status()} />
-          </>
-        )}
-      </Show>
-      <DialogActions>
-        <Button onClick={close}>Walk on</Button>
-      </DialogActions>
-    </Dialog>
+              <Status message={status()} />
+            </>
+          )}
+        </Show>
+        <DialogActions>
+          <Button onClick={close}>Walk on</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* The last step of the reminder is the teaching itself, which is
+        the same question a machine asks — whether there is room, and
+        which move goes if there is not. It is that dialog, paid for
+        with a scale, rather than a second one shaped like it */}
+      <TeachMoveDialog
+        catchId={reminding()?.[0] ?? null}
+        move={reminding()?.[1] ?? null}
+        cost="The Heart Scale"
+        teach={remind}
+        onClose={() => {
+          setReminding(null);
+        }}
+        onTaught={remembered}
+      />
+    </>
   );
 }

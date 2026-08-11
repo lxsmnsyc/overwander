@@ -14,7 +14,7 @@ pools use: special 1/4096, rare 1/64, uncommon 1/8, base for the rest.
 | Band         | What is in it                                                                                                                                 |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                               |
-| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; the six wings                               |
+| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings                 |
 | **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; Bottle Caps; the Purifying Gem; the species relics; the plates |
 | **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                                  |
 
@@ -26,6 +26,12 @@ are meant to be bought, never found.
 The plates and the wings each take a single thin slot, so seventeen plates
 together are worth about one stone: digging up the plate you wanted stays luck
 rather than shopping.
+
+The **Heart Scale** is the one thing in the pool that gold cannot substitute for.
+No vendor stocks one and no vendor takes one, so it is neither bought nor sold:
+what a scale is worth is exactly one forgotten move, put back by the
+[Move Reminder](../firestore/overworld.md#wandering-npcs). That is what keeps
+remembering a move paced by walking rather than by a purse.
 
 ### A stash, not an item
 
@@ -169,7 +175,10 @@ Pieces and Nuggets a walk turns up worth something. He pays the registry's
 `sell`, half of the `buy` he charges for the same item, so nothing bought from
 him can be sold back at a profit. The **Master Ball** is the one ball the
 registry never priced, so it is in neither half of his trade — excluded by the
-missing flag rather than by a list that could fall out of step.
+missing flag rather than by a list that could fall out of step. The **Heart
+Scale** is out of both halves for the same reason and to the same end: a scale a
+player is carrying is a move they can have back, and a price would let them spend
+it on something else.
 
 ## Auctions
 

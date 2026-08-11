@@ -13,4 +13,6 @@
 - [ ] level up + teach move
 - [ ] catch picker = view catch
 - [ ] preferred animation for move
-- [ ] move tutor + heart scale
+- [ ] friends
+- [ ] trading
+- [ ] 

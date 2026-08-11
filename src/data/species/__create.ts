@@ -219,6 +219,32 @@ export function getEggMoves(species: Species): Moves[] {
 }
 
 /**
+ * Everything the species learns by levelling, up to and including a
+ * level, in the order it learns them.
+ *
+ * It is the whole list rather than the last four: a pokemon only ever
+ * *knows* four, and what this answers is what it could have known — a
+ * move learned at level 12 and dropped at level 20 is still on it. The
+ * Move Reminder is what the difference between the two is for.
+ *
+ * A threshold listing a move twice, or two thresholds listing the same
+ * move, yield it once, at the earliest of them
+ */
+export function getLevelUpMoves(species: Species, level: number): Moves[] {
+  const { level: learned } = getSpeciesData(species).learnSet;
+
+  return [
+    ...new Set(
+      Object.keys(learned)
+        .map(Number)
+        .filter((threshold) => threshold <= level)
+        .sort((a, b) => a - b)
+        .flatMap((threshold) => learned[threshold]),
+    ),
+  ];
+}
+
+/**
  * The stage a line hatches at: the species itself when nothing
  * evolves into it, and otherwise the far end of its `evolvesFrom`
  * chain. An egg is always the first stage of its line, and a line's

@@ -327,8 +327,26 @@ behind them fails.
   charged, and an egg is refused outright: what is inside one has not met
   anybody yet.
 
+- **Move Reminder** — takes one **Heart Scale** and puts back a move the pokemon
+  learned by levelling and has since lost. What he can give back is
+  `getRecallableMoves`: the species' `learnSet.level` up to the pokemon's level,
+  minus the moves it still knows, derived again on the server from the stored
+  record. It is the species' own list rather than its line's — an evolved species
+  relists what its line starts with at level 1, so walking `evolvesFrom` would
+  only offer a Charizard moves a Charizard never learns.
+
+  He shares [`learnMove`](../mechanics/raising.md#teaching-a-move) with the
+  machines, so a full list asks which move goes and a list with room asks
+  nothing. The scale leaves the bag in the **same transaction** the move list is
+  written in, so it is only ever consumed when the move is actually taught, and
+  the window's marker is given back when he refuses.
+
+  He is the one wanderer whose price is not gold: a scale is dug out of the
+  ground, no vendor stocks one and no vendor takes one, so what paces him is
+  walking.
+
 - **Vendor** — the shop, and the **only one who takes no marker at all**. What
-  the other four hand over is something the world cannot make twice in six
+  the other five hand over is something the world cannot make twice in six
   hours; what he hands over is a potion, so a player may deal with him as often
   as their purse allows while he is standing there.
 

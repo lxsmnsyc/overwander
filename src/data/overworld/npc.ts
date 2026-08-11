@@ -1,3 +1,8 @@
+import { Items } from '../ids/items';
+import type { Moves } from '../ids/moves';
+import type { Species } from '../ids/species';
+import { getLevelUpMoves } from '../species';
+
 /**
  * The people who pass through a wandering-NPC landmark. The cell is
  * fixed by the chunk seed, the way every landmark is, but who is
@@ -33,6 +38,12 @@ const enum Npc {
    * buys is anything the market puts a price on
    */
   Vendor = 4,
+  /**
+   * Takes a Heart Scale and puts back a move the pokemon learned by
+   * levelling and has since lost. He is the only way a forgotten
+   * level-up move ever comes back, and gold is no use to him
+   */
+  MoveReminder = 5,
 }
 
 export default Npc;
@@ -40,7 +51,14 @@ export default Npc;
 /**
  * Everyone who wanders, for uniform rolls over the variants
  */
-export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy, Npc.Groomer, Npc.Vendor];
+export const NPCS: Npc[] = [
+  Npc.Breeder,
+  Npc.DaycareLady,
+  Npc.NurseJoy,
+  Npc.Groomer,
+  Npc.Vendor,
+  Npc.MoveReminder,
+];
 
 export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Breeder]: 'Breeder',
@@ -48,6 +66,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.NurseJoy]: 'Nurse Joy',
   [Npc.Groomer]: 'Groomer',
   [Npc.Vendor]: 'Vendor',
+  [Npc.MoveReminder]: 'Move Reminder',
 };
 
 /**
@@ -75,3 +94,42 @@ export const GROOMING_FEE = 2500;
  * a whole box right in one stop
  */
 export const NURSE_CARE_LIMIT = 6;
+
+/**
+ * What the Move Reminder charges, and the only thing he takes. He is
+ * the one wanderer whose price is not gold: a scale is dug out of the
+ * ground and nothing sells one, so what paces him is walking rather
+ * than a purse.
+ *
+ * One move costs **one** of them. There is no constant for the count
+ * because there is no choice in it: `learnMove` spends a single item
+ * whatever the item is, so a second figure here would only be
+ * something to fall out of step with it
+ */
+export const REMINDER_FEE = Items.HeartScale;
+
+/**
+ * What the reminder can put back on a pokemon: everything its species
+ * has learned by levelling up to its level, minus the ones it still
+ * knows, in the order it learned them.
+ *
+ * The list is read off the **species standing in front of him** rather
+ * than off any history of the pokemon, because there is no history to
+ * read — a record stores the four moves it knows and nothing about the
+ * ones it dropped. That makes the rule a simple one to say: he can
+ * give back anything this species could have known by now.
+ *
+ * A pre-evolution's list is not walked. An evolved species relists the
+ * moves its line starts with at level 1, which is where it actually
+ * learns them, so the chain adds nothing but a way for a Charizard to
+ * be offered a move a Charizard never learns
+ */
+export function getRecallableMoves(
+  species: Species,
+  level: number,
+  known: Iterable<Moves>,
+): Moves[] {
+  const knows = new Set(known);
+
+  return getLevelUpMoves(species, level).filter((move) => !knows.has(move));
+}

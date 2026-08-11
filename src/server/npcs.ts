@@ -9,9 +9,12 @@ import Npc, {
   DAYCARE_FEE,
   GROOMING_FEE,
   NURSE_CARE_LIMIT,
+  REMINDER_FEE,
+  getRecallableMoves,
 } from '../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT, isMarketable } from '../data/overworld/vendor';
 import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
@@ -20,6 +23,7 @@ import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { grantBredEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
+import { learnMove } from './moves';
 import { readStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { isCatchLocked } from './locks';
@@ -459,6 +463,67 @@ export async function groomCatch(
     throw error;
   }
   return groomed;
+}
+
+/**
+ * Have the Move Reminder put back a move the pokemon learned by
+ * levelling and has since lost, for one Heart Scale.
+ *
+ * What he may put back is not the caller's to say: the recallable list
+ * is derived again here from the **stored** species, level and move
+ * list, so a client asking for a move the pokemon never learned — or
+ * one it already knows — is refused rather than charged.
+ *
+ * `replaces` names which of the known moves the recalled one goes over
+ * and is ignored by a pokemon that still has room. The scale leaves
+ * the bag in the same transaction the move list is written in, so it
+ * is **only ever consumed when the move is actually taught**.
+ *
+ * Resolves the move list as it now stands, or null when he refuses:
+ * the catch is not the player's, it is fighting, locked or still an
+ * egg, the move is not one he can give back, no scale is carried, or
+ * this window's visit has already been made
+ */
+export async function remindMove(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces: number,
+  now: number,
+  offset: number,
+): Promise<Moves[] | null> {
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
+
+  if (snapshot == null) {
+    return null;
+  }
+
+  const visit = await takeVisit(snapshot, 'remind', cell, uid, { caught: catchId, move });
+
+  if (visit == null) {
+    return null;
+  }
+
+  let taught: Moves[] | null;
+
+  try {
+    taught = await learnMove(uid, catchId, move, REMINDER_FEE, replaces, (species, level, known) =>
+      new Set(getRecallableMoves(species, level, known)).has(move),
+    );
+  } catch (error) {
+    await releaseVisit(visit);
+    throw error;
+  }
+
+  // He was asked and gave nothing back — no scale, the wrong move, a
+  // pokemon he cannot touch. The window is given back with it
+  if (taught == null) {
+    await releaseVisit(visit);
+  }
+  return taught;
 }
 
 /**

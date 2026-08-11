@@ -178,25 +178,43 @@ raid still says so. Purifying changes what it costs, not what it was.
 
 ## Teaching a move
 
-A **technical machine** is the only thing that changes what a pokemon knows after
-it has been met — everything else about a move list is decided at the catch or
-inherited from a parent. There is one machine per teachable move, generated from
-the species learn sets, so a move any species can learn brings its machine along.
+Two things change what a pokemon knows after it has been met — everything else
+about a move list is decided at the catch or inherited from a parent:
 
-Using one is the same call whichever way it goes
-([`src/server/moves.ts`](../../src/server/moves.ts)), and what it costs depends
-on how full the list is:
+- A **technical machine**. There is one per teachable move, generated from the
+  species learn sets, so a move any species can learn brings its machine along.
+  What it may teach is the species' `learnSet.teachable`.
+- The **Move Reminder**, a [wandering NPC](../firestore/overworld.md#wandering-npcs),
+  who puts back a move the pokemon learned by levelling and has since lost. What
+  he may give back is `getRecallableMoves` — everything in the species'
+  `learnSet.level` up to the pokemon's level, minus what it still knows — and his
+  price is one **Heart Scale**, which is dug out of the ground and which nothing
+  buys or sells.
+
+Both are the same call
+([`learnMove` in `src/server/moves.ts`](../../src/server/moves.ts)): only *which
+move is allowed* and *what it is paid in* differ, so the rest — whose pokemon it
+is, how much room the list has, whether the price is carried — is decided once.
+What it costs depends on how full the list is:
 
 | The pokemon knows | What happens                                |
 | ----------------- | ------------------------------------------- |
 | Fewer than 4      | It learns a fourth; nothing is given up     |
 | 4                 | The player chooses which one it **forgets** |
 
-The machine leaves the bag and the move list is written in **one transaction**,
-so a machine is never spent on a move that was not learned. Four things are
-refused before either happens: a species that cannot learn the move, a pokemon
-that knows it already, an egg, and a **locked** pokemon — teaching is exactly the
-kind of rewriting a lock is for.
+How many moves a pokemon may hold is the record's own `Slots.Move` rather than
+the game's four, so one with a fifth slot is offered a fifth move instead of
+being asked to forget one.
+
+The price leaves the bag and the move list is written in **one transaction**, so
+nothing is ever spent on a move that was not learned. Four things are refused
+before either happens: a move the source does not allow, a pokemon that knows it
+already, an egg, and a **locked** pokemon — teaching is exactly the kind of
+rewriting a lock is for.
+
+Because the reminder only ever gives back **level-up** moves, a machine move
+dropped to make room is gone for good, and the choice of what to forget stays a
+real one.
 
 ## Putting a pokemon right
 

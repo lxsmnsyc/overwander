@@ -347,6 +347,13 @@ export const enum Items {
   EnergyRoot = 179,
   HealPowder = 180,
   RevivalHerb = 181,
+
+  /**
+   * What the Move Reminder is paid in. It buys nothing else and no
+   * vendor will take one off a player's hands, so a scale in the bag
+   * is a move a pokemon can have back and nothing besides
+   */
+  HeartScale = 182,
 }
 
 /**

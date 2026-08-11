@@ -1282,6 +1282,7 @@ describe('world', () => {
     expect(met.has(Npc.NurseJoy)).toBe(true);
     expect(met.has(Npc.Groomer)).toBe(true);
     expect(met.has(Npc.Vendor)).toBe(true);
+    expect(met.has(Npc.MoveReminder)).toBe(true);
   });
 
   it('fills a vendor’s crate from the window he was drawn in', () => {

@@ -3,6 +3,7 @@ import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
 import registerGems from './gems';
+import registerHeartScale from './heart-scale';
 import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
@@ -46,6 +47,7 @@ export default function registerItems(): void {
   registerKeyItems();
   registerRaidItems();
   registerValuables();
+  registerHeartScale();
   registerWings();
   registerMachines();
 }

@@ -14,46 +14,54 @@ import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
 
 /**
- * Teaching a move, written with admin credentials.
+ * Learning a move, written with admin credentials.
  *
- * A machine is the only thing in the game that changes what a pokemon
- * knows after it has been met — everything else about a move list is
- * decided at the catch or inherited from a parent — so what a machine
- * may write is checked here rather than trusted from the caller: the
- * move has to be the machine's own, the species has to be able to
- * learn it, and the pokemon has to be the player's.
+ * Two things in the game change what a pokemon knows after it has been
+ * met — a technical machine, and the Move Reminder putting back a
+ * level-up move it dropped. Everything else about a move list is
+ * decided at the catch or inherited from a parent.
  *
- * The machine leaves the bag and the move list is written in **one
- * transaction**, so a machine is never spent on a move that was not
- * learned, and a move is never learned for free
+ * Both go through `learnMove`, which is the part neither of them may
+ * be trusted with: whose pokemon it is, whether it is in a state that
+ * can be written at all, how much room the list has, and that the
+ * price is actually in the bag. What differs between them is only
+ * **which move is allowed and what it is paid in**, so that is all
+ * either passes in.
+ *
+ * The price leaves the bag and the move list is written in **one
+ * transaction**, so nothing is ever spent on a move that was not
+ * learned, and no move is ever learned for free
  */
 
 /**
- * Use a technical machine on one of the player's catches.
+ * Whether this pokemon may be given this move at all, asked of the
+ * stored record: its species, the level it has reached, and what it
+ * already knows. A machine asks the species' teachable list; the Move
+ * Reminder asks what it has learned by levelling and lost
+ */
+export type MoveSource = (species: Species, level: number, known: Moves[]) => boolean;
+
+/**
+ * Put one move on one of the player's catches and take the price for
+ * it out of the bag, in one transaction.
  *
- * `replaces` names which of the four the new move goes over, and is
- * ignored by a pokemon that still has room — a machine used on one
- * that knows three moves teaches a fourth rather than replacing
- * anything.
+ * `replaces` names which of the known moves the new one goes over, and
+ * is ignored by a pokemon that still has room — one that knows three
+ * moves learns a fourth rather than replacing anything.
  *
  * Resolves the move list as it now stands, or null when the teaching
  * is refused: the catch is not the player's, it is fighting, locked or
- * still an egg, the item is not a machine, the species cannot learn
- * the move, it knows it already, the machine is not carried, or the
- * move it would go over does not exist
+ * still an egg, `allowed` says no, it knows the move already, the
+ * price is not carried, or the move it would go over does not exist
  */
-export default async function teachMove(
+export async function learnMove(
   uid: string,
   catchId: string,
-  item: Items,
-  replaces = 0,
+  move: Moves,
+  price: Items,
+  replaces: number,
+  allowed: MoveSource,
 ): Promise<Moves[] | null> {
-  const move = getMachineMove(item);
-
-  if (move == null) {
-    return null;
-  }
-
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
@@ -77,11 +85,11 @@ export default async function teachMove(
     const known = asNumberArray(caught.moves) as Moves[];
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     const species = asNumber(caught.species) as Species;
-    const teachable = new Set(getSpeciesData(species).learnSet.teachable);
 
-    // What this species can be taught is the species' own business,
-    // and a move it already knows is a machine spent on nothing
-    if (!teachable.has(move) || new Set(known).has(move)) {
+    // What may be written is the caller's rule, read off the stored
+    // record rather than off anything the client said — and a move it
+    // already knows is a price spent on nothing whichever rule applies
+    if (!allowed(species, asNumber(caught.level), known) || new Set(known).has(move)) {
       return null;
     }
 
@@ -95,7 +103,7 @@ export default async function teachMove(
       return null;
     }
 
-    const carried = await readStackIn(transaction, ITEM_STACKS, uid, item);
+    const carried = await readStackIn(transaction, ITEM_STACKS, uid, price);
 
     if (carried < 1) {
       return null;
@@ -104,8 +112,32 @@ export default async function teachMove(
     const moves =
       known.length < room ? [...known, move] : known.map((one, at) => (at === over ? move : one));
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, carried - 1);
+    writeStackIn(transaction, ITEM_STACKS, uid, price, carried - 1);
     transaction.update(caughtRef, { moves });
     return moves;
   });
+}
+
+/**
+ * Use a technical machine on one of the player's catches. The move is
+ * the machine's own — there is exactly one machine per move — and the
+ * species has to have it on its teachable list.
+ *
+ * Resolves the move list as it now stands, or null when the teaching
+ * is refused
+ */
+export default async function teachMove(
+  uid: string,
+  catchId: string,
+  item: Items,
+  replaces = 0,
+): Promise<Moves[] | null> {
+  const move = getMachineMove(item);
+
+  if (move == null) {
+    return null;
+  }
+  return learnMove(uid, catchId, move, item, replaces, (species) =>
+    new Set(getSpeciesData(species).learnSet.teachable).has(move),
+  );
 }

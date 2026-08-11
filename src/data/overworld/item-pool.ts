@@ -75,6 +75,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The root is a Hyper Potion's worth and then some, so it sits in
     // the band the Hyper Potion sits in rather than with the powders
     { item: Items.EnergyRoot, weight: 6 },
+    // The only thing the Move Reminder takes. It is dug up rather than
+    // bought because nothing sells one — a forgotten move costs a walk,
+    // which is what the move cost in the first place
+    { item: Items.HeartScale, weight: 8 },
     // The wings, blown along the ground: three points of training
     // each, and the only effort a pokemon gets that its levels did
     // not pay for. Thin slots, because they are the one thing in the

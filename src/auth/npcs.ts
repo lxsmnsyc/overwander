@@ -1,4 +1,5 @@
 import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/firebase';
 import {
@@ -7,6 +8,7 @@ import {
   breedCatches as breedOnServerSide,
   buyFromVendor as buyOnServerSide,
   groomCatch as groomOnServerSide,
+  remindMove as remindOnServerSide,
   sellToVendor as sellOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
@@ -211,6 +213,64 @@ async function groomOnServer(
     y,
     cell,
     catchId,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Have the Move Reminder put a forgotten level-up move back on one of
+ * the player's pokemon, for one Heart Scale.
+ *
+ * Which moves he can give back is derived from the species and the
+ * level, so the client already knows the list — `getRecallableMoves` —
+ * and the server derives it again from the stored record before it
+ * takes the scale. `replaces` names which of the known moves it goes
+ * over, and is ignored by a pokemon that still has room.
+ *
+ * The scale is spent in the same transaction the move list is written
+ * in, so it is only ever consumed when the move is actually taught.
+ *
+ * Resolves the move list as it now stands, or null when he refuses
+ */
+export async function remindMove(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces = 0,
+): Promise<Moves[] | null> {
+  return remindOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    move,
+    replaces,
+    snapshot.offset,
+  );
+}
+
+async function remindOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces: number,
+  offset: number,
+): Promise<Moves[] | null> {
+  'use server';
+  return remindOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    catchId,
+    move,
+    replaces,
     await syncServerClock(),
     offset,
   );

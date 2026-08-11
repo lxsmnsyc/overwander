@@ -26,7 +26,14 @@ import { Button, Dialog, DialogActions, List, Meta, Note, Status } from './style
  * only whether, the second asks which.
  *
  * Both are opened by the same props, since which one a player sees is
- * the record's answer rather than the caller's
+ * the record's answer rather than the caller's.
+ *
+ * What is being spent is the caller's, though. A machine is the
+ * default because it is the common case, but the Move Reminder puts
+ * back a forgotten move for a Heart Scale and asks exactly the same
+ * question about exactly the same list — so it passes its own `teach`
+ * and its own word for what it costs rather than having a second
+ * dialog that looks like this one
  */
 export interface TeachMoveDialogProps {
   /**
@@ -34,11 +41,21 @@ export interface TeachMoveDialogProps {
    */
   catchId: string | null;
   /**
-   * The move the machine teaches. The machine itself is derived from
-   * it — there is exactly one per move — so a caller that knows which
-   * move it is offering does not have to know the item id as well
+   * The move being taught. The machine is derived from it — there is
+   * exactly one per move — so a caller paying with a machine does not
+   * have to know the item id as well
    */
   move: Moves | null;
+  /**
+   * What is being spent, named the way the dialog says it: "The
+   * machine is spent teaching it." Defaults to the machine
+   */
+  cost?: string;
+  /**
+   * How the teaching is actually paid for and written. Defaults to
+   * using the machine for the move out of the player's bag
+   */
+  teach?: (catchId: string, move: Moves, replaces: number) => Promise<Moves[] | null>;
   onClose: () => void;
   /**
    * Fired once the move is actually learned, so the sheet behind the
@@ -51,7 +68,7 @@ export interface TeachMoveDialogProps {
  * One move as the sheet draws it: what it is, what kind it is, and
  * what it is worth
  */
-function MoveLine(props: { move: Moves }): JSX.Element {
+export function MoveLine(props: { move: Moves }): JSX.Element {
   return (
     <span class="flex flex-wrap items-center gap-2">
       <TypeBadge type={getMoveData(props.move).type} />
@@ -101,6 +118,11 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
 
   const taught = (): string => (props.move == null ? 'that move' : getMoveData(props.move).name);
 
+  /**
+   * What the teaching costs, as the dialog says it
+   */
+  const spent = (): string => props.cost ?? 'The machine';
+
   const named = (): string => {
     const record = caught();
 
@@ -126,13 +148,16 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
     }
     setStatus(null);
     setBusy(true);
-    teachMove(catchId, getMachineItem(move), forgetting())
+    (
+      props.teach?.(catchId, move, forgetting()) ??
+      teachMove(catchId, getMachineItem(move), forgetting())
+    )
       .then((moves) => {
         setBusy(false);
 
         if (moves == null) {
           setStatus(
-            `${named()} could not be taught ${taught()} — it may know it already, be unable to learn it, or be locked.`,
+            `${named()} could not be taught ${taught()} — it may know it already, be unable to learn it, be locked, or what it costs may not be in your bag.`,
           );
           return;
         }
@@ -174,8 +199,8 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
         isOpen={open() && full()}
         onClose={close}
         title={`Teach ${taught()}?`}
-        description={`${named()} already knows four. Choose the one it forgets — it does not come
-          back on its own.`}
+        description={`${named()} already knows ${known().length}. Choose the one it forgets — only
+          a level-up move ever comes back, and only from the Move Reminder.`}
       >
         {portrait()}
 
@@ -227,7 +252,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
         isOpen={open() && !full()}
         onClose={close}
         title={`Teach ${taught()}?`}
-        description={`${named()} has room for it. The machine is spent teaching it.`}
+        description={`${named()} has room for it. ${spent()} is spent teaching it.`}
       >
         {portrait()}
 

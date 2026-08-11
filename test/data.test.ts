@@ -117,7 +117,9 @@ import {
 } from '../src/data/items/purifying-gem';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { isPortalKey } from '../src/data/items/portal-key';
+import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
+import Npc, { NPCS, NPC_NAMES, REMINDER_FEE, getRecallableMoves } from '../src/data/overworld/npc';
 import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
@@ -138,6 +140,7 @@ import {
   getDayOfYear,
   getEggMoves,
   getFeaturedFamily,
+  getLevelUpMoves,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -1472,6 +1475,69 @@ describe('type-enhancing items', () => {
       expect(data.sell).toBeGreaterThan(0);
       expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
     }
+  });
+
+  it('makes the Heart Scale worth nothing but a forgotten move', () => {
+    const scale = getItemData(Items.HeartScale);
+
+    expect(isHeartScale(Items.HeartScale)).toBe(true);
+    expect(isHeartScale(Items.Nugget)).toBe(false);
+    expect(scale.name).toBe('Heart Scale');
+    expect(scale.flags & ItemFlags.Consumable).not.toBe(0);
+    // Neither side of a vendor's counter takes one: it cannot be
+    // bought, and it cannot be turned back into gold. That is what
+    // keeps the reminder paced by walking rather than by a purse
+    expect(scale.flags & ItemFlags.Marketable).toBe(0);
+    expect(isMarketable(Items.HeartScale)).toBe(false);
+    expect(scale.buy).toBe(0);
+    expect(scale.sell).toBe(0);
+    // So the only way to one is the ground
+    expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.HeartScale)).toBe(true);
+  });
+});
+
+describe('wandering NPCs', () => {
+  it('names everyone who wanders', () => {
+    expect(new Set(NPCS).size).toBe(NPCS.length);
+    for (const npc of NPCS) {
+      expect(NPC_NAMES[npc].length).toBeGreaterThan(0);
+    }
+    expect(new Set(NPCS).has(Npc.MoveReminder)).toBe(true);
+    // The one wanderer whose price is not gold
+    expect(REMINDER_FEE).toBe(Items.HeartScale);
+  });
+
+  it('gives back the level-up moves a pokemon has lost and nothing else', () => {
+    // Everything Bulbasaur has learned by 27, in the order it learned
+    // them — the whole list rather than the four it would be carrying
+    expect(getLevelUpMoves(Species.Bulbasaur, 27)).toEqual([
+      Moves.Tackle,
+      Moves.Growl,
+      Moves.LeechSeed,
+      Moves.VineWhip,
+      Moves.PoisonPowder,
+      Moves.RazorLeaf,
+    ]);
+    // Nothing it has not reached yet
+    expect(new Set(getLevelUpMoves(Species.Bulbasaur, 27)).has(Moves.Growth)).toBe(false);
+    expect(getLevelUpMoves(Species.Bulbasaur, 6)).toEqual([Moves.Tackle, Moves.Growl]);
+
+    // What the reminder can put back is that list minus what it still
+    // knows: the four it is carrying are not offered back to it
+    const carrying = [Moves.VineWhip, Moves.PoisonPowder, Moves.RazorLeaf, Moves.Growth];
+
+    expect(getRecallableMoves(Species.Bulbasaur, 34, carrying)).toEqual([
+      Moves.Tackle,
+      Moves.Growl,
+      Moves.LeechSeed,
+    ]);
+    // A pokemon that never dropped anything has nothing to remember
+    expect(getRecallableMoves(Species.Bulbasaur, 6, [Moves.Tackle, Moves.Growl])).toEqual([]);
+    // And a machine move it forgot stays forgotten: he only ever gives
+    // back what levelling gave it
+    expect(new Set(getRecallableMoves(Species.Bulbasaur, 48, carrying)).has(Moves.PetalDance)).toBe(
+      false,
+    );
   });
 });
 

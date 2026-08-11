@@ -228,8 +228,41 @@ bidder see what they are bidding on.
 Escrow always ends: the winner collects it, or — if nobody bid — the seller takes
 it back. Nothing stays ownerless once the day is up and somebody has come for it.
 
-Four pokemon are refused a listing outright, all of them inside the same
-transaction that would have written it:
+## What may go on the block
+
+A player runs one auction a day, so the block is the scarcest thing in the game,
+and what sits on it decides what the whole feature is for. Left open to anything,
+a day's listing goes on whatever happened to be in the bag and the board fills
+with Potions nobody would walk to a vendor for. So it is narrowed to what a
+bidder **could not simply go and get for themselves**:
+
+| Lot       | May be listed when                                                     | Rule                 |
+| --------- | ---------------------------------------------------------------------- | -------------------- |
+| An item   | It is in the item pool's **special** band                              | `isAuctionableItem`  |
+| A pokemon | Its values are **perfect**, it is **shiny**, or it is **special-tier** | `isAuctionableCatch` |
+
+The prized band is deliberately below the line for items. A Bottle Cap is worth
+[asking twice before spending](../mechanics/items.md#the-item-pool), and it is
+still something a player turns up by walking; the block is for what walking may
+never turn up at all.
+
+The three answers for a pokemon are three different reasons somebody else would
+want it. **Perfect values** are six lucky rolls or a Golden Bottle Cap spent on
+them, and nothing else in the game hands them over. **Shiny** is the one thing a
+player cannot work towards. A **special-tier species** is a legendary or a
+mythical, which the world stages on its own schedule. Anything else — a rare, a
+fully-evolved anything — a bidder can walk out and catch, which is what makes it
+not worth a day of the board.
+
+Both rules live in
+[`src/auth/auction-record.ts`](../../src/auth/auction-record.ts) and are read by
+both sides: the sell pickers leave out everything that fails, and `openAuction`
+asks again from the **stored** record before it takes the lot.
+
+## Four pokemon refused outright
+
+These are refused even when they would otherwise qualify, all inside the same
+transaction that would have written the listing:
 
 | Refused            | Checked with          | Why                                                                           |
 | ------------------ | --------------------- | ----------------------------------------------------------------------------- |
@@ -237,6 +270,11 @@ transaction that would have written it:
 | Waiting in a lobby | `isAnyCatchQueued`    | The lobby holds its id, so it would be silently dropped when the raid started |
 | An egg             | `isEggRecord`         | A bidder cannot see into one and the seller can                               |
 | The player's buddy | the profile's `buddy` | Not something to sell by misreading a list, and a lot cannot be taken back    |
+
+Unlike the eligibility rules above, these four are **shown and refused** rather
+than hidden: a player looking for one of them wants the reason. What does not
+qualify for the block at all is left out of the list, since that would be most of
+a box and a hundred greyed rows say nothing.
 
 The egg rule is about what an auction *is*. A catch lot is readable precisely so
 that a bidder can look at what they are bidding on; an egg shows nothing but the

@@ -234,16 +234,22 @@ size, so a lot worth having can be put out of reach in one bid.
 A pokemon that changes hands arrives as a stranger: its friendship resets to
 `BASE_FRIENDSHIP`, so gold buys the pokemon and never the walking behind it.
 
-Four pokemon cannot be listed at all: one **fighting**, one **waiting in a raid
-lobby**, an **egg** — a bidder cannot see into one and the seller can — and the
-**buddy** at the player's side. A lot cannot be taken back off the block, so the
-buddy is refused rather than quietly sent home: making that sale takes one
-deliberate press first.
+What may go up is narrow on purpose. An item has to be from the **special** band;
+a pokemon has to have **perfect values**, be **shiny**, or be a **special-tier
+species**. One listing a day is the scarcest thing a player has, and everything
+outside those is something a bidder could walk out and catch or dig up for
+themselves — a board full of that is a board nobody reads.
+
+Four pokemon cannot be listed even when they qualify: one **fighting**, one
+**waiting in a raid lobby**, an **egg** — a bidder cannot see into one and the
+seller can — and the **buddy** at the player's side. A lot cannot be taken back
+off the block, so the buddy is refused rather than quietly sent home: making that
+sale takes one deliberate press first.
 
 Nothing happens when bidding closes, because there is no job to run — somebody
 comes back for the lot. Usually that is the winner; a lot **nobody bid on** has
 no winner, so the seller takes it back instead, unsold and unpaid for. What a
-seller cannot do is take it back *early*: a listing that could be pulled the
+seller cannot do is take it back _early_: a listing that could be pulled the
 moment a bid looked unlikely is not one anybody would bid on.
 
 The details are in [Auctions](../firestore/auctions.md).

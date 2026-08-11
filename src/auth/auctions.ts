@@ -54,6 +54,8 @@ export {
   canReclaim,
   getBidState,
   hasEnded,
+  isAuctionableCatch,
+  isAuctionableItem,
   isBidOn,
   isLive,
   nextBid,

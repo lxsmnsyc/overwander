@@ -19,11 +19,20 @@ import {
   canReclaim,
   getBidState,
   hasEnded,
+  isAuctionableCatch,
+  isAuctionableItem,
   isBidOn,
   isLive,
   nextBid,
 } from '../src/auth/auction-record';
+import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
 import { Items } from '../src/data/ids/items';
+import { MAX_IV, PERFECT_IVS, STAT_ORDER, setIV } from '../src/data/constants/stats';
+import { Species } from '../src/data/ids/species';
+import registerSpecies from '../src/data/species/gen-1';
+
+// getSpawnRarity reads the registry, so the species have to be in it
+registerSpecies();
 
 const OPENED = 1_000_000;
 
@@ -257,5 +266,59 @@ describe("a player's bidding history", () => {
     expect(canRebid(theirs, 'buyer', ended)).toBe(false);
     expect(canRebid(auction({ bid: 200, bidder: 'buyer' }), 'buyer', open)).toBe(false);
     expect(canRebid({ ...theirs, settled: true }, 'buyer', open)).toBe(false);
+  });
+});
+
+describe('what may go on the block', () => {
+  /**
+   * A stored catch with only what the rule reads set
+   */
+  const caughtAs = (fields: Record<string, unknown>): CaughtPokemon =>
+    asCaughtPokemon({ species: Species.Pidgey, ivs: 0, shiny: false, ...fields });
+
+  it('takes only one-per-world items', () => {
+    // The special band, and nothing under it
+    for (const item of [
+      Items.MasterBall,
+      Items.ShinyCharm,
+      Items.GoldenBottleCap,
+      Items.PortalKey,
+    ]) {
+      expect(isAuctionableItem(item)).toBe(true);
+    }
+    // Prized is deliberately below the line: a Bottle Cap is worth
+    // asking twice before spending and is still something a walk
+    // turns up
+    for (const item of [
+      Items.BottleCap,
+      Items.PurifyingGem,
+      Items.MaxRevive,
+      Items.FireStone,
+      Items.Nugget,
+      Items.Potion,
+    ]) {
+      expect(isAuctionableItem(item)).toBe(false);
+    }
+  });
+
+  it('takes only pokemon a bidder could not go and catch', () => {
+    // An ordinary Pidgey is a walk away for anybody
+    expect(isAuctionableCatch(caughtAs({}))).toBe(false);
+
+    // Each of the three answers is enough on its own
+    expect(isAuctionableCatch(caughtAs({ ivs: PERFECT_IVS }))).toBe(true);
+    expect(isAuctionableCatch(caughtAs({ shiny: true }))).toBe(true);
+    expect(isAuctionableCatch(caughtAs({ species: Species.Mewtwo }))).toBe(true);
+    expect(isAuctionableCatch(caughtAs({ species: Species.Mew }))).toBe(true);
+
+    // One value short of perfect is not perfect
+    const nearly = setIV(PERFECT_IVS, STAT_ORDER[0], MAX_IV - 1);
+
+    expect(isAuctionableCatch(caughtAs({ ivs: nearly }))).toBe(false);
+
+    // And being merely hard to catch is not one of the three: a
+    // fully-evolved rare is still something a bidder can walk out for
+    expect(isAuctionableCatch(caughtAs({ species: Species.Pidgeot }))).toBe(false);
+    expect(isAuctionableCatch(caughtAs({ species: Species.Ditto }))).toBe(false);
   });
 });

@@ -29,6 +29,7 @@ import {
 import useBottleCap from '../auth/bottle-caps';
 import usePurifyingGem from '../auth/purify';
 import { getInventory } from '../auth/inventory';
+import { isAuctionableCatch } from '../auth/auctions';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { learnLevelUpMove } from '../auth/moves';
 import { useAuth } from '../auth/context';
@@ -936,9 +937,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       label: 'Auction',
       // A favorite is not to be parted with, and a lot cannot be taken
       // back off the block once it is on it. Nobody listening for the
-      // listing is the same as nowhere to list it
+      // listing is the same as nowhere to list it.
+      //
+      // `isAuctionableCatch` is the other half: the block takes one
+      // listing a day off a player, so it is for perfect values, a
+      // shiny or a legendary — anything else a bidder could walk out
+      // and catch. The server asks the same of the stored record
       disabled:
-        props.onAuction == null || fighting() === true || isFavorite(loaded) || isEgg(loaded),
+        props.onAuction == null ||
+        fighting() === true ||
+        isFavorite(loaded) ||
+        isEgg(loaded) ||
+        !isAuctionableCatch(loaded),
       onSelect: () => {
         const catchId = props.catchId;
 

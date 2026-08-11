@@ -2,8 +2,12 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
+import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type { Items } from '../data/ids/items';
+import { isPerfectIVs } from '../data/items/bottle-caps';
+import { getItemBand } from '../data/overworld/item-pool';
 import { asNumber, asRecord, asString } from './__normalize';
+import { type CaughtPokemon, isShiny } from './caught-record';
 
 /**
  * What an auction is, and the rules both sides read it by.
@@ -86,6 +90,56 @@ export interface AuctionTerms {
 export type AuctionOffer =
   | { lot: AuctionLot.Item; item: Items }
   | { lot: AuctionLot.Catch; caught: string };
+
+/**
+ * What may go on the block at all.
+ *
+ * A player runs **one auction a day**, so the block is the scarcest
+ * thing in the game and what sits on it decides what the whole feature
+ * is for. Left open to anything, a day's listing is spent on whatever
+ * happened to be in the bag, and the board fills with Potions nobody
+ * would walk to a vendor for. Narrowed to what a player cannot simply
+ * go and get for themselves, the same listing is worth reading every
+ * day.
+ *
+ * The rules below are the whole of it, and both sides read them: the
+ * pickers leave out everything that fails, and `openAuction` asks
+ * again from the stored record before it takes the lot.
+ */
+
+/**
+ * Whether the item may be auctioned: the **special** band and nothing
+ * else — a Master Ball, a Shiny Charm, a Golden Bottle Cap, a Portal
+ * Key, a raid relic.
+ *
+ * Prized is deliberately below the line. A Bottle Cap is worth asking
+ * twice before spending, and it is still something a player turns up
+ * by walking; the block is for what walking may never turn up at all
+ */
+export function isAuctionableItem(item: Items): boolean {
+  return getItemBand(item) === 'special';
+}
+
+/**
+ * Whether the pokemon may be auctioned. Any one of three answers is
+ * enough, and each is a different reason somebody else would want it:
+ *
+ * - **Perfect values.** Nothing else in the game hands one over; it is
+ *   six lucky rolls or a Golden Bottle Cap spent on it.
+ * - **Shiny.** The one thing a player cannot work towards at all.
+ * - **A special-tier species.** A legendary or a mythical, which the
+ *   world stages on its own schedule and a raid party has to win.
+ *
+ * Everything else a bidder could go and catch, which is what makes it
+ * not worth a day of the board
+ */
+export function isAuctionableCatch(caught: CaughtPokemon): boolean {
+  return (
+    isPerfectIVs(caught.ivs) ||
+    isShiny(caught) ||
+    getSpawnRarity(caught.species) === SpawnRarity.Special
+  );
+}
 
 /**
  * One auction at auctions/{auctionId}

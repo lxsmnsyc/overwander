@@ -6,6 +6,8 @@ import {
   canReclaim,
   claimAuction,
   getSellerStanding,
+  isAuctionableCatch,
+  isAuctionableItem,
   isBidOn,
   isLive,
   nextBid,
@@ -15,7 +17,10 @@ import {
 } from '../auth/auctions';
 import { getBuddy } from '../auth/buddy';
 import { type CaughtPokemon, getCaught, isFavorite } from '../auth/caught';
+import { isShiny } from '../auth/caught-record';
+import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { isEgg } from '../auth/egg';
+import { isPerfectIVs } from '../data/items/bottle-caps';
 import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
 import { NATURE_NAMES } from '../data/ids/natures';
@@ -505,6 +510,26 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   /**
+   * Why this one is worth a listing, in a word. It is the same three
+   * answers `isAuctionableCatch` accepts, said back to the player so
+   * the list reads as a reason rather than as an arbitrary shortlist
+   */
+  const sellingWorth = (option: CatchOption): string | null => {
+    const worth: string[] = [];
+
+    if (isShiny(option.caught)) {
+      worth.push('shiny');
+    }
+    if (isPerfectIVs(option.caught.ivs)) {
+      worth.push('perfect');
+    }
+    if (getSpawnRarity(option.caught.species) === SpawnRarity.Special) {
+      worth.push('legendary');
+    }
+    return worth.length === 0 ? null : worth.join(' · ');
+  };
+
+  /**
    * What the player has picked to put up, if anything. Picking is the
    * whole of the sell card's business: the price, the confirmation and
    * the listing itself all belong to the dialog it opens
@@ -685,6 +710,17 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             day ends with nobody having bid on it. Pick one and the price is named in the dialog
             that opens.
           </Note>
+          {/* A listing is one a day, so what may take it is narrow on
+              purpose: the things a bidder could not simply go and get
+              for themselves. Said plainly here, since the lists below
+              leave everything else out rather than refusing it row by
+              row */}
+          <Note>
+            The block takes <strong>one-per-world items</strong>, and pokemon that are{' '}
+            <strong>perfect</strong>, <strong>shiny</strong> or <strong>legendary</strong>. Anything
+            else is something the finder can walk out and catch, and a day of the board is worth
+            more than that.
+          </Note>
 
           <h4>From the bag</h4>
           <InventoryPicker
@@ -692,7 +728,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             revision={revision()}
             value={null}
             verb="Sell"
-            empty="Carrying nothing to sell."
+            empty="Nothing in the bag is rare enough for the block."
+            filter={(entry) => isAuctionableItem(entry.item)}
             onPick={(picked) => {
               if (picked != null) {
                 setOffered({ lot: AuctionLot.Item, item: picked });
@@ -701,8 +738,11 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           />
 
           <h4>From the records</h4>
-          {/* Three kinds of pokemon are refused rather than hidden, so
-              a player looking for one of them is told why: a raid is
+          {/* Two different lists in one. What does not qualify for the
+              block at all is **left out** — it would be most of a box,
+              and a hundred greyed rows say nothing. The three that
+              would otherwise qualify are **refused and told**, since a
+              player looking for one of them wants the reason: a raid is
               fighting on a frozen copy of a record that has to still be
               there when it ends, an egg is a sealed box only its owner
               can see into, and the buddy is not something to sell by
@@ -712,8 +752,10 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             revision={revision()}
             value={null}
             verb="Sell"
-            empty="No pokemon to sell."
+            empty="Nothing of yours is rare enough for the block."
+            filter={(option) => isAuctionableCatch(option.caught)}
             reason={sellingReason}
+            note={sellingWorth}
             onPick={(picked) => {
               if (picked != null) {
                 setOffered({ lot: AuctionLot.Catch, catchId: picked });

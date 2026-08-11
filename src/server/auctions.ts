@@ -20,6 +20,8 @@ import {
   canBid,
   canClaim,
   canReclaim,
+  isAuctionableCatch,
+  isAuctionableItem,
 } from '../auth/auction-record';
 import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
@@ -136,6 +138,14 @@ export async function openAuction(
     };
 
     if (offer.lot === AuctionLot.Item) {
+      // The block takes one listing a day off a player, so what may go
+      // on it is the special band and nothing under it. The picker
+      // leaves the rest out; this is the same rule asked where a
+      // client cannot skip it
+      if (!isAuctionableItem(offer.item)) {
+        return null;
+      }
+
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, offer.item);
 
       if (!spendStackIn(transaction, ITEM_STACKS, uid, offer.item, stock)) {
@@ -169,6 +179,13 @@ export async function openAuction(
       // block; sending it home first is one press and makes the sale
       // deliberate
       if (docData(profileDoc)?.buddy === offer.caught) {
+        return null;
+      }
+      // And so is anything a bidder could go and catch for themselves.
+      // Perfect values, a shiny or a special-tier species are the three
+      // a walk cannot simply produce, and the rule is asked of the
+      // **stored** record rather than of what the client said about it
+      if (!isAuctionableCatch(asCaughtPokemon(caught))) {
         return null;
       }
       // Whatever it is holding goes with it: the item was handed to

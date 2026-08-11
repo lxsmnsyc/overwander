@@ -174,6 +174,23 @@ describe('friendship', () => {
     expect(gainFriendship(MAX_FRIENDSHIP, 'berry', 1, factor)).toBe(MAX_FRIENDSHIP);
   });
 
+  it('costs more herbal medicine the fonder a pokemon is of you', () => {
+    // The one loss that grows with the band: a pokemon that hardly
+    // knows the player shrugs a mouthful off, and one that trusted
+    // them does not
+    expect(gainFriendship(50, 'herb')).toBe(45);
+    expect(gainFriendship(150, 'herb')).toBe(145);
+    expect(gainFriendship(250, 'herb')).toBe(240);
+
+    // Bitterness is counted in mouthfuls: a root costs two of them
+    // and a Revival Herb three
+    expect(gainFriendship(50, 'herb', 2)).toBe(40);
+    expect(gainFriendship(50, 'herb', 3)).toBe(35);
+
+    // And it stops at nothing rather than going below it
+    expect(gainFriendship(3, 'herb')).toBe(0);
+  });
+
   it('never makes a comfortable ball hurt more', () => {
     // A faint is a faint: the ball is a reason to think better of
     // somebody, not to take a knockout harder

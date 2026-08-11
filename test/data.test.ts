@@ -96,7 +96,7 @@ import {
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { isPortalKey } from '../src/data/items/portal-key';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
-import { MEDICINES, isMedicine, isRevive } from '../src/data/items/medicine';
+import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
@@ -541,6 +541,32 @@ describe('item data', () => {
     for (const item of MEDICINES.keys()) {
       expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
     }
+  });
+
+  it('sells herbal medicine cheaper than the bottle it competes with', () => {
+    // Each herb undercuts its bottled counterpart and does more, and
+    // the difference is charged to the pokemon instead
+    const cheaper: [herb: Items, bottle: Items][] = [
+      [Items.EnergyPowder, Items.SuperPotion],
+      [Items.EnergyRoot, Items.HyperPotion],
+      [Items.HealPowder, Items.FullHeal],
+      [Items.RevivalHerb, Items.MaxRevive],
+    ];
+
+    for (const [herb, bottle] of cheaper) {
+      expect(isHerbal(herb)).toBe(true);
+      expect(isHerbal(bottle)).toBe(false);
+      expect(getItemData(herb).buy).toBeLessThan(getItemData(bottle).buy);
+      expect(bitterness(herb)).toBeGreaterThan(0);
+    }
+
+    // They grow where a walk goes, so the two powders are an everyday
+    // find and the root and the herb are not
+    for (const item of [Items.EnergyPowder, Items.HealPowder]) {
+      expect(ITEM_POOL.base.some((entry) => entry.item === item)).toBe(true);
+    }
+    expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.EnergyRoot)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.RevivalHerb)).toBe(true);
   });
 
   it('buries the bottle caps rather than stocking them', () => {

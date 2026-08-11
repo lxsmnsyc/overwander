@@ -336,6 +336,17 @@ export const enum Items {
   HondewBerry = 175,
   GrepaBerry = 176,
   TamatoBerry = 177,
+
+  /**
+   * Herbal medicine: the cheap way to put a pokemon right. Each does
+   * more than the potion it stands next to and costs a fraction of
+   * the gold, and every one of them is bitter enough that the pokemon
+   * thinks less of whoever made it swallow one
+   */
+  EnergyPowder = 178,
+  EnergyRoot = 179,
+  HealPowder = 180,
+  RevivalHerb = 181,
 }
 
 /**

@@ -7,6 +7,8 @@
 - [ ] add Fossil Maniac
 - [ ] add Jeweler
 - [ ] add Archaeologist
-- [ ] herbal medicine
 - [ ] PP tracking
 - [ ] ability/item descriptions
+- [ ] nicknames
+- [ ] replace ball feature
+- [ ] 

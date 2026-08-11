@@ -2,11 +2,13 @@ import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
 import { type HealthState, healedByItem } from '../auth/health';
+import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
+import { bitterness } from '../data/items/medicine';
 import { getAdminFirestore } from './firebase';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { type UpdateFields, asNumber, docData } from './read';
 
 /**
  * Healing between battles, written with admin credentials.
@@ -29,6 +31,9 @@ import { asNumber, docData } from './read';
  * A pokemon that is **down** can only be reached by a revive, and a
  * revive can only reach one that is down. Everything else is refused
  * where it would do nothing at all, since using it would spend it.
+ *
+ * Herbal medicine costs friendship on top of the item, docked in the
+ * same write as the healing so the two can never come apart.
  *
  * Resolves the health and statuses the catch now has, or null when
  * the use is refused: the catch is not the player's, it is fighting,
@@ -59,7 +64,8 @@ export default async function useHealingItem(
       return null;
     }
 
-    const healed = healedByItem(asCaughtPokemon(caught), item);
+    const record = asCaughtPokemon(caught);
+    const healed = healedByItem(record, item);
 
     // The wrong cure, a pokemon already whole, a potion on a fainted
     // one, a revive on a standing one, or a berry that only does
@@ -75,8 +81,20 @@ export default async function useHealingItem(
       return null;
     }
 
+    // Herbal medicine is swallowed rather than sipped, and the pokemon
+    // holds it against whoever administered it. The loss is taken once
+    // per mouthful, and the Luxury Ball does not soften it: a
+    // comfortable ball is a reason to think better of somebody, never
+    // a reason to mind a mouthful of root less
+    const mouthfuls = bitterness(item);
+    const fields: UpdateFields = { health: healed.health, statuses: healed.statuses };
+
+    if (mouthfuls > 0) {
+      fields.friendship = gainFriendship(record.friendship, 'herb', mouthfuls);
+    }
+
     transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
-    transaction.update(caughtRef, { health: healed.health, statuses: healed.statuses });
+    transaction.update(caughtRef, fields);
     return healed;
   });
 }

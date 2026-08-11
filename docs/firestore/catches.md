@@ -81,17 +81,22 @@ Friendship follows the mainline's Gen 4 rules, tiered so that every gain shrinks
 as the number grows ([`src/data/constants/friendship.ts`](../../src/data/constants/friendship.ts)):
 
 | What happened    | Where it is written                   | 0-99 | 100-199 | 200-255 |
-| ---------------- | ------------------------------------- | ---- | ------- | ------- |
+| ---------------- | ------------------------------------- | ---- | ------- | --------- |
 | Level taken      | `useCandy`                            | +5   | +3      | +2      |
 | 256 steps walked | `recordSteps`, for a hatched buddy    | +2   | +2      | +1      |
 | Bitter berry fed | `feedEffortBerry`                     | +10  | +5      | +2      |
+| Herbal medicine  | `useHealingItem`, per mouthful        | -5   | -5      | -10     |
 | Knocked out      | `recordAftermath`, when health hits 0 | -1   | -1      | -1      |
 
 A catch starts at `BASE_FRIENDSHIP` (70) and something hatched starts at
 `HATCHED_FRIENDSHIP` (120) — the carrying has already happened.
 
+Herbal medicine is the one loss that **grows** with the band, which is the
+mainline's own asymmetry: a pokemon that hardly knows the player swallows
+something horrible and shrugs, while one that trusted them takes it badly.
+
 Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**
-(`friendshipFactor`); the loss is not. The ball is a field of the record, so the
+(`friendshipFactor`); neither loss is. The ball is a field of the record, so the
 bonus is decided at the catch and holds for good, and no writer has to look
 anything else up to apply it.
 
@@ -220,6 +225,14 @@ Three things put a pokemon right, and they all run through one call —
   keeps a berry worth carrying into one. Medicine is the one thing gold is always
   worth spending on, so all of it is `Marketable`, and the everyday half of it is
   in the overworld item pool as well.
+- **Herbal medicine**, the same file's last four entries. Each undercuts the
+  bottle it competes with and does more of the job — Energy Powder 50 points,
+  Energy Root 200, Heal Powder every status, Revival Herb a whole pool off the
+  floor — and is paid for in `friendship` instead. `bitter` on the entry is how
+  many mouthfuls it counts as, and `useHealingItem` docks
+  `gainFriendship(current, 'herb', mouthfuls)` in the **same write** as the
+  healing, so the cure and its cost can never come apart. The `factor` is not
+  passed: a Luxury Ball multiplies gains and never losses.
 - **A level**, through `useCandy` — the slow way. Growing is also mending: a
   level comes with full health and a clean slate.
 

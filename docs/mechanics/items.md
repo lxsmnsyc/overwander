@@ -11,12 +11,12 @@ pools use: special 1/4096, rare 1/64, uncommon 1/8, base for the rest.
 
 ### The item pool
 
-| Band         | What is in it                                                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine                                        |
-| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals; the six wings                              |
-| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives; Bottle Caps; the Purifying Gem; the species relics; the plates |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                   |
+| Band         | What is in it                                                                                                                                 |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                               |
+| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; the six wings                               |
+| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; Bottle Caps; the Purifying Gem; the species relics; the plates |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                                  |
 
 Two placements are deliberate. **Valuables sit a band below what they are worth**
 — they are a steady trickle of gold rather than a jackpot, so the rarest bands

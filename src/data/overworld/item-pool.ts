@@ -52,6 +52,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.IceHeal, weight: 5 },
     { item: Items.Awakening, weight: 5 },
     { item: Items.ParalyzeHeal, weight: 5 },
+    // The herbs grow where a walk goes, which is the reason they cost
+    // less than what a shop bottles: they are picked rather than
+    // bought, and the pokemon that swallows one settles the bill
+    { item: Items.EnergyPowder, weight: 8 },
+    { item: Items.HealPowder, weight: 8 },
   ],
   uncommon: [
     { item: Items.UltraBall, weight: 15 },
@@ -67,6 +72,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.SuperPotion, weight: 10 },
     { item: Items.HyperPotion, weight: 6 },
     { item: Items.FullHeal, weight: 6 },
+    // The root is a Hyper Potion's worth and then some, so it sits in
+    // the band the Hyper Potion sits in rather than with the powders
+    { item: Items.EnergyRoot, weight: 6 },
     // The wings, blown along the ground: three points of training
     // each, and the only effort a pokemon gets that its levels did
     // not pay for. Thin slots, because they are the one thing in the
@@ -86,6 +94,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.FullRestore, weight: 4 },
     { item: Items.Revive, weight: 6 },
     { item: Items.MaxRevive, weight: 2 },
+    // A Max Revive that grows out of the ground. It is the commoner of
+    // the two because what it asks for is not gold
+    { item: Items.RevivalHerb, weight: 4 },
     // A dug-up cap fixes one stat of one pokemon: rare enough to be
     // the find of a walk, common enough to be worth saving for the
     // pokemon that deserves it

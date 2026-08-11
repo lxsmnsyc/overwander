@@ -36,19 +36,26 @@ export const FRIENDSHIP_STEP_INTERVAL = 256;
 
 /**
  * What moved it: a level taken, a walk shared, a berry that tasted
- * bitter but did the pokemon good, or a faint
+ * bitter but did the pokemon good, a mouthful of herbal medicine, or
+ * a faint
  */
-export type FriendshipCause = 'level' | 'walk' | 'berry' | 'faint';
+export type FriendshipCause = 'level' | 'walk' | 'berry' | 'herb' | 'faint';
 
 /**
  * The three bands every gain is read out of, low to high. A pokemon
  * that already thinks well of the player is harder to impress and no
- * easier to disappoint
+ * easier to disappoint.
+ *
+ * A **herb** is the one loss that grows with the band, and it is the
+ * mainline's own asymmetry: a pokemon that barely knows the player
+ * swallows something horrible and shrugs, while one that trusted them
+ * takes it as a betrayal
  */
 const GAINS: Record<FriendshipCause, [low: number, mid: number, high: number]> = {
   level: [5, 3, 2],
   walk: [2, 2, 1],
   berry: [10, 5, 2],
+  herb: [-5, -5, -10],
   faint: [-1, -1, -1],
 };
 

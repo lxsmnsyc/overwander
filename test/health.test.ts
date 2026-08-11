@@ -13,6 +13,7 @@ import {
 } from '../src/auth/health';
 import { Stats, getHealthStat, packIVs } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
+import { bitterness, isHerbal } from '../src/data/items/medicine';
 import { Species } from '../src/data/ids/species';
 import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
 import registerGen1Moves from '../src/data/moves/gen-1';
@@ -264,6 +265,35 @@ describe('medicine', () => {
     // badly hurt it is
     expect(healedByItem(hurt(1), Items.Revive)).toBeNull();
     expect(healedByItem(hurt(1), Items.MaxRevive)).toBeNull();
+  });
+
+  it('reads herbal medicine as medicine, and charges friendship for it', () => {
+    // Each herb out-does the bottle it stands beside: the powder
+    // beats a Super Potion, the root beats a Hyper Potion, and the
+    // herb is a Max Revive that grows out of the ground
+    expect(healedByItem(hurt(20), Items.EnergyPowder)).toEqual({ health: 70, statuses: 0 });
+    expect(healedByItem(hurt(20), Items.EnergyRoot)).toEqual({ health: max(), statuses: 0 });
+    expect(healedByItem(hurt(20, [Statuses.Frozen]), Items.HealPowder)).toEqual({
+      health: 20,
+      statuses: 0,
+    });
+    expect(healedByItem(hurt(0), Items.RevivalHerb)).toEqual({ health: max(), statuses: 0 });
+
+    // And each is refused where it would do nothing, exactly as its
+    // bottled counterpart is
+    expect(healedByItem(hurt(max()), Items.EnergyPowder)).toBeNull();
+    expect(healedByItem(hurt(0), Items.EnergyRoot)).toBeNull();
+    expect(healedByItem(hurt(1), Items.RevivalHerb)).toBeNull();
+
+    // What separates them from the bottles is the bill, counted in
+    // mouthfuls of bitterness
+    expect(isHerbal(Items.EnergyPowder)).toBe(true);
+    expect(isHerbal(Items.MaxRevive)).toBe(false);
+    expect(bitterness(Items.EnergyPowder)).toBe(1);
+    expect(bitterness(Items.HealPowder)).toBe(1);
+    expect(bitterness(Items.EnergyRoot)).toBe(2);
+    expect(bitterness(Items.RevivalHerb)).toBe(3);
+    expect(bitterness(Items.Potion)).toBe(0);
   });
 });
 

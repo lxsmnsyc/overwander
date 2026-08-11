@@ -12,6 +12,11 @@ import { registerItem } from './__create';
  * pokemon that is already down does nothing, exactly as it does not
  * in the mainline games.
  *
+ * The **herbal** four answer the same three problems more cheaply and
+ * charge for it in friendship: they are the choice between a party
+ * put right today and a pokemon that thinks well of the player a
+ * month from now.
+ *
  * Unlike a berry, none of it is held: medicine is used, and a unit
  * cannot carry a potion into a raid to drink mid-fight. That is what
  * keeps berries worth holding.
@@ -48,6 +53,12 @@ export interface MedicineEffect {
    * only thing that works on a pokemon at zero
    */
   revives: number;
+  /**
+   * How bitter it is, in mouthfuls: how many times the herbal
+   * friendship loss is taken when it goes down. Zero for everything
+   * that is not herbal, which is everything a shop bottles
+   */
+  bitter?: number;
 }
 
 /**
@@ -76,6 +87,14 @@ export const MEDICINES = new Map<Items, MedicineEffect>([
   // one. Neither does anything to a pokemon that is still standing
   [Items.Revive, { restore: 0, cures: null, revives: 0.5 }],
   [Items.MaxRevive, { restore: 0, cures: null, revives: 1 }],
+  // The herbal four. Each one out-does the bottle it stands beside —
+  // the powder beats a Super Potion, the root beats a Hyper Potion,
+  // the herb is a Max Revive — and each is paid for in what the
+  // pokemon thinks of the player rather than in gold
+  [Items.EnergyPowder, { restore: 50, cures: null, revives: 0, bitter: 1 }],
+  [Items.EnergyRoot, { restore: 200, cures: null, revives: 0, bitter: 2 }],
+  [Items.HealPowder, { restore: 0, cures: EVERY_STATUS, revives: 0, bitter: 1 }],
+  [Items.RevivalHerb, { restore: 0, cures: null, revives: 1, bitter: 3 }],
 ]);
 
 /**
@@ -86,11 +105,28 @@ export function isMedicine(item: Items): boolean {
 }
 
 /**
- * Whether the item is one of the two revives — the only things that
- * lift a fainted pokemon
+ * Whether the item is one of the revives — the only things that lift
+ * a fainted pokemon
  */
 export function isRevive(item: Items): boolean {
   return (MEDICINES.get(item)?.revives ?? 0) > 0;
+}
+
+/**
+ * How many mouthfuls of bitterness the item costs, for the friendship
+ * that is docked when it goes down. Zero for anything that is not
+ * herbal, so every caller can ask without checking first
+ */
+export function bitterness(item: Items): number {
+  return MEDICINES.get(item)?.bitter ?? 0;
+}
+
+/**
+ * Whether the item is herbal — cheap, effective, and paid for in
+ * friendship
+ */
+export function isHerbal(item: Items): boolean {
+  return bitterness(item) > 0;
 }
 
 const MEDICINE_RESALE = 0.5;
@@ -127,4 +163,12 @@ export default function registerMedicines(): void {
   // A revive is what a lost raid costs, so it is priced like one
   registerMedicine(Items.Revive, 'Revive', 2000);
   registerMedicine(Items.MaxRevive, 'Max Revive', 4000);
+  // The herbal four are the cheap answer to all three problems, and
+  // every price here undercuts the bottle it competes with. What they
+  // cost instead is friendship, which is the one thing gold cannot buy
+  // back — a groomer sells half of what is left, never the last of it
+  registerMedicine(Items.EnergyPowder, 'Energy Powder', 500);
+  registerMedicine(Items.EnergyRoot, 'Energy Root', 800);
+  registerMedicine(Items.HealPowder, 'Heal Powder', 450);
+  registerMedicine(Items.RevivalHerb, 'Revival Herb', 2800);
 }

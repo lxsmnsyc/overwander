@@ -190,6 +190,15 @@ worth to a given pokemon is decided in one place:
   and a revive brings a fainted pokemon round on half a pool — a Max Revive on a
   whole one. None of it is holdable: a potion cannot be drunk mid-raid, which is
   what keeps a berry worth carrying into one.
+- **Herbal medicine**, which answers the same three problems more cheaply and
+  charges the difference to the pokemon. An Energy Powder is 50 points, an Energy
+  Root 200, a Heal Powder takes every status off, and a Revival Herb lifts a
+  fainted pokemon on a whole pool — each one out-doing the bottle it stands next
+  to at a fraction of the gold. Every one of them is bitter, and the pokemon
+  thinks **less** of whoever fed it one: −5 while it hardly knows you, −10 once
+  it does, taken once per mouthful (one for the powders, two for the root, three
+  for the herb). A Luxury Ball does not soften it. It is the choice between a
+  party put right today and a pokemon that thinks the world of you in a month.
 - **A level**, the slow way.
 - **A Heal Ball thrown at something else.** Catching with one mends the pokemon
   walking beside the player — full health, statuses cleared, for nothing beyond

@@ -46,6 +46,7 @@ import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
+import { isHerbal } from '../data/items/medicine';
 import { PURIFY_IV_BOOST, isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
@@ -432,7 +433,11 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         setStatus(
           state == null
             ? `${describeItem(item)} would do nothing for it.`
-            : `${describeItem(item)} used — ${state.health} HP.`,
+            : // Herbal medicine is swallowed, and the pokemon holds it
+              // against whoever handed it over
+              `${describeItem(item)} used — ${state.health} HP.${
+                isHerbal(item) ? ' It did not enjoy that.' : ''
+              }`,
         );
         await refetch();
         await refetchBag();
@@ -987,6 +992,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         }
                       }}
                     />
+                    {/* The herbal ones are cheaper than the bottle they
+                        stand next to and the pokemon pays the
+                        difference, so it is said before the press
+                        rather than after */}
+                    <Show
+                      when={bag()?.some((entry) => isHerbal(entry.item) && isRemedy(entry.item))}
+                    >
+                      <Meta>
+                        Herbal medicine is bitter: it works, and the pokemon will think less of you
+                        for it.
+                      </Meta>
+                    </Show>
                   </DialogSection>
 
                   <DialogSection title="Use item">

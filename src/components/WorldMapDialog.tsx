@@ -3,7 +3,7 @@ import { BIOME_COLORS, BIOME_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import getWorld from '../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../overworld/world';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
+import { Button, Dialog, DialogActions, Note } from './styled';
 import WorldMapCanvas from './WorldMapCanvas';
 import { useGame } from './game-context';
 
@@ -125,14 +125,19 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
   });
 
   return (
-    <Dialog isOpen={props.isOpen} onClose={close} width="wide">
-      <DialogTitle>World Map</DialogTitle>
-      <p>
-        {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
-        arrow keys — hold shift to cross it faster, or press Home to come back to where you are
-        standing.
-      </p>
-
+    <Dialog
+      isOpen={props.isOpen}
+      onClose={close}
+      width="wide"
+      title="World Map"
+      description={
+        <>
+          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
+          arrow keys — hold shift to cross it faster, or press Home to come back to where you are
+          standing.
+        </>
+      }
+    >
       <WorldMapCanvas
         span={SPAN}
         originX={centerX() - HALF}
@@ -144,27 +149,24 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         onRecenter={recenter}
       />
 
-      <Show when={standing()} fallback={<p>Finding you…</p>}>
+      <Show when={standing()} fallback={<Note>Finding you…</Note>}>
         {(at) => (
-          <p>
+          <Note>
             You are standing in chunk {at().chunkX}, {at().chunkY} — ringed on the map while it is
             in view.
-          </p>
+          </Note>
         )}
       </Show>
 
-      <ul>
+      {/* What the colours on the map mean, and how much of what is in
+          view is each one */}
+      <ul class="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-xs">
         <For each={legend().entries}>
           {([biome, count]) => (
-            <li>
+            <li class="flex items-center gap-1.5">
               <span
-                style={{
-                  display: 'inline-block',
-                  width: '0.75rem',
-                  height: '0.75rem',
-                  background: BIOME_COLORS[biome],
-                  'margin-right': '0.5rem',
-                }}
+                class="inline-block size-3 rounded-xs border border-line"
+                style={{ background: BIOME_COLORS[biome] }}
               />
               {BIOME_NAMES[biome]} — {Math.round((count / Math.max(1, legend().ground)) * 100)}%
             </li>
@@ -173,7 +175,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       </ul>
 
       <DialogActions>
-        <DialogButton onClick={close}>Close</DialogButton>
+        <Button onClick={close}>Close</Button>
       </DialogActions>
     </Dialog>
   );

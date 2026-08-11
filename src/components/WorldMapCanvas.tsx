@@ -161,15 +161,10 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       aria-label={`World map, ${props.span} chunks across, centred on ${
         props.originX + Math.floor(props.span / 2)
       }, ${props.originY + Math.floor(props.span / 2)}. Arrow keys pan.`}
-      style={{
-        width: 'min(100%, 34rem)',
-        height: 'auto',
-        display: 'block',
-        margin: '0 auto',
-        // Blown up from a few hundred pixels, so the chunks stay
-        // squares rather than being smeared into each other
-        'image-rendering': 'pixelated',
-      }}
+      // Blown up from a few hundred pixels, so the chunks stay squares
+      // rather than being smeared into each other
+      class="mx-auto block h-auto w-[min(100%,34rem)] rounded-lg border border-line
+        [image-rendering:pixelated] focus-visible:outline-none"
       onFocus={() => {
         setFocused(true);
       }}

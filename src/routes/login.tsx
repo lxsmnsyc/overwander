@@ -3,6 +3,7 @@ import { type JSX, Show, createSignal } from 'solid-js';
 import { signOut } from '../auth/actions';
 import { useAuth } from '../auth/context';
 import LoginForm from '../components/LoginForm';
+import { Button, Card, Note, Row, Status } from '../components/styled';
 
 export default function Login(): JSX.Element {
   const auth = useAuth();
@@ -16,27 +17,29 @@ export default function Login(): JSX.Element {
   };
 
   return (
-    <main>
+    <main class="mx-auto flex w-full max-w-sm flex-col gap-4 px-4 py-6">
       <Title>Sign in - Poketerra</Title>
       <h1>Sign in</h1>
-      <Show
-        when={auth.user()}
-        fallback={
-          <Show when={!auth.loading()} fallback={<p>Loading session…</p>}>
-            <LoginForm />
-          </Show>
-        }
-      >
-        {(user) => (
-          <>
-            <p>Signed in as {user().email ?? user().uid}</p>
-            <button type="button" onClick={leave}>
-              Sign out
-            </button>
-          </>
-        )}
-      </Show>
-      <Show when={error()}>{(message) => <p role="alert">{message()}</p>}</Show>
+      <Card>
+        <Show
+          when={auth.user()}
+          fallback={
+            <Show when={!auth.loading()} fallback={<Note>Loading session…</Note>}>
+              <LoginForm />
+            </Show>
+          }
+        >
+          {(user) => (
+            <>
+              <Note>Signed in as {user().email ?? user().uid}</Note>
+              <Row>
+                <Button onClick={leave}>Sign out</Button>
+              </Row>
+            </>
+          )}
+        </Show>
+        <Status message={error()} tone="alert" />
+      </Card>
     </main>
   );
 }

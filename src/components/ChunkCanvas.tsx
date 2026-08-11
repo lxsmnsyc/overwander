@@ -277,14 +277,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // A canvas has no per-cell elements to hang a tooltip on, so the
       // one tooltip it has says whatever the pointer is over
       title={hovered() == null ? '' : props.label(hovered() ?? 0)}
-      style={{
-        width: 'min(100%, 24rem)',
-        height: 'auto',
-        display: 'block',
-        margin: '0 auto',
-        'border-radius': '0.25rem',
-        cursor: hovered() != null && props.reachable(hovered() ?? 0) ? 'pointer' : 'default',
-      }}
+      class={`mx-auto block h-auto w-[min(100%,24rem)] rounded-lg border border-line
+        focus-visible:outline-none ${
+          hovered() != null && props.reachable(hovered() ?? 0) ? 'cursor-pointer' : 'cursor-default'
+        }`}
       onMouseMove={(event) => {
         setHovered(cellAt(event));
       }}

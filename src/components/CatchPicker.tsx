@@ -3,8 +3,19 @@ import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { useAuth } from '../auth/context';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
 import { describeCatch } from './CatchesList';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Row,
+  RowButton,
+} from './styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -38,6 +49,11 @@ interface CatchPickerCommonProps {
    */
   player?: string;
   title?: string;
+  /**
+   * What the caller is asking for, in a sentence. The picker says
+   * something sensible about how many it wants if the caller does not
+   */
+  description?: string;
   label?: string;
   /**
    * What a row's button says it will do. The pokemon follows it
@@ -148,6 +164,23 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const isDrafted = (id: string): boolean => new Set(draft()).has(id);
 
+  /**
+   * What the picker is asking for. A caller with something more
+   * specific to say says it; otherwise the question is how many, which
+   * the picker already knows
+   */
+  const purpose = (): string => {
+    if (props.description != null) {
+      return props.description;
+    }
+    if (props.multiple !== true) {
+      return 'Choose one of your pokemon.';
+    }
+    return limit() === Number.POSITIVE_INFINITY
+      ? 'Choose from your pokemon.'
+      : `Choose from your pokemon — up to ${limit()} of them.`;
+  };
+
   const close = (): void => {
     setPending(null);
     setConfirming(false);
@@ -199,64 +232,73 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   };
 
   const list = (): JSX.Element => (
-    <>
-      <Show when={!loading()} fallback={<p>Looking them over…</p>}>
+    <div class="flex flex-col gap-3">
+      <Show when={!loading()} fallback={<Note>Looking them over…</Note>}>
         <Show
           when={options().length}
-          fallback={<p>{props.empty ?? 'You have nothing for this.'}</p>}
+          fallback={<Note>{props.empty ?? 'You have nothing for this.'}</Note>}
         >
-          <ul>
+          <List>
             <For each={options()}>
               {(option) => (
-                <li>
-                  <button
-                    type="button"
-                    aria-pressed={
-                      props.multiple === true ? isDrafted(option.id) : props.value === option.id
-                    }
-                    disabled={props.disabled === true || props.reason?.(option) != null}
-                    onClick={() => {
-                      press(option);
-                    }}
-                  >
-                    {isDrafted(option.id) ? '✓ ' : ''}
-                    {props.verb == null ? '' : `${props.verb} `}
-                    {describeCatch(option.caught)}
-                  </button>
-                  {/* Said rather than merely greyed: a pokemon left out
-                      of a party for a reason is worth the sentence */}
-                  <Show when={props.reason?.(option)}>{(said) => <span> · {said()}</span>}</Show>
-                  <Show when={props.note?.(option)}>{(said) => <span> · {said()}</span>}</Show>
+                <ListRow
+                  selected={
+                    props.multiple === true ? isDrafted(option.id) : props.value === option.id
+                  }
+                  class="flex-col items-stretch"
+                >
+                  <div class="flex flex-wrap items-center gap-2">
+                    <RowButton
+                      pressed={
+                        props.multiple === true ? isDrafted(option.id) : props.value === option.id
+                      }
+                      disabled={props.disabled === true || props.reason?.(option) != null}
+                      onClick={() => {
+                        press(option);
+                      }}
+                    >
+                      {isDrafted(option.id) ? '✓ ' : ''}
+                      {props.verb == null ? '' : `${props.verb} `}
+                      {describeCatch(option.caught)}
+                    </RowButton>
+                    {/* Said rather than merely greyed: a pokemon left
+                        out of a party for a reason is worth the
+                        sentence */}
+                    <Show when={props.reason?.(option)}>
+                      {(said) => <Badge tone="ember">{said()}</Badge>}
+                    </Show>
+                    <Show when={props.note?.(option)}>{(said) => <Meta>{said()}</Meta>}</Show>
+                  </div>
                   <Show when={pending() === option.id}>
-                    {' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        pickOne(option.id);
-                      }}
-                    >
-                      {props.verb ?? 'Pick'} this one?
-                    </button>{' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPending(null);
-                      }}
-                    >
-                      Cancel
-                    </button>
+                    <Row>
+                      <Button
+                        tone="primary"
+                        onClick={() => {
+                          pickOne(option.id);
+                        }}
+                      >
+                        {props.verb ?? 'Pick'} this one?
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setPending(null);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Row>
                   </Show>
-                </li>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 
       <Show when={props.multiple === true}>
-        <p>
-          <button
-            type="button"
+        <Row>
+          <Button
+            tone="primary"
             disabled={props.disabled === true || draft().length === 0}
             onClick={finish}
           >
@@ -265,36 +307,39 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
               : `${props.verb ?? 'Take'} ${draft().length}${
                   limit() === Number.POSITIVE_INFINITY ? '' : `/${limit()}`
                 }`}
-          </button>
-        </p>
+          </Button>
+        </Row>
       </Show>
-    </>
+    </div>
   );
 
   return (
     <Show when={props.inline !== true} fallback={list()}>
-      <button
-        type="button"
+      <Button
         onClick={() => {
           setOpened(true);
         }}
       >
         {props.label ?? props.title ?? 'Pick a pokemon'}
-      </button>
-      <Dialog isOpen={showing()} onClose={close}>
-        <DialogTitle>{props.title ?? 'Your pokemon'}</DialogTitle>
+      </Button>
+      <Dialog
+        isOpen={showing()}
+        onClose={close}
+        title={props.title ?? 'Your pokemon'}
+        description={purpose()}
+      >
         {list()}
         <DialogActions>
           <Show when={props.multiple !== true && props.value != null}>
-            <DialogButton
+            <Button
               onClick={() => {
                 pickOne(null);
               }}
             >
               Pick none
-            </DialogButton>
+            </Button>
           </Show>
-          <DialogButton onClick={close}>Close</DialogButton>
+          <Button onClick={close}>Close</Button>
         </DialogActions>
       </Dialog>
     </Show>

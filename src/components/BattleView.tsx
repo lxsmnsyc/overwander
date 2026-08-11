@@ -14,6 +14,7 @@ import type Alliance from '../battle/alliance';
 import { createRocketBattle } from '../overworld/rocket';
 import BattleCanvas from './BattleCanvas';
 import BattleField from './BattleField';
+import { Badge, Button, Note, Row, Status } from './styled';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
 
 /**
@@ -225,13 +226,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   });
 
   return (
-    <section>
-      <h1>{props.active.replay ? 'Replay' : title()}</h1>
-      <Show when={props.active.replay}>
-        <p>A replay awards nothing — the result already stands.</p>
-      </Show>
+    <section class="flex flex-col gap-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <h1 class="grow">{props.active.replay ? 'Replay' : title()}</h1>
+        <Show when={props.active.replay}>
+          <Badge>A replay awards nothing — the result already stands</Badge>
+        </Show>
+      </div>
 
-      <Show when={instance()} fallback={<p>Building the battle…</p>}>
+      <Show when={instance()} fallback={<Note>Building the battle…</Note>}>
         {(built) => (
           <>
             {/* The field at a glance — who is up, what is coming —
@@ -251,11 +254,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       <Show when={outcome() === 'draw'}>
         <p role="status">The battle ground to a halt with nobody able to act.</p>
       </Show>
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+      <Status message={status()} />
 
-      <p>
-        <button
-          type="button"
+      <Row>
+        <Button
+          tone="primary"
           onClick={() => {
             const collect = !props.active.replay && outcome() === 'won';
 
@@ -266,8 +269,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           }}
         >
           {props.active.replay ? 'Exit replay' : 'Leave battle'}
-        </button>
-      </p>
+        </Button>
+      </Row>
     </section>
   );
 }

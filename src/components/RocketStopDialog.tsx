@@ -5,7 +5,7 @@ import { startRocketBattle } from '../auth/rockets';
 import { getSpeciesData } from '../data/species';
 import { ROCKET_PARTY_LEVEL } from '../overworld/rocket';
 import TeamPickerDialog from './TeamPickerDialog';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
+import { Badge, Button, Dialog, DialogActions, List, ListRow, Note, Status } from './styled';
 import { useGame } from './game-context';
 
 export interface RocketStopDialogProps {
@@ -54,42 +54,46 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
 
   return (
     <>
-      <Dialog isOpen={props.challenge != null && !picking()} onClose={props.onClose}>
-        <DialogTitle>Team Rocket</DialogTitle>
+      <Dialog
+        isOpen={props.challenge != null && !picking()}
+        onClose={props.onClose}
+        title="Team Rocket"
+        description="A Team Rocket grunt blocks the way. “Three of mine against however many of
+          yours.”"
+      >
         <Show when={props.challenge?.[1]}>
           {(record) => (
             <>
-              <p>
-                A Team Rocket grunt blocks the way. “Three of mine against however many of yours.”
-              </p>
-              <ul>
+              <List>
                 <For each={record().party}>
                   {(entry) => (
-                    <li>
-                      Shadow {getSpeciesData(entry.species).name} · Lv. {ROCKET_PARTY_LEVEL}
-                    </li>
+                    <ListRow>
+                      <Badge tone="ember">shadow</Badge>
+                      <span class="grow font-medium">{getSpeciesData(entry.species).name}</span>
+                      <Badge>Lv. {ROCKET_PARTY_LEVEL}</Badge>
+                    </ListRow>
                   )}
                 </For>
-              </ul>
+              </List>
               {/* Losing costs the window nothing: the grunt stays put
                     until they are beaten or the window turns over */}
-              <p>Lose and they will still be here. Win and they are gone for the window.</p>
+              <Note>Lose and they will still be here. Win and they are gone for the window.</Note>
             </>
           )}
         </Show>
 
         <DialogActions>
-          <DialogButton
+          <Button
             tone="primary"
             onClick={() => {
               setPicking(true);
             }}
           >
             Battle
-          </DialogButton>
-          <DialogButton onClick={props.onClose}>Walk away</DialogButton>
+          </Button>
+          <Button onClick={props.onClose}>Walk away</Button>
         </DialogActions>
-        <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+        <Status message={status()} />
       </Dialog>
 
       <TeamPickerDialog

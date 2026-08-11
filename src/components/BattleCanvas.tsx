@@ -409,12 +409,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   return (
     <canvas
       ref={canvas}
-      style={{
-        width: '100%',
-        'max-width': `${WIDTH}px`,
-        height: 'auto',
-        'border-radius': '0.5rem',
-      }}
+      class="mx-auto block h-auto w-full rounded-lg border border-line"
+      style={{ 'max-width': `${WIDTH}px` }}
     />
   );
 }

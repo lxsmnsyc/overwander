@@ -1,4 +1,4 @@
-import { type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, type ParentProps, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
@@ -9,7 +9,16 @@ import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES, NURSE_CARE_LIMIT } from '../
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
-import { Dialog, DialogTitle } from './styled';
+import { Button, Dialog, DialogActions, DialogSection, Row, Status } from './styled';
+
+/**
+ * What the person standing there actually says. It is set apart from
+ * the game's own words, because it is somebody talking rather than the
+ * game explaining
+ */
+function Says(props: ParentProps): JSX.Element {
+  return <p class="border-l-2 border-leaf/40 pl-3 text-sm text-muted italic">{props.children}</p>;
+}
 
 /**
  * A catch as the breeding rules read one
@@ -85,6 +94,16 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     return (
       chosenPair != null && canBreed(asParent(chosenPair[0].caught), asParent(chosenPair[1].caught))
     );
+  };
+
+  /**
+   * Who is standing there. The dialog is named after them, and it is
+   * named whether or not somebody has been walked up to yet
+   */
+  const who = (): string => {
+    const npc = props.standing?.[1];
+
+    return npc == null ? 'Somebody' : NPC_NAMES[npc];
   };
 
   const close = (): void => {
@@ -177,103 +196,119 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog isOpen={props.standing != null} onClose={close}>
+    <Dialog
+      isOpen={props.standing != null}
+      onClose={close}
+      title={who()}
+      description="Somebody standing out here with an offer. They will be gone when the window
+        turns over, and each of them takes you up on it once while they are here."
+    >
       <Show when={props.standing}>
         {(standing) => (
           <>
-            <DialogTitle>{NPC_NAMES[standing()[1]]}</DialogTitle>
-
             <Show when={standing()[1] === Npc.Breeder}>
-              <p>
-                "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
-                them. It takes after both."
-              </p>
-              {/* The pair is picked with the same list every other
+              <DialogSection>
+                <Says>
+                  "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
+                  them. It takes after both."
+                </Says>
+                {/* The pair is picked with the same list every other
                     part of the game picks a pokemon with; what makes
                     it a breeding pair is the two, and the rule about
                     what can be one */}
-              <CatchPicker
-                inline
-                multiple
-                max={2}
-                options={catches()}
-                value={chosen()}
-                verb="Leave"
-                empty="You have nothing to leave."
-                filter={(option) => !isEgg(option.caught) && !option.fighting}
-                note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
-                onPick={(picked) => {
-                  setStatus(null);
-                  setChosen(picked);
-                }}
-              />
-              {/* The pairing is checked here only so the button can
+                <CatchPicker
+                  inline
+                  multiple
+                  max={2}
+                  options={catches()}
+                  value={chosen()}
+                  verb="Leave"
+                  empty="You have nothing to leave."
+                  filter={(option) => !isEgg(option.caught) && !option.fighting}
+                  note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
+                  onPick={(picked) => {
+                    setStatus(null);
+                    setChosen(picked);
+                  }}
+                />
+                {/* The pairing is checked here only so the button can
                     say so first; the refusal itself is the server's */}
-              <Show when={chosen().length === 2 && !compatible()}>
-                <p role="status">Those two will have nothing to do with each other.</p>
-              </Show>
-              <p>
-                <button type="button" disabled={busy() || !compatible()} onClick={submitPair}>
-                  Leave them ({BREEDING_FEE} gold)
-                </button>
-              </p>
+                <Status
+                  message={
+                    chosen().length === 2 && !compatible()
+                      ? 'Those two will have nothing to do with each other.'
+                      : null
+                  }
+                />
+                <Row>
+                  <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
+                    Leave them ({BREEDING_FEE} gold)
+                  </Button>
+                </Row>
+              </DialogSection>
             </Show>
 
             <Show when={standing()[1] === Npc.NurseJoy}>
-              <p>
-                "Leave them with me — all of them, if you like. No charge. And if one of them is
-                carrying a shadow, I will see to that too."
-              </p>
-              {/* She is free, so what keeps her from being a tap is
+              <DialogSection>
+                <Says>
+                  "Leave them with me — all of them, if you like. No charge. And if one of them is
+                  carrying a shadow, I will see to that too."
+                </Says>
+                {/* She is free, so what keeps her from being a tap is
                     the window: one visit per player while she is
                     standing here */}
-              <CatchPicker
-                inline
-                multiple
-                max={NURSE_CARE_LIMIT}
-                options={catches()}
-                value={[]}
-                verb="Hand over"
-                empty="You have nothing for her to look at."
-                filter={(option) => !isEgg(option.caught) && !option.fighting}
-                note={(option) => (isShadow(option.caught) ? 'shadow — she would purify it' : null)}
-                onPick={tendParty}
-              />
+                <CatchPicker
+                  inline
+                  multiple
+                  max={NURSE_CARE_LIMIT}
+                  options={catches()}
+                  value={[]}
+                  verb="Hand over"
+                  empty="You have nothing for her to look at."
+                  filter={(option) => !isEgg(option.caught) && !option.fighting}
+                  note={(option) =>
+                    isShadow(option.caught) ? 'shadow — she would purify it' : null
+                  }
+                  onPick={tendParty}
+                />
+              </DialogSection>
             </Show>
 
             <Show when={standing()[1] === Npc.DaycareLady}>
-              <p>
-                "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
-                Wherever it is now, it will be that much further along."
-              </p>
-              {/* The note on each row is what the fee actually buys
+              <DialogSection>
+                <Says>
+                  "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
+                  Wherever it is now, it will be that much further along."
+                </Says>
+                {/* The note on each row is what the fee actually buys
                     that egg: half of a long walk is further than half
                     of a short one */}
-              <CatchPicker
-                inline
-                options={catches()}
-                value={null}
-                verb="Warm"
-                empty="You have no egg for her."
-                filter={(option) =>
-                  isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
-                }
-                note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
-                onPick={(id) => {
-                  if (id != null) {
-                    pushEgg(id);
+                <CatchPicker
+                  inline
+                  options={catches()}
+                  value={null}
+                  verb="Warm"
+                  empty="You have no egg for her."
+                  filter={(option) =>
+                    isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
                   }
-                }}
-              />
+                  note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
+                  onPick={(id) => {
+                    if (id != null) {
+                      pushEgg(id);
+                    }
+                  }}
+                />
+              </DialogSection>
             </Show>
 
-            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+            <Status message={status()} />
           </>
         )}
       </Show>
-      <button type="button" onClick={close}>
-        Walk on
-      </button>
+      <DialogActions>
+        <Button onClick={close}>Walk on</Button>
+      </DialogActions>
     </Dialog>
   );
 }

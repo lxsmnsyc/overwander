@@ -3,6 +3,7 @@ import { getCandies } from '../auth/candy';
 import { getInventory } from '../auth/inventory';
 import type Families from '../data/ids/families';
 import { describeItem } from './InventoryPicker';
+import { Badge, List, ListRow, Note } from './styled';
 
 /**
  * Candy families have no display names of their own — the family
@@ -27,32 +28,34 @@ export default function InventoryList(props: InventoryListProps): JSX.Element {
   return (
     <>
       <h4>Items</h4>
-      <Show when={!items.loading} fallback={<p>Loading items…</p>}>
-        <Show when={items()?.length} fallback={<p>Carrying nothing.</p>}>
-          <ul>
+      <Show when={!items.loading} fallback={<Note>Loading items…</Note>}>
+        <Show when={items()?.length} fallback={<Note>Carrying nothing.</Note>}>
+          <List>
             <For each={items()}>
               {(entry) => (
-                <li>
-                  {describeItem(entry.item)} × {entry.amount}
-                </li>
+                <ListRow>
+                  <span class="grow">{describeItem(entry.item)}</span>
+                  <Badge>× {entry.amount}</Badge>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 
       <h4>Candies</h4>
-      <Show when={!candies.loading} fallback={<p>Loading candies…</p>}>
-        <Show when={candies()?.length} fallback={<p>No candies.</p>}>
-          <ul>
+      <Show when={!candies.loading} fallback={<Note>Loading candies…</Note>}>
+        <Show when={candies()?.length} fallback={<Note>No candies.</Note>}>
+          <List>
             <For each={candies()}>
               {(stack) => (
-                <li>
-                  {describeFamily(stack.family)} × {stack.count}
-                </li>
+                <ListRow>
+                  <span class="grow">{describeFamily(stack.family)}</span>
+                  <Badge tone="gold">× {stack.count}</Badge>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
     </>

@@ -11,6 +11,7 @@ import {
 } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { AuctionLotLabel, BidControls } from './AuctionTab';
+import { Badge, type BadgeTone, Button, List, ListRow, Meta, Note, Status } from './styled';
 
 /**
  * Where the player stands, said the way they would say it
@@ -21,6 +22,19 @@ const BID_STATE_LABELS: Record<BidState, string> = {
   [BidState.Won]: 'won — waiting to be collected',
   [BidState.Lost]: 'lost',
   [BidState.Collected]: 'won and collected',
+};
+
+/**
+ * The same five states, said in colour. Standing to win a lot and
+ * having lost it are the two things a player scans this list for, so
+ * they are the two the eye can tell apart without reading
+ */
+const BID_STATE_TONES: Record<BidState, BadgeTone> = {
+  [BidState.Leading]: 'leaf',
+  [BidState.Outbid]: 'ember',
+  [BidState.Won]: 'gold',
+  [BidState.Lost]: 'neutral',
+  [BidState.Collected]: 'neutral',
 };
 
 /**
@@ -95,18 +109,22 @@ export default function BidsList(props: BidsListProps): JSX.Element {
 
   return (
     <>
-      <Show when={!history.loading} fallback={<p>Loading bids…</p>}>
-        <Show when={history()?.length} fallback={<p>You have not bid on anything.</p>}>
-          <ul>
+      <Show when={!history.loading} fallback={<Note>Loading bids…</Note>}>
+        <Show when={history()?.length} fallback={<Note>You have not bid on anything.</Note>}>
+          <List>
             <For each={history()}>
               {(entry) => {
                 const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
 
                 return (
-                  <li>
-                    <AuctionLotLabel auction={entry.lot} /> ·{' '}
-                    {describeStanding(entry.lot, entry.bid.amount, state())} ·{' '}
-                    {BID_STATE_LABELS[state()]}
+                  <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
+                    <div class="flex grow flex-col gap-0.5">
+                      <span class="font-medium">
+                        <AuctionLotLabel auction={entry.lot} />
+                      </span>
+                      <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
+                    </div>
+                    <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]}</Badge>
                     {/* Outbid, and the lot is still open: the raise is
                         made here rather than by finding it again on
                         the board */}
@@ -123,25 +141,24 @@ export default function BidsList(props: BidsListProps): JSX.Element {
                     {/* Nothing is handed over when bidding closes, so a
                         won lot is collected here too */}
                     <Show when={canClaim(entry.lot, props.player, Date.now())}>
-                      {' '}
-                      <button
-                        type="button"
+                      <Button
+                        tone="primary"
                         onClick={() => {
                           collect(entry.auction);
                         }}
                       >
                         Collect
-                      </button>
+                      </Button>
                     </Show>
-                  </li>
+                  </ListRow>
                 );
               }}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+      <Status message={status()} />
     </>
   );
 }

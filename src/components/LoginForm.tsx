@@ -1,5 +1,6 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import { type JSX, createSignal } from 'solid-js';
 import { registerWithEmail, signInWithEmail, signInWithGoogle } from '../auth/actions';
+import { Button, Row, Status } from './styled';
 
 /**
  * Email and Google sign-in. Registration shares the email form —
@@ -20,8 +21,9 @@ export default function LoginForm(): JSX.Element {
   };
 
   return (
-    <>
+    <div class="flex flex-col gap-3 text-left">
       <form
+        class="flex flex-col gap-3"
         onSubmit={(event) => {
           event.preventDefault();
         }}
@@ -29,6 +31,7 @@ export default function LoginForm(): JSX.Element {
         <input
           type="email"
           placeholder="Email"
+          autocomplete="email"
           value={email()}
           onInput={(event) => {
             setEmail(event.currentTarget.value);
@@ -37,22 +40,33 @@ export default function LoginForm(): JSX.Element {
         <input
           type="password"
           placeholder="Password"
+          autocomplete="current-password"
           value={password()}
           onInput={(event) => {
             setPassword(event.currentTarget.value);
           }}
         />
-        <button type="submit" onClick={run(async () => signInWithEmail(email(), password()))}>
-          Sign in
-        </button>
-        <button type="button" onClick={run(async () => registerWithEmail(email(), password()))}>
-          Register
-        </button>
+        <Row>
+          <Button
+            type="submit"
+            tone="primary"
+            class="grow justify-center"
+            onClick={run(async () => signInWithEmail(email(), password()))}
+          >
+            Sign in
+          </Button>
+          <Button
+            class="grow justify-center"
+            onClick={run(async () => registerWithEmail(email(), password()))}
+          >
+            Register
+          </Button>
+        </Row>
       </form>
-      <button type="button" onClick={run(signInWithGoogle)}>
+      <Button class="justify-center" onClick={run(signInWithGoogle)}>
         Sign in with Google
-      </button>
-      <Show when={error()}>{(message) => <p role="alert">{message()}</p>}</Show>
-    </>
+      </Button>
+      <Status message={error()} tone="alert" />
+    </div>
   );
 }

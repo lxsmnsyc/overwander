@@ -1,5 +1,5 @@
 import { type JSX, Show, createResource, from } from 'solid-js';
-import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
+import { TabGroup, TabPanel } from 'terracotta';
 import { resolveBuddy } from '../auth/buddy';
 import { type Profile, watchProfile } from '../auth/profile';
 import { isEgg } from '../auth/egg';
@@ -8,6 +8,7 @@ import BattleHistory from './BattleHistory';
 import BidsList from './BidsList';
 import CatchesList from './CatchesList';
 import InventoryList from './InventoryList';
+import { Badge, Card, Note, Panel, TabBar, TabButton } from './styled';
 
 const enum InnerTab {
   Catches = 0,
@@ -36,63 +37,81 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   const [buddy] = createResource(() => props.player, resolveBuddy);
 
   return (
-    <section>
-      <h2>Profile</h2>
-      <Show when={profile()} fallback={<p>Loading profile…</p>}>
+    <Panel title="Profile">
+      <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
         {(loaded) => (
-          <>
+          <Card class="sm:flex-row sm:items-center sm:gap-4">
             <Show when={loaded().avatar}>
-              {(avatar) => <img src={avatar()} alt="Avatar" width={64} height={64} />}
+              {(avatar) => (
+                <img
+                  src={avatar()}
+                  alt="Avatar"
+                  width={64}
+                  height={64}
+                  class="size-16 shrink-0 rounded-full border border-line object-cover"
+                />
+              )}
             </Show>
-            <dl>
-              <dt>Nickname</dt>
-              <dd>{loaded().nickname}</dd>
-              <dt>Player id</dt>
-              <dd>{props.player}</dd>
-              <dt>Gold</dt>
-              <dd>{loaded().gold}</dd>
-              <dt>Buddy</dt>
-              <dd>
-                <Show when={buddy()} fallback="None">
-                  {/* An egg walks along without saying what it is */}
-                  {(pair) =>
-                    isEgg(pair()[1])
-                      ? `Egg · ${pair()[1].steps} / ${pair()[1].hatchSteps} steps`
-                      : `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`
-                  }
-                </Show>
-              </dd>
-            </dl>
-          </>
+            <div class="flex grow flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-lg font-semibold">{loaded().nickname}</span>
+                <Badge tone="gold">{loaded().gold} gold</Badge>
+              </div>
+              <dl class="text-sm">
+                <dt>Player id</dt>
+                <dd class="font-mono text-xs break-all">{props.player}</dd>
+                <dt>Buddy</dt>
+                <dd>
+                  <Show when={buddy()} fallback="None">
+                    {/* An egg walks along without saying what it is */}
+                    {(pair) =>
+                      isEgg(pair()[1])
+                        ? `Egg · ${pair()[1].steps} / ${pair()[1].hatchSteps} steps`
+                        : `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`
+                    }
+                  </Show>
+                </dd>
+              </dl>
+            </div>
+          </Card>
         )}
       </Show>
 
-      <TabGroup horizontal defaultValue={InnerTab.Catches} toggleable={false}>
-        <TabList>
-          <Tab value={InnerTab.Catches}>Catches</Tab>
-          <Tab value={InnerTab.Inventory}>Inventory</Tab>
-          <Tab value={InnerTab.Battles}>Battles</Tab>
-          <Tab value={InnerTab.Bids}>Bids</Tab>
-        </TabList>
+      <TabGroup
+        horizontal
+        defaultValue={InnerTab.Catches}
+        toggleable={false}
+        class="flex flex-col gap-3"
+      >
+        <TabBar>
+          <TabButton value={InnerTab.Catches}>Catches</TabButton>
+          <TabButton value={InnerTab.Inventory}>Inventory</TabButton>
+          <TabButton value={InnerTab.Battles}>Battles</TabButton>
+          <TabButton value={InnerTab.Bids}>Bids</TabButton>
+        </TabBar>
         <TabPanel value={InnerTab.Catches}>
-          <h3>Catches</h3>
-          <CatchesList player={props.player} />
+          <Card title="Catches">
+            <CatchesList player={props.player} />
+          </Card>
         </TabPanel>
         <TabPanel value={InnerTab.Inventory}>
-          <h3>Inventory</h3>
-          <InventoryList player={props.player} />
+          <Card title="Inventory">
+            <InventoryList player={props.player} />
+          </Card>
         </TabPanel>
         <TabPanel value={InnerTab.Battles}>
-          <h3>Battles</h3>
-          <BattleHistory player={props.player} />
+          <Card title="Battles">
+            <BattleHistory player={props.player} />
+          </Card>
         </TabPanel>
         {/* What the player has bid on, which lots they are still
             leading, and which they won and have not collected */}
         <TabPanel value={InnerTab.Bids}>
-          <h3>Bids</h3>
-          <BidsList player={props.player} />
+          <Card title="Bids">
+            <BidsList player={props.player} />
+          </Card>
         </TabPanel>
       </TabGroup>
-    </section>
+    </Panel>
   );
 }

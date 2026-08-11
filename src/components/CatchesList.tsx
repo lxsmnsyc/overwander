@@ -6,6 +6,7 @@ import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
 import CatchDialog from './CatchDialog';
+import { List, ListRow, Note, RowButton } from './styled';
 
 /**
  * A one-line summary of a catch: the species name plus the details
@@ -47,24 +48,26 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
   return (
     <>
-      <Show when={!catches.loading} fallback={<p>Loading catches…</p>}>
-        <Show when={catches()?.length} fallback={<p>No catches yet.</p>}>
-          <ul>
+      <Show when={!catches.loading} fallback={<Note>Loading catches…</Note>}>
+        <Show when={catches()?.length} fallback={<Note>No catches yet.</Note>}>
+          <List>
             <For each={catches()}>
               {([id, caught]) => (
-                <li>
-                  <button
-                    type="button"
+                // The whole row opens the catch: a name with a button
+                // beside it would be two places to press for one thing
+                <ListRow class="p-0">
+                  <RowButton
+                    class="rounded-lg px-3 py-2 hover:bg-leaf-soft hover:text-ink"
                     onClick={() => {
                       setSelected(id);
                     }}
                   >
                     {describeCatch(caught)}
-                  </button>
-                </li>
+                  </RowButton>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 

@@ -16,10 +16,24 @@ export default function App(): JSX.Element {
       root={(props) => (
         <MetaProvider>
           <AuthProvider>
-            <Title>SolidStart - Basic</Title>
-            <a href="/">Index</a>
-            <a href="/login">Sign in</a>
-            <a href="/profile">Edit profile</a>
+            <Title>Poketerra</Title>
+            {/* The same bar over every page: where the game is, and
+                the two pages that are about the player rather than
+                about the world */}
+            <header class="border-b border-line bg-paper">
+              <nav class="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
+                <a href="/" class="text-base font-semibold tracking-tight no-underline">
+                  Poketerra
+                </a>
+                <span class="grow" />
+                <a href="/login" class="text-sm">
+                  Sign in
+                </a>
+                <a href="/profile" class="text-sm">
+                  Edit profile
+                </a>
+              </nav>
+            </header>
             <Suspense>{props.children}</Suspense>
           </AuthProvider>
         </MetaProvider>

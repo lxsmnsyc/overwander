@@ -3,6 +3,7 @@ import {
   DialogOverlay,
   DialogPanel,
   Dialog as HeadlessDialog,
+  DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
 } from 'terracotta';
 
@@ -12,19 +13,13 @@ import {
  * Terracotta gives the behaviour — the overlay, the focus trap, the
  * escape key — and says nothing about how any of it looks, so every
  * dialog in the game had been carrying its own copy of the same
- * inline styles. Six copies is six chances to disagree, and they had
- * already started to: one panel opened at 10% from the top and
- * another at 20%, one scrolled and another did not.
+ * styles. Six copies is six chances to disagree, and they had already
+ * started to: one panel opened at 10% from the top and another at 20%,
+ * one scrolled and another did not.
  *
  * These are that panel, once. A dialog written against them says what
  * is in it and nothing about how tall it is.
  */
-
-const OVERLAY_STYLE = {
-  position: 'fixed',
-  inset: '0',
-  background: 'rgba(9, 12, 20, 0.55)',
-} as const;
 
 /**
  * How wide a panel opens. Most dialogs are a list of things to press;
@@ -34,66 +29,60 @@ const OVERLAY_STYLE = {
 export type DialogWidth = 'narrow' | 'wide';
 
 const WIDTHS: Record<DialogWidth, string> = {
-  narrow: 'min(92vw, 26rem)',
-  wide: 'min(92vw, 42rem)',
+  narrow: 'w-[min(92vw,26rem)]',
+  wide: 'w-[min(92vw,44rem)]',
 };
 
-function panelStyle(width: DialogWidth): JSX.CSSProperties {
-  return {
-    position: 'fixed',
-    inset: '8% 50% auto auto',
-    transform: 'translateX(50%)',
-    width: WIDTHS[width],
-    'max-height': '84vh',
-    'overflow-y': 'auto',
-    background: '#fdfdfb',
-    color: '#1c2029',
-    border: '1px solid #d9dde6',
-    padding: '1rem 1.25rem 1.25rem',
-    'border-radius': '0.75rem',
-    'box-shadow': '0 1.5rem 3rem rgba(9, 12, 20, 0.28)',
-    'text-align': 'left',
-  };
-}
+const PANEL =
+  'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
+  ' border border-line bg-paper p-4 text-left shadow-2xl shadow-ink/25 sm:p-5';
 
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
   onClose: () => void;
   width?: DialogWidth;
+  /**
+   * What the dialog is called
+   */
+  title: JSX.Element;
+  /**
+   * What this dialog is for, in a sentence.
+   *
+   * Both of these are props rather than components the caller places,
+   * because terracotta points the dialog's `aria-labelledby` and
+   * `aria-describedby` at a title and a description whether or not
+   * either one is written. A dialog that names itself by an id
+   * belonging to nothing is announced as an unnamed dialog, and a
+   * title written inside a `<Show>` is exactly that for as long as it
+   * is loading. Asking for both here is what makes them impossible to
+   * forget — and the sentence is worth writing anyway, since it is the
+   * line that says what the screen is asking and what it costs
+   */
+  description: JSX.Element;
 }
 
 /**
- * A dialog: the overlay behind it and the panel it is drawn on. What
- * goes in it is the caller's, and usually starts with a `DialogTitle`
+ * A dialog: the overlay behind it and the panel it is drawn on. It
+ * opens with what it is and what it is for; the rest is the caller's
  */
 export function Dialog(props: DialogProps): JSX.Element {
   return (
     <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
-      <DialogOverlay style={OVERLAY_STYLE} />
-      <DialogPanel style={panelStyle(props.width ?? 'narrow')}>{props.children}</DialogPanel>
+      <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
+      <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+        <div class="flex flex-col gap-3">
+          <header class="flex flex-col gap-1 border-b border-line-soft pb-2">
+            {/* A heading rather than bold text: it is what a screen
+                reader announces the dialog by */}
+            <HeadlessDialogTitle class="text-lg font-semibold">{props.title}</HeadlessDialogTitle>
+            <HeadlessDialogDescription class="text-sm text-muted">
+              {props.description}
+            </HeadlessDialogDescription>
+          </header>
+          {props.children}
+        </div>
+      </DialogPanel>
     </HeadlessDialog>
-  );
-}
-
-/**
- * What the dialog is called. It is the first thing in the panel and
- * the thing a screen reader announces, so it is a heading rather than
- * bold text
- */
-export function DialogTitle(props: ParentProps): JSX.Element {
-  return (
-    <HeadlessDialogTitle
-      as="h2"
-      style={{
-        margin: '0 0 0.75rem',
-        'font-size': '1.15rem',
-        'line-height': '1.3',
-        'border-bottom': '1px solid #eceff4',
-        'padding-bottom': '0.5rem',
-      }}
-    >
-      {props.children}
-    </HeadlessDialogTitle>
   );
 }
 
@@ -103,10 +92,8 @@ export function DialogTitle(props: ParentProps): JSX.Element {
  */
 export function DialogSection(props: ParentProps & { title?: string }): JSX.Element {
   return (
-    <section style={{ margin: '0 0 0.9rem' }}>
-      {props.title == null ? null : (
-        <h3 style={{ margin: '0 0 0.35rem', 'font-size': '0.95rem' }}>{props.title}</h3>
-      )}
+    <section class="flex flex-col gap-2">
+      {props.title == null ? null : <h3>{props.title}</h3>}
       {props.children}
     </section>
   );
@@ -118,66 +105,8 @@ export function DialogSection(props: ParentProps & { title?: string }): JSX.Elem
  */
 export function DialogActions(props: ParentProps): JSX.Element {
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        'justify-content': 'flex-end',
-        'align-items': 'center',
-        'flex-wrap': 'wrap',
-        margin: '1rem 0 0',
-        'border-top': '1px solid #eceff4',
-        'padding-top': '0.75rem',
-      }}
-    >
+    <div class="flex flex-wrap items-center justify-end gap-2 border-t border-line-soft pt-3">
       {props.children}
     </div>
-  );
-}
-
-/**
- * What a button in a dialog is for: the thing it is offering, a way
- * out of it, or something that cannot be taken back
- */
-export type ButtonTone = 'primary' | 'ghost' | 'danger';
-
-const TONES: Record<ButtonTone, { background: string; color: string; border: string }> = {
-  primary: { background: '#2f6f4f', color: '#f6faf7', border: '1px solid #245741' },
-  ghost: { background: '#f2f4f8', color: '#1c2029', border: '1px solid #d9dde6' },
-  danger: { background: '#8f3b3b', color: '#fdf5f5', border: '1px solid #6f2d2d' },
-};
-
-export interface DialogButtonProps extends ParentProps {
-  onClick?: () => void;
-  disabled?: boolean;
-  tone?: ButtonTone;
-}
-
-/**
- * A button that looks like the dialog it is in. It stays a plain
- * button underneath — the game has a great many of them, and none of
- * them want a framework
- */
-export function DialogButton(props: DialogButtonProps): JSX.Element {
-  const tone = (): ButtonTone => props.tone ?? 'ghost';
-
-  return (
-    <button
-      type="button"
-      disabled={props.disabled}
-      onClick={() => {
-        props.onClick?.();
-      }}
-      style={{
-        ...TONES[tone()],
-        padding: '0.35rem 0.75rem',
-        'border-radius': '0.4rem',
-        font: 'inherit',
-        cursor: props.disabled === true ? 'default' : 'pointer',
-        opacity: props.disabled === true ? '0.5' : '1',
-      }}
-    >
-      {props.children}
-    </button>
   );
 }

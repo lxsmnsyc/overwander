@@ -66,6 +66,19 @@ import RaidDialog from './RaidDialog';
 import WorldMapDialog from './WorldMapDialog';
 import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
+import {
+  Badge,
+  Button,
+  Card,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Panel,
+  Row,
+  RowButton,
+  Status,
+} from './styled';
 import { GameTab, useGame } from './game-context';
 
 /**
@@ -715,25 +728,30 @@ export default function OverworldTab(): JSX.Element {
   };
 
   return (
-    <section>
-      <h2>Overworld</h2>
-      <p>
-        Click the chunk, then move with the arrow keys or WASD — the keys go wherever the focus is,
-        so a dialog over the top of it stops the walking rather than happening underneath it.
+    <Panel
+      title="Overworld"
+      lede="Click the chunk, then move with the arrow keys or WASD — the keys go wherever the focus
+        is, so a dialog over the top of it stops the walking rather than happening underneath it.
         Stepping off an edge crosses into the next chunk. Step within a cell of a pokemon or a
         landmark — anywhere in the ring around it — and click it to deal with it; walking over one
         does nothing on its own. Shift and an arrow point at a cell without walking, and Enter deals
-        with whatever is pointed at.
-      </p>
-
-      <Show when={view()} fallback={<p>Loading chunk…</p>}>
+        with whatever is pointed at."
+    >
+      <Show when={view()} fallback={<Note>Loading chunk…</Note>}>
         {(loaded) => (
-          <>
-            <p>
-              Chunk {loaded().x}, {loaded().y} · {BIOME_NAMES[loaded().biome]} ·{' '}
-              {new Date(loaded().snapshot.timestamp).toISOString().slice(11, 16)} UTC ·{' '}
-              {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
-            </p>
+          <Card>
+            {/* Where and when this is: the chunk, the ground it is on,
+                and the hour the window was cut at */}
+            <Row>
+              <Badge tone="tide">
+                Chunk {loaded().x}, {loaded().y}
+              </Badge>
+              <Badge tone="leaf">{BIOME_NAMES[loaded().biome]}</Badge>
+              <Badge>
+                {new Date(loaded().snapshot.timestamp).toISOString().slice(11, 16)} UTC ·{' '}
+                {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
+              </Badge>
+            </Row>
 
             {/* The chunk is drawn rather than laid out: one element
                 instead of 256, and the ring the player can act on is
@@ -751,32 +769,32 @@ export default function OverworldTab(): JSX.Element {
               onWalk={move}
             />
 
-            <p>
-              Cell {cellX()}, {cellY()}
-            </p>
-
-            {/* Where this chunk sits in the world. It opens over the
-                overworld rather than beside it: a player looks at the
-                map to decide which way to walk, and then walks */}
-            <p>
-              <button
-                type="button"
+            <Row>
+              <Meta class="grow">
+                Cell {cellX()}, {cellY()}
+              </Meta>
+              {/* Where this chunk sits in the world. It opens over the
+                  overworld rather than beside it: a player looks at the
+                  map to decide which way to walk, and then walks */}
+              <Button
                 onClick={() => {
                   setMapping(true);
                 }}
               >
                 World map
-              </button>
-            </p>
+              </Button>
+            </Row>
 
             {/* Only a buddy walks, and only an egg has anywhere to
                 walk to, so this appears when one is being carried */}
             <Show when={carried()}>
               {(egg) => (
-                <p>
-                  Egg · {egg().steps} / {egg().hatchSteps} steps
-                  {egg().steps >= egg().hatchSteps ? ' · ready to hatch' : ''}
-                </p>
+                <Row>
+                  <Badge tone={egg().steps >= egg().hatchSteps ? 'leaf' : 'neutral'}>
+                    Egg · {egg().steps} / {egg().hatchSteps} steps
+                    {egg().steps >= egg().hatchSteps ? ' · ready to hatch' : ''}
+                  </Badge>
+                </Row>
               )}
             </Show>
 
@@ -785,26 +803,26 @@ export default function OverworldTab(): JSX.Element {
                 is spent whatever the raid comes to */}
             <Show when={relics()?.length}>
               <h4>Raid items</h4>
-              <ul>
+              <List>
                 <For each={relics()}>
                   {(entry) => (
-                    <li>
-                      <button
-                        type="button"
+                    <ListRow>
+                      <RowButton
+                        class="font-medium"
                         onClick={() => {
                           callMythical(loaded().snapshot, entry.item);
                         }}
                       >
                         Use {describeItem(entry.item)} × {entry.amount}
-                      </button>{' '}
-                      — calls {getSpeciesData(entry.species).name}, and is spent doing it
-                    </li>
+                      </RowButton>
+                      <Meta>calls {getSpeciesData(entry.species).name}, and is spent doing it</Meta>
+                    </ListRow>
                   )}
                 </For>
-              </ul>
+              </List>
             </Show>
-            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-          </>
+            <Status message={status()} />
+          </Card>
         )}
       </Show>
 
@@ -879,6 +897,6 @@ export default function OverworldTab(): JSX.Element {
           </>
         )}
       </Show>
-    </section>
+    </Panel>
   );
 }

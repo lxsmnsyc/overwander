@@ -2,6 +2,7 @@ import { Title } from '@solidjs/meta';
 import { type JSX, Show, createResource, createSignal } from 'solid-js';
 import { useAuth } from '../auth/context';
 import { type Profile, ensureProfile, saveProfile } from '../auth/profile';
+import { Button, Card, Field, Note, Row, Status } from '../components/styled';
 
 function ProfileForm(props: { uid: string; initial: Profile }): JSX.Element {
   const [nickname, setNickname] = createSignal(props.initial.nickname);
@@ -19,32 +20,45 @@ function ProfileForm(props: { uid: string; initial: Profile }): JSX.Element {
 
   return (
     <form
+      class="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         save();
       }}
     >
-      <label>
-        Nickname
+      <Field stacked label="Nickname">
         <input
           value={nickname()}
           onInput={(event) => {
             setNickname(event.currentTarget.value);
           }}
         />
-      </label>
-      <label>
-        Avatar URL
+      </Field>
+      <Field stacked label="Avatar URL">
         <input
           value={avatar()}
           onInput={(event) => {
             setAvatar(event.currentTarget.value);
           }}
         />
-      </label>
-      <Show when={avatar()}>{(url) => <img src={url()} alt="Avatar preview" width={64} />}</Show>
-      <button type="submit">Save</button>
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+      </Field>
+      <Show when={avatar()}>
+        {(url) => (
+          <img
+            src={url()}
+            alt="Avatar preview"
+            width={64}
+            height={64}
+            class="size-16 rounded-full border border-line object-cover"
+          />
+        )}
+      </Show>
+      <Row>
+        <Button type="submit" tone="primary">
+          Save
+        </Button>
+      </Row>
+      <Status message={status()} />
     </form>
   );
 }
@@ -55,16 +69,18 @@ export default function ProfilePage(): JSX.Element {
   const [profile] = createResource(auth.user, async (user) => ensureProfile(user));
 
   return (
-    <main>
+    <main class="mx-auto flex w-full max-w-md flex-col gap-4 px-4 py-6">
       <Title>Profile - Poketerra</Title>
       <h1>Profile</h1>
-      <Show when={auth.user()} fallback={<p>Sign in to edit your profile.</p>}>
-        {(user) => (
-          <Show when={profile()} fallback={<p>Loading profile…</p>}>
-            {(loaded) => <ProfileForm uid={user().uid} initial={loaded()} />}
-          </Show>
-        )}
-      </Show>
+      <Card>
+        <Show when={auth.user()} fallback={<Note>Sign in to edit your profile.</Note>}>
+          {(user) => (
+            <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
+              {(loaded) => <ProfileForm uid={user().uid} initial={loaded()} />}
+            </Show>
+          )}
+        </Show>
+      </Card>
     </main>
   );
 }

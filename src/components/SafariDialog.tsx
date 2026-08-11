@@ -9,7 +9,19 @@ import { isShiny } from '../auth/caught-record';
 import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
-import { Dialog, DialogTitle } from './styled';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogSection,
+  List,
+  ListRow,
+  Note,
+  Row,
+  RowButton,
+  Status,
+} from './styled';
 
 /**
  * The ball a carried item stands for, so the bag can be filtered
@@ -142,6 +154,25 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     });
   };
 
+  /**
+   * What is standing there, as the dialog is named after it. A shiny
+   * is marked here the way it is marked everywhere else — and there is
+   * a name to give even before an encounter has been met, since the
+   * dialog is named whether or not one has
+   */
+  const met = (): string => {
+    const active = props.session;
+
+    if (active == null) {
+      return 'Encounter';
+    }
+    const { encounter } = active;
+
+    return `${isShiny(encounter) ? '✦ ' : ''}${getSpeciesData(encounter.species).name} · Lv. ${
+      encounter.level
+    }`;
+  };
+
   const leave = (): void => {
     const active = props.session;
 
@@ -153,15 +184,19 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog isOpen={props.session != null} onClose={leave}>
+    <Dialog
+      isOpen={props.session != null}
+      onClose={leave}
+      title={met()}
+      description="One encounter, one ball at a time. Feeding it makes it easier to catch and
+        every turn gives it another chance to bolt."
+    >
       <Show when={session()}>
         {(active) => (
           <>
-            <DialogTitle>
-              {isShiny(active().encounter) ? '✦ ' : ''}
-              {getSpeciesData(active().encounter.species).name} · Lv. {active().encounter.level}
-            </DialogTitle>
-            <dl>
+            {/* The four numbers the next throw turns on, close enough
+                together to be weighed against each other */}
+            <dl class="rounded-lg border border-line-soft bg-parchment px-3 py-2 text-sm">
               <dt>Catch chance</dt>
               <dd>
                 {Math.round(active().getCatchChance() * 100)}%
@@ -180,62 +215,67 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
               when={active().state === SafariState.Active}
               fallback={<p role="status">{STATE_MESSAGES[active().state]}</p>}
             >
-              <h3>Balls</h3>
-              <Show when={balls().length} fallback={<p>No balls to throw.</p>}>
-                <ul>
-                  <For each={balls()}>
-                    {([ball, amount]) => (
-                      <li>
-                        <button
-                          type="button"
-                          aria-pressed={active().ball === ball}
-                          onClick={() => {
-                            choose(ball);
-                          }}
-                        >
-                          {describeItem(BALL_ITEMS[ball])} × {amount}
-                          {active().ball === ball ? ' (selected)' : ''}
-                        </button>
-                      </li>
-                    )}
-                  </For>
-                </ul>
-              </Show>
+              <DialogSection title="Balls">
+                <Show when={balls().length} fallback={<Note>No balls to throw.</Note>}>
+                  <List>
+                    <For each={balls()}>
+                      {([ball, amount]) => (
+                        <ListRow selected={active().ball === ball}>
+                          <RowButton
+                            pressed={active().ball === ball}
+                            onClick={() => {
+                              choose(ball);
+                            }}
+                          >
+                            {describeItem(BALL_ITEMS[ball])}
+                          </RowButton>
+                          <Badge tone={active().ball === ball ? 'leaf' : 'neutral'}>
+                            × {amount}
+                          </Badge>
+                        </ListRow>
+                      )}
+                    </For>
+                  </List>
+                </Show>
+              </DialogSection>
 
-              <h3>Treats</h3>
-              <Show when={treats().length} fallback={<p>Nothing to feed.</p>}>
-                <ul>
-                  <For each={treats()}>
-                    {([item, amount]) => (
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            feed(item);
-                          }}
-                        >
-                          Feed {describeItem(item)} × {amount}
-                        </button>
-                      </li>
-                    )}
-                  </For>
-                </ul>
-              </Show>
+              <DialogSection title="Treats">
+                <Show when={treats().length} fallback={<Note>Nothing to feed.</Note>}>
+                  <List>
+                    <For each={treats()}>
+                      {([item, amount]) => (
+                        <ListRow>
+                          <RowButton
+                            onClick={() => {
+                              feed(item);
+                            }}
+                          >
+                            Feed {describeItem(item)}
+                          </RowButton>
+                          <Badge>× {amount}</Badge>
+                        </ListRow>
+                      )}
+                    </For>
+                  </List>
+                </Show>
+              </DialogSection>
 
-              <p>
-                <button type="button" onClick={attempt}>
+              <Row>
+                <Button tone="primary" onClick={attempt}>
                   Throw {describeItem(BALL_ITEMS[active().ball])}
-                </button>
-              </p>
+                </Button>
+              </Row>
             </Show>
 
-            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+            <Status message={status()} />
           </>
         )}
       </Show>
-      <button type="button" onClick={leave}>
-        {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
-      </button>
+      <DialogActions>
+        <Button tone={session()?.state === SafariState.Active ? 'danger' : 'ghost'} onClick={leave}>
+          {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

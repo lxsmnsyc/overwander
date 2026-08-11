@@ -5,6 +5,7 @@ import { getLocalOffset, toLocalTime } from '../auth/local-time';
 import { type RaidRecord, getRaidTitle, watchLiveRaids } from '../auth/raids';
 import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
+import { List, ListRow, Meta, Note, Panel, RowButton } from './styled';
 import { useGame } from './game-context';
 
 export interface RaidsTabProps {
@@ -42,41 +43,38 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   });
 
   return (
-    <section>
-      <h2>Raids</h2>
+    <Panel title="Raids" lede="Every lobby still gathering in the current window.">
       <Show
         when={game.raid()}
         fallback={
-          <>
-            <p>Every lobby still gathering in the current window.</p>
-
-            <Show when={raids()} fallback={<p>Loading raids…</p>}>
-              <Show when={raids()?.length} fallback={<p>No raids are gathering right now.</p>}>
-                <ul>
-                  <For each={raids()}>
-                    {([id, raid]) => (
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            game.setRaid(id);
-                          }}
-                        >
-                          {getRaidTitle(raid)} · chunk {raid.chunk.x}, {raid.chunk.y} ·{' '}
-                          {raid.teams.length} team
-                          {raid.teams.length === 1 ? '' : 's'}
-                        </button>
-                      </li>
-                    )}
-                  </For>
-                </ul>
-              </Show>
+          <Show when={raids()} fallback={<Note>Loading raids…</Note>}>
+            <Show when={raids()?.length} fallback={<Note>No raids are gathering right now.</Note>}>
+              <List>
+                <For each={raids()}>
+                  {([id, raid]) => (
+                    <ListRow>
+                      <RowButton
+                        class="font-medium"
+                        onClick={() => {
+                          game.setRaid(id);
+                        }}
+                      >
+                        {getRaidTitle(raid)}
+                      </RowButton>
+                      <Meta>
+                        chunk {raid.chunk.x}, {raid.chunk.y} · {raid.teams.length} team
+                        {raid.teams.length === 1 ? '' : 's'}
+                      </Meta>
+                    </ListRow>
+                  )}
+                </For>
+              </List>
             </Show>
-          </>
+          </Show>
         }
       >
         {(id) => <RaidLobby user={props.user} raidId={id()} />}
       </Show>
-    </section>
+    </Panel>
   );
 }

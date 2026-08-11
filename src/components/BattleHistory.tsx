@@ -2,12 +2,19 @@ import { For, type JSX, Show, createResource, from } from 'solid-js';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../auth/battles';
 import { listClaimedRaids } from '../auth/raids';
 import { getSpeciesData } from '../data/species';
+import { Badge, type BadgeTone, Button, List, ListRow, Meta, Note, RowButton } from './styled';
 import { GameTab, useGame } from './game-context';
 
 const OUTCOME_LABELS: Record<BattleOutcome, string> = {
   [BattleOutcome.Unfinished]: 'Unfinished',
   [BattleOutcome.Won]: 'Won',
   [BattleOutcome.Lost]: 'Lost',
+};
+
+const OUTCOME_TONES: Record<BattleOutcome, BadgeTone> = {
+  [BattleOutcome.Unfinished]: 'neutral',
+  [BattleOutcome.Won]: 'leaf',
+  [BattleOutcome.Lost]: 'ember',
 };
 
 export interface BattleHistoryProps {
@@ -44,24 +51,25 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
     claimed()?.has(record.raid) === false;
 
   return (
-    <Show when={battles()} fallback={<p>Loading battles…</p>}>
-      <Show when={battles()?.length} fallback={<p>No battles fought yet.</p>}>
-        <ul>
+    <Show when={battles()} fallback={<Note>Loading battles…</Note>}>
+      <Show when={battles()?.length} fallback={<Note>No battles fought yet.</Note>}>
+        <List>
           <For each={battles()}>
             {([id, record]) => (
-              <li>
-                <button
-                  type="button"
+              <ListRow>
+                <RowButton
+                  class="font-medium"
                   onClick={() => {
                     game.setBattle({ id, replay: true });
                   }}
                 >
-                  {getSpeciesData(record.species).name} · {OUTCOME_LABELS[record.outcome]} ·{' '}
-                  {new Date(record.startedAt).toISOString().slice(0, 10)}
-                </button>
+                  {getSpeciesData(record.species).name}
+                </RowButton>
+                <Badge tone={OUTCOME_TONES[record.outcome]}>{OUTCOME_LABELS[record.outcome]}</Badge>
+                <Meta>{new Date(record.startedAt).toISOString().slice(0, 10)}</Meta>
                 <Show when={owes(record)}>
-                  <button
-                    type="button"
+                  <Button
+                    tone="primary"
                     onClick={() => {
                       // The overworld meets it: the encounter derives
                       // from the raid's own chunk and window
@@ -71,12 +79,12 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
                     }}
                   >
                     Claim {getSpeciesData(record.species).name}
-                  </button>
+                  </Button>
                 </Show>
-              </li>
+              </ListRow>
             )}
           </For>
-        </ul>
+        </List>
       </Show>
     </Show>
   );

@@ -12,6 +12,7 @@ import {
 } from '../auth/raids';
 import { type TeamRecord, getTeam } from '../auth/teams';
 import TeamPickerDialog from './TeamPickerDialog';
+import { Badge, Button, Card, List, ListRow, Note, Row, Status } from './styled';
 import { useGame } from './game-context';
 
 export interface RaidLobbyProps {
@@ -83,67 +84,71 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
 
   return (
     <>
-      <Show when={raid()} fallback={<p>Loading raid…</p>}>
+      <Show when={raid()} fallback={<Note>Loading raid…</Note>}>
         {(record) => (
-          <>
+          <Card>
             {/* A lobby is named after the place, not the pokemon:
                 the lair is what a player travels to, and what is at
                 home in it follows from that */}
-            <h3>{getRaidTitle(record())}</h3>
-            <p>{isHost() ? 'You are hosting this raid.' : 'Waiting for the host.'}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="grow">{getRaidTitle(record())}</h3>
+              <Badge tone={isHost() ? 'leaf' : 'neutral'}>
+                {isHost() ? 'You are hosting' : 'Waiting for the host'}
+              </Badge>
+            </div>
             {/* The relic that opened it is already spent, so there is
                 no second attempt to fall back on */}
             <Show when={record().kind === RaidKind.Mythical}>
-              <p>The relic is spent. Whatever this raid comes to, it comes to it once.</p>
+              <Note>The relic is spent. Whatever this raid comes to, it comes to it once.</Note>
             </Show>
 
             <h4>Teams</h4>
-            <Show when={teams()?.length} fallback={<p>No teams have joined yet.</p>}>
-              <ul>
+            <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
+              <List>
                 <For each={teams()}>
                   {(team) => (
-                    <li>
-                      {team.player === props.user.uid ? 'You' : team.player} · {team.catches.length}{' '}
-                      pokemon
-                    </li>
+                    <ListRow selected={team.player === props.user.uid}>
+                      <span class="grow">
+                        {team.player === props.user.uid ? 'You' : team.player}
+                      </span>
+                      <Badge>{team.catches.length} pokemon</Badge>
+                    </ListRow>
                   )}
                 </For>
-              </ul>
+              </List>
             </Show>
 
             <Show when={canJoin() === false}>
-              <p>You need a pokemon of your own to fight — you can only watch this one.</p>
+              <Note>You need a pokemon of your own to fight — you can only watch this one.</Note>
             </Show>
 
-            <p>
+            <Row>
               <Show when={canJoin() !== false}>
-                <button
-                  type="button"
+                <Button
+                  tone="primary"
                   onClick={() => {
                     setPicking(true);
                   }}
                 >
                   Form a team
-                </button>
+                </Button>
               </Show>
               <Show when={isHost()}>
-                <button
-                  type="button"
+                <Button
+                  tone="primary"
                   disabled={record().teams.length === 0}
                   onClick={() => {
                     act(async () => startRaid(props.raidId), 'The raid could not be started.');
                   }}
                 >
                   Start
-                </button>
+                </Button>
               </Show>
-              <button type="button" onClick={back}>
-                Go back
-              </button>
-            </p>
+              <Button onClick={back}>Go back</Button>
+            </Row>
 
-            <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-          </>
+            <Status message={status()} />
+          </Card>
         )}
       </Show>
 

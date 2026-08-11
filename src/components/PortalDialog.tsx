@@ -7,7 +7,18 @@ import { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { type PortalDestination, findPortals } from '../overworld/portal';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  RowButton,
+  Status,
+} from './styled';
 
 /**
  * A portal, and everywhere it goes.
@@ -107,27 +118,30 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog isOpen={props.cell != null} onClose={close}>
-      <DialogTitle>Portal</DialogTitle>
-      <p>
-        A ring of standing stones, and a way through. Name a biome and it opens onto the nearest
-        portal in one — the key is spent going through.
-      </p>
-      <p>
-        You carry {keys() ?? 0} Portal {(keys() ?? 0) === 1 ? 'Key' : 'Keys'}.
-      </p>
+    <Dialog
+      isOpen={props.cell != null}
+      onClose={close}
+      title="Portal"
+      description="A ring of standing stones, and a way through. Name a biome and it opens onto the
+        nearest portal in one — the key is spent going through."
+    >
+      <div>
+        <Badge tone={(keys() ?? 0) > 0 ? 'tide' : 'neutral'}>
+          {keys() ?? 0} Portal {(keys() ?? 0) === 1 ? 'Key' : 'Keys'}
+        </Badge>
+      </div>
 
-      <Show when={(keys() ?? 0) > 0} fallback={<p>Without a key it is only stones.</p>}>
+      <Show when={(keys() ?? 0) > 0} fallback={<Note>Without a key it is only stones.</Note>}>
         <Show
           when={destinations().length}
-          fallback={<p>Nothing within reach of this one answers.</p>}
+          fallback={<Note>Nothing within reach of this one answers.</Note>}
         >
-          <ul>
+          <List>
             <For each={destinations()}>
               {(destination) => (
-                <li>
-                  <button
-                    type="button"
+                <ListRow selected={confirming() === destination.biome}>
+                  <RowButton
+                    class="font-medium"
                     disabled={busy()}
                     onClick={() => {
                       cross(destination);
@@ -136,23 +150,23 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
                     {confirming() === destination.biome
                       ? `Step through to ${BIOME_NAMES[destination.biome]}?`
                       : BIOME_NAMES[destination.biome]}
-                  </button>{' '}
+                  </RowButton>
                   {/* How far it is, so a player can tell a neighbour
                       from the other side of the world */}
-                  <span>
+                  <Meta>
                     {destination.distance} chunk{destination.distance === 1 ? '' : 's'} away ·{' '}
                     {destination.x}, {destination.y}
-                  </span>
-                </li>
+                  </Meta>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+      <Status message={status()} />
       <DialogActions>
-        <DialogButton onClick={close}>Close</DialogButton>
+        <Button onClick={close}>Close</Button>
       </DialogActions>
     </Dialog>
   );

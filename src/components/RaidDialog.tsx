@@ -3,7 +3,7 @@ import { RaidAction, RaidKind, type RaidView, enterRaid } from '../auth/raids';
 import { getLairTitle } from '../data/overworld/lair';
 import { getSpeciesData } from '../data/species';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
+import { Badge, Button, Dialog, DialogActions, Status } from './styled';
 import { GameTab, useGame } from './game-context';
 
 /**
@@ -69,6 +69,18 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     return standing == null
       ? 'Lair'
       : getLairTitle(standing.lair, standing.biome, standing.kind === RaidKind.Shadow);
+  };
+
+  /**
+   * Why the button says what it says. It is what the dialog is for,
+   * so it is the dialog's description — and it has an answer even
+   * before a lair has been walked up to, since a description is asked
+   * for whether or not there is one to give
+   */
+  const summary = (): string => {
+    const standing = view();
+
+    return standing == null ? 'A lair, and whatever is standing in it.' : describeAction(standing);
   };
 
   const close = (): void => {
@@ -138,26 +150,26 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog isOpen={props.lair != null} onClose={close}>
-      <DialogTitle>{title()}</DialogTitle>
+    <Dialog isOpen={props.lair != null} onClose={close} title={title()} description={summary()}>
       <Show when={view()}>
         {(standing) => (
           <>
-            <p>
-              {getSpeciesData(standing().species).name}
-              {standing().kind === RaidKind.Shadow ? ' · shadow' : ''}
-            </p>
-            <p>{describeAction(standing())}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-medium">{getSpeciesData(standing().species).name}</span>
+              <Show when={standing().kind === RaidKind.Shadow}>
+                <Badge tone="ember">shadow</Badge>
+              </Show>
+            </div>
             <DialogActions>
-              <DialogButton tone="primary" disabled={busy()} onClick={act}>
+              <Button tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]}
-              </DialogButton>
-              <DialogButton onClick={close}>Close</DialogButton>
+              </Button>
+              <Button onClick={close}>Close</Button>
             </DialogActions>
           </>
         )}
       </Show>
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+      <Status message={status()} />
     </Dialog>
   );
 }

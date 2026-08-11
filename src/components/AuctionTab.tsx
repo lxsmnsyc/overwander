@@ -21,6 +21,19 @@ import type { Items } from '../data/ids/items';
 import CatchPicker from './CatchPicker';
 import { describeCatch } from './CatchesList';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import {
+  Badge,
+  Button,
+  Card,
+  Field,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Panel,
+  Row,
+  Status,
+} from './styled';
 
 const HOUR = 60 * 60 * 1000;
 const MINUTE = 60 * 1000;
@@ -134,34 +147,37 @@ export function BidControls(props: {
     // A seller bidding on their own lot would be selling to
     // themselves, and the standing bidder is already winning it:
     // bidding against themselves could only cost them gold
-    <Show when={props.auction.seller !== props.player} fallback={<span> · yours</span>}>
+    <Show when={props.auction.seller !== props.player} fallback={<Badge tone="tide">yours</Badge>}>
       <Show
         when={props.auction.bidder !== props.player}
-        fallback={<span> · yours unless somebody raises it</span>}
+        fallback={<Badge tone="leaf">yours unless somebody raises it</Badge>}
       >
         <Show
           when={affordable()}
-          fallback={<span> · {nextBid(props.auction)} gold is more than you hold</span>}
+          fallback={<Meta>{nextBid(props.auction)} gold is more than you hold</Meta>}
         >
-          {' '}
-          <input
-            type="number"
-            min={nextBid(props.auction)}
-            max={props.gold}
-            value={amount()}
-            onInput={(event) => {
-              setNamed(Number(event.currentTarget.value));
-            }}
-          />{' '}
-          <button
-            type="button"
-            disabled={amount() > props.gold}
-            onClick={() => {
-              props.onBid(amount());
-            }}
-          >
-            Bid {amount()} gold
-          </button>
+          <Row class="gap-1.5">
+            <Field label="Bid">
+              <input
+                type="number"
+                min={nextBid(props.auction)}
+                max={props.gold}
+                value={amount()}
+                onInput={(event) => {
+                  setNamed(Number(event.currentTarget.value));
+                }}
+              />
+            </Field>
+            <Button
+              tone="primary"
+              disabled={amount() > props.gold}
+              onClick={() => {
+                props.onBid(amount());
+              }}
+            >
+              Bid {amount()} gold
+            </Button>
+          </Row>
         </Show>
       </Show>
     </Show>
@@ -179,16 +195,22 @@ function BidRow(props: {
   onBid: (amount: number) => void;
 }): JSX.Element {
   return (
-    <li>
-      <AuctionLotLabel auction={props.auction} /> · {describeBid(props.auction)} ·{' '}
-      {describeRemaining(props.auction.endsAt, now())}
+    <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
+      <div class="flex grow flex-col gap-0.5">
+        <span class="font-medium">
+          <AuctionLotLabel auction={props.auction} />
+        </span>
+        <Meta>
+          {describeBid(props.auction)} · {describeRemaining(props.auction.endsAt, now())}
+        </Meta>
+      </div>
       <BidControls
         auction={props.auction}
         player={props.player}
         gold={props.gold}
         onBid={props.onBid}
       />
-    </li>
+    </ListRow>
   );
 }
 
@@ -358,143 +380,149 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   return (
-    <section>
-      <h2>Auctions</h2>
-      <p>
-        Every lot runs for a day. Whatever is put up leaves its owner's hands there and then, and
-        the last bidder standing collects it once bidding closes. A bid is paid as it is made and
-        handed back if somebody raises it.
-      </p>
-      <p>You hold {gold()} gold.</p>
+    <Panel
+      title="Auctions"
+      lede="Every lot runs for a day. Whatever is put up leaves its owner's hands there and then,
+        and the last bidder standing collects it once bidding closes. A bid is paid as it is made
+        and handed back if somebody raises it."
+    >
+      <Row>
+        <Badge tone="gold">{gold()} gold</Badge>
+      </Row>
 
-      <h3>On the block</h3>
-      <Show when={auctions()} fallback={<p>Loading auctions…</p>}>
-        <Show when={live().length} fallback={<p>Nothing is up for auction right now.</p>}>
-          <ul>
-            <For each={live()}>
-              {([id, auction]) => (
-                <BidRow
-                  auction={auction}
-                  player={props.player}
-                  gold={gold()}
-                  onBid={(amount) => {
-                    bid(id, amount);
-                  }}
-                />
-              )}
-            </For>
-          </ul>
+      <Card title="On the block">
+        <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
+          <Show when={live().length} fallback={<Note>Nothing is up for auction right now.</Note>}>
+            <List>
+              <For each={live()}>
+                {([id, auction]) => (
+                  <BidRow
+                    auction={auction}
+                    player={props.player}
+                    gold={gold()}
+                    onBid={(amount) => {
+                      bid(id, amount);
+                    }}
+                  />
+                )}
+              </For>
+            </List>
+          </Show>
         </Show>
-      </Show>
+      </Card>
 
-      <h3>Won</h3>
       {/* Nothing is handed over when bidding closes; the winner comes
           back for it, and the seller is paid out of the same claim */}
-      <Show when={won().length} fallback={<p>Nothing waiting to be collected.</p>}>
-        <ul>
-          <For each={won()}>
-            {([id, auction]) => (
-              <li>
-                <AuctionLotLabel auction={auction} /> · won for {auction.bid} gold{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    collect(id);
-                  }}
-                >
-                  Collect
-                </button>
-              </li>
-            )}
-          </For>
-        </ul>
-      </Show>
+      <Card title="Won">
+        <Show when={won().length} fallback={<Note>Nothing waiting to be collected.</Note>}>
+          <List>
+            <For each={won()}>
+              {([id, auction]) => (
+                <ListRow>
+                  <span class="grow font-medium">
+                    <AuctionLotLabel auction={auction} />
+                  </span>
+                  <Meta>won for {auction.bid} gold</Meta>
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      collect(id);
+                    }}
+                  >
+                    Collect
+                  </Button>
+                </ListRow>
+              )}
+            </For>
+          </List>
+        </Show>
+      </Card>
 
-      <h3>Sell</h3>
-      <Show
-        when={running() == null}
-        fallback={
-          <p>
-            You have an auction running — {describeRemaining(running() ?? 0, now())}. One at a time,
-            which is one a day.
-          </p>
-        }
-      >
-        <p>
-          One item — a single one, not the stack — or one pokemon. Whichever it is leaves your hands
-          the moment it goes up, and does not come back.
-        </p>
+      <Card title="Sell">
+        <Show
+          when={running() == null}
+          fallback={
+            <Note>
+              You have an auction running — {describeRemaining(running() ?? 0, now())}. One at a
+              time, which is one a day.
+            </Note>
+          }
+        >
+          <Note>
+            One item — a single one, not the stack — or one pokemon. Whichever it is leaves your
+            hands the moment it goes up, and does not come back.
+          </Note>
 
-        <h4>From the bag</h4>
-        <InventoryPicker
-          inline
-          revision={revision()}
-          value={item()}
-          verb="Sell"
-          empty="Carrying nothing to sell."
-          onPick={pickItem}
-        />
+          <h4>From the bag</h4>
+          <InventoryPicker
+            inline
+            revision={revision()}
+            value={item()}
+            verb="Sell"
+            empty="Carrying nothing to sell."
+            onPick={pickItem}
+          />
 
-        <h4>From the records</h4>
-        {/* A pokemon in a raid is fighting on a frozen copy of a record
-            that has to still be there when the battle ends, so it
-            cannot be sold out from under it */}
-        <CatchPicker
-          inline
-          revision={revision()}
-          value={caught()}
-          verb="Sell"
-          empty="No pokemon to sell."
-          reason={(option) => (option.fighting ? 'in a raid' : null)}
-          onPick={pickCatch}
-        />
+          <h4>From the records</h4>
+          {/* A pokemon in a raid is fighting on a frozen copy of a
+              record that has to still be there when the battle ends, so
+              it cannot be sold out from under it */}
+          <CatchPicker
+            inline
+            revision={revision()}
+            value={caught()}
+            verb="Sell"
+            empty="No pokemon to sell."
+            reason={(option) => (option.fighting ? 'in a raid' : null)}
+            onPick={pickCatch}
+          />
 
-        <p>
-          <label>
-            Asking price{' '}
-            <input
-              type="number"
-              min={MIN_STARTING_BID}
-              value={startingBid()}
-              onInput={(event) => {
-                setStartingBid(Number(event.currentTarget.value));
-                setListing(false);
-              }}
-            />
-          </label>{' '}
-          <label>
-            Least raise{' '}
-            <input
-              type="number"
-              min={MIN_INCREMENT}
-              value={increment()}
-              onInput={(event) => {
-                setIncrement(Number(event.currentTarget.value));
-                setListing(false);
-              }}
-            />
-          </label>
-        </p>
+          <Row>
+            <Field label="Asking price">
+              <input
+                type="number"
+                min={MIN_STARTING_BID}
+                value={startingBid()}
+                onInput={(event) => {
+                  setStartingBid(Number(event.currentTarget.value));
+                  setListing(false);
+                }}
+              />
+            </Field>
+            <Field label="Least raise">
+              <input
+                type="number"
+                min={MIN_INCREMENT}
+                value={increment()}
+                onInput={(event) => {
+                  setIncrement(Number(event.currentTarget.value));
+                  setListing(false);
+                }}
+              />
+            </Field>
+          </Row>
 
-        <p>
-          <button type="button" onClick={list}>
-            {listing() ? 'Give it up for good?' : 'Put it up for auction'}
-          </button>
-          <Show when={listing()}>
-            {' '}
-            <button
-              type="button"
-              onClick={() => {
-                setListing(false);
-              }}
-            >
-              Keep it
-            </button>
-          </Show>
-        </p>
-      </Show>
+          <Row>
+            {/* Putting something up cannot be undone, so the second
+                press is the one that does it — and it is the one that
+                looks like it */}
+            <Button tone={listing() ? 'danger' : 'primary'} onClick={list}>
+              {listing() ? 'Give it up for good?' : 'Put it up for auction'}
+            </Button>
+            <Show when={listing()}>
+              <Button
+                onClick={() => {
+                  setListing(false);
+                }}
+              >
+                Keep it
+              </Button>
+            </Show>
+          </Row>
+        </Show>
+      </Card>
 
-      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
-    </section>
+      <Status message={status()} />
+    </Panel>
   );
 }

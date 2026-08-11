@@ -3,7 +3,18 @@ import { useAuth } from '../auth/context';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import type { Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
-import { Dialog, DialogActions, DialogButton, DialogTitle } from './styled';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  Field,
+  List,
+  ListRow,
+  Note,
+  Row,
+  RowButton,
+} from './styled';
 
 /**
  * Picking something out of the bag.
@@ -47,6 +58,11 @@ interface InventoryPickerCommonProps {
    * What the dialog is called, and what the button that opens it says
    */
   title?: string;
+  /**
+   * What the caller is asking for, in a sentence. The picker says
+   * something sensible about how many it wants if the caller does not
+   */
+  description?: string;
   label?: string;
   /**
    * What a row's button says it will do — "Give", "Use". The name of
@@ -150,6 +166,20 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
 
   const amountOf = (item: Items): number => draft().find(([picked]) => picked === item)?.[1] ?? 0;
 
+  /**
+   * What the picker is asking for. A caller with something more
+   * specific to say says it; otherwise it is one item or several, and
+   * several come with a count each
+   */
+  const purpose = (): string => {
+    if (props.description != null) {
+      return props.description;
+    }
+    return props.multiple === true
+      ? 'Choose what to take out of the bag, and how many of each.'
+      : 'Choose one thing out of the bag.';
+  };
+
   const close = (): void => {
     setPending(null);
     setConfirming(false);
@@ -209,115 +239,126 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   };
 
   const list = (): JSX.Element => (
-    <>
-      <Show when={!loading()} fallback={<p>Looking through the bag…</p>}>
+    <div class="flex flex-col gap-3">
+      <Show when={!loading()} fallback={<Note>Looking through the bag…</Note>}>
         <Show
           when={stacks().length}
-          fallback={<p>{props.empty ?? 'Nothing in the bag for this.'}</p>}
+          fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
         >
-          <ul>
+          <List>
             <For each={stacks()}>
               {(entry) => (
-                <li>
-                  <button
-                    type="button"
-                    aria-pressed={
-                      props.multiple === true
-                        ? amountOf(entry.item) > 0
-                        : props.value === entry.item
-                    }
-                    disabled={props.disabled}
-                    onClick={() => {
-                      press(entry.item);
-                    }}
-                  >
-                    {amountOf(entry.item) > 0 ? '✓ ' : ''}
-                    {props.verb == null ? '' : `${props.verb} `}
-                    {describeItem(entry.item)} × {entry.amount}
-                  </button>
-                  {/* How many of the stack, once the row is in: a
-                      caller asking for items usually wants a count as
-                      well as a name */}
-                  <Show when={props.multiple === true && amountOf(entry.item) > 0}>
-                    {' '}
-                    <input
-                      type="number"
-                      min={1}
-                      max={entry.amount}
-                      value={amountOf(entry.item)}
-                      onInput={(event) => {
-                        setAmount(entry.item, Number(event.currentTarget.value), entry.amount);
+                <ListRow
+                  selected={
+                    props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item
+                  }
+                  class="flex-col items-stretch"
+                >
+                  <div class="flex flex-wrap items-center gap-2">
+                    <RowButton
+                      pressed={
+                        props.multiple === true
+                          ? amountOf(entry.item) > 0
+                          : props.value === entry.item
+                      }
+                      disabled={props.disabled}
+                      onClick={() => {
+                        press(entry.item);
                       }}
-                    />
-                  </Show>
+                    >
+                      {amountOf(entry.item) > 0 ? '✓ ' : ''}
+                      {props.verb == null ? '' : `${props.verb} `}
+                      {describeItem(entry.item)}
+                    </RowButton>
+                    <Badge>× {entry.amount}</Badge>
+                    {/* How many of the stack, once the row is in: a
+                        caller asking for items usually wants a count as
+                        well as a name */}
+                    <Show when={props.multiple === true && amountOf(entry.item) > 0}>
+                      <Field label="Take">
+                        <input
+                          type="number"
+                          min={1}
+                          max={entry.amount}
+                          value={amountOf(entry.item)}
+                          onInput={(event) => {
+                            setAmount(entry.item, Number(event.currentTarget.value), entry.amount);
+                          }}
+                        />
+                      </Field>
+                    </Show>
+                  </div>
                   {/* Asked once more, since picking it is what spends
                       it */}
                   <Show when={pending() === entry.item}>
-                    {' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        pickOne(entry.item);
-                      }}
-                    >
-                      {props.verb ?? 'Pick'} {describeItem(entry.item)}?
-                    </button>{' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPending(null);
-                      }}
-                    >
-                      Cancel
-                    </button>
+                    <Row>
+                      <Button
+                        tone="primary"
+                        onClick={() => {
+                          pickOne(entry.item);
+                        }}
+                      >
+                        {props.verb ?? 'Pick'} {describeItem(entry.item)}?
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setPending(null);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Row>
                   </Show>
-                </li>
+                </ListRow>
               )}
             </For>
-          </ul>
+          </List>
         </Show>
       </Show>
 
       <Show when={props.multiple === true}>
-        <p>
-          <button
-            type="button"
+        <Row>
+          <Button
+            tone="primary"
             disabled={props.disabled === true || draft().length === 0}
             onClick={finish}
           >
             {confirming() ? 'Sure?' : `${props.verb ?? 'Take'} ${draft().length} of them`}
-          </button>
-        </p>
+          </Button>
+        </Row>
       </Show>
-    </>
+    </div>
   );
 
   return (
     <Show when={props.inline !== true} fallback={list()}>
-      <button
-        type="button"
+      <Button
         onClick={() => {
           setOpened(true);
         }}
       >
         {props.label ?? props.title ?? 'Pick an item'}
-      </button>
-      <Dialog isOpen={showing()} onClose={close}>
-        <DialogTitle>{props.title ?? 'The bag'}</DialogTitle>
+      </Button>
+      <Dialog
+        isOpen={showing()}
+        onClose={close}
+        title={props.title ?? 'The bag'}
+        description={purpose()}
+      >
         {list()}
         <DialogActions>
           {/* A single pick can also be no pick: the caller asked for an
               item, and "none" is an answer to that */}
           <Show when={props.multiple !== true && props.value != null}>
-            <DialogButton
+            <Button
               onClick={() => {
                 pickOne(null);
               }}
             >
               Pick none
-            </DialogButton>
+            </Button>
           </Show>
-          <DialogButton onClick={close}>Close</DialogButton>
+          <Button onClick={close}>Close</Button>
         </DialogActions>
       </Dialog>
     </Show>

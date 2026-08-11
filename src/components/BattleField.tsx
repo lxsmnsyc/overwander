@@ -27,6 +27,7 @@ import { Statuses, Weathers } from '../data/ids/status';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
 import { getSpeciesData } from '../data/species';
+import { Badge, Card, List, Meta, Note, Row } from './styled';
 
 /**
  * Everything that changes what one unit looks like. The battle
@@ -213,42 +214,29 @@ function readRoster(battle: Battle): AllianceView[] {
   }));
 }
 
-const CARD_STYLE = {
-  border: '1px solid #ddd',
-  'border-radius': '0.4rem',
-  padding: '0.5rem 0.75rem',
-  margin: '0.35rem 0',
-  'text-align': 'left',
-} as const;
+/**
+ * What a bar is measuring. Health, a cast and a channel are three
+ * different clocks running on the same unit, and telling them apart at
+ * a glance is most of what the readout is for
+ */
+type MeterTone = 'health' | 'down' | 'cast' | 'channel';
 
-const CHIP_STYLE = {
-  display: 'inline-block',
-  border: '1px solid #ccc',
-  'border-radius': '999px',
-  padding: '0 0.5rem',
-  margin: '0 0.25rem 0.25rem 0',
-  'font-size': '0.8rem',
-} as const;
+const METER_TONES: Record<MeterTone, string> = {
+  health: 'bg-leaf',
+  down: 'bg-muted',
+  cast: 'bg-tide',
+  channel: 'bg-arcane',
+};
 
-function Meter(props: { value: number; max: number; color: string }): JSX.Element {
+function Meter(props: { value: number; max: number; tone: MeterTone }): JSX.Element {
   const share = (): number =>
     props.max <= 0 ? 0 : Math.max(0, Math.min(1, props.value / props.max));
 
   return (
-    <div
-      style={{
-        background: '#eee',
-        'border-radius': '999px',
-        height: '0.5rem',
-        overflow: 'hidden',
-      }}
-    >
+    <div class="h-2 overflow-hidden rounded-full bg-line-soft">
       <div
-        style={{
-          width: `${share() * 100}%`,
-          background: props.color,
-          height: '100%',
-        }}
+        class={`h-full rounded-full ${METER_TONES[props.tone]}`}
+        style={{ width: `${share() * 100}%` }}
       />
     </div>
   );
@@ -295,86 +283,95 @@ function UnitCard(props: { unit: Unit; revision: () => number }): JSX.Element {
   const items = (): Items[] => view().items;
 
   return (
-    <li style={{ ...CARD_STYLE, opacity: unit().alive ? '1' : '0.45' }}>
-      <strong>
-        {getSpeciesData(unit().species).name} · Lv. {unit().level}
-      </strong>
-      <div>
+    <li
+      class={`flex flex-col gap-1.5 rounded-lg border border-line bg-paper px-3 py-2 text-left
+        text-sm ${unit().alive ? '' : 'opacity-45'}`}
+    >
+      <div class="flex flex-wrap items-baseline gap-x-2">
+        <strong class="grow">{getSpeciesData(unit().species).name}</strong>
+        <Meta>Lv. {unit().level}</Meta>
+      </div>
+      <Meta>
         {Math.max(0, unit().health)} / {maxHealth()} HP
         {unit().alive ? '' : ' · fainted'}
-      </div>
-      <Meter value={unit().health} max={maxHealth()} color={unit().alive ? '#4c9a4c' : '#999'} />
+      </Meta>
+      <Meter value={unit().health} max={maxHealth()} tone={unit().alive ? 'health' : 'down'} />
 
       {/* What the unit is in the middle of doing */}
       <Show when={unit().casting}>
         {(casting) => (
-          <div>
-            <div>Casting {getMoveData(casting().move).name}</div>
-            <Meter value={casting().time.progress} max={casting().time.duration} color="#4c7a9a" />
-          </div>
+          <>
+            <Meta>Casting {getMoveData(casting().move).name}</Meta>
+            <Meter value={casting().time.progress} max={casting().time.duration} tone="cast" />
+          </>
         )}
       </Show>
       <Show when={unit().channeling}>
         {(channeling) => (
-          <div>
-            <div>
+          <>
+            <Meta>
               Channeling {getMoveData(channeling().move).name} · {channeling().steps} left
-            </div>
+            </Meta>
             <Meter
               value={channeling().time.progress}
               max={channeling().time.duration}
-              color="#7a4c9a"
+              tone="channel"
             />
-          </div>
+          </>
         )}
       </Show>
 
+      {/* Everything stuck to the unit, in the order it matters: what
+          is being done to it, how it has been moved, what it is, and
+          what it brought */}
       <Show when={statuses().length}>
-        <div>
+        <Row class="gap-1">
           <For each={statuses()}>
-            {(status) => <span style={CHIP_STYLE}>{STATUS_NAMES[status]}</span>}
+            {(status) => <Badge tone="ember">{STATUS_NAMES[status]}</Badge>}
           </For>
-        </div>
+        </Row>
       </Show>
 
       <Show when={stages().length}>
-        <div>
+        <Row class="gap-1">
           <For each={stages()}>
             {([stage, value]) => (
-              <span style={CHIP_STYLE}>
+              <Badge tone={value > 0 ? 'leaf' : 'ember'}>
                 {STAGE_NAMES[stage]} {value > 0 ? `+${value}` : value}
-              </span>
+              </Badge>
             )}
           </For>
-        </div>
+        </Row>
       </Show>
 
       <Show when={abilities().length}>
-        <div>
+        <Row class="gap-1">
           <For each={abilities()}>
-            {(ability) => <span style={CHIP_STYLE}>{describeAbility(ability)}</span>}
+            {(ability) => <Badge tone="tide">{describeAbility(ability)}</Badge>}
           </For>
-        </div>
+        </Row>
       </Show>
 
       <Show when={items().length}>
-        <div>
-          <For each={items()}>{(item) => <span style={CHIP_STYLE}>{describeItem(item)}</span>}</For>
-        </div>
+        <Row class="gap-1">
+          <For each={items()}>{(item) => <Badge tone="gold">{describeItem(item)}</Badge>}</For>
+        </Row>
       </Show>
 
       {/* Moves, with the ones cooling down called out */}
-      <div>
+      <Row class="gap-1">
         <For each={view().moves}>
           {(move) => (
-            <span style={{ ...CHIP_STYLE, opacity: move.cooldown ? '0.5' : '1' }}>
-              {getMoveData(move.move).name}
-              {move.disabled ? ' · disabled' : ''}
-              {move.cooldown ? ' · cooling' : ''}
+            <span class={move.cooldown ? 'opacity-50' : ''}>
+              <Badge>
+                {getMoveData(move.move).name}
+                {move.disabled ? ' · disabled' : ''}
+                {move.cooldown ? ' · cooling' : ''}
+              </Badge>
             </span>
           )}
         </For>
-      </div>
+      </Row>
     </li>
   );
 }
@@ -489,41 +486,50 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
   });
 
   return (
-    <div>
+    <div class="flex flex-col gap-4">
       <Show when={weather() !== Weathers.None}>
-        <p>Weather: {WEATHER_NAMES[weather()]}</p>
+        <Row>
+          <Badge tone="tide">Weather: {WEATHER_NAMES[weather()]}</Badge>
+        </Row>
       </Show>
 
-      <For each={roster()}>
-        {(alliance, index) => (
-          <section>
-            <h2>{props.label?.(alliance.alliance, index()) ?? `Alliance ${index() + 1}`}</h2>
-            <For each={alliance.teams}>
-              {(team, teamIndex) => (
-                <>
-                  <Show when={alliance.teams.length > 1}>
-                    <h3>Team {teamIndex() + 1}</h3>
-                  </Show>
-                  <ul style={{ 'list-style': 'none', padding: '0' }}>
-                    <For each={team}>
-                      {(unit) => <UnitCard unit={unit} revision={revisionOf(unit)} />}
-                    </For>
-                  </ul>
-                </>
-              )}
-            </For>
-          </section>
-        )}
-      </For>
+      {/* Two sides of a fight read side by side where there is room
+          for it, and stacked where there is not */}
+      <div class="grid gap-4 lg:grid-cols-2">
+        <For each={roster()}>
+          {(alliance, index) => (
+            <Card title={props.label?.(alliance.alliance, index()) ?? `Alliance ${index() + 1}`}>
+              <For each={alliance.teams}>
+                {(team, teamIndex) => (
+                  <>
+                    <Show when={alliance.teams.length > 1}>
+                      <h4>Team {teamIndex() + 1}</h4>
+                    </Show>
+                    <List>
+                      <For each={team}>
+                        {(unit) => <UnitCard unit={unit} revision={revisionOf(unit)} />}
+                      </For>
+                    </List>
+                  </>
+                )}
+              </For>
+            </Card>
+          )}
+        </For>
+      </div>
 
-      <section>
-        <h2>Log</h2>
-        <Show when={log().length} fallback={<p>Nothing has fired yet.</p>}>
-          <ul style={{ 'list-style': 'none', padding: '0', 'text-align': 'left' }}>
+      <Card title="Log">
+        <Show when={log().length} fallback={<Note>Nothing has fired yet.</Note>}>
+          {/* Newest last, and only so tall: a long fight should not
+              push the field off the screen */}
+          <ul
+            class="m-0 flex max-h-64 list-none flex-col gap-0.5 overflow-y-auto p-0 text-left
+            text-sm text-muted"
+          >
             <For each={log()}>{(line) => <li>{line}</li>}</For>
           </ul>
         </Show>
-      </section>
+      </Card>
     </div>
   );
 }

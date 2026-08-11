@@ -30,6 +30,7 @@ import useBottleCap from '../auth/bottle-caps';
 import usePurifyingGem from '../auth/purify';
 import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
+import { learnLevelUpMove } from '../auth/moves';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
 import { assignableEffort, effortBudget, effortSpent, unusedEffort } from '../auth/effort';
@@ -66,7 +67,7 @@ import { isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
 import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/ids/moves';
-import { getConsumedItem, getSpeciesData } from '../data/species';
+import { getConsumedItem, getMovesLearnedAt, getSpeciesData } from '../data/species';
 import { BIOME_NAMES } from '../data/biome';
 import Biome from '../data/ids/biome';
 import { getLairTitle } from '../data/overworld/lair';
@@ -361,6 +362,70 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     async ([player, family]) => getCandyCount(player, family),
   );
 
+  /**
+   * A move about to be learned, and where it came from. The dialog it
+   * opens decides whether anything is forgotten for it; what differs
+   * between a machine and a level is only what it costs.
+   *
+   * `rest` is the queue behind it. A level can offer more than one
+   * move at once — plenty of species learn two at level 1 — and each
+   * is its own question, asked one after the other
+   */
+  interface Teaching {
+    move: Moves;
+    rest: Moves[];
+    /**
+     * Grown into rather than taught: the candy already paid for it
+     */
+    levelled: boolean;
+  }
+
+  const [teaching, setTeaching] = createSignal<Teaching | null>(null);
+
+  /**
+   * Move on to the next thing the level offered, or close the dialog
+   * when that was the last of them
+   */
+  const nextTeaching = (): void => {
+    const current = teaching();
+    const queued = current?.rest ?? [];
+
+    setTeaching(
+      current == null || queued.length === 0
+        ? null
+        : { ...current, move: queued[0], rest: queued.slice(1) },
+    );
+  };
+
+  /**
+   * Ask about whatever the level it just reached has to offer.
+   *
+   * It is the species' list for **that level exactly** — a move from
+   * any earlier one is the Move Reminder's trade and costs a Heart
+   * Scale — minus anything it knows already, since a candy spent
+   * bringing a pokemon back to a level it has been at before should
+   * not offer the same move twice.
+   *
+   * Saying no is allowed and costs nothing. It is only final once the
+   * next candy takes the pokemon past the level
+   */
+  const offerLevelMoves = (level: number): void => {
+    const caught = view();
+
+    if (caught == null || isEgg(caught)) {
+      return;
+    }
+
+    const knows = new Set(caught.moves);
+    const learning = getMovesLearnedAt(caught.species, level).filter(
+      (learned) => !knows.has(learned),
+    );
+
+    if (learning.length > 0) {
+      setTeaching({ move: learning[0], rest: learning.slice(1), levelled: true });
+    }
+  };
+
   const feedCandy = (): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -376,6 +441,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         await refetchCandies();
         await refetchEvolutions();
         props.onChange?.();
+
+        if (level != null) {
+          offerLevelMoves(level);
+        }
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
@@ -755,11 +824,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * opens it, spends something, and is back to looking at the pokemon
    */
   const [panel, setPanel] = createSignal<'items' | null>(null);
-  /**
-   * The move a machine is about to teach, if one has been used. The
-   * dialog it opens decides whether anything is forgotten for it
-   */
-  const [teaching, setTeaching] = createSignal<Moves | null>(null);
 
   /**
    * One stat as the pokemon actually has it: the species' base, the
@@ -823,7 +887,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     const move = isMachineItem(item) ? getMachineMove(item) : null;
 
     if (move != null) {
-      setTeaching(move);
+      setTeaching({ move, rest: [], levelled: false });
       return;
     }
     if (isBottleCap(item)) {
@@ -1417,17 +1481,23 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         </DialogActions>
       </Dialog>
 
-      {/* Teaching is its own dialog because what it costs is a
-          question — which move is given up — and a machine used on a
-          pokemon with room asks nothing at all */}
+      {/* Learning is its own dialog because what it costs is a
+          question — which move is given up — and one used on a pokemon
+          with room asks nothing at all. A machine and a level ask the
+          same question, so they share it; only the price differs, and
+          a level has none.
+
+          Closing steps to whatever else the level offered rather than
+          straight back to the sheet, since a level can hand over two
+          moves at once and each is its own decision */}
       <TeachMoveDialog
         catchId={teaching() == null ? null : props.catchId}
-        move={teaching()}
-        onClose={() => {
-          setTeaching(null);
-        }}
+        move={teaching()?.move ?? null}
+        cost={teaching()?.levelled === true ? 'Nothing' : undefined}
+        teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
+        onClose={nextTeaching}
         onTaught={() => {
-          setStatus('Taught.');
+          setStatus(teaching()?.levelled === true ? 'Learned.' : 'Taught.');
           Promise.all([refetch(), refetchBag()])
             .then(() => {
               props.onChange?.();

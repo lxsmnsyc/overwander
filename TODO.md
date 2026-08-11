@@ -10,7 +10,6 @@
 - [ ] ability/item descriptions
 - [ ] nicknames
 - [ ] replace ball feature
-- [ ] level up + teach move
 - [ ] catch picker = view catch
 - [ ] preferred animation for move
 - [ ] friends

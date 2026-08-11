@@ -219,6 +219,20 @@ export function getEggMoves(species: Species): Moves[] {
 }
 
 /**
+ * What the species learns on reaching exactly that level, in the order
+ * the entry lists them. A level with nothing on it answers an empty
+ * list.
+ *
+ * This is the moment a level-up move is offered — a pokemon that has
+ * just grown into one is asked whether it wants it. Anything older
+ * than the level it now sits at is gone until the Move Reminder, which
+ * is what `getRecallableMoves` is for
+ */
+export function getMovesLearnedAt(species: Species, level: number): Moves[] {
+  return getSpeciesData(species).learnSet.level[level] ?? [];
+}
+
+/**
  * Everything the species learns by levelling, up to and including a
  * level, in the order it learns them.
  *

@@ -178,9 +178,12 @@ raid still says so. Purifying changes what it costs, not what it was.
 
 ## Teaching a move
 
-Two things change what a pokemon knows after it has been met — everything else
+Three things change what a pokemon knows after it has been met — everything else
 about a move list is decided at the catch or inherited from a parent:
 
+- **Growing into one.** A candy that lands a level offers whatever the species
+  learns at that level (`getMovesLearnedAt`), one move at a time where a level
+  hands over two. It costs nothing: the candy already paid for it.
 - A **technical machine**. There is one per teachable move, generated from the
   species learn sets, so a move any species can learn brings its machine along.
   What it may teach is the species' `learnSet.teachable`.
@@ -191,11 +194,12 @@ about a move list is decided at the catch or inherited from a parent:
   price is one **Heart Scale**, which is dug out of the ground and which nothing
   buys or sells.
 
-Both are the same call
+All three are the same call
 ([`learnMove` in `src/server/moves.ts`](../../src/server/moves.ts)): only *which
 move is allowed* and *what it is paid in* differ, so the rest — whose pokemon it
 is, how much room the list has, whether the price is carried — is decided once.
-What it costs depends on how full the list is:
+A level-up move passes a **null price**, which is the only way to learn one for
+nothing. What it costs depends on how full the list is:
 
 | The pokemon knows | What happens                                |
 | ----------------- | ------------------------------------------- |
@@ -215,6 +219,18 @@ rewriting a lock is for.
 Because the reminder only ever gives back **level-up** moves, a machine move
 dropped to make room is gone for good, and the choice of what to forget stays a
 real one.
+
+### Why the level, and only the level
+
+A level-up move is offered for the level the pokemon is **standing on** and no
+other. Nothing records that the offer was made or declined — the level itself is
+the record — so a player who says no by accident may say yes again until the next
+candy takes the pokemon past it, and a move from any earlier level is gone until
+a Heart Scale buys it back.
+
+That word *exactly* is the whole of the balance. Were the offer "anything it
+could have learned by now", growing up would be a free Move Reminder and the
+Heart Scale would be worth nothing.
 
 ## Putting a pokemon right
 

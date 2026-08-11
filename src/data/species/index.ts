@@ -4,6 +4,7 @@ export {
   getBaseSpecies,
   getEggMoves,
   getLevelUpMoves,
+  getMovesLearnedAt,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,

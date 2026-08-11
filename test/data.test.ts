@@ -141,6 +141,7 @@ import {
   getEggMoves,
   getFeaturedFamily,
   getLevelUpMoves,
+  getMovesLearnedAt,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -1505,6 +1506,26 @@ describe('wandering NPCs', () => {
     expect(new Set(NPCS).has(Npc.MoveReminder)).toBe(true);
     // The one wanderer whose price is not gold
     expect(REMINDER_FEE).toBe(Items.HeartScale);
+  });
+
+  it('offers a level its own moves and no others', () => {
+    // What a pokemon has just grown into is the entry for that level
+    // exactly, in the order the entry lists it
+    expect(getMovesLearnedAt(Species.Bulbasaur, 1)).toEqual([Moves.Tackle, Moves.Growl]);
+    expect(getMovesLearnedAt(Species.Bulbasaur, 13)).toEqual([Moves.VineWhip]);
+    // A level with nothing on it offers nothing — and the level below
+    // one is not the level, which is what keeps growing up from being
+    // a free Move Reminder
+    expect(getMovesLearnedAt(Species.Bulbasaur, 12)).toEqual([]);
+
+    // Every level's own moves are part of what it has learned by then
+    for (const level of [1, 7, 13, 20, 27]) {
+      const learned = new Set(getLevelUpMoves(Species.Bulbasaur, level));
+
+      for (const move of getMovesLearnedAt(Species.Bulbasaur, level)) {
+        expect(learned.has(move)).toBe(true);
+      }
+    }
   });
 
   it('gives back the level-up moves a pokemon has lost and nothing else', () => {

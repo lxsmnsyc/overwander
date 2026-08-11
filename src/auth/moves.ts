@@ -1,17 +1,16 @@
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import { requireUid } from '../server/firebase';
-import teachOnServerSide from '../server/moves';
+import teachOnServerSide, { learnLevelUpMove as learnOnServerSide } from '../server/moves';
 import getIdToken from './session';
 
 /**
- * Teaching a move, as the client asks for it.
+ * Learning a move, as the client asks for it.
  *
- * A machine is the only thing that changes what a pokemon knows after
- * it has been met, so none of it is the client's to decide: which move
- * the machine teaches, whether the species can learn it, and whether
- * the machine is carried are all worked out again on the server from
- * the stored record.
+ * None of it is the client's to decide: which move a machine teaches,
+ * whether the species can learn it, which move a level actually offers
+ * and whether the price is carried are all worked out again on the
+ * server from the stored record.
  */
 
 /**
@@ -38,4 +37,33 @@ async function teachOnServer(
 ): Promise<Moves[] | null> {
   'use server';
   return teachOnServerSide(await requireUid(token), catchId, item, replaces);
+}
+
+/**
+ * Learn a move the pokemon has just grown into — one its species
+ * learns at exactly the level it now sits at. Nothing is charged: the
+ * candy that bought the level paid for it.
+ *
+ * The offer is the level the pokemon is standing on and no other, so
+ * this cannot reach back for an older move — that is the Move
+ * Reminder's trade, and it costs a Heart Scale.
+ *
+ * Resolves the move list as it now stands, or null when it is refused
+ */
+export async function learnLevelUpMove(
+  catchId: string,
+  move: Moves,
+  replaces = 0,
+): Promise<Moves[] | null> {
+  return learnOnServer(await getIdToken(), catchId, move, replaces);
+}
+
+async function learnOnServer(
+  token: string,
+  catchId: string,
+  move: Moves,
+  replaces: number,
+): Promise<Moves[] | null> {
+  'use server';
+  return learnOnServerSide(await requireUid(token), catchId, move, replaces);
 }

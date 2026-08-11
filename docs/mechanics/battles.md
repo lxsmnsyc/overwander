@@ -55,6 +55,65 @@ idle set is maintained by the lifecycle events rather than rescanned, and the
 outcome check deliberately never asks the AI what it *would* do, since consuming
 a random would pull every replay off its seed.
 
+### What it looks like
+
+| Phase     | The caster plays                                        |
+| --------- | ------------------------------------------------------- |
+| Cast      | The move's own `cast` list, **stretched over the cast** |
+| Channel   | The same clip again, stretched over **each step**       |
+| Otherwise | `Idle`, or `Hurt` once knocked out                      |
+
+A move carries a **`cast`** list — animation clip names, most wanted first — and
+the battle plays the first one the sprite in front of it actually has.
+
+Sprite sheets are not uniform. Every one of them carries eleven **common** clips
+(`Idle`, `Sleep`, `Hurt`, `Attack`, `Charge`, `Shoot`, `Double`, `Hop`, `Rotate`,
+`Walk`, `Swing`); twenty-three more are there or not depending on what the
+pokemon was drawn doing. A Machop has a `Punch`; a Magikarp does not. Naming one
+clip per move would mean either every move looking the same or half the roster
+playing nothing, so a move names a **preference** instead:
+
+| Move        | Asks for                        | On a sheet without `Punch` |
+| ----------- | ------------------------------- | -------------------------- |
+| Fire Punch  | `Punch` → `Uppercut` → `Attack` | Swings                     |
+| Blizzard    | `Emit` → `Shoot` → `Charge`     | —                          |
+| Thunderbolt | `Shock` → `Emit` → `Attack`     | —                          |
+
+The last entry is always a common clip, so the walk cannot run off the end;
+[a registry test](../../test/data.test.ts) checks that of every registered move,
+along with no repeats and no invented names. The sprite is asked directly —
+`SpeciesSpriteAnimation.has` — rather than a table being kept of which species
+owns which clip, since the sheet is the truth and a second copy of it would rot.
+
+#### Stretched, not looped
+
+The clip fills the **whole cast** rather than repeating inside it. A cast is
+`(104 − 16 × priority)` frames and a drawn clip is however long it was drawn;
+looping would run a short clip two and a half times and leave it part-way through
+at the moment the move fires, which reads as a twitch rather than a wind-up.
+
+`play(name, { duration })` scales the playhead so one pass takes exactly that
+long — every frame held proportionally longer or shorter, nothing dropped. The
+canvas passes the **whole** window rather than what is left of it: a rate worked
+out afresh from the remainder on every frame is a rate that climbs as the
+remainder shrinks, and a clip driven that way races to its end about two thirds
+of the way through.
+
+**Channelling is drawn the same way.** `ChannelingData extends CastingData`, so
+the rest of a multi-step move carries the same two things a cast does — which
+move, and how long this window runs — and neither needs its own case. The clip
+gets one pass per **step**, so a Fury Swipes is five swipes rather than one swipe
+and four seconds of standing about, and the two halves of a move look like one
+move. A one-shot that has run out while the unit is still working is `restart`ed
+for the next step rather than held on its last frame.
+
+The side effect is the point: a slow move is a visibly slow wind-up and Quick
+Attack is a visibly fast one. Priority stops being a number nobody can see and
+becomes how long the pokemon spends gathering itself.
+
+Nothing about this reaches the mechanics. `cast` sits beside `delay` as a purely
+presentational field: the fight is the same fight with the canvas closed.
+
 ## Damage
 
 The Gen V formula, resolved through events so that anything can have a say:

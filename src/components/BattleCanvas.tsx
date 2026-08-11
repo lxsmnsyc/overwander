@@ -6,6 +6,7 @@ import loadSpeciesSprite from '../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
 import { EventPriority } from '../core/event-emitter';
+import { pickCast } from '../data/constants/cast';
 import { Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
@@ -185,16 +186,71 @@ function layout(
 }
 
 /**
- * What a unit should look like it is doing. A pokemon in the middle
- * of a move is winding one up, one that has been knocked out is down,
- * and everything else is standing there — and a sheet without the
- * animation asked for falls back to the one every sheet has
+ * What a unit should look like it is doing, and how long it has to do
+ * it in.
+ *
+ * A pokemon knocked out is down and one standing about is idle. One
+ * **working a move** — winding it up, or part-way through a
+ * multi-step one — does what that move looks like: the move's own
+ * `cast` list, walked until the sprite in hand has one of them, so a
+ * Fire Punch throws a punch on a sheet that has one and swings on one
+ * that does not.
+ *
+ * What makes that read rather than flicker is the second half: the
+ * clip is **stretched over the window** instead of looping inside it.
+ * A cast is `(104 − 16 × priority)` frames, and a drawn clip is
+ * whatever length it was drawn at, so looping would run a short clip
+ * two and a half times and leave it part-way through when the move
+ * fires. Stretched, the wind-up begins as the cast begins and finishes
+ * exactly as the move goes off — and a slower move is visibly a slower
+ * wind-up, which is priority made legible without a number on screen.
+ *
+ * **Channelling is the same thing again.** It is the rest of a
+ * multi-step move, and it carries the same shape a cast does — the
+ * move, and how long this step has to run — so it is drawn the same
+ * way: one pass of the move's own clip per step. A Fury Swipes is
+ * five swipes rather than one swipe and four seconds of standing
+ * there, and the two halves of a move look like one move
+ *
+ * The sprite is asked directly rather than a table being kept of which
+ * species owns which clip: the sheet is the truth, and a second copy
+ * of it would rot
  */
-function animationFor(unit: Unit): string {
+interface Performance {
+  animation: string;
+  /**
+   * How long one pass should take, or null to play at the speed the
+   * sheet was drawn at
+   */
+  duration: number | null;
+  loop: boolean;
+}
+
+function animationFor(unit: Unit, sprite: SpeciesSpriteAnimation): Performance {
   if (!unit.alive) {
-    return 'Hurt';
+    // A knocked-out pokemon holds the last frame of being hurt rather
+    // than looping it, which is the difference between lying there
+    // and writhing for ever
+    return { animation: 'Hurt', duration: null, loop: false };
   }
-  return unit.casting != null || unit.channeling != null ? 'Charge' : 'Idle';
+
+  // Both halves of a move carry the same two things — which move, and
+  // how long this window has to run — so neither needs its own case
+  const working = unit.casting ?? unit.channeling;
+
+  if (working != null) {
+    return {
+      animation: pickCast(getMoveData(working.move).cast, (name) => sprite.has(name)),
+      // The **whole** window, not what is left of it. A rate worked
+      // out afresh from the remainder every frame is a rate that
+      // climbs as the remainder shrinks, and a clip driven that way
+      // races to its end around two thirds of the way through. The
+      // window is a fixed length; so is the rate that fills it
+      duration: working.time.duration,
+      loop: false,
+    };
+  }
+  return { animation: 'Idle', duration: null, loop: true };
 }
 
 function healthColor(share: number): string {
@@ -243,14 +299,20 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
   const sprite = slot.sprite;
 
   if (sprite?.ready === true) {
-    const wanted = animationFor(unit);
+    const wanted = animationFor(unit, sprite);
+    const playable = sprite.has(wanted.animation) ? wanted.animation : 'Idle';
 
-    // A knocked-out pokemon holds the last frame of being hurt rather
-    // than looping it, which is the difference between lying there
-    // and writhing for ever
-    sprite.play(sprite.has(wanted) ? wanted : 'Idle', {
+    sprite.play(playable, {
       direction: slot.facing,
-      loop: unit.alive,
+      loop: wanted.loop,
+      // Stretching only means anything for the clip that was asked
+      // for: a fallback to Idle is a loop at its own speed
+      duration: playable === wanted.animation ? (wanted.duration ?? undefined) : undefined,
+      // A one-shot that has run out while the unit is still working a
+      // move has reached the end of *a* window, not the end of the
+      // work: the next step of a multi-step move is another pass of
+      // the same clip, so it is started again rather than held
+      restart: sprite.finished && wanted.duration != null,
     });
     // Feet on the line the circle used to sit on, so nothing else
     // that measures from the slot has to move

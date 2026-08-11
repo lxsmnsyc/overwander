@@ -47,6 +47,69 @@ describe('species sprite animation', () => {
     expect(sprite.play('Nap')).toBe(false);
   });
 
+  it('stretches a clip over a window somebody else decided', () => {
+    const sprite = new SpeciesSpriteAnimation('image.png', BULBASAUR);
+    const idle = BULBASAUR.anims.anims.find((anim) => anim.name === 'Idle');
+    const drawn = (idle?.durations ?? []).reduce(
+      (total, held) => total + Math.max(1, held) * SPRITE_TICK,
+      0,
+    );
+
+    expect(drawn).toBeGreaterThan(0);
+
+    // A cast is as long as the move's priority makes it, and the clip
+    // is whatever length it was drawn at. Stretched, the two agree:
+    // one pass fills the window exactly, whatever the two lengths are
+    const window = drawn * 4;
+
+    expect(sprite.play('Idle', { loop: false, duration: window })).toBe(true);
+
+    sprite.update(window - 1);
+    expect(sprite.finished).toBe(false);
+    // The last frame, not the first: the clip ran once over the whole
+    // window rather than four times
+    expect(sprite.frame).toBe(Math.max(0, (idle?.durations.length ?? 1) - 1));
+
+    sprite.update(1);
+    expect(sprite.finished).toBe(true);
+
+    // A shorter window is the same clip played faster, which is what
+    // makes a high-priority move visibly a quicker wind-up
+    const quick = new SpeciesSpriteAnimation('image.png', BULBASAUR);
+
+    quick.play('Idle', { loop: false, duration: drawn / 2 });
+    quick.update(drawn / 2);
+    expect(quick.finished).toBe(true);
+
+    // Asked for again with the same window, it keeps its place — a
+    // caller playing this every tick of a cast must not restart the
+    // clip sixty times a second
+    const held = new SpeciesSpriteAnimation('image.png', BULBASAUR);
+
+    held.play('Idle', { loop: false, duration: window });
+    held.update(window / 2);
+    held.play('Idle', { loop: false, duration: window });
+    held.update(window / 2);
+    expect(held.finished).toBe(true);
+
+    // ...and asked for again once it has run out, `restart` gives it
+    // a fresh pass over a fresh window. That is what the next step of
+    // a multi-step move is
+    held.play('Idle', { loop: false, duration: window, restart: true });
+    expect(held.finished).toBe(false);
+    held.update(window - 1);
+    expect(held.finished).toBe(false);
+    held.update(1);
+    expect(held.finished).toBe(true);
+
+    // Left out, a clip plays at the speed it was drawn at
+    const plain = new SpeciesSpriteAnimation('image.png', BULBASAUR);
+
+    plain.play('Idle', { loop: false });
+    plain.update(drawn);
+    expect(plain.finished).toBe(true);
+  });
+
   it('holds each frame for the duration the sheet gives it', () => {
     const sprite = new SpeciesSpriteAnimation('image.png', BULBASAUR);
     const idle = BULBASAUR.anims.anims.find((anim) => anim.name === 'Idle');

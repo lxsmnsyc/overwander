@@ -103,6 +103,21 @@ export interface PlayOptions {
    * first frame forever
    */
   restart?: boolean;
+  /**
+   * How long one pass should take, in milliseconds, instead of the
+   * time the sheet says.
+   *
+   * The clip is **stretched** rather than cut: every frame is held
+   * proportionally longer or shorter so the whole thing still plays,
+   * start to end, in exactly this long. It is for an animation that
+   * has to fill a window somebody else decided — a battle cast, whose
+   * length comes from the move's priority — where looping would run
+   * the clip two and a half times and cutting would drop the end of
+   * it.
+   *
+   * Left out, the clip plays at the speed it was drawn at
+   */
+  duration?: number;
 }
 
 export interface DrawOptions {
@@ -236,6 +251,14 @@ export default class SpeciesSpriteAnimation {
   private looping = true;
 
   private running = false;
+
+  /**
+   * How fast the playhead moves against the wall clock. One is the
+   * speed the sheet was drawn at; a half runs it twice as slow. It is
+   * how `duration` is honoured — the frames keep their proportions and
+   * only the scale of the whole changes
+   */
+  private rate = 1;
 
   /**
    * How far into the current clip it is, in milliseconds
@@ -406,6 +429,12 @@ export default class SpeciesSpriteAnimation {
     }
     this.looping = options.loop ?? true;
     this.running = true;
+    // Set before the carry-on below, so a caller that asks every tick
+    // can change how long the window is without restarting the clip
+    this.rate =
+      options.duration != null && options.duration > 0 && clip.duration > 0
+        ? clip.duration / options.duration
+        : 1;
 
     // Asking again for what is already playing carries on, unless the
     // caller says otherwise: a canvas that plays `Walk` on every tick
@@ -460,7 +489,7 @@ export default class SpeciesSpriteAnimation {
       return;
     }
 
-    this.elapsed += elapsed;
+    this.elapsed += elapsed * this.rate;
 
     if (this.elapsed < clip.duration) {
       return;

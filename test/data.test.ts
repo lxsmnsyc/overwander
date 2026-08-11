@@ -66,8 +66,9 @@ import {
   isBerry,
 } from '../src/data/items/berries';
 import BERRY_POOL from '../src/data/overworld/berry-pool';
-import { getMoveData } from '../src/data/moves';
+import { getMoveData, getRegisteredMoves } from '../src/data/moves';
 import registerGen1Moves from '../src/data/moves/gen-1';
+import { CAST_ANIMATIONS, DEFAULT_CAST, isCommonCast, pickCast } from '../src/data/constants/cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
 import {
@@ -283,6 +284,56 @@ describe('egg moves', () => {
     // A legendary has nobody to inherit from
     expect(getEggMoves(Species.Mewtwo)).toEqual([]);
     expect(getEggMoves(Species.Articuno)).toEqual([]);
+  });
+});
+
+describe('move cast animations', () => {
+  const named = new Set<string>(CAST_ANIMATIONS);
+
+  it('gives every move a preference that cannot run out', () => {
+    const moves = getRegisteredMoves();
+
+    expect(moves.length).toBeGreaterThan(0);
+
+    for (const move of moves) {
+      const { name, cast } = getMoveData(move);
+
+      // A move with no preference would fall to the same clip as
+      // every other move, which is the state this field exists to
+      // leave behind
+      expect(cast.length, name).toBeGreaterThan(0);
+
+      for (const animation of cast) {
+        expect(named.has(animation), `${name}: ${animation}`).toBe(true);
+      }
+
+      // The walk is preferred-first and stops at the first clip the
+      // sprite has, so the **last** entry has to be one every sheet
+      // carries. Anything else is a move that can fall off the end
+      expect(isCommonCast(cast[cast.length - 1]), `${name}: ${cast.join(' → ')}`).toBe(true);
+
+      // Asking for the same clip twice is a typo rather than a
+      // preference: the second ask can never be reached
+      expect(new Set(cast).size, name).toBe(cast.length);
+    }
+  });
+
+  it('walks the preference against the sprite in hand', () => {
+    const punchy = pickCast(['Punch', 'Uppercut', 'Attack'], (name) => name !== 'Punch');
+
+    // The first clip this sheet actually has, not the first named
+    expect(pickCast(['Punch', 'Uppercut', 'Attack'], () => true)).toBe('Punch');
+    expect(punchy).toBe('Uppercut');
+    expect(pickCast(['Punch', 'Uppercut', 'Attack'], (name) => name === 'Attack')).toBe('Attack');
+
+    // A sheet with none of the named clips still has to be given
+    // something it can play: the common clip every sheet carries
+    expect(pickCast(['Punch', 'Uppercut'], (name) => name === DEFAULT_CAST)).toBe(DEFAULT_CAST);
+    expect(isCommonCast(DEFAULT_CAST)).toBe(true);
+    // ...and a sheet missing even that falls to the one clip nothing
+    // can be without. It should not happen — every sheet has the
+    // eleven — but a sprite is a file on disk, and a file can be wrong
+    expect(pickCast(['Punch', 'Uppercut'], () => false)).toBe('Idle');
   });
 });
 

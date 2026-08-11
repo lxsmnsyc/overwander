@@ -10,6 +10,7 @@ import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import type Lairs from '../data/overworld/lair';
 import type { EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
 import { getMaxHealth } from './health';
@@ -129,6 +130,13 @@ export interface CaughtPokemon {
    */
   statuses: number;
   /**
+   * The lair it was fought in, for a raid prize. It is what the raid
+   * was called, so a record can say where it came from rather than
+   * only what kind of raid it was — null for everything met any other
+   * way
+   */
+  lair: Lairs | null;
+  /**
    * The ball the catch was made with
    */
   ball: Balls;
@@ -240,6 +248,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
         ? getMaxHealth({ species, level, ivs, effortValues })
         : asNumber(data.health),
     statuses: asNumber(data.statuses),
+    lair: data.lair == null ? null : (asNumber(data.lair) as Lairs),
     ball: asNumber(data.ball) as Balls,
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),

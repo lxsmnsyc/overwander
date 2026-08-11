@@ -31,6 +31,18 @@ const enum Biome {
   Steppe = 21,
   MontaneForest = 22,
   PolarOcean = 23,
+  /**
+   * Nowhere on the map: where a mythical comes from.
+   *
+   * A relic calls something out of a place the world does not
+   * contain, and a catch has to say where it came from — the chunk
+   * the player happened to be standing in would be a lie, since
+   * walking back there finds nothing. `getBiome` never returns this
+   * one, no spawn pool is registered for it, and nothing is ever
+   * generated in it: it exists so a record can be honest about a
+   * pokemon that came from beyond the known world
+   */
+  Beyond = 24,
 }
 
 export default Biome;
@@ -127,9 +139,12 @@ export interface BiomeConfig {
  * Target climate point of each biome on the shared -1 to 1 noise
  * scale: sampling humidity/temperature/elevation noise at a world
  * position and picking the nearest target yields that position's
- * biome
+ * biome.
+ *
+ * `Beyond` is deliberately absent, and the type says so: it is not a
+ * climate, so no sampling can land on it. Nothing is generated there
  */
-export const BIOME_CONFIGS: { [key in Biome]: BiomeConfig } = {
+export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig } = {
   // Aquatic: fully saturated, sorted by depth
   [Biome.DeepOcean]: { humidity: 1, temperature: -0.2, elevation: -0.8 },
   [Biome.Ocean]: { humidity: 1, temperature: 0, elevation: -0.4 },

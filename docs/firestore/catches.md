@@ -31,6 +31,7 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `steppedAt`            | `number`                | Server instant steps were last credited at                |
 | `health`               | `number`                | Health left; 0 is fainted. The maximum is derived         |
 | `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying          |
+| `lair`                 | `Lairs \| null`          | The lair a raid prize was won in; null for anything else |
 | `ball`                 | `Balls`                 | Ball the catch was made with                              |
 | `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
 | `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
@@ -181,6 +182,26 @@ A record written before these fields existed has neither, and reading a missing
 `health` as zero would faint every pokemon caught until now. Missing means
 whole: `asCaughtPokemon` derives the maximum for those records, which is what
 they meant.
+
+## Where it came from
+
+`type` says how a pokemon was met — see
+[Encounter kinds](encounters.md#encounter-kinds) — and for a raid prize `lair`
+says **where**. It is the same field the lobby was named after
+([Raids](raids.md)), so a record reads the way the raid did: a Mewtwo won under
+a mountain says `Cerulean Cave`, and a shadow raid that stood in no named place
+says `Shadow Mountain Lair`, derived from the `origin.biome` beside it.
+
+Everything met any other way carries `null` there and is described by its
+encounter kind alone.
+
+A **mythical** goes further: its `origin.biome` is `Biome.Beyond`, a biome that
+is nowhere on the map. No climate targets it (`BIOME_CONFIGS` excludes it by
+type, so `getBiome` cannot return it), no spawn pool is registered for it, and
+nothing is ever generated there. A relic is spent wherever the player happens to
+be standing, but that chunk is not where the pokemon came from — walking back to
+it finds nothing — so the record says `Beyond` rather than naming a place that
+would be a lie.
 
 ## Bottle caps
 

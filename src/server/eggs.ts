@@ -134,6 +134,8 @@ async function writeEgg(
       effortValues: zeroEffortValues(),
     }),
     statuses: 0,
+    // Nothing hatched was fought for in a lair
+    lair: null,
     steps: 0,
     // Frozen here, so a later change to what hatching costs cannot
     // move the finish line on an egg already being carried

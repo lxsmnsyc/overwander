@@ -1,5 +1,6 @@
 import AleaRNG from '../core/alea';
 import { PokemonFlags } from '../data/constants/flags';
+import type Lairs from '../data/overworld/lair';
 import { Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -121,6 +122,12 @@ export interface Encounter {
    * A pure gender-ratio roll from its dedicated spawn value
    */
   gender: Genders;
+  /**
+   * The lair it was fought in, for a raid prize; null for everything
+   * met anywhere else, and for a shadow raid that stood in no
+   * particular place
+   */
+  lair: Lairs | null;
   /**
    * What is true about it, as `PokemonFlags` bits: whether it
    * sparkles for the observing user — the same wild pokemon can be
@@ -395,6 +402,16 @@ export interface EncounterOptions {
    */
   shadow?: boolean;
   /**
+   * The lair the raid it came out of stands in
+   */
+  lair?: Lairs | null;
+  /**
+   * Where the meeting happened, overriding the chunk's own biome. A
+   * mythical comes from `Beyond`: the chunk the relic was spent in is
+   * where the player was standing, not where the pokemon came from
+   */
+  biome?: Biome;
+  /**
    * An extra multiplier on the shiny odds, from whatever the player
    * brought along — the Shiny Charm, for one. It stacks with the
    * species day's own boost
@@ -455,6 +472,7 @@ export default function deriveEncounter(
     individualValue,
     traitValue,
     ivs,
+    lair: options.lair ?? null,
     nature,
     ability,
     gender,
@@ -473,6 +491,6 @@ export default function deriveEncounter(
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,
     y: snapshot.chunk.y,
-    biome: snapshot.chunk.biome,
+    biome: options.biome ?? snapshot.chunk.biome,
   };
 }

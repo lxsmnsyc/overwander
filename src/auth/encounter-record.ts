@@ -7,6 +7,7 @@ import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
+import type Lairs from '../data/overworld/lair';
 import type { Encounter, EncounterType } from '../overworld/encounter';
 import { asNumber, asNumberArray, asRecord, asString } from './__normalize';
 
@@ -42,6 +43,7 @@ export function asEncounterRecord(value: unknown): EncounterRecord {
     individualValue: asNumber(data.individualValue),
     traitValue: asNumber(data.traitValue),
     ivs: asNumber(data.ivs),
+    lair: data.lair == null ? null : (asNumber(data.lair) as Lairs),
     nature: asNumber(data.nature) as Natures,
     ability: asNumber(data.ability) as Abilities,
     gender: asNumber(data.gender) as Genders,

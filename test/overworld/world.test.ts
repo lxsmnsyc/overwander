@@ -8,7 +8,13 @@ import registerBiomeSpawns, {
   getSpawnPool,
   getSpawnRarity,
 } from '../../src/data/biome';
-import Biome, { TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
+import Biome, { BIOME_CONFIGS, TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
+import Lairs, {
+  getBiomeLairs,
+  getLairSpecies,
+  getLairTitle,
+  getSpeciesLair,
+} from '../../src/data/overworld/lair';
 import Natures from '../../src/data/ids/natures';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
@@ -20,7 +26,7 @@ import {
   getSpeciesData,
   registerSpecies,
 } from '../../src/data/species';
-import { RaidKind, deriveRaidReward } from '../../src/auth/raids';
+import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
 import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
@@ -296,12 +302,13 @@ describe('world', () => {
   it('stages legendary raids on the raid window', () => {
     const world = new World('overworld');
     // Alpine tundra stages Articuno; the raid roll only reads the
-    // biome's special tier, so the chunk just has to sit in one
+    // A lair is a place: the polar ocean holds the Seafoam Islands,
+    // and what is at home there is Articuno
     const chunk = findChunk(
       world,
       (candidate) =>
-        candidate.biome === Biome.AlpineTundra &&
-        new Set(candidate.getLandmarkCells().values()).has(Landmark.LegendaryRaid),
+        candidate.biome === Biome.PolarOcean &&
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.LegendaryLair),
     );
 
     expect(chunk).not.toBeNull();
@@ -309,11 +316,12 @@ describe('world', () => {
       return;
     }
 
-    const raids = new ChunkSnapshot(chunk, 0).getLegendaryRaids();
+    const raids = new ChunkSnapshot(chunk, 0).getLegendaryLairs();
 
     expect(raids.size).toBeGreaterThan(0);
     for (const [cell, roll] of raids) {
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.LegendaryRaid);
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.LegendaryLair);
+      expect(roll.lair).toBe(Lairs.SeafoamIslands);
       expect(roll.species).toBe(Species.Articuno);
     }
 
@@ -322,7 +330,7 @@ describe('world', () => {
     const later = new ChunkSnapshot(chunk, RAID_INTERVAL - SNAPSHOT_INTERVAL);
 
     expect(later.raidTimestamp).toBe(0);
-    expect([...later.getLegendaryRaids()]).toEqual([...raids]);
+    expect([...later.getLegendaryLairs()]).toEqual([...raids]);
 
     // The next window rolls again
     const next = new ChunkSnapshot(chunk, RAID_INTERVAL);
@@ -333,12 +341,111 @@ describe('world', () => {
   it('never stages a mythical raid', () => {
     const world = new World('overworld');
 
-    // The tropical rainforest's special tier is Mew alone, so its
-    // raid landmarks stage nothing at all
+    // Mew's island is a lair like any other, but no biome lists it:
+    // the world stages no mythical, so the rainforest it lives in
+    // holds no lair at all
+    expect(getSpeciesLair(Species.Mew)).toBe(Lairs.FarawayIsland);
+    for (const key of Object.keys(BIOME_NAMES)) {
+      expect(getBiomeLairs(Number(key))).not.toContain(Lairs.FarawayIsland);
+    }
+
     const chunk = findChunk(world, (candidate) => candidate.biome === Biome.TropicalRainforest);
 
     expect(chunk).not.toBeNull();
-    expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryRaids().size).toBe(0);
+    expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryLairs().size).toBe(0);
+  });
+
+  it('draws a lair from the biome rather than from its spawn pool', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) =>
+        candidate.biome === Biome.Mountain &&
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.LegendaryLair),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    // A mountain holds two: the volcano and the cave under it. Every
+    // window stages one of them, and whoever is at home in it
+    const hosted = new Set(getBiomeLairs(Biome.Mountain));
+
+    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave]));
+
+    for (let window = 0; window < 12; window++) {
+      for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)
+        .getLegendaryLairs()
+        .values()) {
+        expect(roll.lair).not.toBeNull();
+        expect(hosted.has(roll.lair ?? Lairs.FarawayIsland)).toBe(true);
+        expect(roll.species).toBe(getLairSpecies(roll.lair ?? Lairs.FarawayIsland));
+      }
+    }
+  });
+
+  it('puts a mythical beyond the world rather than in it', () => {
+    // Beyond is a biome a record can carry and nothing else: no
+    // climate targets it, so no sampling can land on it and nothing
+    // is ever generated there
+    expect(BIOME_NAMES[Biome.Beyond]).toBe('Beyond');
+    expect(Object.keys(BIOME_CONFIGS)).not.toContain(String(Biome.Beyond));
+    expect(getSpawnPool(Biome.Beyond, TimeOfDay.Day).base).toEqual([]);
+    expect(getBiomeLairs(Biome.Beyond)).toEqual([]);
+
+    const world = new World('overworld');
+
+    for (let x = 0; x < 40; x++) {
+      for (let y = 0; y < 4; y++) {
+        expect(world.getChunk(x, y).biome).not.toBe(Biome.Beyond);
+      }
+    }
+
+    // The encounter's own biome is the chunk's unless the meeting
+    // says otherwise, which is what a mythical says
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
+    const spawn = [Species.Mew, 0, 0] as const;
+
+    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').biome).toBe(snapshot.chunk.biome);
+    expect(
+      deriveEncounter(snapshot, [...spawn], 'trainer-red', {
+        type: EncounterType.MythicalRaid,
+        biome: Biome.Beyond,
+      }).biome,
+    ).toBe(Biome.Beyond);
+  });
+
+  it('names a raid after the place rather than the pokemon', () => {
+    // A lair is named after itself, shadowed or not
+    expect(getLairTitle(Lairs.SeafoamIslands, Biome.PolarOcean, false)).toBe('Seafoam Islands');
+    expect(getLairTitle(Lairs.SeafoamIslands, Biome.PolarOcean, true)).toBe(
+      'Shadow Seafoam Islands',
+    );
+
+    // A shadow that reached for a rare species instead stands in no
+    // named place, so it is called after the ground it is on
+    expect(getLairTitle(null, Biome.Woodland, true)).toBe('Shadow Woodland Lair');
+
+    // And the record answers with the same words the lobby did
+    expect(
+      getRaidTitle({
+        kind: RaidKind.Shadow,
+        lair: null,
+        species: Species.Gyarados,
+        traitValue: 0,
+        host: 'red',
+        teams: [],
+        battle: null,
+        timestamp: 0,
+        offset: 0,
+        chunk: { seed: 'chunk', x: 0, y: 0 },
+        biome: Biome.Woodland,
+        cell: 0,
+        cleared: false,
+      }),
+    ).toBe('Shadow Woodland Lair');
   });
 
   it('gives a raid boss the gender its species rolls', () => {
@@ -455,8 +562,8 @@ describe('world', () => {
       const snapshot = new ChunkSnapshot(chunk, 0);
 
       for (const roll of [
-        ...snapshot.getShadowRaids().values(),
-        ...snapshot.getLegendaryRaids().values(),
+        ...snapshot.getShadowLairs().values(),
+        ...snapshot.getLegendaryLairs().values(),
       ]) {
         expect(roll.species).not.toBe(Species.Ditto);
         expect(createRaidBossSnapshot(roll.species, roll.traitValue).moves.length).toBeGreaterThan(
@@ -675,10 +782,10 @@ describe('world', () => {
     );
   });
 
-  it('stages shadow raids from the rare and legendary pools', () => {
+  it('stages a shadow lair from the biome, or from its rare band', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.ShadowRaid),
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.ShadowLair),
     );
 
     expect(chunk).not.toBeNull();
@@ -688,22 +795,63 @@ describe('world', () => {
 
     const time = getTimeOfDay(0);
     const pool = getSpawnPool(chunk.biome, time);
-    const raids = new ChunkSnapshot(chunk, 0).getShadowRaids();
+    const hosted = new Set(getBiomeLairs(chunk.biome));
+    const raids = new ChunkSnapshot(chunk, 0).getShadowLairs();
 
     expect(raids.size).toBeGreaterThan(0);
     for (const [cell, roll] of raids) {
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ShadowRaid);
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ShadowLair);
 
-      // Every shadow boss comes from the biome's rare band or, one
-      // draw in eight, its legendaries
-      const rare = pool.rare.some((entry) => entry.species === roll.species);
-      const legendary = getSpawnRarity(roll.species) === SpawnRarity.Special;
+      if (roll.lair == null) {
+        // No named place behind it, so it is one of the biome's own
+        // rare species and it is called after the ground
+        expect(pool.rare.some((entry) => entry.species === roll.species)).toBe(true);
+        expect(getLairTitle(roll.lair, chunk.biome, true)).toBe(
+          `Shadow ${BIOME_NAMES[chunk.biome]} Lair`,
+        );
+        continue;
+      }
 
-      expect(rare || legendary).toBe(true);
+      // Otherwise it has taken over one of the biome's own lairs, and
+      // is called that place with a word in front of it
+      expect(hosted.has(roll.lair)).toBe(true);
+      expect(roll.species).toBe(getLairSpecies(roll.lair));
+      expect(getSpawnRarity(roll.species)).toBe(SpawnRarity.Special);
     }
 
     // The window holds the roll, the same way legendary raids do
-    expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowRaids()]).toEqual([...raids]);
+    expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowLairs()]).toEqual([...raids]);
+  });
+
+  it('lets a shadow take over one of the biome own lairs', () => {
+    const world = new World('overworld');
+    // A mountain has two lairs to be taken over, so a run of windows
+    // turns one up
+    const chunk = findChunk(
+      world,
+      (candidate) =>
+        candidate.biome === Biome.Mountain &&
+        new Set(candidate.getLandmarkCells().values()).has(Landmark.ShadowLair),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const taken = new Set<string>();
+
+    for (let window = 0; window < 200; window++) {
+      for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)
+        .getShadowLairs()
+        .values()) {
+        taken.add(getLairTitle(roll.lair, chunk.biome, true));
+      }
+    }
+
+    // Both kinds turn up: the shadowed place, and the nameless one
+    expect(taken.has('Shadow Mt. Ember') || taken.has('Shadow Cerulean Cave')).toBe(true);
+    expect(taken.has(`Shadow ${BIOME_NAMES[Biome.Mountain]} Lair`)).toBe(true);
   });
 
   it('gives a shadow boss both the Boss and Shadow abilities', () => {
@@ -1571,6 +1719,7 @@ describe('chunk snapshot', () => {
   it('rolls a raid reward per player from the raid seed', () => {
     const raid = {
       kind: RaidKind.Legendary,
+      lair: Lairs.SeafoamIslands,
       species: Species.Articuno,
       traitValue: 0x12345678,
       host: 'red',
@@ -1579,6 +1728,7 @@ describe('chunk snapshot', () => {
       timestamp: 0,
       offset: 0,
       chunk: { seed: 'chunk', x: 0, y: 0 },
+      biome: Biome.PolarOcean,
       cell: 0,
       cleared: true,
     };

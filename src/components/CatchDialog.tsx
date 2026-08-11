@@ -38,7 +38,15 @@ import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
-import { ENCOUNTER_TYPE_NAMES, deriveSize } from '../overworld/encounter';
+import { BIOME_NAMES } from '../data/biome';
+import Biome from '../data/ids/biome';
+import { getLairTitle } from '../data/overworld/lair';
+import {
+  ENCOUNTER_TYPE_NAMES,
+  EncounterType,
+  deriveSize,
+  isRaidEncounter,
+} from '../overworld/encounter';
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -61,6 +69,30 @@ const GENDER_LABELS: Record<Genders, string> = {
  */
 function describeIVs(ivs: number): string {
   return STAT_ORDER.map((stat) => `${STAT_LABELS[stat]} ${getIV(ivs, stat)}`).join(' · ');
+}
+
+/**
+ * Where it came from. Everything the world holds says which biome and
+ * which chunk; a mythical says neither, because it came from
+ * `Beyond` — the chunk a relic was spent in is where the player was
+ * standing, and walking back there finds nothing
+ */
+function describeOrigin(caught: CaughtPokemon): string {
+  const { biome, x, y } = caught.origin;
+
+  return biome === Biome.Beyond ? BIOME_NAMES[biome] : `${BIOME_NAMES[biome]} · chunk ${x}, ${y}`;
+}
+
+/**
+ * Where it was met. A raid prize says which lair it was won in rather
+ * than only that it was a raid — the lair is what the lobby was
+ * called, so the record reads the way the raid did
+ */
+function describeMet(caught: CaughtPokemon): string {
+  if (isRaidEncounter(caught.type)) {
+    return getLairTitle(caught.lair, caught.origin.biome, caught.type === EncounterType.ShadowRaid);
+  }
+  return ENCOUNTER_TYPE_NAMES[caught.type];
 }
 
 /**
@@ -536,12 +568,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       standing: a grunt's drop is not a raid prize */}
                   <Show when={!isEgg(loaded())}>
                     <dt>Met</dt>
-                    <dd>{ENCOUNTER_TYPE_NAMES[loaded().type]}</dd>
+                    <dd>{describeMet(loaded())}</dd>
                   </Show>
                   <dt>Origin</dt>
-                  <dd>
-                    Chunk {loaded().origin.x}, {loaded().origin.y}
-                  </dd>
+                  <dd>{describeOrigin(loaded())}</dd>
                 </dl>
 
                 <Show when={owned()}>

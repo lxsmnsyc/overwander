@@ -12,14 +12,17 @@ const enum Landmark {
    */
   HiddenGrotto = 1,
   /**
-   * A lobby that stages legendary raid encounters
+   * A legendary's lair: the place it lives rather than the pokemon
+   * itself. Which lairs a chunk can hold comes from its biome, and
+   * the lair decides which legendary is at home there
    */
-  LegendaryRaid = 2,
+  LegendaryLair = 2,
   /**
-   * A lobby staging a shadow raid: usually a rare local species,
-   * occasionally a legendary, and always a shadow boss
+   * A lair with something wrong in it. It stages one of the biome's
+   * own lairs where there is one, and otherwise a rare local species
+   * standing in a lair of no particular name — always a shadow boss
    */
-  ShadowRaid = 3,
+  ShadowLair = 3,
   /**
    * A patch of berries, ripe once per landmark window
    */
@@ -51,8 +54,8 @@ export default Landmark;
 export const LANDMARKS: Landmark[] = [
   Landmark.ItemCache,
   Landmark.HiddenGrotto,
-  Landmark.LegendaryRaid,
-  Landmark.ShadowRaid,
+  Landmark.LegendaryLair,
+  Landmark.ShadowLair,
   Landmark.BerryPatch,
   Landmark.TeamRocketStop,
   Landmark.Nest,
@@ -65,8 +68,8 @@ export const LANDMARKS: Landmark[] = [
 export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'Item Cache',
   [Landmark.HiddenGrotto]: 'Hidden Grotto',
-  [Landmark.LegendaryRaid]: 'Legendary Raid',
-  [Landmark.ShadowRaid]: 'Shadow Raid',
+  [Landmark.LegendaryLair]: 'Legendary Raid',
+  [Landmark.ShadowLair]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',
   [Landmark.TeamRocketStop]: 'Team Rocket Stop',
   [Landmark.Nest]: 'Nest',

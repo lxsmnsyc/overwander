@@ -44,6 +44,8 @@ import { getRaidSpecies } from '../data/items/raid-items';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { isEggRecord } from './catch-fields';
+import Biome from '../data/ids/biome';
+import { getSpeciesLair } from '../data/overworld/lair';
 import { getAdminFirestore } from './firebase';
 import { consumeItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
@@ -153,8 +155,8 @@ export async function enterRaid(
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
     kind === RaidKind.Shadow
-      ? snapshot.getShadowRaids().get(cell)
-      : snapshot.getLegendaryRaids().get(cell);
+      ? snapshot.getShadowLairs().get(cell)
+      : snapshot.getLegendaryLairs().get(cell);
 
   if (roll == null) {
     return null;
@@ -174,6 +176,9 @@ export async function enterRaid(
 
     const fresh: RaidRecord = {
       kind,
+      // What the raid is called after: the lair it stands in, or the
+      // biome it stands on when a shadow reached for a rare species
+      lair: roll.lair,
       species: roll.species,
       traitValue: roll.traitValue,
       host: uid,
@@ -182,6 +187,7 @@ export async function enterRaid(
       timestamp: snapshot.raidTimestamp,
       offset: zone,
       chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
+      biome: chunk.biome,
       cell,
       cleared: false,
     };
@@ -273,6 +279,10 @@ export async function hostMythicalRaid(
   // player who joins fights the same mythical
   const fresh: RaidRecord = {
     kind: RaidKind.Mythical,
+    // The relic calls the mythical out to the place it has always
+    // been called from, whatever ground the player is standing on —
+    // which is nowhere the world contains
+    lair: getSpeciesLair(species),
     species,
     traitValue: new AleaRNG(`${id}:mythical`).int32(),
     host: uid,
@@ -281,6 +291,7 @@ export async function hostMythicalRaid(
     timestamp: snapshot.raidTimestamp,
     offset: zone,
     chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
+    biome: Biome.Beyond,
     // A mythical stands on no landmark cell
     cell: -1,
     cleared: false,
@@ -722,6 +733,10 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     // which lobby it came out of
     type: RAID_ENCOUNTER_TYPES[raid.kind],
     shadow,
+    // The prize remembers the place it was won in — and a mythical
+    // remembers that the place was nowhere on the map
+    lair: raid.lair,
+    biome: raid.kind === RaidKind.Mythical ? Biome.Beyond : undefined,
     level: RAID_REWARD_LEVELS[raid.kind],
   });
 

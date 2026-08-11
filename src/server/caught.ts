@@ -122,6 +122,9 @@ export async function recordCatch(
       effortValues: zeroEffortValues(),
     }),
     statuses: 0,
+    // Where it was fought, for a raid prize: the record says which
+    // lair rather than only which kind of raid
+    lair: encounter.lair,
     // Something met in the world arrives already out of its shell,
     // so it has nowhere to be walked to
     steps: 0,

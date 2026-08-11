@@ -28,6 +28,7 @@ export const BIOME_NAMES: Record<Biome, string> = {
   [Biome.Steppe]: 'Steppe',
   [Biome.MontaneForest]: 'Montane Forest',
   [Biome.PolarOcean]: 'Polar Ocean',
+  [Biome.Beyond]: 'Beyond',
 };
 
 /**
@@ -60,6 +61,9 @@ export const BIOME_COLORS: Record<Biome, string> = {
   [Biome.Steppe]: '#c2b566',
   [Biome.MontaneForest]: '#46705a',
   [Biome.PolarOcean]: '#7fa8c4',
+  // Nowhere on the map is ever painted with it; it is here because a
+  // record can carry the biome and something has to answer for it
+  [Biome.Beyond]: '#1a1030',
 };
 
 /**

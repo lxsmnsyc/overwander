@@ -36,7 +36,7 @@ import { asOffset } from './local-time';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
-export { RaidKind, asRaidRecord, deriveRaidReward, raidId } from './raid-record';
+export { RaidKind, asRaidRecord, deriveRaidReward, getRaidTitle, raidId } from './raid-record';
 export type { RaidRecord } from './raid-record';
 
 /**

@@ -3,7 +3,10 @@
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import AleaRNG from '../core/alea';
+import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
+import type Lairs from '../data/overworld/lair';
+import { getLairTitle } from '../data/overworld/lair';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import type { Spawn } from '../overworld/chunk-snapshot';
@@ -21,12 +24,13 @@ import { toZoneKey } from './local-time';
  */
 export const enum RaidKind {
   /**
-   * The biome's legendary, from a LegendaryRaid landmark
+   * A legendary at home in its lair, from a LegendaryLair landmark
    */
   Legendary = 0,
   /**
-   * A shadow boss — usually one of the biome's rare species, one
-   * draw in eight a legendary
+   * A shadow boss — usually one of the biome's rare species standing
+   * in no place in particular, one draw in eight a lair of the
+   * biome's own with something wrong in it
    */
   Shadow = 1,
   /**
@@ -44,6 +48,12 @@ export const enum RaidKind {
  */
 export interface RaidRecord {
   kind: RaidKind;
+  /**
+   * The lair the raid stands in, or null for a shadow raid that
+   * reached for a rare species instead. It is what the raid is
+   * called after — see `getLairTitle`
+   */
+  lair: Lairs | null;
   species: Species;
   /**
    * The 32-bit roll the boss' nature and ability derive from
@@ -77,12 +87,28 @@ export interface RaidRecord {
    * Where the lobby stands, for a listing that has no chunk in hand
    */
   chunk: { seed: string; x: number; y: number };
+  /**
+   * The biome the lobby stands in. A shadow raid with no lair is
+   * named after it, and a listing has no chunk in hand to derive it
+   * from
+   */
+  biome: Biome;
   cell: number;
   /**
    * Set once the boss goes down. A cleared raid keeps its landmark
    * shut for the rest of the window — the legendary has been met
    */
   cleared: boolean;
+}
+
+/**
+ * What the lobby is called: the lair it stands in, shadowed or not.
+ * The species is no longer the name — a place is the same place
+ * whoever is at home in it, and two Articuno raids in one chunk were
+ * two of the same word for different things
+ */
+export function getRaidTitle(raid: RaidRecord): string {
+  return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
 /**
@@ -95,6 +121,7 @@ export function asRaidRecord(value: unknown): RaidRecord {
 
   return {
     kind: asNumber(data.kind) as RaidKind,
+    lair: data.lair == null ? null : (asNumber(data.lair) as Lairs),
     species: asNumber(data.species) as Species,
     traitValue: asNumber(data.traitValue),
     host: asString(data.host),
@@ -103,6 +130,7 @@ export function asRaidRecord(value: unknown): RaidRecord {
     timestamp: asNumber(data.timestamp),
     offset: asNumber(data.offset),
     chunk: { seed: asString(chunk.seed), x: asNumber(chunk.x), y: asNumber(chunk.y) },
+    biome: asNumber(data.biome) as Biome,
     cell: asNumber(data.cell),
     cleared: data.cleared === true,
   };

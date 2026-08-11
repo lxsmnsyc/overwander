@@ -4,25 +4,15 @@ import {
   RaidKind,
   type RaidRecord,
   canJoinRaids,
+  getRaidTitle,
   joinRaid,
   leaveRaid,
   startRaid,
   watchRaid,
 } from '../auth/raids';
 import { type TeamRecord, getTeam } from '../auth/teams';
-import { getSpeciesData } from '../data/species';
 import TeamPickerDialog from './TeamPickerDialog';
 import { useGame } from './game-context';
-
-/**
- * What a lobby calls itself. A legendary raid says nothing extra —
- * it is the ordinary kind
- */
-const RAID_KIND_NAMES: Record<RaidKind, string> = {
-  [RaidKind.Legendary]: '',
-  [RaidKind.Shadow]: 'Shadow',
-  [RaidKind.Mythical]: 'Mythical',
-};
 
 export interface RaidLobbyProps {
   user: User;
@@ -96,9 +86,10 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
       <Show when={raid()} fallback={<p>Loading raid…</p>}>
         {(record) => (
           <>
-            <h3>
-              {RAID_KIND_NAMES[record().kind]} {getSpeciesData(record().species).name} Raid
-            </h3>
+            {/* A lobby is named after the place, not the pokemon:
+                the lair is what a player travels to, and what is at
+                home in it follows from that */}
+            <h3>{getRaidTitle(record())}</h3>
             <p>{isHost() ? 'You are hosting this raid.' : 'Waiting for the host.'}</p>
             {/* The relic that opened it is already spent, so there is
                 no second attempt to fall back on */}

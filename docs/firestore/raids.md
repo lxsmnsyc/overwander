@@ -4,20 +4,36 @@ Raids run on their own three-hour clock (`RAID_INTERVAL` in
 [`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)) rather
 than the 5-minute spawn window, so a lobby stands long enough to gather a party.
 See [Windows](overworld.md#windows) for how a chunk's clocks line up.
-There are two landmark kinds:
+There are two landmark kinds, and both are **lairs**: a place rather than a
+pokemon. `Lairs` ([`src/data/overworld/lair.ts`](../../src/data/overworld/lair.ts))
+names the ones the mainline games gave these legendaries — Seafoam Islands,
+Power Plant, Mt. Ember, Cerulean Cave — maps each to the one legendary at home
+in it, and lists which of them a biome can host. A player who has met Articuno
+before knows what a Seafoam Islands lair is without being told.
 
-- **Legendary raids** draw from the chunk biome's special tier for the raid
-  window's time of day, filtered to legendaries — mythicals are never staged.
-- **Shadow raids** draw from the biome's rare band, except one draw in eight
-  (`SHADOW_RAID_LEGENDARY_CHANCE`) which reaches the legendary pool instead.
-  Their boss carries the `Shadow` ability alongside `Boss`.
+- **Legendary lairs** draw from the **lairs the biome hosts**, not from its
+  spawn pool: the place is the roll, and the place decides who is in it. A biome
+  with no lair to its name stages none, which is most of them.
+- **Shadow lairs** draw from the biome's rare band, except one draw in eight
+  (`SHADOW_RAID_LEGENDARY_CHANCE`) which takes over one of the biome's own lairs
+  instead. Their boss carries the `Shadow` ability alongside `Boss`.
+
+A raid is **named after the place**, by `getLairTitle`: a lair is called after
+itself (`Seafoam Islands`), a shadowed one is that name with a word in front of
+it (`Shadow Seafoam Islands`), and a shadow raid that reached for a rare species
+stands in no named place at all, so it is called after the ground it is on
+(`Shadow Woodland Lair`). The species is no longer the title — two Articuno
+raids in one chunk were two of the same word for different things.
 
 A third kind is not staged by the world at all. A **mythical raid** is opened by
 spending a **raid item**, and stands on no landmark:
 
 - **Mythical raids** are called out by a relic — `RAID_ITEMS` in
   [`src/data/items/raid-items.ts`](../../src/data/items/raid-items.ts) maps each to
-  the species it calls, e.g. the Old Sea Map to Mew. The world never rolls a
+  the species it calls, e.g. the Old Sea Map to Mew. Its lobby is named after
+  the mythical's own lair — `Faraway Island` — and both the lobby and the catch
+  it pays out record `Biome.Beyond`, since a relic calls something out of a
+  place the world does not contain. The world never rolls a
   mythical of its own (`isMythicalSpecies` is excluded from every landmark
   roll), so carrying the relic is the only way to face one. A raid item is found
   in the **special** band of the overworld item pool and nowhere else: it cannot
@@ -52,6 +68,8 @@ together — a player either opens the lobby or joins the one already there.
 | ------------ | ---------------- | ----------------------------------------------------------- |
 | `kind`       | `RaidKind`       | Legendary (0) or Shadow (1)                                 |
 | `species`    | `Species`        | What is being staged                                        |
+| `lair`       | `Lairs \| null`  | The place it stands in; null for a shadow on a rare species |
+| `biome`      | `Biome`          | What a lairless shadow raid is named after                  |
 | `traitValue` | `number`         | 32-bit roll the boss' nature and ability derive from        |
 | `host`       | `string`         | Only this uid may start the raid                            |
 | `teams`      | `string[]`       | `teams/{teamId}` ids, appended via `arrayUnion`             |

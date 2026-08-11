@@ -528,8 +528,8 @@ export default function OverworldTab(): JSX.Element {
       setChallenge(stop);
       return null;
     }
-    if (landmark === Landmark.LegendaryRaid || landmark === Landmark.ShadowRaid) {
-      const kind = landmark === Landmark.ShadowRaid ? RaidKind.Shadow : RaidKind.Legendary;
+    if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
+      const kind = landmark === Landmark.ShadowLair ? RaidKind.Shadow : RaidKind.Legendary;
       const lobby = await enterRaid(loaded.snapshot, at, kind);
 
       if (lobby == null) {
@@ -648,10 +648,10 @@ export default function OverworldTab(): JSX.Element {
     if (landmark === Landmark.HiddenGrotto) {
       return 'G';
     }
-    if (landmark === Landmark.LegendaryRaid) {
+    if (landmark === Landmark.LegendaryLair) {
       return 'R';
     }
-    if (landmark === Landmark.ShadowRaid) {
+    if (landmark === Landmark.ShadowLair) {
       return 'S';
     }
     if (landmark === Landmark.BerryPatch) {

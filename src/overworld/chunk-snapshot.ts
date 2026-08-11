@@ -1,12 +1,14 @@
 import { toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import { boostFamilyWeights, getSpawnPool, isLegendarySpecies, pickSpawn } from '../data/biome';
+import { boostFamilyWeights, getSpawnPool, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
 import Landmark from '../data/overworld/landmark';
+import type Lairs from '../data/overworld/lair';
+import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
 import type Npc from '../data/overworld/npc';
 import { NPCS } from '../data/overworld/npc';
 import type Chunk from './chunk';
@@ -91,10 +93,16 @@ export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
 export const SHADOW_RAID_LEGENDARY_CHANCE = 1 / 8;
 
 /**
- * The legendary a raid lobby is staging, and the 32-bit trait value
- * its nature and ability derive from
+ * What a lair landmark is staging: the lair itself, whoever is at
+ * home in it, and the 32-bit trait value their nature and ability
+ * derive from.
+ *
+ * The lair is null only for a shadow lair that reached for one of the
+ * biome's rare species instead — there is no named place behind that
+ * one, so it is called after the ground it stands on
  */
 export interface RaidRoll {
+  lair: Lairs | null;
   species: Species;
   traitValue: number;
 }
@@ -312,29 +320,30 @@ export default class ChunkSnapshot {
   private raids: Map<number, RaidRoll> | null = null;
 
   /**
-   * The raid window's legendary raids, keyed by the landmark cell. The
-   * legendary is drawn from the biome's special tier for the raid
-   * window's time of day, so a chunk only stages what belongs there —
-   * mythicals never appear, and a biome whose special tier holds no
-   * legendary stages no raid at all
+   * The window's legendary lairs, keyed by the landmark cell.
+   *
+   * The draw is over the **lairs the biome can host**, not over the
+   * legendaries in its spawn pool: a lair is a place, and the place
+   * decides who is at home in it. A biome with no lair to its name
+   * stages none — which is most of them, since a legendary the whole
+   * world could walk to is not a legendary
    */
-  getLegendaryRaids(): Map<number, RaidRoll> {
+  getLegendaryLairs(): Map<number, RaidRoll> {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      const legendaries = pool.special.filter(
-        (entry) => isLegendarySpecies(entry.species) && canStageBoss(entry.species),
+      const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
+        canStageBoss(getLairSpecies(lair)),
       );
 
-      if (legendaries.length > 0) {
+      if (lairs.length > 0) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark === Landmark.LegendaryRaid) {
+          if (landmark === Landmark.LegendaryLair) {
             const rng = new AleaRNG(`${this.key}${this.raidTimestamp}raid${cell}`);
-            // The draws land in order: the legendary, then the trait
-            // value its nature and ability derive from
-            const entry = legendaries[Math.floor(rng.random() * legendaries.length)];
+            // The draws land in order: the lair, then the trait value
+            // its resident's nature and ability derive from
+            const lair = lairs[Math.floor(rng.random() * lairs.length)];
 
-            raids.set(cell, { species: entry.species, traitValue: rng.int32() });
+            raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
           }
         }
       }
@@ -346,42 +355,51 @@ export default class ChunkSnapshot {
   private shadowRaids: Map<number, RaidRoll> | null = null;
 
   /**
-   * The raid window's shadow raids, keyed by the landmark cell. A
-   * shadow raid usually stages one of the biome's rare species, but
-   * one draw in eight reaches the legendary pool instead — the same
-   * odds the rarer bands use everywhere else. A cell with nothing to
-   * stage in either pool holds no raid this window
+   * The window's shadow lairs, keyed by the landmark cell.
+   *
+   * A shadow lair usually holds one of the biome's rare species,
+   * standing in no place in particular; one draw in eight takes over
+   * one of the biome's own lairs instead — the same odds the rarer
+   * bands run on everywhere else. Which of the two it is decides what
+   * the raid is called, and the roll is the same either way. A cell
+   * with nothing to stage on either side holds no raid this window
    */
-  getShadowRaids(): Map<number, RaidRoll> {
+  getShadowLairs(): Map<number, RaidRoll> {
     if (this.shadowRaids == null) {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
-      // A species with nothing left to cast once the boss bans are
-      // applied is no boss: it is left out of both draws rather than
-      // staged with an empty move list
-      const legendaries = pool.special.filter(
-        (entry) => isLegendarySpecies(entry.species) && canStageBoss(entry.species),
+      const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
+        canStageBoss(getLairSpecies(lair)),
       );
+      // A species with nothing left to cast once the boss bans are
+      // applied is no boss: it is left out of the draw rather than
+      // staged with an empty move list
       const rare = pool.rare.filter((entry) => canStageBoss(entry.species));
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.ShadowRaid) {
+        if (landmark !== Landmark.ShadowLair) {
           continue;
         }
 
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
-        // The draws land in order: the pool, the species within it,
-        // then the trait value its nature and ability derive from
-        const legendary = rng.random() < SHADOW_RAID_LEGENDARY_CHANCE;
-        const entries = legendary && legendaries.length > 0 ? legendaries : rare;
+        // The draws land in order: which side of the fork, the thing
+        // within it, then the trait value its nature and ability
+        // derive from
+        const taken = rng.random() < SHADOW_RAID_LEGENDARY_CHANCE && lairs.length > 0;
 
-        if (entries.length === 0) {
+        if (taken) {
+          const lair = lairs[Math.floor(rng.random() * lairs.length)];
+
+          raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
+          continue;
+        }
+        if (rare.length === 0) {
           continue;
         }
 
-        const entry = entries[Math.floor(rng.random() * entries.length)];
+        const entry = rare[Math.floor(rng.random() * rare.length)];
 
-        raids.set(cell, { species: entry.species, traitValue: rng.int32() });
+        raids.set(cell, { lair: null, species: entry.species, traitValue: rng.int32() });
       }
       this.shadowRaids = raids;
     }

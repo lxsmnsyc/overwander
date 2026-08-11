@@ -247,6 +247,17 @@ export default class SafariSession<
    */
   ballsLeft = 0;
 
+  /**
+   * Whether the encounter is still chewing.
+   *
+   * One treat at a time: a player cannot pour the whole bag out at
+   * once and walk the bonus up to its cap before throwing anything.
+   * What clears it is a **throw that missed** — the encounter shook
+   * the ball off and is open to being talked round again — so the
+   * rhythm is feed, throw, feed, throw rather than feed, feed, feed
+   */
+  fed = false;
+
   constructor(
     public readonly encounter: E,
     public readonly random: () => number,
@@ -357,13 +368,21 @@ export default class SafariSession<
   }
 
   /**
+   * Whether the encounter would take a treat right now: it has to be
+   * standing there, and it has to have finished the last one
+   */
+  canFeed(): boolean {
+    return this.state === SafariState.Active && !this.fed;
+  }
+
+  /**
    * Feed the encounter a catch-improving item; false when the item
-   * has no feeding effect
+   * has no feeding effect, or when it is still chewing the last one
    */
   feed(item: Items): boolean {
     this.assertActive();
 
-    if (FEED_CATCH_BONUS[item] == null) {
+    if (!this.canFeed() || FEED_CATCH_BONUS[item] == null) {
       return false;
     }
     this.emit(SafariEvents.Feed, {
@@ -447,6 +466,9 @@ function setupSafariMechanics(session: SafariSession): void {
     if (bonus != null) {
       event.session.catchBonus = Math.min(MAX_CATCH_BONUS, event.session.catchBonus * bonus);
       event.bonus = event.session.catchBonus;
+      // It has a mouthful; nothing else is offered until a throw
+      // misses
+      event.session.fed = true;
     }
   });
 
@@ -471,5 +493,11 @@ function setupSafariMechanics(session: SafariSession): void {
   });
   session.on(SafariEvents.Throw, EventPriority.Post, (event) => {
     event.session.turn += 1;
+    // A ball it shook off leaves it open to another treat. A catch
+    // ends the session, so clearing the flag there would be for
+    // nobody
+    if (event.result !== ThrowResult.Caught) {
+      event.session.fed = false;
+    }
   });
 }

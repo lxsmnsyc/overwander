@@ -1,28 +1,17 @@
-import { For, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
 import type { User } from 'firebase/auth';
 import { getInventory } from '../auth/inventory';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { feedEncounter, throwBall } from '../auth/safari';
-import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
-import { getItemData } from '../data/items';
+import { BALL_ITEMS, Balls, type Items } from '../data/ids/items';
+import { Genders } from '../data/ids/species';
 import { isShiny } from '../auth/caught-record';
 import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
+import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
-import {
-  Badge,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogSection,
-  List,
-  ListRow,
-  Note,
-  Row,
-  RowButton,
-  Status,
-} from './styled';
+import { Badge, Button, Dialog, DialogActions, Note, Status } from './styled';
 
 /**
  * The ball a carried item stands for, so the bag can be filtered
@@ -32,13 +21,22 @@ const BALLS_BY_ITEM = new Map<Items, Balls>(
   Object.entries(BALL_ITEMS).map(([ball, item]) => [item, Number(ball)]),
 );
 
-function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
+/**
+ * Whether the item is something the encounter would eat
+ */
+function isTreat(item: Items): boolean {
+  return FEED_CATCH_BONUS[item] != null;
 }
+
+/**
+ * How a gender is shown beside a level. Something genderless says
+ * nothing rather than saying so: an empty column is not information
+ */
+const GENDER_MARKS: Record<Genders, string> = {
+  [Genders.Genderless]: '',
+  [Genders.Male]: '♂',
+  [Genders.Female]: '♀',
+};
 
 const THROW_MESSAGES: Record<ThrowResult, string> = {
   [ThrowResult.Caught]: 'Caught!',
@@ -63,12 +61,27 @@ export interface SafariDialogProps {
 }
 
 /**
- * One safari encounter: choose a ball, feed it, throw. Every action
- * goes through the persistence layer, so the bag and the catch
- * records move with the session
+ * One safari encounter, as three things a player can do: throw what
+ * is in hand, go through the bag for something else, or walk away.
+ *
+ * What is in hand is one item rather than a list of them — a ball, or
+ * a treat picked up on the way to throwing one — so the dialog asks
+ * the question the player is actually answering ("throw this?") and
+ * keeps the bag behind a button. Every action goes through the
+ * persistence layer, so the bag and the catch records move with the
+ * session
  */
 export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
+  // Whether the bag is open over the three actions. The picker is not
+  // a dialog of its own: this is already one, and a modal over a
+  // modal fights it for the click that closes it
+  const [rummaging, setRummaging] = createSignal(false);
+  // The treat in hand, or null when it is the ball. It is the dialog's
+  // rather than the session's because a ball is a *preference* that
+  // outlives the throw, while a treat is one throw's business — and
+  // the session already owns the ball
+  const [treat, setTreat] = createSignal<Items | null>(null);
   // Read once per opened session: throwing and feeding both spend
   // from the bag, so it is refetched after each action
   const [bag, { refetch }] = createResource(
@@ -104,10 +117,32 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       .map((entry): [Balls | undefined, number] => [BALLS_BY_ITEM.get(entry.item), entry.amount])
       .filter((pair): pair is [Balls, number] => pair[0] != null);
 
-  const treats = (): [Items, number][] =>
-    (bag() ?? [])
-      .filter((entry) => FEED_CATCH_BONUS[entry.item] != null)
-      .map((entry) => [entry.item, entry.amount]);
+  /**
+   * How many of it the player is carrying. Zero for something the bag
+   * has run out of, which is the number worth showing on the button
+   */
+  const stockOf = (item: Items): number =>
+    (bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+
+  // A session opens on the Poke Ball, which is not necessarily what
+  // the player has. The first ball in the bag stands in, so the throw
+  // is one the player can actually make without going through it
+  createEffect(() => {
+    const active = props.session;
+    const carried = balls();
+
+    if (active == null || carried.length === 0 || stockOf(BALL_ITEMS[active.ball]) > 0) {
+      return;
+    }
+    active.chooseBall(carried[0][0]);
+    setRevision((value) => value + 1);
+  });
+
+  /**
+   * What the throw would send: the treat in hand, or the ball the
+   * session is set to
+   */
+  const inHand = (): Items => treat() ?? BALL_ITEMS[props.session?.ball ?? Balls.PokeBall];
 
   const settle = async (message: string | null): Promise<void> => {
     setStatus(message);
@@ -123,30 +158,45 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       });
   };
 
-  const choose = (ball: Balls): void => {
+  /**
+   * Take one thing out of the bag. A ball becomes the preference the
+   * session throws from here on; a treat is only for the next throw
+   */
+  const take = (item: Items): void => {
+    const ball = BALLS_BY_ITEM.get(item);
+
+    setRummaging(false);
+    setStatus(null);
+    if (ball == null) {
+      setTreat(item);
+      return;
+    }
+    setTreat(null);
     props.session?.chooseBall(ball);
     setRevision((value) => value + 1);
   };
 
-  const feed = (item: Items): void => {
+  /**
+   * Throw whatever is in hand. A ball is a catch attempt; a treat is
+   * fed, and the hand goes back to the ball afterwards — one treat is
+   * all the encounter will take before a ball misses
+   */
+  const hurl = (): void => {
+    const thrown = treat();
+
     act(async () => {
       const active = props.session;
 
       if (active == null) {
         return null;
       }
-      return (await feedEncounter(props.user, active, item))
-        ? `Fed ${describeItem(item)}.`
-        : `Could not feed ${describeItem(item)}.`;
-    });
-  };
+      if (thrown != null) {
+        const eaten = await feedEncounter(props.user, active, thrown);
 
-  const attempt = (): void => {
-    act(async () => {
-      const active = props.session;
-
-      if (active == null) {
-        return null;
+        setTreat(null);
+        return eaten
+          ? `Fed ${describeItem(thrown)}. It is watching you now.`
+          : `It would not take the ${describeItem(thrown)}.`;
       }
 
       const result = await throwBall(props.user, active);
@@ -156,10 +206,15 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   };
 
   /**
-   * What is standing there, as the dialog is named after it. A shiny
-   * is marked here the way it is marked everywhere else — and there is
-   * a name to give even before an encounter has been met, since the
-   * dialog is named whether or not one has
+   * What is standing there, as the dialog is named after it: the
+   * species, the level and — for anything that has one — its gender.
+   *
+   * That is deliberately all of it. What the sheet would say about a
+   * caught pokemon, and what the odds behind the next throw are, is
+   * not shown: a player deciding whether this one is worth the balls
+   * should be looking at the pokemon rather than at a table. A shiny
+   * is still marked, since the sprite is already sparkling and
+   * pretending otherwise would only be coy
    */
   const met = (): string => {
     const active = props.session;
@@ -168,10 +223,11 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       return 'Encounter';
     }
     const { encounter } = active;
+    const gender = GENDER_MARKS[encounter.gender];
 
     return `${isShiny(encounter) ? '✦ ' : ''}${getSpeciesData(encounter.species).name} · Lv. ${
       encounter.level
-    }`;
+    }${gender === '' ? '' : ` · ${gender}`}`;
   };
 
   const leave = (): void => {
@@ -181,6 +237,8 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       active.runAway();
     }
     setStatus(null);
+    setRummaging(false);
+    setTreat(null);
     props.onClose();
   };
 
@@ -189,102 +247,108 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       isOpen={props.session != null}
       onClose={leave}
       title={met()}
-      description="One encounter, one ball at a time. Feeding it makes it easier to catch and
-        every turn gives it another chance to bolt."
+      description="One encounter, one throw at a time. A treat makes it easier to catch and every
+        turn gives it another chance to bolt."
     >
       <Show when={session()}>
         {(active) => (
           <>
-            {/* What is standing there, looking back at the player */}
-            <div class="flex justify-center">
-              <SpriteDisplay
-                species={active().encounter.species}
-                shiny={isShiny(active().encounter)}
-                animation="Idle"
-                direction="down"
-                scale={4}
-                label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
-              />
-            </div>
-
-            {/* The four numbers the next throw turns on, close enough
-                together to be weighed against each other */}
-            <dl class="rounded-lg border border-line-soft bg-parchment px-3 py-2 text-sm">
-              <dt>Catch chance</dt>
-              <dd>
-                {Math.round(active().getCatchChance() * 100)}%
-                {active().isFeatured() ? " · it's their family's day" : ''}
-                {active().isPityThrow() ? ' · last ball, it cannot miss' : ''}
-              </dd>
-              <dt>Flee chance</dt>
-              <dd>{Math.round(active().getFleeChance() * 100)}%</dd>
-              <dt>Feeding bonus</dt>
-              <dd>×{active().catchBonus.toFixed(2)}</dd>
-              <dt>Turn</dt>
-              <dd>{active().turn}</dd>
-            </dl>
-
+            {/* The middle of the dialog is the pokemon itself — or the
+                bag, while the player is going through it. Both stand
+                in the same space, so opening the bag does not move the
+                buttons under the cursor */}
             <Show
-              when={active().state === SafariState.Active}
-              fallback={<p role="status">{STATE_MESSAGES[active().state]}</p>}
+              when={rummaging() && active().state === SafariState.Active}
+              fallback={
+                <div class="flex min-h-52 items-center justify-center">
+                  <SpriteDisplay
+                    species={active().encounter.species}
+                    shiny={isShiny(active().encounter)}
+                    animation="Idle"
+                    direction="down"
+                    scale={4}
+                    label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                  />
+                </div>
+              }
             >
-              <DialogSection title="Balls">
-                <Show when={balls().length} fallback={<Note>No balls to throw.</Note>}>
-                  <List>
-                    <For each={balls()}>
-                      {([ball, amount]) => (
-                        <ListRow selected={active().ball === ball}>
-                          <RowButton
-                            pressed={active().ball === ball}
-                            onClick={() => {
-                              choose(ball);
-                            }}
-                          >
-                            {describeItem(BALL_ITEMS[ball])}
-                          </RowButton>
-                          <Badge tone={active().ball === ball ? 'leaf' : 'neutral'}>
-                            × {amount}
-                          </Badge>
-                        </ListRow>
-                      )}
-                    </For>
-                  </List>
-                </Show>
-              </DialogSection>
+              {/* Balls and treats only. Everything else in the bag is
+                  for somewhere that is not standing in front of a wild
+                  pokemon — and a treat is left out entirely while the
+                  encounter is still chewing the last one */}
+              <InventoryPicker
+                inline
+                player={props.user.uid}
+                value={inHand()}
+                verb="Take out"
+                empty="Nothing in the bag to throw."
+                filter={(entry) =>
+                  BALLS_BY_ITEM.has(entry.item) || (isTreat(entry.item) && active().canFeed())
+                }
+                note={(entry) =>
+                  BALLS_BY_ITEM.has(entry.item) ? 'a ball' : 'a treat — fed, not thrown'
+                }
+                entries={bag()}
+                onPick={(item) => {
+                  if (item != null) {
+                    take(item);
+                  }
+                }}
+              />
+            </Show>
 
-              <DialogSection title="Treats">
-                <Show when={treats().length} fallback={<Note>Nothing to feed.</Note>}>
-                  <List>
-                    <For each={treats()}>
-                      {([item, amount]) => (
-                        <ListRow>
-                          <RowButton
-                            onClick={() => {
-                              feed(item);
-                            }}
-                          >
-                            Feed {describeItem(item)}
-                          </RowButton>
-                          <Badge>× {amount}</Badge>
-                        </ListRow>
-                      )}
-                    </For>
-                  </List>
-                </Show>
-              </DialogSection>
-
-              <Row>
-                <Button tone="primary" onClick={attempt}>
-                  Throw {describeItem(BALL_ITEMS[active().ball])}
-                </Button>
-              </Row>
+            <Show when={active().state !== SafariState.Active}>
+              <p role="status">{STATE_MESSAGES[active().state]}</p>
+            </Show>
+            {/* Said before the press rather than after: a treat is one
+                throw's worth, and the hand goes back to the ball once
+                it is eaten */}
+            <Show when={treat() != null && !rummaging()}>
+              <Note>A treat, not a ball. It will not catch anything on its own.</Note>
+            </Show>
+            <Show when={stockOf(inHand()) === 0 && !rummaging()}>
+              <Note>Nothing of that left — go through the bag for something else.</Note>
             </Show>
 
             <Status message={status()} />
           </>
         )}
       </Show>
+
+      {/* Items, throw, run away: what the player is reaching for most
+          often sits nearest the way out */}
       <DialogActions>
+        <Show when={session()?.state === SafariState.Active}>
+          <Show
+            when={rummaging()}
+            fallback={
+              <>
+                <Button
+                  onClick={() => {
+                    setStatus(null);
+                    setRummaging(true);
+                  }}
+                >
+                  Items
+                </Button>
+                <Button tone="primary" disabled={stockOf(inHand()) === 0} onClick={hurl}>
+                  Throw {describeItem(inHand())}
+                </Button>
+                <Badge tone={stockOf(inHand()) > 0 ? 'leaf' : 'neutral'}>
+                  × {stockOf(inHand())}
+                </Badge>
+              </>
+            }
+          >
+            <Button
+              onClick={() => {
+                setRummaging(false);
+              }}
+            >
+              Never mind
+            </Button>
+          </Show>
+        </Show>
         <Button tone={session()?.state === SafariState.Active ? 'danger' : 'ghost'} onClick={leave}>
           {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
         </Button>

@@ -154,15 +154,17 @@ export async function throwBall(
 
 /**
  * Feed the encounter a catch-improving item from the bag; resolves
- * false (spending nothing) when the item has no feeding effect or is
- * not carried
+ * false (spending nothing) when the item has no feeding effect, is
+ * not carried, or the encounter is still chewing the last one
  */
 export async function feedEncounter(
   user: User,
   session: SafariSession<EncounterRecord>,
   item: Items,
 ): Promise<boolean> {
-  if (session.state !== SafariState.Active || FEED_CATCH_BONUS[item] == null) {
+  // Asked before the item leaves the bag: an encounter still chewing
+  // the last treat takes nothing, and a refusal should cost nothing
+  if (!session.canFeed() || FEED_CATCH_BONUS[item] == null) {
     return false;
   }
   if (!(await spendFeed(await getIdToken(user), item))) {

@@ -1,9 +1,29 @@
 # Catching
 
 There is no wild battle. Meeting a pokemon opens a **safari session**
-([`src/overworld/safari.ts`](../../src/overworld/safari.ts)): choose a ball, feed
-it something, throw, and hope. Every action costs a turn, every failed throw
-risks it bolting, and the session ends caught, fled or walked away from.
+([`src/overworld/safari.ts`](../../src/overworld/safari.ts)): throw what is in
+hand, go through the bag for something else, or walk away. Every action costs a
+turn, every failed throw risks it bolting, and the session ends caught, fled or
+walked away from.
+
+The dialog is the pokemon and three buttons. The **top** says only the species,
+the level and the gender — nothing for a genderless one, since an empty column is
+not information. The **middle** is the sprite, standing there. The **bottom** is
+**Items**, **Throw** and **Run away**, in that order.
+
+**Throw** sends whatever is in hand — a ball, which is a catch attempt, or a
+treat, which is fed — and says which it is and how many are left. **Items**
+opens the bag filtered to balls and treats, in the space the sprite was standing
+in, so opening it does not move the buttons under the cursor: picking a ball sets
+the preference the session throws from then on, picking a treat puts it in hand
+for the next throw alone. A session opens on the first ball in the bag rather
+than on a Poke Ball the player may not carry.
+
+**Nothing else is shown.** The catch chance, the flee chance, the feeding bonus
+and the turn are all live on the session and none of them is drawn: a player
+deciding whether this one is worth the balls should be looking at the pokemon
+rather than reading a table off it. What the encounter is really worth — its
+values, its nature, its ability — is a thing to be found out by catching it.
 
 The session is built on the same event engine the battle uses, for the same
 reason: each action only emits, and its effect rides the event at `Exact`. A
@@ -69,6 +89,13 @@ Feeding costs a turn, which is what stops it being free: every turn is another
 chance for the encounter to bolt, and it advances the Timer Ball's clock while
 spending the Quick Ball's.
 
+**One treat at a time.** An encounter that has been fed takes nothing else until
+a thrown ball **misses**, so the bag cannot be poured out all at once to walk the
+bonus up to its cap before the first throw. The rhythm is feed, throw, feed,
+throw — and a catch ends the session, so the flag is only ever cleared by a ball
+the encounter shook off. `canFeed()` is asked on the server side of the feeding
+too, before the item leaves the bag, so a refusal costs nothing.
+
 ## What a miss is worth
 
 A throw that fails to catch rolls again to see whether the encounter runs:
@@ -101,9 +128,9 @@ genuinely spent it.
 ## The session's own clock
 
 `turn` counts resolved feedings and throws — an action vetoed before it lands
-costs nothing. It is what the Quick Ball and the Timer Ball read, and what the
-dialog shows so that a player choosing between them can see which way the clock
-is running.
+costs nothing. It is what the Quick Ball and the Timer Ball read. It is not
+shown: a player who wants the Quick Ball's opener throws it first, and a player
+who wants the Timer Ball's patience is the one who has been throwing.
 
 The bag is not part of the session. The number of balls the player is carrying is
 refreshed from the inventory before each throw, since spending them happens

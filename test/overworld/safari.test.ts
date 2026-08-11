@@ -45,6 +45,32 @@ describe('safari session', () => {
     expect(session.getCatchChance()).toBeCloseTo((45 * 2 * 1.25) / 255);
   });
 
+  it('takes one treat at a time, and another once a ball misses', () => {
+    const session = new SafariSession(makeEncounter(), rolls([0.99, 0.99, 0.99, 0.99]));
+
+    expect(session.canFeed()).toBe(true);
+    expect(session.feed(Items.OranBerry)).toBe(true);
+
+    // Still chewing: nothing else goes in, and a refused feeding
+    // moves neither the bonus nor the clock
+    expect(session.canFeed()).toBe(false);
+    expect(session.feed(Items.OranBerry)).toBe(false);
+    expect(session.catchBonus).toBeCloseTo(1.25);
+    expect(session.turn).toBe(1);
+
+    // A ball it shook off leaves it open to another one
+    expect(session.throwBall()).toBe(ThrowResult.BrokeFree);
+    expect(session.canFeed()).toBe(true);
+    expect(session.feed(Items.OranBerry)).toBe(true);
+    expect(session.catchBonus).toBeCloseTo(1.25 * 1.25);
+
+    // A caught encounter is not hungry, whatever the flag says
+    const caught = new SafariSession(makeEncounter(), rolls([0]));
+
+    expect(caught.throwBall()).toBe(ThrowResult.Caught);
+    expect(caught.canFeed()).toBe(false);
+  });
+
   it('resolves Quick and Timer Balls by the safari clock', () => {
     const session = new SafariSession(makeEncounter(), rolls([0.99, 0.99]));
 

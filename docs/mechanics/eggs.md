@@ -123,7 +123,8 @@ Only an egg already ready to hatch is refused. The step stamp moves with the
 jump, since those steps were not walked and the time they would have taken must
 not be banked for the next report.
 
-Like every wandering NPC she serves a player **once per six-hour window** per
+Like every wandering NPC but the vendor she serves a player **once per six-hour
+window** per
 cell, so a second egg means walking to another wandering cell — and finding
 whoever happens to be standing on that one. See
 [Wandering NPCs](../firestore/overworld.md#wandering-npcs).

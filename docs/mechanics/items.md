@@ -1,8 +1,8 @@
 # Items and gold
 
-Almost everything a player carries was dug out of the ground. There is no shop
-yet, so the overworld item pool is the economy's supply side and raids are its
-mint.
+Almost everything a player carries was dug out of the ground. The only shop is a
+vendor who wanders, and he stocks balls and medicine alone — so the overworld
+item pool is still the economy's supply side, and raids are its mint.
 
 ## What the ground holds
 
@@ -12,7 +12,7 @@ pools use: special 1/4096, rare 1/64, uncommon 1/8, base for the rest.
 ### The item pool
 
 | Band         | What is in it                                                                                                                                 |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                               |
 | **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; the six wings                               |
 | **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; Bottle Caps; the Purifying Gem; the species relics; the plates |
@@ -119,27 +119,42 @@ Gold is a balance on the profile, and the server owns every movement of it.
 | Clearing a shadow raid      | 1,000                              |
 | Beating a Team Rocket grunt | 500                                |
 | Winning an auction lot      | The seller is paid the winning bid |
+| Selling to a vendor         | The item's `sell` price, per piece |
 
 Every fighter in a raid is paid the same purse, and a **Luck Incense** held by
 the buddy doubles it.
 
 **Where it goes:**
 
-| Sink                   | Amount             |
-| ---------------------- | ------------------ |
-| A breeder's egg        | 5,000              |
-| A daycare lady's boost | 2,500              |
-| A groomer's visit      | 2,500              |
-| An auction bid         | Whatever was named |
+| Sink                   | Amount                            |
+| ---------------------- | --------------------------------- |
+| A breeder's egg        | 5,000                             |
+| A daycare lady's boost | 2,500                             |
+| A groomer's visit      | 2,500                             |
+| Buying from a vendor   | The item's `buy` price, per piece |
+| An auction bid         | Whatever was named                |
 
-The three NPCs are the pacing mechanism as much as the price: each serves a
+The three paid NPCs are the pacing mechanism as much as the price: each serves a
 player once per six-hour window per cell, so gold buys convenience rather than
 volume.
 
-**No market yet.** Items carry `buy` and `sell` prices and a `Marketable` flag,
-and nothing reads them: the Pearls and Nuggets a walk turns up are worth gold in
-principle and unsellable in practice. Until a shop exists, the auction house is
-the only way an item becomes gold.
+### The vendor
+
+The **Vendor** is the shop, and he wanders like everyone else. He is the one
+passer-by with **no once-per-window limit** — what the others hand over is
+something the world cannot make twice in six hours, and what he hands over is a
+potion, so his crate and the player's purse are the whole of the limit.
+
+He carries six kinds, derived from the window the same way he is: always a Poke
+Ball and a Potion, the rest drawn from the balls and the medicine. A player who
+wants an Ultra Ball walks until they find somebody carrying one.
+
+He **buys** anything `Marketable`, which is what finally makes the Pearls, Star
+Pieces and Nuggets a walk turns up worth something. He pays the registry's
+`sell`, half of the `buy` he charges for the same item, so nothing bought from
+him can be sold back at a profit. The **Master Ball** is the one ball the
+registry never priced, so it is in neither half of his trade — excluded by the
+missing flag rather than by a list that could fall out of step.
 
 ## Auctions
 

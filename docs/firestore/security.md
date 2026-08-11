@@ -243,7 +243,8 @@ service cloud.firestore {
     }
     // One visit per wandering NPC, cell, window and player. For Nurse
     // Joy it is the whole of the limit, since she charges nothing; for
-    // the other two it is what the fee alone could not do
+    // the three who charge it is what the fee alone could not do. The
+    // vendor writes no marker: a shop is not a once-a-day thing
     match /npcClaims/{claimId} {
       allow read: if signedIn();
       allow write: if false;

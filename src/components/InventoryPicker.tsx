@@ -14,6 +14,7 @@ import {
   type FilterOption,
   List,
   ListRow,
+  Meta,
   Note,
   Row,
   RowButton,
@@ -149,6 +150,12 @@ interface InventoryPickerCommonProps {
    * rather than shown and refused
    */
   filter?: (entry: InventoryEntry) => boolean;
+  /**
+   * A word about the row from whoever is asking — a price, most of the
+   * time. It sits beside the count, since it is something about this
+   * stack rather than something about the item
+   */
+  note?: (entry: InventoryEntry) => string | null;
   /**
    * The bag, already in hand. A caller showing two pickers over one
    * inventory reads it once and passes it to both rather than paying
@@ -382,6 +389,9 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
                       {describeItem(entry.item)}
                     </RowButton>
                     <Badge>× {entry.amount}</Badge>
+                    <Show when={props.note?.(entry) ?? undefined} keyed>
+                      {(note) => <Meta>{note}</Meta>}
+                    </Show>
                     {/* How many of the stack, once the row is in: a
                         caller asking for items usually wants a count as
                         well as a name */}

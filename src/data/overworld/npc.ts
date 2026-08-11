@@ -26,6 +26,13 @@ const enum Npc {
    * done on the pokemon rather than on the egg
    */
   Groomer = 3,
+  /**
+   * Carries a crate of balls and medicine and a purse, and is the
+   * only one of them a player may deal with more than once while he
+   * is standing there. What he sells is fixed for the window; what he
+   * buys is anything the market puts a price on
+   */
+  Vendor = 4,
 }
 
 export default Npc;
@@ -33,13 +40,14 @@ export default Npc;
 /**
  * Everyone who wanders, for uniform rolls over the variants
  */
-export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy, Npc.Groomer];
+export const NPCS: Npc[] = [Npc.Breeder, Npc.DaycareLady, Npc.NurseJoy, Npc.Groomer, Npc.Vendor];
 
 export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Breeder]: 'Breeder',
   [Npc.DaycareLady]: 'Daycare Lady',
   [Npc.NurseJoy]: 'Nurse Joy',
   [Npc.Groomer]: 'Groomer',
+  [Npc.Vendor]: 'Vendor',
 };
 
 /**

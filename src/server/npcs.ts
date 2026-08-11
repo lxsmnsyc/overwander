@@ -1,6 +1,12 @@
 import 'server-only';
 import { asCaughtPokemon, isShadow } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, NPC_CLAIM_COLLECTION } from '../auth/collections';
+import {
+  CAUGHT_COLLECTION,
+  INVENTORY_COLLECTION,
+  NPC_CLAIM_COLLECTION,
+  PROFILE_COLLECTION,
+  inventoryEntryId,
+} from '../auth/collections';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import { groomedFriendship } from '../data/constants/friendship';
@@ -10,7 +16,10 @@ import Npc, {
   GROOMING_FEE,
   NURSE_CARE_LIMIT,
 } from '../data/overworld/npc';
+import { VENDOR_TRADE_LIMIT, isMarketable } from '../data/overworld/vendor';
+import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
+import { getItemData } from '../data/items';
 import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
@@ -21,7 +30,7 @@ import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
-import { type UpdateFields, docData } from './read';
+import { type UpdateFields, asNumber, docData } from './read';
 
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.
@@ -31,13 +40,18 @@ import { type UpdateFields, docData } from './read';
  * asking a breeder to push an egg along — or asking either of them
  * from a cell that has neither — is refused rather than paid for.
  *
- * **Each of them serves a player once per window.** Whoever is at the
- * cell stands there for `NPC_INTERVAL`, and a marker in `npcClaims`
- * records that this player has been seen; a second ask that window is
- * turned away whatever they can pay. It is taken only where the visit
- * actually lands — a pair that cannot breed, an egg already ready to
- * hatch or a party that needed nothing costs nothing — and it is given
- * back if the write behind it fails.
+ * **Each of them serves a player once per window**, the vendor aside.
+ * Whoever is at the cell stands there for `NPC_INTERVAL`, and a marker
+ * in `npcClaims` records that this player has been seen; a second ask
+ * that window is turned away whatever they can pay. It is taken only
+ * where the visit actually lands — a pair that cannot breed, an egg
+ * already ready to hatch or a party that needed nothing costs nothing
+ * — and it is given back if the write behind it fails.
+ *
+ * The **vendor** takes no marker at all: what the others hand over is
+ * something the world cannot make twice in six hours, and what he
+ * hands over is a potion. His crate and the player's purse are the
+ * whole of the limit.
  *
  * The two that charge take the gold after the visit is claimed and put
  * it back if what it bought was never written. A player who is charged
@@ -449,4 +463,141 @@ export async function groomCatch(
     throw error;
   }
   return groomed;
+}
+
+/**
+ * What a trade with the vendor left the player holding: the gold
+ * balance and how much of the item is now in the bag
+ */
+export interface TradeResult {
+  gold: number;
+  carried: number;
+}
+
+/**
+ * Move gold and one stack of items in the same transaction, in
+ * whichever direction the trade goes.
+ *
+ * A shop is the one place in the game where two stores have to agree:
+ * a player charged for a potion that was never handed over is worse
+ * off than one who was refused, and a potion handed over for gold that
+ * was never taken is a mint. Both documents are read and written
+ * together, so neither can happen.
+ *
+ * Resolves null when the player cannot cover their side of it
+ */
+async function trade(
+  uid: string,
+  item: Items,
+  amount: number,
+  gold: number,
+): Promise<TradeResult | null> {
+  const db = getAdminFirestore();
+
+  return db.runTransaction(async (transaction) => {
+    const purse = db.collection(PROFILE_COLLECTION).doc(uid);
+    const stack = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
+    // Both reads happen before either write, which is Firestore's own
+    // rule for a transaction
+    const [profile, carried] = await Promise.all([transaction.get(purse), transaction.get(stack)]);
+    const balance = asNumber(docData(profile)?.gold) + gold;
+    const held = asNumber(docData(carried)?.amount) + amount;
+
+    // The player cannot pay, or is selling what they have not got
+    if (balance < 0 || held < 0) {
+      return null;
+    }
+
+    transaction.set(purse, { gold: balance }, { merge: true });
+    transaction.set(stack, { user: uid, item, amount: held });
+    return { gold: balance, carried: held };
+  });
+}
+
+/**
+ * Buy from the vendor's crate.
+ *
+ * What he is carrying is not the caller's to say: the crate is derived
+ * from the same seed he was, so the item has to be one of the six he
+ * is actually standing behind this window. The price is the registry's
+ * `buy`, which is what makes an item worth the same from every vendor
+ * in the world.
+ *
+ * He is the one wanderer who is **not** once per window. A trader who
+ * sold a player one potion every six hours would not be a trader; what
+ * limits him is his crate and what the player can pay.
+ *
+ * Resolves the balance and the stack afterwards, or null when he is
+ * not standing there, is not carrying it, or the player cannot pay
+ */
+export async function buyFromVendor(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  now: number,
+  offset: number,
+): Promise<TradeResult | null> {
+  if (!Number.isInteger(amount) || amount < 1 || amount > VENDOR_TRADE_LIMIT) {
+    return null;
+  }
+
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
+
+  if (snapshot == null || !new Set(snapshot.getVendorStock(cell)).has(item)) {
+    return null;
+  }
+
+  const price = getItemData(item).buy;
+
+  // A crate is only ever filled with priced goods, so a zero here
+  // would be a registry that changed under the vendor rather than a
+  // free item
+  if (price <= 0) {
+    return null;
+  }
+  return trade(uid, item, amount, -price * amount);
+}
+
+/**
+ * Sell to the vendor.
+ *
+ * What he takes is wider than what he sells: anything the market puts
+ * a price on, so the pearls and nuggets a walk turns up have somewhere
+ * to go. What he pays is the registry's `sell`, which is half of what
+ * he charges for the same item — buying from him and selling it
+ * straight back is a way to lose money, which is the point.
+ *
+ * Resolves the balance and what is left of the stack, or null when he
+ * is not standing there, will not price it, or the player has not got
+ * that many
+ */
+export async function sellToVendor(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  now: number,
+  offset: number,
+): Promise<TradeResult | null> {
+  if (!Number.isInteger(amount) || amount < 1 || amount > VENDOR_TRADE_LIMIT) {
+    return null;
+  }
+
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
+
+  if (snapshot == null || !isMarketable(item)) {
+    return null;
+  }
+
+  const paid = getItemData(item).sell;
+
+  if (paid <= 0) {
+    return null;
+  }
+  return trade(uid, item, -amount, paid * amount);
 }

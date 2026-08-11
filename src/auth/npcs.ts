@@ -1,9 +1,13 @@
+import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/firebase';
 import {
+  type TradeResult,
   boostEgg as boostOnServerSide,
   breedCatches as breedOnServerSide,
+  buyFromVendor as buyOnServerSide,
   groomCatch as groomOnServerSide,
+  sellToVendor as sellOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
 import { syncServerClock } from './clock';
@@ -16,10 +20,12 @@ import getIdToken from './session';
  * Which of them is standing at a cell derives from the chunk, the
  * zone and the window, so the client already knows who it is walking up
  * to — `ChunkSnapshot.getWanderingNpcs`. The calls below are for what
- * they *do*, all of which costs gold and none of which the client is
+ * they *do*, all of which moves gold and none of which the client is
  * trusted with: the server re-derives who is standing there before it
  * charges anything.
  */
+
+export type { TradeResult } from '../server/npcs';
 
 /**
  * Leave two pokemon with the breeder and take the egg. Both must be
@@ -205,6 +211,104 @@ async function groomOnServer(
     y,
     cell,
     catchId,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Buy from the vendor's crate. What he is carrying is derived, so the
+ * client already knows it — `ChunkSnapshot.getVendorStock` — and the
+ * server derives it again before it takes a coin.
+ *
+ * He is the one wanderer a player may deal with as often as they like
+ * while he is standing there: what limits him is the crate and the
+ * purse rather than a once-a-window marker.
+ *
+ * Resolves the balance and the stack afterwards, or null when he is
+ * not carrying it or the player cannot pay
+ */
+export async function buyFromVendor(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+  amount: number,
+): Promise<TradeResult | null> {
+  return buyOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    item,
+    amount,
+    snapshot.offset,
+  );
+}
+
+async function buyOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  offset: number,
+): Promise<TradeResult | null> {
+  'use server';
+  return buyOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    item,
+    amount,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Sell to the vendor. He takes anything the market puts a price on —
+ * wider than what he sells — and pays what the registry says one
+ * fetches, which is half of what he charges for the same thing.
+ *
+ * Resolves the balance and what is left of the stack, or null when he
+ * will not price it or the player has not got that many
+ */
+export async function sellToVendor(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+  amount: number,
+): Promise<TradeResult | null> {
+  return sellOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    item,
+    amount,
+    snapshot.offset,
+  );
+}
+
+async function sellOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  offset: number,
+): Promise<TradeResult | null> {
+  'use server';
+  return sellOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    item,
+    amount,
     await syncServerClock(),
     offset,
   );

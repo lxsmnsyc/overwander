@@ -243,7 +243,7 @@ None of them trusts the caller about who they are talking to:
 `src/server/npcs.ts` re-derives the chunk, the zone and the window and checks
 the NPC standing there **before** doing anything.
 
-**Each of them serves a player once per window.** A marker at
+**Each of them serves a player once per window**, the vendor aside. A marker at
 `npcClaims/{npc}{cell}:{uid}`, stamped with the NPC window, records that this
 player has been seen; a second ask before the passer-by changes is turned away
 whatever they can pay. The marker is per cell, so walking to another wandering
@@ -290,6 +290,30 @@ behind them fails.
   is walked for. A pokemon that can gain nothing is refused before anything is
   charged, and an egg is refused outright: what is inside one has not met
   anybody yet.
+
+- **Vendor** — the shop, and the **only one who takes no marker at all**. What
+  the other four hand over is something the world cannot make twice in six
+  hours; what he hands over is a potion, so a player may deal with him as often
+  as their purse allows while he is standing there.
+
+  What he **sells** is a crate of `VENDOR_STOCK_KINDS` (6) kinds, derived from
+  the same seed he was (`getVendorStock`) — so it is part of who walked up
+  rather than anything stored, and every player who reaches him this window is
+  offered the same six things. Two are always the staples, a Poke Ball and a
+  Potion; the rest are drawn without repeats from the balls and the medicine.
+  The price is the registry's `buy`, so an item costs the same from every vendor
+  in the world.
+
+  What he **buys** is wider: anything `Marketable` at all, at the registry's
+  `sell`, which is where the pearls, star pieces and nuggets a walk turns up
+  finally become gold. `sell` is half of `buy` everywhere, so nothing bought
+  from him can be sold back at a profit.
+
+  The **Master Ball is excluded by arithmetic rather than by a list**: it is the
+  one ball registered without `Marketable` and with a `buy` of 0, and both sides
+  of his counter ask that flag first. `buyFromVendor` and `sellToVendor` move
+  the purse and the item stack in **one transaction**, so a player is never
+  charged for something that was never handed over.
 
 What a bred egg inherits — and what it does not — is in
 [Eggs](catches.md#eggs).

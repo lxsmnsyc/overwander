@@ -81,7 +81,7 @@ Friendship follows the mainline's Gen 4 rules, tiered so that every gain shrinks
 as the number grows ([`src/data/constants/friendship.ts`](../../src/data/constants/friendship.ts)):
 
 | What happened    | Where it is written                   | 0-99 | 100-199 | 200-255 |
-| ---------------- | ------------------------------------- | ---- | ------- | --------- |
+| ---------------- | ------------------------------------- | ---- | ------- | ------- |
 | Level taken      | `useCandy`                            | +5   | +3      | +2      |
 | 256 steps walked | `recordSteps`, for a hatched buddy    | +2   | +2      | +1      |
 | Bitter berry fed | `feedEffortBerry`                     | +10  | +5      | +2      |

@@ -84,6 +84,7 @@ import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
 import { MAX_STACK } from '../../src/data/overworld/item-pool';
 import Npc, { NPCS } from '../../src/data/overworld/npc';
+import { VENDOR_STAPLES, VENDOR_STOCK_KINDS, isMarketable } from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
@@ -1252,6 +1253,63 @@ describe('world', () => {
     // drawn from the same pool as the two who came first
     expect(met.has(Npc.NurseJoy)).toBe(true);
     expect(met.has(Npc.Groomer)).toBe(true);
+    expect(met.has(Npc.Vendor)).toBe(true);
+  });
+
+  it('fills a vendor’s crate from the window he was drawn in', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const crates = new Set<string>();
+    let found = 0;
+
+    for (let window = 0; window < 24; window++) {
+      const at = window * NPC_INTERVAL;
+      const snapshot = new ChunkSnapshot(chunk, at);
+
+      for (const [cell, npc] of snapshot.getWanderingNpcs()) {
+        const stock = snapshot.getVendorStock(cell);
+
+        // Anybody else's cell holds no crate at all
+        if (npc !== Npc.Vendor) {
+          expect(stock).toEqual([]);
+          continue;
+        }
+        found++;
+        crates.add(JSON.stringify(stock));
+
+        // Six kinds, none of them twice, and the two staples always
+        // among them — a vendor with neither balls nor potions is one
+        // a player cannot plan a walk around
+        expect(stock.length).toBe(VENDOR_STOCK_KINDS);
+        expect(new Set(stock).size).toBe(stock.length);
+        for (const staple of VENDOR_STAPLES) {
+          expect(new Set(stock).has(staple)).toBe(true);
+        }
+        // Priced goods only, which is what keeps the Master Ball out
+        // of the crate without naming it
+        for (const item of stock) {
+          expect(isMarketable(item)).toBe(true);
+          expect(getItemData(item).buy).toBeGreaterThan(0);
+        }
+        expect(new Set(stock).has(Items.MasterBall)).toBe(false);
+
+        // Everybody who walks up to the same vendor is shown the same
+        // crate: it is derived, not stored
+        expect(new ChunkSnapshot(chunk, at + 1).getVendorStock(cell)).toEqual(stock);
+      }
+    }
+
+    expect(found).toBeGreaterThan(0);
+    // And the crates are not all the same crate
+    expect(crates.size).toBeGreaterThan(1);
   });
 
   it('opens a portal onto the nearest portal of the biome asked for', () => {

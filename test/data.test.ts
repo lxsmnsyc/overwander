@@ -70,6 +70,12 @@ import {
   pickItem,
   pickItems,
 } from '../src/data/overworld/item-pool';
+import {
+  VENDOR_STAPLES,
+  VENDOR_STOCK_KINDS,
+  getVendorGoods,
+  isMarketable,
+} from '../src/data/overworld/vendor';
 import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
 import { isFavorite, isGuarded } from '../src/auth/caught-record';
 import {
@@ -540,6 +546,32 @@ describe('item data', () => {
     // None of it is one-per-world class
     for (const item of MEDICINES.keys()) {
       expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
+    }
+  });
+
+  it('lets a vendor carry balls and medicine, and never a Master Ball', () => {
+    const goods = new Set(getVendorGoods());
+
+    expect(goods.size).toBeGreaterThan(VENDOR_STOCK_KINDS);
+    for (const item of goods) {
+      const data = getItemData(item);
+
+      expect(data.type === ItemTypes.PokeBall || data.type === ItemTypes.Medicine).toBe(true);
+      expect(isMarketable(item)).toBe(true);
+      // Nothing bought from him can be sold back at a profit, which is
+      // what keeps a vendor from being a gold press
+      expect(data.buy).toBeGreaterThan(0);
+      expect(data.sell).toBeLessThan(data.buy);
+    }
+
+    // The one ball the registry never priced. It is left out because
+    // it has no price rather than because a list says so
+    expect(goods.has(Items.MasterBall)).toBe(false);
+    expect(isMarketable(Items.MasterBall)).toBe(false);
+
+    // Everything the staples are is something every crate holds
+    for (const staple of VENDOR_STAPLES) {
+      expect(goods.has(staple)).toBe(true);
     }
   });
 

@@ -16,8 +16,10 @@ import { isFainted } from '../auth/health';
 
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
+  RaidAction,
   RaidKind,
   type RaidRecord,
+  type RaidView,
   asRaidRecord,
   deriveRaidReward,
   mythicalRaidId,
@@ -99,20 +101,12 @@ const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOu
 export const RAID_BATTLE_TIMEOUT = BATTLE_TIMEOUT;
 
 /**
- * Whether a raid's battle ended without the boss going down — lost
+ * Whether a stored battle ended without the boss going down — lost
  * outright, or abandoned long enough that nobody is coming back to
  * settle it. A raid that was won never reaches here: clearing it
  * shuts the landmark first
  */
-async function isRaidLost(
-  transaction: FirebaseFirestore.Transaction,
-  battleId: string,
-  now: number,
-): Promise<boolean> {
-  const battle = docData(
-    await transaction.get(getAdminFirestore().collection(BATTLE_COLLECTION).doc(battleId)),
-  );
-
+function isBattleLost(battle: Record<string, unknown> | null, now: number): boolean {
   if (battle == null) {
     return true;
   }
@@ -120,6 +114,109 @@ async function isRaidLost(
     return now - asNumber(battle.startedAt) >= RAID_BATTLE_TIMEOUT;
   }
   return asOutcome(battle.outcome) !== BattleOutcome.Won;
+}
+
+/**
+ * The same question, read inside the transaction that acts on the
+ * answer
+ */
+async function isRaidLost(
+  transaction: FirebaseFirestore.Transaction,
+  battleId: string,
+  now: number,
+): Promise<boolean> {
+  return isBattleLost(
+    docData(await transaction.get(getAdminFirestore().collection(BATTLE_COLLECTION).doc(battleId))),
+    now,
+  );
+}
+
+/**
+ * Look at a lair without staging anything.
+ *
+ * What is at the cell, and what this player may do about it, are read
+ * the same way `enterRaid` decides them — so the button the dialog
+ * shows is the one that will actually be honoured when it is pressed.
+ * Nothing is written: a player who walks up to a lair and thinks
+ * better of it leaves no lobby standing behind them.
+ *
+ * Resolves what is there, or null when the cell stages no raid this
+ * window, its raid has been cleared, or there is nothing standing and
+ * this player has no pokemon to stage one with
+ */
+export async function peekRaid(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  kind: RaidKind,
+  now: number,
+  offset: number,
+): Promise<RaidView | null> {
+  const chunk = getWorld().getChunk(x, y);
+  const zone = asOffset(offset);
+  const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
+  const roll =
+    kind === RaidKind.Shadow
+      ? snapshot.getShadowLairs().get(cell)
+      : snapshot.getLegendaryLairs().get(cell);
+
+  if (roll == null) {
+    return null;
+  }
+
+  const db = getAdminFirestore();
+  const lobby = raidId(chunk, snapshot.raidTimestamp, cell, kind, zone);
+  const stored = docData(await db.collection(RAID_COLLECTION).doc(lobby).get());
+  const existing = stored == null ? null : asRaidRecord(stored);
+
+  // The boss has been met; the landmark is shut until the window turns
+  if (existing?.cleared === true) {
+    return null;
+  }
+
+  const staging = await hasAnyCaught(uid);
+  // A lobby that has not started is one a party can still be brought
+  // to
+  const gathering = existing != null && existing.battle == null;
+  // A landmark with nothing standing, or with a party that failed at
+  // it, is one to stage rather than to join
+  const open =
+    existing == null ||
+    (existing.battle != null &&
+      isBattleLost(
+        docData(await db.collection(BATTLE_COLLECTION).doc(existing.battle).get()),
+        now,
+      ));
+
+  // Nothing is standing and they have nothing to stage it with, so
+  // there is not even anything to watch
+  if (open && !staging && existing == null) {
+    return null;
+  }
+
+  // One thing is on offer at a time: a lair to stage, a lobby to
+  // bring a party to, or something to watch — which is what is left
+  // for a player with nothing to field, and for anybody once the
+  // fight has started
+  let action = RaidAction.Spectate;
+
+  if (staging && open) {
+    action = RaidAction.Host;
+  } else if (staging && gathering) {
+    action = RaidAction.Join;
+  }
+
+  return {
+    lobby,
+    action,
+    kind,
+    lair: existing?.lair ?? roll.lair,
+    biome: chunk.biome,
+    species: existing?.species ?? roll.species,
+    battle: existing?.battle ?? null,
+    teams: existing?.teams.length ?? 0,
+  };
 }
 
 /**

@@ -102,6 +102,61 @@ export interface RaidRecord {
 }
 
 /**
+ * What walking up to a lair offers this player. It is the one button
+ * the dialog shows: a lair is looked at before anything is staged, so
+ * what the button says is what pressing it does
+ */
+export const enum RaidAction {
+  /**
+   * Nothing is standing there — or what was standing there was beaten
+   * back — and this player has pokemon to stage it with. Pressing it
+   * opens the lobby
+   */
+  Host = 0,
+  /**
+   * A lobby is gathering and the player can bring a party to it
+   */
+  Join = 1,
+  /**
+   * There is something to watch and nothing to bring: the raid is
+   * already being fought, or the player owns no pokemon of their own.
+   * Watching pays nothing
+   */
+  Spectate = 2,
+}
+
+/**
+ * What a lair holds right now, without staging anything by asking.
+ *
+ * Walking up to a lair used to open a lobby as a side effect of
+ * looking at it, which meant a player who changed their mind had left
+ * a raid standing in the world. The dialog reads this first and stages
+ * only what the button it shows says it will
+ */
+export interface RaidView {
+  /**
+   * The lobby this cell's raid has, or would have when hosted
+   */
+  lobby: string;
+  action: RaidAction;
+  kind: RaidKind;
+  /**
+   * What the raid is named after — the lair, or the biome it stands on
+   */
+  lair: Lairs | null;
+  biome: Biome;
+  species: Species;
+  /**
+   * The battle to watch, when one is already being fought
+   */
+  battle: string | null;
+  /**
+   * How many parties have gathered so far
+   */
+  teams: number;
+}
+
+/**
  * What the lobby is called: the lair it stands in, shadowed or not.
  * The species is no longer the name — a place is the same place
  * whoever is at home in it, and two Articuno raids in one chunk were

@@ -16,10 +16,11 @@ import { getLocalOffset } from '../auth/local-time';
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
   RaidKind,
+  type RaidView,
   canJoinRaids,
   claimRaidReward,
-  enterRaid,
   hostMythicalRaid,
+  peekRaid,
 } from '../auth/raids';
 import { claimRocketReward, enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
@@ -60,6 +61,7 @@ import { isInWorld } from '../overworld/world';
 import pickStartPosition from '../overworld/start';
 import type SafariSession from '../overworld/safari';
 import NpcDialog from './NpcDialog';
+import RaidDialog from './RaidDialog';
 import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
 import { GameTab, useGame } from './game-context';
@@ -229,6 +231,12 @@ export default function OverworldTab(): JSX.Element {
    * done or declined
    */
   const [wanderer, setWanderer] = createSignal<[number, Npc] | null>(null);
+  /**
+   * The lair the player is standing in front of, and what it holds.
+   * Looking at one stages nothing — the dialog's button is where a
+   * lobby is opened or joined
+   */
+  const [lair, setLair] = createSignal<[number, RaidView] | null>(null);
 
   /**
    * The raid items the player carries, each with what it calls. They
@@ -530,27 +538,19 @@ export default function OverworldTab(): JSX.Element {
     }
     if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
       const kind = landmark === Landmark.ShadowLair ? RaidKind.Shadow : RaidKind.Legendary;
-      const lobby = await enterRaid(loaded.snapshot, at, kind);
+      // Looked at rather than walked into: nothing is staged until the
+      // dialog's button is pressed, so a player who thinks better of it
+      // leaves no lobby standing behind them
+      const standing = await peekRaid(loaded.snapshot, at, kind);
 
-      if (lobby == null) {
-        // Nothing to walk into: either the window stages no raid here,
-        // or the player has no pokemon to stage one with
+      if (standing == null) {
+        // Either the window stages no raid here, it has been cleared,
+        // or there is nothing standing and nothing to stage it with
         return (await canJoinRaids(user.uid))
-          ? 'The raid lobby is empty right now.'
+          ? 'The lair is quiet right now.'
           : 'You need a pokemon of your own to raid — you can only watch a raid already under way.';
       }
-      const [id, record] = lobby;
-
-      // A raid already under way cannot be joined; walking in on one
-      // is watching it, and a watched raid pays nothing
-      if (record.battle != null) {
-        game.setBattle({ id: record.battle, replay: true });
-        return 'The raid has already started — you can only watch.';
-      }
-
-      // The lobby itself lives in the Raids tab
-      game.setRaid(id);
-      game.setTab(GameTab.Raids);
+      setLair([at, standing]);
       return null;
     }
     return null;
@@ -827,6 +827,13 @@ export default function OverworldTab(): JSX.Element {
               standing={wanderer()}
               onClose={() => {
                 setWanderer(null);
+              }}
+            />
+            <RaidDialog
+              snapshot={view()?.snapshot ?? null}
+              lair={lair()}
+              onClose={() => {
+                setLair(null);
               }}
             />
           </>

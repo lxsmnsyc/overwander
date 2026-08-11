@@ -17,7 +17,7 @@ import {
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { asString } from './__normalize';
-import { RaidKind, type RaidRecord, asRaidRecord } from './raid-record';
+import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
 import { requireUid } from '../server/firebase';
 import type { RaidReward } from '../server/raids';
@@ -28,6 +28,7 @@ import {
   hostMythicalRaid as hostMythicalOnServerSide,
   joinRaid as joinOnServer,
   leaveRaid as leaveOnServer,
+  peekRaid as peekOnServer,
   startRaid as startOnServer,
 } from '../server/raids';
 import { RAID_COLLECTION, RAID_REWARD_COLLECTION } from './collections';
@@ -36,8 +37,15 @@ import { asOffset } from './local-time';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
-export { RaidKind, asRaidRecord, deriveRaidReward, getRaidTitle, raidId } from './raid-record';
-export type { RaidRecord } from './raid-record';
+export {
+  RaidAction,
+  RaidKind,
+  asRaidRecord,
+  deriveRaidReward,
+  getRaidTitle,
+  raidId,
+} from './raid-record';
+export type { RaidRecord, RaidView } from './raid-record';
 
 /**
  * The alliance numbers live with the battle builder that reads them
@@ -101,6 +109,43 @@ export function watchLiveRaids(
  */
 export async function canJoinRaids(uid: string): Promise<boolean> {
   return hasAnyCaught(uid);
+}
+
+/**
+ * Look at a lair before doing anything about it. Nothing is written:
+ * what comes back is what is standing there and the one thing this
+ * player may do about it — host, join, or watch — so the dialog can
+ * offer that and only that.
+ *
+ * Resolves null when the cell stages no raid this window, its raid has
+ * been cleared, or there is nothing standing and the player has no
+ * pokemon to stage one with
+ */
+export async function peekRaid(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  kind: RaidKind = RaidKind.Legendary,
+): Promise<RaidView | null> {
+  return peekRaidOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    kind,
+    snapshot.offset,
+  );
+}
+
+async function peekRaidOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  kind: RaidKind,
+  offset: number,
+): Promise<RaidView | null> {
+  'use server';
+  return peekOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock(), offset);
 }
 
 /**

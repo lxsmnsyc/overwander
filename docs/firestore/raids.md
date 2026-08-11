@@ -99,6 +99,31 @@ cleared; that is the Raids tab. Both are needed: the window is local, so two zon
 can floor to the same one, and what they stage at a landmark is not the same
 boss. The lobby id carries the zone for the same reason.
 
+## Walking up to a lair
+
+Looking at a lair stages nothing. `peekRaid` reads the cell, the stored lobby
+and — where one exists — its battle, and answers with what is standing there and
+the **one** thing this player may do about it. Nothing is written, so a player
+who opens the dialog and thinks better of it leaves no lobby behind them; before
+this, looking *was* hosting.
+
+| `RaidAction` | When                                                      | What the button does                      |
+| ------------ | --------------------------------------------------------- | ----------------------------------------- |
+| `Host`       | No lobby, or the last party failed — and they own pokemon | `enterRaid` stages it, then the Raids tab |
+| `Join`       | A lobby is gathering and they own pokemon                 | `enterRaid` adopts it, then the Raids tab |
+| `Spectate`   | The battle has started, or they own no pokemon            | Opens the battle, or the lobby, to watch  |
+
+The dialog shows that button and `Close`, rather than three of which two would be
+refused. It resolves null — and the player is told the lair is quiet — when the
+cell stages no raid this window, the raid has been cleared, or there is nothing
+standing and the player has nothing to stage it with.
+
+`peekRaid` decides all of that the same way `enterRaid` does, so the button is
+honoured when it is pressed. It can still be beaten to it: a lobby cleared or
+started between the look and the press is handled by `enterRaid` itself, which
+is the only writer either way — a `Join` that arrives after the fight started
+becomes a seat.
+
 The window gives the boss one defeat, not one fight:
 
 - **Cleared.** `clearRaid` sets `cleared` when the boss goes down, and the

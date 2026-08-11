@@ -10,7 +10,7 @@ import {
   purifyFlags,
   purifyIVs,
 } from '../data/items/purifying-gem';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { type UpdateFields, asNumber, docData } from './read';
@@ -55,7 +55,7 @@ export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
  * for, and the player's to spend one on
  */
 export function isPurifiableRecord(caught: Record<string, unknown>, uid: string): boolean {
-  if (caught.owner !== uid || isCatchLocked(caught)) {
+  if (caught.owner !== uid || isCatchLocked(caught) || isGuardedRecord(caught)) {
     return false;
   }
   // An egg is not a pokemon yet; whatever is inside it was decided

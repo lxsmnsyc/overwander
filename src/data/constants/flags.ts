@@ -36,6 +36,25 @@ export const enum PokemonFlags {
    * beside it says which battle claimed it
    */
   Locked = 0b1000,
+  /**
+   * Kept. The player has said this one is not to be parted with, so
+   * nothing that would hand it to somebody else — releasing it,
+   * putting it on the block, a trade when there is one — will take it.
+   * It changes nothing about what the pokemon can *do*
+   */
+  Favorite = 0b0001_0000,
+  /**
+   * Put away by the player: not to be disturbed.
+   *
+   * It is the other half of a favorite. A favorite cannot leave the
+   * player's hands; a guarded pokemon cannot be rewritten — no level,
+   * no training, no values moved, no evolution, no battle, no heal, no
+   * purifying gem, and nothing given to it or taken back off it. What
+   * only adds to it is left alone: it still walks, still comes to
+   * think more of its owner, and can still be a parent. Both flags are
+   * the player's own doing and both come off the same way they went on
+   */
+  Guarded = 0b0010_0000,
 }
 
 /**

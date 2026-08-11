@@ -18,7 +18,7 @@ import {
   watchOpenAuctions,
 } from '../auth/auctions';
 import { getBuddy } from '../auth/buddy';
-import { type CaughtPokemon, getCaught } from '../auth/caught';
+import { type CaughtPokemon, getCaught, isFavorite } from '../auth/caught';
 import { isEgg } from '../auth/egg';
 import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
@@ -501,6 +501,9 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     }
     if (isEgg(option.caught)) {
       return 'still an egg';
+    }
+    if (isFavorite(option.caught)) {
+      return 'a favorite';
     }
     return buddy()?.caught === option.id ? 'your buddy' : null;
   };

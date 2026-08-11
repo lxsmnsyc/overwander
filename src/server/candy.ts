@@ -8,7 +8,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData, isFeaturedSpecies } from '../data/species';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
@@ -93,7 +93,10 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
       isEggRecord(caught) ||
       // A pokemon in a live battle fights at the level its snapshot
       // froze; raising it now would only disagree with the fight
-      isCatchLocked(caught)
+      isCatchLocked(caught) ||
+      // And a locked one is being kept as it is: a level is the
+      // largest change there is to make to a pokemon
+      isGuardedRecord(caught)
     ) {
       return null;
     }

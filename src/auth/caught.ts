@@ -17,7 +17,9 @@ import {
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
+  setFavorite as favoriteOnServerSide,
   giveItem as giveOnServer,
+  setGuarded as guardedOnServerSide,
   releaseCatch as releaseOnServerSide,
   takeItem as takeOnServer,
 } from '../server/caught';
@@ -27,7 +29,7 @@ import { CAUGHT_COLLECTION } from './collections';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
-export { HELD_ITEM_LIMIT, asCaughtPokemon } from './caught-record';
+export { HELD_ITEM_LIMIT, asCaughtPokemon, isFavorite, isGuarded } from './caught-record';
 export type { CaughtPokemon, OwnershipRecord } from './caught-record';
 
 const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
@@ -171,4 +173,50 @@ export async function releaseCatch(catchId: string): Promise<boolean> {
 async function releaseOnServer(token: string, catchId: string): Promise<boolean> {
   'use server';
   return releaseOnServerSide(await requireUid(token), catchId);
+}
+
+/**
+ * Mark one of the player's pokemon as one they are keeping, or take
+ * the mark off. A favorite cannot be released, put up for auction or
+ * traded away — it is a guard against a mis-click on something that
+ * cannot be undone, and it changes nothing else.
+ *
+ * Resolves the flags as they now stand, or null when the catch is not
+ * the user's or is fighting
+ */
+export async function setFavorite(catchId: string, favorite: boolean): Promise<number | null> {
+  return setFavoriteOnServer(await getIdToken(), catchId, favorite);
+}
+
+async function setFavoriteOnServer(
+  token: string,
+  catchId: string,
+  favorite: boolean,
+): Promise<number | null> {
+  'use server';
+  return favoriteOnServerSide(await requireUid(token), catchId, favorite);
+}
+
+/**
+ * Put one of the player's pokemon away, or take it back out. A guarded
+ * pokemon stays as it is: no levels, no training, no values moved, no
+ * evolution, no fighting, no healing, no purifying, and no item given
+ * to it or taken back off it. What it can still do is what only ever
+ * adds to it — walking beside the player, coming to think more of
+ * them, and standing as a parent at the breeder.
+ *
+ * Resolves the flags as they now stand, or null when the catch is not
+ * the user's or is fighting
+ */
+export async function setGuarded(catchId: string, guarded: boolean): Promise<number | null> {
+  return setGuardedOnServer(await getIdToken(), catchId, guarded);
+}
+
+async function setGuardedOnServer(
+  token: string,
+  catchId: string,
+  guarded: boolean,
+): Promise<number | null> {
+  'use server';
+  return guardedOnServerSide(await requireUid(token), catchId, guarded);
 }

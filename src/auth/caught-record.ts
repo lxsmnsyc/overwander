@@ -214,6 +214,31 @@ export function isShadow(caught: { flags: number }): boolean {
 }
 
 /**
+ * Whether the player has marked it as one they are keeping. A favorite
+ * cannot be released, put up for auction or traded away — it is a
+ * guard against a mis-click on something irreversible, and it changes
+ * nothing else about the pokemon
+ */
+export function isFavorite(caught: { flags: number }): boolean {
+  return hasFlag(caught.flags, PokemonFlags.Favorite);
+}
+
+/**
+ * Whether the player has put it away.
+ *
+ * A guarded pokemon is kept exactly as it is: it cannot be levelled,
+ * trained, have its values moved, evolved, taken into a fight, healed
+ * or purified, and nothing can be given to it or taken back off it.
+ * What it is still free to do is what only ever adds to it — walking,
+ * friendship, and standing as a parent. Unlike the battle lock beside
+ * it, this one is the player's own doing and comes off whenever they
+ * say so
+ */
+export function isGuarded(caught: { flags: number }): boolean {
+  return hasFlag(caught.flags, PokemonFlags.Guarded);
+}
+
+/**
  * How a pokemon came into one owner's hands.
  *
  * It is not the same question as `EncounterType`, which says how the

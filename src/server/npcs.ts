@@ -14,7 +14,7 @@ import type { Species } from '../data/ids/species';
 import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { grantBredEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
@@ -100,6 +100,9 @@ async function releaseVisit(id: string): Promise<void> {
  * player must own and must not have fighting
  */
 function asParent(caught: Record<string, unknown> | null, uid: string): BreedingParent | null {
+  // A locked pokemon may still be a parent: breeding changes nothing
+  // about either of them — the egg is a third record — and the two are
+  // handed straight back
   if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
     return null;
   }
@@ -202,7 +205,14 @@ export async function breedCatches(
  * of hers to do for it
  */
 function tended(caught: Record<string, unknown>, uid: string): UpdateFields | null {
-  if (caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+  // She heals and purifies, and a guarded pokemon is to be left alone
+  // on both counts; it is simply not one of the ones she takes
+  if (
+    caught.owner !== uid ||
+    isCatchLocked(caught) ||
+    isEggRecord(caught) ||
+    isGuardedRecord(caught)
+  ) {
     return null;
   }
 
@@ -407,6 +417,8 @@ export async function groomCatch(
 
   // An egg thinks nothing of anybody yet: what is inside it has not
   // met the player, and the shell is what the daycare lady is for
+  // A locked pokemon is still groomed: friendship is the one thing a
+  // lock leaves alone, and being fussed over is not being changed
   if (stored == null || stored.owner !== uid || isEggRecord(stored) || isCatchLocked(stored)) {
     return null;
   }

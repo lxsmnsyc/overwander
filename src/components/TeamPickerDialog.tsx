@@ -1,11 +1,12 @@
 import type { JSX } from 'solid-js';
+import { isGuarded } from '../auth/caught';
 import { isEgg } from '../auth/egg';
 import { isFainted } from '../auth/health';
 import { TEAM_SIZE } from '../auth/teams';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 
 /**
- * Why a pokemon cannot be brought into a raid. All three are shown
+ * Why a pokemon cannot be brought into a raid. All four are shown
  * rather than hidden: a player counting their six should find out
  * where the sixth went instead of finding it gone
  */
@@ -15,6 +16,10 @@ function heldBack(option: CatchOption): string | null {
   }
   if (isFainted(option.caught)) {
     return 'fainted';
+  }
+  // Put away by its owner. Nothing is wrong with it — they said so
+  if (isGuarded(option.caught)) {
+    return 'locked';
   }
   // One pokemon, one battle. It comes back when the raid it is in ends
   return option.fighting ? 'in a raid' : null;

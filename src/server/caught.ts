@@ -9,7 +9,7 @@ import {
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
-import { PokemonFlags, hasFlag } from '../data/constants/flags';
+import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
@@ -18,7 +18,13 @@ import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
 import resolveBuddy, { resolveBuddyCatch } from './buddy';
 import { grantCandy, grantCatchCandy } from './candy';
-import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
+import {
+  asLocale,
+  isEggRecord,
+  isFavoriteRecord,
+  isGuardedRecord,
+  zeroEffortValues,
+} from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -204,6 +210,69 @@ async function mendWithHealBall(uid: string, ball: Balls): Promise<void> {
 }
 
 /**
+ * Set or clear one of the two flags a player sets themselves.
+ *
+ * A **favorite** cannot be released, auctioned or traded; a **guarded**
+ * pokemon cannot be bred, groomed, fielded, healed, purified or have an
+ * item spent on it. Neither is a rule about the pokemon — both are the
+ * player saying what they want left alone — so both come off exactly
+ * the way they went on, and the record is otherwise untouched.
+ *
+ * The flags are written through `withFlag`, so setting one cannot drop
+ * another: a shiny shadow stays a shiny shadow.
+ *
+ * Refused while the pokemon is fighting, the way every other edit to a
+ * live record is: a battle runs on a frozen snapshot, and a flag that
+ * moved under it would describe a pokemon the fight does not have.
+ * Resolves the flags as they now stand, or null when it was refused
+ */
+async function setCatchFlag(
+  uid: string,
+  catchId: string,
+  flag: PokemonFlags,
+  on: boolean,
+): Promise<number | null> {
+  const db = getAdminFirestore();
+
+  return db.runTransaction(async (transaction) => {
+    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
+    const caught = docData(await transaction.get(ref));
+
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+      return null;
+    }
+
+    const flags = withFlag(asNumber(caught.flags), flag, on);
+
+    transaction.update(ref, { flags });
+    return flags;
+  });
+}
+
+/**
+ * Mark one of the player's catches as one they are keeping, or take
+ * the mark off
+ */
+export async function setFavorite(
+  uid: string,
+  catchId: string,
+  favorite: boolean,
+): Promise<number | null> {
+  return setCatchFlag(uid, catchId, PokemonFlags.Favorite, favorite);
+}
+
+/**
+ * Put one of the player's catches away, or take it back out
+ */
+export async function setGuarded(
+  uid: string,
+  catchId: string,
+  guarded: boolean,
+): Promise<number | null> {
+  return setCatchFlag(uid, catchId, PokemonFlags.Guarded, guarded);
+}
+
+/**
  * Hand an item from the bag to one of the player's catches. The stack
  * and the catch move in one transaction, so an item is never in both
  * places or neither. Resolves false when the catch is not theirs, the
@@ -221,8 +290,16 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    // An egg has no hands: nothing is handed to one until it hatches
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+    // An egg has no hands: nothing is handed to one until it hatches.
+    // A locked one has hands and may already be holding something —
+    // it is simply not to be reached into either way
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isEggRecord(caught) ||
+      isGuardedRecord(caught)
+    ) {
       return false;
     }
 
@@ -256,7 +333,15 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const caught = docData(await transaction.get(caughtRef));
 
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+    // Taking one back is refused for a locked pokemon as much as
+    // handing one over: what it is holding is part of how it was put
+    // away
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isGuardedRecord(caught)
+    ) {
       return false;
     }
 
@@ -291,7 +376,12 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
  * battle is refused outright: the fight is running on a snapshot of a
  * record that has to still be there when it ends.
  *
- * Resolves false when the catch is not the player's or is fighting
+ * A **favorite** is refused as well. Releasing cannot be undone, and
+ * the flag is there for exactly this: the player has already said this
+ * one is not to be parted with.
+ *
+ * Resolves false when the catch is not the player's, is fighting, or
+ * is a favorite
  */
 export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
   const db = getAdminFirestore();
@@ -302,7 +392,12 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
     const [caughtDoc, buddyDoc] = await transaction.getAll(caughtRef, buddyRef);
     const caught = docData(caughtDoc);
 
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isFavoriteRecord(caught)
+    ) {
       return false;
     }
 

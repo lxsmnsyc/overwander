@@ -5,7 +5,7 @@ import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
@@ -55,7 +55,13 @@ export default async function useBottleCap(
     // A pokemon fights as the snapshot froze it, and an egg is not a
     // pokemon yet: what is inside it was decided when it was found,
     // and it stays that way until it hatches
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isEggRecord(caught) ||
+      isGuardedRecord(caught)
+    ) {
       return null;
     }
 

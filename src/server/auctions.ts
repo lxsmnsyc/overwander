@@ -26,7 +26,7 @@ import {
 } from '../auth/auction-record';
 import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isFavoriteRecord } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { isAnyCatchQueued } from './raids';
@@ -159,6 +159,11 @@ export async function openAuction(
       // bidder would be bidding on a sealed box — and the seller knows
       // exactly what is in it, which is not an auction but a shell game
       if (isEggRecord(caught)) {
+        return null;
+      }
+      // So is a favorite. A lot cannot be taken back off the block, and
+      // the flag is the player's own standing answer about this one
+      if (isFavoriteRecord(caught)) {
         return null;
       }
       // So is the buddy. Selling the pokemon at your side out from

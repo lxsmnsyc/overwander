@@ -45,7 +45,7 @@ import type { Items } from '../data/ids/items';
 import { getRaidSpecies } from '../data/items/raid-items';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import Biome from '../data/ids/biome';
 import { getSpeciesLair } from '../data/overworld/lair';
 import { getAdminFirestore } from './firebase';
@@ -524,6 +524,11 @@ export async function joinRaid(
   if (owned.some((entry) => isFainted(asCaughtPokemon(docData(entry))))) {
     return null;
   }
+  // Nor one its owner has put away. A guarded pokemon is not to be
+  // disturbed, and a raid is the loudest thing that could happen to it
+  if (owned.some((entry) => isGuardedRecord(docData(entry) ?? {}))) {
+    return null;
+  }
   // Nor one already waiting in another lobby, or in this one: a party
   // that queues the same pokemon twice would have it dropped from
   // whichever raid started second, without ever being told
@@ -587,6 +592,7 @@ export async function publishTeamSnapshot(
         data?.owner === player &&
         !isCatchLocked(data) &&
         !isEggRecord(data) &&
+        !isGuardedRecord(data) &&
         !isFainted(asCaughtPokemon(data))
       ) {
         fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));

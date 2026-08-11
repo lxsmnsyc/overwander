@@ -1,6 +1,6 @@
 import { type JSX, type ParentProps, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
-import { type CaughtPokemon, listCaught } from '../auth/caught';
+import { type CaughtPokemon, isGuarded, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { isShadow } from '../auth/caught-record';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
@@ -299,6 +299,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                   verb="Hand over"
                   empty="You have nothing for her to look at."
                   filter={(option) => !isEgg(option.caught) && !option.fighting}
+                  reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
                   note={(option) =>
                     isShadow(option.caught) ? 'shadow — she would purify it' : null
                   }

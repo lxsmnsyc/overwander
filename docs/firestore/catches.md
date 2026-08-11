@@ -9,38 +9,38 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 
 ## `caught/{catchId}`
 
-| Field                  | Type                    | Notes                                                 |
-| ---------------------- | ----------------------- | ----------------------------------------------------- |
-| `owner`                | `string`                | Current owner's uid; changes on trade                 |
-| `type`                 | `EncounterType`         | How it was originally met                             |
-| `species`              | `Species`               |                                                       |
-| `level`                | `number`                |                                                       |
-| `individualValue`      | `number`                | 32-bit roll the IVs slice from                        |
-| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature    |
-| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order    |
-| `gender`               | `Genders`               |                                                       |
-| `nature`               | `Natures`               |                                                       |
-| `moves`                | `Moves[]`               |                                                       |
-| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch    |
-| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`     |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first           |
-| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked       |
-| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free     |
-| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any       |
-| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship |
-| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found    |
-| `steppedAt`            | `number`                | Server instant steps were last credited at            |
-| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived     |
-| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying      |
-| `ball`                 | `Balls`                 | Ball the catch was made with                          |
-| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])             |
-| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                |
-| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero           |
-| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance     |
-| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`     |
-| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                 |
-| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                     |
-| `origin.biome`         | `Biome`                 |                                                       |
+| Field                  | Type                    | Notes                                                                   |
+| ---------------------- | ----------------------- | ----------------------------------------------------------------------- |
+| `owner`                | `string`                | Current owner's uid; changes on trade                                   |
+| `type`                 | `EncounterType`         | How it was originally met                                               |
+| `species`              | `Species`               |                                                                         |
+| `level`                | `number`                |                                                                         |
+| `individualValue`      | `number`                | 32-bit roll the IVs slice from                                          |
+| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature                      |
+| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order                      |
+| `gender`               | `Genders`               |                                                                         |
+| `nature`               | `Natures`               |                                                                         |
+| `moves`                | `Moves[]`               |                                                                         |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch                      |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`                       |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first                             |
+| `flags`                | `number`                | `PokemonFlags` bits — see [What the player sets](#what-the-player-sets) |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free                       |
+| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any                         |
+| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship                   |
+| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found                      |
+| `steppedAt`            | `number`                | Server instant steps were last credited at                              |
+| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived                       |
+| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying                        |
+| `ball`                 | `Balls`                 | Ball the catch was made with                                            |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                               |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                                  |
+| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero                             |
+| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance                       |
+| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`                       |
+| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                                   |
+| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                                       |
+| `origin.biome`         | `Biome`                 |                                                                         |
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
@@ -234,6 +234,53 @@ A record written before these fields existed has neither, and reading a missing
 `health` as zero would faint every pokemon caught until now. Missing means
 whole: `asCaughtPokemon` derives the maximum for those records, which is what
 they meant.
+
+## What the player sets
+
+Four of the six `PokemonFlags` are the game's own — shiny, shadow, egg, and the
+battle lock. Two are the player's, set from the catch dialog and cleared the same
+way, and neither says anything about the pokemon itself:
+
+| Flag       | Button              | What it refuses                                                                                  |
+| ---------- | ------------------- | ------------------------------------------------------------------------------------------------ |
+| `Favorite` | Favorite/Unfavorite | Releasing, listing at auction, and trading when there is trading                                 |
+| `Guarded`  | Lock/Unlock         | Levels, training, values moved, evolution, fights, healing, purifying, items given or taken back |
+
+They answer different questions on purpose. A **favorite** is about *parting*
+with a pokemon: it guards the two irreversible things a mis-click can do —
+`releaseCatch` deletes a record outright, and `openAuction` puts one somewhere it
+cannot be taken back from. It changes nothing about what the pokemon can do, so a
+favorite still fights, still trains and can still be a buddy.
+
+A **guarded** pokemon is about *keeping one as it is*. The line is drawn around
+the sheet: anything that would rewrite a stored field is refused, and anything
+that only ever adds to the pokemon is left alone.
+
+Refused: `useCandy` (a level), `trainEffort`, `useWing` and `feedEffortBerry`
+(effort), `useBottleCap` (values), `evolveCatch`, `useHealingItem`,
+`usePurifyingGem`, `visitNurse` (she heals and purifies), `joinRaid`, and both
+`giveItem` and `takeItem` — a locked pokemon is not reached into in either
+direction, so what it is holding stays what it was holding.
+`publishTeamSnapshot` drops it from a party the way it drops an egg or a fainted
+pokemon, so a rocket fight leaves it behind too.
+
+Still allowed: walking as the **buddy** and the steps that come with it,
+**friendship** from every source that grants it, and standing as a **parent** at
+the breeder — `breedCatches` consumes neither parent and writes the egg as a
+third record, so a locked pokemon comes back from the breeder exactly as it left.
+`groomCatch` is allowed for the same reason: friendship is the one field a lock
+does not fence off.
+
+Neither flag is enforced by the client. Every one of those calls checks the
+stored record, through `isFavoriteRecord` and `isGuardedRecord` in
+[`src/server/catch-fields.ts`](../../src/server/catch-fields.ts); the catch dialog
+greys out every section a lock refuses, and the pickers say *a favorite* or
+*locked* so the refusal is visible before the press.
+
+`setFavorite` and `setGuarded` ([`src/server/caught.ts`](../../src/server/caught.ts))
+write through `withFlag`, so setting one cannot drop another — a shiny shadow
+stays a shiny shadow — and both refuse while the pokemon is **fighting**, the way
+every other edit to a live record does.
 
 ## Whose hands it has passed through
 

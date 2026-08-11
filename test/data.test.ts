@@ -71,6 +71,7 @@ import {
   pickItems,
 } from '../src/data/overworld/item-pool';
 import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
+import { isFavorite, isGuarded } from '../src/auth/caught-record';
 import {
   MAX_IV,
   MAX_IV_STARS,
@@ -649,13 +650,51 @@ describe('item data', () => {
 
     // No two flags share a bit, and none of them is zero: a record
     // with no flags set is a plain pokemon, not a shiny one
-    const all = [PokemonFlags.Shiny, PokemonFlags.Shadow, PokemonFlags.Egg, PokemonFlags.Locked];
+    const all = [
+      PokemonFlags.Shiny,
+      PokemonFlags.Shadow,
+      PokemonFlags.Egg,
+      PokemonFlags.Locked,
+      PokemonFlags.Favorite,
+      PokemonFlags.Guarded,
+    ];
 
     expect(new Set(all).size).toBe(all.length);
     for (const flag of all) {
       expect(hasFlag(0, flag)).toBe(false);
       expect(flag & (flag - 1)).toBe(0);
     }
+  });
+
+  it('keeps what the player asked for apart from what the game decided', () => {
+    // The two the player sets themselves answer different questions:
+    // a favorite is about parting with a pokemon, a lock is about
+    // disturbing it, and neither implies the other
+    const kept = withFlag(0, PokemonFlags.Favorite, true);
+    const both = withFlag(kept, PokemonFlags.Guarded, true);
+
+    expect(isFavorite({ flags: kept })).toBe(true);
+    expect(isGuarded({ flags: kept })).toBe(false);
+    expect(isFavorite({ flags: both })).toBe(true);
+    expect(isGuarded({ flags: both })).toBe(true);
+
+    // Both come off the way they went on, and neither disturbs what
+    // the game decided about the pokemon
+    const shinyShadow = withFlag(
+      withFlag(both, PokemonFlags.Shiny, true),
+      PokemonFlags.Shadow,
+      true,
+    );
+    const released = withFlag(
+      withFlag(shinyShadow, PokemonFlags.Favorite, false),
+      PokemonFlags.Guarded,
+      false,
+    );
+
+    expect(isFavorite({ flags: released })).toBe(false);
+    expect(isGuarded({ flags: released })).toBe(false);
+    expect(hasFlag(released, PokemonFlags.Shiny)).toBe(true);
+    expect(hasFlag(released, PokemonFlags.Shadow)).toBe(true);
   });
 
   it('packs the statuses a pokemon carries into one mask', () => {

@@ -4,7 +4,7 @@ import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../au
 import { type HealthState, healedByItem } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import { getAdminFirestore } from './firebase';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
 
@@ -49,7 +49,13 @@ export default async function useHealingItem(
     // A pokemon in a live battle is fighting on a frozen snapshot;
     // healing the record under it would leave the two disagreeing.
     // An egg has nothing to heal yet
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isEggRecord(caught) ||
+      isGuardedRecord(caught)
+    ) {
       return null;
     }
 

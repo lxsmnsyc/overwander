@@ -5,7 +5,7 @@ import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
@@ -35,7 +35,13 @@ export default async function evolveCatch(
     // froze, so it evolves once the fight is over and not before —
     // and an egg has to become a pokemon before it can become a
     // different one
-    if (caught == null || caught.owner !== uid || isCatchLocked(caught) || isEggRecord(caught)) {
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isEggRecord(caught) ||
+      isGuardedRecord(caught)
+    ) {
       return null;
     }
 

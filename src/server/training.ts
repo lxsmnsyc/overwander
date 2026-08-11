@@ -8,7 +8,7 @@ import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
-import { isEggRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
@@ -83,8 +83,16 @@ export async function trainEffort(
     const stored = docData(await transaction.get(ref));
 
     // A pokemon fights as the snapshot froze it, and an egg has not
-    // taken a level of its own yet
-    if (stored == null || stored.owner !== uid || isCatchLocked(stored) || isEggRecord(stored)) {
+    // taken a level of its own yet. A locked one is refused as well:
+    // nothing is spent moving effort about, but where the points sit
+    // is still the sheet being rewritten
+    if (
+      stored == null ||
+      stored.owner !== uid ||
+      isCatchLocked(stored) ||
+      isEggRecord(stored) ||
+      isGuardedRecord(stored)
+    ) {
       return null;
     }
 
@@ -134,7 +142,13 @@ export async function useWing(
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
-    if (stored == null || stored.owner !== uid || isCatchLocked(stored) || isEggRecord(stored)) {
+    if (
+      stored == null ||
+      stored.owner !== uid ||
+      isCatchLocked(stored) ||
+      isEggRecord(stored) ||
+      isGuardedRecord(stored)
+    ) {
       return null;
     }
 
@@ -201,7 +215,13 @@ export async function feedEffortBerry(
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
-    if (stored == null || stored.owner !== uid || isCatchLocked(stored) || isEggRecord(stored)) {
+    if (
+      stored == null ||
+      stored.owner !== uid ||
+      isCatchLocked(stored) ||
+      isEggRecord(stored) ||
+      isGuardedRecord(stored)
+    ) {
       return null;
     }
 

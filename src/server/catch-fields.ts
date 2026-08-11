@@ -36,6 +36,29 @@ export function isEggRecord(caught: Record<string, unknown>): boolean {
 }
 
 /**
+ * Whether the player has marked it as one they are keeping, read
+ * straight off a stored document. A favorite is refused by everything
+ * that would part them with it: a release, an auction, and a trade
+ * when there is one
+ */
+export function isFavoriteRecord(caught: Record<string, unknown>): boolean {
+  return hasFlag(asNumber(caught.flags), PokemonFlags.Favorite);
+}
+
+/**
+ * Whether the player has put it away, read straight off a stored
+ * document. A guarded pokemon is refused by everything that would
+ * rewrite its sheet: a level, its effort, its values, an evolution, a
+ * heal, a purifying gem, a fight, and an item given to it or taken
+ * back off it. What it is still free to do is the part that is only
+ * ever gained — friendship, the steps it walks beside the player, and
+ * standing as a parent, which changes neither parent
+ */
+export function isGuardedRecord(caught: Record<string, unknown>): boolean {
+  return hasFlag(asNumber(caught.flags), PokemonFlags.Guarded);
+}
+
+/**
  * The effort values everything starts with
  */
 export function zeroEffortValues(): Record<Stats, number> {

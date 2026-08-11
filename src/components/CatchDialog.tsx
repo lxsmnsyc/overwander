@@ -9,7 +9,11 @@ import {
   HELD_ITEM_LIMIT,
   getCaught,
   giveItem,
+  isFavorite,
+  isGuarded,
   releaseCatch,
+  setFavorite,
+  setGuarded,
   takeItem,
 } from '../auth/caught';
 import useHealingItem from '../auth/healing';
@@ -289,6 +293,20 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     () => detail() ?? null,
     async (caught) => isLockLive(caught, await syncServerClock()),
   );
+
+  /**
+   * Whether the record is being held as it is, for either of the two
+   * reasons there are: a live battle is running on a copy of it, or
+   * the player has locked it themselves. Everything that would rewrite
+   * the sheet asks this. What the lock leaves alone — walking with it,
+   * grooming it, the two keeping buttons themselves — asks only
+   * whether it is fighting
+   */
+  const frozen = (): boolean => {
+    const loaded = detail();
+
+    return fighting() === true || (loaded != null && isGuarded(loaded));
+  };
 
   /**
    * The candies behind this catch: the stack is keyed by family, so
@@ -610,6 +628,50 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
+   * Mark it as one to keep, or put it away. Both are one field on the
+   * record and both are the player's own doing, so they are settled
+   * the same way: write, re-read, say what happened
+   */
+  const mark = (setting: Promise<number | null>, said: string, refused: string): void => {
+    setStatus(null);
+    setting
+      .then(async (flags) => {
+        setStatus(flags == null ? refused : said);
+        await refetch();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  const favorite = (on: boolean): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    mark(
+      setFavorite(catchId, on),
+      on ? 'Kept — it cannot be released, auctioned or traded.' : 'No longer a favorite.',
+      'That could not be changed.',
+    );
+  };
+
+  const guard = (on: boolean): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    mark(
+      setGuarded(catchId, on),
+      on ? 'Locked — it will be left alone.' : 'Unlocked.',
+      'That could not be changed.',
+    );
+  };
+
+  /**
    * Whether the release button has been pressed once. Letting a
    * pokemon go cannot be undone, so it takes two presses and the
    * second one says what it is doing
@@ -781,6 +843,44 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   </p>
                 </Show>
 
+                {/* The two the player sets themselves. A favorite is
+                    about parting with it; a lock is about disturbing
+                    it. Neither is a rule about the pokemon, so both
+                    come off the same way they went on */}
+                <DialogSection title="Keeping">
+                  <Row>
+                    <Button
+                      tone={isFavorite(loaded()) ? 'ghost' : 'primary'}
+                      disabled={fighting()}
+                      onClick={() => {
+                        favorite(!isFavorite(loaded()));
+                      }}
+                    >
+                      {isFavorite(loaded()) ? 'Unfavorite' : 'Favorite'}
+                    </Button>
+                    <Button
+                      tone={isGuarded(loaded()) ? 'ghost' : 'primary'}
+                      disabled={fighting()}
+                      onClick={() => {
+                        guard(!isGuarded(loaded()));
+                      }}
+                    >
+                      {isGuarded(loaded()) ? 'Unlock' : 'Lock'}
+                    </Button>
+                  </Row>
+                  <Show when={isFavorite(loaded())}>
+                    <Meta>A favorite cannot be released, auctioned or traded away.</Meta>
+                  </Show>
+                  <Show when={isGuarded(loaded())}>
+                    <Meta>
+                      Locked: it stays exactly as it is — no levels, no training, no evolution, no
+                      item given to it or taken back off it, and it is left out of fights, healing
+                      and purifying. It still walks with you, still comes to think more of you, and
+                      can still be left with the breeder.
+                    </Meta>
+                  </Show>
+                </DialogSection>
+
                 <DialogSection title="Buddy">
                   {/* Only what walks beside the player counts steps,
                       so an egg has to be the buddy to get anywhere */}
@@ -831,7 +931,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             <ListRow>
                               <span class="grow">{describeItem(item)}</span>
                               <Button
-                                disabled={fighting()}
+                                disabled={frozen()}
                                 onClick={() => {
                                   moveItem(item, false);
                                 }}
@@ -849,7 +949,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <InventoryPicker
                         inline
                         entries={bag()}
-                        disabled={fighting()}
+                        disabled={frozen()}
                         value={null}
                         verb="Give"
                         empty="Nothing holdable in the bag."
@@ -872,7 +972,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <InventoryPicker
                       inline
                       entries={bag()}
-                      disabled={fighting()}
+                      disabled={frozen()}
                       value={null}
                       verb="Use"
                       empty={
@@ -905,7 +1005,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <InventoryPicker
                         inline
                         entries={bag()}
-                        disabled={fighting()}
+                        disabled={frozen()}
                         confirm
                         value={null}
                         verb="Use"
@@ -932,7 +1032,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <InventoryPicker
                         inline
                         entries={bag()}
-                        disabled={fighting()}
+                        disabled={frozen()}
                         confirm
                         value={null}
                         verb="Use"
@@ -981,7 +1081,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                               {loaded().effortValues[stat]}
                             </Meta>
                             <Button
-                              disabled={fighting() === true || loaded().effortValues[stat] <= 0}
+                              disabled={frozen() || loaded().effortValues[stat] <= 0}
                               onClick={() => {
                                 train(stat, -EFFORT_STEP);
                               }}
@@ -990,10 +1090,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             </Button>
                             <Button
                               tone="primary"
-                              disabled={
-                                fighting() === true ||
-                                assignableEffort(loaded(), stat) < EFFORT_STEP
-                              }
+                              disabled={frozen() || assignableEffort(loaded(), stat) < EFFORT_STEP}
                               onClick={() => {
                                 train(stat, EFFORT_STEP);
                               }}
@@ -1010,7 +1107,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <InventoryPicker
                       inline
                       entries={bag()}
-                      disabled={fighting()}
+                      disabled={frozen()}
                       value={null}
                       verb="Use"
                       empty="No wings in the bag."
@@ -1027,7 +1124,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <InventoryPicker
                       inline
                       entries={bag()}
-                      disabled={fighting()}
+                      disabled={frozen()}
                       value={null}
                       verb="Feed"
                       empty="No berries in the bag that would untrain anything."
@@ -1055,7 +1152,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         disabled={
                           (candies() ?? 0) < getCandyCost(loaded()) ||
                           loaded().level >= MAX_LEVEL ||
-                          fighting() === true
+                          frozen()
                         }
                         onClick={feedCandy}
                       >
@@ -1085,7 +1182,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                               <ListRow>
                                 <RowButton
                                   class="font-medium"
-                                  disabled={fighting()}
+                                  disabled={frozen()}
                                   onClick={() => {
                                     evolve(evolution.species);
                                   }}

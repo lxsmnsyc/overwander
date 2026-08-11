@@ -116,7 +116,7 @@ export async function claimItemCache(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.timestamp}$${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$${cell}:${uid}`;
 
   // The marker records the whole stash, so what a cache paid is
   // readable afterwards rather than only that it paid
@@ -155,7 +155,7 @@ export async function claimBerryPatch(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.timestamp}$berry${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$berry${cell}:${uid}`;
 
   if (
     !(await claim(BERRY_CLAIM_COLLECTION, id, {
@@ -171,10 +171,10 @@ export async function claimBerryPatch(
 }
 
 /**
- * Take the egg a nest is holding. A nest keeps to its own day-long
- * window rather than the five-minute one the chunk turns over on, so
- * the claim marker is stamped with the nest day: one egg per nest,
- * per player, per local day.
+ * Take the egg a nest is holding. A nest keeps to its own half-day
+ * window rather than the quarter-hour one the ground turns over on, so
+ * the claim marker is stamped with the nest window: one egg per
+ * nest, per player, per half day.
  *
  * The player still has to be standing in the chunk's live window to
  * reach it, which is what the snapshot resolves. Resolves the new
@@ -233,7 +233,7 @@ export async function claimHiddenGrotto(
     return null;
   }
 
-  const key = `${snapshot.key}@${snapshot.timestamp}$grotto${cell}`;
+  const key = `${snapshot.key}@${snapshot.landmarkTimestamp}$grotto${cell}`;
 
   if (
     !(await claim(GROTTO_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))
@@ -249,7 +249,7 @@ export async function claimHiddenGrotto(
   // The grotto's pokemon needs the two rolls a snapshot spawn would
   // have; they derive from the same chunk, window and cell, so every
   // observer of this grotto meets the same individual
-  const rng = new AleaRNG(`${snapshot.key}${snapshot.timestamp}grotto${cell}spawn`);
+  const rng = new AleaRNG(`${snapshot.key}${snapshot.landmarkTimestamp}grotto${cell}spawn`);
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
   return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };

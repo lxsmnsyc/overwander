@@ -15,7 +15,7 @@ import {
   toSpawns,
 } from '../auth/rocket-record';
 import { TEAM_SIZE } from '../auth/teams';
-import ChunkSnapshot, { RAID_INTERVAL } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { ROCKET_INTERVAL } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
@@ -55,12 +55,13 @@ function stopEntryId(stop: string, uid: string): string {
 
 /**
  * Walk up to a Team Rocket stop. The grunt's party comes from the
- * chunk's own roll for the hour, so it is the one the world staged
+ * chunk's own roll for the window, so it is the one the world staged
  * wherever the caller says they are standing, and the record is
  * created on first approach.
  *
  * Resolves the stop id and the player's state of it, or null when the
- * cell stages no grunt this hour or the player has already beaten the
+ * cell stages no grunt this window or the player has already beaten
+ * the
  * one it stages
  */
 export async function enterRocketStop(
@@ -81,14 +82,14 @@ export async function enterRocketStop(
   }
 
   const db = getAdminFirestore();
-  const stop = rocketStopId(chunk, snapshot.raidTimestamp, cell, zone);
+  const stop = rocketStopId(chunk, snapshot.rocketTimestamp, cell, zone);
   const ref = db.collection(ROCKET_COLLECTION).doc(stopEntryId(stop, uid));
   const stored = docData(await ref.get());
 
   if (stored != null) {
     const existing = asRocketRecord(stored);
 
-    // A grunt already beaten is gone for the hour; a grunt that won
+    // A grunt already beaten is gone for the window; a grunt that won
     // is still standing there, and can be fought again
     return existing.defeated ? null : [stop, existing];
   }
@@ -101,7 +102,7 @@ export async function enterRocketStop(
       traitValue,
     })),
     battle: null,
-    timestamp: snapshot.raidTimestamp,
+    timestamp: snapshot.rocketTimestamp,
     offset: zone,
     chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
     cell,
@@ -132,7 +133,7 @@ async function isBattleUnfinished(battleId: string): Promise<boolean> {
  *
  * A fight already under way is returned rather than restaged, so a
  * second acceptance walks back into the same one. A stop the player
- * has beaten, or one whose hour has rolled over, stages nothing.
+ * has beaten, or one whose window has rolled over, stages nothing.
  *
  * Resolves the battle id, or null when the challenge cannot be taken
  */
@@ -162,9 +163,9 @@ export async function startRocketBattle(
   if (record.player !== uid || record.defeated) {
     return null;
   }
-  // A grunt stands for the hour that staged them; past that, the
+  // A grunt stands for the window that staged them; past that, the
   // landmark has rolled somebody else
-  if (toLocalTime(now, record.offset) >= record.timestamp + RAID_INTERVAL) {
+  if (toLocalTime(now, record.offset) >= record.timestamp + ROCKET_INTERVAL) {
     return null;
   }
   if (record.battle != null && (await isBattleUnfinished(record.battle))) {

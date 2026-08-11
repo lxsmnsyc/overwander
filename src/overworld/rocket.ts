@@ -11,7 +11,7 @@ import deriveEncounter, { EncounterType, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './raid';
 
 /**
- * The Team Rocket stop: a grunt who bars a cell for the hour and
+ * The Team Rocket stop: a grunt who bars a cell for the window and
  * fights whoever accepts.
  *
  * It is a trainer battle rather than a raid — three pokemon a side,
@@ -23,13 +23,13 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './r
 
 /**
  * Every pokemon a grunt fields stands at the same level, so the fight
- * is about what the player brings rather than how the hour rolled
+ * is about what the player brings rather than how the window rolled
  */
 export const ROCKET_PARTY_LEVEL = 50;
 
 /**
  * What beating one pays. A grunt is a commoner's purse next to a
- * raid boss, and unlike a raid it can be found again next hour
+ * raid boss, and unlike a raid it can be found again next window
  */
 export const ROCKET_STOP_GOLD = 500;
 

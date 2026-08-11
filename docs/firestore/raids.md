@@ -1,12 +1,13 @@
 # Raids and battles
 
-Raids run on their own hour-long clock (`RAID_INTERVAL` in
+Raids run on their own three-hour clock (`RAID_INTERVAL` in
 [`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)) rather
 than the 5-minute spawn window, so a lobby stands long enough to gather a party.
+See [Windows](overworld.md#windows) for how a chunk's clocks line up.
 There are two landmark kinds:
 
 - **Legendary raids** draw from the chunk biome's special tier for the raid
-  hour's time of day, filtered to legendaries — mythicals are never staged.
+  window's time of day, filtered to legendaries — mythicals are never staged.
 - **Shadow raids** draw from the biome's rare band, except one draw in eight
   (`SHADOW_RAID_LEGENDARY_CHANCE`) which reaches the legendary pool instead.
   Their boss carries the `Shadow` ability alongside `Boss`.
@@ -29,21 +30,22 @@ lobby to reopen, since the id is `{chunkSeed}{zone}@{raidTimestamp}$mythical{ite
 and its record already exists. Hosting also refuses a player with no pokemon,
 rather than spending the relic on a lobby nobody can start.
 
-Once open it is an ordinary lobby: it appears in the hour's listing, anyone may
-join it, and it is fought, cleared and claimed through the same calls.
+Once open it is an ordinary lobby: it appears in the window's listing, anyone
+may join it, and it is fought, cleared and claimed through the same calls.
 
-A fourth landmark runs on the same hour without being a raid at all: the **Team
-Rocket Stop**, a solo trainer fight described under
+A fourth landmark runs on a clock of its own length (`ROCKET_INTERVAL`, also
+three hours) without being a raid at all: the **Team Rocket Stop**, a solo
+trainer fight described under
 [`rocketStops`](#rocketstopsstopiduid) below.
 
 ## `raids/{chunkSeed}@{raidTimestamp}${kind}{cell}`
 
 Written by `enterRaid` in [`src/auth/raids.ts`](../../src/auth/raids.ts). The id is
-derived, so every player who walks onto the landmark in the same hour joins the
+derived, so every player who walks onto the landmark in the same window joins the
 lobby that is already standing; the first to arrive hosts it. The kind tag is
 `raid` for a legendary raid and `shadow` for a shadow one, so the two landmark
 types never collide on a cell. The read and the create share a transaction, so
-one landmark stages exactly one raid per hour even when two players walk in
+one landmark stages exactly one raid per window even when two players walk in
 together — a player either opens the lobby or joins the one already there.
 
 | Field        | Type             | Notes                                                       |
@@ -54,8 +56,8 @@ together — a player either opens the lobby or joins the one already there.
 | `host`       | `string`         | Only this uid may start the raid                            |
 | `teams`      | `string[]`       | `teams/{teamId}` ids, appended via `arrayUnion`             |
 | `battle`     | `string \| null` | The battle the host started, null while gathering           |
-| `timestamp`  | `number`         | The **local** raid hour, for listing the live lobbies        |
-| `offset`     | `number`         | Minutes east of UTC the hour was read in                    |
+| `timestamp`  | `number`         | The **local** raid window, for listing the live lobbies     |
+| `offset`     | `number`         | Minutes east of UTC the window was read in                  |
 | `chunk`      | `{ seed, x, y }` | Where the lobby stands, for a listing with no chunk in hand |
 | `cell`       | `number`         | The landmark cell                                           |
 | `cleared`    | `boolean`        | Set when the boss goes down                                 |
@@ -75,15 +77,15 @@ worse than no lobby.
 
 `listLiveRaids(raidTimestamp, offset)` queries `timestamp` and `offset` together
 — **a composite index** — and keeps the lobbies that are neither started nor
-cleared; that is the Raids tab. Both are needed: the hour is local, so two zones
+cleared; that is the Raids tab. Both are needed: the window is local, so two zones
 can floor to the same one, and what they stage at a landmark is not the same
 boss. The lobby id carries the zone for the same reason.
 
-The hour gives the boss one defeat, not one fight:
+The window gives the boss one defeat, not one fight:
 
 - **Cleared.** `clearRaid` sets `cleared` when the boss goes down, and the
-  landmark shuts: `enterRaid` resolves null for the rest of the hour, and the
-  next hour rolls a new raid at the same cell.
+  landmark shuts: `enterRaid` resolves null for the rest of the window, and the
+  next window rolls a new raid at the same cell.
 - **Lost.** `enterRaid` reads the lobby's battle in the same transaction. A
   battle recorded as `Lost`, one whose document is gone, or one still
   `Unfinished` more than `RAID_BATTLE_TIMEOUT` (10 minutes) after its
@@ -215,12 +217,12 @@ pulled back into the bag and kept.
 
 ## `rocketStops/{stopId}:{uid}`
 
-A **Team Rocket Stop** is a landmark that stands a grunt on a cell for the raid
-hour. Unlike a raid it is not a lobby: the grunt fights each passer-by on their
+A **Team Rocket Stop** is a landmark that stands a grunt on a cell for
+`ROCKET_INTERVAL` (3 hours). Unlike a raid it is not a lobby: the grunt fights each passer-by on their
 own, so the state is **per player** and one player's victory closes nothing for
 anybody else.
 
-The stop id is `{chunkSeed}{zone}@{raidTimestamp}$rocket{cell}` and the document
+The stop id is `{chunkSeed}{zone}@{rocketTimestamp}$rocket{cell}` and the document
 appends the uid.
 
 | Field       | Type              | Notes                                                     |
@@ -228,15 +230,15 @@ appends the uid.
 | `player`    | `string`          | The uid this state belongs to                             |
 | `party`     | `RocketPokemon[]` | `{ species, individualValue, traitValue }`, weakest first |
 | `battle`    | `string \| null`  | The fight under way, or the last one fought               |
-| `timestamp` | `number`          | The local raid hour                                       |
+| `timestamp` | `number`          | The local rocket window                                   |
 | `offset`    | `number`          | Minutes east of UTC                                       |
 | `chunk`     | `{ seed, x, y }`  | Where the stop stands                                     |
 | `cell`      | `number`          | The landmark cell                                         |
 | `defeated`  | `boolean`         | Set when the grunt goes down                              |
 
 `enterRocketStop` rolls the party from the chunk itself — one from the biome's
-**base**, **uncommon** and **rare** bands for the hour, each with its own
-individual and trait values, and a band the hour leaves empty borrows from the
+**base**, **uncommon** and **rare** bands for the window, each with its own
+individual and trait values, and a band the window leaves empty borrows from the
 commonest one that is not. The record is written on first approach.
 
 `startRocketBattle` freezes the player's party exactly as `startRaid` does —
@@ -255,7 +257,7 @@ called it a raid prize would be saying the wrong thing about where it came from.
 See [Encounter kinds](encounters.md#encounter-kinds).
 
 Losing changes nothing: the grunt is still standing, and the stop can be fought
-again until the hour turns over. Winning is what closes it —
+again until the window turns over. Winning is what closes it —
 `claimRocketReward` pays `ROCKET_STOP_GOLD` (500) and stages one of the grunt's
 two **commoner** species as an encounter (the rare one is never handed over),
 shadowed, at a fixed `ROCKET_REWARD_LEVEL` (10) — so the same grunt is worth the

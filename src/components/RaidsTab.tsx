@@ -13,31 +13,31 @@ export interface RaidsTabProps {
 }
 
 /**
- * The lobbies still gathering this hour, and the one the player is
+ * The lobbies still gathering this window, and the one the player is
  * standing in. A lobby fills the tab rather than opening over it, so
  * going back is a walk out of the raid and into the list again
  */
 export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   const game = useGame();
-  // The raid hour comes from the server's clock; the listing then
+  // The raid window comes from the server's clock; the listing then
   // follows every lobby that opens, fills, starts or clears
-  // The hour is the player's own: the instant comes from the server,
+  // The window is the player's own: the instant comes from the server,
   // read in their zone, so a lobby they see is one staged where they
   // are standing in the day
   const zone = getLocalOffset();
-  const [hour] = createResource(async () => {
+  const [window] = createResource(async () => {
     const now = toLocalTime(await syncServerClock(), zone);
 
     return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
   });
 
   const raids = from<[string, RaidRecord][]>((set) => {
-    const raidHour = hour();
+    const raidWindow = window();
 
-    if (raidHour == null) {
+    if (raidWindow == null) {
       return () => undefined;
     }
-    return watchLiveRaids(raidHour, zone, (live) => {
+    return watchLiveRaids(raidWindow, zone, (live) => {
       set(live);
     });
   });
@@ -49,7 +49,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
         when={game.raid()}
         fallback={
           <>
-            <p>Every lobby still gathering in the current hour.</p>
+            <p>Every lobby still gathering in the current window.</p>
 
             <Show when={raids()} fallback={<p>Loading raids…</p>}>
               <Show when={raids()?.length} fallback={<p>No raids are gathering right now.</p>}>

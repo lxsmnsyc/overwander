@@ -324,9 +324,10 @@ export async function visitChunk(
 /**
  * Interact with an item cache landmark: everything buried there lands
  * in the player's bag — up to three kinds of up to three pieces, or a
- * single special. A claim marker (cache cell + window + player) guards
- * the grant, so each cache pays a player once per window — an expired
- * window's cache regenerates and can be claimed anew.
+ * single special. A claim marker (cache cell + landmark window +
+ * player) guards the grant, so each cache pays a player once per
+ * quarter hour — an expired window's cache regenerates and can be
+ * claimed anew.
  * Resolves the whole stash, or null when there is nothing to claim
  */
 export async function claimItemCache(
@@ -397,9 +398,10 @@ async function claimBerryOnServer(
 }
 
 /**
- * Take the egg a nest is holding. A nest refills once a local day
- * rather than once a window, and the marker behind it is stamped with
- * that day, so a nest gives each player one egg between midnights.
+ * Take the egg a nest is holding. A nest refills every twelve hours
+ * rather than every landmark window, and the marker behind it is
+ * stamped with that window, so a nest gives each player one egg
+ * between refills.
  *
  * Resolves the new egg's catch id, or null when the nest is empty
  */

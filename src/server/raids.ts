@@ -121,12 +121,12 @@ async function isRaidLost(
 
 /**
  * Walk into a raid landmark. The lobby id is derived from the chunk,
- * the raid hour, the cell and the kind, and the roll behind it comes
+ * the raid window, the cell and the kind, and the roll behind it comes
  * from the chunk's own seed against the server's clock — so what is
  * staged there is what the world staged, not what the caller says.
  *
- * The first arrival of the hour opens the lobby and hosts it, and
- * everyone after adopts what is already standing. The hour gives the
+ * The first arrival of the window opens the lobby and hosts it, and
+ * everyone after adopts what is already standing. The window gives the
  * boss one defeat, not one fight: a raid the party lost — or walked
  * out on — leaves the landmark open for the next arrival to restage
  * against the same roll. Only beating the boss shuts the cell.
@@ -135,7 +135,7 @@ async function isRaidLost(
  * whatever lobby is standing, as a spectator.
  *
  * Resolves the lobby id and its record, or null when the cell stages
- * no raid this hour, its raid has been cleared, or there is nothing
+ * no raid this window, its raid has been cleared, or there is nothing
  * standing for a spectator to watch
  */
 export async function enterRaid(
@@ -186,7 +186,7 @@ export async function enterRaid(
     };
 
     if (existing != null) {
-      // A cleared lobby stays shut until the hour turns over and the
+      // A cleared lobby stays shut until the window turns over and the
       // landmark rolls a new raid: the boss has been met
       if (existing.cleared) {
         return null;
@@ -221,12 +221,12 @@ export async function enterRaid(
  * walks away. Nothing restages it, unlike a landmark raid a party
  * failed.
  *
- * The lobby stands where the player was standing, for the hour they
+ * The lobby stands where the player was standing, for the window they
  * were standing there in, and is joinable by anyone the way any other
  * lobby is.
  *
  * Resolves the lobby id and its record, or null when the item calls
- * nothing, is not carried, or has already been spent on this hour's
+ * nothing, is not carried, or has already been spent on this window's
  * lobby
  */
 export async function hostMythicalRaid(
@@ -251,7 +251,7 @@ export async function hostMythicalRaid(
   const ref = db.collection(RAID_COLLECTION).doc(id);
   const stored = docData(await ref.get());
 
-  // The relic was already spent on this hour's lobby: whatever became
+  // The relic was already spent on this window's lobby: whatever became
   // of it — gathering, fought, lost — is what there is
   if (stored != null) {
     const existing = asRaidRecord(stored);
@@ -609,7 +609,7 @@ export async function finishBattle(
 }
 
 /**
- * Shut a raid's landmark for the rest of the hour. Only a raid whose
+ * Shut a raid's landmark for the rest of the window. Only a raid whose
  * battle is recorded as won can be cleared, so a player cannot close
  * a landmark by claiming a victory that never happened
  */
@@ -649,7 +649,7 @@ export interface RaidReward {
  * raidRewards/{raidId}:{uid} guards it, so the raid pays each fighter
  * once however late they come back for it — the gold and the pokemon
  * ride the same marker, so neither can be collected twice. The
- * encounter is derived against the raid's own chunk and hour, not
+ * encounter is derived against the raid's own chunk and window, not
  * wherever the player is standing now
  */
 export async function claimRaidReward(uid: string, lobby: string): Promise<RaidReward | null> {
@@ -698,7 +698,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   await grantGold(uid, gold);
 
   const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
-  // The raid's own hour and zone, not wherever the claimant is now
+  // The raid's own window and zone, not wherever the claimant is now
   const snapshot = new ChunkSnapshot(chunk, raid.timestamp, raid.offset);
   const [spawnId, spawn] = deriveRaidReward(raid, lobby, uid);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {

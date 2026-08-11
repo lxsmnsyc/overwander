@@ -3,15 +3,40 @@
 These are the synchronization surface: every player observing a chunk must
 derive the same spawns, so the rolls are published once and read by everyone.
 
+## Windows
+
+Nothing in a chunk turns over on one clock. A window is as long as what it holds
+is worth: the pokemon a player walks past are the fastest thing in the world, the
+ground they dig up is slower, and anything worth making a trip for outlives the
+trip. Every interval is a whole number of `SNAPSHOT_INTERVAL`s, so a landmark
+never rolls over halfway through the window a player is standing in.
+
+| Window               | Length     | What it turns over                          |
+| -------------------- | ---------- | ------------------------------------------- |
+| `SNAPSHOT_INTERVAL`  | 5 minutes  | The shared window document and its spawns   |
+| `LANDMARK_INTERVAL`  | 15 minutes | Item stashes, berry patches, hidden grottos |
+| `RAID_INTERVAL`      | 3 hours    | Legendary and shadow raid lobbies           |
+| `ROCKET_INTERVAL`    | 3 hours    | Team Rocket stops                           |
+| `NPC_INTERVAL`       | 6 hours    | Who is standing at a wandering-NPC cell     |
+| `NEST_INTERVAL`      | 12 hours   | The egg lying in a nest                     |
+
+All six are derived from the one snapshot the player is standing in
+([`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)):
+`timestamp` is floored to the spawn window, and `landmarkTimestamp`,
+`raidTimestamp`, `rocketTimestamp`, `npcTimestamp` and `nestTimestamp` floor that
+again to their own. Every claim marker and lobby id is stamped with the window
+its landmark actually runs on, so a stash cannot be re-dug three times while the
+hole is still empty.
+
 ## `snapshots/{chunkSeed}:{zone}`
 
 Written by `resolveSnapshotWindow` in
 [`src/auth/snapshots.ts`](../../src/auth/snapshots.ts), inside a transaction.
 
-| Field       | Type     | Notes                                                     |
-| ----------- | -------- | --------------------------------------------------------- |
-| `seed`      | `string` | The chunk seed, matching the first half of the id         |
-| `offset`    | `number` | Minutes east of UTC the window was read in                |
+| Field       | Type     | Notes                                                         |
+| ----------- | -------- | ------------------------------------------------------------- |
+| `seed`      | `string` | The chunk seed, matching the first half of the id             |
+| `offset`    | `number` | Minutes east of UTC the window was read in                    |
 | `timestamp` | `number` | The 5-minute **local** window, floored to `SNAPSHOT_INTERVAL` |
 
 Whoever finds the record missing or expired writes the new window and is told
@@ -93,7 +118,7 @@ fixed rather than rolled — `LEGENDARY_RAID_REWARD_LEVEL` (50) or
 `SHADOW_RAID_REWARD_LEVEL` (25) — so clearing the same kind of raid is worth the
 same to everyone, and the level-up moves follow that level.
 
-## `cacheClaims/{chunkSeed}@{timestamp}${cell}:{uid}`
+## `cacheClaims/{chunkSeed}@{landmarkTimestamp}${cell}:{uid}`
 
 Written by `claimItemCache` inside a transaction; its existence is the claim
 marker that stops a player collecting the same cache twice in one window.
@@ -125,10 +150,10 @@ cache paid is readable afterwards rather than only that it paid.
 Claims are never updated or deleted — an expired window simply produces a new
 document id. Only the named player may create one.
 
-## `berryClaims/{chunkSeed}@{timestamp}$berry{cell}:{uid}`
+## `berryClaims/{chunkSeed}@{landmarkTimestamp}$berry{cell}:{uid}`
 
 Written by `claimBerryPatch`, the same one-claim-per-window marker as an item
-cache. A berry patch fruits on the 5-minute snapshot window: picked or not, the
+cache. A berry patch fruits on the 15-minute landmark window: picked or not, the
 next window grows something new.
 
 | Field    | Type     | Notes                              |
@@ -149,7 +174,7 @@ interesting draw and the count is only how good a season it had. That is the
 difference from a cache, which rolls several kinds but rarely more than one or
 two of each.
 
-## `grottoClaims/{chunkSeed}@{timestamp}$grotto{cell}:{uid}`
+## `grottoClaims/{chunkSeed}@{landmarkTimestamp}$grotto{cell}:{uid}`
 
 Written by `claimHiddenGrotto`, the same one-claim-per-window marker as an item
 cache.
@@ -165,28 +190,29 @@ base tier out, so nothing common is ever in one. A pokemon reward
 comes back as a spawn tuple whose two rolls derive from
 `{seed}{timestamp}grotto{cell}spawn`, so every observer of that grotto meets the
 same individual; the caller passes it to `startEncounter` under the id
-`{chunkSeed}@{timestamp}$grotto{cell}`, which has no `spawns` document behind it.
+`{chunkSeed}@{landmarkTimestamp}$grotto{cell}`, which has no `spawns` document
+behind it.
 
 ## `nestClaims/{chunkSeed}{zone}@{nestTimestamp}$nest{cell}:{uid}`
 
 Written by `claimNest` in
 [`src/server/overworld.ts`](../../src/server/overworld.ts), the same
 one-claim-per-window marker as an item cache — except that a nest's window is
-`NEST_INTERVAL`, a full **local day**. A nest refills at midnight where the
-player is standing, so it gives each of them one egg between midnights.
+`NEST_INTERVAL`, **twelve local hours**. A nest refills at midnight and at noon
+where the player is standing, so it gives each of them one egg per half day.
 
-| Field     | Type      | Notes                              |
-| --------- | --------- | ---------------------------------- |
-| `player`  | `string`  | Claiming uid                       |
-| `species` | `Species` | What the nest was holding that day |
+| Field     | Type      | Notes                                 |
+| --------- | --------- | ------------------------------------- |
+| `player`  | `string`  | Claiming uid                          |
+| `species` | `Species` | What the nest was holding that window |
 
 The player still has to be standing in the chunk's **live 5-minute window** to
-reach it; the day-long window only decides what is lying there and how often.
+reach it; the half-day window only decides what is lying there and how often.
 The claim grants an egg by writing a `caught` document with `egg` set — see
 [Eggs](catches.md#eggs) — rather than an inventory item or an encounter.
 
 What a nest holds is drawn from the biome's base, uncommon and rare bands for
-that day's time of day and then reduced to the first stage of its line: a nest
+that window's time of day and then reduced to the first stage of its line: a nest
 holds what hatches, not what it grows into. The special tier is left out
 entirely, so no nest ever holds a legendary, and a mythical is still called with
 a relic or not at all. The hatchling is guaranteed one move off its line's egg
@@ -195,14 +221,15 @@ list, which is the reason to walk the egg at all.
 ## Wandering NPCs
 
 A `WanderingNpc` landmark has **no store of its own**. The cell is fixed by the
-chunk seed like any landmark, but who is standing on it is drawn afresh each
-raid hour from `getWanderingNpcs` — the same hour-long window a raid or a Team
-Rocket grunt runs on. A player who needs a breeder waits an hour or walks to
-another one.
+chunk seed like any landmark, but who is standing on it is drawn afresh every
+`NPC_INTERVAL` (6 hours) from `getWanderingNpcs` — twice as long as the raid a
+chunk stages, so a raid rolling over changes nothing about who is at the cell. A
+player who needs a breeder and finds a daycare lady waits for the afternoon or
+walks to another one.
 
 Both services are paid for in gold, and neither trusts the caller about who they
-are talking to: `src/server/npcs.ts` re-derives the chunk, the zone and the hour
-and checks the NPC standing there **before** charging anything. Gold is spent
+are talking to: `src/server/npcs.ts` re-derives the chunk, the zone and the
+window and checks the NPC standing there **before** charging anything. Gold is spent
 first and handed back if the write behind it fails, so a player is never charged
 for nothing.
 

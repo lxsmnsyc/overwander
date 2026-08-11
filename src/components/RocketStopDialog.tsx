@@ -21,7 +21,7 @@ export interface RocketStopDialogProps {
 /**
  * The grunt's challenge, put to the player. Accepting picks a party
  * and drops straight into the fight; declining walks away, and the
- * grunt is still there to be fought again while the hour lasts
+ * grunt is still there to be fought again while the window lasts
  */
 export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Element {
   const game = useGame();
@@ -85,9 +85,9 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                     )}
                   </For>
                 </ul>
-                {/* Losing costs the hour nothing: the grunt stays put
-                    until they are beaten or the hour turns over */}
-                <p>Lose and they will still be here. Win and they are gone for the hour.</p>
+                {/* Losing costs the window nothing: the grunt stays put
+                    until they are beaten or the window turns over */}
+                <p>Lose and they will still be here. Win and they are gone for the window.</p>
               </>
             )}
           </Show>

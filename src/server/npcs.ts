@@ -18,7 +18,7 @@ import { docData } from './read';
  * do for a fee.
  *
  * Who is standing there is not the caller's to say: it is re-derived
- * from the chunk, the zone and the hour before anything is charged,
+ * from the chunk, the zone and the window before anything is charged,
  * so asking a breeder to push an egg along — or asking either of them
  * from a cell that has neither — is refused rather than paid for.
  *
@@ -28,7 +28,7 @@ import { docData } from './read';
  */
 
 /**
- * Who is standing at the cell this hour, or null when the player is
+ * Who is standing at the cell this window, or null when the player is
  * not at a live window, the cell holds no wandering NPC, or somebody
  * else is standing there
  */
@@ -123,10 +123,10 @@ export async function breedCatches(
     return null;
   }
 
-  // Seeded by the pair and the hour, so this visit's egg is this
+  // Seeded by the pair and the window, so this visit's egg is this
   // visit's egg — and by the instant, so the same pair left again is
   // a different one
-  const seed = `${snapshot.key}${snapshot.raidTimestamp}breed${cell}:${uid}:${left}:${right}:${now}`;
+  const seed = `${snapshot.key}${snapshot.npcTimestamp}breed${cell}:${uid}:${left}:${right}:${now}`;
 
   try {
     return await grantBredEgg(uid, snapshot, seed, species, [first, second], now, offset, locale);

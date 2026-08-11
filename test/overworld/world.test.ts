@@ -25,8 +25,12 @@ import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-rec
 import type Chunk from '../../src/overworld/chunk';
 import { neighborCells } from '../../src/overworld/chunk';
 import ChunkSnapshot, {
+  LANDMARK_INTERVAL,
   NEST_INTERVAL,
+  NPC_INTERVAL,
   RAID_INTERVAL,
+  ROCKET_INTERVAL,
+  SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
 } from '../../src/overworld/chunk-snapshot';
 import {
@@ -218,7 +222,7 @@ describe('world', () => {
       }
     }
 
-    const WINDOW = 5 * 60 * 1000;
+    const WINDOW = LANDMARK_INTERVAL;
     const caches = new ChunkSnapshot(chunk, 0).getItemCaches();
 
     // Every reward sits on an ItemCache landmark cell
@@ -227,8 +231,12 @@ describe('world', () => {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ItemCache);
     }
 
-    // The same window agrees for every observer
+    // The same window agrees for every observer, and the ground
+    // outlives the spawns: three spawn windows share one stash
     expect(new ChunkSnapshot(chunk, 60 * 1000).getItemCaches()).toEqual(caches);
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getItemCaches()).toEqual(caches);
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).landmarkTimestamp).toBe(0);
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL).landmarkTimestamp).toBe(LANDMARK_INTERVAL);
 
     // Expired windows regenerate: rewards vary across windows
     const shapes = new Set<string>();
@@ -252,7 +260,7 @@ describe('world', () => {
       }
     }
 
-    const WINDOW = 5 * 60 * 1000;
+    const WINDOW = LANDMARK_INTERVAL;
     const grottos = new ChunkSnapshot(chunk, 0).getHiddenGrottos();
 
     // Every reward sits on a HiddenGrotto landmark cell
@@ -261,8 +269,10 @@ describe('world', () => {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.HiddenGrotto);
     }
 
-    // The same window agrees for every observer
+    // The same window agrees for every observer, and a grotto keeps
+    // what it hides for the whole quarter hour
     expect(new ChunkSnapshot(chunk, 60 * 1000).getHiddenGrottos()).toEqual(grottos);
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getHiddenGrottos()).toEqual(grottos);
 
     // Expired windows regenerate: rewards vary across windows
     const shapes = new Set<string>();
@@ -272,7 +282,7 @@ describe('world', () => {
     expect(shapes.size).toBeGreaterThan(1);
   });
 
-  it('stages legendary raids on the hour', () => {
+  it('stages legendary raids on the raid window', () => {
     const world = new World('overworld');
     // Alpine tundra stages Articuno; the raid roll only reads the
     // biome's special tier, so the chunk just has to sit in one
@@ -296,14 +306,14 @@ describe('world', () => {
       expect(roll.species).toBe(Species.Articuno);
     }
 
-    // Every 5-minute window inside the hour stages the same raid,
-    // even as the spawns around it turn over
-    const later = new ChunkSnapshot(chunk, 55 * 60 * 1000);
+    // Every spawn window inside the raid's three hours stages the
+    // same raid, even as the spawns around it turn over
+    const later = new ChunkSnapshot(chunk, RAID_INTERVAL - SNAPSHOT_INTERVAL);
 
     expect(later.raidTimestamp).toBe(0);
     expect([...later.getLegendaryRaids()]).toEqual([...raids]);
 
-    // The next hour rolls again
+    // The next window rolls again
     const next = new ChunkSnapshot(chunk, RAID_INTERVAL);
 
     expect(next.raidTimestamp).toBe(RAID_INTERVAL);
@@ -450,7 +460,7 @@ describe('world', () => {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocketStop);
 
       // Three pokemon, weakest first: one from each of the biome's
-      // base, uncommon and rare bands — a band the hour leaves empty
+      // base, uncommon and rare bands — a band the window leaves empty
       // borrows from the commonest one that is not
       expect(party).toHaveLength(3);
       for (const [at, band] of [pool.base, pool.uncommon, pool.rare].entries()) {
@@ -460,9 +470,11 @@ describe('world', () => {
       }
     }
 
-    // The hour fixes them, and the next hour rolls somebody else
-    expect(new ChunkSnapshot(chunk, 30 * 60 * 1000).getRocketStops()).toEqual(stops);
-    expect(new ChunkSnapshot(chunk, RAID_INTERVAL).getRocketStops()).not.toEqual(stops);
+    // The window fixes them, and the next one rolls somebody else
+    expect(snapshot.rocketTimestamp).toBe(0);
+    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL - 1).getRocketStops()).toEqual(stops);
+    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL).getRocketStops()).not.toEqual(stops);
+    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL).rocketTimestamp).toBe(ROCKET_INTERVAL);
   });
 
   it('fields a grunt at a fixed level, shadowed, with rolled traits', () => {
@@ -568,7 +580,7 @@ describe('world', () => {
       expect(rare || legendary).toBe(true);
     }
 
-    // The hour holds the roll, the same way legendary raids do
+    // The window holds the roll, the same way legendary raids do
     expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowRaids()]).toEqual([...raids]);
   });
 
@@ -781,7 +793,7 @@ describe('world', () => {
     }
   });
 
-  it('ripens berry patches on the snapshot window', () => {
+  it('ripens berry patches on the landmark window', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
       new Set(candidate.getLandmarkCells().values()).has(Landmark.BerryPatch),
@@ -792,7 +804,7 @@ describe('world', () => {
       return;
     }
 
-    const WINDOW = 5 * 60 * 1000;
+    const WINDOW = LANDMARK_INTERVAL;
     const patches = new ChunkSnapshot(chunk, 0).getBerryPatches();
 
     // Every pick sits on a patch cell, is a berry, and is a handful
@@ -805,8 +817,10 @@ describe('world', () => {
       expect(picked.amount).toBeLessThanOrEqual(MAX_BERRY_PICK);
     }
 
-    // The same window agrees for every observer
+    // The same window agrees for every observer, and a bush keeps
+    // its fruit for the whole quarter hour
     expect(new ChunkSnapshot(chunk, 60 * 1000).getBerryPatches()).toEqual(patches);
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getBerryPatches()).toEqual(patches);
 
     // Expired windows grow something new
     const shapes = new Set<string>();
@@ -817,7 +831,7 @@ describe('world', () => {
     expect(shapes.size).toBeGreaterThan(1);
   });
 
-  it('holds one egg species in a nest for the whole local day', () => {
+  it('holds one egg species in a nest for the whole half day', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
       new Set(candidate.getLandmarkCells().values()).has(Landmark.Nest),
@@ -847,14 +861,49 @@ describe('world', () => {
     }
 
     // A nest outlives every other landmark in the chunk: the spawns
-    // around it turn over all day and it holds the same egg
+    // around it turn over half a day and it holds the same egg
     expect(snapshot.nestTimestamp).toBe(0);
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).getNests()).toEqual(nests);
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL - 1).nestTimestamp).toBe(0);
     expect(new ChunkSnapshot(chunk, NEST_INTERVAL).nestTimestamp).toBe(NEST_INTERVAL);
   });
 
-  it('puts a different passer-by on a wandering cell each hour', () => {
+  it('gives everything in a chunk a window of its own', () => {
+    // What a window is worth is how long it is: the pokemon a player
+    // walks past turn over fastest, the ground they dig up slower,
+    // and the things worth making a trip for slowest of all
+    expect(SNAPSHOT_INTERVAL).toBe(5 * 60 * 1000);
+    expect(LANDMARK_INTERVAL).toBe(15 * 60 * 1000);
+    expect(RAID_INTERVAL).toBe(3 * 60 * 60 * 1000);
+    expect(ROCKET_INTERVAL).toBe(3 * 60 * 60 * 1000);
+    expect(NPC_INTERVAL).toBe(6 * 60 * 60 * 1000);
+    expect(NEST_INTERVAL).toBe(12 * 60 * 60 * 1000);
+
+    // Every window is a whole number of spawn windows, so no landmark
+    // ever turns over halfway through the one a player is standing in
+    for (const interval of [
+      LANDMARK_INTERVAL,
+      RAID_INTERVAL,
+      ROCKET_INTERVAL,
+      NPC_INTERVAL,
+      NEST_INTERVAL,
+    ]) {
+      expect(interval % SNAPSHOT_INTERVAL).toBe(0);
+      expect(interval).toBeGreaterThanOrEqual(SNAPSHOT_INTERVAL);
+    }
+
+    // And each is read off the same snapshot, floored to its own
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(0, 0), NPC_INTERVAL + LANDMARK_INTERVAL);
+
+    expect(snapshot.landmarkTimestamp).toBe(NPC_INTERVAL + LANDMARK_INTERVAL);
+    expect(snapshot.raidTimestamp).toBe(RAID_INTERVAL * 2);
+    expect(snapshot.rocketTimestamp).toBe(ROCKET_INTERVAL * 2);
+    expect(snapshot.npcTimestamp).toBe(NPC_INTERVAL);
+    expect(snapshot.nestTimestamp).toBe(0);
+  });
+
+  it('puts a different passer-by on a wandering cell each window', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
       new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
@@ -873,15 +922,18 @@ describe('world', () => {
       expect(new Set(NPCS).has(npc)).toBe(true);
     }
 
-    // Whoever it is stands for the hour, and the hours are not all
-    // the same person
-    expect(new ChunkSnapshot(chunk, 30 * 60 * 1000).getWanderingNpcs()).toEqual(wanderers);
+    // Whoever it is stands for six hours — twice a raid, so a raid
+    // rolling over does not change who is at the cell — and the
+    // windows are not all the same person
+    expect(new ChunkSnapshot(chunk, RAID_INTERVAL).getWanderingNpcs()).toEqual(wanderers);
+    expect(new ChunkSnapshot(chunk, NPC_INTERVAL - 1).getWanderingNpcs()).toEqual(wanderers);
+    expect(new ChunkSnapshot(chunk, NPC_INTERVAL).npcTimestamp).toBe(NPC_INTERVAL);
 
     const shapes = new Set<string>();
 
-    for (let hour = 0; hour < 24; hour++) {
+    for (let window = 0; window < 24; window++) {
       shapes.add(
-        JSON.stringify([...new ChunkSnapshot(chunk, hour * RAID_INTERVAL).getWanderingNpcs()]),
+        JSON.stringify([...new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs()]),
       );
     }
     expect(shapes.size).toBeGreaterThan(1);
@@ -1045,7 +1097,7 @@ describe('chunk snapshot', () => {
       findChunk(world, (candidate) =>
         new Set(candidate.getLandmarkCells().values()).has(Landmark.ItemCache),
       ) ?? chunk;
-    const WINDOW = 5 * 60 * 1000;
+    const WINDOW = LANDMARK_INTERVAL;
     const caches = (offset: number): string =>
       JSON.stringify(
         Array.from({ length: 6 }, (_, at) => [

@@ -13,9 +13,9 @@ import { toZoneKey } from './local-time';
  * What a Team Rocket stop is, and how a stored one is read back.
  *
  * Unlike a raid lobby, a stop is **per player**: the grunt stands at
- * the cell for the hour and fights each passer-by on their own. A
- * player who loses may try again while the hour lasts; one who wins
- * is done with that stop until the next hour rolls a new grunt. One
+ * the cell for its window and fights each passer-by on their own. A
+ * player who loses may try again while the window lasts; one who wins
+ * is done with that stop until the next window rolls a new grunt. One
  * player's victory closes nothing for anybody else.
  */
 
@@ -45,11 +45,11 @@ export interface RocketRecord {
    */
   battle: string | null;
   /**
-   * The local raid hour the stop belongs to
+   * The local rocket window the stop belongs to
    */
   timestamp: number;
   /**
-   * Minutes east of UTC the hour was read in
+   * Minutes east of UTC the window was read in
    */
   offset: number;
   /**
@@ -60,7 +60,7 @@ export interface RocketRecord {
   cell: number;
   /**
    * Set when the grunt goes down. A beaten stop is shut for this
-   * player for the rest of the hour; a lost one is not
+   * player for the rest of the window; a lost one is not
    */
   defeated: boolean;
 }
@@ -109,18 +109,18 @@ export function toSpawns(party: RocketPokemon[]): Spawn[] {
 }
 
 /**
- * The stop's id for a given hour: the chunk, the zone, the hour and
- * the cell. The player is not part of it — the caller appends their
+ * The stop's id for a given window: the chunk, the zone, the window
+ * and the cell. The player is not part of it — the caller appends their
  * uid — so the stop is one landmark whose state each player keeps
  * their own copy of
  */
 export function rocketStopId(
   chunk: Chunk,
-  raidTimestamp: number,
+  rocketTimestamp: number,
   cell: number,
   offset = 0,
 ): string {
-  return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$rocket${cell}`;
+  return `${chunk.seed}${toZoneKey(offset)}@${rocketTimestamp}$rocket${cell}`;
 }
 
 /**

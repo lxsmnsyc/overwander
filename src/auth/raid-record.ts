@@ -39,8 +39,8 @@ export const enum RaidKind {
 
 /**
  * One raid lobby at raids/{raidId}. The id is derived from the chunk,
- * the raid hour, the landmark cell and the kind, so every player who
- * walks into the same lobby in the same hour joins one raid
+ * the raid window, the landmark cell and the kind, so every player
+ * who walks into the same lobby in the same window joins one raid
  */
 export interface RaidRecord {
   kind: RaidKind;
@@ -63,14 +63,14 @@ export interface RaidRecord {
    */
   battle: string | null;
   /**
-   * The raid hour this lobby belongs to; a listing of live raids
-   * matches on it, and the landmark reopens when the hour turns over
+   * The raid window this lobby belongs to; a listing of live raids
+   * matches on it, and the landmark reopens when the window turns over
    */
   timestamp: number;
   /**
-   * Minutes east of UTC the hour was read in. A raid hour is local,
+   * Minutes east of UTC the window was read in. A raid window is local,
    * so a lobby belongs to the zone that staged it — another zone's
-   * landmark rolls its own boss at its own hour
+   * landmark rolls its own boss at its own window
    */
   offset: number;
   /**
@@ -80,7 +80,7 @@ export interface RaidRecord {
   cell: number;
   /**
    * Set once the boss goes down. A cleared raid keeps its landmark
-   * shut for the rest of the hour — the legendary has been met
+   * shut for the rest of the window — the legendary has been met
    */
   cleared: boolean;
 }
@@ -108,7 +108,7 @@ export function asRaidRecord(value: unknown): RaidRecord {
   };
 }
 /**
- * The lobby id of a raid landmark in a given raid hour. The kind is
+ * The lobby id of a raid landmark in a given raid window. The kind is
  * part of it, so the two landmark types never collide on a cell
  */
 export function raidId(
@@ -120,17 +120,17 @@ export function raidId(
 ): string {
   const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
 
-  // The zone is part of the id because the hour is local: two zones
-  // can floor to the same hour, and what they stage there is not the
+  // The zone is part of the id because the window is local: two zones
+  // can floor to the same window, and what they stage there is not the
   // same boss
   return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
 }
 /**
- * The lobby id of a mythical raid: the hour, the zone, the relic that
+ * The lobby id of a mythical raid: the window, the zone, the relic that
  * called it and whoever spent it. A mythical stands on no landmark,
  * so there is no cell to name — what identifies it is the item and
  * the player who used it, which also means one relic opens one lobby
- * an hour rather than a lobby per attempt
+ * a window rather than a lobby per attempt
  */
 export function mythicalRaidId(
   chunk: Chunk,

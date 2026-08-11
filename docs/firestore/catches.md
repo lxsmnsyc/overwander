@@ -164,7 +164,7 @@ hatches with the Shadow ability for good, costs double candy to raise
 afterwards, and takes `SHADOW_HATCH_FACTOR` (2×) the usual steps to open: what
 is in there should not be, and it takes longer to come out.
 
-The stream is seeded by the pair, the hour, the player and the instant, so the
+The stream is seeded by the pair, the window, the player and the instant, so the
 same two left with the breeder again are a different egg — and no egg can be
 re-rolled by asking twice.
 

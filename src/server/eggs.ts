@@ -200,7 +200,7 @@ export async function grantNestEgg(
  * whether it sparkles — comes from the same trait value any hatchling
  * would have.
  *
- * The stream is seeded by the pair and the hour, so the egg is this
+ * The stream is seeded by the pair and the window, so the egg is this
  * visit's egg rather than one a player can re-roll by asking again.
  *
  * Resolves the new catch id
@@ -245,7 +245,7 @@ export async function grantBredEgg(
       // Something that should not be in there takes twice as long to
       // come out
       hatchSteps: shadow ? EGG_HATCH_STEPS * SHADOW_HATCH_FACTOR : EGG_HATCH_STEPS,
-      timestamp: snapshot.raidTimestamp,
+      timestamp: snapshot.npcTimestamp,
     },
     now,
     offset,

@@ -41,7 +41,7 @@ export interface ActiveBattle {
  * safari encounter the next time the player is standing there.
  *
  * Nothing about the prize travels in it — the species, the level,
- * whether it is shadowed, the chunk and hour it comes from are all
+ * whether it is shadowed, the chunk and window it comes from are all
  * read off the raid or the stop when it is claimed
  */
 export type PendingReward = { raid: string; stop?: undefined } | { stop: string; raid?: undefined };

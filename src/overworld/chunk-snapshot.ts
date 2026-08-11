@@ -35,19 +35,52 @@ export const SPAWN_COUNT = 6;
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
 /**
- * Legendary raids run on their own, far slower clock: a raid stands
- * for a full hour, long enough for players to gather a party, while
- * the spawns around it turn over twelve times
+ * Nothing in a chunk turns over on one clock. A window is as long as
+ * what it holds is worth: the spawns a player walks past all day are
+ * the fastest thing here, and everything a player would make a trip
+ * for is slower than the trip.
+ *
+ * Every interval below is a multiple of `SNAPSHOT_INTERVAL`, so a
+ * window boundary is always a snapshot boundary too — a landmark
+ * never turns over halfway through the window a player is standing in
  */
-export const RAID_INTERVAL = 60 * 60 * 1000;
 
 /**
- * A nest runs slower than anything else in a chunk: one egg per
- * local day. Its window is the player's own calendar day, since the
- * snapshot's clock is already local — a nest refills at midnight
- * where the player is standing
+ * What the ground gives up: item stashes, berry patches and hidden
+ * grottos. Three spawn windows rather than one, so a lap of a chunk
+ * is worth walking and a lap of the same landmark is not
  */
-export const NEST_INTERVAL = 24 * 60 * 60 * 1000;
+export const LANDMARK_INTERVAL = 15 * 60 * 1000;
+
+/**
+ * Legendary and shadow raids. A raid stands for three hours: long
+ * enough that a party can be gathered around one, rare enough that
+ * the one standing in a chunk is worth travelling to
+ */
+export const RAID_INTERVAL = 3 * 60 * 60 * 1000;
+
+/**
+ * Team Rocket's stops, on the raid's own clock. A grunt is a fight
+ * rather than a landmark — it keeps the pace of the other fights in
+ * the chunk rather than the pace of the ground
+ */
+export const ROCKET_INTERVAL = 3 * 60 * 60 * 1000;
+
+/**
+ * How long the same person stays at a wandering-NPC cell. Twice a
+ * raid: a player who needs a breeder and finds a daycare lady is
+ * waiting for the afternoon rather than the next quarter hour, which
+ * is what makes finding the one they wanted worth something
+ */
+export const NPC_INTERVAL = 6 * 60 * 60 * 1000;
+
+/**
+ * A nest runs slower than anything else in a chunk: one egg every
+ * twelve hours, which is one in the morning and one in the evening
+ * for a player who walks the same ground twice a day. The window is
+ * local, since the snapshot's clock already is
+ */
+export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
 
 /**
  * How often a shadow raid reaches past the biome's rare species and
@@ -198,13 +231,23 @@ export default class ChunkSnapshot {
     return placed;
   }
 
+  /**
+   * The quarter-hour window the chunk's ground belongs to: what a
+   * stash holds, what a patch grew, what a grotto hides. It outlives
+   * three spawn windows, so a landmark picked clean stays picked
+   * clean while the pokemon around it turn over
+   */
+  get landmarkTimestamp(): number {
+    return Math.floor(this.timestamp / LANDMARK_INTERVAL) * LANDMARK_INTERVAL;
+  }
+
   private itemCaches: Map<number, ItemStack[]> | null = null;
 
   /**
    * The window's item-cache stashes, keyed by the landmark cell. Each
    * ItemCache landmark rolls what it is holding from the chunk seed
-   * and the window, so a cache is only acquirable while the window
-   * lives — once expired, the next window buries something else.
+   * and the landmark window, so a cache is only acquirable while that
+   * window lives — once expired, the next one buries something else.
    *
    * A stash is up to three kinds of up to three pieces; a cell that
    * rolled nothing is left out entirely
@@ -215,7 +258,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
-          const rng = new AleaRNG(`${this.key}${this.timestamp}cache${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}cache${cell}`);
           const stash = resolveItemCache(() => rng.random());
 
           if (stash.length > 0) {
@@ -233,8 +276,8 @@ export default class ChunkSnapshot {
   /**
    * The window's ripe berries, keyed by the landmark cell: the kind
    * each patch grew and how much of it is on the bush. A patch fruits
-   * on the same 5-minute clock as an item cache: picked or not, the
-   * next window grows something new
+   * on the same quarter-hour clock as an item cache: picked or not,
+   * the next window grows something new
    */
   getBerryPatches(): Map<number, ItemStack> {
     if (this.berryPatches == null) {
@@ -242,7 +285,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.BerryPatch) {
-          const rng = new AleaRNG(`${this.key}${this.timestamp}berry${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}berry${cell}`);
           const berry = resolveBerryPatch(() => rng.random());
 
           if (berry != null) {
@@ -256,9 +299,10 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * The hour-long window the chunk's raids belong to. Raids outlive
-   * the 5-minute spawn window, so every snapshot taken within the
-   * same hour stages the same legendary
+   * The three-hour window the chunk's raids belong to. A raid far
+   * outlives the spawn window, so every snapshot taken within the
+   * same stretch stages the same legendary and a party has time to
+   * gather around it
    */
   get raidTimestamp(): number {
     return Math.floor(this.timestamp / RAID_INTERVAL) * RAID_INTERVAL;
@@ -267,9 +311,9 @@ export default class ChunkSnapshot {
   private raids: Map<number, RaidRoll> | null = null;
 
   /**
-   * The hour's legendary raids, keyed by the landmark cell. The
+   * The raid window's legendary raids, keyed by the landmark cell. The
    * legendary is drawn from the biome's special tier for the raid
-   * hour's time of day, so a chunk only stages what belongs there —
+   * window's time of day, so a chunk only stages what belongs there —
    * mythicals never appear, and a biome whose special tier holds no
    * legendary stages no raid at all
    */
@@ -299,11 +343,11 @@ export default class ChunkSnapshot {
   private shadowRaids: Map<number, RaidRoll> | null = null;
 
   /**
-   * The hour's shadow raids, keyed by the landmark cell. A shadow
-   * raid usually stages one of the biome's rare species, but one
-   * draw in eight reaches the legendary pool instead — the same odds
-   * the rarer bands use everywhere else. A cell with nothing to
-   * stage in either pool holds no raid this hour
+   * The raid window's shadow raids, keyed by the landmark cell. A
+   * shadow raid usually stages one of the biome's rare species, but
+   * one draw in eight reaches the legendary pool instead — the same
+   * odds the rarer bands use everywhere else. A cell with nothing to
+   * stage in either pool holds no raid this window
    */
   getShadowRaids(): Map<number, RaidRoll> {
     if (this.shadowRaids == null) {
@@ -335,13 +379,22 @@ export default class ChunkSnapshot {
     return this.shadowRaids;
   }
 
+  /**
+   * The window Team Rocket's stops belong to. A grunt keeps a raid's
+   * hours rather than a landmark's: the two are the fights of a chunk,
+   * and both are worth walking to while they stand
+   */
+  get rocketTimestamp(): number {
+    return Math.floor(this.timestamp / ROCKET_INTERVAL) * ROCKET_INTERVAL;
+  }
+
   private rocketStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The hour's Team Rocket stops, keyed by the landmark cell: the
+   * The window's Team Rocket stops, keyed by the landmark cell: the
    * three pokemon the grunt standing there fights with, drawn one
    * from each of the biome's base, uncommon and rare bands for the
-   * raid hour's time of day.
+   * rocket window's time of day.
    *
    * A band the biome leaves empty at this hour falls back to the
    * nearest one that has anything — a grunt three pokemon short is no
@@ -355,7 +408,7 @@ export default class ChunkSnapshot {
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
+      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.rocketTimestamp));
       const bands = [pool.base, pool.uncommon, pool.rare];
       // Weakest first, so the party reads the way it is fought; a
       // thin band borrows from the commonest one that is not empty
@@ -369,7 +422,7 @@ export default class ChunkSnapshot {
             continue;
           }
 
-          const rng = new AleaRNG(`${this.key}${this.raidTimestamp}rocket${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.rocketTimestamp}rocket${cell}`);
 
           stops.set(
             cell,
@@ -387,9 +440,9 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * The day-long window the chunk's nests belong to. A nest outlives
+   * The half-day window the chunk's nests belong to. A nest outlives
    * every other landmark in the chunk: the spawns around it turn over
-   * two hundred and eighty-eight times before it holds a new egg
+   * a hundred and forty-four times before it holds a new egg
    */
   get nestTimestamp(): number {
     return Math.floor(this.timestamp / NEST_INTERVAL) * NEST_INTERVAL;
@@ -398,9 +451,9 @@ export default class ChunkSnapshot {
   private nests: Map<number, Species> | null = null;
 
   /**
-   * The day's nests, keyed by the landmark cell: the species whose
+   * The window's nests, keyed by the landmark cell: the species whose
    * egg is lying in each. It is drawn from the biome's ordinary bands
-   * for the nest day's time of day and reduced to the first stage of
+   * for the nest window's time of day and reduced to the first stage of
    * its line — a nest holds what hatches, not what it grows into —
    * and the special tier is left out, so no nest ever holds a
    * legendary
@@ -432,12 +485,21 @@ export default class ChunkSnapshot {
     return this.nests;
   }
 
+  /**
+   * The window a wandering NPC's rounds belong to. Whoever is
+   * standing at the cell stays there for six hours, which is longer
+   * than anything else a player walks up to and shorter than a nest
+   */
+  get npcTimestamp(): number {
+    return Math.floor(this.timestamp / NPC_INTERVAL) * NPC_INTERVAL;
+  }
+
   private wanderers: Map<number, Npc> | null = null;
 
   /**
-   * Who is standing at each wandering-NPC cell this hour. The cell is
-   * the chunk's own, fixed forever like every landmark, but the
-   * person on it is drawn afresh each raid hour — so a player who
+   * Who is standing at each wandering-NPC cell this window. The cell
+   * is the chunk's own, fixed forever like every landmark, but the
+   * person on it is drawn afresh every six hours — so a player who
    * needs a breeder waits for one, or goes looking somewhere else
    */
   getWanderingNpcs(): Map<number, Npc> {
@@ -449,7 +511,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}npc${cell}`);
+        const rng = new AleaRNG(`${this.key}${this.npcTimestamp}npc${cell}`);
 
         wanderers.set(cell, NPCS[Math.floor(rng.random() * NPCS.length)]);
       }
@@ -463,23 +525,23 @@ export default class ChunkSnapshot {
   /**
    * The window's hidden-grotto rewards, keyed by the landmark cell.
    * Each HiddenGrotto landmark rolls its reward from the chunk seed
-   * and the window — the pokemon branch draws from the biome's pool
-   * for this window's time of day — so a grotto only yields while
-   * the window lives; the next window regenerates a new reward
+   * and the landmark window — the pokemon branch draws from the
+   * biome's pool for that window's time of day — so a grotto only
+   * yields while the window lives; the next one hides something else
    */
   getHiddenGrottos(): Map<number, GrottoReward> {
     if (this.hiddenGrottos == null) {
       const grottos = new Map<number, GrottoReward>();
-      const time = getTimeOfDay(this.timestamp);
+      const time = getTimeOfDay(this.landmarkTimestamp);
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.HiddenGrotto) {
-          const rng = new AleaRNG(`${this.key}${this.timestamp}grotto${cell}`);
+          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}grotto${cell}`);
           const reward = resolveHiddenGrotto(
             this.chunk.biome,
             time,
             () => rng.random(),
-            getFeaturedFamily(this.timestamp),
+            getFeaturedFamily(this.landmarkTimestamp),
           );
 
           if (reward != null) {

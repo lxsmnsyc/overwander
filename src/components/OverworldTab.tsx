@@ -225,7 +225,7 @@ export default function OverworldTab(): JSX.Element {
   const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
   /**
    * The passer-by the player has stopped at: the cell they are
-   * standing on and who is on it this hour, until their business is
+   * standing on and who is on it this window, until their business is
    * done or declined
    */
   const [wanderer, setWanderer] = createSignal<[number, Npc] | null>(null);
@@ -485,7 +485,7 @@ export default function OverworldTab(): JSX.Element {
       const standing = loaded.snapshot.getWanderingNpcs().get(at);
 
       if (standing == null) {
-        return 'Nobody is passing through this hour.';
+        return 'Nobody is passing through right now.';
       }
       // What they want is put to the player rather than taken from
       // them; the dialog is where the fee is agreed to
@@ -516,9 +516,9 @@ export default function OverworldTab(): JSX.Element {
       const stop = await enterRocketStop(loaded.snapshot, at);
 
       if (stop == null) {
-        // Either the hour stages no grunt here, or this player has
+        // Either the window stages no grunt here, or this player has
         // already put the one it stages on the ground
-        return 'The stop is deserted this hour.';
+        return 'The stop is deserted right now.';
       }
       if (!(await canJoinRaids(user.uid))) {
         return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';
@@ -533,10 +533,10 @@ export default function OverworldTab(): JSX.Element {
       const lobby = await enterRaid(loaded.snapshot, at, kind);
 
       if (lobby == null) {
-        // Nothing to walk into: either the hour stages no raid here,
+        // Nothing to walk into: either the window stages no raid here,
         // or the player has no pokemon to stage one with
         return (await canJoinRaids(user.uid))
-          ? 'The raid lobby is empty this hour.'
+          ? 'The raid lobby is empty right now.'
           : 'You need a pokemon of your own to raid — you can only watch a raid already under way.';
       }
       const [id, record] = lobby;
@@ -678,7 +678,7 @@ export default function OverworldTab(): JSX.Element {
       return '';
     }
 
-    // A wandering cell is named for whoever is on it this hour, so a
+    // A wandering cell is named for whoever is on it this window, so a
     // player can see from across the chunk whether it is worth the
     // walk
     const standing =

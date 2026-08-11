@@ -21,8 +21,8 @@ export const CACHE_CLAIM_COLLECTION = 'cacheClaims';
 export const GROTTO_CLAIM_COLLECTION = 'grottoClaims';
 export const BERRY_CLAIM_COLLECTION = 'berryClaims';
 /**
- * One marker per nest, day and player: a nest holds one egg per
- * player per local day, and the marker is what says the player has
+ * One marker per nest, window and player: a nest holds one egg per
+ * player per twelve hours, and the marker is what says the player has
  * already taken theirs
  */
 export const NEST_CLAIM_COLLECTION = 'nestClaims';

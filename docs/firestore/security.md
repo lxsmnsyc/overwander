@@ -25,16 +25,16 @@ a call is never trusted — only what the token proves.
 | `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
 | `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
 | `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                     |
-| `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the hour, and the fight freezes the player's party the way a raid does                                            |
+| `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                          |
 | `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                           |
 | `consumeHeldItems`                                         | What a unit spent is checked against the frozen team snapshot, only the reporter's own catches are touched, and each player is billed once per battle          |
 | `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
 | `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
-| `claimNest`                                                | A nest hands over one egg per player per local day, and what is inside it is decided as the server writes it                                                   |
+| `claimNest`                                                | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                    |
 | `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one                                                         |
 | `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                        |
 | `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                      |
-| `boostEgg`                                                 | The daycare lady is re-derived from the hour, and the half a walk she adds is measured against the stored egg                                                  |
+| `boostEgg`                                                 | The daycare lady is re-derived from the window, and the half a walk she adds is measured against the stored egg                                                |
 | `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                    |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart

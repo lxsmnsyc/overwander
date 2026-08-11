@@ -21,23 +21,23 @@ const enum Landmark {
    */
   ShadowRaid = 3,
   /**
-   * A patch of berries, ripe once per snapshot window
+   * A patch of berries, ripe once per landmark window
    */
   BerryPatch = 4,
   /**
-   * A Team Rocket checkpoint: a grunt who bars the way for an hour
-   * and fights whoever accepts
+   * A Team Rocket checkpoint: a grunt who bars the way for three
+   * hours and fights whoever accepts
    */
   TeamRocketStop = 5,
   /**
    * A nest: somewhere a species of the biome leaves an egg. It holds
-   * one for a full day rather than a window, so finding one is worth
-   * walking to
+   * one for half a day rather than a quarter hour, so finding one is
+   * worth walking to
    */
   Nest = 6,
   /**
    * A spot people pass through: which of them is standing there
-   * changes every hour, and each has their own business with a
+   * changes every six hours, and each has their own business with a
    * player who stops
    */
   WanderingNpc = 7,

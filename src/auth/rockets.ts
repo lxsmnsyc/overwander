@@ -23,7 +23,7 @@ export type { RocketReward } from '../server/rockets';
 
 /**
  * Walk up to a stop. Resolves the stop id and the player's state of
- * it, or null when the cell stages no grunt this hour or the player
+ * it, or null when the cell stages no grunt this window or the player
  * has already beaten the one it stages
  */
 export async function enterRocketStop(

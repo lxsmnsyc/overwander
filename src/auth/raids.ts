@@ -68,7 +68,7 @@ export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => voi
 }
 
 /**
- * Follow the hour's live lobbies, so a raid opened or started
+ * Follow the window's live lobbies, so a raid opened or started
  * elsewhere appears and disappears on its own
  */
 export function watchLiveRaids(
@@ -78,7 +78,7 @@ export function watchLiveRaids(
 ): Unsubscribe {
   const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
 
-  // The hour is local, so two zones can floor to the same one; the
+  // The window is local, so two zones can floor to the same one; the
   // offset is what keeps a listing to the lobbies of its own world
   return onSnapshot(
     query(raids, where('timestamp', '==', raidTimestamp), where('offset', '==', asOffset(offset))),
@@ -105,12 +105,12 @@ export async function canJoinRaids(uid: string): Promise<boolean> {
 
 /**
  * Walk into a raid landmark. What is staged there — and whether it is
- * open, being fought, or shut for the hour — is decided by the
+ * open, being fought, or shut for the window — is decided by the
  * server against the chunk's own seed and its clock, so an arrival
  * cannot conjure a lobby on a cell the world staged nothing on.
  *
  * Resolves the lobby id and its record, or null when the cell stages
- * no raid this hour, its raid has been cleared, or the player owns no
+ * no raid this window, its raid has been cleared, or the player owns no
  * pokemon and there is nothing standing to watch
  */
 export async function enterRaid(
@@ -148,7 +148,7 @@ async function enterRaidOnServer(
  *
  * Resolves the lobby id and its record, or null when the item calls
  * nothing, is not carried, the player owns no pokemon to field, or
- * the relic has already been spent on this hour's lobby
+ * the relic has already been spent on this window's lobby
  */
 export async function hostMythicalRaid(
   snapshot: ChunkSnapshot,
@@ -182,8 +182,8 @@ async function hostMythicalOnServer(
 }
 
 /**
- * Every lobby still gathering in the current raid hour: started and
- * cleared raids drop out, and a lobby from a past hour is dead
+ * Every lobby still gathering in the current raid window: started and
+ * cleared raids drop out, and a lobby from a past window is dead
  */
 export async function listLiveRaids(
   raidTimestamp: number,
@@ -216,7 +216,7 @@ async function leaveRaidOnServer(token: string, id: string): Promise<void> {
 
 /**
  * Mark the raid cleared, shutting its landmark for the rest of the
- * hour. Every player who fought reports it; the server clears it only
+ * window. Every player who fought reports it; the server clears it only
  * once the battle is recorded as won by a player who was in it, so a
  * landmark cannot be shut with a victory that never happened
  */
@@ -256,7 +256,7 @@ async function joinRaidOnServer(
  * battle history. A claim marker at raidRewards/{raidId}:{uid}
  * guards it, so the raid pays each fighter once.
  *
- * The encounter is derived from the raid's own chunk and hour, not
+ * The encounter is derived from the raid's own chunk and window, not
  * from wherever the player is standing now, so a late claim meets
  * exactly what the raid staged. Resolves null when the raid was not
  * won by this player, or when they already claimed it

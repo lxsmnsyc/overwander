@@ -1,7 +1,7 @@
 /**
  * The people who pass through a wandering-NPC landmark. The cell is
  * fixed by the chunk seed, the way every landmark is, but who is
- * standing on it is not: each raid hour brings somebody else, so the
+ * standing on it is not: every six hours brings somebody else, so the
  * spot is a crossroads rather than a shop
  */
 const enum Npc {

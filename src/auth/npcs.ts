@@ -9,7 +9,7 @@ import getIdToken from './session';
  * The wandering NPCs, as the client asks them for things.
  *
  * Which of them is standing at a cell derives from the chunk, the
- * zone and the hour, so the client already knows who it is walking up
+ * zone and the window, so the client already knows who it is walking up
  * to — `ChunkSnapshot.getWanderingNpcs`. The calls below are for what
  * they *do*, all of which costs gold and none of which the client is
  * trusted with: the server re-derives who is standing there before it

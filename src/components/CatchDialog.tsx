@@ -1018,12 +1018,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         inline
                         entries={bag()}
                         disabled={frozen()}
-                        // Only the finds worth stopping over ask
-                        // twice. A Potion or a wing is spent a dozen
-                        // times a session and asking about each is a
-                        // click for nothing; a cap, a Purifying Gem or
-                        // a Max Revive is a walk's worth of luck that
-                        // does not come back
+                        // Only the prized and special bands ask twice.
+                        // Everything a player heals with — a Potion, a
+                        // Full Restore, a wing — is spent over and
+                        // over, and asking about each is a click for
+                        // nothing; a cap or a Purifying Gem changes
+                        // the pokemon for good, and the wrong pokemon
+                        // is the wrong pokemon for good with it
                         confirm={(entry) => isPreciousItem(entry.item)}
                         value={null}
                         verb="Use"

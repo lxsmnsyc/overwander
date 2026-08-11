@@ -51,6 +51,11 @@ const BERRY_POOL: ItemRarityGroups = {
     // what it is walking into can dig for the berry that answers it
     ...[...BERRY_RESIST_TYPES.keys()].map((item) => ({ item, weight: 2 })),
   ],
+  // A bush grows nothing permanent. The prized band is for the things
+  // that change a pokemon for good — a cap, a gem — and a berry is
+  // eaten, so the band is left empty and its slice of the roll falls
+  // through to the rare one below it
+  prized: [],
   special: [
     // What a pokemon holds against the moment it is nearly out. They
     // belong with the world's other one-in-a-long-walk finds: a fight

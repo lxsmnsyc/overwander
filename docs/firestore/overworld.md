@@ -190,6 +190,11 @@ The eighteen type-resist berries share the rare band the way the plates share
 their slot in the item pool — one thin slot each, so digging up the one that
 answers what a party is about to walk into stays luck rather than shopping.
 
+A berry pool keeps its **prized** band empty. That band is for the things that
+change a pokemon for good — a Bottle Cap, a Purifying Gem — and a berry is
+eaten, so its slice of the roll falls through to the rare band below it, the way
+any empty band does.
+
 A patch is a bush rather than a buried box, so it bears **one kind** and
 `MIN_BERRY_PICK`-`MAX_BERRY_PICK` (3-5) pieces of it: the rarity is the
 interesting draw and the count is only how good a season it had. That is the

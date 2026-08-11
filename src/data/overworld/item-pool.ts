@@ -19,6 +19,13 @@ export interface ItemRarityGroups {
   base: ItemPoolEntry[];
   uncommon: ItemPoolEntry[];
   rare: ItemPoolEntry[];
+  /**
+   * Between rare and special: the things that change a pokemon for
+   * good rather than getting it through the next fight. A pool with
+   * nothing worth setting apart leaves it empty, and the band is
+   * skipped the way any empty band is
+   */
+  prized: ItemPoolEntry[];
   special: ItemPoolEntry[];
 }
 
@@ -28,6 +35,16 @@ export interface ItemRarityGroups {
  * the smaller valuables are the commons, utility balls and the
  * bigger valuables uncommon, stones and the Nugget rare, and the
  * Master Ball and Shiny Charm the one-per-world class.
+ *
+ * The **prized** band sits between rare and special, and the line it
+ * draws is permanence. The rare band is where a walk turns up
+ * something that gets a party through the next fight — a stone, a
+ * Revive, a plate. Prized is where it turns up something that changes
+ * a pokemon for good and cannot be undone: a Bottle Cap fixes what it
+ * was born with, a Purifying Gem takes a shadow off it, a Max Revive
+ * is the only thing that brings a whole party back from nothing. They
+ * were all rare, and being drawn as often as a stone made them read as
+ * ordinary.
  *
  * The valuables sit a band below what they are worth: they are a
  * steady trickle of gold rather than a jackpot, so the rarest bands
@@ -97,17 +114,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.MaxPotion, weight: 6 },
     { item: Items.FullRestore, weight: 4 },
     { item: Items.Revive, weight: 6 },
-    { item: Items.MaxRevive, weight: 2 },
     // A Max Revive that grows out of the ground. It is the commoner of
-    // the two because what it asks for is not gold
+    // the two — the Max Revive itself is prized now — because what it
+    // asks for is not gold
     { item: Items.RevivalHerb, weight: 4 },
-    // A dug-up cap fixes one stat of one pokemon: rare enough to be
-    // the find of a walk, common enough to be worth saving for the
-    // pokemon that deserves it
-    { item: Items.BottleCap, weight: 6 },
-    // The only way a shadow is ever put right. Thin, because a shadow
-    // raid is not an everyday thing either
-    { item: Items.PurifyingGem, weight: 4 },
     // The relics: a Cubone's bone, a Ditto's dust. Found, never
     // stocked, and worth nothing to anything but their own species
     { item: Items.LightBall, weight: 4 },
@@ -118,6 +128,20 @@ export const ITEM_POOL: ItemRarityGroups = {
     // — seventeen of them share about what one stone is worth, so
     // digging one up stays an event
     ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
+  ],
+  prized: [
+    // A dug-up cap fixes one stat of one pokemon, and nothing else in
+    // the game touches what a catch was born with. The commonest of
+    // the three, so the band has something a player can actually hope
+    // for — its golden twin, which fixes all six, stays special
+    { item: Items.BottleCap, weight: 10 },
+    // The only way a shadow is ever put right, and a shadow is a raid
+    // rather than an everyday thing
+    { item: Items.PurifyingGem, weight: 8 },
+    // The one item that brings a pokemon back from nothing at full
+    // health. The Revive and the Revival Herb are the rare band's
+    // answer to a lost fight; this is the answer to a lost party
+    { item: Items.MaxRevive, weight: 5 },
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },
@@ -155,7 +179,7 @@ export function getItemBand(item: Items): ItemBand | null {
   if (bands == null) {
     bands = new Map();
     // Commonest first, so a rarer listing overwrites it
-    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+    for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
       for (const entry of ITEM_POOL[band]) {
         bands.set(entry.item, band);
       }
@@ -166,48 +190,70 @@ export function getItemBand(item: Items): ItemBand | null {
 
 /**
  * Whether the item is one of the finds worth stopping a player over:
- * the rare and special bands — the caps, the Purifying Gem, the
- * revives, the Master Ball.
+ * the **prized and special** bands — the caps, the Purifying Gem, the
+ * Max Revive, the Master Ball.
  *
- * It is what decides whether spending one is asked about twice. A
- * Potion asked about twice is a click for nothing; a Golden Bottle Cap
- * spent on the wrong pokemon is a walk wasted, and there is no getting
- * it back
+ * It is what decides whether spending one is asked about twice, and it
+ * is the same line the two bands were split on. A prized or special
+ * find changes a pokemon for good or cannot be come by again; a rare
+ * one gets a party through the next fight, and a Max Potion asked
+ * about twice is a click for nothing however scarce it was to dig up.
+ *
+ * Scarcity alone is not the test — what a mistake costs is
  */
 export function isPreciousItem(item: Items): boolean {
   const band = getItemBand(item);
 
-  return band === 'rare' || band === 'special';
+  return band === 'prized' || band === 'special';
 }
 
 /**
- * Cumulative band thresholds for an item roll: the special band owns
- * the first slice of the draw, the rare band the next, the uncommon
- * band the next, and whatever remains falls to base
+ * How wide each band's slice of an item roll is, richest first: the
+ * special band owns the opening slice of the draw, the prized band the
+ * next, then rare, then uncommon, and whatever remains falls to base.
+ *
+ * They are widths rather than running totals, so adding a band takes
+ * its slice out of **base** and leaves every other band as wide as it
+ * was
  */
 export interface ItemBandOdds {
   special: number;
+  prized: number;
   rare: number;
   uncommon: number;
 }
 
 /**
- * The default bands, mirroring the spawn pool's
+ * How often a walk turns up something from the prized band. It sits
+ * eight times commoner than a special and eight times scarcer than a
+ * rare, which is the gap the two left between them: a find of a
+ * season rather than a find of a lifetime
+ */
+export const PRIZED_ITEM_ODDS = 1 / 512;
+
+/**
+ * The default bands. The three ordinary ones mirror the spawn pool's;
+ * the prized band is the item pool's own, since a species has no
+ * equivalent of a thing that changes a pokemon for good
  */
 export const ITEM_BAND_ODDS: ItemBandOdds = {
   special: SPECIAL_SPAWN_ODDS,
+  prized: PRIZED_ITEM_ODDS,
   rare: RARE_SPAWN_ODDS,
   uncommon: UNCOMMON_SPAWN_ODDS,
 };
 
 /**
- * What a Pickup buddy turns up: the ordinary bands with the special
- * one shut out entirely. What it finds is what was lying about — a
- * ball, a potion, now and then a stone — and a Master Ball scuffed up
- * off a path by a Meowth would make the rarest band worth nothing
+ * What a Pickup buddy turns up: the ordinary bands with the top two
+ * shut out entirely. What it finds is what was lying about — a ball, a
+ * potion, now and then a stone — and a Master Ball scuffed up off a
+ * path by a Meowth would make the rarest band worth nothing. A Bottle
+ * Cap found the same way would do the same to the prized band, so it
+ * is shut out for the same reason
  */
 export const PICKUP_BAND_ODDS: ItemBandOdds = {
   special: 0,
+  prized: 0,
   rare: RARE_SPAWN_ODDS,
   uncommon: UNCOMMON_SPAWN_ODDS,
 };
@@ -236,17 +282,28 @@ export const MAX_KINDS = 3;
  * indexed rather than named in the roll, because "no richer than" and
  * "no commoner than" are both just comparisons on the index
  */
-const HAUL_BANDS: (keyof Omit<ItemRarityGroups, 'special'>)[] = ['rare', 'uncommon', 'base'];
+const HAUL_BANDS: (keyof Omit<ItemRarityGroups, 'special'>)[] = [
+  'prized',
+  'rare',
+  'uncommon',
+  'base',
+];
 
 /**
  * Which band a draw lands in, as an index into `HAUL_BANDS`. The
  * special band is not among them: it is decided before any of this
  */
 function bandIndex(roll: number, odds: ItemBandOdds): number {
-  if (roll < odds.special + odds.rare) {
+  let edge = odds.special + odds.prized;
+
+  if (roll < edge) {
     return 0;
   }
-  return roll < odds.special + odds.rare + odds.uncommon ? 1 : 2;
+  edge += odds.rare;
+  if (roll < edge) {
+    return 1;
+  }
+  return roll < edge + odds.uncommon ? 2 : 3;
 }
 
 /**
@@ -290,9 +347,14 @@ function stockedBand(
  * it are drawn as usual — a stash may well be a Master Ball and two
  * stones. What it may never be is **two specials**: the opening draw
  * is the only one that can reach that band, and everything after it
- * is clamped to rare at best. A special is also always a single
+ * is clamped to prized at best. A special is also always a single
  * piece, whatever else is buried with it: a Master Ball found three
  * at a time would stop being a Master Ball.
+ *
+ * The prized band is not held to that: a stash that opened on one may
+ * hold a second, and the pieces are drawn the way any other band's
+ * are. It is scarce rather than one-of-a-kind, and two Bottle Caps in
+ * one hole is a very good dig rather than a broken one.
  *
  * Two kinds landing on the same item are one stack, and a stack never
  * exceeds `MAX_STACK` however they merge.
@@ -328,8 +390,11 @@ export function pickItems(
 
   // Bands that leave no room for a base roll leave none in a haul
   // either: a grotto holds nothing common
-  const commonest = odds.special + odds.rare + odds.uncommon >= 1 ? 1 : 2;
-  // A stash that opened on a special goes on with rares; anything
+  const commonest =
+    odds.special + odds.prized + odds.rare + odds.uncommon >= 1
+      ? HAUL_BANDS.length - 2
+      : HAUL_BANDS.length - 1;
+  // A stash that opened on a special goes on with prized; anything
   // else is capped by the band the opening draw actually reached
   const ceiling = taken > 0 ? 0 : Math.min(bandIndex(opening, odds), commonest);
   const kinds = 1 + Math.floor(random() * MAX_KINDS);
@@ -391,14 +456,18 @@ export function pickItem(
   odds: ItemBandOdds = ITEM_BAND_ODDS,
 ): Items | null {
   const band = random();
-  let tier = groups.base;
+  // Walked richest first, each slice as wide as its own odds. A roll
+  // landing in an empty band falls to the next band down rather than
+  // all the way to base, which is how a pool that keeps nothing
+  // prized still rolls its rares
+  let edge = 0;
 
-  if (band < odds.special && groups.special.length > 0) {
-    tier = groups.special;
-  } else if (band < odds.special + odds.rare && groups.rare.length > 0) {
-    tier = groups.rare;
-  } else if (band < odds.special + odds.rare + odds.uncommon && groups.uncommon.length > 0) {
-    tier = groups.uncommon;
+  for (const tier of ['special', 'prized', 'rare', 'uncommon'] as const) {
+    edge += odds[tier];
+
+    if (band < edge && groups[tier].length > 0) {
+      return pickFromBand(groups[tier], random);
+    }
   }
-  return pickFromBand(tier, random);
+  return pickFromBand(groups.base, random);
 }

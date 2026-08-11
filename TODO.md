@@ -14,4 +14,6 @@
 - [ ] preferred animation for move
 - [ ] friends
 - [ ] trading
-- [ ] 
+- [ ] egg move by parent
+- [ ] limit auction to prized/special items
+- [ ] limit auction to perfect IVs or specials

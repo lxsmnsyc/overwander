@@ -594,10 +594,14 @@ describe('item data', () => {
     // is not
     expect(ITEM_POOL.base.some((entry) => entry.item === Items.Potion)).toBe(true);
     expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.SuperPotion)).toBe(true);
-    for (const item of [Items.MaxPotion, Items.FullRestore, Items.Revive, Items.MaxRevive]) {
+    for (const item of [Items.MaxPotion, Items.FullRestore, Items.Revive]) {
       expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
       expect(ITEM_POOL.base.some((entry) => entry.item === item)).toBe(false);
     }
+    // And the one that undoes a lost party rather than a lost fight
+    // sits a band above the rest of them
+    expect(ITEM_POOL.prized.some((entry) => entry.item === Items.MaxRevive)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.MaxRevive)).toBe(false);
     // None of it is one-per-world class
     for (const item of MEDICINES.keys()) {
       expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
@@ -680,13 +684,14 @@ describe('item data', () => {
     expect(BOTTLE_CAPS.get(Items.GoldenBottleCap)).toBe(STAT_ORDER.length);
     expect(BOTTLE_CAPS.get(Items.BottleCap)).toBe(1);
 
-    // A one-per-world find and an ordinary dig, each in one band only
+    // A one-per-world find and the band below it, each in one band
+    // only: the plain cap fixes one stat and the golden one all six
     expect(ITEM_POOL.special.some((entry) => entry.item === Items.GoldenBottleCap)).toBe(true);
-    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.BottleCap)).toBe(true);
-    for (const band of ['base', 'uncommon', 'rare'] as const) {
+    expect(ITEM_POOL.prized.some((entry) => entry.item === Items.BottleCap)).toBe(true);
+    for (const band of ['base', 'uncommon', 'rare', 'prized'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.GoldenBottleCap)).toBe(false);
     }
-    for (const band of ['base', 'uncommon', 'special'] as const) {
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.BottleCap)).toBe(false);
     }
   });
@@ -698,10 +703,11 @@ describe('item data', () => {
     expect(gem.type).toBe(ItemTypes.Training);
     expect(gem.flags & ItemFlags.Usable).toBeGreaterThan(0);
     expect(gem.flags & ItemFlags.Consumable).toBeGreaterThan(0);
-    // Found, never stocked, and only ever in the rare band
+    // Found, never stocked, and only ever in the prized band: taking
+    // a shadow off a pokemon cannot be undone
     expect(gem.buy).toBe(0);
-    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.PurifyingGem)).toBe(true);
-    for (const band of ['base', 'uncommon', 'special'] as const) {
+    expect(ITEM_POOL.prized.some((entry) => entry.item === Items.PurifyingGem)).toBe(true);
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.PurifyingGem)).toBe(false);
     }
     expect(isPurifyingGem(Items.PurifyingGem)).toBe(true);
@@ -1652,30 +1658,40 @@ describe('biome data', () => {
     // The band an item is hidden in is what decides whether spending
     // it is asked about twice
     expect(getItemBand(Items.MasterBall)).toBe('special');
-    expect(getItemBand(Items.BottleCap)).toBe('rare');
+    expect(getItemBand(Items.BottleCap)).toBe('prized');
+    expect(getItemBand(Items.FireStone)).toBe('rare');
     expect(getItemBand(Items.HeartScale)).toBe('uncommon');
     expect(getItemBand(Items.Potion)).toBe('base');
     // Nothing hides a machine or a berry off a bush
     expect(getItemBand(getMachineItem(Moves.Tackle))).toBeNull();
     expect(getItemBand(Items.OranBerry)).toBeNull();
 
-    // A walk's worth of luck that does not come back
+    // What changes a pokemon for good, or cannot be come by again
     for (const item of [
       Items.GoldenBottleCap,
+      Items.MasterBall,
       Items.BottleCap,
       Items.PurifyingGem,
       Items.MaxRevive,
-      Items.FullRestore,
     ]) {
       expect(isPreciousItem(item)).toBe(true);
     }
-    // And the everyday things, spent a dozen times a session
-    for (const item of [Items.Potion, Items.Antidote, Items.HealthWing, Items.PomegBerry]) {
+    // Scarcity alone is not the test: a Full Restore is a rare dig and
+    // still only a fight's worth of healing, so it is not asked about
+    for (const item of [
+      Items.FullRestore,
+      Items.MaxPotion,
+      Items.Revive,
+      Items.Potion,
+      Items.Antidote,
+      Items.HealthWing,
+      Items.PomegBerry,
+    ]) {
       expect(isPreciousItem(item)).toBe(false);
     }
 
     // Every band listing agrees with the pool it was built from
-    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+    for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
       for (const entry of ITEM_POOL[band]) {
         expect(getItemBand(entry.item)).toBe(band);
       }
@@ -1699,7 +1715,12 @@ describe('biome data', () => {
     // Custom bands replace the defaults: bands summing to 1 shut the
     // base tier out, so even a terrible band roll stays uncommon
     expect(
-      pickItem(ITEM_POOL, rolls([0.99, 0]), { special: 1 / 64, rare: 1 / 8, uncommon: 1 }),
+      pickItem(ITEM_POOL, rolls([0.99, 0]), {
+        special: 1 / 64,
+        prized: 0,
+        rare: 1 / 8,
+        uncommon: 1,
+      }),
     ).toBe(Items.UltraBall);
   });
 
@@ -1756,7 +1777,7 @@ describe('biome data', () => {
 
     // Bands summing to 1 shut the base tier out of a stash the same
     // way they shut it out of a single roll
-    const grotto = { special: 1 / 64, rare: 1 / 8, uncommon: 1 };
+    const grotto = { special: 1 / 64, prized: 0, rare: 1 / 8, uncommon: 1 };
     const dug = pickItems(ITEM_POOL, rolls([0.99, 0.99, 0, 0, 0.001, 0.5, 0, 0.9, 0.5, 0]), grotto);
 
     expect(dug.length).toBeGreaterThan(0);
@@ -1779,14 +1800,16 @@ describe('biome data', () => {
     expect(inBand(ITEM_POOL.rare, pair[1].item)).toBe(true);
     expect(inBand(ITEM_POOL.base, pair[2].item)).toBe(true);
 
-    // A special and two rares: the special is the ceiling, and what
-    // follows it is drawn the way anything under a ceiling is
+    // A special, a prized and a rare: the special is the ceiling, and
+    // what follows it is drawn the way anything under a ceiling is —
+    // clamped to the band directly below the special, which is the
+    // prized one
     const prize = pickItems(ITEM_POOL, rolls([0.0001, 0, 0.9, 0, 0, 0, 0.005, 0.2, 0]));
 
     expect(prize).toHaveLength(3);
     expect(inBand(ITEM_POOL.special, prize[0].item)).toBe(true);
     expect(prize[0].amount).toBe(1);
-    expect(inBand(ITEM_POOL.rare, prize[1].item)).toBe(true);
+    expect(inBand(ITEM_POOL.prized, prize[1].item)).toBe(true);
     expect(inBand(ITEM_POOL.rare, prize[2].item)).toBe(true);
 
     // A rare and a common
@@ -1798,11 +1821,11 @@ describe('biome data', () => {
 
     // Never two specials, however the stream falls: only the opening
     // draw reaches that band, and everything after it is clamped to
-    // rare at best
+    // prized at best
     const specials = new Set(ITEM_POOL.special.map((entry) => entry.item));
     // Odds that make the special band an everyday find, so the sweep
     // is actually testing the rule rather than never reaching it
-    const generous = { special: 0.5, rare: 0.25, uncommon: 0.2 };
+    const generous = { special: 0.5, prized: 0.1, rare: 0.2, uncommon: 0.15 };
     let carried = 0;
 
     for (let seed = 0; seed < 2000; seed++) {

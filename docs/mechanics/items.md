@@ -6,17 +6,34 @@ item pool is still the economy's supply side, and raids are its mint.
 
 ## What the ground holds
 
-Three landmarks give items, and each rolls on the same rarity bands the spawn
-pools use: special 1/4096, rare 1/64, uncommon 1/8, base for the rest.
+Three landmarks give items, and each rolls on rarity bands: special 1/4096,
+**prized 1/512**, rare 1/64, uncommon 1/8, base for the rest. The three ordinary
+bands are the spawn pools'; the prized band is the item pool's own, since a
+species has no equivalent of a thing that changes a pokemon for good. The widths
+are slices rather than running totals, so adding a band takes its share out of
+**base** and leaves every other band as wide as it was.
 
 ### The item pool
 
-| Band         | What is in it                                                                                                                                 |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                               |
-| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings                 |
-| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; Bottle Caps; the Purifying Gem; the species relics; the plates |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                                  |
+| Band         | What is in it                                                                                                                 |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder               |
+| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings |
+| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the plates                 |
+| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives                                                                                   |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                  |
+
+The line between rare and prized is **permanence**. Rare is where a walk turns up
+something that gets a party through the next fight — a stone, a Revive, a plate.
+Prized is where it turns up something that changes a pokemon for good and cannot
+be undone: a Bottle Cap fixes what it was born with, a Purifying Gem takes a
+shadow off it, a Max Revive is the answer to a lost *party* rather than a lost
+fight. All three used to be rare, and being drawn as often as an evolution stone
+made them read as ordinary.
+
+Unlike a special, a prized find is **not** one-of-a-kind: a stash may hold two,
+and they are dug up in stacks like anything else. Two Bottle Caps in one hole is
+a very good dig, not a broken one.
 
 Two placements are deliberate. **Valuables sit a band below what they are worth**
 — they are a steady trickle of gold rather than a jackpot, so the rarest bands
@@ -28,13 +45,16 @@ together are worth about one stone: digging up the plate you wanted stays luck
 rather than shopping.
 
 The bands are read for one thing besides the digging. Spending an item **on a
-pokemon** asks a second time only where the item is `isPreciousItem` — the rare
-and special bands. A Potion or a wing is spent a dozen times a session and asking
-about each is a click for nothing; a Bottle Cap, a Purifying Gem or a Max Revive
-is a walk's worth of luck that does not come back, and the wrong pokemon is the
-wrong pokemon for good. The rarity that decided how hard it was to find is the
-same fact that decides how hard it should be to spend, so there is no second list
-to keep in step.
+pokemon** asks a second time only where the item is `isPreciousItem` — the
+**prized and special** bands, and nothing below them. It is the same line the two
+bands were split on: those are the finds that change a pokemon for good or cannot
+be come by again, and the wrong pokemon is the wrong pokemon for good with them.
+
+Scarcity alone is deliberately not the test. A Full Restore is a rare dig and
+still only a fight's worth of healing, so it goes through on one press like a
+Potion — everything a player heals with is spent over and over, and a confirmation
+on each is a click for nothing. What earns the second press is what a mistake
+costs, not what the walk cost.
 
 The **Heart Scale** is the one thing in the pool that gold cannot substitute for.
 No vendor stocks one and no vendor takes one, so it is neither bought nor sold:
@@ -98,8 +118,11 @@ the half-day wait or the walk.
 
 The one source that is not a landmark. A **Pickup** buddy turns something up
 every `PICKUP_STEP_INTERVAL` (512) steps walked, drawn from the ordinary item
-pool with the **special band shut out** — a ball, a potion, now and then a stone,
-but never a Master Ball scuffed off a path.
+pool with the **top two bands shut out** — a ball, a potion, now and then a
+stone, but never a Master Ball scuffed off a path, and never a Bottle Cap
+either. A prized find is a walk's worth of luck; one a Meowth turns up on the way
+past would make the band worth nothing, which is the same argument that shut the
+special band out first.
 
 What it counts is the marks the walk crossed rather than the steps in a report,
 so a player who reports in small handfuls finds exactly as much as one who

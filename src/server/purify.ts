@@ -1,6 +1,6 @@
 import 'server-only';
 import { asBoolean } from '../auth/__normalize';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
@@ -42,6 +42,9 @@ export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
 
   return {
     ivs,
+    // Purifying lifts every value by two, so it is the other way a
+    // pokemon becomes perfect long after it was caught
+    auctionable: isAuctionableCatch({ ...record, ivs }),
     // The shadow comes off, which is what puts the candy cost back
     // down: nothing else reads it
     shadow: false,

@@ -143,7 +143,7 @@ The reason is the same in each case: a set of named things compares, unions and
 masks as an integer — what a Full Heal takes off is one AND, not a filtered list
 — and the shape a reader wants is one call away.
 
-### The five marks are fields, not bits
+### The marks are fields, not bits
 
 `shiny`, `shadow`, `egg`, `favorite` and `guarded` were one packed `flags` field
 once, for the reasons above. They are five boolean fields because **Firestore
@@ -160,6 +160,41 @@ reads only the matching documents. Each mark needs a **composite index** on
 What that costs is honest: five fields where there was one, a snapshot that
 copies five, and a new question that costs a field and an index rather than a
 bit. The trade was made deliberately for the query.
+
+#### `auctionable` is the sixth, and a different kind
+
+The other five are **stated** about a record. `auctionable` is **derived** from
+three fields the record already carries — `ivs`, `shiny` and `species` — and
+stored anyway. It answers "would somebody else pay for this": perfect values,
+**no** values, shiny, or a special-tier species. See
+[`isAuctionableCatch`](../../src/auth/caught-record.ts), and
+[Auctions](auctions.md#what-may-go-on-the-block) for what asks.
+
+Storing a derived value is the thing this codebase otherwise refuses to do — the
+world's spawns, landmarks and passers-by are all re-derived rather than kept. The
+reason it is kept here is the same one that split `flags` in the first place:
+each input *alone* could be asked of the store (perfect and blank values are each
+one integer, shiny is a field, the special-tier species are a five-value `in`),
+but the rule is **any of the four**, and a disjunction over a box is four queries
+whose results have to be merged and deduplicated in the browser. One field is one
+`where`.
+
+Two rules keep it from rotting into a lie:
+
+- **Every write that moves an input rewrites it.** Catching, writing an egg, a
+  bottle cap (`ivs`), purifying (`ivs`, all six up by two), evolving (`species`).
+  Nothing else can change any of the three — `shiny` is fixed at the encounter,
+  and hatching only lifts the shell. Both cap paths matter in *both* directions:
+  a cap can complete a perfect set, and it can also break a blank one, which is
+  the only way a catch stops being auctionable.
+- **Nothing decides anything by it.** `openAuction` re-derives from the record it
+  is already holding, and the sell picker re-checks every row the query returns.
+  The field can cost a listing its place in a list; it can never authorize one.
+
+A record written before the field existed reads `false` through `asBoolean`, so
+it is missing from the query and caught by the picker's own check. Existing
+catches want a one-off backfill — the same call as the flags split and the bag
+migration.
 
 **There is no lock among them.** `lockedAt` was always the truth behind the old
 `Locked` bit — a stamp of zero is a free pokemon, and the stamp is what tells

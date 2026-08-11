@@ -15,8 +15,10 @@ import {
   reclaimAuction,
   watchOpenAuctions,
 } from '../auth/auctions';
+import { isLockLive } from '../auth/battle-lock';
 import { getBuddy } from '../auth/buddy';
-import { type CaughtPokemon, getCaught, isFavorite } from '../auth/caught';
+import { syncServerClock } from '../auth/clock';
+import { type CaughtPokemon, getCaught, isFavorite, listCaughtMarked } from '../auth/caught';
 import { isShiny } from '../auth/caught-record';
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { isEgg } from '../auth/egg';
@@ -510,6 +512,33 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   /**
+   * The pokemon that could go on the block, asked of the **store**
+   * rather than read out of the whole box and sifted here.
+   *
+   * That is what the record's `auctionable` field is for: a player with
+   * three hundred catches has perhaps three that qualify, and the
+   * question "which of mine are worth a listing" is otherwise three
+   * hundred document reads to answer.
+   *
+   * `filter` below still asks `isAuctionableCatch` of every row that
+   * comes back. The field is an index, not an authority — a record
+   * written before it existed, or by something that forgot to keep it,
+   * is caught here rather than shown as sellable and refused by the
+   * server
+   */
+  const [sellable] = createResource(
+    () => [props.player, revision()] as const,
+    async ([player]): Promise<CatchOption[]> => {
+      const [records, clock] = await Promise.all([
+        listCaughtMarked(player, 'auctionable'),
+        syncServerClock(),
+      ]);
+
+      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, clock) }));
+    },
+  );
+
+  /**
    * Why this one is worth a listing, in a word. It is the same three
    * answers `isAuctionableCatch` accepts, said back to the player so
    * the list reads as a reason rather than as an arbitrary shortlist
@@ -749,7 +778,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
               misreading a list */}
           <CatchPicker
             inline
-            revision={revision()}
+            options={sellable()}
             value={null}
             verb="Sell"
             empty="Nothing of yours is rare enough for the block."

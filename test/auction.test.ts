@@ -27,7 +27,7 @@ import {
 } from '../src/auth/auction-record';
 import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
 import { Items } from '../src/data/ids/items';
-import { MAX_IV, PERFECT_IVS, STAT_ORDER, setIV } from '../src/data/constants/stats';
+import { MAX_IV, PERFECT_IVS, STAT_ORDER, isZeroIVs, setIV } from '../src/data/constants/stats';
 import { Species } from '../src/data/ids/species';
 import registerSpecies from '../src/data/species/gen-1';
 
@@ -271,10 +271,16 @@ describe("a player's bidding history", () => {
 
 describe('what may go on the block', () => {
   /**
+   * Middling values: not perfect, and not blank either, since both
+   * ends of the range are answers in their own right
+   */
+  const ORDINARY_IVS = STAT_ORDER.reduce((packed, stat) => setIV(packed, stat, 15), 0);
+
+  /**
    * A stored catch with only what the rule reads set
    */
   const caughtAs = (fields: Record<string, unknown>): CaughtPokemon =>
-    asCaughtPokemon({ species: Species.Pidgey, ivs: 0, shiny: false, ...fields });
+    asCaughtPokemon({ species: Species.Pidgey, ivs: ORDINARY_IVS, shiny: false, ...fields });
 
   it('takes only one-per-world items', () => {
     // The special band, and nothing under it
@@ -305,20 +311,59 @@ describe('what may go on the block', () => {
     // An ordinary Pidgey is a walk away for anybody
     expect(isAuctionableCatch(caughtAs({}))).toBe(false);
 
-    // Each of the three answers is enough on its own
+    // Each of the four answers is enough on its own
     expect(isAuctionableCatch(caughtAs({ ivs: PERFECT_IVS }))).toBe(true);
+    expect(isAuctionableCatch(caughtAs({ ivs: 0 }))).toBe(true);
     expect(isAuctionableCatch(caughtAs({ shiny: true }))).toBe(true);
     expect(isAuctionableCatch(caughtAs({ species: Species.Mewtwo }))).toBe(true);
     expect(isAuctionableCatch(caughtAs({ species: Species.Mew }))).toBe(true);
 
-    // One value short of perfect is not perfect
+    // One value short of either end is neither
     const nearly = setIV(PERFECT_IVS, STAT_ORDER[0], MAX_IV - 1);
+    const almostBlank = setIV(0, STAT_ORDER[0], 1);
 
     expect(isAuctionableCatch(caughtAs({ ivs: nearly }))).toBe(false);
+    expect(isAuctionableCatch(caughtAs({ ivs: almostBlank }))).toBe(false);
+
+    // The two ends are exactly as rare as each other, and only one of
+    // them can be manufactured: a cap raises values and never lowers
+    // them, so a blank record is found or not at all
+    expect(isZeroIVs(0)).toBe(true);
+    expect(isZeroIVs(PERFECT_IVS)).toBe(false);
 
     // And being merely hard to catch is not one of the three: a
     // fully-evolved rare is still something a bidder can walk out for
     expect(isAuctionableCatch(caughtAs({ species: Species.Pidgeot }))).toBe(false);
     expect(isAuctionableCatch(caughtAs({ species: Species.Ditto }))).toBe(false);
+  });
+
+  it('keeps the stored answer out of the decision', () => {
+    // The record carries a `special` field so the store can be asked
+    // which of a box are worth a listing. It is an index, and the
+    // auction rule never reads it: a record whose field disagrees
+    // with its own values is judged by the values
+    const stale = caughtAs({ shiny: true, auctionable: false });
+    const lying = caughtAs({ auctionable: true });
+
+    expect(stale.auctionable).toBe(false);
+    expect(isAuctionableCatch(stale)).toBe(true);
+
+    expect(lying.auctionable).toBe(true);
+    expect(isAuctionableCatch(lying)).toBe(false);
+
+    // A record written before the field existed reads as false rather
+    // than as a guess, which is what the client-side filter is for
+    expect(asCaughtPokemon({ species: Species.Pidgey, ivs: ORDINARY_IVS }).auctionable).toBe(false);
+  });
+
+  it('derives the field from the values a write is about to make', () => {
+    // Taking the three fields rather than a whole record is what lets
+    // a bottle cap ask about the values it is putting in, not the ones
+    // already stored
+    const record = caughtAs({});
+
+    expect(isAuctionableCatch(record)).toBe(false);
+    expect(isAuctionableCatch({ ...record, ivs: PERFECT_IVS })).toBe(true);
+    expect(isAuctionableCatch({ ...record, species: Species.Articuno })).toBe(true);
   });
 });

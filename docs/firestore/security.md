@@ -255,16 +255,17 @@ A player's bag needs none: `bags/{uid}` is read by id, and its two maps are
 **exempted from indexing** — a key per item id would be an index entry per item
 id, and nothing asks the store which players hold a Master Ball.
 
-| Collection    | Fields                                     | Reason                                            |
-| ------------- | ------------------------------------------ | ------------------------------------------------- |
-| `caught`      | `owner` ASC                                | `listCaught`; automatic single-field index        |
-| `caught`      | `owner` ASC, `species` ASC                 | `hasCaughtSpecies`, the Repeat Ball's check       |
-| `caught`      | `owner` ASC, `shiny` ASC                   | `listCaughtMarked`; one per mark asked for        |
-| `teams`       | `player` ASC                               | `listTeams`; automatic single-field index         |
-| `teams`       | `player` ASC, `catches` ARRAY              | `isAnyCatchQueued` filters on both                |
-| `raids`       | `timestamp` ASC, `offset` ASC              | `listLiveRaids` filters on both                   |
-| `battles`     | `players` ARRAY                            | `listBattleHistory`; automatic array index        |
-| `raidRewards` | `player` ASC                               | `listClaimedRaids`; automatic single-field        |
-| `auctions`    | `settled` ASC                              | `watchOpenAuctions`; automatic single-field index |
-| `auctions`    | `seller` ASC                               | `listAuctionsBy`; automatic single-field index    |
-| `bids`        | `player` ASC                               | `listBidHistory`; automatic single-field index    |
+| Collection    | Fields                         | Reason                                            |
+| ------------- | ------------------------------ | ------------------------------------------------- |
+| `caught`      | `owner` ASC                    | `listCaught`; automatic single-field index        |
+| `caught`      | `owner` ASC, `species` ASC     | `hasCaughtSpecies`, the Repeat Ball's check       |
+| `caught`      | `owner` ASC, `shiny` ASC       | `listCaughtMarked`; one per mark asked for        |
+| `caught`      | `owner` ASC, `auctionable` ASC | The auction sell picker, the same way             |
+| `teams`       | `player` ASC                   | `listTeams`; automatic single-field index         |
+| `teams`       | `player` ASC, `catches` ARRAY  | `isAnyCatchQueued` filters on both                |
+| `raids`       | `timestamp` ASC, `offset` ASC  | `listLiveRaids` filters on both                   |
+| `battles`     | `players` ARRAY                | `listBattleHistory`; automatic array index        |
+| `raidRewards` | `player` ASC                   | `listClaimedRaids`; automatic single-field        |
+| `auctions`    | `settled` ASC                  | `watchOpenAuctions`; automatic single-field index |
+| `auctions`    | `seller` ASC                   | `listAuctionsBy`; automatic single-field index    |
+| `bids`        | `player` ASC                   | `listBidHistory`; automatic single-field index    |

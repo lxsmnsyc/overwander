@@ -2,12 +2,9 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type { Items } from '../data/ids/items';
-import { isPerfectIVs } from '../data/items/bottle-caps';
 import { getItemBand } from '../data/overworld/item-pool';
 import { asNumber, asRecord, asString } from './__normalize';
-import { type CaughtPokemon, isShiny } from './caught-record';
 
 /**
  * What an auction is, and the rules both sides read it by.
@@ -121,25 +118,22 @@ export function isAuctionableItem(item: Items): boolean {
 }
 
 /**
- * Whether the pokemon may be auctioned. Any one of three answers is
- * enough, and each is a different reason somebody else would want it:
- *
- * - **Perfect values.** Nothing else in the game hands one over; it is
- *   six lucky rolls or a Golden Bottle Cap spent on it.
- * - **Shiny.** The one thing a player cannot work towards at all.
- * - **A special-tier species.** A legendary or a mythical, which the
- *   world stages on its own schedule and a raid party has to win.
+ * Whether the pokemon may be auctioned: perfect values, no values at
+ * all, shiny, or a special-tier species. It belongs to the record
+ * rather than to the auction — a catch is either one of the ones
+ * worth somebody's gold or it is not — so it is defined beside the
+ * record and only *used* here.
  *
  * Everything else a bidder could go and catch, which is what makes it
- * not worth a day of the board
+ * not worth a day of the board.
+ *
+ * The record also carries the answer as a stored `auctionable` field.
+ * That field exists so the store can be **asked**; it is never read in
+ * place of this, because a stored answer can lag whatever last changed
+ * the inputs, and the decision to take somebody's pokemon off them is
+ * made from the inputs themselves
  */
-export function isAuctionableCatch(caught: CaughtPokemon): boolean {
-  return (
-    isPerfectIVs(caught.ivs) ||
-    isShiny(caught) ||
-    getSpawnRarity(caught.species) === SpawnRarity.Special
-  );
-}
+export { isAuctionableCatch } from './caught-record';
 
 /**
  * One auction at auctions/{auctionId}

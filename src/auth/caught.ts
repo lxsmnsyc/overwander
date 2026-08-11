@@ -72,11 +72,17 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
 }
 
 /**
- * The five yes-or-no fields a catch carries. Each is its own field on
- * the document rather than a bit of one, which is the whole reason
- * they can be asked of the store
+ * The yes-or-no fields a catch carries. Each is its own field on the
+ * document rather than a bit of one, which is the whole reason they
+ * can be asked of the store.
+ *
+ * `auctionable` is the odd one: the other five are *stated* about a
+ * record, and it is **derived** from three of its own fields — see
+ * `isAuctionableCatch`. It is stored regardless, because "perfect
+ * **or** blank **or** shiny **or** legendary" is a disjunction, and a
+ * disjunction cannot be asked of a box in one query
  */
-export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded';
+export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded' | 'auctionable';
 
 /**
  * The player's pokemon that answer yes to one of them — their shinies,

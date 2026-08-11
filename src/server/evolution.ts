@@ -1,5 +1,5 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
@@ -94,6 +94,10 @@ export default async function evolveCatch(
 
     transaction.update(caughtRef, {
       species: into,
+      // No Gen 1 line evolves into a legendary, so this changes
+      // nothing today. It is written anyway because the day a line
+      // does, a silent wrong answer here would be very hard to see
+      auctionable: isAuctionableCatch({ ...record, species: into }),
       health: rescaleHealth(
         record.health,
         getMaxHealth(record),

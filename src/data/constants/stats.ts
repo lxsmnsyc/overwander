@@ -90,6 +90,20 @@ export function unpackIVs(packed: number): Record<Stats, number> {
 /**
  * The packed value of a pokemon whose every stat is perfect
  */
+/**
+ * Whether every value is as low as it goes.
+ *
+ * It is the mirror of `isPerfectIVs`, and exactly as hard to come by:
+ * six rolls landing on 31 and six landing on 0 are the same odds, and
+ * a pokemon with nothing at all is a curiosity for the same reason one
+ * with everything is a prize. The loop is written out rather than
+ * compared against zero so that a packed field that grows a field
+ * beside the six cannot quietly read as blank
+ */
+export function isZeroIVs(packed: number): boolean {
+  return STAT_ORDER.every((stat) => getIV(packed, stat) === 0);
+}
+
 export const PERFECT_IVS = packIVs({
   [Stats.HP]: MAX_IV,
   [Stats.Attack]: MAX_IV,

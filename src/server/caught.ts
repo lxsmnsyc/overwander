@@ -1,5 +1,5 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, ENCOUNTER_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
@@ -132,6 +132,10 @@ export async function recordCatch(
     egg: false,
     favorite: false,
     guarded: false,
+    // Derived from three fields on this same document, and stored so
+    // the store can be asked "which of mine are worth a listing"
+    // without reading a whole box to find out
+    auctionable: isAuctionableCatch(encounter),
     // A fresh catch has fought nothing
     ...freeFields(),
     // ...so it arrives whole, whatever the throw took out of it: an

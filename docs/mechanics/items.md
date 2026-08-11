@@ -235,8 +235,8 @@ A pokemon that changes hands arrives as a stranger: its friendship resets to
 `BASE_FRIENDSHIP`, so gold buys the pokemon and never the walking behind it.
 
 What may go up is narrow on purpose. An item has to be from the **special** band;
-a pokemon has to have **perfect values**, be **shiny**, or be a **special-tier
-species**. One listing a day is the scarcest thing a player has, and everything
+a pokemon has to have **perfect values** or **no values at all**, be **shiny**,
+or be a **special-tier species**. One listing a day is the scarcest thing a player has, and everything
 outside those is something a bidder could walk out and catch or dig up for
 themselves — a board full of that is a board nobody reads.
 

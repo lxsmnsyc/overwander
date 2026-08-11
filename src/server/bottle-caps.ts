@@ -1,5 +1,5 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import AleaRNG from '../core/alea';
@@ -91,6 +91,9 @@ export default async function useBottleCap(
     // bred egg and a capped pokemon differ from their own roll
     transaction.update(caughtRef, {
       ivs: polished,
+      // A cap is the one thing that can make a pokemon perfect after
+      // the fact, so the stored answer moves with the values
+      auctionable: isAuctionableCatch({ ...record, ivs: polished }),
       // A polished health value is a bigger pool, and the share of it
       // the pokemon was carrying is what it keeps
       health: rescaleHealth(

@@ -2,9 +2,11 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
+import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { isPerfectIVs } from '../data/items/bottle-caps';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
-import type { Stats } from '../data/constants/stats';
+import { type Stats, isZeroIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Balls, Items } from '../data/ids/items';
@@ -93,6 +95,24 @@ export interface CaughtPokemon {
   egg: boolean;
   favorite: boolean;
   guarded: boolean;
+  /**
+   * Whether this is one a player would part with gold for — see
+   * `isAuctionableCatch` for the four answers that count.
+   *
+   * It is **derived**, and stored anyway. Everything the derivation
+   * reads is already on the record — `ivs`, `shiny`, `species` — so
+   * nothing here is new information; what the field buys is the
+   * ability to **ask the store**, which the inputs together cannot.
+   * Perfect values are one integer and could be matched, and shiny is
+   * a field, but "any of these four" is a disjunction, and a
+   * disjunction over a whole box is four queries or none.
+   *
+   * It is written by whatever last changed one of the inputs, and it
+   * is never trusted for a decision: `openAuction` re-derives it from
+   * the record it is holding. A stale field can cost a listing a place
+   * in a list; it can never authorize one
+   */
+  auctionable: boolean;
   moves: Moves[];
   /**
    * The abilities the catch has: the rolled one, plus Shadow for a
@@ -233,6 +253,42 @@ export interface CaughtPokemon {
  */
 export function isShiny(caught: { shiny: boolean }): boolean {
   return caught.shiny;
+}
+
+/**
+ * Whether this is one somebody else would pay for.
+ *
+ * Any one of four answers is enough, and each is a different reason a
+ * stranger cannot simply go and get one:
+ *
+ * - **Perfect values.** Six lucky rolls, or a Golden Bottle Cap spent
+ *   on it. Nothing else in the game hands them over.
+ * - **Nothing at all.** Six rolls landing on zero are exactly as rare
+ *   as six landing on thirty-one, and a pokemon as bad as one can
+ *   possibly be is a curiosity somebody will pay for. It is also the
+ *   one of the four a player cannot manufacture: a cap only ever
+ *   raises values, so a blank record can be found and never made —
+ *   and spending a cap on one destroys what made it worth having.
+ * - **Shiny.** The one thing a player cannot work towards at all.
+ * - **A special-tier species.** A legendary or a mythical, which the
+ *   world stages on its own schedule.
+ *
+ * It takes the three fields rather than a whole record, so a caller
+ * part-way through an update can ask about the values it is **about
+ * to write** — a cap that is raising `ivs`, an evolution that is
+ * changing `species` — rather than about the ones already stored
+ */
+export function isAuctionableCatch(caught: {
+  ivs: number;
+  shiny: boolean;
+  species: Species;
+}): boolean {
+  return (
+    isPerfectIVs(caught.ivs) ||
+    isZeroIVs(caught.ivs) ||
+    isShiny(caught) ||
+    getSpawnRarity(caught.species) === SpawnRarity.Special
+  );
 }
 
 /**
@@ -380,6 +436,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     egg: asBoolean(data.egg),
     favorite: asBoolean(data.favorite),
     guarded: asBoolean(data.guarded),
+    auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     abilities,
     // A record written before the field existed has the room the game

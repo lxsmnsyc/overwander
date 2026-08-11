@@ -236,21 +236,26 @@ a day's listing goes on whatever happened to be in the bag and the board fills
 with Potions nobody would walk to a vendor for. So it is narrowed to what a
 bidder **could not simply go and get for themselves**:
 
-| Lot       | May be listed when                                                     | Rule                 |
-| --------- | ---------------------------------------------------------------------- | -------------------- |
-| An item   | It is in the item pool's **special** band                              | `isAuctionableItem`  |
-| A pokemon | Its values are **perfect**, it is **shiny**, or it is **special-tier** | `isAuctionableCatch` |
+| Lot       | May be listed when                                                                     | Rule                 |
+| --------- | -------------------------------------------------------------------------------------- | -------------------- |
+| An item   | It is in the item pool's **special** band                                              | `isAuctionableItem`  |
+| A pokemon | Its values are **perfect** or **all zero**, it is **shiny**, or it is **special-tier** | `isAuctionableCatch` |
 
 The prized band is deliberately below the line for items. A Bottle Cap is worth
 [asking twice before spending](../mechanics/items.md#the-item-pool), and it is
 still something a player turns up by walking; the block is for what walking may
 never turn up at all.
 
-The three answers for a pokemon are three different reasons somebody else would
+The four answers for a pokemon are four different reasons somebody else would
 want it. **Perfect values** are six lucky rolls or a Golden Bottle Cap spent on
-them, and nothing else in the game hands them over. **Shiny** is the one thing a
-player cannot work towards. A **special-tier species** is a legendary or a
-mythical, which the world stages on its own schedule. Anything else — a rare, a
+them, and nothing else in the game hands them over. **All zero** is the other end
+of the same coin: six rolls landing on 0 are exactly as rare as six landing on
+31, a pokemon as bad as one can possibly be is a curiosity, and it is the only
+one of the four a player **cannot manufacture** — a cap raises values and never
+lowers them, so a blank record is found or not at all, and spending a cap on one
+destroys the thing that made it worth having. **Shiny** is the one thing a player
+cannot work towards. A **special-tier species** is a legendary or a mythical,
+which the world stages on its own schedule. Anything else — a rare, a
 fully-evolved anything — a bidder can walk out and catch, which is what makes it
 not worth a day of the board.
 
@@ -258,6 +263,15 @@ Both rules live in
 [`src/auth/auction-record.ts`](../../src/auth/auction-record.ts) and are read by
 both sides: the sell pickers leave out everything that fails, and `openAuction`
 asks again from the **stored** record before it takes the lot.
+
+The catch rule is also a **stored field**. `auctionable` on the catch record is
+`isAuctionableCatch` written down, so the sell picker asks
+`listCaughtMarked(player, 'auctionable')` instead of reading a whole box to find
+the few rows that qualify — see
+[The marks are fields](catches.md#auctionable-is-the-sixth-and-a-different-kind).
+The field is an index and never an authority: the picker re-checks every row it
+returns, and `openAuction` derives the answer from `ivs`, `shiny` and `species`
+rather than reading it.
 
 ## Four pokemon refused outright
 

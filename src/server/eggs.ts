@@ -1,5 +1,5 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import {
   EGG_HATCH_STEPS,
@@ -187,6 +187,13 @@ async function writeEgg(
     egg: true,
     favorite: false,
     guarded: false,
+    // What is inside the shell is already decided, so what it will be
+    // worth to somebody else is decided with it
+    auctionable: isAuctionableCatch({
+      ivs: fields.ivs,
+      shiny: fields.shiny,
+      species: fields.species,
+    }),
     ...freeFields(),
     // Whole and clean: nothing has fought with it, and an egg cannot
     // be fought with. The figure is what the hatchling will have,

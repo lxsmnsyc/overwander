@@ -113,20 +113,33 @@ a held Rawst Berry eats itself to cure the burn before the first turn.
 `publishTeamSnapshot` drops one from the freeze; a team that fields nothing is
 no team, so a party of fainted pokemon cannot start a battle at all.
 
-Three things put a pokemon right:
+Three things put a pokemon right, and they all run through one call —
+`useHealingItem` ([`src/server/healing.ts`](../../src/server/healing.ts)) — with
+`healedByItem` deciding what any given item is worth to any given pokemon:
 
-- **A berry**, through `feedBerry` — the quick way. What each one restores or
-  cures is the berry's own table in
+- **A berry.** What each one restores or cures is the berry's own table in
   [`src/data/items/berries.ts`](../../src/data/items/berries.ts), shared with the
   battle, so an Oran Berry is worth ten points on either side of a fight. The
   battle's threshold is a battle rule only: out of one, the player decides when
-  it is worth it. A berry that would change nothing — the wrong cure, a pokemon
-  already whole, a Leppa or a Persim, whose effects nothing stores — is refused
-  rather than spent.
+  it is worth it.
+- **Medicine**, in [`src/data/items/medicine.ts`](../../src/data/items/medicine.ts).
+  A **potion** gives health back (20 / 60 / 120 / the whole pool), a **cure**
+  takes a status off (one each for poison, burns, ice, sleep and paralysis; a
+  Full Heal takes the lot), a **Full Restore** does both, and a **revive** brings
+  a fainted pokemon round on half a pool — a Max Revive on a whole one. Unlike a
+  berry, none of it is holdable: a potion cannot be drunk mid-raid, which is what
+  keeps a berry worth carrying into one. Medicine is the one thing gold is always
+  worth spending on, so all of it is `Marketable`, and the everyday half of it is
+  in the overworld item pool as well.
 - **A level**, through `useCandy` — the slow way. Growing is also mending: a
   level comes with full health and a clean slate.
-- Nothing else. There are no revives, which is why a **restoring berry works on
-  a pokemon that is down**: it is the way back up rather than a dead end.
+
+Two rules cut across all of it. **A revive is the only thing that reaches a
+fainted pokemon**, and the only thing that does nothing to one still standing —
+a potion poured over a pokemon that is already down does nothing, exactly as in
+the mainline games. And **an item that would change nothing is refused rather
+than spent**: the wrong cure, a pokemon already whole, a Leppa or a Persim, whose
+effects nothing stores.
 
 A record written before these fields existed has neither, and reading a missing
 `health` as zero would faint every pokemon caught until now. Missing means

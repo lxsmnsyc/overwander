@@ -5,7 +5,7 @@ import {
   NON_VOLATILE_STATUSES,
   carriedStatuses,
   getMaxHealth,
-  healedByBerry,
+  healedByItem,
   isFainted,
   isNonVolatileStatus,
   needsCare,
@@ -136,47 +136,51 @@ describe('berries between battles', () => {
   it('restores what the berry is worth, and no more than the pool', () => {
     const max = getMaxHealth(pokemon(Species.Bulbasaur, 50));
 
-    expect(healedByBerry(hurt(20), Items.OranBerry)).toEqual({ health: 30, statuses: [] });
-    expect(healedByBerry(hurt(20), Items.SitrusBerry)).toEqual({
+    expect(healedByItem(hurt(20), Items.OranBerry)).toEqual({ health: 30, statuses: [] });
+    expect(healedByItem(hurt(20), Items.SitrusBerry)).toEqual({
       health: 20 + Math.floor(max / 4),
       statuses: [],
     });
-    expect(healedByBerry(hurt(max - 1), Items.SitrusBerry)).toEqual({
+    expect(healedByItem(hurt(max - 1), Items.SitrusBerry)).toEqual({
       health: max,
       statuses: [],
     });
   });
 
-  it('brings a fainted pokemon back, since nothing else revives', () => {
-    expect(healedByBerry(hurt(0), Items.OranBerry)).toEqual({ health: 10, statuses: [] });
+  it('cannot reach a pokemon that is down', () => {
+    // A berry or a potion on a fainted pokemon does nothing, the way
+    // it does not in the mainline games: that is what a revive is for
+    expect(healedByItem(hurt(0), Items.OranBerry)).toBeNull();
+    expect(healedByItem(hurt(0), Items.HyperPotion)).toBeNull();
+    expect(healedByItem(hurt(0, [Statuses.Burned]), Items.FullHeal)).toBeNull();
   });
 
   it('cures only what the berry covers', () => {
     const max = getMaxHealth(pokemon(Species.Bulbasaur, 50));
 
-    expect(healedByBerry(hurt(max, [Statuses.Poisoned]), Items.PechaBerry)).toEqual({
+    expect(healedByItem(hurt(max, [Statuses.Poisoned]), Items.PechaBerry)).toEqual({
       health: max,
       statuses: [],
     });
-    expect(healedByBerry(hurt(max, [Statuses.BadlyPoisoned]), Items.PechaBerry)).toEqual({
+    expect(healedByItem(hurt(max, [Statuses.BadlyPoisoned]), Items.PechaBerry)).toEqual({
       health: max,
       statuses: [],
     });
-    expect(healedByBerry(hurt(max, [Statuses.Burned]), Items.LumBerry)).toEqual({
+    expect(healedByItem(hurt(max, [Statuses.Burned]), Items.LumBerry)).toEqual({
       health: max,
       statuses: [],
     });
 
     // The wrong cure does nothing, and a berry that does nothing is
     // never spent
-    expect(healedByBerry(hurt(max, [Statuses.Burned]), Items.PechaBerry)).toBeNull();
+    expect(healedByItem(hurt(max, [Statuses.Burned]), Items.PechaBerry)).toBeNull();
     // Nor is one handed to a pokemon in perfect shape
-    expect(healedByBerry(hurt(max), Items.OranBerry)).toBeNull();
+    expect(healedByItem(hurt(max), Items.OranBerry)).toBeNull();
     // Leppa restores what this engine spends as a cooldown, and
     // Persim cures something no record carries: neither has anything
     // to do out of a battle
-    expect(healedByBerry(hurt(1), Items.LeppaBerry)).toBeNull();
-    expect(healedByBerry(hurt(max, [Statuses.Burned]), Items.PersimBerry)).toBeNull();
+    expect(healedByItem(hurt(1), Items.LeppaBerry)).toBeNull();
+    expect(healedByItem(hurt(max, [Statuses.Burned]), Items.PersimBerry)).toBeNull();
   });
 
   it('cures everything the berry covers, not the first of them', () => {
@@ -184,11 +188,87 @@ describe('berries between battles', () => {
     // both; a Pecha beside it takes only the poison
     const ailing = hurt(20, [Statuses.Poisoned, Statuses.Paralyzed]);
 
-    expect(healedByBerry(ailing, Items.LumBerry)).toEqual({ health: 20, statuses: [] });
-    expect(healedByBerry(ailing, Items.PechaBerry)).toEqual({
+    expect(healedByItem(ailing, Items.LumBerry)).toEqual({ health: 20, statuses: [] });
+    expect(healedByItem(ailing, Items.PechaBerry)).toEqual({
       health: 20,
       statuses: [Statuses.Paralyzed],
     });
+  });
+});
+
+describe('medicine', () => {
+  const hurt = (health: number, statuses: Statuses[] = []): HealthState & HealthSource => ({
+    ...pokemon(Species.Bulbasaur, 50),
+    health,
+    statuses,
+  });
+  const max = (): number => getMaxHealth(pokemon(Species.Bulbasaur, 50));
+
+  it('pours a potion in by the flat figure it is worth', () => {
+    expect(healedByItem(hurt(20), Items.Potion)).toEqual({ health: 40, statuses: [] });
+    expect(healedByItem(hurt(20), Items.SuperPotion)).toEqual({ health: 80, statuses: [] });
+    // A Bulbasaur's pool is smaller than a Hyper Potion is worth, so
+    // the pour stops at the brim
+    expect(healedByItem(hurt(20), Items.HyperPotion)).toEqual({ health: max(), statuses: [] });
+
+    // A Max Potion is as much as the pool holds, and no potion
+    // overfills one
+    expect(healedByItem(hurt(20), Items.MaxPotion)).toEqual({ health: max(), statuses: [] });
+    expect(healedByItem(hurt(max() - 1), Items.HyperPotion)).toEqual({
+      health: max(),
+      statuses: [],
+    });
+
+    // A potion carries no cure, and one poured over a whole pokemon
+    // is one spent on nothing
+    expect(healedByItem(hurt(max() - 5, [Statuses.Burned]), Items.Potion)).toEqual({
+      health: max(),
+      statuses: [Statuses.Burned],
+    });
+    expect(healedByItem(hurt(max()), Items.Potion)).toBeNull();
+  });
+
+  it('takes off exactly what the cure covers', () => {
+    const ailing = hurt(20, [Statuses.Poisoned, Statuses.Paralyzed, Statuses.Burned]);
+
+    expect(healedByItem(ailing, Items.Antidote)).toEqual({
+      health: 20,
+      statuses: [Statuses.Paralyzed, Statuses.Burned],
+    });
+    expect(healedByItem(ailing, Items.ParalyzeHeal)).toEqual({
+      health: 20,
+      statuses: [Statuses.Poisoned, Statuses.Burned],
+    });
+    // Full Heal takes the lot; a cure that covers none of it is not
+    // spent, and none of them gives health back
+    expect(healedByItem(ailing, Items.FullHeal)).toEqual({ health: 20, statuses: [] });
+    expect(healedByItem(hurt(20, [Statuses.Burned]), Items.Antidote)).toBeNull();
+    expect(healedByItem(hurt(20, [Statuses.Sleeping]), Items.Awakening)).toEqual({
+      health: 20,
+      statuses: [],
+    });
+  });
+
+  it('does both halves of the job with a Full Restore', () => {
+    expect(healedByItem(hurt(20, [Statuses.Frozen]), Items.FullRestore)).toEqual({
+      health: max(),
+      statuses: [],
+    });
+  });
+
+  it('revives only what is down, and only a revive does', () => {
+    // Half a pool for a Revive, the whole of it for a Max — and the
+    // statuses go with the faint
+    expect(healedByItem(hurt(0, [Statuses.Burned]), Items.Revive)).toEqual({
+      health: Math.round(max() / 2),
+      statuses: [],
+    });
+    expect(healedByItem(hurt(0), Items.MaxRevive)).toEqual({ health: max(), statuses: [] });
+
+    // A revive is worth nothing to a pokemon still standing, however
+    // badly hurt it is
+    expect(healedByItem(hurt(1), Items.Revive)).toBeNull();
+    expect(healedByItem(hurt(1), Items.MaxRevive)).toBeNull();
   });
 });
 

@@ -6,6 +6,7 @@ import registerGems from './gems';
 import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
+import registerMedicines from './medicine';
 import registerOrbs from './orbs';
 import registerPlates from './plates';
 import registerRaidItems from './raid-items';
@@ -25,6 +26,7 @@ export { getTeachableMoves } from './machines';
 export default function registerItems(): void {
   registerBalls();
   registerBattleBerries();
+  registerMedicines();
   registerEvolutionStones();
   registerTypeBoosters();
   registerStatBoosters();

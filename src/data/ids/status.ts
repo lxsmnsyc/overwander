@@ -38,6 +38,24 @@ export const enum Statuses {
   Dormant = 21,
 }
 
+/**
+ * The statuses a pokemon carries out of a battle. Everything else —
+ * confusion, flinching, a substitute, the field's own effects — is
+ * volatile: it belongs to the fight and ends with it.
+ *
+ * It lives with the ids because it is a property of the statuses
+ * themselves: what a catch record keeps, what a Full Heal takes off
+ * and what a battle report is allowed to write are all the same list
+ */
+export const NON_VOLATILE_STATUSES: Statuses[] = [
+  Statuses.Poisoned,
+  Statuses.BadlyPoisoned,
+  Statuses.Sleeping,
+  Statuses.Paralyzed,
+  Statuses.Burned,
+  Statuses.Frozen,
+];
+
 export const enum Weathers {
   None = 0,
   Sunny = 1,

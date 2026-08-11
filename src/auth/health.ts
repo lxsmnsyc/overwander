@@ -1,9 +1,10 @@
 import type { Stats } from '../data/constants/stats';
 import { STAT_ORDER, getHealthStat } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
-import { Statuses } from '../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses } from '../data/ids/status';
 import type { Species } from '../data/ids/species';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
+import { MEDICINES } from '../data/items/medicine';
 import { getSpeciesData } from '../data/species';
 
 /**
@@ -25,22 +26,13 @@ import { getSpeciesData } from '../data/species';
  */
 
 /**
- * The statuses a pokemon carries out of a battle. Everything else —
- * confusion, flinching, a substitute, the field's own effects — is
- * volatile: it belongs to the fight and ends with it.
- *
- * A unit can hold several of these at once — poisoned and asleep is
+ * The statuses a pokemon carries out of a battle live with the ids,
+ * since what they are is a property of the statuses rather than of
+ * the catch. A unit can hold several at once — poisoned and asleep is
  * an ordinary way to come out of a raid — so the record keeps the
  * whole list rather than the worst of them
  */
-export const NON_VOLATILE_STATUSES: Statuses[] = [
-  Statuses.Poisoned,
-  Statuses.BadlyPoisoned,
-  Statuses.Sleeping,
-  Statuses.Paralyzed,
-  Statuses.Burned,
-  Statuses.Frozen,
-];
+export { NON_VOLATILE_STATUSES };
 
 const NON_VOLATILE = new Set(NON_VOLATILE_STATUSES);
 
@@ -154,38 +146,79 @@ export function needsCare(caught: HealthState & HealthSource): boolean {
 }
 
 /**
- * What a berry leaves a pokemon at when it is handed one outside a
- * battle: whatever it restores, and whatever it cures.
+ * What one item is worth to one pokemon: how much health it restores
+ * and what it takes off. It covers both things a player heals with —
+ * a berry off the bush and medicine out of the bag — because from the
+ * record's point of view they are the same act.
  *
- * The tables are the berry's own — the same ones the battle reads —
- * so an Oran is worth ten points here as well as there, and a Pecha
- * takes poison off wherever the poison came from. The battle's
- * threshold is not consulted: in a fight the berry decides when to
- * eat itself, and out of one the player decides.
+ * A berry's numbers are the berry's own, the same ones the battle
+ * reads, so an Oran is worth ten points here as well as there. What
+ * is *not* read is the battle's threshold: in a fight the berry
+ * decides when to eat itself, and out of one the player decides.
  *
- * A berry works on a pokemon that is **down**, which is deliberate:
- * nothing in the game revives, so an Oran Berry is how a fainted
- * pokemon comes back rather than a dead end nobody can leave.
- *
- * Answers null when the berry would do nothing — the wrong cure, a
- * pokemon already whole, or a berry whose only use is inside a battle
- * (Leppa restores what this game spends as a cooldown, and Persim
- * cures something no record carries)
+ * A revive is the only thing that lifts a **fainted** pokemon, and it
+ * is the only thing that does nothing to one still standing. Every
+ * other item is the other way round: a potion poured over a pokemon
+ * that is already down does nothing, the way it does not in the
+ * mainline games
  */
-export function healedByBerry(caught: HealthState & HealthSource, item: Items): HealthState | null {
-  const max = getMaxHealth(caught);
-  const restoring = BERRY_HEALS.get(item);
-  const curing = BERRY_STATUS_CURES.get(item);
-  let health = caught.health;
+function effectOf(item: Items): {
+  restore: (max: number) => number;
+  cures: Set<Statuses> | null;
+  revives: number;
+} {
+  const medicine = MEDICINES.get(item);
 
-  if (restoring != null && health < max) {
-    health = Math.min(max, health + Math.max(1, Math.floor(restoring.heal(max))));
+  if (medicine != null) {
+    return { restore: () => medicine.restore, cures: medicine.cures, revives: medicine.revives };
   }
 
-  // A berry takes off everything it covers rather than the first
+  // A berry's heal is a share of the pool as often as a flat figure,
+  // so it is resolved against the pokemon it is fed to
+  const restoring = BERRY_HEALS.get(item);
+
+  return {
+    restore: (max) => (restoring == null ? 0 : Math.max(1, Math.floor(restoring.heal(max)))),
+    cures: BERRY_STATUS_CURES.get(item) ?? null,
+    revives: 0,
+  };
+}
+
+/**
+ * Where an item leaves a pokemon: the health it restores, and the
+ * statuses it takes off.
+ *
+ * Answers null when the item would do nothing, and nothing is exactly
+ * what is not worth spending it on — the wrong cure, a pokemon
+ * already whole, a potion on a fainted one, a revive on a standing
+ * one, or an item whose only use is inside a battle (Leppa restores
+ * what this game spends as a cooldown, and Persim cures something no
+ * record carries)
+ */
+export function healedByItem(caught: HealthState & HealthSource, item: Items): HealthState | null {
+  const max = getMaxHealth(caught);
+  const effect = effectOf(item);
+  const down = isFainted(caught);
+
+  // A revive is the whole of what it does: it brings a pokemon back
+  // on its share of the pool, and it is the only thing that reaches
+  // one at zero
+  if (effect.revives > 0) {
+    return down ? { health: Math.max(1, Math.round(max * effect.revives)), statuses: [] } : null;
+  }
+  if (down) {
+    return null;
+  }
+
+  const restore = effect.restore(max);
+  const health = restore > 0 ? Math.min(max, caught.health + restore) : caught.health;
+  // An item takes off everything it covers rather than the first
   // thing it finds: a Lum on a pokemon that is poisoned *and*
   // paralyzed clears both, which is what it does in a battle too
-  const statuses = curing == null ? caught.statuses : caught.statuses.filter((s) => !curing.has(s));
+  const statuses =
+    effect.cures == null
+      ? caught.statuses
+      : caught.statuses.filter((carried) => effect.cures?.has(carried) !== true);
 
   return health === caught.health && statuses.length === caught.statuses.length
     ? null

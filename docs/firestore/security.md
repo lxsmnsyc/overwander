@@ -36,7 +36,7 @@ a call is never trusted — only what the token proves.
 | `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                      |
 | `boostEgg`                                                 | The daycare lady is re-derived from the window, and the half a walk she adds is measured against the stored egg                                                |
 | `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                    |
-| `feedBerry`                                                | A berry leaves the bag and the health it restores lands on the catch in one transaction, and only a berry that would do something is spent                     |
+| `useHealingItem`                                           | The item leaves the bag and the health it restores lands on the catch in one transaction, and only an item that would do something is spent                    |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build

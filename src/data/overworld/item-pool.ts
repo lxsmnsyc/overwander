@@ -43,6 +43,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LuxuryBall, weight: 5 },
     { item: Items.Pearl, weight: 8 },
     { item: Items.Stardust, weight: 8 },
+    // The everyday medicine. A walk that turns up a Potion and an
+    // Antidote is a walk that paid for the raid it is walking towards
+    { item: Items.Potion, weight: 12 },
+    { item: Items.Antidote, weight: 5 },
+    { item: Items.BurnHeal, weight: 5 },
+    { item: Items.IceHeal, weight: 5 },
+    { item: Items.Awakening, weight: 5 },
+    { item: Items.ParalyzeHeal, weight: 5 },
   ],
   uncommon: [
     { item: Items.UltraBall, weight: 15 },
@@ -55,6 +63,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.DuskBall, weight: 10 },
     { item: Items.BigPearl, weight: 8 },
     { item: Items.StarPiece, weight: 8 },
+    { item: Items.SuperPotion, weight: 10 },
+    { item: Items.HyperPotion, weight: 6 },
+    { item: Items.FullHeal, weight: 6 },
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },
@@ -63,6 +74,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
+    // What a party comes back from a lost raid on. The Max Revive is
+    // deliberately the thinner slot of the two
+    { item: Items.MaxPotion, weight: 6 },
+    { item: Items.FullRestore, weight: 4 },
+    { item: Items.Revive, weight: 6 },
+    { item: Items.MaxRevive, weight: 2 },
     // A dug-up cap fixes one stat of one pokemon: rare enough to be
     // the find of a walk, common enough to be worth saving for the
     // pokemon that deserves it

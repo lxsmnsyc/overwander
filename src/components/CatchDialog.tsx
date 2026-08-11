@@ -13,8 +13,14 @@ import {
   releaseCatch,
   takeItem,
 } from '../auth/caught';
-import feedBerry from '../auth/berries';
-import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
+import useHealingItem from '../auth/healing';
+import {
+  type HealthState,
+  STATUS_NAMES,
+  getMaxHealth,
+  healedByItem,
+  isFainted,
+} from '../auth/health';
 import useBottleCap from '../auth/bottle-caps';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
@@ -27,7 +33,6 @@ import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
 import { Genders, type Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
-import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { getMoveData } from '../data/moves';
 import { getConsumedItem, getSpeciesData } from '../data/species';
@@ -237,28 +242,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const caps = (): InventoryEntry[] => (bag() ?? []).filter((entry) => isBottleCap(entry.item));
 
   /**
-   * The berries in the bag that would do this pokemon some good: one
-   * that restores health it is missing, or cures the status it is
-   * carrying. A berry that would change nothing is not offered,
-   * because using it would spend it
+   * Everything in the bag that would do this pokemon some good — a
+   * berry, a potion, a cure, a revive. The rules decide: an item that
+   * would change nothing about this pokemon is not offered, because
+   * using it would spend it
    */
-  const berries = (): InventoryEntry[] => {
+  const remedies = (): InventoryEntry[] => {
     const caught = view();
 
     if (caught == null) {
       return [];
     }
-
-    const hurt = caught.health < getMaxHealth(caught);
-
-    return (bag() ?? []).filter((entry) => {
-      const cures = BERRY_STATUS_CURES.get(entry.item);
-
-      return (
-        (hurt && BERRY_HEALS.has(entry.item)) ||
-        (cures != null && caught.statuses.some((carried) => cures.has(carried)))
-      );
-    });
+    return (bag() ?? []).filter((entry) => healedByItem(caught, entry.item) != null);
   };
 
   const moveItem = (item: Items, give: boolean): void => {
@@ -286,19 +281,19 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
-  const feed = (item: Items): void => {
+  const heal = (item: Items): void => {
     const catchId = props.catchId;
 
     if (owned() == null || catchId == null) {
       return;
     }
     setStatus(null);
-    feedBerry(catchId, item)
-      .then(async (state) => {
+    useHealingItem(catchId, item)
+      .then(async (state: HealthState | null) => {
         setStatus(
           state == null
             ? `${describeItem(item)} would do nothing for it.`
-            : `${describeItem(item)} eaten — ${state.health} HP left.`,
+            : `${describeItem(item)} used — ${state.health} HP.`,
         );
         await refetch();
         await refetchBag();
@@ -632,34 +627,34 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       </Show>
                     </Show>
 
-                    <h3>Berries</h3>
+                    <h3>Healing</h3>
                     {/* A fight leaves what it leaves, and nothing
-                        mends on its own: a berry is the quick way
-                        back, a level the slow one. Only berries that
-                        would actually do something are offered —
-                        using one spends it */}
+                        mends on its own: a berry or medicine is the
+                        quick way back, a level the slow one. Only what
+                        would actually do something is offered — using
+                        it spends it */}
                     <Show
-                      when={berries().length}
+                      when={remedies().length}
                       fallback={
                         <p>
                           {isFainted(loaded())
-                            ? 'It is down. A restoring berry brings it back; a level does too.'
+                            ? 'It is down. Only a revive brings it round — or a level.'
                             : 'Nothing in the bag would do it any good.'}
                         </p>
                       }
                     >
                       <ul>
-                        <For each={berries()}>
+                        <For each={remedies()}>
                           {(entry) => (
                             <li>
                               <button
                                 type="button"
                                 disabled={fighting()}
                                 onClick={() => {
-                                  feed(entry.item);
+                                  heal(entry.item);
                                 }}
                               >
-                                Feed {describeItem(entry.item)} × {entry.amount}
+                                Use {describeItem(entry.item)} × {entry.amount}
                               </button>
                             </li>
                           )}

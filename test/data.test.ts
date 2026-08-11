@@ -46,6 +46,7 @@ import {
 import { MAX_IV, STAT_ORDER, Stats } from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
+import { MEDICINES, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
@@ -441,6 +442,49 @@ describe('item data', () => {
     for (const band of [ITEM_POOL.base, ITEM_POOL.uncommon, ITEM_POOL.rare, ITEM_POOL.special]) {
       expect(band.some((entry) => entry.item === Items.ExpShare)).toBe(false);
       expect(band.some((entry) => entry.item === Items.LuckyEgg)).toBe(false);
+    }
+  });
+
+  it('stocks the medicine and hides some of it too', () => {
+    for (const [item, effect] of MEDICINES) {
+      const data = getItemData(item);
+
+      // Used on a pokemon and spent doing it. Nothing here is
+      // holdable: a potion cannot be drunk mid-raid, which is what
+      // keeps a berry worth carrying
+      expect(data.type).toBe(ItemTypes.Medicine);
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      // The one thing gold is always worth spending on
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBeGreaterThan(0);
+      expect(data.sell).toBeLessThan(data.buy);
+      expect(isMedicine(item)).toBe(true);
+
+      // Every one of them does something: restores, cures or revives
+      expect(effect.restore > 0 || effect.cures != null || effect.revives > 0).toBe(true);
+      // A revive does nothing but revive
+      expect(isRevive(item)).toBe(effect.revives > 0);
+      if (effect.revives > 0) {
+        expect(effect.restore).toBe(0);
+        expect(effect.cures).toBeNull();
+      }
+    }
+    expect(getItemData(Items.MaxRevive).buy).toBeGreaterThan(getItemData(Items.Revive).buy);
+    expect(isMedicine(Items.OranBerry)).toBe(false);
+
+    // A potion is an everyday find; what a lost raid is undone with
+    // is not
+    expect(ITEM_POOL.base.some((entry) => entry.item === Items.Potion)).toBe(true);
+    expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.SuperPotion)).toBe(true);
+    for (const item of [Items.MaxPotion, Items.FullRestore, Items.Revive, Items.MaxRevive]) {
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+      expect(ITEM_POOL.base.some((entry) => entry.item === item)).toBe(false);
+    }
+    // None of it is one-per-world class
+    for (const item of MEDICINES.keys()) {
+      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
     }
   });
 

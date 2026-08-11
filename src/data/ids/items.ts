@@ -221,6 +221,25 @@ export const enum Items {
    */
   GoldenBottleCap = 112,
   BottleCap = 113,
+
+  /**
+   * Medicine: what a party is put right with between fights. The
+   * potions give health back, the cures take a status off, and the
+   * revives are the only things that bring a fainted pokemon round
+   */
+  Potion = 114,
+  SuperPotion = 115,
+  HyperPotion = 116,
+  MaxPotion = 117,
+  FullRestore = 118,
+  Antidote = 119,
+  BurnHeal = 120,
+  IceHeal = 121,
+  Awakening = 122,
+  ParalyzeHeal = 123,
+  FullHeal = 124,
+  Revive = 125,
+  MaxRevive = 126,
 }
 
 /**

@@ -9,6 +9,7 @@ import { isShiny } from '../auth/caught-record';
 import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
+import SpriteDisplay from './SpriteDisplay';
 import {
   Badge,
   Button,
@@ -194,6 +195,18 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       <Show when={session()}>
         {(active) => (
           <>
+            {/* What is standing there, looking back at the player */}
+            <div class="flex justify-center">
+              <SpriteDisplay
+                species={active().encounter.species}
+                shiny={isShiny(active().encounter)}
+                animation="Idle"
+                direction="down"
+                scale={4}
+                label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+              />
+            </div>
+
             {/* The four numbers the next throw turns on, close enough
                 together to be weighed against each other */}
             <dl class="rounded-lg border border-line-soft bg-parchment px-3 py-2 text-sm">

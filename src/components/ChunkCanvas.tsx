@@ -1,7 +1,10 @@
-import { type JSX, createEffect, createSignal, onMount } from 'solid-js';
+import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
+import loadSpeciesSprite from '../canvas/species-sprites';
 import { BIOME_COLORS } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import Landmark from '../data/overworld/landmark';
+import type { Species } from '../data/ids/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
 
 /**
@@ -26,6 +29,14 @@ import { CHUNK_CELLS } from '../overworld/chunk';
 const CELL = 26;
 
 const SIZE = CELL * CHUNK_CELLS;
+
+/**
+ * How much bigger than the sheet a pokemon standing in a cell is
+ * drawn. A frame is around 32 pixels and a cell is 26, so a little
+ * under half size leaves the pokemon inside its square with the grid
+ * still readable around it
+ */
+const SPRITE_SCALE = 0.75;
 
 const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
@@ -78,9 +89,11 @@ export interface ChunkCanvasProps {
   player: number;
   landmarks: Map<number, Landmark>;
   /**
-   * Which cells hold a pokemon this window
+   * Which cells hold a pokemon this window, and which pokemon. It is
+   * what stands there rather than only that something does: the
+   * ground draws the pokemon itself
    */
-  spawns: Set<number>;
+  spawns: Map<number, Species>;
   /**
    * Whether the cell can be acted on from where the player stands.
    * The rule is the tab's — a thing, within the ring around them
@@ -117,6 +130,38 @@ const MOVE_KEYS = new Map<string, [number, number]>([
 
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
+  /**
+   * Bumped once per animation frame. The drawing is one effect over
+   * everything that can change, so a sprite moving on is told the same
+   * way a landmark appearing is: something changed, draw again
+   */
+  const [beat, setBeat] = createSignal(0);
+
+  /**
+   * One animation per species standing in the chunk, shared by every
+   * cell holding that species. Two Rattata in a field are one sheet
+   * and one playhead — they are scenery, and scenery need not be out
+   * of step to be believed
+   */
+  const sprites = new Map<Species, SpeciesSpriteAnimation | null>();
+
+  const spriteFor = (species: Species): SpeciesSpriteAnimation | null => {
+    if (sprites.has(species)) {
+      return sprites.get(species) ?? null;
+    }
+
+    // Held as null until it lands, so a species is asked for once
+    // rather than once per frame it is drawn in
+    sprites.set(species, null);
+    loadSpeciesSprite(species)
+      .then((loaded) => {
+        sprites.set(species, loaded);
+      })
+      .catch(() => {
+        // The dot it always was
+      });
+    return null;
+  };
   const [hovered, setHovered] = createSignal<number | null>(null);
   const [focused, setFocused] = createSignal(false);
   /**
@@ -174,9 +219,37 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     element.height = SIZE * ratio;
     context.scale(ratio, ratio);
 
+    /**
+     * The pokemon standing about are the only thing here that moves
+     * on its own, so the chunk keeps a frame clock of its own — the
+     * battle canvas can borrow the fight's, and there is no fight
+     * here. It stops with the component
+     */
+    let last = 0;
+    let frame = requestAnimationFrame(function step(now: number): void {
+      frame = requestAnimationFrame(step);
+
+      const elapsed = last === 0 ? 0 : now - last;
+
+      last = now;
+
+      for (const sprite of sprites.values()) {
+        sprite?.update(elapsed);
+      }
+      setBeat((count) => count + 1);
+    });
+
+    onCleanup(() => {
+      cancelAnimationFrame(frame);
+    });
+
     // Everything the drawing reads is a signal or a closure over one,
     // so reading them here is what subscribes the picture to them
     createEffect(() => {
+      // Read so the picture redraws with the animations, not only when
+      // something about the chunk changes
+      beat();
+
       context.fillStyle = BIOME_COLORS[props.biome];
       context.fillRect(0, 0, SIZE, SIZE);
 
@@ -222,13 +295,26 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           context.fillText(LANDMARK_GLYPHS[landmark], middle.x, middle.y + 1);
         }
 
-        // A pokemon standing in the open is a dot; what it is belongs
-        // in the label rather than on the ground
-        if (props.spawns.has(index)) {
-          context.fillStyle = COLORS.spawn;
-          context.beginPath();
-          context.arc(middle.x, middle.y, CELL * 0.18, 0, Math.PI * 2);
-          context.fill();
+        // A pokemon standing in the open is drawn where it stands,
+        // facing the way somebody walking up to it would see it. One
+        // whose sheet has not arrived is the dot it always was
+        const standing = props.spawns.get(index);
+
+        if (standing != null) {
+          const sprite = spriteFor(standing);
+
+          if (sprite?.ready === true) {
+            sprite.play('Idle', { direction: 'down', loop: true });
+            sprite.draw(context, middle.x, y + CELL - 2, {
+              scale: SPRITE_SCALE,
+              anchor: 'bottom',
+            });
+          } else {
+            context.fillStyle = COLORS.spawn;
+            context.beginPath();
+            context.arc(middle.x, middle.y, CELL * 0.18, 0, Math.PI * 2);
+            context.fill();
+          }
         }
 
         if (index === props.player) {

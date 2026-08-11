@@ -37,7 +37,7 @@ import { BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
 import { BALL_ITEMS, ItemFlags, type Items } from '../data/ids/items';
-import { Genders, type Species } from '../data/ids/species';
+import { Genders, Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { PURIFY_IV_BOOST, isPurifyingGem } from '../data/items/purifying-gem';
@@ -54,6 +54,7 @@ import {
   isRaidEncounter,
 } from '../overworld/encounter';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import SpriteDisplay from './SpriteDisplay';
 import {
   Badge,
   Button,
@@ -598,6 +599,20 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         <Show when={view()} fallback={<Note>No such catch.</Note>}>
           {(loaded) => (
             <>
+              {/* What the record is about, walking. An egg is drawn as
+                  an egg: what is inside it is not the player's to see
+                  until it hatches */}
+              <div class="flex justify-center">
+                <SpriteDisplay
+                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                  shiny={!isEgg(loaded()) && isShiny(loaded())}
+                  animation="Walk"
+                  direction="down-right"
+                  scale={4}
+                  label={named()}
+                />
+              </div>
+
               {/* The whole sheet, read down rather than across: it is
                   a record of one pokemon, and every line of it is the
                   same shape */}

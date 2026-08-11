@@ -760,7 +760,9 @@ export default function OverworldTab(): JSX.Element {
               biome={loaded().biome}
               player={cell()}
               landmarks={loaded().landmarks}
-              spawns={new Set(loaded().spawns.keys())}
+              spawns={
+                new Map([...loaded().spawns].map(([at, standing]) => [at, standing.spawn[0]]))
+              }
               reachable={(index) =>
                 !busy() && holdsSomething(loaded(), index) && withinReach(index)
               }

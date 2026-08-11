@@ -4,6 +4,7 @@ import { getLairTitle } from '../data/overworld/lair';
 import { getSpeciesData } from '../data/species';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { Badge, Button, Dialog, DialogActions, Status } from './styled';
+import SpriteDisplay from './SpriteDisplay';
 import { GameTab, useGame } from './game-context';
 
 /**
@@ -154,11 +155,21 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       <Show when={view()}>
         {(standing) => (
           <>
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="font-medium">{getSpeciesData(standing().species).name}</span>
-              <Show when={standing().kind === RaidKind.Shadow}>
-                <Badge tone="ember">shadow</Badge>
-              </Show>
+            <div class="flex items-center gap-3">
+              {/* What is waiting in there, pacing. A lair is a name
+                  and a species id until somebody looks inside it */}
+              <SpriteDisplay
+                species={standing().species}
+                animation="Walk"
+                direction="down-right"
+                label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
+              />
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-medium">{getSpeciesData(standing().species).name}</span>
+                <Show when={standing().kind === RaidKind.Shadow}>
+                  <Badge tone="ember">shadow</Badge>
+                </Show>
+              </div>
             </div>
             <DialogActions>
               <Button tone="primary" disabled={busy()} onClick={act}>

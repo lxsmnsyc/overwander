@@ -1,10 +1,14 @@
 import { type JSX, onCleanup, onMount } from 'solid-js';
 import type Battle from '../battle/core';
+import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
+import type { SpriteDirection } from '../canvas/species-sprite-animation';
+import loadSpeciesSprite from '../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
 import { EventPriority } from '../core/event-emitter';
 import { Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
+import type { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getSpeciesData } from '../data/species';
 
@@ -39,6 +43,14 @@ const RADIUS = 24;
  */
 const BOSS_RADIUS = 52;
 
+/**
+ * What a slot's radius is worth in sprite scale. A frame is a few
+ * dozen pixels tall, so a boss at fifty-odd pixels of radius comes
+ * out about twice the size of a party member — which is what the
+ * radius was saying when it was a circle
+ */
+const SPRITE_SCALE_DIVISOR = 16;
+
 const BAR_WIDTH = 72;
 const BAR_HEIGHT = 7;
 
@@ -68,6 +80,16 @@ interface Slot {
   y: number;
   radius: number;
   color: string;
+  /**
+   * The pokemon itself, when its sheet has arrived. A unit whose
+   * sheet is still coming — or has none at all — is drawn as the
+   * circle this used to be, so the fight is watchable either way
+   */
+  sprite: SpeciesSpriteAnimation | null;
+  /**
+   * Which way it is facing: the two sides look at each other
+   */
+  facing: SpriteDirection;
 }
 
 /**
@@ -141,10 +163,38 @@ function readSides(battle: Battle, player: string): { mine: Unit[]; theirs: Unit
 /**
  * Spread a side evenly across its row
  */
-function layout(units: Unit[], y: number, radius: number, color: string): Slot[] {
+function layout(
+  units: Unit[],
+  y: number,
+  radius: number,
+  color: string,
+  facing: SpriteDirection,
+  spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
+): Slot[] {
   const step = WIDTH / (units.length + 1);
 
-  return units.map((unit, at) => ({ unit, x: step * (at + 1), y, radius, color }));
+  return units.map((unit, at) => ({
+    unit,
+    x: step * (at + 1),
+    y,
+    radius,
+    color,
+    facing,
+    sprite: spriteFor(unit),
+  }));
+}
+
+/**
+ * What a unit should look like it is doing. A pokemon in the middle
+ * of a move is winding one up, one that has been knocked out is down,
+ * and everything else is standing there — and a sheet without the
+ * animation asked for falls back to the one every sheet has
+ */
+function animationFor(unit: Unit): string {
+  if (!unit.alive) {
+    return 'Hurt';
+  }
+  return unit.casting != null || unit.channeling != null ? 'Charge' : 'Idle';
 }
 
 function healthColor(share: number): string {
@@ -189,10 +239,31 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
   const share = maxHealth <= 0 ? 0 : unit.health / maxHealth;
 
   context.globalAlpha = unit.alive ? 1 : 0.35;
-  context.beginPath();
-  context.arc(slot.x, slot.y, slot.radius, 0, Math.PI * 2);
-  context.fillStyle = unit.alive ? slot.color : COLORS.down;
-  context.fill();
+
+  const sprite = slot.sprite;
+
+  if (sprite?.ready === true) {
+    const wanted = animationFor(unit);
+
+    // A knocked-out pokemon holds the last frame of being hurt rather
+    // than looping it, which is the difference between lying there
+    // and writhing for ever
+    sprite.play(sprite.has(wanted) ? wanted : 'Idle', {
+      direction: slot.facing,
+      loop: unit.alive,
+    });
+    // Feet on the line the circle used to sit on, so nothing else
+    // that measures from the slot has to move
+    sprite.draw(context, slot.x, slot.y + slot.radius, {
+      scale: slot.radius / SPRITE_SCALE_DIVISOR,
+      anchor: 'bottom',
+    });
+  } else {
+    context.beginPath();
+    context.arc(slot.x, slot.y, slot.radius, 0, Math.PI * 2);
+    context.fillStyle = unit.alive ? slot.color : COLORS.down;
+    context.fill();
+  }
 
   context.font = '12px sans-serif';
   drawLabel(
@@ -239,6 +310,42 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   const flying: Flight[] = [];
 
   /**
+   * One animation per unit, keyed by what that unit currently looks
+   * like. A unit that changes what it looks like — a Transform, a
+   * substitute taking the hits — is drawn as the new thing from the
+   * frame it changed, and the sheet it changed away from stays cached
+   * for whoever else is wearing it
+   */
+  const sprites = new Map<Unit, { appearance: Species; sprite: SpeciesSpriteAnimation | null }>();
+
+  const spriteFor = (unit: Unit): SpeciesSpriteAnimation | null => {
+    const known = sprites.get(unit);
+
+    if (known != null && known.appearance === unit.appearance) {
+      return known.sprite;
+    }
+
+    // Held before the sheet arrives, so a unit is asked for once
+    // rather than once per frame it is drawn in
+    const pending = { appearance: unit.appearance, sprite: null as SpeciesSpriteAnimation | null };
+
+    sprites.set(unit, pending);
+    loadSpeciesSprite(unit.appearance)
+      .then((loaded) => {
+        // Only if it is still what the unit looks like: a sheet that
+        // arrives after a Transform belongs to nobody
+        if (sprites.get(unit) === pending) {
+          pending.sprite = loaded;
+        }
+      })
+      .catch(() => {
+        // Drawn as a circle, which is what it was before there were
+        // sprites at all
+      });
+    return null;
+  };
+
+  /**
    * The flight a move update or a landing is talking about. A move is
    * held in the air by its caster and its name, and one unit is not
    * casting the same move twice at once, so the two of them name it
@@ -274,13 +381,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const { mine, theirs } = readSides(props.battle, props.player);
       const bossSide = [...props.battle.alliances].some((alliance) => alliance.boss);
       const slots = [
+        // The far side looks down the field at the near one, and the
+        // near one looks back up at it
         ...layout(
           theirs,
           ROW_TOP,
           bossSide ? BOSS_RADIUS : RADIUS,
           bossSide ? COLORS.boss : COLORS.theirs,
+          'down',
+          spriteFor,
         ),
-        ...layout(mine, ROW_BOTTOM, RADIUS, COLORS.mine),
+        ...layout(mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor),
       ];
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 
@@ -393,7 +504,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     // The picture is redrawn on the battle's own frame, so it can only
     // ever show a state the battle was actually in
-    const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, draw);
+    /**
+     * The sprites run on the battle's clock, like everything else
+     * here: the tick says how much time passed, and every animation
+     * on the field is moved on by exactly that much. A fight that is
+     * paused is a field of pokemon holding still
+     */
+    const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      for (const held of sprites.values()) {
+        held.sprite?.update(event.duration);
+      }
+      draw();
+    });
 
     // Something to look at before the first tick lands
     draw();

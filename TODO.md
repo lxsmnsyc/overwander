@@ -3,7 +3,6 @@
 - [ ] Remaining Held Items
 - [ ] More berries
 - [ ] overworld weather
-- [ ] add Vendor
 - [ ] add Fossil Maniac
 - [ ] add Jeweler
 - [ ] add Archaeologist
@@ -11,4 +10,5 @@
 - [ ] ability/item descriptions
 - [ ] nicknames
 - [ ] replace ball feature
-- [ ] 
+- [ ] level up + teach move
+- [ ] catch picker = view catch

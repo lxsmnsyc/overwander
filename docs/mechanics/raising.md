@@ -169,7 +169,7 @@ for free along with the healing:
 | Field       | Before             | After                                      |
 | ----------- | ------------------ | ------------------------------------------ |
 | `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                       |
-| `flags`     | Shadow set         | Shadow clear — the candy cost reverts      |
+| `shadow`    | `true`             | `false` — the candy cost reverts           |
 | `ivs`       | As rolled          | Every value `+PURIFY_IV_BOOST` (2), capped |
 
 `Purified` is **entirely cosmetic**: nothing reads it, and no battle changes. It

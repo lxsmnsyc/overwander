@@ -13,6 +13,14 @@ export function asString(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }
 
+/**
+ * A stored yes-or-no, which is only ever true when it was actually
+ * written as one: a missing field, a number, a string are all no
+ */
+export function asBoolean(value: unknown): boolean {
+  return value === true;
+}
+
 export function asNumberArray(value: unknown): number[] {
   return Array.isArray(value)
     ? value.filter((entry): entry is number => typeof entry === 'number')

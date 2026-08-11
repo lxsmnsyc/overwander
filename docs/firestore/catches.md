@@ -9,38 +9,42 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 
 ## `caught/{catchId}`
 
-| Field                  | Type                    | Notes                                                                   |
-| ---------------------- | ----------------------- | ----------------------------------------------------------------------- |
-| `owner`                | `string`                | Current owner's uid; changes on trade                                   |
-| `type`                 | `EncounterType`         | How it was originally met                                               |
-| `species`              | `Species`               |                                                                         |
-| `level`                | `number`                |                                                                         |
-| `individualValue`      | `number`                | 32-bit roll the IVs slice from                                          |
-| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature                      |
-| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order                      |
-| `gender`               | `Genders`               |                                                                         |
-| `nature`               | `Natures`               |                                                                         |
-| `moves`                | `Moves[]`               |                                                                         |
-| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch                      |
-| `slots`                | `number`                | Room for abilities, held items and moves — three bits each              |
-| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`                       |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first                             |
-| `flags`                | `number`                | `PokemonFlags` bits — see [What the player sets](#what-the-player-sets) |
-| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free                       |
-| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any                         |
-| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship                   |
-| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found                      |
-| `steppedAt`            | `number`                | Server instant steps were last credited at                              |
-| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived                       |
-| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying                        |
-| `ball`                 | `Balls`                 | Ball the catch was made with                                            |
-| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                               |
-| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                                  |
-| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero                             |
-| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance                       |
-| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`                       |
-| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                                   |
-| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                                       |
+| Field                  | Type                    | Notes                                                      |
+| ---------------------- | ----------------------- | ---------------------------------------------------------- |
+| `owner`                | `string`                | Current owner's uid; changes on trade                      |
+| `type`                 | `EncounterType`         | How it was originally met                                  |
+| `species`              | `Species`               |                                                            |
+| `level`                | `number`                |                                                            |
+| `individualValue`      | `number`                | 32-bit roll the IVs slice from                             |
+| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature         |
+| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order         |
+| `gender`               | `Genders`               |                                                            |
+| `nature`               | `Natures`               |                                                            |
+| `moves`                | `Moves[]`               |                                                            |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch         |
+| `slots`                | `number`                | Room for abilities, held items and moves — three bits each |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`          |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first                |
+| `shiny`                | `boolean`               | Sparkled for whoever caught it                             |
+| `shadow`               | `boolean`               | Out of a shadow raid; cleared by purifying                 |
+| `egg`                  | `boolean`               | Still in the shell                                         |
+| `favorite`             | `boolean`               | See [What the player sets](#what-the-player-sets)          |
+| `guarded`              | `boolean`               | See [What the player sets](#what-the-player-sets)          |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free          |
+| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any            |
+| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship      |
+| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found         |
+| `steppedAt`            | `number`                | Server instant steps were last credited at                 |
+| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived          |
+| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying           |
+| `ball`                 | `Balls`                 | Ball the catch was made with                               |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                  |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                     |
+| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero                |
+| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance          |
+| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`          |
+| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                      |
+| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                          |
 | `origin.biome`         | `Biome`                 |                                                                         |
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
@@ -103,19 +107,17 @@ anything else up to apply it.
 
 ### Packed fields
 
-Four groups of fields are stored as integers rather than as the shapes a
+Three groups of fields are stored as integers rather than as the shapes a
 reader wants, and each is one call away in either direction
-([`flags.ts`](../../src/data/constants/flags.ts),
-[`stats.ts`](../../src/data/constants/stats.ts),
+([`stats.ts`](../../src/data/constants/stats.ts),
 [`status.ts`](../../src/data/ids/status.ts),
 [`slots.ts`](../../src/data/constants/slots.ts)):
 
-| Stored     | Was                              | Read with                       |
-| ---------- | -------------------------------- | ------------------------------- |
-| `flags`    | `shiny`, `shadow`, `egg`, `lock` | `hasFlag` / `withFlag`          |
-| `ivs`      | `Record<Stats, number>` of six   | `getIV` / `setIV` / `unpackIVs` |
-| `statuses` | `Statuses[]`                     | `statusFlag` / `unpackStatuses` |
-| `slots`    | Three shared constants           | `getSlots` / `withSlots`        |
+| Stored     | Was                            | Read with                       |
+| ---------- | ------------------------------ | ------------------------------- |
+| `ivs`      | `Record<Stats, number>` of six | `getIV` / `setIV` / `unpackIVs` |
+| `statuses` | `Statuses[]`                   | `statusFlag` / `unpackStatuses` |
+| `slots`    | Three shared constants         | `getSlots` / `withSlots`        |
 
 `slots` is how much room this pokemon has for each of its three lists —
 abilities, held items, moves — three bits each, stored **0-based** so a count of
@@ -137,18 +139,37 @@ enum the engine owns, and a volatile status has no bit at all, so a report
 claiming a pokemon is confused cannot be written even by accident. `statusFlag`
 and `flagStatus` are the only place the two numberings meet.
 
-The reasons are the same in each case. A record that answers half a dozen
-yes-or-no questions answers them in one field; a snapshot copies one field
-instead of six; a set of named things compares, unions and masks as an integer
-(what a Full Heal takes off is one AND, not a filtered list); and the next
-question costs a bit rather than a migration.
+The reason is the same in each case: a set of named things compares, unions and
+masks as an integer — what a Full Heal takes off is one AND, not a filtered list
+— and the shape a reader wants is one call away.
 
-Two rules keep that honest. **A flag's bit is never reused** — a stored record
-carries no version number, and the day one bit means two things is the day old
-records start lying. And **a writer that cares about one bit passes the others
-through**: `lockFields(flags, startedAt)` takes the current flags and hands back
-the same ones with `Locked` set, so locking a pokemon cannot drop the fact that
-it sparkles.
+### The five marks are fields, not bits
+
+`shiny`, `shadow`, `egg`, `favorite` and `guarded` were one packed `flags` field
+once, for the reasons above. They are five boolean fields because **Firestore
+cannot query a bit**. There is no `where('flags', '&', Shiny)`: a packed field
+can only be compared whole, so `where('flags', '==', 1)` matches only a shiny
+that is nothing else, and an `in` listing every combination containing the bit
+needs 2ⁿ values and doubles with each flag added. Asking for a player's shinies
+meant reading every catch they own and filtering in the browser.
+
+A field each is one `where` and one index: `listCaughtMarked(owner, 'shiny')`
+reads only the matching documents. Each mark needs a **composite index** on
+`(owner, <mark>)`, since the query filters on two fields at once.
+
+What that costs is honest: five fields where there was one, a snapshot that
+copies five, and a new question that costs a field and an index rather than a
+bit. The trade was made deliberately for the query.
+
+**There is no lock among them.** `lockedAt` was always the truth behind the old
+`Locked` bit — a stamp of zero is a free pokemon, and the stamp is what tells
+this battle's lock from a later one's — so `lockFields(startedAt)` and
+`freeFields()` write the stamp alone.
+
+Every one of them is read with `asBoolean`, which answers yes only to a stored
+`true`: a missing field, a number and a string are all no. A record written
+before the marks were fields therefore reads as none of them, which is what a
+record that never said otherwise should read as.
 
 `individualValue` stays exactly where it was, beside the packed `ivs`. It is the
 32-bit roll the values were originally sliced from; the two agree for a wild
@@ -414,11 +435,11 @@ it live in
 Three fields move, in one transaction with the gem leaving the bag
 ([`src/server/purify.ts`](../../src/server/purify.ts)):
 
-| Field       | Before             | After                                   |
-| ----------- | ------------------ | --------------------------------------- |
-| `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                    |
-| `flags`     | `Shadow` bit set   | `Shadow` bit clear — candy cost reverts |
-| `ivs`       | as rolled          | every value `+PURIFY_IV_BOOST`, capped  |
+| Field       | Before             | After                                  |
+| ----------- | ------------------ | -------------------------------------- |
+| `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                   |
+| `shadow`    | `true`             | `false` — the candy cost reverts       |
+| `ivs`       | as rolled          | every value `+PURIFY_IV_BOOST`, capped |
 
 `Purified` is **entirely cosmetic**: no listener reads it, nothing in a battle
 changes. It is the mark left where the `Shadow` ability was, so a pokemon that
@@ -428,7 +449,7 @@ costs, not what it was.
 The doubled levelling cost is read off the `Shadow` **flag** rather than the
 ability (`getCandyCost` in
 [`src/auth/candy-rules.ts`](../../src/auth/candy-rules.ts)), so clearing that bit
-is what reverts it. Nothing else in the flags is touched: a shiny shadow is
+is what reverts it. Nothing else about it is touched: a shiny shadow is
 still shiny.
 
 Health is rescaled with the change, since two more HP points is a bigger pool

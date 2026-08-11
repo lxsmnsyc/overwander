@@ -1,4 +1,3 @@
-import { PokemonFlags, withFlag } from '../constants/flags';
 import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
 import Abilities from '../ids/abilities';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -39,8 +38,8 @@ export function isPurifyingGem(item: Items): boolean {
  * nothing else. Purifying what is already purified would spend a rare
  * item on nothing
  */
-export function isPurifiable(caught: { flags: number }): boolean {
-  return (caught.flags & PokemonFlags.Shadow) !== 0;
+export function isPurifiable(caught: { shadow: boolean }): boolean {
+  return caught.shadow;
 }
 
 /**
@@ -64,15 +63,6 @@ export function purifyIVs(ivs: number): number {
  */
 export function purifyAbilities(abilities: Abilities[]): Abilities[] {
   return abilities.map((ability) => (ability === Abilities.Shadow ? Abilities.Purified : ability));
-}
-
-/**
- * What it is after the gem: the shadow bit comes off, which is what
- * puts the candy cost back to what everything else pays. Nothing else
- * in the flags is touched — a shiny shadow is still shiny
- */
-export function purifyFlags(flags: number): number {
-  return withFlag(flags, PokemonFlags.Shadow, false);
 }
 
 export default function registerPurifyingGem(): void {

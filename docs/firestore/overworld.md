@@ -84,8 +84,8 @@ Written by `startEncounter`: the per-player view of a shared spawn (shininess,
 gender, ability, nature, moves, …) derived once and reused afterwards.
 
 Holds every field of `Encounter` plus `spawn` (the spawn document id) and
-`player` (the uid). Its `flags` and packed `ivs` are the same shapes the catch
-record stores — see [Packed fields](catches.md#packed-fields) — so recording a
+`player` (the uid). Its `shiny` and `shadow` fields and its packed `ivs` are the
+same shapes the catch record stores — see [Packed fields](catches.md#packed-fields) — so recording a
 catch copies them across rather than converting them. Only the named player may read or write it.
 
 The buddy at the player's side shapes this document, the way a party leader
@@ -106,7 +106,7 @@ their own.
 What a chunk holds is the same for everyone standing in it: no field effect
 changes which species turned up, only how many of them a player can see.
 
-Two of the encounter's flags are worth calling out. **Shiny** is a resonance
+Two of the encounter's own fields are worth calling out. **Shiny** is a resonance
 between the trainer id and the **trait** value, so shininess is independent of
 the IVs a pokemon rolled and the same spawn can sparkle for one player and not
 another. The odds

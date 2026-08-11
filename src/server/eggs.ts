@@ -14,7 +14,6 @@ import {
   stepsRemaining,
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
-import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
@@ -113,11 +112,12 @@ interface EggFields {
   gender: Genders;
   nature: Natures;
   /**
-   * What is true of the pokemon inside, as `PokemonFlags` bits: it
-   * sparkles, or it carries a shadow. One that does hatches with the
+   * What is true of the pokemon inside: whether it sparkles, and
+   * whether it carries a shadow. One that does hatches with the
    * Shadow ability for good, and takes twice as long to open
    */
-  flags: number;
+  shiny: boolean;
+  shadow: boolean;
   moves: Moves[];
   ability: Abilities;
   individualValue: number;
@@ -169,13 +169,11 @@ async function writeEgg(
     moves: fields.moves,
     // A shadow keeps its Shadow ability for good, the way a shadow
     // raid's prize does
-    abilities: hasFlag(fields.flags, PokemonFlags.Shadow)
-      ? [fields.ability, Abilities.Shadow]
-      : [fields.ability],
+    abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
     // The room it will have when it comes out of the shell. A shadow
     // egg hatches carrying two abilities, so it is written with two
     slots: packSlots(
-      hasFlag(fields.flags, PokemonFlags.Shadow) ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
+      fields.shadow ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
       DEFAULT_ITEM_SLOTS,
       DEFAULT_MOVE_SLOTS,
     ),
@@ -187,7 +185,12 @@ async function writeEgg(
     history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg }],
     // An egg on top of whatever the pokemon inside is, and never
     // locked: an egg cannot be fielded
-    ...freeFields(fields.flags | PokemonFlags.Egg),
+    shiny: fields.shiny,
+    shadow: fields.shadow,
+    egg: true,
+    favorite: false,
+    guarded: false,
+    ...freeFields(),
     // Whole and clean: nothing has fought with it, and an egg cannot
     // be fought with. The figure is what the hatchling will have,
     // since an egg is already the pokemon inside it
@@ -261,7 +264,8 @@ export async function grantNestEgg(
       nature: hatchling.nature,
       // It sparkles if it was going to; nothing shadowed comes out of
       // a nest
-      flags: withFlag(hatchling.flags, PokemonFlags.Shadow, false),
+      shiny: hatchling.shiny,
+      shadow: false,
       // A nest guarantees the inherited move; the rest is what the
       // species knows at the level it hatches
       moves: deriveEggMoves(species, EGG_LEVEL, () => rng.random()),
@@ -322,7 +326,8 @@ export async function grantBredEgg(
       nature: hatchling.nature,
       // It sparkles if it was going to, and carries the shadow if it
       // inherited one
-      flags: withFlag(hatchling.flags, PokemonFlags.Shadow, shadow),
+      shiny: hatchling.shiny,
+      shadow,
       moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
       ability: hatchling.ability,
       individualValue: hatchling.individualValue,
@@ -502,11 +507,11 @@ export async function hatchEgg(
       return null;
     }
 
-    // The shell comes off the flags rather than a field of its own, so
-    // whatever else is true of it — that it sparkles, that it is a
-    // shadow — comes through the hatching untouched
+    // Only the shell comes off: whatever else is true of it — that it
+    // sparkles, that it is a shadow — is a field of its own and comes
+    // through the hatching untouched
     transaction.update(ref, {
-      flags: withFlag(caught.flags, PokemonFlags.Egg, false),
+      egg: false,
       steps: caught.hatchSteps,
       // Everything that hatches has already been carried every step
       // of the way, and thinks of whoever carried it accordingly

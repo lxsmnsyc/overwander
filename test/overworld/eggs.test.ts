@@ -10,7 +10,6 @@ import {
   creditableSteps,
   stepsRemaining,
 } from '../../src/auth/egg';
-import { PokemonFlags } from '../../src/data/constants/flags';
 import { Stats, getIV, packIVs } from '../../src/data/constants/stats';
 import registerGen1Moves from '../../src/data/moves/gen-1';
 import type { Moves } from '../../src/data/ids/moves';
@@ -41,7 +40,7 @@ beforeAll(() => {
  * An egg part-way through, as the rules read one
  */
 function egg(steps: number): EggProgress {
-  return { flags: PokemonFlags.Egg, steps, hatchSteps: EGG_HATCH_STEPS };
+  return { egg: true, steps, hatchSteps: EGG_HATCH_STEPS };
 }
 
 describe('egg progress', () => {
@@ -54,7 +53,7 @@ describe('egg progress', () => {
     expect(stepsRemaining(egg(EGG_HATCH_STEPS + 100))).toBe(0);
 
     // Something already hatched has nowhere left to walk
-    const hatched = { flags: 0, steps: 0, hatchSteps: EGG_HATCH_STEPS };
+    const hatched = { egg: false, steps: 0, hatchSteps: EGG_HATCH_STEPS };
 
     expect(canHatch(hatched)).toBe(false);
     expect(stepsRemaining(hatched)).toBe(0);

@@ -72,6 +72,40 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
 }
 
 /**
+ * The five yes-or-no fields a catch carries. Each is its own field on
+ * the document rather than a bit of one, which is the whole reason
+ * they can be asked of the store
+ */
+export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded';
+
+/**
+ * The player's pokemon that answer yes to one of them — their shinies,
+ * their shadows, the eggs they are carrying.
+ *
+ * This is why each of them is a field of its own: a bit cannot be
+ * queried — Firestore compares a number whole — so a packed field
+ * would mean reading every catch a player owns and filtering in the
+ * browser. A field each reads only the matching documents.
+ *
+ * Each mark needs a **composite index** on `(owner, <mark>)` — see
+ * [Catches](../../docs/firestore/catches.md) — since the query filters
+ * on two fields at once
+ */
+export async function listCaughtMarked(
+  owner: string,
+  mark: CatchMark,
+): Promise<[string, CaughtPokemon][]> {
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
+    caughtConverter,
+  );
+  const snapshot = await getDocs(
+    query(caught, where('owner', '==', owner), where(mark, '==', true)),
+  );
+
+  return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/**
  * The most ids `listOwned` will look up at once — Firestore caps a
  * `documentId() in [...]` query, and a party is smaller than this
  * anyway
@@ -181,10 +215,10 @@ async function releaseOnServer(token: string, catchId: string): Promise<boolean>
  * traded away — it is a guard against a mis-click on something that
  * cannot be undone, and it changes nothing else.
  *
- * Resolves the flags as they now stand, or null when the catch is not
+ * Resolves the mark as it now stands, or null when the catch is not
  * the user's or is fighting
  */
-export async function setFavorite(catchId: string, favorite: boolean): Promise<number | null> {
+export async function setFavorite(catchId: string, favorite: boolean): Promise<boolean | null> {
   return setFavoriteOnServer(await getIdToken(), catchId, favorite);
 }
 
@@ -192,7 +226,7 @@ async function setFavoriteOnServer(
   token: string,
   catchId: string,
   favorite: boolean,
-): Promise<number | null> {
+): Promise<boolean | null> {
   'use server';
   return favoriteOnServerSide(await requireUid(token), catchId, favorite);
 }
@@ -205,10 +239,10 @@ async function setFavoriteOnServer(
  * adds to it — walking beside the player, coming to think more of
  * them, and standing as a parent at the breeder.
  *
- * Resolves the flags as they now stand, or null when the catch is not
+ * Resolves the mark as it now stands, or null when the catch is not
  * the user's or is fighting
  */
-export async function setGuarded(catchId: string, guarded: boolean): Promise<number | null> {
+export async function setGuarded(catchId: string, guarded: boolean): Promise<boolean | null> {
   return setGuardedOnServer(await getIdToken(), catchId, guarded);
 }
 
@@ -216,7 +250,7 @@ async function setGuardedOnServer(
   token: string,
   catchId: string,
   guarded: boolean,
-): Promise<number | null> {
+): Promise<boolean | null> {
   'use server';
   return guardedOnServerSide(await requireUid(token), catchId, guarded);
 }

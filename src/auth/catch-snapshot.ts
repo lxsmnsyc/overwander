@@ -9,7 +9,14 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import { deriveSize } from '../overworld/encounter';
-import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import {
+  asBoolean,
+  asNumber,
+  asNumberArray,
+  asRecord,
+  asStatRecord,
+  asString,
+} from './__normalize';
 import { getMaxHealth } from './health';
 import type { CaughtPokemon } from './caught';
 
@@ -43,10 +50,12 @@ export interface CatchSnapshot {
   height: number;
   weight: number;
   /**
-   * What was true about it when the snapshot was taken, as
-   * `PokemonFlags` bits
+   * What was true about it when the snapshot was taken. A frozen copy
+   * answers the two questions a fight asks — whether it sparkles, and
+   * whether it is a shadow
    */
-  flags: number;
+  shiny: boolean;
+  shadow: boolean;
   moves: Moves[];
   abilities: Abilities[];
   items: Items[];
@@ -81,7 +90,8 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     gender: caught.gender,
     height: size.height,
     weight: size.weight,
-    flags: caught.flags,
+    shiny: caught.shiny,
+    shadow: caught.shadow,
     moves: caught.moves,
     abilities: caught.abilities,
     items: caught.items,
@@ -106,7 +116,8 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     gender: asNumber(data.gender) as Genders,
     height: asNumber(data.height),
     weight: asNumber(data.weight),
-    flags: asNumber(data.flags),
+    shiny: asBoolean(data.shiny),
+    shadow: asBoolean(data.shadow),
     moves: asNumberArray(data.moves) as Moves[],
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],

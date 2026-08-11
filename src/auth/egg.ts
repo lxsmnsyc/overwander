@@ -1,4 +1,3 @@
-import { PokemonFlags, hasFlag } from '../data/constants/flags';
 /**
  * What an egg is, and what hatching one costs.
  *
@@ -48,9 +47,9 @@ export const MAX_STEP_REPORT = 64;
  */
 export interface EggProgress {
   /**
-   * The record's `PokemonFlags`; only the egg bit is read
+   * Whether it is still in the shell
    */
-  flags: number;
+  egg: boolean;
   steps: number;
   hatchSteps: number;
 }
@@ -75,8 +74,8 @@ export function canHatch(caught: EggProgress): boolean {
 /**
  * Whether the record is still an egg
  */
-export function isEgg(caught: { flags: number }): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Egg);
+export function isEgg(caught: { egg: boolean }): boolean {
+  return caught.egg;
 }
 
 /**

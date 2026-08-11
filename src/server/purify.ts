@@ -1,4 +1,5 @@
 import 'server-only';
+import { asBoolean } from '../auth/__normalize';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
@@ -7,7 +8,6 @@ import {
   isPurifiable,
   isPurifyingGem,
   purifyAbilities,
-  purifyFlags,
   purifyIVs,
 } from '../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
@@ -18,12 +18,12 @@ import { type UpdateFields, asNumber, docData } from './read';
 /**
  * Purifying, written with admin credentials.
  *
- * What a shadow costs to raise is read off its flags, and what it is
- * is read off its abilities, so putting one right rewrites both — and
- * the values it was born with, which nothing else but a bottle cap
- * touches. All of it lands in one transaction with the gem leaving the
- * bag, so a pokemon is never half-purified and a gem is never spent on
- * nothing.
+ * What a shadow costs to raise is read off its `shadow` field, and
+ * what it is is read off its abilities, so putting one right rewrites
+ * both — and the values it was born with, which nothing else but a
+ * bottle cap touches. All of it lands in one transaction with the gem
+ * leaving the bag, so a pokemon is never half-purified and a gem is
+ * never spent on nothing.
  *
  * The rules both sides read live in
  * [`src/data/items/purifying-gem.ts`](../data/items/purifying-gem.ts)
@@ -40,9 +40,9 @@ export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
 
   return {
     ivs,
-    // The shadow comes off the flags, which is what puts the candy
-    // cost back down: nothing reads "shadow" anywhere else
-    flags: purifyFlags(record.flags),
+    // The shadow comes off, which is what puts the candy cost back
+    // down: nothing else reads it
+    shadow: false,
     abilities: purifyAbilities(record.abilities),
     // Better values mean a bigger pool, and the share of it the
     // pokemon was carrying is what it keeps
@@ -60,7 +60,7 @@ export function isPurifiableRecord(caught: Record<string, unknown>, uid: string)
   }
   // An egg is not a pokemon yet; whatever is inside it was decided
   // when it was found, and it keeps until it hatches
-  return !isEggRecord(caught) && isPurifiable({ flags: asNumber(caught.flags) });
+  return !isEggRecord(caught) && isPurifiable({ shadow: asBoolean(caught.shadow) });
 }
 
 /**

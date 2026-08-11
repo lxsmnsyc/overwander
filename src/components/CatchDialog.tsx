@@ -676,11 +676,11 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * record and both are the player's own doing, so they are settled
    * the same way: write, re-read, say what happened
    */
-  const mark = (setting: Promise<number | null>, said: string, refused: string): void => {
+  const mark = (setting: Promise<boolean | null>, said: string, refused: string): void => {
     setStatus(null);
     setting
-      .then(async (flags) => {
-        setStatus(flags == null ? refused : said);
+      .then(async (marked) => {
+        setStatus(marked == null ? refused : said);
         await refetch();
         props.onChange?.();
       })

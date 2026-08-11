@@ -82,7 +82,7 @@ import {
   getVendorGoods,
   isMarketable,
 } from '../src/data/overworld/vendor';
-import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
+import { asBoolean } from '../src/auth/__normalize';
 import {
   MAX_SLOTS,
   SLOT_BITS,
@@ -112,7 +112,6 @@ import {
   isPurifiable,
   isPurifyingGem,
   purifyAbilities,
-  purifyFlags,
   purifyIVs,
 } from '../src/data/items/purifying-gem';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
@@ -405,14 +404,11 @@ describe('species day', () => {
   });
 
   it('charges a shadow twice the candy per level', () => {
-    expect(getCandyCost({ flags: 0 })).toBe(CANDY_PER_LEVEL);
-    // The cost reads one bit of the record's flags, so a shiny that
-    // is not shadowed still pays the plain rate
-    expect(getCandyCost({ flags: PokemonFlags.Shiny })).toBe(CANDY_PER_LEVEL);
-    expect(getCandyCost({ flags: PokemonFlags.Shadow })).toBe(
-      CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER,
-    );
-    expect(getCandyCost({ flags: PokemonFlags.Shadow | PokemonFlags.Shiny })).toBe(2);
+    // The cost reads one field of the record, so nothing else about
+    // the pokemon changes it
+    expect(getCandyCost({ shadow: false })).toBe(CANDY_PER_LEVEL);
+    expect(getCandyCost({ shadow: true })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
+    expect(getCandyCost({ shadow: true })).toBe(2);
   });
 
   it('pays four candies for a catch on the family day', () => {
@@ -705,17 +701,13 @@ describe('item data', () => {
     expect(isPurifyingGem(Items.BottleCap)).toBe(false);
 
     // Only a shadow is worth spending one on
-    expect(isPurifiable({ flags: withFlag(0, PokemonFlags.Shadow, true) })).toBe(true);
-    expect(isPurifiable({ flags: withFlag(0, PokemonFlags.Shiny, true) })).toBe(false);
+    expect(isPurifiable({ shadow: true })).toBe(true);
+    expect(isPurifiable({ shadow: false })).toBe(false);
 
-    // The shadow comes off the flags, which is what puts the candy
-    // cost back down — and nothing else in them moves
-    const shadowed = withFlag(withFlag(0, PokemonFlags.Shadow, true), PokemonFlags.Shiny, true);
-    const purified = purifyFlags(shadowed);
-
-    expect(getCandyCost({ flags: shadowed })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
-    expect(getCandyCost({ flags: purified })).toBe(CANDY_PER_LEVEL);
-    expect(hasFlag(purified, PokemonFlags.Shiny)).toBe(true);
+    // The shadow comes off, which is what puts the candy cost back
+    // down
+    expect(getCandyCost({ shadow: true })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
+    expect(getCandyCost({ shadow: false })).toBe(CANDY_PER_LEVEL);
 
     // The ability is replaced where it stands; the rolled one is left
     // exactly where it was
@@ -745,66 +737,25 @@ describe('item data', () => {
     expect(purifyIVs(PERFECT_IVS)).toBe(PERFECT_IVS);
   });
 
-  it('packs what is true about a pokemon into one field', () => {
-    // Four independent bits, and setting one leaves the rest alone —
-    // which is the whole reason the lock can be written without
-    // reading the shiny verdict back
-    const shiny = withFlag(0, PokemonFlags.Shiny, true);
-    const both = withFlag(shiny, PokemonFlags.Shadow, true);
-
-    expect(hasFlag(both, PokemonFlags.Shiny)).toBe(true);
-    expect(hasFlag(both, PokemonFlags.Shadow)).toBe(true);
-    expect(hasFlag(both, PokemonFlags.Egg)).toBe(false);
-    expect(withFlag(both, PokemonFlags.Shadow, false)).toBe(shiny);
-    expect(withFlag(shiny, PokemonFlags.Shiny, true)).toBe(shiny);
-
-    // No two flags share a bit, and none of them is zero: a record
-    // with no flags set is a plain pokemon, not a shiny one
-    const all = [
-      PokemonFlags.Shiny,
-      PokemonFlags.Shadow,
-      PokemonFlags.Egg,
-      PokemonFlags.Locked,
-      PokemonFlags.Favorite,
-      PokemonFlags.Guarded,
-    ];
-
-    expect(new Set(all).size).toBe(all.length);
-    for (const flag of all) {
-      expect(hasFlag(0, flag)).toBe(false);
-      expect(flag & (flag - 1)).toBe(0);
-    }
+  it('reads a mark only where it was actually written', () => {
+    // Five fields rather than five bits, so each can be asked of the
+    // store — and a stored yes is a stored `true`, never a number or
+    // a string that happens to be truthy
+    expect(asBoolean(true)).toBe(true);
+    expect(asBoolean(false)).toBe(false);
+    expect(asBoolean(undefined)).toBe(false);
+    expect(asBoolean(1)).toBe(false);
+    expect(asBoolean('true')).toBe(false);
   });
 
   it('keeps what the player asked for apart from what the game decided', () => {
     // The two the player sets themselves answer different questions:
     // a favorite is about parting with a pokemon, a lock is about
     // disturbing it, and neither implies the other
-    const kept = withFlag(0, PokemonFlags.Favorite, true);
-    const both = withFlag(kept, PokemonFlags.Guarded, true);
-
-    expect(isFavorite({ flags: kept })).toBe(true);
-    expect(isGuarded({ flags: kept })).toBe(false);
-    expect(isFavorite({ flags: both })).toBe(true);
-    expect(isGuarded({ flags: both })).toBe(true);
-
-    // Both come off the way they went on, and neither disturbs what
-    // the game decided about the pokemon
-    const shinyShadow = withFlag(
-      withFlag(both, PokemonFlags.Shiny, true),
-      PokemonFlags.Shadow,
-      true,
-    );
-    const released = withFlag(
-      withFlag(shinyShadow, PokemonFlags.Favorite, false),
-      PokemonFlags.Guarded,
-      false,
-    );
-
-    expect(isFavorite({ flags: released })).toBe(false);
-    expect(isGuarded({ flags: released })).toBe(false);
-    expect(hasFlag(released, PokemonFlags.Shiny)).toBe(true);
-    expect(hasFlag(released, PokemonFlags.Shadow)).toBe(true);
+    expect(isFavorite({ favorite: true })).toBe(true);
+    expect(isGuarded({ guarded: false })).toBe(false);
+    expect(isFavorite({ favorite: false })).toBe(false);
+    expect(isGuarded({ guarded: true })).toBe(true);
   });
 
   it('gives every teachable move a machine of its own', () => {

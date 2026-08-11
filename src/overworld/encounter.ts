@@ -1,5 +1,4 @@
 import AleaRNG from '../core/alea';
-import { PokemonFlags } from '../data/constants/flags';
 import type Lairs from '../data/overworld/lair';
 import { Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
@@ -129,12 +128,15 @@ export interface Encounter {
    */
   lair: Lairs | null;
   /**
-   * What is true about it, as `PokemonFlags` bits: whether it
-   * sparkles for the observing user — the same wild pokemon can be
-   * shiny for one trainer and plain for another — and whether it is
-   * shadowed, which carries the Shadow ability for good
+   * Whether it sparkles for the observing user. The same wild pokemon
+   * can be shiny for one trainer and plain for another, since the
+   * roll is a resonance between their id and its trait value
    */
-  flags: number;
+  shiny: boolean;
+  /**
+   * Whether it is shadowed, which carries the Shadow ability for good
+   */
+  shadow: boolean;
   /**
    * The last (up to) four level-up moves learnable at this level
    */
@@ -478,15 +480,14 @@ export default function deriveEncounter(
     gender,
     // The day's featured family sparkles eight times as often, and
     // whatever the player carries multiplies that further
-    flags:
-      (userId != null &&
+    shiny:
+      userId != null &&
       isShinyFor(
         userId,
         traitValue,
         (featured ? SPECIES_DAY_SHINY_BOOST : 1) * (options.shinyBoost ?? 1),
-      )
-        ? PokemonFlags.Shiny
-        : 0) | (options.shadow === true ? PokemonFlags.Shadow : 0),
+      ),
+    shadow: options.shadow === true,
     moves,
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,

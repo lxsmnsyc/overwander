@@ -101,16 +101,16 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
       return null;
     }
 
+    const record = asCaughtPokemon(caught);
     const { family } = getSpeciesData(asSpecies(caught.species));
     const stackRef = getStackRef(uid, family);
     const count = asNumber(docData(await transaction.get(stackRef))?.count);
-    const cost = getCandyCost({ flags: asNumber(caught.flags) });
+    const cost = getCandyCost(record);
 
     if (count < cost) {
       return null;
     }
 
-    const record = asCaughtPokemon(caught);
     const level = record.level + 1;
 
     transaction.set(stackRef, { user: uid, family, count: count - cost });

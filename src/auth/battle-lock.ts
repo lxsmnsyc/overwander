@@ -9,8 +9,6 @@
  * server, which decides an abandoned raid may be restaged; and the
  * client, which greys out what it can see is fighting.
  */
-import { PokemonFlags, hasFlag } from '../data/constants/flags';
-
 const BATTLE_TIMEOUT = 10 * 60 * 1000;
 
 /**
@@ -20,8 +18,8 @@ const BATTLE_TIMEOUT = 10 * 60 * 1000;
  * the same of its own clock before allowing the write, which is where
  * the refusal actually happens
  */
-export function isLockLive(caught: { flags: number; lockedAt: number }, now: number): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Locked) && now - caught.lockedAt < BATTLE_TIMEOUT;
+export function isLockLive(caught: { lockedAt: number }, now: number): boolean {
+  return caught.lockedAt > 0 && now - caught.lockedAt < BATTLE_TIMEOUT;
 }
 
 export default BATTLE_TIMEOUT;

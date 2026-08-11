@@ -9,7 +9,6 @@ import {
 } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
-import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
@@ -105,7 +104,7 @@ export async function recordCatch(
   // was where they were standing
   const zone = asOffset(offset);
   const caughtAt = toLocalISO(now, zone);
-  const shadow = hasFlag(encounter.flags, PokemonFlags.Shadow);
+  const shadow = encounter.shadow;
 
   await ref.set({
     owner: uid,
@@ -130,11 +129,15 @@ export async function recordCatch(
     ),
     items: [],
     history: [{ owner: uid, acquiredAt: caughtAt, kind: Acquisition.Caught }],
-    // Whatever was true of the meeting is true of the record — it
-    // sparkled for this player, or it came out of a shadow raid — and
-    // a fresh catch has fought nothing, so the lock bit comes off the
-    // same field
-    ...freeFields(encounter.flags),
+    // Whatever was true of the meeting is true of the record: it
+    // sparkled for this player, or it came out of a shadow raid
+    shiny: encounter.shiny,
+    shadow,
+    egg: false,
+    favorite: false,
+    guarded: false,
+    // A fresh catch has fought nothing
+    ...freeFields(),
     // ...so it arrives whole, whatever the throw took out of it: an
     // encounter is not a battle, and nothing in one carries over
     health: getMaxHealth({
@@ -225,7 +228,7 @@ async function mendWithHealBall(uid: string, ball: Balls): Promise<void> {
 }
 
 /**
- * Set or clear one of the two flags a player sets themselves.
+ * Set or clear one of the two marks a player sets themselves.
  *
  * A **favorite** cannot be released, auctioned or traded; a **guarded**
  * pokemon cannot be bred, groomed, fielded, healed, purified or have an
@@ -233,20 +236,21 @@ async function mendWithHealBall(uid: string, ball: Balls): Promise<void> {
  * player saying what they want left alone — so both come off exactly
  * the way they went on, and the record is otherwise untouched.
  *
- * The flags are written through `withFlag`, so setting one cannot drop
- * another: a shiny shadow stays a shiny shadow.
+ * Each is a field of its own, so setting one cannot disturb another:
+ * a shiny shadow stays a shiny shadow, and the store can be asked for
+ * every favorite a player owns.
  *
  * Refused while the pokemon is fighting, the way every other edit to a
  * live record is: a battle runs on a frozen snapshot, and a flag that
  * moved under it would describe a pokemon the fight does not have.
- * Resolves the flags as they now stand, or null when it was refused
+ * Resolves what the mark now is, or null when it was refused
  */
-async function setCatchFlag(
+async function setCatchMark(
   uid: string,
   catchId: string,
-  flag: PokemonFlags,
+  field: 'favorite' | 'guarded',
   on: boolean,
-): Promise<number | null> {
+): Promise<boolean | null> {
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
@@ -256,11 +260,8 @@ async function setCatchFlag(
     if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return null;
     }
-
-    const flags = withFlag(asNumber(caught.flags), flag, on);
-
-    transaction.update(ref, { flags });
-    return flags;
+    transaction.update(ref, { [field]: on });
+    return on;
   });
 }
 
@@ -272,8 +273,8 @@ export async function setFavorite(
   uid: string,
   catchId: string,
   favorite: boolean,
-): Promise<number | null> {
-  return setCatchFlag(uid, catchId, PokemonFlags.Favorite, favorite);
+): Promise<boolean | null> {
+  return setCatchMark(uid, catchId, 'favorite', favorite);
 }
 
 /**
@@ -283,8 +284,8 @@ export async function setGuarded(
   uid: string,
   catchId: string,
   guarded: boolean,
-): Promise<number | null> {
-  return setCatchFlag(uid, catchId, PokemonFlags.Guarded, guarded);
+): Promise<boolean | null> {
+  return setCatchMark(uid, catchId, 'guarded', guarded);
 }
 
 /**

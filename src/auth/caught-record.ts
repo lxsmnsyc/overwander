@@ -2,7 +2,6 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import type { Stats } from '../data/constants/stats';
@@ -14,7 +13,14 @@ import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type Lairs from '../data/overworld/lair';
 import { EncounterType } from '../overworld/encounter';
-import { asNumber, asNumberArray, asRecord, asStatRecord, asString } from './__normalize';
+import {
+  asBoolean,
+  asNumber,
+  asNumberArray,
+  asRecord,
+  asStatRecord,
+  asString,
+} from './__normalize';
 import { getMaxHealth } from './health';
 
 /**
@@ -76,12 +82,17 @@ export interface CaughtPokemon {
   gender: Genders;
   nature: Natures;
   /**
-   * What is true about it, as `PokemonFlags` bits: shiny, shadow,
-   * egg, locked. They were four fields; a record answers half a dozen
-   * yes-or-no questions in one now, and the next question costs a bit
-   * rather than a migration
+   * The five yes-or-no questions a catch answers, each its own field
+   * so each can be asked of the store: `where('shiny', '==', true)`
+   * is a query, and a bit of a packed field is not. Whether it is
+   * **fighting** is not among them — `lockedAt` has always carried
+   * that, and a stamp of zero is a free pokemon
    */
-  flags: number;
+  shiny: boolean;
+  shadow: boolean;
+  egg: boolean;
+  favorite: boolean;
+  guarded: boolean;
   moves: Moves[];
   /**
    * The abilities the catch has: the rolled one, plus Shadow for a
@@ -220,16 +231,16 @@ export interface CaughtPokemon {
 /**
  * Whether the catch sparkles, as its original catcher saw it
  */
-export function isShiny(caught: { flags: number }): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Shiny);
+export function isShiny(caught: { shiny: boolean }): boolean {
+  return caught.shiny;
 }
 
 /**
  * Whether it carries a shadow: the Shadow ability for good, and
  * double candy at every level
  */
-export function isShadow(caught: { flags: number }): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Shadow);
+export function isShadow(caught: { shadow: boolean }): boolean {
+  return caught.shadow;
 }
 
 /**
@@ -238,8 +249,8 @@ export function isShadow(caught: { flags: number }): boolean {
  * guard against a mis-click on something irreversible, and it changes
  * nothing else about the pokemon
  */
-export function isFavorite(caught: { flags: number }): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Favorite);
+export function isFavorite(caught: { favorite: boolean }): boolean {
+  return caught.favorite;
 }
 
 /**
@@ -253,8 +264,8 @@ export function isFavorite(caught: { flags: number }): boolean {
  * it, this one is the player's own doing and comes off whenever they
  * say so
  */
-export function isGuarded(caught: { flags: number }): boolean {
-  return hasFlag(caught.flags, PokemonFlags.Guarded);
+export function isGuarded(caught: { guarded: boolean }): boolean {
+  return caught.guarded;
 }
 
 /**
@@ -364,7 +375,11 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     ivs,
     gender: asNumber(data.gender) as Genders,
     nature: asNumber(data.nature) as Natures,
-    flags: asNumber(data.flags),
+    shiny: asBoolean(data.shiny),
+    shadow: asBoolean(data.shadow),
+    egg: asBoolean(data.egg),
+    favorite: asBoolean(data.favorite),
+    guarded: asBoolean(data.guarded),
     moves: asNumberArray(data.moves) as Moves[],
     abilities,
     // A record written before the field existed has the room the game

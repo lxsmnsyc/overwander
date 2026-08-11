@@ -1,7 +1,6 @@
 import 'server-only';
-import { PokemonFlags, hasFlag } from '../data/constants/flags';
+import { asBoolean } from '../auth/__normalize';
 import { Stats } from '../data/constants/stats';
-import { asNumber } from './read';
 
 /**
  * The parts of a catch record that are written the same way whichever
@@ -32,7 +31,7 @@ export function asLocale(value: unknown): string {
  * before it writes anything
  */
 export function isEggRecord(caught: Record<string, unknown>): boolean {
-  return hasFlag(asNumber(caught.flags), PokemonFlags.Egg);
+  return asBoolean(caught.egg);
 }
 
 /**
@@ -42,7 +41,7 @@ export function isEggRecord(caught: Record<string, unknown>): boolean {
  * when there is one
  */
 export function isFavoriteRecord(caught: Record<string, unknown>): boolean {
-  return hasFlag(asNumber(caught.flags), PokemonFlags.Favorite);
+  return asBoolean(caught.favorite);
 }
 
 /**
@@ -55,7 +54,7 @@ export function isFavoriteRecord(caught: Record<string, unknown>): boolean {
  * standing as a parent, which changes neither parent
  */
 export function isGuardedRecord(caught: Record<string, unknown>): boolean {
-  return hasFlag(asNumber(caught.flags), PokemonFlags.Guarded);
+  return asBoolean(caught.guarded);
 }
 
 /**

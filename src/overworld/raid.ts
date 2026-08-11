@@ -11,7 +11,6 @@ import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { PokemonFlags } from '../data/constants/flags';
 import { MAX_IV, PERFECT_IVS, STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Moves } from '../data/ids/moves';
@@ -147,7 +146,8 @@ export function createRaidBossSnapshot(
     weight: size.weight,
     // A boss never sparkles, and a shadow one carries the bit its
     // ability list already says it does
-    flags: shadow ? PokemonFlags.Shadow : 0,
+    shiny: false,
+    shadow,
     // A boss is staged without the moves a boss must not have: see
     // BANNED_BOSS_MOVES for what is on that list and why
     moves: getBossMoves(species),

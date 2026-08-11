@@ -1,7 +1,8 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { RadioGroup, RadioGroupOption } from 'terracotta';
 import { getCaught } from '../auth/caught';
-import { isShiny } from '../auth/caught-record';
+import { getCatchSlots, isShiny } from '../auth/caught-record';
+import { Slots } from '../data/constants/slots';
 import { isEgg } from '../auth/egg';
 import teachMove from '../auth/moves';
 import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/ids/moves';
@@ -9,7 +10,7 @@ import { getMachineItem } from '../data/ids/items';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getSpeciesData } from '../data/species';
-import { MOVE_LIMIT } from '../overworld/encounter';
+
 import SpriteDisplay from './SpriteDisplay';
 import TypeBadge from './TypeBadge';
 import { Button, Dialog, DialogActions, List, Meta, Note, Status } from './styled';
@@ -88,10 +89,15 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
 
   /**
    * Whether the list is full. It is what decides which of the two
-   * dialogs a player is shown, and it is read off the record rather
-   * than passed in
+   * dialogs a player is shown, and it is the **record's** own room
+   * rather than the game's, so a pokemon with a fifth slot is offered
+   * a fifth move instead of being asked to forget one
    */
-  const full = (): boolean => known().length >= MOVE_LIMIT;
+  const full = (): boolean => {
+    const record = caught();
+
+    return record != null && known().length >= getCatchSlots(record, Slots.Move);
+  };
 
   const taught = (): string => (props.move == null ? 'that move' : getMoveData(props.move).name);
 

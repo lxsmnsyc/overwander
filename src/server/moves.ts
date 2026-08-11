@@ -4,8 +4,8 @@ import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../au
 import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
+import { Slots, getSlots } from '../data/constants/slots';
 import { getSpeciesData } from '../data/species';
-import { MOVE_LIMIT } from '../overworld/encounter';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
@@ -83,11 +83,13 @@ export default async function teachMove(
       return null;
     }
 
-    // A pokemon with room learns a fourth move; one that is full puts
-    // the new one over whichever the player named
+    // A pokemon with room learns another move; one that is full puts
+    // the new one over whichever the player named. How much room that
+    // is belongs to the record rather than to the game
+    const room = getSlots(asNumber(caught.slots), Slots.Move);
     const over = Math.floor(replaces);
 
-    if (known.length >= MOVE_LIMIT && (over < 0 || over >= known.length)) {
+    if (known.length >= room && (over < 0 || over >= known.length)) {
       return null;
     }
 
@@ -99,9 +101,7 @@ export default async function teachMove(
     }
 
     const moves =
-      known.length < MOVE_LIMIT
-        ? [...known, move]
-        : known.map((one, at) => (at === over ? move : one));
+      known.length < room ? [...known, move] : known.map((one, at) => (at === over ? move : one));
 
     transaction.set(stackRef, { user: uid, item, amount: carried - 1 });
     transaction.update(caughtRef, { moves });

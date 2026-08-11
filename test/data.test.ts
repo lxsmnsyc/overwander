@@ -83,6 +83,15 @@ import {
   isMarketable,
 } from '../src/data/overworld/vendor';
 import { PokemonFlags, hasFlag, withFlag } from '../src/data/constants/flags';
+import {
+  MAX_SLOTS,
+  SLOT_BITS,
+  Slots,
+  defaultSlots,
+  getSlots,
+  packSlots,
+  withSlots,
+} from '../src/data/constants/slots';
 import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../src/data/constants/sigil';
 import { isFavorite, isGuarded } from '../src/auth/caught-record';
 import {
@@ -846,6 +855,44 @@ describe('item data', () => {
       expect(MOVE_CATEGORY_COLORS[category]).toMatch(/^#[0-9a-f]{6}$/);
     }
     expect(new Set(Object.values(MOVE_CATEGORY_COLORS)).size).toBe(3);
+  });
+
+  it('packs how much room a pokemon has into three counts', () => {
+    // Stored 0-based, so an unwritten field reads as one of each —
+    // which is what the game gave everything before the field existed
+    expect(getSlots(0, Slots.Ability)).toBe(1);
+    expect(getSlots(0, Slots.Item)).toBe(1);
+    expect(getSlots(0, Slots.Move)).toBe(1);
+
+    const usual = packSlots(1, 1, 4);
+
+    expect(getSlots(usual, Slots.Ability)).toBe(1);
+    expect(getSlots(usual, Slots.Item)).toBe(1);
+    expect(getSlots(usual, Slots.Move)).toBe(4);
+    // Three counts, three bits each: the whole field is nine bits
+    expect(usual).toBeLessThan(1 << (3 * SLOT_BITS));
+
+    // One count moves without disturbing the two beside it
+    const roomier = withSlots(usual, Slots.Item, 2);
+
+    expect(getSlots(roomier, Slots.Item)).toBe(2);
+    expect(getSlots(roomier, Slots.Ability)).toBe(1);
+    expect(getSlots(roomier, Slots.Move)).toBe(4);
+
+    // And a count outside what three bits hold is brought inside it
+    // rather than wrapping into its neighbour
+    const clamped = withSlots(usual, Slots.Ability, 99);
+
+    expect(getSlots(clamped, Slots.Ability)).toBe(MAX_SLOTS);
+    expect(getSlots(clamped, Slots.Move)).toBe(4);
+    expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(1);
+
+    // A shadow arrives carrying two abilities, and keeps the room
+    // once the shadow is purified off it
+    expect(getSlots(defaultSlots([Abilities.Overgrow]), Slots.Ability)).toBe(1);
+    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Shadow]), Slots.Ability)).toBe(2);
+    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Purified]), Slots.Ability)).toBe(2);
+    expect(getSlots(defaultSlots(), Slots.Move)).toBe(4);
   });
 
   it('draws both of a pokemon\u2019s rolls as eight braille cells', () => {

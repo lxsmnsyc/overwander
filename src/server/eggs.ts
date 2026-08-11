@@ -15,6 +15,13 @@ import {
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
+import {
+  DEFAULT_ABILITY_SLOTS,
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  SHADOW_ABILITY_SLOTS,
+  packSlots,
+} from '../data/constants/slots';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
@@ -165,6 +172,13 @@ async function writeEgg(
     abilities: hasFlag(fields.flags, PokemonFlags.Shadow)
       ? [fields.ability, Abilities.Shadow]
       : [fields.ability],
+    // The room it will have when it comes out of the shell. A shadow
+    // egg hatches carrying two abilities, so it is written with two
+    slots: packSlots(
+      hasFlag(fields.flags, PokemonFlags.Shadow) ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
+      DEFAULT_ITEM_SLOTS,
+      DEFAULT_MOVE_SLOTS,
+    ),
     // An egg holds nothing, and cannot be handed anything until it
     // has hatched
     items: [],

@@ -1,5 +1,5 @@
 import 'server-only';
-import { Acquisition, HELD_ITEM_LIMIT, asCaughtPokemon } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
 import {
   BUDDY_COLLECTION,
   CAUGHT_COLLECTION,
@@ -10,6 +10,15 @@ import {
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import { PokemonFlags, hasFlag, withFlag } from '../data/constants/flags';
+import {
+  DEFAULT_ABILITY_SLOTS,
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  SHADOW_ABILITY_SLOTS,
+  Slots,
+  getSlots,
+  packSlots,
+} from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
@@ -96,6 +105,7 @@ export async function recordCatch(
   // was where they were standing
   const zone = asOffset(offset);
   const caughtAt = toLocalISO(now, zone);
+  const shadow = hasFlag(encounter.flags, PokemonFlags.Shadow);
 
   await ref.set({
     owner: uid,
@@ -110,9 +120,14 @@ export async function recordCatch(
     moves: encounter.moves,
     // A shadow raid's reward keeps its Shadow ability for good, on
     // top of the one it rolled
-    abilities: hasFlag(encounter.flags, PokemonFlags.Shadow)
-      ? [encounter.ability, Abilities.Shadow]
-      : [encounter.ability],
+    abilities: shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
+    // What it has room for. A shadow is the one thing that arrives
+    // with two abilities, and it keeps that room once purified
+    slots: packSlots(
+      shadow ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
+      DEFAULT_ITEM_SLOTS,
+      DEFAULT_MOVE_SLOTS,
+    ),
     items: [],
     history: [{ owner: uid, acquiredAt: caughtAt, kind: Acquisition.Caught }],
     // Whatever was true of the meeting is true of the record — it
@@ -305,7 +320,10 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
 
     const held = asHeldItems(caught.items);
 
-    if (held.length >= HELD_ITEM_LIMIT) {
+    // How much room it has is the record's own answer: a pokemon that
+    // has been given a second hand is not the one the constant knows
+    // about
+    if (held.length >= getSlots(asNumber(caught.slots), Slots.Item)) {
       return false;
     }
 

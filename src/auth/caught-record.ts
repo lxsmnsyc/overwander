@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { PokemonFlags, hasFlag } from '../data/constants/flags';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import type { Stats } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -28,6 +29,16 @@ import { getMaxHealth } from './health';
  * battle's per-unit item limit
  */
 export const HELD_ITEM_LIMIT = 1;
+
+/**
+ * How much room this pokemon has for that kind of thing. It is the
+ * record's own answer — see [`slots.ts`](../data/constants/slots.ts) —
+ * rather than the game's, which is what lets one pokemon carry two
+ * abilities while the next carries one
+ */
+export function getCatchSlots(caught: { slots: number }, kind: Slots): number {
+  return getSlots(caught.slots, kind);
+}
 
 /**
  * A caught encounter, permanently recorded. The IVs, gender and
@@ -77,6 +88,14 @@ export interface CaughtPokemon {
    * shadow catch, which it keeps for good
    */
   abilities: Abilities[];
+  /**
+   * How much room it has for each of the three lists — abilities,
+   * held items and moves — packed three bits each and read through
+   * `getSlots`. A ceiling belongs to the individual rather than to
+   * the game: a shadow carries two abilities where everything else
+   * carries one
+   */
+  slots: number;
   /**
    * What it is holding, up to HELD_ITEM_LIMIT; a fresh catch holds
    * nothing
@@ -332,6 +351,8 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
   const level = asNumber(data.level);
   const ivs = asNumber(data.ivs);
   const effortValues = asStatRecord(data.effortValues);
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  const abilities = asNumberArray(data.abilities) as Abilities[];
 
   return {
     owner: asString(data.owner),
@@ -345,7 +366,10 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     nature: asNumber(data.nature) as Natures,
     flags: asNumber(data.flags),
     moves: asNumberArray(data.moves) as Moves[],
-    abilities: asNumberArray(data.abilities) as Abilities[],
+    abilities,
+    // A record written before the field existed has the room the game
+    // used to give everything, which is what its own abilities say
+    slots: data.slots == null ? defaultSlots(abilities) : asNumber(data.slots),
     items: asNumberArray(data.items) as Items[],
     // Something hatched began as an egg in its first owner's hands;
     // everything else was caught by them

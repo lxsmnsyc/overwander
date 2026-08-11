@@ -6,7 +6,6 @@ import { canHatch, isEgg } from '../auth/egg';
 import { hatchEgg } from '../auth/eggs';
 import {
   type CaughtPokemon,
-  HELD_ITEM_LIMIT,
   getCaught,
   giveItem,
   isFavorite,
@@ -17,7 +16,8 @@ import {
   takeItem,
 } from '../auth/caught';
 import useHealingItem from '../auth/healing';
-import { ACQUISITION_NAMES, isShadow, isShiny } from '../auth/caught-record';
+import { ACQUISITION_NAMES, getCatchSlots, isShadow, isShiny } from '../auth/caught-record';
+import { Slots } from '../data/constants/slots';
 import { getProfile } from '../auth/profile';
 import {
   type HealthState,
@@ -1326,7 +1326,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       </Show>
                       {/* A catch holds one item at a time, matching the
                         battle's per-unit limit */}
-                      <Show when={owned() != null && loaded().items.length < HELD_ITEM_LIMIT}>
+                      <Show
+                        when={
+                          owned() != null &&
+                          loaded().items.length < getCatchSlots(loaded(), Slots.Item)
+                        }
+                      >
                         <InventoryPicker
                           inline
                           entries={bag()}

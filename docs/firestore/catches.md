@@ -22,6 +22,7 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `nature`               | `Natures`               |                                                                         |
 | `moves`                | `Moves[]`               |                                                                         |
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch                      |
+| `slots`                | `number`                | Room for abilities, held items and moves — three bits each              |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`                       |
 | `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first                             |
 | `flags`                | `number`                | `PokemonFlags` bits — see [What the player sets](#what-the-player-sets) |
@@ -102,17 +103,32 @@ anything else up to apply it.
 
 ### Packed fields
 
-Three groups of fields are stored as integers rather than as the shapes a
+Four groups of fields are stored as integers rather than as the shapes a
 reader wants, and each is one call away in either direction
 ([`flags.ts`](../../src/data/constants/flags.ts),
 [`stats.ts`](../../src/data/constants/stats.ts),
-[`status.ts`](../../src/data/ids/status.ts)):
+[`status.ts`](../../src/data/ids/status.ts),
+[`slots.ts`](../../src/data/constants/slots.ts)):
 
 | Stored     | Was                              | Read with                       |
 | ---------- | -------------------------------- | ------------------------------- |
 | `flags`    | `shiny`, `shadow`, `egg`, `lock` | `hasFlag` / `withFlag`          |
 | `ivs`      | `Record<Stats, number>` of six   | `getIV` / `setIV` / `unpackIVs` |
 | `statuses` | `Statuses[]`                     | `statusFlag` / `unpackStatuses` |
+| `slots`    | Three shared constants           | `getSlots` / `withSlots`        |
+
+`slots` is how much room this pokemon has for each of its three lists —
+abilities, held items, moves — three bits each, stored **0-based** so a count of
+one reads out of a zero. A ceiling belongs to the individual rather than to the
+game: a shadow carries two abilities where everything else carries one, and it
+keeps that room once purified. The defaults are 1 ability (2 for a shadow), 1
+held item and 4 moves, and three bits gives each of them room to reach 8.
+
+Both places that enforce a ceiling read it off the record rather than off a
+constant: `giveItem` asks `Slots.Item` before it hands anything over, and
+`teachMove` asks `Slots.Move` to decide whether a machine teaches a further move
+or costs one. A record written before the field existed reads its old defaults
+from its own abilities, so nothing needs backfilling.
 
 `statuses` is a bitfield of its own — `StatusFlags`, six flags starting at the
 first bit — rather than shifts of the battle engine's `Statuses` enum. A stored

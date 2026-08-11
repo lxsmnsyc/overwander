@@ -11,7 +11,6 @@ import {
   isBidOn,
   isLive,
   nextBid,
-  openCatchAuction,
   openItemAuction,
   placeBid,
   reclaimAuction,
@@ -24,6 +23,7 @@ import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import { NATURE_NAMES } from '../data/ids/natures';
+import AuctionDialog from './AuctionDialog';
 import CatchDialog, { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './CatchesList';
@@ -527,10 +527,15 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     setListing(false);
   };
 
+  /**
+   * Picking a pokemon opens the listing dialog rather than filling in
+   * the form below it: a pokemon is worth looking at while a price is
+   * being put on it, and an item is not
+   */
   const pickCatch = (picked: string | null): void => {
-    setCaught(picked);
     setItem(null);
     setListing(false);
+    setCaught(picked);
   };
 
   const settle = (opening: Promise<string | null>): void => {
@@ -553,29 +558,18 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
 
   const list = (): void => {
     const offeredItem = item();
-    const offeredCatch = caught();
 
-    if (offeredItem == null && offeredCatch == null) {
-      setStatus('Pick something to put up first.');
+    if (offeredItem == null) {
+      setStatus('Pick something out of the bag to put up first.');
       return;
     }
     if (!listing()) {
       setListing(true);
       return;
     }
-
-    const terms = { startingBid: startingBid(), increment: increment() };
-
     setStatus(null);
     setListing(false);
-
-    if (offeredItem != null) {
-      settle(openItemAuction(offeredItem, terms));
-      return;
-    }
-    if (offeredCatch != null) {
-      settle(openCatchAuction(offeredCatch, terms));
-    }
+    settle(openItemAuction(offeredItem, { startingBid: startingBid(), increment: increment() }));
   };
 
   const bid = (id: string, amount: number): void => {
@@ -749,7 +743,8 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           <Note>
             One item — a single one, not the stack — or one pokemon. Whichever it is leaves your
             hands the moment it goes up and cannot be taken off the block; it only comes back if the
-            day ends with nobody having bid on it.
+            day ends with nobody having bid on it. The price below is the item's; a pokemon is
+            priced in the dialog that opens when you pick one.
           </Note>
 
           <h4>From the bag</h4>
@@ -772,7 +767,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           <CatchPicker
             inline
             revision={revision()}
-            value={caught()}
+            value={null}
             verb="Sell"
             empty="No pokemon to sell."
             reason={sellingReason}
@@ -825,6 +820,23 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       </Card>
 
       <Status message={status()} />
+
+      {/* Putting one of the player's own pokemon up: the sprite, the
+          terms, and a second dialog that says what listing means */}
+      <AuctionDialog
+        catchId={caught()}
+        onClose={() => {
+          setCaught(null);
+        }}
+        onListed={() => {
+          setStatus('It is on the block until the day is up.');
+          // The board and the seller's one-a-day standing both move
+          // with it; a failed re-read leaves the last good board up
+          Promise.resolve(refetchStanding())
+            .then(refresh)
+            .catch(() => undefined);
+        }}
+      />
 
       {/* A lot opened in full. It is somebody else's pokemon — in
           escrow it is nobody's — so the dialog is read-only: the whole

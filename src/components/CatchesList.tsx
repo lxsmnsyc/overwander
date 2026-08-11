@@ -5,6 +5,7 @@ import { isEgg } from '../auth/egg';
 import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
+import AuctionDialog from './AuctionDialog';
 import CatchDialog from './CatchDialog';
 import matches from '../core/search';
 import { List, ListRow, Note, Row, RowButton, SEARCH_FROM, Search } from './styled';
@@ -46,6 +47,9 @@ export interface CatchesListProps {
 export default function CatchesList(props: CatchesListProps): JSX.Element {
   const [catches, { refetch }] = createResource(() => props.player, listCaught);
   const [selected, setSelected] = createSignal<string | null>(null);
+  // The pokemon being put on the block, if any. It is kept apart from
+  // the one being read: listing opens as the sheet closes
+  const [listing, setListing] = createSignal<string | null>(null);
 
   /**
    * What was typed. It is matched against the same line the row shows,
@@ -101,6 +105,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       <CatchDialog
         player={props.player}
         catchId={selected()}
+        onAuction={(catchId) => {
+          setListing(catchId);
+        }}
         onClose={() => {
           setSelected(null);
         }}
@@ -108,6 +115,18 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
           // An evolution renames the entry behind the dialog. A
           // failed refetch leaves the last good list in place; the
           // dialog already reported whatever went wrong
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
+
+      {/* Listing is its own dialog, opened as the sheet closes: the
+          pokemon is about to leave the records the sheet was reading */}
+      <AuctionDialog
+        catchId={listing()}
+        onClose={() => {
+          setListing(null);
+        }}
+        onListed={() => {
           Promise.resolve(refetch()).catch(() => undefined);
         }}
       />

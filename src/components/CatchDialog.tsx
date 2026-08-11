@@ -29,13 +29,6 @@ import {
 import useBottleCap from '../auth/bottle-caps';
 import usePurifyingGem from '../auth/purify';
 import { getInventory } from '../auth/inventory';
-import {
-  MAX_INCREMENT,
-  MAX_STARTING_BID,
-  MIN_INCREMENT,
-  MIN_STARTING_BID,
-  openCatchAuction,
-} from '../auth/auctions';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
@@ -87,7 +80,6 @@ import {
   Dialog,
   DialogActions,
   DialogSection,
-  Field,
   List,
   ListRow,
   Menu,
@@ -218,6 +210,12 @@ export interface CatchDialogProps {
    * behind the dialog can refresh
    */
   onChange?: () => void;
+  /**
+   * Open the listing dialog for this pokemon. The menu's Auction entry
+   * is left out entirely when nobody is listening, since a sheet with
+   * a dead button on it is worse than one without the button
+   */
+  onAuction?: (catchId: string) => void;
   /**
    * Show the record and offer nothing.
    *
@@ -748,14 +746,11 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * Which of the menu's panels is open under the bar, if any. They are
-   * panels rather than sections because neither is part of reading the
-   * sheet: a player opens one, does the thing, and is back to looking
-   * at the pokemon
+   * Whether the bag is open under the bar. It is a panel rather than a
+   * section because it is not part of reading the sheet: a player
+   * opens it, spends something, and is back to looking at the pokemon
    */
-  const [panel, setPanel] = createSignal<'items' | 'auction' | null>(null);
-  const [asking, setAsking] = createSignal(MIN_STARTING_BID);
-  const [raise, setRaise] = createSignal(MIN_INCREMENT);
+  const [panel, setPanel] = createSignal<'items' | null>(null);
 
   /**
    * One stat as the pokemon actually has it: the species' base, the
@@ -815,33 +810,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * Put it on the block. The lot leaves the player's records as the
-   * auction opens, so the dialog has nothing left to show and closes
-   * behind it
-   */
-  const sell = (): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    setStatus(null);
-    openCatchAuction(catchId, { startingBid: asking(), increment: raise() })
-      .then((id: string | null) => {
-        if (id == null) {
-          setStatus('It could not be listed — you may already have a lot running.');
-          return;
-        }
-        setPanel(null);
-        props.onChange?.();
-        props.onClose();
-      })
-      .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
-      });
-  };
-
-  /**
    * What the menu offers. Everything in it is occasional — the things
    * a player does to a pokemon now and then rather than every time
    * they open its sheet — and every one of them is refused while it is
@@ -872,10 +840,21 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     {
       label: 'Auction',
       // A favorite is not to be parted with, and a lot cannot be taken
-      // back off the block once it is on it
-      disabled: fighting() === true || isFavorite(loaded) || isEgg(loaded),
+      // back off the block once it is on it. Nobody listening for the
+      // listing is the same as nowhere to list it
+      disabled:
+        props.onAuction == null || fighting() === true || isFavorite(loaded) || isEgg(loaded),
       onSelect: () => {
-        setPanel((open) => (open === 'auction' ? null : 'auction'));
+        const catchId = props.catchId;
+
+        if (catchId == null) {
+          return;
+        }
+        // The listing dialog is the parent's to open: this one is
+        // already a dialog, and the pokemon is about to leave the
+        // records this sheet is reading
+        props.onClose();
+        props.onAuction?.(catchId);
       },
     },
     {
@@ -950,55 +929,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         }
                       }}
                     />
-                  </DialogSection>
-                </Show>
-
-                <Show when={panel() === 'auction'}>
-                  <DialogSection title="Auction">
-                    <Note>
-                      It leaves your records the moment the lot opens, held items and all, and comes
-                      back only if the day ends with nobody having bid.
-                    </Note>
-                    <Row>
-                      <Field label="Asking price">
-                        <input
-                          type="number"
-                          min={MIN_STARTING_BID}
-                          max={MAX_STARTING_BID}
-                          value={asking()}
-                          onInput={(event) => {
-                            setAsking(Number(event.currentTarget.value));
-                          }}
-                        />
-                      </Field>
-                      <Field label="Least raise">
-                        <input
-                          type="number"
-                          min={MIN_INCREMENT}
-                          max={MAX_INCREMENT}
-                          value={raise()}
-                          onInput={(event) => {
-                            setRaise(Number(event.currentTarget.value));
-                          }}
-                        />
-                      </Field>
-                    </Row>
-                    <Row>
-                      <Button
-                        tone="primary"
-                        disabled={asking() < MIN_STARTING_BID || raise() < MIN_INCREMENT}
-                        onClick={sell}
-                      >
-                        List it
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setPanel(null);
-                        }}
-                      >
-                        Never mind
-                      </Button>
-                    </Row>
                   </DialogSection>
                 </Show>
               </Show>

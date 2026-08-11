@@ -2,8 +2,6 @@ import { For, type JSX, Show, createResource, createSignal, from } from 'solid-j
 import {
   AuctionLot,
   type AuctionRecord,
-  MIN_INCREMENT,
-  MIN_STARTING_BID,
   canClaim,
   canReclaim,
   claimAuction,
@@ -11,7 +9,6 @@ import {
   isBidOn,
   isLive,
   nextBid,
-  openItemAuction,
   placeBid,
   reclaimAuction,
   watchOpenAuctions,
@@ -21,9 +18,8 @@ import { type CaughtPokemon, getCaught, isFavorite } from '../auth/caught';
 import { isEgg } from '../auth/egg';
 import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
-import type { Items } from '../data/ids/items';
 import { NATURE_NAMES } from '../data/ids/natures';
-import AuctionDialog from './AuctionDialog';
+import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
 import CatchDialog, { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './CatchesList';
@@ -508,69 +504,12 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     return buddy()?.caught === option.id ? 'your buddy' : null;
   };
 
-  const [item, setItem] = createSignal<Items | null>(null);
-  const [caught, setCaught] = createSignal<string | null>(null);
-  const [startingBid, setStartingBid] = createSignal(MIN_STARTING_BID);
-  const [increment, setIncrement] = createSignal(MIN_INCREMENT);
   /**
-   * Whether the sell button has been pressed once. A lot cannot be
-   * taken back off the block, so it takes a second press
+   * What the player has picked to put up, if anything. Picking is the
+   * whole of the sell card's business: the price, the confirmation and
+   * the listing itself all belong to the dialog it opens
    */
-  const [listing, setListing] = createSignal(false);
-
-  /**
-   * Picking one clears the other: one lot goes up, not two
-   */
-  const pickItem = (picked: Items | null): void => {
-    setItem(picked);
-    setCaught(null);
-    setListing(false);
-  };
-
-  /**
-   * Picking a pokemon opens the listing dialog rather than filling in
-   * the form below it: a pokemon is worth looking at while a price is
-   * being put on it, and an item is not
-   */
-  const pickCatch = (picked: string | null): void => {
-    setItem(null);
-    setListing(false);
-    setCaught(picked);
-  };
-
-  const settle = (opening: Promise<string | null>): void => {
-    opening
-      .then(async (id) => {
-        setStatus(
-          id == null
-            ? 'It could not be put up — you may already have an auction running.'
-            : 'It is on the block until the day is up.',
-        );
-        setItem(null);
-        setCaught(null);
-        await refetchStanding();
-        refresh();
-      })
-      .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
-      });
-  };
-
-  const list = (): void => {
-    const offeredItem = item();
-
-    if (offeredItem == null) {
-      setStatus('Pick something out of the bag to put up first.');
-      return;
-    }
-    if (!listing()) {
-      setListing(true);
-      return;
-    }
-    setStatus(null);
-    setListing(false);
-    settle(openItemAuction(offeredItem, { startingBid: startingBid(), increment: increment() }));
-  };
+  const [offered, setOffered] = createSignal<AuctionSubject | null>(null);
 
   const bid = (id: string, amount: number): void => {
     setStatus(null);
@@ -743,18 +682,22 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           <Note>
             One item — a single one, not the stack — or one pokemon. Whichever it is leaves your
             hands the moment it goes up and cannot be taken off the block; it only comes back if the
-            day ends with nobody having bid on it. The price below is the item's; a pokemon is
-            priced in the dialog that opens when you pick one.
+            day ends with nobody having bid on it. Pick one and the price is named in the dialog
+            that opens.
           </Note>
 
           <h4>From the bag</h4>
           <InventoryPicker
             inline
             revision={revision()}
-            value={item()}
+            value={null}
             verb="Sell"
             empty="Carrying nothing to sell."
-            onPick={pickItem}
+            onPick={(picked) => {
+              if (picked != null) {
+                setOffered({ lot: AuctionLot.Item, item: picked });
+              }
+            }}
           />
 
           <h4>From the records</h4>
@@ -771,62 +714,79 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             verb="Sell"
             empty="No pokemon to sell."
             reason={sellingReason}
-            onPick={pickCatch}
+            onPick={(picked) => {
+              if (picked != null) {
+                setOffered({ lot: AuctionLot.Catch, catchId: picked });
+              }
+            }}
           />
+        </Show>
+      </Card>
 
-          <Row>
-            <Field label="Asking price">
-              <input
-                type="number"
-                min={MIN_STARTING_BID}
-                value={startingBid()}
-                onInput={(event) => {
-                  setStartingBid(Number(event.currentTarget.value));
-                  setListing(false);
-                }}
-              />
-            </Field>
-            <Field label="Least raise">
-              <input
-                type="number"
-                min={MIN_INCREMENT}
-                value={increment()}
-                onInput={(event) => {
-                  setIncrement(Number(event.currentTarget.value));
-                  setListing(false);
-                }}
-              />
-            </Field>
-          </Row>
+      {/* Nothing is handed over when bidding closes; the winner comes
+          back for it, and the seller is paid out of the same claim */}
+      <Card title="Won">
+        <Show when={won().length} fallback={<Note>Nothing waiting to be collected.</Note>}>
+          <List>
+            <For each={won()}>
+              {([id, auction]) => (
+                <ListRow>
+                  <span class="grow font-medium">
+                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
+                  </span>
+                  <Meta>
+                    won for {auction.bid} gold · from {describeSeller(auction)}
+                  </Meta>
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      collect(id);
+                    }}
+                  >
+                    Collect
+                  </Button>
+                </ListRow>
+              )}
+            </For>
+          </List>
+        </Show>
+      </Card>
 
-          <Row>
-            {/* Putting something up cannot be undone, so the second
-                press is the one that does it — and it is the one that
-                looks like it */}
-            <Button tone={listing() ? 'danger' : 'primary'} onClick={list}>
-              {listing() ? 'Put it out of reach for a day?' : 'Put it up for auction'}
-            </Button>
-            <Show when={listing()}>
-              <Button
-                onClick={() => {
-                  setListing(false);
-                }}
-              >
-                Keep it
-              </Button>
-            </Show>
-          </Row>
+      {/* A lot the day ran out on without a bid has no winner to go to,
+          so it goes back where it came from */}
+      <Card title="Unsold">
+        <Show when={unsold().length} fallback={<Note>Nothing of yours went unsold.</Note>}>
+          <List>
+            <For each={unsold()}>
+              {([id, auction]) => (
+                <ListRow>
+                  <span class="grow font-medium">
+                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
+                  </span>
+                  <Meta>nobody bid</Meta>
+                  <Button
+                    tone="primary"
+                    onClick={() => {
+                      reclaim(id);
+                    }}
+                  >
+                    Take it back
+                  </Button>
+                </ListRow>
+              )}
+            </For>
+          </List>
         </Show>
       </Card>
 
       <Status message={status()} />
 
-      {/* Putting one of the player's own pokemon up: the sprite, the
-          terms, and a second dialog that says what listing means */}
+      {/* Putting something up: what it is, the terms, and a second
+          dialog that says what listing actually means */}
       <AuctionDialog
-        catchId={caught()}
+        subject={offered()}
         onClose={() => {
-          setCaught(null);
+          setOffered(null);
         }}
         onListed={() => {
           setStatus('It is on the block until the day is up.');

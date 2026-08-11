@@ -1,24 +1,29 @@
 import { type JSX, Show, createResource, createSignal } from 'solid-js';
 import {
+  AuctionLot,
   MAX_INCREMENT,
   MAX_STARTING_BID,
   MIN_INCREMENT,
   MIN_STARTING_BID,
   openCatchAuction,
+  openItemAuction,
 } from '../auth/auctions';
 import { getCaught } from '../auth/caught';
 import { isShiny } from '../auth/caught-record';
 import { isEgg } from '../auth/egg';
+import type { Items } from '../data/ids/items';
 import { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
+import { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from './styled';
 
 /**
- * Putting one pokemon on the block.
+ * Putting one thing on the block — a pokemon, or a single item out of
+ * the bag.
  *
  * It is a dialog of its own rather than a section of the sell card,
- * because listing is one decision made about one pokemon: the player
+ * because listing is one decision made about one lot: the player
  * should be looking at the thing they are about to part with while
  * they name a price for it. That is the whole of the layout — what it
  * is, what it costs to open, and what it costs to raise.
@@ -28,11 +33,21 @@ import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '.
  * back off the block: it goes up for a day, and comes back only if the
  * day ends with nobody having bid at all
  */
+
+/**
+ * What is being put up. It is the same shape the auction record uses
+ * to say what a lot holds, so the dialog and the lot it opens are
+ * describing the thing the same way
+ */
+export type AuctionSubject =
+  | { lot: AuctionLot.Catch; catchId: string }
+  | { lot: AuctionLot.Item; item: Items };
+
 export interface AuctionDialogProps {
   /**
-   * The pokemon to list, or null when the dialog is closed
+   * What to list, or null when the dialog is closed
    */
-  catchId: string | null;
+  subject: AuctionSubject | null;
   onClose: () => void;
   /**
    * Fired once a lot is actually open, so the board and the records
@@ -50,7 +65,10 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
   const [confirming, setConfirming] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
 
-  const [caught] = createResource(() => props.catchId, getCaught);
+  const [caught] = createResource(
+    () => (props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null),
+    getCaught,
+  );
 
   /**
    * What is being sold, by name. An egg says only that it is one —
@@ -58,6 +76,12 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
    * dialog should not say more than the lot will
    */
   const named = (): string => {
+    const subject = props.subject;
+
+    if (subject?.lot === AuctionLot.Item) {
+      return describeItem(subject.item);
+    }
+
     const record = caught();
 
     if (record == null) {
@@ -82,14 +106,20 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
   };
 
   const list = (): void => {
-    const catchId = props.catchId;
+    const subject = props.subject;
 
-    if (catchId == null || !sensible()) {
+    if (subject == null || !sensible()) {
       return;
     }
+
+    const terms = { startingBid: asking(), increment: raise() };
+
     setStatus(null);
     setBusy(true);
-    openCatchAuction(catchId, { startingBid: asking(), increment: raise() })
+    (subject.lot === AuctionLot.Item
+      ? openItemAuction(subject.item, terms)
+      : openCatchAuction(subject.catchId, terms)
+    )
       .then((id) => {
         setBusy(false);
 
@@ -98,7 +128,9 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
           // back to the form rather than closing over it
           setConfirming(false);
           setStatus(
-            'It could not be put up — you may already have an auction running, or it may be a favorite, an egg or your buddy.',
+            subject.lot === AuctionLot.Item
+              ? 'It could not be put up — you may already have an auction running, or no longer carry one.'
+              : 'It could not be put up — you may already have an auction running, or it may be a favorite, an egg or your buddy.',
           );
           return;
         }
@@ -114,22 +146,35 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
 
   /**
    * What is standing on the block, drawn the size a dialog can hold.
-   * An egg is drawn as an egg, the way it is everywhere else
+   *
+   * A pokemon is its sprite, and an egg is drawn as an egg the way it
+   * is everywhere else. An **item** has no picture yet, so it is its
+   * own name, set large — a placeholder for the icon that belongs
+   * there, rather than an empty frame pretending to be one
    */
   const portrait = (): JSX.Element => (
-    <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
-      {(record) => (
-        <div class="flex justify-center">
-          <SpriteDisplay
-            species={isEgg(record()) ? Species.Egg : record().species}
-            shiny={!isEgg(record()) && isShiny(record())}
-            animation="Idle"
-            direction="down"
-            scale={4}
-            label={named()}
-          />
+    <Show
+      when={props.subject?.lot !== AuctionLot.Item}
+      fallback={
+        <div class="flex min-h-24 items-center justify-center">
+          <span class="text-center text-lg font-semibold">{named()}</span>
         </div>
-      )}
+      }
+    >
+      <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
+        {(record) => (
+          <div class="flex justify-center">
+            <SpriteDisplay
+              species={isEgg(record()) ? Species.Egg : record().species}
+              shiny={!isEgg(record()) && isShiny(record())}
+              animation="Idle"
+              direction="down"
+              scale={4}
+              label={named()}
+            />
+          </div>
+        )}
+      </Show>
     </Show>
   );
 
@@ -139,7 +184,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
           other: only ever one of them is open, so neither is fighting
           the other for the click that closes it */}
       <Dialog
-        isOpen={props.catchId != null && !confirming()}
+        isOpen={props.subject != null && !confirming()}
         onClose={close}
         title={`Auction ${named()}`}
         description="What it opens at, and the least a bid may raise it by. A lot stands for a day."
@@ -177,7 +222,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
           <Button onClick={close}>Never mind</Button>
           <Button
             tone="primary"
-            disabled={!sensible() || caught() == null}
+            disabled={!sensible() || (props.subject?.lot === AuctionLot.Catch && caught() == null)}
             onClick={() => {
               setStatus(null);
               setConfirming(true);
@@ -192,7 +237,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
           actually means, in the words the player will remember if it
           sells for less than they hoped */}
       <Dialog
-        isOpen={props.catchId != null && confirming()}
+        isOpen={props.subject != null && confirming()}
         onClose={() => {
           setConfirming(false);
         }}
@@ -202,9 +247,11 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
         {portrait()}
 
         <Note>
-          Opening at {asking()} gold, raised {raise()} at a time. It stands for a day, held items
-          and all, and it cannot be taken back off the block — it comes back only if the day ends
-          with nobody having bid.
+          Opening at {asking()} gold, raised {raise()} at a time. It stands for a day and cannot be
+          taken back off the block — it comes back only if the day ends with nobody having bid.
+          {props.subject?.lot === AuctionLot.Item
+            ? ' One piece goes up, not the stack.'
+            : ' It goes up held items and all.'}
         </Note>
         <Meta>Whoever wins it pays what they bid; the gold is yours when they collect it.</Meta>
 

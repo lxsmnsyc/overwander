@@ -5,7 +5,8 @@ import { isEgg } from '../auth/egg';
 import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
-import AuctionDialog from './AuctionDialog';
+import { AuctionLot } from '../auth/auctions';
+import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
 import CatchDialog from './CatchDialog';
 import matches from '../core/search';
 import { List, ListRow, Note, Row, RowButton, SEARCH_FROM, Search } from './styled';
@@ -49,7 +50,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const [selected, setSelected] = createSignal<string | null>(null);
   // The pokemon being put on the block, if any. It is kept apart from
   // the one being read: listing opens as the sheet closes
-  const [listing, setListing] = createSignal<string | null>(null);
+  const [listing, setListing] = createSignal<AuctionSubject | null>(null);
 
   /**
    * What was typed. It is matched against the same line the row shows,
@@ -106,7 +107,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         player={props.player}
         catchId={selected()}
         onAuction={(catchId) => {
-          setListing(catchId);
+          setListing({ lot: AuctionLot.Catch, catchId });
         }}
         onClose={() => {
           setSelected(null);
@@ -122,7 +123,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       {/* Listing is its own dialog, opened as the sheet closes: the
           pokemon is about to leave the records the sheet was reading */}
       <AuctionDialog
-        catchId={listing()}
+        subject={listing()}
         onClose={() => {
           setListing(null);
         }}

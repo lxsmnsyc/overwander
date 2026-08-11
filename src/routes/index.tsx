@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import { For, type JSX, Show } from 'solid-js';
 import { Tab, TabGroup, TabList, TabPanel } from 'terracotta';
 import { useAuth } from '../auth/context';
+import AuctionTab from '../components/AuctionTab';
 import BattleView from '../components/BattleView';
 import GameProvider, { GameTab, useGame } from '../components/game-context';
 import LoginForm from '../components/LoginForm';
@@ -21,6 +22,7 @@ const TABS: TabDefinition[] = [
   { tab: GameTab.Overworld, label: 'Overworld' },
   { tab: GameTab.WorldMap, label: 'World Map' },
   { tab: GameTab.Raids, label: 'Raids' },
+  { tab: GameTab.Auctions, label: 'Auctions' },
 ];
 
 /**
@@ -59,6 +61,9 @@ function GameView(props: { user: User }): JSX.Element {
           </TabPanel>
           <TabPanel value={GameTab.Raids}>
             <RaidsTab user={props.user} />
+          </TabPanel>
+          <TabPanel value={GameTab.Auctions}>
+            <AuctionTab player={props.user.uid} />
           </TabPanel>
         </TabGroup>
       }

@@ -23,7 +23,7 @@ import type { Spawn } from '../overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
 import { getAdminFirestore } from './firebase';
-import { asLocale, zeroEffortValues } from './catch-fields';
+import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import { freeFields, isCatchLocked } from './locks';
 import { docData } from './read';
 
@@ -301,7 +301,7 @@ export async function recordSteps(
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
-    if (stored == null || stored.owner !== uid || stored.egg !== true) {
+    if (stored == null || stored.owner !== uid || !isEggRecord(stored)) {
       return null;
     }
 
@@ -337,7 +337,7 @@ export async function hatchEgg(
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
-    if (stored == null || stored.owner !== uid || stored.egg !== true || isCatchLocked(stored)) {
+    if (stored == null || stored.owner !== uid || !isEggRecord(stored) || isCatchLocked(stored)) {
       return null;
     }
 
@@ -347,7 +347,13 @@ export async function hatchEgg(
       return null;
     }
 
-    transaction.update(ref, { egg: false, steps: caught.hatchSteps });
+    // The shell comes off the flags rather than a field of its own, so
+    // whatever else is true of it — that it sparkles, that it is a
+    // shadow — comes through the hatching untouched
+    transaction.update(ref, {
+      flags: withFlag(caught.flags, PokemonFlags.Egg, false),
+      steps: caught.hatchSteps,
+    });
     return caught.species;
   });
 

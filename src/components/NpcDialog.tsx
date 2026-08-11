@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, Show, createResource, createSignal } from 'solid-js';
 import { Dialog, DialogOverlay, DialogPanel, DialogTitle } from 'terracotta';
 import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
@@ -7,19 +7,9 @@ import { isShadow } from '../auth/caught-record';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { boostEgg, breed } from '../auth/npcs';
 import Npc, { BREEDING_FEE, DAYCARE_FEE, NPC_NAMES } from '../data/overworld/npc';
-import { getSpeciesData } from '../data/species';
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-
-/**
- * One of the player's catches, with what the NPC needs to know about
- * it: whether it is busy fighting, and how it reads as a parent
- */
-interface Candidate {
-  id: string;
-  caught: CaughtPokemon;
-  fighting: boolean;
-}
+import CatchPicker, { type CatchOption } from './CatchPicker';
 
 /**
  * A catch as the breeding rules read one
@@ -33,12 +23,6 @@ function asParent(caught: CaughtPokemon): BreedingParent {
     shadow: isShadow(caught),
     egg: isEgg(caught),
   };
-}
-
-function describe(caught: CaughtPokemon): string {
-  return isEgg(caught)
-    ? `Egg · ${caught.steps} / ${caught.hatchSteps} steps`
-    : `${getSpeciesData(caught.species).name} · Lv. ${caught.level}`;
 }
 
 export interface NpcDialogProps {
@@ -70,34 +54,26 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [chosen, setChosen] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
 
+  // Both lists are drawn from this one read: the pair the breeder
+  // wants and the egg the daycare lady wants are the same records,
+  // asked two different questions
   const [catches, { refetch }] = createResource(
     () => (props.standing == null ? null : props.player),
-    async (player): Promise<Candidate[]> => {
+    async (player): Promise<CatchOption[]> => {
       const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
 
       return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
     },
   );
 
-  const parents = (): Candidate[] =>
-    (catches() ?? []).filter((entry) => !isEgg(entry.caught) && !entry.fighting);
-
-  /**
-   * The eggs she will take: any that still has walking left in it
-   */
-  const eggs = (): Candidate[] =>
-    (catches() ?? []).filter(
-      (entry) => isEgg(entry.caught) && !entry.fighting && stepsRemaining(entry.caught) > 0,
-    );
-
-  const pair = (): [Candidate, Candidate] | null => {
+  const pair = (): [CatchOption, CatchOption] | null => {
     const picked = chosen();
 
     if (picked.length !== 2) {
       return null;
     }
 
-    const found = picked.map((id) => parents().find((entry) => entry.id === id));
+    const found = picked.map((id) => (catches() ?? []).find((entry) => entry.id === id));
 
     return found[0] == null || found[1] == null ? null : [found[0], found[1]];
   };
@@ -108,17 +84,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     return (
       chosenPair != null && canBreed(asParent(chosenPair[0].caught), asParent(chosenPair[1].caught))
     );
-  };
-
-  const toggle = (id: string): void => {
-    const picked = chosen();
-
-    setStatus(null);
-    if (picked.includes(id)) {
-      setChosen(picked.filter((entry) => entry !== id));
-    } else if (picked.length < 2) {
-      setChosen([...picked, id]);
-    }
   };
 
   const close = (): void => {
@@ -208,30 +173,25 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                   "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
                   them. It takes after both."
                 </p>
-                <Show when={!catches.loading} fallback={<p>Looking them over…</p>}>
-                  <Show when={parents().length} fallback={<p>You have nothing to leave.</p>}>
-                    <ul>
-                      <For each={parents()}>
-                        {(entry) => (
-                          <li>
-                            <button
-                              type="button"
-                              aria-pressed={chosen().includes(entry.id)}
-                              disabled={busy()}
-                              onClick={() => {
-                                toggle(entry.id);
-                              }}
-                            >
-                              {chosen().includes(entry.id) ? '✓ ' : ''}
-                              {describe(entry.caught)}
-                              {isShadow(entry.caught) ? ' · shadow' : ''}
-                            </button>
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                </Show>
+                {/* The pair is picked with the same list every other
+                    part of the game picks a pokemon with; what makes
+                    it a breeding pair is the two, and the rule about
+                    what can be one */}
+                <CatchPicker
+                  inline
+                  multiple
+                  max={2}
+                  options={catches()}
+                  value={chosen()}
+                  verb="Leave"
+                  empty="You have nothing to leave."
+                  filter={(option) => !isEgg(option.caught) && !option.fighting}
+                  note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
+                  onPick={(picked) => {
+                    setStatus(null);
+                    setChosen(picked);
+                  }}
+                />
                 {/* The pairing is checked here only so the button can
                     say so first; the refusal itself is the server's */}
                 <Show when={chosen().length === 2 && !compatible()}>
@@ -249,31 +209,25 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                   "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
                   Wherever it is now, it will be that much further along."
                 </p>
-                <Show when={!catches.loading} fallback={<p>Looking them over…</p>}>
-                  <Show when={eggs().length} fallback={<p>You have no egg for her.</p>}>
-                    <ul>
-                      <For each={eggs()}>
-                        {(entry) => (
-                          <li>
-                            <button
-                              type="button"
-                              disabled={busy()}
-                              onClick={() => {
-                                pushEgg(entry.id);
-                              }}
-                            >
-                              Warm {describe(entry.caught)} ({DAYCARE_FEE} gold)
-                            </button>{' '}
-                            {/* What the fee actually buys this egg,
-                                since half of a long walk is further
-                                than half of a short one */}
-                            — {entry.caught.steps} → {boostedSteps(entry.caught)}
-                          </li>
-                        )}
-                      </For>
-                    </ul>
-                  </Show>
-                </Show>
+                {/* The note on each row is what the fee actually buys
+                    that egg: half of a long walk is further than half
+                    of a short one */}
+                <CatchPicker
+                  inline
+                  options={catches()}
+                  value={null}
+                  verb="Warm"
+                  empty="You have no egg for her."
+                  filter={(option) =>
+                    isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
+                  }
+                  note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
+                  onPick={(id) => {
+                    if (id != null) {
+                      pushEgg(id);
+                    }
+                  }}
+                />
               </Show>
 
               <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>

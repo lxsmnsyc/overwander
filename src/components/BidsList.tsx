@@ -1,0 +1,147 @@
+import { For, type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import {
+  type AuctionRecord,
+  BidState,
+  canClaim,
+  canRebid,
+  claimAuction,
+  getBidState,
+  listBidHistory,
+  placeBid,
+} from '../auth/auctions';
+import { type Profile, watchProfile } from '../auth/profile';
+import { AuctionLotLabel, BidControls } from './AuctionTab';
+
+/**
+ * Where the player stands, said the way they would say it
+ */
+const BID_STATE_LABELS: Record<BidState, string> = {
+  [BidState.Leading]: 'leading',
+  [BidState.Outbid]: 'outbid',
+  [BidState.Won]: 'won — waiting to be collected',
+  [BidState.Lost]: 'lost',
+  [BidState.Collected]: 'won and collected',
+};
+
+/**
+ * What the lot stands at now, next to what this player put in. The two
+ * are the same number only while they are the ones winning it
+ */
+function describeStanding(auction: AuctionRecord, mine: number, state: BidState): string {
+  return state === BidState.Leading || state === BidState.Won || state === BidState.Collected
+    ? `${mine} gold`
+    : `you bid ${mine} · standing at ${auction.bid}`;
+}
+
+export interface BidsListProps {
+  player: string;
+}
+
+/**
+ * Everything the player has bid on, newest first.
+ *
+ * The lot itself only keeps the bid that is standing — that is all it
+ * needs to settle — so this is read from the player's own bid records
+ * and the lots looked up from them. A player outbid an hour ago still
+ * finds the lot here, which is the point: being outbid is something
+ * you learn by looking, so the answer to it is here too. A lot that is
+ * still open takes another bid without going back to the board.
+ *
+ * Nothing is polled. Whether bidding has closed is this reader's own
+ * clock against the closing time the listing was written with, and the
+ * server checks it again for real when a bid or a claim arrives
+ */
+export default function BidsList(props: BidsListProps): JSX.Element {
+  const [history, { refetch }] = createResource(() => props.player, listBidHistory);
+  const [status, setStatus] = createSignal<string | null>(null);
+
+  // Bidding again spends gold, so the balance the bid box is bounded
+  // by is followed rather than read once
+  const profile = from<Profile | null>((set) =>
+    watchProfile(props.player, (record) => {
+      set(record);
+    }),
+  );
+
+  const gold = (): number => profile()?.gold ?? 0;
+
+  const bid = (id: string, amount: number): void => {
+    setStatus(null);
+    placeBid(id, amount)
+      .then(async (placed) => {
+        setStatus(
+          placed == null
+            ? 'That bid could not be placed.'
+            : `Bid ${placed} gold — it is yours unless somebody raises it.`,
+        );
+        await refetch();
+      })
+      .catch((thrown: unknown) => {
+        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+      });
+  };
+
+  const collect = (id: string): void => {
+    setStatus(null);
+    claimAuction(id)
+      .then(async (claimed) => {
+        setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
+        await refetch();
+      })
+      .catch((thrown: unknown) => {
+        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+      });
+  };
+
+  return (
+    <>
+      <Show when={!history.loading} fallback={<p>Loading bids…</p>}>
+        <Show when={history()?.length} fallback={<p>You have not bid on anything.</p>}>
+          <ul>
+            <For each={history()}>
+              {(entry) => {
+                const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
+
+                return (
+                  <li>
+                    <AuctionLotLabel auction={entry.lot} /> ·{' '}
+                    {describeStanding(entry.lot, entry.bid.amount, state())} ·{' '}
+                    {BID_STATE_LABELS[state()]}
+                    {/* Outbid, and the lot is still open: the raise is
+                        made here rather than by finding it again on
+                        the board */}
+                    <Show when={canRebid(entry.lot, props.player, Date.now())}>
+                      <BidControls
+                        auction={entry.lot}
+                        player={props.player}
+                        gold={gold()}
+                        onBid={(amount) => {
+                          bid(entry.auction, amount);
+                        }}
+                      />
+                    </Show>
+                    {/* Nothing is handed over when bidding closes, so a
+                        won lot is collected here too */}
+                    <Show when={canClaim(entry.lot, props.player, Date.now())}>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          collect(entry.auction);
+                        }}
+                      >
+                        Collect
+                      </button>
+                    </Show>
+                  </li>
+                );
+              }}
+            </For>
+          </ul>
+        </Show>
+      </Show>
+
+      <Show when={status()}>{(message) => <p role="status">{message()}</p>}</Show>
+    </>
+  );
+}

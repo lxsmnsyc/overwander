@@ -9,9 +9,10 @@ import CatchDialog from './CatchDialog';
 
 /**
  * A one-line summary of a catch: the species name plus the details
- * that separate two of the same species at a glance
+ * that separate two of the same species at a glance. The auction board
+ * shows a lot the same way a player sees their own pokemon
  */
-function describeCatch(caught: CaughtPokemon): string {
+export function describeCatch(caught: CaughtPokemon): string {
   // An egg is listed as an egg and nothing more: the species inside
   // is already decided, and showing it here would give it away
   if (isEgg(caught)) {

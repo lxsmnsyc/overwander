@@ -19,6 +19,7 @@ deployed as-is before the game is exposed to real players.
 | [Catch records](firestore/catches.md)             | `caught`, the battle lock, and eggs waiting to be walked                   |
 | [Shared overworld stores](firestore/overworld.md) | `snapshots`, `spawns`, `encounters`, the landmark claim markers            |
 | [Raids and battles](firestore/raids.md)           | `raids`, `teams`, `teamSnapshots`, `battles`, `rocketStops`, `raidRewards` |
+| [Auctions](firestore/auctions.md)                 | `auctions`, `auctionSellers`, and the escrow a lot sits in                 |
 | [Encounter kinds](firestore/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as         |
 | [Time](firestore/time.md)                         | The server clock, and the player-local zone everything is read in          |
 | [Security](firestore/security.md)                 | Privileged writes, the rules to deploy, and the indexes they need          |

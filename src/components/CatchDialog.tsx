@@ -23,7 +23,7 @@ import {
   isFainted,
 } from '../auth/health';
 import useBottleCap from '../auth/bottle-caps';
-import { type InventoryEntry, getInventory } from '../auth/inventory';
+import { getInventory } from '../auth/inventory';
 import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
 import { useAuth } from '../auth/context';
 import { evolveCatch, listEvolutions } from '../auth/evolution';
@@ -47,6 +47,7 @@ import {
   deriveSize,
   isRaidEncounter,
 } from '../overworld/encounter';
+import InventoryPicker, { describeItem } from './InventoryPicker';
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -112,18 +113,6 @@ function describeAbility(ability: Abilities): string {
     return getAbilityData(ability).name;
   } catch {
     return `Ability #${ability}`;
-  }
-}
-
-/**
- * The item registry only knows berries and stones so far; a held
- * ball would throw, so fall back to the raw id
- */
-function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
   }
 }
 
@@ -253,41 +242,28 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   );
 
   /**
-   * The holdable items in the player's bag; a catch can only be
-   * handed something it is allowed to hold
+   * Whether a catch is allowed to hold it at all
    */
-  const holdable = (): InventoryEntry[] =>
-    (bag() ?? []).filter((entry) => {
-      try {
-        return (getItemData(entry.item).flags & ItemFlags.Holdable) !== 0;
-      } catch {
-        // An unregistered item has no flags to read, so it is not
-        // offered rather than assumed holdable
-        return false;
-      }
-    });
+  const isHoldable = (item: Items): boolean => {
+    try {
+      return (getItemData(item).flags & ItemFlags.Holdable) !== 0;
+    } catch {
+      // An unregistered item has no flags to read, so it is not
+      // offered rather than assumed holdable
+      return false;
+    }
+  };
 
   /**
-   * The bottle caps in the bag. Every other usable item is used
-   * somewhere else — a ball on an encounter, a stone through the
-   * evolution it enables — so these are the only ones a catch itself
-   * has a button for
+   * Whether the item would do this pokemon some good — a berry, a
+   * potion, a cure, a revive. The rules decide: an item that would
+   * change nothing about this pokemon is not offered, because using it
+   * would spend it
    */
-  const caps = (): InventoryEntry[] => (bag() ?? []).filter((entry) => isBottleCap(entry.item));
-
-  /**
-   * Everything in the bag that would do this pokemon some good — a
-   * berry, a potion, a cure, a revive. The rules decide: an item that
-   * would change nothing about this pokemon is not offered, because
-   * using it would spend it
-   */
-  const remedies = (): InventoryEntry[] => {
+  const isRemedy = (item: Items): boolean => {
     const caught = view();
 
-    if (caught == null) {
-      return [];
-    }
-    return (bag() ?? []).filter((entry) => healedByItem(caught, entry.item) != null);
+    return caught != null && healedByItem(caught, item) != null;
   };
 
   const moveItem = (item: Items, give: boolean): void => {
@@ -638,25 +614,20 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     {/* A catch holds one item at a time, matching the
                       battle's per-unit limit */}
                     <Show when={loaded().items.length < HELD_ITEM_LIMIT}>
-                      <Show when={holdable().length} fallback={<p>Nothing holdable in the bag.</p>}>
-                        <ul>
-                          <For each={holdable()}>
-                            {(entry) => (
-                              <li>
-                                <button
-                                  type="button"
-                                  disabled={fighting()}
-                                  onClick={() => {
-                                    moveItem(entry.item, true);
-                                  }}
-                                >
-                                  Give {describeItem(entry.item)} × {entry.amount}
-                                </button>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      </Show>
+                      <InventoryPicker
+                        inline
+                        entries={bag()}
+                        disabled={fighting()}
+                        value={null}
+                        verb="Give"
+                        empty="Nothing holdable in the bag."
+                        filter={(entry) => isHoldable(entry.item)}
+                        onPick={(item) => {
+                          if (item != null) {
+                            moveItem(item, true);
+                          }
+                        }}
+                      />
                     </Show>
 
                     <h3>Healing</h3>
@@ -665,34 +636,24 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         quick way back, a level the slow one. Only what
                         would actually do something is offered — using
                         it spends it */}
-                    <Show
-                      when={remedies().length}
-                      fallback={
-                        <p>
-                          {isFainted(loaded())
-                            ? 'It is down. Only a revive brings it round — or a level.'
-                            : 'Nothing in the bag would do it any good.'}
-                        </p>
+                    <InventoryPicker
+                      inline
+                      entries={bag()}
+                      disabled={fighting()}
+                      value={null}
+                      verb="Use"
+                      empty={
+                        isFainted(loaded())
+                          ? 'It is down. Only a revive brings it round — or a level.'
+                          : 'Nothing in the bag would do it any good.'
                       }
-                    >
-                      <ul>
-                        <For each={remedies()}>
-                          {(entry) => (
-                            <li>
-                              <button
-                                type="button"
-                                disabled={fighting()}
-                                onClick={() => {
-                                  heal(entry.item);
-                                }}
-                              >
-                                Use {describeItem(entry.item)} × {entry.amount}
-                              </button>
-                            </li>
-                          )}
-                        </For>
-                      </ul>
-                    </Show>
+                      filter={(entry) => isRemedy(entry.item)}
+                      onPick={(item) => {
+                        if (item != null) {
+                          heal(item);
+                        }
+                      }}
+                    />
 
                     <h3>Use item</h3>
                     {/* A cap is the only thing that moves the values a
@@ -703,25 +664,25 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       when={!isPerfectIVs(loaded().ivs)}
                       fallback={<p>Every value is already as high as it goes.</p>}
                     >
-                      <Show when={caps().length} fallback={<p>No bottle caps in the bag.</p>}>
-                        <ul>
-                          <For each={caps()}>
-                            {(entry) => (
-                              <li>
-                                <button
-                                  type="button"
-                                  disabled={fighting()}
-                                  onClick={() => {
-                                    polish(entry.item);
-                                  }}
-                                >
-                                  Use {describeItem(entry.item)} × {entry.amount}
-                                </button>
-                              </li>
-                            )}
-                          </For>
-                        </ul>
-                      </Show>
+                      {/* Every other usable item is used somewhere else
+                          — a ball on an encounter, a stone through the
+                          evolution it enables — so the caps are the
+                          only ones a catch itself offers */}
+                      <InventoryPicker
+                        inline
+                        entries={bag()}
+                        disabled={fighting()}
+                        confirm
+                        value={null}
+                        verb="Use"
+                        empty="No bottle caps in the bag."
+                        filter={(entry) => isBottleCap(entry.item)}
+                        onPick={(item) => {
+                          if (item != null) {
+                            polish(item);
+                          }
+                        }}
+                      />
                     </Show>
 
                     <h3>Candies</h3>

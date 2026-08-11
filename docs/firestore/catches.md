@@ -9,36 +9,36 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 
 ## `caught/{catchId}`
 
-| Field                  | Type                    | Notes                                                     |
-| ---------------------- | ----------------------- | --------------------------------------------------------- |
-| `owner`                | `string`                | Current owner's uid; changes on trade                     |
-| `type`                 | `EncounterType`         | How it was originally met                                 |
-| `species`              | `Species`               |                                                           |
-| `level`                | `number`                |                                                           |
-| `individualValue`      | `number`                | 32-bit roll the IVs slice from                            |
-| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature        |
-| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order        |
-| `gender`               | `Genders`               |                                                           |
-| `nature`               | `Natures`               |                                                           |
-| `moves`                | `Moves[]`               |                                                           |
-| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch        |
-| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`         |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append      |
-| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked           |
-| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free         |
-| `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any       |
-| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found        |
-| `steppedAt`            | `number`                | Server instant steps were last credited at                |
-| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived         |
-| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying          |
-| `lair`                 | `Lairs \| null`          | The lair a raid prize was won in; null for anything else |
-| `ball`                 | `Balls`                 | Ball the catch was made with                              |
-| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                 |
-| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                    |
-| `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                           |
-| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                     |
-| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                         |
-| `origin.biome`         | `Biome`                 |                                                           |
+| Field                  | Type                    | Notes                                                    |
+| ---------------------- | ----------------------- | -------------------------------------------------------- |
+| `owner`                | `string`                | Current owner's uid; changes on trade                    |
+| `type`                 | `EncounterType`         | How it was originally met                                |
+| `species`              | `Species`               |                                                          |
+| `level`                | `number`                |                                                          |
+| `individualValue`      | `number`                | 32-bit roll the IVs slice from                           |
+| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature       |
+| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order       |
+| `gender`               | `Genders`               |                                                          |
+| `nature`               | `Natures`               |                                                          |
+| `moves`                | `Moves[]`               |                                                          |
+| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch       |
+| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`        |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt }`, oldest first; trades append     |
+| `flags`                | `number`                | `PokemonFlags` bits: shiny, shadow, egg, locked          |
+| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free        |
+| `steps`                | `number`                | Steps walked with it as buddy; only eggs accrue any      |
+| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found       |
+| `steppedAt`            | `number`                | Server instant steps were last credited at               |
+| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived        |
+| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying         |
+| `lair`                 | `Lairs \| null`         | The lair a raid prize was won in; null for anything else |
+| `ball`                 | `Balls`                 | Ball the catch was made with                             |
+| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                |
+| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                   |
+| `effortValues`         | `Record<Stats, number>` | Starts at zero across the board                          |
+| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                    |
+| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                        |
+| `origin.biome`         | `Biome`                 |                                                          |
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
@@ -259,6 +259,17 @@ again on the way out would make catch-and-release a way of farming candy from
 the same spawn rather than a way of clearing space.
 
 The dialog asks twice before calling it, and there is no undo.
+
+## Escrow
+
+A pokemon put up for auction is not deleted and not held anywhere else: it stays
+its own document with `owner` set to the empty string, which is nobody. Every
+write that touches a catch asks whether the caller is its `owner`, and a uid is
+never empty, so an escrowed pokemon is refused to the seller, the bidders and
+everyone else by the checks that were already there — while staying **readable**,
+which is what lets a bidder see what they are bidding on. Collecting the lot
+writes the winner's uid into `owner` and appends the sale to `history`. See
+[Auctions](auctions.md).
 
 ## Eggs
 

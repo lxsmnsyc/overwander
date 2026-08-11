@@ -15,6 +15,7 @@ export const enum GameTab {
   Overworld = 1,
   WorldMap = 2,
   Raids = 3,
+  Auctions = 4,
 }
 
 /**

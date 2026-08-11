@@ -27,6 +27,25 @@ export const BERRY_CLAIM_COLLECTION = 'berryClaims';
  */
 export const NEST_CLAIM_COLLECTION = 'nestClaims';
 
+/**
+ * One document per auction. A lot named here is already out of the
+ * seller's hands: the item left their bag and the pokemon left their
+ * records when the auction opened
+ */
+export const AUCTION_COLLECTION = 'auctions';
+/**
+ * One document per seller, naming the auction they have running and
+ * when it closes. It is what keeps a player to one auction at a time,
+ * which — since an auction runs a day — is one a day
+ */
+export const AUCTION_SELLER_COLLECTION = 'auctionSellers';
+/**
+ * One document per bidder and auction pair, id "{uid}:{auctionId}":
+ * the lot keeps only the bid that is standing, so a player's own
+ * history of what they have bid on is kept on their side
+ */
+export const BID_COLLECTION = 'bids';
+
 export const TEAM_COLLECTION = 'teams';
 export const TEAM_SNAPSHOT_COLLECTION = 'teamSnapshots';
 export const BATTLE_COLLECTION = 'battles';
@@ -50,6 +69,14 @@ export const BATTLE_AFTERMATH_COLLECTION = 'battleAftermaths';
  */
 export function inventoryEntryId(uid: string, item: Items): string {
   return `${uid}:${item}`;
+}
+
+/**
+ * One document per bidder and lot, so bidding again rewrites what they
+ * bid rather than adding to a list
+ */
+export function bidEntryId(uid: string, auction: string): string {
+  return `${uid}:${auction}`;
 }
 
 /**

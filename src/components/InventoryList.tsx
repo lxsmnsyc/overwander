@@ -2,20 +2,7 @@ import { For, type JSX, Show, createResource } from 'solid-js';
 import { getCandies } from '../auth/candy';
 import { getInventory } from '../auth/inventory';
 import type Families from '../data/ids/families';
-import type { Items } from '../data/ids/items';
-import { getItemData } from '../data/items';
-
-/**
- * The item registry only knows berries and stones so far; a carried
- * ball would throw, so fall back to the raw id
- */
-function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
-}
+import { describeItem } from './InventoryPicker';
 
 /**
  * Candy families have no display names of their own — the family

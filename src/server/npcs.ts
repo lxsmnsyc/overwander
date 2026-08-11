@@ -6,6 +6,7 @@ import Npc, { BREEDING_FEE, DAYCARE_FEE } from '../data/overworld/npc';
 import type { Species } from '../data/ids/species';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import { isEggRecord } from './catch-fields';
 import { grantBredEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
@@ -170,7 +171,7 @@ export async function boostEgg(
   const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
   const stored = docData(await ref.get());
 
-  if (stored == null || stored.owner !== uid || stored.egg !== true || isCatchLocked(stored)) {
+  if (stored == null || stored.owner !== uid || !isEggRecord(stored) || isCatchLocked(stored)) {
     return null;
   }
 

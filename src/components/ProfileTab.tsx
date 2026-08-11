@@ -5,6 +5,7 @@ import { type Profile, watchProfile } from '../auth/profile';
 import { isEgg } from '../auth/egg';
 import { getSpeciesData } from '../data/species';
 import BattleHistory from './BattleHistory';
+import BidsList from './BidsList';
 import CatchesList from './CatchesList';
 import InventoryList from './InventoryList';
 
@@ -12,6 +13,7 @@ const enum InnerTab {
   Catches = 0,
   Inventory = 1,
   Battles = 2,
+  Bids = 3,
 }
 
 export interface ProfileTabProps {
@@ -70,6 +72,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           <Tab value={InnerTab.Catches}>Catches</Tab>
           <Tab value={InnerTab.Inventory}>Inventory</Tab>
           <Tab value={InnerTab.Battles}>Battles</Tab>
+          <Tab value={InnerTab.Bids}>Bids</Tab>
         </TabList>
         <TabPanel value={InnerTab.Catches}>
           <h3>Catches</h3>
@@ -82,6 +85,12 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         <TabPanel value={InnerTab.Battles}>
           <h3>Battles</h3>
           <BattleHistory player={props.player} />
+        </TabPanel>
+        {/* What the player has bid on, which lots they are still
+            leading, and which they won and have not collected */}
+        <TabPanel value={InnerTab.Bids}>
+          <h3>Bids</h3>
+          <BidsList player={props.player} />
         </TabPanel>
       </TabGroup>
     </section>

@@ -9,34 +9,37 @@ that take the caller's Firebase ID token and resolve it with `requireUid`
 ([`src/server/firebase.ts`](../../src/server/firebase.ts)). A uid passed alongside
 a call is never trusted — only what the token proves.
 
-| Written on the server                                      | What the rules could not enforce                                                                                                                               |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recordCatch`                                              | The record is built from `encounters/{spawnId}:{uid}`, so the pokemon written down is the one that was staged, not one the caller describes                    |
-| `grantItem` / `consumeItem`                                | Item stacks are currency; a client that could write them could mint Master Balls                                                                               |
-| `grantGold` / `spendGold`                                  | The same, for the balance                                                                                                                                      |
-| `grantCandy` / `useCandy`                                  | A candy buys a level, so minting candy mints levels                                                                                                            |
-| `giveItem` / `takeItem`                                    | The bag and the catch have to move together, in one transaction                                                                                                |
-| `releaseCatch`                                             | The record is deleted, its held items go back to the bag and a buddy record naming it goes with it, all at once                                                |
-| `evolveCatch`                                              | The criteria — level, held item, carried item — are cross-document                                                                                             |
-| `claimItemCache` / `claimBerryPatch` / `claimHiddenGrotto` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing         |
-| `startEncounter` / `meetSpawn`                             | The spawn is read from the shared store and has to belong to the chunk's live window                                                                           |
-| `markFled`                                                 | The key is recomputed from the stored encounter                                                                                                                |
-| `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                  |
-| `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                              |
-| `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                        |
-| `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                     |
+| Written on the server                                      | What the rules could not enforce                                                                                                                                |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `recordCatch`                                              | The record is built from `encounters/{spawnId}:{uid}`, so the pokemon written down is the one that was staged, not one the caller describes                     |
+| `grantItem` / `consumeItem`                                | Item stacks are currency; a client that could write them could mint Master Balls                                                                                |
+| `grantGold` / `spendGold`                                  | The same, for the balance                                                                                                                                       |
+| `grantCandy` / `useCandy`                                  | A candy buys a level, so minting candy mints levels                                                                                                             |
+| `giveItem` / `takeItem`                                    | The bag and the catch have to move together, in one transaction                                                                                                 |
+| `releaseCatch`                                             | The record is deleted, its held items go back to the bag and a buddy record naming it goes with it, all at once                                                 |
+| `evolveCatch`                                              | The criteria — level, held item, carried item — are cross-document                                                                                              |
+| `claimItemCache` / `claimBerryPatch` / `claimHiddenGrotto` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing          |
+| `startEncounter` / `meetSpawn`                             | The spawn is read from the shared store and has to belong to the chunk's live window                                                                            |
+| `markFled`                                                 | The key is recomputed from the stored encounter                                                                                                                 |
+| `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                   |
+| `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                               |
+| `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                         |
+| `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                      |
 | `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                          |
 | `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                           |
-| `recordAftermath`                                          | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                    |
-| `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                    |
-| `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                        |
-| `claimNest`                                                | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                    |
-| `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one                                                         |
-| `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                        |
-| `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                      |
-| `boostEgg`                                                 | The daycare lady is re-derived from the window, and the half a walk she adds is measured against the stored egg                                                |
-| `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                    |
-| `useHealingItem`                                           | The item leaves the bag and the health it restores lands on the catch in one transaction, and only an item that would do something is spent                    |
+| `recordAftermath`                                          | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                     |
+| `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                     |
+| `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                         |
+| `claimNest`                                                | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                     |
+| `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one                                                          |
+| `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                         |
+| `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side, and the fee is taken first                       |
+| `boostEgg`                                                 | The daycare lady is re-derived from the window, and the half a walk she adds is measured against the stored egg                                                 |
+| `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                     |
+| `useHealingItem`                                           | The item leaves the bag and the health it restores lands on the catch in one transaction, and only an item that would do something is spent                     |
+| `openAuction`                                              | The lot leaves the seller's hands as the listing is written, and the seller document is what holds them to one auction at a time                                |
+| `placeBid`                                                 | Gold moves as the bid lands: the outbid one is refunded and the new one taken in the same transaction, so a standing bid is money already paid                  |
+| `claimAuction`                                             | Who won, whether bidding has closed, and the one-claim `settled` flag are all read where a client cannot skip them — and the seller is paid from the same claim |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build
@@ -162,6 +165,27 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
+    // The auction board: every signed-in player can see what is on it,
+    // and nobody writes it. A lot leaves its owner's hands as the
+    // listing is written, a bid moves gold, and collecting one hands
+    // over a pokemon — none of that is a client's to assert
+    match /auctions/{auctionId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // What a seller has running, which is what holds them to one
+    // auction at a time. Theirs to read, nobody's to write
+    match /auctionSellers/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+    // A player's own bidding history, id "{uid}:{auctionId}". The lot
+    // keeps only the standing bid, so this is what says they took part
+    // at all — and what they paid is nobody else's business
+    match /bids/{bidId} {
+      allow read: if signedIn() && bidId.split(':')[0] == request.auth.uid;
+      allow write: if false;
+    }
     // A grunt's party, and whether they have been put down: what one
     // pays out is the server's to decide
     match /rocketStops/{stopId} {
@@ -214,16 +238,19 @@ actually deployed.
 
 ## Required indexes
 
-| Collection    | Fields                                     | Reason                                       |
-| ------------- | ------------------------------------------ | -------------------------------------------- |
-| `spawns`      | `chunk` ASC, `offset` ASC, `timestamp` ASC | `listSpawns` filters on all three            |
-| `caught`      | `owner` ASC                                | `listCaught`; automatic single-field index   |
-| `spawns`      | `chunk` ASC, `offset` ASC                  | `clearStaleSpawns` clears its own zone       |
-| `caught`      | `owner` ASC, `species` ASC                 | `hasCaughtSpecies`, the Repeat Ball's check  |
-| `inventories` | `user` ASC                                 | `getInventory`; automatic single-field index |
-| `candies`     | `user` ASC                                 | `getCandies`; automatic single-field index   |
-| `teams`       | `player` ASC                               | `listTeams`; automatic single-field index    |
-| `teams`       | `player` ASC, `catches` ARRAY              | `isAnyCatchQueued` filters on both           |
-| `raids`       | `timestamp` ASC, `offset` ASC              | `listLiveRaids` filters on both              |
-| `battles`     | `players` ARRAY                            | `listBattleHistory`; automatic array index   |
-| `raidRewards` | `player` ASC                               | `listClaimedRaids`; automatic single-field   |
+| Collection    | Fields                                     | Reason                                            |
+| ------------- | ------------------------------------------ | ------------------------------------------------- |
+| `spawns`      | `chunk` ASC, `offset` ASC, `timestamp` ASC | `listSpawns` filters on all three                 |
+| `caught`      | `owner` ASC                                | `listCaught`; automatic single-field index        |
+| `spawns`      | `chunk` ASC, `offset` ASC                  | `clearStaleSpawns` clears its own zone            |
+| `caught`      | `owner` ASC, `species` ASC                 | `hasCaughtSpecies`, the Repeat Ball's check       |
+| `inventories` | `user` ASC                                 | `getInventory`; automatic single-field index      |
+| `candies`     | `user` ASC                                 | `getCandies`; automatic single-field index        |
+| `teams`       | `player` ASC                               | `listTeams`; automatic single-field index         |
+| `teams`       | `player` ASC, `catches` ARRAY              | `isAnyCatchQueued` filters on both                |
+| `raids`       | `timestamp` ASC, `offset` ASC              | `listLiveRaids` filters on both                   |
+| `battles`     | `players` ARRAY                            | `listBattleHistory`; automatic array index        |
+| `raidRewards` | `player` ASC                               | `listClaimedRaids`; automatic single-field        |
+| `auctions`    | `settled` ASC                              | `watchOpenAuctions`; automatic single-field index |
+| `auctions`    | `seller` ASC                               | `listAuctionsBy`; automatic single-field index    |
+| `bids`        | `player` ASC                               | `listBidHistory`; automatic single-field index    |

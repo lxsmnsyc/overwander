@@ -1,7 +1,7 @@
 import { isEgg } from '../auth/egg';
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { BUDDY_COLLECTION, CAUGHT_COLLECTION } from '../auth/collections';
+import { CAUGHT_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import type { Buddy } from '../overworld/core';
 import { getAdminFirestore } from './firebase';
 import { docData } from './read';
@@ -16,8 +16,8 @@ export async function resolveBuddyCatch(
   uid: string,
 ): Promise<[string, Record<string, unknown>] | null> {
   const db = getAdminFirestore();
-  const buddy = docData(await db.collection(BUDDY_COLLECTION).doc(uid).get());
-  const catchId = buddy?.caught;
+  const profile = docData(await db.collection(PROFILE_COLLECTION).doc(uid).get());
+  const catchId = profile?.buddy;
 
   if (typeof catchId !== 'string' || catchId === '') {
     return null;

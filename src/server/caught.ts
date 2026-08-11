@@ -1,12 +1,6 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import {
-  BUDDY_COLLECTION,
-  CAUGHT_COLLECTION,
-  ENCOUNTER_COLLECTION,
-  INVENTORY_COLLECTION,
-  inventoryEntryId,
-} from '../auth/collections';
+import { CAUGHT_COLLECTION, ENCOUNTER_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import { asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import {
@@ -35,6 +29,8 @@ import {
 } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
+import { ITEM_STACKS } from '../auth/stacks';
+import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
@@ -328,14 +324,11 @@ export async function giveItem(uid: string, catchId: string, item: Items): Promi
       return false;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const amount = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const carried = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
-    if (amount < 1) {
+    if (!spendStackIn(transaction, ITEM_STACKS, uid, item, carried)) {
       return false;
     }
-
-    transaction.set(stackRef, { user: uid, item, amount: amount - 1 });
     transaction.update(caughtRef, { items: [...held, item] });
     return true;
   });
@@ -371,13 +364,12 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
       return false;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const amount = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const carried = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     // Only the one copy comes off, so a future stack of duplicates
     // still gives back exactly what it took
     transaction.update(caughtRef, { items: held.filter((_, at) => at !== index) });
-    transaction.set(stackRef, { user: uid, item, amount: amount + 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, carried + 1);
     return true;
   });
 }
@@ -407,8 +399,8 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
 
   return db.runTransaction(async (transaction) => {
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const buddyRef = db.collection(BUDDY_COLLECTION).doc(uid);
-    const [caughtDoc, buddyDoc] = await transaction.getAll(caughtRef, buddyRef);
+    const profileRef = db.collection(PROFILE_COLLECTION).doc(uid);
+    const [caughtDoc, profileDoc] = await transaction.getAll(caughtRef, profileRef);
     const caught = docData(caughtDoc);
 
     if (
@@ -430,19 +422,20 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
     }
 
     const stacks = await Promise.all(
-      [...returning.keys()].map(async (item) => {
-        const ref = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-
-        return [item, ref, asNumber(docData(await transaction.get(ref))?.amount)] as const;
-      }),
+      [...returning.keys()].map(
+        async (item) => [item, await readStackIn(transaction, ITEM_STACKS, uid, item)] as const,
+      ),
     );
 
-    for (const [item, ref, amount] of stacks) {
-      transaction.set(ref, { user: uid, item, amount: amount + (returning.get(item) ?? 0) });
+    for (const [item, carried] of stacks) {
+      writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (returning.get(item) ?? 0));
     }
 
-    if (docData(buddyDoc)?.caught === catchId) {
-      transaction.delete(buddyRef);
+    // The buddy is a field of the profile, so it is cleared rather
+    // than deleted: the player walks alone, they do not stop having a
+    // profile
+    if (docData(profileDoc)?.buddy === catchId) {
+      transaction.update(profileRef, { buddy: '' });
     }
     transaction.delete(caughtRef);
     return true;

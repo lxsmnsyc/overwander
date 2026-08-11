@@ -602,10 +602,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * Which catch is currently walking with the player, so the button
    * can say whether this is the one
    */
-  const [buddy, { refetch: refetchBuddy }] = createResource(
-    () => owned(),
-    async (uid) => (await getBuddy(uid))?.caught ?? null,
-  );
+  const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
 
   const takeAlong = (): void => {
     const uid = owned();

@@ -1,6 +1,7 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import { assignEffort as assignedValues, unusedEffort } from '../auth/effort';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
@@ -10,8 +11,9 @@ import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { docData } from './read';
 
 /**
  * Training, written with admin credentials.
@@ -152,8 +154,7 @@ export async function useWing(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (stock < 1) {
       return null;
@@ -174,7 +175,7 @@ export async function useWing(
     // finding at any level
     const trained = { ...record, effortValues, effortBonus: record.effortBonus + gained };
 
-    transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     transaction.update(ref, {
       effortValues,
       effortBonus: trained.effortBonus,
@@ -225,8 +226,7 @@ export async function feedEffortBerry(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (stock < 1) {
       return null;
@@ -243,7 +243,7 @@ export async function feedEffortBerry(
     const friendship = gainFriendship(record.friendship, 'berry', 1, friendshipFactor(record.ball));
     const trained = { ...record, effortValues, friendship };
 
-    transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     transaction.update(ref, {
       effortValues,
       friendship,

@@ -210,6 +210,20 @@ export function encounterKey(encounter: Encounter): string {
 }
 
 /**
+ * The window a key belongs to, read back out of it.
+ *
+ * A fled encounter is only worth remembering while the window that
+ * staged it is live: the spawn is gone when the window turns over,
+ * and the key with it. Answers zero for anything that is not a key,
+ * which reads as long expired
+ */
+export function encounterWindow(key: string): number {
+  const window = Number(key.slice(key.lastIndexOf('@') + 1, key.lastIndexOf(':')));
+
+  return Number.isFinite(window) ? window : 0;
+}
+
+/**
  * A safari-style catch attempt on one encounter: no battle, just
  * throwing, feeding and hoping. Following the battle classes, the
  * action methods only emit — the actual effects ride the Exact

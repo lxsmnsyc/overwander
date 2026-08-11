@@ -1,28 +1,14 @@
-// Firestore returns untyped documents; the converter below restores
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
-// oxlint-disable typescript/no-unnecessary-type-assertion
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
-import { asNumber, asString } from './__normalize';
-import { INVENTORY_COLLECTION, inventoryEntryId } from './collections';
+import { BAG_COLLECTION, ITEM_STACKS, bagId, getStack, listStacks } from './stacks';
 import { getFirebaseFirestore } from './firebase';
 
 /**
- * One item stack a user carries, stored per item at
- * inventories/{uid}:{item} so a grant or a spend touches one small
- * document instead of rewriting the whole bag. Firestore security
- * rules must restrict writes to the owning uid. Gold is not here —
- * the balance lives on the user's profile
+ * The bag as a list of stacks, which is how every picker in the game
+ * wants it. What it is *stored* as is one map in one document — see
+ * [`stacks.ts`](./stacks.ts) — so reading the whole bag is one read
+ * however much is in it, and the candies come out of the same
+ * document. Gold is not here: the balance lives on the profile
  */
 export interface InventoryEntry {
   /**
@@ -34,59 +20,44 @@ export interface InventoryEntry {
    */
   item: Items;
   /**
-   * How many are carried; entries never drop below zero
+   * How many are carried; a stack spent to its last is taken out of
+   * the map rather than kept at zero
    */
   amount: number;
 }
 
-const converter: FirestoreDataConverter<InventoryEntry> = {
-  toFirestore: (entry) => entry,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return {
-      user: asString(data.user),
-      item: asNumber(data.item) as Items,
-      amount: asNumber(data.amount),
-    };
-  },
-};
-
 /**
- * The stack's document reference, converter attached
+ * The player's whole bag, in one read
  */
-function getEntryRef(uid: string, item: Items): DocumentReference<InventoryEntry> {
-  return doc(
-    getFirebaseFirestore(),
-    INVENTORY_COLLECTION,
-    inventoryEntryId(uid, item),
-  ).withConverter(converter);
+async function readBag(uid: string): Promise<unknown> {
+  const snapshot = await getDoc(doc(getFirebaseFirestore(), BAG_COLLECTION, bagId(uid)));
+
+  return snapshot.data();
 }
 
 /**
- * Every stack the user carries, as stored. Stacks that fell to zero
- * are left out
+ * Every stack the user carries
  */
 export async function getInventory(uid: string): Promise<InventoryEntry[]> {
-  const entries = collection(getFirebaseFirestore(), INVENTORY_COLLECTION).withConverter(converter);
-  const result = await getDocs(query(entries, where('user', '==', uid)));
-
-  return result.docs.map((entry) => entry.data()).filter((entry) => entry.amount > 0);
+  return listStacks(await readBag(uid), ITEM_STACKS).map(([item, amount]) => ({
+    user: uid,
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    item: item as Items,
+    amount,
+  }));
 }
 
 /**
  * How many of one item the user carries
  */
 export async function getItemCount(uid: string, item: Items): Promise<number> {
-  const snapshot = await getDoc(getEntryRef(uid, item));
-
-  return snapshot.data()?.amount ?? 0;
+  return getStack(await readBag(uid), ITEM_STACKS, item);
 }
 
 /**
  * The bag is read here and written only by the server: items are
  * value, so `grantItem` and `consumeItem` live in
  * [`src/server/inventory.ts`](../server/inventory.ts) behind a
- * verified caller, and the rules leave this collection read-only to
+ * verified caller, and the rules leave the document read-only to
  * clients
  */

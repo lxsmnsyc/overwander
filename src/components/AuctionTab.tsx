@@ -501,7 +501,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     if (isFavorite(option.caught)) {
       return 'a favorite';
     }
-    return buddy()?.caught === option.id ? 'your buddy' : null;
+    return buddy() === option.id ? 'your buddy' : null;
   };
 
   /**

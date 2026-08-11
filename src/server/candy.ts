@@ -1,5 +1,6 @@
 import 'server-only';
-import { CANDY_COLLECTION, CAUGHT_COLLECTION, candyStackId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { CANDY_STACKS } from '../auth/stacks';
 import getCandyCost, { CANDY_PER_CATCH, SPECIES_DAY_CANDY_BOOST } from '../auth/candy-rules';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
@@ -12,6 +13,7 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
+import { grantStack, readStackIn, spendStackIn } from './stacks';
 
 /**
  * A stored species id, restored the same way the client's converters
@@ -26,22 +28,11 @@ const asSpecies = (value: unknown): Species => asNumber(value) as Species;
  * feeding and the server decides whether it happened
  */
 
-function getStackRef(uid: string, family: Families): FirebaseFirestore.DocumentReference {
-  return getAdminFirestore().collection(CANDY_COLLECTION).doc(candyStackId(uid, family));
-}
-
 /**
  * Add candies to a family's stack, creating it on first acquisition
  */
 export async function grantCandy(uid: string, family: Families, count = 1): Promise<void> {
-  const db = getAdminFirestore();
-
-  await db.runTransaction(async (transaction) => {
-    const ref = getStackRef(uid, family);
-    const current = asNumber(docData(await transaction.get(ref))?.count);
-
-    transaction.set(ref, { user: uid, family, count: current + count });
-  });
+  return grantStack(CANDY_STACKS, uid, family, count);
 }
 
 /**
@@ -103,17 +94,17 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
 
     const record = asCaughtPokemon(caught);
     const { family } = getSpeciesData(asSpecies(caught.species));
-    const stackRef = getStackRef(uid, family);
-    const count = asNumber(docData(await transaction.get(stackRef))?.count);
+    const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
     const cost = getCandyCost(record);
 
-    if (count < cost) {
+    // The candy and the level land together or not at all: a candy
+    // spent without the level is the failure this transaction exists
+    // to prevent
+    if (!spendStackIn(transaction, CANDY_STACKS, uid, family, held, cost)) {
       return null;
     }
 
     const level = record.level + 1;
-
-    transaction.set(stackRef, { user: uid, family, count: count - cost });
     transaction.update(caughtRef, {
       level,
       // A level restores what the last fight took, status and all

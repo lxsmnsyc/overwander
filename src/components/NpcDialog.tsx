@@ -337,10 +337,11 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   /**
    * Agree to what is in the basket.
    *
-   * Each kind is its own trade, so a stack that turns out not to be
-   * there — sold from another tab, or a crate that changed under the
-   * player when the window turned over — stops at itself rather than
-   * voiding the rest of the basket
+   * The whole of it is one trade — one call, one transaction, one
+   * write to the purse and one to the bag — so a basket a player
+   * agreed to lands entire or not at all. A line the vendor will not
+   * price, or a stack sold from another tab, refuses the trade rather
+   * than quietly selling the rest of it
    */
   const settle = (): void => {
     const snapshot = props.snapshot;
@@ -352,32 +353,25 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     }
     setStatus(null);
     setBusy(true);
-    (async () => {
-      let moved = 0;
-
-      for (const [item, amount] of deal.picks) {
-        const done = deal.buying
-          ? await buyFromVendor(snapshot, standing[0], item, amount)
-          : await sellToVendor(snapshot, standing[0], item, amount);
-
-        if (done != null) {
-          moved += priceOf(item, deal.buying) * amount;
-        }
-      }
-      return moved;
-    })()
-      .then((moved) => {
+    (deal.buying
+      ? buyFromVendor(snapshot, standing[0], deal.picks)
+      : sellToVendor(snapshot, standing[0], deal.picks)
+    )
+      .then((done) => {
         setBusy(false);
         setBasket(null);
 
-        if (moved === 0) {
+        if (done == null) {
           setStatus(
             deal.buying
-              ? 'He would not sell you that — it is not in his crate, or your purse will not cover it.'
-              : 'He would not put a price on any of that.',
+              ? 'He would not sell you that — something in it is not in his crate, or your purse will not cover the lot.'
+              : 'He would not take that — something in it is worth nothing to him, or you have not got it.',
           );
           return;
         }
+
+        const moved = totalOf(deal);
+
         setStatus(
           deal.buying
             ? `He handed it over and counted your gold. (−${moved} gold)`

@@ -1,12 +1,14 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
 
@@ -62,9 +64,7 @@ export default async function evolveCatch(
     let stock = 0;
 
     if (consumed != null) {
-      const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, consumed));
-
-      stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+      stock = await readStackIn(transaction, ITEM_STACKS, uid, consumed);
 
       if (stock > 0) {
         carried.add(consumed);
@@ -85,11 +85,7 @@ export default async function evolveCatch(
     }
 
     if (consumed != null) {
-      transaction.set(db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, consumed)), {
-        user: uid,
-        item: consumed,
-        amount: stock - 1,
-      });
+      writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
     }
     // An evolution is a bigger pokemon, not a healed one: the share
     // of health it had is what it keeps, so a Charmander at half

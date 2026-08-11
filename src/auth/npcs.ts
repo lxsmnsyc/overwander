@@ -221,6 +221,8 @@ async function groomOnServer(
  * client already knows it — `ChunkSnapshot.getVendorStock` — and the
  * server derives it again before it takes a coin.
  *
+ * The whole basket is one trade: it lands entire or not at all.
+ *
  * He is the one wanderer a player may deal with as often as they like
  * while he is standing there: what limits him is the crate and the
  * purse rather than a once-a-window marker.
@@ -231,16 +233,14 @@ async function groomOnServer(
 export async function buyFromVendor(
   snapshot: ChunkSnapshot,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
 ): Promise<TradeResult | null> {
   return buyOnServer(
     await getIdToken(),
     snapshot.chunk.x,
     snapshot.chunk.y,
     cell,
-    item,
-    amount,
+    basket,
     snapshot.offset,
   );
 }
@@ -250,8 +250,7 @@ async function buyOnServer(
   x: number,
   y: number,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
@@ -260,8 +259,7 @@ async function buyOnServer(
     x,
     y,
     cell,
-    item,
-    amount,
+    basket,
     await syncServerClock(),
     offset,
   );
@@ -272,22 +270,23 @@ async function buyOnServer(
  * wider than what he sells — and pays what the registry says one
  * fetches, which is half of what he charges for the same thing.
  *
+ * The whole basket is one trade: a bag short of one line sells
+ * nothing rather than part of it.
+ *
  * Resolves the balance and what is left of the stack, or null when he
  * will not price it or the player has not got that many
  */
 export async function sellToVendor(
   snapshot: ChunkSnapshot,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
 ): Promise<TradeResult | null> {
   return sellOnServer(
     await getIdToken(),
     snapshot.chunk.x,
     snapshot.chunk.y,
     cell,
-    item,
-    amount,
+    basket,
     snapshot.offset,
   );
 }
@@ -297,8 +296,7 @@ async function sellOnServer(
   x: number,
   y: number,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
@@ -307,8 +305,7 @@ async function sellOnServer(
     x,
     y,
     cell,
-    item,
-    amount,
+    basket,
     await syncServerClock(),
     offset,
   );

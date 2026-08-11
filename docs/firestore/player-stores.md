@@ -20,36 +20,66 @@ The balance is not theirs to write: `grantGold` and `spendGold` live in
 inside a transaction so concurrent rewards cannot clobber each other. The rules
 pin `gold` on update and require a new profile to open at zero.
 
-## `inventories/{uid}:{item}`
+## `bags/{uid}`
 
-Read through [`src/auth/inventory.ts`](../../src/auth/inventory.ts) and written by
-[`src/server/inventory.ts`](../../src/server/inventory.ts). One document per user
-and item pair, so a grant or a spend touches a single small document and the
-same item can never split across two records. Both mutations run inside a
-transaction.
+Everything a player is carrying, in **one document**: a map per kind, keyed by
+the id of the thing and valued by how many.
 
-| Field    | Type     | Notes                                         |
-| -------- | -------- | --------------------------------------------- |
-| `user`   | `string` | Owning uid, matching the first half of the id |
-| `item`   | `Items`  | Numeric item id from the `Items` enum         |
-| `amount` | `number` | How many are carried; never goes below zero   |
+```text
+bags/{uid} = { items: { "114": 3, "10007": 1 }, candies: { "0": 12 } }
+```
 
-Private: only the owning uid may read, and only the server may write.
-`getInventory` queries `where('user', '==', uid)` and filters out stacks that
-have been spent to zero — those documents stay behind rather than being
-deleted.
+| Field     | Type                     | Notes                          |
+| --------- | ------------------------ | ------------------------------ |
+| `items`   | `Record<string, number>` | Item id → how many are carried |
+| `candies` | `Record<string, number>` | Family id → how many are held  |
 
-## `candies/{uid}:{family}`
+Read through [`src/auth/inventory.ts`](../../src/auth/inventory.ts) and
+[`src/auth/candy.ts`](../../src/auth/candy.ts), which are the bag's two views of
+one document; written only by
+[`src/server/stacks.ts`](../../src/server/stacks.ts), since both maps are
+currency — one mints Master Balls and the other mints levels.
 
-Read through [`src/auth/candy.ts`](../../src/auth/candy.ts), written by
-[`src/server/candy.ts`](../../src/server/candy.ts). Keyed by evolution family
-rather than species, because a candy feeds any catch in its family.
+### Why one document
 
-| Field    | Type       | Notes                                         |
-| -------- | ---------- | --------------------------------------------- |
-| `user`   | `string`   | Owning uid, matching the first half of the id |
-| `family` | `Families` | Numeric family id from the `Families` enum    |
-| `count`  | `number`   | How many are held; never goes below zero      |
+It was a collection each — `inventories/{uid}:{item}` and
+`candies/{uid}:{family}`, one small row per thing. Every picker in the game
+opens by reading the whole bag, and a row per thing billed **a read per kind
+carried**, a number that grows with a player's collection forever. One document
+is one read however much they own, the items and the candies arrive together
+instead of as two queries, and the bag can be watched live for what a row per
+thing would have cost a listener per row.
+
+What it costs is that a player's whole bag is one document, so their writes
+queue behind each other. That is self-contention — nobody else writes your bag
+— and it is why anything handing over several kinds does it in **one** write:
+`grantStacks` for a dug-up stash and the Pickup finds, and one transaction for
+a whole vendor basket.
+
+Both maps are **exempted from indexing**. A key per item id would be an index
+entry per item id, and nothing asks the store which players hold a Master Ball.
+
+### How a stack is read and written
+
+[`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which map a kind lives in
+(`ITEM_STACKS`, `CANDY_STACKS`) and reads one out: `getStack` for a count,
+`listStacks` for the id-count pairs every picker wants. Nothing is ever listed
+at zero — a stack spent to its last is **deleted** from the map rather than left
+sitting at nothing, which is what the old rows did.
+
+[`src/server/stacks.ts`](../../src/server/stacks.ts) has two layers, because
+most callers change a stack **and something else** in one breath — an item
+leaves the bag as a move is learned, a candy leaves the pile as a level lands.
+Those take `readStackIn` / `writeStackIn` / `spendStackIn` and pass their own
+transaction; the rest take `grantStack` / `spendStack` / `grantStacks`, which
+open one of their own.
+
+Every write is a **merge at one field path**, never a whole document: two kinds
+changed in one transaction are two mutations against `items.114` and
+`items.117`, so the second cannot overwrite the first. Reads still come before
+writes — two kinds read in one transaction are two reads of the same document —
+which is Firestore's own rule and the reason the multi-kind callers gather
+before they write.
 
 `useCandy(catchId)` spends `getCandyCost(caught)` candies to raise a catch
 by a level — one for an ordinary catch, two for a shadow. It reads
@@ -82,31 +112,32 @@ The effects live in
 [`src/overworld/items/candy-items.ts`](../../src/overworld/items/candy-items.ts)
 and register themselves the way every other buddy effect does.
 
-## `buddies/{uid}`
+## The buddy, on the profile
 
-Set by [`src/auth/buddy.ts`](../../src/auth/buddy.ts). One buddy per player, so the
-document id is the uid itself and setting a new buddy replaces the old one.
-Overworld item effects and abilities read it to decide what the player's
-companion changes; the planned walking feature follows the same record.
+Set by [`src/auth/buddy.ts`](../../src/auth/buddy.ts) through the profile's
+`buddy` field: the `caught/{catchId}` walking at the player's side, or an empty
+string when they walk alone.
 
-| Field    | Type     | Notes                                       |
-| -------- | -------- | ------------------------------------------- |
-| `player` | `string` | Owning uid, matching the document id        |
-| `caught` | `string` | Id of the `caught/{catchId}` being followed |
+It was `buddies/{uid}` — one document holding one string — and it is a field
+because it is read on nearly **every** overworld action: every encounter
+derivation asks what the buddy changes, every catch asks what it is carrying,
+every step report asks what is being walked. A document of its own was a second
+read for one string, on the hottest path in the game.
 
 `setBuddy` reads the catch first and refuses to write when the player does not
-own it. Ownership can still lapse afterwards — a trade leaves the buddy record
-pointing at someone else's pokemon — so `resolveBuddy` re-checks `owner` on
-read and resolves null when it no longer matches. `clearBuddy` deletes the
-document rather than blanking the field, and `releaseCatch` deletes it in the
-same transaction when the released pokemon was the one being followed — a buddy
-record naming a document that is gone would otherwise outlive it.
+own it. Ownership can still lapse afterwards — a trade leaves the field pointing
+at someone else's pokemon — so `resolveBuddy` re-checks `owner` on read and
+resolves null when it no longer matches. `clearBuddy` writes an empty string,
+and `releaseCatch` clears it in the same transaction when the released pokemon
+was the one being followed.
 
 An **egg** may be the buddy, and has to be: steps only count for what walks
 beside the player. `resolveBuddy` reports no field effects for one, though — it
 is carried, not accompanied. See [Eggs](catches.md#eggs).
 
-Private to the owning uid.
+The rules restrict the field to the owning uid, the way the nickname beside it is
+restricted — and `gold` stays server-only, so the profile's rule has to name
+which keys a player may touch rather than allowing the whole document.
 
 ## `positions/{uid}`
 
@@ -160,10 +191,21 @@ read through [`src/auth/safari.ts`](../../src/auth/safari.ts). The key is
 recomputed from the stored encounter, so a player cannot retire a meeting they
 never had.
 
-| Field  | Type       | Notes                                                      |
-| ------ | ---------- | ---------------------------------------------------------- |
-| `keys` | `string[]` | Encounter keys the user has scared off; only ever appended |
+| Field  | Type       | Notes                                          |
+| ------ | ---------- | ---------------------------------------------- |
+| `keys` | `string[]` | Encounter keys the user has scared off, pruned |
 
 An encounter key is `` `${x},${y}@${timestamp}:${individualValue}` `` (see
 `encounterKey` in [`src/overworld/safari.ts`](../../src/overworld/safari.ts)).
+
+**The list is pruned as it is written.** The key carries the window that staged
+the spawn, and a spawn is gone when its window turns over — so a key older than
+`FLED_MEMORY` (1 hour) can never match anything again and is dropped by the same
+write that adds a new one. An hour rather than one 5-minute window because the
+windows are **local**: a player who crosses a zone reads a clock offset from the
+one their last key was written against.
+
+Without that, the list only grew — one key per encounter a player ever walked
+away from, in a single document, until it met Firestore's megabyte.
+
 Private to the owning uid, and read-only to them.

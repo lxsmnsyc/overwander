@@ -5,20 +5,14 @@
 import {
   type FirestoreDataConverter,
   type Unsubscribe,
-  collection,
   doc,
-  getDocs,
   onSnapshot,
-  query,
   runTransaction,
-  where,
-  writeBatch,
 } from 'firebase/firestore';
 import type { ItemStack } from '../data/overworld/item-pool';
-import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
-import { asNumber, asString } from './__normalize';
+import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
 import { requireUid } from '../server/firebase';
 import {
   claimBerryPatch as claimBerryOnServerSide,
@@ -29,77 +23,14 @@ import {
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
 import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
-import { SNAPSHOT_COLLECTION, SPAWN_COLLECTION } from './collections';
+import { SNAPSHOT_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
-/**
- * One shared snapshot record per chunk **and zone** at
- * snapshots/{chunkSeed}:{zone}: whoever finds the record missing or
- * expired refreshes it, and the stored window is canonical for every
- * player in that zone — nobody derives spawns from their own clock.
- *
- * The zone is part of the key because the window is local: players an
- * ocean apart are in different hours of the day, so they walk
- * different worlds rather than fighting over one window
- */
-export interface SnapshotRecord {
-  /**
-   * The chunk seed this snapshot belongs to
-   */
-  seed: string;
-  /**
-   * Minutes east of UTC the window was read in
-   */
-  offset: number;
-  /**
-   * The 5-minute local window the snapshot covers
-   */
-  timestamp: number;
-}
-
-/**
- * One synchronized spawn at spawns/{snapshotKey#index}: the raw
- * roll (species, individual value, trait value) shared by every
- * player viewing the chunk from the same zone
- */
-export interface SpawnRecord {
-  chunk: string;
-  offset: number;
-  timestamp: number;
-  species: Species;
-  individualValue: number;
-  traitValue: number;
-}
-
 const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
   toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return {
-      seed: asString(data.seed),
-      offset: asNumber(data.offset),
-      timestamp: asNumber(data.timestamp),
-    };
-  },
-};
-
-const spawnConverter: FirestoreDataConverter<SpawnRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return {
-      chunk: asString(data.chunk),
-      offset: asNumber(data.offset),
-      timestamp: asNumber(data.timestamp),
-      species: asNumber(data.species) as Species,
-      individualValue: asNumber(data.individualValue),
-      traitValue: asNumber(data.traitValue),
-    };
-  },
+  fromFirestore: (snapshot) => asSnapshotRecord(snapshot.data()),
 };
 
 /**
@@ -107,10 +38,6 @@ const spawnConverter: FirestoreDataConverter<SpawnRecord> = {
  */
 function windowId(chunk: Chunk, offset: number): string {
   return `${chunk.seed}:${toZoneKey(offset)}`;
-}
-
-function spawnId(snapshot: ChunkSnapshot, index: number): string {
-  return `${snapshot.key}@${snapshot.timestamp}#${index}`;
 }
 
 /**
@@ -122,7 +49,8 @@ function spawnId(snapshot: ChunkSnapshot, index: number): string {
 async function resolveSnapshotWindow(
   chunk: Chunk,
   offset: number,
-): Promise<{ timestamp: number; refreshed: boolean }> {
+  count: number,
+): Promise<SnapshotRecord> {
   const db = getFirebaseFirestore();
   const ref = doc(db, SNAPSHOT_COLLECTION, windowId(chunk, offset)).withConverter(
     snapshotConverter,
@@ -137,14 +65,36 @@ async function resolveSnapshotWindow(
     const existing = (await transaction.get(ref)).data();
     const now = toLocalTime(serverNow(), offset);
 
-    if (existing != null && now < existing.timestamp + SNAPSHOT_INTERVAL) {
-      return { timestamp: existing.timestamp, refreshed: false };
+    // A live window is adopted whole — its spawns are what everybody
+    // in this zone is looking at. One written before the spawns moved
+    // in has none, so it is rolled again rather than shown empty
+    if (
+      existing != null &&
+      now < existing.timestamp + SNAPSHOT_INTERVAL &&
+      existing.spawns.length > 0
+    ) {
+      return existing;
     }
 
-    const window = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    const timestamp = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    // The rolls come from the window itself, so whoever writes it
+    // writes what everyone else will read: one document, one write,
+    // and no stale spawns left behind to sweep up
+    const record: SnapshotRecord = {
+      seed: chunk.seed,
+      offset: asOffset(offset),
+      timestamp,
+      spawns: new ChunkSnapshot(chunk, timestamp, offset)
+        .getSpawns(count)
+        .map(([species, individualValue, traitValue]) => ({
+          species,
+          individualValue,
+          traitValue,
+        })),
+    };
 
-    transaction.set(ref, { seed: chunk.seed, offset: asOffset(offset), timestamp: window });
-    return { timestamp: window, refreshed: true };
+    transaction.set(ref, record);
+    return record;
   });
 }
 
@@ -152,8 +102,12 @@ async function resolveSnapshotWindow(
  * Resolve the chunk's current snapshot from the shared store, so
  * every player of that chunk in that zone derives the same one
  */
-export async function getChunkSnapshot(chunk: Chunk, offset: number): Promise<ChunkSnapshot> {
-  const { timestamp } = await resolveSnapshotWindow(chunk, offset);
+export async function getChunkSnapshot(
+  chunk: Chunk,
+  offset: number,
+  count: number,
+): Promise<ChunkSnapshot> {
+  const { timestamp } = await resolveSnapshotWindow(chunk, offset, count);
 
   return new ChunkSnapshot(chunk, timestamp, offset);
 }
@@ -166,7 +120,7 @@ export async function getChunkSnapshot(chunk: Chunk, offset: number): Promise<Ch
 export function watchSnapshotWindow(
   chunk: Chunk,
   offset: number,
-  onChange: (timestamp: number | null) => void,
+  onChange: (record: SnapshotRecord | null) => void,
 ): Unsubscribe {
   const ref = doc(
     getFirebaseFirestore(),
@@ -175,137 +129,31 @@ export function watchSnapshotWindow(
   ).withConverter(snapshotConverter);
 
   return onSnapshot(ref, (snapshot) => {
-    onChange(snapshot.data()?.timestamp ?? null);
+    onChange(snapshot.data() ?? null);
   });
-}
-
-/**
- * Follow the chunk's published spawns for one window: a spawn caught
- * or cleared by another player disappears from every screen at once
- */
-export function watchSpawns(
-  chunk: Chunk,
-  offset: number,
-  timestamp: number,
-  onChange: (spawns: [string, SpawnRecord][]) => void,
-): Unsubscribe {
-  const spawns = collection(getFirebaseFirestore(), SPAWN_COLLECTION).withConverter(spawnConverter);
-
-  return onSnapshot(
-    query(
-      spawns,
-      where('chunk', '==', chunk.seed),
-      where('offset', '==', asOffset(offset)),
-      where('timestamp', '==', timestamp),
-    ),
-    (result) => {
-      onChange(result.docs.map((entry) => [entry.id, entry.data()]));
-    },
-  );
-}
-
-/**
- * Drop every stored spawn of the chunk **in this zone** that belongs
- * to a window other than the current one. Another zone's spawns are
- * left where they are: its window turns over on its own clock
- */
-async function clearStaleSpawns(chunk: Chunk, offset: number, timestamp: number): Promise<void> {
-  const db = getFirebaseFirestore();
-  const spawns = collection(db, SPAWN_COLLECTION).withConverter(spawnConverter);
-  const result = await getDocs(
-    query(spawns, where('chunk', '==', chunk.seed), where('offset', '==', asOffset(offset))),
-  );
-  const batch = writeBatch(db);
-
-  for (const entry of result.docs) {
-    if (entry.data().timestamp !== timestamp) {
-      batch.delete(entry.ref);
-    }
-  }
-  await batch.commit();
-}
-
-/**
- * Roll the snapshot's spawns and publish them to the shared spawn
- * store. Ids are deterministic (snapshot key + roll index) and the
- * rolls themselves derive from the shared window, so concurrent
- * players write identical documents — every viewer of the chunk
- * sees one synchronized set. Returns id-spawn pairs
- */
-export async function publishSpawns(
-  snapshot: ChunkSnapshot,
-  count: number,
-): Promise<[string, Spawn][]> {
-  const db = getFirebaseFirestore();
-  const spawns = snapshot.getSpawns(count);
-  const batch = writeBatch(db);
-  const pairs: [string, Spawn][] = [];
-
-  spawns.forEach((spawn, index) => {
-    const id = spawnId(snapshot, index);
-    const [species, individualValue, traitValue] = spawn;
-
-    batch.set(doc(db, SPAWN_COLLECTION, id).withConverter(spawnConverter), {
-      chunk: snapshot.chunk.seed,
-      offset: asOffset(snapshot.offset),
-      timestamp: snapshot.timestamp,
-      species,
-      individualValue,
-      traitValue,
-    });
-    pairs.push([id, spawn]);
-  });
-  await batch.commit();
-
-  return pairs;
-}
-
-/**
- * The synchronized spawns of a chunk's current window, as stored
- */
-export async function listSpawns(snapshot: ChunkSnapshot): Promise<[string, SpawnRecord][]> {
-  const spawns = collection(getFirebaseFirestore(), SPAWN_COLLECTION).withConverter(spawnConverter);
-  const result = await getDocs(
-    query(
-      spawns,
-      where('chunk', '==', snapshot.chunk.seed),
-      where('offset', '==', asOffset(snapshot.offset)),
-      where('timestamp', '==', snapshot.timestamp),
-    ),
-  );
-
-  return result.docs.map((entry) => [entry.id, entry.data()]);
 }
 
 /**
  * Visit a chunk: resolve its current window and hand back the
- * synchronized spawns. The visitor who rolls the window over
- * regenerates the chunk — stale spawn records are deleted and the
- * new window's spawns published; within a live window the stored
- * set is reused (published by whoever arrives first)
+ * synchronized spawns.
+ *
+ * Whoever finds the window expired rolls the next one and writes it,
+ * spawns and all, in a single transaction; everybody else adopts what
+ * is stored. There is nothing left over to clean up, since a window
+ * that turns over overwrites its own spawns
  */
 export async function visitChunk(
   chunk: Chunk,
   count: number,
   offset: number,
 ): Promise<[string, Spawn][]> {
-  const { timestamp, refreshed } = await resolveSnapshotWindow(chunk, offset);
-  const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
+  const record = await resolveSnapshotWindow(chunk, offset, count);
+  const key = `${chunk.seed}:${toZoneKey(offset)}`;
 
-  if (refreshed) {
-    await clearStaleSpawns(chunk, offset, timestamp);
-    return publishSpawns(snapshot, count);
-  }
-
-  const existing = await listSpawns(snapshot);
-
-  if (existing.length > 0) {
-    return existing.map(([id, record]) => [
-      id,
-      [record.species, record.individualValue, record.traitValue],
-    ]);
-  }
-  return publishSpawns(snapshot, count);
+  return record.spawns.map((roll, index) => [
+    spawnId(key, record.timestamp, index),
+    [roll.species, roll.individualValue, roll.traitValue],
+  ]);
 }
 
 /**

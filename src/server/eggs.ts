@@ -1,11 +1,6 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import {
-  BUDDY_COLLECTION,
-  CAUGHT_COLLECTION,
-  INVENTORY_COLLECTION,
-  inventoryEntryId,
-} from '../auth/collections';
+import { CAUGHT_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import {
   EGG_HATCH_STEPS,
   EGG_LEVEL,
@@ -41,6 +36,8 @@ import type { Spawn } from '../overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
 import { getAdminFirestore } from './firebase';
+import { ITEM_STACKS } from '../auth/stacks';
+import { readStackIn, writeStackIn } from './stacks';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import {
   BASE_FRIENDSHIP,
@@ -52,7 +49,7 @@ import {
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { freeFields, isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { docData } from './read';
 
 /**
  * Eggs, written with admin credentials.
@@ -383,8 +380,8 @@ export async function recordSteps(
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
-    const buddy = docData(await transaction.get(db.collection(BUDDY_COLLECTION).doc(uid)));
-    const catchId = buddy?.caught;
+    const profile = docData(await transaction.get(db.collection(PROFILE_COLLECTION).doc(uid)));
+    const catchId = profile?.buddy;
 
     if (typeof catchId !== 'string' || catchId === '') {
       return null;
@@ -430,8 +427,8 @@ export async function recordSteps(
       // Every stack is read before anything is written, the way a
       // transaction requires
       const stacks = await Promise.all(
-        [...found.keys()].map(async (item) =>
-          transaction.get(db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item))),
+        [...found.keys()].map(
+          async (item) => [item, await readStackIn(transaction, ITEM_STACKS, uid, item)] as const,
         ),
       );
 
@@ -452,14 +449,8 @@ export async function recordSteps(
           : {}),
       });
 
-      for (const [at, item] of [...found.keys()].entries()) {
-        const amount = found.get(item) ?? 0;
-
-        transaction.set(stacks[at].ref, {
-          user: uid,
-          item,
-          amount: asNumber(docData(stacks[at])?.amount) + amount,
-        });
+      for (const [item, carried] of stacks) {
+        writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
       return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
     }

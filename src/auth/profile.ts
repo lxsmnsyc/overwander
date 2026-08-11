@@ -28,6 +28,17 @@ export interface Profile {
    * The in-game currency balance
    */
   gold: number;
+  /**
+   * The `caught/{catchId}` walking at the player's side, or an empty
+   * string when they walk alone.
+   *
+   * It was a store of its own — `buddies/{uid}`, one document holding
+   * one string — and it is a field because it is read on nearly every
+   * overworld action: every encounter derivation, every catch, every
+   * step report asks who is walking beside the player. A field costs
+   * the read the profile was already making
+   */
+  buddy: string;
 }
 
 const PROFILE_COLLECTION = 'profiles';
@@ -43,6 +54,7 @@ const converter: FirestoreDataConverter<Profile> = {
       nickname: typeof data.nickname === 'string' ? data.nickname : 'Trainer',
       avatar: typeof data.avatar === 'string' ? data.avatar : null,
       gold: typeof data.gold === 'number' ? data.gold : 0,
+      buddy: typeof data.buddy === 'string' ? data.buddy : '',
     };
   },
 };
@@ -81,6 +93,16 @@ export async function saveProfile(uid: string, details: ProfileDetails): Promise
 }
 
 /**
+ * Point the profile's buddy at a catch, or clear it with an empty
+ * string. It is written apart from the other details because it is
+ * set from the catch sheet rather than from the profile form — see
+ * [`src/auth/buddy.ts`](./buddy.ts) for what the field means
+ */
+export async function setBuddyField(uid: string, catchId: string): Promise<void> {
+  return setDoc(getProfileRef(uid), { buddy: catchId }, { merge: true });
+}
+
+/**
  * Seed details from whatever the auth method already knows: Google
  * sign-in carries a display name and photo, email accounts fall
  * back to the address' local part
@@ -90,6 +112,7 @@ export function deriveProfileDefaults(user: User): Profile {
     nickname: user.displayName ?? user.email?.split('@')[0] ?? 'Trainer',
     avatar: user.photoURL,
     gold: 0,
+    buddy: '',
   };
 }
 
@@ -97,7 +120,7 @@ export function deriveProfileDefaults(user: User): Profile {
  * The balance is currency, so it never moves from a browser: gold is
  * granted and spent by the server in
  * [`src/server/profile.ts`](../server/profile.ts), and the rules let
- * a player write only their own nickname and avatar
+ * a player write only their own nickname, avatar and buddy
  */
 
 /**

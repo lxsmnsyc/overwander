@@ -1,59 +1,29 @@
 import { isEgg } from './egg';
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  deleteDoc,
-  doc,
-  getDoc,
-  setDoc,
-} from 'firebase/firestore';
 import type { Buddy } from '../overworld/core';
-import { asString } from './__normalize';
 import { type CaughtPokemon, getCaught } from './caught';
-import { getFirebaseFirestore } from './firebase';
+import { getProfile, setBuddyField } from './profile';
 
 /**
- * The pokemon a player keeps at their side, stored one per player at
- * buddies/{uid}. Overworld item effects and abilities read the buddy
- * to decide what the player's presence changes, and the planned
- * walking feature follows the same record. Firestore security rules
- * must restrict writes to the owning uid
+ * The pokemon a player keeps at their side.
+ *
+ * It is a field of the profile — `profiles/{uid}.buddy` — rather than
+ * a store of its own. Overworld item effects and abilities read the
+ * buddy to decide what the player's presence changes, and walking
+ * follows the same record, so it is asked for on nearly every action
+ * a player takes: a document of its own was a second read for one
+ * string. Firestore security rules restrict the field to the owning
+ * uid, the way the nickname beside it is restricted
  */
-export interface BuddyRecord {
-  /**
-   * The owning uid, matching the document id
-   */
-  player: string;
-  /**
-   * The caught/{catchId} the buddy points at
-   */
-  caught: string;
-}
-
-const BUDDY_COLLECTION = 'buddies';
-
-const converter: FirestoreDataConverter<BuddyRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return { player: asString(data.player), caught: asString(data.caught) };
-  },
-};
-
-function getBuddyRef(uid: string): DocumentReference<BuddyRecord> {
-  return doc(getFirebaseFirestore(), BUDDY_COLLECTION, uid).withConverter(converter);
-}
 
 /**
- * The player's buddy record, or null when they have none. The record
- * may still point at a pokemon they no longer own — resolveBuddy
+ * The catch the player is walking with, or null when they walk alone.
+ * It may still point at a pokemon they no longer own — `resolveBuddy`
  * checks that
  */
-export async function getBuddy(uid: string): Promise<BuddyRecord | null> {
-  const snapshot = await getDoc(getBuddyRef(uid));
+export async function getBuddy(uid: string): Promise<string | null> {
+  const buddy = (await getProfile(uid))?.buddy ?? '';
 
-  return snapshot.data() ?? null;
+  return buddy === '' ? null : buddy;
 }
 
 /**
@@ -67,7 +37,7 @@ export async function setBuddy(uid: string, catchId: string): Promise<boolean> {
   if (caught == null || caught.owner !== uid) {
     return false;
   }
-  await setDoc(getBuddyRef(uid), { player: uid, caught: catchId });
+  await setBuddyField(uid, catchId);
   return true;
 }
 
@@ -75,7 +45,7 @@ export async function setBuddy(uid: string, catchId: string): Promise<boolean> {
  * Send the buddy back; the player walks alone afterwards
  */
 export async function clearBuddy(uid: string): Promise<void> {
-  await deleteDoc(getBuddyRef(uid));
+  await setBuddyField(uid, '');
 }
 
 /**
@@ -116,16 +86,16 @@ export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
  * this is where that is caught
  */
 export async function resolveBuddy(uid: string): Promise<[string, CaughtPokemon] | null> {
-  const record = await getBuddy(uid);
+  const catchId = await getBuddy(uid);
 
-  if (record == null) {
+  if (catchId == null) {
     return null;
   }
 
-  const caught = await getCaught(record.caught);
+  const caught = await getCaught(catchId);
 
   if (caught == null || caught.owner !== uid) {
     return null;
   }
-  return [record.caught, caught];
+  return [catchId, caught];
 }

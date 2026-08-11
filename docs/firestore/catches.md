@@ -180,7 +180,7 @@ both are kept.
 `evolveCatch` in [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps the
 species, and a bottle cap polishes the values (see [Bottle
 caps](#bottle-caps)). An evolution that uses an item decrements
-`inventories/{uid}:{item}` in the same transaction, so the stone and the new
+the player's `bags/{uid}` in the same transaction, so the stone and the new
 species land together or not at all. Criteria are re-checked against the stored
 documents inside that transaction, never trusted from the caller.
 
@@ -471,7 +471,7 @@ same transaction, so nothing is left pointing at a record that has vanished:
 
 - whatever it was holding goes back to the bag â€” the item was the player's, not
   the pokemon's;
-- `buddies/{uid}` is deleted when it named the released catch;
+- the profile's `buddy` is cleared when it named the released catch;
 - a catch that is **locked** into a live battle is refused outright, since the
   fight is running on a snapshot of a record that has to still be there when it
   ends.
@@ -552,7 +552,7 @@ no more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims â€
 250 ms a pace, capped at 64 a report, and never past `hatchSteps`. The stamp
 moves on every report, credited or not, so a refused one banks no time for the
 next. That is why `steppedAt` lives on the catch document (server-written) rather
-than on `buddies/{uid}` (client-written).
+than on the profile's `buddy` (client-written).
 
 `hatchSteps` is settled when the egg is written, and two things move it: a shadow
 egg doubles it, and a **Flame Body** buddy standing beside the player at the

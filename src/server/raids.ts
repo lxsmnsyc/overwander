@@ -441,9 +441,11 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
  * answer it: a team still listed by a raid that has not started is a
  * party waiting to fight, and what it holds is spoken for.
  *
- * Teams of raids that have started, been cleared, or dropped the team
- * on the way out do not count — those pokemon are free (or locked,
- * which is a different question)
+ * A team is deleted when its raid starts, so what is left is only
+ * ever a party still waiting. The lobby is checked anyway — a raid
+ * cleared, or one the team was dropped from on the way out, leaves
+ * its pokemon free — and a party that is actually fighting answers
+ * the different question the battle lock asks
  */
 export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
   const db = getAdminFirestore();
@@ -699,6 +701,14 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     outcome: BattleOutcome.Unfinished,
     startedAt: now,
   });
+
+  // The lobby's teams have done their work. What the fight runs on is
+  // the snapshots, which are frozen and complete; a team is a list of
+  // catch ids that was only ever there so a party could gather and be
+  // checked for a pokemon queued twice. Left behind they would be one
+  // stale document per raid ever staged, and `isAnyCatchQueued` would
+  // go on finding parties that are fighting rather than waiting
+  await Promise.all(raid.teams.map(async (id) => db.collection(TEAM_COLLECTION).doc(id).delete()));
 
   return battle.id;
 }

@@ -81,6 +81,7 @@ import deriveEncounter, {
   isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
+import { encounterKey, encounterWindow } from '../../src/overworld/safari';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
 import Npc, { NPCS } from '../../src/data/overworld/npc';
@@ -1394,6 +1395,26 @@ describe('world', () => {
     for (const [biome, destination] of destinations) {
       expect(findPortal(world, chunk.x, chunk.y, biome)).toEqual(destination);
     }
+  });
+
+  it('reads the window back out of an encounter key', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(3, 4), 12 * SNAPSHOT_INTERVAL);
+    const encounter = deriveEncounter(snapshot, [Species.Pidgey, 0, 0]);
+    const key = encounterKey(encounter);
+
+    // The key carries which window staged the spawn, which is what
+    // lets a fled list forget the ones that can never come back: a
+    // window that has turned over has taken its spawns with it
+    expect(encounterWindow(key)).toBe(12 * SNAPSHOT_INTERVAL);
+    expect(encounterKey(encounter)).toBe(key);
+
+    // A key from another window is a different key, and anything that
+    // is not a key at all reads as long expired
+    const later = new ChunkSnapshot(world.getChunk(3, 4), 13 * SNAPSHOT_INTERVAL);
+
+    expect(encounterKey(deriveEncounter(later, [Species.Pidgey, 0, 0]))).not.toBe(key);
+    expect(encounterWindow('nonsense')).toBe(0);
   });
 
   it('keeps specials out of nests however the roll falls', () => {

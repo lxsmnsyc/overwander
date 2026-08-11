@@ -1,14 +1,16 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import { type HealthState, healedByItem } from '../auth/health';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { bitterness } from '../data/items/medicine';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isCatchLocked } from './locks';
-import { type UpdateFields, asNumber, docData } from './read';
+import { type UpdateFields, docData } from './read';
 
 /**
  * Healing between battles, written with admin credentials.
@@ -74,8 +76,7 @@ export default async function useHealingItem(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (stock < 1) {
       return null;
@@ -93,7 +94,7 @@ export default async function useHealingItem(
       fields.friendship = gainFriendship(record.friendship, 'herb', mouthfuls);
     }
 
-    transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     transaction.update(caughtRef, fields);
     return healed;
   });

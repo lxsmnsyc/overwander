@@ -7,12 +7,11 @@ import {
   NEST_CLAIM_COLLECTION,
   PHENOMENON_CLAIM_COLLECTION,
   SNAPSHOT_COLLECTION,
-  SPAWN_COLLECTION,
 } from '../auth/collections';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
+import { asSpawnRolls, spawnId as nameSpawn } from '../auth/snapshot-record';
 import AleaRNG from '../core/alea';
 import type { ItemStack } from '../data/overworld/item-pool';
-import type { Species } from '../data/ids/species';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
@@ -20,14 +19,14 @@ import ChunkSnapshot, {
 } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import deriveEncounter, { type EncounterOptions } from '../overworld/encounter';
-import { encounterKey } from '../overworld/safari';
+import { encounterKey, encounterWindow } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { grantNestEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
 import { asNumber, asStringArray, docData } from './read';
-import { grantItem } from './inventory';
+import { grantItem, grantItems } from './inventory';
 
 /**
  * The overworld's privileged side: what a landmark pays out, and what
@@ -128,12 +127,15 @@ export async function claimItemCache(
 }
 
 /**
- * Put a whole stash in the bag, one stack at a time
+ * Put a whole stash in the bag. A bag is one document, so three kinds
+ * dug out of one cache are **one** write rather than three queueing
+ * behind each other — and a stash cannot half-land
  */
 async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
-  for (const { item, amount } of stash) {
-    await grantItem(uid, item, amount);
-  }
+  await grantItems(
+    uid,
+    stash.map(({ item, amount }) => [item, amount]),
+  );
 }
 
 /**
@@ -329,19 +331,19 @@ export async function meetSpawn(
   now: number,
   offset: number,
 ): Promise<EncounterRecord | null> {
-  const data = docData(await getAdminFirestore().collection(SPAWN_COLLECTION).doc(spawnId).get());
   const snapshot = await resolveSnapshot(x, y, now, offset);
 
-  // The spawn has to belong to the chunk the player is standing in,
-  // in its live window: one from a window that has turned over, or
-  // from a chunk away, is not standing there to be met
-  if (
-    data == null ||
-    snapshot == null ||
-    data.chunk !== snapshot.chunk.seed ||
-    data.offset !== snapshot.offset ||
-    data.timestamp !== snapshot.timestamp
-  ) {
+  if (snapshot == null) {
+    return null;
+  }
+
+  // The name says which chunk, which zone and which window the spawn
+  // belongs to, and the window it names has to be the live one: a
+  // spawn from a window that has turned over, or from a chunk away,
+  // is not standing there to be met
+  const index = spawnIndex(spawnId);
+
+  if (spawnId !== nameSpawn(snapshot.key, snapshot.timestamp, index)) {
     return null;
   }
 
@@ -350,13 +352,23 @@ export async function meetSpawn(
   // The extras a lure draws in are only there for the player whose
   // buddy drew them: the window publishes them for everyone, and a
   // player walking without a lure cannot meet what they cannot see
-  if (spawnIndex(spawnId) >= overworld.checkSpawnCount(SPAWN_COUNT)) {
+  if (index >= overworld.checkSpawnCount(SPAWN_COUNT)) {
     return null;
   }
 
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  const species = asNumber(data.species) as Species;
-  const spawn: Spawn = [species, asNumber(data.individualValue), asNumber(data.traitValue)];
+  // The roll itself comes off the window document, which is the one
+  // the whole zone is looking at
+  const window = docData(
+    await getAdminFirestore().collection(SNAPSHOT_COLLECTION).doc(snapshot.key).get(),
+  );
+  const rolls = asSpawnRolls(window?.spawns);
+
+  if (index >= rolls.length) {
+    return null;
+  }
+
+  const rolled = rolls[index];
+  const spawn: Spawn = [rolled.species, rolled.individualValue, rolled.traitValue];
 
   return startEncounter(uid, snapshot, spawnId, spawn);
 }
@@ -392,6 +404,30 @@ export async function markFled(uid: string, spawnId: string): Promise<void> {
     if (new Set(keys).has(key)) {
       return;
     }
-    transaction.set(ref, { keys: [...keys, key] }, { merge: true });
+    transaction.set(ref, { keys: [...keep(keys, encounterWindow(key)), key] }, { merge: true });
   });
+}
+
+/**
+ * How long a fled encounter is remembered for.
+ *
+ * What it has to outlive is the window that staged it: the spawn is
+ * gone when the window turns over, so a key from an older one can
+ * never match anything again. The allowance is an hour rather than
+ * one window, because the windows are **local** — a player who
+ * crosses a zone reads a clock offset from the one their last key was
+ * written against, and an hour is more than any of that is worth
+ * arguing about.
+ *
+ * Without it the list only ever grows: one key per encounter a player
+ * has ever walked away from, in one document, until it meets
+ * Firestore's megabyte
+ */
+export const FLED_MEMORY = 60 * 60 * 1000;
+
+/**
+ * The keys still worth keeping, measured against the newest one
+ */
+function keep(keys: string[], newest: number): string[] {
+  return keys.filter((key) => newest - encounterWindow(key) < FLED_MEMORY);
 }

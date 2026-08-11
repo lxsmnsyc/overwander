@@ -1,6 +1,3 @@
-import type Families from '../data/ids/families';
-import type { Items } from '../data/ids/items';
-
 /**
  * Every Firestore collection the game uses, named once. The client
  * reads through these and the privileged server writes through the
@@ -8,14 +5,23 @@ import type { Items } from '../data/ids/items';
  * collection the other has moved on from
  */
 export const PROFILE_COLLECTION = 'profiles';
-export const INVENTORY_COLLECTION = 'inventories';
-export const CANDY_COLLECTION = 'candies';
-export const BUDDY_COLLECTION = 'buddies';
+/**
+ * Everything a player is carrying, in one document per player: the
+ * items map and the candies map. They were a collection each, one
+ * small row per thing, and a row per thing billed a read per kind
+ * carried every time a picker opened. See [`stacks.ts`](./stacks.ts)
+ */
+export const BAG_COLLECTION = 'bags';
 export const CAUGHT_COLLECTION = 'caught';
 export const FLED_COLLECTION = 'fled';
 
+/**
+ * One document per chunk and zone: the window everyone in that zone
+ * shares, and the spawns it rolled. The spawns were a collection of
+ * their own once — they have no life apart from the window that
+ * rolled them, so they live in it
+ */
 export const SNAPSHOT_COLLECTION = 'snapshots';
-export const SPAWN_COLLECTION = 'spawns';
 export const ENCOUNTER_COLLECTION = 'encounters';
 export const CACHE_CLAIM_COLLECTION = 'cacheClaims';
 export const PHENOMENON_CLAIM_COLLECTION = 'phenomenonClaims';
@@ -79,25 +85,9 @@ export const RAID_REWARD_COLLECTION = 'raidRewards';
 export const BATTLE_AFTERMATH_COLLECTION = 'battleAftermaths';
 
 /**
- * One stack per user and item pair, so the same item can never split
- * across two documents
- */
-export function inventoryEntryId(uid: string, item: Items): string {
-  return `${uid}:${item}`;
-}
-
-/**
  * One document per bidder and lot, so bidding again rewrites what they
  * bid rather than adding to a list
  */
 export function bidEntryId(uid: string, auction: string): string {
   return `${uid}:${auction}`;
-}
-
-/**
- * One stack per user and family: a candy feeds any catch of its
- * family, so the stack is keyed by family rather than by species
- */
-export function candyStackId(uid: string, family: Families): string {
-  return `${uid}:${family}`;
 }

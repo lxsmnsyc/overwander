@@ -1,14 +1,16 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { docData } from './read';
 
 /**
  * Using a bottle cap, written with admin credentials. Individual
@@ -65,8 +67,7 @@ export default async function useBottleCap(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (stock < 1) {
       return null;
@@ -83,7 +84,7 @@ export default async function useBottleCap(
       return null;
     }
 
-    transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     // Only the per-stat values move. `individualValue` is the roll the
     // encounter was staged from and stays the record of it — the
     // stored stats are what every reader uses, which is what lets a

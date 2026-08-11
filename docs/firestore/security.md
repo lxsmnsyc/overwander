@@ -9,43 +9,44 @@ that take the caller's Firebase ID token and resolve it with `requireUid`
 ([`src/server/firebase.ts`](../../src/server/firebase.ts)). A uid passed alongside
 a call is never trusted — only what the token proves.
 
-| Written on the server                                      | What the rules could not enforce                                                                                                                                                                  |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recordCatch`                                              | The record is built from `encounters/{spawnId}:{uid}`, so the pokemon written down is the one that was staged, not one the caller describes                                                       |
-| `grantItem` / `consumeItem`                                | Item stacks are currency; a client that could write them could mint Master Balls                                                                                                                  |
-| `grantGold` / `spendGold`                                  | The same, for the balance                                                                                                                                                                         |
-| `grantCandy` / `useCandy`                                  | A candy buys a level, so minting candy mints levels                                                                                                                                               |
-| `giveItem` / `takeItem`                                    | The bag and the catch have to move together, in one transaction                                                                                                                                   |
-| `releaseCatch`                                             | The record is deleted, its held items go back to the bag and a buddy record naming it goes with it, all at once                                                                                   |
-| `evolveCatch`                                              | The criteria — level, held item, carried item — are cross-document                                                                                                                                |
+| Written on the server                                    | What the rules could not enforce                                                                                                                                                                  |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `recordCatch`                                            | The record is built from `encounters/{spawnId}:{uid}`, so the pokemon written down is the one that was staged, not one the caller describes                                                       |
+| `grantItem` / `consumeItem`                              | Item stacks are currency; a client that could write them could mint Master Balls                                                                                                                  |
+| `grantGold` / `spendGold`                                | The same, for the balance                                                                                                                                                                         |
+| `grantCandy` / `useCandy`                                | A candy buys a level, so minting candy mints levels                                                                                                                                               |
+| `giveItem` / `takeItem`                                  | The bag and the catch have to move together, in one transaction                                                                                                                                   |
+| `releaseCatch`                                           | The record is deleted, its held items go back to the bag and the profile's buddy is cleared if it named the released catch, all at once                                                           |
+| `evolveCatch`                                            | The criteria — level, held item, carried item — are cross-document                                                                                                                                |
 | `claimItemCache` / `claimBerryPatch` / `claimPhenomenon` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing                                            |
-| `startEncounter` / `meetSpawn`                             | The spawn is read from the shared store and has to belong to the chunk's live window                                                                                                              |
-| `markFled`                                                 | The key is recomputed from the stored encounter                                                                                                                                                   |
-| `peekRaid`                                                 | Reads only, but reads what the world staged: what a lair holds — and whether this player may host, join or only watch — is not a client's to decide                                               |
-| `joinRaid`                                                 | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                                                     |
-| `startRaid`                                                | Only the host may start; teams are frozen from the stored catches                                                                                                                                 |
-| `finishBattle`                                             | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                                                           |
-| `hostMythicalRaid`                                         | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                                                        |
-| `enterRocketStop` / `startRocketBattle`                    | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                                                            |
-| `claimRocketReward`                                        | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                                                             |
-| `recordAftermath`                                          | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                                                       |
-| `clearRaid`                                                | A landmark shuts only for a battle actually recorded as won                                                                                                                                       |
-| `claimRaidReward`                                          | Participation, the win, and the one-claim marker are all cross-document                                                                                                                           |
-| `claimNest`                                                | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                                                       |
-| `walk`                                                     | Steps are credited against the server clock, so a report buys no more than the time since the last one — and what a Pickup buddy found is the server's own roll, landing in the same transaction  |
-| `hatchEgg`                                                 | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                                                           |
-| `breedCatches`                                             | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side; the once-a-window visit is claimed before the fee is taken                         |
-| `boostEgg`                                                 | The daycare lady is re-derived from the window, the half a walk she adds is measured against the stored egg, and she serves a player once per window                                              |
-| `useBottleCap`                                             | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                                                       |
-| `useHealingItem`                                           | The item leaves the bag and the health it restores lands on the catch in one transaction, and only an item that would do something is spent                                                       |
-| `openAuction`                                              | The lot leaves the seller's hands as the listing is written, and the seller document is what holds them to one auction at a time                                                                  |
-| `placeBid`                                                 | Gold moves as the bid lands: the outbid one is refunded and the new one taken in the same transaction, so a standing bid is money already paid                                                    |
-| `claimAuction`                                             | Who won, whether bidding has closed, and the one-claim `settled` flag are all read where a client cannot skip them — and the seller is paid from the same claim                                   |
-| `reclaimAuction`                                           | Only the seller, only once bidding has closed with nobody having bid, and only through the same `settled` flag a collection uses, so a lot cannot be pulled off the block or handed back twice    |
-| `usePurifyingGem`                                          | The shadow bit, the ability and the values move together with the gem leaving the bag, so a rare item is never spent on a pokemon that did not change                                             |
-| `visitNurse`                                               | Who is standing at the cell is re-derived, and the once-a-window marker is taken only once she has actually done something                                                                        |
-| `usePortal`                                                | The cell has to really be a portal in a live window, the far end is re-derived rather than accepted, and the key is taken only once the crossing is known to be real                              |
-| `savePosition`                                             | A client that could write this document could write anybody else's; the coordinates are clamped to somewhere that exists, and nothing about the walk is checked because nothing trusts a position |
+| `startEncounter` / `meetSpawn`                           | The spawn is read from the shared store and has to belong to the chunk's live window                                                                                                              |
+| `markFled`                                               | The key is recomputed from the stored encounter                                                                                                                                                   |
+| `peekRaid`                                               | Reads only, but reads what the world staged: what a lair holds — and whether this player may host, join or only watch — is not a client's to decide                                               |
+| `joinRaid`                                               | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                                                     |
+| `startRaid`                                              | Only the host may start; teams are frozen from the stored catches                                                                                                                                 |
+| `finishBattle`                                           | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                                                           |
+| `hostMythicalRaid`                                       | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                                                        |
+| `enterRocketStop` / `startRocketBattle`                  | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                                                            |
+| `claimRocketReward`                                      | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                                                             |
+| `recordAftermath`                                        | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                                                       |
+| `clearRaid`                                              | A landmark shuts only for a battle actually recorded as won                                                                                                                                       |
+| `claimRaidReward`                                        | Participation, the win, and the one-claim marker are all cross-document                                                                                                                           |
+| `claimNest`                                              | A nest hands over one egg per player per half day, and what is inside it is decided as the server writes it                                                                                       |
+| `teachMove`                                              | Which move a machine teaches, whether the species can learn it and whether the machine is carried are all decided again from the stored record, and the machine leaves the bag in the same write  |
+| `walk`                                                   | Steps are credited against the server clock, so a report buys no more than the time since the last one — and what a Pickup buddy found is the server's own roll, landing in the same transaction  |
+| `hatchEgg`                                               | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                                                           |
+| `breedCatches`                                           | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side; the once-a-window visit is claimed before the fee is taken                         |
+| `boostEgg`                                               | The daycare lady is re-derived from the window, the half a walk she adds is measured against the stored egg, and she serves a player once per window                                              |
+| `useBottleCap`                                           | Which values a cap raises is the server's roll, and the cap leaves the bag in the same transaction the stats are written in                                                                       |
+| `useHealingItem`                                         | The item leaves the bag and the health it restores lands on the catch in one transaction, and only an item that would do something is spent                                                       |
+| `openAuction`                                            | The lot leaves the seller's hands as the listing is written, and the seller document is what holds them to one auction at a time                                                                  |
+| `placeBid`                                               | Gold moves as the bid lands: the outbid one is refunded and the new one taken in the same transaction, so a standing bid is money already paid                                                    |
+| `claimAuction`                                           | Who won, whether bidding has closed, and the one-claim `settled` flag are all read where a client cannot skip them — and the seller is paid from the same claim                                   |
+| `reclaimAuction`                                         | Only the seller, only once bidding has closed with nobody having bid, and only through the same `settled` flag a collection uses, so a lot cannot be pulled off the block or handed back twice    |
+| `usePurifyingGem`                                        | The shadow field, the ability and the values move together with the gem leaving the bag, so a rare item is never spent on a pokemon that did not change                                           |
+| `visitNurse`                                             | Who is standing at the cell is re-derived, and the once-a-window marker is taken only once she has actually done something                                                                        |
+| `usePortal`                                              | The cell has to really be a portal in a live window, the far end is re-derived rather than accepted, and the key is taken only once the crossing is known to be real                              |
+| `savePosition`                                           | A client that could write this document could write anybody else's; the coordinates are clamped to somewhere that exists, and nothing about the walk is checked because nothing trusts a position |
 
 Every module under `src/server` opens with `import 'server-only'`. SolidStart
 resolves that marker itself: an empty module on the server, and a **build
@@ -93,22 +94,20 @@ service cloud.firestore {
       // A profile opens empty-handed; gold only ever moves on the
       // server, so a first write cannot name its own balance
       allow create: if isOwner(uid) && request.resource.data.gold == 0;
+      // The buddy lives here too: it is the player's to set, and it
+      // is read on nearly every action they take
       allow update: if isOwner(uid)
         && request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['nickname', 'avatar']);
+          .hasOnly(['nickname', 'avatar', 'buddy']);
       allow delete: if false;
     }
 
-    // Item stacks, id "{uid}:{item}". Read by the owner, written only
-    // by the server: these are currency
-    match /inventories/{stackId} {
-      allow read: if signedIn() && stackId.split(':')[0] == request.auth.uid;
-      allow write: if false;
-    }
-    // Candy stacks, id "{uid}:{family}" — the same, since a candy
-    // buys a level
-    match /candies/{stackId} {
-      allow read: if signedIn() && stackId.split(':')[0] == request.auth.uid;
+    // Everything a player carries, items and candies together. Read
+    // by the owner, written only by the server: both maps are
+    // currency, since one mints Master Balls and the other mints
+    // levels
+    match /bags/{uid} {
+      allow read: if isOwner(uid);
       allow write: if false;
     }
     // Where a player is standing. Theirs to read, and the server's to
@@ -123,15 +122,7 @@ service cloud.firestore {
       allow read: if isOwner(uid);
       allow write: if false;
     }
-    match /buddies/{uid} {
-      allow read: if isOwner(uid);
-      allow delete: if isOwner(uid);
-      allow create, update: if isOwner(uid)
-        && request.resource.data.player == uid
-        && request.auth.uid == get(
-          /databases/$(database)/documents/caught/$(request.resource.data.caught)
-        ).data.owner;
-    }
+
 
     // Catch records: readable by every signed-in player (a trade
     // starts with looking), written only by the server. Catching,
@@ -143,16 +134,15 @@ service cloud.firestore {
     }
 
     // Shared overworld state: everyone reads, signed-in players publish
+    // The window and the spawns it rolled are one document, so
+    // publishing them is one write anybody in the zone may make
     match /snapshots/{windowId} {
       allow read: if signedIn();
       allow write: if signedIn()
         && request.resource.data.seed == windowId.split(':')[0]
         && request.resource.data.offset is int
-        && request.resource.data.timestamp is int;
-    }
-    match /spawns/{spawnId} {
-      allow read: if signedIn();
-      allow write: if signedIn();
+        && request.resource.data.timestamp is int
+        && request.resource.data.spawns is list;
     }
 
     // Per-player derivations and claim markers, keyed by
@@ -259,14 +249,15 @@ actually deployed.
 
 ## Required indexes
 
+A player's bag needs none: `bags/{uid}` is read by id, and its two maps are
+**exempted from indexing** — a key per item id would be an index entry per item
+id, and nothing asks the store which players hold a Master Ball.
+
 | Collection    | Fields                                     | Reason                                            |
 | ------------- | ------------------------------------------ | ------------------------------------------------- |
-| `spawns`      | `chunk` ASC, `offset` ASC, `timestamp` ASC | `listSpawns` filters on all three                 |
 | `caught`      | `owner` ASC                                | `listCaught`; automatic single-field index        |
-| `spawns`      | `chunk` ASC, `offset` ASC                  | `clearStaleSpawns` clears its own zone            |
 | `caught`      | `owner` ASC, `species` ASC                 | `hasCaughtSpecies`, the Repeat Ball's check       |
-| `inventories` | `user` ASC                                 | `getInventory`; automatic single-field index      |
-| `candies`     | `user` ASC                                 | `getCandies`; automatic single-field index        |
+| `caught`      | `owner` ASC, `shiny` ASC                   | `listCaughtMarked`; one per mark asked for        |
 | `teams`       | `player` ASC                               | `listTeams`; automatic single-field index         |
 | `teams`       | `player` ASC, `catches` ARRAY              | `isAnyCatchQueued` filters on both                |
 | `raids`       | `timestamp` ASC, `offset` ASC              | `listLiveRaids` filters on both                   |

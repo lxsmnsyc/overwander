@@ -231,12 +231,12 @@ it back. Nothing stays ownerless once the day is up and somebody has come for it
 Four pokemon are refused a listing outright, all of them inside the same
 transaction that would have written it:
 
-| Refused            | Checked with       | Why                                                                           |
-| ------------------ | ------------------ | ----------------------------------------------------------------------------- |
-| Fighting           | `isCatchLocked`    | The battle runs on a frozen copy of a record that has to still be there       |
-| Waiting in a lobby | `isAnyCatchQueued` | The lobby holds its id, so it would be silently dropped when the raid started |
-| An egg             | `isEggRecord`      | A bidder cannot see into one and the seller can                               |
-| The player's buddy | `buddies/{uid}`    | Not something to sell by misreading a list, and a lot cannot be taken back    |
+| Refused            | Checked with          | Why                                                                           |
+| ------------------ | --------------------- | ----------------------------------------------------------------------------- |
+| Fighting           | `isCatchLocked`       | The battle runs on a frozen copy of a record that has to still be there       |
+| Waiting in a lobby | `isAnyCatchQueued`    | The lobby holds its id, so it would be silently dropped when the raid started |
+| An egg             | `isEggRecord`         | A bidder cannot see into one and the seller can                               |
+| The player's buddy | the profile's `buddy` | Not something to sell by misreading a list, and a lot cannot be taken back    |
 
 The egg rule is about what an auction *is*. A catch lot is readable precisely so
 that a bidder can look at what they are bidding on; an egg shows nothing but the
@@ -244,7 +244,7 @@ word "Egg" to everyone except the person selling it, who has known what is insid
 since the moment it was found.
 
 The buddy rule replaces something the code used to do: listing the buddy deleted
-`buddies/{uid}` in the same transaction, the way a release does. Refusing is
+the profile's `buddy` in the same transaction, the way a release does. Refusing is
 better than tidying up after — a lot cannot be taken off the block, so a
 mis-click sold the pokemon the player walks with. Sending it home first is one
 press, and it makes the sale deliberate.

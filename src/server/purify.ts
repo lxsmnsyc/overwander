@@ -1,7 +1,8 @@
 import 'server-only';
 import { asBoolean } from '../auth/__normalize';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import {
@@ -12,6 +13,7 @@ import {
 } from '../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
 import { type UpdateFields, asNumber, docData } from './read';
 
@@ -90,8 +92,7 @@ export default async function usePurifyingGem(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (stock < 1) {
       return null;
@@ -99,7 +100,7 @@ export default async function usePurifyingGem(
 
     const purified = purifiedFields(caught);
 
-    transaction.set(stackRef, { user: uid, item, amount: stock - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     transaction.update(caughtRef, purified);
     return asNumber(purified.ivs);
   });

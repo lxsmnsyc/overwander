@@ -1,6 +1,7 @@
 import 'server-only';
 import { asNumberArray } from '../auth/__normalize';
-import { CAUGHT_COLLECTION, INVENTORY_COLLECTION, inventoryEntryId } from '../auth/collections';
+import { CAUGHT_COLLECTION } from '../auth/collections';
+import { ITEM_STACKS } from '../auth/stacks';
 import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
@@ -8,6 +9,7 @@ import { Slots, getSlots } from '../data/constants/slots';
 import { getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
 
@@ -93,8 +95,7 @@ export default async function teachMove(
       return null;
     }
 
-    const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    const carried = asNumber(docData(await transaction.get(stackRef))?.amount);
+    const carried = await readStackIn(transaction, ITEM_STACKS, uid, item);
 
     if (carried < 1) {
       return null;
@@ -103,7 +104,7 @@ export default async function teachMove(
     const moves =
       known.length < room ? [...known, move] : known.map((one, at) => (at === over ? move : one));
 
-    transaction.set(stackRef, { user: uid, item, amount: carried - 1 });
+    writeStackIn(transaction, ITEM_STACKS, uid, item, carried - 1);
     transaction.update(caughtRef, { moves });
     return moves;
   });

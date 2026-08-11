@@ -2,19 +2,9 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import type Families from '../data/ids/families';
-import { asNumber, asString } from './__normalize';
-import { CANDY_COLLECTION, candyStackId } from './collections';
+import { BAG_COLLECTION, CANDY_STACKS, bagId, getStack, listStacks } from './stacks';
 import { useCandy as feedOnServer } from '../server/candy';
 import { requireUid } from '../server/firebase';
 import { getFirebaseFirestore } from './firebase';
@@ -50,43 +40,34 @@ export interface CandyStack {
   count: number;
 }
 
-const converter: FirestoreDataConverter<CandyStack> = {
-  toFirestore: (stack) => stack,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
+/**
+ * The player's whole bag, in one read. The candies live in it beside
+ * the items — see [`stacks.ts`](./stacks.ts) — so a screen showing
+ * both reads one document
+ */
+async function readBag(uid: string): Promise<unknown> {
+  const snapshot = await getDoc(doc(getFirebaseFirestore(), BAG_COLLECTION, bagId(uid)));
 
-    return {
-      user: asString(data.user),
-      family: asNumber(data.family) as Families,
-      count: asNumber(data.count),
-    };
-  },
-};
-
-function getStackRef(uid: string, family: Families): DocumentReference<CandyStack> {
-  return doc(getFirebaseFirestore(), CANDY_COLLECTION, candyStackId(uid, family)).withConverter(
-    converter,
-  );
+  return snapshot.data();
 }
 
 /**
- * Every candy stack the user holds; families spent to zero are left
- * out
+ * Every candy stack the user holds
  */
 export async function getCandies(uid: string): Promise<CandyStack[]> {
-  const stacks = collection(getFirebaseFirestore(), CANDY_COLLECTION).withConverter(converter);
-  const result = await getDocs(query(stacks, where('user', '==', uid)));
-
-  return result.docs.map((entry) => entry.data()).filter((stack) => stack.count > 0);
+  return listStacks(await readBag(uid), CANDY_STACKS).map(([family, count]) => ({
+    user: uid,
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    family: family as Families,
+    count,
+  }));
 }
 
 /**
  * How many candies of one family the user holds
  */
 export async function getCandyCount(uid: string, family: Families): Promise<number> {
-  const snapshot = await getDoc(getStackRef(uid, family));
-
-  return snapshot.data()?.count ?? 0;
+  return getStack(await readBag(uid), CANDY_STACKS, family);
 }
 
 /**

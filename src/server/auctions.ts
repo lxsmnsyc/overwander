@@ -3,12 +3,9 @@ import {
   AUCTION_COLLECTION,
   AUCTION_SELLER_COLLECTION,
   BID_COLLECTION,
-  BUDDY_COLLECTION,
   CAUGHT_COLLECTION,
-  INVENTORY_COLLECTION,
   PROFILE_COLLECTION,
   bidEntryId,
-  inventoryEntryId,
 } from '../auth/collections';
 import {
   AUCTION_DURATION,
@@ -29,6 +26,8 @@ import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
 import { isEggRecord, isFavoriteRecord } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, spendStackIn, writeStackIn } from './stacks';
+import { ITEM_STACKS } from '../auth/stacks';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
@@ -137,17 +136,15 @@ export async function openAuction(
     };
 
     if (offer.lot === AuctionLot.Item) {
-      const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, offer.item));
-      const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+      const stock = await readStackIn(transaction, ITEM_STACKS, uid, offer.item);
 
-      if (stock < 1) {
+      if (!spendStackIn(transaction, ITEM_STACKS, uid, offer.item, stock)) {
         return null;
       }
-      transaction.set(stackRef, { user: uid, item: offer.item, amount: stock - 1 });
     } else {
       const caughtRef = db.collection(CAUGHT_COLLECTION).doc(offer.caught);
-      const buddyRef = db.collection(BUDDY_COLLECTION).doc(uid);
-      const [caughtDoc, buddyDoc] = await transaction.getAll(caughtRef, buddyRef);
+      const profileRef = db.collection(PROFILE_COLLECTION).doc(uid);
+      const [caughtDoc, profileDoc] = await transaction.getAll(caughtRef, profileRef);
       const caught = docData(caughtDoc);
 
       // A pokemon fighting right now is running on a frozen snapshot
@@ -171,7 +168,7 @@ export async function openAuction(
       // misreading a list, and a lot cannot be taken back off the
       // block; sending it home first is one press and makes the sale
       // deliberate
-      if (docData(buddyDoc)?.caught === offer.caught) {
+      if (docData(profileDoc)?.buddy === offer.caught) {
         return null;
       }
       // Whatever it is holding goes with it: the item was handed to
@@ -296,10 +293,9 @@ export async function claimAuction(
     const paid = asNumber(docData(await transaction.get(sellerRef))?.gold);
 
     if (auction.lot === AuctionLot.Item && auction.item != null) {
-      const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, auction.item));
-      const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+      const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
 
-      transaction.set(stackRef, { user: uid, item: auction.item, amount: stock + 1 });
+      writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
     } else {
       const caughtRef = db.collection(CAUGHT_COLLECTION).doc(auction.caught);
       const caught = docData(await transaction.get(caughtRef));
@@ -381,10 +377,9 @@ export async function reclaimAuction(
     }
 
     if (auction.lot === AuctionLot.Item && auction.item != null) {
-      const stackRef = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, auction.item));
-      const stock = asNumber(docData(await transaction.get(stackRef))?.amount);
+      const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
 
-      transaction.set(stackRef, { user: uid, item: auction.item, amount: stock + 1 });
+      writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
     } else {
       const caughtRef = db.collection(CAUGHT_COLLECTION).doc(auction.caught);
       const caught = docData(await transaction.get(caughtRef));

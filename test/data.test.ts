@@ -83,6 +83,7 @@ import {
   isMarketable,
 } from '../src/data/overworld/vendor';
 import { asBoolean } from '../src/auth/__normalize';
+import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../src/auth/stacks';
 import {
   MAX_SLOTS,
   SLOT_BITS,
@@ -735,6 +736,47 @@ describe('item data', () => {
     expect(getIV(values, Stats.SpecialAttack)).toBe(MAX_IV);
     expect(getIV(values, Stats.Speed)).toBe(MAX_IV);
     expect(purifyIVs(PERFECT_IVS)).toBe(PERFECT_IVS);
+  });
+
+  it('keeps everything a player carries in one bag', () => {
+    // Two maps in one document: the items and the candies live beside
+    // each other, so a screen showing both reads one document rather
+    // than running two queries
+    const bag = {
+      items: { [Items.Potion]: 3, [Items.UltraBall]: 1 },
+      candies: { [Families.Bulbasaur]: 12 },
+    };
+
+    expect(getStack(bag, ITEM_STACKS, Items.Potion)).toBe(3);
+    expect(getStack(bag, CANDY_STACKS, Families.Bulbasaur)).toBe(12);
+
+    // Each map is read on its own: a candy count is never mistaken
+    // for an item count, whatever the two ids happen to be — and
+    // Potion's id is not a family anybody has candy of
+    expect(getStack(bag, CANDY_STACKS, Items.Potion)).toBe(0);
+    expect(getStack(bag, ITEM_STACKS, Families.Bulbasaur)).toBe(0);
+
+    // What is not carried is not there. A key that was never written,
+    // a bag that never was, and a count of zero all read the same,
+    // and none of them is listed
+    expect(getStack(bag, ITEM_STACKS, Items.MasterBall)).toBe(0);
+    expect(getStack(undefined, ITEM_STACKS, Items.Potion)).toBe(0);
+    expect(getStack({ items: { [Items.Potion]: 0 } }, ITEM_STACKS, Items.Potion)).toBe(0);
+    expect(listStacks({ items: { [Items.Potion]: 0 } }, ITEM_STACKS)).toEqual([]);
+
+    // Listed as id-count pairs, which is what every picker wants
+    expect(new Map(listStacks(bag, ITEM_STACKS))).toEqual(
+      new Map([
+        [Items.Potion, 3],
+        [Items.UltraBall, 1],
+      ]),
+    );
+    expect(listStacks(bag, CANDY_STACKS)).toEqual([[Families.Bulbasaur, 12]]);
+
+    // And anything that is not a bag at all is an empty one rather
+    // than a thrown error
+    expect(listStacks({ items: 'nonsense' }, ITEM_STACKS)).toEqual([]);
+    expect(listStacks(null, CANDY_STACKS)).toEqual([]);
   });
 
   it('reads a mark only where it was actually written', () => {

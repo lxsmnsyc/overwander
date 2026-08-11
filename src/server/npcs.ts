@@ -1,12 +1,6 @@
 import 'server-only';
 import { asCaughtPokemon, isShadow } from '../auth/caught-record';
-import {
-  CAUGHT_COLLECTION,
-  INVENTORY_COLLECTION,
-  NPC_CLAIM_COLLECTION,
-  PROFILE_COLLECTION,
-  inventoryEntryId,
-} from '../auth/collections';
+import { CAUGHT_COLLECTION, NPC_CLAIM_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import { groomedFriendship } from '../data/constants/friendship';
@@ -26,6 +20,8 @@ import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { grantBredEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
+import { readStackIn, writeStackIn } from './stacks';
+import { ITEM_STACKS } from '../auth/stacks';
 import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
@@ -488,77 +484,100 @@ export interface TradeResult {
  */
 async function trade(
   uid: string,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
   gold: number,
 ): Promise<TradeResult | null> {
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
     const purse = db.collection(PROFILE_COLLECTION).doc(uid);
-    const stack = db.collection(INVENTORY_COLLECTION).doc(inventoryEntryId(uid, item));
-    // Both reads happen before either write, which is Firestore's own
-    // rule for a transaction
-    const [profile, carried] = await Promise.all([transaction.get(purse), transaction.get(stack)]);
+    // Every read happens before any write, which is Firestore's own
+    // rule for a transaction — and the bag is one document, so a
+    // basket of six kinds is still one read and one write
+    const [profile, ...carried] = await Promise.all([
+      transaction.get(purse),
+      ...basket.map(async ([item]) => readStackIn(transaction, ITEM_STACKS, uid, item)),
+    ]);
     const balance = asNumber(docData(profile)?.gold) + gold;
-    const held = asNumber(docData(carried)?.amount) + amount;
+    const held = basket.map(([, amount], at) => carried[at] + amount);
 
-    // The player cannot pay, or is selling what they have not got
-    if (balance < 0 || held < 0) {
+    // The player cannot pay, or is selling what they have not got.
+    // The whole basket is refused rather than the affordable part of
+    // it: a trade a player agreed to is one trade
+    if (balance < 0 || held.some((count) => count < 0)) {
       return null;
     }
 
     transaction.set(purse, { gold: balance }, { merge: true });
-    transaction.set(stack, { user: uid, item, amount: held });
-    return { gold: balance, carried: held };
+    for (const [at, [item]] of basket.entries()) {
+      writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
+    }
+    return { gold: balance, carried: held.reduce((total, count) => total + count, 0) };
   });
+}
+
+/**
+ * What a basket comes to, or null when any of it is something the
+ * vendor will not trade. Nothing is charged for a basket that has one
+ * bad line in it
+ */
+function priced(
+  basket: [item: Items, amount: number][],
+  price: (item: Items) => number,
+): number | null {
+  let total = 0;
+
+  for (const [item, amount] of basket) {
+    const each = price(item);
+
+    if (!Number.isInteger(amount) || amount < 1 || amount > VENDOR_TRADE_LIMIT || each <= 0) {
+      return null;
+    }
+    total += each * amount;
+  }
+  return basket.length === 0 ? null : total;
 }
 
 /**
  * Buy from the vendor's crate.
  *
  * What he is carrying is not the caller's to say: the crate is derived
- * from the same seed he was, so the item has to be one of the six he
- * is actually standing behind this window. The price is the registry's
- * `buy`, which is what makes an item worth the same from every vendor
- * in the world.
+ * from the same seed he was, so everything in the basket has to be one
+ * of the six he is actually standing behind this window. The price is
+ * the registry's `buy`, which is what makes an item worth the same
+ * from every vendor in the world.
  *
- * He is the one wanderer who is **not** once per window. A trader who
- * sold a player one potion every six hours would not be a trader; what
- * limits him is his crate and what the player can pay.
+ * The **whole basket is one trade**: one transaction, one write to the
+ * purse and one to the bag, so a player who agreed to six kinds gets
+ * six kinds or none. He is also the one wanderer who is **not** once
+ * per window — a trader who sold a player one potion every six hours
+ * would not be a trader.
  *
- * Resolves the balance and the stack afterwards, or null when he is
- * not standing there, is not carrying it, or the player cannot pay
+ * Resolves the balance and what the bag now holds of it, or null when
+ * he is not standing there, is not carrying something in the basket,
+ * or the player cannot pay
  */
 export async function buyFromVendor(
   uid: string,
   x: number,
   y: number,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
   now: number,
   offset: number,
 ): Promise<TradeResult | null> {
-  if (!Number.isInteger(amount) || amount < 1 || amount > VENDOR_TRADE_LIMIT) {
-    return null;
-  }
-
   const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
 
-  if (snapshot == null || !new Set(snapshot.getVendorStock(cell)).has(item)) {
+  if (snapshot == null) {
     return null;
   }
 
-  const price = getItemData(item).buy;
+  const stock = new Set(snapshot.getVendorStock(cell));
+  // A crate is only ever filled with priced goods, so a zero price is
+  // a registry that changed under the vendor rather than a free item
+  const owed = priced(basket, (item) => (stock.has(item) ? getItemData(item).buy : 0));
 
-  // A crate is only ever filled with priced goods, so a zero here
-  // would be a registry that changed under the vendor rather than a
-  // free item
-  if (price <= 0) {
-    return null;
-  }
-  return trade(uid, item, amount, -price * amount);
+  return owed == null ? null : trade(uid, basket, -owed);
 }
 
 /**
@@ -570,8 +589,11 @@ export async function buyFromVendor(
  * he charges for the same item — buying from him and selling it
  * straight back is a way to lose money, which is the point.
  *
- * Resolves the balance and what is left of the stack, or null when he
- * is not standing there, will not price it, or the player has not got
+ * The basket is one trade here too, so a bag that turns out to be
+ * short of one line sells nothing rather than part of it.
+ *
+ * Resolves the balance and what is left, or null when he is not
+ * standing there, will not price something, or the player has not got
  * that many
  */
 export async function sellToVendor(
@@ -579,25 +601,23 @@ export async function sellToVendor(
   x: number,
   y: number,
   cell: number,
-  item: Items,
-  amount: number,
+  basket: [item: Items, amount: number][],
   now: number,
   offset: number,
 ): Promise<TradeResult | null> {
-  if (!Number.isInteger(amount) || amount < 1 || amount > VENDOR_TRADE_LIMIT) {
-    return null;
-  }
-
   const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
 
-  if (snapshot == null || !isMarketable(item)) {
+  if (snapshot == null) {
     return null;
   }
 
-  const paid = getItemData(item).sell;
+  const paid = priced(basket, (item) => (isMarketable(item) ? getItemData(item).sell : 0));
 
-  if (paid <= 0) {
-    return null;
-  }
-  return trade(uid, item, -amount, paid * amount);
+  return paid == null
+    ? null
+    : trade(
+        uid,
+        basket.map(([item, amount]) => [item, -amount]),
+        paid,
+      );
 }

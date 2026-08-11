@@ -26,7 +26,6 @@ import { claimRocketReward, enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, isEncounterFled } from '../auth/safari';
 import {
-  type SpawnRecord,
   claimBerryPatch,
   claimItemCache,
   claimNest,
@@ -34,7 +33,6 @@ import {
   startEncounter,
   visitChunk,
   watchSnapshotWindow,
-  watchSpawns,
 } from '../auth/snapshots';
 import { type EggWalk, walk } from '../auth/eggs';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome';
@@ -52,6 +50,7 @@ import { getInventory } from '../auth/inventory';
 import { getRaidSpecies } from '../data/items/raid-items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
+import { type SnapshotRecord, type SpawnRoll, spawnId } from '../auth/snapshot-record';
 import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import type { Buddy } from '../overworld/core';
@@ -160,7 +159,7 @@ function buildChunkView(
   y: number,
   timestamp: number,
   offset: number,
-  published: [string, SpawnRecord][],
+  published: SpawnRoll[],
   player: string | null,
   buddy: Buddy | null,
 ): ChunkView {
@@ -184,10 +183,12 @@ function buildChunkView(
       return;
     }
 
-    const [id, stored] = published[index];
+    const stored = published[index];
 
     spawns.set(cell, {
-      id,
+      // The name is derived from the window rather than stored with
+      // the roll, so the two cannot disagree about which spawn it is
+      id: spawnId(snapshot.key, timestamp, index),
       spawn: [stored.species, stored.individualValue, stored.traitValue],
     });
   });
@@ -342,26 +343,19 @@ export default function OverworldTab(): JSX.Element {
     });
   });
 
-  const snapshotWindow = from<number | null>((set) => {
+  // One subscription for the whole window: what time it is here and
+  // what is standing in the chunk arrive together, since they are one
+  // document. A spawn caught by another player disappears from every
+  // screen the moment the window is rewritten
+  const window = from<SnapshotRecord | null>((set) => {
     // Nothing is watched until the player has been put somewhere:
     // chunk 0,0 is not where they are, and publishing its window
     // would be a visit nobody made
     if (!placed()) {
       return () => undefined;
     }
-    return watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (timestamp) => {
-      set(timestamp);
-    });
-  });
-
-  const published = from<[string, SpawnRecord][]>((set) => {
-    const timestamp = snapshotWindow();
-
-    if (timestamp == null) {
-      return () => undefined;
-    }
-    return watchSpawns(getWorld().getChunk(chunkX(), chunkY()), zone, timestamp, (spawns) => {
-      set(spawns);
+    return watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (record) => {
+      set(record);
     });
   });
 
@@ -370,16 +364,16 @@ export default function OverworldTab(): JSX.Element {
   const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
 
   const view = (): ChunkView | null => {
-    const timestamp = snapshotWindow();
+    const record = window();
 
-    return timestamp == null
+    return record == null
       ? null
       : buildChunkView(
           chunkX(),
           chunkY(),
-          timestamp,
+          record.timestamp,
           zone,
-          published() ?? [],
+          record.spawns,
           auth.user()?.uid ?? null,
           buddy() ?? null,
         );

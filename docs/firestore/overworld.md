@@ -50,19 +50,31 @@ The zone is part of the key because the window is local: a chunk is not one
 world seen from several clocks but one per zone. See
 [Local time](time.md#local-time).
 
-## `spawns/{chunkSeed}{zone}@{timestamp}#{index}`
+## The window's spawns
 
-Written by `publishSpawns`, deleted by `clearStaleSpawns` when a window rolls
-over.
+They are a **field of the snapshot**, not a collection. A spawn has no life
+apart from the window that rolled it: it is rolled with the window, replaced
+with it, and never read without it — so `snapshots/{chunkSeed}:{zone}` carries
+`spawns: SpawnRoll[]`, in roll order.
 
-| Field             | Type      | Notes                        |
-| ----------------- | --------- | ---------------------------- |
-| `chunk`           | `string`  | Chunk seed                   |
-| `offset`          | `number`  | Minutes east of UTC          |
-| `timestamp`       | `number`  | Local snapshot window        |
-| `species`         | `Species` |                              |
-| `individualValue` | `number`  |                              |
-| `traitValue`      | `number`  |                              |
+| Field of a roll   | Type      |
+| ----------------- | --------- |
+| `species`         | `Species` |
+| `individualValue` | `number`  |
+| `traitValue`      | `number`  |
+
+Where a spawn stands is not stored. The cells are re-derived from the same seed
+and window by `getSpawnCells`, so the nth roll is the nth placed cell on every
+screen. Its **name** is derived too — `{chunkSeed}:{zone}@{timestamp}#{index}`,
+from `spawnId` — which is what an encounter document is keyed by; nothing has to
+keep a document alive to give a spawn a name.
+
+What that replaced: one document per spawn, published in a batch of eight, found
+again by a three-field query on a **composite index** `(chunk, offset,
+timestamp)`, and swept up by a second query and a delete batch every time a
+window turned over. Publishing is now one write inside the same transaction that
+fixes the window, reading is one read, and a window that rolls over overwrites
+its own spawns — there is nothing stale left to clear. The index is gone with it.
 
 A window publishes `SPAWN_COUNT` (6) spawns plus `LURE_SPAWN_BONUS` (2) more:
 the extras are rolled for every chunk so that all its visitors share one set of
@@ -71,12 +83,9 @@ can see them rather than whether they exist. A player without one neither sees
 the last two on the map nor may meet them: `meetSpawn` reads the index off the
 spawn id and refuses anything past `visibleSpawnCount`.
 
-The id is deterministic, so concurrent publishers write identical documents
-rather than duplicates. `listSpawns` queries `chunk`, `offset` and `timestamp`
-together, which **requires a composite index** on `(chunk, offset, timestamp)`.
-`clearStaleSpawns` queries `chunk` and `offset` — it clears its own zone's
-stale windows and leaves every other zone's alone, since those turn over on
-their own clocks.
+`meetSpawn` also checks the whole name against the live window before it reads
+the roll, so a spawn from a window that has turned over — or from a chunk away —
+is not standing there to be met.
 
 ## `encounters/{spawnId}:{uid}`
 
@@ -112,7 +121,7 @@ the IVs a pokemon rolled and the same spawn can sparkle for one player and not
 another. The odds
 are multiplied by the species day (×8 for the featured family) and by the Shiny
 Charm (×8) when the player's buddy is holding it — `startEncounter` checks
-`buddies/{uid}` and that catch's held items before deriving. **Shadow**
+the profile's `buddy` and that catch's held items before deriving. **Shadow**
 marks a shadow raid's reward: `recordCatch` then writes `Abilities.Shadow` into
 the catch's `abilities` alongside the rolled one, so it keeps it for good.
 

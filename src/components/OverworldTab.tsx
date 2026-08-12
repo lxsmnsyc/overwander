@@ -7,22 +7,15 @@ import {
   createResource,
   createSignal,
   onCleanup,
+  onMount,
 } from 'solid-js';
 import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
-import { getLocalOffset, toLocalTime } from '../auth/local-time';
-import { serverNow } from '../auth/clock';
+import { getLocalOffset } from '../auth/local-time';
 import type { EncounterRecord } from '../auth/encounter-record';
-import {
-  RaidKind,
-  type RaidView,
-  canJoinRaids,
-  claimRaidReward,
-  hostMythicalRaid,
-  peekRaid,
-} from '../auth/raids';
+import { RaidKind, type RaidView, canJoinRaids, hostMythicalRaid, peekRaid } from '../auth/raids';
 import { savePosition } from '../auth/positions';
-import { claimRocketReward, enterRocketStop } from '../auth/rockets';
+import { enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, getFledKeys, isEncounterFled } from '../auth/safari';
 import {
@@ -35,7 +28,7 @@ import {
   watchSnapshotWindow,
 } from '../auth/snapshots';
 import { type EggWalk, walk } from '../auth/eggs';
-import { BIOME_NAMES } from '../data/biome';
+import { BIOME_COLORS, BIOME_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
@@ -50,7 +43,7 @@ import { getRaidSpecies } from '../data/items/raid-items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
 import { type SnapshotRecord, type SpawnRoll, spawnId } from '../auth/snapshot-record';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL, SPAWN_COUNT } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import type { Buddy } from '../overworld/core';
 import createOverworld from '../overworld/setup';
@@ -99,11 +92,21 @@ const SAVE_DELAY = 1500;
 const STEP_REPORT_SIZE = 8;
 
 /**
- * How long after a window is due the next one is asked for. A moment,
- * so a clock a hair fast does not ask for the window it is already
- * looking at and get it back unchanged
+ * How often the chunk may be asked for while the player is playing.
+ *
+ * The window it is showing lasts five minutes, and asking for it again
+ * is a write: whoever asks for an expired one rolls the next set of
+ * spawns for everybody standing there. Left on a timer, a player who
+ * walked away from the screen kept rolling windows for a chunk nobody
+ * was looking at, once every five minutes, for as long as the tab was
+ * open.
+ *
+ * So it is asked for when it is actually worth asking: when the page
+ * comes back to the front, and while the player is doing something —
+ * and no more than once in five seconds, since a walk is twenty
+ * presses and each one is not a question about the world
  */
-const WINDOW_GRACE = 250;
+const REFRESH_DEBOUNCE = 5000;
 
 function describeItem(item: Items): string {
   try {
@@ -343,11 +346,63 @@ export default function OverworldTab(): JSX.Element {
     );
   };
 
+  /**
+   * When the chunk was last asked for. It is a plain variable rather
+   * than a signal: nothing renders off it, and a debounce that caused
+   * a redraw would be a strange thing
+   */
+  let askedAt = 0;
+
+  /**
+   * Ask for the chunk, unless it was just asked for.
+   *
+   * Coming back to the page always asks — the window has very likely
+   * turned over while it was in the background, and that is the moment
+   * a player wants to see what is standing there now. Everything else
+   * a player does asks at most every five seconds
+   */
+  const askForWindow = (whatever = false): void => {
+    const at = Date.now();
+
+    if (!whatever && at - askedAt < REFRESH_DEBOUNCE) {
+      return;
+    }
+    askedAt = at;
+    refreshWindow();
+  };
+
+  // Arriving somewhere is always worth a look: this runs on being
+  // placed and again on every chunk walked into, since `refreshWindow`
+  // reads the coordinates
   createEffect(() => {
     if (!placed()) {
       return;
     }
+    askedAt = Date.now();
     refreshWindow();
+  });
+
+  /**
+   * The page coming back to the front.
+   *
+   * A tab left open all afternoon is showing an afternoon-old chunk.
+   * Nothing is polling for it any more, so the moment somebody looks
+   * at the page again is the moment to find out what is there
+   */
+  onMount(() => {
+    const onReturn = (): void => {
+      if (document.visibilityState === 'visible' && placed()) {
+        askForWindow(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', onReturn);
+    globalThis.addEventListener('focus', onReturn);
+
+    onCleanup(() => {
+      document.removeEventListener('visibilitychange', onReturn);
+      globalThis.removeEventListener('focus', onReturn);
+    });
   });
 
   // One subscription for the whole window: what time it is here and
@@ -368,35 +423,6 @@ export default function OverworldTab(): JSX.Element {
       if (record != null) {
         set(record);
       }
-    });
-  });
-
-  /**
-   * The window turns over on its own.
-   *
-   * Publishing happens on arrival, and after that the subscription
-   * carries whatever anybody else writes — which is nothing at all in
-   * a chunk with one player in it. Their five minutes would run out
-   * and the same spawns would stand there until they walked away and
-   * came back. So the moment the window is due, it is asked for
-   * again: whoever is looking at an expired one rolls the next.
-   *
-   * The clock is the server's, since that is the clock the window was
-   * cut against, and the wait is measured from the window rather than
-   * ticked, so nothing drifts
-   */
-  createEffect(() => {
-    const record = window();
-
-    if (record == null) {
-      return;
-    }
-
-    const due = record.timestamp + SNAPSHOT_INTERVAL - toLocalTime(serverNow(), zone);
-    const timer = setTimeout(refreshWindow, Math.max(0, due) + WINDOW_GRACE);
-
-    onCleanup(() => {
-      clearTimeout(timer);
     });
   });
 
@@ -538,6 +564,10 @@ export default function OverworldTab(): JSX.Element {
   });
 
   const move = (deltaX: number, deltaY: number): void => {
+    // A step is a reason to wonder what is around, at most every few
+    // seconds of walking
+    askForWindow();
+
     let x = cellX() + deltaX;
     let y = cellY() + deltaY;
     let chunk = chunkX();
@@ -713,31 +743,20 @@ export default function OverworldTab(): JSX.Element {
   };
 
   // A cleared raid leaves its legendary waiting, and a beaten grunt
-  // what they dropped; both are met the moment the player is back in
-  // the overworld
+  // what they dropped. Both are collected by the game itself the
+  // moment the fight is won — the world is not on screen then — and
+  // what is left for the world to do is put the pokemon in front of
+  // the player as soon as they are back in it
   createEffect(() => {
-    const reward = game.reward();
+    const waiting = game.encounter();
     const user = auth.user();
 
-    if (reward == null || user == null) {
+    if (waiting == null || user == null) {
       return;
     }
-    game.setReward(null);
-    (reward.stop == null ? claimRaidReward(reward.raid) : claimRocketReward(reward.stop))
-      .then(async (collected) => {
-        if (collected == null) {
-          setStatus('There is nothing left to collect.');
-          return;
-        }
-        // The purse lands in the profile straight away; the pokemon
-        // is still to be met
-        setStatus(
-          reward.stop == null
-            ? `The raid paid ${collected.gold} gold.`
-            : `The grunt dropped ${collected.gold} gold and fled.`,
-        );
-        setSession(await createSafariSession(user, collected.encounter));
-      })
+    game.setEncounter(null);
+    createSafariSession(user, waiting)
+      .then(setSession)
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
       });
@@ -765,6 +784,10 @@ export default function OverworldTab(): JSX.Element {
   };
 
   const reach = (index: number): void => {
+    // Reaching for something is the moment it matters most whether the
+    // chunk still holds what it is showing
+    askForWindow();
+
     const loaded = view();
     const user = auth.user();
 
@@ -834,9 +857,15 @@ export default function OverworldTab(): JSX.Element {
                 canvas asks for the shorter of its container's two
                 sides, so the container has to be one those units can
                 measure */}
+            {/* The page takes the colour of the country the player is
+                standing in. The board is a square and the screen is
+                not, so there is always a margin around it — left grey
+                it read as a picture of a world on a page, rather than
+                as being somewhere */}
             <div
               class="flex h-full w-full items-center justify-center px-3 pt-8 pb-20
-                [container-type:size]"
+                transition-colors [container-type:size]"
+              style={{ 'background-color': BIOME_COLORS[loaded().biome] }}
             >
               <ChunkCanvas
                 biome={loaded().biome}

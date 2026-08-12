@@ -1,24 +1,12 @@
-import { For, type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { useAuth } from '../auth/context';
-import { describeCatch } from './CatchesList';
+import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
+import { asBoxEntry, describeCatch } from './CatchesList';
 import matches from '../core/search';
-import {
-  Badge,
-  Button,
-  Dialog,
-  DialogActions,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Row,
-  RowButton,
-  SEARCH_FROM,
-  Search,
-} from './styled';
+import { Button, Dialog, DialogActions, Meta, Note, Row, SEARCH_FROM, Search } from './styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -247,6 +235,45 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     pickMany();
   };
 
+  const [box, setBox] = createSignal(0);
+
+  const boxes = (): number => Math.max(1, Math.ceil(options().length / BOX_SIZE));
+
+  // A search that empties the last box would leave the player looking
+  // at nothing; whatever they type, they end up somewhere with pokemon
+  createEffect(() => {
+    setBox((at) => Math.min(at, boxes() - 1));
+  });
+
+  /**
+   * The squares of the box being looked at, each carrying whether the
+   * caller has taken it or refuses it. A refusal is drawn rather than
+   * hidden: a player hunting for a pokemon that is not in their party
+   * wants to be told it is fighting somewhere else, not left to
+   * wonder where it went
+   */
+  const page = (): BoxEntry[] =>
+    options()
+      .slice(box() * BOX_SIZE, (box() + 1) * BOX_SIZE)
+      .map((option) => {
+        const refused = props.reason?.(option) ?? null;
+        const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
+        const square = asBoxEntry([option.id, option.caught]);
+
+        if (refused != null) {
+          return { ...square, mark: 'refused' as const, label: `${square.label} — ${refused}` };
+        }
+        return taken ? { ...square, mark: 'picked' as const } : square;
+      });
+
+  const pressById = (id: string): void => {
+    const option = options().find((entry) => entry.id === id);
+
+    if (option != null && props.disabled !== true) {
+      press(option);
+    }
+  };
+
   const list = (): JSX.Element => (
     <div class="flex flex-col gap-3">
       <Show when={offered().length > SEARCH_FROM}>
@@ -272,65 +299,63 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
             </Note>
           }
         >
-          <List>
-            <For each={options()}>
-              {(option) => (
-                <ListRow
-                  selected={
-                    props.multiple === true ? isDrafted(option.id) : props.value === option.id
-                  }
-                  class="flex-col items-stretch"
-                >
-                  <div class="flex flex-wrap items-center gap-2">
-                    <RowButton
-                      pressed={
-                        props.multiple === true ? isDrafted(option.id) : props.value === option.id
-                      }
-                      disabled={props.disabled === true || props.reason?.(option) != null}
-                      onClick={() => {
-                        press(option);
-                      }}
-                    >
-                      {isDrafted(option.id) ? '✓ ' : ''}
-                      {props.verb == null ? '' : `${props.verb} `}
-                      {describeCatch(option.caught)}
-                    </RowButton>
-                    {/* Said rather than merely greyed: a pokemon left
-                        out of a party for a reason is worth the
-                        sentence */}
-                    <Show when={props.reason?.(option)}>
-                      {(said) => <Badge tone="ember">{said()}</Badge>}
-                    </Show>
-                    <Show when={props.note?.(option)}>{(said) => <Meta>{said()}</Meta>}</Show>
-                  </div>
-                  <Show when={pending() === option.id}>
-                    <Row>
-                      <Button
-                        tone="primary"
-                        onClick={() => {
-                          pickOne(option.id);
-                        }}
-                      >
-                        {props.verb ?? 'Pick'} this one?
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setPending(null);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Row>
-                  </Show>
-                </ListRow>
-              )}
-            </For>
-          </List>
+          {/* The same box the player keeps their collection in. Picking
+              a party out of a hundred pokemon is looking rather than
+              reading, and a list of a hundred lines was reading */}
+          <CatchBoxCanvas entries={page()} onOpen={pressById} />
+
+          <Show when={boxes() > 1}>
+            <Row class="justify-center">
+              <Button
+                disabled={box() === 0}
+                onClick={() => {
+                  setBox((at) => Math.max(0, at - 1));
+                }}
+              >
+                ‹
+              </Button>
+              <Meta>
+                Box {box() + 1} of {boxes()}
+              </Meta>
+              <Button
+                disabled={box() >= boxes() - 1}
+                onClick={() => {
+                  setBox((at) => Math.min(boxes() - 1, at + 1));
+                }}
+              >
+                ›
+              </Button>
+            </Row>
+          </Show>
         </Show>
       </Show>
 
+      {/* A single pick that asks twice does it here rather than in the
+          square: there is no room under a sprite for a question */}
+      <Show when={options().find((one) => one.id === pending())}>
+        {(asked) => (
+          <Row class="justify-center">
+            <Button
+              tone="primary"
+              onClick={() => {
+                pickOne(asked().id);
+              }}
+            >
+              {props.verb ?? 'Pick'} {describeCatch(asked().caught)}?
+            </Button>
+            <Button
+              onClick={() => {
+                setPending(null);
+              }}
+            >
+              Cancel
+            </Button>
+          </Row>
+        )}
+      </Show>
+
       <Show when={props.multiple === true}>
-        <Row>
+        <Row class="justify-center">
           <Button
             tone="primary"
             disabled={props.disabled === true || draft().length === 0}

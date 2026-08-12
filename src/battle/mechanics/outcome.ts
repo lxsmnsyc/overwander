@@ -3,45 +3,44 @@ import type Alliance from '../alliance';
 import type Battle from '../core';
 import { BattleModes } from '../core';
 import { BattleEvents } from '../events';
-import { MOVE_LOCKING_STATUS } from '../status';
-import type Unit from '../unit';
-import { hasAnyStatus } from '../utils';
 
 /**
- * Whether the unit still has something it could do: a move that is
- * neither disabled nor cooling down, and nothing stopping it from
- * using one. The check never asks the AI what it would pick — that
- * would consume battle randoms and pull the replay off its seed
+ * How long the field has to stay decided before the battle is called.
+ *
+ * A side going down is not the end of a real-time fight: the last hit
+ * is still in the air, a berry may bring somebody back, and a move
+ * already cast lands after the unit that cast it fell. Calling the
+ * result on the frame the last pokemon fainted means a player watches
+ * the verdict appear over a field that is still moving.
+ *
+ * So the fight is given three seconds to change its mind. Anything
+ * that puts a second side back on its feet inside that window puts the
+ * countdown back too, and the battle carries on
  */
-function canAct(unit: Unit): boolean {
-  if (!unit.alive || unit.casting || unit.channeling || hasAnyStatus(unit, MOVE_LOCKING_STATUS)) {
-    return false;
-  }
-
-  for (const state of Object.values(unit.moves)) {
-    // tsc types the mapped-record values as possibly undefined;
-    // tsgolint disagrees, so the guard is flagged as unnecessary
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
-    if (state && !state.disabled && !state.cooldown) {
-      return true;
-    }
-  }
-  return false;
-}
+const GRACE = 3000;
 
 /**
- * Who the settled battle belongs to. One side left standing wins
- * outright. A raid that ends with nobody standing goes to the party:
- * a boss taken down with the last of the party is a raid beaten, and
- * only one side of a raid is the boss. Anywhere else, a field with
- * nobody standing — or one where several sides remain but none can
- * act — is a draw
+ * Who the settled battle belongs to.
+ *
+ * One side left standing wins outright, however it got there. A field
+ * with nobody left is the interesting case, and the two kinds of fight
+ * answer it differently:
+ *
+ * A **raid** has no draws. The party went in to take something down,
+ * and a boss that is on the floor when the dust settles is a boss they
+ * took down — that the last of them went with it changes what it cost,
+ * not what happened. So the party takes it.
+ *
+ * A **fight between players** is the other way round: neither of them
+ * beat the other, and calling it for one of them because of how the
+ * alliances happen to be ordered would be inventing a result. That is
+ * the only case in the game that is a draw.
  */
 function resolveWinner(battle: Battle, standing: Set<Alliance>): Alliance | null {
   if (standing.size === 1) {
     return [...standing][0];
   }
-  if (standing.size > 0 || battle.mode !== BattleModes.Raid) {
+  if (battle.mode !== BattleModes.Raid) {
     return null;
   }
 
@@ -51,68 +50,53 @@ function resolveWinner(battle: Battle, standing: Set<Alliance>): Alliance | null
 }
 
 /**
- * The battle's terminal state. Rather than watching for knockouts,
- * the scan asks whether the fight can still go anywhere: is anything
- * mid-cast or mid-channel, and could any unit still act against a
- * living enemy? Once neither holds, the battle is over — victory
- * goes to the one alliance with units left standing.
+ * The battle's terminal state.
  *
- * Reading it this way settles the fights a knockout watcher would
- * miss: a side that is alive but permanently unable to act ends the
- * battle just as a wiped one does. Who wins the settled field is
- * resolveWinner's call.
+ * It watches for one thing: whether more than one side still has
+ * something alive. While two do, the fight is going on whatever either
+ * of them is able to do about it — a side that cannot act is not a
+ * side that has lost, and treating it as one used to end fights while
+ * both parties were still on the field, waiting out a cooldown.
+ *
+ * Once only one side is left — or none — the countdown starts, and the
+ * result is called when it runs out.
  */
 export default function setupOutcomeMechanics(battle: Battle): void {
-  battle.on(BattleEvents.Tick, EventPriority.Post, () => {
+  /**
+   * How long the field has been decided, or null while it is not. It
+   * is reset rather than merely paused: a fight that goes back to two
+   * sides gets the whole three seconds again the next time it does not
+   */
+  let deciding: number | null = null;
+
+  battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     if (battle.settled) {
       return;
     }
 
     const standing = new Set<Alliance>();
-    let pending = false;
 
     for (const alliance of battle.alliances) {
       for (const team of alliance.teams) {
         for (const unit of team.units) {
-          if (!unit.alive) {
-            continue;
-          }
-          standing.add(alliance);
-
-          // A cast or channel already under way is an action still
-          // owed to the battle, however it resolves
-          if (unit.casting != null || unit.channeling != null) {
-            pending = true;
+          if (unit.alive) {
+            standing.add(alliance);
           }
         }
       }
     }
 
-    // With more than one side standing the fight can still go on: an
-    // action already owed to it may yet change who is standing, and so
-    // may anybody with a move left to make
+    // Still a fight: two sides with something left to lose
     if (standing.size > 1) {
-      if (pending) {
-        return;
-      }
-
-      for (const alliance of standing) {
-        for (const team of alliance.teams) {
-          for (const unit of team.units) {
-            if (canAct(unit)) {
-              return;
-            }
-          }
-        }
-      }
+      deciding = null;
+      return;
     }
 
-    // One side standing — or none — is a decided fight, whatever
-    // anybody is still winding up. Waiting for the field to fall quiet
-    // instead is waiting for something that may never happen: a
-    // survivor with a move that reaches its own side can buff an empty
-    // field for ever, and a lobby of them is never all idle on the
-    // same tick
+    deciding = (deciding ?? 0) + event.duration;
+
+    if (deciding < GRACE) {
+      return;
+    }
 
     battle.settled = true;
     battle.winner = resolveWinner(battle, standing);

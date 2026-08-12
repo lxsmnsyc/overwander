@@ -310,6 +310,14 @@ function LotRow(props: {
 }
 
 export interface AuctionTabProps {
+  /**
+   * Whether the seller's side is open. It is a prop rather than a
+   * signal of its own because the button that opens it lives in the
+   * dialog's own top bar, beside the heading, where a player looks for
+   * "the thing that adds one"
+   */
+  adding?: boolean;
+  onAdding?: (open: boolean) => void;
   player: string;
 }
 
@@ -686,127 +694,142 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     return mine != null && now() < mine.endsAt ? mine.endsAt : null;
   };
 
-  return (
-    <Panel>
-      <Row>
-        <Badge tone="gold">{gold()} gold</Badge>
-      </Row>
+  /**
+   * The board, split by what is actually on it. An item and a pokemon
+   * are not the same purchase — one is a stack somebody needs and the
+   * other is an individual with its own numbers — and a single column
+   * mixing them means scrolling past everything you are not shopping
+   * for
+   */
+  const lotsOf = (kind: AuctionLot): [string, AuctionRecord][] =>
+    board().filter(([, auction]) => auction.lot === kind);
 
-      <Card>
-        <Row>
-          <h3 class="grow">On the block</h3>
-          <Show when={board().length > SEARCH_FROM}>
-            <Search
-              placeholder="Search the lots"
-              value={query()}
-              onChange={(typed) => {
-                setQuery(typed);
+  const column = (kind: AuctionLot, empty: string): JSX.Element => (
+    <Show
+      when={lotsOf(kind).length}
+      fallback={<Note>{query().length === 0 ? empty : 'Nothing here matches.'}</Note>}
+    >
+      <List>
+        <For each={lotsOf(kind)}>
+          {([id, auction]) => (
+            <LotRow
+              auction={auction}
+              player={props.player}
+              gold={gold()}
+              name={nameOf(auction)}
+              detail={detailOf(auction)}
+              seller={describeSeller(auction)}
+              claim={claimOf(id, auction)}
+              onInspect={
+                auction.lot === AuctionLot.Catch
+                  ? () => {
+                      // A pokemon on the block is somebody else's, so
+                      // it opens read-only: the whole record, and
+                      // nothing to press
+                      game.setSheet({ catchId: auction.caught, readOnly: true });
+                    }
+                  : undefined
+              }
+              onBid={(amount) => {
+                bid(id, amount);
               }}
             />
-          </Show>
-        </Row>
-        <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
+          )}
+        </For>
+      </List>
+    </Show>
+  );
+
+  return (
+    <Panel>
+      <Row class="justify-center">
+        <Badge tone="gold">{gold()} gold</Badge>
+        <Show when={board().length > SEARCH_FROM}>
+          <Search
+            placeholder="Search the lots"
+            value={query()}
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
+        </Show>
+      </Row>
+
+      {/* Putting something up, opened from the Add button in the top
+          bar. It stands in front of the board rather than under it:
+          somebody selling is not shopping at the same moment */}
+      <Show when={props.adding === true}>
+        <Card title="Sell">
           <Show
-            when={board().length}
+            when={running() == null}
             fallback={
               <Note>
-                {query().length === 0
-                  ? 'Nothing is up for auction right now.'
-                  : 'No lot on the block matches.'}
+                You have an auction running — {describeRemaining(running() ?? 0, now())}. One at a
+                time, which is one a day.
               </Note>
             }
           >
-            <List>
-              <For each={board()}>
-                {([id, auction]) => (
-                  <LotRow
-                    auction={auction}
-                    player={props.player}
-                    gold={gold()}
-                    name={nameOf(auction)}
-                    detail={detailOf(auction)}
-                    seller={describeSeller(auction)}
-                    claim={claimOf(id, auction)}
-                    onInspect={
-                      auction.lot === AuctionLot.Catch
-                        ? () => {
-                            // A pokemon on the block is somebody
-                            // else's, so it opens read-only: the whole
-                            // record, and nothing to press
-                            game.setSheet({ catchId: auction.caught, readOnly: true });
-                          }
-                        : undefined
-                    }
-                    onBid={(amount) => {
-                      bid(id, amount);
-                    }}
-                  />
-                )}
-              </For>
-            </List>
+            <h4>From the bag</h4>
+            <InventoryPicker
+              inline
+              revision={revision()}
+              value={null}
+              verb="Sell"
+              empty="Nothing in the bag is rare enough for the block."
+              filter={(entry) => isAuctionableItem(entry.item)}
+              onPick={(picked) => {
+                if (picked != null) {
+                  setOffered({ lot: AuctionLot.Item, item: picked });
+                }
+              }}
+            />
+
+            <h4>From the records</h4>
+            {/* Two different lists in one. What does not qualify for
+                the block at all is **left out** — it would be most of a
+                box, and a hundred greyed rows say nothing. The three
+                that would otherwise qualify are **refused and told**,
+                since a player looking for one of them wants the reason:
+                a raid is fighting on a frozen copy of a record that has
+                to still be there when it ends, an egg is a sealed box
+                only its owner can see into, and the buddy is not
+                something to sell by misreading a list */}
+            <CatchPicker
+              inline
+              options={sellable()}
+              value={null}
+              verb="Sell"
+              empty="Nothing of yours is rare enough for the block."
+              filter={(option) => isAuctionableCatch(option.caught)}
+              reason={sellingReason}
+              note={sellingWorth}
+              onPick={(picked) => {
+                if (picked != null) {
+                  setOffered({ lot: AuctionLot.Catch, catchId: picked });
+                }
+              }}
+            />
           </Show>
-        </Show>
-      </Card>
+          <Row class="justify-center">
+            <Button
+              onClick={() => {
+                props.onAdding?.(false);
+              }}
+            >
+              Done
+            </Button>
+          </Row>
+        </Card>
+      </Show>
 
-      <Card title="Sell">
-        <Show
-          when={running() == null}
-          fallback={
-            <Note>
-              You have an auction running — {describeRemaining(running() ?? 0, now())}. One at a
-              time, which is one a day.
-            </Note>
-          }
-        >
-          {/* What the block takes, and what listing costs, used to be
-              said here in two paragraphs. Neither is a thing a player
-              reads twice: the lists below already show only what
-              qualifies and say so where they are empty, and what
-              listing costs is named in the dialog that opens — which
-              is the last moment before it costs anything, and the only
-              one where reading it changes what somebody does */}
-          <h4>From the bag</h4>
-          <InventoryPicker
-            inline
-            revision={revision()}
-            value={null}
-            verb="Sell"
-            empty="Nothing in the bag is rare enough for the block."
-            filter={(entry) => isAuctionableItem(entry.item)}
-            onPick={(picked) => {
-              if (picked != null) {
-                setOffered({ lot: AuctionLot.Item, item: picked });
-              }
-            }}
-          />
-
-          <h4>From the records</h4>
-          {/* Two different lists in one. What does not qualify for the
-              block at all is **left out** — it would be most of a box,
-              and a hundred greyed rows say nothing. The three that
-              would otherwise qualify are **refused and told**, since a
-              player looking for one of them wants the reason: a raid is
-              fighting on a frozen copy of a record that has to still be
-              there when it ends, an egg is a sealed box only its owner
-              can see into, and the buddy is not something to sell by
-              misreading a list */}
-          <CatchPicker
-            inline
-            options={sellable()}
-            value={null}
-            verb="Sell"
-            empty="Nothing of yours is rare enough for the block."
-            filter={(option) => isAuctionableCatch(option.caught)}
-            reason={sellingReason}
-            note={sellingWorth}
-            onPick={(picked) => {
-              if (picked != null) {
-                setOffered({ lot: AuctionLot.Catch, catchId: picked });
-              }
-            }}
-          />
-        </Show>
-      </Card>
+      <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
+        {/* Items on the left, pokemon on the right — side by side
+            where there is room, stacked where there is not */}
+        <div class="grid gap-4 md:grid-cols-2">
+          <Card title="Items">{column(AuctionLot.Item, 'No items are up right now.')}</Card>
+          <Card title="Pokemon">{column(AuctionLot.Catch, 'No pokemon are up right now.')}</Card>
+        </div>
+      </Show>
 
       <Status message={status()} />
 
@@ -819,6 +842,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         }}
         onListed={() => {
           setStatus('It is on the block until the day is up.');
+          props.onAdding?.(false);
           // The board and the seller's one-a-day standing both move
           // with it; a failed re-read leaves the last good board up
           Promise.resolve(refetchStanding())

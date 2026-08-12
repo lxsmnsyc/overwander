@@ -1,6 +1,6 @@
 import { Title } from '@solidjs/meta';
 import type { User } from 'firebase/auth';
-import { type JSX, Show } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { useAuth } from '../auth/context';
 import ActionBar from '../components/ActionBar';
@@ -51,6 +51,17 @@ const DESCRIPTIONS: Record<GameDialog.Profile | GameDialog.Raids | GameDialog.Au
  */
 function GameView(props: { user: User }): JSX.Element {
   const game = useGame();
+  /**
+   * Whether the seller's side of the auction board is open. It lives
+   * here because the button that opens it is in the dialog's top bar
+   */
+  const [selling, setSelling] = createSignal(false);
+  /**
+   * What the raids panel is called. A lobby is a lair, and the lair is
+   * what a player travelled to — so while they are standing in one, it
+   * names the panel rather than the word "Raids"
+   */
+  const [lobby, setLobby] = createSignal<string | null>(null);
   const close = (): void => {
     game.setDialog(GameDialog.None);
   };
@@ -59,6 +70,16 @@ function GameView(props: { user: User }): JSX.Element {
   return (
     <Show
       when={game.battle()}
+      // Keyed, so the battle is handed over as itself rather than as a
+      // reader of a signal that is about to be empty.
+      //
+      // Leaving is the one press that unsets the thing the view is
+      // built from, and an unkeyed `Show` hands its child an accessor
+      // that throws the moment the condition goes false. The button's
+      // own handler read `props.active` to work out whether there was
+      // a prize to collect, so pressing Leave threw before it had done
+      // anything — which is why Leave appeared to do nothing at all
+      keyed
       fallback={
         <div class="relative h-full">
           <OverworldTab />
@@ -82,25 +103,53 @@ function GameView(props: { user: User }): JSX.Element {
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             width="wide"
-            quiet
-            title={TITLES[GameDialog.Raids]}
+            // Named for the lair while the player is in one, and quiet
+            // while they are only looking at the list: a panel of
+            // lobbies captioned "Raids" says what the button they
+            // pressed already said
+            quiet={lobby() == null}
+            terse
+            title={lobby() ?? TITLES[GameDialog.Raids]}
             description={DESCRIPTIONS[GameDialog.Raids]}
           >
-            <RaidsTab user={props.user} />
-            <DialogActions>
-              <Button onClick={close}>Close</Button>
-            </DialogActions>
+            <RaidsTab
+              user={props.user}
+              onTitle={(named) => {
+                setLobby(named);
+              }}
+            />
+            <Show when={lobby() == null}>
+              <DialogActions>
+                <Button onClick={close}>Close</Button>
+              </DialogActions>
+            </Show>
           </Dialog>
 
           <Dialog
             isOpen={showing(GameDialog.Auctions)}
             onClose={close}
             width="wide"
-            quiet
+            terse
             title={TITLES[GameDialog.Auctions]}
+            // The one thing the board is for that is not looking at it
+            aside={
+              <Button
+                onClick={() => {
+                  setSelling(true);
+                }}
+              >
+                Add
+              </Button>
+            }
             description={DESCRIPTIONS[GameDialog.Auctions]}
           >
-            <AuctionTab player={props.user.uid} />
+            <AuctionTab
+              player={props.user.uid}
+              adding={selling()}
+              onAdding={(open) => {
+                setSelling(open);
+              }}
+            />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -147,13 +196,9 @@ function GameView(props: { user: User }): JSX.Element {
         </div>
       }
     >
-      {(active) => (
-        <div class="h-full overflow-y-auto">
-          <div class="mx-auto w-full max-w-5xl px-4 py-6">
-            <BattleView active={active()} />
-          </div>
-        </div>
-      )}
+      {/* A battle is the whole page while it is running, the same way
+          the world is when one is not */}
+      {(active) => <BattleView active={active} />}
     </Show>
   );
 }

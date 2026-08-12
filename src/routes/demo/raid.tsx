@@ -1,10 +1,10 @@
 import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type Battle from '../../battle/core';
 import BattleCanvas from '../../components/BattleCanvas';
-import BattleField from '../../components/BattleField';
+import BattleParty from '../../components/BattleParty';
 import { Badge, Button, Meta, Note } from '../../components/styled';
-import type Alliance from '../../battle/alliance';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import {
   BOSS_ALLIANCE,
@@ -57,6 +57,24 @@ const DEFAULT_SEED = 'poketerra';
  */
 function rollSeed(): string {
   return Math.floor(Math.random() * 0xffff_ffff).toString(36);
+}
+
+/**
+ * Whose cards to show in a demo nobody is signed in to: the first
+ * party that went into the raid
+ */
+function firstParty(battle: Battle): string {
+  for (const alliance of battle.alliances) {
+    if (alliance.boss) {
+      continue;
+    }
+    for (const team of alliance.teams) {
+      if (team.player !== '') {
+        return team.player;
+      }
+    }
+  }
+  return '';
 }
 
 export default function RaidDemo(): JSX.Element {
@@ -118,8 +136,6 @@ export default function RaidDemo(): JSX.Element {
     return 'Nobody left standing.';
   };
 
-  const sideOf = (alliance: Alliance): string => (alliance.boss ? 'Boss' : 'Parties');
-
   return (
     <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6">
       <Title>Raid demo · Poketerra</Title>
@@ -160,8 +176,18 @@ export default function RaidDemo(): JSX.Element {
             {/* No party is the viewer's, so the canvas draws the
                 fighting side at the bottom the way it does for anyone
                 who walked in on a raid already under way */}
-            <BattleCanvas battle={staged.battle} player="" />
-            <BattleField battle={staged.battle} label={sideOf} />
+            {/* The canvas takes the room it is given, and on a page
+                that is a column of prose it has to be given some: a
+                height of "all of it" measured against a container of
+                "as tall as its contents" is a field nought pixels
+                high */}
+            <div class="h-[60vh] w-full overflow-hidden rounded-panel border border-line">
+              <BattleCanvas battle={staged.battle} player="" />
+            </div>
+            {/* The demo has no signed-in player, so it stands in as
+                the first party: the cards are about somebody's own
+                pokemon, and here that is whoever went in first */}
+            <BattleParty battle={staged.battle} player={firstParty(staged.battle)} />
           </>
         )}
       </Show>

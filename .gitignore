@@ -137,6 +137,12 @@ dist
 
 .output
 
+# Playwright: the browsers it downloads, and what a run leaves behind
+test-results
+playwright-report
+blob-report
+.playwright
+
 # Firebase emulators: logs, the UI's downloads and any exported state
 firebase-debug.log
 firestore-debug.log

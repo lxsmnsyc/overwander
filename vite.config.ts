@@ -56,8 +56,14 @@ export default defineConfig({
      * outside the emulator. Left in, `pnpm test` would fail on a
      * machine that has no Java rather than on anything to do with the
      * code, so those tests are run on their own by `pnpm test:rules`,
-     * which starts an emulator around them (see `vitest.rules.ts`)
+     * which starts an emulator around them (see `vitest.rules.ts`).
+     *
+     * `e2e` is left out for the same reason and more so: those are
+     * Playwright specs, and Playwright refuses to have its `test`
+     * called by another runner — collected here they do not merely
+     * fail, they fail with an error about configuration files that
+     * says nothing about the game
      */
-    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/firestore/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/firestore/**', 'e2e/**'],
   },
 });

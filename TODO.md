@@ -19,4 +19,4 @@
 - [ ] adjacent chunk preload
 - [ ] "3D" layout
 - [ ] Mini Boss ability
-- [ ] Playwright tests
+- [ ] Battle summary

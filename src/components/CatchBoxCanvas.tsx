@@ -60,7 +60,6 @@ const HEIGHT = CELL * BOX_ROWS;
 
 const COLORS = {
   cell: 'rgba(255, 255, 255, 0.55)',
-  grid: 'rgba(0, 0, 0, 0.08)',
   /**
    * The square under the pointer. A box is for finding one pokemon in
    * thirty, so which one the press would open has to be obvious
@@ -75,6 +74,21 @@ const COLORS = {
   progress: '#7bb661',
   progressTrack: 'rgba(0, 0, 0, 0.12)',
   fainted: 'rgba(120, 30, 30, 0.18)',
+  /**
+   * A square the caller has taken. The glow is the whole cell rather
+   * than a tick alone: picking a party of six out of thirty is a thing
+   * done by looking at the shape of what is chosen, and a mark small
+   * enough to sit under a sprite is too small to see that way
+   */
+  picked: 'rgba(123, 182, 97, 0.28)',
+  pickedEdge: '#5f9648',
+  pickedMark: '#3f6b30',
+  /**
+   * And one the caller will not take. It is shown rather than left
+   * out, because a player looking for a pokemon that is missing wants
+   * to be told why rather than left to wonder where it went
+   */
+  refusedMark: '#a33c3c',
 } as const;
 
 /**
@@ -93,6 +107,12 @@ export interface BoxEntry {
   progress: number;
   fainted: boolean;
   /**
+   * Whether the caller has taken this one, or refuses to. A picked
+   * square glows and carries a tick; a refused one carries a cross and
+   * is not pressable
+   */
+  mark?: 'picked' | 'refused';
+  /**
    * What a screen reader is told about this square
    */
   label: string;
@@ -101,6 +121,45 @@ export interface BoxEntry {
 export interface CatchBoxCanvasProps {
   entries: BoxEntry[];
   onOpen: (id: string) => void;
+}
+
+/**
+ * The tick or the cross under a sprite, drawn rather than written: the
+ * squares are sixty-odd pixels across and a word does not fit in one
+ */
+function drawMark(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  kind: 'picked' | 'refused',
+): void {
+  const size = 5;
+
+  context.save();
+  context.lineWidth = 2.5;
+  context.lineCap = 'round';
+  context.lineJoin = 'round';
+  // A plate under it, so the mark reads against a sprite as well as
+  // against an empty square
+  context.fillStyle = 'rgba(255, 255, 255, 0.85)';
+  context.beginPath();
+  context.arc(x, y, size + 3, 0, Math.PI * 2);
+  context.fill();
+
+  context.strokeStyle = kind === 'picked' ? COLORS.pickedMark : COLORS.refusedMark;
+  context.beginPath();
+  if (kind === 'picked') {
+    context.moveTo(x - size, y);
+    context.lineTo(x - size / 3, y + size * 0.8);
+    context.lineTo(x + size, y - size * 0.8);
+  } else {
+    context.moveTo(x - size, y - size);
+    context.lineTo(x + size, y + size);
+    context.moveTo(x + size, y - size);
+    context.lineTo(x - size, y + size);
+  }
+  context.stroke();
+  context.restore();
 }
 
 /**
@@ -254,8 +313,19 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
 
         context.fillStyle = hovered() === index && entry != null ? COLORS.hover : COLORS.cell;
         context.fillRect(x + 2, y + 2, CELL - 4, CELL - 4);
-        context.strokeStyle = COLORS.grid;
-        context.strokeRect(x + 2.5, y + 2.5, CELL - 5, CELL - 5);
+
+        // Taken: the square itself says so, before anything drawn on
+        // it. Nothing else is outlined — the squares are told apart by
+        // the gap between them, and thirty boxes ruled in grey is a
+        // spreadsheet with pokemon in it
+        if (entry?.mark === 'picked') {
+          context.fillStyle = COLORS.picked;
+          context.fillRect(x + 2, y + 2, CELL - 4, CELL - 4);
+          context.strokeStyle = COLORS.pickedEdge;
+          context.lineWidth = 2;
+          context.strokeRect(x + 3, y + 3, CELL - 6, CELL - 6);
+          context.lineWidth = 1;
+        }
 
         if (entry == null) {
           continue;
@@ -292,6 +362,11 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
           context.fillRect(x + 10, y + CELL - 8, CELL - 20, 3);
           context.fillStyle = COLORS.progress;
           context.fillRect(x + 10, y + CELL - 8, width, 3);
+        }
+
+        // Whether the caller has it, at the pokemon's feet
+        if (entry.mark != null) {
+          drawMark(context, x + CELL / 2, y + CELL - SPRITE_BASE + 2, entry.mark);
         }
       }
 

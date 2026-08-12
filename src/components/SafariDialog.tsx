@@ -1,4 +1,4 @@
-import { type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
 import type { User } from 'firebase/auth';
 import { getInventory } from '../auth/inventory';
 import type { EncounterRecord } from '../auth/encounter-record';
@@ -105,6 +105,24 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     revision();
     return props.session;
   };
+
+  // A new encounter starts on a blank dialog.
+  //
+  // Nothing here belongs to the pokemon standing there now: "Caught!"
+  // is about the last one, and so is the treat left in hand and the
+  // bag left open. The dialog is not rebuilt between encounters — the
+  // same one is handed a new session — so the state it kept was the
+  // previous encounter's, announced over the next one
+  createEffect(
+    on(
+      () => props.session,
+      () => {
+        setStatus(null);
+        setRummaging(false);
+        setTreat(null);
+      },
+    ),
+  );
 
   // The session tracks the bag only through the persistence layer,
   // so the view keeps its count in step — that is what makes the

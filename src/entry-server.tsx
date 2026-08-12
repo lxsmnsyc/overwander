@@ -15,6 +15,11 @@ export default createHandler(() => (
         </head>
         <body>
           <div id="app">{children}</div>
+          {/* Where every dialog is drawn. It stands beside the app
+              rather than inside it so a panel is never clipped by, or
+              stacked under, whatever the page happened to build around
+              the button that opened it */}
+          <div id="portals" />
           {scripts}
         </body>
       </html>

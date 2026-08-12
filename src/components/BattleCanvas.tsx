@@ -95,6 +95,15 @@ interface Slot {
    */
   sprite: SpeciesSpriteAnimation | null;
   /**
+   * Whether the pokemon writes its name under itself.
+   *
+   * The player's own side does not: every one of them has a card
+   * along the bottom of the screen carrying its name, its level and a
+   * great deal more, and the same six names painted on the field as
+   * well is the field saying what the cards already said
+   */
+  quiet?: boolean;
+  /**
    * Which way it is facing: the two sides look at each other
    */
   facing: SpriteDirection;
@@ -209,6 +218,7 @@ function layout(
   color: string,
   facing: SpriteDirection,
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
+  quiet = false,
 ): Slot[] {
   const step = WIDTH / (units.length + 1);
   const fitted = Math.max(MIN_RADIUS, Math.min(radius, step / 2));
@@ -221,6 +231,7 @@ function layout(
     color,
     facing,
     sprite: spriteFor(unit),
+    quiet,
   }));
 }
 
@@ -462,14 +473,17 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
   // And a slot too small to hold its own name does not print one:
   // forty-eight overlapping names say less than none, and the field
   // readout underneath names every one of them anyway
-  const named = slot.radius >= RADIUS;
+  const named = slot.radius >= RADIUS && slot.quiet !== true;
 
   context.font = '12px sans-serif';
 
   if (named) {
     drawLabel(
       context,
-      `${getSpeciesData(unit.species).name} · Lv. ${unit.level}`,
+      // The level first, the way a card says it and the way the games
+      // have always said it: what a player checks a boss for is how
+      // far above them it is, and that is the number they read first
+      `Lv. ${unit.level} ${getSpeciesData(unit.species).name}`,
       slot.x,
       slot.y + slot.radius + 16,
       COLORS.text,
@@ -580,15 +594,55 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       return;
     }
 
-    // Drawn in logical pixels and scaled once, so the circles are not
-    // soft on a retina display
-    const ratio = window.devicePixelRatio;
+    /**
+     * Fit the backing store to the room the element has been given,
+     * and lay the ground.
+     *
+     * The field is drawn in its own coordinates whatever the screen
+     * is, and used to be blown up to fit — which meant the picture was
+     * letterboxed and the page showed through above and below it. Now
+     * the canvas is the size of the page, the drawing is centred
+     * inside it at the largest scale that fits, and the ground colour
+     * is painted over the whole of it. The fight is the same size it
+     * always was; what changed is that there is field around it
+     * instead of nothing.
+     *
+     * The backing store is only reallocated when the element actually
+     * changes size: assigning `width` clears the canvas and hands back
+     * a fresh buffer, which is not a thing to do sixty times a second
+     */
+    let sized = { width: 0, height: 0, ratio: 0 };
 
-    element.width = WIDTH * ratio;
-    element.height = HEIGHT * ratio;
-    context.scale(ratio, ratio);
+    const ground = (): void => {
+      const ratio = window.devicePixelRatio;
+      const width = Math.max(1, element.clientWidth);
+      const height = Math.max(1, element.clientHeight);
+
+      if (sized.width !== width || sized.height !== height || sized.ratio !== ratio) {
+        element.width = Math.round(width * ratio);
+        element.height = Math.round(height * ratio);
+        sized = { width, height, ratio };
+      }
+
+      const scale = Math.min(width / WIDTH, height / HEIGHT);
+
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      // Painted edge to edge before the transform that centres the
+      // field, so the margins are field rather than page
+      context.fillStyle = COLORS.field;
+      context.fillRect(0, 0, width, height);
+      context.transform(
+        scale,
+        0,
+        0,
+        scale,
+        (width - WIDTH * scale) / 2,
+        (height - HEIGHT * scale) / 2,
+      );
+    };
 
     const draw = (): void => {
+      ground();
       const field = readField(props.battle, props.player);
       const bossSide = [...props.battle.alliances].some((alliance) => alliance.boss);
 
@@ -603,16 +657,15 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           'down',
           spriteFor,
         ),
-        ...layout(field.mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor),
+        // The near side keeps its names to itself: they are on the
+        // cards under the field
+        ...layout(field.mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor, true),
       ];
 
       // Watching a raid from outside it: the whole lobby, drawn around
       // the thing it came for. Anything else is two sides facing off
       const slots = field.lobby == null ? rows() : ringLayout(field.lobby, spriteFor);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
-
-      context.fillStyle = COLORS.field;
-      context.fillRect(0, 0, WIDTH, HEIGHT);
 
       for (const slot of slots) {
         drawSlot(context, slot);
@@ -745,10 +798,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   });
 
   return (
+    // Sized to the room it is given rather than to its own drawing
+    // coordinates. The field is the screen the way the chunk is: a
+    // battle is the only thing happening while it is happening, and a
+    // picture of it letterboxed in the middle of a page of nothing
+    // wastes most of the screen it is the point of
     <canvas
       ref={canvas}
-      class="mx-auto block h-auto w-full rounded-lg border border-line"
-      style={{ 'max-width': `${WIDTH}px` }}
+      // The field is the page: it takes every pixel it is given, and
+      // the fight is drawn in the middle of it
+      class="block h-full w-full"
     />
   );
 }

@@ -10,6 +10,9 @@ import {
   useContext,
 } from 'solid-js';
 import { useAuth } from '../auth/context';
+import type { EncounterRecord } from '../auth/encounter-record';
+import { claimRaidReward } from '../auth/raids';
+import { claimRocketReward } from '../auth/rockets';
 import type { PositionRecord } from '../auth/position-record';
 import { getPosition, savePosition } from '../auth/positions';
 import type { AuctionSubject } from './AuctionDialog';
@@ -100,6 +103,18 @@ export interface GameState {
   setBattle: Setter<ActiveBattle | null>;
   reward: Accessor<PendingReward | null>;
   setReward: Setter<PendingReward | null>;
+  /**
+   * What a cleared raid or a beaten grunt left standing, once it has
+   * been collected: the encounter the player is about to meet.
+   *
+   * It is claimed here rather than in the overworld because the
+   * overworld is not on screen when it is won — the battle has the
+   * page — and an effect that only runs once its component mounts
+   * turns "the moment you leave the fight" into "a moment after the
+   * world has drawn itself again"
+   */
+  encounter: Accessor<EncounterRecord | null>;
+  setEncounter: Setter<EncounterRecord | null>;
   /**
    * What the game has just given them, until they have seen it. Empty
    * whenever there is nothing to show, which is nearly always
@@ -239,11 +254,14 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   // they cannot do anything in — no raid to join, nothing to bring to
   // a grunt, and a safari they can throw nothing at.
   //
-  // Asked after they have been placed, because a gift is stamped with
-  // where its owner was standing when it arrived, and before the
-  // position is written that is chunk zero for everybody
+  // Asked the moment there is somebody to ask for, rather than after
+  // they have been put on the map. The record is stamped `Beyond` —
+  // a fateful encounter happened nowhere, and the sheet shows no
+  // place for one — so nothing about it needs a position, and waiting
+  // for one put a second round trip in front of the first thing a new
+  // player ever sees
   createEffect(() => {
-    if (auth.user() == null || position() == null) {
+    if (auth.user() == null) {
       return;
     }
     claimMysteryGift()
@@ -261,6 +279,36 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [raid, setRaid] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
+  const [encounter, setEncounter] = createSignal<EncounterRecord | null>(null);
+
+  /**
+   * Collect what a won fight left behind, the moment it is won.
+   *
+   * The prize is claimed here rather than by the overworld: the
+   * overworld is unmounted while the battle has the page, so an effect
+   * living there could not start until the player had already left the
+   * fight and the world had drawn itself again. Claimed here, the
+   * pokemon is standing there waiting by the time they arrive
+   */
+  createEffect(() => {
+    const owed = reward();
+
+    if (owed == null) {
+      return;
+    }
+    setReward(null);
+    (owed.stop == null ? claimRaidReward(owed.raid) : claimRocketReward(owed.stop))
+      .then((collected) => {
+        if (collected != null) {
+          setEncounter(collected.encounter);
+        }
+      })
+      .catch(() => {
+        // Nothing is lost by a claim that failed: the raid keeps what
+        // it owes until somebody collects it, and the overworld says
+        // so when they walk back to it
+      });
+  });
 
   return (
     <GameContext.Provider
@@ -275,6 +323,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setBattle,
         reward,
         setReward,
+        encounter,
+        setEncounter,
         gifts,
         setGifts,
         sheet,

@@ -1,5 +1,14 @@
 import type { User } from 'firebase/auth';
-import { For, type JSX, Show, createEffect, createResource, createSignal, from } from 'solid-js';
+import {
+  For,
+  type JSX,
+  Show,
+  createEffect,
+  createResource,
+  createSignal,
+  from,
+  onCleanup,
+} from 'solid-js';
 import {
   RaidKind,
   type RaidRecord,
@@ -11,12 +20,14 @@ import {
   watchRaid,
 } from '../auth/raids';
 import { type TeamRecord, getTeam } from '../auth/teams';
+import { getSpeciesData } from '../data/species';
+import SpriteDisplay from './SpriteDisplay';
 import TeamPickerDialog from './TeamPickerDialog';
 import matches from '../core/search';
 import {
   Badge,
   Button,
-  Card,
+  DialogActions,
   List,
   ListRow,
   Note,
@@ -30,6 +41,12 @@ import { useGame } from './game-context';
 export interface RaidLobbyProps {
   user: User;
   raidId: string;
+  /**
+   * What the lobby is called, reported upwards as soon as it is known.
+   * The name belongs at the top of the panel the lobby fills, which is
+   * the dialog's own heading rather than anything this can draw
+   */
+  onTitle?: (title: string | null) => void;
 }
 
 /**
@@ -64,6 +81,18 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   );
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
+
+  // The lair names the panel it is in. It is cleared on the way out so
+  // the list of lobbies gets its own name back
+  createEffect(() => {
+    const record = raid();
+
+    props.onTitle?.(record == null ? null : getRaidTitle(record));
+  });
+
+  onCleanup(() => {
+    props.onTitle?.(null);
+  });
 
   /**
    * Who is being looked for. A player is searched by the name the row
@@ -110,20 +139,30 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     <>
       <Show when={raid()} fallback={<Note>Loading raid…</Note>}>
         {(record) => (
-          <Card>
-            {/* A lobby is named after the place, not the pokemon:
-                the lair is what a player travels to, and what is at
-                home in it follows from that */}
-            <div class="flex flex-wrap items-center gap-2">
-              <h3 class="grow">{getRaidTitle(record())}</h3>
+          <div class="flex flex-col gap-3">
+            {/* What is waiting in there, pacing. The lair's name is the
+                panel's own heading, so the picture says the one thing
+                the name cannot */}
+            <div class="flex flex-col items-center gap-1 text-center">
+              <SpriteDisplay
+                species={record().species}
+                animation="Idle"
+                direction="down"
+                scale={4}
+                label={`${getSpeciesData(record().species).name}, waiting in the lair`}
+              />
+              <span class="font-medium">{getSpeciesData(record().species).name}</span>
               <Badge tone={isHost() ? 'leaf' : 'neutral'}>
                 {isHost() ? 'You are hosting' : 'Waiting for the host'}
               </Badge>
             </div>
+
             {/* The relic that opened it is already spent, so there is
                 no second attempt to fall back on */}
             <Show when={record().kind === RaidKind.Mythical}>
-              <Note>The relic is spent. Whatever this raid comes to, it comes to it once.</Note>
+              <Note class="text-center">
+                The relic is spent. Whatever this raid comes to, it comes to it once.
+              </Note>
             </Show>
 
             <Row>
@@ -140,31 +179,47 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                 />
               </Show>
             </Row>
+
+            {/* A lobby can hold thirty parties, so the list scrolls
+                rather than growing the panel. The player's own row is
+                stuck to the top of it: it is the one row they came to
+                look at, and it is the one that scrolls away first */}
             <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
               <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
-                <List>
-                  <For each={joined()}>
-                    {(team) => (
-                      <ListRow selected={team.player === props.user.uid}>
-                        <span class="grow">
-                          {team.player === props.user.uid ? 'You' : team.player}
-                        </span>
-                        <Badge>{team.catches.length} pokemon</Badge>
-                      </ListRow>
-                    )}
-                  </For>
-                </List>
+                <div class="max-h-56 overflow-y-auto">
+                  <List>
+                    <For each={joined()}>
+                      {(team) => (
+                        <ListRow
+                          selected={team.player === props.user.uid}
+                          class={
+                            team.player === props.user.uid ? 'sticky top-0 z-10 bg-leaf-soft' : ''
+                          }
+                        >
+                          <span class="grow">
+                            {team.player === props.user.uid ? 'You' : team.player}
+                          </span>
+                          <Badge>{team.catches.length} pokemon</Badge>
+                        </ListRow>
+                      )}
+                    </For>
+                  </List>
+                </div>
               </Show>
             </Show>
 
             <Show when={canJoin() === false}>
-              <Note>You need a pokemon of your own to fight — you can only watch this one.</Note>
+              <Note class="text-center">
+                You need a pokemon of your own to fight — you can only watch this one.
+              </Note>
             </Show>
 
-            <Row>
+            <Status message={status()} />
+
+            {/* Bring a party, start the fight, or walk out of it */}
+            <DialogActions center>
               <Show when={canJoin() !== false}>
                 <Button
-                  tone="primary"
                   onClick={() => {
                     setPicking(true);
                   }}
@@ -183,11 +238,9 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                   Start
                 </Button>
               </Show>
-              <Button onClick={back}>Go back</Button>
-            </Row>
-
-            <Status message={status()} />
-          </Card>
+              <Button onClick={back}>Cancel</Button>
+            </DialogActions>
+          </div>
         )}
       </Show>
 

@@ -8,13 +8,12 @@ import {
   watchBattle,
 } from '../auth/battles';
 import { useAuth } from '../auth/context';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid } from '../auth/raids';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../auth/raids';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../overworld/raid';
-import type Alliance from '../battle/alliance';
 import { createRocketBattle } from '../overworld/rocket';
 import BattleCanvas from './BattleCanvas';
-import BattleField from './BattleField';
-import { Badge, Button, Dialog, DialogActions, Note, Row, Status } from './styled';
+import BattleParty from './BattleParty';
+import { Badge, Button, Dialog, DialogActions, Note, Status } from './styled';
 import { type ActiveBattle, GameDialog, useGame } from './game-context';
 
 /**
@@ -129,23 +128,49 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   /**
-   * What the fight is called: a raid names itself, a stop names the
-   * grunt standing in the way
+   * What the fight is called: a raid is named for the lair it is being
+   * fought in, and a stop names the grunt standing in the way.
+   *
+   * The lair is read once rather than followed. The name of a place
+   * does not change while somebody is fighting in it, and the raid
+   * record is cleared the moment the boss goes down — a subscription
+   * would watch its own prize delete the title out from under it
    */
-  const title = (): string => (props.active.rocket == null ? 'Raid Battle' : 'Team Rocket');
+  const [lair, setLair] = createSignal<string | null>(null);
 
-  /**
-   * What to call a side. A raid has a boss to name; a trainer fight
-   * has an opponent, which is whichever side is not the player's
-   */
-  const sideOf = (built: RaidBattle, alliance: Alliance): string => {
-    if (alliance.boss) {
-      return 'Boss';
+  createEffect(() => {
+    const raidId = props.active.raid;
+
+    if (raidId == null) {
+      return;
     }
-    if (props.active.rocket != null && alliance !== built.alliances.get(PLAYER_ALLIANCE)) {
+
+    let cancelled = false;
+
+    getRaid(raidId)
+      .then((staged) => {
+        if (!cancelled && staged != null) {
+          setLair(getRaidTitle(staged));
+        }
+      })
+      .catch(() => {
+        // The fight is the same fight unnamed: it falls back to what
+        // kind of battle it is
+      });
+
+    onCleanup(() => {
+      cancelled = true;
+    });
+  });
+
+  const title = (): string => {
+    if (props.active.rocket != null) {
       return 'Team Rocket';
     }
-    return 'Party';
+
+    const named = lair();
+
+    return named == null ? 'Raid Battle' : `Raid Battle: ${named}`;
   };
 
   /**
@@ -176,7 +201,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       case 'draw':
         return {
           title: 'A draw',
-          said: 'The battle ground to a halt with nobody able to act.',
+          said: 'Both sides went down together.',
         };
       default:
         return null;
@@ -186,6 +211,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const leave = (): void => {
     instance()?.battle.end();
     setInstance(null);
+    // The lobby is let go of as well as the battle.
+    //
+    // This is what made Leave look broken: the lobby watches its own
+    // record and opens the battle the moment that record names one, so
+    // a player still standing in a started lobby was put straight back
+    // into the fight they had just left. Nothing was wrong with the
+    // button — it worked, and the raids panel undid it before the page
+    // had finished redrawing
+    game.setRaid(null);
     game.setBattle(null);
   };
 
@@ -261,36 +295,83 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   });
 
   return (
-    <section class="flex flex-col gap-4">
-      <div class="flex flex-wrap items-center gap-2">
-        <h1 class="grow">{props.active.replay ? 'Replay' : title()}</h1>
-        <Show when={props.active.replay}>
-          <Badge>A replay awards nothing — the result already stands</Badge>
+    <section class="relative h-full w-full overflow-hidden">
+      {/* The field is the page. Everything else floats over it, the
+          way the overworld carries its caption and its bar rather than
+          giving up a strip of map to them */}
+      {/* Every pixel of it, with nothing between the field and the
+          edge of the screen — not even the two of padding that used to
+          leave a hairline of page showing all the way round */}
+      <div class="absolute inset-0">
+        <Show
+          when={instance()}
+          fallback={
+            <div class="flex h-full w-full items-center justify-center">
+              <Note>Building the battle…</Note>
+            </div>
+          }
+        >
+          {(built) => <BattleCanvas battle={built().battle} player={auth.user()?.uid ?? ''} />}
         </Show>
       </div>
 
-      <Show when={instance()} fallback={<Note>Building the battle…</Note>}>
+      {/* What the fight is, in the corner it is least in the way */}
+      <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
+        <span
+          class="rounded-full border border-line bg-paper/95 px-3 py-1 text-sm font-medium
+          shadow-lg shadow-ink/20 backdrop-blur-sm"
+        >
+          {props.active.replay ? 'Replay' : title()}
+        </span>
+        <Show when={props.active.replay}>
+          <Badge>Awards nothing</Badge>
+        </Show>
+      </div>
+
+      {/* And the way out, in the other one */}
+      <div class="absolute top-3 right-3">
+        <Button tone="primary" onClick={finish}>
+          Leave
+        </Button>
+      </div>
+
+      {/* The player's own pokemon, stuck along the bottom over the
+          field rather than under it: what each of them has left, and
+          which of their moves are off cooldown */}
+      <Show when={instance()}>
         {(built) => (
           <>
-            {/* The field at a glance — who is up, what is coming —
-                over the readout that says the rest of it */}
-            <BattleCanvas battle={built().battle} player={auth.user()?.uid ?? ''} />
-            <BattleField battle={built().battle} label={(alliance) => sideOf(built(), alliance)} />
+            {/* And in a fight between two trainers, the other side's
+                at the top, on their end of the field. A raid gets none
+                of this: the boss is one pokemon drawn twice the size
+                of everything else and needs no card, and a lobby of
+                strangers' parties is a wall of them */}
+            <Show when={props.active.rocket != null}>
+              <div class="pointer-events-none absolute inset-x-0 top-14 flex justify-center px-3">
+                <div class="pointer-events-auto max-w-full overflow-x-auto">
+                  <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} theirs />
+                </div>
+              </div>
+            </Show>
+
+            <div class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3">
+              <div class="pointer-events-auto max-w-full overflow-x-auto">
+                <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} />
+              </div>
+            </div>
           </>
         )}
       </Show>
 
-      {/* The result stays on the page once the dialog has been
-          dismissed, so a player who closed it can still see how it
-          went while looking over the field */}
-      <Show when={verdict()}>{(said) => <p role="status">{said().said}</p>}</Show>
-      <Status message={status()} />
-
-      <Row>
-        <Button tone="primary" onClick={finish}>
-          {props.active.replay ? 'Exit replay' : 'Leave battle'}
-        </Button>
-      </Row>
+      {/* Anything that went wrong writing the result down. It is not
+          the verdict — that has a dialog of its own — so it sits out
+          of the way at the top rather than under the field */}
+      <div
+        class="pointer-events-none absolute inset-x-0 bottom-40 flex justify-center px-3
+        text-center"
+      >
+        <Status message={status()} />
+      </div>
 
       {/* A fight that has been won or lost says so rather than leaving
           a line of text under a field that is no longer moving. It

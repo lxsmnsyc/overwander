@@ -1,4 +1,5 @@
-import type { JSX, ParentProps } from 'solid-js';
+import { type JSX, type ParentProps, createEffect, onCleanup } from 'solid-js';
+import { Portal, isServer } from 'solid-js/web';
 import {
   DialogOverlay,
   DialogPanel,
@@ -36,6 +37,50 @@ const WIDTHS: Record<DialogWidth, string> = {
 const PANEL =
   'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
   ' border border-line bg-paper p-4 text-left shadow-2xl shadow-ink/25 sm:p-5';
+
+/**
+ * The panel's own padding, undone and put back on a child.
+ *
+ * A bar stuck to the top or the bottom of a scrolling panel has to
+ * reach the edges of it, or the content slides through the strip of
+ * padding beside it; and it has to carry that padding itself, or it
+ * sits flush against the border. Pulling the margin out and paying it
+ * back as padding does both, and leaves the element where it was
+ */
+const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
+
+/**
+ * The heading, held at the top while the rest of the dialog scrolls
+ * under it. The catch sheet is several screens long, and its name and
+ * the menu of things that can be done to the pokemon are what a player
+ * scrolls back up for
+ */
+const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-paper pt-4 sm:-mt-5 sm:pt-5 ${BLEED}`;
+
+/**
+ * And the buttons, held at the bottom for the same reason: the way out
+ * of a long dialog should not be somewhere a player has to travel to
+ */
+const STUCK_BOTTOM = `sticky bottom-0 z-20 -mb-4 bg-paper pb-4 sm:-mb-5 sm:pb-5 ${BLEED}`;
+
+/**
+ * Where the dialogs are drawn: a container of their own, standing
+ * beside the app root rather than inside it.
+ *
+ * A dialog rendered where it was written is a fixed-position panel
+ * inside whatever the page had built around it, and it inherits every
+ * accident of that — a stacking context from a transform, a clip from
+ * an `overflow-hidden`, a `z-index` race with the floating bar. Drawn
+ * into a container that is a sibling of the app, a dialog is over
+ * everything by construction, and the order they appear in that
+ * container is the order they were opened in
+ */
+function portalHost(): HTMLElement | undefined {
+  if (isServer) {
+    return undefined;
+  }
+  return document.getElementById('portals') ?? undefined;
+}
 
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
@@ -97,38 +142,90 @@ export interface DialogProps extends ParentProps {
  * opens with what it is and what it is for; the rest is the caller's
  */
 export function Dialog(props: DialogProps): JSX.Element {
+  let panel: HTMLDivElement | undefined;
+
+  /**
+   * Escape closes it, wherever the keyboard happens to be.
+   *
+   * Terracotta closes on Escape only while the focus is inside the
+   * panel, and the focus does not stay there: the page behind redraws
+   * — a chunk window arriving, a record re-read — and whatever had it
+   * loses it to the document body. From there Escape reached nothing,
+   * and a dialog a player had opened could only be closed by finding
+   * its button.
+   *
+   * Only the topmost dialog answers. A catch sheet opened over the
+   * profile is what the key means, and closing the profile out from
+   * under it would take the sheet with it
+   */
+  createEffect(() => {
+    if (!props.isOpen) {
+      return;
+    }
+
+    const onKey = (event: KeyboardEvent): void => {
+      const dialogs = [...document.querySelectorAll('[tc-dialog]')];
+
+      if (
+        event.key !== 'Escape' ||
+        event.defaultPrevented ||
+        panel == null ||
+        dialogs.at(-1)?.contains(panel) !== true
+      ) {
+        return;
+      }
+      event.preventDefault();
+      props.onClose();
+    };
+
+    document.addEventListener('keydown', onKey);
+    onCleanup(() => {
+      document.removeEventListener('keydown', onKey);
+    });
+  });
+
   return (
-    <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
-      <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
-      <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
-        <div class="flex flex-col gap-3">
-          <header
-            class={
-              props.quiet === true
-                ? 'sr-only'
-                : 'flex flex-col gap-1 border-b border-line-soft pb-2'
-            }
-          >
-            {/* A heading rather than bold text: it is what a screen
-                reader announces the dialog by. It sits in the middle
-                of the panel, and anything standing beside it is pinned
-                to the edge rather than allowed to push it off centre */}
-            <div class="relative flex min-h-8 items-center justify-center">
-              <HeadlessDialogTitle class="text-center text-lg font-semibold">
-                {props.title}
-              </HeadlessDialogTitle>
-              {props.aside == null ? null : <div class="absolute right-0">{props.aside}</div>}
-            </div>
-            <HeadlessDialogDescription
-              class={props.terse === true ? 'sr-only' : 'text-center text-sm text-muted'}
+    <Portal mount={portalHost()}>
+      <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
+        <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
+        <DialogPanel
+          // Assigned rather than handed over: a bare `ref` reads as a
+          // variable nothing ever writes to
+          ref={(element: HTMLDivElement) => {
+            panel = element;
+          }}
+          class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}
+        >
+          <div class="flex flex-col gap-3">
+            <header
+              class={
+                props.quiet === true
+                  ? 'sr-only'
+                  : `flex flex-col gap-1 border-b border-line-soft pb-2 ${STUCK_TOP}`
+              }
             >
-              {props.description}
-            </HeadlessDialogDescription>
-          </header>
-          {props.children}
-        </div>
-      </DialogPanel>
-    </HeadlessDialog>
+              {/* A heading rather than bold text: it is what a screen
+                  reader announces the dialog by. It sits in the middle
+                  of the panel, and anything standing beside it is
+                  pinned to the edge rather than allowed to push it off
+                  centre */}
+              <div class="relative flex min-h-8 items-center justify-center">
+                <HeadlessDialogTitle class="text-center text-lg font-semibold">
+                  {props.title}
+                </HeadlessDialogTitle>
+                {props.aside == null ? null : <div class="absolute right-0">{props.aside}</div>}
+              </div>
+              <HeadlessDialogDescription
+                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-muted'}
+              >
+                {props.description}
+              </HeadlessDialogDescription>
+            </header>
+            {props.children}
+          </div>
+        </DialogPanel>
+      </HeadlessDialog>
+    </Portal>
   );
 }
 
@@ -154,7 +251,7 @@ export function DialogSection(props: ParentProps & { title?: string }): JSX.Elem
 export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
   return (
     <div
-      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-3 ${
+      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-3 ${STUCK_BOTTOM} ${
         props.center === true ? 'justify-center' : 'justify-end'
       }`}
     >

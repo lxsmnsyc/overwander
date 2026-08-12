@@ -11,6 +11,12 @@ import { useGame } from './game-context';
 
 export interface RaidsTabProps {
   user: User;
+  /**
+   * What the panel should be called: the lair, while the player is
+   * standing in a lobby, and nothing while they are looking at the
+   * list of them
+   */
+  onTitle?: (title: string | null) => void;
 }
 
 /**
@@ -78,7 +84,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
           </Show>
         }
       >
-        {(id) => <RaidLobby user={props.user} raidId={id()} />}
+        {(id) => <RaidLobby user={props.user} raidId={id()} onTitle={props.onTitle} />}
       </Show>
     </Panel>
   );

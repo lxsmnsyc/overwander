@@ -45,9 +45,11 @@ function hatchProgress(caught: CaughtPokemon): number {
 }
 
 /**
- * A catch as a square of the box
+ * A catch as a square of the box. It is exported because every screen
+ * that shows a collection shows the same squares — the player's own
+ * box, and the picker a party is chosen from
  */
-function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
+export function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
   return {
     id,
     species: caught.species,

@@ -5,6 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
+import { RESIDUAL_TICK } from './__create';
 
 interface SeedingData {
   progress: number;
@@ -18,7 +19,7 @@ export default function setupSeedingStatus(battle: Battle): void {
     for (const [unit, data] of instances.entries()) {
       data.progress += event.duration;
 
-      if (data.progress >= 1000) {
+      if (data.progress >= RESIDUAL_TICK) {
         data.progress = 0;
 
         unit.triggerStatus(Statuses.Seeding, data.cause);

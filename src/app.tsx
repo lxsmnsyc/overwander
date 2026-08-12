@@ -26,6 +26,9 @@ export default function App(): JSX.Element {
                   Poketerra
                 </a>
                 <span class="grow" />
+                <a href="/demo/raid" class="text-sm">
+                  Raid demo
+                </a>
                 <a href="/login" class="text-sm">
                   Sign in
                 </a>

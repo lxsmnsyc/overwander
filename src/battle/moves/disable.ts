@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -53,19 +53,39 @@ export default function setupDisable(battle: Battle): void {
     }
   });
 
+  /**
+   * What Disable would take away from the target: the move being used
+   * right now, otherwise the last one used. Undefined when there is
+   * nothing to take — the target has used nothing, no longer knows
+   * what it used, or is already carrying a disabled move
+   */
+  function getDisabledMove(target: Unit): Moves | undefined {
+    if (instances.has(target)) {
+      return undefined;
+    }
+
+    const move = target.casting?.move ?? target.channeling?.move ?? lastUsed.get(target);
+
+    return move != null && target.moves[move] != null ? move : undefined;
+  }
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Disable) {
+      event.usable =
+        event.target.type === MoveTargetType.Unit &&
+        getDisabledMove(event.target.unit) !== undefined;
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move !== Moves.Disable || event.target.type !== MoveTargetType.Unit) {
       return;
     }
 
     const target = event.target.unit;
+    const move = getDisabledMove(target);
 
-    // The move being used right now, otherwise the last one used
-    const move = target.casting?.move ?? target.channeling?.move ?? lastUsed.get(target);
-
-    // Fails when neither suffices, when the target no longer knows
-    // the move, or when a move is already disabled
-    if (move == null || target.moves[move] == null || instances.has(target)) {
+    if (move === undefined) {
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
       return;
     }

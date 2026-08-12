@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import type Battle from '../../src/battle/core';
 import type Unit from '../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
@@ -21,6 +22,29 @@ const NONE_CAUSE = { type: EffectType.None } as const;
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
+}
+
+/**
+ * Time in frames rather than one leap. A phase that ends part-way
+ * through a tick hands the whole of that tick's elapsed time to the
+ * phase it opens, so a single 1800ms jump would run a cast and the
+ * step after it at once — which is exactly what these tests are trying
+ * to tell apart
+ */
+function advance(battle: Battle, duration: number): void {
+  const frame = 1000 / 60;
+
+  for (let elapsed = 0; elapsed < duration; elapsed += frame) {
+    battle.tick(frame);
+  }
+}
+
+/**
+ * Whether the unit is in the hiding half of a two-step move — down a
+ * hole, in the air, or gone
+ */
+function attackerIsHidden(unit: Unit): boolean {
+  return unit.status[Statuses.Invulnerable] != null;
 }
 
 describe('damage mechanics', () => {
@@ -439,6 +463,100 @@ describe('casting flow', () => {
     const quickAttack = attacker.checkMoveCastTime(Moves.QuickAttack, target);
 
     expect(quickAttack).toBeLessThan(tackle);
+  });
+
+  it('a cast that lands puts its move on cooldown', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.addMove(Moves.Tackle);
+
+    attacker.cast(Moves.Tackle, unitTarget(defender));
+    advance(battle, 1800);
+
+    // 180 seconds' worth of uses divided by Tackle's 35 PP
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 35) * 1000);
+    expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
+  });
+
+  it('a cast whose target faints stops, and pays no cooldown for it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const bystander = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.addMove(Moves.Tackle);
+
+    attacker.cast(Moves.Tackle, unitTarget(defender));
+    advance(battle, 500);
+    expect(attacker.casting).toBeDefined();
+
+    bystander.damage(NONE_CAUSE, defender, 9999, 0);
+
+    // The wind-up is thrown away rather than landing on a corpse, and
+    // a move that was never used is a move still ready to use
+    expect(attacker.casting).toBeUndefined();
+    expect(attacker.moves[Moves.Tackle]?.cooldown).toBeUndefined();
+  });
+
+  it('channels the remaining steps of a multi-step move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.addMove(Moves.Dig);
+
+    attacker.cast(Moves.Dig, unitTarget(defender));
+
+    // The cast ends with the first step: underground, and out of
+    // reach of anything that does not dig after it
+    advance(battle, 1800);
+
+    expect(attacker.casting).toBeUndefined();
+    expect(attacker.channeling).toBeDefined();
+    expect(attacker.status[Statuses.Invulnerable]).toBeDefined();
+    expect(defender.health).toBe(160);
+
+    // A channelled step runs as long as the wind-up that opened it
+    advance(battle, 1800);
+
+    expect(attacker.channeling).toBeUndefined();
+    expect(attacker.status[Statuses.Invulnerable]).toBeUndefined();
+    expect(defender.health).toBeLessThan(160);
+  });
+
+  it('a teleporting unit comes back', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const unit = createUnit(battle, teamA);
+    // Somebody to come in, which is what a self switch-out needs
+    createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    unit.addMove(Moves.Teleport);
+
+    let switches = 0;
+
+    battle.on(BattleEvents.UnitSwitch, EventPriority.Post, () => {
+      switches++;
+    });
+
+    unit.cast(Moves.Teleport, { type: MoveTargetType.None });
+
+    // Teleport is priority -6, so both its wind-up and its one
+    // channelled step run 200 frames (~3333ms)
+    advance(battle, 3400);
+
+    expect(attackerIsHidden(unit)).toBe(true);
+
+    advance(battle, 3400);
+
+    // Vanishing and never reappearing is the failure this guards: the
+    // step that brings the user back is a channelled one, so a channel
+    // that never starts leaves it invulnerable for the rest of the
+    // fight
+    expect(attackerIsHidden(unit)).toBe(false);
+    expect(switches).toBe(1);
   });
 
   it('interruption stops the cast without resolving the move', () => {

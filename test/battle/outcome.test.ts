@@ -47,25 +47,45 @@ describe('outcome mechanics', () => {
     expect(battle.winner).toBe(allianceA);
   });
 
-  it('waits for a cast already under way', () => {
-    const { battle, allianceA, teamA, teamB } = createSettledBattle();
+  it('waits for a cast already under way while both sides stand', () => {
+    const { battle, teamA, teamB } = createSettledBattle();
     const caster = createUnit(battle, teamA);
-    const victim = createUnit(battle, teamB);
+    const waiting = createUnit(battle, teamB);
 
-    victim.faint(caster);
-    // Mid-cast: an action the battle is still owed, however it
-    // resolves, so the scan holds off even with one side wiped
+    // Neither holds a move, so nothing but the cast can happen — and
+    // the cast may yet decide it, so the scan holds off
     caster.casting = {
       move: Moves.Tackle,
-      target: { type: MoveTargetType.Unit, unit: victim },
+      target: { type: MoveTargetType.Unit, unit: waiting },
       time: { progress: 0, duration: 1000 },
     };
 
     battle.tick(16);
     expect(battle.settled).toBe(false);
 
-    // The cast resolves and the scan settles on the next tick
+    // It resolves, and the stalemate underneath it settles
     caster.casting = undefined;
+    battle.tick(16);
+    expect(battle.settled).toBe(true);
+  });
+
+  it('settles a decided field without waiting for the wind-up', () => {
+    const { battle, allianceA, teamA, teamB } = createSettledBattle();
+    const winner = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    victim.faint(winner);
+    winner.casting = {
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.Unit, unit: victim },
+      time: { progress: 0, duration: 1000 },
+    };
+
+    // One side left standing is a decided fight whatever the survivor
+    // is winding up. Waiting for the field to fall quiet is waiting
+    // for something that may never come: a survivor with a move that
+    // reaches its own side can buff an empty field for ever, and a
+    // lobby of them is never all idle on the same tick
     battle.tick(16);
     expect(battle.settled).toBe(true);
     expect(battle.winner).toBe(allianceA);

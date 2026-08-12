@@ -38,6 +38,15 @@ export default function setupCounter(battle: Battle): void {
     lastPhysicalHit.delete(event.source);
   });
 
+  // Counter returns a hit, so there has to be one to return, and
+  // somebody still standing to return it to. The AI asks the same
+  // record the trigger below reads
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Counter) {
+      event.usable = lastPhysicalHit.get(event.source)?.attacker.alive === true;
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     if (event.move !== Moves.Counter) {
       return;

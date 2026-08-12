@@ -365,7 +365,7 @@ export default class Unit {
       target,
       steps,
     };
-    this.battle.emit(BattleEvents.CheckUnitCanCast, event);
+    this.battle.emit(BattleEvents.CheckUnitCanChannel, event);
     return event.success;
   }
 
@@ -383,7 +383,7 @@ export default class Unit {
   }
 
   updateChannel(data: Partial<ChannelingData>): void {
-    if (this.casting) {
+    if (this.channeling) {
       this.battle.emit(BattleEvents.UnitUpdateChannel, {
         id: 'UnitUpdateChannel',
         disabled: false,
@@ -886,7 +886,7 @@ export default class Unit {
 
   leave(): void {
     this.battle.emit(BattleEvents.UnitLeavesField, {
-      id: 'UnitEntersField',
+      id: 'UnitLeavesField',
       disabled: false,
       source: this,
     });

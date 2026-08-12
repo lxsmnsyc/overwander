@@ -5,6 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
+import { RESIDUAL_TICK } from './__create';
 
 interface PoisonedData {
   progress: number;
@@ -14,13 +15,11 @@ interface PoisonedData {
 export function setupPoisonedStatus(battle: Battle): void {
   const instances = new Map<Unit, PoisonedData>();
 
-  const POISONED_TICK = 1000;
-
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress += event.duration;
 
-      if (data.progress >= POISONED_TICK) {
+      if (data.progress >= RESIDUAL_TICK) {
         data.progress = 0;
 
         unit.triggerStatus(Statuses.Poisoned, data.cause);
@@ -83,13 +82,11 @@ interface BadlyPoisonedData {
 export function setupBadlyPoisonedStatus(battle: Battle): void {
   const instances = new Map<Unit, BadlyPoisonedData>();
 
-  const BADLY_POISONED_TICK = 1000;
-
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress += event.duration;
 
-      if (data.progress >= BADLY_POISONED_TICK) {
+      if (data.progress >= RESIDUAL_TICK) {
         data.progress = 0;
 
         unit.triggerStatus(Statuses.BadlyPoisoned, data.cause);

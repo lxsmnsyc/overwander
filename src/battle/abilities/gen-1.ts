@@ -18,6 +18,7 @@ import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
+import { RISKY_PENALTY } from '../ai/choose-move';
 import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import {
@@ -27,11 +28,12 @@ import {
   MoveTargetType,
   type UnitAttackEvent,
 } from '../events';
+import { ABSORB_MOVES } from '../moves/absorb';
 import { CRASH_MOVES } from '../moves/crash';
 import { OHKO_MOVES } from '../moves/fixed-damage';
 import { RECOIL_MOVES } from '../moves/recoil';
 import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
-import { hasAttackEffect } from '../moves/status';
+import { STATUS_MOVES, hasAttackEffect } from '../moves/status';
 import { transformUnit } from '../moves/transform';
 import { PROTECTED_ABILITIES } from './special';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
@@ -50,6 +52,7 @@ import {
   MergedAbilityLifecycle,
   createAbility,
   createBlazeAbility,
+  createContactHazard,
   createDrizzleAbility,
   createHydrationAbility,
   createKeenEyeAbility,
@@ -490,25 +493,30 @@ const setupAbilities = [
   createAbility(Abilities.Static, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      if (
-        event.success &&
-        !(event.flags & DamageFlags.Indirect) &&
-        event.cause.type === EffectType.Move &&
-        event.cause.unit !== event.target &&
-        event.target.hasAbility(Abilities.Static) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        battle.random() < CHANCE
-      ) {
-        event.target.triggerAbility(Abilities.Static);
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.Static) &&
+          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          battle.random() < CHANCE
+        ) {
+          event.target.triggerAbility(Abilities.Static);
 
-        event.cause.unit.addStatus(Statuses.Paralyzed, {
-          type: EffectType.Ability,
-          ability: Abilities.Static,
-          unit: event.target,
-        });
-      }
-    });
+          event.cause.unit.addStatus(Statuses.Paralyzed, {
+            type: EffectType.Ability,
+            ability: Abilities.Static,
+            unit: event.target,
+          });
+        }
+      }),
+      // Touching it costs something, so the AI is told before it
+      // decides to
+      createContactHazard(battle, Abilities.Static),
+    ]);
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Lightning_Rod_(Ability)
@@ -622,25 +630,30 @@ const setupAbilities = [
   createAbility(Abilities.PoisonPoint, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      if (
-        event.success &&
-        !(event.flags & DamageFlags.Indirect) &&
-        event.cause.type === EffectType.Move &&
-        event.cause.unit !== event.target &&
-        event.target.hasAbility(Abilities.PoisonPoint) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        battle.random() < CHANCE
-      ) {
-        event.target.triggerAbility(Abilities.PoisonPoint);
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.PoisonPoint) &&
+          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          battle.random() < CHANCE
+        ) {
+          event.target.triggerAbility(Abilities.PoisonPoint);
 
-        event.cause.unit.addStatus(Statuses.Poisoned, {
-          type: EffectType.Ability,
-          ability: Abilities.PoisonPoint,
-          unit: event.target,
-        });
-      }
-    });
+          event.cause.unit.addStatus(Statuses.Poisoned, {
+            type: EffectType.Ability,
+            ability: Abilities.PoisonPoint,
+            unit: event.target,
+          });
+        }
+      }),
+      // Touching it costs something, so the AI is told before it
+      // decides to
+      createContactHazard(battle, Abilities.PoisonPoint),
+    ]);
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Rivalry_(Ability)
@@ -691,45 +704,78 @@ const setupAbilities = [
   createAbility(Abilities.CuteCharm, (battle) => {
     const CHANCE = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      if (
-        event.success &&
-        !(event.flags & DamageFlags.Indirect) &&
-        event.cause.type === EffectType.Move &&
-        event.cause.unit !== event.target &&
-        event.target.hasAbility(Abilities.CuteCharm) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        battle.random() < CHANCE
-      ) {
-        event.target.triggerAbility(Abilities.CuteCharm);
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.CuteCharm) &&
+          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          battle.random() < CHANCE
+        ) {
+          event.target.triggerAbility(Abilities.CuteCharm);
 
-        // The gender matchup is enforced by the status immunity
-        event.cause.unit.addStatus(Statuses.Infatuated, {
-          type: EffectType.Ability,
-          ability: Abilities.CuteCharm,
-          unit: event.target,
-        });
-      }
-    });
+          // The gender matchup is enforced by the status immunity
+          event.cause.unit.addStatus(Statuses.Infatuated, {
+            type: EffectType.Ability,
+            ability: Abilities.CuteCharm,
+            unit: event.target,
+          });
+        }
+      }),
+      // Touching it costs something, so the AI is told before it
+      // decides to
+      createContactHazard(battle, Abilities.CuteCharm),
+    ]);
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
-  createAbility(Abilities.MagicGuard, (battle) =>
-    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
-      // Only direct attack damage can hurt the holder — and what the
-      // holder spends on purpose, which is not damage done to it: a
-      // Substitute's price and an Explosion's own life are paid
-      // whoever pays them
-      if (
-        event.success &&
-        event.flags & DamageFlags.Indirect &&
-        !(event.flags & DamageFlags.Cost) &&
-        event.target.hasAbility(Abilities.MagicGuard)
-      ) {
-        event.success = false;
-      }
-    }),
-  ),
+  createAbility(Abilities.MagicGuard, (battle) => {
+    /**
+     * What a move would be spent on for nothing: statuses whose whole
+     * point is the health they take. A burn is not among them — the
+     * chip is refused but the halved Attack is not, and that is what
+     * a burn is mostly for
+     */
+    const POINTLESS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+        // Only direct attack damage can hurt the holder — and what the
+        // holder spends on purpose, which is not damage done to it: a
+        // Substitute's price and an Explosion's own life are paid
+        // whoever pays them
+        if (
+          event.success &&
+          event.flags & DamageFlags.Indirect &&
+          !(event.flags & DamageFlags.Cost) &&
+          event.target.hasAbility(Abilities.MagicGuard)
+        ) {
+          event.success = false;
+        }
+      }),
+      // A poison that will never take a point of health is a cast
+      // spent on nothing, so the AI is refused it outright — the
+      // holder is not immune to the status, it is immune to the only
+      // thing the status does
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        const status = STATUS_MOVES[event.move];
+
+        // Explicit null check: the first Statuses enum member is 0
+        if (
+          event.usable &&
+          status != null &&
+          POINTLESS.has(status) &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit.hasAbility(Abilities.MagicGuard)
+        ) {
+          event.usable = false;
+        }
+      }),
+    ]);
+  }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Friend_Guard_(Ability)
   createAbility(Abilities.FriendGuard, (battle) =>
@@ -987,41 +1033,46 @@ const setupAbilities = [
     const PARALYSIS = 0.19;
     const SLEEP = 0.3;
 
-    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      if (
-        event.success &&
-        !(event.flags & DamageFlags.Indirect) &&
-        event.cause.type === EffectType.Move &&
-        event.cause.unit !== event.target &&
-        event.target.hasAbility(Abilities.EffectSpore) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        // Grass types and Overcoat holders are immune to spores
-        // (modern mechanics; explicit check)
-        !event.cause.unit.types.has(Types.Grass) &&
-        !event.cause.unit.hasAbility(Abilities.Overcoat)
-      ) {
-        const roll = battle.random();
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.EffectSpore) &&
+          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          // Grass types and Overcoat holders are immune to spores
+          // (modern mechanics; explicit check)
+          !event.cause.unit.types.has(Types.Grass) &&
+          !event.cause.unit.hasAbility(Abilities.Overcoat)
+        ) {
+          const roll = battle.random();
 
-        let status: Statuses | undefined;
-        if (roll < POISON) {
-          status = Statuses.Poisoned;
-        } else if (roll < PARALYSIS) {
-          status = Statuses.Paralyzed;
-        } else if (roll < SLEEP) {
-          status = Statuses.Sleeping;
+          let status: Statuses | undefined;
+          if (roll < POISON) {
+            status = Statuses.Poisoned;
+          } else if (roll < PARALYSIS) {
+            status = Statuses.Paralyzed;
+          } else if (roll < SLEEP) {
+            status = Statuses.Sleeping;
+          }
+
+          if (status != null) {
+            event.target.triggerAbility(Abilities.EffectSpore);
+
+            event.cause.unit.addStatus(status, {
+              type: EffectType.Ability,
+              ability: Abilities.EffectSpore,
+              unit: event.target,
+            });
+          }
         }
-
-        if (status != null) {
-          event.target.triggerAbility(Abilities.EffectSpore);
-
-          event.cause.unit.addStatus(status, {
-            type: EffectType.Ability,
-            ability: Abilities.EffectSpore,
-            unit: event.target,
-          });
-        }
-      }
-    });
+      }),
+      // Touching it costs something, so the AI is told before it
+      // decides to
+      createContactHazard(battle, Abilities.EffectSpore),
+    ]);
   }),
 
   // Paras
@@ -1119,6 +1170,17 @@ const setupAbilities = [
           for (const holder of holders) {
             holder.triggerAbility(Abilities.Damp);
           }
+        }
+      }),
+      // The same answer, given to the AI before it picks. It cannot
+      // ask the cast check itself — infatuation answers that one with
+      // a coin toss, and a speculative flip would pull every replay
+      // off its seed — so a veto that lives there says so here too.
+      // Otherwise the holder's opponent picks an Explosion it will
+      // never be allowed to cast, every tick, for ever
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+        if (event.usable && holders.size > 0 && SELF_DESTRUCT_MOVES.has(event.move)) {
+          event.usable = false;
         }
       }),
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
@@ -1423,24 +1485,53 @@ const setupAbilities = [
     // The effect targets the inflicting unit, which the trigger event
     // cannot carry, so it stays inline. Two Synchronize holders never
     // ping-pong: the reflected status is non-refreshable on re-add
-    return battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
-      const cause = event.cause;
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+        const cause = event.cause;
 
-      if (
-        SYNC_STATUS.has(event.status) &&
-        event.source.hasAbility(Abilities.Synchronize) &&
-        cause.type !== EffectType.None &&
-        cause.unit !== event.source
-      ) {
-        event.source.triggerAbility(Abilities.Synchronize);
+        if (
+          SYNC_STATUS.has(event.status) &&
+          event.source.hasAbility(Abilities.Synchronize) &&
+          cause.type !== EffectType.None &&
+          cause.unit !== event.source
+        ) {
+          event.source.triggerAbility(Abilities.Synchronize);
 
-        cause.unit.addStatus(event.status, {
+          cause.unit.addStatus(event.status, {
+            type: EffectType.Ability,
+            ability: Abilities.Synchronize,
+            unit: event.source,
+          });
+        }
+      }),
+      // Giving one of these to a holder is giving it to yourself, so
+      // the AI is warned before it does. Not warned when it would
+      // shrug the reflection off — an immune user pays nothing, and
+      // the status still lands on the holder
+      battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+        const status = STATUS_MOVES[event.move];
+
+        // Explicit null check: the first Statuses enum member is 0
+        if (
+          status == null ||
+          !SYNC_STATUS.has(status) ||
+          event.target.type !== MoveTargetType.Unit ||
+          !event.target.unit.hasAbility(Abilities.Synchronize)
+        ) {
+          return;
+        }
+
+        const reflected = {
           type: EffectType.Ability,
           ability: Abilities.Synchronize,
-          unit: event.source,
-        });
-      }
-    });
+          unit: event.target.unit,
+        } as const;
+
+        if (!event.source.checkStatusImmunity(status, reflected)) {
+          event.score -= RISKY_PENALTY;
+        }
+      }),
+    ]);
   }),
 
   // Machop
@@ -1532,17 +1623,33 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Liquid_Ooze_(Ability)
-  createAbility(Abilities.LiquidOoze, (battle) =>
-    // Drains from the holder backfire; only fired on real drains,
-    // so the cue is safe here
-    battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
-      if (event.value > 0 && event.target.hasAbility(Abilities.LiquidOoze)) {
-        event.value = -event.value;
+  createAbility(
+    Abilities.LiquidOoze,
+    (battle) =>
+      new MergedAbilityLifecycle([
+        // Drains from the holder backfire; only fired on real drains,
+        // so the cue is safe here
+        battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
+          if (event.value > 0 && event.target.hasAbility(Abilities.LiquidOoze)) {
+            event.value = -event.value;
 
-        // For visual cues
-        event.target.triggerAbility(Abilities.LiquidOoze);
-      }
-    }),
+            // For visual cues
+            event.target.triggerAbility(Abilities.LiquidOoze);
+          }
+        }),
+        // A drain into it is a drain the other way round. The move
+        // still lands, so this is a warning rather than a refusal —
+        // but a pokemon with anything else to throw should throw it
+        battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+          if (
+            event.target.type === MoveTargetType.Unit &&
+            ABSORB_MOVES.has(event.move) &&
+            event.target.unit.hasAbility(Abilities.LiquidOoze)
+          ) {
+            event.score -= RISKY_PENALTY;
+          }
+        }),
+      ]),
   ),
 
   // Geodude
@@ -1598,25 +1705,30 @@ const setupAbilities = [
 
     // The effect targets the attacker, which the trigger event
     // cannot carry, so it stays inline
-    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      if (
-        event.success &&
-        !(event.flags & DamageFlags.Indirect) &&
-        event.cause.type === EffectType.Move &&
-        event.cause.unit !== event.target &&
-        event.target.hasAbility(Abilities.FlameBody) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
-        battle.random() < CHANCE
-      ) {
-        event.target.triggerAbility(Abilities.FlameBody);
+    return new MergedAbilityLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & DamageFlags.Indirect) &&
+          event.cause.type === EffectType.Move &&
+          event.cause.unit !== event.target &&
+          event.target.hasAbility(Abilities.FlameBody) &&
+          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          battle.random() < CHANCE
+        ) {
+          event.target.triggerAbility(Abilities.FlameBody);
 
-        event.cause.unit.addStatus(Statuses.Burned, {
-          type: EffectType.Ability,
-          ability: Abilities.FlameBody,
-          unit: event.target,
-        });
-      }
-    });
+          event.cause.unit.addStatus(Statuses.Burned, {
+            type: EffectType.Ability,
+            ability: Abilities.FlameBody,
+            unit: event.target,
+          });
+        }
+      }),
+      // Touching it costs something, so the AI is told before it
+      // decides to
+      createContactHazard(battle, Abilities.FlameBody),
+    ]);
   }),
 
   // Slowpoke
@@ -2656,6 +2768,36 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+        pop(event);
+      }),
+      // The AI's speculative windows: what it asks about a move it is
+      // considering has to be answered the way the move will actually
+      // resolve, or the holder refuses a Ground move against a
+      // Levitator it could hit and underrates every hit it would take
+      // through Filter. Same brackets, same nesting, no second copy of
+      // what this ability ignores
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Prepare, (event) => {
+        if (
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.source.hasAbility(Abilities.MoldBreaker)
+        ) {
+          push(event, event.target.unit);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Cleanup, (event) => {
+        pop(event);
+      }),
+      battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Prepare, (event) => {
+        if (
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.source.hasAbility(Abilities.MoldBreaker)
+        ) {
+          push(event, event.target.unit);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Cleanup, (event) => {
         pop(event);
       }),
       // Damage bracket: suspend the suppression for the application

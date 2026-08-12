@@ -88,13 +88,14 @@ export default function setupOutcomeMechanics(battle: Battle): void {
       }
     }
 
-    if (pending) {
-      return;
-    }
-
-    // With more than one side standing the fight can still go on, so
-    // long as somebody has a move to make against someone else
+    // With more than one side standing the fight can still go on: an
+    // action already owed to it may yet change who is standing, and so
+    // may anybody with a move left to make
     if (standing.size > 1) {
+      if (pending) {
+        return;
+      }
+
       for (const alliance of standing) {
         for (const team of alliance.teams) {
           for (const unit of team.units) {
@@ -105,6 +106,13 @@ export default function setupOutcomeMechanics(battle: Battle): void {
         }
       }
     }
+
+    // One side standing — or none — is a decided fight, whatever
+    // anybody is still winding up. Waiting for the field to fall quiet
+    // instead is waiting for something that may never happen: a
+    // survivor with a move that reaches its own side can buff an empty
+    // field for ever, and a lobby of them is never all idle on the
+    // same tick
 
     battle.settled = true;
     battle.winner = resolveWinner(battle, standing);

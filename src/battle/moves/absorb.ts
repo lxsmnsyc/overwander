@@ -2,9 +2,15 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
+import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
-const ABSORB_MOVES = new Set<Moves>([
+/**
+ * The moves that take health back from what they hit. Exported so an
+ * ability that turns a drain against its user (Liquid Ooze) can say
+ * which moves it is talking about without keeping its own list
+ */
+export const ABSORB_MOVES = new Set<Moves>([
   Moves.Absorb,
   Moves.MegaDrain,
   Moves.LeechLife,
@@ -13,14 +19,26 @@ const ABSORB_MOVES = new Set<Moves>([
 
 const HEALING_FACTOR = 0.5;
 
+/**
+ * Dream Eater eats a dream, so there has to be one: it does nothing at
+ * all to a target that is awake
+ */
+function isDreamEaterUsable(target: MoveTarget): boolean {
+  return target.type === MoveTargetType.Unit && target.unit.status[Statuses.Sleeping] != null;
+}
+
 export default function setupAbsorb(battle: Battle): void {
+  // The AI is told the same thing the trigger below enforces, so it
+  // never picks Dream Eater against somebody who is awake
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.DreamEater && !isDreamEaterUsable(event.target)) {
+      event.usable = false;
+    }
+  });
+
   // Dream Eater only works on sleeping targets
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
-    if (
-      event.move === Moves.DreamEater &&
-      event.target.type === MoveTargetType.Unit &&
-      event.target.unit.status[Statuses.Sleeping] == null
-    ) {
+    if (event.move === Moves.DreamEater && !isDreamEaterUsable(event.target)) {
       event.disabled = true;
 
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);

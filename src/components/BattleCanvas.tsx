@@ -2,6 +2,7 @@ import { type JSX, onCleanup, onMount } from 'solid-js';
 import type Battle from '../battle/core';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import type { SpriteDirection } from '../canvas/species-sprite-animation';
+import facingToward from '../canvas/facing';
 import loadSpeciesSprite from '../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
@@ -38,6 +39,12 @@ const HEIGHT = 360;
 const ROW_TOP = 96;
 const ROW_BOTTOM = HEIGHT - 96;
 const RADIUS = 24;
+/**
+ * How small a crowded row is allowed to draw its pokemon. Below this
+ * a sprite is a smudge, so a row with more on it than will fit lets
+ * them overlap rather than shrinking to nothing
+ */
+const MIN_RADIUS = 12;
 /**
  * The boss is drawn large, since it is one thing against a party and
  * the size is what says so
@@ -123,22 +130,40 @@ interface Flight {
 const STALE_TICKS = 8;
 
 /**
- * Which units are drawn, and on which side.
+ * The field as it is to be drawn.
  *
  * A raid is watched from behind one's own party: the other players'
- * teams are left out entirely — a six-player raid would otherwise be
- * thirty-odd circles, most of them nobody's business — and the boss
- * stands alone at the top. A battle with no boss is drawn as two
- * sides, the viewer's below and everyone else's above
+ * teams are left out entirely — a ten-player raid would otherwise be
+ * sixty pokemon, most of them nobody's business — and the boss stands
+ * alone at the top. A battle with no boss is drawn as two sides, the
+ * viewer's below and everyone else's above.
+ *
+ * A **spectator** of a raid has no party to stand behind, and no
+ * reason to leave anybody out: they are shown the whole lobby, drawn
+ * as what it is rather than as a line — see `ringLayout`
  */
-function readSides(battle: Battle, player: string): { mine: Unit[]; theirs: Unit[] } {
+interface Field {
+  /**
+   * Set only when the viewer is watching a raid they are not in: the
+   * boss, and every party facing it, kept apart so each can be drawn
+   * as a party rather than as thirty units in a row
+   */
+  lobby: { boss: Unit[]; teams: Unit[][] } | null;
+  mine: Unit[];
+  theirs: Unit[];
+}
+
+function readField(battle: Battle, player: string): Field {
   const boss: Unit[] = [];
   const owned: Unit[] = [];
   const others: Unit[] = [];
+  const teams: Unit[][] = [];
   let staged = false;
 
   for (const alliance of battle.alliances) {
     for (const team of alliance.teams) {
+      const fielded: Unit[] = [];
+
       for (const unit of team.units) {
         if (alliance.boss) {
           staged = true;
@@ -147,22 +172,35 @@ function readSides(battle: Battle, player: string): { mine: Unit[]; theirs: Unit
           owned.push(unit);
         } else {
           others.push(unit);
+          fielded.push(unit);
         }
+      }
+      if (fielded.length > 0) {
+        teams.push(fielded);
       }
     }
   }
 
   if (staged) {
-    // A raid: the viewer's own party, and the thing it is fighting.
-    // Somebody watching a raid they are not in has no party of their
-    // own, so they are shown the side that is fighting
-    return { mine: owned.length > 0 ? owned : others, theirs: boss };
+    // Somebody watching a raid they are not in owns nothing on the
+    // field, which is exactly when the whole lobby is worth drawing
+    if (owned.length === 0) {
+      return { lobby: { boss, teams }, mine: others, theirs: boss };
+    }
+    return { lobby: null, mine: owned, theirs: boss };
   }
-  return owned.length > 0 ? { mine: owned, theirs: others } : { mine: others, theirs: [] };
+  return owned.length > 0
+    ? { lobby: null, mine: owned, theirs: others }
+    : { lobby: null, mine: others, theirs: [] };
 }
 
 /**
- * Spread a side evenly across its row
+ * Spread a side evenly across its row.
+ *
+ * The asked-for radius is what a slot gets when the row has room for
+ * it. A crowded row — a full raid lobby is thirty pokemon on one side
+ * — shrinks its slots to the gap between them instead, so a big fight
+ * reads as a crowd rather than as a pile
  */
 function layout(
   units: Unit[],
@@ -173,16 +211,105 @@ function layout(
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
 ): Slot[] {
   const step = WIDTH / (units.length + 1);
+  const fitted = Math.max(MIN_RADIUS, Math.min(radius, step / 2));
 
   return units.map((unit, at) => ({
     unit,
     x: step * (at + 1),
     y,
-    radius,
+    radius: fitted,
     color,
     facing,
     sprite: spriteFor(unit),
   }));
+}
+
+const TAU = Math.PI * 2;
+
+/**
+ * The ellipse the parties stand on, measured from the middle of the
+ * field. Wider than it is tall because the field is: a circle of teams
+ * on a 16:9 board would leave the sides empty and run off the top
+ */
+const LOBBY_RX = 240;
+const LOBBY_RY = 108;
+
+/**
+ * How far a party's own members stand from the middle of their party,
+ * and how much that ring is flattened. The squash is the same reason
+ * the lobby ellipse is one: height is what the field is short of
+ */
+const TEAM_RADIUS = 27;
+const TEAM_SQUASH = 0.7;
+
+/**
+ * How big a pokemon is drawn in a lobby. Smaller than a row slot,
+ * since there are eight parties of them and the point is that the
+ * shape of the lobby reads at a glance
+ */
+const LOBBY_RADIUS = 14;
+
+/**
+ * A raid as it is: the boss in the middle, the parties around it, each
+ * party a ring of its own, everybody looking inward.
+ *
+ * This is what a spectator is shown, and it says two things a pair of
+ * rows cannot. **Who came with whom** — a party is a cluster rather
+ * than a stretch of a line somebody has to count along — and **what
+ * the fight is**, which is one thing in the middle with a lobby closed
+ * around it. Facing carries the rest: every pokemon is turned toward
+ * the boss, so the field points at what it is all about
+ */
+function ringLayout(
+  lobby: { boss: Unit[]; teams: Unit[][] },
+  spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
+): Slot[] {
+  const centerX = WIDTH / 2;
+  const centerY = HEIGHT / 2;
+  const slots: Slot[] = [];
+
+  // Normally one. Two would be a raid nothing stages yet, so they
+  // stand side by side rather than on top of one another
+  lobby.boss.forEach((unit, at) => {
+    slots.push({
+      unit,
+      x: centerX + (at - (lobby.boss.length - 1) / 2) * BOSS_RADIUS * 2,
+      y: centerY,
+      radius: BOSS_RADIUS,
+      color: COLORS.boss,
+      // The one thing on the field with nothing to look at: it is
+      // being looked at, so it faces the viewer
+      facing: 'down',
+      sprite: spriteFor(unit),
+    });
+  });
+
+  lobby.teams.forEach((units, at) => {
+    // The first party at the top, the rest round to the right
+    const around = (at / lobby.teams.length) * TAU - TAU / 4;
+    const teamX = centerX + Math.cos(around) * LOBBY_RX;
+    const teamY = centerY + Math.sin(around) * LOBBY_RY;
+    // A party of one stands at its own middle rather than orbiting it
+    const spread = units.length > 1 ? TEAM_RADIUS : 0;
+
+    units.forEach((unit, member) => {
+      const spin = (member / units.length) * TAU - TAU / 4;
+      const x = teamX + Math.cos(spin) * spread;
+      const y = teamY + Math.sin(spin) * spread * TEAM_SQUASH;
+
+      slots.push({
+        unit,
+        x,
+        y,
+        radius: LOBBY_RADIUS,
+        color: COLORS.mine,
+        facing: facingToward(x, y, centerX, centerY),
+        sprite: spriteFor(unit),
+      });
+    });
+  });
+
+  return slots;
 }
 
 /**
@@ -266,11 +393,12 @@ function drawBar(
   y: number,
   share: number,
   color: string,
+  width = BAR_WIDTH,
 ): void {
   context.fillStyle = COLORS.track;
-  context.fillRect(x - BAR_WIDTH / 2, y, BAR_WIDTH, BAR_HEIGHT);
+  context.fillRect(x - width / 2, y, width, BAR_HEIGHT);
   context.fillStyle = color;
-  context.fillRect(x - BAR_WIDTH / 2, y, BAR_WIDTH * Math.max(0, Math.min(1, share)), BAR_HEIGHT);
+  context.fillRect(x - width / 2, y, width * Math.max(0, Math.min(1, share)), BAR_HEIGHT);
 }
 
 function drawLabel(
@@ -327,28 +455,49 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
     context.fill();
   }
 
+  // A bar no wider than the pokemon has room for. A crowded field —
+  // a lobby, or a row with more on it than fits — is one where every
+  // bar at full width would be read as somebody else's
+  const bar = Math.min(BAR_WIDTH, slot.radius * 3);
+  // And a slot too small to hold its own name does not print one:
+  // forty-eight overlapping names say less than none, and the field
+  // readout underneath names every one of them anyway
+  const named = slot.radius >= RADIUS;
+
   context.font = '12px sans-serif';
-  drawLabel(
-    context,
-    `${getSpeciesData(unit.species).name} · Lv. ${unit.level}`,
-    slot.x,
-    slot.y + slot.radius + 16,
-    COLORS.text,
-  );
-  drawBar(context, slot.x, slot.y + slot.radius + 22, share, healthColor(share));
+
+  if (named) {
+    drawLabel(
+      context,
+      `${getSpeciesData(unit.species).name} · Lv. ${unit.level}`,
+      slot.x,
+      slot.y + slot.radius + 16,
+      COLORS.text,
+    );
+  }
+  drawBar(context, slot.x, slot.y + slot.radius + (named ? 22 : 8), share, healthColor(share), bar);
 
   // What it is in the middle of, named above its head: a cast the
   // other side can still interrupt, or a channel already landing
   const busy = unit.casting ?? unit.channeling;
 
   if (busy != null && unit.alive) {
-    drawLabel(context, getMoveData(busy.move).name, slot.x, slot.y - slot.radius - 10, COLORS.text);
+    if (named) {
+      drawLabel(
+        context,
+        getMoveData(busy.move).name,
+        slot.x,
+        slot.y - slot.radius - 10,
+        COLORS.text,
+      );
+    }
     drawBar(
       context,
       slot.x,
       slot.y - slot.radius - 6,
       busy.time.duration <= 0 ? 1 : busy.time.progress / busy.time.duration,
       unit.casting == null ? COLORS.channel : COLORS.cast,
+      bar,
     );
   }
   context.globalAlpha = 1;
@@ -440,21 +589,26 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     context.scale(ratio, ratio);
 
     const draw = (): void => {
-      const { mine, theirs } = readSides(props.battle, props.player);
+      const field = readField(props.battle, props.player);
       const bossSide = [...props.battle.alliances].some((alliance) => alliance.boss);
-      const slots = [
+
+      const rows = (): Slot[] => [
         // The far side looks down the field at the near one, and the
         // near one looks back up at it
         ...layout(
-          theirs,
+          field.theirs,
           ROW_TOP,
           bossSide ? BOSS_RADIUS : RADIUS,
           bossSide ? COLORS.boss : COLORS.theirs,
           'down',
           spriteFor,
         ),
-        ...layout(mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor),
+        ...layout(field.mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor),
       ];
+
+      // Watching a raid from outside it: the whole lobby, drawn around
+      // the thing it came for. Anything else is two sides facing off
+      const slots = field.lobby == null ? rows() : ringLayout(field.lobby, spriteFor);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 
       context.fillStyle = COLORS.field;

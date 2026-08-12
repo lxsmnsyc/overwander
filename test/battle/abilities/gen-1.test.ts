@@ -1978,6 +1978,37 @@ describe('Boss', () => {
     expect(boss.status[Statuses.Sleeping]).toBeDefined();
   });
 
+  it('cannot be infatuated', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const charmer = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    // Infatuation only takes hold between opposite genders, so the
+    // three of them are given one — otherwise a boss that shrugged
+    // nothing off would still come out unaffected and the test would
+    // pass for the wrong reason
+    boss.setGender(Genders.Male);
+    plain.setGender(Genders.Male);
+    charmer.setGender(Genders.Female);
+
+    const smitten = {
+      type: EffectType.Ability,
+      ability: Abilities.CuteCharm,
+      unit: charmer,
+    } as const;
+
+    plain.addStatus(Statuses.Infatuated, smitten);
+    boss.addStatus(Statuses.Infatuated, smitten);
+
+    // A lobby is up to ten parties, so somebody always has the gender
+    // the boss would fall for: an Attract that landed would turn the
+    // raid into a queue of who brought the right pokemon
+    expect(plain.status[Statuses.Infatuated]).toBeDefined();
+    expect(boss.status[Statuses.Infatuated]).toBeUndefined();
+  });
+
   it('cannot have its moves disabled', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
@@ -2040,7 +2071,7 @@ describe('Boss', () => {
     expect(boss.health).toBe(160); // no recoil (stored health unchanged)
   });
 
-  it('lies dormant for five seconds on its first entry only', () => {
+  it('lies dormant for ten seconds on its first entry only', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
     boss.addAbility(Abilities.Boss);
@@ -2052,6 +2083,11 @@ describe('Boss', () => {
 
     expect(boss.status[Statuses.Dormant]).toBeDefined();
     expect(boss.checkCanCast(Moves.Tackle, target)).toBe(false);
+
+    // Still warming up halfway through
+    battle.tick(5000);
+
+    expect(boss.status[Statuses.Dormant]).toBeDefined();
 
     battle.tick(5000);
 

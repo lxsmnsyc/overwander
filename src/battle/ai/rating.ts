@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { MoveTargetPriorities } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -96,7 +96,7 @@ export function setupRatingAI(battle: Battle): void {
    * threatening enemy scores higher, so the AI concentrates fire on
    * the biggest current threat instead of spreading it arbitrarily.
    */
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (event.target.type !== MoveTargetType.Unit) {
       return;
     }

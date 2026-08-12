@@ -4,8 +4,10 @@ import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import createTimedStatus from './__create';
 
-// The warm-up period of a freshly fielded Boss
-const DURATION = 5000;
+// The warm-up period of a freshly fielded Boss: long enough for a
+// lobby to open on it, buff up and land the first hits before it
+// starts casting back
+const DURATION = 10000;
 
 const setupTimer = createTimedStatus(Statuses.Dormant, DURATION);
 

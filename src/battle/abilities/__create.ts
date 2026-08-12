@@ -1,10 +1,14 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import type { EventListenerLifecycle } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
-import { StatFlags } from '../../data/ids/moves';
+import { MoveFlags, StatFlags } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import { type Statuses, Weathers } from '../../data/ids/status';
+import { RISKY_PENALTY } from '../ai/choose-move';
 import type Battle from '../core';
+import type { CheckUnitAIMoveScoreEvent } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';
@@ -74,6 +78,37 @@ export function createAbility(ability: Abilities, setup: (battle: Battle) => Abi
       disableAbility(event.ability, event.source);
     });
   };
+}
+
+/**
+ * The AI half of an ability that punishes whoever touches its holder
+ * — Static, Flame Body, Poison Point, Effect Spore, Cute Charm.
+ *
+ * It is only the *warning*: what the ability actually does to the
+ * attacker stays where it is written, since each of the five does
+ * something different with a different chance. This is the one thing
+ * they share, and it is a thing the AI cannot work out for itself —
+ * the effect fires on a damage event that the speculative pass never
+ * emits, so without being told, a pokemon punches a Static Pikachu
+ * exactly as readily as it punches anything else.
+ *
+ * A warning rather than a refusal: the move still lands, so it loses
+ * to an equally good one that costs nothing and beats standing about
+ */
+export function createContactHazard(
+  battle: Battle,
+  targetAbility: Abilities,
+): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+  return battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (
+      event.target.type === MoveTargetType.Unit &&
+      event.target.unit !== event.source &&
+      getMoveData(event.move).flags & MoveFlags.Contact &&
+      event.target.unit.hasAbility(targetAbility)
+    ) {
+      event.score -= RISKY_PENALTY;
+    }
+  });
 }
 
 /**

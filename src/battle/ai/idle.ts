@@ -14,18 +14,34 @@ import { chooseMove } from './choose-move';
  *
  * Instead of scanning the whole field every tick, the loop keeps a
  * tracking set of idle units, maintained by the lifecycle events that
- * change a unit's ability to act.
+ * change a unit's ability to act. A set is only worth keeping if it
+ * cannot go stale, so the two rules it is built on are:
+ *
+ * - **bookkeeping opens before the thing it tracks, and closes before
+ *   anything that could veto the close.** A move with no delay ends
+ *   inside the very event that started it, so a listener that opened
+ *   the pending trigger at Post would run after the close and leave
+ *   the unit pending forever — standing still for the rest of the
+ *   fight. Both halves therefore run at `Pre`.
+ * - **pending triggers are counted, not flagged.** One move can put
+ *   several in the air at once — Mirror Move casts a copy from inside
+ *   the trigger it is finishing — and a flag cleared by the first to
+ *   land would free the unit while the rest are still coming.
  */
 export default function setupIdleAI(battle: Battle): void {
-  const pendingTrigger = new Set<Unit>();
+  const pendingTrigger = new Map<Unit, number>();
   const idle = new Set<Unit>();
+
+  function isPending(unit: Unit): boolean {
+    return (pendingTrigger.get(unit) ?? 0) > 0;
+  }
 
   function isIdle(unit: Unit): boolean {
     return (
       unit.alive &&
       !unit.casting &&
       !unit.channeling &&
-      !pendingTrigger.has(unit) &&
+      !isPending(unit) &&
       !hasAnyStatus(unit, MOVE_LOCKING_STATUS)
     );
   }
@@ -48,8 +64,9 @@ export default function setupIdleAI(battle: Battle): void {
     idle.delete(event.source);
   });
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
-    pendingTrigger.add(event.source);
+  // Pre, and counted: see the note above the loop
+  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Pre, (event) => {
+    pendingTrigger.set(event.source, (pendingTrigger.get(event.source) ?? 0) + 1);
     idle.delete(event.source);
   });
 
@@ -87,8 +104,14 @@ export default function setupIdleAI(battle: Battle): void {
     refresh(event.source);
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Post, (event) => {
-    pendingTrigger.delete(event.source);
+  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Pre, (event) => {
+    const pending = (pendingTrigger.get(event.source) ?? 0) - 1;
+
+    if (pending > 0) {
+      pendingTrigger.set(event.source, pending);
+    } else {
+      pendingTrigger.delete(event.source);
+    }
     refresh(event.source);
   });
 
@@ -103,7 +126,18 @@ export default function setupIdleAI(battle: Battle): void {
   });
 
   battle.on(BattleEvents.Tick, EventPriority.Post, () => {
-    for (const unit of idle) {
+    // A copy, because casting mutates the set the loop is walking —
+    // and a unit that leaves it and comes back within the same tick
+    // would otherwise be visited twice
+    for (const unit of [...idle]) {
+      // The set is a cache of the check, so the check has the last
+      // word: a unit that stopped being idle earlier in this very tick
+      // does not get to act on the strength of a stale entry
+      if (!isIdle(unit)) {
+        idle.delete(unit);
+        continue;
+      }
+
       const choice = chooseMove(battle, unit);
 
       if (choice) {

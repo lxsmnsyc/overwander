@@ -56,6 +56,19 @@ export function meetsEvolutionCriteria(
 }
 
 /**
+ * Whether the species has nothing left to become.
+ *
+ * It is asked of the species rather than of a catch, so it says
+ * nothing about whether *this* pokemon could evolve today — a
+ * Charmander is not fully evolved whatever its level or the bag it is
+ * carrying. It is what "still growing" means to an Eviolite, and what
+ * a demo means by wanting a field of finished pokemon
+ */
+export function isFullyEvolved(species: Species): boolean {
+  return (getSpeciesData(species).evolvesInto ?? []).length === 0;
+}
+
+/**
  * Every evolution the species can take right now, in data order
  */
 export function getAvailableEvolutions(

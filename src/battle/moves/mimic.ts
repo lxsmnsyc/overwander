@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -14,6 +14,17 @@ export default function setupMimic(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
     if (!BANNED_MOVES.has(event.move)) {
       lastCast.set(event.source, event.move);
+    }
+  });
+
+  // Mimic copies the target's last move, so it needs one to copy that
+  // the user does not already know
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Mimic) {
+      const copied =
+        event.target.type === MoveTargetType.Unit ? lastCast.get(event.target.unit) : undefined;
+
+      event.usable = copied != null && event.source.moves[copied] == null;
     }
   });
 

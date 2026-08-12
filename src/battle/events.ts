@@ -202,6 +202,14 @@ export const enum BattleEvents {
    * verdict rather than a race to disable the event first
    */
   CheckUnitCanDamage = 132,
+  /**
+   * Whether a move the AI is considering would actually do something
+   * against a given target. It is asked before the move is scored, so
+   * a move whose prerequisite is unmet (Dream Eater on somebody awake,
+   * Counter with nothing to return) is never picked at all rather than
+   * picked and then failed on trigger
+   */
+  CheckUnitAIMoveUsable = 133,
 }
 
 export const enum MoveTargetType {
@@ -657,6 +665,25 @@ export interface CheckUnitAIMoveScoreEvent extends UnitMoveEvent {
   score: number;
 }
 
+/**
+ * The speculative form of a move use: would this move, against this
+ * target, do anything at all?
+ *
+ * Every effect that can refuse a move on trigger — an immunity, an
+ * unmet prerequisite, a target already carrying what the move would
+ * apply — answers here too, next to the refusal itself, so the two
+ * cannot drift apart. Nothing here may change the battle: it is a
+ * question asked of a move that has not been used
+ */
+export interface CheckUnitAIMoveUsableEvent extends UnitMoveEvent {
+  target: MoveTarget;
+  /**
+   * Whether the move would do something. Opens true; a listener
+   * answering false takes the move out of the running entirely
+   */
+  usable: boolean;
+}
+
 export interface AIMoveChoice {
   move: Moves;
   target: MoveTarget;
@@ -843,7 +870,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.RemoveAlliance]: [AllianceEvent, EventPriority];
 
   // AI events
-  [BattleEvents.CheckUnitAIMoveScore]: [CheckUnitAIMoveScoreEvent, EventPriority];
+  [BattleEvents.CheckUnitAIMoveScore]: [CheckUnitAIMoveScoreEvent, AttackPriority];
+  [BattleEvents.CheckUnitAIMoveUsable]: [CheckUnitAIMoveUsableEvent, AttackPriority];
   [BattleEvents.UnitAIChooseMove]: [UnitAIChooseMoveEvent, EventPriority];
   [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];

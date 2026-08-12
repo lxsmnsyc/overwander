@@ -917,6 +917,21 @@ describe('Transform', () => {
     expect(ditto.moves[Moves.Ember]).toBeUndefined();
     expect(ditto.moves[Moves.Transform]).toBeDefined();
   });
+
+  it('leaves no empty slot behind in the move record', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ditto = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    ditto.addMove(Moves.Transform);
+    target.addMove(Moves.Ember);
+
+    ditto.triggerMoveEffect(Moves.Transform, unitTarget(target), 0);
+
+    // Anything that walks the record with Object.values — the AI, the
+    // field readout — reads a blanked slot as a move whose state is
+    // missing, and the readout crashes on it
+    expect(Object.values(ditto.moves).every((state) => state != null)).toBe(true);
+  });
 });
 
 describe('interaction fixes', () => {

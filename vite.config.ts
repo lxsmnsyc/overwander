@@ -24,4 +24,22 @@ export default defineConfig({
   // Tailwind reads its configuration out of src/app.css rather than a
   // config file of its own, so the plugin is all the wiring there is
   plugins: [tailwindcss(), solidStart(), ...(forTests ? [] : [nitro()])],
+  ssr: {
+    // `server-only` is a marker, not a library. SolidStart's
+    // `boundary-modules` plugin resolves it to an empty module on the
+    // server and refuses it on the client — which is the whole of how
+    // `src/server/*` is kept out of the browser bundle.
+    //
+    // It only gets to do that if Vite asks it. A bare import of a
+    // package that is really there is **externalized** for SSR before
+    // the plugin pipeline sees it, so Node ends up requiring the real
+    // `server-only`, whose entire body is a `throw`. Every route 500s
+    // with "This module cannot be imported from a Client Component
+    // module" and nothing in the stack names the importer, because
+    // there is no importer at fault: the boundary check never ran.
+    //
+    // Keeping it non-external puts the marker back in front of the
+    // plugin that understands it
+    noExternal: ['server-only'],
+  },
 });

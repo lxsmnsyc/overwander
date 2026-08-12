@@ -5,6 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
+import { RESIDUAL_TICK } from './__create';
 
 interface BurnedData {
   progress: number;
@@ -14,13 +15,11 @@ interface BurnedData {
 export default function setupBurnedStatus(battle: Battle): void {
   const instances = new Map<Unit, BurnedData>();
 
-  const BURNED_TICK = 1000;
-
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [unit, data] of instances.entries()) {
       data.progress += event.duration;
 
-      if (data.progress >= BURNED_TICK) {
+      if (data.progress >= RESIDUAL_TICK) {
         data.progress = 0;
 
         unit.triggerStatus(Statuses.Burned, data.cause);

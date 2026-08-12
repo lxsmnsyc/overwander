@@ -4,7 +4,7 @@ import { Items } from '../../data/ids/items';
 import { MoveCategories, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
-import { getSpeciesData } from '../../data/species';
+import { isFullyEvolved } from '../../data/species';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
@@ -177,7 +177,7 @@ export default function setupStatBoosters(battle: Battle): void {
     if (!holds(event.source, Items.Eviolite)) {
       return;
     }
-    if ((getSpeciesData(event.source.species).evolvesInto ?? []).length > 0) {
+    if (!isFullyEvolved(event.source.species)) {
       event.value *= STAT_BOOST_FACTOR;
     }
   });

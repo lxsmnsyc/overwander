@@ -14,7 +14,7 @@ import type Alliance from '../battle/alliance';
 import { createRocketBattle } from '../overworld/rocket';
 import BattleCanvas from './BattleCanvas';
 import BattleField from './BattleField';
-import { Badge, Button, Note, Row, Status } from './styled';
+import { Badge, Button, Dialog, DialogActions, Note, Row, Status } from './styled';
 import { type ActiveBattle, GameTab, useGame } from './game-context';
 
 /**
@@ -48,6 +48,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   // The units mutate in place, so the view re-reads them on a timer
   const [revision, setRevision] = createSignal(0);
   const [recorded, setRecorded] = createSignal(false);
+  // Whether the player has closed the verdict. Once, per battle: the
+  // view is rebuilt for the next one, so nothing has to reset it
+  const [dismissed, setDismissed] = createSignal(false);
 
   createEffect(() => {
     const loaded = record();
@@ -159,10 +162,42 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return 'The raid boss is down — it is waiting in the overworld.';
   };
 
+  /**
+   * What the end of the fight is called, and what it says. A replay
+   * settles nothing, so it only reports what happened; a fight that
+   * counted says where the prize went
+   */
+  const verdict = (): { title: string; said: string } | null => {
+    switch (outcome()) {
+      case 'won':
+        return { title: 'Victory', said: victory() };
+      case 'lost':
+        return { title: 'Defeat', said: 'The party fainted.' };
+      case 'draw':
+        return {
+          title: 'A draw',
+          said: 'The battle ground to a halt with nobody able to act.',
+        };
+      default:
+        return null;
+    }
+  };
+
   const leave = (): void => {
     instance()?.battle.end();
     setInstance(null);
     game.setBattle(null);
+  };
+
+  /**
+   * Leaving for good: a cleared raid sends the player back to where
+   * the legendary is standing
+   */
+  const finish = (): void => {
+    const collect = !props.active.replay && outcome() === 'won';
+
+    leave();
+    game.setTab(collect ? GameTab.Overworld : game.tab());
   };
 
   /**
@@ -245,32 +280,48 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         )}
       </Show>
 
-      <Show when={outcome() === 'won'}>
-        <p role="status">{victory()}</p>
-      </Show>
-      <Show when={outcome() === 'lost'}>
-        <p role="status">The party fainted.</p>
-      </Show>
-      <Show when={outcome() === 'draw'}>
-        <p role="status">The battle ground to a halt with nobody able to act.</p>
-      </Show>
+      {/* The result stays on the page once the dialog has been
+          dismissed, so a player who closed it can still see how it
+          went while looking over the field */}
+      <Show when={verdict()}>{(said) => <p role="status">{said().said}</p>}</Show>
       <Status message={status()} />
 
       <Row>
-        <Button
-          tone="primary"
-          onClick={() => {
-            const collect = !props.active.replay && outcome() === 'won';
-
-            leave();
-            // A cleared raid sends the player back to where the
-            // legendary is standing
-            game.setTab(collect ? GameTab.Overworld : game.tab());
-          }}
-        >
+        <Button tone="primary" onClick={finish}>
           {props.active.replay ? 'Exit replay' : 'Leave battle'}
         </Button>
       </Row>
+
+      {/* A fight that has been won or lost says so rather than leaving
+          a line of text under a field that is no longer moving. It
+          opens the moment the engine settles it, and closing it leaves
+          the player on the finished field rather than walking them out
+          — the prize is already recorded either way */}
+      <Show when={verdict()}>
+        {(said) => (
+          <Dialog
+            isOpen={!dismissed()}
+            onClose={() => {
+              setDismissed(true);
+            }}
+            title={said().title}
+            description={said().said}
+          >
+            <DialogActions>
+              <Button
+                onClick={() => {
+                  setDismissed(true);
+                }}
+              >
+                Stay and look
+              </Button>
+              <Button tone="primary" onClick={finish}>
+                {props.active.replay ? 'Exit replay' : 'Leave battle'}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
+      </Show>
     </section>
   );
 }

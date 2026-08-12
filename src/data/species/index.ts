@@ -24,6 +24,7 @@ export {
   SUPPORTED_METHODS,
   getAvailableEvolutions,
   getConsumedItem,
+  isFullyEvolved,
   meetsEvolutionCriteria,
 } from './evolution';
 export type { EvolutionContext } from './evolution';

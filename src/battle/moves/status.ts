@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
@@ -89,6 +89,31 @@ export function hasAttackEffect(move: Moves): boolean {
 }
 
 function setupUnitStatusMoves(battle: Battle): void {
+  // A status move against somebody who already carries the status, or
+  // who cannot take it at all, applies nothing: the AI is told so
+  // before it picks one rather than after it has spent the cast
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const status = STATUS_MOVES[event.move];
+
+    // Explicit null check: the first Statuses enum member is 0
+    if (!event.usable || status == null || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const target = event.target.unit;
+
+    if (
+      target.status[status] != null ||
+      target.checkStatusImmunity(status, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      })
+    ) {
+      event.usable = false;
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
     const targetStatus = STATUS_MOVES[event.move];
 

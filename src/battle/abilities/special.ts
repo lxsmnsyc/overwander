@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, MoveTargetFlags, Moves } from '../../data/ids/moves';
@@ -54,13 +54,21 @@ export const BANNED_BOSS_MOVES = new Set<Moves>([
 ]);
 
 /**
- * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest)
+ * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest).
+ *
+ * All of them take the fight away from the player rather than making
+ * it harder: a boss that cannot act is not a boss anybody fought.
+ * **Infatuation** is on the list for that reason and one more — a
+ * lobby is up to ten parties, so somebody always has the gender the
+ * boss would fall for, and an Attract landing would turn the raid into
+ * a queue of who brought the right pokemon
  */
 const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Trapped,
   Statuses.Flinched,
   Statuses.Frozen,
   Statuses.Sleeping,
+  Statuses.Infatuated,
 ]);
 
 function isSelfInflicted(cause: EffectCause, source: unknown): boolean {
@@ -200,6 +208,20 @@ const setupAbilities = [
 
           // For visual cues
           event.source.triggerAbility(Abilities.Boss);
+        }
+      }),
+      // Neither of the two above is worth casting at a boss, so the
+      // AI is told before it picks one: a forced switch-out fails
+      // outright, and a disabling never sticks
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        if (
+          event.usable &&
+          (FORCED_SWITCH_MOVES.has(event.move) || event.move === Moves.Disable) &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          event.target.unit.hasAbility(Abilities.Boss)
+        ) {
+          event.usable = false;
         }
       }),
       // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright

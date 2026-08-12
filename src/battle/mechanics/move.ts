@@ -72,7 +72,12 @@ export function setupMoveMechanics(battle: Battle): void {
     event.source.moves[event.move] = createMoveState(event.source, event.move);
   });
   battle.on(BattleEvents.UnitRemoveMove, EventPriority.Exact, (event) => {
-    event.source.moves[event.move] = undefined;
+    // Deleted rather than blanked: the record is walked with
+    // Object.values by both the AI and the field readout, and a slot
+    // that is present but empty reads as a move with no state at all.
+    // A forgotten move is not a move the unit knows nothing about, it
+    // is a move the unit does not have
+    delete event.source.moves[event.move];
   });
   battle.on(BattleEvents.UnitEnableMove, EventPriority.Exact, (event) => {
     const current = event.source.moves[event.move];
@@ -341,9 +346,13 @@ export function setupChannelingMechanics(battle: Battle): void {
       event.success =
         // Caster must be alive
         event.source.alive &&
-        // Caster must not be casting/channeling
-        !!(event.source.casting ?? event.source.channeling) &&
-        // Move must not be disabled
+        // The wind-up it continues is already over: a channel is
+        // started from finishCast or finishChannel, both of which
+        // clear the phase they end before opening the next one
+        !(event.source.casting ?? event.source.channeling) &&
+        // Move must not be disabled. Cooldown is deliberately not
+        // consulted: the cooldown of this very move started when the
+        // cast finished, and the channel is the rest of that same use
         !event.source.moves[event.move]?.disabled;
 
       // If the move target is a unit, make sure it is still alive
@@ -351,6 +360,17 @@ export function setupChannelingMechanics(battle: Battle): void {
         event.success = event.success && event.target.unit.alive;
       }
     }
+  });
+
+  /**
+   * A channelled step runs as long as the wind-up that opened it. It
+   * is the engine's stand-in for a turn, so a two-step move spends one
+   * hidden underground or gathering light, and a rampage swings again
+   * at the pace it swung the first time. Moves that want longer say so
+   * on top of it — Bide doubles it
+   */
+  battle.on(BattleEvents.CheckUnitMoveChannelTime, EventPriority.Exact, (event) => {
+    event.duration = getCastTime(event.source.checkMovePriority(event.move, event.target));
   });
 
   battle.on(BattleEvents.UnitChannel, EventPriority.Exact, (event) => {
@@ -421,14 +441,14 @@ export function setupChannelingMechanics(battle: Battle): void {
           isChannelingTargetUnit(unit, event.source) ||
           isChannelingTargetUnit(unit, event.target)
         ) {
-          unit.stopCast();
+          unit.stopChannel();
         }
       }
     } else {
-      // Otherwise, update the casting target
+      // Otherwise, update the channeling target
       for (const unit of queue) {
         if (isChannelingTargetUnit(unit, event.source)) {
-          unit.updateCast({
+          unit.updateChannel({
             target: {
               type: MoveTargetType.Unit,
               unit: event.target,
@@ -436,7 +456,7 @@ export function setupChannelingMechanics(battle: Battle): void {
           });
           // TODO should this swap targets?
         } else if (isChannelingTargetUnit(unit, event.target)) {
-          unit.updateCast({
+          unit.updateChannel({
             target: {
               type: MoveTargetType.Unit,
               unit: event.source,

@@ -223,6 +223,14 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
     unit.addStatus(status, { type: EffectType.None });
   }
 
+  // On the field at last, and said so — **after** everything above,
+  // which is the whole reason it is here rather than beside
+  // `addUnit`. Entering is what puts a unit in the AI's idle set and
+  // what fires the abilities that read the field on arrival, and both
+  // want a finished pokemon: a unit announced before its health was
+  // set is not alive yet, so it is never counted idle and never acts
+  unit.enter();
+
   return unit;
 }
 

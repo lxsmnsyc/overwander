@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -21,6 +21,15 @@ export default function setupMirrorMove(battle: Battle): void {
 
   battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
     lastMove.delete(event.source);
+  });
+
+  // Nothing to mirror is nothing to do: the AI is refused Mirror Move
+  // against a target that has not used one yet
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.MirrorMove) {
+      event.usable =
+        event.target.type === MoveTargetType.Unit && lastMove.get(event.target.unit) != null;
+    }
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {

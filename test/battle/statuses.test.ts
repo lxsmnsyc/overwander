@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import { RESIDUAL_TICK } from '../../src/battle/status/__create';
 import type Unit from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
@@ -30,11 +31,15 @@ describe('Poisoned', () => {
 
     victim.addStatus(Statuses.Poisoned, moveCause(attacker));
 
+    // It bites every two seconds, so a second of it costs nothing yet
+    battle.tick(1000);
+    expect(victim.health).toBe(160);
+
     battle.tick(1000);
     expect(victim.health).toBe(140);
 
     victim.cure(NONE_CAUSE);
-    battle.tick(1000);
+    battle.tick(2000);
     expect(victim.health).toBe(140);
   });
 
@@ -65,10 +70,14 @@ describe('Badly Poisoned', () => {
 
     victim.addStatus(Statuses.BadlyPoisoned, moveCause(attacker, Moves.Toxic));
 
+    // Every two seconds, like every other status that chips away
+    battle.tick(1000);
+    expect(victim.health).toBe(160);
+
     battle.tick(1000);
     expect(victim.health).toBe(150); // 1/16
 
-    battle.tick(1000);
+    battle.tick(RESIDUAL_TICK);
     expect(victim.health).toBe(130); // + 2/16
   });
 });
@@ -94,6 +103,9 @@ describe('Burned', () => {
 
     const attackerBefore = attacker.health;
     battle.tick(1000);
+    expect(attacker.health).toBe(attackerBefore);
+
+    battle.tick(1000);
     expect(attackerBefore - attacker.health).toBe(10); // 160 / 16
   });
 });
@@ -106,6 +118,11 @@ describe('Leech Seed', () => {
     seeder.setHealth(100);
 
     victim.addStatus(Statuses.Seeding, moveCause(seeder, Moves.LeechSeed));
+
+    battle.tick(1000);
+
+    expect(victim.health).toBe(160);
+    expect(seeder.health).toBe(100);
 
     battle.tick(1000);
 

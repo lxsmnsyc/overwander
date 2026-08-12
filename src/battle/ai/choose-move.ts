@@ -1,5 +1,6 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { MoveAttackFlags, MoveCategories, MoveTargetFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -7,7 +8,7 @@ import {
   type AIMoveChoice,
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
-  EffectType,
+  type CheckUnitAIMoveUsableEvent,
   type MoveTarget,
   MoveTargetType,
   type UnitAIChooseMoveEvent,
@@ -31,8 +32,21 @@ const BASE_SCORE = 100;
 /**
  * The gen 4 "useless move" penalty: enough to lose against any
  * neutral option, so the move is only picked when everything is bad.
+ *
+ * Exported because an effect that makes a move pointless says so
+ * itself, next to the effect — the AI does not keep a list of what
+ * everything else does
  */
-const USELESS_PENALTY = 10;
+export const USELESS_PENALTY = 10;
+
+/**
+ * What a move costs to use when using it hands something back: a
+ * drain into Liquid Ooze, a status into Synchronize, a punch into
+ * Static. Smaller than the useless penalty on purpose — the move
+ * still does its job, so it loses to an equally good one that is free
+ * and beats doing nothing at all
+ */
+export const RISKY_PENALTY = 3;
 
 /**
  * Raid battles favor setting up: enough to outbid any non-KO damage
@@ -101,6 +115,24 @@ export function setupChooseMoveAI(battle: Battle): void {
     return event.value;
   }
 
+  /**
+   * Whether the move would do anything against this target. A move
+   * that answers no is not scored at all, so the AI never spends a
+   * cast on something that resolves to "but it failed!"
+   */
+  function isMoveUsable(source: Unit, move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitAIMoveUsableEvent = {
+      id: 'CheckUnitAIMoveUsable',
+      disabled: false,
+      source,
+      move,
+      target,
+      usable: true,
+    };
+    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+    return event.usable;
+  }
+
   function scoreMove(source: Unit, move: Moves, target: MoveTarget): number {
     const event: CheckUnitAIMoveScoreEvent = {
       id: 'CheckUnitAIMoveScore',
@@ -115,8 +147,32 @@ export function setupChooseMoveAI(battle: Battle): void {
   }
 
   /**
+   * Whether the side a move reaches for still has anybody on it.
+   *
+   * A move that only reaches the enemy has nothing left to do once the
+   * enemy is down: the fan-out at trigger time would find nobody, and
+   * the cast, the cooldown and the opening would all be spent on
+   * empty air. Anything that reaches its own side always has at least
+   * the user to reach
+   */
+  function hasLivingTarget(source: Unit, targetFlags: number): boolean {
+    if (!(targetFlags & MoveTargetFlags.Enemy)) {
+      return true;
+    }
+    for (const unit of battle.units(source.team.alliance)) {
+      if (unit.alive) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Collect the candidate targets on the field for a move, based on
-   * its configured target flags.
+   * its configured target flags. **No candidates means the move is not
+   * a candidate**: a move with nothing to aim at is left out of the
+   * running rather than offered with nothing named, which is how a
+   * unit ends up winding up move after move at an empty field
    */
   function collectTargets(source: Unit, targetFlags: number): MoveTarget[] {
     /**
@@ -124,7 +180,7 @@ export function setupChooseMoveAI(battle: Battle): void {
      * targets on trigger, so they score as a single targetless use.
      */
     if (targetFlags & MoveTargetFlags.Multiple || targetFlags === 0) {
-      return [{ type: MoveTargetType.None }];
+      return hasLivingTarget(source, targetFlags) ? [{ type: MoveTargetType.None }] : [];
     }
 
     const targets: MoveTarget[] = [];
@@ -174,10 +230,6 @@ export function setupChooseMoveAI(battle: Battle): void {
       }
     }
 
-    if (targets.length === 0) {
-      targets.push({ type: MoveTargetType.None });
-    }
-
     return targets;
   }
 
@@ -191,6 +243,13 @@ export function setupChooseMoveAI(battle: Battle): void {
     let best: AIMoveChoice[] = [];
 
     function consider(move: Moves, target: MoveTarget): void {
+      // A move that cannot work here is not a low-scoring option, it
+      // is not an option: casting it would spend the cast time, the
+      // cooldown and the opening for nothing
+      if (!isMoveUsable(source, move, target)) {
+        return;
+      }
+
       const score = scoreMove(source, move, target);
 
       if (best.length === 0 || score > best[0].score) {
@@ -220,10 +279,31 @@ export function setupChooseMoveAI(battle: Battle): void {
     }
   });
 
+  // --- Usability rules ---
+
+  /**
+   * The one every move answers to: a target the move cannot touch at
+   * all. It is the same question the trigger asks before the effect
+   * runs — type immunity, a powder against a Grass type, a Ground move
+   * under something airborne — so a move that would be refused there
+   * is refused here first, at no cost
+   */
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (!event.usable || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const type = event.source.checkMoveType(event.move, event.target);
+
+    if (event.source.checkMoveImmunity(event.move, event.target, type)) {
+      event.usable = false;
+    }
+  });
+
   // --- Scoring modifiers ---
 
   // Damaging moves: prefer stronger hits, reward guaranteed KOs
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -259,8 +339,10 @@ export function setupChooseMoveAI(battle: Battle): void {
     event.score += Math.min(4, Math.floor((4 * damage) / target.health));
   });
 
-  // Status-inflicting moves: useless when the target can't receive it
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+  // Status-inflicting moves: a target that cannot receive the status
+  // is refused by the usability rule in the status move group, so what
+  // is left to weigh is only who is worth spending it on
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const status = STATUS_MOVES[event.move];
 
     if (status == null || event.target.type !== MoveTargetType.Unit) {
@@ -268,18 +350,6 @@ export function setupChooseMoveAI(battle: Battle): void {
     }
 
     const target = event.target.unit;
-
-    if (
-      target.status[status] ||
-      target.checkStatusImmunity(status, {
-        type: EffectType.Move,
-        move: event.move,
-        unit: event.source,
-      })
-    ) {
-      event.score -= USELESS_PENALTY;
-      return;
-    }
 
     // Status spreads early: better against a healthy target
     const maxHP = Math.max(1, target.checkStat(Stats.HP, 0));
@@ -291,7 +361,7 @@ export function setupChooseMoveAI(battle: Battle): void {
 
   // Self statuses (e.g. Focus Energy): useless when already active,
   // reckless when about to go down
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const status = SELF_STATUS_MOVES[event.move];
 
     if (status == null) {
@@ -315,9 +385,15 @@ export function setupChooseMoveAI(battle: Battle): void {
     }
   });
 
-  // Raid battles: friendly stage-boosting moves take priority
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
-    if (battle.mode !== BattleModes.Raid) {
+  // Raid battles: friendly stage-boosting moves take priority — for
+  // the party, and only the party. Setting up is what a side that has
+  // to survive a long fight does with its first few casts, and the
+  // boss is not that side: it is the clock everybody else is racing,
+  // and a boss spending its doubled cast time on a Withdraw is a boss
+  // handing the lobby the fight. It attacks, and the buffs it does
+  // pick it picks on their own merits
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (battle.mode !== BattleModes.Raid || event.source.hasAbility(Abilities.Boss)) {
       return;
     }
 
@@ -344,7 +420,7 @@ export function setupChooseMoveAI(battle: Battle): void {
   });
 
   // Healing moves: valuable when hurt, useless when topped off
-  battle.on(BattleEvents.CheckUnitAIMoveScore, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (!HEALING_MOVES.has(event.move)) {
       return;
     }

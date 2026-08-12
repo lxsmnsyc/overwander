@@ -62,14 +62,23 @@ export async function countBalls(uid: string): Promise<number> {
 }
 
 /**
+ * Everything that has run from this player and is still worth
+ * remembering, as encounter keys. One document, one read: the map
+ * asks for it once per window and checks every spawn it is about to
+ * draw against it
+ */
+export async function getFledKeys(uid: string): Promise<Set<string>> {
+  const snapshot = await getDoc(doc(getFirebaseFirestore(), FLED_COLLECTION, uid));
+
+  return new Set(asStringArray(snapshot.data()?.keys));
+}
+
+/**
  * Whether the encounter already fled from this user; the overworld
  * must not offer it again when true
  */
 export async function isEncounterFled(uid: string, encounter: EncounterRecord): Promise<boolean> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), FLED_COLLECTION, uid));
-  const keys = new Set(asStringArray(snapshot.data()?.keys));
-
-  return keys.has(encounterKey(encounter));
+  return (await getFledKeys(uid)).has(encounterKey(encounter));
 }
 
 /**
@@ -116,6 +125,20 @@ async function retireEncounter(token: string, spawn: string): Promise<void> {
 }
 
 /**
+ * How a throw landed, and what it left behind: the record the catch
+ * was written to, for a throw that caught something.
+ *
+ * The id is handed back rather than looked up afterwards because the
+ * catch is the one thing the player wants to see next — the sheet for
+ * what they have just caught — and searching their collection for the
+ * newest row is a guess where this is the answer
+ */
+export interface ThrowOutcome {
+  result: ThrowResult;
+  catchId: string | null;
+}
+
+/**
  * Throw the session's preferred ball: spends one from the bag, rolls
  * the catch, and has the server write down a success or a flight.
  * Resolves null when the session is over or no ball of the preferred
@@ -124,7 +147,7 @@ async function retireEncounter(token: string, spawn: string): Promise<void> {
 export async function throwBall(
   user: User,
   session: SafariSession<EncounterRecord>,
-): Promise<ThrowResult | null> {
+): Promise<ThrowOutcome | null> {
   if (session.state !== SafariState.Active) {
     return null;
   }
@@ -145,11 +168,15 @@ export async function throwBall(
   if (result === ThrowResult.Caught) {
     // The catch is stamped in the catcher's own zone and carries the
     // locale it was made in, so its date reads as the day they had
-    await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale());
-  } else if (result === ThrowResult.Fled) {
+    return {
+      result,
+      catchId: await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale()),
+    };
+  }
+  if (result === ThrowResult.Fled) {
     await retireEncounter(token, spawn);
   }
-  return result;
+  return { result, catchId: null };
 }
 
 /**

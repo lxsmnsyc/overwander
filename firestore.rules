@@ -1,0 +1,189 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Public to read. A player sets their own details; the balance
+    // moves only on the server, so it may not change from a client
+    match /profiles/{uid} {
+      allow read: if signedIn();
+      // A profile opens empty-handed; gold only ever moves on the
+      // server, so a first write cannot name its own balance
+      allow create: if isOwner(uid) && request.resource.data.gold == 0;
+      // The buddy lives here too: it is the player's to set, and it
+      // is read on nearly every action they take
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['nickname', 'avatar', 'buddy']);
+      allow delete: if false;
+    }
+
+    // Everything a player carries, items and candies together. Read
+    // by the owner, written only by the server: both maps are
+    // currency, since one mints Master Balls and the other mints
+    // levels
+    match /bags/{uid} {
+      // `get` rather than `read`: the condition names the document's
+      // own id, which a query has none of — see the note on `bids`.
+      // A bag is fetched by id and never listed, so a list is refused
+      // outright rather than failing on a null wildcard
+      allow get: if isOwner(uid);
+      allow write: if false;
+    }
+    // Where a player is standing. Theirs to read, and the server's to
+    // write — not because a position is trusted (nothing checks one)
+    // but because a client that could write this could write anybody's
+    match /positions/{uid} {
+      allow get: if isOwner(uid);
+      allow write: if false;
+    }
+    // Fled encounters are recomputed from the stored encounter
+    match /fled/{uid} {
+      allow get: if isOwner(uid);
+      allow write: if false;
+    }
+
+
+    // Catch records: readable by every signed-in player (a trade
+    // starts with looking), written only by the server. Catching,
+    // levelling, evolving and handing an item over all go through
+    // src/server/*
+    match /caught/{catchId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Shared overworld state: everyone reads, signed-in players publish
+    // The window and the spawns it rolled are one document, so
+    // publishing them is one write anybody in the zone may make
+    match /snapshots/{windowId} {
+      allow read: if signedIn();
+      allow write: if signedIn()
+        && request.resource.data.seed == windowId.split(':')[0]
+        && request.resource.data.offset is int
+        && request.resource.data.timestamp is int
+        && request.resource.data.spawns is list;
+    }
+
+    // Per-player derivations and claim markers, keyed by
+    // "{parentId}:{uid}". The player reads their own; only the server
+    // writes them, since each one is a reward changing hands
+    match /encounters/{encounterId} {
+      allow get: if signedIn() && encounterId.split(':')[1] == request.auth.uid;
+      allow write: if false;
+    }
+    match /cacheClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // Raid lobbies: opening one, joining, leaving, starting and
+    // clearing are all the server's. What a landmark stages, and
+    // whether a failed raid may be restaged, depend on world state
+    // and a battle's outcome — neither is a client's to assert
+    match /raids/{raidId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /raidRewards/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // The auction board: every signed-in player can see what is on it,
+    // and nobody writes it. A lot leaves its owner's hands as the
+    // listing is written, a bid moves gold, and collecting one hands
+    // over a pokemon — none of that is a client's to assert
+    match /auctions/{auctionId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // What a seller has running, which is what holds them to one
+    // auction at a time. Theirs to read, nobody's to write
+    match /auctionSellers/{uid} {
+      allow get: if isOwner(uid);
+      allow write: if false;
+    }
+    // A player's own bidding history, id "{uid}:{auctionId}". The lot
+    // keeps only the standing bid, so this is what says they took part
+    // at all — and what they paid is nobody else's business.
+    //
+    // Split, because the two halves of a read cannot ask the same
+    // question. Naming a document is a `get`, and the id is what says
+    // whose it is; asking for the collection is a `list`, where the
+    // id wildcard is **null** — the rule is evaluated per document
+    // the query would return, before any of them has a name. Asking
+    // `bidId` there is a "Null value error", and a bidding history
+    // that cannot be read at all
+    match /bids/{bidId} {
+      allow get: if signedIn() && bidId.split(':')[0] == request.auth.uid;
+      // The field the query filters on. A query that does not filter
+      // by player would return somebody else's document, fail this
+      // for it, and be refused whole — which is the check
+      allow list: if signedIn() && resource.data.player == request.auth.uid;
+      allow write: if false;
+    }
+    // A grunt's party, and whether they have been put down: what one
+    // pays out is the server's to decide
+    match /rocketStops/{stopId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // Teams, the snapshots a fight freezes, and the battles
+    // themselves are all written by the server: a party names catch
+    // ids, and an outcome decides who is owed a legendary
+    match /teams/{teamId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /teamSnapshots/{snapshotId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /battles/{battleId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // What a battle left the party with — items spent, health lost,
+    // status carried: written by the server, since it writes to
+    // catch records
+    match /battleAftermaths/{markerId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /phenomenonClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /berryClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // A nest claim is what an egg was written against, so it is the
+    // server's alone — the same as every other landmark marker
+    match /nestClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // One visit per wandering NPC, cell, window and player. For Nurse
+    // Joy it is the whole of the limit, since she charges nothing; for
+    // the three who charge it is what the fee alone could not do. The
+    // vendor writes no marker: a shop is not a once-a-day thing
+    match /npcClaims/{claimId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    // What the game has already given a player. A gift is decided,
+    // written and marked on the server in one go, so this is nobody's
+    // to read and nobody's to write: a client that could delete its
+    // own marker could ask for the same gift twice
+    match /giftClaims/{claimId} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}

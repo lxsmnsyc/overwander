@@ -1,4 +1,5 @@
 import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import drawCaption from '../canvas/caption';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../canvas/species-sprites';
 import { BIOME_COLORS } from '../data/biome';
@@ -83,6 +84,13 @@ export interface ChunkCanvasProps {
    * What the ground is made of, which is the whole of the background
    */
   biome: Biome;
+  /**
+   * What to write in the corner: where this is, in a few words. It is
+   * drawn into the picture rather than set above it, since the two
+   * things it says — the ground and the coordinates — are things
+   * about the picture and nothing else on the page needs them
+   */
+  caption: string;
   /**
    * The cell the player is standing on
    */
@@ -336,6 +344,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
+      drawCaption(context, props.caption);
+
       // A border while the keyboard is in here. It is not decoration:
       // the walk keys only work while this has focus, so whether it
       // does is the difference between the arrows moving somebody and
@@ -359,14 +369,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // point with shift and an arrow, act with Enter
       tabindex={0}
       role="application"
-      aria-label={`Chunk map. ${props.label(cursor()) || 'Empty ground'} under the cursor.`}
+      // The caption is painted, so it is said here as well: it is the
+      // only place the chunk names itself now
+      aria-label={`Chunk map. ${props.caption}. ${
+        props.label(cursor()) || 'Empty ground'
+      } under the cursor.`}
       // A canvas has no per-cell elements to hang a tooltip on, so the
       // one tooltip it has says whatever the pointer is over
       title={hovered() == null ? '' : props.label(hovered() ?? 0)}
-      class={`mx-auto block h-auto w-[min(100%,24rem)] rounded-lg border border-line
-        focus-visible:outline-none ${
-          hovered() != null && props.reachable(hovered() ?? 0) ? 'cursor-pointer' : 'cursor-default'
-        }`}
+      // The chunk is the page, so it takes the page: drawn at its own
+      // resolution and blown up to the largest square its container
+      // will hold — `cqmin` is the shorter of the two sides, so it
+      // fills a wide screen top to bottom and a tall one side to
+      // side. The element is that square rather than a full-size box
+      // with the picture letterboxed inside it, because a click is
+      // read back through the element's own bounds: a box bigger than
+      // what is painted in it would put every cell a few pixels out
+      class={`block h-[100cqmin] w-[100cqmin] focus-visible:outline-none ${
+        hovered() != null && props.reachable(hovered() ?? 0) ? 'cursor-pointer' : 'cursor-default'
+      }`}
       onMouseMove={(event) => {
         setHovered(cellAt(event));
       }}

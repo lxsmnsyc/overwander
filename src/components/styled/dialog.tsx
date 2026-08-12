@@ -59,6 +59,37 @@ export interface DialogProps extends ParentProps {
    * line that says what the screen is asking and what it costs
    */
   description: JSX.Element;
+  /**
+   * Whether the heading is for the screen reader alone.
+   *
+   * A dialog that *is* one picture — the world map — has nothing to
+   * caption: a title and a sentence above it are two lines of prose
+   * on top of the thing they describe. The two are still written and
+   * still announced, since terracotta names and describes the dialog
+   * by them and a dialog with neither is announced as an unnamed one;
+   * they are only taken out of sight
+   */
+  quiet?: boolean;
+  /**
+   * Whether the sentence under the title is for the screen reader
+   * alone.
+   *
+   * Between a dialog that captions itself and one that says nothing:
+   * the encounter names what is standing there — species, level,
+   * gender, whether it sparkles — which is the whole of what a player
+   * needs, while the sentence beneath it explains a game they are
+   * already playing
+   */
+  terse?: boolean;
+  /**
+   * Something to put beside the title — the menu of things that can be
+   * done to whatever the dialog is about.
+   *
+   * It is taken out of the flow rather than laid out next to the
+   * heading, so the heading stays in the middle of the panel whatever
+   * is standing to the right of it
+   */
+  aside?: JSX.Element;
 }
 
 /**
@@ -71,11 +102,26 @@ export function Dialog(props: DialogProps): JSX.Element {
       <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
       <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
         <div class="flex flex-col gap-3">
-          <header class="flex flex-col gap-1 border-b border-line-soft pb-2">
+          <header
+            class={
+              props.quiet === true
+                ? 'sr-only'
+                : 'flex flex-col gap-1 border-b border-line-soft pb-2'
+            }
+          >
             {/* A heading rather than bold text: it is what a screen
-                reader announces the dialog by */}
-            <HeadlessDialogTitle class="text-lg font-semibold">{props.title}</HeadlessDialogTitle>
-            <HeadlessDialogDescription class="text-sm text-muted">
+                reader announces the dialog by. It sits in the middle
+                of the panel, and anything standing beside it is pinned
+                to the edge rather than allowed to push it off centre */}
+            <div class="relative flex min-h-8 items-center justify-center">
+              <HeadlessDialogTitle class="text-center text-lg font-semibold">
+                {props.title}
+              </HeadlessDialogTitle>
+              {props.aside == null ? null : <div class="absolute right-0">{props.aside}</div>}
+            </div>
+            <HeadlessDialogDescription
+              class={props.terse === true ? 'sr-only' : 'text-center text-sm text-muted'}
+            >
               {props.description}
             </HeadlessDialogDescription>
           </header>
@@ -101,11 +147,17 @@ export function DialogSection(props: ParentProps & { title?: string }): JSX.Elem
 
 /**
  * The row a dialog ends on. Buttons sit to the right of it, in the
- * order they are written, with the way out last
+ * order they are written, with the way out last — or in the middle,
+ * for a dialog that is one thing shown down the centre and would
+ * look lopsided ending anywhere else
  */
-export function DialogActions(props: ParentProps): JSX.Element {
+export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
   return (
-    <div class="flex flex-wrap items-center justify-end gap-2 border-t border-line-soft pt-3">
+    <div
+      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-3 ${
+        props.center === true ? 'justify-center' : 'justify-end'
+      }`}
+    >
       {props.children}
     </div>
   );

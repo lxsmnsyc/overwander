@@ -1,4 +1,4 @@
-import { For, type JSX, type ParentProps, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
 import { type CaughtPokemon, isGuarded, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
@@ -54,10 +54,6 @@ import {
  * the game's own words, because it is somebody talking rather than the
  * game explaining
  */
-function Says(props: ParentProps): JSX.Element {
-  return <p class="border-l-2 border-leaf/40 pl-3 text-sm text-muted italic">{props.children}</p>;
-}
-
 /**
  * A catch as the breeding rules read one
  */
@@ -485,6 +481,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         isOpen={props.standing != null && reminding() == null}
         onClose={close}
         title={who()}
+        terse
         description="Somebody standing out here with an offer. They will be gone when the window
         turns over, and each of them takes you up on it once while they are here — the vendor
         as often as your purse allows."
@@ -494,10 +491,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             <>
               <Show when={standing()[1] === Npc.Breeder}>
                 <DialogSection>
-                  <Says>
-                    "Leave two of yours with me — {BREEDING_FEE} gold — and you will have an egg of
-                    them. It takes after both."
-                  </Says>
                   {/* The pair is picked with the same list every other
                     part of the game picks a pokemon with; what makes
                     it a breeding pair is the two, and the rule about
@@ -526,7 +519,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                         : null
                     }
                   />
-                  <Row>
+                  <Row class="justify-center">
                     <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
                       Leave them ({BREEDING_FEE} gold)
                     </Button>
@@ -536,10 +529,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.NurseJoy}>
                 <DialogSection>
-                  <Says>
-                    "Leave them with me — all of them, if you like. No charge. And if one of them is
-                    carrying a shadow, I will see to that too."
-                  </Says>
                   {/* She is free, so what keeps her from being a tap is
                     the window: one visit per player while she is
                     standing here */}
@@ -563,10 +552,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.DaycareLady}>
                 <DialogSection>
-                  <Says>
-                    "Bring me an egg — {DAYCARE_FEE} gold — and I will warm it half a walk's worth.
-                    Wherever it is now, it will be that much further along."
-                  </Says>
                   {/* The note on each row is what the fee actually buys
                     that egg: half of a long walk is further than half
                     of a short one */}
@@ -591,10 +576,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.Groomer}>
                 <DialogSection>
-                  <Says>
-                    "Leave one with me — {GROOMING_FEE} gold — and I will see to it properly. It
-                    will think half again as much of you when I hand it back."
-                  </Says>
                   {/* The note is what the fee actually buys this
                     pokemon: half of what it has left to give, which is
                     a great deal to one just out of its ball and next
@@ -624,11 +605,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.MoveReminder}>
                 <DialogSection>
-                  <Says>
-                    "There is not a move in the world that is truly gone — only ones nobody has
-                    reminded them of. Bring me one of yours and a Heart Scale, and it will
-                    remember."
-                  </Says>
                   <Row>
                     <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
                       {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
@@ -721,10 +697,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.Vendor}>
                 <DialogSection title="Trading">
-                  <Says>
-                    "Balls and medicine, same price as anywhere. And I will take anything off you
-                    that is worth something — I am walking on either way."
-                  </Says>
                   <Row>
                     <Badge tone="gold">{gold() ?? 0} gold</Badge>
                   </Row>
@@ -860,7 +832,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             </>
           )}
         </Show>
-        <DialogActions>
+        <DialogActions center>
           <Button onClick={close}>Walk on</Button>
         </DialogActions>
       </Dialog>

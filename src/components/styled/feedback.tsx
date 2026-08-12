@@ -22,13 +22,19 @@ const BADGE_TONES: Record<BadgeTone, string> = {
 
 /**
  * A word about a thing, attached to it: what a lot stands at, where a
- * bid stands, whether a pokemon can fight
+ * bid stands, whether a pokemon can fight.
+ *
+ * It is set to the same metrics as a button — the same padding, the
+ * same text — because the two stand side by side constantly: a level
+ * beside the button that raises it, a count beside the button that
+ * spends it. A badge half the height of its neighbour makes a row of
+ * them read as a mistake rather than as a row
  */
-export function Badge(props: ParentProps & { tone?: BadgeTone }): JSX.Element {
+export function Badge(props: ParentProps & { tone?: BadgeTone; class?: string }): JSX.Element {
   return (
     <span
-      class={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium
-        whitespace-nowrap ${BADGE_TONES[props.tone ?? 'neutral']}`}
+      class={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-medium
+        whitespace-nowrap ${BADGE_TONES[props.tone ?? 'neutral']} ${props.class ?? ''}`}
     >
       {props.children}
     </span>

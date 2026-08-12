@@ -71,6 +71,24 @@ export function spawnId(key: string, timestamp: number, index: number): string {
 }
 
 /**
+ * The document a chunk's window lives at, one per chunk and zone.
+ *
+ * It is **not** `ChunkSnapshot.key`, which the derivations are seeded
+ * from and which joins the two halves with nothing between them. The
+ * separator here is load-bearing twice over: the security rules read
+ * the seed back out of the id to check that a published window is
+ * filed under the chunk it claims to be from, and the two sides of
+ * the game have to agree on the spelling or one of them writes a
+ * window the other cannot find. They did not agree once — the server
+ * asked for a document a colon away from the one the browser had
+ * written — and every wild pokemon in the game answered "it is gone,
+ * the chunk has moved on"
+ */
+export function windowId(seed: string, zone: string): string {
+  return `${seed}:${zone}`;
+}
+
+/**
  * The stored rolls, restored. Anything that is not a roll is dropped
  * rather than read as a Missingno standing in the grass
  */

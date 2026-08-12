@@ -349,13 +349,20 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   return (
     <Show when={props.inline !== true} fallback={list()}>
-      <Button
-        onClick={() => {
-          setOpened(true);
-        }}
-      >
-        {props.label ?? props.title ?? 'Pick a pokemon'}
-      </Button>
+      {/* The button that opens it, for a caller that has not said
+          when it opens. One that passes `open` has a trigger of its
+          own — a grunt's challenge, a lair — and this one turned up
+          beside it saying the same thing twice, or, where the caller
+          was a dialog, loose on the page behind it */}
+      <Show when={props.open === undefined}>
+        <Button
+          onClick={() => {
+            setOpened(true);
+          }}
+        >
+          {props.label ?? props.title ?? 'Pick a pokemon'}
+        </Button>
+      </Show>
       <Dialog
         isOpen={showing()}
         onClose={close}

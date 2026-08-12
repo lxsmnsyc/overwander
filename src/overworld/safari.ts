@@ -206,7 +206,19 @@ const MAX_FLEE_CHANCE = 0.5;
  * coordinates, the snapshot window and the rolled individual value
  */
 export function encounterKey(encounter: Encounter): string {
-  return `${encounter.x},${encounter.y}@${encounter.timestamp}:${encounter.individualValue}`;
+  return spawnKey(encounter.x, encounter.y, encounter.timestamp, encounter.individualValue);
+}
+
+/**
+ * The same key, from what a published roll already says.
+ *
+ * The chunk knows all three parts before anybody has met anything —
+ * where it is, which window it is showing and what was rolled — which
+ * is what lets the map leave out a pokemon that has already fled from
+ * this player rather than drawing one that cannot be met
+ */
+export function spawnKey(x: number, y: number, timestamp: number, individualValue: number): string {
+  return `${x},${y}@${timestamp}:${individualValue}`;
 }
 
 /**

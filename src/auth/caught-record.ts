@@ -353,6 +353,13 @@ export const enum Acquisition {
    * not have to be told apart from new ones by their shape
    */
   Trade = 3,
+  /**
+   * It was given to them: a mystery gift, which today is the pokemon
+   * the game hands somebody who has none. It is its own kind because
+   * it is the one arrival nobody worked for, and a history that
+   * called it a catch would be saying they went and found it
+   */
+  Gift = 4,
 }
 
 /**
@@ -363,6 +370,7 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
   [Acquisition.Egg]: 'Received as an egg',
   [Acquisition.Auction]: 'Won at auction',
   [Acquisition.Trade]: 'Traded for',
+  [Acquisition.Gift]: 'Received as a gift',
 };
 
 export interface OwnershipRecord {

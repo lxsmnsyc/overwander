@@ -15,3 +15,8 @@
 - [ ] trading
 - [ ] egg move by parent
 - [ ] held item on encounter
+- [ ] unimplemented gen 1 moves
+- [ ] adjacent chunk preload
+- [ ] "3D" layout
+- [ ] Mini Boss ability
+- [ ] Playwright tests

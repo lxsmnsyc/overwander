@@ -15,7 +15,7 @@ import { createRocketBattle } from '../overworld/rocket';
 import BattleCanvas from './BattleCanvas';
 import BattleField from './BattleField';
 import { Badge, Button, Dialog, DialogActions, Note, Row, Status } from './styled';
-import { type ActiveBattle, GameTab, useGame } from './game-context';
+import { type ActiveBattle, GameDialog, useGame } from './game-context';
 
 /**
  * How often the view re-reads the units; the battle itself runs on
@@ -197,7 +197,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     const collect = !props.active.replay && outcome() === 'won';
 
     leave();
-    game.setTab(collect ? GameTab.Overworld : game.tab());
+    game.setDialog(collect ? GameDialog.None : game.dialog());
   };
 
   /**

@@ -5,7 +5,7 @@ import { startRocketBattle } from '../auth/rockets';
 import { getSpeciesData } from '../data/species';
 import { ROCKET_PARTY_LEVEL } from '../overworld/rocket';
 import TeamPickerDialog from './TeamPickerDialog';
-import { Badge, Button, Dialog, DialogActions, List, ListRow, Note, Status } from './styled';
+import { Badge, Button, Dialog, DialogActions, Status } from './styled';
 import { useGame } from './game-context';
 
 export interface RocketStopDialogProps {
@@ -58,31 +58,27 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
         title="Team Rocket"
+        terse
         description="A Team Rocket grunt blocks the way. “Three of mine against however many of
           yours.”"
       >
         <Show when={props.challenge?.[1]}>
           {(record) => (
             <>
-              <List>
+              <div class="flex flex-wrap justify-center gap-2 py-2">
                 <For each={record().party}>
                   {(entry) => (
-                    <ListRow>
-                      <Badge tone="ember">shadow</Badge>
-                      <span class="grow font-medium">{getSpeciesData(entry.species).name}</span>
-                      <Badge>Lv. {ROCKET_PARTY_LEVEL}</Badge>
-                    </ListRow>
+                    <Badge tone="ember">
+                      {getSpeciesData(entry.species).name} · Lv. {ROCKET_PARTY_LEVEL}
+                    </Badge>
                   )}
                 </For>
-              </List>
-              {/* Losing costs the window nothing: the grunt stays put
-                    until they are beaten or the window turns over */}
-              <Note>Lose and they will still be here. Win and they are gone for the window.</Note>
+              </div>
             </>
           )}
         </Show>
 
-        <DialogActions>
+        <DialogActions center>
           <Button
             tone="primary"
             onClick={() => {

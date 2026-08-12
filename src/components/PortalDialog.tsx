@@ -47,7 +47,12 @@ export interface PortalDialogProps {
 
 export default function PortalDialog(props: PortalDialogProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
-  const [confirming, setConfirming] = createSignal<Biome | null>(null);
+  /**
+   * The biome the player has their finger on. Choosing is not going:
+   * the list is picked from and the crossing is confirmed underneath
+   * it, so a wrong press costs nothing until the button at the bottom
+   */
+  const [picked, setPicked] = createSignal<Biome | null>(null);
   const [busy, setBusy] = createSignal(false);
 
   /**
@@ -78,26 +83,21 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
 
   const close = (): void => {
     setStatus(null);
-    setConfirming(null);
+    setPicked(null);
     setBusy(false);
     props.onClose();
   };
 
-  const cross = (destination: PortalDestination): void => {
+  const cross = (): void => {
     const snapshot = props.snapshot;
     const cell = props.cell;
+    const destination = destinations().find((reach) => reach.biome === picked());
 
-    if (snapshot == null || cell == null) {
-      return;
-    }
-    // A key is spent going through, so the biome is named once and
-    // confirmed once
-    if (confirming() !== destination.biome) {
-      setStatus(null);
-      setConfirming(destination.biome);
+    if (snapshot == null || cell == null || destination == null) {
       return;
     }
 
+    setStatus(null);
     setBusy(true);
     usePortalOnServer(snapshot, cell, destination.biome)
       .then(async (arrived) => {
@@ -122,50 +122,59 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       isOpen={props.cell != null}
       onClose={close}
       title="Portal"
+      terse
       description="A ring of standing stones, and a way through. Name a biome and it opens onto the
         nearest portal in one — the key is spent going through."
     >
-      <div>
-        <Badge tone={(keys() ?? 0) > 0 ? 'tide' : 'neutral'}>
-          {keys() ?? 0} Portal {(keys() ?? 0) === 1 ? 'Key' : 'Keys'}
+      {/* What it costs, said as a count rather than as a sentence. It
+          is why the button at the bottom is dead, so it is the one
+          thing above the list worth a line */}
+      <div class="flex justify-center">
+        <Badge tone={(keys.latest ?? 0) > 0 ? 'tide' : 'neutral'}>
+          {keys.latest ?? 0} Portal {(keys.latest ?? 0) === 1 ? 'Key' : 'Keys'}
         </Badge>
       </div>
 
-      <Show when={(keys() ?? 0) > 0} fallback={<Note>Without a key it is only stones.</Note>}>
-        <Show
-          when={destinations().length}
-          fallback={<Note>Nothing within reach of this one answers.</Note>}
-        >
-          <List>
-            <For each={destinations()}>
-              {(destination) => (
-                <ListRow selected={confirming() === destination.biome}>
-                  <RowButton
-                    class="font-medium"
-                    disabled={busy()}
-                    onClick={() => {
-                      cross(destination);
-                    }}
-                  >
-                    {confirming() === destination.biome
-                      ? `Step through to ${BIOME_NAMES[destination.biome]}?`
-                      : BIOME_NAMES[destination.biome]}
-                  </RowButton>
-                  {/* How far it is, so a player can tell a neighbour
-                      from the other side of the world */}
-                  <Meta>
-                    {destination.distance} chunk{destination.distance === 1 ? '' : 's'} away ·{' '}
-                    {destination.x}, {destination.y}
-                  </Meta>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </Show>
+      <Show
+        when={destinations().length}
+        fallback={<Note class="text-center">Nothing within reach of this one answers.</Note>}
+      >
+        <List>
+          <For each={destinations()}>
+            {(destination) => (
+              <ListRow selected={picked() === destination.biome}>
+                <RowButton
+                  class="font-medium"
+                  pressed={picked() === destination.biome}
+                  disabled={busy()}
+                  onClick={() => {
+                    setStatus(null);
+                    setPicked(destination.biome);
+                  }}
+                >
+                  {BIOME_NAMES[destination.biome]}
+                </RowButton>
+                {/* How far it is, so a player can tell a neighbour
+                    from the other side of the world */}
+                <Meta>
+                  {destination.distance} chunk{destination.distance === 1 ? '' : 's'} away ·{' '}
+                  {destination.x}, {destination.y}
+                </Meta>
+              </ListRow>
+            )}
+          </For>
+        </List>
       </Show>
 
       <Status message={status()} />
-      <DialogActions>
+      <DialogActions center>
+        <Button
+          tone="primary"
+          disabled={busy() || picked() == null || (keys.latest ?? 0) === 0}
+          onClick={cross}
+        >
+          Confirm
+        </Button>
         <Button onClick={close}>Close</Button>
       </DialogActions>
     </Dialog>

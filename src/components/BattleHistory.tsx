@@ -16,7 +16,8 @@ import {
   Row,
   RowButton,
 } from './styled';
-import { GameTab, useGame } from './game-context';
+import { describeMoment } from '../core/dates';
+import { GameDialog, useGame } from './game-context';
 
 const OUTCOME_LABELS: Record<BattleOutcome, string> = {
   [BattleOutcome.Unfinished]: 'Unfinished',
@@ -144,7 +145,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
                   <Badge tone={OUTCOME_TONES[record.outcome]}>
                     {OUTCOME_LABELS[record.outcome]}
                   </Badge>
-                  <Meta>{new Date(record.startedAt).toISOString().slice(0, 10)}</Meta>
+                  <Meta>{describeMoment(record.startedAt)}</Meta>
                   <Show when={owes(record)}>
                     <Button
                       tone="primary"
@@ -152,7 +153,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
                         // The overworld meets it: the encounter derives
                         // from the raid's own chunk and window
                         game.setReward({ raid: record.raid });
-                        game.setTab(GameTab.Overworld);
+                        game.setDialog(GameDialog.None);
                         Promise.resolve(refetchClaimed()).catch(() => undefined);
                       }}
                     >

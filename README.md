@@ -87,13 +87,90 @@ placement, spawn rolls and lair contents all derive from it, so two deployments
 with different seeds are two different planets — and stored records that name a
 chunk will point at ground that no longer looks the same.
 
+### Running against the emulators
+
+A Firebase project is not needed to develop against. `firebase.json` configures
+the **Auth and Firestore emulators**, and a `demo-` project id makes them run
+entirely offline — no account to hold, no key to leak, and nothing a mistake can
+cost.
+
+```bash
+pnpm emulators   # in one terminal: auth on 9099, firestore on 8080, UI on 4000
+pnpm dev         # in another
+```
+
+Point the app at them by uncommenting the emulator block at the bottom of
+`.env.example` in your `.env`. The web config above it can stay blank — an
+emulated run fills in its own, because a developer who has no project has nothing
+to copy a key out of, and the emulators verify none of it. Anything you do set is
+still honoured, which is how you point the emulators at a real project's id to
+work against a copy of its data.
+
+Both halves of the game have to be told separately, because they are separate
+SDKs: `VITE_FIREBASE_EMULATOR=true` is the browser's half, and
+`FIRESTORE_EMULATOR_HOST` / `FIREBASE_AUTH_EMULATOR_HOST` are read by the Admin
+SDK itself, which is what routes the privileged writes. Both default to the same
+project id, since the emulators keep one store per project — name it on both
+sides or neither.
+
+Naming only one is the mistake worth knowing about, because nothing about it
+looks like a mistake: `VITE_FIREBASE_PROJECT_ID=test` with `FIREBASE_PROJECT_ID`
+left at the default puts the browser in one store and the server in another. Both
+halves work, both write successfully, and the player is looking at a store that
+nothing the server writes ever reaches — no catches, no bag, no gold, no profile,
+and no error anywhere. The server refuses to start against a project the browser
+is not using, so this now fails with a message that names both ids instead.
+
+The emulators enforce `firestore.rules`, so a client write the rules refuse fails
+locally the way it would in production — which is the point of developing against
+them rather than against a project where the rules are not deployed yet.
+
+**The Firestore emulator needs a JDK 21 or newer** (the auth emulator is Node and
+needs nothing). `firebase emulators:start` says so plainly if the one on `PATH`
+is older — having a new enough one installed is not the same as it being the one
+found first:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
+```
+
+Sign-in against the emulators is worth knowing two things about. The **Emulator
+UI** at <http://localhost:4000/auth> can add a user outright, which is the
+shortest way to a signed-in session. And **Google sign-in opens a popup** served
+from the emulator's own port, which some browsers will not let talk back to the
+page that opened it; the app falls back to a redirect when that happens, but
+email sign-in avoids the question entirely.
+
 ### Firestore rules and indexes
 
-There is no `firestore.rules` in the repository yet. The rules the code assumes —
-along with the three composite indexes its queries need — are written out in
-[Security](docs/firestore/security.md), and should be deployed before the game is
-exposed to anybody. Most collections are read-only to clients on purpose: the
-server owns anything worth cheating for.
+[`firestore.rules`](firestore.rules) and
+[`firestore.indexes.json`](firestore.indexes.json) are what the code assumes, and
+what [Security](docs/firestore/security.md) explains. Deploy them before the game
+is exposed to anybody:
+
+```bash
+npx firebase deploy --only firestore:rules,firestore:indexes --project <id>
+```
+
+Most collections are read-only to clients on purpose: the server owns anything
+worth cheating for.
+
+The rules have tests of their own, since nothing outside the emulator can say
+what a rule does:
+
+```bash
+pnpm test:rules
+```
+
+It starts a Firestore emulator, runs `test/firestore/`, and stops it again —
+which is why it is not part of `pnpm test`, the rest of which needs nothing
+running. The run **clears the store between cases**, so it wants an emulator to
+itself; if one is already up on 8080, give it a spare port rather than letting
+it empty the one you are using:
+
+```bash
+FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
+```
 
 ## Commands
 
@@ -103,7 +180,9 @@ server owns anything worth cheating for.
 | `pnpm build`          | Production build (client, server and Nitro output) |
 | `pnpm start`          | Serve the built output from `.output/`             |
 | `pnpm preview`        | Preview the build locally                          |
+| `pnpm emulators`      | Local Firebase (auth, Firestore, UI on port 4000)  |
 | `pnpm test`           | The whole test suite, once                         |
+| `pnpm test:rules`     | The Firestore rules, against a throwaway emulator  |
 | `npx tsc --noEmit`    | Type-check                                         |
 | `npx oxlint src test` | Lint                                               |
 | `npx oxfmt src test`  | Format                                             |

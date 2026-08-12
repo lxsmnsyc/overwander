@@ -1,5 +1,10 @@
-import { type JSX, createSignal } from 'solid-js';
-import { registerWithEmail, signInWithEmail, signInWithGoogle } from '../auth/actions';
+import { type JSX, createSignal, onMount } from 'solid-js';
+import {
+  registerWithEmail,
+  signInWithEmail,
+  signInWithGoogle,
+  takeRedirectResult,
+} from '../auth/actions';
 import { Button, Row, Status } from './styled';
 
 /**
@@ -19,6 +24,16 @@ export default function LoginForm(): JSX.Element {
       setError(caught instanceof Error ? caught.message : String(caught));
     });
   };
+
+  // A sign-in that went the redirect way comes back here. Landing
+  // signed in needs nothing from this — the auth listener has it —
+  // but one that failed on the way would otherwise come back to a
+  // form with nothing to say about why
+  onMount(() => {
+    takeRedirectResult().catch((caught: unknown) => {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    });
+  });
 
   return (
     <div class="flex flex-col gap-3 text-left">

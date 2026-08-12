@@ -12,7 +12,7 @@ import {
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
-import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
+import { type SnapshotRecord, asSnapshotRecord, spawnId, windowId } from './snapshot-record';
 import { requireUid } from '../server/firebase';
 import {
   claimBerryPatch as claimBerryOnServerSide,
@@ -36,8 +36,8 @@ const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
 /**
  * The document a chunk's window lives at, one per zone
  */
-function windowId(chunk: Chunk, offset: number): string {
-  return `${chunk.seed}:${toZoneKey(offset)}`;
+function chunkWindowId(chunk: Chunk, offset: number): string {
+  return windowId(chunk.seed, toZoneKey(offset));
 }
 
 /**
@@ -52,7 +52,7 @@ async function resolveSnapshotWindow(
   count: number,
 ): Promise<SnapshotRecord> {
   const db = getFirebaseFirestore();
-  const ref = doc(db, SNAPSHOT_COLLECTION, windowId(chunk, offset)).withConverter(
+  const ref = doc(db, SNAPSHOT_COLLECTION, chunkWindowId(chunk, offset)).withConverter(
     snapshotConverter,
   );
 
@@ -125,7 +125,7 @@ export function watchSnapshotWindow(
   const ref = doc(
     getFirebaseFirestore(),
     SNAPSHOT_COLLECTION,
-    windowId(chunk, offset),
+    chunkWindowId(chunk, offset),
   ).withConverter(snapshotConverter);
 
   return onSnapshot(ref, (snapshot) => {
@@ -148,7 +148,10 @@ export async function visitChunk(
   offset: number,
 ): Promise<[string, Spawn][]> {
   const record = await resolveSnapshotWindow(chunk, offset, count);
-  const key = `${chunk.seed}:${toZoneKey(offset)}`;
+  // A spawn is named after the **snapshot's** key rather than the
+  // document's: the two differ by the separator, and it is the
+  // snapshot's that the server re-derives the name from
+  const key = new ChunkSnapshot(chunk, record.timestamp, offset).key;
 
   return record.spawns.map((roll, index) => [
     spawnId(key, record.timestamp, index),

@@ -1,5 +1,6 @@
 import { type JSX, createEffect, createSignal, onMount } from 'solid-js';
-import { BIOME_COLORS } from '../data/biome';
+import drawCaption from '../canvas/caption';
+import { BIOME_COLORS, BIOME_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
 
 /**
@@ -88,6 +89,57 @@ export interface WorldMapCanvasProps {
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   const [focused, setFocused] = createSignal(false);
+  /**
+   * The chunk under the pointer, as an index into the view. A map this
+   * size is a wall of colour without it: a player can see that the
+   * north-east is green, and nothing tells them which green
+   */
+  const [hovered, setHovered] = createSignal<number | null>(null);
+
+  /**
+   * Which chunk of the view a pointer at these page coordinates is
+   * over. The map is drawn at its own resolution and blown up, so the
+   * reading is scaled back through whatever the element ended up
+   */
+  const chunkAt = (event: MouseEvent): number | null => {
+    const element = canvas;
+
+    if (element == null) {
+      return null;
+    }
+
+    const bounds = element.getBoundingClientRect();
+    const across = props.span;
+    const x = Math.floor(((event.clientX - bounds.left) / bounds.width) * across);
+    const y = Math.floor(((event.clientY - bounds.top) / bounds.height) * across);
+
+    if (x < 0 || y < 0 || x >= across || y >= across) {
+      return null;
+    }
+    return y * across + x;
+  };
+
+  /**
+   * What the pointer is over, in the words the overworld uses for the
+   * chunk the player is standing in. Nothing beyond the world's edge
+   * is anywhere, so it says nothing there
+   */
+  const naming = (): string => {
+    const at = hovered();
+
+    if (at == null) {
+      return '';
+    }
+
+    const biome = props.biomes[at];
+
+    if (biome == null) {
+      return '';
+    }
+    return `${BIOME_NAMES[biome]} (${props.originX + (at % props.span)}, ${
+      props.originY + Math.floor(at / props.span)
+    })`;
+  };
 
   onMount(() => {
     const element = canvas;
@@ -142,6 +194,10 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         context.lineWidth = 1;
       }
 
+      // What the pointer is over, in the corner. It is drawn last so
+      // the ground cannot be painted over it
+      drawCaption(context, naming());
+
       // A border while the keyboard is in here, so it is clear which
       // thing the arrow keys are moving
       if (focused()) {
@@ -165,6 +221,13 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       // rather than being smeared into each other
       class="mx-auto block h-auto w-[min(100%,34rem)] rounded-lg border border-line
         [image-rendering:pixelated] focus-visible:outline-none"
+      title={naming()}
+      onMouseMove={(event) => {
+        setHovered(chunkAt(event));
+      }}
+      onMouseLeave={() => {
+        setHovered(null);
+      }}
       onFocus={() => {
         setFocused(true);
       }}

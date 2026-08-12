@@ -30,6 +30,7 @@ import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
+import { hasSpareCatch } from './caught';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
 import { asNumber, docData } from './read';
@@ -106,6 +107,14 @@ export async function openAuction(
   // started. The check is a query, so it is asked before the
   // transaction the way joining a raid asks it
   if (offer.lot === AuctionLot.Catch && (await isAnyCatchQueued(uid, [offer.caught]))) {
+    return null;
+  }
+
+  // Nor their last one. A lot leaves the seller's hands the moment it
+  // is listed, so a player could put up the only pokemon they have
+  // and be left with nothing for the day it takes to find out whether
+  // anybody wanted it
+  if (offer.lot === AuctionLot.Catch && !(await hasSpareCatch(uid))) {
     return null;
   }
 

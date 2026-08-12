@@ -1,15 +1,14 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
 import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { isShiny } from '../auth/caught-record';
 import { isEgg } from '../auth/egg';
 import { unpackStatuses } from '../data/ids/status';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../auth/health';
 import { getSpeciesData } from '../data/species';
-import { AuctionLot } from '../auth/auctions';
-import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
-import CatchDialog from './CatchDialog';
+import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
 import matches from '../core/search';
-import { List, ListRow, Note, Row, RowButton, SEARCH_FROM, Search } from './styled';
+import { Button, Meta, Note, Row, SEARCH_FROM, Search } from './styled';
+import { useGame } from './game-context';
 
 /**
  * A one-line summary of a catch: the species name plus the details
@@ -37,36 +36,87 @@ export function describeCatch(caught: CaughtPokemon): string {
   return `${shiny}${name} · Lv. ${caught.level}${condition}`;
 }
 
+/**
+ * How far along an egg's walk is, as a fraction. An egg written
+ * before the walk existed has nowhere to be, and counts as ready
+ */
+function hatchProgress(caught: CaughtPokemon): number {
+  return caught.hatchSteps <= 0 ? 1 : Math.min(1, caught.steps / caught.hatchSteps);
+}
+
+/**
+ * A catch as a square of the box
+ */
+function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
+  return {
+    id,
+    species: caught.species,
+    shiny: !isEgg(caught) && isShiny(caught),
+    egg: isEgg(caught),
+    progress: hatchProgress(caught),
+    fainted: isFainted(caught),
+    label: describeCatch(caught),
+  };
+}
+
 export interface CatchesListProps {
   player: string;
 }
 
 /**
- * The player's catches. Selecting one opens it in a dialog rather
- * than navigating away, so the list stays where it was
+ * The player's pokemon, in boxes of thirty.
+ *
+ * They were a list of lines, which is what a list is for and not what
+ * a collection is: a player looking for the shiny one, or for the egg
+ * that is nearly out, was reading rather than looking. A box is thirty
+ * squares of sprite, newest first, and pressing one opens it.
  */
 export default function CatchesList(props: CatchesListProps): JSX.Element {
+  const game = useGame();
   const [catches, { refetch }] = createResource(() => props.player, listCaught);
-  const [selected, setSelected] = createSignal<string | null>(null);
-  // The pokemon being put on the block, if any. It is kept apart from
-  // the one being read: listing opens as the sheet closes
-  const [listing, setListing] = createSignal<AuctionSubject | null>(null);
+
+  // The sheet is opened over the whole screen rather than inside this
+  // box, so what happens in it comes back the same way: a record that
+  // changed bumps a counter, and this reads itself again
+  createEffect(() => {
+    game.records();
+    Promise.resolve(refetch()).catch(() => undefined);
+  });
 
   /**
-   * What was typed. It is matched against the same line the row shows,
-   * so what a player can read they can search for: a species, a level,
-   * a status, or the mark on a shiny
+   * What was typed. It is matched against the line the square is
+   * named by, so what a player can read on a hover they can search
+   * for: a species, a level, a status, or the mark on a shiny
    */
   const [query, setQuery] = createSignal('');
+  const [box, setBox] = createSignal(0);
 
+  /**
+   * The whole collection, newest first. A player comes back to what
+   * they just caught far more often than to what they caught in
+   * March, so the first box is the recent one
+   */
   const shown = (): [string, CaughtPokemon][] =>
-    (catches() ?? []).filter(([, caught]) => matches(describeCatch(caught), query()));
+    (catches.latest ?? [])
+      .filter(([, caught]) => matches(describeCatch(caught), query()))
+      .sort(([, one], [, other]) => other.caughtAt.localeCompare(one.caughtAt));
+
+  const boxes = (): number => Math.max(1, Math.ceil(shown().length / BOX_SIZE));
+
+  // A search that empties the last box leaves the player looking at
+  // nothing; whatever they type, they end up somewhere with pokemon
+  createEffect(() => {
+    setBox((at) => Math.min(at, boxes() - 1));
+  });
+
+  const page = (): BoxEntry[] =>
+    shown()
+      .slice(box() * BOX_SIZE, (box() + 1) * BOX_SIZE)
+      .map(asBoxEntry);
 
   return (
     <>
-      {/* A handful of pokemon are read down; a box of them are looked
-          through */}
-      <Show when={(catches()?.length ?? 0) > SEARCH_FROM}>
+      <Show when={(catches.latest?.length ?? 0) > SEARCH_FROM}>
         <Row>
           <Search
             placeholder="Search your pokemon"
@@ -78,59 +128,51 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         </Row>
       </Show>
 
-      <Show when={!catches.loading} fallback={<Note>Loading catches…</Note>}>
-        <Show when={catches()?.length} fallback={<Note>No catches yet.</Note>}>
+      {/* The box holds what it had while it re-reads. Anything done to
+          a catch sends this back to the server, and a read that
+          suspends takes the whole page down with it for the length of
+          the round trip */}
+      <Show
+        when={catches.latest != null}
+        fallback={<Note>{catches.loading ? 'Loading catches…' : 'No catches yet.'}</Note>}
+      >
+        <Show when={catches.latest?.length} fallback={<Note>No catches yet.</Note>}>
           <Show when={shown().length} fallback={<Note>Nothing here matches.</Note>}>
-            <List>
-              <For each={shown()}>
-                {([id, caught]) => (
-                  // The whole row opens the catch: a name with a button
-                  // beside it would be two places to press for one thing
-                  <ListRow class="p-0">
-                    <RowButton
-                      class="rounded-lg px-3 py-2 hover:bg-leaf-soft hover:text-ink"
-                      onClick={() => {
-                        setSelected(id);
-                      }}
-                    >
-                      {describeCatch(caught)}
-                    </RowButton>
-                  </ListRow>
-                )}
-              </For>
-            </List>
+            <CatchBoxCanvas
+              entries={page()}
+              onOpen={(catchId) => {
+                game.setSheet({ catchId });
+              }}
+            />
+
+            {/* One box at a time, the way a box works. It appears only
+                when there is more than one to go through */}
+            <Show when={boxes() > 1}>
+              <Row class="justify-center">
+                <Button
+                  disabled={box() === 0}
+                  onClick={() => {
+                    setBox((at) => Math.max(0, at - 1));
+                  }}
+                >
+                  ‹
+                </Button>
+                <Meta>
+                  Box {box() + 1} of {boxes()}
+                </Meta>
+                <Button
+                  disabled={box() >= boxes() - 1}
+                  onClick={() => {
+                    setBox((at) => Math.min(boxes() - 1, at + 1));
+                  }}
+                >
+                  ›
+                </Button>
+              </Row>
+            </Show>
           </Show>
         </Show>
       </Show>
-
-      <CatchDialog
-        player={props.player}
-        catchId={selected()}
-        onAuction={(catchId) => {
-          setListing({ lot: AuctionLot.Catch, catchId });
-        }}
-        onClose={() => {
-          setSelected(null);
-        }}
-        onChange={() => {
-          // An evolution renames the entry behind the dialog. A
-          // failed refetch leaves the last good list in place; the
-          // dialog already reported whatever went wrong
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
-
-      {/* Listing is its own dialog, opened as the sheet closes: the
-          pokemon is about to leave the records the sheet was reading */}
-      <AuctionDialog
-        subject={listing()}
-        onClose={() => {
-          setListing(null);
-        }}
-        onListed={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
     </>
   );
 }

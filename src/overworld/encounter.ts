@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type Lairs from '../data/overworld/lair';
 import { Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
@@ -73,13 +74,25 @@ export function isRaidEncounter(type: EncounterType): boolean {
 }
 
 /**
+ * Whether the meeting happened nowhere.
+ *
+ * A gift and an event pokemon are handed over, and a mythical is
+ * called out of a relic — none of the three was standing anywhere,
+ * so none of them has a place to name. They are one thing to a
+ * player: met in a fateful encounter
+ */
+export function isFatefulEncounter(type: EncounterType): boolean {
+  return type === EncounterType.Fateful || type === EncounterType.MythicalRaid;
+}
+
+/**
  * What each kind is called where a record is shown
  */
 export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.Wild]: 'Wild',
   [EncounterType.Hatched]: 'Hatched',
   [EncounterType.LegendaryRaid]: 'Legendary Raid',
-  [EncounterType.Fateful]: 'Event',
+  [EncounterType.Fateful]: 'Fateful encounter',
   [EncounterType.Rocket]: 'Team Rocket',
   [EncounterType.ShadowRaid]: 'Shadow Raid',
   [EncounterType.MythicalRaid]: 'Mythical Raid',
@@ -168,8 +181,30 @@ const TRAIT_BITS = 8;
 const TRAIT_MASK = 0xff;
 const TRAIT_RANGE = 256;
 
-const MIN_SPAWN_LEVEL = 5;
-const MAX_SPAWN_LEVEL = 100;
+/**
+ * What a wild pokemon may be, by what it is.
+ *
+ * A single range from 5 to 100 put a level 90 Rattata in the first
+ * field a new player walked into and a level 7 Dragonite in the last.
+ * Rarity already says roughly where a species belongs in a game —
+ * what is common is what is met early — so it decides the band as
+ * well, and the two questions a player asks of a spawn ("can I catch
+ * it" and "is it worth catching") stop pulling against each other.
+ *
+ * The specials are deliberately the whole range. There is one of each
+ * in the world, nobody meets one twice, and a legendary that could
+ * only ever be met at one strength is a legendary with a known
+ * answer
+ */
+export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number]> = {
+  [SpawnRarity.Base]: [5, 15],
+  [SpawnRarity.Uncommon]: [15, 30],
+  [SpawnRarity.Rare]: [30, 45],
+  // The babies and the unowns are met the way a base spawn is: they
+  // are rare to *find*, not far along
+  [SpawnRarity.Prized]: [5, 15],
+  [SpawnRarity.Special]: [1, 100],
+};
 
 /**
  * Share of the ability slice that lands a hidden ability (1/8)
@@ -438,10 +473,9 @@ export default function deriveEncounter(
   // the level are read by the derive helpers above
   const levelSlice = traitValue & TRAIT_MASK;
 
+  const [lowest, highest] = SPAWN_LEVELS[getSpawnRarity(species)];
   const level =
-    options.level ??
-    MIN_SPAWN_LEVEL +
-      Math.floor((levelSlice / TRAIT_RANGE) * (MAX_SPAWN_LEVEL - MIN_SPAWN_LEVEL + 1));
+    options.level ?? lowest + Math.floor((levelSlice / TRAIT_RANGE) * (highest - lowest + 1));
 
   const sliceIV = (index: number): number =>
     Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);

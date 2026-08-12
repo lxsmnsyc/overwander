@@ -1,9 +1,8 @@
-import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
-import { BIOME_COLORS, BIOME_NAMES } from '../data/biome';
+import { type JSX, createMemo, createSignal } from 'solid-js';
 import type Biome from '../data/ids/biome';
 import getWorld from '../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../overworld/world';
-import { Button, Dialog, DialogActions, Note } from './styled';
+import { Button, Dialog, DialogActions } from './styled';
 import WorldMapCanvas from './WorldMapCanvas';
 import { useGame } from './game-context';
 
@@ -105,30 +104,12 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
     return values;
   });
 
-  /**
-   * Which biomes the visible region holds, and how much of it each one
-   * covers. Ground beyond the world's edge is not ground, and is left
-   * out of the reckoning
-   */
-  const legend = createMemo(() => {
-    const counts = new Map<Biome, number>();
-    let ground = 0;
-
-    for (const biome of biomes()) {
-      if (biome == null) {
-        continue;
-      }
-      ground += 1;
-      counts.set(biome, (counts.get(biome) ?? 0) + 1);
-    }
-    return { ground, entries: [...counts].sort((left, right) => right[1] - left[1]) };
-  });
-
   return (
     <Dialog
       isOpen={props.isOpen}
       onClose={close}
       width="wide"
+      quiet
       title="World Map"
       description={
         <>
@@ -148,31 +129,6 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         onPan={pan}
         onRecenter={recenter}
       />
-
-      <Show when={standing()} fallback={<Note>Finding you…</Note>}>
-        {(at) => (
-          <Note>
-            You are standing in chunk {at().chunkX}, {at().chunkY} — ringed on the map while it is
-            in view.
-          </Note>
-        )}
-      </Show>
-
-      {/* What the colours on the map mean, and how much of what is in
-          view is each one */}
-      <ul class="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-xs">
-        <For each={legend().entries}>
-          {([biome, count]) => (
-            <li class="flex items-center gap-1.5">
-              <span
-                class="inline-block size-3 rounded-xs border border-line"
-                style={{ background: BIOME_COLORS[biome] }}
-              />
-              {BIOME_NAMES[biome]} — {Math.round((count / Math.max(1, legend().ground)) * 100)}%
-            </li>
-          )}
-        </For>
-      </ul>
 
       <DialogActions>
         <Button onClick={close}>Close</Button>

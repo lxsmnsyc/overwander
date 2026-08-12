@@ -50,6 +50,12 @@ export interface ButtonProps extends ParentProps {
    * wide it sits, where it lines up
    */
   class?: string;
+  /**
+   * What hovering it says. It is for the reason behind a button rather
+   * than for the button itself — why this one cannot be pressed — so a
+   * label stays short without the answer going missing
+   */
+  title?: string;
 }
 
 export default function Button(props: ButtonProps): JSX.Element {
@@ -61,6 +67,7 @@ export default function Button(props: ButtonProps): JSX.Element {
       // most of these sit in one without meaning to
       type={props.type ?? 'button'}
       disabled={props.disabled}
+      title={props.title}
       class={`${BASE} ${look()} ${props.class ?? ''}`}
       onClick={() => {
         props.onClick?.();

@@ -21,6 +21,6 @@ export type { MenuAction, MenuProps } from './menu';
 export { default as Search, SEARCH_FROM } from './search';
 export type { SearchProps } from './search';
 export type { ListRowProps, RowButtonProps } from './list';
-export { Card, Panel, Row } from './surface';
+export { Card, Divider, Panel, Row } from './surface';
 export type { CardProps, PanelProps } from './surface';
-export { TabBar, TabButton } from './tabs';
+export { TabBar, TabButton, TabPane } from './tabs';

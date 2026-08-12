@@ -252,4 +252,11 @@ no winner, so the seller takes it back instead, unsold and unpaid for. What a
 seller cannot do is take it back _early_: a listing that could be pulled the
 moment a bid looked unlikely is not one anybody would bid on.
 
+They come back to the same place they bid: the board is **one list, newest lot
+first**, and a lot that has stopped taking bids stays in it with a Collect or a
+Take-it-back where the bid box was. Splitting won and unsold lots into headings
+of their own meant three places to look for one thing, two of them empty nearly
+always — what a player wins is a handful of rows a year on a board they read
+every day.
+
 The details are in [Auctions](../firestore/auctions.md).

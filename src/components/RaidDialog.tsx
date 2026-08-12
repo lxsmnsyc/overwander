@@ -3,9 +3,9 @@ import { RaidAction, RaidKind, type RaidView, enterRaid } from '../auth/raids';
 import { getLairTitle } from '../data/overworld/lair';
 import { getSpeciesData } from '../data/species';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { Badge, Button, Dialog, DialogActions, Status } from './styled';
+import { Button, Dialog, DialogActions, Status } from './styled';
 import SpriteDisplay from './SpriteDisplay';
-import { GameTab, useGame } from './game-context';
+import { GameDialog, useGame } from './game-context';
 
 /**
  * What the one button says. A lair offers exactly one thing at a time
@@ -92,13 +92,13 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
 
   /**
    * Watching needs nothing staged: a battle already under way is
-   * opened as it stands, and a lobby still gathering is watched from
-   * the Raids tab the way its own players see it
+   * opened as it stands, and a lobby still gathering is watched in the
+   * raids dialog the way its own players see it
    */
   const spectate = (standing: RaidView): void => {
     if (standing.battle == null) {
       game.setRaid(standing.lobby);
-      game.setTab(GameTab.Raids);
+      game.setDialog(GameDialog.Raids);
     } else {
       game.setBattle({ id: standing.battle, replay: true });
     }
@@ -141,7 +141,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
           return;
         }
         game.setRaid(id);
-        game.setTab(GameTab.Raids);
+        game.setDialog(GameDialog.Raids);
         close();
       })
       .catch((caught: unknown) => {
@@ -151,27 +151,31 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog isOpen={props.lair != null} onClose={close} title={title()} description={summary()}>
+    <Dialog
+      isOpen={props.lair != null}
+      onClose={close}
+      title={title()}
+      terse
+      description={summary()}
+    >
       <Show when={view()}>
         {(standing) => (
           <>
-            <div class="flex items-center gap-3">
-              {/* What is waiting in there, pacing. A lair is a name
-                  and a species id until somebody looks inside it */}
+            {/* What is waiting in there, pacing, with its name under
+                it. The dialog's own title already says which lair and
+                whether it is a shadow one, so the picture says the
+                one thing the title cannot */}
+            <div class="flex flex-col items-center gap-2 py-2 text-center">
               <SpriteDisplay
                 species={standing().species}
                 animation="Walk"
                 direction="down-right"
+                scale={4}
                 label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
               />
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="font-medium">{getSpeciesData(standing().species).name}</span>
-                <Show when={standing().kind === RaidKind.Shadow}>
-                  <Badge tone="ember">shadow</Badge>
-                </Show>
-              </div>
+              <span class="font-medium">{getSpeciesData(standing().species).name}</span>
             </div>
-            <DialogActions>
+            <DialogActions center>
               <Button tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]}
               </Button>

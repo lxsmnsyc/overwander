@@ -61,6 +61,19 @@ export function Card(props: CardProps): JSX.Element {
 }
 
 /**
+ * The line between two things standing side by side.
+ *
+ * A row of facts — what kind of pokemon, what it fights as, how big
+ * it is, which gender — reads as one long phrase without something
+ * between them, and a middle dot is easy to miss at the size these
+ * are set in. It is hidden from a screen reader, which hears the
+ * facts as separate elements already
+ */
+export function Divider(): JSX.Element {
+  return <span aria-hidden="true" class="h-4 w-px shrink-0 bg-line" />;
+}
+
+/**
  * A row of things to press, laid out so it wraps rather than runs off
  * a narrow screen
  */

@@ -12,16 +12,27 @@ import {
 import { useAuth } from '../auth/context';
 import type { PositionRecord } from '../auth/position-record';
 import { getPosition, savePosition } from '../auth/positions';
+import type { AuctionSubject } from './AuctionDialog';
+import type { MysteryGift } from '../auth/gift-record';
+import claimMysteryGift from '../auth/gifts';
+import { ensureProfile } from '../auth/profile';
 import getWorld from '../overworld/current';
 import pickStartPosition, { type StartPosition } from '../overworld/start';
 /**
- * The panels the signed-in view can be showing
+ * What is open over the world.
+ *
+ * The overworld is not one of these: it is the page, and everything
+ * else is something pulled over the top of it and put away again. A
+ * player is always standing somewhere, so there is no state in which
+ * the map is not what they are looking at — only states where
+ * something is covering it
  */
-export const enum GameTab {
-  Profile = 0,
-  Overworld = 1,
+export const enum GameDialog {
+  None = 0,
+  Profile = 1,
   Raids = 2,
   Auctions = 3,
+  Map = 4,
 }
 
 /**
@@ -53,35 +64,73 @@ export interface ActiveBattle {
  */
 export type PendingReward = { raid: string; stop?: undefined } | { stop: string; raid?: undefined };
 
+/**
+ * A catch opened in full, and whether it is being read or handled.
+ * Somebody else's pokemon — a lot on the block — is read-only: the
+ * whole record, and nothing to press
+ */
+export interface OpenSheet {
+  catchId: string;
+  readOnly?: boolean;
+}
+
 export interface GameState {
-  tab: Accessor<GameTab>;
-  setTab: Setter<GameTab>;
+  dialog: Accessor<GameDialog>;
+  setDialog: Setter<GameDialog>;
   /**
    * Where the player is standing, or null while it is still being
    * found out.
    *
-   * It lives above the tabs because more than one of them needs it and
-   * only one of them can be mounted: a tab panel unmounts when it is
-   * left, so a position kept inside the Overworld tab would be unknown
-   * to the World Map until the player had visited the Overworld first.
-   * It is read once here, and the Overworld publishes every step back
-   * to it
+   * It lives above the overworld because the map dialog needs it too
+   * and a dialog is not mounted until it is opened. It is read once
+   * here, and the overworld publishes every step back to it
    */
   position: Accessor<PositionRecord | null>;
   setPosition: Setter<PositionRecord | null>;
   /**
-   * The raid lobby the player is in, shown inside the Raids tab
+   * The raid lobby the player is in, shown inside the raids dialog
    */
   raid: Accessor<string | null>;
   setRaid: Setter<string | null>;
   /**
    * The battle in progress. While one is set, it takes the whole
-   * page — tabs and all
+   * page — world, bar and all
    */
   battle: Accessor<ActiveBattle | null>;
   setBattle: Setter<ActiveBattle | null>;
   reward: Accessor<PendingReward | null>;
   setReward: Setter<PendingReward | null>;
+  /**
+   * What the game has just given them, until they have seen it. Empty
+   * whenever there is nothing to show, which is nearly always
+   */
+  gifts: Accessor<MysteryGift[]>;
+  setGifts: Setter<MysteryGift[]>;
+  /**
+   * The catch sheet, which is a screen rather than a panel.
+   *
+   * It lives here because of where it is opened from: a list inside
+   * the profile dialog, and another inside the auctions dialog. A
+   * sheet rendered where it was opened is a dialog inside a dialog —
+   * a panel on a panel, boxed into whatever room the one underneath
+   * left it. Opened from here it is the only thing on the screen,
+   * which is what a whole record needs
+   */
+  sheet: Accessor<OpenSheet | null>;
+  setSheet: Setter<OpenSheet | null>;
+  /**
+   * A lot being put up, from wherever it was chosen
+   */
+  listing: Accessor<AuctionSubject | null>;
+  setListing: Setter<AuctionSubject | null>;
+  /**
+   * Bumped whenever a record changes under a list that is showing:
+   * an evolution renames a row, a release takes one away, a listing
+   * puts one in escrow. Lists watch it rather than being handed a
+   * callback through every dialog between them and the change
+   */
+  records: Accessor<number>;
+  touchRecords: () => void;
 }
 
 const GameContext = createContext<GameState>();
@@ -96,15 +145,35 @@ export function useGame(): GameState {
 }
 
 /**
- * Where the signed-in player is: which tab, which raid lobby, and
- * whether a battle has taken over the page. It lives above the tabs
- * because the overworld opens lobbies the Raids tab shows, and both
- * raids and replays open battles that replace everything
+ * Where the signed-in player is: what is open over the world, which
+ * raid lobby they are in, and whether a battle has taken the page. It
+ * lives above all of it because the overworld opens lobbies the raids
+ * dialog shows, and both raids and replays open battles that replace
+ * everything
  */
 export default function GameProvider(props: ParentProps): JSX.Element {
   const auth = useAuth();
-  const [tab, setTab] = createSignal(GameTab.Profile);
+  const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
+
+  // A profile on first sight, seeded from whatever the sign-in
+  // already knows. The game reads a profile everywhere — the balance
+  // sits over the auction board and the player's own name is on their
+  // catches — so a player the store has never heard of would leave
+  // every one of those readings waiting on a document that is never
+  // coming
+  createEffect(() => {
+    const user = auth.user();
+
+    if (user == null) {
+      return;
+    }
+    ensureProfile(user).catch(() => {
+      // Nothing to do about it here: the profile is read through a
+      // subscription that will pick it up whenever it does appear,
+      // and a sign-in is not worth interrupting over a nickname
+    });
+  });
 
   // Where they left off, or — for somebody who has never walked
   // anywhere — somewhere random in the starting region, written down
@@ -159,6 +228,36 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       cancelled = true;
     });
   });
+  const [gifts, setGifts] = createSignal<MysteryGift[]>([]);
+  const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
+  const [listing, setListing] = createSignal<AuctionSubject | null>(null);
+  const [records, setRecords] = createSignal(0);
+
+  // Whether the game owes them anything, asked once a session. Today
+  // that is the pokemon somebody with none is handed: a player who
+  // has walked out of their last one is otherwise standing in a world
+  // they cannot do anything in — no raid to join, nothing to bring to
+  // a grunt, and a safari they can throw nothing at.
+  //
+  // Asked after they have been placed, because a gift is stamped with
+  // where its owner was standing when it arrived, and before the
+  // position is written that is chunk zero for everybody
+  createEffect(() => {
+    if (auth.user() == null || position() == null) {
+      return;
+    }
+    claimMysteryGift()
+      .then((given) => {
+        if (given.length > 0) {
+          setGifts(given);
+        }
+      })
+      .catch(() => {
+        // A gift that could not be asked for is one the next sign-in
+        // asks for again: nothing has been given, so nothing is lost
+      });
+  });
+
   const [raid, setRaid] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
@@ -166,8 +265,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   return (
     <GameContext.Provider
       value={{
-        tab,
-        setTab,
+        dialog,
+        setDialog,
         position,
         setPosition,
         raid,
@@ -176,6 +275,16 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setBattle,
         reward,
         setReward,
+        gifts,
+        setGifts,
+        sheet,
+        setSheet,
+        listing,
+        setListing,
+        records,
+        touchRecords: () => {
+          setRecords((count) => count + 1);
+        },
       }}
     >
       {props.children}

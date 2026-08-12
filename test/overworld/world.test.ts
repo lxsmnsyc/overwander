@@ -73,6 +73,7 @@ import deriveEncounter, {
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
   MOVE_LIMIT,
+  SPAWN_LEVELS,
   deriveAbility,
   deriveMoves,
   deriveNature,
@@ -1786,9 +1787,32 @@ describe('chunk snapshot', () => {
     const maxed = deriveEncounter(snapshot, [spawn[0], 0xffffffff, 0]);
     expect(maxed.ivs).toBe(PERFECT_IVS);
 
-    // A zero trait value bottoms out the level; all-ones caps it
-    expect(maxed.level).toBe(5);
-    expect(deriveEncounter(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(100);
+    // A zero trait value bottoms out the level and all-ones tops it —
+    // within the band the species belongs to, which is what keeps a
+    // level 90 Rattata out of the first field somebody walks into
+    const [lowest, highest] = SPAWN_LEVELS[getSpawnRarity(spawn[0])];
+
+    expect(maxed.level).toBe(lowest);
+    expect(deriveEncounter(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(highest);
+
+    // Every band, at both ends. A special is the exception: one of
+    // each exists, and it may be met at any strength at all
+    for (const rarity of [
+      SpawnRarity.Base,
+      SpawnRarity.Uncommon,
+      SpawnRarity.Rare,
+      SpawnRarity.Prized,
+      SpawnRarity.Special,
+    ]) {
+      const [floor, ceiling] = SPAWN_LEVELS[rarity];
+
+      expect(ceiling).toBeGreaterThan(floor);
+      expect(floor).toBeGreaterThanOrEqual(1);
+      expect(ceiling).toBeLessThanOrEqual(100);
+      // The specials alone are the whole range: one of each exists,
+      // and a legendary with a known strength is a solved one
+      expect(rarity === SpawnRarity.Special).toBe(floor === 1 && ceiling === 100);
+    }
 
     // Sex-locked species never roll the other gender, whatever the
     // gender slice (byte 1) holds

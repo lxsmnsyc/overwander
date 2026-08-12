@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { solidStart } from '@solidjs/start/config';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
@@ -23,7 +24,13 @@ const forTests = process.env.VITEST != null;
 export default defineConfig({
   // Tailwind reads its configuration out of src/app.css rather than a
   // config file of its own, so the plugin is all the wiring there is
-  plugins: [tailwindcss(), solidStart(), ...(forTests ? [] : [nitro()])],
+  plugins: [
+    tailwindcss(),
+    solidStart({
+      devOverlay: false,
+    }),
+    ...(forTests ? [] : [nitro()]),
+  ],
   ssr: {
     // `server-only` is a marker, not a library. SolidStart's
     // `boundary-modules` plugin resolves it to an empty module on the
@@ -41,5 +48,16 @@ export default defineConfig({
     // Keeping it non-external puts the marker back in front of the
     // plugin that understands it
     noExternal: ['server-only'],
+  },
+  test: {
+    /**
+     * `test/firestore` is the one part of the suite that needs
+     * something running — the rules language has no interpreter
+     * outside the emulator. Left in, `pnpm test` would fail on a
+     * machine that has no Java rather than on anything to do with the
+     * code, so those tests are run on their own by `pnpm test:rules`,
+     * which starts an emulator around them (see `vitest.rules.ts`)
+     */
+    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/firestore/**'],
   },
 });

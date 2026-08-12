@@ -18,7 +18,13 @@ import {
 import { isLockLive } from '../auth/battle-lock';
 import { getBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
-import { type CaughtPokemon, getCaught, isFavorite, listCaughtMarked } from '../auth/caught';
+import {
+  type CaughtPokemon,
+  countCaught,
+  getCaught,
+  isFavorite,
+  listCaughtMarked,
+} from '../auth/caught';
 import { isShiny } from '../auth/caught-record';
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { isEgg } from '../auth/egg';
@@ -27,11 +33,12 @@ import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
 import { NATURE_NAMES } from '../data/ids/natures';
 import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
-import CatchDialog, { describeAbility } from './CatchDialog';
+import { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './CatchesList';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import matches from '../core/search';
+import { useGame } from './game-context';
 import {
   Badge,
   Button,
@@ -208,10 +215,21 @@ export function BidControls(props: {
 }
 
 /**
- * One lot on the board: what it is, what it stands at, how long it has
- * left, and the bid box
+ * What a lot that has stopped taking bids is waiting for: the player
+ * to come and get it. A won lot is collected and an unsold one is
+ * taken back, which are the same row with different words on it
  */
-function BidRow(props: {
+interface LotClaim {
+  said: string;
+  label: string;
+  onClaim: () => void;
+}
+
+/**
+ * One lot on the board: what it is, what it stands at, how long it has
+ * left, and either the bid box or the way to collect it
+ */
+function LotRow(props: {
   auction: AuctionRecord;
   player: string;
   gold: number;
@@ -227,6 +245,11 @@ function BidRow(props: {
    * which is already entirely described by its name
    */
   onInspect?: () => void;
+  /**
+   * Set when bidding is over and this lot is the player's to take,
+   * which is what a row offers instead of a bid
+   */
+  claim?: LotClaim;
   onBid: (amount: number) => void;
 }): JSX.Element {
   return (
@@ -249,21 +272,39 @@ function BidRow(props: {
             </RowButton>
           )}
         </Show>
+        {/* What it stands at is what a bidder needs; a lot that has
+            stopped taking bids says what it went for beside the
+            button instead, since "40 gold to take it" reads as an
+            offer on something nobody can bid on any more */}
         <Meta>
-          {describeBid(props.auction)} · {describeRemaining(props.auction.endsAt, now())} · listed
-          by {props.seller}
+          {props.claim == null ? `${describeBid(props.auction)} · ` : ''}
+          {describeRemaining(props.auction.endsAt, now())} · listed by {props.seller}
         </Meta>
         {/* What is worth paying for, on a line of its own: it is
             longer than everything above it and read differently —
             a bidder scans it once and then decides */}
         <Show when={props.detail}>{(said) => <Meta>{said()}</Meta>}</Show>
       </div>
-      <BidControls
-        auction={props.auction}
-        player={props.player}
-        gold={props.gold}
-        onBid={props.onBid}
-      />
+      <Show
+        when={props.claim}
+        fallback={
+          <BidControls
+            auction={props.auction}
+            player={props.player}
+            gold={props.gold}
+            onBid={props.onBid}
+          />
+        }
+      >
+        {(claim) => (
+          <Row class="gap-1.5">
+            <Meta>{claim().said}</Meta>
+            <Button tone="primary" onClick={claim().onClaim}>
+              {claim().label}
+            </Button>
+          </Row>
+        )}
+      </Show>
     </ListRow>
   );
 }
@@ -273,16 +314,24 @@ export interface AuctionTabProps {
 }
 
 /**
- * The auction house: what is on the block, what the player has won and
- * not collected, and the one lot they may put up themselves.
+ * The auction house: one board, newest lot first, and the one lot the
+ * player may put up themselves.
+ *
+ * **One list.** What is taking bids, what this player won and has not
+ * come back for, and what of theirs went unsold are all the same
+ * thing — a lot on the board — and each row already says which it is
+ * by what it offers to do. Three lists meant three places to look for
+ * one thing, and two of them stood empty nearly always: what a player
+ * wins is a handful of rows a year on a board they read every day.
  *
  * Putting something up cannot be undone while the lot runs — the item
  * leaves the bag and the pokemon leaves the player's records there and
  * then — so it takes a second press, the way letting a pokemon go does.
  * Only a lot the day ended on without a bid comes back, and it comes
- * back here
+ * back to the same row it was listed in
  */
 export default function AuctionTab(props: AuctionTabProps): JSX.Element {
+  const game = useGame();
   const [status, setStatus] = createSignal<string | null>(null);
 
   // The balance moves with every bid placed and every one handed back,
@@ -300,7 +349,10 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   // read once
   const auctions = from<[string, AuctionRecord][]>((set) =>
     watchOpenAuctions((open) => {
-      set(open.sort(([, one], [, other]) => one.endsAt - other.endsAt));
+      // Newest first. Every lot runs exactly a day, so when it closes
+      // is when it was listed — the most recently put up is the one
+      // nobody has seen yet, and the one worth opening the board for
+      set(open.sort(([, one], [, other]) => other.endsAt - one.endsAt));
     }),
   );
 
@@ -419,66 +471,16 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   /**
-   * The lot being looked at in full, if any. A pokemon on the block is
-   * somebody else's, so it opens read-only: the dialog shows the whole
-   * record and offers nothing to do to it
-   */
-  const [inspecting, setInspecting] = createSignal<string | null>(null);
-
-  /**
    * What was typed. A board is somebody else's shelf — a player comes
    * to it looking for one thing, so it is searched by what the lot is
    * rather than scrolled
    */
   const [query, setQuery] = createSignal('');
 
-  const open = (): [string, AuctionRecord][] =>
-    (auctions() ?? []).filter(([, auction]) => isLive(auction, now()));
-
-  /**
-   * The lots still taking bids, soonest to close first. A lot whose
-   * name has not arrived yet is left in: it is on the board, and
-   * hiding it until its pokemon loads would be a board that shrinks
-   * while it is being read
-   */
-  const live = (): [string, AuctionRecord][] =>
-    open().filter(([, auction]) => {
-      const name = nameOf(auction);
-
-      return name == null || matches(name, query());
-    });
-
-  /**
-   * The ones this player won and has not come back for
-   */
-  const won = (): [string, AuctionRecord][] =>
-    (auctions() ?? []).filter(([, auction]) => canClaim(auction, props.player, now()));
-
-  /**
-   * The player's own lots that ran their day out without a single bid.
-   * Nobody won them, so there is nobody to hand them to but the seller
-   */
-  const unsold = (): [string, AuctionRecord][] =>
-    (auctions() ?? []).filter(([, auction]) => canReclaim(auction, props.player, now()));
-
-  /**
-   * The auction the player has running, if any. A seller runs one at a
-   * time, so this is what the sell form asks before it offers anything
-   */
-  const [standing, { refetch: refetchStanding }] = createResource(
-    () => props.player,
-    getSellerStanding,
-  );
-
-  const running = (): number | null => {
-    const mine = standing();
-
-    return mine != null && now() < mine.endsAt ? mine.endsAt : null;
-  };
-
   // Bumped whenever something leaves the player's hands or lands in
   // them, so the two pickers below re-read what there is to sell
   const [revision, setRevision] = createSignal(0);
+
   const refresh = (): void => {
     setRevision(revision() + 1);
   };
@@ -498,7 +500,22 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * three again when the listing actually arrives; this is so a player
    * is told before they press rather than after
    */
+  /**
+   * Whether this is the only pokemon they have, which is the one that
+   * may not be sold
+   */
+  const [onlyOne] = createResource(
+    () => props.player,
+    async (uid) => (await countCaught(uid)) <= 1,
+  );
+
   const sellingReason = (option: CatchOption): string | null => {
+    // A lot leaves its owner's hands as it is listed, so the last one
+    // may not be listed at all — the same rule that stops it being
+    // released
+    if (onlyOne() === true) {
+      return 'your only pokemon';
+    }
     if (option.fighting) {
       return 'in a raid';
     }
@@ -604,13 +621,73 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       });
   };
 
+  /**
+   * What a row offers on a lot that has stopped taking bids: nothing
+   * for somebody else's, collecting one this player won, and taking
+   * back one of their own the day ran out on without a single bid.
+   *
+   * A lot in either state is still on the board rather than filed
+   * under a heading of its own. Three lists meant three places to
+   * look for one thing, and two of them were empty nearly always —
+   * what a player has won is a handful of rows a year on a board
+   * they read every day
+   */
+  const claimOf = (id: string, auction: AuctionRecord): LotClaim | undefined => {
+    if (canClaim(auction, props.player, now())) {
+      return {
+        said: `won for ${auction.bid} gold`,
+        label: 'Collect',
+        onClaim: () => {
+          collect(id);
+        },
+      };
+    }
+    if (canReclaim(auction, props.player, now())) {
+      return {
+        said: 'nobody bid',
+        label: 'Take it back',
+        onClaim: () => {
+          reclaim(id);
+        },
+      };
+    }
+    return undefined;
+  };
+
+  /**
+   * The board: everything still taking bids, and whatever of the
+   * player's own is waiting to be picked up, newest first.
+   *
+   * A lot whose name has not arrived yet is left in: it is on the
+   * board, and hiding it until its pokemon loads would be a board
+   * that shrinks while it is being read
+   */
+  const board = (): [string, AuctionRecord][] =>
+    (auctions() ?? [])
+      .filter(([id, auction]) => isLive(auction, now()) || claimOf(id, auction) !== undefined)
+      .filter(([, auction]) => {
+        const name = nameOf(auction);
+
+        return name == null || matches(name, query());
+      });
+
+  /**
+   * The auction the player has running, if any. A seller runs one at a
+   * time, so this is what the sell form asks before it offers anything
+   */
+  const [standing, { refetch: refetchStanding }] = createResource(
+    () => props.player,
+    getSellerStanding,
+  );
+
+  const running = (): number | null => {
+    const mine = standing();
+
+    return mine != null && now() < mine.endsAt ? mine.endsAt : null;
+  };
+
   return (
-    <Panel
-      title="Auctions"
-      lede="Every lot runs for a day. Whatever is put up leaves its owner's hands there and then,
-        and the last bidder standing collects it once bidding closes. A bid is paid as it is made
-        and handed back if somebody raises it. A lot nobody bid on goes back to whoever listed it."
-    >
+    <Panel>
       <Row>
         <Badge tone="gold">{gold()} gold</Badge>
       </Row>
@@ -618,7 +695,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       <Card>
         <Row>
           <h3 class="grow">On the block</h3>
-          <Show when={open().length > SEARCH_FROM}>
+          <Show when={board().length > SEARCH_FROM}>
             <Search
               placeholder="Search the lots"
               value={query()}
@@ -630,7 +707,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Row>
         <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
           <Show
-            when={live().length}
+            when={board().length}
             fallback={
               <Note>
                 {query().length === 0
@@ -640,19 +717,23 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             }
           >
             <List>
-              <For each={live()}>
+              <For each={board()}>
                 {([id, auction]) => (
-                  <BidRow
+                  <LotRow
                     auction={auction}
                     player={props.player}
                     gold={gold()}
                     name={nameOf(auction)}
                     detail={detailOf(auction)}
                     seller={describeSeller(auction)}
+                    claim={claimOf(id, auction)}
                     onInspect={
                       auction.lot === AuctionLot.Catch
                         ? () => {
-                            setInspecting(auction.caught);
+                            // A pokemon on the block is somebody
+                            // else's, so it opens read-only: the whole
+                            // record, and nothing to press
+                            game.setSheet({ catchId: auction.caught, readOnly: true });
                           }
                         : undefined
                     }
@@ -667,62 +748,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Show>
       </Card>
 
-      {/* Nothing is handed over when bidding closes; the winner comes
-          back for it, and the seller is paid out of the same claim */}
-      <Card title="Won">
-        <Show when={won().length} fallback={<Note>Nothing waiting to be collected.</Note>}>
-          <List>
-            <For each={won()}>
-              {([id, auction]) => (
-                <ListRow>
-                  <span class="grow font-medium">
-                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
-                  </span>
-                  <Meta>
-                    won for {auction.bid} gold · from {describeSeller(auction)}
-                  </Meta>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      collect(id);
-                    }}
-                  >
-                    Collect
-                  </Button>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </Show>
-      </Card>
-
-      {/* A lot the day ran out on without a bid has no winner to go to,
-          so it goes back where it came from */}
-      <Card title="Unsold">
-        <Show when={unsold().length} fallback={<Note>Nothing of yours went unsold.</Note>}>
-          <List>
-            <For each={unsold()}>
-              {([id, auction]) => (
-                <ListRow>
-                  <span class="grow font-medium">
-                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
-                  </span>
-                  <Meta>nobody bid</Meta>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      reclaim(id);
-                    }}
-                  >
-                    Take it back
-                  </Button>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </Show>
-      </Card>
-
       <Card title="Sell">
         <Show
           when={running() == null}
@@ -733,24 +758,13 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
             </Note>
           }
         >
-          <Note>
-            One item — a single one, not the stack — or one pokemon. Whichever it is leaves your
-            hands the moment it goes up and cannot be taken off the block; it only comes back if the
-            day ends with nobody having bid on it. Pick one and the price is named in the dialog
-            that opens.
-          </Note>
-          {/* A listing is one a day, so what may take it is narrow on
-              purpose: the things a bidder could not simply go and get
-              for themselves. Said plainly here, since the lists below
-              leave everything else out rather than refusing it row by
-              row */}
-          <Note>
-            The block takes <strong>one-per-world items</strong>, and pokemon that are{' '}
-            <strong>perfect</strong>, <strong>shiny</strong> or <strong>legendary</strong>. Anything
-            else is something the finder can walk out and catch, and a day of the board is worth
-            more than that.
-          </Note>
-
+          {/* What the block takes, and what listing costs, used to be
+              said here in two paragraphs. Neither is a thing a player
+              reads twice: the lists below already show only what
+              qualifies and say so where they are empty, and what
+              listing costs is named in the dialog that opens — which
+              is the last moment before it costs anything, and the only
+              one where reading it changes what somebody does */}
           <h4>From the bag</h4>
           <InventoryPicker
             inline
@@ -794,62 +808,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Show>
       </Card>
 
-      {/* Nothing is handed over when bidding closes; the winner comes
-          back for it, and the seller is paid out of the same claim */}
-      <Card title="Won">
-        <Show when={won().length} fallback={<Note>Nothing waiting to be collected.</Note>}>
-          <List>
-            <For each={won()}>
-              {([id, auction]) => (
-                <ListRow>
-                  <span class="grow font-medium">
-                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
-                  </span>
-                  <Meta>
-                    won for {auction.bid} gold · from {describeSeller(auction)}
-                  </Meta>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      collect(id);
-                    }}
-                  >
-                    Collect
-                  </Button>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </Show>
-      </Card>
-
-      {/* A lot the day ran out on without a bid has no winner to go to,
-          so it goes back where it came from */}
-      <Card title="Unsold">
-        <Show when={unsold().length} fallback={<Note>Nothing of yours went unsold.</Note>}>
-          <List>
-            <For each={unsold()}>
-              {([id, auction]) => (
-                <ListRow>
-                  <span class="grow font-medium">
-                    <AuctionLotLabel auction={auction} name={nameOf(auction)} />
-                  </span>
-                  <Meta>nobody bid</Meta>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      reclaim(id);
-                    }}
-                  >
-                    Take it back
-                  </Button>
-                </ListRow>
-              )}
-            </For>
-          </List>
-        </Show>
-      </Card>
-
       <Status message={status()} />
 
       {/* Putting something up: what it is, the terms, and a second
@@ -866,18 +824,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           Promise.resolve(refetchStanding())
             .then(refresh)
             .catch(() => undefined);
-        }}
-      />
-
-      {/* A lot opened in full. It is somebody else's pokemon — in
-          escrow it is nobody's — so the dialog is read-only: the whole
-          record, and nothing to press */}
-      <CatchDialog
-        readOnly
-        player={props.player}
-        catchId={inspecting()}
-        onClose={() => {
-          setInspecting(null);
         }}
       />
     </Panel>

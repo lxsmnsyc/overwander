@@ -11,7 +11,7 @@ import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
-import { Badge, Button, Dialog, DialogActions, Note, Status } from './styled';
+import { Button, Dialog, DialogActions, Status } from './styled';
 
 /**
  * The ball a carried item stands for, so the bag can be filtered
@@ -58,6 +58,15 @@ export interface SafariDialogProps {
    */
   session: SafariSession<EncounterRecord> | null;
   onClose: () => void;
+  /**
+   * Fired with the new record the moment a throw lands.
+   *
+   * A caught pokemon is the thing the player was after, and the sheet
+   * is where it can be looked at properly — its sigil, what it was
+   * born with, what it can be raised into. Handing the id up rather
+   * than opening the sheet here keeps one dialog on screen at a time
+   */
+  onCaught?: (catchId: string) => void;
 }
 
 /**
@@ -199,9 +208,18 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
           : `It would not take the ${describeItem(thrown)}.`;
       }
 
-      const result = await throwBall(props.user, active);
+      const thrownAt = await throwBall(props.user, active);
 
-      return result == null ? 'No ball of that kind to throw.' : THROW_MESSAGES[result];
+      if (thrownAt == null) {
+        return 'No ball of that kind to throw.';
+      }
+      // Straight to the sheet for what was caught. The encounter is
+      // over the moment the ball holds, so there is nothing left in
+      // this dialog to come back to
+      if (thrownAt.catchId != null) {
+        props.onCaught?.(thrownAt.catchId);
+      }
+      return THROW_MESSAGES[thrownAt.result];
     });
   };
 
@@ -247,6 +265,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       isOpen={props.session != null}
       onClose={leave}
       title={met()}
+      terse
       description="One encounter, one throw at a time. A treat makes it easier to catch and every
         turn gives it another chance to bolt."
     >
@@ -300,16 +319,10 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
             <Show when={active().state !== SafariState.Active}>
               <p role="status">{STATE_MESSAGES[active().state]}</p>
             </Show>
-            {/* Said before the press rather than after: a treat is one
-                throw's worth, and the hand goes back to the ball once
-                it is eaten */}
-            <Show when={treat() != null && !rummaging()}>
-              <Note>A treat, not a ball. It will not catch anything on its own.</Note>
-            </Show>
-            <Show when={stockOf(inHand()) === 0 && !rummaging()}>
-              <Note>Nothing of that left — go through the bag for something else.</Note>
-            </Show>
-
+            {/* What is in hand says the rest: the throw button names
+                it, the badge beside it counts what is left, and a
+                treat that would catch nothing is a treat the player
+                chose to take out */}
             <Status message={status()} />
           </>
         )}
@@ -317,7 +330,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
 
       {/* Items, throw, run away: what the player is reaching for most
           often sits nearest the way out */}
-      <DialogActions>
+      <DialogActions center>
         <Show when={session()?.state === SafariState.Active}>
           <Show
             when={rummaging()}
@@ -331,12 +344,11 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 >
                   Items
                 </Button>
+                {/* What is being thrown and how many are left are one
+                    thing to read, so they are one thing to look at */}
                 <Button tone="primary" disabled={stockOf(inHand()) === 0} onClick={hurl}>
-                  Throw {describeItem(inHand())}
+                  Throw {describeItem(inHand())} × {stockOf(inHand())}
                 </Button>
-                <Badge tone={stockOf(inHand()) > 0 ? 'leaf' : 'neutral'}>
-                  × {stockOf(inHand())}
-                </Badge>
               </>
             }
           >

@@ -1,5 +1,5 @@
 import type { Species } from '../data/ids/species';
-import { getAvailableEvolutions } from '../data/species';
+import { getSpeciesData, meetsEvolutionCriteria } from '../data/species';
 import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/firebase';
@@ -8,23 +8,50 @@ import { getInventory } from './inventory';
 import getIdToken from './session';
 
 /**
- * Every evolution the catch can take right now: its level, the items
- * its owner carries and the items it holds are all measured against
- * the species' evolution data. Resolves an empty list when the catch
- * is not the user's or nothing qualifies
+ * One of the shapes a pokemon could grow into, and whether it could do
+ * it today
  */
-export async function listEvolutions(uid: string, catchId: string): Promise<EvolutionData[]> {
+export interface EvolutionOption {
+  evolution: EvolutionData;
+  /**
+   * Whether every condition is met right now: the level reached, the
+   * stone in the bag, the item in its hands
+   */
+  available: boolean;
+}
+
+/**
+ * Every evolution the species has, with the ones it cannot take yet
+ * left in.
+ *
+ * Offering only what is possible right now means a Charmander's sheet
+ * says nothing at all about Charmeleon, so a player has no way to
+ * learn what they are working towards except to reach it by accident.
+ * The unmet ones are shown and refused instead, which is the same
+ * answer with the reason attached.
+ *
+ * Resolves an empty list when the catch is not the user's
+ */
+export async function listEvolutionOptions(
+  uid: string,
+  catchId: string,
+): Promise<EvolutionOption[]> {
   const [caught, inventory] = await Promise.all([getCaught(catchId), getInventory(uid)]);
 
   if (caught == null || caught.owner !== uid) {
     return [];
   }
 
-  return getAvailableEvolutions(caught.species, {
+  const context = {
     level: caught.level,
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
     held: new Set(caught.items),
-  });
+  };
+
+  return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({
+    evolution,
+    available: meetsEvolutionCriteria(evolution, context),
+  }));
 }
 
 /**

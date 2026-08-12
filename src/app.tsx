@@ -17,26 +17,10 @@ export default function App(): JSX.Element {
         <MetaProvider>
           <AuthProvider>
             <Title>Poketerra</Title>
-            {/* The same bar over every page: where the game is, and
-                the two pages that are about the player rather than
-                about the world */}
-            <header class="border-b border-line bg-paper">
-              <nav class="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
-                <a href="/" class="text-base font-semibold tracking-tight no-underline">
-                  Poketerra
-                </a>
-                <span class="grow" />
-                <a href="/demo/raid" class="text-sm">
-                  Raid demo
-                </a>
-                <a href="/login" class="text-sm">
-                  Sign in
-                </a>
-                <a href="/profile" class="text-sm">
-                  Edit profile
-                </a>
-              </nav>
-            </header>
+            {/* No bar over the top. The game is one page — the world,
+                with what the player wants pulled over it — and a nav
+                offering to leave it was three links to two pages that
+                no longer exist and one that is a demo */}
             <Suspense>{props.children}</Suspense>
           </AuthProvider>
         </MetaProvider>

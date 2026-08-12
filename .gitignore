@@ -136,3 +136,11 @@ dist
 .pnp.*
 
 .output
+
+# Firebase emulators: logs, the UI's downloads and any exported state
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log
+ui-debug.log
+.firebase

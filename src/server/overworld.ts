@@ -9,7 +9,7 @@ import {
   SNAPSHOT_COLLECTION,
 } from '../auth/collections';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
-import { asSpawnRolls, spawnId as nameSpawn } from '../auth/snapshot-record';
+import { asSpawnRolls, spawnId as nameSpawn, windowId } from '../auth/snapshot-record';
 import AleaRNG from '../core/alea';
 import type { ItemStack } from '../data/overworld/item-pool';
 import ChunkSnapshot, {
@@ -62,7 +62,7 @@ export async function resolveSnapshot(
   const stored = docData(
     await getAdminFirestore()
       .collection(SNAPSHOT_COLLECTION)
-      .doc(`${chunk.seed}:${toZoneKey(zone)}`)
+      .doc(windowId(chunk.seed, toZoneKey(zone)))
       .get(),
   );
   const timestamp = asNumber(stored?.timestamp);
@@ -357,9 +357,15 @@ export async function meetSpawn(
   }
 
   // The roll itself comes off the window document, which is the one
-  // the whole zone is looking at
+  // the whole zone is looking at. It is addressed by the document's
+  // id and **not** by `snapshot.key`: the two are a separator apart,
+  // and asking for the key found nothing at all — so every published
+  // spawn in the game answered as though its window had turned over
   const window = docData(
-    await getAdminFirestore().collection(SNAPSHOT_COLLECTION).doc(snapshot.key).get(),
+    await getAdminFirestore()
+      .collection(SNAPSHOT_COLLECTION)
+      .doc(windowId(snapshot.chunk.seed, toZoneKey(snapshot.offset)))
+      .get(),
   );
   const rolls = asSpawnRolls(window?.spawns);
 

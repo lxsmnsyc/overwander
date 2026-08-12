@@ -27,9 +27,70 @@ const ADMIN_APP = 'poketerra-admin';
  */
 const SERVICE_ACCOUNT = process.env.FIREBASE_SERVICE_ACCOUNT;
 
+/**
+ * Whether the emulators are what this process is talking to.
+ *
+ * Nothing here has to route the calls: the admin SDK reads these two
+ * variables itself and points at the local ports. What it will not do
+ * is invent a project to point at — so an emulated run supplies one
+ * and skips the credentials, which the emulators do not check and a
+ * developer machine has no reason to hold
+ */
+const EMULATED =
+  process.env.FIRESTORE_EMULATOR_HOST != null || process.env.FIREBASE_AUTH_EMULATOR_HOST != null;
+
+/**
+ * The project the emulators keep their store under when neither side
+ * names one. It matches the browser's default in
+ * [`src/auth/firebase.ts`](../auth/firebase.ts) — leaving both unset
+ * is meant to work
+ */
+const EMULATOR_PROJECT = 'demo-poketerra';
+
+/**
+ * Refuse to run against a different project to the browser's.
+ *
+ * The emulators keep **one store per project id**, and the two sides
+ * of the game name theirs separately: the browser reads
+ * `VITE_FIREBASE_PROJECT_ID` and the admin SDK here reads
+ * `FIREBASE_PROJECT_ID`. Let them disagree and everything appears to
+ * work — both halves talk to a real emulator, both writes succeed —
+ * while the player is looking at a store nothing the server writes
+ * ever reaches. Their catches, their bag, their gold and their
+ * profile are all in the other one. Nothing errors, nothing is
+ * denied, and every panel is simply empty for ever.
+ *
+ * So it is refused here, where both values are visible, rather than
+ * left to be discovered as an empty game
+ */
+function requireOneProject(project: string): void {
+  const browser = process.env.VITE_FIREBASE_PROJECT_ID;
+
+  if (browser == null || browser === '' || browser === project) {
+    return;
+  }
+  throw new Error(
+    `Firebase project mismatch: the browser is configured for "${browser}" ` +
+      `(VITE_FIREBASE_PROJECT_ID) and the server for "${project}" (FIREBASE_PROJECT_ID). ` +
+      'The emulators keep one store per project, so the two would be playing different ' +
+      `games. Set both to the same id in .env — or leave both unset, which is "${EMULATOR_PROJECT}" ` +
+      'on either side — and restart the dev server.',
+  );
+}
+
 function getAdminApp(): App {
   if (getApps().some((app) => app.name === ADMIN_APP)) {
     return getApp(ADMIN_APP);
+  }
+
+  if (EMULATED) {
+    // The same project id the browser is configured with, since the
+    // emulators keep one store per project and the two sides have to
+    // be looking at the same one
+    const project = process.env.FIREBASE_PROJECT_ID ?? EMULATOR_PROJECT;
+
+    requireOneProject(project);
+    return initializeApp({ projectId: project }, ADMIN_APP);
   }
 
   if (SERVICE_ACCOUNT == null || SERVICE_ACCOUNT === '') {

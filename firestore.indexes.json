@@ -1,0 +1,56 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "caught",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "owner", "order": "ASCENDING" },
+        { "fieldPath": "species", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "caught",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "owner", "order": "ASCENDING" },
+        { "fieldPath": "shiny", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "caught",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "owner", "order": "ASCENDING" },
+        { "fieldPath": "auctionable", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "teams",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "player", "order": "ASCENDING" },
+        { "fieldPath": "catches", "arrayConfig": "CONTAINS" }
+      ]
+    },
+    {
+      "collectionGroup": "raids",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "timestamp", "order": "ASCENDING" },
+        { "fieldPath": "offset", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "bags",
+      "fieldPath": "items",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "bags",
+      "fieldPath": "candies",
+      "indexes": []
+    }
+  ]
+}

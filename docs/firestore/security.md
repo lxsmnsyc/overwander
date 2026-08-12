@@ -109,19 +109,23 @@ service cloud.firestore {
     // currency, since one mints Master Balls and the other mints
     // levels
     match /bags/{uid} {
-      allow read: if isOwner(uid);
+      // `get` rather than `read`: the condition names the document's
+      // own id, which a query has none of — see the note on `bids`.
+      // A bag is fetched by id and never listed, so a list is refused
+      // outright rather than failing on a null wildcard
+      allow get: if isOwner(uid);
       allow write: if false;
     }
     // Where a player is standing. Theirs to read, and the server's to
     // write — not because a position is trusted (nothing checks one)
     // but because a client that could write this could write anybody's
     match /positions/{uid} {
-      allow read: if isOwner(uid);
+      allow get: if isOwner(uid);
       allow write: if false;
     }
     // Fled encounters are recomputed from the stored encounter
     match /fled/{uid} {
-      allow read: if isOwner(uid);
+      allow get: if isOwner(uid);
       allow write: if false;
     }
 
@@ -151,7 +155,7 @@ service cloud.firestore {
     // "{parentId}:{uid}". The player reads their own; only the server
     // writes them, since each one is a reward changing hands
     match /encounters/{encounterId} {
-      allow read: if signedIn() && encounterId.split(':')[1] == request.auth.uid;
+      allow get: if signedIn() && encounterId.split(':')[1] == request.auth.uid;
       allow write: if false;
     }
     match /cacheClaims/{claimId} {
@@ -181,14 +185,26 @@ service cloud.firestore {
     // What a seller has running, which is what holds them to one
     // auction at a time. Theirs to read, nobody's to write
     match /auctionSellers/{uid} {
-      allow read: if isOwner(uid);
+      allow get: if isOwner(uid);
       allow write: if false;
     }
     // A player's own bidding history, id "{uid}:{auctionId}". The lot
     // keeps only the standing bid, so this is what says they took part
-    // at all — and what they paid is nobody else's business
+    // at all — and what they paid is nobody else's business.
+    //
+    // Split, because the two halves of a read cannot ask the same
+    // question. Naming a document is a `get`, and the id is what says
+    // whose it is; asking for the collection is a `list`, where the
+    // id wildcard is **null** — the rule is evaluated per document
+    // the query would return, before any of them has a name. Asking
+    // `bidId` there is a "Null value error", and a bidding history
+    // that cannot be read at all
     match /bids/{bidId} {
-      allow read: if signedIn() && bidId.split(':')[0] == request.auth.uid;
+      allow get: if signedIn() && bidId.split(':')[0] == request.auth.uid;
+      // The field the query filters on. A query that does not filter
+      // by player would return somebody else's document, fail this
+      // for it, and be refused whole — which is the check
+      allow list: if signedIn() && resource.data.player == request.auth.uid;
       allow write: if false;
     }
     // A grunt's party, and whether they have been put down: what one
@@ -248,6 +264,54 @@ service cloud.firestore {
 Firestore has no `where` clause on `match` paths, so any grouped block above has
 to be expanded into one `match` statement per collection when the rules are
 actually deployed.
+
+A read is two operations, and a rule that names the document's own id can only
+answer one of them. `get` names a document; `list` is evaluated **per document a
+query would return**, before any of them has a name, so every wildcard in the
+match path is `null` there — asking for one is a *"Null value error for 'list'"*
+rather than a refusal, and the tab that ran the query shows nothing at all. Where
+a collection is both fetched by id and queried, the two halves get separate
+rules: `bids` reads its id for a `get` and the `player` field the query filters on
+for a `list`. Where a collection is only ever fetched by id, the rule says `get`
+and a query is refused outright rather than erroring.
+
+That file now exists: [`firestore.rules`](../../firestore.rules) is the block
+above, and [`firestore.indexes.json`](../../firestore.indexes.json) the table
+below. The **emulators enforce both**, so a client write these refuse fails on a
+developer's machine rather than in front of a player — see the emulator section
+of the [README](../../README.md).
+
+The one collection no client touches at all is `giftClaims`: a mystery gift is
+decided, written and marked in the same server call, so the marker is neither
+read nor written from a browser — and a client that could delete its own marker
+could ask for the same gift twice.
+
+### Testing them
+
+The rules language has no interpreter outside the emulator, so
+[`test/firestore/rules.test.ts`](../../test/firestore/rules.test.ts) asks the
+engine itself: for each collection, whether the owner may read it, whether
+anybody else may, whether a query is refused where only a `get` was granted, and
+whether the client is kept out of the writes. Run them with
+`pnpm test:rules`, which starts a Firestore emulator around the run and stops it
+after.
+
+They are kept out of `pnpm test` because they are the only tests that need
+something running — an emulator, and so a JDK. The run **empties the store
+between cases**, which is why it wants an emulator of its own: point it at one
+that is already up and it takes that data with it. `FIRESTORE_EMULATOR_PORT`
+moves it to a spare port when there is a development emulator to leave alone.
+
+Two things worth knowing that the tests are what settled:
+
+- A profile write that names `gold` **at the value it already holds** is
+  allowed. `affectedKeys()` is a diff, so a field rewritten with what was there
+  is in no key set at all. Nothing changes hands, and refusing it would refuse a
+  client that sends the whole document back.
+- Under `allow get` alone, a query is refused rather than returning the caller's
+  own document — including for the player who owns it. That is the intent, and
+  it is why the collections that are genuinely queried, like `bids`, carry a
+  separate `list` rule filtered on a field.
 
 ## Required indexes
 

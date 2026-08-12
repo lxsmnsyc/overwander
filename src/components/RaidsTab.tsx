@@ -1,10 +1,11 @@
 import type { User } from 'firebase/auth';
-import { For, type JSX, Show, createResource, from } from 'solid-js';
+import { For, type JSX, Show, createResource } from 'solid-js';
 import { syncServerClock } from '../auth/clock';
 import { getLocalOffset, toLocalTime } from '../auth/local-time';
 import { type RaidRecord, getRaidTitle, watchLiveRaids } from '../auth/raids';
 import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
+import watchLive from './watch';
 import { List, ListRow, Meta, Note, Panel, RowButton } from './styled';
 import { useGame } from './game-context';
 
@@ -31,11 +32,15 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
     return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
   });
 
-  const raids = from<[string, RaidRecord][]>((set) => {
+  // The window is not known when this is first asked for — it comes
+  // from a round trip to the server's clock — so the listing has to
+  // be opened again once it arrives. `from` would ask once and never
+  // again, and the tab would say "Loading raids…" for ever
+  const raids = watchLive<[string, RaidRecord][]>((set) => {
     const raidWindow = window();
 
     if (raidWindow == null) {
-      return () => undefined;
+      return null;
     }
     return watchLiveRaids(raidWindow, zone, (live) => {
       set(live);
@@ -43,7 +48,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   });
 
   return (
-    <Panel title="Raids" lede="Every lobby still gathering in the current window.">
+    <Panel>
       <Show
         when={game.raid()}
         fallback={

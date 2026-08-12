@@ -1,7 +1,7 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, ENCOUNTER_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
-import { asEncounterRecord } from '../auth/encounter-record';
+import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import {
   DEFAULT_ABILITY_SLOTS,
@@ -65,39 +65,53 @@ export async function hasAnyCaught(uid: string): Promise<boolean> {
 }
 
 /**
- * Record the catch of an encounter the player is already in. The
- * encounter is read from `encounters/{spawnId}:{uid}` — the document
- * the server itself wrote when the meeting started — so the species,
- * level, IVs and shininess are the ones that were staged, whatever
- * the client believes.
+ * Whether the player has a pokemon to spare — that is, more than the
+ * one.
  *
- * Every catch pays its family's candy, fourfold on the family's own
- * day, in the same call: the reward cannot be skipped or claimed
- * twice by a client that stops asking.
+ * Nothing may take somebody's last one. Releasing it or selling it
+ * leaves a player who cannot join a raid, cannot answer a grunt and
+ * cannot throw a ball at anything, which is not a decision so much as
+ * a way of ending the game by accident. The game gives a pokemon to
+ * anyone who has none, so an emptied collection would also be handed
+ * a new starter — releasing the last one to reroll it is not a loop
+ * worth having.
  *
- * Resolves the new catch id, or null when the player is not in that
- * encounter
+ * Two documents at most, since the question is "more than one" rather
+ * than "how many"
  */
-export async function recordCatch(
+export async function hasSpareCatch(uid: string): Promise<boolean> {
+  const owned = await getAdminFirestore()
+    .collection(CAUGHT_COLLECTION)
+    .where('owner', '==', uid)
+    .limit(2)
+    .get();
+
+  return owned.size > 1;
+}
+
+/**
+ * Write one pokemon into a player's collection.
+ *
+ * Every way a pokemon arrives ends here — thrown at and caught, or
+ * handed over as a gift — because everything below the first three
+ * lines is the same either way: what it rolled, what room it has,
+ * what it is worth to somebody else, and the fact that it arrives
+ * whole. What differs is the ball it is in and what the history says
+ * it was, so those are asked for
+ */
+export async function writeCaughtRecord(
   uid: string,
-  spawnId: string,
+  encounter: EncounterRecord,
   ball: Balls,
+  kind: Acquisition,
   now: number,
   offset: number,
   locale: string,
-): Promise<string | null> {
-  const db = getAdminFirestore();
-  const stored = docData(await db.collection(ENCOUNTER_COLLECTION).doc(`${spawnId}:${uid}`).get());
-
-  if (stored == null) {
-    return null;
-  }
-
-  const encounter = asEncounterRecord(stored);
-  const ref = db.collection(CAUGHT_COLLECTION).doc();
-  // The instant is the server's, the calendar the catcher's: the
-  // stamp is written in their zone, and the species day is the day it
-  // was where they were standing
+): Promise<string> {
+  const ref = getAdminFirestore().collection(CAUGHT_COLLECTION).doc();
+  // The instant is the server's, the calendar the owner's: the stamp
+  // is written in their zone, and the species day is the day it was
+  // where they were standing
   const zone = asOffset(offset);
   const caughtAt = toLocalISO(now, zone);
   const shadow = encounter.shadow;
@@ -124,7 +138,7 @@ export async function recordCatch(
       DEFAULT_MOVE_SLOTS,
     ),
     items: [],
-    history: [{ owner: uid, acquiredAt: caughtAt, kind: Acquisition.Caught }],
+    history: [{ owner: uid, acquiredAt: caughtAt, kind }],
     // Whatever was true of the meeting is true of the record: it
     // sparkled for this player, or it came out of a shadow raid
     shiny: encounter.shiny,
@@ -168,6 +182,42 @@ export async function recordCatch(
       biome: encounter.biome,
     },
   });
+  return ref.id;
+}
+
+/**
+ * Record the catch of an encounter the player is already in. The
+ * encounter is read from `encounters/{spawnId}:{uid}` — the document
+ * the server itself wrote when the meeting started — so the species,
+ * level, IVs and shininess are the ones that were staged, whatever
+ * the client believes.
+ *
+ * Every catch pays its family's candy, fourfold on the family's own
+ * day, in the same call: the reward cannot be skipped or claimed
+ * twice by a client that stops asking.
+ *
+ * Resolves the new catch id, or null when the player is not in that
+ * encounter
+ */
+export async function recordCatch(
+  uid: string,
+  spawnId: string,
+  ball: Balls,
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<string | null> {
+  const db = getAdminFirestore();
+  const stored = docData(await db.collection(ENCOUNTER_COLLECTION).doc(`${spawnId}:${uid}`).get());
+
+  if (stored == null) {
+    return null;
+  }
+
+  const encounter = asEncounterRecord(stored);
+  const zone = asOffset(offset);
+  const id = await writeCaughtRecord(uid, encounter, ball, Acquisition.Caught, now, offset, locale);
+
   await grantCatchCandy(uid, encounter.species, toLocalTime(now, zone));
 
   // And then whatever the player was carrying when they caught it.
@@ -182,7 +232,7 @@ export async function recordCatch(
   }
   await mendWithHealBall(uid, ball);
 
-  return ref.id;
+  return id;
 }
 
 /**
@@ -395,11 +445,17 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
  * the flag is there for exactly this: the player has already said this
  * one is not to be parted with.
  *
- * Resolves false when the catch is not the player's, is fighting, or
- * is a favorite
+ * So is the **last** one, whatever it is: see `hasSpareCatch`.
+ *
+ * Resolves false when the catch is not the player's, is fighting, is
+ * a favorite, or is the only pokemon they have
  */
 export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
   const db = getAdminFirestore();
+
+  if (!(await hasSpareCatch(uid))) {
+    return false;
+  }
 
   return db.runTransaction(async (transaction) => {
     const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);

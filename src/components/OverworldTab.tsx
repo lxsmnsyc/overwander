@@ -6,12 +6,12 @@ import {
   createEffect,
   createResource,
   createSignal,
-  from,
   onCleanup,
 } from 'solid-js';
 import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
-import { getLocalOffset } from '../auth/local-time';
+import { getLocalOffset, toLocalTime } from '../auth/local-time';
+import { serverNow } from '../auth/clock';
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
   RaidKind,
@@ -24,7 +24,7 @@ import {
 import { savePosition } from '../auth/positions';
 import { claimRocketReward, enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
-import { createSafariSession, isEncounterFled } from '../auth/safari';
+import { createSafariSession, getFledKeys, isEncounterFled } from '../auth/safari';
 import {
   claimBerryPatch,
   claimItemCache,
@@ -35,9 +35,8 @@ import {
   watchSnapshotWindow,
 } from '../auth/snapshots';
 import { type EggWalk, walk } from '../auth/eggs';
-import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome';
+import { BIOME_NAMES } from '../data/biome';
 import type Biome from '../data/ids/biome';
-import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { ItemStack } from '../data/overworld/item-pool';
@@ -51,7 +50,7 @@ import { getRaidSpecies } from '../data/items/raid-items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
 import { type SnapshotRecord, type SpawnRoll, spawnId } from '../auth/snapshot-record';
-import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { SNAPSHOT_INTERVAL, SPAWN_COUNT } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import type { Buddy } from '../overworld/core';
 import createOverworld from '../overworld/setup';
@@ -59,27 +58,17 @@ import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
 import type SafariSession from '../overworld/safari';
+import { spawnKey } from '../overworld/safari';
 import ChunkCanvas from './ChunkCanvas';
+import watchLive from './watch';
+import NoticeDialog from './NoticeDialog';
 import NpcDialog from './NpcDialog';
 import PortalDialog from './PortalDialog';
 import RaidDialog from './RaidDialog';
-import WorldMapDialog from './WorldMapDialog';
 import RocketStopDialog from './RocketStopDialog';
 import SafariDialog from './SafariDialog';
-import {
-  Badge,
-  Button,
-  Card,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Panel,
-  Row,
-  RowButton,
-  Status,
-} from './styled';
-import { GameTab, useGame } from './game-context';
+import { Badge, Button, Note, Status } from './styled';
+import { GameDialog, useGame } from './game-context';
 
 /**
  * How many spawns a visit publishes: the ordinary six plus the two a
@@ -108,6 +97,13 @@ const SAVE_DELAY = 1500;
  * report arrived
  */
 const STEP_REPORT_SIZE = 8;
+
+/**
+ * How long after a window is due the next one is asked for. A moment,
+ * so a clock a hair fast does not ask for the window it is already
+ * looking at and get it back unchanged
+ */
+const WINDOW_GRACE = 250;
 
 function describeItem(item: Items): string {
   try {
@@ -162,6 +158,7 @@ function buildChunkView(
   published: SpawnRoll[],
   player: string | null,
   buddy: Buddy | null,
+  fled: Set<string>,
 ): ChunkView {
   const chunk = getWorld().getChunk(x, y);
   const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
@@ -184,6 +181,14 @@ function buildChunkView(
     }
 
     const stored = published[index];
+
+    // One that has already run from this player is not standing
+    // there any more — for them. It stays in the window, since the
+    // window is everybody's, and it is left out of what this player
+    // is shown rather than out of what was rolled
+    if (fled.has(spawnKey(x, y, timestamp, stored.individualValue))) {
+      return;
+    }
 
     spawns.set(cell, {
       // The name is derived from the window rather than stored with
@@ -251,11 +256,10 @@ export default function OverworldTab(): JSX.Element {
    */
   const [portal, setPortal] = createSignal<number | null>(null);
   /**
-   * Whether the world map is open over the chunk. It is a look at
-   * where they are rather than a place to go, so it opens here rather
-   * than taking a tab of its own
+   * What a landmark just paid out, as a heading and a sentence, until
+   * the player has said they have seen it
    */
-  const [mapping, setMapping] = createSignal(false);
+  const [found, setFound] = createSignal<[string, string] | null>(null);
   /**
    * The lair the player is standing in front of, and what it holds.
    * Looking at one stages nothing — the dialog's button is where a
@@ -297,7 +301,7 @@ export default function OverworldTab(): JSX.Element {
           return;
         }
         game.setRaid(lobby[0]);
-        game.setTab(GameTab.Raids);
+        game.setDialog(GameDialog.Raids);
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
@@ -329,39 +333,85 @@ export default function OverworldTab(): JSX.Element {
    * so a window rolling over or a spawn another player caught shows
    * up without a reload
    */
+  const refreshWindow = (): void => {
+    // The window always rolls the lure's extras, so every player of
+    // the chunk shares one set of rolls whoever publishes them
+    visitChunk(getWorld().getChunk(chunkX(), chunkY()), PUBLISHED_SPAWNS, zone).catch(
+      (caught: unknown) => {
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      },
+    );
+  };
+
   createEffect(() => {
     if (!placed()) {
       return;
     }
-
-    const chunk = getWorld().getChunk(chunkX(), chunkY());
-
-    // The window always rolls the lure's extras, so every player of
-    // the chunk shares one set of rolls whoever publishes them
-    visitChunk(chunk, PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
-      setStatus(caught instanceof Error ? caught.message : String(caught));
-    });
+    refreshWindow();
   });
 
   // One subscription for the whole window: what time it is here and
   // what is standing in the chunk arrive together, since they are one
   // document. A spawn caught by another player disappears from every
   // screen the moment the window is rewritten
-  const window = from<SnapshotRecord | null>((set) => {
+  const window = watchLive<SnapshotRecord>((set) => {
     // Nothing is watched until the player has been put somewhere:
     // chunk 0,0 is not where they are, and publishing its window
-    // would be a visit nobody made
+    // would be a visit nobody made. Being placed is what opens it,
+    // which is why this is `watchLive` and not `from` — see the note
+    // there, and note that walking into the next chunk re-opens it
+    // for the same reason
     if (!placed()) {
-      return () => undefined;
+      return null;
     }
     return watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (record) => {
-      set(record);
+      if (record != null) {
+        set(record);
+      }
+    });
+  });
+
+  /**
+   * The window turns over on its own.
+   *
+   * Publishing happens on arrival, and after that the subscription
+   * carries whatever anybody else writes — which is nothing at all in
+   * a chunk with one player in it. Their five minutes would run out
+   * and the same spawns would stand there until they walked away and
+   * came back. So the moment the window is due, it is asked for
+   * again: whoever is looking at an expired one rolls the next.
+   *
+   * The clock is the server's, since that is the clock the window was
+   * cut against, and the wait is measured from the window rather than
+   * ticked, so nothing drifts
+   */
+  createEffect(() => {
+    const record = window();
+
+    if (record == null) {
+      return;
+    }
+
+    const due = record.timestamp + SNAPSHOT_INTERVAL - toLocalTime(serverNow(), zone);
+    const timer = setTimeout(refreshWindow, Math.max(0, due) + WINDOW_GRACE);
+
+    onCleanup(() => {
+      clearTimeout(timer);
     });
   });
 
   // What walks beside the player changes what the chunk holds, so the
   // buddy's effects are read alongside it
   const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
+
+  /**
+   * What has run from this player. Re-read when a meeting ends, since
+   * the one that just fled is the one that has to stop being drawn
+   */
+  const [fled, { refetch: refetchFled }] = createResource(
+    () => auth.user()?.uid ?? null,
+    async (uid) => getFledKeys(uid),
+  );
 
   const view = (): ChunkView | null => {
     const record = window();
@@ -376,6 +426,7 @@ export default function OverworldTab(): JSX.Element {
           record.spawns,
           auth.user()?.uid ?? null,
           buddy() ?? null,
+          fled() ?? new Set(),
         );
   };
 
@@ -552,16 +603,27 @@ export default function OverworldTab(): JSX.Element {
     if (landmark === Landmark.ItemCache) {
       const stash = await claimItemCache(loaded.snapshot, at);
 
-      return stash == null
-        ? 'The cache is empty until the next window.'
-        : `Found ${describeStash(stash)}.`;
+      // What came out of the ground is put in front of them rather
+      // than said under the map: a player pressing a cell is looking
+      // at the cell
+      setFound([
+        'Item cache',
+        stash == null
+          ? 'The cache is empty until the next window.'
+          : `Found ${describeStash(stash)}.`,
+      ]);
+      return null;
     }
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(loaded.snapshot, at);
 
-      return berries == null
-        ? 'The patch is bare until the next window.'
-        : `Picked ${describeStash([berries])}.`;
+      setFound([
+        'Berry patch',
+        berries == null
+          ? 'The patch is bare until the next window.'
+          : `Picked ${describeStash([berries])}.`,
+      ]);
+      return null;
     }
     if (landmark === Landmark.WanderingNpc) {
       const standing = loaded.snapshot.getWanderingNpcs().get(at);
@@ -593,7 +655,14 @@ export default function OverworldTab(): JSX.Element {
         return `${showing == null ? 'It' : PHENOMENON_NAMES[showing]} — nothing there now.`;
       }
       if (claim.kind === 'item') {
-        return `Left behind: ${describeStash(claim.items)}.`;
+        // Shown the way a cache or a patch is shown: something was
+        // found, and a player pressing a cell is looking at the cell
+        // rather than at the line under the map
+        setFound([
+          showing == null ? 'Found' : PHENOMENON_NAMES[showing],
+          `Left behind: ${describeStash(claim.items)}.`,
+        ]);
+        return null;
       }
       if (claim.kind === 'egg') {
         return 'An egg, tucked away in the grotto. Walk with it to hatch it.';
@@ -744,103 +813,90 @@ export default function OverworldTab(): JSX.Element {
   };
 
   return (
-    <Panel
-      title="Overworld"
-      lede="Click the chunk, then move with the arrow keys or WASD — the keys go wherever the focus
-        is, so a dialog over the top of it stops the walking rather than happening underneath it.
-        Stepping off an edge crosses into the next chunk. Step within a cell of a pokemon or a
-        landmark — anywhere in the ring around it — and click it to deal with it; walking over one
-        does nothing on its own. Shift and an arrow point at a cell without walking, and Enter deals
-        with whatever is pointed at."
-    >
-      <Show when={view()} fallback={<Note>Loading chunk…</Note>}>
+    <div class="relative h-full w-full">
+      <Show
+        when={view()}
+        fallback={
+          <div class="flex h-full items-center justify-center">
+            <Note>Loading chunk…</Note>
+          </div>
+        }
+      >
         {(loaded) => (
-          <Card>
-            {/* Where and when this is: the chunk, the ground it is on,
-                and the hour the window was cut at */}
-            <Row>
-              <Badge tone="tide">
-                Chunk {loaded().x}, {loaded().y}
-              </Badge>
-              <Badge tone="leaf">{BIOME_NAMES[loaded().biome]}</Badge>
-              <Badge>
-                {new Date(loaded().snapshot.timestamp).toISOString().slice(11, 16)} UTC ·{' '}
-                {TIME_OF_DAY_NAMES[getTimeOfDay(loaded().snapshot.timestamp)]}
-              </Badge>
-            </Row>
-
+          <>
             {/* The chunk is drawn rather than laid out: one element
                 instead of 256, and the ring the player can act on is
-                shaded rather than left to be guessed at */}
-            <ChunkCanvas
-              biome={loaded().biome}
-              player={cell()}
-              landmarks={loaded().landmarks}
-              spawns={
-                new Map([...loaded().spawns].map(([at, standing]) => [at, standing.spawn[0]]))
-              }
-              reachable={(index) =>
-                !busy() && holdsSomething(loaded(), index) && withinReach(index)
-              }
-              label={titleOf}
-              onReach={reach}
-              onWalk={move}
-            />
+                shaded rather than left to be guessed at. Where this is
+                is written into the corner of it — it is a fact about
+                the picture, so it belongs in the picture.
 
-            <Row>
-              <Meta class="grow">
-                Cell {cellX()}, {cellY()}
-              </Meta>
-              {/* Where this chunk sits in the world. It opens over the
-                  overworld rather than beside it: a player looks at the
-                  map to decide which way to walk, and then walks */}
-              <Button
-                onClick={() => {
-                  setMapping(true);
-                }}
-              >
-                World map
-              </Button>
-            </Row>
+                The box around it is sized rather than laid out: the
+                canvas asks for the shorter of its container's two
+                sides, so the container has to be one those units can
+                measure */}
+            <div
+              class="flex h-full w-full items-center justify-center px-3 pt-8 pb-20
+                [container-type:size]"
+            >
+              <ChunkCanvas
+                biome={loaded().biome}
+                caption={`${BIOME_NAMES[loaded().biome]} (${loaded().x}, ${loaded().y})`}
+                player={cell()}
+                landmarks={loaded().landmarks}
+                spawns={
+                  new Map([...loaded().spawns].map(([at, standing]) => [at, standing.spawn[0]]))
+                }
+                reachable={(index) =>
+                  !busy() && holdsSomething(loaded(), index) && withinReach(index)
+                }
+                label={titleOf}
+                onReach={reach}
+                onWalk={move}
+              />
+            </div>
 
-            {/* Only a buddy walks, and only an egg has anywhere to
-                walk to, so this appears when one is being carried */}
-            <Show when={carried()}>
-              {(egg) => (
-                <Row>
+            {/* What the player is carrying and what they can spend
+                here, over the corner of the map rather than under it.
+                Both are things about this moment — an egg a few paces
+                from hatching, a relic that can only be used where
+                somebody is standing — and neither is worth a strip of
+                the world when there is no egg and no relic */}
+            <div class="pointer-events-none absolute top-2 right-2 flex flex-col items-end gap-1">
+              <Show when={carried()}>
+                {(egg) => (
                   <Badge tone={egg().steps >= egg().hatchSteps ? 'leaf' : 'neutral'}>
-                    Egg · {egg().steps} / {egg().hatchSteps} steps
-                    {egg().steps >= egg().hatchSteps ? ' · ready to hatch' : ''}
+                    Egg · {egg().steps} / {egg().hatchSteps}
+                    {egg().steps >= egg().hatchSteps ? ' · ready' : ''}
                   </Badge>
-                </Row>
-              )}
-            </Show>
+                )}
+              </Show>
+              {/* A mythical stands on no landmark: the only way to
+                  face one is to spend the relic that calls it, and it
+                  is spent whatever the raid comes to */}
+              <For each={relics()}>
+                {(entry) => (
+                  <Button
+                    class="pointer-events-auto"
+                    onClick={() => {
+                      callMythical(loaded().snapshot, entry.item);
+                    }}
+                  >
+                    Use {describeItem(entry.item)} × {entry.amount}
+                  </Button>
+                )}
+              </For>
+            </div>
 
-            {/* A mythical stands on no landmark: the only way to
-                face one is to spend the relic that calls it, and it
-                is spent whatever the raid comes to */}
-            <Show when={relics()?.length}>
-              <h4>Raid items</h4>
-              <List>
-                <For each={relics()}>
-                  {(entry) => (
-                    <ListRow>
-                      <RowButton
-                        class="font-medium"
-                        onClick={() => {
-                          callMythical(loaded().snapshot, entry.item);
-                        }}
-                      >
-                        Use {describeItem(entry.item)} × {entry.amount}
-                      </RowButton>
-                      <Meta>calls {getSpeciesData(entry.species).name}, and is spent doing it</Meta>
-                    </ListRow>
-                  )}
-                </For>
-              </List>
+            {/* Whatever just happened, said once over the world and
+                clear of the bar underneath it */}
+            <Show when={status()}>
+              <div class="pointer-events-none absolute inset-x-0 bottom-20 flex justify-center px-4">
+                <div class="pointer-events-auto max-w-md">
+                  <Status message={status()} />
+                </div>
+              </div>
             </Show>
-            <Status message={status()} />
-          </Card>
+          </>
         )}
       </Show>
 
@@ -850,8 +906,29 @@ export default function OverworldTab(): JSX.Element {
             <SafariDialog
               user={user()}
               session={session()}
+              onCaught={(catchId) => {
+                // The encounter is finished the moment it is caught, so
+                // the safari closes and the sheet for what was caught
+                // opens in its place
+                setSession(null);
+                game.setSheet({ catchId });
+              }}
               onClose={() => {
                 setSession(null);
+                // A meeting that ended in a flight leaves the chunk
+                // with one fewer pokemon in it for this player
+                Promise.resolve(refetchFled()).catch(() => {
+                  // Worst case the spawn is drawn until the window
+                  // turns over, and interacting with it says it has
+                  // already fled — which is what happened before
+                });
+              }}
+            />
+            <NoticeDialog
+              title={found()?.[0] ?? 'Found'}
+              message={found()?.[1] ?? null}
+              onClose={() => {
+                setFound(null);
               }}
             />
             <RocketStopDialog
@@ -874,12 +951,6 @@ export default function OverworldTab(): JSX.Element {
               lair={lair()}
               onClose={() => {
                 setLair(null);
-              }}
-            />
-            <WorldMapDialog
-              isOpen={mapping()}
-              onClose={() => {
-                setMapping(false);
               }}
             />
             <PortalDialog
@@ -915,6 +986,6 @@ export default function OverworldTab(): JSX.Element {
           </>
         )}
       </Show>
-    </Panel>
+    </div>
   );
 }

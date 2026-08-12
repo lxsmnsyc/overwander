@@ -8,6 +8,7 @@ import {
   collection,
   doc,
   documentId,
+  getCountFromServer,
   getDoc,
   getDocs,
   limit,
@@ -69,6 +70,21 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
   const snapshot = await getDocs(query(caught, where('owner', '==', owner)));
 
   return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/**
+ * How many pokemon the player has, without reading any of them.
+ *
+ * It is asked where the answer decides whether something may be given
+ * up — a release, a listing — because the last one may not be. A
+ * count query is billed as a fraction of a read whatever the number
+ * comes to, so this stays cheap for a player with three hundred
+ */
+export async function countCaught(owner: string): Promise<number> {
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION);
+  const counted = await getCountFromServer(query(caught, where('owner', '==', owner)));
+
+  return counted.data().count;
 }
 
 /**

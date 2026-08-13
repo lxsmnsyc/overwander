@@ -2,8 +2,10 @@ import type { User } from 'firebase/auth';
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import type { RocketRecord } from '../auth/rocket-record';
 import { startRocketBattle } from '../auth/rockets';
+import Npc from '../data/overworld/npc';
 import { getSpeciesData } from '../data/species';
 import { ROCKET_PARTY_LEVEL } from '../overworld/rocket';
+import { NPC_QUOTES } from './NpcDialog';
 import TeamPickerDialog from './TeamPickerDialog';
 import SpriteDisplay from './SpriteDisplay';
 import { Badge, Button, Dialog, DialogActions, Meta, Status } from './styled';
@@ -60,8 +62,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
         onClose={props.onClose}
         title="Team Rocket"
         terse
-        description="A Team Rocket grunt blocks the way. “Three of mine against however many of
-          yours.”"
+        description={`A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`}
       >
         <Show when={props.challenge?.[1]}>
           {(record) => (

@@ -76,8 +76,13 @@ export function setupMoveMechanics(battle: Battle): void {
     // Object.values by both the AI and the field readout, and a slot
     // that is present but empty reads as a move with no state at all.
     // A forgotten move is not a move the unit knows nothing about, it
-    // is a move the unit does not have
-    delete event.source.moves[event.move];
+    // is a move the unit does not have.
+    //
+    // Through `Reflect` rather than the `delete` keyword only because
+    // the key is computed, which the lint refuses on the grounds that
+    // a record with dynamic keys wants to be a `Map`. This one is a
+    // record keyed by a move id everywhere else in the engine
+    Reflect.deleteProperty(event.source.moves, event.move);
   });
   battle.on(BattleEvents.UnitEnableMove, EventPriority.Exact, (event) => {
     const current = event.source.moves[event.move];

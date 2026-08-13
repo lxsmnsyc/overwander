@@ -173,10 +173,71 @@ export async function claimBerryPatch(
 }
 
 /**
+ * The claim marker one player's visit to one nest, in one half-day
+ * window, is written against. Both the peek and the claim name it, so
+ * looking and taking cannot disagree about which egg is in question
+ */
+function nestClaimId(snapshot: ChunkSnapshot, cell: number, uid: string): string {
+  return `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}:${uid}`;
+}
+
+/**
+ * What is lying in a nest, without taking it.
+ *
+ * Looking is free and writes nothing — the same bargain a lair
+ * offers. It exists because an egg is not something to be handed to
+ * somebody who has not agreed to carry it: a buddy carries one egg,
+ * and taking a second one is a decision about the first.
+ *
+ * What is **not** answered is which species it is. That is the whole
+ * of what an egg is, and the server knowing it is no reason to say it
+ */
+export async function peekNest(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  now: number,
+  offset: number,
+): Promise<NestOffer | null> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const species = snapshot?.getNests().get(cell);
+
+  if (snapshot == null || species == null) {
+    return null;
+  }
+  return {
+    taken: (
+      await getAdminFirestore()
+        .collection(NEST_CLAIM_COLLECTION)
+        .doc(nestClaimId(snapshot, cell, uid))
+        .get()
+    ).exists,
+  };
+}
+
+/**
+ * A nest with an egg in it, put to the player before anything is
+ * written. There is one field and it is the only one worth knowing:
+ * the species is deliberately left out
+ */
+export interface NestOffer {
+  /**
+   * Whether this player has already taken this window's egg. The nest
+   * still holds one for everybody else — a marker is per player
+   */
+  taken: boolean;
+}
+
+/**
  * Take the egg a nest is holding. A nest keeps to its own half-day
  * window rather than the quarter-hour one the ground turns over on, so
  * the claim marker is stamped with the nest window: one egg per
  * nest, per player, per half day.
+ *
+ * It is what `peekNest` above offered, agreed to: the peek wrote
+ * nothing, so this is still the first and only write, and the marker
+ * it takes is the one the peek was reading.
  *
  * The player still has to be standing in the chunk's live window to
  * reach it, which is what the snapshot resolves. Resolves the new
@@ -198,7 +259,7 @@ export async function claimNest(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}:${uid}`;
+  const id = nestClaimId(snapshot, cell, uid);
 
   if (!(await claim(NEST_CLAIM_COLLECTION, id, { player: uid, species }))) {
     return null;
@@ -215,6 +276,50 @@ export type PhenomenonClaim =
   | { kind: 'item'; items: ItemStack[] }
   | { kind: 'encounter'; encounter: EncounterRecord }
   | { kind: 'egg'; catchId: string };
+
+/**
+ * Whether what is going on at a cell is an egg, without walking into
+ * it.
+ *
+ * Only the egg is asked about, and only the egg is answered. An item
+ * and a pokemon are things a player walks into and deals with; an egg
+ * is a thing they have to decide to carry, and the deciding has to
+ * happen before it is theirs. Everything else about the hour stays
+ * unsaid, so pressing a cell to see whether it is worth pressing is
+ * not a way of reading the world for free
+ */
+export async function peekPhenomenonEgg(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  now: number,
+  offset: number,
+): Promise<NestOffer | null> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const reward = snapshot?.getPhenomenonReward(cell) ?? null;
+
+  if (snapshot == null || reward?.kind !== 'egg') {
+    return null;
+  }
+  return {
+    taken: (
+      await getAdminFirestore()
+        .collection(PHENOMENON_CLAIM_COLLECTION)
+        .doc(`${phenomenonKey(snapshot, cell)}:${uid}`)
+        .get()
+    ).exists,
+  };
+}
+
+/**
+ * What one hour of one phenomenon cell is called. The claim marker
+ * hangs off it, and so does the seed the startled pokemon is rolled
+ * from — both the peek and the claim name it the same way
+ */
+function phenomenonKey(snapshot: ChunkSnapshot, cell: number): string {
+  return `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening${cell}`;
+}
 
 /**
  * Walk into whatever is going on at a cell.
@@ -246,7 +351,7 @@ export async function claimPhenomenon(
     return null;
   }
 
-  const key = `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening${cell}`;
+  const key = phenomenonKey(snapshot, cell);
 
   if (
     !(await claim(PHENOMENON_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))

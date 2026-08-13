@@ -15,11 +15,14 @@ import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk
 import { type SnapshotRecord, asSnapshotRecord, spawnId, windowId } from './snapshot-record';
 import { requireUid } from '../server/firebase';
 import {
+  type NestOffer,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
   meetSpawn,
+  peekNest as peekNestOnServerSide,
+  peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
 import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
@@ -239,6 +242,74 @@ async function claimBerryOnServer(
 ): Promise<ItemStack | null> {
   'use server';
   return claimBerryOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Whether there is an egg to be had here, without taking it.
+ *
+ * Looking is free and writes nothing, the way looking into a lair is.
+ * An egg is the one reward in the overworld that is not simply better
+ * to have — a buddy carries one egg and walks it open, so taking a
+ * second is a decision about the first — and a landmark that pressed
+ * one into the player's hands gave them no way to make it.
+ *
+ * Resolves null where there is nothing lying there at all. Nothing
+ * about the species comes back: that is what an egg is
+ */
+export async function peekNest(snapshot: ChunkSnapshot, cell: number): Promise<NestOffer | null> {
+  return peekNestOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
+}
+
+async function peekNestOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+): Promise<NestOffer | null> {
+  'use server';
+  return peekNestOnServerSide(await requireUid(token), x, y, cell, await syncServerClock(), offset);
+}
+
+/**
+ * The same question of a phenomenon cell, and only of the egg: an
+ * item and a pokemon are walked into as they always were
+ */
+export async function peekPhenomenonEgg(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<NestOffer | null> {
+  return peekPhenomenonEggOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
+}
+
+async function peekPhenomenonEggOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+): Promise<NestOffer | null> {
+  'use server';
+  return peekPhenomenonEggOnServerSide(
     await requireUid(token),
     x,
     y,

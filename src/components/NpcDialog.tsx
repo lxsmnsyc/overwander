@@ -62,7 +62,7 @@ import {
  *
  * They are quotes, so they are written as quotes
  */
-const NPC_QUOTES: Record<Npc, string> = {
+export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.Breeder]:
     'Leave me two that get along and I will see what comes of it. The egg is yours — you do the walking.',
   [Npc.DaycareLady]:
@@ -75,6 +75,11 @@ const NPC_QUOTES: Record<Npc, string> = {
     'Crate is open. I will sell you what is in it and buy near enough anything you are carrying — as often as your purse holds out.',
   [Npc.MoveReminder]:
     'It has not forgotten a thing, you know. One Heart Scale and I will remind it.',
+  // The grunt never opens this dialog — walking up to one puts the
+  // challenge in `RocketStopDialog`, which says this line instead —
+  // but they are one of the people a wandering cell draws, so their
+  // words live with the rest
+  [Npc.RocketGrunt]: 'Three of mine against however many of yours.',
 };
 
 /**
@@ -376,6 +381,11 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     visitNurse(snapshot, standing[0], picked)
       .then(async (tended) => {
         setBusy(false);
+        // Handed back, so the counter is empty again: the picker
+        // follows what this holds, and leaving them lit would leave
+        // the button offering to hand over the six she has just
+        // returned
+        setParty([]);
         setStatus(
           tended == null
             ? 'She looked them over and handed them straight back — there was nothing to do, or she has already seen you this while.'
@@ -987,8 +997,12 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             reminder's case scroll past a list of moves to find it. The
             bar is where a dialog is answered */}
         <DialogActions center>
-          <Show when={props.standing?.[1]} keyed>
-            {(npc) => npcActions(npc)}
+          {/* Keyed on the pair rather than on the npc: `Npc.Breeder`
+              is 0, and a `Show` asked about it is a `Show` asked about
+              a falsy value — the breeder's own button was the one
+              thing this row never drew */}
+          <Show when={props.standing} keyed>
+            {(standing) => npcActions(standing[1])}
           </Show>
           <Button onClick={close}>Walk on</Button>
         </DialogActions>

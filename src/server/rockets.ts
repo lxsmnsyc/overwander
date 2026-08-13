@@ -15,7 +15,7 @@ import {
   toSpawns,
 } from '../auth/rocket-record';
 import { TEAM_SIZE } from '../auth/teams';
-import ChunkSnapshot, { ROCKET_INTERVAL } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { NPC_INTERVAL } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
@@ -82,7 +82,7 @@ export async function enterRocketStop(
   }
 
   const db = getAdminFirestore();
-  const stop = rocketStopId(chunk, snapshot.rocketTimestamp, cell, zone);
+  const stop = rocketStopId(chunk, snapshot.npcTimestamp, cell, zone);
   const ref = db.collection(ROCKET_COLLECTION).doc(stopEntryId(stop, uid));
   const stored = docData(await ref.get());
 
@@ -102,7 +102,7 @@ export async function enterRocketStop(
       traitValue,
     })),
     battle: null,
-    timestamp: snapshot.rocketTimestamp,
+    timestamp: snapshot.npcTimestamp,
     offset: zone,
     chunk: { seed: chunk.seed, x: chunk.x, y: chunk.y },
     cell,
@@ -164,8 +164,8 @@ export async function startRocketBattle(
     return null;
   }
   // A grunt stands for the window that staged them; past that, the
-  // landmark has rolled somebody else
-  if (toLocalTime(now, record.offset) >= record.timestamp + ROCKET_INTERVAL) {
+  // cell has rolled somebody else onto it
+  if (toLocalTime(now, record.offset) >= record.timestamp + NPC_INTERVAL) {
     return null;
   }
   if (record.battle != null && (await isBattleUnfinished(record.battle))) {

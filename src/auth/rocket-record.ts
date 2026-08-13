@@ -12,6 +12,10 @@ import { toZoneKey } from './local-time';
 /**
  * What a Team Rocket stop is, and how a stored one is read back.
  *
+ * A stop is not a landmark of its own: it is a grunt drawn onto a
+ * wandering-NPC cell, so it keeps that cell's window and turns over
+ * with whoever comes next.
+ *
  * Unlike a raid lobby, a stop is **per player**: the grunt stands at
  * the cell for its window and fights each passer-by on their own. A
  * player who loses may try again while the window lasts; one who wins
@@ -114,13 +118,8 @@ export function toSpawns(party: RocketPokemon[]): Spawn[] {
  * uid — so the stop is one landmark whose state each player keeps
  * their own copy of
  */
-export function rocketStopId(
-  chunk: Chunk,
-  rocketTimestamp: number,
-  cell: number,
-  offset = 0,
-): string {
-  return `${chunk.seed}${toZoneKey(offset)}@${rocketTimestamp}$rocket${cell}`;
+export function rocketStopId(chunk: Chunk, npcTimestamp: number, cell: number, offset = 0): string {
+  return `${chunk.seed}${toZoneKey(offset)}@${npcTimestamp}$rocket${cell}`;
 }
 
 /**

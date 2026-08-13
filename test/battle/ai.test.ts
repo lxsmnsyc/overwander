@@ -463,6 +463,34 @@ describe('Struggle', () => {
     expect(chooseMove(battle, unit)).toBeUndefined();
   });
 
+  it('is cast, lands and is paid for, through the ordinary pipeline', () => {
+    // The one that matters: Struggle is in nobody's move set, so
+    // every step of the cast — the usability check, the trigger, the
+    // cooldown that is never started — walks a path where
+    // `unit.moves[move]` is undefined
+    const harness = createBattle();
+    setupChooseMoveAI(harness.battle);
+    setupIdleAI(harness.battle);
+
+    const { battle, teamA, teamB } = harness;
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    enemy.setHealth(100_000);
+    unit.addMove(Moves.Tackle);
+    unit.disableMove(Moves.Tackle);
+    unit.enter();
+
+    for (let frame = 0; frame < 40; frame++) {
+      battle.tick(250);
+    }
+
+    // It hit something, and it cost a quarter of its own health per
+    // go — four of them and the unit has struggled itself down
+    expect(enemy.health).toBeLessThan(100_000);
+    expect(unit.health).toBeLessThan(160);
+  });
+
   it('can be cast without being a move the unit knows', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

@@ -191,9 +191,19 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
 
   createEffect(() => {
-    if (showing()) {
-      setDraft(untrack(chosen));
+    if (!showing()) {
+      return;
     }
+    // A live picker has no picks of its own: it reports every press
+    // and the caller decides what they are worth, so what the caller
+    // holds is what the squares show. Nurse Joy handing a party back
+    // hands back an empty list, and the box has to let go of them —
+    // otherwise the six she just returned are still lit, under a
+    // button still offering to hand them over.
+    //
+    // Every other picker keeps its draft to itself until it is
+    // confirmed, so the caller's value is read once and untracked
+    setDraft(props.multiple === true && props.live === true ? chosen() : untrack(chosen));
   });
 
   const isDrafted = (id: string): boolean => new Set(draft()).has(id);

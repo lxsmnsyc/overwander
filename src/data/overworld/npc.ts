@@ -7,7 +7,12 @@ import { getLevelUpMoves } from '../species';
  * The people who pass through a wandering-NPC landmark. The cell is
  * fixed by the chunk seed, the way every landmark is, but who is
  * standing on it is not: every six hours brings somebody else, so the
- * spot is a crossroads rather than a shop
+ * spot is a crossroads rather than a shop.
+ *
+ * Not all of them are there to help. A Team Rocket grunt is one of the
+ * people a crossroads brings, which is why the stop is not a landmark
+ * of its own: a player walking up to a wandering cell does not know
+ * yet whether they have found a nurse or a fight
  */
 const enum Npc {
   /**
@@ -44,6 +49,12 @@ const enum Npc {
    * level-up move ever comes back, and gold is no use to him
    */
   MoveReminder = 5,
+  /**
+   * Bars the cell and fights whoever accepts, with three shadows of
+   * the biome's own. Beaten, they pay a purse and leave one of their
+   * commoners behind; they are the one wanderer a player can lose to
+   */
+  RocketGrunt = 6,
 }
 
 export default Npc;
@@ -58,6 +69,7 @@ export const NPCS: Npc[] = [
   Npc.Groomer,
   Npc.Vendor,
   Npc.MoveReminder,
+  Npc.RocketGrunt,
 ];
 
 export const NPC_NAMES: Record<Npc, string> = {
@@ -67,6 +79,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Groomer]: 'Groomer',
   [Npc.Vendor]: 'Vendor',
   [Npc.MoveReminder]: 'Move Reminder',
+  [Npc.RocketGrunt]: 'Team Rocket Grunt',
 };
 
 /**

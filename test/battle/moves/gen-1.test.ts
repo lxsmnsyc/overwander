@@ -929,8 +929,12 @@ describe('Transform', () => {
 
     // Anything that walks the record with Object.values — the AI, the
     // field readout — reads a blanked slot as a move whose state is
-    // missing, and the readout crashes on it
-    expect(Object.values(ditto.moves).every((state) => state != null)).toBe(true);
+    // missing, and the readout crashes on it. Asked slot by slot
+    // rather than over the values, so what is being checked is that
+    // the key itself is gone
+    const slots = Object.keys(ditto.moves).map(Number) as Moves[];
+
+    expect(slots.filter((move) => ditto.moves[move] === undefined)).toEqual([]);
   });
 });
 

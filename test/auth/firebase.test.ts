@@ -25,7 +25,7 @@ describe('firebase web config', () => {
     // blank key happily and refuses only when Auth is asked for
     const blank = initializeApp({ apiKey: '', projectId: 'demo-poketerra' }, 'blank-key');
 
-    expect(() => getAuth(blank)).toThrowError(/invalid-api-key/);
+    expect(() => getAuth(blank)).toThrow(/invalid-api-key/);
 
     const filled = initializeApp(config, 'filled-key');
 
@@ -59,18 +59,16 @@ describe('firebase web config', () => {
 
   it('reports what it read for the flag, not only that it is unhappy', () => {
     // The one thing that tells the four ways of getting here apart
-    expect(() => requireFirebaseConfig({})).toThrowError(/is unset/);
-    expect(() => requireFirebaseConfig({ VITE_FIREBASE_EMULATOR: 'True!' })).toThrowError(
-      /is "True!"/,
-    );
+    expect(() => requireFirebaseConfig({})).toThrow(/is unset/);
+    expect(() => requireFirebaseConfig({ VITE_FIREBASE_EMULATOR: 'True!' })).toThrow(/is "True!"/);
   });
 
   it('says what is missing rather than what the SDK noticed', () => {
     // Every plausible way to arrive here: an unfilled .env, and one
     // filled in after the dev server was already running
-    expect(() => requireFirebaseConfig({})).toThrowError(/VITE_FIREBASE_EMULATOR/);
-    expect(() => requireFirebaseConfig({})).toThrowError(/restart/);
-    expect(() => requireFirebaseConfig({ VITE_FIREBASE_API_KEY: 'real-key' })).toThrowError(
+    expect(() => requireFirebaseConfig({})).toThrow(/VITE_FIREBASE_EMULATOR/);
+    expect(() => requireFirebaseConfig({})).toThrow(/restart/);
+    expect(() => requireFirebaseConfig({ VITE_FIREBASE_API_KEY: 'real-key' })).toThrow(
       /not configured/,
     );
     expect(() => requireFirebaseConfig({ VITE_FIREBASE_EMULATOR: 'true' })).not.toThrow();

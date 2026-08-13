@@ -18,11 +18,14 @@ import { savePosition } from '../auth/positions';
 import { enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
 import { createSafariSession, getFledKeys, isEncounterFled } from '../auth/safari';
+import type { NestOffer } from '../server/overworld';
 import {
   claimBerryPatch,
   claimItemCache,
   claimNest,
   claimPhenomenon,
+  peekNest,
+  peekPhenomenonEgg,
   startEncounter,
   visitChunk,
   watchSnapshotWindow,
@@ -34,8 +37,7 @@ import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { ItemStack } from '../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../data/overworld/landmark';
-import type Npc from '../data/overworld/npc';
-import { NPC_NAMES } from '../data/overworld/npc';
+import Npc, { NPC_NAMES } from '../data/overworld/npc';
 import { PHENOMENON_NAMES } from '../data/overworld/phenomenon';
 import { getItemData } from '../data/items';
 import { getInventory } from '../auth/inventory';
@@ -56,7 +58,7 @@ import ChunkCanvas from './ChunkCanvas';
 import watchLive from './watch';
 import NpcDialog from './NpcDialog';
 import PortalDialog from './PortalDialog';
-import NestDialog from './NestDialog';
+import NestDialog, { type EggSource, type EggState } from './NestDialog';
 import RaidDialog from './RaidDialog';
 import RocketStopDialog from './RocketStopDialog';
 import ItemStash from './ItemStash';
@@ -65,9 +67,9 @@ import { Badge, Button, Note, Status, useToast } from './styled';
 import { GameDialog, useGame } from './game-context';
 
 /**
- * How many spawns a visit publishes: the ordinary six plus the two a
- * lure draws in, rolled for every window so that a lure changes who
- * can see them rather than whether they exist
+ * How many spawns a visit publishes: the ordinary eight plus the
+ * three a lure draws in, rolled for every window so that a lure
+ * changes who can see them rather than whether they exist
  */
 const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
 
@@ -131,6 +133,14 @@ function describeStash(stash: ItemStack[]): string {
     return parts[0] ?? 'nothing';
   }
   return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
+/**
+ * Whether an egg the world is holding is still going spare, or is one
+ * this player has already had out of this window
+ */
+function stateOf(offer: NestOffer): EggState {
+  return offer.taken ? 'taken' : 'offered';
 }
 
 /**
@@ -305,11 +315,6 @@ export default function OverworldTab(): JSX.Element {
    * What the lair dialog says when there is nothing standing in it
    */
   const [lairReason, setLairReason] = createSignal<string | null>(null);
-  /**
-   * What a nest just gave up, until the player has seen it
-   */
-  const [nest, setNest] = createSignal<{ found: boolean; said: string } | null>(null);
-
   /**
    * The raid items the player carries, each with what it calls. They
    * are used where the player stands, so they live here rather than
@@ -514,6 +519,74 @@ export default function OverworldTab(): JSX.Element {
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
 
   /**
+   * An egg that has been found and not yet accepted.
+   *
+   * Both places one turns up — a nest, and the one grotto in sixty-four
+   * that is hiding one instead of a pokemon — offer it the same way,
+   * so they share the dialog and the answer. `message` is what came of
+   * accepting, once the player has: while it is null the dialog is
+   * still asking
+   */
+  const [eggOffer, setEggOffer] = createSignal<{
+    cell: number;
+    from: EggSource;
+    state: EggState;
+    message: string | null;
+  } | null>(null);
+  const [taking, setTaking] = createSignal(false);
+
+  /**
+   * Take it. The claim is the same call the landmark always made —
+   * the peek above wrote nothing, so this is still the first and only
+   * write, and a second player standing at the same nest is unaffected
+   */
+  const takeEgg = (): void => {
+    const offer = eggOffer();
+    const loaded = view();
+
+    if (offer == null || loaded == null || taking()) {
+      return;
+    }
+    setTaking(true);
+    (offer.from === 'nest'
+      ? claimNest(loaded.snapshot, offer.cell)
+      : claimPhenomenon(loaded.snapshot, offer.cell).then((claim) =>
+          claim?.kind === 'egg' ? claim.catchId : null,
+        )
+    )
+      .then((catchId) => {
+        setTaking(false);
+        setEggOffer((standing) =>
+          standing == null
+            ? null
+            : {
+                ...standing,
+                message:
+                  catchId == null
+                    ? 'It is gone — somebody else may have been here, or the window has turned over.'
+                    : 'Carry it as your buddy and walk. Nothing about it is known until it opens.',
+              },
+        );
+
+        if (catchId != null) {
+          // A new record, under whatever list is showing behind this
+          game.touchRecords();
+        }
+      })
+      .catch((caught: unknown) => {
+        setTaking(false);
+        setEggOffer((standing) =>
+          standing == null
+            ? null
+            : {
+                ...standing,
+                message: caught instanceof Error ? caught.message : String(caught),
+              },
+        );
+      });
+  };
+
+  /**
    * The egg walking with the player, as of the last report. Null
    * while they carry none — which is most of the time, and costs
    * nothing to keep asking about
@@ -710,27 +783,61 @@ export default function OverworldTab(): JSX.Element {
       if (standing == null) {
         return 'Nobody is passing through right now.';
       }
+      // One of the people a crossroads brings is not there to trade.
+      // The grunt's own dialog is what the challenge is put in, so the
+      // branch is here rather than inside the wanderer's
+      if (standing === Npc.RocketGrunt) {
+        const stop = await enterRocketStop(loaded.snapshot, at);
+
+        if (stop == null) {
+          // Either the window stages no grunt here, or this player has
+          // already put the one it stages on the ground
+          return 'The grunt has moved on.';
+        }
+        if (!(await canJoinRaids(user.uid))) {
+          return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';
+        }
+        // The challenge is put to the player rather than taken for
+        // them; the dialog is what accepts it
+        setChallenge(stop);
+        return null;
+      }
       // What they want is put to the player rather than taken from
       // them; the dialog is where the fee is agreed to
       setWanderer([at, standing]);
       return null;
     }
     if (landmark === Landmark.Nest) {
-      const egg = await claimNest(loaded.snapshot, at);
+      // Looked into rather than emptied. Every other landmark pays out
+      // the moment it is pressed, because everything else they pay is
+      // simply better to have; an egg is not. A buddy carries one egg
+      // and walks it open, so a second one is a decision about the
+      // first, and the player is the one to make it
+      const offer = await peekNest(loaded.snapshot, at);
 
-      // What is in it is not on offer: an egg shows nothing about
-      // itself until it has been carried far enough to open. It is
-      // still shown — a nest a player pressed answers where they are
-      // looking rather than under the map
-      setNest(
-        egg == null
-          ? { found: false, said: 'The nest is bare until tomorrow.' }
-          : { found: true, said: 'An egg is lying in the nest.' },
-      );
+      // A bare nest opens the dialog too. A player who pressed a cell
+      // asked a question, and the answer belongs where they are
+      // looking rather than in a line under the map
+      setEggOffer({
+        cell: at,
+        from: 'nest',
+        state: offer == null ? 'bare' : stateOf(offer),
+        message: null,
+      });
       return null;
     }
     if (landmark === Landmark.Phenomenon) {
       const showing = loaded.snapshot.getPhenomena().get(at);
+      // The grotto's egg is the one thing here that is asked about
+      // first; an item and a pokemon are walked into as they always
+      // were, and neither is worth a question
+      const hidden = await peekPhenomenonEgg(loaded.snapshot, at);
+
+      if (hidden != null) {
+        setEggOffer({ cell: at, from: 'grotto', state: stateOf(hidden), message: null });
+        return null;
+      }
+
       const claim = await claimPhenomenon(loaded.snapshot, at);
 
       if (claim == null) {
@@ -750,25 +857,12 @@ export default function OverworldTab(): JSX.Element {
         return null;
       }
       if (claim.kind === 'egg') {
+        // Unreachable in practice — an egg is peeked at above and
+        // taken through the dialog — but the claim can still answer
+        // one if the hour turned over between the two calls
         return 'An egg, tucked away in the grotto. Walk with it to hatch it.';
       }
       return meet(user, claim.encounter);
-    }
-    if (landmark === Landmark.TeamRocketStop) {
-      const stop = await enterRocketStop(loaded.snapshot, at);
-
-      if (stop == null) {
-        // Either the window stages no grunt here, or this player has
-        // already put the one it stages on the ground
-        return 'The stop is deserted right now.';
-      }
-      if (!(await canJoinRaids(user.uid))) {
-        return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';
-      }
-      // The challenge is put to the player rather than taken for
-      // them; the dialog is what accepts it
-      setChallenge(stop);
-      return null;
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived from the chunk it stands in, so the
@@ -1026,10 +1120,12 @@ export default function OverworldTab(): JSX.Element {
               }}
             />
             <NestDialog
-              message={nest()?.said ?? null}
-              found={nest()?.found === true}
+              offer={eggOffer()}
+              busy={taking()}
+              onAccept={takeEgg}
               onClose={() => {
-                setNest(null);
+                setEggOffer(null);
+                setTaking(false);
               }}
             />
             <RaidDialog

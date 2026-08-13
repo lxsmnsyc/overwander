@@ -438,8 +438,15 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
     const left = ids.filter((id) => !mine.has(id));
 
     // The last party out shuts the door behind it, and so does a host
-    // who never opened one
-    if (left.length === 0 && !record.cleared) {
+    // who never formed one.
+    //
+    // Whether the leaver had anything in there is the whole of the
+    // condition. Without it, a **spectator** walking out of somebody
+    // else's freshly opened lobby would take it down with them: they
+    // hold no team, so the teams left behind are the same empty list
+    // either way, and the door would be shut on a host still standing
+    // in the room
+    if (left.length === 0 && !record.cleared && (mine.size > 0 || record.host === uid)) {
       transaction.delete(ref);
       return;
     }

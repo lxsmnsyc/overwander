@@ -66,17 +66,11 @@ export const LANDMARK_INTERVAL = 15 * 60 * 1000;
 export const RAID_INTERVAL = 3 * 60 * 60 * 1000;
 
 /**
- * Team Rocket's stops, on the raid's own clock. A grunt is a fight
- * rather than a landmark — it keeps the pace of the other fights in
- * the chunk rather than the pace of the ground
- */
-export const ROCKET_INTERVAL = 3 * 60 * 60 * 1000;
-
-/**
- * How long the same person stays at a wandering-NPC cell. Twice a
- * raid: a player who needs a breeder and finds a daycare lady is
- * waiting for the afternoon rather than the next quarter hour, which
- * is what makes finding the one they wanted worth something
+ * How long the same person stays at a wandering-NPC cell — a Team
+ * Rocket grunt among them. Twice a raid: a player who needs a breeder
+ * and finds a daycare lady is waiting for the afternoon rather than
+ * the next quarter hour, which is what makes finding the one they
+ * wanted worth something
  */
 export const NPC_INTERVAL = 6 * 60 * 60 * 1000;
 
@@ -419,66 +413,6 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * The window Team Rocket's stops belong to. A grunt keeps a raid's
-   * hours rather than a landmark's: the two are the fights of a chunk,
-   * and both are worth walking to while they stand
-   */
-  get rocketTimestamp(): number {
-    return Math.floor(this.timestamp / ROCKET_INTERVAL) * ROCKET_INTERVAL;
-  }
-
-  private rocketStops: Map<number, Spawn[]> | null = null;
-
-  /**
-   * The window's Team Rocket stops, keyed by the landmark cell: the
-   * three pokemon the grunt standing there fights with, drawn one
-   * from each of the biome's base, uncommon and rare bands for the
-   * rocket window's time of day.
-   *
-   * A band the biome leaves empty at this hour falls back to the
-   * nearest one that has anything — a grunt three pokemon short is no
-   * grunt at all, and somewhere thin should still be patrolled. Only
-   * a pool with nothing awake in it stages nobody.
-   *
-   * Each draw carries its own individual and trait values, so the
-   * grunt's team is as varied as any wild pokemon; what it does not
-   * carry is a level, which the fight fixes for all three
-   */
-  getRocketStops(): Map<number, Spawn[]> {
-    if (this.rocketStops == null) {
-      const stops = new Map<number, Spawn[]>();
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.rocketTimestamp));
-      const bands = [pool.base, pool.uncommon, pool.rare];
-      // Weakest first, so the party reads the way it is fought; a
-      // thin band borrows from the commonest one that is not empty
-      const stocked = bands.find((band) => band.length > 0);
-
-      if (stocked != null) {
-        const fielded = bands.map((band) => (band.length > 0 ? band : stocked));
-
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.TeamRocketStop) {
-            continue;
-          }
-
-          const rng = new AleaRNG(`${this.key}${this.rocketTimestamp}rocket${cell}`);
-
-          stops.set(
-            cell,
-            fielded.map((band): Spawn => {
-              const entry = band[Math.floor(rng.random() * band.length)];
-
-              return [entry.species, rng.int32(), rng.int32()];
-            }),
-          );
-        }
-      }
-      this.rocketStops = stops;
-    }
-    return this.rocketStops;
-  }
-
-  /**
    * The half-day window the chunk's nests belong to. A nest outlives
    * every other landmark in the chunk: the spawns around it turn over
    * a hundred and forty-four times before it holds a new egg
@@ -539,7 +473,10 @@ export default class ChunkSnapshot {
    * Who is standing at each wandering-NPC cell this window. The cell
    * is the chunk's own, fixed forever like every landmark, but the
    * person on it is drawn afresh every six hours — so a player who
-   * needs a breeder waits for one, or goes looking somewhere else
+   * needs a breeder waits for one, or goes looking somewhere else.
+   *
+   * A Team Rocket grunt is one of the draws, so the same walk that
+   * finds a nurse can find a fight instead
    */
   getWanderingNpcs(): Map<number, Npc> {
     if (this.wanderers == null) {
@@ -557,6 +494,57 @@ export default class ChunkSnapshot {
       this.wanderers = wanderers;
     }
     return this.wanderers;
+  }
+
+  private rocketStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The window's Team Rocket stops, keyed by the wandering-NPC cell a
+   * grunt was drawn onto: the three pokemon they fight with, drawn one
+   * from each of the biome's base, uncommon and rare bands for the NPC
+   * window's time of day.
+   *
+   * A band the biome leaves empty at this hour falls back to the
+   * nearest one that has anything — a grunt three pokemon short is no
+   * grunt at all, and somewhere thin should still be patrolled. Only
+   * a pool with nothing awake in it stages nobody.
+   *
+   * Each draw carries its own individual and trait values, so the
+   * grunt's team is as varied as any wild pokemon; what it does not
+   * carry is a level, which the fight fixes for all three
+   */
+  getRocketStops(): Map<number, Spawn[]> {
+    if (this.rocketStops == null) {
+      const stops = new Map<number, Spawn[]>();
+      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.npcTimestamp));
+      const bands = [pool.base, pool.uncommon, pool.rare];
+      // Weakest first, so the party reads the way it is fought; a
+      // thin band borrows from the commonest one that is not empty
+      const stocked = bands.find((band) => band.length > 0);
+
+      if (stocked != null) {
+        const fielded = bands.map((band) => (band.length > 0 ? band : stocked));
+
+        for (const [cell, standing] of this.getWanderingNpcs()) {
+          if (standing !== Npc.RocketGrunt) {
+            continue;
+          }
+
+          const rng = new AleaRNG(`${this.key}${this.npcTimestamp}rocket${cell}`);
+
+          stops.set(
+            cell,
+            fielded.map((band): Spawn => {
+              const entry = band[Math.floor(rng.random() * band.length)];
+
+              return [entry.species, rng.int32(), rng.int32()];
+            }),
+          );
+        }
+      }
+      this.rocketStops = stops;
+    }
+    return this.rocketStops;
   }
 
   /**

@@ -30,29 +30,25 @@ const enum Landmark {
    */
   BerryPatch = 4,
   /**
-   * A Team Rocket checkpoint: a grunt who bars the way for three
-   * hours and fights whoever accepts
-   */
-  TeamRocketStop = 5,
-  /**
    * A nest: somewhere a species of the biome leaves an egg. It holds
    * one for half a day rather than a quarter hour, so finding one is
    * worth walking to
    */
-  Nest = 6,
+  Nest = 5,
   /**
    * A spot people pass through: which of them is standing there
    * changes every six hours, and each has their own business with a
-   * player who stops
+   * player who stops — including the Team Rocket grunt, who bars the
+   * cell and fights whoever accepts
    */
-  WanderingNpc = 7,
+  WanderingNpc = 6,
   /**
    * A way through to somewhere else. It does nothing on its own — a
    * Portal Key is what opens one — and where it goes is another portal
    * of the biome the traveller names, which is what makes the network
    * a network rather than a teleport
    */
-  Portal = 8,
+  Portal = 7,
 }
 
 export default Landmark;
@@ -66,7 +62,6 @@ export const LANDMARKS: Landmark[] = [
   Landmark.LegendaryLair,
   Landmark.ShadowLair,
   Landmark.BerryPatch,
-  Landmark.TeamRocketStop,
   Landmark.Nest,
   Landmark.WanderingNpc,
   Landmark.Portal,
@@ -81,7 +76,6 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.LegendaryLair]: 'Legendary Raid',
   [Landmark.ShadowLair]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',
-  [Landmark.TeamRocketStop]: 'Team Rocket Stop',
   [Landmark.Nest]: 'Nest',
   [Landmark.WanderingNpc]: 'Wandering NPC',
   [Landmark.Portal]: 'Portal',

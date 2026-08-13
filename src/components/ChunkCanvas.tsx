@@ -72,7 +72,6 @@ const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.LegendaryLair]: 'R',
   [Landmark.ShadowLair]: 'S',
   [Landmark.BerryPatch]: 'B',
-  [Landmark.TeamRocketStop]: 'T',
   [Landmark.Nest]: 'N',
   [Landmark.WanderingNpc]: 'P',
   [Landmark.Portal]: 'O',

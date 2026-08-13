@@ -251,6 +251,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           title: 'A draw',
           said: 'Both sides went down together.',
         };
+      // Still being fought, so there is no verdict to give
+      case null:
       default:
         return null;
     }

@@ -230,8 +230,14 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
                     of={MAX_FRIENDSHIP}
                     said={describeFriendship(pair()[1].friendship)}
                   />
+                  {/* `walked`, not `steps`. They are two counts on
+                      purpose: `steps` is how far an egg has been
+                      carried and stops meaning anything the moment it
+                      hatches, while `walked` is how far this pokemon
+                      has gone as somebody's buddy — which is the one
+                      that buys the friendship above */}
                   <Meta>
-                    {pair()[1].steps} {pair()[1].steps === 1 ? 'step' : 'steps'} walked together
+                    {pair()[1].walked} {pair()[1].walked === 1 ? 'step' : 'steps'} walked together
                   </Meta>
                 </Show>
               </div>

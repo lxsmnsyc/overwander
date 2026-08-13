@@ -42,7 +42,6 @@ import ChunkSnapshot, {
   NPC_INTERVAL,
   PHENOMENON_INTERVAL,
   RAID_INTERVAL,
-  ROCKET_INTERVAL,
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
 } from '../../src/overworld/chunk-snapshot';
@@ -704,8 +703,9 @@ describe('world', () => {
 
   it('stands a Team Rocket grunt on one band of each rarity', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.TeamRocketStop),
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
     );
 
     expect(chunk).not.toBeNull();
@@ -719,7 +719,10 @@ describe('world', () => {
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocketStop);
+      // A stop is a grunt drawn onto a wandering-NPC cell rather than
+      // a landmark of its own
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.WanderingNpc);
+      expect(snapshot.getWanderingNpcs().get(cell)).toBe(Npc.RocketGrunt);
 
       // Three pokemon, weakest first: one from each of the biome's
       // base, uncommon and rare bands — a band the window leaves empty
@@ -732,17 +735,18 @@ describe('world', () => {
       }
     }
 
-    // The window fixes them, and the next one rolls somebody else
-    expect(snapshot.rocketTimestamp).toBe(0);
-    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL - 1).getRocketStops()).toEqual(stops);
-    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL).getRocketStops()).not.toEqual(stops);
-    expect(new ChunkSnapshot(chunk, ROCKET_INTERVAL).rocketTimestamp).toBe(ROCKET_INTERVAL);
+    // The grunt keeps the cell's own window: they stand as long as any
+    // other wanderer, and the next one brings somebody else
+    expect(snapshot.npcTimestamp).toBe(0);
+    expect(new ChunkSnapshot(chunk, NPC_INTERVAL - 1).getRocketStops()).toEqual(stops);
+    expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getRocketStops()).not.toEqual(stops);
   });
 
   it('fields a grunt at a fixed level, shadowed, with rolled traits', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.TeamRocketStop),
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
     );
 
     expect(chunk).not.toBeNull();
@@ -1212,7 +1216,6 @@ describe('world', () => {
     expect(SNAPSHOT_INTERVAL).toBe(5 * 60 * 1000);
     expect(LANDMARK_INTERVAL).toBe(15 * 60 * 1000);
     expect(RAID_INTERVAL).toBe(3 * 60 * 60 * 1000);
-    expect(ROCKET_INTERVAL).toBe(3 * 60 * 60 * 1000);
     expect(NPC_INTERVAL).toBe(6 * 60 * 60 * 1000);
     expect(NEST_INTERVAL).toBe(12 * 60 * 60 * 1000);
 
@@ -1221,7 +1224,6 @@ describe('world', () => {
     for (const interval of [
       LANDMARK_INTERVAL,
       RAID_INTERVAL,
-      ROCKET_INTERVAL,
       NPC_INTERVAL,
       NEST_INTERVAL,
     ]) {
@@ -1235,7 +1237,6 @@ describe('world', () => {
 
     expect(snapshot.landmarkTimestamp).toBe(NPC_INTERVAL + LANDMARK_INTERVAL);
     expect(snapshot.raidTimestamp).toBe(RAID_INTERVAL * 2);
-    expect(snapshot.rocketTimestamp).toBe(ROCKET_INTERVAL * 2);
     expect(snapshot.npcTimestamp).toBe(NPC_INTERVAL);
     expect(snapshot.nestTimestamp).toBe(0);
   });

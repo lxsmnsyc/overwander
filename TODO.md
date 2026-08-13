@@ -22,4 +22,5 @@
 - [ ] Battle summary
 - [ ] Admin page + role (mystery gift creation)
 - [ ] Make sign in with email + password dev-only
+- [ ] add "attack"
 - [ ] 

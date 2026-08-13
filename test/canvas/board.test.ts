@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import {
   ASPECT,
+  type BoardCell,
   PITCH,
   SPRITE_FACINGS,
+  boardCellAtFraction,
+  boardCells,
+  borderExit,
   cellAtFraction,
+  chunkCellOf,
+  compassMarks,
   facingFrom,
+  fitPicture,
+  isBorderCell,
   paintOrder,
+  projectBoardCell,
+  projectBoardCellQuad,
   projectCell,
   projectCellQuad,
   projectGround,
@@ -95,6 +105,146 @@ describe('the board projection', () => {
       expect(front.y).toBeGreaterThan(behind.y);
       expect(front.scale).toBeGreaterThan(behind.scale);
     }
+  });
+});
+
+describe('fitting the picture to a screen', () => {
+  it('keeps its proportions whatever shape the screen is', () => {
+    for (const [width, height] of [
+      [1280, 720],
+      [390, 844],
+      [1024, 1024],
+      [2560, 1080],
+    ]) {
+      const frame = fitPicture(width, height);
+
+      expect(frame.height / frame.width, `${width}x${height}`).toBeCloseTo(ASPECT, 6);
+      // Inside the screen, and off its edges: a board fitted to the
+      // last pixel loses its far corner as soon as it is turned
+      expect(frame.x).toBeGreaterThan(0);
+      expect(frame.y).toBeGreaterThan(0);
+      expect(frame.x + frame.width).toBeLessThan(width);
+      // ...and clear of the bottom by more than the top, since the
+      // menu stands there
+      expect(height - (frame.y + frame.height)).toBeGreaterThan(frame.y);
+    }
+  });
+
+  it('is as large as the screen allows', () => {
+    // Wide screens are held by their height and tall ones by their
+    // width, which is the whole of what fitting means
+    expect(fitPicture(4000, 720).height).toBeGreaterThan(600);
+    expect(fitPicture(400, 4000).width).toBeGreaterThan(360);
+    // Twice the screen is twice the picture
+    expect(fitPicture(2560, 1440).width).toBeCloseTo(fitPicture(1280, 720).width * 2, 6);
+  });
+});
+
+describe('the apron around the chunk', () => {
+  const APRON = boardCells().filter(isBorderCell);
+
+  it('rings the chunk without its corners, which nobody could stand on', () => {
+    // Four sides of sixteen. A corner would be a cell only reachable
+    // by a diagonal step, and nothing in this game moves diagonally
+    expect(APRON).toHaveLength(CHUNK_CELLS * 4);
+    expect(boardCells()).toHaveLength(CHUNK_CELLS * CHUNK_CELLS + CHUNK_CELLS * 4);
+
+    for (const cell of APRON) {
+      expect(chunkCellOf(cell)).toBeNull();
+    }
+  });
+
+  it('is drawn inside the picture however the board is turned', () => {
+    for (let step = 0; step < 24; step++) {
+      const yaw = (step / 24) * 2 * Math.PI;
+
+      for (const cell of APRON) {
+        for (const corner of projectBoardCellQuad(cell, yaw)) {
+          expect(corner.x, `apron at ${yaw}`).toBeGreaterThanOrEqual(-1e-9);
+          expect(corner.x).toBeLessThanOrEqual(1 + 1e-9);
+          expect(corner.y).toBeGreaterThanOrEqual(-1e-9);
+          expect(corner.y).toBeLessThanOrEqual(1 + 1e-9);
+        }
+      }
+    }
+  });
+
+  it('reads back as itself, and the chunk reads back as nothing there', () => {
+    for (const cell of APRON) {
+      const middle = projectBoardCell(cell);
+
+      expect(boardCellAtFraction(middle.x, middle.y)).toEqual(cell);
+      // The chunk's own reading knows nothing about the apron: a press
+      // out there is not a press on a cell of the chunk
+      expect(cellAtFraction(middle.x, middle.y)).toBeNull();
+    }
+  });
+
+  it('is the way out of the chunk, one straight step over', () => {
+    expect(borderExit({ x: -1, y: 5 })).toEqual({ cell: 5 * CHUNK_CELLS, step: [-1, 0] });
+    expect(borderExit({ x: CHUNK_CELLS, y: 5 })).toEqual({
+      cell: 5 * CHUNK_CELLS + CHUNK_CELLS - 1,
+      step: [1, 0],
+    });
+    expect(borderExit({ x: 5, y: -1 })).toEqual({ cell: 5, step: [0, -1] });
+    expect(borderExit({ x: 5, y: CHUNK_CELLS })).toEqual({
+      cell: (CHUNK_CELLS - 1) * CHUNK_CELLS + 5,
+      step: [0, 1],
+    });
+
+    // A cell of the chunk is not a way out of it, and neither is a
+    // corner, which is not a cell at all
+    expect(borderExit({ x: 5, y: 5 })).toBeNull();
+    expect(borderExit({ x: -1, y: -1 })).toBeNull();
+  });
+
+  it('leaves every threshold beside the edge it steps off', () => {
+    for (const cell of APRON) {
+      const exit = borderExit(cell);
+
+      expect(exit).not.toBeNull();
+      // The edge cell it leaves from is the one it is level with
+      const from: BoardCell = {
+        x: (exit?.cell ?? 0) % CHUNK_CELLS,
+        y: Math.floor((exit?.cell ?? 0) / CHUNK_CELLS),
+      };
+
+      expect(Math.abs(from.x - cell.x) + Math.abs(from.y - cell.y)).toBe(1);
+    }
+  });
+});
+
+describe('the compass', () => {
+  it('stands its letters off the board, one to each side', () => {
+    const marks = compassMarks();
+
+    expect(marks.map((mark) => mark.label)).toEqual(['N', 'E', 'S', 'W']);
+
+    // Inside the picture, and outside the board: north is beyond the
+    // far edge, south beyond the near one
+    for (const mark of marks) {
+      expect(mark.x).toBeGreaterThanOrEqual(0);
+      expect(mark.x).toBeLessThanOrEqual(1);
+      expect(mark.y).toBeGreaterThanOrEqual(0);
+      expect(mark.y).toBeLessThanOrEqual(1);
+      expect(boardCellAtFraction(mark.x, mark.y)).toBeNull();
+    }
+
+    const [north, east, south, west] = marks;
+
+    expect(north.y).toBeLessThan(projectGround({ u: 0.5, v: 0 }).y);
+    expect(south.y).toBeGreaterThan(projectGround({ u: 0.5, v: 1 }).y);
+    expect(west.x).toBeLessThan(east.x);
+  });
+
+  it('carries the letters round with the board', () => {
+    // A quarter turn puts what was north where east was: the letters
+    // are ground points, so they turn with everything else on it
+    const facing = compassMarks();
+    const turned = compassMarks(Math.PI / 2);
+
+    expect(turned[0].x).toBeCloseTo(facing[1].x, 6);
+    expect(turned[0].y).toBeCloseTo(facing[1].y, 6);
   });
 });
 

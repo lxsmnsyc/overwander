@@ -29,6 +29,21 @@ export interface Profile {
    */
   gold: number;
   /**
+   * What this account is, beyond a player: an empty string for
+   * everybody who signs up, and whatever the game comes to call its
+   * staff for the few who are not.
+   *
+   * It is a **string** rather than a flag or an enum so the set of
+   * roles can grow without a migration — a record written today reads
+   * back the same however many roles exist tomorrow.
+   *
+   * Nothing a browser sends may name it: the rules let a player write
+   * only their nickname, avatar and buddy, and refuse a first write
+   * that names a role at all. A role is granted out of band, the way
+   * gold is
+   */
+  role: string;
+  /**
    * The `caught/{catchId}` walking at the player's side, or an empty
    * string when they walk alone.
    *
@@ -55,6 +70,9 @@ const converter: FirestoreDataConverter<Profile> = {
       avatar: typeof data.avatar === 'string' ? data.avatar : null,
       gold: typeof data.gold === 'number' ? data.gold : 0,
       buddy: typeof data.buddy === 'string' ? data.buddy : '',
+      // Everybody is a player until somebody says otherwise, so a
+      // record without the field is one
+      role: typeof data.role === 'string' ? data.role : '',
     };
   },
 };
@@ -113,6 +131,8 @@ export function deriveProfileDefaults(user: User): Profile {
     avatar: user.photoURL,
     gold: 0,
     buddy: '',
+    // An account opens as a player, whatever it may be made later
+    role: '',
   };
 }
 
@@ -120,7 +140,10 @@ export function deriveProfileDefaults(user: User): Profile {
  * The balance is currency, so it never moves from a browser: gold is
  * granted and spent by the server in
  * [`src/server/profile.ts`](../server/profile.ts), and the rules let
- * a player write only their own nickname, avatar and buddy
+ * a player write only their own nickname, avatar and buddy. The role
+ * is the same kind of field for the same reason — an account that
+ * could name what it is would be granting itself whatever a role ever
+ * comes to allow
  */
 
 /**

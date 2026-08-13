@@ -187,6 +187,8 @@ async function writeEgg(
     egg: true,
     favorite: false,
     guarded: false,
+    // It begins here: an egg has passed through no hands at all
+    traded: false,
     // What is inside the shell is already decided, so what it will be
     // worth to somebody else is decided with it
     auctionable: isAuctionableCatch({

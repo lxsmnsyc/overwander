@@ -3,7 +3,7 @@
   "include": ["src", "types", "test", "e2e", "scripts", "playwright.config.ts"],
   "compilerOptions": {
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["@solidjs/start/env", "@types/node"],
     "importHelpers": true,
     "declaration": false,

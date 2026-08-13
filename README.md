@@ -208,7 +208,7 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 | `src/components/` | The UI, including the styled wrappers over terracotta in `components/styled/` |
 | `src/canvas/`     | Sprite sheets and the animation class the map and battle canvases draw with   |
 | `src/core/`       | The shared primitives: seeded RNG, Perlin noise, the event engine             |
-| `public/sprites/` | PMD-style sprite sheets, one folder per species id                            |
+| `public/sprites/` | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon |
 | `test/`           | Vitest suites, mirroring the source tree                                      |
 | `docs/`           | The mechanics and Firestore documentation                                     |
 

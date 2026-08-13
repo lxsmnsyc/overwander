@@ -209,7 +209,7 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
             made it unbearable before was doing it down the middle of
             the screen, on top of the board. In the corner the column
             is out of the way of the map, of the badges over its other
-            corner, and of the bar along the bottom */}
+            corner, and of the menu along the bottom */}
         <ul
           class="pointer-events-none fixed top-3 left-3 z-[100] m-0 flex list-none flex-col
             items-start gap-2 p-0"

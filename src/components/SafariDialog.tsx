@@ -45,6 +45,14 @@ const THROW_MESSAGES: Record<ThrowResult, string> = {
   [ThrowResult.Fled]: 'It fled.',
 };
 
+/**
+ * How large the ball on the throw button is drawn. It is the label
+ * rather than a decoration beside one now — the button no longer
+ * spells out what is in hand — so it is drawn at a size that can be
+ * told from the other balls at a glance
+ */
+const THROW_SPRITE = 28;
+
 const STATE_MESSAGES: Record<SafariState, string> = {
   [SafariState.Active]: '',
   [SafariState.Caught]: 'Caught — it is yours.',
@@ -343,13 +351,9 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 inline
                 player={props.user.uid}
                 value={inHand()}
-                verb="Take out"
                 empty="Nothing in the bag to throw."
                 filter={(entry) =>
                   BALLS_BY_ITEM.has(entry.item) || (isTreat(entry.item) && active().canFeed())
-                }
-                note={(entry) =>
-                  BALLS_BY_ITEM.has(entry.item) ? 'a ball' : 'a treat — fed, not thrown'
                 }
                 entries={bag()}
                 onPick={(item) => {
@@ -390,15 +394,25 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 >
                   Items
                 </Button>
-                {/* What is being thrown and how many are left are one
-                    thing to read, so they are one thing to look at */}
-                {/* The ball, drawn on the button that throws it. What
-                    is in hand is the one thing on this screen a player
-                    checks between every throw, and a picture of a
-                    Great Ball is read faster than the words */}
-                <Button tone="primary" disabled={stockOf(inHand()) === 0} onClick={hurl}>
-                  <ItemSprite item={inHand()} size={20} label="" />
-                  Throw {describeItem(inHand())} × {stockOf(inHand())}
+                {/* The ball, drawn on the button that throws it, and
+                    named nowhere else on it.
+                    
+                    What is in hand is the one thing on this screen a
+                    player checks between every throw, and a picture of
+                    a Great Ball is read faster than the words — so the
+                    picture is the label and is drawn large enough to
+                    be one. Spelling it out as well made the longest
+                    button in the game, which wrapped onto two lines
+                    and left the bar with one button taller than the
+                    others */}
+                <Button
+                  tone="primary"
+                  disabled={stockOf(inHand()) === 0}
+                  label={`Throw ${describeItem(inHand())}, ${stockOf(inHand())} left`}
+                  onClick={hurl}
+                >
+                  <ItemSprite item={inHand()} size={THROW_SPRITE} label="" />
+                  Throw × {stockOf(inHand())}
                 </Button>
               </>
             }

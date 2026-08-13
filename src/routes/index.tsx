@@ -3,12 +3,14 @@ import type { User } from 'firebase/auth';
 import { type JSX, Show, createSignal } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { useAuth } from '../auth/context';
-import ActionBar from '../components/ActionBar';
 import AuctionDialog from '../components/AuctionDialog';
 import AuctionTab from '../components/AuctionTab';
 import BattleView from '../components/BattleView';
 import CatchDialog from '../components/CatchDialog';
+import CatchesList from '../components/CatchesList';
+import GameMenu from '../components/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/game-context';
+import InventoryList from '../components/InventoryList';
 import LoginForm from '../components/LoginForm';
 import MysteryGiftDialog from '../components/MysteryGiftDialog';
 import OverworldTab from '../components/OverworldTab';
@@ -24,7 +26,7 @@ import { Button, Dialog, DialogActions, Note } from '../components/styled';
  * There is one page and it is the chunk the player is standing in,
  * drawn to fill whatever screen they are on. Their own things, the
  * lobbies gathering and the auction board are all pulled over it by
- * the bar at the bottom and put away again — none of them is
+ * the menu at the bottom and put away again — none of them is
  * somewhere to *be*, and a set of tabs said otherwise by making the
  * world one quarter of the game.
  */
@@ -35,16 +37,27 @@ import { Button, Dialog, DialogActions, Note } from '../components/styled';
  * button that says Profile, so a panel captioned Profile is a line of
  * text telling them what they just did
  */
-const TITLES: Record<GameDialog.Profile | GameDialog.Raids | GameDialog.Auctions, string> = {
+type Panelled =
+  | GameDialog.Profile
+  | GameDialog.Raids
+  | GameDialog.Auctions
+  | GameDialog.Catches
+  | GameDialog.Inventory;
+
+const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
   [GameDialog.Raids]: 'Raids',
   [GameDialog.Auctions]: 'Auctions',
+  [GameDialog.Catches]: 'Catches',
+  [GameDialog.Inventory]: 'Inventory',
 };
 
-const DESCRIPTIONS: Record<GameDialog.Profile | GameDialog.Raids | GameDialog.Auctions, string> = {
-  [GameDialog.Profile]: 'Your details, your catches, what you carry and what you have bid on.',
+const DESCRIPTIONS: Record<Panelled, string> = {
+  [GameDialog.Profile]: 'Your details, your buddy, your battles and what you have bid on.',
   [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
   [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
+  [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',
+  [GameDialog.Inventory]: 'Everything you are carrying.',
 };
 
 /**
@@ -84,7 +97,38 @@ function GameView(props: { user: User }): JSX.Element {
       fallback={
         <div class="relative h-full">
           <OverworldTab />
-          <ActionBar />
+          <GameMenu />
+
+          {/* The two that came out of the profile. Each is one list and
+              nothing else, so each is its own panel rather than a tab
+              of a page about somebody */}
+          <Dialog
+            isOpen={showing(GameDialog.Catches)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Catches]}
+            description={DESCRIPTIONS[GameDialog.Catches]}
+          >
+            <CatchesList player={props.user.uid} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            isOpen={showing(GameDialog.Inventory)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Inventory]}
+            description={DESCRIPTIONS[GameDialog.Inventory]}
+          >
+            <InventoryList player={props.user.uid} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
 
           <Dialog
             isOpen={showing(GameDialog.Profile)}
@@ -233,7 +277,7 @@ export default function Home(): JSX.Element {
                   <h1 class="text-3xl">Poketerra</h1>
                   <p class="text-sm text-on-accent/85">Sign in to walk the overworld.</p>
                   {/* The theme is worth changing before signing in as
-                      much as after it — the bar that carries it is
+                      much as after it — the menu that carries it is
                       behind the sign-in, and this is the whole game
                       until somebody does */}
                   <ThemeToggle class="absolute top-3 right-3 px-2.5 text-ink" />

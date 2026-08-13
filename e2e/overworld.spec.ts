@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openBar, signIn } from './game';
+import { dismissGift, expectShut, openMenu, openPanel, signIn } from './game';
 
 /**
  * The page a player spends nearly all of their time on: the chunk they
- * are standing in, and the bar that reaches everything else.
+ * are standing in, and the one button that reaches everything else.
  */
 
 test.describe('the overworld', () => {
@@ -25,32 +25,38 @@ test.describe('the overworld', () => {
     expect(bounds?.height ?? 0).toBeGreaterThan(300);
   });
 
-  test('reaches everything from the bar at the bottom', async ({ page }) => {
-    const bar = page.getByRole('navigation', { name: 'Game' });
+  test('reaches everything from the one button at the bottom', async ({ page }) => {
+    const menu = await openMenu(page);
 
-    for (const label of ['Profile', 'Map', 'Raids', 'Auctions']) {
-      await expect(bar.getByRole('button', { name: label })).toBeVisible();
+    // Everything that is not the world, as a keypad. The three that
+    // are kept for later are drawn and unpressable rather than left
+    // out, so the keys do not move as the game grows
+    for (const label of ['World', 'Catches', 'Inventory', 'Profile', 'Raids', 'Auctions']) {
+      await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
+    }
+    for (const label of ['Friends', 'Gifts', 'Settings']) {
+      await expect(menu.getByRole('button', { name: label, exact: true })).toBeDisabled();
     }
   });
 
   test('opens the world map as a picture', async ({ page }) => {
-    const map = await openBar(page, 'Map');
+    const map = await openPanel(page, 'World');
 
     await expect(map.locator('canvas')).toBeVisible();
   });
 
   test('lets a dialog go and gives the world back', async ({ page }) => {
-    const profile = await openBar(page, 'Profile');
+    const profile = await openPanel(page, 'Profile');
 
-    await expect(profile.getByRole('tab', { name: 'Catches' })).toBeVisible();
+    await expect(profile.getByRole('tab', { name: 'Battles' })).toBeVisible();
 
     await page.keyboard.press('Escape');
     await expectShut(profile);
 
-    // And the bar is live again afterwards. A dialog that closes but
+    // And the menu is live again afterwards. A dialog that closes but
     // leaves its overlay behind looks shut and swallows every press
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
-    // `openBar` asserts the panel is up, which is the whole point
-    await openBar(page, 'Auctions');
+    // `openPanel` asserts the panel is up, which is the whole point
+    await openPanel(page, 'Auctions');
   });
 });

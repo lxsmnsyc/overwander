@@ -147,6 +147,8 @@ export async function writeCaughtRecord(
     egg: false,
     favorite: false,
     guarded: false,
+    // Caught by the hands holding it, so it has been nobody else's
+    traded: false,
     // Derived from three fields on this same document, and stored so
     // the store can be asked "which of mine are worth a listing"
     // without reading a whole box to find out

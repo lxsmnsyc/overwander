@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dialogNamed, dismissGift, expectShut, openBar, signIn } from './game';
+import { dialogNamed, dismissGift, expectShut, openPanel, signIn } from './game';
 
 /**
  * The lobbies gathering in the current window.
@@ -26,7 +26,7 @@ test.describe('the raids panel', () => {
   });
 
   test('settles on either a list of lobbies or the fact that there are none', async ({ page }) => {
-    const raids = await openBar(page, 'Raids');
+    const raids = await openPanel(page, 'Raids');
 
     // Whichever it is, it is not still loading. The window comes from
     // the server's clock, so the listing cannot even be opened until a
@@ -41,7 +41,7 @@ test.describe('the raids panel', () => {
   });
 
   test('opens a lobby into the panel, named for the lair', async ({ page }) => {
-    const raids = await openBar(page, 'Raids');
+    const raids = await openPanel(page, 'Raids');
 
     await expect(raids.getByText('Loading raids…')).toBeHidden({ timeout: 20_000 });
 
@@ -67,7 +67,7 @@ test.describe('the raids panel', () => {
   });
 
   test('closes and gives the world back', async ({ page }) => {
-    const raids = await openBar(page, 'Raids');
+    const raids = await openPanel(page, 'Raids');
 
     await raids.getByRole('button', { name: 'Close' }).click();
     await expectShut(raids);

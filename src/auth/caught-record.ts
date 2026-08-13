@@ -96,6 +96,20 @@ export interface CaughtPokemon {
   favorite: boolean;
   guarded: boolean;
   /**
+   * Whether this pokemon has changed hands in a trade.
+   *
+   * The history already says so — an entry with `Acquisition.Trade` in
+   * it is exactly this fact — but a history is a list, and a list
+   * cannot be asked of the store. This can: "which of mine came from
+   * somebody else" is one query rather than a whole box read and
+   * filtered, which is what the same argument buys `auctionable`.
+   *
+   * Nothing sets it yet: trading does not exist. It is written `false`
+   * from the day catches are created so that the day it does, old
+   * records do not have to be told apart from new ones by their shape
+   */
+  traded: boolean;
+  /**
    * Whether this is one a player would part with gold for — see
    * `isAuctionableCatch` for the four answers that count.
    *
@@ -444,6 +458,9 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     egg: asBoolean(data.egg),
     favorite: asBoolean(data.favorite),
     guarded: asBoolean(data.guarded),
+    // A record written before trading was a field was written before
+    // trading was a thing, so it was never traded
+    traded: asBoolean(data.traded),
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     abilities,

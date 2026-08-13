@@ -1,15 +1,26 @@
 import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
 import {
   ASPECT,
+  BORDER_CELLS,
+  type BoardCell,
+  PICTURE_SPAN,
   PITCH,
   type ProjectedPoint,
   SPRITE_FACINGS,
   angleOf,
-  cellAtFraction,
+  boardCellAtFraction,
+  boardCellOf,
+  boardCells,
+  borderExit,
+  chunkCellOf,
+  compassMarks,
   facingFrom,
+  fitPicture,
+  isBoardCell,
+  isBorderCell,
   paintOrder,
+  projectBoardCellQuad,
   projectCell,
-  projectCellQuad,
   projectGround,
   radiusOf,
   shortestTurn,
@@ -40,20 +51,30 @@ import { CHUNK_CELLS } from '../overworld/chunk';
  */
 
 /**
- * How big a cell is drawn. The canvas is stretched to its container
- * afterwards, so this is only the resolution it is drawn at
+ * How big a cell is at the size the picture was drawn at.
+ *
+ * The canvas is the page now, so the picture is however large the
+ * screen allows rather than a fixed number of pixels. What this and
+ * the sizes beside it describe is one **reference** picture: a radius
+ * of `CELL * 0.3` is that on a board of this width and proportionally
+ * more on a wider one. Everything measured in pixels is multiplied by
+ * how much larger the real picture came out
  */
 const CELL = 26;
 
-const WIDTH = CELL * CHUNK_CELLS;
+/**
+ * The reference picture's width. It is wider than the chunk: there is
+ * an apron of threshold cells around it and the compass letters stand
+ * off that again
+ */
+const WIDTH = CELL * CHUNK_CELLS * PICTURE_SPAN;
 
 /**
- * The picture is shorter than it is wide: the board is laid back
- * under the camera, so its depth takes up less room than its width.
- * The element carries the same ratio, and the projection is what
- * decides both
+ * How far past the chunk the apron of thresholds reaches, in board
+ * fractions — the units the ground is measured in, where the chunk
+ * itself runs from 0 to 1
  */
-const HEIGHT = Math.round(WIDTH * ASPECT);
+const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
  * How much bigger than the sheet a pokemon standing in a cell is
@@ -88,12 +109,20 @@ const COLORS = {
    */
   cursor: '#3b82f6',
   /**
-   * The compass: a face to read the needle against, and a needle
-   * pointing the way the world's north has been turned to
+   * The compass, which is four letters standing on the ground off the
+   * edges of the board. They are read against whatever country the
+   * chunk is made of, so each one is drawn on a halo of its own rather
+   * than trusting a dark letter to show up on dark ground
    */
-  compassFace: 'rgba(255, 255, 255, 0.55)',
-  compassRim: 'rgba(0, 0, 0, 0.35)',
-  needle: '#c2402f',
+  compass: '#1c1c1c',
+  compassHalo: 'rgba(255, 255, 255, 0.75)',
+  /**
+   * The apron: the ring of thresholds around the chunk. Darker than the
+   * board and outside its lit surface, because it is not part of the
+   * chunk — it is the edge of it, and stepping onto one is leaving
+   */
+  border: 'rgba(0, 0, 0, 0.22)',
+  borderLine: 'rgba(0, 0, 0, 0.10)',
   /**
    * The ground under something standing on it
    */
@@ -119,22 +148,66 @@ const COLORS = {
 const TURN_DEAD_ZONE = 0.06;
 
 /**
- * How big the compass is drawn, in the same pixels the board is.
- *
- * It earns its corner: the walk keys are the **world's** — up is
- * north whichever way the camera is looking — so a player who has
- * turned the board has no other way of telling which way that is.
- * Without it, turning the camera quietly scrambles the controls
+ * How big the compass letters are on the reference picture. They are
+ * the only writing on it, and they are read at a glance rather than
+ * studied
  */
-const COMPASS_RADIUS = 22;
+const COMPASS_SIZE = 15;
 
-const COMPASS_MARGIN = 14;
+/**
+ * How thick the halo under a compass letter is drawn
+ */
+const COMPASS_HALO = 3;
 
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
  * laid back under the camera, so it is squashed the way the ground is
  */
 const GROUND_SQUASH = Math.sin((PITCH * Math.PI) / 180) * 0.55;
+
+/**
+ * Crossing a boundary, drawn rather than waited through.
+ *
+ * The next chunk's window is a round trip, and while it is in the air
+ * there is nothing to draw. The world used to be taken off the screen
+ * for that moment and a line of text put in its place, which is a
+ * flash of the whole page for what is usually a fraction of a second
+ * — and it happens every time a player walks off an edge.
+ *
+ * So the board is carried off instead: the one being left slides away
+ * behind the walker and fades, and the one they have walked into comes
+ * on from the far side. Nothing waits on the drawing — the caller
+ * holds the old board up until the new one has arrived, and says which
+ * half of the crossing this is
+ */
+export interface Crossing {
+  /**
+   * The step that took them over, in the world's own cells: north is
+   * `dy` of -1 whichever way the camera is pointing
+   */
+  dx: number;
+  dy: number;
+  /**
+   * Whether the board is being carried off or brought on
+   */
+  phase: 'out' | 'in';
+}
+
+/**
+ * How long each half of a crossing takes. Short: it is a step, and a
+ * player crossing several chunks would otherwise spend the walk
+ * watching the boards rather than the world
+ */
+export const CROSSING_OUT = 180;
+
+export const CROSSING_IN = 220;
+
+/**
+ * How far the board travels while it is being carried off, as a
+ * fraction of the picture. Far enough to be leaving, near enough that
+ * it is the same board the whole way
+ */
+const CROSSING_SLIDE = 0.3;
 
 /**
  * Which button turns the board. The left one is for pressing cells
@@ -203,10 +276,10 @@ export interface ChunkCanvasProps {
   /**
    * Where this is, in a few words.
    *
-   * Nothing draws it any more — it is on the bar along the bottom of
-   * the screen, where it costs the world nothing — but the picture is
-   * still the thing being named, so it is still what a screen reader
-   * is told this canvas is
+   * Nothing draws it any more — it is at the top of the menu at the
+   * bottom of the screen, where it costs the world nothing — but the
+   * picture is still the thing being named, so it is still what a
+   * screen reader is told this canvas is
    */
   caption: string;
   /**
@@ -221,11 +294,6 @@ export interface ChunkCanvasProps {
    */
   spawns: Map<number, Species>;
   /**
-   * Whether the cell can be acted on from where the player stands.
-   * The rule is the tab's — a thing, within the ring around them
-   */
-  reachable: (index: number) => boolean;
-  /**
    * What to call the cell when the pointer rests on it
    */
   label: (index: number) => string;
@@ -235,20 +303,40 @@ export interface ChunkCanvasProps {
    */
   yaw: number;
   onTurn: (yaw: number) => void;
-  onReach: (index: number) => void;
   /**
-   * A step, in cells. The chunk owns the walk keys because it owns the
-   * focus: a player typing into something else, or reading a dialog
-   * over the top of this, is not walking anywhere
+   * Whether the board is on its way off the screen or on to it, and
+   * which way the player went. Null while they are standing in the
+   * chunk that is drawn, which is nearly always
    */
-  onWalk: (deltaX: number, deltaY: number) => void;
+  crossing: Crossing | null;
+  /**
+   * A cell the player has asked to be at — the chunk's own, or one of
+   * the thresholds around it.
+   *
+   * The canvas has no idea what that costs. Where the player is, what
+   * is standing in the way and how long a walk takes are the tab's, and
+   * this says only which square was pressed
+   */
+  onPress: (cell: BoardCell) => void;
 }
 
 /**
- * The keys that move something, and which way. A plain one walks the
- * player; the same key with shift moves the cursor, which is what
- * Enter acts on
+ * The keys that move the cursor, and which way. They no longer walk
+ * anybody: a walk is a press on where you want to be, and this is that
+ * press for a player who is using the keyboard for it
  */
+/**
+ * Which way a step off the board goes, in the world's own words. North
+ * is the far edge of the chunk however the camera has been walked
+ * round, which is the same north the compass letters are drawn from
+ */
+const BEARINGS = new Map<string, string>([
+  ['0,-1', 'north'],
+  ['1,0', 'east'],
+  ['0,1', 'south'],
+  ['-1,0', 'west'],
+]);
+
 const MOVE_KEYS = new Map<string, [number, number]>([
   ['ArrowUp', [0, -1]],
   ['ArrowDown', [0, 1]],
@@ -294,7 +382,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       });
     return null;
   };
-  const [hovered, setHovered] = createSignal<number | null>(null);
+  const [hovered, setHovered] = createSignal<BoardCell | null>(null);
+  /**
+   * How big the canvas is on screen, in CSS pixels. The picture is
+   * fitted into it, so this is what decides how large the board is
+   * drawn
+   */
+  const [box, setBox] = createSignal({ width: WIDTH, height: WIDTH * ASPECT });
   const [focused, setFocused] = createSignal(false);
   /**
    * Which way round the board is being looked at. It is the camera's,
@@ -325,22 +419,62 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   let turned = false;
   /**
+   * When the half of the crossing being drawn started. It is a plain
+   * variable stamped by the effect below rather than a signal: the
+   * picture is already redrawn every frame, so nothing needs telling
+   * that a clock is running
+   */
+  let crossedAt = 0;
+
+  createEffect(() => {
+    // The caller hands in a fresh crossing for each half, so each half
+    // starts its own clock. Standing still stamps nothing worth having
+    const half = props.crossing?.phase;
+
+    crossedAt = half == null ? 0 : performance.now();
+  });
+  /**
    * The cell the keyboard is pointing at. It follows the player until
    * it is moved, and goes back to them whenever they walk — which is
    * what a player looking at their own square expects, and it means
    * the cursor is never left behind in a chunk they have left
    */
-  const [cursor, setCursor] = createSignal(props.player);
+  const [cursor, setCursor] = createSignal<BoardCell>(boardCellOf(props.player));
 
   createEffect(() => {
-    setCursor(props.player);
+    setCursor(boardCellOf(props.player));
   });
 
+  /**
+   * Point somewhere else. The apron counts — walking off the edge is
+   * something a player at a keyboard has to be able to ask for too —
+   * and its corners do not, since they are not cells
+   */
   const moveCursor = ([dx, dy]: [number, number]): void => {
-    const x = Math.min(CHUNK_CELLS - 1, Math.max(0, (cursor() % CHUNK_CELLS) + dx));
-    const y = Math.min(CHUNK_CELLS - 1, Math.max(0, Math.floor(cursor() / CHUNK_CELLS) + dy));
+    setCursor((at) => {
+      const next = { x: at.x + dx, y: at.y + dy };
 
-    setCursor(y * CHUNK_CELLS + x);
+      return isBoardCell(next) ? next : at;
+    });
+  };
+
+  /**
+   * What a cell is called, for the tooltip and for a screen reader. A
+   * threshold is named by where it goes rather than by what is on it,
+   * because nothing is ever on one
+   */
+  const nameOf = (cell: BoardCell | null): string => {
+    if (cell == null) {
+      return '';
+    }
+
+    const exit = borderExit(cell);
+    const index = chunkCellOf(cell);
+
+    if (exit != null) {
+      return `The way ${BEARINGS.get(`${exit.step[0]},${exit.step[1]}`) ?? 'on'}, into the next chunk`;
+    }
+    return index == null ? '' : props.label(index);
   };
 
   /**
@@ -361,17 +495,26 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     }
 
     const bounds = element.getBoundingClientRect();
+    // Through the picture rather than the element. They were the same
+    // thing while the canvas was the board; now the canvas is the page
+    // and the picture is as much of it as the board's proportions
+    // allow, so a press has to be put back through the same fitting
+    // the painter drew it with
+    const frame = fitPicture(bounds.width, bounds.height);
 
+    if (frame.width === 0 || frame.height === 0) {
+      return null;
+    }
     return {
-      x: (event.clientX - bounds.left) / bounds.width,
-      y: (event.clientY - bounds.top) / bounds.height,
+      x: (event.clientX - bounds.left - frame.x) / frame.width,
+      y: (event.clientY - bounds.top - frame.y) / frame.height,
     };
   };
 
-  const cellAt = (event: MouseEvent): number | null => {
+  const cellAt = (event: MouseEvent): BoardCell | null => {
     const at = fractionAt(event);
 
-    return at == null ? null : cellAtFraction(at.x, at.y, yaw());
+    return at == null ? null : boardCellAtFraction(at.x, at.y, yaw());
   };
 
   /**
@@ -427,47 +570,73 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return;
     }
 
-    const ratio = window.devicePixelRatio;
+    // How big the page is, watched rather than measured once: the
+    // canvas *is* the page, so a resized window or a turned phone is a
+    // different picture and a board of the wrong size in the middle of
+    // it
+    setBox({ width: element.clientWidth, height: element.clientHeight });
 
-    element.width = WIDTH * ratio;
-    element.height = HEIGHT * ratio;
-    context.scale(ratio, ratio);
+    const watching = new ResizeObserver(() => {
+      setBox({ width: element.clientWidth, height: element.clientHeight });
+    });
+
+    watching.observe(element);
+    onCleanup(() => {
+      watching.disconnect();
+    });
 
     /**
-     * A projected point in pixels rather than in fractions of the
-     * picture. The projection answers in fractions because three
-     * different sizes ask it the same question; this is the painter's
-     * size
+     * Where the picture is on this screen, and how much larger it came
+     * out than the one everything here is measured against.
+     *
+     * Both are worked out once a frame rather than per point: the
+     * canvas is the page, so they change when the window does and at
+     * no other time
+     */
+    let placed = fitPicture(WIDTH, WIDTH * ASPECT);
+    let magnify = 1;
+
+    /**
+     * A projected point in the screen's own pixels. The projection
+     * answers in fractions of the picture because three different
+     * sizes ask it the same question — the painter, the pointer and
+     * the browser test — and this is where the picture is
      */
     const at = (point: ProjectedPoint): ProjectedPoint => ({
-      x: point.x * WIDTH,
-      y: point.y * HEIGHT,
+      x: placed.x + point.x * placed.width,
+      y: placed.y + point.y * placed.height,
       scale: point.scale,
     });
 
     /**
-     * Lay a cell's four corners out as a path, ready to be filled or
-     * stroked. A cell is a quad now — the two far corners are closer
-     * together than the two near ones — so nothing here can be a rect
+     * Lay four corners out as a path, ready to be filled or stroked.
+     * Nothing here is a rect: a cell is a quad, with its two far
+     * corners closer together than its two near ones, and so is the
+     * board
      */
-    /**
-     * The board's own outline, as a path: four corners of ground
-     * rather than the four corners of the canvas
-     */
-    const traceBoard = (): void => {
-      const corners = [
-        { u: 0, v: 0 },
-        { u: 1, v: 0 },
-        { u: 1, v: 1 },
-        { u: 0, v: 1 },
-      ].map((edge) => at(projectGround(edge, yaw())));
-
+    const traceQuad = (corners: ProjectedPoint[]): void => {
       context.beginPath();
       context.moveTo(corners[0].x, corners[0].y);
       for (const corner of corners.slice(1)) {
         context.lineTo(corner.x, corner.y);
       }
       context.closePath();
+    };
+
+    /**
+     * A square of ground, as a path. `edge` is how far outside the
+     * chunk it reaches, in board fractions: none of it for the chunk
+     * itself, one cell's worth for the apron around it
+     */
+    const traceGround = (edge: number): void => {
+      traceQuad(
+        [
+          { u: -edge, v: -edge },
+          { u: 1 + edge, v: -edge },
+          { u: 1 + edge, v: 1 + edge },
+          { u: -edge, v: 1 + edge },
+        ].map((corner) => at(projectGround(corner, yaw()))),
+      );
     };
 
     /**
@@ -495,15 +664,60 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       ].map((corner) => at(projectGround(corner, yaw())));
     };
 
-    const traceCell = (index: number): void => {
-      const quad = projectCellQuad(index, yaw()).map(at);
+    const traceCell = (cell: BoardCell): void => {
+      traceQuad(projectBoardCellQuad(cell, yaw()).map(at));
+    };
 
-      context.beginPath();
-      context.moveTo(quad[0].x, quad[0].y);
-      for (const corner of quad.slice(1)) {
-        context.lineTo(corner.x, corner.y);
+    /**
+     * Every square the picture is made of, worked out once: the chunk's
+     * own cells and the apron's, which do not change while the player
+     * is standing in this chunk
+     */
+    const squares = boardCells();
+
+    /**
+     * Where the board is on its way to or from, in the picture's own
+     * pixels, and how much of it is left.
+     *
+     * The direction is the walked one put through the projection
+     * rather than taken as up or across: the camera can be anywhere
+     * round the board, so which way north is on the screen is
+     * something only the projection knows. The ground moves **against**
+     * the walk, the way scenery does — a player walking north watches
+     * the field they are leaving go south
+     */
+    const carrying = (): { x: number; y: number; alpha: number } => {
+      const step = props.crossing;
+
+      if (step == null) {
+        return { x: 0, y: 0, alpha: 1 };
       }
-      context.closePath();
+
+      const going = step.phase === 'out';
+      const span = going ? CROSSING_OUT : CROSSING_IN;
+      const part = Math.min(1, Math.max(0, (performance.now() - crossedAt) / span));
+      // Eased at both ends, so the board leans into the move and
+      // settles rather than starting and stopping at full speed
+      const eased = part * part * (3 - 2 * part);
+      const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+      const ahead = at(projectGround({ u: 0.5 + step.dx * 0.25, v: 0.5 + step.dy * 0.25 }, yaw()));
+      const away = Math.hypot(ahead.x - middle.x, ahead.y - middle.y);
+      const reach = (going ? -eased : 1 - eased) * CROSSING_SLIDE * placed.width;
+      // The fade lags the travel on the way out and leads it on the
+      // way in, so the board is still there for most of the leaving and
+      // is back before it has finished arriving. Fading in step with
+      // the slide left an empty field of country in the middle of the
+      // crossing, which is the flash again in a nicer colour
+      const alpha = going ? 1 - eased * eased : 1 - (1 - eased) * (1 - eased);
+
+      if (away === 0) {
+        return { x: 0, y: 0, alpha };
+      }
+      return {
+        x: ((ahead.x - middle.x) / away) * reach,
+        y: ((ahead.y - middle.y) / away) * reach,
+        alpha,
+      };
     };
 
     /**
@@ -537,20 +751,60 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // something about the chunk changes
       beat();
 
+      /**
+       * The screen, as it is this frame.
+       *
+       * The canvas is the page: it is however large the window is, and
+       * the backing store is that in real pixels. Sized here rather
+       * than once at the start, because a window that is resized — or
+       * a phone that is turned over — is a different page
+       */
+      const screen = box();
+      const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
+
+      if (element.width !== Math.round(screen.width * ratio)) {
+        element.width = Math.round(screen.width * ratio);
+      }
+      if (element.height !== Math.round(screen.height * ratio)) {
+        element.height = Math.round(screen.height * ratio);
+      }
+      // Set rather than multiplied: resizing a canvas throws its
+      // transform away, so this is what puts it back — and it is the
+      // only transform the drawing below assumes
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      placed = fitPicture(screen.width, screen.height);
+      magnify = placed.width / WIDTH;
+
       // Nothing outside the board. A tilted board leaves corners of
       // the canvas that are not board, and painting them — even a
       // shade of the ground — draws a rectangle around a picture that
       // has no rectangle in it. Cleared, the page's own colour is what
       // shows through, which is this same country carrying on past the
       // edge of what the player can reach
-      context.clearRect(0, 0, WIDTH, HEIGHT);
+      context.clearRect(0, 0, screen.width, screen.height);
 
-      traceBoard();
+      // Everything below is drawn where the board is rather than where
+      // it lives, because while a boundary is being crossed it is on
+      // its way somewhere. The clearing above is not: it is the whole
+      // canvas whatever the board is doing
+      const carried = carrying();
+
+      context.save();
+      context.globalAlpha = carried.alpha;
+      context.translate(carried.x, carried.y);
+
+      // The country, apron and all: the threshold cells are as much a
+      // part of the world as the chunk is, and a player stepping onto
+      // one is walking on the same ground
+      traceGround(APRON);
       context.fillStyle = BIOME_COLORS[props.biome];
       context.fill();
-      // The one thing that tells the board from the ground it is
-      // standing on: a surface catches a little more light than the
-      // country around it
+      // The one thing that tells the chunk from the ground around it: a
+      // surface catches a little more light than the country does. It
+      // stops at the chunk's own edge, so the apron reads as the way
+      // out rather than as more of the same
+      traceGround(0);
       context.fillStyle = COLORS.surface;
       context.fill();
 
@@ -567,11 +821,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * is flat and cannot occlude anything, so it is finished before
        * the first pokemon is drawn
        */
-      for (let index = 0; index < CHUNK_CELLS * CHUNK_CELLS; index++) {
-        traceCell(index);
+      for (const square of squares) {
+        traceCell(square);
+
+        // The apron is drawn as ground of a different kind: shaded
+        // over, and ruled with a fainter line. It is a step out of the
+        // chunk rather than a square of it, and a player should be able
+        // to see that without pressing one to find out
+        if (isBorderCell(square)) {
+          context.fillStyle = COLORS.border;
+          context.fill();
+          context.strokeStyle = COLORS.borderLine;
+          context.stroke();
+          continue;
+        }
         context.strokeStyle = COLORS.grid;
         context.stroke();
 
+        const index = square.y * CHUNK_CELLS + square.x;
         const landmark = props.landmarks.get(index);
 
         if (landmark != null) {
@@ -579,10 +846,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
           context.fillStyle = COLORS.landmark;
           context.beginPath();
-          context.arc(middle.x, middle.y, CELL * 0.36 * middle.scale, 0, Math.PI * 2);
+          context.arc(middle.x, middle.y, CELL * 0.36 * middle.scale * magnify, 0, Math.PI * 2);
           context.fill();
           context.fillStyle = COLORS.glyph;
-          context.font = `bold ${Math.round(CELL * 0.6 * middle.scale)}px monospace`;
+          context.font = `bold ${Math.round(CELL * 0.6 * middle.scale * magnify)}px monospace`;
           context.fillText(LANDMARK_GLYPHS[landmark], middle.x, middle.y + 1);
         }
       }
@@ -640,7 +907,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               loop: true,
             });
 
-            const scale = SPRITE_SCALE * middle.scale;
+            const scale = SPRITE_SCALE * middle.scale * magnify;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
             // the whole of standing a pokemon there — whatever is drawn
@@ -671,7 +938,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           } else {
             context.fillStyle = COLORS.spawn;
             context.beginPath();
-            context.arc(middle.x, middle.y, CELL * 0.18 * middle.scale, 0, Math.PI * 2);
+            context.arc(middle.x, middle.y, CELL * 0.18 * middle.scale * magnify, 0, Math.PI * 2);
             context.fill();
           }
         }
@@ -679,91 +946,76 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (index === props.player) {
           context.fillStyle = COLORS.player;
           context.beginPath();
-          context.arc(middle.x, middle.y, CELL * 0.3 * middle.scale, 0, Math.PI * 2);
+          context.arc(middle.x, middle.y, CELL * 0.3 * middle.scale * magnify, 0, Math.PI * 2);
           context.fill();
           context.strokeStyle = COLORS.glyph;
           context.stroke();
         }
-
-        // Last of all, and only while the keyboard is in here: what
-        // Enter would act on
-        if (focused() && index === cursor()) {
-          traceCell(index);
-          context.strokeStyle = COLORS.cursor;
-          context.lineWidth = 3;
-          context.stroke();
-          context.lineWidth = 1;
-        }
       }
 
-      /**
-       * And the compass, over the corner of the picture nothing else
-       * uses.
-       *
-       * North is the world's, so it is drawn from the same turn the
-       * board is: the needle is where the far edge of the chunk went.
-       * It is flat rather than laid into the ground — a compass is a
-       * thing in the player's hand, not a thing on the board
-       */
-      const compass = {
-        x: COMPASS_RADIUS + COMPASS_MARGIN,
-        y: HEIGHT - COMPASS_RADIUS - COMPASS_MARGIN,
-      };
-
-      context.beginPath();
-      context.arc(compass.x, compass.y, COMPASS_RADIUS, 0, Math.PI * 2);
-      context.fillStyle = COLORS.compassFace;
-      context.fill();
-      context.strokeStyle = COLORS.compassRim;
-      context.lineWidth = 1;
-      context.stroke();
-
-      // Where north went: the chunk's far edge, turned by however far
-      // the camera has been walked round
-      const north = { x: Math.sin(yaw()), y: -Math.cos(yaw()) };
-      const along = (distance: number, across = 0): { x: number; y: number } => ({
-        x: compass.x + north.x * distance * COMPASS_RADIUS - north.y * across * COMPASS_RADIUS,
-        y: compass.y + north.y * distance * COMPASS_RADIUS + north.x * across * COMPASS_RADIUS,
-      });
-
-      // A needle rather than a line: a point, and two shoulders behind
-      // it
-      const tip = along(0.62);
-      const left = along(-0.26, -0.22);
-      const right = along(-0.26, 0.22);
-
-      context.beginPath();
-      context.moveTo(tip.x, tip.y);
-      context.lineTo(left.x, left.y);
-      context.lineTo(right.x, right.y);
-      context.closePath();
-      context.fillStyle = COLORS.needle;
-      context.fill();
-
-      // The letter rides the needle rather than sitting at the top of
-      // the face: it is what the needle is pointing at
-      const letter = along(0.86);
-
-      context.fillStyle = COLORS.glyph;
-      context.font = 'bold 11px monospace';
-      context.fillText('N', letter.x, letter.y);
-
-      // Nothing is written on the board. The chunk used to caption
-      // itself in a corner of the picture, which cost four cells of
-      // the world to say something that never changes while the
-      // player is standing in it — it is on the bar at the bottom
-      // now, where the rest of the game's furniture is
+      // Over everything, and only while the keyboard is in here: what
+      // Enter would walk to. It is drawn last rather than in its own
+      // row, because it is a mark on the picture rather than a thing
+      // standing on the board — and the apron is as pressable as the
+      // chunk, so it has to be able to appear out there
+      if (focused()) {
+        traceCell(cursor());
+        context.strokeStyle = COLORS.cursor;
+        context.lineWidth = 3;
+        context.stroke();
+        context.lineWidth = 1;
+      }
 
       // A border while the keyboard is in here. It is not decoration:
-      // the walk keys only work while this has focus, so whether it
-      // does is the difference between the arrows moving somebody and
-      // doing nothing at all. It follows the board's own outline,
-      // which is a trapezoid rather than the canvas
-      traceBoard();
+      // the cursor keys only work while this has focus, so whether it
+      // does is the difference between the arrows pointing at
+      // something and doing nothing at all. It follows the board's own
+      // outline — the apron included, since that is as pressable as
+      // the rest — which is a trapezoid rather than the canvas
+      traceGround(APRON);
       context.strokeStyle = focused() ? COLORS.cursor : COLORS.grid;
       context.lineWidth = focused() ? 3 : 1;
       context.stroke();
       context.lineWidth = 1;
+
+      // The board is finished, so it is put back where it was found:
+      // what is drawn from here is the player's own instruments, and
+      // they are not the thing being carried off
+      context.restore();
+
+      /**
+       * And the compass: four letters standing off the four edges of
+       * the board, on the ground rather than in a corner of the canvas.
+       *
+       * A dial in the corner was a second picture to read — a needle to
+       * compare against a board, when the thing a player actually wants
+       * to know is which edge of *this board* is north. Put the letters
+       * where the edges are and there is nothing to compare: the letter
+       * is beside the edge it names, and walking the camera round
+       * carries them with it.
+       *
+       * They are drawn upright and at one size however far round they
+       * have gone. A compass is read by the player, and a letter laid
+       * into the ground would be scenery
+       */
+      context.font = `bold ${Math.round(COMPASS_SIZE * magnify)}px monospace`;
+      context.lineJoin = 'round';
+      for (const mark of compassMarks(yaw())) {
+        const spot = at(mark);
+
+        context.lineWidth = COMPASS_HALO * magnify;
+        context.strokeStyle = COLORS.compassHalo;
+        context.strokeText(mark.label, spot.x, spot.y);
+        context.fillStyle = COLORS.compass;
+        context.fillText(mark.label, spot.x, spot.y);
+      }
+      context.lineWidth = 1;
+
+      // Nothing else is written on the board. The chunk used to caption
+      // itself in a corner of the picture, which cost four cells of
+      // the world to say something that never changes while the
+      // player is standing in it — it is inside the menu now, where
+      // the rest of the game's furniture is
     });
 
     // The overworld is what the tab is for, so it takes the keyboard
@@ -776,31 +1028,34 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       ref={canvas}
       // Focusable, so the chunk is still reachable by keyboard now
       // that its cells are paint rather than 256 buttons: tab to it,
-      // point with shift and an arrow, act with Enter
+      // point with the arrows, and walk there with Enter
       tabindex={0}
       role="application"
       // The caption is painted, so it is said here as well: it is the
       // only place the chunk names itself now
       aria-label={`Chunk map. ${props.caption}. ${
-        props.label(cursor()) || 'Empty ground'
+        nameOf(cursor()) || 'Empty ground'
       } under the cursor.`}
       // A canvas has no per-cell elements to hang a tooltip on, so the
       // one tooltip it has says whatever the pointer is over
-      title={hovered() == null ? '' : props.label(hovered() ?? 0)}
-      // The chunk is the page, so it takes the page: drawn at its own
-      // resolution and blown up to the largest box its container will
-      // hold. The picture is no longer square — it is wider than it is
-      // tall, because the board is laid back under the camera — so the
-      // height follows the canvas' own proportions rather than being
-      // asked for. `cqmin` is the shorter of the container's two
-      // sides, which keeps a tall screen from cropping it.
+      title={nameOf(hovered())}
+      // The chunk is the page, so it takes the page — all of it. The
+      // element is the whole window, and the picture is fitted inside
+      // it: as large as the board's own proportions allow, with a
+      // little kept back at the edges. A board fitted to the last
+      // pixel loses its far corner the moment the camera is walked
+      // round, since a square is widest corner-on.
       //
-      // The element is exactly what is painted in it, with nothing
-      // letterboxed, because a press is read back through the
-      // element's own bounds: a box bigger than the picture would put
-      // every cell a few pixels out
-      class={`block h-auto w-[100cqmin] focus-visible:outline-none ${
-        hovered() != null && props.reachable(hovered() ?? 0) ? 'cursor-pointer' : 'cursor-default'
+      // Nothing outside the picture is painted, so the country behind
+      // shows through — and a press is put back through the same
+      // fitting the painter drew with, so what is under the pointer is
+      // what gets pressed.
+      //
+      // Every square is worth pressing now — the far ones are walked
+      // to rather than out of reach — so the pointer says so over all
+      // of them, and says nothing over the ground beside the board
+      class={`absolute inset-0 block h-full w-full focus-visible:outline-none ${
+        hovered() == null ? 'cursor-default' : 'cursor-pointer'
       }`}
       // The right button walks the camera round the board rather than
       // opening the browser's own menu over it
@@ -858,12 +1113,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         if (step != null) {
           event.preventDefault();
-          // Shift points; without it, they walk
-          if (event.shiftKey) {
-            moveCursor(step);
-          } else {
-            props.onWalk(step[0], step[1]);
-          }
+          // They point rather than walk. Nothing walks a cell at a
+          // time any more: a press says where to be and the walk is
+          // worked out, so the arrows are how a keyboard says where
+          moveCursor(step);
           return;
         }
         // The same walk round the board, for a keyboard — and for
@@ -876,30 +1129,31 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-
-          if (props.reachable(cursor())) {
-            props.onReach(cursor());
-          }
+          props.onPress(cursor());
         }
       }}
       onClick={(event) => {
         // A control-click is how the Mac turns the board, and unlike a
         // right-click it still comes back round as an ordinary click.
         // Left alone it would press whichever cell the drag finished
-        // over — so the board turns, and then something on it opens
+        // over — so the board turns, and then the player walks off
+        // across it
         if (isTurningPress(event) || turned) {
           turned = false;
           return;
         }
+        // And nothing at all while the board is being carried on or
+        // off: it is not where it is drawn, so a press would land on
+        // whichever cell happened to slide under the pointer
+        if (props.crossing != null) {
+          return;
+        }
 
-        const index = cellAt(event);
+        const cell = cellAt(event);
 
-        if (index != null) {
-          setCursor(index);
-
-          if (props.reachable(index)) {
-            props.onReach(index);
-          }
+        if (cell != null) {
+          setCursor(cell);
+          props.onPress(cell);
         }
       }}
     />

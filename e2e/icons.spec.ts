@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, openBar, signIn } from './game';
+import { dismissGift, openPanel, signIn } from './game';
 
 /**
  * The bag, with pictures in it.
@@ -19,11 +19,9 @@ test.describe('item icons', () => {
   });
 
   test('draws a picture beside everything in the bag', async ({ page }) => {
-    const profile = await openBar(page, 'Profile');
+    const bag = await openPanel(page, 'Inventory');
 
-    await profile.getByRole('tab', { name: 'Inventory' }).click();
-
-    const balls = profile.getByRole('listitem').filter({ hasText: 'Poke Ball' }).first();
+    const balls = bag.getByRole('listitem').filter({ hasText: 'Poke Ball' }).first();
     const icon = balls.locator('canvas');
 
     await expect(icon).toBeVisible();

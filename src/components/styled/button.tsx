@@ -42,7 +42,8 @@ const DISABLED =
  * answers the network
  */
 const BASE =
-  'inline-flex items-center gap-1.5 rounded-xl border-2 px-3 py-1.5 text-sm font-bold' +
+  'inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border-2 px-3 py-1.5' +
+  ' text-sm font-bold' +
   ' transition-[background-color,border-color,color,box-shadow,transform]' +
   ' active:translate-y-[2px] active:shadow-none focus-visible:outline-2' +
   ' focus-visible:outline-offset-2 focus-visible:outline-tide';
@@ -63,6 +64,16 @@ export interface ButtonProps extends ParentProps {
    */
   class?: string;
   /**
+   * What it is called, where the label a player reads is shorter than
+   * the thing being done.
+   *
+   * The throw button is the case it was written for: it says "Throw"
+   * over a picture of what is in hand, because a picture of a Great
+   * Ball is read faster than the words — and a screen reader has no
+   * picture, so it is told which ball in full
+   */
+  label?: string;
+  /**
    * What hovering it says. It is for the reason behind a button rather
    * than for the button itself — why this one cannot be pressed — so a
    * label stays short without the answer going missing
@@ -80,6 +91,7 @@ export default function Button(props: ButtonProps): JSX.Element {
       type={props.type ?? 'button'}
       disabled={props.disabled}
       title={props.title}
+      aria-label={props.label}
       class={`${BASE} ${look()} ${props.class ?? ''}`}
       onClick={() => {
         props.onClick?.();

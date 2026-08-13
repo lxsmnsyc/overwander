@@ -125,52 +125,159 @@ function raw(point: GroundPoint): ProjectedPoint {
 }
 
 /**
+ * How many cells of apron are drawn around the chunk.
+ *
+ * They are not part of it: nothing is ever placed on one, and standing
+ * on one is not a thing a player does for any length of time — a step
+ * onto the apron is a step into the chunk next door. It is one cell
+ * deep because it is a threshold rather than a road
+ */
+export const BORDER_CELLS = 1;
+
+/**
+ * The apron, in board fractions — the same units the ground is measured
+ * in, where the chunk itself runs from 0 to 1
+ */
+const APRON = BORDER_CELLS / CHUNK_CELLS;
+
+/**
+ * How far from the middle of the board the compass letters stand: past
+ * the apron, and then a cell further.
+ *
+ * Off the board on purpose. They are what the player has instead of a
+ * fixed up: the walk is no longer keys, so north is only ever knowable
+ * from where the letter for it has been carried to — and a letter lying
+ * *on* the ground would be scenery, one more thing painted on the
+ * board rather than a note about which way it is facing
+ */
+const COMPASS_REACH = 0.5 + (BORDER_CELLS + 1) / CHUNK_CELLS;
+
+/**
+ * Room for the glyph itself when the picture is measured, as a
+ * fraction of the picture's own width.
+ *
+ * A letter is drawn about its point, so fitting to the point alone
+ * would clip half of every one of them. It is added **after** the
+ * projection rather than to the reach above, which is the whole of why
+ * it is here: a bump of ground beyond the near edge is a long way down
+ * the screen once perspective has had it, and the picture came out
+ * with a band of nothing under the board deep enough to lose a third
+ * of the page in
+ */
+const LETTER_ROOM = 0.03;
+
+/**
  * The corners of the board, which is what it has to be fitted by: the
  * near edge is the widest thing in the picture and the far edge the
  * narrowest, so neither the width nor the height is the board's own
  */
+/**
+ * Everything that has to be inside the picture: the apron's corners,
+ * and the four letters standing off its edges. The chunk's own corners
+ * are inside the apron's, so they are not measured separately
+ */
+const OUTER: GroundPoint[] = [
+  { u: -APRON, v: -APRON },
+  { u: 1 + APRON, v: -APRON },
+  { u: -APRON, v: 1 + APRON },
+  { u: 1 + APRON, v: 1 + APRON },
+  { u: 0.5, v: 0.5 - COMPASS_REACH },
+  { u: 0.5 + COMPASS_REACH, v: 0.5 },
+  { u: 0.5, v: 0.5 + COMPASS_REACH },
+  { u: 0.5 - COMPASS_REACH, v: 0.5 },
+];
+
 const BOUNDS = ((): { left: number; top: number; width: number; height: number } => {
-  const corners: ProjectedPoint[] = [];
-
   /**
-   * Measured over **every** angle the board can be turned to, not
-   * only the one it starts at.
+   * Measured with the board **facing front**, which is how a player
+   * spends nearly all of their time looking at it.
    *
-   * A frame fitted to the square as it stands would have to grow and
-   * shrink as the board turned inside it, which reads as the board
-   * lurching toward and away from the camera while the player is only
-   * walking around it. Fitted once to the widest the board ever gets
-   * — corner-on — the picture holds still and the turning is the only
-   * thing that moves. A quarter turn is all there is to check: past
-   * that it is the same square again
+   * It used to be measured over every angle the board could be turned
+   * to, so that the picture never changed size — and the price of that
+   * was paid on every screen at every moment: a square is widest
+   * corner-on and its near corner is magnified by the perspective as
+   * it swings toward the camera, so a frame that could hold *that*
+   * left the board facing front sitting in the middle of a page of
+   * empty country. Turning is what gives way instead — see the fit
+   * below
    */
-  for (let step = 0; step <= 90; step++) {
-    const yaw = (step * Math.PI) / 180;
-
-    for (const corner of [
-      { u: 0, v: 0 },
-      { u: 1, v: 0 },
-      { u: 0, v: 1 },
-      { u: 1, v: 1 },
-    ]) {
-      corners.push(raw(turn(corner, yaw)));
-    }
-  }
-
+  const corners = OUTER.map((point) => raw(point));
   const left = Math.min(...corners.map((corner) => corner.x));
   const top = Math.min(...corners.map((corner) => corner.y));
-
   // The real extent rather than twice the furthest corner: the board
   // is not symmetric about its own middle once it is laid back, since
   // the near edge is both wider and further from the centre than the
   // far one
+  const width = Math.max(...corners.map((corner) => corner.x)) - left;
+  const height = Math.max(...corners.map((corner) => corner.y)) - top;
+  // ...and then the same room on every side, measured on the picture
+  // rather than on the ground, so the letters have somewhere to be
+  // drawn and the board is not pushed up the screen to pay for it
+  const room = width * LETTER_ROOM;
+
   return {
-    left,
-    top,
-    width: Math.max(...corners.map((corner) => corner.x)) - left,
-    height: Math.max(...corners.map((corner) => corner.y)) - top,
+    left: left - room,
+    top: top - room,
+    width: width + room * 2,
+    height: height + room * 2,
   };
 })();
+
+/**
+ * The middle of the picture, which is what the board is turned about
+ * and what it shrinks toward
+ */
+const MIDDLE = { x: BOUNDS.left + BOUNDS.width / 2, y: BOUNDS.top + BOUNDS.height / 2 };
+
+/**
+ * How large the board may be drawn at each angle, measured a degree at
+ * a time through a quarter turn.
+ *
+ * A square turned corner-on is half as wide again as one facing front,
+ * and the corner that swings toward the camera is magnified on top of
+ * that. Something has to give: either the picture is fitted to that and
+ * the board is small whichever way it is facing, or the board gives up
+ * a little of itself while it is turned and has it back when it comes
+ * round. This is the second — the far corner never reaches the edge of
+ * the screen, and facing front the board is as large as the page
+ * allows.
+ *
+ * A quarter turn is the whole table: the points being measured are a
+ * square and a cross, and both are the same set again after ninety
+ * degrees
+ */
+const FIT = ((): number[] => {
+  const table: number[] = [];
+
+  for (let step = 0; step <= 90; step++) {
+    const yaw = (step * Math.PI) / 180;
+    let worst = 1;
+
+    for (const point of OUTER) {
+      const turned = raw(turn(point, yaw));
+
+      worst = Math.max(
+        worst,
+        Math.abs(turned.x - MIDDLE.x) / (BOUNDS.width / 2),
+        Math.abs(turned.y - MIDDLE.y) / (BOUNDS.height / 2),
+      );
+    }
+    table.push(1 / worst);
+  }
+  return table;
+})();
+
+/**
+ * How much of itself the board keeps at this angle: 1 facing front,
+ * and least of all corner-on. Read between the degrees rather than
+ * rounded to one, so that turning it is smooth
+ */
+function fitAt(yaw: Yaw): number {
+  const degrees = ((((yaw * 180) / Math.PI) % 90) + 90) % 90;
+  const step = Math.floor(degrees);
+
+  return FIT[step] + (FIT[step + 1] - FIT[step]) * (degrees - step);
+}
 
 /**
  * How wide and tall the picture is, as a fraction of its width. The
@@ -178,6 +285,71 @@ const BOUNDS = ((): { left: number; top: number; width: number; height: number }
  * is no longer square — a square one would be half empty
  */
 export const ASPECT = BOUNDS.height / BOUNDS.width;
+
+/**
+ * How wide the picture is in board widths.
+ *
+ * The picture is no longer the board: there is an apron around it and
+ * four letters standing off that, so a canvas sized to the chunk would
+ * draw all of it at whatever is left over. A painter multiplies its
+ * cell size by this and gets a canvas whose cells are the size it
+ * asked for
+ */
+export const PICTURE_SPAN = BOUNDS.width;
+
+/**
+ * How much of a screen the picture is allowed to take.
+ *
+ * The board fills the page now rather than sitting in a box in the
+ * middle of it, and a picture drawn edge to edge is one whose corners
+ * are cut off by the screen the moment the camera is walked round —
+ * the board is widest corner-on, and that is exactly the width the
+ * picture was fitted to. A little kept back all the way round is what
+ * makes the far corner a corner rather than a straight line
+ */
+const PICTURE_INSET = 0.96;
+
+/**
+ * And how much of the bottom is somebody else's.
+ *
+ * The menu stands there, fixed over the world, and the compass letter
+ * for south stands at the bottom middle of the picture — which is the
+ * same spot. The picture keeps out of it rather than the menu moving:
+ * a button a player reaches for without looking should not move
+ */
+const PICTURE_FLOOR = 0.08;
+
+/**
+ * Where the picture goes on a screen of this size, in that screen's
+ * own pixels.
+ *
+ * Everything the projection answers is a fraction of the picture, and
+ * the picture is not the screen: it keeps its proportions, is as large
+ * as fits, and leaves the edges alone. This is the one place that
+ * turns the one into the other — the painter draws through it and the
+ * browser test aims through it, so a press lands where it looks like
+ * it will
+ */
+export function fitPicture(
+  width: number,
+  height: number,
+): { x: number; y: number; width: number; height: number } {
+  const room = {
+    width: width * PICTURE_INSET,
+    height: height * (PICTURE_INSET - PICTURE_FLOOR),
+  };
+  const drawn = Math.min(room.width, room.height / ASPECT);
+
+  return {
+    x: (width - drawn) / 2,
+    // Centred in what is left once the menu has had its strip, rather
+    // than in the screen: centred in the screen, the picture would sit
+    // under the menu by half of it
+    y: (height * (1 - PICTURE_FLOOR) - drawn * ASPECT) / 2,
+    width: drawn,
+    height: drawn * ASPECT,
+  };
+}
 
 /**
  * Where a ground point lands, in fractions of the drawn picture: 0 to
@@ -190,11 +362,16 @@ export const ASPECT = BOUNDS.height / BOUNDS.width;
  */
 export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint {
   const projected = raw(turn(point, yaw));
+  // Drawn toward the middle of the picture by however much the board
+  // has given up at this angle. Whatever is standing on it gives up
+  // the same, which is why the factor rides home on `scale`: a pokemon
+  // is drawn the size of the ground it is standing on
+  const fit = fitAt(yaw);
 
   return {
-    x: (projected.x - BOUNDS.left) / BOUNDS.width,
-    y: (projected.y - BOUNDS.top) / BOUNDS.height,
-    scale: projected.scale,
+    x: (MIDDLE.x + (projected.x - MIDDLE.x) * fit - BOUNDS.left) / BOUNDS.width,
+    y: (MIDDLE.y + (projected.y - MIDDLE.y) * fit - BOUNDS.top) / BOUNDS.height,
+    scale: projected.scale * fit,
   };
 }
 
@@ -206,8 +383,11 @@ export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint 
  * rather than a guess refined by sampling
  */
 export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint {
-  const px = x * BOUNDS.width + BOUNDS.left;
-  const py = y * BOUNDS.height + BOUNDS.top;
+  // The shrinking comes off first, since it is the last thing the
+  // forward transform does
+  const fit = fitAt(yaw);
+  const px = MIDDLE.x + (x * BOUNDS.width + BOUNDS.left - MIDDLE.x) / fit;
+  const py = MIDDLE.y + (y * BOUNDS.height + BOUNDS.top - MIDDLE.y) / fit;
 
   /**
    * Solved rather than searched. With `t` for the depth either side of
@@ -227,29 +407,126 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
 }
 
 /**
- * The middle of a cell, as a fraction of the picture. It is where a
- * pointer is aimed and where a sprite stands
+ * A cell of the drawn board, in cells across and back from the chunk's
+ * own top left corner.
+ *
+ * A chunk cell has both between 0 and `CHUNK_CELLS - 1`. The apron is
+ * everything one step outside that: `-1` and `CHUNK_CELLS` are the
+ * threshold cells, and the four corners where two of them would meet
+ * are not cells at all — a player can only step onto the apron
+ * straight, so a corner would be ground nobody could ever stand on
  */
-export function projectCell(index: number, yaw: Yaw = 0): ProjectedPoint {
-  return projectGround(
-    {
-      u: ((index % CHUNK_CELLS) + 0.5) / CHUNK_CELLS,
-      v: (Math.floor(index / CHUNK_CELLS) + 0.5) / CHUNK_CELLS,
-    },
-    yaw,
+export interface BoardCell {
+  x: number;
+  y: number;
+}
+
+/**
+ * Whether the coordinates name a cell that is actually drawn — the
+ * chunk, or the apron beside one of its four edges
+ */
+export function isBoardCell(cell: BoardCell): boolean {
+  const outX = cell.x < 0 || cell.x >= CHUNK_CELLS;
+  const outY = cell.y < 0 || cell.y >= CHUNK_CELLS;
+
+  if (outX && outY) {
+    return false;
+  }
+  return (
+    cell.x >= -BORDER_CELLS &&
+    cell.y >= -BORDER_CELLS &&
+    cell.x < CHUNK_CELLS + BORDER_CELLS &&
+    cell.y < CHUNK_CELLS + BORDER_CELLS
   );
 }
 
 /**
- * The four corners of a cell, clockwise from the far left one. A cell
- * is a quad rather than a square now: the two far corners are closer
- * together than the two near ones
+ * Whether this is a threshold rather than a piece of the chunk
  */
-export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
-  const left = (index % CHUNK_CELLS) / CHUNK_CELLS;
-  const right = ((index % CHUNK_CELLS) + 1) / CHUNK_CELLS;
-  const far = Math.floor(index / CHUNK_CELLS) / CHUNK_CELLS;
-  const near = (Math.floor(index / CHUNK_CELLS) + 1) / CHUNK_CELLS;
+export function isBorderCell(cell: BoardCell): boolean {
+  return cell.x < 0 || cell.y < 0 || cell.x >= CHUNK_CELLS || cell.y >= CHUNK_CELLS;
+}
+
+/**
+ * Every cell the painter has to draw, the chunk and its apron
+ */
+export function boardCells(): BoardCell[] {
+  const cells: BoardCell[] = [];
+
+  for (let y = -BORDER_CELLS; y < CHUNK_CELLS + BORDER_CELLS; y++) {
+    for (let x = -BORDER_CELLS; x < CHUNK_CELLS + BORDER_CELLS; x++) {
+      if (isBoardCell({ x, y })) {
+        cells.push({ x, y });
+      }
+    }
+  }
+  return cells;
+}
+
+/**
+ * Which chunk cell this is, or null for a threshold
+ */
+export function chunkCellOf(cell: BoardCell): number | null {
+  return isBorderCell(cell) ? null : cell.y * CHUNK_CELLS + cell.x;
+}
+
+/**
+ * Where a chunk cell sits on the board
+ */
+export function boardCellOf(index: number): BoardCell {
+  return { x: index % CHUNK_CELLS, y: Math.floor(index / CHUNK_CELLS) };
+}
+
+/**
+ * The way out of the chunk a threshold cell is: the edge cell a player
+ * steps off, and the step that takes them over. Null for anything that
+ * is not a threshold.
+ *
+ * The step is the same one the walk has always taken — off the edge and
+ * in from the opposite side of the neighbour — so nothing about
+ * crossing a boundary had to learn that the apron exists
+ */
+export function borderExit(cell: BoardCell): { cell: number; step: [number, number] } | null {
+  if (!isBoardCell(cell) || !isBorderCell(cell)) {
+    return null;
+  }
+
+  /**
+   * Which side of the chunk this is off: -1 before the first cell, 1
+   * past the last, and 0 for the axis the threshold is level with
+   */
+  const beyond = (along: number): number => {
+    if (along < 0) {
+      return -1;
+    }
+    return along >= CHUNK_CELLS ? 1 : 0;
+  };
+  const step: [number, number] = [beyond(cell.x), beyond(cell.y)];
+  const from = {
+    x: Math.min(CHUNK_CELLS - 1, Math.max(0, cell.x)),
+    y: Math.min(CHUNK_CELLS - 1, Math.max(0, cell.y)),
+  };
+
+  return { cell: from.y * CHUNK_CELLS + from.x, step };
+}
+
+/**
+ * The middle of a board cell, as a fraction of the picture
+ */
+export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint {
+  return projectGround({ u: (cell.x + 0.5) / CHUNK_CELLS, v: (cell.y + 0.5) / CHUNK_CELLS }, yaw);
+}
+
+/**
+ * The four corners of a board cell, clockwise from the far left one. A
+ * cell is a quad rather than a square now: the two far corners are
+ * closer together than the two near ones
+ */
+export function projectBoardCellQuad(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint[] {
+  const left = cell.x / CHUNK_CELLS;
+  const right = (cell.x + 1) / CHUNK_CELLS;
+  const far = cell.y / CHUNK_CELLS;
+  const near = (cell.y + 1) / CHUNK_CELLS;
 
   return [
     projectGround({ u: left, v: far }, yaw),
@@ -257,6 +534,44 @@ export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
     projectGround({ u: right, v: near }, yaw),
     projectGround({ u: left, v: near }, yaw),
   ];
+}
+
+/**
+ * The middle of a chunk cell, as a fraction of the picture. It is where
+ * a pointer is aimed and where a sprite stands
+ */
+export function projectCell(index: number, yaw: Yaw = 0): ProjectedPoint {
+  return projectBoardCell(boardCellOf(index), yaw);
+}
+
+/**
+ * The four corners of a chunk cell
+ */
+export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
+  return projectBoardCellQuad(boardCellOf(index), yaw);
+}
+
+/**
+ * Which of the four ways round the compass is pointing, and where the
+ * letter for it stands.
+ *
+ * They are ground points like anything else, so they turn with the
+ * board without being told about it: walk the camera a quarter and N
+ * walks a quarter with it. The letters themselves are drawn upright —
+ * a compass is read by the player rather than by the world
+ */
+export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { label: string })[] {
+  return (
+    [
+      ['N', 0, -1],
+      ['E', 1, 0],
+      ['S', 0, 1],
+      ['W', -1, 0],
+    ] as const
+  ).map(([label, du, dv]) => ({
+    label,
+    ...projectGround({ u: 0.5 + du * COMPASS_REACH, v: 0.5 + dv * COMPASS_REACH }, yaw),
+  }));
 }
 
 /**
@@ -339,17 +654,24 @@ export function shortestTurn(from: Yaw, to: Yaw): number {
 }
 
 /**
- * Which cell a fraction of the picture is over, or null for a press
- * that landed on the ground beside the board — which is most of the
- * top two corners now that the board is a trapezoid
+ * Which board cell a fraction of the picture is over, or null for a
+ * press that landed on the ground beside all of it — which is most of
+ * the top two corners now that the board is a trapezoid, and the four
+ * corners of the apron, where nothing is drawn
+ */
+export function boardCellAtFraction(x: number, y: number, yaw: Yaw = 0): BoardCell | null {
+  const { u, v } = unprojectGround(x, y, yaw);
+  const cell = { x: Math.floor(u * CHUNK_CELLS), y: Math.floor(v * CHUNK_CELLS) };
+
+  return isBoardCell(cell) ? cell : null;
+}
+
+/**
+ * The same reading, narrowed to the chunk: a press on the apron is not
+ * a press on a cell of it
  */
 export function cellAtFraction(x: number, y: number, yaw: Yaw = 0): number | null {
-  const { u, v } = unprojectGround(x, y, yaw);
-  const column = Math.floor(u * CHUNK_CELLS);
-  const row = Math.floor(v * CHUNK_CELLS);
+  const cell = boardCellAtFraction(x, y, yaw);
 
-  if (column < 0 || row < 0 || column >= CHUNK_CELLS || row >= CHUNK_CELLS) {
-    return null;
-  }
-  return row * CHUNK_CELLS + column;
+  return cell == null ? null : chunkCellOf(cell);
 }

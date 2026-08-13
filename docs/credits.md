@@ -91,24 +91,42 @@ that writes the format will play without conversion. `pnpm compact-sprites`
 rewrites the PNG containers as indexed colour without touching a pixel; it
 changes bytes, not pictures.
 
-> **Provenance is not yet recorded, and it must be.** Nothing in this
-> repository says who drew these sheets or under what terms they may be used —
-> not the descriptions under `meta`, which carry no credit field, and not the commits
-> that added them. Fan sprite collections are typically licensed per sprite,
-> with a named artist for each one and terms that are usually non-commercial,
-> so "MIT, like the rest of the repo" is almost certainly wrong for this
-> directory.
+### Where the sheets come from
+
+| Sheets                             | Source                                                              | Licence                                                                                        |
+| ---------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `pokemon/regular`, `pokemon/shiny` | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC — attribution, **non-commercial**                                                     |
+| `pokemon/meta`                     | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
+| `ui/items`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
+| `ui/move-categories`               | Not recorded yet                                                    | Unknown                                                                                        |
+
+**SpriteCollab** is the Pokémon Mystery Dungeon sprite collection this game's
+pokemon are animated from, and the reason a sheet here has eight facing rows, a
+frame duration table and a marked shadow, head and hands on every frame — all of
+that is theirs. Its terms are `CC BY-NC`: it may be redistributed and built upon
+with appropriate credit, and **not commercially**. Every sprite in it carries its
+own credit row, in `sprite/{dex}/credits.txt` with the names in the collection's
+`credit_names.txt`. The four pokemon shipped so far — Bulbasaur, Articuno,
+Zapdos and Moltres — are credited there to **CHUNSOFT**, whose games the sprites
+are drawn from.
+
+**pokesprite** is where the item icons come from: 32×32 inventory sprites, named
+the way that project names them, which is why an `Exp. Share` is `exp-share.png`
+on the `held` sheet. Its README is explicit that the code is MIT and **the sprite
+images are not** — they are © Nintendo/Creatures Inc./GAME FREAK Inc., like the
+names in `src/data`.
+
+> **What is still missing.** Three of the sheets under `pokemon` are not pokemon
+> — the Missingno placeholder, an egg and a substitute, numbered past a hundred
+> thousand — and which entry of which pack each came from has not been written
+> down. Nor has the source of the three move-category marks. Both need filling
+> in before this is published anywhere, and any pokemon added later needs its
+> own credit row pulled from `sprite/{dex}/credits.txt` when its sheet is added.
 >
-> Before this project is published anywhere, each source below needs filling in
-> with where the sheets came from, the licence they carry, and the artists
-> named by it:
->
-> | Sheets              | Source | Licence | Artists |
-> | ------------------- | ------ | ------- | ------- |
-> | `pokemon/regular`   | —      | —       | —       |
-> | `pokemon/shiny`     | —      | —       | —       |
-> | `ui/items`          | —      | —       | —       |
-> | `ui/move-categories`| —      | —       | —       |
+> **The art is not MIT.** The licence at the root of this repository covers the
+> code; it does not and cannot cover this directory. `CC BY-NC` makes a
+> commercial release of the game as it stands impossible without replacing the
+> pokemon sheets, and the item icons are Nintendo's outright.
 
 ## The rules
 

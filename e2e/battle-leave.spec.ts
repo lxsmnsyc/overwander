@@ -54,7 +54,7 @@ test.describe('leaving a battle', () => {
     ).not.toBeAttached();
     await expect(
       page.getByRole('navigation', { name: 'Game' }),
-      'the overworld bar should be back',
+      'the overworld menu should be back',
     ).toBeVisible();
 
     // And it stays left. The lobby watches its own record, and that

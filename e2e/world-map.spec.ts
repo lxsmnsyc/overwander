@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openBar, signIn } from './game';
+import { dismissGift, expectShut, openPanel, signIn } from './game';
 
 /**
  * The world, as a picture of where the player is and what is around
@@ -29,7 +29,7 @@ test.describe('the world map', () => {
   });
 
   test('opens as a picture of the world', async ({ page }) => {
-    const map = await openBar(page, 'Map');
+    const map = await openPanel(page, 'World');
     const picture = map.locator('canvas');
 
     await expect(picture).toBeVisible();
@@ -41,7 +41,7 @@ test.describe('the world map', () => {
   });
 
   test('pans with the arrow keys and comes back with Home', async ({ page }) => {
-    const map = await openBar(page, 'Map');
+    const map = await openPanel(page, 'World');
     const picture = map.locator('canvas');
 
     await picture.click();
@@ -62,7 +62,7 @@ test.describe('the world map', () => {
   });
 
   test('closes and gives the world back', async ({ page }) => {
-    const map = await openBar(page, 'Map');
+    const map = await openPanel(page, 'World');
 
     await map.getByRole('button', { name: 'Close' }).click();
     await expectShut(map);

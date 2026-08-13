@@ -480,7 +480,12 @@ describe('where the parts of a pokemon are', () => {
     // around the body rather than on it
     expect(frame.center).toBeNull();
 
-    const marked = [frame.head, frame.left, frame.right].filter((point) => point != null);
+    // Said as a type guard rather than left to be inferred: a plain
+    // `!= null` filter still hands back an array that might hold one,
+    // and the average below reads into every point it is given
+    const marked = [frame.head, frame.left, frame.right].filter(
+      (point): point is Point => point != null,
+    );
 
     expect(marked.length).toBe(3);
     expect(center?.[0]).toBeCloseTo(

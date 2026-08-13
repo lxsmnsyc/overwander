@@ -151,10 +151,12 @@ export async function stageRaid(player: Player): Promise<string> {
  * player does not is that the lobby is there to be found
  */
 export async function enterRaid(page: Page): Promise<void> {
-  await page
-    .getByRole('navigation', { name: 'Game' })
-    .getByRole('button', { name: 'Raids' })
-    .click();
+  const menu = page.getByRole('navigation', { name: 'Game' });
+
+  // Two presses: the menu is one button at the bottom of the world,
+  // and the raids are a key inside it
+  await menu.getByRole('button', { name: 'Menu' }).click();
+  await menu.getByRole('button', { name: 'Raids', exact: true }).click();
 
   const panel = page.getByRole('dialog', { name: 'Raids' });
   const lobby = panel.getByRole('listitem').getByRole('button').first();

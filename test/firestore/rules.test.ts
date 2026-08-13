@@ -173,6 +173,22 @@ describe('profiles', () => {
     await assertFails(setDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { nickname: 'Alice' }));
   });
 
+  it('opens as a player, whatever it says it is', async () => {
+    // The role is authority the way gold is money: an account that
+    // could name its own would be granting itself one
+    await assertFails(
+      setDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { gold: 0, role: 'admin' }),
+    );
+    // Saying it is a player is the same as not saying anything
+    await assertSucceeds(setDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { gold: 0, role: '' }));
+  });
+
+  it('refuses a player granting themselves a role later', async () => {
+    await seed(`${PROFILE_COLLECTION}/${ALICE}`, { nickname: 'Alice', gold: 40, role: '' });
+
+    await assertFails(updateDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { role: 'admin' }));
+  });
+
   it('is created only by the player it belongs to', async () => {
     await assertFails(setDoc(doc(as(BOB), PROFILE_COLLECTION, ALICE), { gold: 0 }));
   });

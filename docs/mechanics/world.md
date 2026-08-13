@@ -182,5 +182,27 @@ around a pokemon or a landmark and **clicks** it; passing through a cell springs
 nothing. Reach decides what a player bothers to walk to, not what they are
 allowed to claim.
 
+## Getting there
+
+A press says where to be, not which way to face. The route is A\* over the
+chunk's own grid ([`src/overworld/path.ts`](../../src/overworld/path.ts)),
+straight steps only — nothing in this game moves diagonally — and it is walked a
+cell every quarter second, so a walk costs the same paces an egg is counted by. The
+route is re-planned at every step rather than kept as a list, because the chunk
+moves under a walk: a window turns over, another player takes a spawn, something
+appears in the way.
+
+Landmarks and whatever is standing in the chunk are obstacles rather than
+destinations, so a press on one walks up **beside** it and reaches out on
+arrival — the same 3×3 an interaction is checked against.
+
+The board is drawn with a one-cell apron around the chunk, shaded darker than
+the ground inside it. Those cells are thresholds: walking onto one is the step
+that carries a player into the neighbouring chunk, re-entering it from the
+opposite edge. The four corners of the apron are not drawn, since a straight
+step could never reach one. Which way is which is read off the four compass
+letters standing outside the apron; they are points on the ground like anything
+else, so they turn with the board as the camera walks around it.
+
 See [`positions/{uid}`](../firestore/player-stores.md#positionsuid) and
 [Reaching, not treading](../firestore/overworld.md#reaching-not-treading).

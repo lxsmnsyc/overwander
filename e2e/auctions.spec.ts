@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openBar, signIn } from './game';
+import { dismissGift, expectShut, openPanel, signIn } from './game';
 
 /**
  * The board: what is up for auction, and the one thing to do about it
@@ -18,7 +18,7 @@ test.describe('the auction board', () => {
   });
 
   test('is two boards side by side, items and pokemon', async ({ page }) => {
-    const board = await openBar(page, 'Auctions');
+    const board = await openPanel(page, 'Auctions');
 
     await expect(board.getByText('Loading auctions…')).toBeHidden({ timeout: 20_000 });
 
@@ -40,7 +40,7 @@ test.describe('the auction board', () => {
   test('offers selling from the top bar rather than from the bottom of the list', async ({
     page,
   }) => {
-    const board = await openBar(page, 'Auctions');
+    const board = await openPanel(page, 'Auctions');
     const add = board.getByRole('button', { name: 'Add' });
 
     // Beside the heading, which is the top of the panel
@@ -56,7 +56,7 @@ test.describe('the auction board', () => {
   });
 
   test('closes and gives the world back', async ({ page }) => {
-    const board = await openBar(page, 'Auctions');
+    const board = await openPanel(page, 'Auctions');
 
     await board.getByRole('button', { name: 'Close' }).click();
     await expectShut(board);

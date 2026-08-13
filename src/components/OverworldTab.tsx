@@ -8,7 +8,9 @@ import {
   createSignal,
   onCleanup,
   onMount,
+  untrack,
 } from 'solid-js';
+import { type BoardCell, borderExit, chunkCellOf } from '../canvas/board';
 import { getBuddyEffects } from '../auth/buddy';
 import { useAuth } from '../auth/context';
 import { getLocalOffset } from '../auth/local-time';
@@ -44,6 +46,7 @@ import { getInventory } from '../auth/inventory';
 import { getRaidSpecies } from '../data/items/raid-items';
 import { getSpeciesData } from '../data/species';
 import { CHUNK_CELLS } from '../overworld/chunk';
+import { findPath, findPathBeside } from '../overworld/path';
 import { type SnapshotRecord, type SpawnRoll, spawnId } from '../auth/snapshot-record';
 import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
@@ -54,7 +57,7 @@ import getWorld from '../overworld/current';
 import { isInWorld } from '../overworld/world';
 import type SafariSession from '../overworld/safari';
 import { spawnKey } from '../overworld/safari';
-import ChunkCanvas from './ChunkCanvas';
+import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from './ChunkCanvas';
 import watchLive from './watch';
 import NpcDialog from './NpcDialog';
 import PortalDialog from './PortalDialog';
@@ -118,6 +121,54 @@ const REFRESH_DEBOUNCE = 5000;
  */
 const ICON_SIZE = 24;
 
+/**
+ * How long a cell takes to walk, in milliseconds.
+ *
+ * Slow enough to be a walk rather than a jump to the far side of the
+ * chunk, and quick enough that crossing one is not something a player
+ * sits through. It is also what a step *costs*: the egg being carried
+ * counts every one of them, so a walk that took no time would be a
+ * hatching machine
+ */
+const STEP_PACE = 250;
+
+/**
+ * How long a chunk may be held on screen after the player has walked
+ * out of it.
+ *
+ * The board being carried off is held up until the next chunk's window
+ * lands, and that is a round trip nobody can promise. Past this it is
+ * let go of whether or not there is anything to put in its place: a
+ * player looking at a chunk they left ten seconds ago is worse off
+ * than one looking at a line that says the next one is loading
+ */
+const CROSSING_LIMIT = 4000;
+
+/**
+ * A walk in progress: where it is going, and what happens when it gets
+ * there.
+ *
+ * The goal is a cell of the chunk the walk started in, so a walk does
+ * not survive leaving it — which is the whole of what `exit` is for.
+ * A threshold press is a walk to the edge cell in front of it and then
+ * one step over, and that step is the last thing the walk does
+ */
+interface Journey {
+  /**
+   * The cell being walked to, or the one being walked up to
+   */
+  goal: number;
+  /**
+   * A step out of the chunk on arrival, for a threshold press
+   */
+  exit: [number, number] | null;
+  /**
+   * Whether the goal is a thing rather than a place: something stands
+   * on it, so the walk ends beside it and reaches out
+   */
+  act: boolean;
+}
+
 function describeItem(item: Items): string {
   try {
     return getItemData(item).name;
@@ -152,10 +203,9 @@ function stateOf(offer: NestOffer): EggState {
 
 /**
  * Where a chunk is, in the words the game names it by: the country
- * and the two numbers that pick it out of the world. It is said on
- * the bar along the bottom of the screen and told to a screen reader
- * as the name of the board, which is the same fact twice and so is
- * written once
+ * and the two numbers that pick it out of the world. It is said at
+ * the top of the menu and told to a screen reader as the name of the
+ * board, which is the same fact twice and so is written once
  */
 function naming(chunk: ChunkView): string {
   return `${BIOME_NAMES[chunk.biome]} (${chunk.x}, ${chunk.y})`;
@@ -253,6 +303,11 @@ export default function OverworldTab(): JSX.Element {
   const [chunkY, setChunkY] = createSignal(0);
   const [cellX, setCellX] = createSignal(START_CELL);
   const [cellY, setCellY] = createSignal(START_CELL);
+  /**
+   * Where they are standing, as one number: the cell index every part
+   * of the game names a square by
+   */
+  const cell = (): number => cellY() * CHUNK_CELLS + cellX();
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
   const toast = useToast();
@@ -517,13 +572,106 @@ export default function OverworldTab(): JSX.Element {
         );
   };
 
-  // Where they are, said on the bar at the bottom of the screen. The
-  // bar is a sibling of the world rather than a child of it, so the
-  // words are published upwards and cleared on the way out — a battle
-  // takes the page, and the place under it is not where the player is
-  // standing any more
-  createEffect(() => {
+  /**
+   * The board being left behind, while it is being left behind.
+   *
+   * Crossing a boundary re-opens the window subscription, and what it
+   * holds is null until the next chunk's window arrives — so the world
+   * had nothing to draw for a round trip and put a line of text on the
+   * screen instead. That is a flash of the whole page, every time
+   * somebody walks off an edge.
+   *
+   * Held here, the old chunk stays on screen and is carried off by the
+   * canvas while the new one is in the air. The player's cell is held
+   * with it: they are already standing on the far side by then, and
+   * their marker jumping to the opposite edge of a board they have not
+   * left yet is the same flash in miniature
+   */
+  const [frozen, setFrozen] = createSignal<{ view: ChunkView; player: number } | null>(null);
+  const [crossing, setCrossing] = createSignal<Crossing | null>(null);
+  /**
+   * Whether the board has finished being carried off. The other half
+   * of the wait is the new window, and the crossing turns round when
+   * both are done
+   */
+  const [gone, setGone] = createSignal(true);
+
+  /**
+   * What is on screen: the board being carried off, or the one the
+   * player is standing in
+   */
+  const shown = (): ChunkView | null => frozen()?.view ?? view();
+
+  const cross = (deltaX: number, deltaY: number): void => {
     const standing = view();
+
+    if (standing == null) {
+      // Nothing is drawn yet, so there is nothing to carry off — which
+      // is the first chunk of a session and nothing else
+      return;
+    }
+    setFrozen({ view: standing, player: cell() });
+    setGone(false);
+    setCrossing({ dx: deltaX, dy: deltaY, phase: 'out' });
+  };
+
+  // The clock: each half of a crossing lasts as long as it lasts, and
+  // the out half has a floor under it — a window that never arrives
+  // must not leave a player looking at a chunk they walked out of
+  createEffect(() => {
+    const step = crossing();
+
+    if (step == null) {
+      return;
+    }
+
+    const ending = setTimeout(
+      () => {
+        if (step.phase === 'out') {
+          setGone(true);
+        } else {
+          setCrossing(null);
+        }
+      },
+      step.phase === 'out' ? CROSSING_OUT : CROSSING_IN,
+    );
+    const stalled =
+      step.phase === 'out'
+        ? setTimeout(() => {
+            setFrozen(null);
+            setCrossing(null);
+          }, CROSSING_LIMIT)
+        : null;
+
+    onCleanup(() => {
+      clearTimeout(ending);
+      if (stalled != null) {
+        clearTimeout(stalled);
+      }
+    });
+  });
+
+  // ...and the turn: the old board is off the screen and the new one
+  // has arrived, so it is let go of and brought on from the far side
+  createEffect(() => {
+    const step = crossing();
+
+    if (step?.phase !== 'out' || !gone() || view() == null) {
+      return;
+    }
+    setFrozen(null);
+    setCrossing({ ...step, phase: 'in' });
+  });
+
+  // Where they are, said at the top of the menu. The menu is a sibling
+  // of the world rather than a child of it, so the words are published
+  // upwards and cleared on the way out — a battle takes the page, and
+  // the place under it is not where the player is standing any more
+  createEffect(() => {
+    // What is drawn rather than where they are standing: while a
+    // boundary is being crossed those differ for a moment, and the
+    // words under a picture should be about the picture
+    const standing = shown();
 
     game.setPlace(standing == null ? null : naming(standing));
   });
@@ -531,8 +679,6 @@ export default function OverworldTab(): JSX.Element {
   onCleanup(() => {
     game.setPlace(null);
   });
-
-  const cell = (): number => cellY() * CHUNK_CELLS + cellX();
 
   /**
    * An egg that has been found and not yet accepted.
@@ -743,6 +889,12 @@ export default function OverworldTab(): JSX.Element {
     // step into, so a walk into the edge goes nowhere
     if (!isInWorld(chunk, row)) {
       return;
+    }
+
+    // Leaving the chunk: hold on to what is drawn, so the board can be
+    // carried off the screen rather than taken off it
+    if (chunk !== chunkX() || row !== chunkY()) {
+      cross(deltaX, deltaY);
     }
     setChunkX(chunk);
     setChunkY(row);
@@ -983,8 +1135,154 @@ export default function OverworldTab(): JSX.Element {
       });
   };
 
-  const titleOf = (index: number): string => {
+  /**
+   * Where the player is walking, if they are.
+   *
+   * A press says where to be; this is what is left of it while they
+   * get there. It is re-planned at every step rather than kept as a
+   * list of squares, because the chunk moves under a walk — a window
+   * turns over, another player takes a spawn, a pokemon appears in the
+   * way — and a route worked out once would walk straight through
+   * whatever arrived after it was drawn
+   */
+  const [journey, setJourney] = createSignal<Journey | null>(null);
+
+  /**
+   * Whether the walk has arrived. Reaching for something ends beside
+   * it rather than on it: standing on top of what you are looking at
+   * is not what walking up to something means
+   */
+  const arrived = (plan: Journey): boolean =>
+    plan.act ? withinReach(plan.goal) : cell() === plan.goal;
+
+  /**
+   * One cell of the walk: work out the way from where they are now,
+   * and take a single step along it.
+   *
+   * Stopping is as much a part of this as walking. A route that no
+   * longer exists — the way blocked, the goal now standing under a
+   * pokemon — ends the walk where it stands rather than casting about
+   * for somewhere else to go, since the player can see the board and
+   * will press again
+   */
+  const stride = (): void => {
+    const plan = journey();
     const loaded = view();
+
+    if (plan == null || loaded == null) {
+      return;
+    }
+
+    if (arrived(plan)) {
+      setJourney(null);
+      if (plan.act) {
+        reach(plan.goal);
+      } else if (plan.exit != null) {
+        move(plan.exit[0], plan.exit[1]);
+      }
+      return;
+    }
+
+    const here = cell();
+    const passable = (index: number): boolean => !holdsSomething(loaded, index);
+    const route = plan.act
+      ? findPathBeside(here, plan.goal, passable)
+      : findPath(here, plan.goal, passable);
+    const next = route?.[0];
+
+    if (next == null) {
+      setJourney(null);
+      return;
+    }
+    move(
+      (next % CHUNK_CELLS) - (here % CHUNK_CELLS),
+      Math.floor(next / CHUNK_CELLS) - Math.floor(here / CHUNK_CELLS),
+    );
+  };
+
+  /**
+   * The walk itself: a step, and then one every `STEP_PACE` until it
+   * arrives or gives up.
+   *
+   * The first step is taken the moment the press lands. A walk that
+   * waited half a second before starting reads as a press that did not
+   * register, which is the one thing a control like this must never do.
+   *
+   * Everything the step reads is read outside the effect's tracking,
+   * so the only thing that restarts the clock is a **new** press: read
+   * plainly, a step that moves the player would re-run this, clear the
+   * timer and step again immediately, which is a walk at the speed of
+   * the message queue
+   */
+  createEffect(() => {
+    if (journey() == null) {
+      return;
+    }
+    untrack(stride);
+
+    const timer = setInterval(() => {
+      untrack(stride);
+    }, STEP_PACE);
+
+    onCleanup(() => {
+      clearInterval(timer);
+    });
+  });
+
+  // A walk belongs to the chunk it was started in: its goal is a cell
+  // number, and cell 42 of the chunk next door is somewhere else
+  // entirely. Crossing a boundary — on foot, or through a portal —
+  // ends it
+  createEffect(() => {
+    chunkX();
+    chunkY();
+    setJourney(null);
+  });
+
+  /**
+   * A square the player has asked to be at.
+   *
+   * Three things it can be. Something they are already standing beside
+   * is reached for where they stand; anything else worth pressing is
+   * walked up to and then reached for; a threshold is walked to and
+   * stepped over, into the chunk beyond
+   */
+  const press = (target: BoardCell): void => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+
+    const exit = borderExit(target);
+
+    if (exit != null) {
+      setJourney({ goal: exit.cell, exit: exit.step, act: false });
+      return;
+    }
+
+    const index = chunkCellOf(target);
+
+    if (index == null) {
+      return;
+    }
+    if (holdsSomething(loaded, index)) {
+      setJourney(null);
+
+      if (withinReach(index)) {
+        reach(index);
+      } else {
+        setJourney({ goal: index, exit: null, act: true });
+      }
+      return;
+    }
+    setJourney(index === cell() ? null : { goal: index, exit: null, act: false });
+  };
+
+  const titleOf = (index: number): string => {
+    // The board on screen rather than the one they are standing in:
+    // a cell is named for what is drawn on it
+    const loaded = shown();
     const landmark = loaded?.landmarks.get(index);
     const spawn = loaded?.spawns.get(index);
 
@@ -1015,7 +1313,11 @@ export default function OverworldTab(): JSX.Element {
   return (
     <div class="relative h-full w-full">
       <Show
-        when={view()}
+        // What is drawn, which is the board being carried off while one
+        // is: the live view is null for a round trip after a boundary
+        // is crossed, and taking the world off the screen for that is
+        // the flash this holds it up to avoid
+        when={shown()}
         fallback={
           <div class="flex h-full items-center justify-center">
             <Note>Loading chunk…</Note>
@@ -1036,12 +1338,16 @@ export default function OverworldTab(): JSX.Element {
                 measure */}
             {/* The page takes the colour of the country the player is
                 standing in. The board is a square and the screen is
-                not, so there is always a margin around it — left grey
+                not, so there is always country around it — left grey
                 it read as a picture of a world on a page, rather than
-                as being somewhere */}
+                as being somewhere.
+
+                Edge to edge, with nothing laid out around it: the
+                canvas is the whole of this, and where the board sits
+                inside it is the projection's business rather than the
+                page's */}
             <div
-              class="flex h-full w-full items-center justify-center px-3 pt-8 pb-20
-                transition-colors [container-type:size]"
+              class="absolute inset-0 transition-colors"
               style={{ 'background-color': BIOME_COLORS[loaded().biome] }}
             >
               <ChunkCanvas
@@ -1055,17 +1361,17 @@ export default function OverworldTab(): JSX.Element {
                   setYaw(turned);
                 }}
                 caption={naming(loaded())}
-                player={cell()}
+                // Held with the board while one is being carried off:
+                // they are standing in the next chunk by then, and
+                // their marker has no business on this one
+                player={frozen()?.player ?? cell()}
+                crossing={crossing()}
                 landmarks={loaded().landmarks}
                 spawns={
                   new Map([...loaded().spawns].map(([at, standing]) => [at, standing.spawn[0]]))
                 }
-                reachable={(index) =>
-                  !busy() && holdsSomething(loaded(), index) && withinReach(index)
-                }
                 label={titleOf}
-                onReach={reach}
-                onWalk={move}
+                onPress={press}
               />
             </div>
 

@@ -53,8 +53,9 @@ export function newPlayer(): Player {
 }
 
 /**
- * Register and land in the world. Resolves once the action bar is up,
- * which is the game's own signal that it has a player and a position
+ * Register and land in the world. Resolves once the menu at the bottom
+ * is up, which is the game's own signal that it has a player and a
+ * position
  */
 export async function signIn(page: Page, player: Player = newPlayer()): Promise<Player> {
   await page.goto('/');
@@ -126,13 +127,15 @@ export async function expectShut(dialog: Locator): Promise<void> {
 }
 
 /**
- * What the dialog behind each button on the bar is called. Three of
- * the four say the same word on the button and in the heading; the
- * map is the exception
+ * What the dialog behind each key of the menu is called. Most of them
+ * say the same word on the key and in the heading; the world is the
+ * exception, since the map is a picture of it rather than the thing
  */
-const BAR_DIALOGS: Record<string, string> = {
+const MENU_DIALOGS: Record<string, string> = {
   Profile: 'Profile',
-  Map: 'World Map',
+  World: 'World Map',
+  Catches: 'Catches',
+  Inventory: 'Inventory',
   Raids: 'Raids',
   Auctions: 'Auctions',
 };
@@ -166,12 +169,26 @@ export async function dismissGift(page: Page): Promise<void> {
 }
 
 /**
- * Open one of the four things behind the bar at the bottom
+ * Pull out the menu at the bottom of the world. Everything that is not
+ * the world is behind it, and it is one button rather than a row of
+ * them, so every one of these is two presses
  */
-export async function openBar(page: Page, label: keyof typeof BAR_DIALOGS): Promise<Locator> {
-  await page.getByRole('navigation', { name: 'Game' }).getByRole('button', { name: label }).click();
+export async function openMenu(page: Page): Promise<Locator> {
+  const menu = page.getByRole('navigation', { name: 'Game' });
 
-  const dialog = dialogNamed(page, BAR_DIALOGS[label]);
+  await menu.getByRole('button', { name: 'Menu' }).click();
+  return menu;
+}
+
+/**
+ * Open one of the things behind that button
+ */
+export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): Promise<Locator> {
+  const menu = await openMenu(page);
+
+  await menu.getByRole('button', { name: label, exact: true }).click();
+
+  const dialog = dialogNamed(page, MENU_DIALOGS[label]);
 
   await expectOpen(dialog);
   return dialog;
@@ -181,17 +198,11 @@ export async function openBar(page: Page, label: keyof typeof BAR_DIALOGS): Prom
  * Open the player's collection, drawn as a box of squares
  */
 export async function openBox(page: Page): Promise<Locator> {
-  const profile = await openBar(page, 'Profile');
+  const catches = await openPanel(page, 'Catches');
 
-  // A tab rather than a button: terracotta gives the tab strip the
-  // roles a tab strip has, and pressing it by the wrong one waits
-  // forever for something that was never there
-  await profile.getByRole('tab', { name: 'Catches' }).click();
-
-  // By its own name rather than "the canvas in the profile". The
-  // profile draws more than one now — the buddy card has a sprite of
-  // its own — and a bare `canvas` lookup matches both
-  const box = profile.getByRole('application', { name: /^Box of pokemon/ });
+  // By its own name rather than "the canvas in the panel": a bare
+  // `canvas` lookup matches whatever else is drawn beside it
+  const box = catches.getByRole('application', { name: /^Box of pokemon/ });
 
   await expect(box).toBeVisible();
   return box;

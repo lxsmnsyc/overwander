@@ -5,15 +5,19 @@ import { type Profile, watchProfile } from '../auth/profile';
 import BattleHistory from './BattleHistory';
 import BuddyCard from './BuddyCard';
 import BidsList from './BidsList';
-import CatchesList from './CatchesList';
-import InventoryList from './InventoryList';
 import { Badge, Button, Card, Note, Panel, Status, TabBar, TabButton, TabPane } from './styled';
 
+/**
+ * What is left under the tabs.
+ *
+ * The catches and the bag were the first two, and they are their own
+ * panels behind the menu now: they are the two things a player opens
+ * most, and neither is a fact about who somebody is. What stays is
+ * what the profile was always about — what this player has done
+ */
 const enum InnerTab {
-  Catches = 0,
-  Inventory = 1,
-  Battles = 2,
-  Bids = 3,
+  Battles = 0,
+  Bids = 1,
 }
 
 export interface ProfileTabProps {
@@ -21,9 +25,9 @@ export interface ProfileTabProps {
 }
 
 /**
- * Everything about the player: their details and balance, their
- * buddy, and — under an inner tab — their catches and what they
- * carry
+ * Who the player is: their details and balance, who is walking with
+ * them, and — under an inner tab — what they have fought and what they
+ * have bid on
  */
 export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   // The balance moves whenever the player earns or spends, so the
@@ -97,26 +101,14 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
 
       <TabGroup
         horizontal
-        defaultValue={InnerTab.Catches}
+        defaultValue={InnerTab.Battles}
         toggleable={false}
         class="flex flex-col gap-3"
       >
         <TabBar>
-          <TabButton value={InnerTab.Catches}>Catches</TabButton>
-          <TabButton value={InnerTab.Inventory}>Inventory</TabButton>
           <TabButton value={InnerTab.Battles}>Battles</TabButton>
           <TabButton value={InnerTab.Bids}>Bids</TabButton>
         </TabBar>
-        <TabPane value={InnerTab.Catches}>
-          <Card title="Catches">
-            <CatchesList player={props.player} />
-          </Card>
-        </TabPane>
-        <TabPane value={InnerTab.Inventory}>
-          <Card title="Inventory">
-            <InventoryList player={props.player} />
-          </Card>
-        </TabPane>
         <TabPane value={InnerTab.Battles}>
           <Card title="Battles">
             <BattleHistory player={props.player} />

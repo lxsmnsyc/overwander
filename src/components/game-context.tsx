@@ -36,6 +36,18 @@ export const enum GameDialog {
   Raids = 2,
   Auctions = 3,
   Map = 4,
+  /**
+   * The player's pokemon and the player's bag, which were two tabs
+   * inside the profile.
+   *
+   * They are the two things a player opens most and the two that had
+   * least to do with the page they were on: a profile is who somebody
+   * is, and their box of pokemon is not that. Behind the menu they are
+   * one press rather than two, and the profile is left with what it
+   * was always about
+   */
+  Catches = 5,
+  Inventory = 6,
 }
 
 /**
@@ -96,9 +108,9 @@ export interface GameState {
    * It was painted into the corner of the map, which is the one place
    * on the screen the map cannot spare — a caption over the board sits
    * on top of whatever cell is under it, and the board is the game. It
-   * belongs on the bar with the rest of the furniture, and the bar is
-   * a sibling of the overworld rather than a child of it, so the words
-   * travel through here.
+   * belongs in the menu with the rest of the furniture, and the menu
+   * is a sibling of the overworld rather than a child of it, so the
+   * words travel through here.
    *
    * Null while the chunk is still being read
    */

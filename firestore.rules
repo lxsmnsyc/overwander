@@ -14,8 +14,14 @@ service cloud.firestore {
     match /profiles/{uid} {
       allow read: if signedIn();
       // A profile opens empty-handed; gold only ever moves on the
-      // server, so a first write cannot name its own balance
-      allow create: if isOwner(uid) && request.resource.data.gold == 0;
+      // server, so a first write cannot name its own balance — and
+      // neither can it name a role, which is the same field for
+      // authority that gold is for money. An absent role is a player,
+      // so the write may leave it out; what it may not do is arrive
+      // as anything else
+      allow create: if isOwner(uid)
+        && request.resource.data.gold == 0
+        && request.resource.data.get('role', '') == '';
       // The buddy lives here too: it is the player's to set, and it
       // is read on nearly every action they take
       allow update: if isOwner(uid)

@@ -1,12 +1,17 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import {
+  AttackPriority,
+  type EventListenerLifecycle,
+  EventPriority,
+} from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
+import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { ONE_SHOTS } from '../../data/items/one-shots';
-import { BattleEvents } from '../events';
+import { BattleEvents, type EffectCause, EffectType, type UnitUpdateStageEvent } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { createEffectivenessTracker, createHeldItems, holds, spendItem } from './__create';
@@ -68,6 +73,14 @@ const ALL_STAGES: Stages[] = [
   Stages.Accuracy,
 ];
 
+/**
+ * The pair of listeners it takes to catch a stat going down
+ */
+type StageListeners = [
+  EventListenerLifecycle<UnitUpdateStageEvent>,
+  EventListenerLifecycle<UnitUpdateStageEvent>,
+];
+
 export default createHeldItems(
   () => ONE_SHOTS.keys(),
   (battle) => {
@@ -94,6 +107,42 @@ export default createHeldItems(
      */
     function lowered(unit: Unit): Stages[] {
       return ALL_STAGES.filter((stage) => unit.stages[stage] < 0);
+    }
+
+    /**
+     * A stage can fall two ways: something takes one off, or something
+     * adds a negative one — an Intimidate does the latter — so
+     * anything answering a stat being lowered has to watch both
+     */
+    function lowering(listener: (unit: Unit, cause: EffectCause) => void): StageListeners {
+      // Both events carry the change that was actually applied once
+      // they have been resolved — a stage that was already at the
+      // floor comes back as nothing moved — so a negative is a stat
+      // that really did go down, whichever door it came through
+      const fell = (event: UnitUpdateStageEvent): void => {
+        if (event.value < 0) {
+          listener(event.source, event.cause);
+        }
+      };
+
+      return [
+        battle.on(BattleEvents.UnitRemoveStage, EventPriority.Post, fell),
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Post, fell),
+      ];
+    }
+
+    /**
+     * Being sized up by an Intimidate. The ability lowers the Attack
+     * of everything it can see, so the stare-down is read off the
+     * cause of that drop rather than off the ability's own trigger,
+     * which fires on the one doing the intimidating
+     */
+    function intimidated(listener: (unit: Unit) => void): StageListeners {
+      return lowering((unit, cause) => {
+        if (cause.type === EffectType.Ability && cause.ability === Abilities.Intimidate) {
+          listener(unit);
+        }
+      });
     }
 
     const listening = new MergedLifecycle([
@@ -193,8 +242,23 @@ export default createHeldItems(
         }
       }),
 
-      battle.on(BattleEvents.UnitRemoveStage, EventPriority.Post, (event) => {
-        const unit = event.source;
+      // An Adrenaline Orb answers being sized up rather than being
+      // hit: the stare-down is what it is waiting for, and whether
+      // the holder's Attack actually fell is beside the point
+      ...intimidated((unit) => {
+        const cause = spendItem(unit, Items.AdrenalineOrb);
+
+        if (cause) {
+          unit.addStage(Stages.Speed, REACTION_STAGES, cause);
+        }
+      }),
+
+      /**
+       * A stat is lowered either by taking one off — a Growl — or by
+       * adding a negative one, which is how an Intimidate does it, so
+       * the herb watches both doors
+       */
+      ...lowering((unit) => {
         const taken = lowered(unit);
 
         if (taken.length === 0 || !holds(unit, Items.WhiteHerb)) {

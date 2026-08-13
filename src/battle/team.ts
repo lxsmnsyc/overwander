@@ -1,7 +1,12 @@
 import { type TeamStatuses, Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
 import type Battle from './core';
-import { BattleEvents, type CheckTeamStatusImmunityEvent, type EffectCause } from './events';
+import {
+  BattleEvents,
+  type CheckTeamStatusDurationEvent,
+  type CheckTeamStatusImmunityEvent,
+  type EffectCause,
+} from './events';
 import type Unit from './unit';
 
 export default class Team {
@@ -46,6 +51,26 @@ export default class Team {
       status,
       cause,
     });
+  }
+
+  /**
+   * How long a status the team has just been put under lasts. It is
+   * the team-wide twin of a unit's own check, and the cause is passed
+   * on because what lengthens a screen — a Light Clay — is held by
+   * whoever put the screen up rather than by the team standing behind
+   * it
+   */
+  checkStatusDuration(status: TeamStatuses, duration: number, cause: EffectCause): number {
+    const event: CheckTeamStatusDurationEvent = {
+      id: 'CheckTeamStatusDuration',
+      disabled: false,
+      team: this,
+      status,
+      duration,
+      cause,
+    };
+    this.battle.emit(BattleEvents.CheckTeamStatusDuration, event);
+    return event.duration;
   }
 
   removeStatus(status: TeamStatuses, cause: EffectCause): void {

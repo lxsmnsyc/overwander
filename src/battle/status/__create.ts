@@ -72,7 +72,7 @@ export default function createTimedStatus(status: Statuses, duration: number) {
         instances.set(event.source, {
           progress: 0,
           // Resolved through the event engine (e.g. Early Bird)
-          duration: event.source.checkStatusDuration(status, duration),
+          duration: event.source.checkStatusDuration(status, duration, event.cause),
         });
 
         timer.start();

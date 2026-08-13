@@ -1605,7 +1605,14 @@ describe('item data', () => {
     // A trade item is used on the pokemon rather than held by it: the
     // mainline reads one during the trade, and here the trade is a
     // condition the record answers on its own
-    expect(getItemData(Items.KingsRock).flags & ItemFlags.Holdable).toBe(0);
+    expect(getItemData(Items.DragonScale).flags & ItemFlags.Holdable).toBe(0);
+    expect(getItemData(Items.DragonScale).flags & ItemFlags.Usable).not.toBe(0);
+
+    // The King's Rock is the exception, and is both: the evolution it
+    // gates is still out of reach, but what it does in a fight — a
+    // chance of leaving whoever was hit reeling — works today
+    expect(getItemData(Items.KingsRock).flags & ItemFlags.Holdable).not.toBe(0);
+    expect(getItemData(Items.KingsRock).flags & ItemFlags.Usable).not.toBe(0);
 
     // Metal Coat is not duplicated: the Steel booster already
     // registered is the id an evolution will read

@@ -4,10 +4,13 @@ import type Unit from '../../src/battle/unit';
 import {
   BAND_FACTOR,
   BIG_ROOT_FACTOR,
+  BINDING_BAND_FACTOR,
   BLACK_SLUDGE_SHARE,
   BRIGHT_POWDER_EVASION,
   EXPERT_BELT_FACTOR,
+  GRIP_CLAW_FACTOR,
   LEFTOVERS_SHARE,
+  LIGHT_CLAY_FACTOR,
   METRONOME_LIMIT,
   METRONOME_STEP,
   QUICK_CLAW_PRIORITY,
@@ -18,12 +21,15 @@ import {
   WIDE_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
+import { SCREEN_DURATION } from '../../src/battle/status/reflect';
+import { TRAPPED_DURATION, TRAPPED_TICK } from '../../src/battle/status/trapped';
+import Abilities from '../../src/data/ids/abilities';
 import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Items } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders, Species } from '../../src/data/ids/species';
-import { Statuses, Weathers } from '../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -418,6 +424,86 @@ describe('gear that changes a rule', () => {
   });
 });
 
+describe('gear that lengthens what is already running', () => {
+  it('holds a screen up for half again as long with a Light Clay', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const other = createUnit(battle, teamB);
+    const cause = moveCause(caster, Moves.Reflect);
+
+    caster.addItem(Items.LightClay);
+    teamA.addStatus(TeamStatuses.Reflect, cause);
+    teamB.addStatus(TeamStatuses.Reflect, moveCause(other, Moves.Reflect));
+
+    // The plain screen is out on time; the clay's is still up
+    battle.tick(SCREEN_DURATION);
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+    expect(teamA.status[TeamStatuses.Reflect]).toBeDefined();
+
+    battle.tick(SCREEN_DURATION * (LIGHT_CLAY_FACTOR - 1));
+    expect(teamA.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('holds a bind on for longer with a Grip Claw', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gripping = createUnit(battle, teamA);
+    const barehanded = createUnit(battle, teamA);
+    const held = createUnit(battle, teamB);
+    const loose = createUnit(battle, teamB);
+
+    gripping.addItem(Items.GripClaw);
+    held.addStatus(Statuses.Trapped, moveCause(gripping, Moves.Wrap));
+    loose.addStatus(Statuses.Trapped, moveCause(barehanded, Moves.Wrap));
+
+    battle.tick(TRAPPED_DURATION);
+    expect(loose.status[Statuses.Trapped]).toBeUndefined();
+    expect(held.status[Statuses.Trapped]).toBeDefined();
+
+    battle.tick(TRAPPED_DURATION * (GRIP_CLAW_FACTOR - 1));
+    expect(held.status[Statuses.Trapped]).toBeUndefined();
+  });
+
+  it('grips harder with a Binding Band', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const banded = createUnit(battle, teamA);
+    const barehanded = createUnit(battle, teamA);
+    const squeezed = createUnit(battle, teamB);
+    const held = createUnit(battle, teamB);
+
+    banded.addItem(Items.BindingBand);
+    squeezed.addStatus(Statuses.Trapped, moveCause(banded, Moves.Wrap));
+    held.addStatus(Statuses.Trapped, moveCause(barehanded, Moves.Wrap));
+
+    const maxHealth = squeezed.checkStat(Stats.HP, 0);
+
+    battle.tick(TRAPPED_TICK);
+
+    const plain = maxHealth - held.health;
+
+    expect(plain).toBeGreaterThan(0);
+    expect(maxHealth - squeezed.health).toBeCloseTo(plain * BINDING_BAND_FACTOR, 5);
+  });
+
+  it('leaves the target reeling now and then with a King’s Rock', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    holder.addItem(Items.KingsRock);
+
+    pinRandom(battle, 0.99); // above the chance: nothing comes of it
+    holder.attack(target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(target.status[Statuses.Flinched]).toBeUndefined();
+
+    pinRandom(battle, 0); // and this time the rock tells
+    holder.attack(target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(target.status[Statuses.Flinched]).toBeDefined();
+    // Held, not spent — and still the trade item it also is
+    expect(holder.items[Items.KingsRock]).toBe(true);
+  });
+});
+
 describe('the family gate', () => {
   it('wires a family back up when somebody picks one up again', () => {
     const { battle, teamA, teamB } = createBattle();
@@ -608,6 +694,41 @@ describe('one-shots', () => {
 
     expect(holder.status[Statuses.Infatuated]).toBeUndefined();
     expect(holder.items[Items.MentalHerb]).toBeUndefined();
+  });
+
+  it('answers a stare-down with an Adrenaline Orb', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const intimidator = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamB);
+
+    holder.addItem(Items.AdrenalineOrb);
+    intimidator.addAbility(Abilities.Intimidate);
+    intimidator.enter();
+
+    // Both lost the Attack; only the one carrying the orb got
+    // something back for it
+    expect(holder.stages[Stages.Attack]).toBe(-1);
+    expect(bare.stages[Stages.Attack]).toBe(-1);
+
+    expect(holder.stages[Stages.Speed]).toBe(REACTION_STAGES);
+    expect(holder.items[Items.AdrenalineOrb]).toBeUndefined();
+    expect(bare.stages[Stages.Speed]).toBe(0);
+  });
+
+  it('puts back a stage an Intimidate took, not only one that was removed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const intimidator = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    holder.addItem(Items.WhiteHerb);
+    intimidator.addAbility(Abilities.Intimidate);
+    intimidator.enter();
+
+    // An Intimidate lowers by adding a negative stage rather than by
+    // removing one, and the herb has to answer both
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(holder.items[Items.WhiteHerb]).toBeUndefined();
   });
 
   it('spends a Power Herb on one instant cast', () => {

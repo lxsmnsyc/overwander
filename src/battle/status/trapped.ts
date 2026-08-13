@@ -13,8 +13,8 @@ interface TrappedData {
 }
 
 // Real-time equivalent of the 4-5 trapping turns
-const TRAPPED_DURATION = 4000;
-const TRAPPED_TICK = 1000;
+export const TRAPPED_DURATION = 4000;
+export const TRAPPED_TICK = 1000;
 
 export default function setupTrappedStatus(battle: Battle): void {
   const instances = new Map<Unit, TrappedData>();
@@ -53,7 +53,9 @@ export default function setupTrappedStatus(battle: Battle): void {
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Trapped && !instances.has(event.source)) {
       instances.set(event.source, {
-        duration: TRAPPED_DURATION,
+        // Resolved through the event engine: a Grip Claw held by
+        // whoever is doing the binding holds it on for longer
+        duration: event.source.checkStatusDuration(Statuses.Trapped, TRAPPED_DURATION, event.cause),
         progress: 0,
         cause: event.cause,
       });

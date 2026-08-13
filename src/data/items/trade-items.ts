@@ -51,13 +51,25 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string][] = [
   [Items.WhippedDream, 'Whipped Dream', 'whipped-dream'],
 ];
 
+/**
+ * The one trade item that is also a held item.
+ *
+ * A King's Rock does something in a fight — it makes whatever its
+ * holder throws liable to leave the target flinching — and that is
+ * true whether or not the evolution it also gates is reachable yet.
+ * So it carries the Holdable flag alongside the rest of the family's,
+ * the way Metal Coat is one id doing two jobs. The battle half is in
+ * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
+ */
+const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
+
 export default function registerTradeItems(): void {
   for (const [item, name, icon] of TRADE_ITEMS) {
     registerItem(item, {
       name,
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
-      flags: ItemFlags.Usable,
+      flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,
       buy: 0,
       sell: 0,
     });

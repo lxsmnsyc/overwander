@@ -540,13 +540,14 @@ export default class Unit {
     }
   }
 
-  checkStatusDuration(status: Statuses, duration: number): number {
+  checkStatusDuration(status: Statuses, duration: number, cause: EffectCause): number {
     const event: CheckUnitStatusDurationEvent = {
       id: 'CheckUnitStatusDuration',
       disabled: false,
       source: this,
       status,
       duration,
+      cause,
     };
     this.battle.emit(BattleEvents.CheckUnitStatusDuration, event);
     return event.duration;

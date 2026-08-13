@@ -4,9 +4,10 @@ import { Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories, MoveFlags, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
-import { Statuses, Weathers } from '../../data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { FOUND_GEAR, MARKET_GEAR } from '../../data/items/gear';
 import { getMoveData } from '../../data/moves';
+import { TRAPPING_MOVES } from '../moves/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
@@ -112,6 +113,32 @@ export const FOCUS_BAND_CHANCE = 0.1;
 export const ROCKY_HELMET_SHARE = 1 / 6;
 
 /**
+ * Half again as long a screen, which is what a Light Clay is worth in
+ * the mainline: five turns become eight
+ */
+export const LIGHT_CLAY_FACTOR = 1.5;
+
+/**
+ * What the two binding items are worth. A Grip Claw is the mainline's
+ * flat seven turns against the usual four or five, so here it is the
+ * same proportion of a bind's few seconds; a Binding Band deepens the
+ * chip instead, which is the other half of what being held costs
+ */
+export const GRIP_CLAW_FACTOR = 1.75;
+export const BINDING_BAND_FACTOR = 4 / 3;
+
+/**
+ * How often a King's Rock leaves whoever was hit reeling
+ */
+export const KINGS_ROCK_CHANCE = 0.1;
+
+/**
+ * The screens a Light Clay holds up. Nothing else a team can be under
+ * is a thing anybody put there on purpose
+ */
+const SCREEN_STATUSES = new Set<TeamStatuses>([TeamStatuses.Reflect, TeamStatuses.LightScreen]);
+
+/**
  * The weathers an umbrella is any use against. It keeps the sun and
  * the rain off its holder — and nothing else: a sandstorm goes round
  * an umbrella, which is what the goggles are for
@@ -150,7 +177,9 @@ interface Streak {
 }
 
 export default createHeldItems(
-  () => [...MARKET_GEAR.keys(), ...FOUND_GEAR.keys()],
+  // The King's Rock is registered with the trade items, since the
+  // evolution it gates is the other half of what it is for
+  () => [...MARKET_GEAR.keys(), ...FOUND_GEAR.keys(), Items.KingsRock],
   (battle) => {
     const landingHard = createEffectivenessTracker(battle);
 
@@ -482,6 +511,77 @@ export default createHeldItems(
         charmer.addStatus(Statuses.Infatuated, {
           type: EffectType.Item,
           item: Items.DestinyKnot,
+          unit: event.source,
+        });
+      }),
+
+      // A Light Clay holds a screen up for half again as long. It is
+      // read off whoever put the screen up, not off the team standing
+      // behind it
+      battle.on(BattleEvents.CheckTeamStatusDuration, EventPriority.Post, (event) => {
+        if (
+          SCREEN_STATUSES.has(event.status) &&
+          event.cause.type !== EffectType.None &&
+          holds(event.cause.unit, Items.LightClay)
+        ) {
+          event.duration *= LIGHT_CLAY_FACTOR;
+        }
+      }),
+
+      // A Grip Claw holds on for longer, and is read off the one doing
+      // the holding rather than the one being held
+      battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+        if (
+          event.status === Statuses.Trapped &&
+          event.cause.type !== EffectType.None &&
+          holds(event.cause.unit, Items.GripClaw)
+        ) {
+          event.duration *= GRIP_CLAW_FACTOR;
+        }
+      }),
+
+      /**
+       * A Binding Band grips harder: the chip a bind takes every
+       * second is a third bigger. It is the binder's own indirect
+       * damage, so what identifies it is the move that caused it —
+       * anything else that unit is doing to the same target stays
+       * whatever size it was
+       */
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+        if (
+          event.flags & DamageFlags.Indirect &&
+          event.cause.type === EffectType.Move &&
+          TRAPPING_MOVES.has(event.cause.move) &&
+          event.target.status[Statuses.Trapped] != null &&
+          holds(event.cause.unit, Items.BindingBand)
+        ) {
+          event.value *= BINDING_BAND_FACTOR;
+        }
+      }),
+
+      /**
+       * A King's Rock makes whatever its holder throws liable to leave
+       * the target reeling. It rides the attack rather than the move,
+       * so it is a chance on every blow that lands rather than on one
+       * particular kind of blow — and a move that already flinches
+       * does not get a second roll at it
+       */
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+        if (
+          !event.success ||
+          event.category === MoveCategories.Status ||
+          !event.target.alive ||
+          event.target.status[Statuses.Flinched] != null ||
+          !holds(event.source, Items.KingsRock) ||
+          battle.random() >= KINGS_ROCK_CHANCE
+        ) {
+          return;
+        }
+
+        event.source.triggerItem(Items.KingsRock);
+        event.target.addStatus(Statuses.Flinched, {
+          type: EffectType.Item,
+          item: Items.KingsRock,
           unit: event.source,
         });
       }),

@@ -514,6 +514,20 @@ export const enum Items {
   WhiteHerb = 261,
   MentalHerb = 262,
   PowerHerb = 263,
+
+  /**
+   * The gear that lengthens or deepens something already running: a
+   * screen, and the grip of whatever is holding a pokemon still
+   */
+  LightClay = 264,
+  GripClaw = 265,
+  BindingBand = 266,
+
+  /**
+   * Held against being sized up: the holder answers a stare-down by
+   * being quicker for it, once
+   */
+  AdrenalineOrb = 267,
 }
 
 /**

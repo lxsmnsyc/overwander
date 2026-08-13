@@ -217,6 +217,13 @@ export const enum BattleEvents {
    * how quickly the move comes back
    */
   UnitSetMovePoints = 134,
+
+  /**
+   * How long a team status holds, the team-wide twin of
+   * CheckUnitStatusDuration: it is what a Light Clay lengthens a
+   * screen by
+   */
+  CheckTeamStatusDuration = 135,
 }
 
 export const enum MoveTargetType {
@@ -492,10 +499,24 @@ export interface UnitUpdateStageEvent extends UnitStageEvent {
 
 /**
  * How long a timed status holds the unit; listeners (e.g. Early
- * Bird) adjust the duration in milliseconds
+ * Bird) adjust the duration in milliseconds.
+ *
+ * The cause rides along because some of what adjusts a duration
+ * belongs to whoever inflicted it rather than to whoever is holding
+ * it — a Grip Claw is held by the one doing the binding
  */
 export interface CheckUnitStatusDurationEvent extends UnitStatusEvent {
   duration: number;
+  cause: EffectCause;
+}
+
+/**
+ * How long a team status holds, in milliseconds. The cause carries
+ * the unit that put it up, which is the one a Light Clay is held by
+ */
+export interface CheckTeamStatusDurationEvent extends TeamStatusEvent {
+  duration: number;
+  cause: EffectCause;
 }
 
 /**
@@ -891,6 +912,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
+  [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
   [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
   [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];

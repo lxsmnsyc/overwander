@@ -10,7 +10,11 @@ interface ScreenData {
   cause: EffectCause;
 }
 
-const SCREEN_DURATION = 10000; // 10 seconds
+/**
+ * How long a screen holds without help. A Light Clay lengthens it
+ * through CheckTeamStatusDuration
+ */
+export const SCREEN_DURATION = 10000;
 const DAMAGE_REDUCTION = 2732 / 4096;
 
 /**
@@ -37,7 +41,10 @@ function createScreenStatus(status: TeamStatuses, category: MoveCategories) {
     battle.on(BattleEvents.TeamAddStatus, EventPriority.Post, (event) => {
       if (event.status === status && !instances.has(event.team)) {
         instances.set(event.team, {
-          progress: SCREEN_DURATION,
+          // Resolved through the event engine, so that what the unit
+          // who put the screen up is holding — a Light Clay — can
+          // lengthen it
+          progress: event.team.checkStatusDuration(status, SCREEN_DURATION, event.cause),
           cause: event.cause,
         });
 

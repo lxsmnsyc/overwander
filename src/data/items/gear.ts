@@ -42,6 +42,9 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.UtilityUmbrella, 'Utility Umbrella'],
   [Items.SmokeBall, 'Smoke Ball'],
   [Items.DestinyKnot, 'Destiny Knot'],
+  [Items.LightClay, 'Light Clay'],
+  [Items.GripClaw, 'Grip Claw'],
+  [Items.BindingBand, 'Binding Band'],
 ]);
 
 /**

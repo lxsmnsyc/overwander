@@ -35,6 +35,7 @@ export const ONE_SHOTS: Map<Items, string> = new Map([
   [Items.WhiteHerb, 'White Herb'],
   [Items.MentalHerb, 'Mental Herb'],
   [Items.PowerHerb, 'Power Herb'],
+  [Items.AdrenalineOrb, 'Adrenaline Orb'],
 ]);
 
 /**

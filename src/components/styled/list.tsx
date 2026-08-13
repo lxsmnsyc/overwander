@@ -27,9 +27,12 @@ export interface ListRowProps extends ParentProps {
 export function ListRow(props: ListRowProps): JSX.Element {
   return (
     <li
-      class={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border px-3 py-2 text-sm ${
-        props.selected === true ? 'border-leaf bg-leaf-soft' : 'border-line bg-paper'
-      } ${props.class ?? ''}`}
+      class={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-2 px-3 py-2 text-sm
+        shadow-pop-sm transition-colors ${
+          props.selected === true
+            ? 'border-leaf bg-leaf-soft'
+            : 'border-line bg-paper hover:border-tide'
+        } ${props.class ?? ''}`}
     >
       {props.children}
     </li>
@@ -60,8 +63,8 @@ export function RowButton(props: RowButtonProps): JSX.Element {
       aria-pressed={props.pressed}
       disabled={props.disabled}
       class={`grow rounded-none border-0 bg-transparent p-0 text-left text-sm font-normal
-        hover:border-0 hover:text-leaf-dark disabled:bg-transparent disabled:text-muted
-        disabled:line-through ${props.class ?? ''}`}
+        shadow-none hover:border-0 hover:text-tide-dark active:translate-y-0
+        disabled:bg-transparent disabled:text-muted disabled:line-through ${props.class ?? ''}`}
       onClick={() => {
         props.onClick?.();
       }}

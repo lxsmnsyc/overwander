@@ -34,9 +34,14 @@ const WIDTHS: Record<DialogWidth, string> = {
   wide: 'w-[min(92vw,44rem)]',
 };
 
+/**
+ * The window itself: a thick blue frame around white, standing off the
+ * page on a hard shadow. It is the series' message box rather than a
+ * card — what the game has to say has always arrived in a frame
+ */
 const PANEL =
   'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border border-line bg-paper px-4 text-left shadow-2xl shadow-ink/25 sm:px-5';
+  ' border-4 border-tide bg-paper px-4 text-left shadow-window sm:px-5';
 
 /**
  * The panel's vertical padding, which lives on the **content** rather
@@ -68,7 +73,7 @@ const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
  * the menu of things that can be done to the pokemon are what a player
  * scrolls back up for
  */
-const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-paper pt-4 sm:-mt-5 sm:pt-5 ${BLEED}`;
+const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-tide pt-4 text-paper sm:-mt-5 sm:pt-5 ${BLEED}`;
 
 /**
  * And the buttons, held at the bottom for the same reason: the way out
@@ -204,7 +209,7 @@ export function Dialog(props: DialogProps): JSX.Element {
               class={
                 props.quiet === true
                   ? 'sr-only'
-                  : `flex flex-col gap-1 border-b border-line-soft pb-4 sm:pb-5 ${STUCK_TOP}`
+                  : `flex flex-col gap-1 border-b-2 border-tide-dark pb-3 sm:pb-4 ${STUCK_TOP}`
               }
             >
               {/* A heading rather than bold text: it is what a screen
@@ -213,13 +218,18 @@ export function Dialog(props: DialogProps): JSX.Element {
                   pinned to the edge rather than allowed to push it off
                   centre */}
               <div class="relative flex min-h-8 items-center justify-center">
-                <HeadlessDialogTitle class="text-center text-lg font-semibold">
+                <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
                   {props.title}
                 </HeadlessDialogTitle>
-                {props.aside == null ? null : <div class="absolute right-0">{props.aside}</div>}
+                {/* Back to ink: the bar is blue and its text is white,
+                    which a button standing on it would otherwise
+                    inherit — a white label on a white button */}
+                {props.aside == null ? null : (
+                  <div class="absolute right-0 text-ink">{props.aside}</div>
+                )}
               </div>
               <HeadlessDialogDescription
-                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-muted'}
+                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-paper/85'}
               >
                 {props.description}
               </HeadlessDialogDescription>
@@ -256,7 +266,7 @@ export function DialogSection(
 export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
   return (
     <div
-      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM} ${
+      class={`flex flex-wrap items-center gap-2 border-t-2 border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM} ${
         props.center === true ? 'justify-center' : 'justify-end'
       }`}
     >

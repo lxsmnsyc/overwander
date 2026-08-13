@@ -19,6 +19,8 @@ mechanics taken from the modern games where the two disagree.
   and the raising actually work.
 - [Firestore](docs/firestore.md) — every store the game writes to, what is in
   it, and who may touch it.
+- [Credits](docs/credits.md) — who wrote it, what it is built out of, and where
+  the art and the rules come from.
 
 ## How it is built
 

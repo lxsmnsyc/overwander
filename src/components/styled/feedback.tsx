@@ -33,7 +33,7 @@ const BADGE_TONES: Record<BadgeTone, string> = {
 export function Badge(props: ParentProps & { tone?: BadgeTone; class?: string }): JSX.Element {
   return (
     <span
-      class={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-medium
+      class={`inline-flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-sm font-bold
         whitespace-nowrap ${BADGE_TONES[props.tone ?? 'neutral']} ${props.class ?? ''}`}
     >
       {props.children}
@@ -65,7 +65,7 @@ export interface StatusProps {
  * it is: the last thing that happened, kept until something else does
  */
 const STATUS_TONES: Record<'status' | 'alert', string> = {
-  status: 'border-line bg-line-soft/70 text-ink',
+  status: 'border-tide bg-tide-soft text-ink',
   alert: 'border-ember bg-ember-soft text-ember-dark',
 };
 
@@ -75,7 +75,8 @@ export function Status(props: StatusProps): JSX.Element {
       {(message) => (
         <p
           role={props.tone ?? 'status'}
-          class={`rounded-panel border px-3 py-2 text-sm ${STATUS_TONES[props.tone ?? 'status']}`}
+          class={`rounded-panel border-2 px-3 py-2 text-sm shadow-pop-sm
+            ${STATUS_TONES[props.tone ?? 'status']}`}
         >
           {message()}
         </p>

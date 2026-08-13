@@ -25,9 +25,10 @@ const ACTIONS: BarAction[] = [
 ];
 
 const BUTTON =
-  'cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium text-ink transition-colors' +
-  ' hover:bg-parchment focus-visible:outline-2 focus-visible:outline-offset-2' +
-  ' focus-visible:outline-leaf';
+  'cursor-pointer rounded-full border-0 bg-transparent px-4 py-1.5 text-sm font-bold text-ink' +
+  ' shadow-none transition-colors hover:border-0 hover:bg-tide hover:text-paper' +
+  ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
+  ' focus-visible:outline-tide';
 
 export default function ActionBar(): JSX.Element {
   const game = useGame();
@@ -41,7 +42,7 @@ export default function ActionBar(): JSX.Element {
     >
       <div
         class="pointer-events-auto flex flex-wrap items-center justify-center gap-1 rounded-full
-          border border-line bg-paper/95 p-1 shadow-lg shadow-ink/20 backdrop-blur-sm"
+          border-2 border-tide bg-paper/95 p-1 shadow-pop backdrop-blur-sm"
       >
         {/* Where the player is standing, first on the bar and before
             anything to press. It was painted into the corner of the

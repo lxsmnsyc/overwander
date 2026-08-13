@@ -11,44 +11,70 @@
  * is written as ordinary markup and Tailwind's reset would otherwise
  * leave all of it looking like nothing at all.
  *
+ * What it is dressed *as* is a handheld pokemon game: sky over the
+ * page rather than paper, windows with a thick frame and a blue bar
+ * across the top of them, and buttons that sit on a hard shadow and
+ * drop onto the page when they are pressed. Nothing here is a picture
+ * or a font file — it is the same six colours and two shadows used
+ * consistently, which is most of what makes a screen read as one
+ * thing rather than as a form.
+ *
  * Anything reusable beyond that is a component in
  * `src/components/styled`, not a class name invented here.
  */
 
 @theme {
-  /* Parchment and ink: a field guide rather than a dashboard */
-  --color-parchment: #f3f1ea;
-  --color-paper: #fdfdfb;
-  --color-ink: #1c2029;
-  --color-muted: #5b6472;
-  --color-line: #d9dde6;
-  --color-line-soft: #eceff4;
+  /* Sky and ink: the page is outdoors, and what is written on it is
+     the near-black navy the games set their text in rather than black */
+  --color-parchment: #e7effb;
+  --color-paper: #ffffff;
+  --color-ink: #1f2a44;
+  --color-muted: #5e7291;
+  --color-line: #aec2de;
+  --color-line-soft: #e6edf8;
 
   /* What the game offers you */
-  --color-leaf: #2f6f4f;
-  --color-leaf-dark: #245741;
-  --color-leaf-soft: #e7f0ea;
+  --color-leaf: #33a05a;
+  --color-leaf-dark: #237644;
+  --color-leaf-soft: #e0f3e7;
 
-  /* What cannot be taken back */
-  --color-ember: #8f3b3b;
-  --color-ember-dark: #6f2d2d;
-  --color-ember-soft: #f7ecec;
+  /* What cannot be taken back, in the red of the ball it is thrown in */
+  --color-ember: #dc2e26;
+  --color-ember-dark: #a81f1a;
+  --color-ember-soft: #fdeceb;
 
   /* Gold, and the rest of what a lot is worth */
-  --color-gold: #97701f;
-  --color-gold-soft: #f6efdd;
+  --color-gold: #c08508;
+  --color-gold-soft: #fff3d6;
 
-  /* Where you are and what is happening there */
-  --color-tide: #2f5f8f;
-  --color-tide-soft: #e6eef7;
+  /* Where you are and what is happening there. It is also the game's
+     furniture — the bar over a window, the tab you are on — because
+     the series has always framed what it says to you in blue */
+  --color-tide: #2a75bb;
+  --color-tide-dark: #1d5487;
+  --color-tide-soft: #e3eefb;
 
   /* A move being channelled, which is neither a cast nor damage */
-  --color-arcane: #7a4c9a;
+  --color-arcane: #7b4fc0;
 
+  /* Rounded rather than neutral. Nothing is downloaded for this: the
+     platforms that have a rounded face use it and the rest fall back
+     to what they were using before */
   --font-sans:
-    Gordita, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Nunito, Quicksand, Gordita, Roboto,
+    system-ui, 'Helvetica Neue', sans-serif;
 
-  --radius-panel: 0.75rem;
+  --radius-panel: 1rem;
+
+  /* A hard offset rather than a blur: the game's controls sit slightly
+     above the page and land on it when pressed, which is the one bit
+     of movement a menu screen gets */
+  --shadow-pop: 0 3px 0 0 rgb(31 42 68 / 0.18);
+  --shadow-pop-sm: 0 2px 0 0 rgb(31 42 68 / 0.16);
+
+  /* And a window, which is further off the page than a button is */
+  --shadow-window:
+    0 6px 0 0 rgb(29 84 135 / 0.35), 0 24px 48px -16px rgb(31 42 68 / 0.55);
 }
 
 @layer base {
@@ -58,26 +84,36 @@
 
   body {
     @apply bg-parchment text-ink font-sans text-[0.95rem] leading-relaxed antialiased;
+
+    /* Daylight over the top of the page. It is under everything the
+       game draws — the world fills the screen on its own — and shows
+       at the edges of dialogs and behind the shorter panels */
+    background-image:
+      radial-gradient(120% 90% at 50% -20%, #ffffff 0%, transparent 60%),
+      linear-gradient(180deg, #eef5fe 0%, var(--color-parchment) 100%);
+    background-attachment: fixed;
   }
 
   h1 {
-    @apply text-2xl font-semibold tracking-tight;
+    @apply text-2xl font-extrabold tracking-tight;
   }
 
   h2 {
-    @apply text-xl font-semibold tracking-tight;
+    @apply text-xl font-extrabold tracking-tight;
   }
 
   h3 {
-    @apply text-base font-semibold;
+    @apply text-base font-bold;
   }
 
+  /* The little caption over a block of facts, set the way a game sets
+     a label on a status screen: small, spaced out and shouted quietly */
   h4 {
-    @apply text-sm font-semibold text-muted uppercase tracking-wide;
+    @apply text-xs font-bold text-tide uppercase tracking-[0.12em];
   }
 
   a {
-    @apply text-leaf underline underline-offset-2 hover:text-leaf-dark;
+    @apply font-semibold text-tide underline underline-offset-2 hover:text-tide-dark;
   }
 
   /* Lists are the game's main structure — a bag, a party, a board —
@@ -100,27 +136,30 @@
   }
 
   dd {
-    @apply font-medium;
+    @apply font-semibold;
   }
 
-  /* A button with nothing said about it still looks pressable. The
-     kit's own buttons say more, and utilities beat this layer */
+  /* A button with nothing said about it still looks pressable, and
+     pressing it still moves it. The kit's own buttons say more, and
+     utilities beat this layer */
   button {
-    @apply cursor-pointer rounded-md border border-line bg-paper px-2.5 py-1 text-sm font-medium
-      transition-colors hover:border-leaf hover:text-leaf-dark
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf;
+    @apply cursor-pointer rounded-xl border-2 border-line bg-paper px-3 py-1 text-sm font-bold
+      shadow-pop-sm transition-[background-color,border-color,color,box-shadow,transform]
+      hover:border-tide hover:text-tide-dark active:translate-y-[2px] active:shadow-none
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide;
   }
 
   button:disabled {
-    @apply cursor-default border-line bg-line-soft text-muted opacity-70 hover:border-line
-      hover:text-muted;
+    @apply cursor-default border-line bg-line-soft text-muted opacity-70 shadow-none
+      hover:border-line hover:text-muted active:translate-y-0;
   }
 
   input,
   select,
   textarea {
-    @apply rounded-md border border-line bg-paper px-2 py-1 text-sm
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf;
+    @apply rounded-xl border-2 border-line bg-paper px-2.5 py-1 text-sm
+      focus-visible:border-tide focus-visible:outline-2 focus-visible:outline-offset-2
+      focus-visible:outline-tide;
   }
 
   input[type='number'] {
@@ -133,10 +172,11 @@
 
   /* Whatever the game has just done, and whatever went wrong doing it */
   [role='status'] {
-    @apply rounded-md border border-line bg-paper px-3 py-2 text-sm;
+    @apply rounded-panel border-2 border-line bg-paper px-3 py-2 text-sm shadow-pop-sm;
   }
 
   [role='alert'] {
-    @apply rounded-md border border-ember bg-ember-soft px-3 py-2 text-sm text-ember-dark;
+    @apply rounded-panel border-2 border-ember bg-ember-soft px-3 py-2 text-sm text-ember-dark
+      shadow-pop-sm;
   }
 }

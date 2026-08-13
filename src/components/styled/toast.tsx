@@ -53,7 +53,7 @@ const WIDTH = 'w-[min(88vw,18rem)]';
 export type ToastTone = 'neutral' | 'leaf' | 'ember';
 
 const TONES: Record<ToastTone, string> = {
-  neutral: 'border-line bg-paper',
+  neutral: 'border-tide bg-paper',
   leaf: 'border-leaf bg-leaf-soft',
   ember: 'border-ember bg-ember-soft',
 };
@@ -127,7 +127,7 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       // something that happened, not something being asked
       role="status"
       class={`pointer-events-auto relative flex ${WIDTH} shrink-0 flex-col items-center gap-1
-        rounded-panel border px-4 py-3 text-center shadow-lg shadow-ink/20
+        rounded-panel border-2 px-4 py-3 text-center shadow-pop
         ${TONES[props.toast.tone ?? 'neutral']}`}
     >
       <Show when={props.toast.art}>
@@ -140,7 +140,8 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       <button
         type="button"
         aria-label="Dismiss"
-        class="absolute top-1 right-2 text-muted"
+        class="absolute top-1 right-1 rounded-full border-0 bg-transparent px-1.5 py-0 leading-none
+          text-muted shadow-none hover:border-0 hover:text-ember active:translate-y-0"
         onClick={props.onClose}
       >
         ×

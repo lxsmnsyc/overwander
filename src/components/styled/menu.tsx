@@ -34,10 +34,11 @@ export interface MenuProps {
 }
 
 const ITEM =
-  'cursor-pointer rounded-md px-2 py-1 text-left text-sm transition-colors hover:bg-leaf-soft' +
-  ' hover:text-leaf-dark aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
+  'cursor-pointer rounded-lg border-0 bg-transparent px-2 py-1 text-left text-sm font-semibold' +
+  ' shadow-none transition-colors hover:border-0 hover:bg-tide-soft hover:text-tide-dark' +
+  ' active:translate-y-0 aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
   ' aria-disabled:hover:bg-transparent aria-disabled:hover:text-muted' +
-  ' [&[tc-active]]:bg-leaf-soft [&[tc-active]]:text-leaf-dark';
+  ' [&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark';
 
 export default function Menu(props: MenuProps): JSX.Element {
   const [open, setOpen] = createSignal(false);
@@ -51,9 +52,10 @@ export default function Menu(props: MenuProps): JSX.Element {
       class={`relative inline-flex ${props.class ?? ''}`}
     >
       <PopoverButton
-        class="inline-flex items-center gap-1.5 rounded-md border border-line bg-paper px-2.5
-          py-1 text-sm font-medium transition-colors hover:border-leaf hover:text-leaf-dark
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf"
+        class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-3
+          py-1 text-sm font-bold shadow-pop-sm transition-colors hover:border-tide
+          hover:text-tide-dark focus-visible:outline-2 focus-visible:outline-offset-2
+          focus-visible:outline-tide"
       >
         {props.label}
         <span aria-hidden="true">▾</span>
@@ -64,8 +66,8 @@ export default function Menu(props: MenuProps): JSX.Element {
           the side of the screen — and a menu you have to scroll the
           page sideways to read is a menu with nothing in it */}
       <PopoverPanel
-        class="absolute top-full right-0 z-30 mt-1 w-max min-w-44 rounded-lg border border-line
-          bg-paper p-1 shadow-lg shadow-ink/15"
+        class="absolute top-full right-0 z-30 mt-1.5 w-max min-w-44 rounded-xl border-2
+          border-tide bg-paper p-1 shadow-pop"
       >
         <HeadlessMenu class="flex list-none flex-col gap-0.5">
           <For each={props.actions}>

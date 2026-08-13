@@ -18,22 +18,32 @@ import { Button as HeadlessButton } from 'terracotta';
 export type ButtonTone = 'primary' | 'ghost' | 'danger';
 
 const TONES: Record<ButtonTone, string> = {
-  primary: 'border-leaf-dark bg-leaf text-paper hover:bg-leaf-dark hover:text-paper',
-  ghost: 'border-line bg-paper text-ink hover:border-leaf hover:text-leaf-dark',
-  danger: 'border-ember-dark bg-ember text-paper hover:bg-ember-dark hover:text-paper',
+  primary: 'border-leaf-dark bg-leaf text-paper shadow-pop hover:bg-leaf-dark hover:text-paper',
+  ghost: 'border-line bg-paper text-ink shadow-pop hover:border-tide hover:text-tide-dark',
+  danger: 'border-ember-dark bg-ember text-paper shadow-pop hover:bg-ember-dark hover:text-paper',
 };
 
 /**
  * A button that cannot be pressed says so plainly rather than wearing
  * its tone at half strength: a greyed-out green button still reads as
- * the thing to press
+ * the thing to press. It is also flat on the page — nothing to press
+ * means nothing standing up off it
  */
-const DISABLED = 'cursor-default border-line bg-line-soft text-muted hover:border-line';
+const DISABLED =
+  'cursor-default border-line bg-line-soft text-muted shadow-none hover:border-line' +
+  ' active:translate-y-0';
 
+/**
+ * The shape of every button in the game: a thick edge, a round corner
+ * and a hard shadow it drops onto when it is pressed. The press is the
+ * point — a menu of things to do should answer the finger before it
+ * answers the network
+ */
 const BASE =
-  'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-sm font-medium' +
-  ' transition-colors focus-visible:outline-2 focus-visible:outline-offset-2' +
-  ' focus-visible:outline-leaf';
+  'inline-flex items-center gap-1.5 rounded-xl border-2 px-3 py-1.5 text-sm font-bold' +
+  ' transition-[background-color,border-color,color,box-shadow,transform]' +
+  ' active:translate-y-[2px] active:shadow-none focus-visible:outline-2' +
+  ' focus-visible:outline-offset-2 focus-visible:outline-tide';
 
 export interface ButtonProps extends ParentProps {
   onClick?: () => void;

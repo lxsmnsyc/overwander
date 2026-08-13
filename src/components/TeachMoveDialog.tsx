@@ -89,9 +89,10 @@ export function MoveLine(props: { move: Moves }): JSX.Element {
 }
 
 const OPTION =
-  'flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors' +
-  ' border-line bg-paper hover:border-leaf aria-checked:border-leaf aria-checked:bg-leaf-soft' +
-  ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf';
+  'flex cursor-pointer items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm shadow-pop-sm' +
+  ' transition-colors border-line bg-paper hover:border-tide aria-checked:border-leaf' +
+  ' aria-checked:bg-leaf-soft focus-visible:outline-2 focus-visible:outline-offset-2' +
+  ' focus-visible:outline-tide';
 
 export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Element {
   const [forgetting, setForgetting] = createSignal(0);
@@ -269,7 +270,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
           <List>
             <For each={known()}>
               {(move) => (
-                <li class="rounded-lg border border-line bg-paper px-3 py-2 text-sm">
+                <li class="rounded-xl border-2 border-line bg-paper px-3 py-2 text-sm shadow-pop-sm">
                   <MoveLine move={move} />
                 </li>
               )}

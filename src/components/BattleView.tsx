@@ -389,8 +389,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         {/* What the fight is, in the corner it is least in the way */}
         <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
           <span
-            class="rounded-full border border-line bg-paper/95 px-3 py-1 text-sm font-medium
-            shadow-lg shadow-ink/20 backdrop-blur-sm"
+            class="rounded-full border-2 border-tide bg-paper/95 px-3 py-1 text-sm font-bold
+            shadow-pop backdrop-blur-sm"
           >
             {props.active.replay ? 'Replay' : title()}
           </span>
@@ -416,8 +416,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
               role="status"
             >
               <span
-                class="rounded-full border border-line bg-paper/90 px-6 py-3 text-4xl font-semibold
-                  tabular-nums shadow-lg shadow-ink/30 backdrop-blur-sm"
+                class="rounded-full border-4 border-tide bg-paper/90 px-6 py-3 text-4xl
+                  font-extrabold tabular-nums shadow-pop backdrop-blur-sm"
               >
                 {left()}
               </span>

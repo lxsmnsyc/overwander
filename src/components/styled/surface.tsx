@@ -50,9 +50,8 @@ export interface CardProps extends ParentProps {
 export function Card(props: CardProps): JSX.Element {
   return (
     <section
-      class={`flex flex-col gap-2 rounded-panel border border-line bg-paper p-3 sm:p-4 ${
-        props.class ?? ''
-      }`}
+      class={`flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-3 shadow-pop
+        sm:p-4 ${props.class ?? ''}`}
     >
       {props.title == null ? null : <h3>{props.title}</h3>}
       {props.children}

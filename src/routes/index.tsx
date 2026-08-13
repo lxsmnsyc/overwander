@@ -219,11 +219,22 @@ export default function Home(): JSX.Element {
           <div class="flex h-full items-center justify-center px-4">
             <Show when={!auth.loading()} fallback={<Note>Loading session…</Note>}>
               {/* The whole of the game before signing in: what it is,
-                  and the one thing there is to do about it */}
-              <div class="flex w-full max-w-sm flex-col gap-4 text-center">
-                <h1>Poketerra</h1>
-                <Note>Sign in to walk the overworld.</Note>
-                <LoginForm />
+                  and the one thing there is to do about it. It is drawn
+                  as a title screen — the game's own window, with the
+                  name across the top of it — because it is the first
+                  thing anybody sees of the game and a bare form says
+                  nothing about what they are signing in to */}
+              <div
+                class="flex w-full max-w-sm flex-col gap-4 overflow-hidden rounded-panel border-4
+                  border-tide bg-paper text-center shadow-window"
+              >
+                <header class="flex flex-col gap-1 bg-tide px-4 py-4 text-paper">
+                  <h1 class="text-3xl">Poketerra</h1>
+                  <p class="text-sm text-paper/85">Sign in to walk the overworld.</p>
+                </header>
+                <div class="px-4 pb-4">
+                  <LoginForm />
+                </div>
               </div>
             </Show>
           </div>

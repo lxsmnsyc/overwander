@@ -398,8 +398,8 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
       // stretched to the full width of a wide dialog is thirty large
       // squares to sweep the eye across rather than one thing to look
       // at
-      class={`mx-auto my-2 block h-auto w-full max-w-lg rounded-lg border border-line bg-parchment
-        focus-visible:outline-none ${
+      class={`mx-auto my-2 block h-auto w-full max-w-lg rounded-xl border-4 border-tide
+        bg-parchment shadow-pop focus-visible:outline-none ${
           hovered() != null && entryAt(hovered() ?? 0) != null ? 'cursor-pointer' : 'cursor-default'
         }`}
       onMouseMove={(event) => {

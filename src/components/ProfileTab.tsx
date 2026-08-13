@@ -72,7 +72,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                   alt="Avatar"
                   width={64}
                   height={64}
-                  class="size-16 shrink-0 rounded-full border border-line object-cover"
+                  class="size-16 shrink-0 rounded-full border-2 border-tide object-cover"
                 />
               )}
             </Show>

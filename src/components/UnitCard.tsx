@@ -183,8 +183,8 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
   return (
     <li
-      class={`flex w-32 shrink-0 flex-col gap-1 rounded-lg border border-line bg-paper/95 px-2 py-1.5
-        text-left text-xs shadow-sm shadow-ink/10 ${unit().alive ? '' : 'opacity-50 grayscale'}`}
+      class={`flex w-32 shrink-0 flex-col gap-1 rounded-xl border-2 border-line bg-paper/95 px-2
+        py-1.5 text-left text-xs shadow-pop-sm ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
           difference between a party member and the thing killing it is

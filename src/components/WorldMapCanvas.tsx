@@ -219,7 +219,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       }, ${props.originY + Math.floor(props.span / 2)}. Arrow keys pan.`}
       // Blown up from a few hundred pixels, so the chunks stay squares
       // rather than being smeared into each other
-      class="mx-auto block h-auto w-[min(100%,34rem)] rounded-lg border border-line
+      class="mx-auto block h-auto w-[min(100%,34rem)] rounded-xl border-4 border-tide shadow-pop
         [image-rendering:pixelated] focus-visible:outline-none"
       title={naming()}
       onMouseMove={(event) => {

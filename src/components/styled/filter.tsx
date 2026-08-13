@@ -37,11 +37,12 @@ export interface FilterProps<V> {
  * bare `tc-active` attribute of its own rather than a `data-` one, so
  * the variant is written out
  */
-const ACTIVE = '[&[tc-active]]:bg-leaf-soft [&[tc-active]]:text-leaf-dark';
+const ACTIVE = '[&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark';
 
 const OPTION =
-  'cursor-pointer rounded-md px-2 py-1 text-sm transition-colors hover:bg-leaf-soft' +
-  ' aria-selected:bg-leaf aria-selected:text-paper aria-selected:hover:bg-leaf-dark ' +
+  'cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
+  ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-paper' +
+  ' aria-selected:hover:bg-tide-dark ' +
   ACTIVE;
 
 export default function Filter<V>(props: {
@@ -74,9 +75,10 @@ export default function Filter<V>(props: {
     >
       <ListboxLabel class="text-muted">{props.label}</ListboxLabel>
       <ListboxButton
-        class="inline-flex items-center gap-1.5 rounded-md border border-line bg-paper px-2.5
-          py-1 text-sm font-medium transition-colors hover:border-leaf hover:text-leaf-dark
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-leaf"
+        class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-3
+          py-1 text-sm font-bold shadow-pop-sm transition-colors hover:border-tide
+          hover:text-tide-dark focus-visible:outline-2 focus-visible:outline-offset-2
+          focus-visible:outline-tide"
       >
         {showing()}
         <span aria-hidden="true">▾</span>
@@ -84,9 +86,9 @@ export default function Filter<V>(props: {
       {/* Over the list it filters rather than pushing it down the
           page: the rows underneath are what the choice is about */}
       <ListboxOptions
-        class="absolute top-full left-0 z-20 mt-1 flex max-h-64 w-max min-w-full list-none
-          flex-col gap-0.5 overflow-y-auto rounded-lg border border-line bg-paper p-1
-          shadow-lg shadow-ink/15"
+        class="absolute top-full left-0 z-20 mt-1.5 flex max-h-64 w-max min-w-full list-none
+          flex-col gap-0.5 overflow-y-auto rounded-xl border-2 border-tide bg-paper p-1
+          shadow-pop"
       >
         <For each={props.options}>
           {(option) => (

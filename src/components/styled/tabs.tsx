@@ -12,16 +12,21 @@ import { Note } from './feedback';
  * is told and the thing the eye is shown cannot drift apart.
  */
 
+/**
+ * A tab is a tab in a menu screen: the one you are on is filled in and
+ * stands off the bar, the rest are quiet words beside it
+ */
 const TAB =
-  'cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium text-muted transition-colors' +
-  ' hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2' +
-  ' focus-visible:outline-leaf aria-selected:bg-paper aria-selected:text-ink' +
-  ' aria-selected:shadow-sm';
+  'cursor-pointer rounded-lg border-2 border-transparent bg-transparent px-3 py-1 text-sm' +
+  ' font-bold text-muted shadow-none transition-colors hover:border-transparent hover:text-ink' +
+  ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
+  ' focus-visible:outline-tide aria-selected:border-tide-dark aria-selected:bg-tide' +
+  ' aria-selected:text-paper aria-selected:shadow-pop-sm';
 
 export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
   return (
     <TabList
-      class={`flex flex-wrap gap-1 rounded-panel border border-line bg-parchment p-1 ${
+      class={`flex flex-wrap gap-1 rounded-panel border-2 border-line bg-parchment p-1 ${
         props.class ?? ''
       }`}
     >

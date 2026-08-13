@@ -394,7 +394,32 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
     // pokemon barred from one move still comes with four
     .filter((move) => banned?.has(move) !== true);
 
-  return learned.slice(-MOVE_LIMIT);
+  /**
+   * The same move twice is one move.
+   *
+   * A learn set lists a move at every level it is offered at, and
+   * plenty are offered more than once — a Kadabra is handed Confusion
+   * as an evolution move at level 1 and again at 16, and Disable at 1
+   * and again at 20. Taken as a run, that is four slots holding two
+   * moves: half a move set, and a pokemon that cannot do half of what
+   * it looks like it can.
+   *
+   * The **last** of each is what is kept, so the four are still the
+   * four most recently learned
+   */
+  const unique: Moves[] = [];
+  const seen = new Set<Moves>();
+
+  for (let at = learned.length - 1; at >= 0; at--) {
+    const move = learned[at];
+
+    if (!seen.has(move)) {
+      seen.add(move);
+      unique.unshift(move);
+    }
+  }
+
+  return unique.slice(-MOVE_LIMIT);
 }
 
 /**

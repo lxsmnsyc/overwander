@@ -495,10 +495,19 @@ function spawnIndex(spawnId: string): number {
 }
 
 /**
- * Mark an encounter as fled. The key is recomputed from the stored
- * encounter, so a player cannot retire a meeting they never had
+ * Take a spawn out of what this player is shown, for as long as the
+ * window that staged it lasts.
+ *
+ * Two things retire one, and they look the same from the map's side:
+ * a pokemon that **ran off**, and one that was **caught**. Neither is
+ * standing there any more for the player it happened to, and both
+ * leave it standing for everybody else — the spawn belongs to the
+ * shared window, so what changes is only what this player is drawn.
+ *
+ * The key is recomputed from the stored encounter rather than taken
+ * from the caller, so a player cannot retire a meeting they never had
  */
-export async function markFled(uid: string, spawnId: string): Promise<void> {
+export async function retireSpawn(uid: string, spawnId: string): Promise<void> {
   const db = getAdminFirestore();
   const stored = docData(await db.collection(ENCOUNTER_COLLECTION).doc(`${spawnId}:${uid}`).get());
 

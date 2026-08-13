@@ -22,10 +22,12 @@ import registerGen1Moves from '../../src/data/moves/gen-1';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   getBaseSpecies,
+  getRegisteredSpecies,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
 } from '../../src/data/species';
+import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
 import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
@@ -548,6 +550,32 @@ describe('world', () => {
     expect(bossUnits[0].height).toBe(boss.height);
     expect(bossUnits[0].weight).toBe(boss.weight);
     expect(boss.weight).toBe(deriveSize(Species.Articuno, 0x12345678).weight);
+  });
+
+  it('never derives the same move twice', () => {
+    // A learn set lists a move at every level it is offered at, and
+    // Kadabra is offered Confusion at 1 and again at 16, Disable at 1
+    // and again at 20. Run together that is four slots holding two
+    // moves — a pokemon that cannot do half of what its card says
+    const kadabra = deriveMoves(Species.Kadabra, 30);
+
+    expect(new Set(kadabra).size).toBe(kadabra.length);
+
+    // ...and it is the *latest* of each that is kept, so the four are
+    // still the four most recently learned
+    expect(kadabra).toContain(Moves.Psybeam);
+
+    // Every species, at every level one of them can be met at
+    for (const species of getRegisteredSpecies()) {
+      for (const level of [1, 10, 25, 50, MAX_LEVEL]) {
+        const moves = deriveMoves(species, level);
+
+        expect(new Set(moves).size, `${getSpeciesData(species).name} at ${level}`).toBe(
+          moves.length,
+        );
+        expect(moves.length).toBeLessThanOrEqual(MOVE_LIMIT);
+      }
+    }
   });
 
   it('stages a boss without the moves a boss must not have', () => {
@@ -1221,12 +1249,7 @@ describe('world', () => {
 
     // Every window is a whole number of spawn windows, so no landmark
     // ever turns over halfway through the one a player is standing in
-    for (const interval of [
-      LANDMARK_INTERVAL,
-      RAID_INTERVAL,
-      NPC_INTERVAL,
-      NEST_INTERVAL,
-    ]) {
+    for (const interval of [LANDMARK_INTERVAL, RAID_INTERVAL, NPC_INTERVAL, NEST_INTERVAL]) {
       expect(interval % SNAPSHOT_INTERVAL).toBe(0);
       expect(interval).toBeGreaterThanOrEqual(SNAPSHOT_INTERVAL);
     }

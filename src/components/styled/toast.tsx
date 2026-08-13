@@ -43,12 +43,12 @@ const LIFETIME = 4500;
 const STACK = 3;
 
 /**
- * How wide one is allowed to get. Narrower than it was, because they
- * stand **beside** each other rather than under: a column of them grew
- * down the middle of the screen and covered the thing the player was
- * looking at, which is the one place a passing remark must not be
+ * How wide one is allowed to get. They are back to a column, but a
+ * column **in the corner** rather than down the middle: what covered
+ * the board before was a stack of tall centred cards, and what is
+ * stacked now is a line apiece
  */
-const WIDTH = 'w-[min(88vw,18rem)]';
+const WIDTH = 'w-[min(88vw,16rem)]';
 
 export type ToastTone = 'neutral' | 'leaf' | 'ember';
 
@@ -126,22 +126,28 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       // Announced rather than read out on arrival: a toast is
       // something that happened, not something being asked
       role="status"
-      class={`pointer-events-auto relative flex ${WIDTH} shrink-0 flex-col items-center gap-1
-        rounded-panel border-2 px-4 py-3 text-center shadow-pop
-        ${TONES[props.toast.tone ?? 'neutral']}`}
+      // One line, read left to right: what it is, what it says, and
+      // the way to be rid of it. A cache paying three kinds of thing
+      // is three of these rather than one card with a gallery in it
+      class={`pointer-events-auto flex ${WIDTH} shrink-0 items-center gap-2 rounded-panel border-2
+        px-2 py-1.5 text-left shadow-pop ${TONES[props.toast.tone ?? 'neutral']}`}
     >
       <Show when={props.toast.art}>
-        {(art) => <div class="flex items-center justify-center">{art()}</div>}
+        {(art) => <div class="flex shrink-0 items-center justify-center">{art()}</div>}
       </Show>
-      <Show when={props.toast.title}>{(title) => <strong class="text-sm">{title()}</strong>}</Show>
-      <Show when={props.toast.message}>{(said) => <span class="text-sm">{said()}</span>}</Show>
+      <div class="flex min-w-0 grow flex-col">
+        <Show when={props.toast.title}>
+          {(title) => <strong class="truncate text-sm">{title()}</strong>}
+        </Show>
+        <Show when={props.toast.message}>{(said) => <span class="text-sm">{said()}</span>}</Show>
+      </div>
       {/* Nothing has to be pressed — it goes on its own — but a player
           who has read it should not have to wait for it */}
       <button
         type="button"
         aria-label="Dismiss"
-        class="absolute top-1 right-1 rounded-full border-0 bg-transparent px-1.5 py-0 leading-none
-          text-muted shadow-none hover:border-0 hover:text-ember active:translate-y-0"
+        class="shrink-0 rounded-full border-0 bg-transparent px-1.5 py-0 leading-none text-muted
+          shadow-none hover:border-0 hover:text-ember active:translate-y-0"
         onClick={props.onClose}
       >
         ×
@@ -195,19 +201,18 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     <ToastContext.Provider value={{ push, dismiss, toasts }}>
       {props.children}
       <Portal mount={portalHost()}>
-        {/* One band across the top, over everything, and not in the
-            way of a press: only the toasts themselves take the
-            pointer.
+        {/* A column in the **top-left corner**, over everything and
+            not in the way of a press: only the toasts themselves take
+            the pointer.
 
-            A **row** rather than a column. Stacked downwards they
-            marched into the middle of the screen and sat on top of
-            whatever the player was doing — which is the whole problem
-            with a notice that nobody asked for. Side by side they stay
-            a strip along the edge, and the strip scrolls rather than
-            growing when several land at once */}
+            Stacking downwards is what a stack of notices does; what
+            made it unbearable before was doing it down the middle of
+            the screen, on top of the board. In the corner the column
+            is out of the way of the map, of the badges over its other
+            corner, and of the bar along the bottom */}
         <ul
-          class="pointer-events-none fixed inset-x-0 top-3 z-[100] m-0 flex list-none flex-row
-            flex-nowrap items-start justify-center gap-2 overflow-x-auto p-0 px-3"
+          class="pointer-events-none fixed top-3 left-3 z-[100] m-0 flex list-none flex-col
+            items-start gap-2 p-0"
         >
           <For each={toasts()}>
             {(toast) => (

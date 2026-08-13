@@ -11,7 +11,7 @@ import SafariSession, {
 import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/firebase';
 import { consumeItem } from '../server/inventory';
-import { markFled } from '../server/overworld';
+import { retireSpawn } from '../server/overworld';
 import { asStringArray } from './__normalize';
 import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
@@ -67,18 +67,21 @@ export async function countBalls(uid: string): Promise<number> {
  * asks for it once per window and checks every spawn it is about to
  * draw against it
  */
-export async function getFledKeys(uid: string): Promise<Set<string>> {
+export async function getRetiredKeys(uid: string): Promise<Set<string>> {
   const snapshot = await getDoc(doc(getFirebaseFirestore(), FLED_COLLECTION, uid));
 
   return new Set(asStringArray(snapshot.data()?.keys));
 }
 
 /**
- * Whether the encounter already fled from this user; the overworld
- * must not offer it again when true
+ * Whether this encounter is over for this player — it ran off, or it
+ * was caught. The overworld must not offer it again either way
  */
-export async function isEncounterFled(uid: string, encounter: EncounterRecord): Promise<boolean> {
-  return (await getFledKeys(uid)).has(encounterKey(encounter));
+export async function isEncounterRetired(
+  uid: string,
+  encounter: EncounterRecord,
+): Promise<boolean> {
+  return (await getRetiredKeys(uid)).has(encounterKey(encounter));
 }
 
 /**
@@ -121,7 +124,7 @@ async function keepCatch(
  */
 async function retireEncounter(token: string, spawn: string): Promise<void> {
   'use server';
-  await markFled(await requireUid(token), spawn);
+  await retireSpawn(await requireUid(token), spawn);
 }
 
 /**

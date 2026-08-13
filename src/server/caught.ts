@@ -34,6 +34,7 @@ import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
 import { asNumber, asNumberArray, docData } from './read';
+import { retireSpawn } from './overworld';
 
 /**
  * Catch records, written with admin credentials. A catch is the most
@@ -231,6 +232,13 @@ export async function recordCatch(
     await grantCandy(uid, owed, count);
   }
   await mendWithHealBall(uid, ball);
+  // And it is not standing there any more — for this player. The
+  // spawn belongs to the window and the window is everybody's, so it
+  // is retired the same way one that ran off is: left in the world,
+  // left out of what this player is shown. Without it the map went on
+  // drawing a pokemon that is already in the bag, and pressing it
+  // opened an encounter that could never be caught twice
+  await retireSpawn(uid, spawnId);
 
   return id;
 }

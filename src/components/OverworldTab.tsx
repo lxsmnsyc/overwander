@@ -17,7 +17,7 @@ import { RaidKind, type RaidView, canJoinRaids, hostMythicalRaid, peekRaid } fro
 import { savePosition } from '../auth/positions';
 import { enterRocketStop } from '../auth/rockets';
 import type { RocketRecord } from '../auth/rocket-record';
-import { createSafariSession, getFledKeys, isEncounterFled } from '../auth/safari';
+import { createSafariSession, getRetiredKeys, isEncounterRetired } from '../auth/safari';
 import type { NestOffer } from '../server/overworld';
 import {
   claimBerryPatch,
@@ -61,9 +61,9 @@ import PortalDialog from './PortalDialog';
 import NestDialog, { type EggSource, type EggState } from './NestDialog';
 import RaidDialog from './RaidDialog';
 import RocketStopDialog from './RocketStopDialog';
-import ItemStash from './ItemStash';
+import ItemSprite from './ItemSprite';
 import SafariDialog from './SafariDialog';
-import { Badge, Button, Note, Status, useToast } from './styled';
+import { Badge, Button, Note, useToast } from './styled';
 import { GameDialog, useGame } from './game-context';
 
 /**
@@ -110,6 +110,13 @@ const STEP_REPORT_SIZE = 8;
  * presses and each one is not a question about the world
  */
 const REFRESH_DEBOUNCE = 5000;
+
+/**
+ * How big the picture on one of those lines is. Small: the line is
+ * two words wide, and the picture is there to be recognised rather
+ * than admired
+ */
+const ICON_SIZE = 24;
 
 function describeItem(item: Items): string {
   try {
@@ -246,33 +253,43 @@ export default function OverworldTab(): JSX.Element {
   const [chunkY, setChunkY] = createSignal(0);
   const [cellX, setCellX] = createSignal(START_CELL);
   const [cellY, setCellY] = createSignal(START_CELL);
-  const [status, setStatus] = createSignal<string | null>(null);
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
   const toast = useToast();
 
   /**
-   * Say what a landmark just paid out.
-   *
-   * A cache, a patch and a phenomenon all report the same way, and
-   * none of them is a question: what came out of the ground is in the
-   * bag by the time there is anything to say. They used to take the
-   * screen for it, which made a player press a button to acknowledge
-   * something they could not have refused — in the middle of a walk,
-   * with the map behind the dialog
+   * Say something in passing: over the world for a few seconds, and
+   * gone. Nothing here is a question — what a toast reports has
+   * already happened — so nothing waits on it being read
    */
-  const announce = (title: string, empty: string, items: ItemStack[] | null): void => {
-    const found = items != null && items.length > 0;
+  const remark = (message: string, tone?: 'neutral' | 'leaf' | 'ember'): void => {
+    toast.push({ message, tone });
+  };
 
-    toast.push({
-      title,
-      // Only where there is nothing to draw. A cache that paid out
-      // shows what it paid in pictures, and a line naming the same
-      // items underneath them is the same news twice
-      message: found ? undefined : empty,
-      art: found ? <ItemStash items={items} /> : undefined,
-      tone: found ? 'leaf' : 'neutral',
-    });
+  /**
+   * Say what a landmark just paid out: **one line per thing**, and the
+   * thing itself drawn beside its name.
+   *
+   * It used to be one card carrying a gallery of everything at once,
+   * with the landmark's name over the top of it. That is a lot of
+   * screen for a fact that reads "three Poke Balls" — and the name of
+   * the landmark is the thing the player just pressed, so it is the
+   * one part they already know. A stack of short lines says the same
+   * in the corner
+   */
+  const announce = (empty: string, items: ItemStack[] | null): void => {
+    if (items == null || items.length === 0) {
+      remark(empty);
+      return;
+    }
+
+    for (const stack of items) {
+      toast.push({
+        message: `${describeItem(stack.item)} ×${stack.amount}`,
+        art: <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
+        tone: 'leaf',
+      });
+    }
   };
 
   /**
@@ -339,20 +356,19 @@ export default function OverworldTab(): JSX.Element {
    * the Raids tab is where it is fought from
    */
   const callMythical = (snapshot: ChunkSnapshot, item: Items): void => {
-    setStatus(null);
     hostMythicalRaid(snapshot, item)
       .then(async (lobby) => {
         await refetchRelics();
 
         if (lobby == null) {
-          setStatus('That relic called nothing.');
+          remark('That relic called nothing.');
           return;
         }
         game.setRaid(lobby[0]);
         game.setDialog(GameDialog.Raids);
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -386,7 +402,7 @@ export default function OverworldTab(): JSX.Element {
     // the chunk shares one set of rolls whoever publishes them
     visitChunk(getWorld().getChunk(chunkX(), chunkY()), PUBLISHED_SPAWNS, zone).catch(
       (caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       },
     );
   };
@@ -481,7 +497,7 @@ export default function OverworldTab(): JSX.Element {
    */
   const [fled, { refetch: refetchFled }] = createResource(
     () => auth.user()?.uid ?? null,
-    async (uid) => getFledKeys(uid),
+    async (uid) => getRetiredKeys(uid),
   );
 
   const view = (): ChunkView | null => {
@@ -623,7 +639,7 @@ export default function OverworldTab(): JSX.Element {
         // the player is looking at the map rather than at their
         // inventory, and nothing else would tell them
         if (report != null && report.picked.length > 0) {
-          setStatus(`Your buddy picked up ${describeStash(report.picked)}.`);
+          remark(`Your buddy picked up ${describeStash(report.picked)}.`, 'leaf');
         }
       })
       .catch(() => {
@@ -657,7 +673,7 @@ export default function OverworldTab(): JSX.Element {
       movedAt: Date.now(),
     });
     savePosition(chunk, row, x, y).catch((caught: unknown) => {
-      setStatus(caught instanceof Error ? caught.message : String(caught));
+      remark(caught instanceof Error ? caught.message : String(caught), 'ember');
     });
   };
 
@@ -738,8 +754,10 @@ export default function OverworldTab(): JSX.Element {
    * once per player and the safari session opens over it
    */
   const meet = async (user: User, encounter: EncounterRecord): Promise<string | null> => {
-    if (await isEncounterFled(user.uid, encounter)) {
-      return 'Nothing here — it already fled from you.';
+    if (await isEncounterRetired(user.uid, encounter)) {
+      // Either it ran off or it is already in the bag; from the cell's
+      // side those are the same thing — nobody is standing there
+      return 'Nothing here — this one is done with you.';
     }
     setSession(await createSafariSession(user, encounter));
     return null;
@@ -764,17 +782,13 @@ export default function OverworldTab(): JSX.Element {
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
-      announce('Item cache', 'The cache is empty until the next window.', stash);
+      announce('The cache is empty until the next window.', stash);
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(loaded.snapshot, at);
 
-      announce(
-        'Berry patch',
-        'The patch is bare until the next window.',
-        berries == null ? null : [berries],
-      );
+      announce('The patch is bare until the next window.', berries == null ? null : [berries]);
       return null;
     }
     if (landmark === Landmark.WanderingNpc) {
@@ -849,11 +863,7 @@ export default function OverworldTab(): JSX.Element {
         // Shown the way a cache or a patch is shown: something was
         // found, and a player pressing a cell is looking at the cell
         // rather than at the line under the map
-        announce(
-          showing == null ? 'Found' : PHENOMENON_NAMES[showing],
-          'Nothing was left behind.',
-          claim.items,
-        );
+        announce('Nothing was left behind.', claim.items);
         return null;
       }
       if (claim.kind === 'egg') {
@@ -909,7 +919,7 @@ export default function OverworldTab(): JSX.Element {
     createSafariSession(user, waiting)
       .then(setSession)
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   });
 
@@ -945,12 +955,23 @@ export default function OverworldTab(): JSX.Element {
     if (loaded == null || user == null || busy() || !withinReach(index)) {
       return;
     }
-    setStatus(null);
     setBusy(true);
+    // Whatever the cell had to say, said in passing.
+    //
+    // It used to be a line pinned over the bottom of the map, and it
+    // stayed there until the next press — so "nothing there now" from
+    // a phenomenon an hour ago sat under a player who had since walked
+    // half a chunk. Nothing an interaction reports is a question, and
+    // none of it is worth keeping: a toast says it and takes itself
+    // away
     interact(loaded, user, index)
-      .then(setStatus)
+      .then((said) => {
+        if (said != null) {
+          remark(said);
+        }
+      })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       })
       .finally(() => {
         setBusy(false);
@@ -1066,16 +1087,6 @@ export default function OverworldTab(): JSX.Element {
                 )}
               </For>
             </div>
-
-            {/* Whatever just happened, said once over the world and
-                clear of the bar underneath it */}
-            <Show when={status()}>
-              <div class="pointer-events-none absolute inset-x-0 bottom-20 flex justify-center px-4">
-                <div class="pointer-events-auto max-w-md">
-                  <Status message={status()} />
-                </div>
-              </div>
-            </Show>
           </>
         )}
       </Show>
@@ -1092,6 +1103,13 @@ export default function OverworldTab(): JSX.Element {
                 // opens in its place
                 setSession(null);
                 game.setSheet({ catchId });
+                // And it is off the map: a caught pokemon is retired
+                // from this player's world the same way one that ran
+                // off is, so the cell it was standing on is empty
+                // ground now rather than a pokemon already in the bag
+                Promise.resolve(refetchFled()).catch(() => {
+                  // Worst case it is drawn until the window turns over
+                });
               }}
               onClose={() => {
                 setSession(null);
@@ -1151,7 +1169,7 @@ export default function OverworldTab(): JSX.Element {
                 setChunkY(destination.y);
                 setCellX(destination.cell % CHUNK_CELLS);
                 setCellY(Math.floor(destination.cell / CHUNK_CELLS));
-                setStatus(
+                remark(
                   `Through to ${BIOME_NAMES[destination.biome]} — chunk ${destination.x}, ${destination.y}.`,
                 );
                 // A key was spent getting here, so where it got them is

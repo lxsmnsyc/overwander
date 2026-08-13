@@ -182,7 +182,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
             species={isEgg(record()) ? Species.Egg : record().species}
             shiny={!isEgg(record()) && isShiny(record())}
             animation="Idle"
-            direction="down"
+            direction="Down"
             scale={4}
             label={named()}
           />

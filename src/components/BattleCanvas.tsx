@@ -1,9 +1,9 @@
 import { type JSX, onCleanup, onMount } from 'solid-js';
 import type Battle from '../battle/core';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
-import type { SpriteDirection } from '../canvas/species-sprite-animation';
+import type { Point, SpriteDirection } from '../canvas/sprite-sheet';
 import facingToward from '../canvas/facing';
-import loadSpeciesSprite, { floorSlack } from '../canvas/species-sprites';
+import loadSpeciesSprite from '../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
 import { EventPriority } from '../core/event-emitter';
@@ -290,7 +290,7 @@ function ringLayout(
       color: COLORS.boss,
       // The one thing on the field with nothing to look at: it is
       // being looked at, so it faces the viewer
-      facing: 'down',
+      facing: 'Down',
       sprite: spriteFor(unit),
     });
   });
@@ -425,6 +425,34 @@ function drawLabel(
 }
 
 /**
+ * How much bigger than the sheet a pokemon in this slot is drawn
+ */
+function scaleOf(slot: Slot): number {
+  return slot.radius / SPRITE_SCALE_DIVISOR;
+}
+
+/**
+ * Where the pokemon in a slot actually **is** — the middle of its
+ * body, as the sheet marks it on the frame it is holding.
+ *
+ * It is what a move in the air flies at. The slot's own point is the
+ * middle of a circle somebody laid out, and a pokemon drawn on it is
+ * not centred in its own frame: aiming at the circle put a projectile
+ * through the empty half of a tall frame while the pokemon it was
+ * thrown at stood to one side of it. A slot with nothing drawn on it
+ * yet is still a place, and answers with its own middle
+ */
+function bodyOf(slot: Slot): Point {
+  const sprite = slot.sprite;
+  const placed =
+    sprite?.ready === true
+      ? sprite.locate('center', slot.x, slot.y, { scale: scaleOf(slot), anchor: 'center' })
+      : null;
+
+  return placed ?? [slot.x, slot.y];
+}
+
+/**
  * One unit: the circle, what it is, what it has left, and what it is
  * in the middle of doing
  */
@@ -453,18 +481,20 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
       // the same clip, so it is started again rather than held
       restart: sprite.finished && wanted.duration != null,
     });
-    // Feet on the line the circle used to sit on, so nothing else
-    // that measures from the slot has to move.
+    // Its body over the middle of the slot, which is the point
+    // everything else on the field is measured from: the bars, the
+    // name, and whatever is flying at it.
     //
-    // Past that line by the empty band along the bottom of the frame,
-    // or the pokemon stands a sixth of its own height above the
-    // ground with its name and its health bar drawn under its feet
-    const scale = slot.radius / SPRITE_SCALE_DIVISOR;
+    // The sheet says where the body is on the frame it is holding, so
+    // this is the pokemon being centred rather than its box — a
+    // wingspan drawn into the top of a tall frame no longer drags the
+    // pokemon off its own slot. Its shadow goes wherever that leaves
+    // the ground, which on a field is the only thing saying the
+    // pokemon is standing on something
+    const placement = { scale: scaleOf(slot), anchor: 'center' } as const;
 
-    sprite.draw(context, slot.x, slot.y + slot.radius + floorSlack(sprite, scale), {
-      scale,
-      anchor: 'bottom',
-    });
+    sprite.drawShadow(context, slot.x, slot.y, placement);
+    sprite.draw(context, slot.x, slot.y, placement);
   } else {
     context.beginPath();
     context.arc(slot.x, slot.y, slot.radius, 0, Math.PI * 2);
@@ -660,12 +690,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           ROW_TOP,
           bossSide ? BOSS_RADIUS : RADIUS,
           bossSide ? COLORS.boss : COLORS.theirs,
-          'down',
+          'Down',
           spriteFor,
         ),
         // The near side keeps its names to itself: they are on the
         // cards under the field
-        ...layout(field.mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'up', spriteFor, true),
+        ...layout(field.mine, ROW_BOTTOM, RADIUS, COLORS.mine, 'Up', spriteFor, true),
       ];
 
       // Watching a raid from outside it: the whole lobby, drawn around
@@ -693,10 +723,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           if (from == null || to == null) {
             continue;
           }
+          const [fromX, fromY] = bodyOf(from);
+          const [toX, toY] = bodyOf(to);
+
           context.beginPath();
           context.arc(
-            from.x + (to.x - from.x) * flight.share,
-            from.y + (to.y - from.y) * flight.share,
+            fromX + (toX - fromX) * flight.share,
+            fromY + (toY - fromY) * flight.share,
             5,
             0,
             Math.PI * 2,

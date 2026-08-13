@@ -1,4 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
+import { projectCell } from '../src/canvas/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, dialogNamed, dismissGift, expectOpen, signIn } from './game';
@@ -52,7 +53,14 @@ const STEPS = 24;
 const WANDER = 20;
 
 /**
- * Where a cell sits on screen
+ * Where a cell sits on screen.
+ *
+ * Through the game's own projection rather than by dividing the box
+ * into a grid. The board is drawn as a tilted plane — the far rows
+ * are narrower and shallower than the near ones — so an evenly
+ * divided box would aim at the wrong cell everywhere except the
+ * middle. The projection answers in fractions of the picture, which
+ * is exactly what a bounding box turns into pixels
  */
 async function cellAt(world: Locator, index: number): Promise<{ x: number; y: number } | null> {
   const bounds = await world.boundingBox();
@@ -61,11 +69,11 @@ async function cellAt(world: Locator, index: number): Promise<{ x: number; y: nu
     return null;
   }
 
-  const size = { width: bounds.width / CHUNK_CELLS, height: bounds.height / CHUNK_CELLS };
+  const middle = projectCell(index);
 
   return {
-    x: bounds.x + (index % CHUNK_CELLS) * size.width + size.width / 2,
-    y: bounds.y + Math.floor(index / CHUNK_CELLS) * size.height + size.height / 2,
+    x: bounds.x + middle.x * bounds.width,
+    y: bounds.y + middle.y * bounds.height,
   };
 }
 

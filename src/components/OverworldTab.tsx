@@ -550,6 +550,11 @@ export default function OverworldTab(): JSX.Element {
     message: string | null;
   } | null>(null);
   const [taking, setTaking] = createSignal(false);
+  /**
+   * Which way round the board is being looked at. It outlives the
+   * chunk it was turned in
+   */
+  const [yaw, setYaw] = createSignal(0);
 
   /**
    * Take it. The claim is the same call the landmark always made —
@@ -1041,6 +1046,14 @@ export default function OverworldTab(): JSX.Element {
             >
               <ChunkCanvas
                 biome={loaded().biome}
+                // The camera belongs to the player rather than to the
+                // chunk: walking over a boundary swaps the board out
+                // and a camera living down there would face front
+                // again every time
+                yaw={yaw()}
+                onTurn={(turned) => {
+                  setYaw(turned);
+                }}
                 caption={naming(loaded())}
                 player={cell()}
                 landmarks={loaded().landmarks}

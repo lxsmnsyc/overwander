@@ -7,6 +7,8 @@
     "types": ["@solidjs/start/env", "@types/node"],
     "importHelpers": true,
     "declaration": false,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,

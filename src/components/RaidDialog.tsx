@@ -219,7 +219,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                 <SpriteDisplay
                   species={standing().species}
                   animation="Walk"
-                  direction="down-right"
+                  direction="DownRight"
                   scale={4}
                   label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
                 />

@@ -119,7 +119,7 @@ export default function MysteryGiftDialog(props: MysteryGiftDialogProps): JSX.El
                 species={given().species}
                 shiny={given().shiny}
                 animation="Idle"
-                direction="down-left"
+                direction="DownLeft"
                 scale={4}
                 label={describeGiven(given())}
               />

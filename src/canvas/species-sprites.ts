@@ -1,58 +1,42 @@
 import { Species } from '../data/ids/species';
 import SpeciesSpriteAnimation from './species-sprite-animation';
+import asSpriteSheetJSON, { type SpriteSheetJSON } from './sprite-sheet';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
  *
- * The sheets live under `public/sprites/pokemon/{coat}/{species}`,
- * where the coat is `regular` or `shiny` and the folder under it is
- * the species id — so nothing has to keep a table of names beside the
- * enum that already numbers them. Species 0, 1 and 2 are Missingno, an
- * egg and a substitute: things that appear on a field without being
+ * A pokemon is three files, all named after its species id:
+ *
+ * ```
+ * public/sprites/pokemon/regular/1.png
+ * public/sprites/pokemon/shiny/1.png
+ * public/sprites/pokemon/meta/1.json
+ * ```
+ *
+ * so nothing has to keep a table of names beside the enum that already
+ * numbers them. Species 100000, 100001 and 100002 are Missingno, an egg
+ * and a substitute: things that appear on a field without being
  * anybody's pokemon, numbered alongside the rest so they are asked for
- * exactly the same way — the placeholders included, which is why they
- * are numbered a long way past the dex rather than in front of it: a
- * species id **is** its dex number now, and Missingno, an egg and a
- * substitute are not pokemon and have no dex number to take.
+ * exactly the same way — and numbered a long way past the dex rather
+ * than in front of it, because a species id **is** its dex number now
+ * and those three have no dex number to take.
  *
  * The two coats are **siblings** rather than one nested inside the
- * other. A shiny sheet used to live in a `shiny` folder inside the
- * ordinary one, which reads as the shiny belonging to the regular
- * sprite; they are two drawings of the same pokemon, and a directory
- * of every shiny is a thing worth being able to look at on its own.
+ * other. They are two drawings of the same pokemon, and a directory of
+ * every shiny is a thing worth being able to look at on its own. What
+ * they are not is two animations: the description under `meta` is one
+ * file for both, because a shiny is the same frames held for the same
+ * time with the same anchors on them, and two copies of that is two
+ * things to keep in step.
  *
- * Sheets are shared. A sheet is one download and one description; a
- * playhead is not, so a caller gets its own animation cloned off the
- * one loaded copy — six pokemon on a field are six playheads over one
- * image.
+ * Everything is shared as far as it can be. One description is fetched
+ * per pokemon however many coats of it are asked for, one drawing per
+ * coat however many callers want it, and a caller gets its own playhead
+ * cloned off the loaded copy — six pokemon on a field are six playheads
+ * over one image.
  */
 
 export const SPRITE_ROOT = '/sprites/pokemon';
-
-/**
- * How much of a frame's height is empty ground under the pokemon's
- * feet.
- *
- * A sheet is cut as one box per frame with the pokemon standing in
- * the middle of it, so a frame drawn with its bottom edge on a line
- * puts the pokemon well above that line — floating over its own
- * health bar on the field, and leaving a gap between it and its name
- * in a dialog. Every caller that stands a sprite on something takes
- * this off the bottom, which is the same fix in both places because
- * it is the same band of nothing.
- *
- * It is a fraction rather than a number of pixels: the frames are cut
- * at different sizes and drawn at whatever scale the caller wants
- */
-export const FLOOR_SLACK = 0.16;
-
-/**
- * How far past a line a sprite has to be drawn for its feet to land
- * on it, at the scale it is being drawn at
- */
-export function floorSlack(sprite: SpeciesSpriteAnimation, scale: number): number {
-  return sprite.frameSize.height * scale * FLOOR_SLACK;
-}
 
 /**
  * What is drawn when a pokemon has no sheet of its own. Only a
@@ -62,36 +46,90 @@ export function floorSlack(sprite: SpeciesSpriteAnimation, scale: number): numbe
  */
 export const FALLBACK_SPECIES = Species.Missingno;
 
-export function spriteBasePath(species: Species, shiny = false): string {
-  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}`;
+/**
+ * The drawing of one coat of one pokemon
+ */
+export function spriteImagePath(species: Species, shiny = false): string {
+  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}.png`;
 }
 
 /**
- * Every sheet asked for so far, by path. A failed load is remembered
- * as a failure: a pokemon with no sheet should cost one 404, not one
- * per frame
+ * The animation both coats of one pokemon share
+ */
+export function spriteMetaPath(species: Species): string {
+  return `${SPRITE_ROOT}/meta/${species}.json`;
+}
+
+/**
+ * Every description asked for so far, by species. A failure is
+ * remembered as a failure: a pokemon with no description should cost
+ * one 404, not one per frame
+ */
+const DESCRIPTIONS = new Map<Species, Promise<SpriteSheetJSON | null>>();
+
+/**
+ * Every sheet asked for so far, by the path of its drawing
  */
 const SHEETS = new Map<string, Promise<SpeciesSpriteAnimation | null>>();
 
-async function loadSheet(path: string): Promise<SpeciesSpriteAnimation | null> {
+async function loadDescription(species: Species): Promise<SpriteSheetJSON | null> {
   try {
-    const sprite = await SpeciesSpriteAnimation.fetch(path);
+    const response = await fetch(spriteMetaPath(species));
 
-    await sprite.load();
-    return sprite;
+    if (!response.ok) {
+      return null;
+    }
+    return asSpriteSheetJSON(await response.json());
   } catch {
+    // A description that is missing, unreachable or not JSON at all is
+    // a pokemon this build cannot draw. Falling back is the caller's
+    // business, not handling an exception mid-frame
     return null;
   }
 }
 
-async function sheet(path: string): Promise<SpeciesSpriteAnimation | null> {
+async function description(species: Species): Promise<SpriteSheetJSON | null> {
+  const known = DESCRIPTIONS.get(species);
+
+  if (known != null) {
+    return known;
+  }
+
+  const loading = loadDescription(species);
+
+  DESCRIPTIONS.set(species, loading);
+  return loading;
+}
+
+async function loadSheet(species: Species, shiny: boolean): Promise<SpeciesSpriteAnimation | null> {
+  const data = await description(species);
+
+  if (data == null) {
+    return null;
+  }
+
+  try {
+    const sprite = new SpeciesSpriteAnimation(spriteImagePath(species, shiny), data);
+
+    await sprite.load();
+    return sprite;
+  } catch {
+    // The description is there and the drawing is not: that is how a
+    // pokemon with no shiny of its own answers, and the ordinary coat
+    // is tried next
+    return null;
+  }
+}
+
+async function sheet(species: Species, shiny: boolean): Promise<SpeciesSpriteAnimation | null> {
+  const path = spriteImagePath(species, shiny);
   const known = SHEETS.get(path);
 
   if (known != null) {
     return known;
   }
 
-  const loading = loadSheet(path);
+  const loading = loadSheet(species, shiny);
 
   SHEETS.set(path, loading);
   return loading;
@@ -118,19 +156,22 @@ export default async function loadSpeciesSprite(
   species: Species,
   request: SpriteRequest = {},
 ): Promise<SpeciesSpriteAnimation | null> {
-  // A shiny with no shiny sheet is still that pokemon: the ordinary
-  // sheet is a better answer than Missingno
-  const paths =
+  // A shiny with no shiny drawing is still that pokemon: the ordinary
+  // coat is a better answer than Missingno
+  const wanted: [Species, boolean][] =
     request.shiny === true
-      ? [spriteBasePath(species, true), spriteBasePath(species)]
-      : [spriteBasePath(species)];
+      ? [
+          [species, true],
+          [species, false],
+        ]
+      : [[species, false]];
 
   if (request.fallback !== false) {
-    paths.push(spriteBasePath(FALLBACK_SPECIES));
+    wanted.push([FALLBACK_SPECIES, false]);
   }
 
-  for (const path of paths) {
-    const loaded = await sheet(path);
+  for (const [wantedSpecies, shiny] of wanted) {
+    const loaded = await sheet(wantedSpecies, shiny);
 
     if (loaded != null) {
       return loaded.clone();

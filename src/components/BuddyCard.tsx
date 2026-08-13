@@ -162,7 +162,7 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
                   species={isEgg(pair()[1]) ? Species.Egg : pair()[1].species}
                   shiny={!isEgg(pair()[1]) && isShiny(pair()[1])}
                   animation="Walk"
-                  direction="down-left"
+                  direction="DownLeft"
                   scale={2}
                   label={
                     isEgg(pair()[1])

@@ -328,7 +328,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
                     animation="Idle"
-                    direction="down"
+                    direction="Down"
                     scale={4}
                     label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
                   />

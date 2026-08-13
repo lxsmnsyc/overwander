@@ -1258,7 +1258,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     species={isEgg(loaded()) ? Species.Egg : loaded().species}
                     shiny={!isEgg(loaded()) && isShiny(loaded())}
                     animation="Walk"
-                    direction="down-left"
+                    direction="DownLeft"
                     scale={4}
                     label={named()}
                   />

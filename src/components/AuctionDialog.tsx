@@ -168,7 +168,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
               species={isEgg(record()) ? Species.Egg : record().species}
               shiny={!isEgg(record()) && isShiny(record())}
               animation="Idle"
-              direction="down"
+              direction="Down"
               scale={4}
               label={named()}
             />

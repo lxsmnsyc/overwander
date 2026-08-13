@@ -177,7 +177,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                 <SpriteDisplay
                   species={record().species}
                   animation="Idle"
-                  direction="down"
+                  direction="Down"
                   scale={4}
                   label={`${getSpeciesData(record().species).name}, waiting in the lair`}
                 />

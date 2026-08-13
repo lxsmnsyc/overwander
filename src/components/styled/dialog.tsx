@@ -266,9 +266,14 @@ export function DialogSection(
 export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
   return (
     <div
-      class={`flex flex-wrap items-center gap-2 border-t-2 border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM} ${
-        props.center === true ? 'justify-center' : 'justify-end'
-      }`}
+      // One line, whatever is on it. Wrapped, a dialog with three
+      // buttons dropped the last one — usually the way out — onto a
+      // row of its own the moment the panel was a little narrow, which
+      // reads as two bars rather than one and moves the button a
+      // player reaches for without looking. It scrolls sideways
+      // instead, the way the grunt's roster does
+      class={`flex flex-nowrap items-center gap-2 overflow-x-auto border-t-2 border-line-soft pt-4
+        sm:pt-5 ${STUCK_BOTTOM} ${props.center === true ? 'justify-center' : 'justify-end'}`}
     >
       {props.children}
     </div>

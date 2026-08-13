@@ -69,25 +69,31 @@ Versions are in [package.json](../package.json); the exact tree is in
 ## Art
 
 Everything drawn on a canvas lives under `public/sprites`, as sheets of pixel
-art with a `data.json` beside each one describing where the frames are.
+art with a description saying where the frames are.
 
-| Path                             | What it holds                                                                     |
-| -------------------------------- | ---------------------------------------------------------------------------------- |
-| `public/sprites/pokemon/regular` | One folder per species id, each an animated sheet: idle, walk, attack, hurt, sleep |
-| `public/sprites/pokemon/shiny`   | The same species again in their shiny colours                                      |
-| `public/sprites/ui/items`        | Item icons, one sheet per kind — balls, berries, medicine, machines, plates        |
-| `public/sprites/ui/move-categories` | The three marks a move's category is shown by                                    |
+| Path                                | What it holds                                                                       |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `public/sprites/pokemon/regular`    | One `{species}.png` per pokemon, an animated sheet: idle, walk, attack, hurt, sleep |
+| `public/sprites/pokemon/shiny`      | The same pokemon again in their shiny colours                                       |
+| `public/sprites/pokemon/meta`       | One `{species}.json` per pokemon: the animation both coats share, and the anchors   |
+| `public/sprites/ui/items`           | Item icons, one sheet per kind — balls, berries, medicine, machines, plates         |
+| `public/sprites/ui/move-categories` | The three marks a move's category is shown by                                       |
 
 The pokemon sheets are in the **PMD sprite format** — the layout Pokémon Mystery
 Dungeon fan sprite projects use, with eight facing rows per animation and an
-`anims` block naming the frame sizes and durations. `src/canvas/species-sprite-animation.ts`
-reads that format directly, so a sheet from any project that writes it will play
-without conversion. `pnpm compact-sprites` rewrites the PNG containers as
-indexed colour without touching a pixel; it changes bytes, not pictures.
+`anims` block naming the frame sizes and durations. A description under `meta`
+carries that block along with the collection's **anchor points**: per frame, where
+the pokemon's shadow, body, head and hands are. It is one file per pokemon rather
+than one per coat, because a shiny is the same animation in different colours.
+`src/canvas/sprite-sheet.ts` is the whole of that contract and
+`src/canvas/species-sprite-animation.ts` plays it, so a sheet from any project
+that writes the format will play without conversion. `pnpm compact-sprites`
+rewrites the PNG containers as indexed colour without touching a pixel; it
+changes bytes, not pictures.
 
 > **Provenance is not yet recorded, and it must be.** Nothing in this
 > repository says who drew these sheets or under what terms they may be used —
-> not the `data.json` files, which carry no credit field, and not the commits
+> not the descriptions under `meta`, which carry no credit field, and not the commits
 > that added them. Fan sprite collections are typically licensed per sprite,
 > with a named artist for each one and terms that are usually non-commercial,
 > so "MIT, like the rest of the repo" is almost certainly wrong for this

@@ -342,17 +342,23 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
         const sprite = spriteFor(entry);
 
         if (sprite?.ready === true) {
-          sprite.play('Idle', { direction: 'down-left', loop: true });
+          sprite.play('Idle', { direction: 'DownLeft', loop: true });
 
           const { width, height } = sprite.frameSize;
           // Whichever side is longer decides the scale, so the whole
           // frame lands inside the room the square gives it
           const fit = Math.min(SPRITE_ROOM / Math.max(1, width), SPRITE_ROOM / Math.max(1, height));
-
-          sprite.draw(context, x + CELL / 2, y + CELL - SPRITE_BASE, {
+          // Standing on the line the marks are drawn on, rather than
+          // hanging over it: the sheet says which point of the frame
+          // sits on the ground, and this box has a floor for it — the
+          // caught mark goes just under the same line
+          const placement = {
             scale: Math.min(SPRITE_MAX_SCALE, fit),
-            anchor: 'bottom',
-          });
+            anchor: 'shadow',
+          } as const;
+
+          sprite.drawShadow(context, x + CELL / 2, y + CELL - SPRITE_BASE, placement);
+          sprite.draw(context, x + CELL / 2, y + CELL - SPRITE_BASE, placement);
         }
 
         if (entry.egg) {

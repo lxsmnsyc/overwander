@@ -1,7 +1,7 @@
 import { type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
-import type { SpriteDirection } from '../canvas/species-sprite-animation';
-import loadSpeciesSprite, { floorSlack } from '../canvas/species-sprites';
+import type { SpriteDirection } from '../canvas/sprite-sheet';
+import loadSpeciesSprite from '../canvas/species-sprites';
 import type { Species } from '../data/ids/species';
 
 /**
@@ -81,7 +81,7 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
     const wanted = props.animation ?? 'Idle';
 
     drawn.play(drawn.has(wanted) ? wanted : 'Idle', {
-      direction: props.direction ?? 'down',
+      direction: props.direction ?? 'Down',
       loop: true,
     });
 
@@ -100,12 +100,22 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
       frame = requestAnimationFrame(paint);
 
       const { width, height } = drawn.frameSize;
-      // The band of empty ground under the feet, taken off the box and
-      // paid back below it: the picture ends where the pokemon does,
-      // and the pokemon comes down into the space it was floating
-      // above
-      const slack = Math.round(floorSlack(drawn, scale));
-      const room = { width: width * scale, height: height * scale - slack };
+      // The box is the picture rather than the cell it was drawn in.
+      // The frames on a compact sheet are already cropped to what is
+      // lit, and the sheet marks the point that stands on the ground,
+      // so nothing here has to guess at how much empty ground to trim
+      // off the bottom — which is what it used to do, badly, on the
+      // sheets drawn tall enough for a wingspan
+      const feet = drawn.anchor('shadow');
+      const floor = feet == null ? height * scale : (feet[1] + 0.5) * scale;
+      // Room for the picture and for the shadow under it, whichever
+      // reaches lower. On a trimmed sheet they are not the same: a
+      // frame is cropped to what is drawn, so the ground a flying
+      // pokemon casts its shadow on is below the bottom of its frame
+      const room = {
+        width: width * scale,
+        height: Math.max(height * scale, Math.round(floor + drawn.shadowRadius(scale).y + 1)),
+      };
 
       // The canvas is sized from the animation rather than by the
       // caller: a frame is as big as it is, and a box guessed at
@@ -122,10 +132,15 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, room.width, room.height);
-      // Past the bottom of the box by exactly what was trimmed off it,
-      // so the frame lands where it always did and the empty band
-      // falls off the edge
-      drawn.draw(context, room.width / 2, room.height + slack, { scale, anchor: 'bottom' });
+
+      // Standing on the floor of its own box, with the shadow it casts
+      // drawn on it: a picture of a pokemon with nothing under it
+      // reads as a pokemon hanging in the air, and the sheets have
+      // always carried the size of one
+      const placement = { scale, anchor: 'shadow' } as const;
+
+      drawn.drawShadow(context, room.width / 2, floor, placement);
+      drawn.draw(context, room.width / 2, floor, placement);
     };
 
     frame = requestAnimationFrame(paint);

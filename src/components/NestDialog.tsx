@@ -102,7 +102,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
                 <SpriteDisplay
                   species={Species.Egg}
                   animation="Idle"
-                  direction="down"
+                  direction="Down"
                   scale={4}
                   label="An egg"
                 />

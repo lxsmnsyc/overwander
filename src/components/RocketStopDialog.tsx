@@ -104,7 +104,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                         <SpriteDisplay
                           species={entry.species}
                           animation="Idle"
-                          direction="down"
+                          direction="Down"
                           scale={3}
                           label={`${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`}
                         />

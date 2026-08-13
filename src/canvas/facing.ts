@@ -1,4 +1,4 @@
-import type { SpriteDirection } from './species-sprite-animation';
+import type { SpriteDirection } from './sprite-sheet';
 
 /**
  * Which way a sprite has to look to be looking at something else.
@@ -19,14 +19,14 @@ const TAU = Math.PI * 2;
  * system whose y grows downward
  */
 const FACING_BY_OCTANT: SpriteDirection[] = [
-  'right',
-  'down-right',
-  'down',
-  'down-left',
-  'left',
-  'up-left',
-  'up',
-  'up-right',
+  'Right',
+  'DownRight',
+  'Down',
+  'DownLeft',
+  'Left',
+  'UpLeft',
+  'Up',
+  'UpRight',
 ];
 
 export default function facingToward(

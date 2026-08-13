@@ -1,7 +1,7 @@
 import { type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import type { SpriteDirection } from '../canvas/species-sprite-animation';
-import loadSpeciesSprite from '../canvas/species-sprites';
+import loadSpeciesSprite, { floorSlack } from '../canvas/species-sprites';
 import type { Species } from '../data/ids/species';
 
 /**
@@ -100,7 +100,12 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
       frame = requestAnimationFrame(paint);
 
       const { width, height } = drawn.frameSize;
-      const room = { width: width * scale, height: height * scale };
+      // The band of empty ground under the feet, taken off the box and
+      // paid back below it: the picture ends where the pokemon does,
+      // and the pokemon comes down into the space it was floating
+      // above
+      const slack = Math.round(floorSlack(drawn, scale));
+      const room = { width: width * scale, height: height * scale - slack };
 
       // The canvas is sized from the animation rather than by the
       // caller: a frame is as big as it is, and a box guessed at
@@ -117,7 +122,10 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, room.width, room.height);
-      drawn.draw(context, room.width / 2, room.height, { scale, anchor: 'bottom' });
+      // Past the bottom of the box by exactly what was trimmed off it,
+      // so the frame lands where it always did and the empty band
+      // falls off the edge
+      drawn.draw(context, room.width / 2, room.height + slack, { scale, anchor: 'bottom' });
     };
 
     frame = requestAnimationFrame(paint);

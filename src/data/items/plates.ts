@@ -70,6 +70,10 @@ export default function registerPlates(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      // A plate is not named for its type — a Fist Plate is Fighting
+      // — so the picture is taken from the plate's own first word,
+      // which is what the `plates` sheet names them by
+      icon: `plates/${(NAMES[item] ?? '').split(' ')[0].toLowerCase()}`,
       flags: ItemFlags.Holdable,
       buy: 0,
       sell: PLATE_RESALE,

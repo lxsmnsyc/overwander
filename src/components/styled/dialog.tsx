@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, createEffect, onCleanup } from 'solid-js';
+import { type JSX, type ParentProps, onCleanup, onMount } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import {
   DialogOverlay,
@@ -36,16 +36,29 @@ const WIDTHS: Record<DialogWidth, string> = {
 
 const PANEL =
   'fixed left-1/2 top-[8%] max-h-[84vh] -translate-x-1/2 overflow-y-auto rounded-panel' +
-  ' border border-line bg-paper p-4 text-left shadow-2xl shadow-ink/25 sm:p-5';
+  ' border border-line bg-paper px-4 text-left shadow-2xl shadow-ink/25 sm:px-5';
 
 /**
- * The panel's own padding, undone and put back on a child.
+ * The panel's vertical padding, which lives on the **content** rather
+ * than on the panel.
+ *
+ * A sticky element is bounded by its containing block, and the panel's
+ * own padding is outside the flex column the children are in — so a
+ * bar stuck to the bottom stopped at the end of the content and left a
+ * strip of panel below it with the list scrolling through the gap. Put
+ * the padding inside the column and the bars can cover it, which is
+ * what makes them read as the edges of the panel rather than as
+ * something floating near them
+ */
+const INSET = 'py-4 sm:py-5';
+
+/**
+ * The panel's side padding, undone and put back on a child.
  *
  * A bar stuck to the top or the bottom of a scrolling panel has to
- * reach the edges of it, or the content slides through the strip of
- * padding beside it; and it has to carry that padding itself, or it
- * sits flush against the border. Pulling the margin out and paying it
- * back as padding does both, and leaves the element where it was
+ * reach the sides of it, or the content slides through the strip of
+ * padding beside it. Pulling the margin out and paying it back as
+ * padding does that, and leaves the element where it was
  */
 const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
 
@@ -142,35 +155,32 @@ export interface DialogProps extends ParentProps {
  * opens with what it is and what it is for; the rest is the caller's
  */
 export function Dialog(props: DialogProps): JSX.Element {
-  let panel: HTMLDivElement | undefined;
-
   /**
-   * Escape closes it, wherever the keyboard happens to be.
+   * The panel's contents — **our** element, not terracotta's.
    *
-   * Terracotta closes on Escape only while the focus is inside the
-   * panel, and the focus does not stay there: the page behind redraws
-   * — a chunk window arriving, a record re-read — and whatever had it
-   * loses it to the document body. From there Escape reached nothing,
-   * and a dialog a player had opened could only be closed by finding
-   * its button.
+   * The obvious thing is a `ref` on `DialogPanel`, and it is the thing
+   * that broke this: terracotta does not forward one, so the variable
+   * stayed null, the test below could never pass, and the handler
+   * never fired once. Escape only ever worked when terracotta answered
+   * it itself, which it does only while the focus is still inside the
+   * panel — and the focus is exactly what does not stay there when the
+   * page behind redraws.
    *
-   * Only the topmost dialog answers. A catch sheet opened over the
-   * profile is what the key means, and closing the profile out from
-   * under it would take the sheet with it
+   * A ref on a plain `div` is a ref the compiler writes itself, and
+   * the dialog it belongs to is whatever `[tc-dialog]` it sits inside
    */
-  createEffect(() => {
-    if (!props.isOpen) {
-      return;
-    }
+  let inside: HTMLDivElement | undefined;
 
+  onMount(() => {
     const onKey = (event: KeyboardEvent): void => {
       const dialogs = [...document.querySelectorAll('[tc-dialog]')];
 
       if (
+        !props.isOpen ||
         event.key !== 'Escape' ||
         event.defaultPrevented ||
-        panel == null ||
-        dialogs.at(-1)?.contains(panel) !== true
+        inside == null ||
+        dialogs.at(-1)?.contains(inside) !== true
       ) {
         return;
       }
@@ -188,20 +198,13 @@ export function Dialog(props: DialogProps): JSX.Element {
     <Portal mount={portalHost()}>
       <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
         <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
-        <DialogPanel
-          // Assigned rather than handed over: a bare `ref` reads as a
-          // variable nothing ever writes to
-          ref={(element: HTMLDivElement) => {
-            panel = element;
-          }}
-          class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}
-        >
-          <div class="flex flex-col gap-3">
+        <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+          <div ref={inside} class={`flex flex-col gap-3 ${INSET}`}>
             <header
               class={
                 props.quiet === true
                   ? 'sr-only'
-                  : `flex flex-col gap-1 border-b border-line-soft pb-2 ${STUCK_TOP}`
+                  : `flex flex-col gap-1 border-b border-line-soft pb-4 sm:pb-5 ${STUCK_TOP}`
               }
             >
               {/* A heading rather than bold text: it is what a screen
@@ -233,9 +236,11 @@ export function Dialog(props: DialogProps): JSX.Element {
  * A run of related things inside a dialog — a list and the sentence
  * above it — set apart from the run before it
  */
-export function DialogSection(props: ParentProps & { title?: string }): JSX.Element {
+export function DialogSection(
+  props: ParentProps & { title?: string; class?: string },
+): JSX.Element {
   return (
-    <section class="flex flex-col gap-2">
+    <section class={`flex flex-col gap-2 ${props.class ?? ''}`}>
       {props.title == null ? null : <h3>{props.title}</h3>}
       {props.children}
     </section>
@@ -251,7 +256,7 @@ export function DialogSection(props: ParentProps & { title?: string }): JSX.Elem
 export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
   return (
     <div
-      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-3 ${STUCK_BOTTOM} ${
+      class={`flex flex-wrap items-center gap-2 border-t border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM} ${
         props.center === true ? 'justify-center' : 'justify-end'
       }`}
     >

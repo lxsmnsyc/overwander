@@ -26,6 +26,12 @@ export const SHEET = 'Pokemon Info';
  */
 export const GIFT = 'Mystery Gift';
 
+/**
+ * And what the second half of a giving is called: the pokemon is the
+ * congratulation, and what came with it is its own notice
+ */
+export const ROAD = 'For the road';
+
 export interface Player {
   email: string;
   password: string;
@@ -148,7 +154,14 @@ export async function dismissGift(page: Page): Promise<void> {
   const thanks = page.getByRole('button', { name: 'Thanks' });
 
   await expect(thanks).toBeVisible({ timeout: CLAIMED });
-  await thanks.click();
+
+  // A giving is two notices — the pokemon, then what came with it —
+  // and a spec that only wanted the world back has to see both off.
+  // Bounded rather than looped on the button alone, so a Thanks that
+  // stopped closing anything fails here instead of spinning
+  for (let step = 0; step < 3 && (await thanks.isVisible()); step++) {
+    await thanks.click();
+  }
   await expect(thanks).toBeHidden();
 }
 
@@ -175,7 +188,10 @@ export async function openBox(page: Page): Promise<Locator> {
   // forever for something that was never there
   await profile.getByRole('tab', { name: 'Catches' }).click();
 
-  const box = profile.locator('canvas');
+  // By its own name rather than "the canvas in the profile". The
+  // profile draws more than one now — the buddy card has a sprite of
+  // its own — and a bare `canvas` lookup matches both
+  const box = profile.getByRole('application', { name: /^Box of pokemon/ });
 
   await expect(box).toBeVisible();
   return box;

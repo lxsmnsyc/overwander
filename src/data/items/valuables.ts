@@ -11,6 +11,7 @@ export default function registerValuables(): void {
   registerItem(Items.Pearl, {
     name: 'Pearl',
     type: ItemTypes.Valuable,
+    icon: 'valuables/pearl',
     flags: 0,
     buy: 0,
     sell: 1400,
@@ -18,6 +19,7 @@ export default function registerValuables(): void {
   registerItem(Items.Stardust, {
     name: 'Stardust',
     type: ItemTypes.Valuable,
+    icon: 'valuables/stardust',
     flags: 0,
     buy: 0,
     sell: 2000,
@@ -25,6 +27,7 @@ export default function registerValuables(): void {
   registerItem(Items.BigPearl, {
     name: 'Big Pearl',
     type: ItemTypes.Valuable,
+    icon: 'valuables/big-pearl',
     flags: 0,
     buy: 0,
     sell: 7500,
@@ -32,6 +35,7 @@ export default function registerValuables(): void {
   registerItem(Items.StarPiece, {
     name: 'Star Piece',
     type: ItemTypes.Valuable,
+    icon: 'valuables/star-piece',
     flags: 0,
     buy: 0,
     sell: 9800,
@@ -40,6 +44,7 @@ export default function registerValuables(): void {
   registerItem(Items.Nugget, {
     name: 'Nugget',
     type: ItemTypes.Valuable,
+    icon: 'valuables/nugget',
     flags: 0,
     buy: 0,
     sell: 10000,

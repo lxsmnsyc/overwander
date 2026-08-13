@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
   SpawnRarity,
   boostFamilyWeights,
@@ -53,6 +55,7 @@ import registerItems, {
   ITEM_TYPE_ORDER,
   getItemData,
   getTeachableMoves,
+  listItemsByType,
 } from '../src/data/items';
 import { WING_STATS, isWing } from '../src/data/items/wings';
 import {
@@ -1359,6 +1362,74 @@ describe('item data', () => {
     // A buddy holds it; nothing ever consumes it
     expect(charm.flags & ItemFlags.Holdable).not.toBe(0);
     expect(charm.flags & ItemFlags.Consumable).toBe(0);
+  });
+});
+
+describe('item icons', () => {
+  /**
+   * The shipped sheets, read once and asked about by every item.
+   *
+   * They are read off disk rather than mocked because the whole point
+   * of the test is that the two halves agree: an item names a picture
+   * in `src/data/items`, and the picture either exists under
+   * `public/sprites/ui/items` or it does not. Several families derive
+   * the name from the item's own — a berry from its name, a machine
+   * from its move's type — so a new berry or a new type is exactly
+   * the sort of thing that would name a picture nobody drew
+   */
+  const sheets = new Map<string, Set<string>>();
+
+  function pictures(sheet: string): Set<string> {
+    const known = sheets.get(sheet);
+
+    if (known != null) {
+      return known;
+    }
+
+    let names: Set<string>;
+
+    try {
+      const data = asBasicSpriteData(
+        JSON.parse(readFileSync(`public/sprites/ui/items/${sheet}/data.json`, 'utf8')),
+      );
+
+      names = new Set(data.images.map((image) => image.name.replace(/\.png$/, '')));
+    } catch {
+      // A sheet that is not there answers as an empty one, so the
+      // failure below names the item rather than throwing out of the
+      // whole test
+      names = new Set();
+    }
+    sheets.set(sheet, names);
+    return names;
+  }
+
+  it('gives every registered item a picture that exists', () => {
+    const items = ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
+
+    expect(items.length).toBeGreaterThan(100);
+
+    for (const item of items) {
+      const data = getItemData(item);
+      const cut = data.icon.lastIndexOf('/');
+
+      expect(cut, `${data.name} names no sheet`).toBeGreaterThan(0);
+      expect(
+        pictures(data.icon.slice(0, cut)).has(data.icon.slice(cut + 1)),
+        `${data.name} wants ${data.icon}, which is not on the sheet`,
+      ).toBe(true);
+    }
+  });
+
+  it('draws a machine in the colours of the move it teaches', () => {
+    // The machines are generated rather than written out, so their
+    // pictures are too: one per type, and a move of a type nothing
+    // has drawn would be a machine with no picture
+    for (const move of getTeachableMoves()) {
+      expect(getItemData(getMachineItem(move)).icon).toBe(
+        `tm/${TYPE_NAMES[getMoveData(move).type].toLowerCase()}`,
+      );
+    }
   });
 });
 

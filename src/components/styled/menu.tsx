@@ -58,8 +58,13 @@ export default function Menu(props: MenuProps): JSX.Element {
         {props.label}
         <span aria-hidden="true">▾</span>
       </PopoverButton>
+      {/* Hung from the button's right edge rather than its left.
+          The button that opens it is pinned to the right of a dialog
+          header, so a panel laid out rightwards from there runs off
+          the side of the screen — and a menu you have to scroll the
+          page sideways to read is a menu with nothing in it */}
       <PopoverPanel
-        class="absolute top-full left-0 z-30 mt-1 w-max min-w-44 rounded-lg border border-line
+        class="absolute top-full right-0 z-30 mt-1 w-max min-w-44 rounded-lg border border-line
           bg-paper p-1 shadow-lg shadow-ink/15"
       >
         <HeadlessMenu class="flex list-none flex-col gap-0.5">

@@ -86,7 +86,7 @@ export default defineConfig({
     {
       // Through a launcher, which clears away the Java emulator a
       // previous run may have orphaned before starting a fresh set
-      command: `node e2e/emulators.ts ${PROJECT_ID}`,
+      command: `node scripts/emulators.ts ${PROJECT_ID}`,
       /**
        * Waited on at the **auth** emulator rather than at Firestore.
        *

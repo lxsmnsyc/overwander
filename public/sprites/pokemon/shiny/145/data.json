@@ -1,0 +1,349 @@
+{
+  "sheet": {
+    "width": 2800,
+    "height": 2688,
+    "images": [
+      {
+        "name": "Hop",
+        "x": 0,
+        "y": 0,
+        "width": 560,
+        "height": 1088
+      },
+      {
+        "name": "Emit",
+        "x": 560,
+        "y": 0,
+        "width": 960,
+        "height": 1024
+      },
+      {
+        "name": "Double",
+        "x": 1520,
+        "y": 0,
+        "width": 1280,
+        "height": 960
+      },
+      {
+        "name": "Shoot",
+        "x": 0,
+        "y": 1088,
+        "width": 1008,
+        "height": 896
+      },
+      {
+        "name": "Hurt",
+        "x": 1008,
+        "y": 1088,
+        "width": 160,
+        "height": 832
+      },
+      {
+        "name": "Charge",
+        "x": 1168,
+        "y": 1088,
+        "width": 560,
+        "height": 768
+      },
+      {
+        "name": "Idle",
+        "x": 1728,
+        "y": 1088,
+        "width": 224,
+        "height": 768
+      },
+      {
+        "name": "Walk",
+        "x": 1952,
+        "y": 1088,
+        "width": 224,
+        "height": 768
+      },
+      {
+        "name": "Rotate",
+        "x": 2176,
+        "y": 1088,
+        "width": 504,
+        "height": 704
+      },
+      {
+        "name": "Swing",
+        "x": 0,
+        "y": 1984,
+        "width": 720,
+        "height": 704
+      },
+      {
+        "name": "Attack",
+        "x": 720,
+        "y": 1984,
+        "width": 880,
+        "height": 704
+      },
+      {
+        "name": "Sleep",
+        "x": 1520,
+        "y": 960,
+        "width": 112,
+        "height": 48
+      }
+    ]
+  },
+  "anims": {
+    "shadowSize": 2,
+    "anims": [
+      {
+        "name": "Rotate",
+        "frameHeight": 88,
+        "frameWidth": 56,
+        "index": 12,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Rotate"
+      },
+      {
+        "name": "Charge",
+        "frameHeight": 96,
+        "frameWidth": 56,
+        "index": 11,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Charge"
+      },
+      {
+        "name": "Hop",
+        "frameHeight": 136,
+        "frameWidth": 56,
+        "index": 10,
+        "durations": [
+          2,
+          1,
+          2,
+          3,
+          4,
+          4,
+          3,
+          2,
+          1,
+          2
+        ],
+        "target": "Hop"
+      },
+      {
+        "name": "Double",
+        "frameHeight": 120,
+        "frameWidth": 80,
+        "index": 9,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Double"
+      },
+      {
+        "name": "Swing",
+        "frameHeight": 88,
+        "frameWidth": 80,
+        "index": 8,
+        "durations": [
+          2,
+          1,
+          2,
+          2,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "target": "Swing"
+      },
+      {
+        "name": "Idle",
+        "frameHeight": 96,
+        "frameWidth": 56,
+        "index": 7,
+        "durations": [
+          8,
+          10,
+          8,
+          10
+        ],
+        "target": "Idle"
+      },
+      {
+        "name": "Hurt",
+        "frameHeight": 104,
+        "frameWidth": 80,
+        "index": 6,
+        "durations": [
+          2,
+          8
+        ],
+        "target": "Hurt"
+      },
+      {
+        "name": "Sleep",
+        "frameHeight": 48,
+        "frameWidth": 56,
+        "index": 5,
+        "durations": [
+          30,
+          35
+        ],
+        "target": "Sleep"
+      },
+      {
+        "name": "Emit",
+        "frameHeight": 128,
+        "frameWidth": 80,
+        "index": 4,
+        "durations": [
+          2,
+          2,
+          2,
+          6,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Emit"
+      },
+      {
+        "name": "Shoot",
+        "frameHeight": 112,
+        "frameWidth": 72,
+        "index": 3,
+        "durations": [
+          2,
+          2,
+          2,
+          6,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Shoot"
+      },
+      {
+        "name": "Attack",
+        "frameHeight": 88,
+        "frameWidth": 80,
+        "index": 1,
+        "durations": [
+          2,
+          2,
+          4,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "Walk",
+        "frameHeight": 96,
+        "frameWidth": 56,
+        "index": 0,
+        "durations": [
+          6,
+          6,
+          6,
+          6
+        ],
+        "target": "Walk"
+      },
+      {
+        "name": "Strike",
+        "frameHeight": 88,
+        "frameWidth": 80,
+        "index": 2,
+        "durations": [
+          2,
+          2,
+          4,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "SpAttack",
+        "frameHeight": 128,
+        "frameWidth": 80,
+        "index": 4,
+        "durations": [
+          2,
+          2,
+          2,
+          6,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Emit"
+      }
+    ]
+  }
+}

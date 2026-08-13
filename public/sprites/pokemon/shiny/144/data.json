@@ -1,0 +1,362 @@
+{
+  "sheet": {
+    "width": 3624,
+    "height": 2880,
+    "images": [
+      {
+        "name": "Hop",
+        "x": 0,
+        "y": 0,
+        "width": 880,
+        "height": 1152
+      },
+      {
+        "name": "Hurt",
+        "x": 880,
+        "y": 0,
+        "width": 128,
+        "height": 960
+      },
+      {
+        "name": "Swing",
+        "x": 1008,
+        "y": 0,
+        "width": 1080,
+        "height": 960
+      },
+      {
+        "name": "Double",
+        "x": 2088,
+        "y": 0,
+        "width": 1536,
+        "height": 960
+      },
+      {
+        "name": "Attack",
+        "x": 0,
+        "y": 1152,
+        "width": 880,
+        "height": 960
+      },
+      {
+        "name": "Shoot",
+        "x": 880,
+        "y": 1152,
+        "width": 1976,
+        "height": 832
+      },
+      {
+        "name": "Charge",
+        "x": 2856,
+        "y": 1152,
+        "width": 720,
+        "height": 768
+      },
+      {
+        "name": "RearUp",
+        "x": 0,
+        "y": 2112,
+        "width": 1360,
+        "height": 768
+      },
+      {
+        "name": "Idle",
+        "x": 1360,
+        "y": 2112,
+        "width": 352,
+        "height": 704
+      },
+      {
+        "name": "Walk",
+        "x": 1712,
+        "y": 2112,
+        "width": 352,
+        "height": 704
+      },
+      {
+        "name": "Rotate",
+        "x": 2064,
+        "y": 2112,
+        "width": 792,
+        "height": 576
+      },
+      {
+        "name": "Sleep",
+        "x": 2088,
+        "y": 960,
+        "width": 112,
+        "height": 48
+      }
+    ]
+  },
+  "anims": {
+    "shadowSize": 2,
+    "anims": [
+      {
+        "name": "Rotate",
+        "frameHeight": 72,
+        "frameWidth": 88,
+        "index": 12,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Rotate"
+      },
+      {
+        "name": "Charge",
+        "frameHeight": 96,
+        "frameWidth": 72,
+        "index": 11,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Charge"
+      },
+      {
+        "name": "Hop",
+        "frameHeight": 144,
+        "frameWidth": 88,
+        "index": 10,
+        "durations": [
+          2,
+          1,
+          2,
+          3,
+          4,
+          4,
+          3,
+          2,
+          1,
+          2
+        ],
+        "target": "Hop"
+      },
+      {
+        "name": "Double",
+        "frameHeight": 120,
+        "frameWidth": 96,
+        "index": 9,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Double"
+      },
+      {
+        "name": "Swing",
+        "frameHeight": 120,
+        "frameWidth": 120,
+        "index": 8,
+        "durations": [
+          2,
+          1,
+          2,
+          2,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "target": "Swing"
+      },
+      {
+        "name": "Idle",
+        "frameHeight": 88,
+        "frameWidth": 88,
+        "index": 7,
+        "durations": [
+          8,
+          10,
+          8,
+          16
+        ],
+        "target": "Idle"
+      },
+      {
+        "name": "Hurt",
+        "frameHeight": 120,
+        "frameWidth": 64,
+        "index": 6,
+        "durations": [
+          2,
+          8
+        ],
+        "target": "Hurt"
+      },
+      {
+        "name": "Sleep",
+        "frameHeight": 48,
+        "frameWidth": 56,
+        "index": 5,
+        "durations": [
+          30,
+          35
+        ],
+        "target": "Sleep"
+      },
+      {
+        "name": "RearUp",
+        "frameHeight": 96,
+        "frameWidth": 80,
+        "index": 4,
+        "durations": [
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "RearUp"
+      },
+      {
+        "name": "Shoot",
+        "frameHeight": 104,
+        "frameWidth": 104,
+        "index": 3,
+        "durations": [
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          6,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Shoot"
+      },
+      {
+        "name": "Attack",
+        "frameHeight": 120,
+        "frameWidth": 88,
+        "index": 1,
+        "durations": [
+          2,
+          2,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "Walk",
+        "frameHeight": 88,
+        "frameWidth": 88,
+        "index": 0,
+        "durations": [
+          8,
+          10,
+          8,
+          10
+        ],
+        "target": "Walk"
+      },
+      {
+        "name": "Strike",
+        "frameHeight": 120,
+        "frameWidth": 88,
+        "index": 2,
+        "durations": [
+          2,
+          2,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "SpAttack",
+        "frameHeight": 96,
+        "frameWidth": 80,
+        "index": 4,
+        "durations": [
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "RearUp"
+      }
+    ]
+  }
+}

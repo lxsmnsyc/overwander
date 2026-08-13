@@ -25,6 +25,7 @@ export default function registerCandyItems(): void {
   registerItem(Items.ExpShare, {
     name: 'Exp. Share',
     type: ItemTypes.Held,
+    icon: 'key/exp-share',
     flags: ItemFlags.Holdable | ItemFlags.Marketable,
     buy: CANDY_ITEM_PRICE,
     sell: CANDY_ITEM_PRICE * CANDY_ITEM_RESALE,
@@ -33,6 +34,7 @@ export default function registerCandyItems(): void {
   registerItem(Items.LuckyEgg, {
     name: 'Lucky Egg',
     type: ItemTypes.Held,
+    icon: 'held/lucky-egg',
     flags: ItemFlags.Holdable | ItemFlags.Marketable,
     buy: CANDY_ITEM_PRICE,
     sell: CANDY_ITEM_PRICE * CANDY_ITEM_RESALE,

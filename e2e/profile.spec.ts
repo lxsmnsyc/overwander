@@ -33,7 +33,7 @@ test.describe('the profile', () => {
 
     await profile.getByRole('tab', { name: 'Catches' }).click();
 
-    const box = profile.locator('canvas');
+    const box = profile.getByRole('application', { name: /^Box of pokemon/ });
 
     await expect(box).toBeVisible();
 

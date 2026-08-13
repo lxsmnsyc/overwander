@@ -99,6 +99,12 @@ pnpm emulators   # in one terminal: auth on 9099, firestore on 8080, UI on 4000
 pnpm dev         # in another
 ```
 
+`pnpm emulators` clears up after itself before it starts. The Firebase CLI runs
+Firestore as a separate Java process, and a run cut short with Ctrl-C regularly
+leaves that process holding its ports with nothing driving it — which used to
+mean the next start died on `port taken` and had to be untangled by hand. A set
+that is still answering is left alone and said so; only wreckage is cleared.
+
 Point the app at them by uncommenting the emulator block at the bottom of
 `.env.example` in your `.env`. The web config above it can stay blank — an
 emulated run fills in its own, because a developer who has no project has nothing

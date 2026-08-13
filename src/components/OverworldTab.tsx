@@ -54,13 +54,14 @@ import type SafariSession from '../overworld/safari';
 import { spawnKey } from '../overworld/safari';
 import ChunkCanvas from './ChunkCanvas';
 import watchLive from './watch';
-import NoticeDialog from './NoticeDialog';
 import NpcDialog from './NpcDialog';
 import PortalDialog from './PortalDialog';
+import NestDialog from './NestDialog';
 import RaidDialog from './RaidDialog';
 import RocketStopDialog from './RocketStopDialog';
+import ItemStash from './ItemStash';
 import SafariDialog from './SafariDialog';
-import { Badge, Button, Note, Status } from './styled';
+import { Badge, Button, Note, Status, useToast } from './styled';
 import { GameDialog, useGame } from './game-context';
 
 /**
@@ -130,6 +131,17 @@ function describeStash(stash: ItemStack[]): string {
     return parts[0] ?? 'nothing';
   }
   return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
+/**
+ * Where a chunk is, in the words the game names it by: the country
+ * and the two numbers that pick it out of the world. It is said on
+ * the bar along the bottom of the screen and told to a screen reader
+ * as the name of the board, which is the same fact twice and so is
+ * written once
+ */
+function naming(chunk: ChunkView): string {
+  return `${BIOME_NAMES[chunk.biome]} (${chunk.x}, ${chunk.y})`;
 }
 
 interface ChunkView {
@@ -227,6 +239,31 @@ export default function OverworldTab(): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
+  const toast = useToast();
+
+  /**
+   * Say what a landmark just paid out.
+   *
+   * A cache, a patch and a phenomenon all report the same way, and
+   * none of them is a question: what came out of the ground is in the
+   * bag by the time there is anything to say. They used to take the
+   * screen for it, which made a player press a button to acknowledge
+   * something they could not have refused — in the middle of a walk,
+   * with the map behind the dialog
+   */
+  const announce = (title: string, empty: string, items: ItemStack[] | null): void => {
+    const found = items != null && items.length > 0;
+
+    toast.push({
+      title,
+      // Only where there is nothing to draw. A cache that paid out
+      // shows what it paid in pictures, and a line naming the same
+      // items underneath them is the same news twice
+      message: found ? undefined : empty,
+      art: found ? <ItemStash items={items} /> : undefined,
+      tone: found ? 'leaf' : 'neutral',
+    });
+  };
 
   /**
    * Whether an interaction is in flight, so a second click on the
@@ -259,16 +296,19 @@ export default function OverworldTab(): JSX.Element {
    */
   const [portal, setPortal] = createSignal<number | null>(null);
   /**
-   * What a landmark just paid out, as a heading and a sentence, until
-   * the player has said they have seen it
-   */
-  const [found, setFound] = createSignal<[string, string] | null>(null);
-  /**
    * The lair the player is standing in front of, and what it holds.
    * Looking at one stages nothing — the dialog's button is where a
    * lobby is opened or joined
    */
-  const [lair, setLair] = createSignal<[number, RaidView] | null>(null);
+  const [lair, setLair] = createSignal<[number, RaidView | null] | null>(null);
+  /**
+   * What the lair dialog says when there is nothing standing in it
+   */
+  const [lairReason, setLairReason] = createSignal<string | null>(null);
+  /**
+   * What a nest just gave up, until the player has seen it
+   */
+  const [nest, setNest] = createSignal<{ found: boolean; said: string } | null>(null);
 
   /**
    * The raid items the player carries, each with what it calls. They
@@ -456,6 +496,21 @@ export default function OverworldTab(): JSX.Element {
         );
   };
 
+  // Where they are, said on the bar at the bottom of the screen. The
+  // bar is a sibling of the world rather than a child of it, so the
+  // words are published upwards and cleared on the way out — a battle
+  // takes the page, and the place under it is not where the player is
+  // standing any more
+  createEffect(() => {
+    const standing = view();
+
+    game.setPlace(standing == null ? null : naming(standing));
+  });
+
+  onCleanup(() => {
+    game.setPlace(null);
+  });
+
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
 
   /**
@@ -636,23 +691,17 @@ export default function OverworldTab(): JSX.Element {
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
-      setFound([
-        'Item cache',
-        stash == null
-          ? 'The cache is empty until the next window.'
-          : `Found ${describeStash(stash)}.`,
-      ]);
+      announce('Item cache', 'The cache is empty until the next window.', stash);
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(loaded.snapshot, at);
 
-      setFound([
+      announce(
         'Berry patch',
-        berries == null
-          ? 'The patch is bare until the next window.'
-          : `Picked ${describeStash([berries])}.`,
-      ]);
+        'The patch is bare until the next window.',
+        berries == null ? null : [berries],
+      );
       return null;
     }
     if (landmark === Landmark.WanderingNpc) {
@@ -670,10 +719,15 @@ export default function OverworldTab(): JSX.Element {
       const egg = await claimNest(loaded.snapshot, at);
 
       // What is in it is not on offer: an egg shows nothing about
-      // itself until it has been carried far enough to open
-      return egg == null
-        ? 'The nest is bare until tomorrow.'
-        : 'An egg is lying in the nest. Walk with it to hatch it.';
+      // itself until it has been carried far enough to open. It is
+      // still shown — a nest a player pressed answers where they are
+      // looking rather than under the map
+      setNest(
+        egg == null
+          ? { found: false, said: 'The nest is bare until tomorrow.' }
+          : { found: true, said: 'An egg is lying in the nest.' },
+      );
+      return null;
     }
     if (landmark === Landmark.Phenomenon) {
       const showing = loaded.snapshot.getPhenomena().get(at);
@@ -688,10 +742,11 @@ export default function OverworldTab(): JSX.Element {
         // Shown the way a cache or a patch is shown: something was
         // found, and a player pressing a cell is looking at the cell
         // rather than at the line under the map
-        setFound([
+        announce(
           showing == null ? 'Found' : PHENOMENON_NAMES[showing],
-          `Left behind: ${describeStash(claim.items)}.`,
-        ]);
+          'Nothing was left behind.',
+          claim.items,
+        );
         return null;
       }
       if (claim.kind === 'egg') {
@@ -729,13 +784,15 @@ export default function OverworldTab(): JSX.Element {
       // leaves no lobby standing behind them
       const standing = await peekRaid(loaded.snapshot, at, kind);
 
-      if (standing == null) {
-        // Either the window stages no raid here, it has been cleared,
-        // or there is nothing standing and nothing to stage it with
-        return (await canJoinRaids(user.uid))
-          ? 'The lair is quiet right now.'
-          : 'You need a pokemon of your own to raid — you can only watch a raid already under way.';
-      }
+      // Either the window stages no raid here, it has been cleared, or
+      // there is nothing standing and nothing to stage it with. The
+      // dialog opens for all of it: a player who pressed a lair is
+      // looking at the lair, not at the line under the map
+      setLairReason(
+        standing != null || (await canJoinRaids(user.uid))
+          ? 'The lair is quiet right now — nothing has come out of it this window.'
+          : 'You need a pokemon of your own to raid. You can watch one already under way.',
+      );
       setLair([at, standing]);
       return null;
     }
@@ -869,7 +926,7 @@ export default function OverworldTab(): JSX.Element {
             >
               <ChunkCanvas
                 biome={loaded().biome}
-                caption={`${BIOME_NAMES[loaded().biome]} (${loaded().x}, ${loaded().y})`}
+                caption={naming(loaded())}
                 player={cell()}
                 landmarks={loaded().landmarks}
                 spawns={
@@ -953,13 +1010,6 @@ export default function OverworldTab(): JSX.Element {
                 });
               }}
             />
-            <NoticeDialog
-              title={found()?.[0] ?? 'Found'}
-              message={found()?.[1] ?? null}
-              onClose={() => {
-                setFound(null);
-              }}
-            />
             <RocketStopDialog
               user={user()}
               challenge={challenge()}
@@ -975,9 +1025,17 @@ export default function OverworldTab(): JSX.Element {
                 setWanderer(null);
               }}
             />
+            <NestDialog
+              message={nest()?.said ?? null}
+              found={nest()?.found === true}
+              onClose={() => {
+                setNest(null);
+              }}
+            />
             <RaidDialog
               snapshot={view()?.snapshot ?? null}
               lair={lair()}
+              reason={lairReason()}
               onClose={() => {
                 setLair(null);
               }}

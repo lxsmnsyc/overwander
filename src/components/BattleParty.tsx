@@ -53,6 +53,17 @@ const CARD_EVENTS = [
   BattleEvents.UnitStartCooldown,
   BattleEvents.UnitUpdateCooldown,
   BattleEvents.UnitFinishCooldown,
+  // What it is winding up, and how far along it is. These tick as
+  // often as the cooldowns do, and without them the bar for the move
+  // being cast would appear, sit still and vanish
+  BattleEvents.UnitCast,
+  BattleEvents.UnitUpdateCast,
+  BattleEvents.UnitFinishCast,
+  BattleEvents.UnitStopCast,
+  BattleEvents.UnitChannel,
+  BattleEvents.UnitUpdateChannel,
+  BattleEvents.UnitFinishChannel,
+  BattleEvents.UnitStopChannel,
   BattleEvents.UnitSetLevel,
   BattleEvents.UnitSetSpecies,
   BattleEvents.UnitSetAppearance,
@@ -156,6 +167,24 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
   };
 
   onMount(() => {
+    /**
+     * The battle this row hung its listeners on, held rather than
+     * re-read.
+     *
+     * Cleanup must not touch props. This one did, and it is what made
+     * leaving a battle look like a button that did nothing: the view
+     * above passes `instance().battle`, leaving clears `instance`, and
+     * the disposal that follows read the prop again and found null.
+     * The `TypeError` was thrown **inside** Solid's `cleanNode`, so the
+     * teardown stopped half-done and the battle stayed on screen —
+     * which is exactly the shape of "Leave does nothing".
+     *
+     * A component being disposed is being disposed whatever its props
+     * say by then. What it has to undo is what it actually did, so
+     * that is what is kept
+     */
+    const battle = props.battle;
+
     const onCardEvent = (event: BaseEvent): void => {
       batch(() => {
         for (const unit of unitsOf(event)) {
@@ -165,22 +194,22 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     };
 
     const onRosterEvent = (): void => {
-      setParty(readParty(props.battle, props.player, props.theirs === true));
+      setParty(readParty(battle, props.player, props.theirs === true));
     };
 
     for (const event of CARD_EVENTS) {
-      props.battle.on(event, EventPriority.Post, onCardEvent);
+      battle.on(event, EventPriority.Post, onCardEvent);
     }
     for (const event of ROSTER_EVENTS) {
-      props.battle.on(event, EventPriority.Post, onRosterEvent);
+      battle.on(event, EventPriority.Post, onRosterEvent);
     }
 
     onCleanup(() => {
       for (const event of CARD_EVENTS) {
-        props.battle.off(event, EventPriority.Post, onCardEvent);
+        battle.off(event, EventPriority.Post, onCardEvent);
       }
       for (const event of ROSTER_EVENTS) {
-        props.battle.off(event, EventPriority.Post, onRosterEvent);
+        battle.off(event, EventPriority.Post, onRosterEvent);
       }
     });
   });
@@ -193,7 +222,12 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
       // Named, because there are two of these rows in a fight between
       // two trainers and they are otherwise the same list twice
       aria-label={props.theirs === true ? 'The other side' : 'Your party'}
-      class="m-0 flex list-none flex-row flex-wrap items-end justify-center gap-2 p-0"
+      // `items-stretch` rather than `items-end`: a card carries a row
+      // of status squares only while it has a status, so a party
+      // where one pokemon is poisoned drew one tall card and five
+      // short ones. Stretched, every card in the row is as tall as
+      // the tallest and the moves line up across the party
+      class="m-0 flex list-none flex-row flex-wrap items-stretch justify-center gap-2 p-0"
     >
       <For each={party()}>{(unit) => <UnitCard unit={unit} revision={revisionOf(unit)} />}</For>
     </ul>

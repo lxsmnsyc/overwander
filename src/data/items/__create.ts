@@ -6,6 +6,23 @@ export interface ItemData {
   type: ItemTypes;
 
   /**
+   * Which picture the game draws for it, as `sheet/name`.
+   *
+   * The sheets live under `public/sprites/ui/items/{sheet}` — a
+   * `data.json` naming where each picture sits and an `image.png`
+   * holding them — so `balls/poke` is the `poke` picture on the
+   * `balls` sheet. It is written here, beside the price and the
+   * flags, rather than in a table of its own: an item added without a
+   * picture would otherwise be an item that quietly draws nothing,
+   * and the field being required is what makes that impossible.
+   *
+   * A few items name a picture drawn for something else, because the
+   * sheets do not have one of their own for them. Those say so where
+   * they are registered
+   */
+  icon: string;
+
+  /**
    * ItemFlags bitfield
    */
   flags: number;
@@ -22,6 +39,23 @@ export interface ItemData {
    * and nothing else: nuggets and pearls are carried for it
    */
   sell: number;
+}
+
+/**
+ * The picture an item's own name points at.
+ *
+ * The sheets are cut from the same source the names come from, so a
+ * "Never-Melt Ice" is `never-melt-ice` and an "Exp. Share" is
+ * `exp-share`: lower case, and every run of anything that is not a
+ * letter or a digit becomes one dash. Families whose sheet names them
+ * after something else — a Fist Plate is on the `plates` sheet rather
+ * than a `fighting` one — write their own instead of calling this
+ */
+export function nameToIcon(sheet: string, name: string): string {
+  return `${sheet}/${name
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/^-|-$/g, '')}`;
 }
 
 const ITEM_DATA = new Map<Items, ItemData>();

@@ -21,8 +21,10 @@ import {
 } from '../auth/raids';
 import { type TeamRecord, getTeam } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
+import { RAID_BOSS_LEVEL } from '../overworld/raid';
 import SpriteDisplay from './SpriteDisplay';
 import TeamPickerDialog from './TeamPickerDialog';
+import TypeBadge from './TypeBadge';
 import matches from '../core/search';
 import {
   Badge,
@@ -90,6 +92,30 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     props.onTitle?.(record == null ? null : getRaidTitle(record));
   });
 
+  /**
+   * Whether this lobby has ever been seen. It is not a signal: nothing
+   * renders from it, and it is only here to tell "not loaded yet" from
+   * "gone"
+   */
+  let arrived = false;
+
+  // A lobby the last party walked out of is deleted, and it can be
+  // deleted while this player is standing in it — watching, or waiting
+  // for a host who has just left. What is left to look at is nothing,
+  // so the panel goes back to the list of lobbies rather than sitting
+  // on "Loading raid…" for a raid that no longer exists
+  createEffect(() => {
+    const record = raid();
+
+    if (record != null) {
+      arrived = true;
+      return;
+    }
+    if (arrived) {
+      game.setRaid(null);
+    }
+  });
+
   onCleanup(() => {
     props.onTitle?.(null);
   });
@@ -144,14 +170,32 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                 panel's own heading, so the picture says the one thing
                 the name cannot */}
             <div class="flex flex-col items-center gap-1 text-center">
-              <SpriteDisplay
-                species={record().species}
-                animation="Idle"
-                direction="down"
-                scale={4}
-                label={`${getSpeciesData(record().species).name}, waiting in the lair`}
-              />
-              <span class="font-medium">{getSpeciesData(record().species).name}</span>
+              {/* Feet on the floor of the box rather than in the
+                  middle of one: a tall boss and a short one put their
+                  name on the same line that way */}
+              <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
+                <SpriteDisplay
+                  species={record().species}
+                  animation="Idle"
+                  direction="down"
+                  scale={4}
+                  label={`${getSpeciesData(record().species).name}, waiting in the lair`}
+                />
+              </div>
+              {/* Named the way the lair named it — the level first,
+                  because a raid boss is fought at the cap whoever it
+                  is, and that is the number a player is sizing their
+                  party against */}
+              <span class="font-medium">
+                Lv. {RAID_BOSS_LEVEL} {getSpeciesData(record().species).name}
+              </span>
+              {/* And what it fights as, for the same reason the lair
+                  says it: the party is picked against these */}
+              <div class="flex flex-wrap justify-center gap-1">
+                <For each={getSpeciesData(record().species).types}>
+                  {(type) => <TypeBadge type={type} />}
+                </For>
+              </div>
               <Badge tone={isHost() ? 'leaf' : 'neutral'}>
                 {isHost() ? 'You are hosting' : 'Waiting for the host'}
               </Badge>

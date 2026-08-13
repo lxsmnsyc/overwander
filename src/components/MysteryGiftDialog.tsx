@@ -1,11 +1,10 @@
-import { For, type JSX, Show } from 'solid-js';
-import { type CatchGift, GiftKind, type MysteryGift } from '../auth/gift-record';
+import { type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../auth/gift-record';
 import getSigil from '../data/constants/sigil';
-import type { Items } from '../data/ids/items';
-import { getItemData } from '../data/items';
 import { getSpeciesData } from '../data/species';
+import ItemStash from './ItemStash';
 import SpriteDisplay from './SpriteDisplay';
-import { Badge, Button, Dialog, DialogActions, Meta } from './styled';
+import { Button, Dialog, DialogActions, Meta } from './styled';
 
 /**
  * A mystery gift, shown once and dismissed.
@@ -18,9 +17,14 @@ import { Badge, Button, Dialog, DialogActions, Meta } from './styled';
  * closing it changes nothing. So it has one button, and the button
  * says thank you rather than yes.
  *
- * It is laid out the way the catch sheet lays the same pokemon out —
- * the sprite, its level and name under that, the sigil under that —
- * so the first sight of it and every later one agree.
+ * It is **two** notices rather than one. A first giving is a pokemon
+ * *and* twenty Poke Balls, and those are not the same news: one is
+ * the thing a new player is being congratulated on, and the other is
+ * what they will need to catch the next one. Shown together, the balls
+ * were a row of grey badges under a sprite — read as a footnote to the
+ * pokemon, when they are the reason the world is playable at all. So
+ * the pokemon is shown, thanked for, and then what came with it is
+ * shown in its own right, with the pictures the bag draws it by.
  */
 
 export interface MysteryGiftDialogProps {
@@ -29,10 +33,6 @@ export interface MysteryGiftDialogProps {
    */
   gifts: MysteryGift[];
   onClose: () => void;
-}
-
-function describeItem(item: Items, amount: number): string {
-  return `${getItemData(item).name} × ${amount}`;
 }
 
 /**
@@ -46,16 +46,41 @@ function describeGiven(given: CatchGift): string {
 export default function MysteryGiftDialog(props: MysteryGiftDialogProps): JSX.Element {
   /**
    * The pokemon of the giving, if there is one. It is the thing the
-   * dialog is about — everything else that came with it is written
-   * underneath in a line
+   * first notice is about
    */
   const pokemon = (): CatchGift | null =>
     props.gifts.find((gift): gift is CatchGift => gift.kind === GiftKind.Catch) ?? null;
 
   /**
-   * What a screen reader is told the dialog is for. It says in one
-   * sentence what the panel says in four lines, since a reader has no
-   * sprite to look at
+   * And everything else, which is the second
+   */
+  const items = (): ItemGift[] =>
+    props.gifts.filter((gift): gift is ItemGift => gift.kind === GiftKind.Item);
+
+  /**
+   * Whether the pokemon has been thanked for yet. A giving with no
+   * pokemon in it starts past that point, so the bag is the only
+   * notice a player who was handed balls alone ever sees
+   */
+  const [thanked, setThanked] = createSignal(false);
+
+  // A new giving starts at the beginning of itself. The component is
+  // not rebuilt between them — the same one is handed a new list — so
+  // a second gift would otherwise open on the step the last one ended
+  createEffect(() => {
+    if (props.gifts.length > 0) {
+      setThanked(false);
+    }
+  });
+
+  const showingCatch = (): boolean => props.gifts.length > 0 && !thanked() && pokemon() != null;
+  const showingItems = (): boolean =>
+    props.gifts.length > 0 && (thanked() || pokemon() == null) && items().length > 0;
+
+  /**
+   * What a screen reader is told the first panel is for. It says in
+   * one sentence what the panel says in four lines, since a reader has
+   * no sprite to look at
    */
   const summary = (): string => {
     const given = pokemon();
@@ -65,20 +90,31 @@ export default function MysteryGiftDialog(props: MysteryGiftDialogProps): JSX.El
       : `Congratulations! You received a ${describeGiven(given)}.`;
   };
 
-  return (
-    <Dialog
-      isOpen={props.gifts.length > 0}
-      onClose={props.onClose}
-      title="Mystery Gift"
-      terse
-      description={summary()}
-    >
-      <div class="flex flex-col items-center gap-3 py-2 text-center">
-        <p class="text-lg font-semibold">Congratulations!</p>
+  /**
+   * Done with whichever notice is up. The pokemon hands over to the
+   * bag; the bag is the end of it
+   */
+  const next = (): void => {
+    if (showingCatch() && items().length > 0) {
+      setThanked(true);
+      return;
+    }
+    props.onClose();
+  };
 
+  return (
+    <>
+      <Dialog
+        isOpen={showingCatch()}
+        onClose={next}
+        title="Mystery Gift"
+        terse
+        description={summary()}
+      >
         <Show when={pokemon()}>
           {(given) => (
-            <>
+            <div class="flex flex-col items-center gap-2 text-center">
+              <p class="text-lg font-semibold">Congratulations!</p>
               <SpriteDisplay
                 species={given().species}
                 shiny={given().shiny}
@@ -96,27 +132,35 @@ export default function MysteryGiftDialog(props: MysteryGiftDialogProps): JSX.El
                   {getSigil(given().individualValue, given().traitValue)}
                 </Meta>
               </div>
-            </>
+            </div>
           )}
         </Show>
+        <DialogActions center>
+          <Button tone="primary" onClick={next}>
+            Thanks
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* And whatever came along with it, which is not what the
-            player is being congratulated on */}
-        <div class="flex flex-wrap justify-center gap-2">
-          <For each={props.gifts}>
-            {(gift) => (
-              <Show when={gift.kind === GiftKind.Item ? gift : null}>
-                {(item) => <Badge>{describeItem(item().item, item().amount)}</Badge>}
-              </Show>
-            )}
-          </For>
+      {/* And what came with it, in its own right rather than as a
+          footnote under a sprite */}
+      <Dialog
+        isOpen={showingItems()}
+        onClose={props.onClose}
+        title="For the road"
+        terse
+        description="What came with the gift has been put in your bag."
+      >
+        <div class="flex flex-col items-center gap-2 text-center">
+          <ItemStash items={items()} />
+          <Meta>It is in your bag.</Meta>
         </div>
-      </div>
-      <DialogActions center>
-        <Button tone="primary" onClick={props.onClose}>
-          Thanks
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogActions center>
+          <Button tone="primary" onClick={props.onClose}>
+            Thanks
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

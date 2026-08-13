@@ -1,3 +1,4 @@
+import { TYPE_NAMES } from '../constants/types';
 import { ItemFlags, ItemTypes, getMachineItem } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import { MoveCategories } from '../ids/moves';
@@ -63,6 +64,10 @@ export default function registerMachines(): void {
     registerItem(getMachineItem(move), {
       name: `TM ${getMoveData(move).name}`,
       type: ItemTypes.Machine,
+      // A machine is drawn in the colours of the move it teaches,
+      // which is the whole of what a machine looks like: the `tm`
+      // sheet holds one per type
+      icon: `tm/${TYPE_NAMES[getMoveData(move).type].toLowerCase()}`,
       // A machine is used on a pokemon and spent by the teaching
       flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy,

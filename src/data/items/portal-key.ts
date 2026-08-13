@@ -26,6 +26,9 @@ export default function registerPortalKey(): void {
   registerItem(Items.PortalKey, {
     name: 'Portal Key',
     type: ItemTypes.KeyItem,
+    // The sheets have no portal key; a key stone is the nearest
+    // thing they draw
+    icon: 'key/key-stone',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,

@@ -1,15 +1,25 @@
-import type { Species } from '../data/ids/species';
+import { Species } from '../data/ids/species';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
  *
- * The sheets live under `public/sprites/pokemon/{species}` — the
- * folder is the species id, so nothing has to keep a table of names
- * beside the enum that already numbers them. Species 0, 1 and 2 are
- * Missingno, an egg and a substitute: things that appear on a field
- * without being anybody's pokemon, numbered alongside the rest so
- * they are asked for exactly the same way.
+ * The sheets live under `public/sprites/pokemon/{coat}/{species}`,
+ * where the coat is `regular` or `shiny` and the folder under it is
+ * the species id — so nothing has to keep a table of names beside the
+ * enum that already numbers them. Species 0, 1 and 2 are Missingno, an
+ * egg and a substitute: things that appear on a field without being
+ * anybody's pokemon, numbered alongside the rest so they are asked for
+ * exactly the same way — the placeholders included, which is why they
+ * are numbered a long way past the dex rather than in front of it: a
+ * species id **is** its dex number now, and Missingno, an egg and a
+ * substitute are not pokemon and have no dex number to take.
+ *
+ * The two coats are **siblings** rather than one nested inside the
+ * other. A shiny sheet used to live in a `shiny` folder inside the
+ * ordinary one, which reads as the shiny belonging to the regular
+ * sprite; they are two drawings of the same pokemon, and a directory
+ * of every shiny is a thing worth being able to look at on its own.
  *
  * Sheets are shared. A sheet is one download and one description; a
  * playhead is not, so a caller gets its own animation cloned off the
@@ -20,15 +30,40 @@ import SpeciesSpriteAnimation from './species-sprite-animation';
 export const SPRITE_ROOT = '/sprites/pokemon';
 
 /**
+ * How much of a frame's height is empty ground under the pokemon's
+ * feet.
+ *
+ * A sheet is cut as one box per frame with the pokemon standing in
+ * the middle of it, so a frame drawn with its bottom edge on a line
+ * puts the pokemon well above that line — floating over its own
+ * health bar on the field, and leaving a gap between it and its name
+ * in a dialog. Every caller that stands a sprite on something takes
+ * this off the bottom, which is the same fix in both places because
+ * it is the same band of nothing.
+ *
+ * It is a fraction rather than a number of pixels: the frames are cut
+ * at different sizes and drawn at whatever scale the caller wants
+ */
+export const FLOOR_SLACK = 0.16;
+
+/**
+ * How far past a line a sprite has to be drawn for its feet to land
+ * on it, at the scale it is being drawn at
+ */
+export function floorSlack(sprite: SpeciesSpriteAnimation, scale: number): number {
+  return sprite.frameSize.height * scale * FLOOR_SLACK;
+}
+
+/**
  * What is drawn when a pokemon has no sheet of its own. Only a
  * handful are drawn so far, and the rest of the dex has to look like
  * *something* — Missingno is what the game has always shown when it
  * did not know what to show
  */
-export const FALLBACK_SPECIES = 0 as Species;
+export const FALLBACK_SPECIES = Species.Missingno;
 
 export function spriteBasePath(species: Species, shiny = false): string {
-  return shiny ? `${SPRITE_ROOT}/${species}/shiny` : `${SPRITE_ROOT}/${species}`;
+  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}`;
 }
 
 /**

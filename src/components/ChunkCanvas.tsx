@@ -1,5 +1,4 @@
 import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
-import drawCaption from '../canvas/caption';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../canvas/species-sprites';
 import { BIOME_COLORS } from '../data/biome';
@@ -85,10 +84,12 @@ export interface ChunkCanvasProps {
    */
   biome: Biome;
   /**
-   * What to write in the corner: where this is, in a few words. It is
-   * drawn into the picture rather than set above it, since the two
-   * things it says — the ground and the coordinates — are things
-   * about the picture and nothing else on the page needs them
+   * Where this is, in a few words.
+   *
+   * Nothing draws it any more — it is on the bar along the bottom of
+   * the screen, where it costs the world nothing — but the picture is
+   * still the thing being named, so it is still what a screen reader
+   * is told this canvas is
    */
   caption: string;
   /**
@@ -344,7 +345,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
-      drawCaption(context, props.caption);
+      // Nothing is written on the board. The chunk used to caption
+      // itself in a corner of the picture, which cost four cells of
+      // the world to say something that never changes while the
+      // player is standing in it — it is on the bar at the bottom
+      // now, where the rest of the game's furniture is
 
       // A border while the keyboard is in here. It is not decoration:
       // the walk keys only work while this has focus, so whether it

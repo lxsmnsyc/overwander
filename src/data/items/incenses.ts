@@ -75,6 +75,9 @@ export default function registerIncenses(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      // The `incense` sheet names them by the word in front of the
+      // word "Incense": a Sea Incense is `sea`
+      icon: `incense/${(NAMES[item] ?? '').split(' ')[0].toLowerCase()}`,
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
       buy: INCENSE_PRICE,
       sell: INCENSE_PRICE * INCENSE_RESALE,

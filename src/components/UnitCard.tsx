@@ -2,7 +2,8 @@
 // Object.keys hands back as strings; the assertions below put the enum
 // type back on them
 // oxlint-disable typescript/no-unsafe-type-assertion
-import { For, type JSX, Show, createMemo } from 'solid-js';
+import { For, Index, type JSX, Show, createMemo } from 'solid-js';
+import type { ProgressData } from '../battle/events';
 import type Unit from '../battle/unit';
 import { Stats } from '../data/constants/stats';
 import { Statuses } from '../data/ids/status';
@@ -92,6 +93,22 @@ const STATUS_NAMES: Record<Statuses, string> = {
  */
 const MOVE_SLOTS = 4;
 
+/**
+ * How far along a timed thing is, as a fraction of itself. Everything
+ * the engine times — a cooldown coming back, a move being wound up —
+ * counts up to its own duration, so they are all read the same way.
+ * Nothing timed at all is finished by definition: a move that is not
+ * cooling is a move that can be thrown now
+ */
+function fractionOf(progress: ProgressData | undefined): number {
+  if (progress == null) {
+    return 1;
+  }
+  return progress.duration <= 0
+    ? 1
+    : Math.min(1, Math.max(0, progress.progress / progress.duration));
+}
+
 export interface UnitCardProps {
   unit: Unit;
   /**
@@ -109,6 +126,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
    */
   const view = createMemo(() => {
     const unit = props.unit;
+    // The one thing being cast or channelled, read as a picture of
+    // this instant rather than as the engine's own object: the state
+    // is mutated in place and swapped out under us, and a card holding
+    // the object would be showing a cast that finished a second ago
+    const acting = unit.casting ?? unit.channeling;
 
     return {
       at: props.revision(),
@@ -117,25 +139,41 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
       statuses: (Object.keys(unit.status) as unknown as Statuses[]).filter(
         (status) => unit.status[status] != null,
       ),
-      moves: Object.values(unit.moves).slice(0, MOVE_SLOTS),
+      /**
+       * The four boxes, each already reduced to what it draws.
+       *
+       * Reduced **here**, in the memo, rather than read out of the
+       * move state in the markup. That is what was wrong with the
+       * cooldown bars: a `For` hands its callback the item as a plain
+       * value, so `move.cooldown` inside the row was read exactly once
+       * — the row had nothing reactive in it to re-run, and every bar
+       * sat at whatever width it had the moment the card was built.
+       * The numbers underneath were moving the whole time
+       */
+      moves: Object.values(unit.moves)
+        .slice(0, MOVE_SLOTS)
+        .map((move) => ({
+          name: getMoveData(move.move).name,
+          disabled: move.disabled,
+          ready: fractionOf(move.cooldown),
+        })),
+      /**
+       * What it is in the middle of doing, if anything. A move being
+       * wound up is the one thing on a card that says what is about
+       * to happen rather than what has already happened
+       */
+      acting:
+        acting == null
+          ? null
+          : {
+              name: getMoveData(acting.move).name,
+              channelling: unit.channeling != null,
+              done: fractionOf(acting.time),
+            },
     };
   });
 
   const unit = (): Unit => view().unit;
-
-  /**
-   * How ready a move is, as a fraction. One that is not cooling is
-   * ready, which is a full box; one that is cooling fills as it comes
-   * back, so a glance at the grid says what can be thrown right now
-   */
-  const readiness = (cooldown: { progress: number; duration: number } | undefined): number => {
-    if (cooldown == null) {
-      return 1;
-    }
-    return cooldown.duration <= 0
-      ? 1
-      : Math.min(1, Math.max(0, cooldown.progress / cooldown.duration));
-  };
 
   const health = (): number => {
     const max = view().maxHealth;
@@ -173,26 +211,60 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         </span>
       </div>
 
+      {/* What it is doing right now, which is the one line on the card
+          about the next second rather than the last one. The room is
+          held whether or not anything is being wound up: a card that
+          grew a line every time its pokemon threw a move would push
+          the whole party up and down the screen all fight */}
+      <div class="flex h-4 flex-col justify-center">
+        <Show when={view().acting}>
+          {(acting) => (
+            <div
+              class="relative overflow-hidden rounded-full border border-line-soft bg-line-soft"
+              title={`${acting().channelling ? 'Channelling' : 'Casting'} ${acting().name}`}
+            >
+              <div
+                class={`absolute inset-y-0 left-0 ${
+                  acting().channelling ? 'bg-leaf/40' : 'bg-gold/50'
+                }`}
+                style={{ width: `${acting().done * 100}%` }}
+              />
+              <span class="relative block truncate px-1 text-[0.625rem] leading-4">
+                {acting().name}
+              </span>
+            </div>
+          )}
+        </Show>
+      </div>
+
       {/* The four moves, each box a bar of its own cooldown. A full
-          box is a move that can be thrown now */}
+          box is a move that can be thrown now.
+
+          `Index` rather than `For`: the boxes are four slots that go
+          on saying different things, not a list of things that come
+          and go. `For` keys on the item, and an item reduced to what
+          it draws is a new object on every tick — which would rebuild
+          all four rows sixty times a second. `Index` keys on the slot
+          and hands the row a signal, so a tick moves four widths and
+          touches nothing else */}
       <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0">
-        <For each={view().moves}>
+        <Index each={view().moves}>
           {(move) => (
             <li
               class="relative overflow-hidden rounded border border-line-soft bg-line-soft px-1
                 py-0.5"
-              title={`${getMoveData(move.move).name}${move.disabled ? ' — disabled' : ''}`}
+              title={`${move().name}${move().disabled ? ' — disabled' : ''}`}
             >
               <div
-                class={`absolute inset-y-0 left-0 ${move.disabled ? 'bg-muted/30' : 'bg-tide/30'}`}
-                style={{ width: `${readiness(move.cooldown) * 100}%` }}
+                class={`absolute inset-y-0 left-0 ${move().disabled ? 'bg-muted/30' : 'bg-tide/30'}`}
+                style={{ width: `${move().ready * 100}%` }}
               />
-              <span class={`relative block truncate ${move.disabled ? 'text-muted' : ''}`}>
-                {getMoveData(move.move).name}
+              <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
+                {move().name}
               </span>
             </li>
           )}
-        </For>
+        </Index>
       </ul>
 
       {/* And whatever is stuck to it, as colours. There is a name on

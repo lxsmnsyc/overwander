@@ -1,6 +1,6 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * Medicine: what a party is put right with between fights.
@@ -140,6 +140,7 @@ function registerMedicine(item: Items, name: string, buy: number): void {
   registerItem(item, {
     name,
     type: ItemTypes.Medicine,
+    icon: nameToIcon('medicine', name),
     // Used on a pokemon and spent doing it; never held, so nothing
     // drinks a potion mid-battle
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,

@@ -1,5 +1,5 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * Stat-enhancing held items: what a pokemon carries to be stronger
@@ -61,6 +61,7 @@ export default function registerStatBoosters(): void {
     registerItem(item, {
       name,
       type: ItemTypes.Held,
+      icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
       buy: STAT_BOOSTER_PRICE,
       sell: STAT_BOOSTER_PRICE * STAT_BOOSTER_RESALE,
@@ -71,6 +72,7 @@ export default function registerStatBoosters(): void {
     registerItem(item, {
       name,
       type: ItemTypes.Held,
+      icon: nameToIcon('held', name),
       // Found rather than bought: a relic has no listing, only a
       // price somebody will pay for it
       flags: ItemFlags.Holdable,

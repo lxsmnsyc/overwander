@@ -1,4 +1,4 @@
-import { Types } from '../constants/types';
+import { TYPE_NAMES, Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -69,10 +69,13 @@ const GEM_RESALE = 0.5;
  * consumable: landing the move is what spends one
  */
 export default function registerGems(): void {
-  for (const item of GEMS.keys()) {
+  for (const [item, type] of GEMS) {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      // The `gems` sheet holds one per type, named after the type, so
+      // the gem's own picture is the type it belongs to
+      icon: `gems/${TYPE_NAMES[type].toLowerCase()}`,
       flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy: GEM_PRICE,
       sell: GEM_PRICE * GEM_RESALE,

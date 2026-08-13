@@ -3,7 +3,7 @@ import type Battle from '../battle/core';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import type { SpriteDirection } from '../canvas/species-sprite-animation';
 import facingToward from '../canvas/facing';
-import loadSpeciesSprite from '../canvas/species-sprites';
+import loadSpeciesSprite, { floorSlack } from '../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
 import { EventPriority } from '../core/event-emitter';
@@ -454,9 +454,15 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
       restart: sprite.finished && wanted.duration != null,
     });
     // Feet on the line the circle used to sit on, so nothing else
-    // that measures from the slot has to move
-    sprite.draw(context, slot.x, slot.y + slot.radius, {
-      scale: slot.radius / SPRITE_SCALE_DIVISOR,
+    // that measures from the slot has to move.
+    //
+    // Past that line by the empty band along the bottom of the frame,
+    // or the pokemon stands a sixth of its own height above the
+    // ground with its name and its health bar drawn under its feet
+    const scale = slot.radius / SPRITE_SCALE_DIVISOR;
+
+    sprite.draw(context, slot.x, slot.y + slot.radius + floorSlack(sprite, scale), {
+      scale,
       anchor: 'bottom',
     });
   } else {

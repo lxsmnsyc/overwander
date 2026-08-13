@@ -1,4 +1,4 @@
-import { type JSX, Show, createEffect, createSignal, from, onCleanup } from 'solid-js';
+import { type JSX, Show, batch, createEffect, createSignal, from, onCleanup } from 'solid-js';
 import {
   BattleOutcome,
   type BattleRecord,
@@ -21,6 +21,24 @@ import { type ActiveBattle, GameDialog, useGame } from './game-context';
  * its own frame timer
  */
 const POLL_INTERVAL = 250;
+
+/**
+ * How long the field is held before the fight starts, in seconds.
+ *
+ * A real-time battle is over in half a minute and nobody presses
+ * anything in it, so the moment it opens is the only chance a player
+ * has to see what they brought and what they are up against. Dropped
+ * straight in, the first exchange had already landed before the
+ * sprites finished loading. The engine is seeded and deterministic —
+ * holding the start changes nothing about how the fight goes, only
+ * when it begins
+ */
+const COUNTDOWN = 3;
+
+/**
+ * How often the countdown is stepped, in milliseconds
+ */
+const COUNTDOWN_TICK = 1000;
 
 export interface BattleViewProps {
   active: ActiveBattle;
@@ -50,6 +68,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   // Whether the player has closed the verdict. Once, per battle: the
   // view is rebuilt for the next one, so nothing has to reset it
   const [dismissed, setDismissed] = createSignal(false);
+  /**
+   * Seconds left before the fight starts, or null once it has
+   */
+  const [counting, setCounting] = createSignal<number | null>(null);
 
   createEffect(() => {
     const loaded = record();
@@ -73,9 +95,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           ? createRocketBattle(props.active.id, teams)
           : createRaidBattle(props.active.id, teams);
 
+        // Built and set up, but not yet running: the countdown below
+        // is what lets it go
         built.battle.initialize();
-        built.battle.start();
         setInstance(built);
+        setCounting(COUNTDOWN);
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
@@ -83,6 +107,30 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     onCleanup(() => {
       cancelled = true;
+    });
+  });
+
+  // Three, two, one. The last step starts the battle rather than
+  // counting to zero and leaving it to somebody else
+  createEffect(() => {
+    const built = instance();
+    const left = counting();
+
+    if (built == null || left == null) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (left > 1) {
+        setCounting(left - 1);
+        return;
+      }
+      setCounting(null);
+      built.battle.start();
+    }, COUNTDOWN_TICK);
+
+    onCleanup(() => {
+      clearTimeout(timer);
     });
   });
 
@@ -208,30 +256,37 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
   };
 
+  /**
+   * Out of the fight and back into the world.
+   *
+   * All of it goes at once, in one batch. The lobby is let go of as
+   * well as the battle — the lobby watches its own record and opens
+   * the battle the moment that record names one, so a player still
+   * standing in a started lobby was put straight back into the fight
+   * they had just left — and so is whatever panel was open when the
+   * fight began.
+   *
+   * That last part is the difference between Leave working and Leave
+   * *looking* like it did nothing. The battle was started from inside
+   * the raids dialog, so leaving it used to put that dialog back on
+   * screen: the panel a player pressed Start in reappeared over the
+   * world, which reads as the button having done nothing at all.
+   * Leaving a battle means being in the overworld, so that is where it
+   * puts them
+   */
   const leave = (): void => {
     instance()?.battle.end();
-    setInstance(null);
-    // The lobby is let go of as well as the battle.
-    //
-    // This is what made Leave look broken: the lobby watches its own
-    // record and opens the battle the moment that record names one, so
-    // a player still standing in a started lobby was put straight back
-    // into the fight they had just left. Nothing was wrong with the
-    // button — it worked, and the raids panel undid it before the page
-    // had finished redrawing
-    game.setRaid(null);
-    game.setBattle(null);
-  };
-
-  /**
-   * Leaving for good: a cleared raid sends the player back to where
-   * the legendary is standing
-   */
-  const finish = (): void => {
-    const collect = !props.active.replay && outcome() === 'won';
-
-    leave();
-    game.setDialog(collect ? GameDialog.None : game.dialog());
+    batch(() => {
+      // The instance is deliberately **not** cleared here. Unsetting
+      // the battle takes this whole view down, and its own cleanup
+      // ends the engine; clearing it first only empties the accessor
+      // that the canvas and the card rows are still reading from while
+      // they are being disposed
+      setCounting(null);
+      game.setRaid(null);
+      game.setDialog(GameDialog.None);
+      game.setBattle(null);
+    });
   };
 
   /**
@@ -295,14 +350,31 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   });
 
   return (
-    <section class="relative h-full w-full overflow-hidden">
-      {/* The field is the page. Everything else floats over it, the
-          way the overworld carries its caption and its bar rather than
-          giving up a strip of map to them */}
-      {/* Every pixel of it, with nothing between the field and the
-          edge of the screen — not even the two of padding that used to
-          leave a hairline of page showing all the way round */}
-      <div class="absolute inset-0">
+    <section class="flex h-full w-full flex-col overflow-hidden">
+      {/* The field is **between** the two sets of cards rather than
+          under both of them.
+
+          It used to take the whole page with the cards floating over
+          it, which cost the fight the two strips it most needed: a
+          raid boss is drawn at the top of the field and the player's
+          own row at the bottom, so a card row lying over each end
+          covered exactly the pokemon a player was watching. Sandwiched,
+          the canvas gets whatever is left and the sprites are never
+          behind anything */}
+      {/* In a fight between two trainers, the other side is at the top,
+          on their end of the field. A raid gets none of this: the boss
+          is one pokemon drawn twice the size of everything else and
+          needs no card, and a lobby of strangers' parties is a wall of
+          them */}
+      <Show when={props.active.rocket == null ? null : instance()}>
+        {(built) => (
+          <div class="shrink-0 overflow-x-auto px-3 pt-3">
+            <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} theirs />
+          </div>
+        )}
+      </Show>
+
+      <div class="relative min-h-0 grow">
         <Show
           when={instance()}
           fallback={
@@ -313,65 +385,66 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         >
           {(built) => <BattleCanvas battle={built().battle} player={auth.user()?.uid ?? ''} />}
         </Show>
-      </div>
 
-      {/* What the fight is, in the corner it is least in the way */}
-      <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
-        <span
-          class="rounded-full border border-line bg-paper/95 px-3 py-1 text-sm font-medium
-          shadow-lg shadow-ink/20 backdrop-blur-sm"
-        >
-          {props.active.replay ? 'Replay' : title()}
-        </span>
-        <Show when={props.active.replay}>
-          <Badge>Awards nothing</Badge>
+        {/* What the fight is, in the corner it is least in the way */}
+        <div class="pointer-events-none absolute top-3 left-3 flex items-center gap-2">
+          <span
+            class="rounded-full border border-line bg-paper/95 px-3 py-1 text-sm font-medium
+            shadow-lg shadow-ink/20 backdrop-blur-sm"
+          >
+            {props.active.replay ? 'Replay' : title()}
+          </span>
+          <Show when={props.active.replay}>
+            <Badge>Awards nothing</Badge>
+          </Show>
+        </div>
+
+        {/* And the way out, in the other one */}
+        <div class="absolute top-3 right-3">
+          <Button tone="primary" onClick={leave}>
+            Leave
+          </Button>
+        </div>
+
+        {/* Three seconds to look at the field before anything happens
+            in it. It is drawn over the middle of the fight because the
+            fight is what it is counting down to */}
+        <Show when={counting()}>
+          {(left) => (
+            <div
+              class="pointer-events-none absolute inset-0 flex items-center justify-center"
+              role="status"
+            >
+              <span
+                class="rounded-full border border-line bg-paper/90 px-6 py-3 text-4xl font-semibold
+                  tabular-nums shadow-lg shadow-ink/30 backdrop-blur-sm"
+              >
+                {left()}
+              </span>
+            </div>
+          )}
         </Show>
+
+        {/* Anything that went wrong writing the result down. It is not
+            the verdict — that has a dialog of its own — so it sits out
+            of the way rather than under the field */}
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3
+          text-center"
+        >
+          <Status message={status()} />
+        </div>
       </div>
 
-      {/* And the way out, in the other one */}
-      <div class="absolute top-3 right-3">
-        <Button tone="primary" onClick={finish}>
-          Leave
-        </Button>
-      </div>
-
-      {/* The player's own pokemon, stuck along the bottom over the
-          field rather than under it: what each of them has left, and
-          which of their moves are off cooldown */}
+      {/* The player's own pokemon along the bottom: what each of them
+          has left, and which of their moves are off cooldown */}
       <Show when={instance()}>
         {(built) => (
-          <>
-            {/* And in a fight between two trainers, the other side's
-                at the top, on their end of the field. A raid gets none
-                of this: the boss is one pokemon drawn twice the size
-                of everything else and needs no card, and a lobby of
-                strangers' parties is a wall of them */}
-            <Show when={props.active.rocket != null}>
-              <div class="pointer-events-none absolute inset-x-0 top-14 flex justify-center px-3">
-                <div class="pointer-events-auto max-w-full overflow-x-auto">
-                  <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} theirs />
-                </div>
-              </div>
-            </Show>
-
-            <div class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3">
-              <div class="pointer-events-auto max-w-full overflow-x-auto">
-                <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} />
-              </div>
-            </div>
-          </>
+          <div class="shrink-0 overflow-x-auto px-3 pb-3">
+            <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} />
+          </div>
         )}
       </Show>
-
-      {/* Anything that went wrong writing the result down. It is not
-          the verdict — that has a dialog of its own — so it sits out
-          of the way at the top rather than under the field */}
-      <div
-        class="pointer-events-none absolute inset-x-0 bottom-40 flex justify-center px-3
-        text-center"
-      >
-        <Status message={status()} />
-      </div>
 
       {/* A fight that has been won or lost says so rather than leaving
           a line of text under a field that is no longer moving. It
@@ -388,7 +461,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             title={said().title}
             description={said().said}
           >
-            <DialogActions>
+            {/* Centred, like everything else in the panel. The
+                verdict is one line about what happened and two things
+                to do about it, and buttons pushed to the right of a
+                centred sentence read as belonging to something else */}
+            <DialogActions center>
               <Button
                 onClick={() => {
                   setDismissed(true);
@@ -396,7 +473,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
               >
                 Stay and look
               </Button>
-              <Button tone="primary" onClick={finish}>
+              <Button tone="primary" onClick={leave}>
                 {props.active.replay ? 'Exit replay' : 'Leave battle'}
               </Button>
             </DialogActions>

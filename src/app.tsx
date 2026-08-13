@@ -4,6 +4,7 @@ import { FileRoutes } from '@solidjs/start/router';
 import { type JSX, Suspense } from 'solid-js';
 import AuthProvider from './auth/context';
 import registerGameData from './data';
+import { ToastProvider } from './components/styled';
 import './app.css';
 
 // Species, moves, items and spawn pools are inert until registered,
@@ -20,8 +21,15 @@ export default function App(): JSX.Element {
             {/* No bar over the top. The game is one page — the world,
                 with what the player wants pulled over it — and a nav
                 offering to leave it was three links to two pages that
-                no longer exist and one that is a demo */}
-            <Suspense>{props.children}</Suspense>
+                no longer exist and one that is a demo.
+
+                The toasts sit outside all of it, because what the game
+                has to say in passing is not any one screen's business:
+                a cache dug up says so over the world, and it would say
+                so over a battle too */}
+            <ToastProvider>
+              <Suspense>{props.children}</Suspense>
+            </ToastProvider>
           </AuthProvider>
         </MetaProvider>
       )}

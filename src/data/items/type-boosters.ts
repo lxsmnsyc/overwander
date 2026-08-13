@@ -1,6 +1,6 @@
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * Type-enhancing held items: one per attacking type, each worth a
@@ -55,6 +55,15 @@ const NAMES: { [key in Items]?: string } = {
 };
 
 /**
+ * The one whose name points at nothing. Every other booster is on the
+ * `held` sheet under its own name; there is no fairy feather drawn
+ * anywhere, so it borrows the one feather the sheets do have
+ */
+const ICONS: { [key in Items]?: string } = {
+  [Items.FairyFeather]: 'valuables/pretty-wing',
+};
+
+/**
  * They all do the same job, so they all cost the same: a flat price
  * rather than one type being dearer than another
  */
@@ -72,6 +81,7 @@ export default function registerTypeBoosters(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      icon: ICONS[item] ?? nameToIcon('held', NAMES[item] ?? ''),
       // Held for as long as its holder keeps it: nothing consumes a
       // Charcoal, and nothing uses one on a pokemon either
       flags: ItemFlags.Holdable | ItemFlags.Marketable,

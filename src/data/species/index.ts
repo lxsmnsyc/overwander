@@ -3,6 +3,7 @@ import registerGen1Species from './gen-1';
 export {
   getBaseSpecies,
   getEggMoves,
+  getFamilyName,
   getLevelUpMoves,
   getMovesLearnedAt,
   getRegisteredSpecies,

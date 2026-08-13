@@ -1,6 +1,6 @@
 import { Stats } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * The wings: one stat, three points of effort, and gone.
@@ -49,6 +49,9 @@ export default function registerWings(): void {
     registerItem(item, {
       name: NAMES[item] ?? 'Wing',
       type: ItemTypes.Training,
+      // The wings are drawn on the medicine sheet, since that is what
+      // they are: something a pokemon swallows for what it does to it
+      icon: nameToIcon('medicine', NAMES[item] ?? 'Wing'),
       flags: ItemFlags.Usable | ItemFlags.Consumable,
       // Found on the wind rather than stocked: a shop that sold them
       // would sell training by the gold piece

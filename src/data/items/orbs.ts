@@ -1,5 +1,5 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * The orbs: held for what they do to their own holder.
@@ -33,6 +33,7 @@ export default function registerOrbs(): void {
     registerItem(item, {
       name,
       type: ItemTypes.Held,
+      icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
       buy: ORB_PRICE,
       sell: ORB_PRICE * ORB_RESALE,

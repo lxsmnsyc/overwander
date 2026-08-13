@@ -402,7 +402,18 @@ export async function hostMythicalRaid(
  * Walk out of a lobby: the player's teams come out with them, so a
  * raid they left does not start with their party in it. Only their
  * own teams are pulled — the team documents name their owner — and a
- * started raid is already frozen into snapshots, so it is left alone
+ * started raid is already frozen into snapshots, so it is left alone.
+ *
+ * A lobby nobody is left in is taken down rather than left standing.
+ * It was left standing, and it was a lobby in every listing and a lair
+ * that could not be hosted again — most often opened by somebody who
+ * pressed Host, saw what was in there and walked out again without
+ * ever forming a team, which left a raid nobody had joined sitting in
+ * the world until the window turned over.
+ *
+ * A **cleared** lobby is the one empty one that stays: it is the
+ * record of the boss having been met, and it is what keeps the
+ * landmark shut for the rest of the window
  */
 export async function leaveRaid(uid: string, lobby: string): Promise<void> {
   const db = getAdminFirestore();
@@ -415,23 +426,27 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
       return;
     }
 
-    const ids = asStringArray(raid.teams);
-
-    if (ids.length === 0) {
-      return;
-    }
-
-    const teams = await transaction.getAll(
-      ...ids.map((id) => db.collection(TEAM_COLLECTION).doc(id)),
-    );
+    const record = asRaidRecord(raid);
+    const ids = record.teams;
+    const teams =
+      ids.length === 0
+        ? []
+        : await transaction.getAll(...ids.map((id) => db.collection(TEAM_COLLECTION).doc(id)));
     const mine = new Set(
       teams.filter((entry) => docData(entry)?.player === uid).map((entry) => entry.id),
     );
+    const left = ids.filter((id) => !mine.has(id));
 
+    // The last party out shuts the door behind it, and so does a host
+    // who never opened one
+    if (left.length === 0 && !record.cleared) {
+      transaction.delete(ref);
+      return;
+    }
     if (mine.size === 0) {
       return;
     }
-    transaction.update(ref, { teams: ids.filter((id) => !mine.has(id)) });
+    transaction.update(ref, { teams: left });
   });
 }
 

@@ -35,7 +35,7 @@ import { NATURE_NAMES } from '../data/ids/natures';
 import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
 import { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
-import { describeCatch } from './CatchesList';
+import { describeCatch } from './catch-summary';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import matches from '../core/search';
 import { useGame } from './game-context';

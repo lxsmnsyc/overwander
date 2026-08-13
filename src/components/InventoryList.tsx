@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { getCandies } from '../auth/candy';
+import { getFamilyName } from '../data/species';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
-import type Families from '../data/ids/families';
 import {
   EVERY_CATEGORY,
   type ItemCategory,
@@ -9,6 +9,7 @@ import {
   isInCategory,
   listCategories,
 } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
 import matches from '../core/search';
 import {
   Badge,
@@ -21,14 +22,6 @@ import {
   SEARCH_FROM,
   Search,
 } from './styled';
-
-/**
- * Candy families have no display names of their own — the family
- * enum is an id list — so the family number stands in
- */
-function describeFamily(family: Families): string {
-  return `Family #${family}`;
-}
 
 export interface InventoryListProps {
   player: string;
@@ -96,6 +89,10 @@ export default function InventoryList(props: InventoryListProps): JSX.Element {
               <For each={shown()}>
                 {(entry) => (
                   <ListRow>
+                    {/* The picture, then the name. Hidden from a
+                        screen reader, which is already being read the
+                        name written beside it */}
+                    <ItemSprite item={entry.item} size={28} label="" />
                     <span class="grow">{describeItem(entry.item)}</span>
                     <Badge>× {entry.amount}</Badge>
                   </ListRow>
@@ -113,7 +110,7 @@ export default function InventoryList(props: InventoryListProps): JSX.Element {
             <For each={candies()}>
               {(stack) => (
                 <ListRow>
-                  <span class="grow">{describeFamily(stack.family)}</span>
+                  <span class="grow">{getFamilyName(stack.family)} Candy</span>
                   <Badge tone="gold">× {stack.count}</Badge>
                 </ListRow>
               )}

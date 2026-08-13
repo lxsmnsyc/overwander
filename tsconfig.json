@@ -1,6 +1,6 @@
 {
   "exclude": ["node_modules"],
-  "include": ["src", "types", "test", "e2e", "playwright.config.ts"],
+  "include": ["src", "types", "test", "e2e", "scripts", "playwright.config.ts"],
   "compilerOptions": {
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],

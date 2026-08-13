@@ -54,10 +54,32 @@ export interface StatusProps {
   tone?: 'status' | 'alert';
 }
 
+/**
+ * Drawn as a panel rather than as a paragraph.
+ *
+ * Set as plain text it was indistinguishable from the sentence above
+ * it explaining what the screen is for — so a player who handed a
+ * party to Nurse Joy and got "She looked after 6 of them" back read
+ * it, if they read it at all, as more of the game's furniture. Ruled
+ * off and set on its own ground it reads as an answer, which is what
+ * it is: the last thing that happened, kept until something else does
+ */
+const STATUS_TONES: Record<'status' | 'alert', string> = {
+  status: 'border-line bg-line-soft/70 text-ink',
+  alert: 'border-ember bg-ember-soft text-ember-dark',
+};
+
 export function Status(props: StatusProps): JSX.Element {
   return (
     <Show when={props.message}>
-      {(message) => <p role={props.tone ?? 'status'}>{message()}</p>}
+      {(message) => (
+        <p
+          role={props.tone ?? 'status'}
+          class={`rounded-panel border px-3 py-2 text-sm ${STATUS_TONES[props.tone ?? 'status']}`}
+        >
+          {message()}
+        </p>
+      )}
     </Show>
   );
 }

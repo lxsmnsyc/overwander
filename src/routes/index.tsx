@@ -103,11 +103,15 @@ function GameView(props: { user: User }): JSX.Element {
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             width="wide"
-            // Named for the lair while the player is in one, and quiet
-            // while they are only looking at the list: a panel of
-            // lobbies captioned "Raids" says what the button they
-            // pressed already said
-            quiet={lobby() == null}
+            // Named for the lair while the player is standing in one,
+            // and "Raids" while they are only looking at the list.
+            //
+            // It used to draw no heading at all for the list, on the
+            // grounds that the button they pressed already said the
+            // word — but a panel that opens with a row of lobbies and
+            // no title reads as something half-loaded, and a lobby
+            // opened from the *world* rather than from that button
+            // arrives with no word about where it came from
             terse
             title={lobby() ?? TITLES[GameDialog.Raids]}
             description={DESCRIPTIONS[GameDialog.Raids]}

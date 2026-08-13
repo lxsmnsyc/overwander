@@ -91,6 +91,20 @@ export interface GameState {
   position: Accessor<PositionRecord | null>;
   setPosition: Setter<PositionRecord | null>;
   /**
+   * Where that is, in words: the country and the chunk's coordinates.
+   *
+   * It was painted into the corner of the map, which is the one place
+   * on the screen the map cannot spare — a caption over the board sits
+   * on top of whatever cell is under it, and the board is the game. It
+   * belongs on the bar with the rest of the furniture, and the bar is
+   * a sibling of the overworld rather than a child of it, so the words
+   * travel through here.
+   *
+   * Null while the chunk is still being read
+   */
+  place: Accessor<string | null>;
+  setPlace: Setter<string | null>;
+  /**
    * The raid lobby the player is in, shown inside the raids dialog
    */
   raid: Accessor<string | null>;
@@ -170,6 +184,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const auth = useAuth();
   const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
+  const [place, setPlace] = createSignal<string | null>(null);
 
   // A profile on first sight, seeded from whatever the sign-in
   // already knows. The game reads a profile everywhere — the balance
@@ -202,7 +217,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
 
     let cancelled = false;
 
-    const place = (at: PositionRecord | StartPosition, store: boolean): void => {
+    const standAt = (at: PositionRecord | StartPosition, store: boolean): void => {
       if (cancelled) {
         return;
       }
@@ -226,17 +241,17 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     getPosition(user.uid)
       .then((stored) => {
         if (stored != null) {
-          place(stored, false);
+          standAt(stored, false);
           return;
         }
-        place(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), true);
+        standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), true);
       })
       .catch(() => {
         // Their position could not be read, which is no reason to keep
         // them out of the world. Nothing is written for it either: a
         // save on top of a failed read could move somebody whose real
         // record was there all along
-        place(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), false);
+        standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), false);
       });
 
     onCleanup(() => {
@@ -317,6 +332,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setDialog,
         position,
         setPosition,
+        place,
+        setPlace,
         raid,
         setRaid,
         battle,

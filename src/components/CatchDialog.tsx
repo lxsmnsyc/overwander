@@ -52,6 +52,7 @@ import getSigil from '../data/constants/sigil';
 import { BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
+import type Natures from '../data/ids/natures';
 import { NATURE_NAMES, getNatureFactor } from '../data/ids/natures';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../data/ids/items';
 import { EvolutionMethod, Genders, Species } from '../data/ids/species';
@@ -61,7 +62,7 @@ import { isHerbal } from '../data/items/medicine';
 import { isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
 import { getMoveData } from '../data/moves';
-import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/ids/moves';
+import type { Moves } from '../data/ids/moves';
 import {
   SUPPORTED_METHODS,
   getConsumedItem,
@@ -82,6 +83,7 @@ import {
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
 import TeachMoveDialog from './TeachMoveDialog';
+import MoveCategorySprite from './MoveCategorySprite';
 import TypeBadge from './TypeBadge';
 import { TabGroup, TabPanel } from 'terracotta';
 import {
@@ -132,6 +134,27 @@ const EFFORT_STEP = 4;
  */
 const NATURE_BARS = ['bg-tide', 'bg-leaf', 'bg-ember'] as const;
 const NATURE_NUMBERS = ['text-tide', '', 'text-ember-dark'] as const;
+
+/**
+ * And the same three said in a mark rather than in a colour.
+ *
+ * A nature moves one stat up a tenth and another down a tenth, which
+ * is the difference between two of the same species and is worth
+ * being able to *see*. It was a colour alone, which says nothing to
+ * anybody who cannot tell this blue from this red — and nothing at
+ * all to a screen reader
+ */
+const NATURE_MARKS = ['▼', '', '▲'] as const;
+
+const NATURE_WORDS = ['lowered by its nature', '', 'raised by its nature'] as const;
+
+/**
+ * Which of the three a nature does to this stat: −1, 0 or 1, shifted
+ * to index the tables above
+ */
+function natureShift(nature: Natures, stat: Stats): number {
+  return Math.sign(getNatureFactor(nature, stat) - 1) + 1;
+}
 
 const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
@@ -1014,6 +1037,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
+   * Whether the bag holds anything at all this pokemon would gain
+   * from. It is the same question the picker's filter asks, asked
+   * once over the whole bag, so the menu entry that opens the picker
+   * knows whether there would be a list in it
+   */
+  const hasUsableItem = (): boolean =>
+    (bag.latest ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
+
+  /**
    * Spend it, whatever it is. Each kind already has its own call and
    * its own message; this only decides which one the item belongs to
    */
@@ -1065,7 +1097,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     },
     {
       label: 'Use item',
-      disabled: frozen() || isEgg(loaded),
+      // Dead where there is nothing to spend. The panel it opens says
+      // "Nothing in the bag would do it any good" — which is an
+      // answer, but it appeared at the *top* of the sheet, a screen
+      // away from the menu that was pressed, so the press read as
+      // having done nothing at all. A menu entry that cannot lead
+      // anywhere should say so where the finger already is
+      disabled: frozen() || isEgg(loaded) || !hasUsableItem(),
       onSelect: () => {
         setPanel((open) => (open === 'items' ? null : 'items'));
       },
@@ -1100,7 +1138,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       },
     },
     {
-      label: buddy.latest === props.catchId ? 'Walking with you' : 'Walk with this one',
+      label: buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
       disabled: buddy.latest === props.catchId,
       onSelect: takeAlong,
     },
@@ -1207,15 +1245,24 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
               >
                 {/* What the record is about, walking. An egg is drawn
                     as an egg: what is inside it is not the player's to
-                    see until it hatches */}
-                <SpriteDisplay
-                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
-                  shiny={!isEgg(loaded()) && isShiny(loaded())}
-                  animation="Walk"
-                  direction="down-right"
-                  scale={4}
-                  label={named()}
-                />
+                    see until it hatches.
+
+                    It stands on the floor of a box with room above it.
+                    The header is stuck to the top of the panel, so a
+                    sprite drawn tight against it was clipped by the
+                    bar the moment anything scrolled — and the space
+                    that was above the pokemon is better spent under
+                    the header than between the pokemon and its name */}
+                <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
+                  <SpriteDisplay
+                    species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                    shiny={!isEgg(loaded()) && isShiny(loaded())}
+                    animation="Walk"
+                    direction="down-left"
+                    scale={4}
+                    label={named()}
+                  />
+                </div>
 
                 <div class="flex flex-col items-center gap-0.5">
                   <h3>{named()}</h3>
@@ -1395,7 +1442,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
                             {(stat) => (
                               <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                <span class="w-28 shrink-0 text-left">
+                                  {STAT_LABELS[stat]}
+                                  {/* The arrow the games have always
+                                      used, beside the stat it is about.
+                                      The bar and the number are already
+                                      tinted, and a colour is not
+                                      something everybody can read */}
+                                  <Show when={NATURE_MARKS[natureShift(loaded().nature, stat)]}>
+                                    {(arrow) => (
+                                      <span
+                                        class={NATURE_NUMBERS[natureShift(loaded().nature, stat)]}
+                                        title={`${STAT_LABELS[stat]} is ${
+                                          NATURE_WORDS[natureShift(loaded().nature, stat)]
+                                        }`}
+                                        aria-label={
+                                          NATURE_WORDS[natureShift(loaded().nature, stat)]
+                                        }
+                                        role="img"
+                                      >
+                                        {' '}
+                                        {arrow()}
+                                      </span>
+                                    )}
+                                  </Show>
+                                </span>
                                 {/* Measured against its own best rather
                                     than against a ceiling: what a player
                                     wants off this list is which end of
@@ -1405,9 +1476,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                                 <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
                                   <div
                                     class={`h-full rounded-full ${
-                                      NATURE_BARS[
-                                        Math.sign(getNatureFactor(loaded().nature, stat) - 1) + 1
-                                      ]
+                                      NATURE_BARS[natureShift(loaded().nature, stat)]
                                     }`}
                                     style={{
                                       width: `${(totalOf(loaded(), stat) / bestTotal(loaded())) * 100}%`,
@@ -1416,9 +1485,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                                 </div>
                                 <Meta
                                   class={`w-12 text-right tabular-nums ${
-                                    NATURE_NUMBERS[
-                                      Math.sign(getNatureFactor(loaded().nature, stat) - 1) + 1
-                                    ]
+                                    NATURE_NUMBERS[natureShift(loaded().nature, stat)]
                                   }`}
                                 >
                                   {totalOf(loaded(), stat)}
@@ -1476,15 +1543,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                                 <Meta class="w-12 text-right tabular-nums">
                                   {loaded().effortValues[stat]}
                                 </Meta>
+                                {/* Only up. Effort is taken back off a
+                                    stat by feeding the pokemon a bitter
+                                    berry — a Pomeg for health, a Kelpsy
+                                    for attack — which costs an item and
+                                    earns the pokemon's regard. A button
+                                    here undid all of that for free, and
+                                    made six berries pointless */}
                                 <Show when={owned() != null}>
-                                  <Button
-                                    disabled={frozen() || loaded().effortValues[stat] <= 0}
-                                    onClick={() => {
-                                      train(stat, -EFFORT_STEP);
-                                    }}
-                                  >
-                                    −{EFFORT_STEP}
-                                  </Button>
                                   <Button
                                     tone="primary"
                                     disabled={
@@ -1519,20 +1585,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             <ListRow class="justify-between">
                               <span class="flex items-center gap-2">
                                 <TypeBadge type={getMoveData(move).type} />
-                                {/* Which of the three kinds it is, as a
-                                    mark rather than a word: the word is
-                                    the title, so nothing rests on the
-                                    colour alone */}
-                                <span
-                                  class="size-3 shrink-0 rounded-sm"
-                                  style={{
-                                    'background-color':
-                                      MOVE_CATEGORY_COLORS[getMoveData(move).category],
-                                  }}
-                                  title={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
-                                  aria-label={MOVE_CATEGORY_NAMES[getMoveData(move).category]}
-                                  role="img"
-                                />
+                                {/* Which of the three kinds it is, as
+                                    the badge every game since Diamond
+                                    has used. It carries its own name
+                                    for anyone who cannot see it, so
+                                    nothing rests on the picture alone */}
+                                <MoveCategorySprite category={getMoveData(move).category} />
                                 <span class="font-medium">{getMoveData(move).name}</span>
                               </span>
                               <Meta>

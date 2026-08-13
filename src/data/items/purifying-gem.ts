@@ -71,6 +71,9 @@ export default function registerPurifyingGem(): void {
     // Spent on a pokemon to change what it is rather than what it can
     // do, the way a bottle cap is
     type: ItemTypes.Training,
+    // Nothing on the sheets is a purifying gem; the sparkling stone
+    // is the one drawn thing that reads as a stone that cleanses
+    icon: 'key/sparkling-stone',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,

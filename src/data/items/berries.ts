@@ -305,11 +305,25 @@ export function isBerry(item: Items): boolean {
   );
 }
 
+/**
+ * The picture of a berry.
+ *
+ * Every berry sits on the one `berries` sheet under the bare half of
+ * its name — a Cheri Berry is `cheri` — so the sprite is derived from
+ * the name rather than written out fifty-three more times. The sheet
+ * covers every berry the game has, and one it did not cover would
+ * draw nothing rather than draw the wrong fruit
+ */
+function berryIcon(name: string): string {
+  return `berries/${name.replace(' Berry', '').toLowerCase()}`;
+}
+
 export default function registerBattleBerries(): void {
   // Cures paralysis
   registerItem(Items.CheriBerry, {
     name: 'Cheri Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/cheri',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -318,6 +332,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.ChestoBerry, {
     name: 'Chesto Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/chesto',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -326,6 +341,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.PechaBerry, {
     name: 'Pecha Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/pecha',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -334,6 +350,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.RawstBerry, {
     name: 'Rawst Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/rawst',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -342,6 +359,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.AspearBerry, {
     name: 'Aspear Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/aspear',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -350,6 +368,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.LeppaBerry, {
     name: 'Leppa Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/leppa',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -358,6 +377,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.OranBerry, {
     name: 'Oran Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/oran',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -366,6 +386,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.PersimBerry, {
     name: 'Persim Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/persim',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -374,6 +395,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.LumBerry, {
     name: 'Lum Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/lum',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -382,6 +404,7 @@ export default function registerBattleBerries(): void {
   registerItem(Items.SitrusBerry, {
     name: 'Sitrus Berry',
     type: ItemTypes.Berry,
+    icon: 'berries/sitrus',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
     buy: 0,
     sell: 20,
@@ -394,6 +417,7 @@ export default function registerBattleBerries(): void {
     registerItem(item, {
       name,
       type: ItemTypes.Berry,
+      icon: berryIcon(name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable,
       buy: 0,
       // The scarcer berries are worth more to a seller than the cures

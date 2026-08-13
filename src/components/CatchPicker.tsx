@@ -4,7 +4,7 @@ import { type CaughtPokemon, listCaught } from '../auth/caught';
 import { syncServerClock } from '../auth/clock';
 import { useAuth } from '../auth/context';
 import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
-import { asBoxEntry, describeCatch } from './CatchesList';
+import { asBoxEntry, describeCatch } from './catch-summary';
 import matches from '../core/search';
 import { Button, Dialog, DialogActions, Meta, Note, Row, SEARCH_FROM, Search } from './styled';
 
@@ -112,6 +112,17 @@ export type CatchPickerProps = CatchPickerCommonProps &
          * parents. Rows stop taking picks once it is reached
          */
         max?: number;
+        /**
+         * Report every press rather than waiting to be confirmed, and
+         * draw no confirm button.
+         *
+         * It is for a caller that already has a button of its own —
+         * the breeder's "Breed", the nurse's "Hand over" — where the
+         * picker's own confirm was a second button next to it saying
+         * very nearly the same thing. The caller holds the picks and
+         * decides what they are worth
+         */
+        live?: boolean;
       }
   );
 
@@ -137,13 +148,32 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     },
   );
 
-  const loading = (): boolean => props.options == null && owned.loading;
+  /**
+   * Whether there is nothing to show yet — as opposed to a list on
+   * screen being read again, which keeps what it has
+   */
+  const loading = (): boolean => props.options == null && owned.latest == null && owned.loading;
 
   /**
-   * What the caller will accept, before the player narrows it further
+   * What the caller will accept, before the player narrows it further.
+   *
+   * Newest first, everywhere. A player comes back to what they just
+   * caught far more often than to what they caught in March, and the
+   * box in the profile has always been ordered this way — a picker
+   * that showed the same collection in a different order was the same
+   * box twice with the pokemon in different squares.
+   *
+   * Read through `latest` rather than the resource: reading one that
+   * is loading throws to the nearest Suspense boundary, and the
+   * nearest one to a picker inside a dialog is the root of the whole
+   * app. Nurse Joy re-reads this list every time she hands a party
+   * back, so a plain read took the page down for the length of the
+   * round trip
    */
   const offered = (): CatchOption[] =>
-    (props.options ?? owned() ?? []).filter((option) => props.filter?.(option) ?? true);
+    (props.options ?? owned.latest ?? [])
+      .filter((option) => props.filter?.(option) ?? true)
+      .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
 
   const [query, setQuery] = createSignal('');
 
@@ -206,6 +236,17 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     }
     props.onPick(draft());
     close();
+    // Back to whatever the caller holds now that it has been told.
+    //
+    // A dialog gets this for nothing — it is shut, and opening it
+    // again reads `value` afresh — but an inline list stays on screen
+    // with the picks still lit and the button still counting them. A
+    // player who handed six pokemon to Nurse Joy saw the same six
+    // still selected and the same button still offering to hand them
+    // over, which reads as a press that did nothing
+    if (props.inline === true) {
+      setDraft(untrack(chosen));
+    }
   };
 
   const press = (option: CatchOption): void => {
@@ -217,6 +258,11 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         setDraft(draft().filter((id) => id !== option.id));
       } else if (draft().length < limit()) {
         setDraft([...draft(), option.id]);
+      }
+      // A live picker has no confirm of its own: the caller's button
+      // is the confirm, so the caller is told on every press
+      if (props.live === true) {
+        props.onPick(draft());
       }
       return;
     }
@@ -273,6 +319,28 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       press(option);
     }
   };
+
+  /**
+   * The button that takes the picks.
+   *
+   * It belongs beside the way out rather than in the middle of the
+   * panel: "Join with 3/6" and "Close" are the two things a player
+   * does with this screen, and one of them was floating above a list
+   * while the other sat in the corner
+   */
+  const confirm = (): JSX.Element => (
+    <Button
+      tone="primary"
+      disabled={props.disabled === true || draft().length === 0}
+      onClick={finish}
+    >
+      {confirming()
+        ? 'Sure?'
+        : `${props.verb ?? 'Take'} ${draft().length}${
+            limit() === Number.POSITIVE_INFINITY ? '' : `/${limit()}`
+          }`}
+    </Button>
+  );
 
   const list = (): JSX.Element => (
     <div class="flex flex-col gap-3">
@@ -354,20 +422,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         )}
       </Show>
 
-      <Show when={props.multiple === true}>
-        <Row class="justify-center">
-          <Button
-            tone="primary"
-            disabled={props.disabled === true || draft().length === 0}
-            onClick={finish}
-          >
-            {confirming()
-              ? 'Sure?'
-              : `${props.verb ?? 'Take'} ${draft().length}${
-                  limit() === Number.POSITIVE_INFINITY ? '' : `/${limit()}`
-                }`}
-          </Button>
-        </Row>
+      {/* Inline, the confirm sits under the list: there is no dialog
+          row for it to stand on. A live picker draws none at all —
+          the caller has its own, and two buttons saying nearly the
+          same thing is the thing being fixed */}
+      <Show when={props.multiple === true && props.inline === true && props.live !== true}>
+        <Row class="justify-center">{confirm()}</Row>
       </Show>
     </div>
   );
@@ -405,6 +465,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
               Pick none
             </Button>
           </Show>
+          <Show when={props.multiple === true}>{confirm()}</Show>
           <Button onClick={close}>Close</Button>
         </DialogActions>
       </Dialog>

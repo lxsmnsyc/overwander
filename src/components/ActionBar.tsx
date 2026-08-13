@@ -1,4 +1,4 @@
-import { For, type JSX } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { GameDialog, useGame } from './game-context';
 
 /**
@@ -43,6 +43,20 @@ export default function ActionBar(): JSX.Element {
         class="pointer-events-auto flex flex-wrap items-center justify-center gap-1 rounded-full
           border border-line bg-paper/95 p-1 shadow-lg shadow-ink/20 backdrop-blur-sm"
       >
+        {/* Where the player is standing, first on the bar and before
+            anything to press. It was painted into the corner of the
+            board, on top of four cells of a world the player is trying
+            to read; here it costs nothing and stands with the rest of
+            the furniture. Nothing to press, so it is set apart from
+            the buttons by a rule rather than by being one */}
+        <Show when={game.place()}>
+          {(place) => (
+            <>
+              <span class="px-3 py-1.5 text-sm text-muted whitespace-nowrap">{place()}</span>
+              <span aria-hidden="true" class="h-5 w-px shrink-0 bg-line" />
+            </>
+          )}
+        </Show>
         <For each={ACTIONS}>
           {(action) => (
             <button

@@ -1,5 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { CLAIMED, GIFT, dialogNamed, expectOpen, expectShut, offCentre, signIn } from './game';
+import {
+  CLAIMED,
+  GIFT,
+  ROAD,
+  dialogNamed,
+  dismissGift,
+  expectOpen,
+  expectShut,
+  offCentre,
+  signIn,
+} from './game';
 
 /**
  * The first thing that happens to anybody.
@@ -23,11 +33,23 @@ test.describe('the starter gift', () => {
 
     // What it is, written the way the sheet writes it
     await expect(gift.getByText(/^Lv\. \d+ /)).toBeVisible();
-    // And what came with it
-    await expect(gift.getByText(/Poke Ball × \d+/)).toBeVisible();
 
+    // The balls are the *second* notice rather than a row of badges
+    // under the sprite: they are what makes the world playable, not a
+    // footnote to the pokemon
     await gift.getByRole('button', { name: 'Thanks' }).click();
     await expectShut(gift);
+
+    const bag = dialogNamed(page, ROAD);
+
+    await expectOpen(bag);
+    await expect(bag.getByText('Poke Ball')).toBeVisible();
+    await expect(bag.getByText(/× \d+/)).toBeVisible();
+    // Drawn rather than named
+    await expect(bag.locator('canvas')).toBeVisible();
+
+    await bag.getByRole('button', { name: 'Thanks' }).click();
+    await expectShut(bag);
   });
 
   test('names itself in the middle of the panel', async ({ page }) => {
@@ -46,7 +68,7 @@ test.describe('the starter gift', () => {
     const gift = dialogNamed(page, GIFT);
 
     await expectOpen(gift, CLAIMED);
-    await gift.getByRole('button', { name: 'Thanks' }).click();
+    await dismissGift(page);
     await expectShut(gift);
 
     // Coming back is not another pokemon. The claim is written down

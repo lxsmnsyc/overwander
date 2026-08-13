@@ -144,10 +144,19 @@ let biomeIndex: Map<Biome, Species[]> | null = null;
  */
 let familyIndex: Families[] | null = null;
 
+/**
+ * What each family is called, worked out the first time it is asked
+ * for. See `getFamilyName`
+ */
+const familyNames = new Map<Families, string>();
+
 export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
   familyIndex = null;
+  // A line that has just gained a member may have gained a new base
+  // stage, and the name is that stage's
+  familyNames.clear();
 }
 
 /**
@@ -276,6 +285,40 @@ export function getBaseSpecies(species: Species): Species {
     previous = getSpeciesData(current).evolvesFrom;
   }
   return current;
+}
+
+/**
+ * The name a family is known by, derived rather than written down.
+ *
+ * A family is a line of pokemon, and a line is called after what it
+ * starts as — a Charmander's candy is a Charmander's candy whether it
+ * is being fed to a Charmeleon or a Charizard. So the name is the
+ * **base species** of the line: found by walking any member of it back
+ * to the stage it hatches at, which is the same answer whichever
+ * member is asked.
+ *
+ * It is derived because the alternative is a second list of eighty
+ * names beside the enum that already holds them, kept in step by hand.
+ * A family with nothing registered under it has no name to give and
+ * says so with its number, which is the honest answer for a line the
+ * game does not have yet
+ */
+export function getFamilyName(family: Families): string {
+  const known = familyNames.get(family);
+
+  if (known != null) {
+    return known;
+  }
+
+  for (const species of SPECIES_MAP.keys()) {
+    if (getSpeciesData(species).family === family) {
+      const name = getSpeciesData(getBaseSpecies(species)).name;
+
+      familyNames.set(family, name);
+      return name;
+    }
+  }
+  return `Family #${family}`;
 }
 
 export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {

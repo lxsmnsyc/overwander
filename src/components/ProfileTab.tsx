@@ -1,11 +1,9 @@
-import { type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import { type JSX, Show, createSignal, from } from 'solid-js';
 import { TabGroup } from 'terracotta';
 import { signOut } from '../auth/actions';
-import { resolveBuddy } from '../auth/buddy';
 import { type Profile, watchProfile } from '../auth/profile';
-import { isEgg } from '../auth/egg';
-import { getSpeciesData } from '../data/species';
 import BattleHistory from './BattleHistory';
+import BuddyCard from './BuddyCard';
 import BidsList from './BidsList';
 import CatchesList from './CatchesList';
 import InventoryList from './InventoryList';
@@ -35,7 +33,6 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       set(record);
     }),
   );
-  const [buddy] = createResource(() => props.player, resolveBuddy);
   const [error, setError] = createSignal<string | null>(null);
 
   const leave = (): void => {
@@ -50,7 +47,25 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
         {(loaded) => (
           <Card class="sm:flex-row sm:items-center sm:gap-4">
-            <Show when={loaded().avatar}>
+            {/* The avatar, or the room one will take. It is drawn
+                either way: a card that grows a picture the day a
+                player sets one changes shape under somebody who
+                already knows it, and the placeholder says there is
+                something here to set */}
+            <Show
+              when={loaded().avatar}
+              fallback={
+                <div
+                  class="flex size-16 shrink-0 items-center justify-center rounded-full border
+                    border-dashed border-line bg-line-soft text-lg font-semibold text-muted"
+                  role="img"
+                  aria-label="No avatar set"
+                  title="No avatar set"
+                >
+                  {loaded().nickname.slice(0, 1).toUpperCase()}
+                </div>
+              }
+            >
               {(avatar) => (
                 <img
                   src={avatar()}
@@ -64,18 +79,6 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             <div class="flex grow flex-wrap items-center gap-2">
               <span class="text-lg font-semibold">{loaded().nickname}</span>
               <Badge tone="gold">{loaded().gold} gold</Badge>
-              {/* Who is walking with them, which is the one thing
-                  here that changes what happens outside: a buddy
-                  draws spawns in and an egg is counting paces */}
-              <Show when={buddy()}>
-                {(pair) => (
-                  <Badge>
-                    {isEgg(pair()[1])
-                      ? `Egg · ${pair()[1].steps} / ${pair()[1].hatchSteps}`
-                      : `${getSpeciesData(pair()[1].species).name} · Lv. ${pair()[1].level}`}
-                  </Badge>
-                )}
-              </Show>
             </div>
             {/* The way out. It lived on a sign-in page of its own,
                 which is a page for the one moment a player is not
@@ -85,6 +88,12 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </Card>
         )}
       </Show>
+
+      {/* Who is walking with them, which is the one thing on this
+          page that changes what happens outside it: a buddy draws
+          spawns in, earns the candy, and is what an egg is counted
+          against */}
+      <BuddyCard player={props.player} />
 
       <TabGroup
         horizontal

@@ -1,5 +1,7 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { spriteBasePath } from '../../src/canvas/species-sprites';
+import { Species } from '../../src/data/ids/species';
 import SpeciesSpriteAnimation, {
   SPRITE_TICK,
   type SpriteSheetData,
@@ -16,10 +18,13 @@ function readSheet(path: string): SpriteSheetData {
 }
 
 /**
- * Species 3 is Bulbasaur — the folders are numbered by species id,
- * so 0, 1 and 2 are Missingno, an egg and a substitute
+ * The folders are numbered by species id, and a species id is its dex
+ * number — so Bulbasaur is 1. Missingno, an egg and a substitute are
+ * numbered past a hundred thousand, since they are not pokemon and
+ * have no dex number of their own. `regular` is the coat: the shiny
+ * drawings are a sibling tree of the same shape
  */
-const BULBASAUR = readSheet('public/sprites/pokemon/3/data.json');
+const BULBASAUR = readSheet('public/sprites/pokemon/regular/1/data.json');
 
 describe('sprite sheet data', () => {
   it('reads a shipped sheet', () => {
@@ -213,5 +218,42 @@ describe('species sprite animation', () => {
 
     expect(sprite.ready).toBe(false);
     expect(sprite.playing).toBeNull();
+  });
+});
+
+describe('where the sheets are', () => {
+  /**
+   * The tree on disk and the path the code builds have to agree, and
+   * nothing else checks that: a sheet asked for at the wrong path is a
+   * 404 the loader swallows on purpose, so the pokemon silently draws
+   * as Missingno rather than anything failing.
+   *
+   * So every folder that ships is walked back through `spriteBasePath`
+   * and has to come out as itself. That is what makes moving the tree
+   * — the shiny drawings became a sibling of the regular ones rather
+   * than a folder inside each — something the tests notice
+   */
+  it('builds the path of every sheet that ships', () => {
+    for (const [coat, shiny] of [
+      ['regular', false],
+      ['shiny', true],
+    ] as const) {
+      const folders = readdirSync(`public/sprites/pokemon/${coat}`, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => Number(entry.name));
+
+      expect(folders.length, `${coat} sheets should ship`).toBeGreaterThan(0);
+
+      for (const species of folders) {
+        expect(spriteBasePath(species, shiny)).toBe(`/sprites/pokemon/${coat}/${species}`);
+      }
+    }
+  });
+
+  it('keeps the two coats apart', () => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    const bulbasaur = Species.Bulbasaur;
+
+    expect(spriteBasePath(bulbasaur)).not.toBe(spriteBasePath(bulbasaur, true));
   });
 });

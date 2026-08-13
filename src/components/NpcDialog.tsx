@@ -33,6 +33,7 @@ import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import InventoryPicker, { type ItemAmount, describeItem } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
 import TeachMoveDialog, { MoveLine } from './TeachMoveDialog';
 import {
   Badge,
@@ -50,10 +51,32 @@ import {
 } from './styled';
 
 /**
- * What the person standing there actually says. It is set apart from
- * the game's own words, because it is somebody talking rather than the
- * game explaining
+ * What the person standing there actually says.
+ *
+ * Each of them is one offer, and the sentence explaining it used to be
+ * the dialog's own description — the same line of small grey text
+ * every screen in the game has, which is the game explaining rather
+ * than somebody talking. Said in their own words and set under them,
+ * it reads as the person the player has walked up to, and it says the
+ * one thing the row of controls beneath cannot: what this is for.
+ *
+ * They are quotes, so they are written as quotes
  */
+const NPC_QUOTES: Record<Npc, string> = {
+  [Npc.Breeder]:
+    'Leave me two that get along and I will see what comes of it. The egg is yours — you do the walking.',
+  [Npc.DaycareLady]:
+    'Give me that egg a while. I cannot hurry it much, but half of what is left is half you need not walk.',
+  [Npc.NurseJoy]:
+    'Hand them over, all of them. Nothing to pay — I am only here until the day turns over.',
+  [Npc.Groomer]:
+    'Brushed, fussed over and handed straight back thinking the world of you. Works best on one that barely knows you.',
+  [Npc.Vendor]:
+    'Crate is open. I will sell you what is in it and buy near enough anything you are carrying — as often as your purse holds out.',
+  [Npc.MoveReminder]:
+    'It has not forgotten a thing, you know. One Heart Scale and I will remind it.',
+};
+
 /**
  * A catch as the breeding rules read one
  */
@@ -67,6 +90,16 @@ function asParent(caught: CaughtPokemon): BreedingParent {
     egg: isEgg(caught),
   };
 }
+
+/**
+ * How every one of these sections is laid out.
+ *
+ * Down the middle, all of them. The dialog is one person making one
+ * offer — a picture of them, a line of what they say, and the thing
+ * they want picked — and a column of left-aligned lists under a
+ * centred portrait read as two screens stuck together
+ */
+const CENTRED = 'items-center text-center';
 
 /**
  * A trade the player has put together but not yet agreed to: which way
@@ -128,6 +161,12 @@ export interface NpcDialogProps {
 export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<string[]>([]);
+  /**
+   * What has been put in front of Nurse Joy but not yet handed over.
+   * The picker reports every press and this holds it, so the button
+   * that hands them over can live on the bar with the way out
+   */
+  const [party, setParty] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
   // What has been picked out of the crate or the bag but not yet
   // agreed to. A trade is two steps on purpose: the picker is where
@@ -191,19 +230,35 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * The crate as a list the picker can read: the same shape a bag has,
    * so buying and selling are the same list asked in two directions.
    *
-   * What stands in for a stack's count is **what the purse will take** —
-   * he has as many potions as anyone wants, and the number that matters
-   * to the player is how many of them they can afford. A kind they
-   * cannot afford one of is left out rather than shown and refused
+   * What stands in for a stack's count is **how many he will part with
+   * at once** — he has as many potions as anyone wants, and the limit
+   * is the trade's rather than the crate's.
+   *
+   * It used to be how many the purse could cover, which put an item
+   * the player could not afford in the list at "× 0" wearing a badge
+   * saying so. That is the same refusal three times over: the count,
+   * the badge, and the total at the bottom that will not let the trade
+   * through. The price beside the row is what a player is deciding
+   * with, and the total is where a purse that will not stretch says so
    */
   const crate = (): InventoryEntry[] =>
-    stock()
-      .map((item) => ({
-        user: props.player,
-        item,
-        amount: Math.min(VENDOR_TRADE_LIMIT, Math.floor((gold() ?? 0) / priceOf(item, true))),
-      }))
-      .filter((entry) => entry.amount > 0);
+    stock().map((item) => ({
+      user: props.player,
+      item,
+      amount: VENDOR_TRADE_LIMIT,
+    }));
+
+  /**
+   * The player's pokemon as every picker in this dialog reads them.
+   *
+   * `latest`, not the resource. Every one of these people writes and
+   * then re-reads the list, and a read that suspends throws to the
+   * nearest Suspense boundary — which, from inside a dialog, is the
+   * root of the whole app. Handing a party to Nurse Joy took the
+   * entire page down for the length of the round trip and brought it
+   * back with the dialog shut
+   */
+  const offers = (): CatchOption[] => catches.latest ?? [];
 
   const pair = (): [CatchOption, CatchOption] | null => {
     const picked = chosen();
@@ -212,7 +267,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       return null;
     }
 
-    const found = picked.map((id) => (catches() ?? []).find((entry) => entry.id === id));
+    const found = picked.map((id) => offers().find((entry) => entry.id === id));
 
     return found[0] == null || found[1] == null ? null : [found[0], found[1]];
   };
@@ -240,13 +295,13 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * price, and it is read off the same bag the vendor's picker reads
    */
   const scales = (): number =>
-    (bag() ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+    (bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
   /**
    * Which pokemon has been picked out for the reminder
    */
   const remembering = (): CatchOption | null =>
-    (catches() ?? []).find((option) => option.id === remindee()) ?? null;
+    offers().find((option) => option.id === remindee()) ?? null;
 
   /**
    * What he could give this one back: everything its species learns by
@@ -270,6 +325,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const close = (): void => {
     setStatus(null);
     setChosen([]);
+    setParty([]);
     setCounter(null);
     setBasket(null);
     forget();
@@ -461,6 +517,120 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   };
 
   /**
+   * What each of them offers, as the one or two buttons that do it.
+   *
+   * They live on the dialog's bottom bar rather than in the section
+   * they belong to, so every one of these dialogs is answered in the
+   * same place — and the vendor, whose offer is three screens deep,
+   * says what pressing on means at each of them
+   */
+  const npcActions = (npc: Npc): JSX.Element => {
+    if (npc === Npc.Breeder) {
+      return (
+        <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
+          Breed ({BREEDING_FEE} gold)
+        </Button>
+      );
+    }
+    if (npc === Npc.NurseJoy) {
+      return (
+        <Button
+          tone="primary"
+          disabled={busy() || party().length === 0}
+          onClick={() => {
+            tendParty(party());
+          }}
+        >
+          {party().length === 0 ? 'Hand over' : `Hand over ${party().length}`}
+        </Button>
+      );
+    }
+    if (npc === Npc.MoveReminder) {
+      return (
+        <Button
+          tone="primary"
+          disabled={busy() || scales() < 1 || remindee() == null || recall() == null}
+          onClick={() => {
+            const id = remindee();
+            const move = recall();
+
+            if (id != null && move != null) {
+              setReminding([id, move]);
+            }
+          }}
+        >
+          Remind it (1 Heart Scale)
+        </Button>
+      );
+    }
+    if (npc !== Npc.Vendor) {
+      // The daycare lady and the groomer take one pokemon and act on
+      // it the moment it is pressed, so there is nothing left to agree
+      // to — a button here would only ask the same question twice
+      return null;
+    }
+
+    const deal = basket();
+
+    if (deal != null) {
+      return (
+        <>
+          <Button
+            tone="primary"
+            disabled={busy() || (deal.buying && totalOf(deal) > (gold.latest ?? 0))}
+            onClick={settle}
+          >
+            {deal.buying ? 'Buy' : 'Sell'}
+          </Button>
+          <Button
+            disabled={busy()}
+            onClick={() => {
+              setBasket(null);
+            }}
+          >
+            Cancel
+          </Button>
+        </>
+      );
+    }
+    if (counter() != null) {
+      return (
+        <Button
+          disabled={busy()}
+          onClick={() => {
+            setCounter(null);
+          }}
+        >
+          Never mind
+        </Button>
+      );
+    }
+    return (
+      <>
+        <Button
+          tone="primary"
+          disabled={busy()}
+          onClick={() => {
+            setStatus(null);
+            setCounter('buy');
+          }}
+        >
+          Buy
+        </Button>
+        <Button
+          disabled={busy()}
+          onClick={() => {
+            setStatus(null);
+            setCounter('sell');
+          }}
+        >
+          Sell
+        </Button>
+      </>
+    );
+  };
+
+  /**
    * The scale is gone and the move is back. The bag is re-read the way
    * a trade re-reads it, since that is where the scale went from
    */
@@ -489,20 +659,47 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         <Show when={props.standing}>
           {(standing) => (
             <>
+              {/* Where they will stand once there is somebody drawn.
+                  The room is held now rather than added later, so the
+                  dialog does not change shape under a player who
+                  already knows it — the same room the grunt's stop
+                  keeps.
+
+                  What they say goes under them rather than in the
+                  dialog's description, where it was the game's voice
+                  rather than theirs */}
+              <div class="flex flex-col items-center gap-2 pt-1 text-center">
+                <div
+                  class="flex h-24 w-24 items-end justify-center rounded-panel border border-dashed
+                    border-line bg-line-soft/60 text-xs text-muted"
+                >
+                  <span class="pb-2">{who()}</span>
+                </div>
+                <blockquote class="m-0 max-w-prose text-sm text-muted italic">
+                  “{NPC_QUOTES[standing()[1]]}”
+                </blockquote>
+              </div>
+
               <Show when={standing()[1] === Npc.Breeder}>
-                <DialogSection>
+                <DialogSection class={CENTRED}>
                   {/* The pair is picked with the same list every other
                     part of the game picks a pokemon with; what makes
                     it a breeding pair is the two, and the rule about
-                    what can be one */}
+                    what can be one.
+
+                    Live, so the picker draws no confirm of its own:
+                    "Leave 2/2" and "Leave them" were two buttons for
+                    one press, and the second was the only one that
+                    did anything */}
                   <CatchPicker
                     inline
                     multiple
+                    live
                     max={2}
-                    options={catches()}
+                    options={offers()}
                     value={chosen()}
-                    verb="Leave"
-                    empty="You have nothing to leave."
+                    verb="Breed"
+                    empty="You have nothing to breed."
                     filter={(option) => !isEgg(option.caught) && !option.fighting}
                     note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
                     onPick={(picked) => {
@@ -519,25 +716,21 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                         : null
                     }
                   />
-                  <Row class="justify-center">
-                    <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
-                      Leave them ({BREEDING_FEE} gold)
-                    </Button>
-                  </Row>
                 </DialogSection>
               </Show>
 
               <Show when={standing()[1] === Npc.NurseJoy}>
-                <DialogSection>
+                <DialogSection class={CENTRED}>
                   {/* She is free, so what keeps her from being a tap is
                     the window: one visit per player while she is
                     standing here */}
                   <CatchPicker
                     inline
                     multiple
+                    live
                     max={NURSE_CARE_LIMIT}
-                    options={catches()}
-                    value={[]}
+                    options={offers()}
+                    value={party()}
                     verb="Hand over"
                     empty="You have nothing for her to look at."
                     filter={(option) => !isEgg(option.caught) && !option.fighting}
@@ -545,19 +738,25 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                     note={(option) =>
                       isShadow(option.caught) ? 'shadow — she would purify it' : null
                     }
-                    onPick={tendParty}
+                    onPick={(picked) => {
+                      setStatus(null);
+                      setParty(picked);
+                    }}
                   />
                 </DialogSection>
               </Show>
 
               <Show when={standing()[1] === Npc.DaycareLady}>
-                <DialogSection>
+                {/* Centred, like everything else she is standing in
+                    the middle of: one egg, one price, and the box the
+                    egg is picked out of */}
+                <DialogSection class={CENTRED}>
                   {/* The note on each row is what the fee actually buys
                     that egg: half of a long walk is further than half
                     of a short one */}
                   <CatchPicker
                     inline
-                    options={catches()}
+                    options={offers()}
                     value={null}
                     verb="Warm"
                     empty="You have no egg for her."
@@ -575,14 +774,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
               </Show>
 
               <Show when={standing()[1] === Npc.Groomer}>
-                <DialogSection>
+                <DialogSection class={CENTRED}>
                   {/* The note is what the fee actually buys this
                     pokemon: half of what it has left to give, which is
                     a great deal to one just out of its ball and next
                     to nothing to one that already adores its owner */}
                   <CatchPicker
                     inline
-                    options={catches()}
+                    options={offers()}
                     value={null}
                     verb="Groom"
                     empty="You have nothing for him to see to."
@@ -600,13 +799,21 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                       }
                     }}
                   />
+                  {/* What it costs. The rest of what he is for is
+                      said in his own words under him */}
+                  <Meta class="block">{GROOMING_FEE} gold, once while he is here.</Meta>
                 </DialogSection>
               </Show>
 
               <Show when={standing()[1] === Npc.MoveReminder}>
-                <DialogSection>
+                <DialogSection class={CENTRED}>
+                  {/* The scale itself rather than the words for it.
+                      It is the whole price of what he does, and a
+                      player who has one in the bag knows it by the
+                      picture — the bag draws it the same way */}
                   <Row>
                     <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
+                      <ItemSprite item={REMINDER_FEE} size={20} label="" />
                       {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
                     </Badge>
                   </Row>
@@ -622,7 +829,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                     own, since this is already one */}
                   <CatchPicker
                     inline
-                    options={catches()}
+                    options={offers()}
                     value={remindee()}
                     verb="Remind"
                     empty="You have nothing that has forgotten anything."
@@ -675,30 +882,13 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                       </For>
                     </List>
                   </Show>
-
-                  <Row>
-                    <Button
-                      tone="primary"
-                      disabled={busy() || scales() < 1 || remindee() == null || recall() == null}
-                      onClick={() => {
-                        const id = remindee();
-                        const move = recall();
-
-                        if (id != null && move != null) {
-                          setReminding([id, move]);
-                        }
-                      }}
-                    >
-                      Remind it (1 Heart Scale)
-                    </Button>
-                  </Row>
                 </DialogSection>
               </Show>
 
               <Show when={standing()[1] === Npc.Vendor}>
-                <DialogSection title="Trading">
-                  <Row>
-                    <Badge tone="gold">{gold() ?? 0} gold</Badge>
+                <DialogSection title="Trading" class={CENTRED}>
+                  <Row class="justify-center">
+                    <Badge tone="gold">{gold.latest ?? 0} gold</Badge>
                   </Row>
 
                   {/* Two steps on purpose. The picker is where the player
@@ -711,33 +901,10 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                       // Neither list is a dialog of its own: this one is
                       // already a dialog, and a modal opened over a modal
                       // fights it for the click that closes it. Pressing
-                      // Buy or Sell puts the list here instead
-                      <Show
-                        when={counter()}
-                        fallback={
-                          <Row>
-                            <Button
-                              tone="primary"
-                              disabled={busy()}
-                              onClick={() => {
-                                setStatus(null);
-                                setCounter('buy');
-                              }}
-                            >
-                              Buy
-                            </Button>
-                            <Button
-                              disabled={busy()}
-                              onClick={() => {
-                                setStatus(null);
-                                setCounter('sell');
-                              }}
-                            >
-                              Sell
-                            </Button>
-                          </Row>
-                        }
-                      >
+                      // Buy or Sell puts the list here instead. Both of
+                      // those buttons are on the bottom bar, where
+                      // everything that acts on this dialog is
+                      <Show when={counter()} fallback={<Note>Buy from him, or sell to him.</Note>}>
                         {(side) => (
                           <>
                             <InventoryPicker
@@ -745,14 +912,20 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                               multiple
                               player={props.player}
                               verb={side() === 'buy' ? 'Buy' : 'Sell'}
-                              entries={side() === 'buy' ? crate() : bag()}
+                              entries={side() === 'buy' ? crate() : bag.latest}
                               disabled={busy()}
                               value={[]}
                               empty={
                                 side() === 'buy'
-                                  ? 'Nothing in his crate is within your purse.'
+                                  ? 'His crate is empty.'
                                   : 'Nothing in your bag is worth anything to him.'
                               }
+                              // Everything he stocks is listed,
+                              // affordable or not. What the purse will
+                              // not stretch to is refused by the row
+                              // being unpickable and said again by the
+                              // price beside it — a badge repeating it
+                              // in words was the same news three times
                               filter={(entry) =>
                                 side() === 'buy' ||
                                 (isMarketable(entry.item) && priceOf(entry.item, false) > 0)
@@ -765,16 +938,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                                 );
                               }}
                             />
-                            <Row>
-                              <Button
-                                disabled={busy()}
-                                onClick={() => {
-                                  setCounter(null);
-                                }}
-                              >
-                                Never mind
-                              </Button>
-                            </Row>
                           </>
                         )}
                       </Show>
@@ -794,33 +957,16 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                             )}
                           </For>
                         </List>
-                        <Row>
+                        <Row class="justify-center">
                           <Badge tone={deal().buying ? 'gold' : 'leaf'}>
                             {deal().buying ? '−' : '+'}
                             {totalOf(deal())} gold
                           </Badge>
                           <Meta>
                             {deal().buying
-                              ? `Leaves you ${(gold() ?? 0) - totalOf(deal())}.`
-                              : `Leaves you ${(gold() ?? 0) + totalOf(deal())}.`}
+                              ? `Leaves you ${(gold.latest ?? 0) - totalOf(deal())}.`
+                              : `Leaves you ${(gold.latest ?? 0) + totalOf(deal())}.`}
                           </Meta>
-                        </Row>
-                        <Row>
-                          <Button
-                            tone="primary"
-                            disabled={busy() || (deal().buying && totalOf(deal()) > (gold() ?? 0))}
-                            onClick={settle}
-                          >
-                            {deal().buying ? 'Buy them' : 'Sell them'}
-                          </Button>
-                          <Button
-                            disabled={busy()}
-                            onClick={() => {
-                              setBasket(null);
-                            }}
-                          >
-                            Cancel
-                          </Button>
                         </Row>
                       </>
                     )}
@@ -832,7 +978,18 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             </>
           )}
         </Show>
+
+        {/* Everything that acts, on the bar with the way out.
+
+            They were scattered down the panel — under a picker, under a
+            list, under a summary — so a player who had chosen what they
+            wanted had to look for the button that did it, and in the
+            reminder's case scroll past a list of moves to find it. The
+            bar is where a dialog is answered */}
         <DialogActions center>
+          <Show when={props.standing?.[1]} keyed>
+            {(npc) => npcActions(npc)}
+          </Show>
           <Button onClick={close}>Walk on</Button>
         </DialogActions>
       </Dialog>

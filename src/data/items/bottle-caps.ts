@@ -76,6 +76,10 @@ export default function registerBottleCaps(): void {
   registerItem(Items.GoldenBottleCap, {
     name: 'Golden Bottle Cap',
     type: ItemTypes.Training,
+    // Neither cap is drawn anywhere on the sheets. The relic coins
+    // are the nearest thing: a small metal disc, and gold against
+    // silver says which of the two this is without a word
+    icon: 'valuables/relic-gold',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,
@@ -84,6 +88,7 @@ export default function registerBottleCaps(): void {
   registerItem(Items.BottleCap, {
     name: 'Bottle Cap',
     type: ItemTypes.Training,
+    icon: 'valuables/relic-silver',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,

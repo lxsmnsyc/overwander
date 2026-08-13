@@ -25,6 +25,9 @@ export default function registerHeartScale(): void {
   registerItem(Items.HeartScale, {
     name: 'Heart Scale',
     type: ItemTypes.Valuable,
+    // No scale of its own on the sheets; the heart is the half of it
+    // a player recognises, so that is what it borrows
+    icon: 'medicine/sweet-heart',
     flags: ItemFlags.Consumable,
     buy: 0,
     sell: 0,

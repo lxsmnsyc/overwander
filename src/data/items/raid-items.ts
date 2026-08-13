@@ -1,7 +1,7 @@
 import { isMythicalSpecies } from '../biome';
 import { Species } from '../ids/species';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { nameToIcon, registerItem } from './__create';
 
 /**
  * Raid items: the relics that call a mythical out to be fought.
@@ -43,6 +43,7 @@ export default function registerRaidItems(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.KeyItem,
+      icon: nameToIcon('key', NAMES[item] ?? ''),
       // Used to open a raid, and gone once it has been
       flags: ItemFlags.Usable | ItemFlags.Consumable,
       buy: 0,

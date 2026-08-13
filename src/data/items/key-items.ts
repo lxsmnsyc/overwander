@@ -13,6 +13,7 @@ export default function registerKeyItems(): void {
   registerItem(Items.ShinyCharm, {
     name: 'Shiny Charm',
     type: ItemTypes.KeyItem,
+    icon: 'key/shiny-charm',
     flags: ItemFlags.Holdable,
     buy: 0,
     sell: 0,

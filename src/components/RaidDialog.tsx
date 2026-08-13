@@ -1,10 +1,11 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import { For, type JSX, Show, createSignal } from 'solid-js';
 import { RaidAction, RaidKind, type RaidView, enterRaid } from '../auth/raids';
 import { getLairTitle } from '../data/overworld/lair';
 import { getSpeciesData } from '../data/species';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { Button, Dialog, DialogActions, Status } from './styled';
+import { Button, Dialog, DialogActions, Meta, Note, Status } from './styled';
 import SpriteDisplay from './SpriteDisplay';
+import TypeBadge from './TypeBadge';
 import { GameDialog, useGame } from './game-context';
 
 /**
@@ -18,6 +19,26 @@ const ACTION_LABELS: Record<RaidAction, string> = {
   [RaidAction.Join]: 'Join',
   [RaidAction.Spectate]: 'Spectate',
 };
+
+/**
+ * What a raid of this kind is, in a sentence: what it takes to fight
+ * and what walking away costs.
+ *
+ * The three are genuinely different bargains, and the difference is
+ * the thing a player is deciding about. A legendary comes back next
+ * window; a shadow is the same lair with something wrong in it and
+ * pays a pokemon that costs double to raise; a mythical was called by
+ * a relic that is already spent, so there is no second attempt
+ */
+function describeRaid(view: RaidView): string {
+  if (view.kind === RaidKind.Mythical) {
+    return 'The relic that called it is already spent — this raid happens once, won or lost.';
+  }
+  if (view.kind === RaidKind.Shadow) {
+    return 'A shadow raid: what it leaves behind is stronger and costs twice the candy to raise.';
+  }
+  return 'A raid takes a party. Beaten, it waits in the overworld for whoever fought it.';
+}
 
 /**
  * Why it says what it says, so a player who wanted to fight knows why
@@ -43,10 +64,21 @@ export interface RaidDialogProps {
    */
   snapshot: ChunkSnapshot | null;
   /**
-   * The cell walked up to and what is standing there, or null when the
-   * player is not in front of a lair
+   * The cell walked up to and what is standing there. The view is null
+   * for a lair with nothing in it this window — the dialog still
+   * opens, and says so.
+   *
+   * That is deliberate. A player who walks up to a lair and presses it
+   * has asked a question, and the answer used to be a line of text
+   * under the map that they were not looking at. Whatever the lair has
+   * to say, it says here
    */
-  lair: [cell: number, view: RaidView] | null;
+  lair: [cell: number, view: RaidView | null] | null;
+  /**
+   * Why there is nothing to fight, when there is not: the lair is
+   * quiet, or the player has nothing of their own to bring
+   */
+  reason?: string | null;
   onClose: () => void;
 }
 
@@ -81,7 +113,10 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   const summary = (): string => {
     const standing = view();
 
-    return standing == null ? 'A lair, and whatever is standing in it.' : describeAction(standing);
+    if (standing != null) {
+      return describeAction(standing);
+    }
+    return props.reason ?? 'A lair, and whatever is standing in it.';
   };
 
   const close = (): void => {
@@ -158,22 +193,49 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       terse
       description={summary()}
     >
-      <Show when={view()}>
+      <Show
+        when={view()}
+        fallback={
+          <>
+            {/* A lair with nothing in it is still a lair, and a player
+                who pressed it is owed an answer where they are looking
+                rather than in a line under the map */}
+            <Note class="py-4 text-center">{summary()}</Note>
+            <DialogActions center>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </>
+        }
+      >
         {(standing) => (
           <>
             {/* What is waiting in there, pacing, with its name under
-                it. The dialog's own title already says which lair and
-                whether it is a shadow one, so the picture says the
-                one thing the title cannot */}
+                it and a word about what it is. The sprite stands on
+                the floor of its box rather than in the middle of one,
+                so a tall boss and a short one put their feet on the
+                same line and the name below does not move */}
             <div class="flex flex-col items-center gap-2 py-2 text-center">
-              <SpriteDisplay
-                species={standing().species}
-                animation="Walk"
-                direction="down-right"
-                scale={4}
-                label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
-              />
-              <span class="font-medium">{getSpeciesData(standing().species).name}</span>
+              <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
+                <SpriteDisplay
+                  species={standing().species}
+                  animation="Walk"
+                  direction="down-right"
+                  scale={4}
+                  label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
+                />
+              </div>
+              <span class="text-lg font-medium">{getSpeciesData(standing().species).name}</span>
+              <div class="flex flex-wrap justify-center gap-1">
+                <For each={getSpeciesData(standing().species).types}>
+                  {(type) => <TypeBadge type={type} />}
+                </For>
+              </div>
+              {/* What fighting it means, which is the decision the
+                  button below asks for. The dex's word for its kind —
+                  a Freeze Pokemon — went with the types above it: the
+                  badges say what it fights as, which is the half of it
+                  that changes how the raid goes */}
+              <Meta class="max-w-prose">{describeRaid(standing())}</Meta>
             </div>
             <DialogActions center>
               <Button tone="primary" disabled={busy()} onClick={act}>

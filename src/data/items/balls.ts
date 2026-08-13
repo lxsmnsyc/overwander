@@ -11,6 +11,7 @@ export default function registerBalls(): void {
   registerItem(Items.PokeBall, {
     name: 'Poke Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/poke',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 200,
     sell: 100,
@@ -18,6 +19,7 @@ export default function registerBalls(): void {
   registerItem(Items.GreatBall, {
     name: 'Great Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/great',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 600,
     sell: 300,
@@ -25,6 +27,7 @@ export default function registerBalls(): void {
   registerItem(Items.UltraBall, {
     name: 'Ultra Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/ultra',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1200,
     sell: 600,
@@ -33,6 +36,7 @@ export default function registerBalls(): void {
   registerItem(Items.MasterBall, {
     name: 'Master Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/master',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,
@@ -41,6 +45,7 @@ export default function registerBalls(): void {
   registerItem(Items.PremierBall, {
     name: 'Premier Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/premier',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 200,
     sell: 100,
@@ -49,6 +54,7 @@ export default function registerBalls(): void {
   registerItem(Items.HealBall, {
     name: 'Heal Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/heal',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 300,
     sell: 150,
@@ -57,6 +63,7 @@ export default function registerBalls(): void {
   registerItem(Items.LuxuryBall, {
     name: 'Luxury Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/luxury',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -65,6 +72,7 @@ export default function registerBalls(): void {
   registerItem(Items.NetBall, {
     name: 'Net Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/net',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -73,6 +81,7 @@ export default function registerBalls(): void {
   registerItem(Items.DiveBall, {
     name: 'Dive Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/dive',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -81,6 +90,7 @@ export default function registerBalls(): void {
   registerItem(Items.NestBall, {
     name: 'Nest Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/nest',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -89,6 +99,7 @@ export default function registerBalls(): void {
   registerItem(Items.RepeatBall, {
     name: 'Repeat Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/repeat',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -97,6 +108,7 @@ export default function registerBalls(): void {
   registerItem(Items.TimerBall, {
     name: 'Timer Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/timer',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -105,6 +117,7 @@ export default function registerBalls(): void {
   registerItem(Items.QuickBall, {
     name: 'Quick Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/quick',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,
@@ -113,6 +126,7 @@ export default function registerBalls(): void {
   registerItem(Items.DuskBall, {
     name: 'Dusk Ball',
     type: ItemTypes.PokeBall,
+    icon: 'balls/dusk',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
     sell: 500,

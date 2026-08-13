@@ -9,6 +9,7 @@ export default function registerEvolutionStones(): void {
   registerItem(Items.FireStone, {
     name: 'Fire Stone',
     type: ItemTypes.Evolution,
+    icon: 'evolutions/fire-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
     buy: 3000,
     sell: 1500,
@@ -16,6 +17,7 @@ export default function registerEvolutionStones(): void {
   registerItem(Items.WaterStone, {
     name: 'Water Stone',
     type: ItemTypes.Evolution,
+    icon: 'evolutions/water-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
     buy: 3000,
     sell: 1500,
@@ -23,6 +25,7 @@ export default function registerEvolutionStones(): void {
   registerItem(Items.ThunderStone, {
     name: 'Thunder Stone',
     type: ItemTypes.Evolution,
+    icon: 'evolutions/thunder-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
     buy: 3000,
     sell: 1500,
@@ -30,6 +33,7 @@ export default function registerEvolutionStones(): void {
   registerItem(Items.LeafStone, {
     name: 'Leaf Stone',
     type: ItemTypes.Evolution,
+    icon: 'evolutions/leaf-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
     buy: 3000,
     sell: 1500,
@@ -37,6 +41,7 @@ export default function registerEvolutionStones(): void {
   registerItem(Items.MoonStone, {
     name: 'Moon Stone',
     type: ItemTypes.Evolution,
+    icon: 'evolutions/moon-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
     buy: 3000,
     sell: 1500,

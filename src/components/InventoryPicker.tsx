@@ -3,6 +3,7 @@ import { useAuth } from '../auth/context';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import type { ItemTypes, Items } from '../data/ids/items';
 import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../data/items';
+import ItemSprite from './ItemSprite';
 import matches from '../core/search';
 import {
   Badge,
@@ -137,6 +138,16 @@ interface InventoryPickerCommonProps {
    * live battle, say, where every row is refused for the same reason
    */
   disabled?: boolean;
+  /**
+   * Why one particular row cannot be picked, or null when it can.
+   *
+   * It is a **reason** rather than a flag because the row stays on
+   * screen: a vendor's crate lists what he stocks whether or not the
+   * player can afford it today, and "not enough gold" is the whole
+   * point of showing the row at all. Hiding it instead would make the
+   * crate change shape with the purse
+   */
+  blocked?: (entry: InventoryEntry) => string | null;
   /**
    * Render the list on its own, with no dialog and no button to open
    * one. For callers that are already in a dialog
@@ -394,13 +405,17 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
                   class="flex-col items-stretch"
                 >
                   <div class="flex flex-wrap items-center gap-2">
+                    {/* What it looks like, in front of what it is
+                        called. Silent to a screen reader: the button
+                        beside it already names the item */}
+                    <ItemSprite item={entry.item} size={28} label="" />
                     <RowButton
                       pressed={
                         props.multiple === true
                           ? amountOf(entry.item) > 0
                           : props.value === entry.item
                       }
-                      disabled={props.disabled}
+                      disabled={props.disabled === true || props.blocked?.(entry) != null}
                       onClick={() => {
                         press(entry);
                       }}
@@ -412,6 +427,11 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
                     <Badge>× {entry.amount}</Badge>
                     <Show when={props.note?.(entry) ?? undefined} keyed>
                       {(note) => <Meta>{note}</Meta>}
+                    </Show>
+                    {/* And why it cannot be pressed, where the row is
+                        shown but refused */}
+                    <Show when={props.blocked?.(entry) ?? undefined} keyed>
+                      {(why) => <Badge tone="ember">{why}</Badge>}
                     </Show>
                     {/* How many of the stack, once the row is in: a
                         caller asking for items usually wants a count as
@@ -465,7 +485,12 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
             disabled={props.disabled === true || draft().length === 0}
             onClick={finish}
           >
-            {confirming() ? 'Sure?' : `${props.verb ?? 'Take'} ${draft().length} of them`}
+            {/* The verb alone. "Buy 3 of them" counted the *rows* in
+                the basket rather than the items in it, which for a
+                basket holding five of one thing was a number that
+                answered nothing — and what is in it is listed above
+                the button either way */}
+            {confirming() ? 'Sure?' : (props.verb ?? 'Take')}
           </Button>
         </Row>
       </Show>

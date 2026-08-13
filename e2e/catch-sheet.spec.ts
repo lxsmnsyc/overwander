@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, offCentre, openCatch, signIn } from './game';
+import { SHEET, dismissGift, offCentre, openCatch, signIn } from './game';
 
 /**
  * One pokemon in full.
@@ -30,7 +30,7 @@ test.describe('the catch sheet', () => {
 
   test('is named for what it is, with the pokemon named inside it', async ({ page }) => {
     const sheet = await openCatch(page);
-    const title = sheet.getByText('Pokemon Info');
+    const title = sheet.getByText(SHEET);
 
     // The window is called Pokemon Info; the pokemon's own name lives
     // under its sprite, where it belongs to the pokemon
@@ -107,6 +107,6 @@ test.describe('the catch sheet', () => {
     const torn = await page.evaluate(() => window.torn?.count ?? -1);
 
     expect(torn, 'nothing should have been unmounted while the favorite was written').toBe(0);
-    await expect(sheet.getByText('Pokemon Info')).toBeVisible();
+    await expect(sheet.getByText(SHEET)).toBeVisible();
   });
 });

@@ -10,6 +10,7 @@ import { getSpeciesData } from '../data/species';
 import type SafariSession from '../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../overworld/safari';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
 import SpriteDisplay from './SpriteDisplay';
 import { Button, Dialog, DialogActions, Status } from './styled';
 
@@ -91,6 +92,11 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   // outlives the throw, while a treat is one throw's business — and
   // the session already owns the ball
   const [treat, setTreat] = createSignal<Items | null>(null);
+  /**
+   * What was just caught, until the player has said they have seen it.
+   * The sheet opens from here rather than from the throw
+   */
+  const [caught, setCaught] = createSignal<string | null>(null);
   // Read once per opened session: throwing and feeding both spend
   // from the bag, so it is refetched after each action
   const [bag, { refetch }] = createResource(
@@ -120,6 +126,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
         setStatus(null);
         setRummaging(false);
         setTreat(null);
+        setCaught(null);
       },
     ),
   );
@@ -180,8 +187,8 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   const act = (action: () => Promise<string | null>): void => {
     action()
       .then(settle)
-      .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+      .catch((failure: unknown) => {
+        setStatus(failure instanceof Error ? failure.message : String(failure));
       });
   };
 
@@ -231,11 +238,13 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       if (thrownAt == null) {
         return 'No ball of that kind to throw.';
       }
-      // Straight to the sheet for what was caught. The encounter is
-      // over the moment the ball holds, so there is nothing left in
-      // this dialog to come back to
+      // Held onto rather than handed straight up. A ball that holds
+      // used to throw the catch sheet over the encounter in the same
+      // beat — several screens of detail arriving before the player
+      // had seen the ball stop moving. The catch is announced here
+      // first, and the sheet is what they press for
       if (thrownAt.catchId != null) {
-        props.onCaught?.(thrownAt.catchId);
+        setCaught(thrownAt.catchId);
       }
       return THROW_MESSAGES[thrownAt.result];
     });
@@ -259,11 +268,27 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
       return 'Encounter';
     }
     const { encounter } = active;
-    const gender = GENDER_MARKS[encounter.gender];
 
-    return `${isShiny(encounter) ? '✦ ' : ''}${getSpeciesData(encounter.species).name} · Lv. ${
-      encounter.level
-    }${gender === '' ? '' : ` · ${gender}`}`;
+    // The level first, then what it is, then the one mark for its
+    // gender — the order the catch sheet and the field readout say it
+    // in. Read as a phrase rather than as a row of facts separated by
+    // dots, which is what a name is
+    return `Lv. ${encounter.level} ${isShiny(encounter) ? '✦ ' : ''}${
+      getSpeciesData(encounter.species).name
+    } ${GENDER_MARKS[encounter.gender]}`.trimEnd();
+  };
+
+  /**
+   * Done looking at what was caught: the sheet takes it from here, and
+   * the encounter is over either way
+   */
+  const openSheet = (): void => {
+    const id = caught();
+
+    setCaught(null);
+    if (id != null) {
+      props.onCaught?.(id);
+    }
   };
 
   const leave = (): void => {
@@ -275,6 +300,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     setStatus(null);
     setRummaging(false);
     setTreat(null);
+    setCaught(null);
     props.onClose();
   };
 
@@ -335,7 +361,9 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
             </Show>
 
             <Show when={active().state !== SafariState.Active}>
-              <p role="status">{STATE_MESSAGES[active().state]}</p>
+              <p class="text-center text-lg font-semibold" role="status">
+                {STATE_MESSAGES[active().state]}
+              </p>
             </Show>
             {/* What is in hand says the rest: the throw button names
                 it, the badge beside it counts what is left, and a
@@ -364,7 +392,12 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 </Button>
                 {/* What is being thrown and how many are left are one
                     thing to read, so they are one thing to look at */}
+                {/* The ball, drawn on the button that throws it. What
+                    is in hand is the one thing on this screen a player
+                    checks between every throw, and a picture of a
+                    Great Ball is read faster than the words */}
                 <Button tone="primary" disabled={stockOf(inHand()) === 0} onClick={hurl}>
+                  <ItemSprite item={inHand()} size={20} label="" />
                   Throw {describeItem(inHand())} × {stockOf(inHand())}
                 </Button>
               </>
@@ -378,6 +411,15 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
               Never mind
             </Button>
           </Show>
+        </Show>
+        {/* What was caught is the one thing worth pressing once the
+            ball has held. It is offered rather than opened: a sheet
+            that arrives on its own lands before the player has taken
+            in that they caught anything */}
+        <Show when={caught()}>
+          <Button tone="primary" onClick={openSheet}>
+            Have a look
+          </Button>
         </Show>
         <Button tone={session()?.state === SafariState.Active ? 'danger' : 'ghost'} onClick={leave}>
           {session()?.state === SafariState.Active ? 'Run away' : 'Close'}

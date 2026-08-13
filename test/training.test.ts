@@ -18,8 +18,28 @@ import {
   gainFriendship,
   groomedFriendship,
 } from '../src/data/constants/friendship';
-import { EFFORT_PER_LEVEL, MAX_EFFORT_PER_STAT, Stats } from '../src/data/constants/stats';
-import { Balls } from '../src/data/ids/items';
+import {
+  EFFORT_PER_LEVEL,
+  MAX_EFFORT_PER_STAT,
+  STAT_ORDER,
+  Stats,
+} from '../src/data/constants/stats';
+import { asCaughtPokemon, getMovePoints } from '../src/auth/caught-record';
+import { Balls, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
+import { Moves } from '../src/data/ids/moves';
+import registerItems, { getItemData } from '../src/data/items';
+import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_PRICE, VITAMIN_STATS } from '../src/data/items/vitamins';
+import { WING_EFFORT, WING_STATS } from '../src/data/items/wings';
+import { PP_UP_LIMIT, getMovePP, registerMoves } from '../src/data/moves';
+import { getItemBand } from '../src/data/overworld/item-pool';
+import { registerSpecies } from '../src/data/species';
+import { Species } from '../src/data/ids/species';
+
+// The registries the assertions below read: what a move's PP is, and
+// what the market makes of a vitamin
+registerMoves();
+registerSpecies();
+registerItems();
 
 function trained(
   level: number,
@@ -195,5 +215,84 @@ describe('friendship', () => {
     // A faint is a faint: the ball is a reason to think better of
     // somebody, not to take a knockout harder
     expect(gainFriendship(50, 'faint', 1, friendshipFactor(Balls.LuxuryBall))).toBe(49);
+  });
+});
+
+describe('move points', () => {
+  it('adds a fifth of the move at a time, floored', () => {
+    // Tackle is a 35 PP move: a fifth of it is seven, so each point
+    // is worth exactly seven and three are worth twenty-one
+    expect(getMovePP(Moves.Tackle)).toBe(35);
+    expect(getMovePP(Moves.Tackle, 1)).toBe(42);
+    expect(getMovePP(Moves.Tackle, 2)).toBe(49);
+    expect(getMovePP(Moves.Tackle, 3)).toBe(56);
+
+    // Floored rather than rounded: a fifth of 15 is three
+    expect(getMovePP(Moves.Thunderbolt)).toBe(15);
+    expect(getMovePP(Moves.Thunderbolt, 1)).toBe(18);
+    expect(getMovePP(Moves.Thunderbolt, 3)).toBe(24);
+  });
+
+  it('never gives a move more than it will take', () => {
+    // The limit is what a PP Max buys, and nothing goes past it —
+    // however many points a stored record claims
+    expect(getMovePP(Moves.Tackle, PP_UP_LIMIT)).toBe(getMovePP(Moves.Tackle, 99));
+    expect(getMovePP(Moves.Tackle, -1)).toBe(getMovePP(Moves.Tackle));
+  });
+
+  it('reads a stored record back inside those limits', () => {
+    // Firestore hands back whatever is there. A count past the limit
+    // would make a move faster than any amount of gold can buy, and
+    // anything that is not a count is not a point spent
+    const caught = asCaughtPokemon({
+      species: Species.Pidgey,
+      level: 5,
+      movePoints: { [Moves.Tackle]: 99, [Moves.Growl]: 0, [Moves.TailWhip]: 'lots' },
+    });
+
+    expect(getMovePoints(caught, Moves.Tackle)).toBe(PP_UP_LIMIT);
+    expect(getMovePoints(caught, Moves.Growl)).toBe(0);
+    expect(getMovePoints(caught, Moves.Ember)).toBe(0);
+    expect(caught.movePoints[String(Moves.TailWhip)]).toBeUndefined();
+  });
+
+  it('reads a record written before moves could be trained as untrained', () => {
+    expect(asCaughtPokemon({ species: Species.Pidgey, level: 5 }).movePoints).toEqual({});
+  });
+});
+
+describe('vitamins', () => {
+  it('feeds one stat each, ten points at a time', () => {
+    // A vitamin is a wing at scale: the same grant, bought rather
+    // than found, so the two share one call on the server
+    expect(VITAMIN_EFFORT).toBeGreaterThan(WING_EFFORT);
+    expect(new Set(VITAMIN_STATS.values())).toEqual(new Set(STAT_ORDER));
+    expect(VITAMIN_STATS.get(Items.HPUp)).toBe(Stats.HP);
+    expect(VITAMIN_STATS.get(Items.Carbos)).toBe(Stats.Speed);
+    expect(VITAMIN_STATS.size).toBe(WING_STATS.size);
+  });
+
+  it('is bought rather than found, which is a wing turned around', () => {
+    for (const item of VITAMIN_STATS.keys()) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Training);
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(VITAMIN_PRICE);
+      // Nothing on the ground hides one: a vitamin is a gold sink
+      expect(getItemBand(item)).toBeNull();
+    }
+    // A wing is the other way round: found, never stocked
+    for (const item of WING_STATS.keys()) {
+      expect(getItemData(item).flags & ItemFlags.Marketable).toBe(0);
+      expect(getItemBand(item)).toBe('uncommon');
+    }
+  });
+
+  it('sells a PP Max for what three PP Ups cost', () => {
+    expect(PP_ITEMS.get(Items.PPUp)).toBe(1);
+    expect(PP_ITEMS.get(Items.PPMax)).toBe(PP_UP_LIMIT);
+    expect(getItemData(Items.PPMax).buy).toBe(getItemData(Items.PPUp).buy * PP_UP_LIMIT);
+    expect(getItemData(Items.PPUp).type).toBe(ItemTypes.Training);
   });
 });

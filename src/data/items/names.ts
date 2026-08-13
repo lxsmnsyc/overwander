@@ -15,6 +15,7 @@ export const ITEM_TYPE_NAMES: Record<ItemTypes, string> = {
   [ItemTypes.Evolution]: 'Evolution',
   [ItemTypes.Valuable]: 'Valuables',
   [ItemTypes.Training]: 'Training',
+  [ItemTypes.Fossil]: 'Fossils',
 };
 
 /**
@@ -31,5 +32,8 @@ export const ITEM_TYPE_ORDER: ItemTypes[] = [
   ItemTypes.Training,
   ItemTypes.Machine,
   ItemTypes.KeyItem,
+  // Carried rather than used, both of them: a fossil until somebody
+  // with a bench is found, a nugget until somebody with a purse is
+  ItemTypes.Fossil,
   ItemTypes.Valuable,
 ];

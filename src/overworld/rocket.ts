@@ -96,6 +96,8 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
     shiny: false,
     shadow: true,
     moves: grunt.moves,
+    // A grunt buys no PP Ups: what it fields is what the roll gave it
+    movePoints: {},
     abilities: [grunt.ability, Abilities.Shadow],
     items: [],
     // A grunt's pokemon has no record to have been hurt on: it is

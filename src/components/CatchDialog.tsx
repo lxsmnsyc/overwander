@@ -11,13 +11,20 @@ import {
   giveItem,
   isFavorite,
   isGuarded,
+  listCaught,
   releaseCatch,
   setFavorite,
   setGuarded,
   takeItem,
 } from '../auth/caught';
 import useHealingItem from '../auth/healing';
-import { ACQUISITION_NAMES, getCatchSlots, isShadow, isShiny } from '../auth/caught-record';
+import {
+  ACQUISITION_NAMES,
+  getCatchSlots,
+  getMovePoints,
+  isShadow,
+  isShiny,
+} from '../auth/caught-record';
 import { Slots } from '../data/constants/slots';
 import { getProfile } from '../auth/profile';
 import {
@@ -36,7 +43,7 @@ import { learnLevelUpMove } from '../auth/moves';
 import { useAuth } from '../auth/context';
 import { type EvolutionOption, evolveCatch, listEvolutionOptions } from '../auth/evolution';
 import { assignableEffort, unusedEffort } from '../auth/effort';
-import { type TrainingResult, feedEffortBerry, trainEffort, useWing } from '../auth/training';
+import { type TrainingResult, feedEffortBerry, trainEffort, useEffortItem } from '../auth/training';
 import { getAbilityData } from '../data/abilities';
 import { MAX_LEVEL } from '../data/constants/levels';
 import {
@@ -50,6 +57,7 @@ import {
 import getSigil from '../data/constants/sigil';
 
 import { BERRY_EFFORT_DROPS } from '../data/items/berries';
+import { isPPItem, isVitamin } from '../data/items/vitamins';
 import { isWing } from '../data/items/wings';
 import type Abilities from '../data/ids/abilities';
 import type Natures from '../data/ids/natures';
@@ -61,7 +69,7 @@ import { isBottleCap, isPerfectIVs } from '../data/items/bottle-caps';
 import { isHerbal } from '../data/items/medicine';
 import { isPurifyingGem } from '../data/items/purifying-gem';
 import { unpackStatuses } from '../data/ids/status';
-import { getMoveData } from '../data/moves';
+import { PP_UP_LIMIT, getMoveData } from '../data/moves';
 import type { Moves } from '../data/ids/moves';
 import {
   SUPPORTED_METHODS,
@@ -80,8 +88,10 @@ import {
   isFatefulEncounter,
   isRaidEncounter,
 } from '../overworld/encounter';
+import IncreasePPDialog from './IncreasePPDialog';
 import InventoryPicker, { describeItem } from './InventoryPicker';
 import SpriteDisplay from './SpriteDisplay';
+import StepButton from './StepButton';
 import TeachMoveDialog from './TeachMoveDialog';
 import MoveCategorySprite from './MoveCategorySprite';
 import TypeBadge from './TypeBadge';
@@ -156,7 +166,12 @@ function natureShift(nature: Natures, stat: Stats): number {
   return Math.sign(getNatureFactor(nature, stat) - 1) + 1;
 }
 
-const STAT_LABELS: Record<Stats, string> = {
+/**
+ * What the six are called. Exported because the dex entry prints the
+ * species' base stats under the same names: two screens naming the
+ * same six differently is two vocabularies for one thing
+ */
+export const STAT_LABELS: Record<Stats, string> = {
   [Stats.HP]: 'HP',
   [Stats.Attack]: 'Attack',
   [Stats.Defense]: 'Defense',
@@ -363,6 +378,15 @@ export interface CatchDialogProps {
    * This is so the buttons are not offered in the first place
    */
   readOnly?: boolean;
+  /**
+   * Open a different one of the player's pokemon — the one before this
+   * in the box, or the one after.
+   *
+   * Absent for a sheet that is not one of a run: a lot on the block is
+   * a pokemon somebody is looking at rather than a page of their own
+   * collection, and there is nothing either side of it to step to
+   */
+  onCatch?: (catchId: string) => void;
 }
 
 /**
@@ -392,6 +416,65 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     // one on the block is the exception: it is owned by nobody while
     // it is there, and being able to look is the point of a board
     return props.readOnly === true || loaded.owner === props.player ? loaded : null;
+  };
+
+  /**
+   * The rest of the box, in the order the box draws it — newest first,
+   * the same sort the picker uses, so "next" means the square to the
+   * right of this one rather than some other order nobody can see.
+   *
+   * Read once per player rather than per pokemon: stepping through a
+   * collection would otherwise pay for the whole listing at every
+   * press. It goes stale when a record leaves the box, which is a
+   * release or a listing — and both of those shut the sheet
+   */
+  const [siblings] = createResource(
+    // Read again each time the sheet **opens** rather than once for
+    // the session: a pokemon caught since the last look belongs in the
+    // run. Stepping does not re-read it — the source is the player
+    // rather than the pokemon — so walking a box of three hundred is
+    // still one query
+    () =>
+      props.readOnly === true || props.onCatch == null || props.catchId == null
+        ? null
+        : props.player,
+    async (player) =>
+      (await listCaught(player))
+        .sort(([, one], [, other]) => other.caughtAt.localeCompare(one.caughtAt))
+        .map(([id]) => id),
+  );
+
+  /**
+   * The catch either side of this one, or null at the ends of the box.
+   * The ends are ends rather than a loop: somebody stepping through
+   * three hundred pokemon should stop at the last one instead of
+   * quietly starting again
+   */
+  const neighbour = (step: number): string | null => {
+    const listed = siblings.latest;
+    const catchId = props.catchId;
+
+    if (listed == null || catchId == null) {
+      return null;
+    }
+
+    const at = listed.indexOf(catchId);
+    const wanted = at + step;
+
+    return at < 0 || wanted < 0 || wanted >= listed.length ? null : listed[wanted];
+  };
+
+  const walk = (step: number): (() => void) | undefined => {
+    const next = neighbour(step);
+    const open = props.onCatch;
+
+    if (next == null || open == null) {
+      return undefined;
+    }
+    return () => {
+      setStatus(null);
+      open(next);
+    };
   };
 
   /**
@@ -524,6 +607,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   }
 
   const [teaching, setTeaching] = createSignal<Teaching | null>(null);
+  /**
+   * The PP Up or PP Max waiting on a move to be spent on. Like a
+   * machine, the bottle is picked in the bag and asked about here —
+   * and unlike everything else in the bag, it is not spent until the
+   * question is answered
+   */
+  const [bottle, setBottle] = createSignal<Items | null>(null);
 
   /**
    * Move on to the next thing the level offered, or close the dialog
@@ -744,16 +834,22 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     );
   };
 
-  const trainWithWing = (item: Items): void => {
+  /**
+   * Whether the item is one that grants effort: a wing found on the
+   * ground, or a vitamin bought off a shelf
+   */
+  const isEffortItem = (item: Items): boolean => isWing(item) || isVitamin(item);
+
+  const trainWithItem = (item: Items): void => {
     const catchId = props.catchId;
 
     if (owned() == null || catchId == null) {
       return;
     }
     settleTraining(
-      useWing(catchId, item),
+      useEffortItem(catchId, item),
       `${describeItem(item)} could not be used.`,
-      () => `${describeItem(item)} — three points it did not have to earn.`,
+      () => `${describeItem(item)} — points it did not have to earn.`,
     );
   };
 
@@ -1033,7 +1129,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         !new Set(caught.moves).has(move)
       );
     }
-    return isRemedy(item) || isWing(item) || BERRY_EFFORT_DROPS.has(item);
+    // A bottle is offered only where there is a move for it to go on
+    // that has not already taken everything it will take
+    if (isPPItem(item)) {
+      return caught.moves.some((move) => getMovePoints(caught, move) < PP_UP_LIMIT);
+    }
+    return isRemedy(item) || isEffortItem(item) || BERRY_EFFORT_DROPS.has(item);
   };
 
   /**
@@ -1061,12 +1162,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       setTeaching({ move, rest: [], levelled: false });
       return;
     }
+    // And so does a bottle, for the same reason: what it buys lands on
+    // one move and cannot be moved off it afterwards
+    if (isPPItem(item)) {
+      setBottle(item);
+      return;
+    }
     if (isBottleCap(item)) {
       polish(item);
     } else if (isPurifyingGem(item)) {
       purify(item);
-    } else if (isWing(item)) {
-      trainWithWing(item);
+    } else if (isEffortItem(item)) {
+      trainWithItem(item);
     } else if (BERRY_EFFORT_DROPS.has(item)) {
       feedBitterBerry(item);
     } else {
@@ -1152,7 +1259,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         // than sitting open behind it: two modals at once fight for the
         // click that closes them, and the sheet is what the player comes
         // back to afterwards
-        isOpen={props.catchId != null && teaching() == null}
+        isOpen={props.catchId != null && teaching() == null && bottle() == null}
         onClose={() => {
           setStatus(null);
           // A release half-confirmed is a release declined
@@ -1164,7 +1271,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         // it: the pokemon's own name is written under its sprite, where
         // it belongs to the pokemon rather than to the window
         title="Pokemon Info"
-        aside={
+        // The run this sheet is one of, either side of its name. They
+        // are the panel's rather than the pokemon's, so they stay put
+        // however far down the sheet is scrolled
+        lead={<StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />}
+        aside={<StepButton label="Next pokemon" mark="›" onPress={walk(1)} />}
+        // And what can be done to it, on a bar of its own under the
+        // name. It was a button in the corner of the heading, beside
+        // the arrows that are there now — and what a player does to a
+        // pokemon deserves more room than a corner
+        bar={
           <Show when={owned() == null ? null : view()}>
             {(loaded) => <Menu label="Actions" actions={actions(loaded())} />}
           </Show>
@@ -1372,16 +1488,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       it cannot become yet left in and refused. A row
                       that is out of reach says what it is waiting for,
                       so the sheet is also where a player finds out
-                      what they are working towards */}
-                  <DialogSection title="Evolution">
-                    <Show
-                      when={evolutions.latest?.length}
-                      fallback={
-                        <Note>
-                          {evolutions.loading ? 'Checking evolutions…' : 'It does not evolve.'}
-                        </Note>
-                      }
-                    >
+                      what they are working towards.
+
+                      A pokemon at the end of its line has no section at
+                      all rather than a heading over the words "It does
+                      not evolve": most of a full-grown box would carry
+                      a ruled-off paragraph saying nothing was going to
+                      happen */}
+                  <Show when={evolutions.latest?.length}>
+                    <DialogSection title="Evolution">
                       <List>
                         <For each={evolutions.latest}>
                           {(option) => (
@@ -1409,8 +1524,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           )}
                         </For>
                       </List>
-                    </Show>
-                  </DialogSection>
+                    </DialogSection>
+                  </Show>
 
                   {/* Three readings of the same six numbers: what the
                       pokemon has, what it was born with, and what has
@@ -1780,6 +1895,25 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         onClose={nextTeaching}
         onTaught={() => {
           setStatus(teaching()?.levelled === true ? 'Learned.' : 'Taught.');
+          Promise.all([refetch(), refetchBag()])
+            .then(() => {
+              props.onChange?.();
+            })
+            .catch(() => undefined);
+        }}
+      />
+
+      {/* And the same shape for a bottle: a PP Up is spent on one move
+          and nothing takes the points back, so it asks which before it
+          leaves the bag */}
+      <IncreasePPDialog
+        catchId={bottle() == null ? null : props.catchId}
+        item={bottle()}
+        onClose={() => {
+          setBottle(null);
+        }}
+        onUsed={(said) => {
+          setStatus(said);
           Promise.all([refetch(), refetchBag()])
             .then(() => {
               props.onChange?.();

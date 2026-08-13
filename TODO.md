@@ -3,7 +3,6 @@
 - [ ] Remaining Held Items
 - [ ] More berries
 - [ ] overworld weather
-- [ ] add Fossil Maniac
 - [ ] add Jeweler
 - [ ] add Archaeologist
 - [ ] PP tracking
@@ -21,4 +20,4 @@
 - [ ] Admin page + role (mystery gift creation)
 - [ ] Make sign in with email + password dev-only
 - [ ] add "attack"
-- [ ] pokedex
+- [ ] effect sprites

@@ -241,6 +241,12 @@ function LotRow(props: {
   detail?: string | null;
   seller: string;
   /**
+   * Open the seller's profile. Absent for the reader's own lot: a
+   * player pressing their own name on the board would be opening a
+   * read-only copy of the profile the menu already gives them
+   */
+  onSeller?: () => void;
+  /**
    * Open the pokemon on the block in full. Absent for an item lot,
    * which is already entirely described by its name
    */
@@ -276,9 +282,25 @@ function LotRow(props: {
             stopped taking bids says what it went for beside the
             button instead, since "40 gold to take it" reads as an
             offer on something nobody can bid on any more */}
+        {/* Who listed it is a way to them: a board is a room full of
+            strangers selling things, and what somebody else has caught
+            and fought is most of what says whether their lot is worth
+            bidding on */}
         <Meta>
           {props.claim == null ? `${describeBid(props.auction)} · ` : ''}
-          {describeRemaining(props.auction.endsAt, now())} · listed by {props.seller}
+          {describeRemaining(props.auction.endsAt, now())} · listed by{' '}
+          <Show when={props.onSeller} fallback={props.seller}>
+            {(visit) => (
+              // Inline and the size of the line it sits in: it is a
+              // word in a sentence rather than a row of its own
+              <RowButton
+                class="inline text-xs underline decoration-dotted underline-offset-2"
+                onClick={visit()}
+              >
+                {props.seller}
+              </RowButton>
+            )}
+          </Show>
         </Meta>
         {/* What is worth paying for, on a line of its own: it is
             longer than everything above it and read differently —
@@ -719,6 +741,13 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
               name={nameOf(auction)}
               detail={detailOf(auction)}
               seller={describeSeller(auction)}
+              onSeller={
+                auction.seller === props.player
+                  ? undefined
+                  : () => {
+                      game.setVisiting(auction.seller);
+                    }
+              }
               claim={claimOf(id, auction)}
               onInspect={
                 auction.lot === AuctionLot.Catch
@@ -740,8 +769,12 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     </Show>
   );
 
-  return (
-    <Panel>
+  /**
+   * The board itself: what there is to bid on, and what the player is
+   * holding to bid with
+   */
+  const shopping = (): JSX.Element => (
+    <>
       <Row class="justify-center">
         <Badge tone="gold">{gold()} gold</Badge>
         <Show when={board().length > SEARCH_FROM}>
@@ -755,10 +788,25 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Show>
       </Row>
 
-      {/* Putting something up, opened from the Add button in the top
-          bar. It stands in front of the board rather than under it:
-          somebody selling is not shopping at the same moment */}
-      <Show when={props.adding === true}>
+      <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
+        {/* Items on the left, pokemon on the right — side by side
+            where there is room, stacked where there is not */}
+        <div class="grid gap-4 md:grid-cols-2">
+          <Card title="Items">{column(AuctionLot.Item, 'No items are up right now.')}</Card>
+          <Card title="Pokemon">{column(AuctionLot.Catch, 'No pokemon are up right now.')}</Card>
+        </div>
+      </Show>
+    </>
+  );
+
+  return (
+    <Panel>
+      {/* Selling **replaces** the board rather than standing on top of
+          it. Somebody putting something up is not shopping at the same
+          moment, and a sell card pushed in above the lots left a player
+          scrolling past their own bag to get back to what they came
+          for */}
+      <Show when={props.adding === true} fallback={shopping()}>
         <Card title="Sell">
           <Show
             when={running() == null}
@@ -810,25 +858,19 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
               }}
             />
           </Show>
+          {/* Back to the board. It says where it goes rather than
+              "Done", since nothing has been finished by pressing it —
+              the listing itself happens in the dialog */}
           <Row class="justify-center">
             <Button
               onClick={() => {
                 props.onAdding?.(false);
               }}
             >
-              Done
+              Back to the board
             </Button>
           </Row>
         </Card>
-      </Show>
-
-      <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
-        {/* Items on the left, pokemon on the right — side by side
-            where there is room, stacked where there is not */}
-        <div class="grid gap-4 md:grid-cols-2">
-          <Card title="Items">{column(AuctionLot.Item, 'No items are up right now.')}</Card>
-          <Card title="Pokemon">{column(AuctionLot.Catch, 'No pokemon are up right now.')}</Card>
-        </div>
       </Show>
 
       <Status message={status()} />

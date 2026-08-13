@@ -1,18 +1,17 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
-import { RadioGroup, RadioGroupOption } from 'terracotta';
 import { getCaught } from '../auth/caught';
 import { getCatchSlots, isShiny } from '../auth/caught-record';
 import { Slots } from '../data/constants/slots';
 import { isEgg } from '../auth/egg';
 import teachMove from '../auth/moves';
-import { MOVE_CATEGORY_COLORS, MOVE_CATEGORY_NAMES, type Moves } from '../data/ids/moves';
+import type { Moves } from '../data/ids/moves';
 import { getMachineItem } from '../data/ids/items';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getSpeciesData } from '../data/species';
 
+import MovePicker, { MoveLine } from './MovePicker';
 import SpriteDisplay from './SpriteDisplay';
-import TypeBadge from './TypeBadge';
 import { Button, Dialog, DialogActions, List, Meta, Note, Status } from './styled';
 
 /**
@@ -65,34 +64,10 @@ export interface TeachMoveDialogProps {
 }
 
 /**
- * One move as the sheet draws it: what it is, what kind it is, and
- * what it is worth
+ * The one move drawn beside the picker is the same line the picker
+ * draws, so it comes from there too
  */
-export function MoveLine(props: { move: Moves }): JSX.Element {
-  return (
-    <span class="flex flex-wrap items-center gap-2">
-      <TypeBadge type={getMoveData(props.move).type} />
-      <span
-        class="size-3 shrink-0 rounded-sm"
-        style={{ 'background-color': MOVE_CATEGORY_COLORS[getMoveData(props.move).category] }}
-        title={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
-        aria-label={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
-        role="img"
-      />
-      <span class="font-medium">{getMoveData(props.move).name}</span>
-      <Meta>
-        {getMoveData(props.move).power == null ? '' : `${getMoveData(props.move).power} power · `}
-        {getMoveData(props.move).pp} PP
-      </Meta>
-    </span>
-  );
-}
-
-const OPTION =
-  'flex cursor-pointer items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm shadow-pop-sm' +
-  ' transition-colors border-line bg-paper hover:border-tide aria-checked:border-leaf' +
-  ' aria-checked:bg-leaf-soft focus-visible:outline-2 focus-visible:outline-offset-2' +
-  ' focus-visible:outline-tide';
+export { MoveLine };
 
 export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Element {
   const [forgetting, setForgetting] = createSignal(0);
@@ -213,27 +188,13 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
           )}
         </Show>
 
-        {/* The type argument is written out because the options are
-            indexes: without it the group's value is inferred from the
-            DOM handler rather than from what is being picked */}
-        <RadioGroup<number>
-          toggleable={false}
+        <MovePicker
+          moves={known()}
           value={forgetting()}
-          onChange={(picked) => {
-            if (picked !== undefined) {
-              setForgetting(picked);
-            }
+          onPick={(at) => {
+            setForgetting(at);
           }}
-          class="flex flex-col gap-2"
-        >
-          <For each={known()}>
-            {(move, at) => (
-              <RadioGroupOption value={at()} class={OPTION}>
-                <MoveLine move={move} />
-              </RadioGroupOption>
-            )}
-          </For>
-        </RadioGroup>
+        />
 
         <Status message={status()} />
 

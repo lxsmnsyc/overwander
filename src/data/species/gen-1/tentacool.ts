@@ -61,7 +61,7 @@ export default function registerTentacoolSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean],
+    biomes: [Biome.Ocean, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

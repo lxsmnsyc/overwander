@@ -19,6 +19,12 @@ export const enum ItemTypes {
    * in the game can touch once a catch is made
    */
   Training = 8,
+  /**
+   * Dug out of the ground with a pokemon still in it. A fossil does
+   * nothing on its own — it is carried until somebody with the
+   * machinery to revive it is found, and spent there
+   */
+  Fossil = 9,
 }
 
 export const enum ItemFlags {
@@ -354,6 +360,79 @@ export const enum Items {
    * is a move a pokemon can have back and nothing besides
    */
   HeartScale = 182,
+
+  /**
+   * The rest of the evolution stones. Every one of them is spent the
+   * way the five above are; what none of them has yet is a species
+   * that answers, since each is asked for by a line no generation
+   * registered here reaches. They are written now so that the day one
+   * is, the item is already what it will always be
+   */
+  SunStone = 183,
+  ShinyStone = 184,
+  DuskStone = 185,
+  DawnStone = 186,
+  IceStone = 187,
+
+  /**
+   * The trade items: what the mainline hands a pokemon before passing
+   * it to somebody else. Here a trade opens an evolution rather than
+   * performing one — see the `traded` field on a catch — so these are
+   * used on a pokemon like a stone, and the trade is the other half of
+   * what the evolution asks for.
+   *
+   * Metal Coat is not among them because it is already registered, as
+   * the Steel type booster it also is: one item, one id, and the
+   * evolution reads the same entry the battle does
+   */
+  KingsRock = 188,
+  DragonScale = 189,
+  UpGrade = 190,
+  DubiousDisc = 191,
+  Protector = 192,
+  Electirizer = 193,
+  Magmarizer = 194,
+  ReaperCloth = 195,
+  RazorClaw = 196,
+  RazorFang = 197,
+  PrismScale = 198,
+  DeepSeaTooth = 199,
+  DeepSeaScale = 200,
+  Sachet = 201,
+  WhippedDream = 202,
+
+  /**
+   * The vitamins: ten points of effort in one stat, bought rather than
+   * found. They are the wings' opposite number — a wing is three
+   * points blown along the ground, a vitamin is ten off a shelf — and
+   * between them they are the only training a pokemon's own levels did
+   * not pay for
+   */
+  HPUp = 203,
+  Protein = 204,
+  Iron = 205,
+  Calcium = 206,
+  Zinc = 207,
+  Carbos = 208,
+
+  /**
+   * What is spent on a move rather than on a stat. In a game whose
+   * fights run on cooldowns, a move's PP is how often it comes back —
+   * so these shorten the wait rather than adding uses
+   */
+  PPUp = 209,
+  PPMax = 210,
+
+  /**
+   * The fossils: an extinct pokemon, still in the rock. Each one
+   * names exactly one species and is spent bringing it back — see
+   * [`FOSSIL_SPECIES`](../items/fossils.ts) — which is the only way
+   * any of the three is ever met, since nothing that came out of a
+   * fossil spawns in the world any more
+   */
+  HelixFossil = 211,
+  DomeFossil = 212,
+  OldAmber = 213,
 }
 
 /**

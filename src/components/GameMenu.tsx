@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
 import { GameDialog, useGame } from './game-context';
+import { IconSlot } from './styled';
 import { ThemeToggle } from './theme';
 
 /**
@@ -8,14 +9,14 @@ import { ThemeToggle } from './theme';
  * behind it.
  *
  * It was a bar with four words on it, which worked while there were
- * four. There are nine now — the player's catches and their bag came
- * out of the profile, and there is room kept for the friends, the
- * gifts and the settings that are not built yet — and a row of nine
- * across the bottom of the world is a strip of map taken away from
- * every screen to say words that never change.
+ * four. There are ten now — the player's catches and their bag came
+ * out of the profile, the dex arrived beside them, and there is room
+ * kept for the friends, the gifts and the settings that are not built
+ * yet — and a row of ten across the bottom of the world is a strip of
+ * map taken away from every screen to say words that never change.
  *
- * So it is one button, and the nine live in a panel that opens above
- * it. A grid rather than a list: nine things read as a keypad at a
+ * So it is one button, and the ten live in a panel that opens above
+ * it. A grid rather than a list: ten things read as a keypad at a
  * glance and as a menu to be scanned when they are stacked, and a
  * keypad is what this is — the same thing is always in the same
  * corner, which is what makes it pressable without reading.
@@ -38,6 +39,7 @@ interface MenuEntry {
 const ENTRIES: MenuEntry[] = [
   { label: 'World', dialog: GameDialog.Map },
   { label: 'Catches', dialog: GameDialog.Catches },
+  { label: 'Pokedex', dialog: GameDialog.Pokedex },
   { label: 'Inventory', dialog: GameDialog.Inventory },
   { label: 'Profile', dialog: GameDialog.Profile },
   { label: 'Raids', dialog: GameDialog.Raids },
@@ -46,26 +48,6 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Gifts' },
   { label: 'Settings' },
 ];
-
-/**
- * Where a picture will go.
- *
- * Nothing here is drawn yet, and the room for it is taken now rather
- * than later: a menu that grows a column of icons the day they are
- * drawn moves every label on it, and a player who had learned where
- * Raids was has to learn it again. It is dashed so it reads as a space
- * kept rather than as something that failed to load
- */
-function IconSlot(props: { size?: string }): JSX.Element {
-  return (
-    <span
-      aria-hidden="true"
-      class={`shrink-0 rounded-md border border-dashed border-line bg-line-soft ${
-        props.size ?? 'size-7'
-      }`}
-    />
-  );
-}
 
 const TILE =
   'flex cursor-pointer flex-col items-center gap-1 rounded-xl border-2 border-transparent' +

@@ -57,6 +57,13 @@ export const enum EncounterType {
    * Fought and caught in a mythical raid — the one a raid item called
    */
   MythicalRaid = 6,
+  /**
+   * Brought back out of a fossil. It is its own kind because it is
+   * the only pokemon in the game nobody met: it was dug up as a rock
+   * and revived at a bench, and a record calling that wild would be
+   * naming a chunk the species has not lived in for a very long time
+   */
+  Revived = 7,
 }
 
 /**
@@ -96,6 +103,7 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.Rocket]: 'Team Rocket',
   [EncounterType.ShadowRaid]: 'Shadow Raid',
   [EncounterType.MythicalRaid]: 'Mythical Raid',
+  [EncounterType.Revived]: 'Revived from a fossil',
 };
 
 /**

@@ -24,6 +24,7 @@ import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { grantNestEgg } from './eggs';
 import { getAdminFirestore } from './firebase';
+import { recordSeenSpecies } from './pokedex';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
 import { asNumber, asStringArray, docData } from './read';
 import { grantItem, grantItems } from './inventory';
@@ -420,6 +421,11 @@ export async function startEncounter(
   };
 
   await ref.set(record);
+  // Met, whatever becomes of the meeting: the dex counts what a player
+  // has laid eyes on, so one that flees or is walked away from is
+  // still one they have seen. The early return above is what keeps a
+  // meeting walked back into from being counted twice
+  await recordSeenSpecies(uid, record.species, record.shiny);
   return record;
 }
 

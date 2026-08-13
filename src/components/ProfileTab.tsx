@@ -13,7 +13,13 @@ import { Badge, Button, Card, Note, Panel, Status, TabBar, TabButton, TabPane } 
  * The catches and the bag were the first two, and they are their own
  * panels behind the menu now: they are the two things a player opens
  * most, and neither is a fact about who somebody is. What stays is
- * what the profile was always about — what this player has done
+ * what the profile was always about — what this player has done.
+ *
+ * A profile being *visited* has no tabs at all. Somebody else's bids
+ * cannot be read — a bidding history is the one thing on the board
+ * that stays private, and the rules refuse the query — which leaves
+ * their battles, and a bar holding one tab is a control that decides
+ * nothing
  */
 const enum InnerTab {
   Battles = 0,
@@ -22,6 +28,16 @@ const enum InnerTab {
 
 export interface ProfileTabProps {
   player: string;
+  /**
+   * Whether this is somebody else's profile, being looked at.
+   *
+   * Everything that only reports stays; everything that changes
+   * something goes — signing out, swapping the buddy, collecting what
+   * a raid still owes. None of it is a permission: the server refuses
+   * every one of them for a player who is not the owner. This is so
+   * they are not offered in the first place
+   */
+  viewOnly?: boolean;
 }
 
 /**
@@ -87,8 +103,11 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             {/* The way out. It lived on a sign-in page of its own,
                 which is a page for the one moment a player is not
                 signed in — so it lives with the rest of what is
-                theirs instead */}
-            <Button onClick={leave}>Sign out</Button>
+                theirs instead. Nobody signs out of somebody else's
+                profile */}
+            <Show when={props.viewOnly !== true}>
+              <Button onClick={leave}>Sign out</Button>
+            </Show>
           </Card>
         )}
       </Show>
@@ -97,31 +116,43 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           page that changes what happens outside it: a buddy draws
           spawns in, earns the candy, and is what an egg is counted
           against */}
-      <BuddyCard player={props.player} />
+      <BuddyCard player={props.player} viewOnly={props.viewOnly} />
 
-      <TabGroup
-        horizontal
-        defaultValue={InnerTab.Battles}
-        toggleable={false}
-        class="flex flex-col gap-3"
-      >
-        <TabBar>
-          <TabButton value={InnerTab.Battles}>Battles</TabButton>
-          <TabButton value={InnerTab.Bids}>Bids</TabButton>
-        </TabBar>
-        <TabPane value={InnerTab.Battles}>
+      {/* Visited, this is the whole of the bottom half: what they have
+          fought, with no bar over it. The tabs are back the moment the
+          profile is the reader's own */}
+      <Show
+        when={props.viewOnly !== true}
+        fallback={
           <Card title="Battles">
-            <BattleHistory player={props.player} />
+            <BattleHistory player={props.player} viewOnly />
           </Card>
-        </TabPane>
-        {/* What the player has bid on, which lots they are still
-            leading, and which they won and have not collected */}
-        <TabPane value={InnerTab.Bids}>
-          <Card title="Bids">
-            <BidsList player={props.player} />
-          </Card>
-        </TabPane>
-      </TabGroup>
+        }
+      >
+        <TabGroup
+          horizontal
+          defaultValue={InnerTab.Battles}
+          toggleable={false}
+          class="flex flex-col gap-3"
+        >
+          <TabBar>
+            <TabButton value={InnerTab.Battles}>Battles</TabButton>
+            <TabButton value={InnerTab.Bids}>Bids</TabButton>
+          </TabBar>
+          <TabPane value={InnerTab.Battles}>
+            <Card title="Battles">
+              <BattleHistory player={props.player} />
+            </Card>
+          </TabPane>
+          {/* What the player has bid on, which lots they are still
+              leading, and which they won and have not collected */}
+          <TabPane value={InnerTab.Bids}>
+            <Card title="Bids">
+              <BidsList player={props.player} />
+            </Card>
+          </TabPane>
+        </TabGroup>
+      </Show>
       <Status message={error()} tone="alert" />
     </Panel>
   );

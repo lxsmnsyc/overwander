@@ -42,6 +42,16 @@ service cloud.firestore {
       allow get: if isOwner(uid);
       allow write: if false;
     }
+    // What a player has met and what they have kept. Read by the
+    // owner, written only by the server: a dex is the game's record of
+    // what actually happened, so a client that could write one could
+    // claim to have faced a Mewtwo it never met
+    match /pokedex/{uid} {
+      // `get` rather than `read`, for the same reason the bag is: it
+      // is fetched by id and never listed
+      allow get: if isOwner(uid);
+      allow write: if false;
+    }
     // Where a player is standing. Theirs to read, and the server's to
     // write — not because a position is trusted (nothing checks one)
     // but because a client that could write this could write anybody's

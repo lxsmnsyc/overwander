@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { TimeOfDay } from '../../ids/biome';
+import { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -59,7 +59,9 @@ export default function registerKabutoSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Beach, Biome.Ocean],
+    // Extinct: nothing brings one back but a fossil, so it lives
+    // nowhere on the map
+    biomes: [],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -95,7 +97,9 @@ export default function registerKabutoSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Beach, Biome.Ocean],
+    // Extinct: nothing brings one back but a fossil, so it lives
+    // nowhere on the map
+    biomes: [],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

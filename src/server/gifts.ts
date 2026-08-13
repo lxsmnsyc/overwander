@@ -10,7 +10,7 @@ import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import Biome from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
-import { getRegisteredSpecies } from '../data/species';
+import { getRegisteredSpecies, getSpeciesData } from '../data/species';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import deriveEncounter, { EncounterType } from '../overworld/encounter';
@@ -61,10 +61,18 @@ const STARTER_GIFT = 'starter';
  * separately what counts as a beginning — a species is a starter for
  * the same reason it is a common spawn. Fully-evolved species, middle
  * stages, babies and the one-per-world specials are all left out by
- * being something other than Base
+ * being something other than Base.
+ *
+ * A species that lives nowhere is left out as well. The fossils are
+ * Base by the shape of their line and extinct by where they live, and
+ * handing one over as a first pokemon would give away for nothing the
+ * only thing a fossil is for
  */
 export function getStarterPool(): Species[] {
-  return getRegisteredSpecies().filter((species) => getSpawnRarity(species) === SpawnRarity.Base);
+  return getRegisteredSpecies().filter(
+    (species) =>
+      getSpawnRarity(species) === SpawnRarity.Base && getSpeciesData(species).biomes.length > 0,
+  );
 }
 
 /**

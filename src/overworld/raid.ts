@@ -151,6 +151,9 @@ export function createRaidBossSnapshot(
     // A boss is staged without the moves a boss must not have: see
     // BANNED_BOSS_MOVES for what is on that list and why
     moves: getBossMoves(species),
+    // A boss is staged rather than raised, so nothing has been spent
+    // on what it knows
+    movePoints: {},
     // The Boss ability is what makes it a raid: the health pool, the
     // stage immunities and the sweeping single-target moves all ride
     // on it, alongside the species' own rolled ability
@@ -194,6 +197,10 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   }
   for (const move of snapshot.moves) {
     unit.addMove(move);
+    // What its owner spent on the move, frozen with the rest of it. A
+    // snapshot from before PP Ups existed carries nothing, and the
+    // move fights at the PP it is registered with
+    unit.setMovePoints(move, snapshot.movePoints[String(move)] ?? 0);
   }
   for (const ability of snapshot.abilities) {
     unit.addAbility(ability);

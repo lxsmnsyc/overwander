@@ -13,7 +13,10 @@ import GameProvider, { GameDialog, useGame } from '../components/game-context';
 import InventoryList from '../components/InventoryList';
 import LoginForm from '../components/LoginForm';
 import MysteryGiftDialog from '../components/MysteryGiftDialog';
+import DexEntryDialog from '../components/DexEntryDialog';
 import OverworldTab from '../components/OverworldTab';
+import PokedexTab from '../components/PokedexTab';
+import ProfileDialog from '../components/ProfileDialog';
 import ProfileTab from '../components/ProfileTab';
 import RaidsTab from '../components/RaidsTab';
 import { ThemeToggle } from '../components/theme';
@@ -42,7 +45,8 @@ type Panelled =
   | GameDialog.Raids
   | GameDialog.Auctions
   | GameDialog.Catches
-  | GameDialog.Inventory;
+  | GameDialog.Inventory
+  | GameDialog.Pokedex;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
@@ -50,6 +54,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Auctions]: 'Auctions',
   [GameDialog.Catches]: 'Catches',
   [GameDialog.Inventory]: 'Inventory',
+  [GameDialog.Pokedex]: 'Pokedex',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -58,6 +63,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
   [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',
   [GameDialog.Inventory]: 'Everything you are carrying.',
+  [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
 };
 
 /**
@@ -111,6 +117,21 @@ function GameView(props: { user: User }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
             <CatchesList player={props.user.uid} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* The dex: what there is, beside the box of what they have */}
+          <Dialog
+            isOpen={showing(GameDialog.Pokedex)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Pokedex]}
+            description={DESCRIPTIONS[GameDialog.Pokedex]}
+          >
+            <PokedexTab player={props.user.uid} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -180,14 +201,17 @@ function GameView(props: { user: User }): JSX.Element {
             width="wide"
             terse
             title={TITLES[GameDialog.Auctions]}
-            // The one thing the board is for that is not looking at it
+            // The one thing the board is for that is not looking at
+            // it. Selling takes the whole panel rather than a card on
+            // top of the lots, so the key that opened it is also the
+            // way back out
             aside={
               <Button
                 onClick={() => {
-                  setSelling(true);
+                  setSelling(!selling());
                 }}
               >
-                Add
+                {selling() ? 'Board' : 'Add'}
               </Button>
             }
             description={DESCRIPTIONS[GameDialog.Auctions]}
@@ -219,8 +243,36 @@ function GameView(props: { user: User }): JSX.Element {
               game.setSheet(null);
             }}
             onChange={game.touchRecords}
+            // The pokemon either side of this one in the box, opened
+            // from the arrows beside the sprite
+            onCatch={(catchId) => {
+              game.setSheet({ catchId });
+            }}
             onAuction={(catchId) => {
               game.setListing({ lot: AuctionLot.Catch, catchId });
+            }}
+          />
+
+          {/* One species in full, opened out of the dex and over it:
+              an entry is a screen rather than a panel on a panel */}
+          <DexEntryDialog
+            player={props.user.uid}
+            species={game.dexEntry()}
+            onClose={() => {
+              game.setDexEntry(null);
+            }}
+            onSpecies={(species) => {
+              game.setDexEntry(species);
+            }}
+          />
+
+          {/* Somebody else met on the board or in a lobby, opened over
+              the panel that named them: the same profile, with nothing
+              on it that writes */}
+          <ProfileDialog
+            player={game.visiting()}
+            onClose={() => {
+              game.setVisiting(null);
             }}
           />
 

@@ -45,7 +45,7 @@ removed the three rule blocks that had to `get()` the parent to find an owner.
 | `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`          |
 | `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                      |
 | `origin.x`, `origin.y` | `number`                | Chunk coordinates                                          |
-| `origin.biome`         | `Biome`                 |                                                                         |
+| `origin.biome`         | `Biome`                 |                                                            |
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
@@ -73,8 +73,7 @@ move it, each in one transaction:
   with a negative amount. Nothing is consumed — the points came with the levels.
 - **`useWing`** spends a wing for `WING_EFFORT` (3) points in the wing's own
   stat and raises `effortBonus` by the same, so a wing grants training rather
-  than spending the pool. That is what makes one worth the same at level 5 as at
-  100.
+  than spending the pool. That is what makes one worth the same at level 5 as at 100.
 - **`feedEffortBerry`** spends a bitter berry to take `BERRY_EFFORT_DROP` (10)
   points off one stat. They return to the pool rather than being lost, and the
   pokemon thinks better of the player for it.
@@ -173,7 +172,7 @@ stored anyway. It answers "would somebody else pay for this": perfect values,
 Storing a derived value is the thing this codebase otherwise refuses to do — the
 world's spawns, landmarks and passers-by are all re-derived rather than kept. The
 reason it is kept here is the same one that split `flags` in the first place:
-each input *alone* could be asked of the store (perfect and blank values are each
+each input _alone_ could be asked of the store (perfect and blank values are each
 one integer, shiny is a field, the special-tier species are a five-value `in`),
 but the rule is **any of the four**, and a disjunction over a box is four queries
 whose results have to be merged and deduplicated in the browser. One field is one
@@ -184,7 +183,7 @@ Two rules keep it from rotting into a lie:
 - **Every write that moves an input rewrites it.** Catching, writing an egg, a
   bottle cap (`ivs`), purifying (`ivs`, all six up by two), evolving (`species`).
   Nothing else can change any of the three — `shiny` is fixed at the encounter,
-  and hatching only lifts the shell. Both cap paths matter in *both* directions:
+  and hatching only lifts the shell. Both cap paths matter in _both_ directions:
   a cap can complete a perfect set, and it can also break a blank one, which is
   the only way a catch stops being auctionable.
 - **Nothing decides anything by it.** `openAuction` re-derives from the record it
@@ -331,13 +330,13 @@ way, and neither says anything about the pokemon itself:
 | `Favorite` | Favorite/Unfavorite | Releasing, listing at auction, and trading when there is trading                                 |
 | `Guarded`  | Lock/Unlock         | Levels, training, values moved, evolution, fights, healing, purifying, items given or taken back |
 
-They answer different questions on purpose. A **favorite** is about *parting*
+They answer different questions on purpose. A **favorite** is about _parting_
 with a pokemon: it guards the two irreversible things a mis-click can do —
 `releaseCatch` deletes a record outright, and `openAuction` puts one somewhere it
 cannot be taken back from. It changes nothing about what the pokemon can do, so a
 favorite still fights, still trains and can still be a buddy.
 
-A **guarded** pokemon is about *keeping one as it is*. The line is drawn around
+A **guarded** pokemon is about _keeping one as it is_. The line is drawn around
 the sheet: anything that would rewrite a stored field is refused, and anything
 that only ever adds to the pokemon is left alone.
 
@@ -359,8 +358,8 @@ does not fence off.
 Neither flag is enforced by the client. Every one of those calls checks the
 stored record, through `isFavoriteRecord` and `isGuardedRecord` in
 [`src/server/catch-fields.ts`](../../src/server/catch-fields.ts); the catch dialog
-greys out every section a lock refuses, and the pickers say *a favorite* or
-*locked* so the refusal is visible before the press.
+greys out every section a lock refuses, and the pickers say _a favorite_ or
+_locked_ so the refusal is visible before the press.
 
 `setFavorite` and `setGuarded` ([`src/server/caught.ts`](../../src/server/caught.ts))
 write through `withFlag`, so setting one cannot drop another — a shiny shadow
@@ -370,19 +369,21 @@ every other edit to a live record does.
 ## Whose hands it has passed through
 
 `history` is one entry per owner, oldest first, and each says **when** that owner
-received it — a local ISO 8601 string in *their* own zone, the way a catch date
+received it — a local ISO 8601 string in _their_ own zone, the way a catch date
 is — and **how**:
 
-| `Acquisition` | Written by     | What it means                              |
-| ------------- | -------------- | ------------------------------------------ |
-| `Caught`      | `recordCatch`  | They threw the ball                        |
-| `Egg`         | `writeEgg`     | It came to them as an egg, nest or breeder |
-| `Auction`     | `claimAuction` | They won it on the block                   |
-| `Trade`       | nothing yet    | Reserved for trading                       |
+| `Acquisition` | Written by         | What it means                                  |
+| ------------- | ------------------ | ---------------------------------------------- |
+| `Caught`      | `recordCatch`      | They threw the ball                            |
+| `Egg`         | `writeEgg`         | It came to them as an egg, nest or breeder     |
+| `Auction`     | `claimAuction`     | They won it on the block                       |
+| `Trade`       | nothing yet        | Reserved for trading                           |
+| `Gift`        | `claimStarterGift` | It was handed to them — today, a first pokemon |
+| `Revived`     | `reviveFossil`     | They carried a fossil to somebody with a bench |
 
 It is a different question from the record's own `type`
 ([Encounter kinds](encounters.md#encounter-kinds)), which says how the pokemon
-was first met and never changes. A Mewtwo can be a legendary raid prize *and*
+was first met and never changes. A Mewtwo can be a legendary raid prize _and_
 something its second owner bought, and the two fields say so separately.
 
 `Trade` exists before trading does on purpose: a member added later would leave
@@ -560,7 +561,7 @@ A breeder's egg is written the same way a nest's is, by `grantBredEgg`, and
 differs only in where the pokemon inside comes from. Three of its six individual
 values are copied straight off one parent or the other and the rest are rolled;
 the moves its line can only inherit are passed on by whichever parent actually
-knows them, which is what makes breeding a way to *teach* a move rather than
+knows them, which is what makes breeding a way to _teach_ a move rather than
 roll one. Its nature, ability and gender are its own.
 
 A shadow parent may pass the shadow on — a coin toss, so breeding two of them is
@@ -592,7 +593,7 @@ than on the profile's `buddy` (client-written).
 `hatchSteps` is settled when the egg is written, and two things move it: a shadow
 egg doubles it, and a **Flame Body** buddy standing beside the player at the
 pick-up halves it. Both are frozen onto the record rather than asked again during
-the walk — once an egg is being carried it *is* the buddy, so there is nothing
+the walk — once an egg is being carried it _is_ the buddy, so there is nothing
 beside the player left to ask.
 
 A report also credits whatever a **Pickup** buddy found along the way: the same

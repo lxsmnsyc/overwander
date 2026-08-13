@@ -55,6 +55,18 @@ const enum Npc {
    * commoners behind; they are the one wanderer a player can lose to
    */
   RocketGrunt = 6,
+  /**
+   * Carries two of the three fossils and will part with one for
+   * gold. He is the only place a fossil can be bought, and he sells
+   * a player one while he is standing there
+   */
+  FossilManiac = 7,
+  /**
+   * Takes a fossil and hands back what was in it. He charges nothing
+   * but the rock, and — alone among the people who do something to a
+   * pokemon — he will do it as often as a player has fossils
+   */
+  FossilScientist = 8,
 }
 
 export default Npc;
@@ -70,6 +82,8 @@ export const NPCS: Npc[] = [
   Npc.Vendor,
   Npc.MoveReminder,
   Npc.RocketGrunt,
+  Npc.FossilManiac,
+  Npc.FossilScientist,
 ];
 
 export const NPC_NAMES: Record<Npc, string> = {
@@ -80,6 +94,8 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Vendor]: 'Vendor',
   [Npc.MoveReminder]: 'Move Reminder',
   [Npc.RocketGrunt]: 'Team Rocket Grunt',
+  [Npc.FossilManiac]: 'Fossil Maniac',
+  [Npc.FossilScientist]: 'Fossil Scientist',
 };
 
 /**

@@ -80,6 +80,25 @@ export interface SpeciesData {
    */
   family: Families;
   /**
+   * Whether this is the species' **default form** rather than a
+   * variant of it: an Alolan Vulpix, a Galarian Meowth, a Mega
+   * Charizard and a Rotom in a washing machine are all forms of a
+   * species whose base form is something else.
+   *
+   * It is not about evolution. A Charizard is a base form and so is a
+   * Charmander; what makes one of them different is `evolvesFrom`,
+   * which answers that question already.
+   *
+   * The field is **optional and true when absent**, because every
+   * species registered today is a default form — Gen 1 has no variants
+   * — and a hundred and fifty-one lines saying so would be a hundred
+   * and fifty-one places for the exception to hide. A later
+   * generation's variant writes `baseForm: false`, and everything that
+   * counts a dex or fills a pool asks `isBaseForm` rather than reading
+   * the field
+   */
+  baseForm?: boolean;
+  /**
    * The species this pokemon evolves from, if any
    */
   evolvesFrom?: Species;
@@ -207,6 +226,25 @@ export function getSpeciesData(species: Species): SpeciesData {
     return result;
   }
   throw new Error('Missing species data for ' + species);
+}
+
+/**
+ * Whether the species is a default form rather than a variant of
+ * another one. A registration that says nothing is one: variants are
+ * the exception, and the exception is what gets written down
+ */
+export function isBaseForm(species: Species): boolean {
+  return getSpeciesData(species).baseForm !== false;
+}
+
+/**
+ * Every registered species that is a default form, in registration
+ * order. It is what a dex is counted against — one row per pokemon
+ * rather than one per costume — and what a pool draws from where the
+ * variant would be wrong to stage
+ */
+export function getBaseForms(): Species[] {
+  return [...SPECIES_MAP.keys()].filter((species) => isBaseForm(species));
 }
 
 export interface SpeciesAbilityPools {

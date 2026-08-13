@@ -12,7 +12,7 @@ import Natures from '../../src/data/ids/natures';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
-import { getMoveData } from '../../src/data/moves';
+import { PP_UP_LIMIT, getMoveData } from '../../src/data/moves';
 import { FULL_INCENSE_PRIORITY, LAX_INCENSE_EVASION } from '../../src/battle/items/incenses';
 import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
 import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
@@ -478,6 +478,35 @@ describe('casting flow', () => {
     // 180 seconds' worth of uses divided by Tackle's 35 PP
     expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 35) * 1000);
     expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
+  });
+
+  it('a move with points spent on it comes back sooner', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.addMove(Moves.Tackle);
+    // What a PP Max buys. PP here is how often a move comes back, so
+    // the points shorten the wait rather than adding uses
+    attacker.setMovePoints(Moves.Tackle, PP_UP_LIMIT);
+
+    attacker.cast(Moves.Tackle, unitTarget(defender));
+    advance(battle, 1800);
+
+    // Tackle's 35 PP plus three fifths of it: 56, and the wait comes
+    // down in proportion
+    expect(attacker.moves[Moves.Tackle]?.points).toBe(PP_UP_LIMIT);
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 56) * 1000);
+  });
+
+  it('spends no points on a move the unit does not know', () => {
+    const { battle, teamA } = createBattle();
+    const attacker = createUnit(battle, teamA);
+
+    // Points for a move it was never fielded with belong to nothing,
+    // and inventing a state for them would give it the move
+    attacker.setMovePoints(Moves.Thunderbolt, PP_UP_LIMIT);
+    expect(attacker.moves[Moves.Thunderbolt]).toBeUndefined();
   });
 
   it('a cast whose target faints stops, and pays no cooldown for it', () => {

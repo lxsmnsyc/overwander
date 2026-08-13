@@ -210,6 +210,13 @@ export const enum BattleEvents {
    * picked and then failed on trigger
    */
   CheckUnitAIMoveUsable = 133,
+  /**
+   * How many points have been spent on one of the unit's moves — what
+   * a PP Up bought. It is set when the unit is fielded, from the
+   * record it was copied out of, and read by `CheckUnitMovePP` to say
+   * how quickly the move comes back
+   */
+  UnitSetMovePoints = 134,
 }
 
 export const enum MoveTargetType {
@@ -263,6 +270,10 @@ export interface UnitEntersFieldEvent extends UnitEvent {
 
 export interface UnitMoveEvent extends UnitEvent {
   move: Moves;
+}
+
+export interface UnitMovePointsEvent extends UnitMoveEvent {
+  points: number;
 }
 
 export interface UnitCastEvent extends UnitMoveEvent {
@@ -803,6 +814,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitTriggerItem]: [UnitItemEvent, EventPriority];
 
   [BattleEvents.UnitAddMove]: [UnitMoveEvent, EventPriority];
+  [BattleEvents.UnitSetMovePoints]: [UnitMovePointsEvent, EventPriority];
   [BattleEvents.UnitRemoveMove]: [UnitMoveEvent, EventPriority];
   [BattleEvents.UnitEnableMove]: [UnitMoveEvent, EventPriority];
   [BattleEvents.UnitDisableMove]: [UnitMoveEvent, EventPriority];
@@ -905,6 +917,12 @@ export interface MoveState {
   source: Unit;
   disabled: boolean;
   cooldown?: ProgressData;
+  /**
+   * What has been spent on the move — PP Ups, up to `PP_UP_LIMIT`.
+   * Zero for anything the unit was not fielded with points for: a
+   * wild pokemon, a grunt's party, a raid boss
+   */
+  points: number;
 }
 
 export interface ChannelingData extends CastingData {

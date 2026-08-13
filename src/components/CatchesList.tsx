@@ -4,6 +4,14 @@ import { useGame } from './game-context';
 
 export interface CatchesListProps {
   player: string;
+  /**
+   * Whether this is somebody else's box. Catch records are readable by
+   * every signed-in player — that is what makes a lot on the block
+   * worth bidding on — so the box draws the same either way, and what
+   * changes is what opening a square leads to: the whole record, and
+   * nothing on it to press
+   */
+  viewOnly?: boolean;
 }
 
 /**
@@ -27,15 +35,16 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     <CatchPicker
       inline
       player={props.player}
+      viewOnly={props.viewOnly}
       value={null}
       verb="Open"
-      empty="No catches yet."
+      empty={props.viewOnly === true ? 'Nothing caught yet.' : 'No catches yet.'}
       // A record changed under it — an evolution, a release, a lot put
       // on the block — and the box reads itself again
       revision={game.records()}
       onPick={(catchId) => {
         if (catchId != null) {
-          game.setSheet({ catchId });
+          game.setSheet({ catchId, readOnly: props.viewOnly === true });
         }
       }}
     />

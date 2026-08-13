@@ -56,7 +56,6 @@ export default function registerMountainSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Magmar, weight: 5 },
-        { species: Species.Aerodactyl, weight: 2 },
         { species: Species.Snorlax, weight: 5 },
       ],
       special: [

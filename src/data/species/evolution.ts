@@ -4,22 +4,37 @@ import { type EvolutionData, getSpeciesData } from './__create';
 
 /**
  * The conditions the game can actually verify today. Everything else
- * — trades, friendship, weather, party composition — has no stored
+ * — friendship, weather, party composition — has no stored
  * counterpart yet, so an evolution requiring it is never offered
  * rather than silently treated as met
  */
 export const SUPPORTED_METHODS =
-  EvolutionMethod.Level | EvolutionMethod.UsedItem | EvolutionMethod.HeldItem;
+  EvolutionMethod.Level |
+  EvolutionMethod.UsedItem |
+  EvolutionMethod.HeldItem |
+  EvolutionMethod.Trade;
 
 /**
  * What an evolution check is measured against: the catch's level,
- * the items its owner carries (for an item used on it) and the items
- * the catch itself holds
+ * the items its owner carries (for an item used on it), the items
+ * the catch itself holds, and whether it has ever changed hands
  */
 export interface EvolutionContext {
   level: number;
   carried: ReadonlySet<Items>;
   held: ReadonlySet<Items>;
+  /**
+   * Whether this pokemon has been traded — the catch's own `traded`
+   * field.
+   *
+   * The mainline evolves one **during** the trade, which is a moment
+   * this game has nowhere to put: an evolution here is something a
+   * player asks for from the catch sheet. So a trade opens the
+   * evolution rather than performing it, and the record carries the
+   * fact for good — a Machoke traded once is a Machamp waiting to be
+   * asked, whatever happens to it afterwards
+   */
+  traded: boolean;
 }
 
 /**
@@ -51,6 +66,9 @@ export function meetsEvolutionCriteria(
     if (evolution.item == null || !context.held.has(evolution.item)) {
       return false;
     }
+  }
+  if ((method & EvolutionMethod.Trade) !== 0 && !context.traded) {
+    return false;
   }
   return true;
 }

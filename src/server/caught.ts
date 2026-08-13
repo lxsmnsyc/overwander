@@ -29,6 +29,7 @@ import {
 } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
+import { recordCaughtSpecies } from './pokedex';
 import { ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -128,6 +129,9 @@ export async function writeCaughtRecord(
     gender: encounter.gender,
     nature: encounter.nature,
     moves: encounter.moves,
+    // Nothing has been spent on any of them: what a pokemon arrives
+    // knowing is what its species and its rolls gave it
+    movePoints: {},
     // A shadow raid's reward keeps its Shadow ability for good, on
     // top of the one it rolled
     abilities: shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
@@ -185,6 +189,12 @@ export async function writeCaughtRecord(
       biome: encounter.biome,
     },
   });
+  // Every arrival ends here — thrown at and caught, or handed over —
+  // so this is the one place the dex has to be told a pokemon became
+  // this player's. An egg is the exception and writes its own record;
+  // it is logged when it hatches, since what is in the shell is not
+  // something the player has met yet
+  await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
   return ref.id;
 }
 

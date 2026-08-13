@@ -53,6 +53,16 @@ test.describe('the auction board', () => {
 
     await add.click();
     await expect(board.getByRole('heading', { name: 'Sell' })).toBeVisible();
+
+    // Selling takes the whole panel: the lots are put away rather than
+    // pushed down, since nobody is shopping and listing at once
+    await expect(board.getByRole('heading', { name: 'Items' })).toBeHidden();
+    await expect(board.getByRole('heading', { name: 'Pokemon', exact: true })).toBeHidden();
+
+    // And the key that opened it is the way back
+    await board.getByRole('button', { name: 'Board', exact: true }).click();
+    await expect(board.getByRole('heading', { name: 'Sell' })).toBeHidden();
+    await expect(board.getByRole('heading', { name: 'Items' })).toBeVisible();
   });
 
   test('closes and gives the world back', async ({ page }) => {

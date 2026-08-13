@@ -35,6 +35,8 @@ a call is never trusted — only what the token proves.
 | `teachMove`                                              | Which move a machine teaches, whether the species can learn it and whether the machine is carried are all decided again from the stored record, and the machine leaves the bag in the same write  |
 | `learnLevelUpMove`                                       | The move has to be one the species learns at exactly the level the stored record sits at, so nothing older can be had for free — that is the Move Reminder's trade, and it costs a Heart Scale    |
 | `remindMove`                                             | The Move Reminder is re-derived from the window, what he can give back is derived again from the stored species, level and move list, and the Heart Scale leaves the bag in the same write        |
+| `buyFossil`                                              | Which two fossils the maniac carries is re-derived from his window, the visit is claimed before the trade, and the gold and the rock move in one transaction                                      |
+| `reviveFossil`                                           | What comes out of a fossil belongs to the fossil and arrives at a fixed level, and the rock leaves the bag before the record is written — and goes back if it never is                            |
 | `walk`                                                   | Steps are credited against the server clock, so a report buys no more than the time since the last one — and what a Pickup buddy found is the server's own roll, landing in the same transaction  |
 | `hatchEgg`                                               | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                                                           |
 | `breedCatches`                                           | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side; the once-a-window visit is claimed before the fee is taken                         |
@@ -268,7 +270,7 @@ actually deployed.
 A read is two operations, and a rule that names the document's own id can only
 answer one of them. `get` names a document; `list` is evaluated **per document a
 query would return**, before any of them has a name, so every wildcard in the
-match path is `null` there — asking for one is a *"Null value error for 'list'"*
+match path is `null` there — asking for one is a _"Null value error for 'list'"_
 rather than a refusal, and the tab that ran the query shows nothing at all. Where
 a collection is both fetched by id and queried, the two halves get separate
 rules: `bids` reads its id for a `get` and the `player` field the query filters on

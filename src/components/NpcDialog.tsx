@@ -10,15 +10,19 @@ import { getProfile } from '../auth/profile';
 import {
   boostEgg,
   breed,
+  buyFossil,
   buyFromVendor,
   groomCatch,
   remindMove,
+  reviveFossil,
   sellToVendor,
   visitNurse,
 } from '../auth/npcs';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
-import { getItemData } from '../data/items';
+import { FOSSIL_SPECIES, getItemData, isFossil } from '../data/items';
+import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../data/overworld/fossil';
+import { getSpeciesData } from '../data/species';
 import Npc, {
   BREEDING_FEE,
   DAYCARE_FEE,
@@ -80,6 +84,10 @@ export const NPC_QUOTES: Record<Npc, string> = {
   // but they are one of the people a wandering cell draws, so their
   // words live with the rest
   [Npc.RocketGrunt]: 'Three of mine against however many of yours.',
+  [Npc.FossilManiac]:
+    'Dug these out myself. Two is all I am carrying, and one is all I am parting with today — the rest of the world stopped making them.',
+  [Npc.FossilScientist]:
+    'Hand me the rock and give me a moment. Whatever is in there has been waiting rather a long while — bring me another when you find one.',
 };
 
 /**
@@ -113,6 +121,18 @@ const CENTRED = 'items-center text-center';
 interface Basket {
   buying: boolean;
   picks: ItemAmount[];
+}
+
+/**
+ * What is inside a fossil, said in the one word a player is actually
+ * deciding on. It is no secret — the rock names the species — and a
+ * fossil bought or opened without being told which one it is would be
+ * a decision made blind
+ */
+function fossilHolds(item: Items): string {
+  const species = FOSSIL_SPECIES.get(item);
+
+  return species == null ? '' : getSpeciesData(species).name;
 }
 
 /**
@@ -192,6 +212,11 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [remindee, setRemindee] = createSignal<string | null>(null);
   const [recall, setRecall] = createSignal<Moves | null>(null);
   const [reminding, setReminding] = createSignal<[catchId: string, move: Moves] | null>(null);
+  // Which of the two the maniac is carrying has been pointed at, and
+  // which of the ones in the bag has been put on the scientist's
+  // bench. Neither is spent until the button on the bar is pressed
+  const [buying, setBuying] = createSignal<Items | null>(null);
+  const [opening, setOpening] = createSignal<Items | null>(null);
 
   // Both lists are drawn from this one read: the pair the breeder
   // wants and the egg the daycare lady wants are the same records,
@@ -327,6 +352,24 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setRecall(null);
   };
 
+  /**
+   * The two the maniac is carrying. Derived from the window he was,
+   * so it needs no read of its own — and the server derives the pair
+   * again before it takes a coin
+   */
+  const offer = (): Items[] => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    return snapshot == null || standing == null ? [] : snapshot.getFossilOffer(standing[0]);
+  };
+
+  /**
+   * What is in the bag that the scientist can open
+   */
+  const fossils = (): InventoryEntry[] =>
+    (bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
+
   const close = (): void => {
     setStatus(null);
     setChosen([]);
@@ -335,6 +378,8 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setBasket(null);
     forget();
     setReminding(null);
+    setBuying(null);
+    setOpening(null);
     props.onClose();
   };
 
@@ -505,6 +550,82 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   };
 
   /**
+   * Buy the fossil that has been pointed at. He sells one while he is
+   * standing here, so the refusal covers both a purse that will not
+   * stretch and a player he has already dealt with
+   */
+  const buyRock = (): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+    const item = buying();
+
+    if (snapshot == null || standing == null || item == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    buyFossil(snapshot, standing[0], item)
+      .then((done) => {
+        setBusy(false);
+
+        if (done == null) {
+          setStatus(
+            'He would not part with it — your purse will not cover it, or he has already sold you one this while.',
+          );
+          return;
+        }
+        setBuying(null);
+        setStatus(`He wrapped it up and counted your gold. (−${getFossilPrice(item)} gold)`);
+        setTraded(traded() + 1);
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setBusy(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  /**
+   * Put the fossil on the bench. What comes out is the fossil's
+   * rather than anybody's choice, and the rock is gone either way —
+   * which is why it is a button on the bar rather than a press on the
+   * row
+   */
+  const openRock = (): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+    const item = opening();
+
+    if (snapshot == null || standing == null || item == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    reviveFossil(snapshot, standing[0], item)
+      .then(async (revived) => {
+        setBusy(false);
+
+        if (revived == null) {
+          setStatus('Nothing came of it — you may not be carrying that any more.');
+          return;
+        }
+        setOpening(null);
+        setStatus(
+          `The rock came apart and left a ${getSpeciesData(revived.species).name} behind, level ${
+            revived.level
+          }.${revived.shiny ? ' It sparkles.' : ''}`,
+        );
+        setTraded(traded() + 1);
+        await refetch();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setBusy(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  /**
    * Hand the scale over and take the move back.
    *
    * It is the teaching dialog's `teach`, so what a player agreed to
@@ -570,6 +691,26 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
           }}
         >
           Remind it (1 Heart Scale)
+        </Button>
+      );
+    }
+    if (npc === Npc.FossilManiac) {
+      const item = buying();
+
+      return (
+        <Button
+          tone="primary"
+          disabled={busy() || item == null || getFossilPrice(item) > (gold.latest ?? 0)}
+          onClick={buyRock}
+        >
+          {item == null ? 'Buy' : `Buy (${getFossilPrice(item)} gold)`}
+        </Button>
+      );
+    }
+    if (npc === Npc.FossilScientist) {
+      return (
+        <Button tone="primary" disabled={busy() || opening() == null} onClick={openRock}>
+          Revive it
         </Button>
       );
     }
@@ -891,6 +1032,89 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                         )}
                       </For>
                     </List>
+                  </Show>
+                </DialogSection>
+              </Show>
+
+              <Show when={standing()[1] === Npc.FossilManiac}>
+                <DialogSection class={CENTRED}>
+                  <Row class="justify-center">
+                    <Badge tone="gold">{gold.latest ?? 0} gold</Badge>
+                  </Row>
+
+                  {/* Two rocks, and what is in each of them. It is no
+                    secret which species a fossil holds, and buying one
+                    for the price of a nugget without being told would
+                    be a decision made blind */}
+                  <Show
+                    when={offer().length > 0}
+                    fallback={<Note>He has nothing on him just now.</Note>}
+                  >
+                    <List>
+                      <For each={offer()}>
+                        {(item) => (
+                          <ListRow selected={buying() === item}>
+                            <RowButton
+                              pressed={buying() === item}
+                              disabled={busy()}
+                              onClick={() => {
+                                setStatus(null);
+                                setBuying(item);
+                              }}
+                            >
+                              <ItemSprite item={item} size={24} label="" />
+                              <span class="grow text-left">
+                                {describeItem(item)}
+                                <Meta class="block">{fossilHolds(item)}</Meta>
+                              </span>
+                              <Meta>{getFossilPrice(item)} gold</Meta>
+                            </RowButton>
+                          </ListRow>
+                        )}
+                      </For>
+                    </List>
+                  </Show>
+                </DialogSection>
+              </Show>
+
+              <Show when={standing()[1] === Npc.FossilScientist}>
+                <DialogSection class={CENTRED}>
+                  {/* What he takes is in the bag rather than in a
+                    crate, so the list is the player's own fossils. He
+                    charges nothing else, and he will do it as often as
+                    there are rocks to open */}
+                  <Show
+                    when={fossils().length > 0}
+                    fallback={<Note>You are carrying nothing he can open.</Note>}
+                  >
+                    <List>
+                      <For each={fossils()}>
+                        {(entry) => (
+                          <ListRow selected={opening() === entry.item}>
+                            <RowButton
+                              pressed={opening() === entry.item}
+                              disabled={busy()}
+                              onClick={() => {
+                                setStatus(null);
+                                setOpening(entry.item);
+                              }}
+                            >
+                              <ItemSprite item={entry.item} size={24} label="" />
+                              <span class="grow text-left">
+                                {describeItem(entry.item)}
+                                <Meta class="block">{fossilHolds(entry.item)}</Meta>
+                              </span>
+                              <Meta>× {entry.amount}</Meta>
+                            </RowButton>
+                          </ListRow>
+                        )}
+                      </For>
+                    </List>
+                    {/* The one thing about the outcome that is not
+                        said by the rock itself */}
+                    <Meta class="block">
+                      Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.
+                    </Meta>
                   </Show>
                 </DialogSection>
               </Show>

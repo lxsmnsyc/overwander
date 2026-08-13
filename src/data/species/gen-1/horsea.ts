@@ -57,7 +57,7 @@ export default function registerHorseaSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 225,
-    biomes: [Biome.Ocean, Biome.CoralReef],
+    biomes: [Biome.Ocean, Biome.CoralReef, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

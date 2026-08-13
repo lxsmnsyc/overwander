@@ -31,7 +31,15 @@ test.describe('the overworld', () => {
     // Everything that is not the world, as a keypad. The three that
     // are kept for later are drawn and unpressable rather than left
     // out, so the keys do not move as the game grows
-    for (const label of ['World', 'Catches', 'Inventory', 'Profile', 'Raids', 'Auctions']) {
+    for (const label of [
+      'World',
+      'Catches',
+      'Pokedex',
+      'Inventory',
+      'Profile',
+      'Raids',
+      'Auctions',
+    ]) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
     }
     for (const label of ['Friends', 'Gifts', 'Settings']) {

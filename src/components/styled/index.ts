@@ -14,6 +14,8 @@ export type { BadgeTone, StatusProps } from './feedback';
 export { default as Field } from './field';
 export type { FieldProps } from './field';
 export { default as Filter } from './filter';
+export { default as IconSlot } from './icon';
+export type { IconSlotProps } from './icon';
 export type { FilterOption, FilterProps } from './filter';
 export { List, ListRow, Meta, RowButton } from './list';
 export { default as Menu } from './menu';

@@ -78,6 +78,10 @@ export default async function evolveCatch(
       // same document the species change is written back to
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       held: new Set(asNumberArray(caught.items) as Items[]),
+      // Read off the stored record rather than taken from the caller:
+      // a trade evolution is opened by the trade the server wrote, not
+      // by a client saying one happened
+      traded: caught.traded === true,
     };
 
     if (!getAvailableEvolutions(species, context).some((entry) => entry.species === into)) {

@@ -84,6 +84,8 @@ import deriveEncounter, {
   isShinyFor,
 } from '../../src/overworld/encounter';
 import { encounterKey, encounterWindow } from '../../src/overworld/safari';
+import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fossil';
+import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
 import Npc, { NPCS } from '../../src/data/overworld/npc';
@@ -1364,6 +1366,55 @@ describe('world', () => {
     expect(found).toBeGreaterThan(0);
     // And the crates are not all the same crate
     expect(crates.size).toBeGreaterThan(1);
+  });
+
+  it('gives the fossil maniac two of the three, drawn with his window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const offers = new Set<string>();
+    let found = 0;
+
+    for (let window = 0; window < 48; window++) {
+      const at = window * NPC_INTERVAL;
+      const snapshot = new ChunkSnapshot(chunk, at);
+
+      for (const [cell, npc] of snapshot.getWanderingNpcs()) {
+        const offer = snapshot.getFossilOffer(cell);
+
+        // Nobody else is carrying any
+        if (npc !== Npc.FossilManiac) {
+          expect(offer).toEqual([]);
+          continue;
+        }
+        found++;
+        offers.add(JSON.stringify(offer));
+
+        // Two of the three, never the same one twice, and never all
+        // of them: what he offers is a choice
+        expect(offer.length).toBe(FOSSIL_OFFER_KINDS);
+        expect(new Set(offer).size).toBe(offer.length);
+        for (const item of offer) {
+          expect(isFossil(item)).toBe(true);
+          expect(getFossilPrice(item)).toBeGreaterThan(0);
+        }
+
+        // Everybody who reaches the same maniac is offered the same
+        // two: it is derived, not stored
+        expect(new ChunkSnapshot(chunk, at + 1).getFossilOffer(cell)).toEqual(offer);
+      }
+    }
+
+    expect(found).toBeGreaterThan(0);
+    // And he is not carrying the same pair every window
+    expect(offers.size).toBeGreaterThan(1);
   });
 
   it('opens a portal onto the nearest portal of the biome asked for', () => {

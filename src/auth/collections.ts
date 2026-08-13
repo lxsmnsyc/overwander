@@ -12,6 +12,15 @@ export const PROFILE_COLLECTION = 'profiles';
  * carried every time a picker opened. See [`stacks.ts`](./stacks.ts)
  */
 export const BAG_COLLECTION = 'bags';
+/**
+ * What a player has met and kept, in one document per player: a count
+ * per species of the ones they have seen and the ones they have
+ * caught, each split into the ordinary and the sparkling. It is the
+ * bag's shape applied to a different question — see
+ * [`pokedex-record.ts`](./pokedex-record.ts) — and for the same
+ * reason: a dex is read whole or not at all
+ */
+export const POKEDEX_COLLECTION = 'pokedex';
 export const CAUGHT_COLLECTION = 'caught';
 export const FLED_COLLECTION = 'fled';
 

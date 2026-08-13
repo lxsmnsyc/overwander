@@ -1,6 +1,7 @@
 import registerGen1Species from './gen-1';
 
 export {
+  getBaseForms,
   getBaseSpecies,
   getEggMoves,
   getFamilyName,
@@ -11,6 +12,7 @@ export {
   getSpeciesAbilityPools,
   getSpeciesByBiome,
   getSpeciesData,
+  isBaseForm,
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
 export {

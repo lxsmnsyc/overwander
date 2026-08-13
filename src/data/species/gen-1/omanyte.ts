@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
@@ -59,7 +59,9 @@ export default function registerOmanyteSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean, Biome.DeepOcean],
+    // Extinct: nothing brings one back but a fossil, so it lives
+    // nowhere on the map
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -95,7 +97,9 @@ export default function registerOmanyteSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Water3],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean, Biome.DeepOcean],
+    // Extinct: nothing brings one back but a fossil, so it lives
+    // nowhere on the map
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

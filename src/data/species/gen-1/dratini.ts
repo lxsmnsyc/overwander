@@ -62,7 +62,7 @@ export default function registerDratiniSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean],
+    biomes: [Biome.Ocean, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -107,7 +107,7 @@ export default function registerDratiniSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Ocean],
+    biomes: [Biome.Ocean, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

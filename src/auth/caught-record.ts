@@ -15,6 +15,7 @@ import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type Lairs from '../data/overworld/lair';
 import { EncounterType } from '../overworld/encounter';
+import { PP_UP_LIMIT } from '../data/moves';
 import {
   asBoolean,
   asNumber,
@@ -22,6 +23,7 @@ import {
   asRecord,
   asStatRecord,
   asString,
+  isRecord,
 } from './__normalize';
 import { getMaxHealth } from './health';
 
@@ -104,6 +106,12 @@ export interface CaughtPokemon {
    * somebody else" is one query rather than a whole box read and
    * filtered, which is what the same argument buys `auctionable`.
    *
+   * It is also what opens a **trade evolution**: a Machoke that has
+   * changed hands may become a Machamp, and one that has not may not
+   * — see `meetsEvolutionCriteria`. The mainline evolves one during
+   * the trade itself; here the trade opens the evolution and the
+   * player asks for it from the catch sheet.
+   *
    * Nothing sets it yet: trading does not exist. It is written `false`
    * from the day catches are created so that the day it does, old
    * records do not have to be told apart from new ones by their shape
@@ -128,6 +136,24 @@ export interface CaughtPokemon {
    */
   auctionable: boolean;
   moves: Moves[];
+  /**
+   * How many points have been spent on each move, keyed by the move's
+   * id: what a PP Up bought, and what `getMovePP` reads to say how
+   * often the move comes back.
+   *
+   * It is a **map beside the move list** rather than a field inside
+   * it, because the list itself is a shape this game uses in four
+   * places where points are meaningless — an encounter's rolled moves,
+   * a battle snapshot's, a grunt's party, a bred egg's inheritance.
+   * The training belongs to this individual, so it sits with the other
+   * things spent on one: `effortValues`, `effortBonus`, `slots`.
+   *
+   * Only moves with something spent on them appear. A move put over by
+   * another loses its points with it — the mainline loses PP Ups on a
+   * forgotten move too — so nothing here outlives the move it belongs
+   * to
+   */
+  movePoints: Record<string, number>;
   /**
    * The abilities the catch has: the rolled one, plus Shadow for a
    * shadow catch, which it keeps for good
@@ -374,6 +400,13 @@ export const enum Acquisition {
    * called it a catch would be saying they went and found it
    */
   Gift = 4,
+  /**
+   * They carried a fossil to somebody with the machinery to open it.
+   * Like an egg, the pokemon was never anybody else's — it began
+   * here — but nobody bred it and nothing hatched: what they handed
+   * over was a rock
+   */
+  Revived = 5,
 }
 
 /**
@@ -385,6 +418,7 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
   [Acquisition.Auction]: 'Won at auction',
   [Acquisition.Trade]: 'Traded for',
   [Acquisition.Gift]: 'Received as a gift',
+  [Acquisition.Revived]: 'Revived from a fossil',
 };
 
 export interface OwnershipRecord {
@@ -428,6 +462,35 @@ function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecor
 }
 
 /**
+ * The points spent on each move, restored. Anything that is not a
+ * count of them is left out rather than read as zero, and a count is
+ * held to what a move will take — a stored figure past the limit is a
+ * record that should not have one, and reading it back would make a
+ * move faster than any amount of gold can buy
+ */
+export function asMovePoints(value: unknown): Record<string, number> {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const spent: Record<string, number> = {};
+
+  for (const [move, points] of Object.entries(value)) {
+    if (typeof points === 'number' && points > 0) {
+      spent[move] = Math.min(Math.floor(points), PP_UP_LIMIT);
+    }
+  }
+  return spent;
+}
+
+/**
+ * How many points have been spent on one of this pokemon's moves
+ */
+export function getMovePoints(caught: { movePoints: Record<string, number> }, move: Moves): number {
+  return caught.movePoints[String(move)] ?? 0;
+}
+
+/**
  * Restore a catch from an untyped Firestore value. The client's
  * converter and the privileged server both read through here, so the
  * two agree on what a stored catch means
@@ -463,6 +526,9 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     traded: asBoolean(data.traded),
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
+    // A record written before a move could be trained has nothing
+    // spent on any of them
+    movePoints: asMovePoints(data.movePoints),
     abilities,
     // A record written before the field existed has the room the game
     // used to give everything, which is what its own abilities say

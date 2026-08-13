@@ -17,6 +17,7 @@ import {
   asStatRecord,
   asString,
 } from './__normalize';
+import { asMovePoints } from './caught-record';
 import { getMaxHealth } from './health';
 import type { CaughtPokemon } from './caught';
 
@@ -57,6 +58,12 @@ export interface CatchSnapshot {
   shiny: boolean;
   shadow: boolean;
   moves: Moves[];
+  /**
+   * What has been spent on each of those moves, keyed by move id. It
+   * is frozen with everything else: a PP Up bought while a raid is
+   * under way changes the pokemon, not the copy already fighting
+   */
+  movePoints: Record<string, number>;
   abilities: Abilities[];
   items: Items[];
   /**
@@ -93,6 +100,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     shiny: caught.shiny,
     shadow: caught.shadow,
     moves: caught.moves,
+    movePoints: caught.movePoints,
     abilities: caught.abilities,
     items: caught.items,
     health: caught.health,
@@ -119,6 +127,9 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     shiny: asBoolean(data.shiny),
     shadow: asBoolean(data.shadow),
     moves: asNumberArray(data.moves) as Moves[],
+    // A snapshot written before a move could be trained has nothing
+    // spent on any of them
+    movePoints: asMovePoints(data.movePoints),
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
     // A snapshot written before a fight could hurt anything carries

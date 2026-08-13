@@ -1,14 +1,17 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon, getMovePoints } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { assignEffort as assignedValues, unusedEffort } from '../auth/effort';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
+import type { Moves } from '../data/ids/moves';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
+import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
+import { PP_UP_LIMIT, getMovePP } from '../data/moves';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
@@ -118,26 +121,47 @@ export async function trainEffort(
 }
 
 /**
- * Use a wing on one of the player's catches: three points of effort
- * in the wing's own stat, granted rather than spent, so a pokemon
- * with nothing left in its pool still gains from one.
+ * What one of the training items is worth, and where it goes: the
+ * stat it feeds and how many points it grants.
  *
- * Resolves what the pokemon now has, or null when the wing is
- * refused: the catch is not the player's, it is fighting, it is still
- * an egg, none of that wing is carried, or the stat is already
- * trained as far as it goes
+ * A wing and a vitamin do the same thing at different sizes — three
+ * points found on the ground, ten bought off a shelf — so they are
+ * one call rather than two that would drift apart
  */
-export async function useWing(
+function effortGrant(item: Items): [stat: Stats, amount: number] | null {
+  const wing = WING_STATS.get(item);
+
+  if (wing != null) {
+    return [wing, WING_EFFORT];
+  }
+
+  const vitamin = VITAMIN_STATS.get(item);
+
+  return vitamin == null ? null : [vitamin, VITAMIN_EFFORT];
+}
+
+/**
+ * Use a wing or a vitamin on one of the player's catches: points of
+ * effort in the item's own stat, granted rather than spent, so a
+ * pokemon with nothing left in its pool still gains from one.
+ *
+ * Resolves what the pokemon now has, or null when it is refused: the
+ * catch is not the player's, it is fighting, it is still an egg, none
+ * of that item is carried, or the stat is already trained as far as it
+ * goes
+ */
+export async function useEffortItem(
   uid: string,
   catchId: string,
   item: Items,
 ): Promise<TrainingResult | null> {
-  const stat = WING_STATS.get(item);
+  const grant = effortGrant(item);
 
-  if (stat == null) {
+  if (grant == null) {
     return null;
   }
 
+  const [stat, amount] = grant;
   const db = getAdminFirestore();
 
   return db.runTransaction(async (transaction) => {
@@ -161,7 +185,7 @@ export async function useWing(
     }
 
     const record = asCaughtPokemon(stored);
-    const trainedTo = Math.min(MAX_EFFORT_PER_STAT, record.effortValues[stat] + WING_EFFORT);
+    const trainedTo = Math.min(MAX_EFFORT_PER_STAT, record.effortValues[stat] + amount);
 
     // Nothing to gain, so nothing is spent
     if (trainedTo === record.effortValues[stat]) {
@@ -170,9 +194,9 @@ export async function useWing(
 
     const gained = trainedTo - record.effortValues[stat];
     const effortValues = { ...record.effortValues, [stat]: trainedTo };
-    // The wing pays for what it granted, so a pokemon's own pool is
+    // The item pays for what it granted, so a pokemon's own pool is
     // untouched by it — that is the whole of what makes a wing worth
-    // finding at any level
+    // finding, or a vitamin worth buying, at any level
     const trained = { ...record, effortValues, effortBonus: record.effortBonus + gained };
 
     writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
@@ -182,6 +206,93 @@ export async function useWing(
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
     });
     return asResult(trained);
+  });
+}
+
+/**
+ * What a PP call comes back with: how many points that move now
+ * carries, and what its PP has become — which is what decides how
+ * quickly it comes back in a fight
+ */
+export interface MovePointsResult {
+  move: Moves;
+  points: number;
+  pp: number;
+}
+
+/**
+ * Spend a PP Up or a PP Max on one of a pokemon's moves.
+ *
+ * The points are permanent and nothing takes them back: a stat can be
+ * trained back down with a bitter berry, a move's points cannot. What
+ * they buy in this game is a **shorter cooldown** rather than more
+ * uses — see `getMovePP` — and a move at the limit is refused rather
+ * than charged for nothing.
+ *
+ * A PP Max is worth the whole allowance at once, so it is accepted on
+ * a move with anything less than the limit and takes it straight
+ * there; what it grants is however much was missing.
+ *
+ * Resolves what the move now carries, or null when it is refused: the
+ * catch is not the player's, it is fighting, it is still an egg, it
+ * does not know that move, none of the item is carried, or the move
+ * has already had everything it will take
+ */
+export async function usePPItem(
+  uid: string,
+  catchId: string,
+  move: Moves,
+  item: Items,
+): Promise<MovePointsResult | null> {
+  const worth = PP_ITEMS.get(item);
+
+  if (worth == null) {
+    return null;
+  }
+
+  const db = getAdminFirestore();
+
+  return db.runTransaction(async (transaction) => {
+    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
+    const stored = docData(await transaction.get(ref));
+
+    if (
+      stored == null ||
+      stored.owner !== uid ||
+      isCatchLocked(stored) ||
+      isEggRecord(stored) ||
+      isGuardedRecord(stored)
+    ) {
+      return null;
+    }
+
+    const record = asCaughtPokemon(stored);
+
+    // The move has to be one it actually knows: points on a move it
+    // does not would sit in the record forever, since nothing would
+    // ever prune them
+    if (!new Set(record.moves).has(move)) {
+      return null;
+    }
+
+    const stock = await readStackIn(transaction, ITEM_STACKS, uid, item);
+
+    if (stock < 1) {
+      return null;
+    }
+
+    const points = Math.min(PP_UP_LIMIT, getMovePoints(record, move) + worth);
+
+    // Already as far as it goes, so nothing is spent
+    if (points === getMovePoints(record, move)) {
+      return null;
+    }
+
+    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    // Written at the one field path, so two moves trained in the same
+    // breath cannot overwrite each other's points
+    transaction.update(ref, { [`movePoints.${move}`]: points });
+    return { move, points, pp: getMovePP(move, points) };
   });
 }
 

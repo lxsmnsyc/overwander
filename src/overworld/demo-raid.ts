@@ -128,6 +128,9 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
     shiny: index % 8 === 0,
     shadow: false,
     moves: deriveMoves(species, level),
+    // Nobody trained it: a staged pokemon has had nothing spent on
+    // any of its moves
+    movePoints: {},
     abilities: [deriveAbility(species, traitValue)],
     items: [],
     health: getMaxHealth({ species, level, ivs, effortValues }),

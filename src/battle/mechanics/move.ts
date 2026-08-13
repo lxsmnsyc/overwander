@@ -15,7 +15,7 @@ import {
   Moves,
   StatFlags,
 } from '../../data/ids/moves';
-import { getMoveData } from '../../data/moves';
+import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../data/moves';
 import type Alliance from '../alliance';
 import type Battle from '../core';
 import type {
@@ -64,12 +64,25 @@ function createMoveState(source: Unit, move: Moves): MoveState {
     move,
     disabled: false,
     cooldown: undefined,
+    // Nothing has been spent on it until whoever fields the unit says
+    // so, which is what keeps a wild pokemon's moves plain
+    points: 0,
   };
 }
 
 export function setupMoveMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitAddMove, EventPriority.Exact, (event) => {
     event.source.moves[event.move] = createMoveState(event.source, event.move);
+  });
+  battle.on(BattleEvents.UnitSetMovePoints, EventPriority.Exact, (event) => {
+    const data = event.source.moves[event.move];
+
+    // Only a move the unit actually has: points for one it does not
+    // know belong to nothing, and inventing a state for them would
+    // give it a move it was never fielded with
+    if (data) {
+      data.points = Math.min(Math.max(0, Math.floor(event.points)), PP_UP_LIMIT);
+    }
   });
   battle.on(BattleEvents.UnitRemoveMove, EventPriority.Exact, (event) => {
     // Deleted rather than blanked: the record is walked with
@@ -137,7 +150,11 @@ export function setupMoveMechanics(battle: Battle): void {
     event.power = getMoveData(event.move).power;
   });
   battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Exact, (event) => {
-    event.pp = getMoveData(event.move).pp;
+    // What the move is registered with, plus whatever its owner spent
+    // on it. Everything that changes PP afterwards — Pressure halving
+    // it — is a multiplier at a later priority, so the order the two
+    // land in does not matter
+    event.pp = getMovePP(event.move, event.source.moves[event.move]?.points ?? 0);
   });
   battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Exact, (event) => {
     event.priority = getMoveData(event.move).priority ?? 0;

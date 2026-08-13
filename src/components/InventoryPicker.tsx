@@ -372,7 +372,13 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
             />
           </Show>
           <Show when={categories().length > 2}>
+            {/* The word at one end of the row and the control at the
+                other, rather than the pair of them huddled on the
+                left: what a player presses is the dropdown, and it is
+                easier to find on an edge than in the middle of a line
+                of text */}
             <Filter
+              class="grow justify-between"
               label="Category"
               value={shelf()}
               options={categories()}

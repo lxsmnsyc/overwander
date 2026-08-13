@@ -85,6 +85,13 @@ export interface BuddyCardProps {
    * player's records catches up
    */
   onChange?: () => void;
+  /**
+   * Whether this is somebody else's buddy. Who is walking with them is
+   * worth seeing — it is the one pokemon a trainer is known by — but
+   * swapping it is theirs alone, so the button and the picker behind
+   * it are left out
+   */
+  viewOnly?: boolean;
 }
 
 export default function BuddyCard(props: BuddyCardProps): JSX.Element {
@@ -129,6 +136,14 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
       });
   };
 
+  /**
+   * Whose buddy this is, as the card says it. Everything about a buddy
+   * reads as something happening to the reader — walking with you,
+   * walked together — and none of that is true of a trainer whose
+   * profile is being looked at
+   */
+  const walker = (): string => (props.viewOnly === true ? 'them' : 'you');
+
   return (
     // No heading. The card is one line — a pokemon and the button that
     // swaps it — and a title over a single row is a word taking up as
@@ -139,8 +154,10 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
           when={buddy()}
           fallback={
             <Note class="grow">
-              Nobody is walking with you. A buddy draws pokemon in, earns the candy and is the only
-              thing that hatches an egg.
+              <Show when={props.viewOnly !== true} fallback="Nobody is walking with this trainer.">
+                Nobody is walking with you. A buddy draws pokemon in, earns the candy and is the
+                only thing that hatches an egg.
+              </Show>
             </Note>
           }
         >
@@ -166,8 +183,8 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
                   scale={2}
                   label={
                     isEgg(pair()[1])
-                      ? 'An egg, walking with you'
-                      : `${getSpeciesData(pair()[1].species).name}, walking with you`
+                      ? `An egg, walking with ${walker()}`
+                      : `${getSpeciesData(pair()[1].species).name}, walking with ${walker()}`
                   }
                 />
               </div>
@@ -249,31 +266,35 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
             it is the one with no buddy in it: a card that only offered
             to *replace* a buddy left a player with none no way to pick
             one at all */}
-        <Button
-          onClick={() => {
-            setPicking(true);
-          }}
-        >
-          {buddy() == null ? 'Choose a buddy' : 'Replace'}
-        </Button>
+        <Show when={props.viewOnly !== true}>
+          <Button
+            onClick={() => {
+              setPicking(true);
+            }}
+          >
+            {buddy() == null ? 'Choose a buddy' : 'Replace'}
+          </Button>
+        </Show>
       </Row>
 
       <Status message={status()} tone="alert" />
 
       {/* The ordinary picker: an egg is as valid a buddy as anything
           else, so nothing is left out of it */}
-      <CatchPicker
-        player={props.player}
-        open={picking()}
-        value={buddy()?.[0] ?? null}
-        title="Walk with"
-        verb="Walk with"
-        empty="You have nothing to walk with yet."
-        onClose={() => {
-          setPicking(false);
-        }}
-        onPick={choose}
-      />
+      <Show when={props.viewOnly !== true}>
+        <CatchPicker
+          player={props.player}
+          open={picking()}
+          value={buddy()?.[0] ?? null}
+          title="Walk with"
+          verb="Walk with"
+          empty="You have nothing to walk with yet."
+          onClose={() => {
+            setPicking(false);
+          }}
+          onPick={choose}
+        />
+      </Show>
     </Card>
   );
 }

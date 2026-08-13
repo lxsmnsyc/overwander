@@ -3,12 +3,15 @@ import type { Moves } from '../data/ids/moves';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/firebase';
 import {
+  type RevivedFossil,
   type TradeResult,
   boostEgg as boostOnServerSide,
   breedCatches as breedOnServerSide,
+  buyFossil as buyFossilOnServerSide,
   buyFromVendor as buyOnServerSide,
   groomCatch as groomOnServerSide,
   remindMove as remindOnServerSide,
+  reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
@@ -27,7 +30,7 @@ import getIdToken from './session';
  * charges anything.
  */
 
-export type { TradeResult } from '../server/npcs';
+export type { RevivedFossil, TradeResult } from '../server/npcs';
 
 /**
  * Leave two pokemon with the breeder and take the egg. Both must be
@@ -368,5 +371,101 @@ async function sellOnServer(
     basket,
     await syncServerClock(),
     offset,
+  );
+}
+
+/**
+ * Buy one fossil off the Fossil Maniac. Which two he is carrying is
+ * derived, so the client already knows them —
+ * `ChunkSnapshot.getFossilOffer` — and the server derives the pair
+ * again before it takes a coin.
+ *
+ * He sells a player one while he is standing there.
+ *
+ * Resolves the balance and how many of that fossil are now carried,
+ * or null when he is not holding it, the purse will not cover it, or
+ * he has already sold to this player this window
+ */
+export async function buyFossil(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+): Promise<TradeResult | null> {
+  return buyFossilOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    item,
+    snapshot.offset,
+  );
+}
+
+async function buyFossilOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  offset: number,
+): Promise<TradeResult | null> {
+  'use server';
+  return buyFossilOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    item,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Hand a fossil to the Fossil Scientist and take back what was in it.
+ * Which species that is belongs to the fossil, and the level is
+ * fixed, so nothing about the outcome is the client's to name.
+ *
+ * He is the one wanderer besides the vendor who is not once a window:
+ * a player carrying three fossils may open all three.
+ *
+ * Resolves what came out, or null when he refuses — he is not
+ * standing there, or the fossil is not in the bag
+ */
+export async function reviveFossil(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+): Promise<RevivedFossil | null> {
+  return reviveOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    item,
+    snapshot.offset,
+    getLocale(),
+  );
+}
+
+async function reviveOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  offset: number,
+  locale: string,
+): Promise<RevivedFossil | null> {
+  'use server';
+  return reviveOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    item,
+    await syncServerClock(),
+    offset,
+    locale,
   );
 }

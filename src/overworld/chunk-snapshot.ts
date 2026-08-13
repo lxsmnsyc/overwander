@@ -7,6 +7,7 @@ import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
+import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
@@ -565,6 +566,26 @@ export default class ChunkSnapshot {
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}wares${cell}`);
 
     return rollVendorStock(() => rng.random());
+  }
+
+  /**
+   * Which two fossils the maniac at this cell is carrying, or nothing
+   * at all when somebody else is standing there.
+   *
+   * Derived the way the vendor's crate is, and for the same reason:
+   * what he has is part of who walked up rather than something
+   * stored, so every player who reaches him this window is offered
+   * the same two — and the next window brings somebody with a
+   * different pair
+   */
+  getFossilOffer(cell: number): Items[] {
+    if (this.getWanderingNpcs().get(cell) !== Npc.FossilManiac) {
+      return [];
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}fossils${cell}`);
+
+    return rollFossilOffer(() => rng.random());
   }
 
   /**

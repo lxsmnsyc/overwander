@@ -2,13 +2,16 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
+  BIOME_NAMES,
   SpawnRarity,
+  TIMES_OF_DAY,
   boostFamilyWeights,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
   isMythicalSpecies,
   isPrizedSpecies,
+  listSpeciesHabitats,
   pickSpawn,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
@@ -84,6 +87,13 @@ import {
   pickItems,
 } from '../src/data/overworld/item-pool';
 import {
+  FOSSIL_OFFER_KINDS,
+  FOSSIL_REVIVE_LEVEL,
+  getFossilPrice,
+  rollFossilOffer,
+} from '../src/data/overworld/fossil';
+import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils';
+import {
   VENDOR_STAPLES,
   VENDOR_STOCK_KINDS,
   getVendorGoods,
@@ -142,6 +152,7 @@ import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-booste
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   getAvailableEvolutions,
+  getBaseForms,
   getBaseSpecies,
   getConsumedItem,
   getDayOfYear,
@@ -154,9 +165,12 @@ import {
   getSpeciesAbilityPools,
   getSpeciesByBiome,
   getSpeciesData,
+  isBaseForm,
   isFeaturedSpecies,
+  meetsEvolutionCriteria,
   registerSpecies,
 } from '../src/data/species';
+import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -231,6 +245,128 @@ describe('species measurements', () => {
     expect(getSpeciesData(Species.Charizard).weight).toBeGreaterThan(
       getSpeciesData(Species.Charmeleon).weight,
     );
+  });
+});
+
+describe('species forms', () => {
+  it('treats every registered species as a default form', () => {
+    // Gen 1 has no Alolan anything, so the flag is absent everywhere
+    // and answers true rather than being written out a hundred and
+    // fifty-one times
+    const registered = getRegisteredSpecies();
+
+    expect(registered.length).toBeGreaterThan(0);
+    for (const species of registered) {
+      expect(getSpeciesData(species).baseForm).toBeUndefined();
+      expect(isBaseForm(species)).toBe(true);
+    }
+    expect(getBaseForms()).toEqual(registered);
+  });
+
+  it('is about the costume rather than the evolution', () => {
+    // A Charizard is a base form and so is a Charmander: what makes
+    // one of them different is the line it stands in, which
+    // `evolvesFrom` answers
+    expect(isBaseForm(Species.Charmander)).toBe(true);
+    expect(isBaseForm(Species.Charizard)).toBe(true);
+    expect(getSpeciesData(Species.Charizard).evolvesFrom).toBe(Species.Charmeleon);
+
+    // A variant says so, and drops out of the base forms with it.
+    // Registration is an idempotent overwrite, so the species is put
+    // back exactly as it was rather than left in a costume
+    const original = getSpeciesData(Species.Charizard);
+
+    try {
+      registerSpeciesData(Species.Charizard, { ...original, baseForm: false });
+      expect(isBaseForm(Species.Charizard)).toBe(false);
+      expect(new Set(getBaseForms()).has(Species.Charizard)).toBe(false);
+    } finally {
+      registerSpeciesData(Species.Charizard, original);
+    }
+    expect(isBaseForm(Species.Charizard)).toBe(true);
+  });
+});
+
+describe('where a species lives', () => {
+  it('reads the pools backwards, one entry per biome, hour and band', () => {
+    const habitats = listSpeciesHabitats(Species.Rattata);
+
+    expect(habitats.length).toBeGreaterThan(0);
+
+    // Every entry says a place the pool actually lists it in, in the
+    // band the pool put it in
+    for (const habitat of habitats) {
+      const groups = getSpawnPool(habitat.biome, habitat.time);
+      const bands: [SpawnRarity, { species: Species }[]][] = [
+        [SpawnRarity.Base, groups.base],
+        [SpawnRarity.Uncommon, groups.uncommon],
+        [SpawnRarity.Rare, groups.rare],
+        [SpawnRarity.Prized, groups.prized ?? []],
+        [SpawnRarity.Special, groups.special],
+      ];
+
+      for (const [rarity, entries] of bands) {
+        const listed = entries.some((entry) => entry.species === Species.Rattata);
+
+        expect(listed).toBe(rarity === habitat.rarity);
+      }
+    }
+  });
+
+  it('finds the grassland it is met in all day', () => {
+    const grassland = listSpeciesHabitats(Species.Rattata).filter(
+      (habitat) => habitat.biome === Biome.Grassland,
+    );
+
+    expect(grassland.map((habitat) => habitat.time).sort()).toEqual(
+      [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night].sort(),
+    );
+    for (const habitat of grassland) {
+      expect(habitat.rarity).toBe(SpawnRarity.Base);
+    }
+  });
+
+  it('puts the one-per-world species in the band they are drawn from', () => {
+    // Every registered species stands in some pool, a mythical
+    // included — what makes one of those rare is the band rather than
+    // the absence of a home
+    expect(isMythicalSpecies(Species.Mew)).toBe(true);
+
+    const habitats = listSpeciesHabitats(Species.Mew);
+
+    expect(habitats.length).toBeGreaterThan(0);
+    for (const habitat of habitats) {
+      expect(habitat.rarity).toBe(SpawnRarity.Special);
+    }
+  });
+
+  it('says the same thing the pools do about every species', () => {
+    // Nothing is invented and nothing is dropped: the number of
+    // habitat entries is exactly the number of times the registry
+    // lists that species anywhere
+    const counted = new Map<Species, number>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        for (const band of [
+          groups.base,
+          groups.uncommon,
+          groups.rare,
+          groups.prized ?? [],
+          groups.special,
+        ]) {
+          for (const entry of band) {
+            counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
+          }
+        }
+      }
+    }
+
+    for (const species of getRegisteredSpecies()) {
+      expect(listSpeciesHabitats(species).length).toBe(counted.get(species) ?? 0);
+    }
   });
 });
 
@@ -460,7 +596,7 @@ describe('evolution data', () => {
   });
 
   it('offers level evolutions once the threshold is reached', () => {
-    const context = { carried: new Set<Items>(), held: new Set<Items>() };
+    const context = { carried: new Set<Items>(), held: new Set<Items>(), traded: false };
 
     expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 15 })).toEqual([]);
     expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 16 })).toEqual([
@@ -469,7 +605,7 @@ describe('evolution data', () => {
   });
 
   it('offers stone evolutions only while the stone is carried', () => {
-    const context = { level: 50, held: new Set<Items>() };
+    const context = { level: 50, held: new Set<Items>(), traded: false };
 
     expect(getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set() })).toEqual([]);
     expect(
@@ -482,16 +618,32 @@ describe('evolution data', () => {
     ]);
   });
 
+  it('offers trade evolutions only to a pokemon that has changed hands', () => {
+    const context = { level: 100, carried: new Set<Items>(), held: new Set<Items>() };
+
+    // A Machoke nobody has traded stays a Machoke however high its
+    // level runs — the level is not what the evolution asks for
+    expect(getAvailableEvolutions(Species.Machoke, { ...context, traded: false })).toEqual([]);
+    expect(getAvailableEvolutions(Species.Machoke, { ...context, traded: true })).toEqual([
+      { species: Species.Machamp, method: EvolutionMethod.Trade },
+    ]);
+    // And the record's own history is what answers, so a fresh catch
+    // of the same species is refused beside a traded one
+    expect(getAvailableEvolutions(Species.Haunter, { ...context, level: 1, traded: true })).toEqual(
+      [{ species: Species.Gengar, method: EvolutionMethod.Trade }],
+    );
+  });
+
   it('never offers evolutions it cannot verify', () => {
-    // Trade evolutions have no stored counterpart yet, so Machoke
-    // stays a Machoke however high its level runs
+    // Friendship, weather and party composition have no stored
+    // counterpart, so an evolution asking for one is refused rather
+    // than waved through — even with everything else in hand
     expect(
-      getAvailableEvolutions(Species.Machoke, {
-        level: 100,
-        carried: new Set(),
-        held: new Set(),
-      }),
-    ).toEqual([]);
+      meetsEvolutionCriteria(
+        { species: Species.Machamp, method: EvolutionMethod.Trade | EvolutionMethod.Friendship },
+        { level: 100, carried: new Set(), held: new Set(), traded: true },
+      ),
+    ).toBe(false);
   });
 
   it('spends the used item and leaves a held one alone', () => {
@@ -734,6 +886,80 @@ describe('item data', () => {
     for (const item of MEDICINES.keys()) {
       expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(false);
     }
+  });
+
+  it('buries the fossils and leaves what is in them nowhere else', () => {
+    expect(listFossils().length).toBe(FOSSIL_SPECIES.size);
+    expect([...FOSSIL_SPECIES.values()]).toEqual([
+      Species.Omanyte,
+      Species.Kabuto,
+      Species.Aerodactyl,
+    ]);
+
+    for (const [item, species] of FOSSIL_SPECIES) {
+      const data = getItemData(item);
+
+      // Spent opening it, and worth nothing to anybody in between:
+      // no vendor stocks one and no vendor takes one, which is what
+      // keeps a fossil paced by digging rather than by a purse
+      expect(data.type).toBe(ItemTypes.Fossil);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(isMarketable(item)).toBe(false);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBe(0);
+      expect(isFossil(item)).toBe(true);
+      expect(data.name.length).toBeGreaterThan(0);
+
+      // The maniac is the one person who will part with one, and he
+      // charges gold for it
+      expect(getFossilPrice(item)).toBeGreaterThan(0);
+
+      // What is inside lives nowhere at all: reviving it is the only
+      // way any of the three is ever met
+      expect(listSpeciesHabitats(species).length).toBe(0);
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+
+    // ...and neither do the species they grow into
+    for (const species of [Species.Omastar, Species.Kabutops]) {
+      expect(listSpeciesHabitats(species).length).toBe(0);
+    }
+
+    // Nothing else on the shelf is one
+    expect(isFossil(Items.Nugget)).toBe(false);
+
+    // The two sea fossils are dug up about as often as a stone; the
+    // amber is a band above both, because Aerodactyl is
+    for (const item of [Items.HelixFossil, Items.DomeFossil]) {
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
+      expect(getItemBand(item)).toBe('rare');
+    }
+    expect(getItemBand(Items.OldAmber)).toBe('prized');
+    expect(getFossilPrice(Items.OldAmber)).toBeGreaterThan(getFossilPrice(Items.HelixFossil));
+
+    // Whatever comes out arrives at the same level for everybody who
+    // carried the same rock in
+    expect(FOSSIL_REVIVE_LEVEL).toBeGreaterThan(0);
+  });
+
+  it('has the maniac carry two of the three, never the same one twice', () => {
+    const rng = new AleaRNG('fossils');
+    const pairs = new Set<string>();
+
+    for (let at = 0; at < 50; at++) {
+      const offer = rollFossilOffer(() => rng.random());
+
+      expect(offer.length).toBe(FOSSIL_OFFER_KINDS);
+      expect(new Set(offer).size).toBe(offer.length);
+      for (const item of offer) {
+        expect(isFossil(item)).toBe(true);
+      }
+      pairs.add(JSON.stringify([...offer].sort((left, right) => left - right)));
+    }
+
+    // Every pairing of the three turns up, so no fossil is one a
+    // player can never be offered
+    expect(pairs.size).toBe(3);
   });
 
   it('lets a vendor carry balls and medicine, and never a Master Ball', () => {
@@ -1244,8 +1470,62 @@ describe('item data', () => {
       Items.ShinyCharm,
       Items.OldSeaMap,
       Items.GoldenBottleCap,
-      Items.PortalKey,
     ]);
+  });
+
+  it('registers the stones and trade items nothing can spend yet', () => {
+    // Every line that asks for one belongs to a generation this game
+    // has not registered, so they are named, drawn and priceless
+    // rather than stocked or buried
+    const latent = [
+      Items.SunStone,
+      Items.ShinyStone,
+      Items.DuskStone,
+      Items.DawnStone,
+      Items.IceStone,
+      Items.KingsRock,
+      Items.DragonScale,
+      Items.UpGrade,
+      Items.DubiousDisc,
+      Items.Protector,
+      Items.Electirizer,
+      Items.Magmarizer,
+      Items.ReaperCloth,
+      Items.RazorClaw,
+      Items.RazorFang,
+      Items.PrismScale,
+      Items.DeepSeaTooth,
+      Items.DeepSeaScale,
+      Items.Sachet,
+      Items.WhippedDream,
+    ];
+
+    for (const item of latent) {
+      const data = getItemData(item);
+
+      // Spent on a pokemon, the way the five Kanto stones are
+      expect(data.type).toBe(ItemTypes.Evolution);
+      expect(data.flags & ItemFlags.Usable).not.toBe(0);
+      // Nothing stocks one, nothing buys one back, and the ground
+      // hides none of them
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBe(0);
+      expect(getItemBand(item)).toBeNull();
+    }
+    expect(new Set(getVendorGoods().map((item) => item)).size).toBeGreaterThan(0);
+    for (const item of latent) {
+      expect(new Set(getVendorGoods()).has(item)).toBe(false);
+    }
+
+    // A trade item is used on the pokemon rather than held by it: the
+    // mainline reads one during the trade, and here the trade is a
+    // condition the record answers on its own
+    expect(getItemData(Items.KingsRock).flags & ItemFlags.Holdable).toBe(0);
+
+    // Metal Coat is not duplicated: the Steel booster already
+    // registered is the id an evolution will read
+    expect(getItemData(Items.MetalCoat).type).toBe(ItemTypes.Held);
   });
 
   it('spends a portal key on the crossing', () => {
@@ -1264,11 +1544,13 @@ describe('item data', () => {
     expect(isPortalKey(Items.PortalKey)).toBe(true);
     expect(isPortalKey(Items.OldSeaMap)).toBe(false);
 
-    // A portal is a landmark like any other, and the rarest band is
-    // the only place its key is found
+    // A portal is a landmark like any other, and the prized band is
+    // the only place its key is found: rarer than a stone, commoner
+    // than the things there is one of in the world
     expect(new Set(LANDMARKS).has(Landmark.Portal)).toBe(true);
     expect(LANDMARK_NAMES[Landmark.Portal]).toBe('Portal');
-    for (const band of ['base', 'uncommon', 'rare'] as const) {
+    expect(ITEM_POOL.prized.some((entry) => entry.item === Items.PortalKey)).toBe(true);
+    for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
       expect(ITEM_POOL[band].some((entry) => entry.item === Items.PortalKey)).toBe(false);
     }
   });

@@ -241,6 +241,23 @@ export default class Unit {
     });
   }
 
+  /**
+   * Say how many points have been spent on one of its moves. It is
+   * written when the unit is fielded, out of the record it was copied
+   * from, and nothing changes it mid-fight: a PP Up bought while a
+   * raid is running belongs to the pokemon rather than to the copy in
+   * the battle
+   */
+  setMovePoints(move: Moves, points: number): void {
+    this.battle.emit(BattleEvents.UnitSetMovePoints, {
+      id: 'UnitSetMovePoints',
+      disabled: false,
+      source: this,
+      move,
+      points,
+    });
+  }
+
   removeMove(move: Moves): void {
     this.battle.emit(BattleEvents.UnitRemoveMove, {
       id: 'UnitRemoveMove',

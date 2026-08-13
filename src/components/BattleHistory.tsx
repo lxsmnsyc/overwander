@@ -56,6 +56,13 @@ function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
 
 export interface BattleHistoryProps {
   player: string;
+  /**
+   * Whether these are somebody else's fights. Watching one back is
+   * looking — a replay awards nothing and settles nothing — so it
+   * stays; collecting what a raid still owes is the owner's, so it
+   * goes
+   */
+  viewOnly?: boolean;
 }
 
 /**
@@ -83,6 +90,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
    * itself is guarded server-side, so this only decides what to show
    */
   const owes = (record: BattleRecord): boolean =>
+    props.viewOnly !== true &&
     record.outcome === BattleOutcome.Won &&
     record.raid.length > 0 &&
     claimed()?.has(record.raid) === false;

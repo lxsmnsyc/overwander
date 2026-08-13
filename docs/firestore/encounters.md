@@ -5,15 +5,16 @@ is stored on both the encounter and the catch it becomes, and every way of
 meeting a pokemon is its own kind — a record should say where it actually came
 from:
 
-| Kind             | Id  | Shown as         | Where it comes from                       |
-| ---------------- | --- | ---------------- | ----------------------------------------- |
-| `Wild`           | 0   | Wild             | A chunk snapshot's spawns                 |
-| `Hatched`        | 1   | Hatched          | An egg                                    |
-| `LegendaryRaid`  | 2   | Legendary Raid   | A cleared legendary raid                  |
-| `Fateful`        | 3   | Event            | An event or mystery gift                  |
-| `Rocket`         | 4   | Team Rocket      | A beaten Team Rocket grunt                |
-| `ShadowRaid`     | 5   | Shadow Raid      | A cleared shadow raid                     |
-| `MythicalRaid`   | 6   | Mythical Raid    | A cleared mythical raid                   |
+| Kind            | Id  | Shown as              | Where it comes from                     |
+| --------------- | --- | --------------------- | --------------------------------------- |
+| `Wild`          | 0   | Wild                  | A chunk snapshot's spawns               |
+| `Hatched`       | 1   | Hatched               | An egg                                  |
+| `LegendaryRaid` | 2   | Legendary Raid        | A cleared legendary raid                |
+| `Fateful`       | 3   | Event                 | An event or mystery gift                |
+| `Rocket`        | 4   | Team Rocket           | A beaten Team Rocket grunt              |
+| `ShadowRaid`    | 5   | Shadow Raid           | A cleared shadow raid                   |
+| `MythicalRaid`  | 6   | Mythical Raid         | A cleared mythical raid                 |
+| `Revived`       | 7   | Revived from a fossil | A fossil opened by the Fossil Scientist |
 
 The three raids are kept apart because they are not the same prize: a legendary
 raid stages a legendary and hands it over at level 50; a shadow raid usually
@@ -27,6 +28,6 @@ list them separately to treat them the same.
 `ENCOUNTER_TYPE_NAMES` is what the catch dialog's **Met** row shows.
 
 > Records written before the split carry `type: 2`, which now reads as
-> *Legendary Raid*. A catch that actually came from a shadow raid can be told by
+> _Legendary Raid_. A catch that actually came from a shadow raid can be told by
 > its `shadow: true`, so a backfill is possible if the distinction matters
 > retroactively.

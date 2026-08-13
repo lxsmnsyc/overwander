@@ -136,10 +136,10 @@ same to everyone, and the level-up moves follow that level.
 Written by `claimItemCache` inside a transaction; its existence is the claim
 marker that stops a player collecting the same cache twice in one window.
 
-| Field    | Type          | Notes                                |
-| -------- | ------------- | ------------------------------------ |
-| `player` | `string`      | Claiming uid                         |
-| `items`  | `ItemStack[]` | The whole stash: `{ item, amount }`  |
+| Field    | Type          | Notes                               |
+| -------- | ------------- | ----------------------------------- |
+| `player` | `string`      | Claiming uid                        |
+| `items`  | `ItemStack[]` | The whole stash: `{ item, amount }` |
 
 A cache holds a **stash**, not an item. `pickItems` reads the band roll as a
 _ceiling_ rather than a choice: it is the best thing in the stash, and one kind
@@ -169,11 +169,11 @@ Written by `claimBerryPatch`, the same one-claim-per-window marker as an item
 cache. A berry patch fruits on the 15-minute landmark window: picked or not, the
 next window grows something new.
 
-| Field    | Type     | Notes                              |
-| -------- | -------- | ---------------------------------- |
-| `player` | `string` | Claiming uid                       |
-| `item`   | `Items`  | The berry that was picked          |
-| `amount` | `number` | How many came off the bush         |
+| Field    | Type     | Notes                      |
+| -------- | -------- | -------------------------- |
+| `player` | `string` | Claiming uid               |
+| `item`   | `Items`  | The berry that was picked  |
+| `amount` | `number` | How many came off the bush |
 
 What grows comes from the berry pool in
 [`src/data/overworld/berry-pool.ts`](../../src/data/overworld/berry-pool.ts),
@@ -292,7 +292,9 @@ None of them trusts the caller about who they are talking to:
 `src/server/npcs.ts` re-derives the chunk, the zone and the window and checks
 the NPC standing there **before** doing anything.
 
-**Each of them serves a player once per window**, the vendor aside. A marker at
+**Each of them serves a player once per window**, the vendor and the fossil
+scientist aside — what those two hand over is paced by a purse and by a bag of
+fossils rather than by the clock. A marker at
 `npcClaims/{npc}{cell}:{uid}`, stamped with the NPC window, records that this
 player has been seen; a second ask before the passer-by changes is turned away
 whatever they can pay. The marker is per cell, so walking to another wandering
@@ -302,7 +304,7 @@ costs.
 It is taken as late as each call can manage, once the visit is known to be one
 that will land: a pair that cannot breed, an egg already ready to hatch, or a
 party that needed nothing is refused without spending it. The two that charge
-claim the visit *before* taking the gold — a player already seen should not be
+claim the visit _before_ taking the gold — a player already seen should not be
 charged to be told so — and both the gold and the visit go back if the write
 behind them fails.
 
@@ -315,7 +317,7 @@ behind them fails.
   The egg is the first stage of the mother's line — the non-Ditto parent's when
   a Ditto stands in.
 - **Daycare Lady** — takes an egg and `DAYCARE_FEE` gold and adds `hatchSteps /
-  2` to wherever it already stood (`boostedSteps`), so an egg a quarter of the
+2` to wherever it already stood (`boostedSteps`), so an egg a quarter of the
   way along comes out three quarters of the way. It is a share of the
   requirement rather than a place on it, which means one past the half-way mark
   is finished by a single boost and any egg is finished by two — the fee is what
@@ -332,7 +334,7 @@ behind them fails.
 
 - **Groomer** — takes one of the player's pokemon and `GROOMING_FEE` gold, and
   hands it back thinking half again as well of them: `groomedFriendship` adds
-  half of whatever is *left* to give, the same bargain the daycare lady makes
+  half of whatever is _left_ to give, the same bargain the daycare lady makes
   with an egg. It is worth a great deal to a pokemon fresh out of a ball and
   almost nothing to one that is already inseparable, and because it is always
   half of the remainder it can never buy the last of a friendship — that part
@@ -358,10 +360,33 @@ behind them fails.
   ground, no vendor stocks one and no vendor takes one, so what paces him is
   walking.
 
-- **Vendor** — the shop, and the **only one who takes no marker at all**. What
-  the other five hand over is something the world cannot make twice in six
-  hours; what he hands over is a potion, so a player may deal with him as often
-  as their purse allows while he is standing there.
+- **Fossil Maniac** — carries **two of the three fossils**, drawn without repeats
+  from the same seed he was (`getFossilOffer`), and will part with **one** of
+  them for `FOSSIL_PRICES` gold while he is standing there. He is the only place
+  in the game a fossil can be bought — everywhere else, one is dug out of the
+  ground — and which two he has is the window's, so a player after a particular
+  one waits for it or walks somewhere else. `buyFossil` claims the visit before
+  the trade and gives it back when the purse will not stretch, and the gold and
+  the rock move in the same transaction the vendor's trades move in.
+
+- **Fossil Scientist** — takes a fossil and hands back what was in it, and takes
+  **nothing else**. Which species comes out belongs to the rock
+  (`FOSSIL_SPECIES`), and it arrives at `FOSSIL_REVIVE_LEVEL` (20), so the only
+  thing the player decides is which fossil to hand over. The record is written
+  as an `EncounterType.Revived` catch with `Acquisition.Revived` in its history:
+  nobody met it, and calling it wild would name a chunk the species has not
+  lived in for a very long time.
+
+  He is the **second wanderer who takes no marker**. What paces him is how many
+  fossils have been dug up rather than the window — turning away the second of
+  two already carried would only be a walk to the next cell to do the same
+  thing. The fossil leaves the bag first and is put back if the record is never
+  written, since a fossil spent on nothing cannot be walked off.
+
+- **Vendor** — the shop, and one of the two who take **no marker at all**. What
+  the others hand over is something the world cannot make twice in six hours;
+  what he hands over is a potion, so a player may deal with him as often as
+  their purse allows while he is standing there.
 
   What he **sells** is a crate of `VENDOR_STOCK_KINDS` (6) kinds, derived from
   the same seed he was (`getVendorStock`) — so it is part of who walked up
@@ -426,7 +451,7 @@ zones compute different ones.
 
 Nothing triggers by being walked over. A player steps within the 3x3 around a
 pokemon or a landmark and **clicks** it; passing through a cell springs nothing.
-That is a client rule. A player's position *is* stored now
+That is a client rule. A player's position _is_ stored now
 ([`positions/{uid}`](player-stores.md#positionsuid)), but it is their own report
 of themselves, written every second and a half rather than every step — there is
 no path in it, and nothing checks a claim against it. What the server does check

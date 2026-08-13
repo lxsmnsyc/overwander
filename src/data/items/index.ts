@@ -2,6 +2,7 @@ import registerBalls from './balls';
 import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
+import registerFossils from './fossils';
 import registerGems from './gems';
 import registerHeartScale from './heart-scale';
 import registerIncenses from './incenses';
@@ -15,13 +16,16 @@ import registerPurifyingGem from './purifying-gem';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
+import registerTradeItems from './trade-items';
 import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
+import registerVitamins from './vitamins';
 import registerWings from './wings';
 
 export { getItemData, listItemsByType, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
+export { FOSSIL_SPECIES, getSpeciesFossil, isFossil, listFossils } from './fossils';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
@@ -34,6 +38,7 @@ export default function registerItems(): void {
   registerBattleBerries();
   registerMedicines();
   registerEvolutionStones();
+  registerTradeItems();
   registerTypeBoosters();
   registerStatBoosters();
   registerIncenses();
@@ -48,6 +53,8 @@ export default function registerItems(): void {
   registerRaidItems();
   registerValuables();
   registerHeartScale();
+  registerFossils();
   registerWings();
+  registerVitamins();
   registerMachines();
 }

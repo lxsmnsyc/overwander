@@ -15,19 +15,19 @@ are slices rather than running totals, so adding a band takes its share out of
 
 ### The item pool
 
-| Band         | What is in it                                                                                                                 |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder               |
-| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings |
-| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the plates                 |
-| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives                                                                                   |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                  |
+| Band         | What is in it                                                                                                                             |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                           |
+| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings             |
+| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the plates; the Helix and Dome Fossils |
+| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives, the Old Amber                                                                                |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                              |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight — a stone, a Revive, a plate.
 Prized is where it turns up something that changes a pokemon for good and cannot
 be undone: a Bottle Cap fixes what it was born with, a Purifying Gem takes a
-shadow off it, a Max Revive is the answer to a lost *party* rather than a lost
+shadow off it, a Max Revive is the answer to a lost _party_ rather than a lost
 fight. All three used to be rare, and being drawn as often as an evolution stone
 made them read as ordinary.
 
@@ -62,11 +62,23 @@ what a scale is worth is exactly one forgotten move, put back by the
 [Move Reminder](../firestore/overworld.md#wandering-npcs). That is what keeps
 remembering a move paced by walking rather than by a purse.
 
+The **fossils** make the same bargain, and are the only items in the pool worth a
+pokemon. Each of the three names exactly one species — a Helix Fossil an Omanyte,
+a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and none of those three
+spawns anywhere in the world any more, so reviving one at the
+[Fossil Scientist](../firestore/overworld.md#wandering-npcs) is the only way any
+of them is ever met. The two sea fossils sit with the stones in the **rare** band
+and the amber a band above them, in **prized**, because what is in it was the
+rarest thing on the mountain when the mountain still had one. No vendor prices
+any of them; the [Fossil Maniac](../firestore/overworld.md#wandering-npcs) is the
+only person who will sell one, and he carries two of the three and parts with one
+a window.
+
 ### A stash, not an item
 
 An **Item Cache** holds a stash. The band roll is read as a **ceiling** rather
 than a choice — it is the best thing in there, and one of that kind is
-guaranteed. How many *kinds* is a separate draw (up to `MAX_KINDS`, 3), and every
+guaranteed. How many _kinds_ is a separate draw (up to `MAX_KINDS`, 3), and every
 kind after the first rolls its own band, clamped to that ceiling. So a stash may
 be two rares and a base, or three commons, or one of each. Rarity and count being
 independent is what stops a good dig from being the same three slots every time.
@@ -179,17 +191,19 @@ the buddy doubles it.
 
 **Where it goes:**
 
-| Sink                   | Amount                            |
-| ---------------------- | --------------------------------- |
-| A breeder's egg        | 5,000                             |
-| A daycare lady's boost | 2,500                             |
-| A groomer's visit      | 2,500                             |
-| Buying from a vendor   | The item's `buy` price, per piece |
-| An auction bid         | Whatever was named                |
+| Sink                    | Amount                            |
+| ----------------------- | --------------------------------- |
+| A breeder's egg         | 5,000                             |
+| A daycare lady's boost  | 2,500                             |
+| A groomer's visit       | 2,500                             |
+| A fossil off the maniac | 12,000, or 30,000 for the amber   |
+| Buying from a vendor    | The item's `buy` price, per piece |
+| An auction bid          | Whatever was named                |
 
-The three paid NPCs are the pacing mechanism as much as the price: each serves a
+The four paid NPCs are the pacing mechanism as much as the price: each serves a
 player once per six-hour window per cell, so gold buys convenience rather than
-volume.
+volume. The maniac's fossil is the dearest of them because it is the only one
+that buys a **pokemon** — one of the three the world does not spawn at all.
 
 ### The vendor
 

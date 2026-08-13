@@ -284,21 +284,17 @@ describe('what may go on the block', () => {
 
   it('takes only one-per-world items', () => {
     // The special band, and nothing under it
-    for (const item of [
-      Items.MasterBall,
-      Items.ShinyCharm,
-      Items.GoldenBottleCap,
-      Items.PortalKey,
-    ]) {
+    for (const item of [Items.MasterBall, Items.ShinyCharm, Items.GoldenBottleCap]) {
       expect(isAuctionableItem(item)).toBe(true);
     }
     // Prized is deliberately below the line: a Bottle Cap is worth
     // asking twice before spending and is still something a walk
-    // turns up
+    // turns up — and so, now, is a Portal Key
     for (const item of [
       Items.BottleCap,
       Items.PurifyingGem,
       Items.MaxRevive,
+      Items.PortalKey,
       Items.FireStone,
       Items.Nugget,
       Items.Potion,

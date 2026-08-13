@@ -14,6 +14,7 @@ import type { EncounterRecord } from '../auth/encounter-record';
 import { claimRaidReward } from '../auth/raids';
 import { claimRocketReward } from '../auth/rockets';
 import type { PositionRecord } from '../auth/position-record';
+import type { Species } from '../data/ids/species';
 import { getPosition, savePosition } from '../auth/positions';
 import type { AuctionSubject } from './AuctionDialog';
 import type { MysteryGift } from '../auth/gift-record';
@@ -48,6 +49,14 @@ export const enum GameDialog {
    */
   Catches = 5,
   Inventory = 6,
+  /**
+   * Every pokemon there is, and how much of each the player has met.
+   *
+   * It is beside the catches rather than inside them: a box is what
+   * somebody has and a dex is what there is, and the difference
+   * between the two is the game
+   */
+  Pokedex = 7,
 }
 
 /**
@@ -165,6 +174,28 @@ export interface GameState {
   listing: Accessor<AuctionSubject | null>;
   setListing: Setter<AuctionSubject | null>;
   /**
+   * Somebody else's profile, by uid, or null when nobody's is open.
+   *
+   * It lives here for the reason the catch sheet does: a trainer is
+   * met in the middle of something — a lobby they have joined, a lot
+   * they listed — and their profile opens over the panel that named
+   * them rather than inside it. It is never the reader's own uid; the
+   * player's own profile is the menu's, with everything that can be
+   * pressed still on it
+   */
+  visiting: Accessor<string | null>;
+  setVisiting: Setter<string | null>;
+  /**
+   * The species whose dex entry is open, or null when none is.
+   *
+   * It travels the same road the catch sheet does and for the same
+   * reason: an entry is a screen rather than a panel, and it is opened
+   * from the dex — which is itself a dialog — so drawn where it was
+   * asked for it would be a panel boxed inside another panel's room
+   */
+  dexEntry: Accessor<Species | null>;
+  setDexEntry: Setter<Species | null>;
+  /**
    * Bumped whenever a record changes under a list that is showing:
    * an evolution renames a row, a release takes one away, a listing
    * puts one in escrow. Lists watch it rather than being handed a
@@ -273,6 +304,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [gifts, setGifts] = createSignal<MysteryGift[]>([]);
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
+  const [visiting, setVisiting] = createSignal<string | null>(null);
+  const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
 
   // Whether the game owes them anything, asked once a session. Today
@@ -360,6 +393,10 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setSheet,
         listing,
         setListing,
+        visiting,
+        setVisiting,
+        dexEntry,
+        setDexEntry,
         records,
         touchRecords: () => {
           setRecords((count) => count + 1);

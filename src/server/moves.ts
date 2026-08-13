@@ -1,4 +1,5 @@
 import 'server-only';
+import { FieldValue } from 'firebase-admin/firestore';
 import { asNumberArray } from '../auth/__normalize';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
@@ -118,13 +119,20 @@ export async function learnMove(
       return null;
     }
 
-    const moves =
-      known.length < room ? [...known, move] : known.map((one, at) => (at === over ? move : one));
+    const full = known.length >= room;
+    const moves = full ? known.map((one, at) => (at === over ? move : one)) : [...known, move];
+    // What was spent on a move goes with the move. The mainline loses
+    // a forgotten move's PP Ups too, and a record that kept them would
+    // hand them back for free the day the same move was learned again
+    const forgotten = full ? known[over] : null;
 
     if (price != null) {
       writeStackIn(transaction, ITEM_STACKS, uid, price, carried - 1);
     }
-    transaction.update(caughtRef, { moves });
+    transaction.update(caughtRef, {
+      moves,
+      ...(forgotten == null ? {} : { [`movePoints.${forgotten}`]: FieldValue.delete() }),
+    });
     return moves;
   });
 }

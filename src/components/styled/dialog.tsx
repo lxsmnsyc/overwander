@@ -68,12 +68,25 @@ const INSET = 'py-4 sm:py-5';
 const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
 
 /**
+ * The same trick split in two, for the top of the panel: the row
+ * reaches past the panel's padding, and each thing inside it pays the
+ * padding back for itself.
+ *
+ * It is two rows now rather than one — the heading, and the bar of
+ * things that can be done under it — and only the heading is painted.
+ * A single bleeding element cannot do that: the blue would either stop
+ * short of the panel's edge or run under the transparent row below it
+ */
+const BLEED_OUT = '-mx-4 sm:-mx-5';
+const PAD_IN = 'px-4 sm:px-5';
+
+/**
  * The heading, held at the top while the rest of the dialog scrolls
  * under it. The catch sheet is several screens long, and its name and
  * the menu of things that can be done to the pokemon are what a player
  * scrolls back up for
  */
-const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-tide pt-4 text-on-accent sm:-mt-5 sm:pt-5 ${BLEED}`;
+const STUCK_TOP = `sticky top-0 z-20 -mt-4 sm:-mt-5 ${BLEED_OUT}`;
 
 /**
  * And the buttons, held at the bottom for the same reason: the way out
@@ -145,14 +158,31 @@ export interface DialogProps extends ParentProps {
    */
   terse?: boolean;
   /**
-   * Something to put beside the title — the menu of things that can be
-   * done to whatever the dialog is about.
+   * Something to put beside the title, on the right.
    *
    * It is taken out of the flow rather than laid out next to the
    * heading, so the heading stays in the middle of the panel whatever
    * is standing to the right of it
    */
   aside?: JSX.Element;
+  /**
+   * And the same on the left. The pair of them is what a sheet showing
+   * one of a run puts its "previous" and "next" in: they belong to the
+   * panel rather than to anything in it, and the heading stays centred
+   * between them
+   */
+  lead?: JSX.Element;
+  /**
+   * A second bar under the heading, for what can be *done* to whatever
+   * the dialog is showing.
+   *
+   * It is stuck to the top with the heading rather than scrolling
+   * away, because the actions are what a long sheet is scrolled back
+   * up for — and it carries no colour of its own, so it reads as a row
+   * of buttons standing on the page rather than as a second header
+   * competing with the first
+   */
+  bar?: JSX.Element;
 }
 
 /**
@@ -205,35 +235,61 @@ export function Dialog(props: DialogProps): JSX.Element {
         <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
         <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
           <div ref={inside} class={`flex flex-col gap-3 ${INSET}`}>
-            <header
-              class={
-                props.quiet === true
-                  ? 'sr-only'
-                  : `flex flex-col gap-1 border-b-2 border-tide-dark pb-3 sm:pb-4 ${STUCK_TOP}`
-              }
-            >
-              {/* A heading rather than bold text: it is what a screen
-                  reader announces the dialog by. It sits in the middle
-                  of the panel, and anything standing beside it is
-                  pinned to the edge rather than allowed to push it off
-                  centre */}
-              <div class="relative flex min-h-8 items-center justify-center">
-                <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
-                  {props.title}
-                </HeadlessDialogTitle>
-                {/* Back to ink: the bar is blue and its text is white,
-                    which a button standing on it would otherwise
-                    inherit — a white label on a white button */}
-                {props.aside == null ? null : (
-                  <div class="absolute right-0 text-ink">{props.aside}</div>
-                )}
-              </div>
-              <HeadlessDialogDescription
-                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
+            {/* Both stuck rows travel together: a second `sticky` under
+                the first would have to be told how tall the first is,
+                and the heading is a line taller when it carries its
+                sentence than when it does not */}
+            <div class={props.quiet === true && props.bar == null ? 'sr-only' : STUCK_TOP}>
+              <header
+                class={
+                  props.quiet === true
+                    ? 'sr-only'
+                    : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
+                      text-on-accent sm:pt-5 sm:pb-4 ${PAD_IN}`
+                }
               >
-                {props.description}
-              </HeadlessDialogDescription>
-            </header>
+                {/* A heading rather than bold text: it is what a screen
+                    reader announces the dialog by. It sits in the middle
+                    of the panel, and anything standing beside it is
+                    pinned to an edge rather than allowed to push it off
+                    centre */}
+                <div class="relative flex min-h-8 items-center justify-center">
+                  {/* Back to ink: the bar is blue and its text is white,
+                      which a button standing on it would otherwise
+                      inherit — a white label on a white button */}
+                  {props.lead == null ? null : (
+                    <div class="absolute left-0 text-ink">{props.lead}</div>
+                  )}
+                  <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
+                    {props.title}
+                  </HeadlessDialogTitle>
+                  {props.aside == null ? null : (
+                    <div class="absolute right-0 text-ink">{props.aside}</div>
+                  )}
+                </div>
+                <HeadlessDialogDescription
+                  class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
+                >
+                  {props.description}
+                </HeadlessDialogDescription>
+              </header>
+              {/* What can be done to whatever the dialog is showing,
+                  under the heading and stuck with it. It carries no
+                  fill of its own: it is a row of buttons standing on
+                  the page rather than a second header competing with
+                  the first */}
+              {props.bar == null ? null : (
+                <div
+                  // To the right, where the rest of the game keeps what
+                  // it can do to a thing: the menu at the foot of a
+                  // dialog ends there too
+                  class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
+                    ${PAD_IN}`}
+                >
+                  {props.bar}
+                </div>
+              )}
+            </div>
             {props.children}
           </div>
         </DialogPanel>

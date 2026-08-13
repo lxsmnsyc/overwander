@@ -69,7 +69,6 @@ export default function registerBeachSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Staryu, weight: 20 },
-        { species: Species.Kabuto, weight: 2 },
       ],
       uncommon: [],
       rare: [
@@ -77,7 +76,6 @@ export default function registerBeachSpawns(): void {
         { species: Species.Seaking, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
-        { species: Species.Kabutops, weight: 5 },
       ],
       special: [],
     },

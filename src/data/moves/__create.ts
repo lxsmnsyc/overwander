@@ -60,3 +60,34 @@ export function getMoveData(move: Moves): MoveData {
   }
   throw new Error('Missing move data for ' + move);
 }
+
+/**
+ * What one point spent on a move is worth: a fifth of the move's own
+ * PP, and three points at most. It is the mainline's arithmetic for a
+ * PP Up, and it lives here rather than with the item because it is a
+ * property of the move — the item is only how a point is bought
+ */
+export const PP_UP_STEP = 0.2;
+
+export const PP_UP_LIMIT = 3;
+
+/**
+ * What a move's PP comes to for one pokemon, with whatever has been
+ * spent on it.
+ *
+ * PP here is not a pool that drains: the fights run in real time, and
+ * a move's PP is how often it comes back — `PP_COOLDOWN_BASIS / pp`
+ * seconds between casts. So the points a PP Up buys are a **shorter
+ * wait** rather than more uses, which is the same thing the mainline
+ * item buys said in this game's terms.
+ *
+ * The arithmetic is the mainline's: a fifth of the move's own PP per
+ * point, floored, and no more than `PP_UP_LIMIT` points on one move.
+ * A move with nothing spent on it answers exactly what it is
+ * registered with, so this is safe to call for every move everywhere
+ */
+export function getMovePP(move: Moves, points = 0): number {
+  const base = getMoveData(move).pp;
+
+  return base + Math.floor(base * PP_UP_STEP * Math.min(Math.max(0, points), PP_UP_LIMIT));
+}

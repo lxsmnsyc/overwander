@@ -19,6 +19,7 @@ import {
   startRaid,
   watchRaid,
 } from '../auth/raids';
+import { getProfile } from '../auth/profile';
 import { type TeamRecord, getTeam } from '../auth/teams';
 import { getSpeciesData } from '../data/species';
 import { RAID_BOSS_LEVEL } from '../overworld/raid';
@@ -34,6 +35,7 @@ import {
   ListRow,
   Note,
   Row,
+  RowButton,
   SEARCH_FROM,
   Search,
   Status,
@@ -74,6 +76,37 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     async (ids) =>
       (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
   );
+
+  /**
+   * What everybody in the lobby is called. A party is named by its
+   * player's uid in the record, and a uid is not a person: the row is
+   * the way into their profile, so it should say the name that profile
+   * opens under. Read once for the whole lobby, keyed on who is in it,
+   * and falling back to the uid — a lobby of thirty rows all reading
+   * "a trainer" tells nobody which is which
+   */
+  const [names] = createResource(
+    () => [...new Set((teams() ?? []).map((team) => team.player))].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const found = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const profile = await getProfile(uid);
+
+            if (profile != null) {
+              found.set(uid, profile.nickname);
+            }
+          }),
+      );
+      return found;
+    },
+  );
+
+  const named = (uid: string): string => names()?.get(uid) ?? uid;
 
   // A player with no pokemon of their own can stand in the lobby and
   // watch, but has nothing to field
@@ -129,7 +162,12 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
 
   const joined = (): TeamRecord[] =>
     (teams() ?? []).filter((team) =>
-      matches(team.player === props.user.uid ? `You ${team.player}` : team.player, query()),
+      matches(
+        team.player === props.user.uid
+          ? `You ${team.player}`
+          : `${named(team.player)} ${team.player}`,
+        query(),
+      ),
     );
 
   const act = (action: () => Promise<string | null>, failure: string): void => {
@@ -240,9 +278,26 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
                             team.player === props.user.uid ? 'sticky top-0 z-10 bg-leaf-soft' : ''
                           }
                         >
-                          <span class="grow">
-                            {team.player === props.user.uid ? 'You' : team.player}
-                          </span>
+                          {/* Anybody but the reader is somebody worth
+                              knowing about before the fight starts:
+                              what they walk with, what they have
+                              fought, what is in their box. Their own
+                              row is not a button — a player pressing
+                              their own name in a lobby would be
+                              opening a read-only copy of the profile
+                              the menu already gives them */}
+                          <Show
+                            when={team.player !== props.user.uid}
+                            fallback={<span class="grow">You</span>}
+                          >
+                            <RowButton
+                              onClick={() => {
+                                game.setVisiting(team.player);
+                              }}
+                            >
+                              {named(team.player)}
+                            </RowButton>
+                          </Show>
                           <Badge>{team.catches.length} pokemon</Badge>
                         </ListRow>
                       )}

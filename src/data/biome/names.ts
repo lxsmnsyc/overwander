@@ -1,4 +1,5 @@
 import Biome, { TimeOfDay } from '../ids/biome';
+import { SpawnRarity } from './__create';
 
 /**
  * Display names for the biomes; the enum itself carries only ids
@@ -74,4 +75,20 @@ export const TIME_OF_DAY_NAMES: Record<TimeOfDay, string> = {
   [TimeOfDay.Day]: 'Day',
   [TimeOfDay.Evening]: 'Evening',
   [TimeOfDay.Night]: 'Night',
+};
+
+/**
+ * How lucky a walk has to be, in a word.
+ *
+ * The bands are named for how often they come up rather than for what
+ * is in them: "uncommon" is what a player experiences, while the rule
+ * behind it — a middle evolution — is a fact about the line that the
+ * dex says elsewhere anyway
+ */
+export const SPAWN_RARITY_NAMES: Record<SpawnRarity, string> = {
+  [SpawnRarity.Base]: 'Common',
+  [SpawnRarity.Uncommon]: 'Uncommon',
+  [SpawnRarity.Rare]: 'Rare',
+  [SpawnRarity.Prized]: 'Prized',
+  [SpawnRarity.Special]: 'Legendary',
 };

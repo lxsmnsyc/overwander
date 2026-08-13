@@ -61,6 +61,17 @@ interface CatchPickerCommonProps {
    */
   disabled?: boolean;
   /**
+   * Whether the box belongs to somebody else.
+   *
+   * It is not `disabled`: the squares still answer a press, because
+   * looking at one of a stranger's pokemon is the whole reason their
+   * box is on screen. What goes is everything that would *take* one —
+   * the confirm, the "Pick none", the second press that asks whether
+   * you meant it — since none of them is a question about a
+   * collection that is not yours
+   */
+  viewOnly?: boolean;
+  /**
    * Render the list on its own, with no dialog and no button to open
    * one
    */
@@ -217,6 +228,9 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     if (props.description != null) {
       return props.description;
     }
+    if (props.viewOnly === true) {
+      return 'What this trainer has caught.';
+    }
     if (props.multiple !== true) {
       return 'Choose one of your pokemon.';
     }
@@ -261,6 +275,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const press = (option: CatchOption): void => {
     if (props.reason?.(option) != null) {
+      return;
+    }
+    // Somebody else's box: a press is a look at the record rather than
+    // a pick, so it is reported at once and asked about no further
+    if (props.viewOnly === true) {
+      pickOne(option.id);
       return;
     }
     if (props.multiple === true) {
@@ -357,7 +377,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <Show when={offered().length > SEARCH_FROM}>
         <Row>
           <Search
-            placeholder="Search your pokemon"
+            placeholder={props.viewOnly === true ? 'Search their pokemon' : 'Search your pokemon'}
             value={query()}
             onChange={(typed) => {
               setQuery(typed);
@@ -373,7 +393,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
             <Note>
               {query().length === 0
                 ? (props.empty ?? 'You have nothing for this.')
-                : 'None of yours match that.'}
+                : `None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
             </Note>
           }
         >
@@ -436,7 +456,14 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           row for it to stand on. A live picker draws none at all —
           the caller has its own, and two buttons saying nearly the
           same thing is the thing being fixed */}
-      <Show when={props.multiple === true && props.inline === true && props.live !== true}>
+      <Show
+        when={
+          props.multiple === true &&
+          props.inline === true &&
+          props.live !== true &&
+          props.viewOnly !== true
+        }
+      >
         <Row class="justify-center">{confirm()}</Row>
       </Show>
     </div>
@@ -461,12 +488,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <Dialog
         isOpen={showing()}
         onClose={close}
-        title={props.title ?? 'Your pokemon'}
+        title={props.title ?? (props.viewOnly === true ? 'Their pokemon' : 'Your pokemon')}
         description={purpose()}
       >
         {list()}
         <DialogActions>
-          <Show when={props.multiple !== true && props.value != null}>
+          <Show when={props.multiple !== true && props.value != null && props.viewOnly !== true}>
             <Button
               onClick={() => {
                 pickOne(null);
@@ -475,7 +502,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
               Pick none
             </Button>
           </Show>
-          <Show when={props.multiple === true}>{confirm()}</Show>
+          <Show when={props.multiple === true && props.viewOnly !== true}>{confirm()}</Show>
           <Button onClick={close}>Close</Button>
         </DialogActions>
       </Dialog>

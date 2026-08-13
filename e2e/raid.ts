@@ -4,6 +4,7 @@ import Biome from '../src/data/ids/biome';
 import { Species } from '../src/data/ids/species';
 import { RaidKind } from '../src/auth/raid-record';
 import { RAID_INTERVAL } from '../src/overworld/chunk-snapshot';
+import { uidOf, writeDocument } from './emulator';
 import type { Player } from './game';
 
 /**
@@ -21,25 +22,10 @@ import type { Player } from './game';
  * battle from the real teams, and leaving it is the button under test.
  * The only thing skipped is the walk.
  *
- * The writes go in as the emulator's owner, which is what lets a test
- * put a document somewhere the security rules would not let a player
- * put one.
+ * The writes go in as the emulator's owner — see
+ * [`emulator.ts`](./emulator.ts) — which is what lets a test put a
+ * document somewhere the security rules would not let a player put one.
  */
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value != null;
-}
-
-const PROJECT = 'demo-poketerra';
-const FIRESTORE = `http://127.0.0.1:8080/v1/projects/${PROJECT}/databases/(default)/documents`;
-const AUTH = `http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/${PROJECT}`;
-
-/**
- * The emulators take this in place of a signed token and treat the
- * caller as the project owner, which is how a test writes past the
- * rules
- */
-const OWNER = { Authorization: 'Bearer owner', 'Content-Type': 'application/json' };
 
 /**
  * Which chunk the staged lobby claims to stand in. Nothing reads it
@@ -66,61 +52,34 @@ function currentWindow(): { timestamp: number; offset: number } {
 }
 
 /**
- * The uid the auth emulator gave this account. The raid names its host
- * by uid, and only the host may start it, so the test has to know
- * which one the sign-in produced
- */
-async function uidOf(player: Player): Promise<string> {
-  // The admin query rather than the emulator's own `accounts` path,
-  // which only answers DELETE — asking it for a listing is a 405
-  const response = await fetch(`${AUTH}/accounts:query`, {
-    method: 'POST',
-    headers: OWNER,
-    body: JSON.stringify({ returnUserInfo: true }),
-  });
-
-  expect(response.ok, 'the auth emulator should list its accounts').toBe(true);
-
-  const listed: unknown = await response.json();
-  const users = isRecord(listed) && Array.isArray(listed.userInfo) ? listed.userInfo : [];
-  const wanted = player.email.toLowerCase();
-
-  for (const user of users) {
-    if (isRecord(user) && user.email === wanted && typeof user.localId === 'string') {
-      return user.localId;
-    }
-  }
-  throw new Error(`no account for ${player.email}`);
-}
-
-/**
  * A raid document, in the shape Firestore's REST API wants it
  */
-function raidFields(host: string, window: { timestamp: number; offset: number }): unknown {
+function raidFields(
+  host: string,
+  window: { timestamp: number; offset: number },
+): Record<string, unknown> {
   return {
-    fields: {
-      kind: { integerValue: String(RaidKind.Legendary) },
-      lair: { nullValue: null },
-      species: { integerValue: String(Species.Articuno) },
-      traitValue: { integerValue: '1234' },
-      host: { stringValue: host },
-      teams: { arrayValue: { values: [] } },
-      battle: { nullValue: null },
-      timestamp: { integerValue: String(window.timestamp) },
-      offset: { integerValue: String(window.offset) },
-      chunk: {
-        mapValue: {
-          fields: {
-            seed: { stringValue: CHUNK.seed },
-            x: { integerValue: String(CHUNK.x) },
-            y: { integerValue: String(CHUNK.y) },
-          },
+    kind: { integerValue: String(RaidKind.Legendary) },
+    lair: { nullValue: null },
+    species: { integerValue: String(Species.Articuno) },
+    traitValue: { integerValue: '1234' },
+    host: { stringValue: host },
+    teams: { arrayValue: { values: [] } },
+    battle: { nullValue: null },
+    timestamp: { integerValue: String(window.timestamp) },
+    offset: { integerValue: String(window.offset) },
+    chunk: {
+      mapValue: {
+        fields: {
+          seed: { stringValue: CHUNK.seed },
+          x: { integerValue: String(CHUNK.x) },
+          y: { integerValue: String(CHUNK.y) },
         },
       },
-      biome: { integerValue: String(Biome.Tundra) },
-      cell: { integerValue: String(CELL) },
-      cleared: { booleanValue: false },
     },
+    biome: { integerValue: String(Biome.Tundra) },
+    cell: { integerValue: String(CELL) },
+    cleared: { booleanValue: false },
   };
 }
 
@@ -133,13 +92,8 @@ export async function stageRaid(player: Player): Promise<string> {
   const host = await uidOf(player);
   const window = currentWindow();
   const id = `e2e-${host}-${window.timestamp}`;
-  const response = await fetch(`${FIRESTORE}/raids?documentId=${id}`, {
-    method: 'POST',
-    headers: OWNER,
-    body: JSON.stringify(raidFields(host, window)),
-  });
 
-  expect(response.ok, `staging the raid failed: ${await response.text()}`).toBe(true);
+  await writeDocument('raids', id, raidFields(host, window));
   return id;
 }
 

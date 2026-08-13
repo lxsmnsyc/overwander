@@ -49,6 +49,7 @@ import {
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { freeFields, isCatchLocked } from './locks';
+import { recordCaughtSpecies } from './pokedex';
 import { docData } from './read';
 
 /**
@@ -164,6 +165,8 @@ async function writeEgg(
     gender: fields.gender,
     nature: fields.nature,
     moves: fields.moves,
+    // An egg has had nothing spent on what is inside it
+    movePoints: {},
     // A shadow keeps its Shadow ability for good, the way a shadow
     // raid's prize does
     abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
@@ -493,7 +496,7 @@ export async function hatchEgg(
   offset: number,
 ): Promise<Species | null> {
   const db = getAdminFirestore();
-  const species = await db.runTransaction(async (transaction) => {
+  const hatched = await db.runTransaction(async (transaction) => {
     const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
     const stored = docData(await transaction.get(ref));
 
@@ -520,12 +523,16 @@ export async function hatchEgg(
       // hatching, and what it does now buys friendship
       walked: 0,
     });
-    return caught.species;
+    return { species: caught.species, shiny: caught.shiny };
   });
 
-  if (species == null) {
+  if (hatched == null) {
     return null;
   }
-  await grantCatchCandy(uid, species, toLocalTime(now, asOffset(offset)));
-  return species;
+  await grantCatchCandy(uid, hatched.species, toLocalTime(now, asOffset(offset)));
+  // The dex is told here rather than where the egg was picked up: what
+  // is inside a shell is not something the player has met, and an egg
+  // that never hatches is a species they never saw
+  await recordCaughtSpecies(uid, hatched.species, hatched.shiny);
+  return hatched.species;
 }

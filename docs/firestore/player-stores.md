@@ -20,6 +20,30 @@ The balance is not theirs to write: `grantGold` and `spendGold` live in
 inside a transaction so concurrent rewards cannot clobber each other. The rules
 pin `gold` on update and require a new profile to open at zero.
 
+### Looking at somebody else
+
+Because the document is public, a trainer met in the middle of something — a
+party in a raid lobby, a lot on the auction board — can be opened as the profile
+they already have. [`ProfileDialog`](../../src/components/ProfileDialog.tsx)
+holds the uid being visited (`game.visiting()`), names the panel by their
+nickname, and renders the ordinary [`ProfileTab`](../../src/components/ProfileTab.tsx)
+with `viewOnly` set. That flag travels down to the buddy card and the battle
+history, and it takes out everything that writes: the sign-out, the buddy swap,
+the button that collects what a won raid still owes.
+
+None of it is a permission. The rules refuse every one of those writes for
+anybody but the owner, and the server refuses them again; the flag is so a
+reader is not offered a button that could only fail.
+
+What a visitor is left with is who they are, who walks with them, and what they
+have fought — no tab bar over it, since a bar holding one tab decides nothing.
+**Bids** are the one part of the board that stays private: `bids/{bidId}` may
+only be listed by the player who placed them. The **bag** is not on the profile
+at all, and `bags/{uid}` is a `get` by the owner alone. Their **catches** are
+readable — `caught/{catchId}` is public, which is what makes a lot on the block
+worth bidding on — but the visited profile does not show them; the box behind
+the menu is only ever the reader's own.
+
 ## `bags/{uid}`
 
 Everything a player is carrying, in **one document**: a map per kind, keyed by
@@ -168,7 +192,7 @@ Steps and position settle **together**. The paces an egg has walked are reported
 in batches while a walk is in progress, and flushed — batch or not — at the
 moment the position is written, so a player never comes back further along the
 map than their egg is along its walk. A portal crossing settles the same way: the
-walk *to* the portal counts, the crossing itself is not a walk and adds no steps.
+walk _to_ the portal counts, the crossing itself is not a walk and adds no steps.
 The server bounds a step report by the time since the last one either way
 (`creditableSteps`), so nothing about moving a position can be turned into
 progress on an egg.
@@ -183,6 +207,63 @@ about where they are stands somewhere they are not and finds exactly what is
 there — see [Reaching, not treading](overworld.md#reaching-not-treading).
 
 Private to the owning uid, and read-only to them.
+
+## `pokedex/{uid}`
+
+What a player has met and what they have kept, in **one document** — the bag's
+shape, for the bag's reason. Read through
+[`src/auth/pokedex.ts`](../../src/auth/pokedex.ts) and written only by the
+server: a dex is the game's record of what actually happened, so a client that
+could write one could claim to have faced a Mewtwo it never met.
+
+```text
+pokedex/{uid} = {
+  seen: { "25": 14 }, seenShiny: { "25": 1 },
+  caught: { "25": 2 }, caughtShiny: { "25": 1 },
+}
+```
+
+| Field         | Type                     | Notes                                 |
+| ------------- | ------------------------ | ------------------------------------- |
+| `seen`        | `Record<string, number>` | Species id → how many were ever met   |
+| `seenShiny`   | `Record<string, number>` | The sparkling ones, counted apart     |
+| `caught`      | `Record<string, number>` | Species id → how many were ever owned |
+| `caughtShiny` | `Record<string, number>` | The sparkling ones, counted apart     |
+
+The counts are **historical**: releasing a Pidgey or losing one to an auction
+leaves the dex exactly as it was. A shiny is counted only in its own map, so a
+species' total is the two added together.
+
+Private to the owning uid, and read-only to them.
+
+### What the screen makes of it
+
+The dex is behind the menu, beside the catches: a box is what somebody has and
+a dex is what there is. [`PokedexTab`](../../src/components/PokedexTab.tsx)
+reads the document once and draws **every base form in the registry** — one
+entry per pokemon rather than one per costume, which is the rule
+`getBaseForms` already counts a dex by — as a grid of squares in dex order,
+thirty at a time in the same six-by-five box the collection is kept in. Each
+square is in one of three states, and the gaps are the point: a number alone
+for a species never met, its own silhouette for one met and never kept, and
+the pokemon itself for one that has been owned.
+
+Opening a square opens [`DexEntryDialog`](../../src/components/DexEntryDialog.tsx):
+both coats (each a silhouette until it has been owned), the category, the
+height and weight, the family's candy the reader is holding, the abilities, the
+base stats, **where it lives**, and everything it can learn.
+
+"Where it lives" is the spawn pools read backwards. Every other reader asks a
+biome what lives in it; `listSpeciesHabitats` in
+[`src/data/biome/__create.ts`](../../src/data/biome/__create.ts) sweeps every
+pool of every biome at every hour once, keeps the index, and answers the
+opposite question — which biome, at which hour, out of which rarity band. It is
+thrown away whenever a pool is registered, so it cannot go stale. Something met
+around the clock at the same odds says **Anytime** rather than the same badge
+four times, and a species with a **lair** — the four legendaries and Mew — is
+named by the place first: a player who came to that entry came for
+[Cerulean Cave](../../src/data/overworld/lair.ts), not for the odds of walking
+into one.
 
 ## `fled/{uid}`
 

@@ -1,5 +1,5 @@
 import type Biome from '../ids/biome';
-import type { TimeOfDay } from '../ids/biome';
+import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
 import { Species } from '../ids/species';
 import { getBaseSpecies, getSpeciesData } from '../species';
@@ -48,8 +48,16 @@ const EMPTY_GROUPS: SpawnRarityGroups = { base: [], uncommon: [], rare: [], spec
 
 const SPAWN_POOLS = new Map<Biome, SpawnPool>();
 
+/**
+ * The pools read backwards: which species is in which of them. Built
+ * the first time a dex asks and thrown away whenever a pool is
+ * registered — see `listSpeciesHabitats`
+ */
+let habitatIndex: Map<Species, SpeciesHabitat[]> | null = null;
+
 export function registerSpawnPool(biome: Biome, pool: SpawnPool): void {
   SPAWN_POOLS.set(biome, pool);
+  habitatIndex = null;
 }
 
 export function getSpawnPool(biome: Biome, time: TimeOfDay): SpawnRarityGroups {
@@ -173,6 +181,81 @@ export const enum SpawnRarity {
    * Mythicals, legendaries and other one-per-world class species
    */
   Special = 4,
+}
+
+/**
+ * Which rarity each band of a pool is, in the order a dex reads them:
+ * commonest first, so a species listed in several biomes is described
+ * by the easiest place to meet it before the hardest
+ */
+const BAND_RARITIES: [band: keyof SpawnRarityGroups, rarity: SpawnRarity][] = [
+  ['base', SpawnRarity.Base],
+  ['uncommon', SpawnRarity.Uncommon],
+  ['rare', SpawnRarity.Rare],
+  ['prized', SpawnRarity.Prized],
+  ['special', SpawnRarity.Special],
+];
+
+/**
+ * Every period of the day, in the order a day runs through them
+ */
+export const TIMES_OF_DAY: TimeOfDay[] = [
+  TimeOfDay.Morning,
+  TimeOfDay.Day,
+  TimeOfDay.Evening,
+  TimeOfDay.Night,
+];
+
+/**
+ * One place and hour a species can be met, and how lucky a walk has to
+ * be to meet it there
+ */
+export interface SpeciesHabitat {
+  biome: Biome;
+  time: TimeOfDay;
+  rarity: SpawnRarity;
+}
+
+/**
+ * Every other reader of a pool asks "what lives here" — a chunk is
+ * being populated, and the biome is what it starts from. A dex asks the
+ * opposite question, and answering it by walking every pool of every
+ * biome at every hour is a sweep of the whole registry, so it is swept
+ * once and kept
+ */
+function buildHabitats(): Map<Species, SpeciesHabitat[]> {
+  const found = new Map<Species, SpeciesHabitat[]>();
+
+  for (const [biome, pool] of SPAWN_POOLS) {
+    for (const time of TIMES_OF_DAY) {
+      const groups = pool[time];
+
+      for (const [band, rarity] of BAND_RARITIES) {
+        for (const entry of spawnBand(groups, band)) {
+          const places = found.get(entry.species) ?? [];
+
+          places.push({ biome, time, rarity });
+          found.set(entry.species, places);
+        }
+      }
+    }
+  }
+  return found;
+}
+
+/**
+ * Everywhere this species is met in the wild, as the dex lists it.
+ *
+ * A species is listed once per biome, hour and band it appears in, so
+ * something that lives in a grassland all day answers four entries and
+ * something that only comes out at night answers one. A species that
+ * spawns nowhere — a legendary staged by a lair, a mythical called by
+ * a relic, an evolution that is never met in the wild — answers an
+ * empty list, which is the honest answer rather than a missing one
+ */
+export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
+  habitatIndex ??= buildHabitats();
+  return habitatIndex.get(species) ?? [];
 }
 
 export const UNCOMMON_SPAWN_ODDS = 1 / 8;

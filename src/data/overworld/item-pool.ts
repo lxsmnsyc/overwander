@@ -128,6 +128,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     // — seventeen of them share about what one stone is worth, so
     // digging one up stays an event
     ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
+    // The two sea fossils. They sit with the stones because that is
+    // what they are worth: a stone is one evolution a line could not
+    // otherwise reach, and a fossil is one species the world no
+    // longer spawns at all
+    { item: Items.HelixFossil, weight: 4 },
+    { item: Items.DomeFossil, weight: 4 },
   ],
   prized: [
     // A dug-up cap fixes one stat of one pokemon, and nothing else in
@@ -142,6 +148,17 @@ export const ITEM_POOL: ItemRarityGroups = {
     // health. The Revive and the Revival Herb are the rare band's
     // answer to a lost fight; this is the answer to a lost party
     { item: Items.MaxRevive, weight: 5 },
+    // One crossing of the world. It is spent in the crossing, so it
+    // changes where a player is rather than what a pokemon is — but it
+    // is the only thing that does, and a network nobody can reach is
+    // no network. Prized rather than special: the map is meant to be
+    // walked more than once in a lifetime
+    { item: Items.PortalKey, weight: 8 },
+    // The amber is a band above the other two fossils, because what
+    // is in it is: Aerodactyl was the rarest thing on the mountain
+    // when the mountain still had one, and nothing else brings one
+    // back
+    { item: Items.OldAmber, weight: 5 },
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },
@@ -152,9 +169,6 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },
-    // One crossing of the world. It is spent in the crossing, which is
-    // what keeps the map worth walking
-    { item: Items.PortalKey, weight: 8 },
   ],
 };
 

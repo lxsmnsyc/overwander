@@ -142,9 +142,14 @@ export const PINCH_BERRIES = new Set<Items>([
 
 /**
  * What a Lansat adds to the holder's odds of a critical hit, and what
- * a Micle adds to the accuracy of the move it is spent on
+ * a Micle adds to the accuracy of the move it is spent on.
+ *
+ * The critical figure is a number of **stages**, not a multiplier: the
+ * ratio a blow is rolled against opens at zero and everything that
+ * sharpens a unit — Focus Energy, a Slash, a Scope Lens — adds to it,
+ * so anything written as a multiplier would quietly amount to nothing
  */
-export const LANSAT_CRITICAL_RATIO = 2;
+export const LANSAT_CRITICAL_STAGES = 2;
 export const MICLE_ACCURACY = 1.2;
 
 /**

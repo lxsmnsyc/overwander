@@ -141,7 +141,9 @@ import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landm
 import Npc, { NPCS, NPC_NAMES, REMINDER_FEE, getRecallableMoves } from '../src/data/overworld/npc';
 import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
+import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/gear';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
+import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../src/data/items/one-shots';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
@@ -2044,6 +2046,66 @@ describe('type-enhancing items', () => {
       expect(data.sell).toBeGreaterThan(0);
       expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
     }
+  });
+
+  it('lists the gear the market carries and hides the rest of it', () => {
+    const pooled = new Set(
+      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const [item, name] of MARKET_GEAR) {
+      const data = getItemData(item);
+
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Gear works for as long as it is carried: nothing spends it
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(GEAR_PRICE);
+      expect(isGear(item)).toBe(true);
+      expect(pooled.has(item)).toBe(false);
+    }
+
+    for (const [item] of FOUND_GEAR) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Found rather than stocked: no listing, only a resale price
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBeGreaterThan(0);
+      expect(isGear(item)).toBe(true);
+      expect(pooled.has(item)).toBe(true);
+    }
+
+    // The sludge is litter and the two lenses are species relics, so
+    // the ground hides them where it hides their own kind
+    expect(ITEM_POOL.base.some((entry) => entry.item === Items.BlackSludge)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.LuckyPunch)).toBe(true);
+    expect(ITEM_POOL.rare.some((entry) => entry.item === Items.Stick)).toBe(true);
+  });
+
+  it('spends a one-shot the way it spends a berry', () => {
+    for (const [item, name] of ONE_SHOTS) {
+      const data = getItemData(item);
+
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // The whole difference between these and the gear
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.buy).toBe(ONE_SHOT_PRICE);
+      expect(isOneShot(item)).toBe(true);
+      expect(isGear(item)).toBe(false);
+    }
+
+    // A one-shot is worth less than the gear it sits beside, because
+    // a fight where its moment never comes is a fight it sat out
+    expect(ONE_SHOT_PRICE).toBeLessThan(GEAR_PRICE);
   });
 
   it('makes the Heart Scale worth nothing but a forgotten move', () => {

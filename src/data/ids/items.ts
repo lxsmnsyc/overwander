@@ -458,6 +458,62 @@ export const enum Items {
   RelicBand = 229,
   RelicStatue = 230,
   RelicCrown = 231,
+
+  /**
+   * The gear: held items that do their work for as long as they are
+   * carried and are never spent. Each is one small standing rule —
+   * health back every second, a tenth more accuracy, a share of what
+   * touching the holder costs — written against a hook the battle
+   * engine already has. The battle side of them lives in
+   * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
+   */
+  Leftovers = 232,
+  ShellBell = 233,
+  BigRoot = 234,
+  MuscleBand = 235,
+  WiseGlasses = 236,
+  ExpertBelt = 237,
+  Metronome = 238,
+  WideLens = 239,
+  ScopeLens = 240,
+  BrightPowder = 241,
+  QuickClaw = 242,
+  FocusBand = 243,
+  RockyHelmet = 244,
+  SafetyGoggles = 245,
+  UtilityUmbrella = 246,
+  SmokeBall = 247,
+  DestinyKnot = 248,
+
+  /**
+   * The gear nobody stocks: a lump of sludge that is food to a Poison
+   * type and poison to everyone else, and two more species relics —
+   * a punching bag only a Chansey has the hands for, and the leek a
+   * Farfetch'd was already carrying
+   */
+  BlackSludge = 249,
+  LuckyPunch = 250,
+  Stick = 251,
+
+  /**
+   * The one-shots: held against a single moment and gone once it
+   * comes. A sash is worth exactly one blow that would have finished
+   * its holder, a policy is worth one hit taken badly, and a herb is
+   * worth one move. See
+   * [`src/battle/items/one-shots.ts`](../../battle/items/one-shots.ts)
+   */
+  FocusSash = 252,
+  AirBalloon = 253,
+  WeaknessPolicy = 254,
+  BlunderPolicy = 255,
+  AbsorbBulb = 256,
+  CellBattery = 257,
+  Snowball = 258,
+  LuminousMoss = 259,
+  ThroatSpray = 260,
+  WhiteHerb = 261,
+  MentalHerb = 262,
+  PowerHerb = 263,
 }
 
 /**

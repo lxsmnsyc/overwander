@@ -7,7 +7,8 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import type Unit from '../unit';
-import { MergedAbilityLifecycle, createAbility } from './__create';
+import { MergedLifecycle } from '../lifecycle';
+import { createAbility } from './__create';
 
 /**
  * Special-tier abilities that can never be disabled (e.g. by
@@ -88,7 +89,7 @@ const setupAbilities = [
     // Units that already went through their first-entry dormancy
     const awakened = new Set<Unit>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
           // The flat term is what keeps an early raid from being

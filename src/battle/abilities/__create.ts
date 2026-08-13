@@ -10,33 +10,11 @@ import { RISKY_PENALTY } from '../ai/choose-move';
 import type Battle from '../core';
 import type { CheckUnitAIMoveScoreEvent } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';
 
-interface AbilityLifecycle {
-  start(): void;
-  stop(): void;
-}
-
-export class MergedAbilityLifecycle implements AbilityLifecycle {
-  constructor(public lifecycles: AbilityLifecycle[]) {
-    // no-op
-  }
-
-  start(): void {
-    for (const lifecycle of this.lifecycles) {
-      lifecycle.start();
-    }
-  }
-
-  stop(): void {
-    for (const lifecycle of this.lifecycles) {
-      lifecycle.stop();
-    }
-  }
-}
-
-export function createAbility(ability: Abilities, setup: (battle: Battle) => AbilityLifecycle) {
+export function createAbility(ability: Abilities, setup: (battle: Battle) => Lifecycle) {
   return (battle: Battle): void => {
     const lifecycle = setup(battle);
 
@@ -156,7 +134,7 @@ export function createHydrationAbility(
   return createAbility(
     targetAbility,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: no major status conditions in the weather
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
           if (
@@ -196,7 +174,7 @@ export function createWaterAbsorbAbility(
   return createAbility(
     targetAbility,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: grants the type immunity
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -256,7 +234,7 @@ export function createLimberAbility(
   return createAbility(
     targetAbility,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: the statuses cannot land
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
           if (
@@ -308,7 +286,7 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
   return createAbility(
     targetAbility,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
@@ -388,7 +366,7 @@ export function createDrizzleAbility(
   return createAbility(
     targetAbility,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // For when the unit transforms
         battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
           triggerWeather(battle, event.source);

@@ -77,6 +77,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The first rung of the relic ladder. It is worth what a Stardust
     // is worth, so it is hidden where a Stardust is hidden
     { item: Items.RelicCopper, weight: 4 },
+    // Somebody's rubbish, which is a meal to a Poison type and a slow
+    // poisoning to everyone else. It is litter, so it lies where
+    // litter lies
+    { item: Items.BlackSludge, weight: 4 },
     // The everyday medicine. A walk that turns up a Potion and an
     // Antidote is a walk that paid for the raid it is walking towards
     { item: Items.Potion, weight: 12 },
@@ -151,6 +155,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ThickClub, weight: 4 },
     { item: Items.MetalPowder, weight: 4 },
     { item: Items.QuickPowder, weight: 4 },
+    // And the two that sharpen one species' aim: a Chansey's glove
+    // and a Farfetch'd leek
+    { item: Items.LuckyPunch, weight: 4 },
+    { item: Items.Stick, weight: 4 },
     // The plates, buried where they fell. Each is a single thin slot
     // — seventeen of them share about what one stone is worth, so
     // digging one up stays an event

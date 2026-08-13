@@ -2,8 +2,8 @@ import { EventPriority } from '../../core/event-emitter';
 import { INCENSE_TYPES } from '../../data/items/incenses';
 import { PLATES } from '../../data/items/plates';
 import { TYPE_BOOSTERS } from '../../data/items/type-boosters';
-import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { createHeldItems, holds } from './__create';
 
 /**
  * Type-enhancing held items: a Charcoal makes its holder's Fire moves
@@ -32,21 +32,23 @@ const BOOSTS = new Map([...TYPE_BOOSTERS, ...INCENSE_TYPES, ...PLATES]);
  */
 export const TYPE_BOOSTER_FACTOR = 1.2;
 
-export default function setupTypeBoosters(battle: Battle): void {
-  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-    if (event.power == null) {
-      return;
-    }
-
-    const type = event.source.checkMoveType(event.move, event.target);
-
-    for (const [item, boosted] of BOOSTS) {
-      // Only an enabled item boosts: one that has been disabled is
-      // still in the holder's grip but does nothing
-      if (boosted === type && event.source.items[item] === true) {
-        event.power *= TYPE_BOOSTER_FACTOR;
+export default createHeldItems(
+  () => BOOSTS.keys(),
+  (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (event.power == null) {
         return;
       }
-    }
-  });
-}
+
+      const type = event.source.checkMoveType(event.move, event.target);
+
+      for (const [item, boosted] of BOOSTS) {
+        // Only an enabled item boosts: one that has been disabled is
+        // still in the holder's grip but does nothing
+        if (boosted === type && holds(event.source, item)) {
+          event.power *= TYPE_BOOSTER_FACTOR;
+          return;
+        }
+      }
+    }),
+);

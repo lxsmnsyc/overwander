@@ -3,9 +3,10 @@ import { Stats } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
+import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
+import { createHeldItems, holds } from './__create';
 
 /**
  * The orbs: held for what they do to their own holder.
@@ -33,70 +34,79 @@ const AFFLICTIONS = new Map<Items, Statuses>([
   [Items.ToxicOrb, Statuses.BadlyPoisoned],
 ]);
 
-export default function setupOrbs(battle: Battle): void {
-  // A Life Orb lifts every damaging move its holder throws
-  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-    if (event.power != null && event.source.items[Items.LifeOrb] === true) {
-      event.power *= LIFE_ORB_FACTOR;
-    }
-  });
+export default createHeldItems(
+  () => [Items.LifeOrb, ...AFFLICTIONS.keys()],
+  (battle) => {
+    /**
+     * How long each holder has been carrying each affliction orb. It
+     * is kept per orb as well as per unit — one shared tally would
+     * have each orb's pass forgetting what the other had counted —
+     * and it empties once the orb has done what it does, so an orb
+     * afflicts once rather than every few seconds
+     */
+    const carried = new Map<Items, Map<Unit, number>>();
 
-  // And takes a tenth of its holder for each one that lands. It is
-  // indirect damage the holder does to itself, so nothing about the
-  // blow — drain, recoil, a foe's own reactions — reads it as a hit
-  battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
-    if (
-      !event.success ||
-      event.category === MoveCategories.Status ||
-      event.source.items[Items.LifeOrb] !== true ||
-      !event.source.alive
-    ) {
-      return;
-    }
+    return new MergedLifecycle([
+      // A Life Orb lifts every damaging move its holder throws
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (event.power != null && holds(event.source, Items.LifeOrb)) {
+          event.power *= LIFE_ORB_FACTOR;
+        }
+      }),
 
-    const recoil = Math.max(1, Math.floor(event.source.checkStat(Stats.HP, 0) * LIFE_ORB_RECOIL));
-
-    event.source.damage(
-      { type: EffectType.Item, item: Items.LifeOrb, unit: event.source },
-      event.source,
-      recoil,
-      DamageFlags.Indirect,
-    );
-  });
-
-  /**
-   * How long each holder has been carrying each affliction orb. It is
-   * kept per orb as well as per unit — one shared tally would have
-   * each orb's pass forgetting what the other had counted — and it
-   * empties once the orb has done what it does, so an orb afflicts
-   * once rather than every few seconds
-   */
-  const carried = new Map<Items, Map<Unit, number>>();
-
-  battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-    for (const [item, status] of AFFLICTIONS) {
-      let holders = carried.get(item);
-
-      if (holders == null) {
-        holders = new Map<Unit, number>();
-        carried.set(item, holders);
-      }
-
-      for (const unit of battle.units()) {
-        if (unit.items[item] !== true || !unit.alive) {
-          holders.delete(unit);
-          continue;
+      // And takes a tenth of its holder for each one that lands. It
+      // is indirect damage the holder does to itself, so nothing
+      // about the blow — drain, recoil, a foe's own reactions —
+      // reads it as a hit
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+        if (
+          !event.success ||
+          event.category === MoveCategories.Status ||
+          !holds(event.source, Items.LifeOrb) ||
+          !event.source.alive
+        ) {
+          return;
         }
 
-        const held = (holders.get(unit) ?? 0) + event.duration;
+        const recoil = Math.max(
+          1,
+          Math.floor(event.source.checkStat(Stats.HP, 0) * LIFE_ORB_RECOIL),
+        );
 
-        holders.set(unit, held);
+        event.source.damage(
+          { type: EffectType.Item, item: Items.LifeOrb, unit: event.source },
+          event.source,
+          recoil,
+          DamageFlags.Indirect,
+        );
+      }),
 
-        if (held >= ORB_DELAY && unit.status[status] == null) {
-          unit.addStatus(status, { type: EffectType.Item, item, unit });
-          holders.delete(unit);
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        for (const [item, status] of AFFLICTIONS) {
+          let holders = carried.get(item);
+
+          if (holders == null) {
+            holders = new Map<Unit, number>();
+            carried.set(item, holders);
+          }
+
+          for (const unit of battle.units()) {
+            if (!holds(unit, item) || !unit.alive) {
+              holders.delete(unit);
+              continue;
+            }
+
+            const held = (holders.get(unit) ?? 0) + event.duration;
+
+            holders.set(unit, held);
+
+            if (held >= ORB_DELAY && unit.status[status] == null) {
+              unit.addStatus(status, { type: EffectType.Item, item, unit });
+              holders.delete(unit);
+            }
+          }
         }
-      }
-    }
-  });
-}
+      }),
+    ]);
+  },
+);

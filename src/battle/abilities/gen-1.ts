@@ -47,9 +47,9 @@ import {
   isWeatherRainy,
   isWeatherSandstorm,
   isWeatherSunny,
+  onUnitActs,
 } from '../utils';
 import {
-  MergedAbilityLifecycle,
   createAbility,
   createBlazeAbility,
   createContactHazard,
@@ -60,6 +60,7 @@ import {
   createShellArmorAbility,
   createWaterAbsorbAbility,
 } from './__create';
+import { MergedLifecycle } from '../lifecycle';
 
 // Vetoes the residual weather chip damage carried by the given weather
 // cause (see mechanics/weather.ts)
@@ -119,7 +120,7 @@ const setupAbilities = [
   createAbility(
     Abilities.SolarPower,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
           if (
             isWeatherSunny(event.source) &&
@@ -129,11 +130,11 @@ const setupAbilities = [
             event.value *= 2;
           }
         }),
-        // Due to the lack of turn mechanics, we only detect on move
-        // cast; the chip damage rides the trigger
-        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-          if (isWeatherSunny(event.source) && event.source.hasAbility(Abilities.SolarPower)) {
-            event.source.triggerAbility(Abilities.SolarPower);
+        // No turns to hang a residual on: it is paid as the holder
+        // reaches for a move. The chip damage rides the trigger
+        ...onUnitActs(battle, (unit) => {
+          if (isWeatherSunny(unit) && unit.hasAbility(Abilities.SolarPower)) {
+            unit.triggerAbility(Abilities.SolarPower);
           }
         }),
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
@@ -177,11 +178,12 @@ const setupAbilities = [
   createAbility(
     Abilities.RainDish,
     (battle) =>
-      new MergedAbilityLifecycle([
-        // No turn mechanics, we detect on move cast instead
-        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-          if (isWeatherRainy(event.source) && event.source.hasAbility(Abilities.RainDish)) {
-            event.source.triggerAbility(Abilities.RainDish);
+      new MergedLifecycle([
+        // No turn mechanics: it is paid as the holder reaches for a
+        // move
+        ...onUnitActs(battle, (unit) => {
+          if (isWeatherRainy(unit) && unit.hasAbility(Abilities.RainDish)) {
+            unit.triggerAbility(Abilities.RainDish);
           }
         }),
         // The heal rides the trigger
@@ -224,15 +226,16 @@ const setupAbilities = [
   createAbility(
     Abilities.ShedSkin,
     (battle) =>
-      new MergedAbilityLifecycle([
-        // No turn mechanics, we roll the 30% cure on move cast instead
-        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      new MergedLifecycle([
+        // No turn mechanics: the 30% cure is rolled as the holder
+        // reaches for a move
+        ...onUnitActs(battle, (unit) => {
           if (
-            event.source.hasAbility(Abilities.ShedSkin) &&
-            hasAnyStatus(event.source, MAJOR_STATUS_CONDITIONS) &&
+            unit.hasAbility(Abilities.ShedSkin) &&
+            hasAnyStatus(unit, MAJOR_STATUS_CONDITIONS) &&
             battle.random() < 0.3
           ) {
-            event.source.triggerAbility(Abilities.ShedSkin);
+            unit.triggerAbility(Abilities.ShedSkin);
           }
         }),
         // The cure rides the trigger
@@ -264,7 +267,7 @@ const setupAbilities = [
     // final damage when the attack is not very effective overall.
     const totals = new WeakMap<UnitAttackEvent, number>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
         if (event.parent.source.hasAbility(Abilities.TintedLens)) {
           totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
@@ -332,7 +335,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Guts,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
           if (
             event.stat === Stats.Attack &&
@@ -363,7 +366,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Hustle,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
           if (
             event.stat === Stats.Attack &&
@@ -390,7 +393,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Intimidate,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           if (event.source.hasAbility(Abilities.Intimidate)) {
             event.source.triggerAbility(Abilities.Intimidate);
@@ -464,7 +467,7 @@ const setupAbilities = [
       }
     }
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Unnerve)) {
           pressure(event.source);
@@ -493,7 +496,7 @@ const setupAbilities = [
   createAbility(Abilities.Static, (battle) => {
     const CHANCE = 0.3;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
@@ -523,7 +526,7 @@ const setupAbilities = [
   createAbility(
     Abilities.LightningRod,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Single-target Electric moves are drawn to a rod on the
         // defending side
         battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
@@ -592,7 +595,7 @@ const setupAbilities = [
   createAbility(
     Abilities.SandVeil,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
           if (
             event.accuracy != null &&
@@ -611,7 +614,7 @@ const setupAbilities = [
   createAbility(
     Abilities.SandRush,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
           if (
             event.stat === Stats.Speed &&
@@ -630,7 +633,7 @@ const setupAbilities = [
   createAbility(Abilities.PoisonPoint, (battle) => {
     const CHANCE = 0.3;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
@@ -678,7 +681,7 @@ const setupAbilities = [
   createAbility(Abilities.SheerForce, (battle) => {
     const FACTOR = 5325 / 4096;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Moves with a secondary effect hit harder...
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
         if (
@@ -704,7 +707,7 @@ const setupAbilities = [
   createAbility(Abilities.CuteCharm, (battle) => {
     const CHANCE = 0.3;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
@@ -741,7 +744,7 @@ const setupAbilities = [
      */
     const POINTLESS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
         // Only direct attack damage can hurt the holder — and what the
         // holder spends on purpose, which is not damage done to it: a
@@ -822,7 +825,7 @@ const setupAbilities = [
      */
     const activated = new Set<Unit>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Pure query: grants the immunity, no side effects
       battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
         if (
@@ -883,7 +886,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Competitive,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: only stat drops inflicted by an enemy raise the
         // holder's ire; its own boost has a positive value, so it
         // never re-triggers
@@ -936,7 +939,7 @@ const setupAbilities = [
   createAbility(
     Abilities.InnerFocus,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: cannot flinch
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
           if (
@@ -974,7 +977,7 @@ const setupAbilities = [
       [MoveCategories.Special]: TeamStatuses.LightScreen,
     };
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
         const screen = SCREEN_BY_CATEGORY[event.parent.category];
 
@@ -1033,7 +1036,7 @@ const setupAbilities = [
     const PARALYSIS = 0.19;
     const SLEEP = 0.3;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
@@ -1080,7 +1083,7 @@ const setupAbilities = [
   createAbility(
     Abilities.DrySkin,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: grants the Water immunity
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -1125,26 +1128,26 @@ const setupAbilities = [
             event.value *= 1.25;
           }
         }),
-        // Soaks up rain, dries out in the sun (rolled on cast, like
-        // Rain Dish and Solar Power)
-        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-          if (!event.source.hasAbility(Abilities.DrySkin)) {
+        // Soaks up rain, dries out in the sun — paid as the holder
+        // reaches for a move, like Rain Dish and Solar Power
+        ...onUnitActs(battle, (unit) => {
+          if (!unit.hasAbility(Abilities.DrySkin)) {
             return;
           }
 
-          const maxHP = event.source.checkStat(Stats.HP, 0);
+          const maxHP = unit.checkStat(Stats.HP, 0);
 
-          if (isWeatherRainy(event.source)) {
-            event.source.setHealth(event.source.health + maxHP / 8);
-            event.source.triggerAbility(Abilities.DrySkin);
-          } else if (isWeatherSunny(event.source)) {
-            event.source.damage(
-              { type: EffectType.Ability, ability: Abilities.DrySkin, unit: event.source },
-              event.source,
+          if (isWeatherRainy(unit)) {
+            unit.setHealth(unit.health + maxHP / 8);
+            unit.triggerAbility(Abilities.DrySkin);
+          } else if (isWeatherSunny(unit)) {
+            unit.damage(
+              { type: EffectType.Ability, ability: Abilities.DrySkin, unit },
+              unit,
               maxHP / 8,
               DamageFlags.NonLethal | DamageFlags.Indirect,
             );
-            event.source.triggerAbility(Abilities.DrySkin);
+            unit.triggerAbility(Abilities.DrySkin);
           }
         }),
       ]),
@@ -1160,7 +1163,7 @@ const setupAbilities = [
      */
     const holders = new Set<Unit>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Nobody on the field can blow itself up while a holder is up
       battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
         if (event.success && holders.size > 0 && SELF_DESTRUCT_MOVES.has(event.move)) {
@@ -1254,7 +1257,7 @@ const setupAbilities = [
     const BOOSTED = new Set<Types>([Types.Ground, Types.Rock, Types.Steel]);
     const FACTOR = 1.3;
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
         if (
           event.power != null &&
@@ -1325,7 +1328,7 @@ const setupAbilities = [
      */
     const holders = new Set<Unit>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Weather effects are suppressed while any holder is up
       battle.on(BattleEvents.CheckUnitWeather, EventPriority.Post, (event) => {
         if (holders.size > 0) {
@@ -1376,7 +1379,7 @@ const setupAbilities = [
   createAbility(
     Abilities.AngerPoint,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: a real critical hit on the holder triggers it
         battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
           const parent = event.parent;
@@ -1407,7 +1410,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Defiant,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: only stat drops inflicted by an enemy trigger
         // the defiance; its own boost has a positive value, so it
         // never re-triggers
@@ -1442,7 +1445,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Justified,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: direct damage from a Dark-type move
         battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
@@ -1485,7 +1488,7 @@ const setupAbilities = [
     // The effect targets the inflicting unit, which the trigger event
     // cannot carry, so it stays inline. Two Synchronize holders never
     // ping-pong: the reflected status is non-refreshable on re-add
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
         const cause = event.cause;
 
@@ -1539,7 +1542,7 @@ const setupAbilities = [
   createAbility(
     Abilities.NoGuard,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Moves used by or against the holder skip the accuracy check
         battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
           if (
@@ -1571,7 +1574,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Steadfast,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: the holder flinches
         battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
           if (event.status === Statuses.Flinched && event.source.hasAbility(Abilities.Steadfast)) {
@@ -1626,7 +1629,7 @@ const setupAbilities = [
   createAbility(
     Abilities.LiquidOoze,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Drains from the holder backfire; only fired on real drains,
         // so the cue is safe here
         battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
@@ -1667,7 +1670,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Sturdy,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: one-hit KO moves cannot touch the holder
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -1705,7 +1708,7 @@ const setupAbilities = [
 
     // The effect targets the attacker, which the trigger event
     // cannot carry, so it stays inline
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
           event.success &&
@@ -1736,7 +1739,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Oblivious,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: cannot be infatuated
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
           if (
@@ -1789,7 +1792,7 @@ const setupAbilities = [
   createAbility(
     Abilities.OwnTempo,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: cannot be confused
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
           if (
@@ -1839,7 +1842,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Regenerator,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: the holder withdraws from the field alive
         battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
           if (event.source.alive && event.source.hasAbility(Abilities.Regenerator)) {
@@ -1929,11 +1932,12 @@ const setupAbilities = [
   createAbility(
     Abilities.IceBody,
     (battle) =>
-      new MergedAbilityLifecycle([
-        // No turn mechanics, we detect on move cast instead
-        battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-          if (isWeatherHail(event.source) && event.source.hasAbility(Abilities.IceBody)) {
-            event.source.triggerAbility(Abilities.IceBody);
+      new MergedLifecycle([
+        // No turn mechanics: it is paid as the holder reaches for a
+        // move
+        ...onUnitActs(battle, (unit) => {
+          if (isWeatherHail(unit) && unit.hasAbility(Abilities.IceBody)) {
+            unit.triggerAbility(Abilities.IceBody);
           }
         }),
         // The heal rides the trigger
@@ -2008,7 +2012,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Overcoat,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         chipImmunity(battle, Abilities.Overcoat, Weathers.Sandstorm),
         chipImmunity(battle, Abilities.Overcoat, Weathers.Hail),
         // Pure query: powder- and spore-based moves cannot land
@@ -2042,7 +2046,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Levitate,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Airborne unless something (e.g. Gravity) forces grounding;
         // the shared immunity rule then blocks Ground moves
         battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
@@ -2075,7 +2079,7 @@ const setupAbilities = [
   createAbility(
     Abilities.WeakArmor,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: direct damage from a physical move
         battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
@@ -2154,7 +2158,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Soundproof,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Pure query: sound-based moves cannot land
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -2235,7 +2239,7 @@ const setupAbilities = [
     // Last berry each holder consumed, restorable by the next harvest
     const consumed = new Map<Unit, Items>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Only self-consumption (e.g. eating a pinch berry) is
       // harvestable; forced removal by others is not
       battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
@@ -2247,15 +2251,16 @@ const setupAbilities = [
           consumed.set(event.source, event.item);
         }
       }),
-      // No turn mechanics, we detect on move cast instead; the
-      // regrowth is guaranteed in the sun, a coin flip otherwise
-      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      // No turn mechanics: it is rolled as the holder reaches for a
+      // move, and the regrowth is guaranteed in the sun, a coin flip
+      // otherwise
+      ...onUnitActs(battle, (unit) => {
         if (
-          consumed.has(event.source) &&
-          event.source.hasAbility(Abilities.Harvest) &&
-          (isWeatherSunny(event.source) || battle.random() < CHANCE)
+          consumed.has(unit) &&
+          unit.hasAbility(Abilities.Harvest) &&
+          (isWeatherSunny(unit) || battle.random() < CHANCE)
         ) {
-          event.source.triggerAbility(Abilities.Harvest);
+          unit.triggerAbility(Abilities.Harvest);
         }
       }),
       // The regrowth rides the trigger
@@ -2301,7 +2306,7 @@ const setupAbilities = [
      */
     const activated = new Set<Unit>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Unburden) && !holdsAnyItem(event.source)) {
           activated.add(event.source);
@@ -2387,7 +2392,7 @@ const setupAbilities = [
       }
     }
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Pure query: while any holder is up, every other unit's
       // abilities read as absent — no unit state is touched, so the
       // gas lifting restores everything for free
@@ -2430,7 +2435,7 @@ const setupAbilities = [
   createAbility(
     Abilities.NaturalCure,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: leaving the field with a status condition
         battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
           if (
@@ -2467,30 +2472,33 @@ const setupAbilities = [
   createAbility(Abilities.Healer, (battle) => {
     const CHANCE = 0.3;
 
-    // No turn mechanics, we detect on move cast instead; the cure
-    // needs the rolled ally, so the effect stays inline
-    return battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-      if (!event.source.hasAbility(Abilities.Healer)) {
-        return;
-      }
-
-      for (const ally of event.source.team.units) {
-        if (
-          ally !== event.source &&
-          ally.alive &&
-          hasAnyStatus(ally, MAJOR_STATUS_CONDITIONS) &&
-          battle.random() < CHANCE
-        ) {
-          event.source.triggerAbility(Abilities.Healer);
-
-          ally.cure({
-            type: EffectType.Ability,
-            ability: Abilities.Healer,
-            unit: event.source,
-          });
+    // No turn mechanics: it is rolled as the holder reaches for a
+    // move, and the cure needs the rolled ally, so the effect stays
+    // inline
+    return new MergedLifecycle(
+      onUnitActs(battle, (unit) => {
+        if (!unit.hasAbility(Abilities.Healer)) {
+          return;
         }
-      }
-    });
+
+        for (const ally of unit.team.units) {
+          if (
+            ally !== unit &&
+            ally.alive &&
+            hasAnyStatus(ally, MAJOR_STATUS_CONDITIONS) &&
+            battle.random() < CHANCE
+          ) {
+            unit.triggerAbility(Abilities.Healer);
+
+            ally.cure({
+              type: EffectType.Ability,
+              ability: Abilities.Healer,
+              unit,
+            });
+          }
+        }
+      }),
+    );
   }),
 
   // Tangela
@@ -2501,7 +2509,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Scrappy,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Normal and Fighting moves connect with Ghosts
         battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
           if (
@@ -2543,7 +2551,7 @@ const setupAbilities = [
   createAbility(Abilities.Rattled, (battle) => {
     const SCARY_TYPES = new Set<Types>([Types.Bug, Types.Dark, Types.Ghost]);
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Detection: direct damage from a scary-typed move
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
         if (
@@ -2601,7 +2609,7 @@ const setupAbilities = [
       return best;
     }
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Detection: entering the field with an enemy to copy
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Imposter) && strongestEnemy(event.source) != null) {
@@ -2631,7 +2639,7 @@ const setupAbilities = [
     // the final damage when the attack is super effective overall
     const totals = new WeakMap<UnitAttackEvent, number>();
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
         if (event.parent.target.hasAbility(Abilities.Filter)) {
           totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
@@ -2652,7 +2660,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Moxie,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: a direct move knocked the target out
         battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
@@ -2730,7 +2738,7 @@ const setupAbilities = [
       }
     }
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Pure query: an ignored defender's abilities read as absent
       battle.on(BattleEvents.CheckUnitAbility, EventPriority.Post, (event) => {
         if (
@@ -2936,7 +2944,7 @@ const setupAbilities = [
       return best;
     }
 
-    return new MergedAbilityLifecycle([
+    return new MergedLifecycle([
       // Detection: entering the field with something to copy
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Trace) && findTrace(event.source) != null) {
@@ -2961,7 +2969,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Download,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Detection: entering the field with enemies to analyze
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           if (!event.source.hasAbility(Abilities.Download)) {
@@ -3010,7 +3018,7 @@ const setupAbilities = [
   createAbility(
     Abilities.Pressure,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Real-time analog of doubled PP usage: moves aimed at the
         // holder resolve with half their PP, doubling their cooldown.
         // A Boss caster is exempt (explicit check, like Run Away vs
@@ -3043,7 +3051,7 @@ const setupAbilities = [
   createAbility(
     Abilities.SnowCloak,
     (battle) =>
-      new MergedAbilityLifecycle([
+      new MergedLifecycle([
         // Sand Veil's hail twin: incoming accuracy is taxed
         battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
           if (

@@ -757,6 +757,22 @@ describe('Drought', () => {
 
     expect(battle.weather.current).toBe(Weathers.Sunny);
   });
+
+  it('calls up the sun by casting the move for it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    let cast: Moves | null = null;
+
+    battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+      cast = event.move;
+    });
+
+    holder.addAbility(Abilities.Drought);
+
+    // A Drought is a Sunny Day nobody had to learn: one path to the
+    // sky rather than two that have to agree with each other
+    expect(cast).toBe(Moves.SunnyDay);
+  });
 });
 
 describe('Competitive', () => {

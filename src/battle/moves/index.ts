@@ -34,6 +34,7 @@ import setupTransform from './transform';
 import setupTriAttack from './tri-attack';
 import setupSwitchOutMoves from './switch-out';
 import setupWeatherAccuracyMoves from './weather-accuracy';
+import setupWeatherMoves from './weather';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -74,6 +75,7 @@ export default function setupMoves(battle: Battle): void {
   setupMirrorMove(battle);
   setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);
+  setupWeatherMoves(battle);
   setupConversion(battle);
 
   // Last, because it is what is left: the fallback only answers when

@@ -72,8 +72,7 @@ import {
   isBerry,
 } from '../src/data/items/berries';
 import BERRY_POOL from '../src/data/overworld/berry-pool';
-import { getMoveData, getRegisteredMoves } from '../src/data/moves';
-import registerGen1Moves from '../src/data/moves/gen-1';
+import { getMoveData, getRegisteredMoves, registerMoves } from '../src/data/moves';
 import { CAST_ANIMATIONS, DEFAULT_CAST, isCommonCast, pickCast } from '../src/data/constants/cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
@@ -178,7 +177,7 @@ import { registerSpecies as registerSpeciesData } from '../src/data/species/__cr
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
-registerGen1Moves();
+registerMoves();
 registerAbilities();
 registerSpecies();
 registerItems();

@@ -95,6 +95,20 @@ export function onUnitActs(
   ];
 }
 
+/**
+ * The skies nothing else can push aside. A primal weather is not
+ * something a Rain Dance or a Drizzle argues with
+ */
+const PRIMAL_WEATHERS = new Set<Weathers>([
+  Weathers.ExtremeSunny,
+  Weathers.HeavyRain,
+  Weathers.StrongWinds,
+]);
+
+export function isPrimalWeather(weather: Weathers): boolean {
+  return PRIMAL_WEATHERS.has(weather);
+}
+
 export function isWeatherSunny(unit: Unit): boolean {
   const weather = unit.checkWeather();
   return weather === Weathers.Sunny || weather === Weathers.ExtremeSunny;

@@ -87,11 +87,17 @@ export default class Battle extends EventEngine<BattleEventMap> {
     disabled: false,
   };
 
-  setWeather(weather: Weathers): void {
+  /**
+   * Put weather over the whole field. The duration is how long it
+   * holds before the sky clears itself; zero leaves it out
+   * indefinitely, which is what clearing to None does
+   */
+  setWeather(weather: Weathers, duration = 0): void {
     this.emit(BattleEvents.SetWeather, {
       id: 'Weather',
       disabled: false,
       weather,
+      duration,
     });
   }
 

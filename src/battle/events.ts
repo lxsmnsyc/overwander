@@ -224,6 +224,12 @@ export const enum BattleEvents {
    * screen by
    */
   CheckTeamStatusDuration = 135,
+
+  /**
+   * How long weather a unit calls up stays out. It is what the
+   * weather rocks lengthen
+   */
+  CheckUnitWeatherDuration = 136,
 }
 
 export const enum MoveTargetType {
@@ -259,6 +265,12 @@ export interface TickEvent extends BaseEvent {
 
 export interface WeatherEvent extends BaseEvent {
   weather: Weathers;
+  /**
+   * How long it stays out, in milliseconds. Zero is weather with no
+   * clock on it at all — what a battle opens under, and what clearing
+   * the sky sets
+   */
+  duration: number;
 }
 
 export interface UnitEvent extends BaseEvent {
@@ -370,6 +382,15 @@ export interface CheckUnitMoveTargetFlagsEvent extends UnitMoveEvent {
 export interface UnitSetWeatherEvent extends UnitEvent {
   weather: Weathers;
   global: boolean;
+  duration: number;
+}
+
+/**
+ * How long the weather a unit is calling up stays out; the rocks
+ * lengthen it here
+ */
+export interface CheckUnitWeatherDurationEvent extends UnitWeatherEvent {
+  duration: number;
 }
 
 /**
@@ -670,6 +691,7 @@ export interface TeamUnitEvent extends TeamEvent {
 
 export interface TeamWeatherEvent extends TeamEvent {
   weather: Weathers;
+  duration: number;
 }
 
 export interface CheckTeamStatusImmunityEvent extends TeamUpdateStatusEvent {
@@ -913,6 +935,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
   [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
+  [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
   [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
   [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];

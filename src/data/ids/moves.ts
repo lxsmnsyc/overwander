@@ -311,4 +311,16 @@ export const enum Moves {
   Conversion = 162,
   Kinesis = 163,
   SoftBoiled = 164,
+
+  /**
+   * The weather moves. They are the only way anything without the
+   * ability for it can put weather on the field, which is what the
+   * whole weather half of the engine — the chip damage, the abilities
+   * that read the sky, the items that shelter from it — has been
+   * waiting for
+   */
+  RainDance = 165,
+  SunnyDay = 166,
+  Sandstorm = 167,
+  Hail = 168,
 }

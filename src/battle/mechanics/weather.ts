@@ -55,9 +55,9 @@ export default function setupWeatherMechanics(battle: Battle): void {
   // (e.g. Boss) widened the scope
   battle.on(BattleEvents.UnitSetWeather, EventPriority.Exact, (event) => {
     if (event.global || battle.mode === BattleModes.PvP) {
-      battle.setWeather(event.weather);
+      battle.setWeather(event.weather, event.duration);
     } else {
-      event.source.team.setWeather(event.weather);
+      event.source.team.setWeather(event.weather, event.duration);
     }
   });
 

@@ -1,3 +1,4 @@
+import { registerMoves } from '../../src/data/moves';
 import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
 import Alliance from '../../src/battle/alliance';
@@ -24,7 +25,6 @@ import Unit from '../../src/battle/unit';
 import { Stats, StatsKind } from '../../src/data/constants/stats';
 import type { Types } from '../../src/data/constants/types';
 import registerItems from '../../src/data/items';
-import registerGen1Moves from '../../src/data/moves/gen-1';
 import { registerSpecies } from '../../src/data/species';
 
 let dataRegistered = false;
@@ -48,7 +48,7 @@ export function createBattle(
   mode?: BattleModes,
 ): BattleHarness {
   if (!dataRegistered) {
-    registerGen1Moves();
+    registerMoves();
     registerSpecies();
     registerItems();
     dataRegistered = true;

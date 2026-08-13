@@ -113,10 +113,11 @@ export const FOCUS_BAND_CHANCE = 0.1;
 export const ROCKY_HELMET_SHARE = 1 / 6;
 
 /**
- * Half again as long a screen, which is what a Light Clay is worth in
- * the mainline: five turns become eight
+ * What a Light Clay is worth: the mainline's five turns of screen
+ * become eight, which is the same bargain a weather rock strikes with
+ * the sky
  */
-export const LIGHT_CLAY_FACTOR = 1.5;
+export const LIGHT_CLAY_FACTOR = 1.6;
 
 /**
  * What the two binding items are worth. A Grip Claw is the mainline's
@@ -137,6 +138,24 @@ export const KINGS_ROCK_CHANCE = 0.1;
  * is a thing anybody put there on purpose
  */
 const SCREEN_STATUSES = new Set<TeamStatuses>([TeamStatuses.Reflect, TeamStatuses.LightScreen]);
+
+/**
+ * What a weather rock is worth, which is what a Light Clay is worth:
+ * the mainline's five turns become eight
+ */
+export const WEATHER_ROCK_FACTOR = 1.6;
+
+/**
+ * The rocks, and the sky each one holds out for longer. Hail and snow
+ * are the same weather as far as an Icy Rock is concerned — it is the
+ * cold it keeps, not the shape of it
+ */
+const WEATHER_ROCKS: { item: Items; weathers: Set<Weathers> }[] = [
+  { item: Items.DampRock, weathers: new Set([Weathers.Rain]) },
+  { item: Items.HeatRock, weathers: new Set([Weathers.Sunny]) },
+  { item: Items.IcyRock, weathers: new Set([Weathers.Hail, Weathers.Snow]) },
+  { item: Items.SmoothRock, weathers: new Set([Weathers.Sandstorm]) },
+];
 
 /**
  * The weathers an umbrella is any use against. It keeps the sun and
@@ -515,9 +534,25 @@ export default createHeldItems(
         });
       }),
 
-      // A Light Clay holds a screen up for half again as long. It is
-      // read off whoever put the screen up, not off the team standing
-      // behind it
+      /**
+       * A weather rock holds whatever its holder called up out for
+       * longer. It answers where the weather is asked for rather than
+       * where it lands, because the rock belongs to the one calling
+       * it up — a Damp Rock in a raid lengthens its own team's rain
+       * and nobody else's
+       */
+      battle.on(BattleEvents.CheckUnitWeatherDuration, EventPriority.Post, (event) => {
+        for (const rock of WEATHER_ROCKS) {
+          if (rock.weathers.has(event.weather) && holds(event.source, rock.item)) {
+            event.duration *= WEATHER_ROCK_FACTOR;
+            return;
+          }
+        }
+      }),
+
+      // A Light Clay holds a screen up for as long as a rock holds
+      // the sky. It is read off whoever put the screen up, not off
+      // the team standing behind it
       battle.on(BattleEvents.CheckTeamStatusDuration, EventPriority.Post, (event) => {
         if (
           SCREEN_STATUSES.has(event.status) &&

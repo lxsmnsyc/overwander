@@ -88,11 +88,12 @@ export default class Team {
     disabled: false,
   };
 
-  setWeather(weather: Weathers): void {
+  setWeather(weather: Weathers, duration = 0): void {
     this.battle.emit(BattleEvents.TeamSetWeather, {
       id: 'TeamSetWeather',
       disabled: false,
       weather,
+      duration,
       team: this,
     });
   }

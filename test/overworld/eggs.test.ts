@@ -1,3 +1,4 @@
+import { registerMoves } from '../../src/data/moves';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { EggProgress } from '../../src/auth/egg';
 import {
@@ -11,7 +12,6 @@ import {
   stepsRemaining,
 } from '../../src/auth/egg';
 import { Stats, getIV, packIVs } from '../../src/data/constants/stats';
-import registerGen1Moves from '../../src/data/moves/gen-1';
 import type { Moves } from '../../src/data/ids/moves';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
@@ -32,7 +32,7 @@ import {
 import { deriveEggMoves, deriveMoves } from '../../src/overworld/encounter';
 
 beforeAll(() => {
-  registerGen1Moves();
+  registerMoves();
   registerSpecies();
 });
 

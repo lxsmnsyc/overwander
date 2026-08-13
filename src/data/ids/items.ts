@@ -528,6 +528,15 @@ export const enum Items {
    * being quicker for it, once
    */
   AdrenalineOrb = 267,
+
+  /**
+   * The weather rocks: one per sky, each holding whatever its holder
+   * called up out for longer
+   */
+  DampRock = 268,
+  HeatRock = 269,
+  IcyRock = 270,
+  SmoothRock = 271,
 }
 
 /**

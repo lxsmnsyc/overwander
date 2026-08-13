@@ -2,16 +2,17 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { MoveFlags, StatFlags } from '../../data/ids/moves';
-import { getMoveData } from '../../data/moves';
+import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
-import { type Statuses, Weathers } from '../../data/ids/status';
+import type { Statuses, Weathers } from '../../data/ids/status';
 import { RISKY_PENALTY } from '../ai/choose-move';
 import type Battle from '../core';
 import type { CheckUnitAIMoveScoreEvent } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
+import { isPrimalWeather } from '../utils';
 import type Unit from '../unit';
 
 export function createAbility(ability: Abilities, setup: (battle: Battle) => Lifecycle) {
@@ -351,15 +352,9 @@ export function createDrizzleAbility(
   targetAbility: Abilities,
   targetWeather: Weathers,
 ): (battle: Battle) => void {
-  // Primal weathers cannot be overridden
-  const PRIMAL_WEATHERS = new Set<Weathers>([
-    Weathers.ExtremeSunny,
-    Weathers.HeavyRain,
-    Weathers.StrongWinds,
-  ]);
-
   function triggerWeather(battle: Battle, source: Unit): void {
-    if (source.hasAbility(targetAbility) && !PRIMAL_WEATHERS.has(battle.weather.current)) {
+    // A primal sky is not something an ability argues with
+    if (source.hasAbility(targetAbility) && !isPrimalWeather(battle.weather.current)) {
       source.triggerAbility(targetAbility);
     }
   }
@@ -375,12 +370,33 @@ export function createDrizzleAbility(
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           triggerWeather(battle, event.source);
         }),
-        // The weather change rides the trigger; scope resolves
-        // through the unit (battle mode, Boss override)
+        /**
+         * The weather change rides the trigger, and the trigger casts
+         * the move that calls up that sky rather than setting it
+         * itself: a Drought is a Sunny Day nobody had to learn.
+         *
+         * That way there is one weather-changing path rather than
+         * two. Everything the move goes through on its way — the
+         * scope resolving through the unit, whatever an item or an
+         * ability has to say about weather landing — happens for the
+         * ability as well, without either side having to remember
+         * that the other exists
+         */
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === targetAbility) {
-            event.source.setWeather(targetWeather);
+          if (event.ability !== targetAbility) {
+            return;
           }
+
+          const move = getWeatherMove(targetWeather);
+
+          if (move == null) {
+            // No move calls up this sky, so there is nothing to cast
+            // and the ability sets it directly
+            event.source.setWeather(targetWeather);
+            return;
+          }
+
+          event.source.triggerMove(move, { type: MoveTargetType.None }, 0);
         }),
       ]),
   );

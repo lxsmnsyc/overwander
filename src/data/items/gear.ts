@@ -45,6 +45,10 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.LightClay, 'Light Clay'],
   [Items.GripClaw, 'Grip Claw'],
   [Items.BindingBand, 'Binding Band'],
+  [Items.DampRock, 'Damp Rock'],
+  [Items.HeatRock, 'Heat Rock'],
+  [Items.IcyRock, 'Icy Rock'],
+  [Items.SmoothRock, 'Smooth Rock'],
 ]);
 
 /**

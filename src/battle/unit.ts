@@ -35,6 +35,7 @@ import type {
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
   CheckUnitUpdateStageEvent,
+  CheckUnitWeatherDurationEvent,
   EffectCause,
   MoveState,
   MoveTarget,
@@ -1025,7 +1026,13 @@ export default class Unit {
     return event.grounded;
   }
 
-  setWeather(weather: Weathers): void {
+  /**
+   * Call up weather. It stays out until something changes it unless a
+   * duration is given: a sky nobody is holding open — the one the
+   * overworld handed the battle, a primal one — has no clock on it,
+   * and the weather moves are what put one there
+   */
+  setWeather(weather: Weathers, duration = 0): void {
     this.battle.emit(BattleEvents.UnitSetWeather, {
       id: 'UnitSetWeather',
       disabled: false,
@@ -1034,7 +1041,24 @@ export default class Unit {
       // Scope is resolved by the weather mechanics (battle mode) and
       // listeners (e.g. Boss) that widen it
       global: false,
+      duration,
     });
+  }
+
+  /**
+   * How long weather this unit calls up stays out. The rocks answer
+   * here
+   */
+  checkWeatherDuration(weather: Weathers, duration: number): number {
+    const event: CheckUnitWeatherDurationEvent = {
+      id: 'CheckUnitWeatherDuration',
+      disabled: false,
+      source: this,
+      weather,
+      duration,
+    };
+    this.battle.emit(BattleEvents.CheckUnitWeatherDuration, event);
+    return event.duration;
   }
 
   checkMoveTargetFlags(move: Moves): number {

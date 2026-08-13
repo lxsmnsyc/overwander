@@ -1,3 +1,4 @@
+import { registerMoves } from '../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import Abilities from '../../src/data/ids/abilities';
@@ -18,7 +19,6 @@ import Lairs, {
 import Natures from '../../src/data/ids/natures';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
-import registerGen1Moves from '../../src/data/moves/gen-1';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   getBaseSpecies,
@@ -121,7 +121,7 @@ import World, {
 // Spawn rolls read the species registry and the biome spawn pools;
 // the berry patch reads the item registry to name what it grew, and
 // the machines that registry generates read the move data
-registerGen1Moves();
+registerMoves();
 registerSpecies();
 registerItems();
 registerBiomeSpawns();

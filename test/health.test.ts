@@ -1,3 +1,4 @@
+import { registerMoves } from '../src/data/moves';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ACQUISITION_NAMES, Acquisition, asCaughtPokemon } from '../src/auth/caught-record';
 import type { HealthSource, HealthState } from '../src/auth/health';
@@ -16,12 +17,11 @@ import { Items } from '../src/data/ids/items';
 import { bitterness, isHerbal } from '../src/data/items/medicine';
 import { Species } from '../src/data/ids/species';
 import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
-import registerGen1Moves from '../src/data/moves/gen-1';
 import { EncounterType } from '../src/overworld/encounter';
 import { getSpeciesData, registerSpecies } from '../src/data/species';
 
 beforeAll(() => {
-  registerGen1Moves();
+  registerMoves();
   registerSpecies();
 });
 

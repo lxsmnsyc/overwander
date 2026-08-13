@@ -139,9 +139,9 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     ),
   );
 
-  // The session tracks the bag only through the persistence layer,
-  // so the view keeps its count in step — that is what makes the
-  // last-ball pity visible before the throw
+  // The session tracks the bag only through the persistence layer, so
+  // the view keeps its count in step: it is what the throw button
+  // counts down and what says there is nothing left to throw
   createEffect(() => {
     const active = props.session;
     const carried = bag();

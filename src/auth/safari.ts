@@ -37,15 +37,12 @@ export async function createSafariSession(
   // The Repeat Ball needs to know whether this species is already in
   // the player's records; it is read once, when the session opens
   const speciesCaught = await hasCaughtSpecies(user.uid, encounter.species);
-  // The last-ball pity is measured against the stock the player
-  // walked in with, so it is read here and never again
-  const startingBalls = await countBalls(user.uid);
-  const session = new SafariSession(encounter, () => rng.random(), {
-    speciesCaught,
-    startingBalls,
-  });
+  const session = new SafariSession(encounter, () => rng.random(), { speciesCaught });
 
-  session.ballsLeft = startingBalls;
+  // What the bag holds is the session's own business only so far as
+  // knowing whether there is anything left to throw; the throw itself
+  // no longer asks
+  session.ballsLeft = await countBalls(user.uid);
   return session;
 }
 

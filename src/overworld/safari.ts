@@ -1,9 +1,11 @@
 import { type BaseEvent, EventPriority } from '../core/event-emitter';
 import { EventEngine } from '../core/event-engine';
-import { Stats } from '../data/constants/stats';
+import { MAX_LEVEL } from '../data/constants/levels';
+import { Stats, getIV, getOtherStat } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
+import { getNatureFactor } from '../data/ids/natures';
 import { SPECIES_DAY_CATCH_BOOST, getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
@@ -148,14 +150,6 @@ const DUSK_BALL_MODIFIER = 3;
 const DUSK_TIMES = TimeOfDay.Evening | TimeOfDay.Night;
 
 /**
- * A player who came in well stocked and threw their way down to a
- * single ball does not lose the encounter to one last bad roll: that
- * final throw always lands. The stock has to have been real, hence
- * the threshold — arriving with two balls earns no pity
- */
-export const PITY_BALL_THRESHOLD = 100;
-
-/**
  * What a ball's condition is measured against beyond the encounter
  * itself
  */
@@ -165,11 +159,6 @@ export interface SafariContext {
    * reads it. Unknown counts as not owned
    */
   speciesCaught?: boolean;
-  /**
-   * How many balls the player carried when the session opened, all
-   * kinds counted together. The last-ball pity needs it
-   */
-  startingBalls?: number;
 }
 
 /**
@@ -194,7 +183,53 @@ export const FEED_CATCH_BONUS: Partial<Record<Items, number>> = {
  */
 const MAX_CATCH_BONUS = 4;
 
+/**
+ * What each ball already thrown adds to the next one.
+ *
+ * A player who came in well stocked used to be handed their last ball
+ * outright, which is a rule that does nothing at all for the first
+ * ninety-nine throws and then decides the encounter by itself — and it
+ * asked the session how full the bag was, which is not something a
+ * meeting between two pokemon should depend on.
+ *
+ * This is the same mercy paid out a percent at a time instead. It is
+ * compound, so it is nothing for a while and then matters: the tenth
+ * throw is worth a tenth more than the first, the seventieth twice as
+ * much. Nothing rare falls to it — a Mewtwo would take hundreds of
+ * balls before the drift caught up — but a long, patient meeting is
+ * worth more than the same number of throws spread over several
+ */
+const THROW_DRIFT = 1.01;
+
 const CATCH_RATE_SCALE = 255;
+
+/**
+ * How much of a ball's pull is left against a pokemon at the level
+ * cap.
+ *
+ * The mainline formula reads how hurt the thing is, which is a number
+ * an encounter here does not have: nothing is fought before it is
+ * caught. Level is what this game knows about how much of a pokemon is
+ * standing there, and a full-grown one shrugging off a ball a young one
+ * would not is the same fact told the way this game can tell it
+ */
+export const LEVEL_CATCH_FLOOR = 0.45;
+
+/**
+ * What the level leaves of a throw: all of it at level 1, falling
+ * evenly to `LEVEL_CATCH_FLOOR` at the cap.
+ *
+ * Evenly rather than on a curve, because a player who has met a few
+ * dozen pokemon should be able to feel the rule without being told
+ * it — twice the level, about half again as hard. It multiplies rather
+ * than replacing anything, so a species that was easy to catch is
+ * still the easier of the two at any level
+ */
+export function levelCatchFactor(level: number): number {
+  const grown = Math.min(1, Math.max(0, (level - 1) / (MAX_LEVEL - 1)));
+
+  return 1 - (1 - LEVEL_CATCH_FLOOR) * grown;
+}
 
 /**
  * Even the fastest species stays catchable: flee rolls cap here
@@ -274,6 +309,15 @@ export default class SafariSession<
   ballsLeft = 0;
 
   /**
+   * How many balls have been thrown at this encounter.
+   *
+   * The safari clock beside it counts feedings too, and this must not:
+   * what wears a pokemon down is being thrown at, and a player who fed
+   * it a berry has already been paid for that in the feeding bonus
+   */
+  throws = 0;
+
+  /**
    * Whether the encounter is still chewing.
    *
    * One treat at a time: a player cannot pour the whole bag out at
@@ -347,14 +391,6 @@ export default class SafariSession<
   }
 
   /**
-   * Whether the next throw is the pity throw: the player started
-   * well stocked and is down to their last ball, so it cannot miss
-   */
-  isPityThrow(): boolean {
-    return (this.context.startingBalls ?? 0) > PITY_BALL_THRESHOLD && this.ballsLeft === 1;
-  }
-
-  /**
    * Whether the encounter belongs to the day's featured family, which
    * comes along four times as readily
    */
@@ -364,33 +400,64 @@ export default class SafariSession<
 
   /**
    * The chance the next throw lands: species catch rate, ball
-   * modifier, accumulated feeding bonus and the family day's own
-   * bonus — unless it is the pity throw, which is certain
+   * modifier, accumulated feeding bonus, how grown the thing standing
+   * there is, the family day's own bonus, and how many balls it has
+   * already shaken off
    */
   getCatchChance(): number {
-    if (this.isPityThrow()) {
-      return 1;
-    }
-
     const rate = getSpeciesData(this.encounter.species).catchRate;
     const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
+    const grown = levelCatchFactor(this.encounter.level);
+    // Every ball already thrown at it leaves it a little readier for
+    // the next one
+    const wearing = THROW_DRIFT ** this.throws;
 
-    return Math.min(1, (rate * this.getBallModifier() * this.catchBonus * day) / CATCH_RATE_SCALE);
+    return Math.min(
+      1,
+      (rate * this.getBallModifier() * this.catchBonus * day * grown * wearing) / CATCH_RATE_SCALE,
+    );
   }
 
   /**
-   * The chance the encounter flees after a failed throw: faster
-   * species bolt more readily. What was fought for — a raid's
-   * legendary, a beaten grunt's parting gift — never bolts
+   * How fast the thing standing there actually is: its own Speed, with
+   * its level, its individual value and its nature in it rather than
+   * the number printed against its species.
+   *
+   * The species' base Speed said that every Rattata in the world runs
+   * alike — a level 5 one met in the first field bolts exactly as
+   * readily as a level 40 one, and the fast individual with the fast
+   * nature is no harder to hold onto than its slow cousin. Both of
+   * those are facts the game already knows about the pokemon in front
+   * of the player, and neither of them was being asked.
+   *
+   * No effort values: nothing wild has trained
+   */
+  getSpeed(): number {
+    return getOtherStat(
+      this.encounter.level,
+      getSpeciesData(this.encounter.species).stats[Stats.Speed],
+      getIV(this.encounter.ivs, Stats.Speed),
+      0,
+      getNatureFactor(this.encounter.nature, Stats.Speed),
+    );
+  }
+
+  /**
+   * The chance the encounter flees after a failed throw: the faster it
+   * is, the more readily it bolts, capped so that even the fastest
+   * stays catchable.
+   *
+   * Reading the real stat makes the flee roll grow with the level the
+   * way the catch chance shrinks with it — a young pokemon is easy to
+   * catch and easy to keep hold of, and a full-grown one is neither.
+   * What was fought for — a raid's legendary, a beaten grunt's parting
+   * gift — never bolts at all
    */
   getFleeChance(): number {
     if (isRaidEncounter(this.encounter.type) || this.encounter.type === EncounterType.Rocket) {
       return 0;
     }
-
-    const speed = getSpeciesData(this.encounter.species).stats[Stats.Speed];
-
-    return Math.min(MAX_FLEE_CHANCE, speed / CATCH_RATE_SCALE);
+    return Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);
   }
 
   /**
@@ -519,6 +586,7 @@ function setupSafariMechanics(session: SafariSession): void {
   });
   session.on(SafariEvents.Throw, EventPriority.Post, (event) => {
     event.session.turn += 1;
+    event.session.throws += 1;
     // A ball it shook off leaves it open to another treat. A catch
     // ends the session, so clearing the flag there would be for
     // nobody

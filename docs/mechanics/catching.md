@@ -34,13 +34,31 @@ replays.
 ## What a throw is worth
 
 ```text
-catch chance = species catch rate × ball modifier × feeding bonus × species day
-               ────────────────────────────────────────────────────────────────
-                                          255
+catch chance = species catch rate × ball modifier × feeding bonus × species day × level
+               ─────────────────────────────────────────────────────────────────────────
+                                             255
 ```
 
 capped at 1. The species' catch rate is the mainline one, so a Caterpie comes
 along and a Chansey does not.
+
+### The level term
+
+The mainline formula reads how hurt the pokemon is. An encounter here is not a
+battle — nothing is fought before it is caught — so there is no health bar to
+read, and **level** is what the game knows instead about how much of a pokemon
+is standing there:
+
+```text
+level term = 1 − (1 − 0.45) × (level − 1) / 99
+```
+
+All of the throw at level 1, falling evenly to 0.45 of it at the cap. It is
+even rather than curved so a player can feel the rule without being told it,
+and it multiplies rather than replacing anything: the species that was easier
+to catch is still the easier of the two at any level. A Lv. 38 Gyarados takes
+`45 × 0.79 / 255` — about 14% a throw with a Poke Ball, against 17.6% before
+its age was counted.
 
 ### Ball modifiers
 
@@ -101,10 +119,20 @@ too, before the item leaves the bag, so a refusal costs nothing.
 A throw that fails to catch rolls again to see whether the encounter runs:
 
 ```text
-flee chance = species base Speed / 255, capped at 0.5
+flee chance = its own Speed stat / 255, capped at 0.5
 ```
 
-Faster species bolt more readily, and even the fastest stays catchable. Two
+Its **own** stat — level, individual value and nature in it — rather than the
+number printed against its species. The base said every Rattata in the world
+runs alike: a level 5 one met in the first field bolted exactly as readily as a
+level 40 one, and a fast individual with a fast nature was no harder to hold
+onto than its slow cousin. Both were already known about the pokemon standing
+there and neither was being asked.
+
+Reading the real stat makes the flee roll grow with the level the way the catch
+chance shrinks with it: a young pokemon is easy to catch and easy to keep hold
+of, a full-grown one is neither. Effort values are not counted — nothing wild
+has trained. Even the fastest stays catchable, at the 0.5 cap. Two
 encounters never flee at all: a **raid prize** and the pokemon a **beaten Team
 Rocket grunt** hands over. Those were fought for, and losing one to a bad roll
 after the fight was already won would be a punishment for winning.
@@ -114,16 +142,27 @@ An encounter that flees is remembered by key in
 Walking away is different: `runAway` ends the session without marking anything,
 so the same pokemon is still standing there until its window turns over.
 
-## The last ball
+## Wearing it down
 
-A player who came in well stocked and threw their way down to a single ball does
-not lose the encounter to one last bad roll. When the session opened with more
-than `PITY_BALL_THRESHOLD` (100) balls of all kinds and exactly one is left, the
-next throw is certain.
+Every ball already thrown at an encounter makes the next one worth a little
+more:
 
-The threshold is what keeps that honest: arriving with two balls earns no pity.
-The stock has to have been real, and the guarantee is for the player who
-genuinely spent it.
+```text
+throw term = 1.01 ^ throws
+```
+
+Compound, and counted per **throw** rather than per turn — a feeding is already
+paid for by its own bonus. It is nothing for a while and then it matters: ten
+balls in, a throw is worth a tenth more than the first; seventy balls in, twice
+as much.
+
+This replaced a free catch on the last ball, which was handed to anyone who had
+opened the session carrying more than a hundred of them. That rule did nothing
+at all for ninety-nine throws and then decided the encounter by itself, and it
+made a meeting between two pokemon depend on how full a bag was. Nothing about
+the bag reaches the throw now. Patience is still rewarded, a percent at a time,
+and nothing rare falls to it — a Mewtwo would take hundreds of balls before the
+drift caught up.
 
 ## The session's own clock
 
@@ -132,10 +171,12 @@ costs nothing. It is what the Quick Ball and the Timer Ball read. It is not
 shown: a player who wants the Quick Ball's opener throws it first, and a player
 who wants the Timer Ball's patience is the one who has been throwing.
 
+`throws` counts only the balls, and it is what the drift above reads.
+
 The bag is not part of the session. The number of balls the player is carrying is
 refreshed from the inventory before each throw, since spending them happens
-through the persistence layer, and that is what makes the last-ball pity visible
-*before* the throw rather than after it.
+through the persistence layer — but nothing about how many there are changes what
+a throw is worth.
 
 Everything a session actually spends or produces — a ball leaving the bag, a
 catch record being written, the fled key — is a server write. See

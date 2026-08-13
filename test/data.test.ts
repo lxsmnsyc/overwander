@@ -98,7 +98,9 @@ import {
   VENDOR_STOCK_KINDS,
   getVendorGoods,
   isMarketable,
+  sellPrice,
 } from '../src/data/overworld/vendor';
+import { VALUABLE_SELL, isValuable } from '../src/data/items/valuables';
 import { asBoolean } from '../src/auth/__normalize';
 import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../src/auth/stacks';
 import {
@@ -1470,7 +1472,87 @@ describe('item data', () => {
       Items.ShinyCharm,
       Items.OldSeaMap,
       Items.GoldenBottleCap,
+      // The one thing in the band that is only gold, and there because
+      // it is more of it than anything else in the game pays
+      Items.RelicCrown,
     ]);
+  });
+
+  it('runs the valuables up one ladder, priced and placed together', () => {
+    // Every valuable is the same kind of thing — gold with a picture
+    // on it — so they share a shape: found, never stocked, and worth
+    // exactly what a vendor pays
+    for (const [item, sell] of VALUABLE_SELL) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Valuable);
+      expect(data.sell).toBe(sell);
+      expect(data.buy).toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      // A valuable that nothing hid would be a valuable nobody could
+      // ever have
+      expect(getItemBand(item)).not.toBeNull();
+      expect(isValuable(item)).toBe(true);
+    }
+    expect(isValuable(Items.Potion)).toBe(false);
+
+    // The ladder climbs, and the band each rung is hidden in climbs
+    // with it. It is banded by what a find is worth, so a shell off a
+    // beach is a common and a crown out of a ruin stands with the
+    // Master Ball
+    const bands = ['base', 'uncommon', 'rare', 'prized', 'special'];
+    const rung = (item: Items): number => bands.indexOf(getItemBand(item) ?? '');
+
+    expect(getItemBand(Items.TinyMushroom)).toBe('base');
+    expect(getItemBand(Items.RelicCopper)).toBe('base');
+    expect(getItemBand(Items.RelicSilver)).toBe('uncommon');
+    expect(getItemBand(Items.BigNugget)).toBe('rare');
+    expect(getItemBand(Items.CometShard)).toBe('prized');
+    expect(getItemBand(Items.RelicCrown)).toBe('special');
+
+    // Banded by worth throughout: nothing dear is hidden where
+    // something cheap is, whichever pair is compared
+    const ladder = [...VALUABLE_SELL].sort(([, one], [, other]) => one - other);
+
+    for (const [at, [item, sell]] of ladder.entries()) {
+      for (const [dearer, price] of ladder.slice(at + 1)) {
+        if (price > sell) {
+          expect(
+            rung(item),
+            `${getItemData(item).name} vs ${getItemData(dearer).name}`,
+          ).toBeLessThanOrEqual(rung(dearer));
+        }
+      }
+    }
+
+    // And the dearest of them is the thinnest slot in the rarest
+    // band: a Relic Crown is a story rather than an afternoon's income
+    const crown = ITEM_POOL.special.find((entry) => entry.item === Items.RelicCrown);
+
+    expect(crown?.weight).toBe(Math.min(...ITEM_POOL.special.map((entry) => entry.weight)));
+    for (const entry of ITEM_POOL.special) {
+      expect(getItemData(Items.RelicCrown).sell).toBeGreaterThanOrEqual(
+        getItemData(entry.item).sell,
+      );
+    }
+  });
+
+  it('lets the vendor buy anything priced, listing or no listing', () => {
+    // What `Marketable` says is that the market **lists** it — that it
+    // could be in a crate. What he takes off a player's hands is
+    // anything with a price on it, which is the only thing a nugget
+    // was ever for
+    expect(sellPrice(Items.Nugget)).toBe(getItemData(Items.Nugget).sell);
+    expect(sellPrice(Items.Nugget)).toBeGreaterThan(0);
+    expect(isMarketable(Items.Nugget)).toBe(false);
+    expect(sellPrice(Items.OranBerry)).toBeGreaterThan(0);
+    expect(sellPrice(Items.UltraBall)).toBeGreaterThan(0);
+
+    // Zero means he will not take it at all: what these are worth is
+    // not gold
+    expect(sellPrice(Items.HeartScale)).toBe(0);
+    expect(sellPrice(Items.PortalKey)).toBe(0);
+    expect(sellPrice(Items.SunStone)).toBe(0);
   });
 
   it('registers the stones and trade items nothing can spend yet', () => {

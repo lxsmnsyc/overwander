@@ -13,7 +13,7 @@ import Npc, {
   getRecallableMoves,
 } from '../data/overworld/npc';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../data/overworld/fossil';
-import { VENDOR_TRADE_LIMIT, isMarketable } from '../data/overworld/vendor';
+import { VENDOR_TRADE_LIMIT, sellPrice } from '../data/overworld/vendor';
 import AleaRNG from '../core/alea';
 import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -682,7 +682,10 @@ export async function sellToVendor(
     return null;
   }
 
-  const paid = priced(basket, (item) => (isMarketable(item) ? getItemData(item).sell : 0));
+  // What he pays is the registry's price, not whether he stocks it:
+  // the pearls and nuggets a walk turns up are never in a crate, and
+  // selling them is the only thing they are for
+  const paid = priced(basket, sellPrice);
 
   return paid == null
     ? null

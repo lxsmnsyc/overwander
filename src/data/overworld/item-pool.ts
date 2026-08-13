@@ -46,9 +46,15 @@ export interface ItemRarityGroups {
  * were all rare, and being drawn as often as a stone made them read as
  * ordinary.
  *
- * The valuables sit a band below what they are worth: they are a
- * steady trickle of gold rather than a jackpot, so the rarest bands
- * stay for the things gold cannot buy.
+ * The **valuables** climb through every band, because they are one
+ * ladder and it is a long one — two hundred gold for a shell off a
+ * beach, six hundred thousand for a crown out of a ruin. A find is
+ * banded by what it is worth, so the shore trinkets are commons, the
+ * ruins sit with the Bottle Caps, and the crown stands in the rarest
+ * band of all. That last one is the exception to what this band is
+ * for: everything else there is something gold cannot buy, and the
+ * crown is there because it is more gold than the game pays for
+ * anything else.
  *
  * Machines are deliberately absent: they are bought, never found.
  */
@@ -61,6 +67,16 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LuxuryBall, weight: 5 },
     { item: Items.Pearl, weight: 8 },
     { item: Items.Stardust, weight: 8 },
+    // The roadside trinkets: a shell off a beach, a feather off a
+    // path, a mushroom nobody would stop for. They are what makes a
+    // walk pay at all, so they are the commonest gold in the game
+    { item: Items.ShoalSalt, weight: 6 },
+    { item: Items.ShoalShell, weight: 6 },
+    { item: Items.PrettyWing, weight: 6 },
+    { item: Items.TinyMushroom, weight: 8 },
+    // The first rung of the relic ladder. It is worth what a Stardust
+    // is worth, so it is hidden where a Stardust is hidden
+    { item: Items.RelicCopper, weight: 4 },
     // The everyday medicine. A walk that turns up a Potion and an
     // Antidote is a walk that paid for the raid it is walking towards
     { item: Items.Potion, weight: 12 },
@@ -86,6 +102,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.DuskBall, weight: 10 },
     { item: Items.BigPearl, weight: 8 },
     { item: Items.StarPiece, weight: 8 },
+    { item: Items.BigMushroom, weight: 6 },
+    { item: Items.RareBone, weight: 5 },
+    { item: Items.RelicSilver, weight: 4 },
     { item: Items.SuperPotion, weight: 10 },
     { item: Items.HyperPotion, weight: 6 },
     { item: Items.FullHeal, weight: 6 },
@@ -109,6 +128,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
+    // The middle of the ladder, thinning as it climbs
+    // Cut off a Slowpoke, and worth more than the nugget it is found
+    // beside — which is the joke, and the reason it is thin
+    { item: Items.SlowpokeTail, weight: 3 },
+    { item: Items.PearlString, weight: 5 },
+    { item: Items.RelicGold, weight: 4 },
+    { item: Items.BalmMushroom, weight: 4 },
+    { item: Items.BigNugget, weight: 2 },
     // What a party comes back from a lost raid on. The Max Revive is
     // deliberately the thinner slot of the two
     { item: Items.MaxPotion, weight: 6 },
@@ -159,6 +186,14 @@ export const ITEM_POOL: ItemRarityGroups = {
     // when the mountain still had one, and nothing else brings one
     // back
     { item: Items.OldAmber, weight: 5 },
+    // The ruins. They change nothing about a pokemon, which is what
+    // the rest of this band is for — what puts them here is that one
+    // of them pays for a season of everything else, and a band that
+    // draws a Bottle Cap is the right rate for that
+    { item: Items.RelicVase, weight: 3 },
+    { item: Items.CometShard, weight: 2 },
+    { item: Items.RelicBand, weight: 2 },
+    { item: Items.RelicStatue, weight: 1 },
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },
@@ -169,6 +204,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },
+    // The one thing here that is only gold. Everything beside it is
+    // something gold cannot buy, and the crown earns its place the
+    // other way round: six hundred thousand is more than the game
+    // pays for anything else, so the band that hides a Master Ball is
+    // the only one that can hide it. The thinnest slot of the five
+    { item: Items.RelicCrown, weight: 5 },
   ],
 };
 

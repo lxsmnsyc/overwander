@@ -52,6 +52,25 @@ export function isMarketable(item: Items): boolean {
 }
 
 /**
+ * What a vendor pays for one, which is a wider question than what he
+ * stocks.
+ *
+ * The `Marketable` flag says the market **lists** the item — that it
+ * could be in a crate — and the balls and the medicine are the only
+ * things that are. What he takes off a player's hands is anything the
+ * registry puts a `sell` figure on: the pearls and nuggets a walk
+ * turns up exist for nothing else, and a berry picked off a bush is
+ * worth something to him too.
+ *
+ * Zero means he will not take it at all. A Heart Scale, a Portal Key
+ * and the stones nothing can spend yet are all priced at nothing on
+ * purpose — what they are worth is not gold
+ */
+export function sellPrice(item: Items): number {
+  return getItemData(item).sell;
+}
+
+/**
  * Everything a vendor could conceivably have in his crate: the balls
  * and the medicine, minus whatever the registry declined to price.
  *

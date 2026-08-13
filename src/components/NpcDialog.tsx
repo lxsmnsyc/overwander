@@ -32,7 +32,7 @@ import Npc, {
   REMINDER_FEE,
   getRecallableMoves,
 } from '../data/overworld/npc';
-import { VENDOR_TRADE_LIMIT, isMarketable } from '../data/overworld/vendor';
+import { VENDOR_TRADE_LIMIT } from '../data/overworld/vendor';
 import { type BreedingParent, canBreed } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from './CatchPicker';
@@ -1160,10 +1160,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                               // being unpickable and said again by the
                               // price beside it — a badge repeating it
                               // in words was the same news three times
-                              filter={(entry) =>
-                                side() === 'buy' ||
-                                (isMarketable(entry.item) && priceOf(entry.item, false) > 0)
-                              }
+                              filter={(entry) => side() === 'buy' || priceOf(entry.item, false) > 0}
                               note={(entry) => `${priceOf(entry.item, side() === 'buy')} gold each`}
                               onPick={(picks) => {
                                 setCounter(null);

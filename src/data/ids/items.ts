@@ -433,6 +433,31 @@ export const enum Items {
   HelixFossil = 211,
   DomeFossil = 212,
   OldAmber = 213,
+
+  /**
+   * The rest of what the ground gives up for gold and nothing else.
+   * They do nothing to a pokemon, nothing in a fight and nothing at a
+   * landmark: a walk turns one up, a vendor takes it, and that is the
+   * whole of what they are for
+   */
+  TinyMushroom = 214,
+  BigMushroom = 215,
+  BalmMushroom = 216,
+  BigNugget = 217,
+  PearlString = 218,
+  CometShard = 219,
+  RareBone = 220,
+  PrettyWing = 221,
+  ShoalSalt = 222,
+  ShoalShell = 223,
+  SlowpokeTail = 224,
+  RelicCopper = 225,
+  RelicSilver = 226,
+  RelicGold = 227,
+  RelicVase = 228,
+  RelicBand = 229,
+  RelicStatue = 230,
+  RelicCrown = 231,
 }
 
 /**

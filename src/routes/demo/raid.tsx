@@ -181,8 +181,10 @@ export default function RaidDemo(): JSX.Element {
                 height of "all of it" measured against a container of
                 "as tall as its contents" is a field nought pixels
                 high */}
-            <div class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
-              shadow-pop">
+            <div
+              class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
+              shadow-pop"
+            >
               <BattleCanvas battle={staged.battle} player="" />
             </div>
             {/* The demo has no signed-in player, so it stands in as

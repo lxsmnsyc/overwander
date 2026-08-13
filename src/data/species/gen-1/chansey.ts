@@ -76,6 +76,11 @@ export default function registerChanseySpecies(): void {
         Moves.Substitute,
         Moves.Strength,
         Moves.Flash,
+        // Chansey's egg, and the machine that teaches it. The man who
+        // hands the TM out says only a Chansey can learn it, which is
+        // nearly true — Mew can as well, and was not supposed to be
+        // spoken of
+        Moves.SoftBoiled,
       ],
     },
   });

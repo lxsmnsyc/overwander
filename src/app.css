@@ -3,13 +3,16 @@
 /**
  * The game's look, in one place.
  *
- * Two things live here. The theme names the colours and the type the
+ * Three things live here. The theme names the colours and the type the
  * game is drawn in, so a component asks for `bg-paper` or `text-muted`
  * rather than repeating a hex code that only means something to
- * whoever picked it. The base layer then dresses plain HTML — a
- * heading, a list, a button with no classes on it — because the game
- * is written as ordinary markup and Tailwind's reset would otherwise
- * leave all of it looking like nothing at all.
+ * whoever picked it. Those names are then given values twice — once
+ * for daylight and once for night — so a screen written against them
+ * is both themes at once and no component has to say `dark:` anything.
+ * The base layer finally dresses plain HTML — a heading, a list, a
+ * button with no classes on it — because the game is written as
+ * ordinary markup and Tailwind's reset would otherwise leave all of it
+ * looking like nothing at all.
  *
  * What it is dressed *as* is a handheld pokemon game: sky over the
  * page rather than paper, windows with a thick frame and a blue bar
@@ -23,39 +26,57 @@
  * `src/components/styled`, not a class name invented here.
  */
 
-@theme {
-  /* Sky and ink: the page is outdoors, and what is written on it is
-     the near-black navy the games set their text in rather than black */
-  --color-parchment: #e7effb;
-  --color-paper: #ffffff;
-  --color-ink: #1f2a44;
-  --color-muted: #5e7291;
-  --color-line: #aec2de;
-  --color-line-soft: #e6edf8;
+/**
+ * Night is a class on the root element rather than the browser's own
+ * preference, because the player is allowed to disagree with their
+ * machine. Terracotta's `ColorSchemeProvider` is what puts it there —
+ * see `src/components/theme.tsx` — and this teaches Tailwind's `dark:`
+ * variant to look for the same class, for the rare thing that has to
+ * differ by more than a colour
+ */
+@custom-variant dark (&:where(.dark, .dark *));
 
-  /* What the game offers you */
-  --color-leaf: #33a05a;
-  --color-leaf-dark: #237644;
-  --color-leaf-soft: #e0f3e7;
+/**
+ * The names, pointed at whichever set of values is in force.
+ *
+ * `inline` is what makes the two themes possible: without it Tailwind
+ * copies the value into every utility, and `bg-paper` would be the
+ * daylight white wherever it was written. Pointed at a variable
+ * instead, `bg-paper` is *whatever paper currently is*, and changing
+ * that one variable under `.dark` redraws the whole game
+ */
+@theme inline {
+  --color-parchment: var(--sky);
+  --color-paper: var(--panel);
+  --color-ink: var(--text);
+  --color-muted: var(--text-quiet);
+  --color-line: var(--edge);
+  --color-line-soft: var(--edge-soft);
 
-  /* What cannot be taken back, in the red of the ball it is thrown in */
-  --color-ember: #dc2e26;
-  --color-ember-dark: #a81f1a;
-  --color-ember-soft: #fdeceb;
+  --color-leaf: var(--green);
+  --color-leaf-dark: var(--green-deep);
+  --color-leaf-soft: var(--green-wash);
 
-  /* Gold, and the rest of what a lot is worth */
-  --color-gold: #c08508;
-  --color-gold-soft: #fff3d6;
+  --color-ember: var(--red);
+  --color-ember-dark: var(--red-deep);
+  --color-ember-soft: var(--red-wash);
 
-  /* Where you are and what is happening there. It is also the game's
-     furniture — the bar over a window, the tab you are on — because
-     the series has always framed what it says to you in blue */
-  --color-tide: #2a75bb;
-  --color-tide-dark: #1d5487;
-  --color-tide-soft: #e3eefb;
+  --color-gold: var(--yellow);
+  --color-gold-soft: var(--yellow-wash);
 
-  /* A move being channelled, which is neither a cast nor damage */
-  --color-arcane: #7b4fc0;
+  --color-tide: var(--blue);
+  --color-tide-dark: var(--blue-deep);
+  --color-tide-soft: var(--blue-wash);
+
+  --color-arcane: var(--violet);
+
+  /**
+   * What is written *on* a filled colour — a green button, the blue
+   * bar over a dialog. It is white in both themes, since the fills
+   * themselves stay bright: `text-paper` would have flipped to the
+   * colour of a panel at night and put dark text on a green button
+   */
+  --color-on-accent: #ffffff;
 
   /* Rounded rather than neutral. Nothing is downloaded for this: the
      platforms that have a rounded face use it and the rest fall back
@@ -68,29 +89,125 @@
 
   /* A hard offset rather than a blur: the game's controls sit slightly
      above the page and land on it when pressed, which is the one bit
-     of movement a menu screen gets */
-  --shadow-pop: 0 3px 0 0 rgb(31 42 68 / 0.18);
-  --shadow-pop-sm: 0 2px 0 0 rgb(31 42 68 / 0.16);
+     of movement a menu screen gets. It is heavier at night, where a
+     pale shadow would be invisible */
+  --shadow-pop: 0 3px 0 0 var(--drop);
+  --shadow-pop-sm: 0 2px 0 0 var(--drop-soft);
 
   /* And a window, which is further off the page than a button is */
-  --shadow-window:
-    0 6px 0 0 rgb(29 84 135 / 0.35), 0 24px 48px -16px rgb(31 42 68 / 0.55);
+  --shadow-window: 0 6px 0 0 var(--drop-window), 0 24px 48px -16px var(--drop-cast);
+}
+
+/**
+ * Daylight: a field of sky with the game's windows standing on it
+ */
+:root {
+  color-scheme: light;
+
+  --sky: #e7effb;
+  --panel: #ffffff;
+  --text: #1f2a44;
+  --text-quiet: #5e7291;
+  --edge: #aec2de;
+  --edge-soft: #e6edf8;
+
+  /* What the game offers you */
+  --green: #33a05a;
+  --green-deep: #237644;
+  --green-wash: #e0f3e7;
+
+  /* What cannot be taken back, in the red of the ball it is thrown in */
+  --red: #dc2e26;
+  --red-deep: #a81f1a;
+  --red-wash: #fdeceb;
+
+  /* Gold, and the rest of what a lot is worth */
+  --yellow: #c08508;
+  --yellow-wash: #fff3d6;
+
+  /* Where you are and what is happening there. It is also the game's
+     furniture — the bar over a window, the tab you are on — because
+     the series has always framed what it says to you in blue */
+  --blue: #2a75bb;
+  --blue-deep: #1d5487;
+  --blue-wash: #e3eefb;
+
+  /* A move being channelled, which is neither a cast nor damage */
+  --violet: #7b4fc0;
+
+  --drop: rgb(31 42 68 / 0.18);
+  --drop-soft: rgb(31 42 68 / 0.16);
+  --drop-window: rgb(29 84 135 / 0.35);
+  --drop-cast: rgb(31 42 68 / 0.55);
+
+  /* The two halves of the daylight over the page */
+  --sky-high: #eef5fe;
+  --sky-glow: #ffffff;
+}
+
+/**
+ * Night, which is the same game after dark rather than a second one.
+ *
+ * The fills keep their hue and gain a little light — a green button is
+ * still the green button — while the ground the game is drawn on drops
+ * to a deep navy and the washes behind a badge become tints of it. The
+ * shadows go black, since a shadow made of navy over navy is nothing.
+ *
+ * The `-deep` half of each pair goes the other way here: it is the
+ * *stronger* sibling rather than literally the darker one — the hover
+ * on a filled button, the word written on a wash, the line under the
+ * blue bar — and strength on a dark ground is light. Left darker they
+ * were a hover that dimmed and a label that sank into the panel behind
+ * it
+ */
+.dark {
+  color-scheme: dark;
+
+  --sky: #0b1222;
+  --panel: #16203a;
+  --text: #e9f0fb;
+  --text-quiet: #9db0d0;
+  --edge: #33456b;
+  --edge-soft: #202c48;
+
+  --green: #34a75f;
+  --green-deep: #63d391;
+  --green-wash: #143223;
+
+  --red: #d93a30;
+  --red-deep: #ff8c84;
+  --red-wash: #351a18;
+
+  --yellow: #e2a71c;
+  --yellow-wash: #372a0d;
+
+  --blue: #2f7dc4;
+  --blue-deep: #8ec5f2;
+  --blue-wash: #13263f;
+
+  --violet: #a077e6;
+
+  --drop: rgb(0 0 0 / 0.55);
+  --drop-soft: rgb(0 0 0 / 0.45);
+  --drop-window: rgb(0 0 0 / 0.55);
+  --drop-cast: rgb(0 0 0 / 0.7);
+
+  --sky-high: #121c33;
+  --sky-glow: #1d2a48;
 }
 
 @layer base {
-  html {
-    color-scheme: light;
-  }
-
   body {
     @apply bg-parchment text-ink font-sans text-[0.95rem] leading-relaxed antialiased;
 
-    /* Daylight over the top of the page. It is under everything the
-       game draws — the world fills the screen on its own — and shows
-       at the edges of dialogs and behind the shorter panels */
+    /* Daylight over the top of the page, and at night the same light
+       from the same place with almost nothing left in it. It is under
+       everything the game draws — the world fills the screen on its
+       own — and shows at the edges of dialogs and behind the shorter
+       panels */
     background-image:
-      radial-gradient(120% 90% at 50% -20%, #ffffff 0%, transparent 60%),
-      linear-gradient(180deg, #eef5fe 0%, var(--color-parchment) 100%);
+      radial-gradient(120% 90% at 50% -20%, var(--sky-glow) 0%, transparent 60%),
+      linear-gradient(180deg, var(--sky-high) 0%, var(--sky) 100%);
     background-attachment: fixed;
   }
 

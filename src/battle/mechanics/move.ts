@@ -6,13 +6,13 @@ import {
   TypeEffectiveness,
   Types,
 } from '../../data/constants/types';
-import type { Moves } from '../../data/ids/moves';
 import {
   DamageFlags,
   MoveAttackFlags,
   MoveCategories,
   MoveFlags,
   MoveTargetFlags,
+  Moves,
   StatFlags,
 } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
@@ -154,6 +154,15 @@ function isCastingTargetUnit(caster: Unit, target: Unit): boolean {
 }
 
 function canUnitCastMove(caster: Unit, move: Moves): boolean {
+  // Struggle is nobody's move. It is what is thrown when everything
+  // that *is* somebody's move has been shut off, so it cannot be asked
+  // for from the move set the way the rest are — it would be refused
+  // for not being in there, which is the only condition it is ever
+  // used under
+  if (move === Moves.Struggle) {
+    return true;
+  }
+
   const data = caster.moves[move];
   if (data) {
     return !(data.disabled || data.cooldown);

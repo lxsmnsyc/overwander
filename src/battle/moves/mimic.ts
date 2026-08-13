@@ -5,7 +5,11 @@ import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 const BANNED_MOVES = new Set<Moves>([
-  // ...
+  // Struggle is not a move to be copied: it is what the engine
+  // reaches for when a unit has nothing, and a unit that mimicked it
+  // would be carrying a move that costs a quarter of its health and
+  // shuts the fallback off by being the one move it still knows
+  Moves.Struggle,
 ]);
 
 export default function setupMimic(battle: Battle): void {

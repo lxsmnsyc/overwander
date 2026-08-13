@@ -10,6 +10,9 @@ import { BattleEvents, EffectType } from '../events';
 const HEAL_FRACTION: { [key in Moves]?: number } = {
   // https://bulbapedia.bulbagarden.net/wiki/Recover_(move)
   [Moves.Recover]: 0.5,
+  // Chansey's own Recover, down to the fraction
+  // https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
+  [Moves.SoftBoiled]: 0.5,
 };
 
 export default function setupRecoverMoves(battle: Battle): void {

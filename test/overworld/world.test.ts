@@ -203,7 +203,7 @@ describe('world', () => {
     expect(chunk.biome).toBe(world.getChunk(3, -7).biome);
   });
 
-  it('rolls 3-5 fixed landmarks per chunk, each on its own cell', () => {
+  it('rolls 5-7 fixed landmarks per chunk, each on its own cell', () => {
     const world = new World('overworld');
     const shapes = new Set<string>();
 
@@ -211,8 +211,8 @@ describe('world', () => {
       const chunk = world.getChunk(x, 0);
       const landmarks = chunk.getLandmarks();
 
-      expect(landmarks.length).toBeGreaterThanOrEqual(3);
-      expect(landmarks.length).toBeLessThanOrEqual(5);
+      expect(landmarks.length).toBeGreaterThanOrEqual(5);
+      expect(landmarks.length).toBeLessThanOrEqual(7);
 
       // One cell each: the cell map holds every landmark, all
       // within the central 8x8
@@ -1721,10 +1721,10 @@ describe('chunk snapshot', () => {
         }
 
         // Nine cells at most per landmark, out of the central 8x8's
-        // sixty-four: the ring never costs a chunk one of its three
-        // to five
-        expect(landmarks.size).toBeGreaterThanOrEqual(3);
-        expect(landmarks.size).toBeLessThanOrEqual(5);
+        // sixty-four: the ring never costs a chunk one of its five
+        // to seven
+        expect(landmarks.size).toBeGreaterThanOrEqual(5);
+        expect(landmarks.size).toBeLessThanOrEqual(7);
         // The area is the landmarks plus their rings, and a ring
         // inside the central 8x8 is never empty
         expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);

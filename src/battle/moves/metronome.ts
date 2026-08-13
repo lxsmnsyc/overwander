@@ -5,9 +5,17 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
- * Moves Metronome never calls
+ * Moves Metronome never calls. The two nobody knows are in here for
+ * the same reason as the two it would call on itself: a Metronome
+ * that rolled Struggle would charge a quarter of the user's health
+ * for a move it was never entitled to
  */
-const EXCLUDED = new Set<Moves>([Moves._Confused, Moves.Metronome, Moves.MirrorMove]);
+const EXCLUDED = new Set<Moves>([
+  Moves._Confused,
+  Moves.Struggle,
+  Moves.Metronome,
+  Moves.MirrorMove,
+]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Metronome_(move)
 export default function setupMetronome(battle: Battle): void {

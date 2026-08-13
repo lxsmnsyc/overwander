@@ -23,7 +23,7 @@ export function createBuddyAbility(
 /**
  * How many extra spawns a lure is worth
  */
-export const LURE_SPAWN_BONUS = 2;
+export const LURE_SPAWN_BONUS = 3;
 
 /**
  * Arena Trap, Illuminate and No Guard all do one thing out here:

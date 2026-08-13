@@ -20,7 +20,7 @@ export const LUCK_INCENSE_BONUS = 2;
  * window rolls what it rolls, and a player whose buddy is burning one
  * meets fewer of them
  */
-export const PURE_INCENSE_QUIET = 2;
+export const PURE_INCENSE_QUIET = 3;
 
 /**
  * Luck Incense: the purse comes back doubled

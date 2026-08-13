@@ -36,7 +36,7 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * LURE_SPAWN_BONUS more on top, which the window always rolls so that
  * every player of the chunk shares one set of rolls
  */
-export const SPAWN_COUNT = 6;
+export const SPAWN_COUNT = 8;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 

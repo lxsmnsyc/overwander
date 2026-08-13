@@ -1,5 +1,6 @@
 import { For, type JSX, Show } from 'solid-js';
 import { GameDialog, useGame } from './game-context';
+import { ThemeToggle } from './theme';
 
 /**
  * The one piece of furniture the game has.
@@ -26,7 +27,7 @@ const ACTIONS: BarAction[] = [
 
 const BUTTON =
   'cursor-pointer rounded-full border-0 bg-transparent px-4 py-1.5 text-sm font-bold text-ink' +
-  ' shadow-none transition-colors hover:border-0 hover:bg-tide hover:text-paper' +
+  ' shadow-none transition-colors hover:border-0 hover:bg-tide hover:text-on-accent' +
   ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
   ' focus-visible:outline-tide';
 
@@ -71,6 +72,11 @@ export default function ActionBar(): JSX.Element {
             </button>
           )}
         </For>
+        {/* Day or night, last on the bar and set apart from the four
+            that open something: it changes how the game looks rather
+            than what is on the screen */}
+        <span aria-hidden="true" class="h-5 w-px shrink-0 bg-line" />
+        <ThemeToggle class={`${BUTTON} px-3`} />
       </div>
     </nav>
   );

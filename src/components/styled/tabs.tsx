@@ -21,7 +21,7 @@ const TAB =
   ' font-bold text-muted shadow-none transition-colors hover:border-transparent hover:text-ink' +
   ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
   ' focus-visible:outline-tide aria-selected:border-tide-dark aria-selected:bg-tide' +
-  ' aria-selected:text-paper aria-selected:shadow-pop-sm';
+  ' aria-selected:text-on-accent aria-selected:shadow-pop-sm';
 
 export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
   return (

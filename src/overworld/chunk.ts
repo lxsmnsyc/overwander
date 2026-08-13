@@ -36,8 +36,8 @@ export function centeredCells(size: number): number[] {
   return cells;
 }
 
-const MIN_LANDMARKS = 3;
-const MAX_LANDMARKS = 5;
+const MIN_LANDMARKS = 5;
+const MAX_LANDMARKS = 7;
 
 /**
  * The cells touching one, diagonals included, clipped to the chunk.
@@ -78,7 +78,7 @@ export default class Chunk {
   private landmarkCells: Map<number, Landmark> | null = null;
 
   /**
-   * The chunk's 3-5 landmarks (duplicates allowed), each on its own
+   * The chunk's 5-7 landmarks (duplicates allowed), each on its own
    * cell within the central 8x8, keyed by row-major cell index.
    * Rolled from the chunk seed alone — no clock or snapshot
    * involved — so the same chunk yields the same landmarks on the

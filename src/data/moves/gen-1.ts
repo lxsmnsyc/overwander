@@ -1737,4 +1737,54 @@ export default function registerGen1Moves(): void {
     flags: 0,
     cast: ['Swell', 'RearUp', 'Charge'],
   });
+  // https://bulbapedia.bulbagarden.net/wiki/Conversion_(move)
+  registerMove(Moves.Conversion, {
+    name: 'Conversion',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: 0,
+    flags: 0,
+    cast: ['Swell', 'RearUp', 'Charge'],
+  });
+  // https://bulbapedia.bulbagarden.net/wiki/Kinesis_(move)
+  registerMove(Moves.Kinesis, {
+    name: 'Kinesis',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 80,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: 0,
+    cast: ['Twirl', 'Shake', 'Charge'],
+  });
+  // https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
+  registerMove(Moves.SoftBoiled, {
+    name: 'Soft-Boiled',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 10,
+    target: 0,
+    flags: 0,
+    cast: ['Swell', 'RearUp', 'Charge'],
+  });
+  /**
+   * What is thrown when there is nothing left to throw.
+   *
+   * Nobody learns it and nothing teaches it: the engine reaches for it
+   * on a pokemon whose every move is spent, disabled or otherwise shut
+   * off. It is typeless — `Unknown` is not in the chart, so nothing
+   * resists it and nothing is immune — and it costs the user a quarter
+   * of its whole health whatever it lands for
+   */
+  registerMove(Moves.Struggle, {
+    name: 'Struggle',
+    type: Types.Unknown,
+    category: MoveCategories.Physical,
+    power: 50,
+    pp: 1,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+    cast: ['Strike', 'Attack'],
+  });
 }

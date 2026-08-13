@@ -33,8 +33,10 @@ export default function registerPorygonSpecies(): void {
     biomes: [Biome.Grassland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
+      // Conversion is Porygon's own move and always has been: it is
+      // switched on knowing it, alongside the other two it starts with
       level: {
-        1: [Moves.Tackle, Moves.Sharpen],
+        1: [Moves.Tackle, Moves.Sharpen, Moves.Conversion],
         23: [Moves.Psybeam],
         28: [Moves.Recover],
         35: [Moves.Agility],

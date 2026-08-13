@@ -14,6 +14,7 @@ import MysteryGiftDialog from '../components/MysteryGiftDialog';
 import OverworldTab from '../components/OverworldTab';
 import ProfileTab from '../components/ProfileTab';
 import RaidsTab from '../components/RaidsTab';
+import { ThemeToggle } from '../components/theme';
 import WorldMapDialog from '../components/WorldMapDialog';
 import { Button, Dialog, DialogActions, Note } from '../components/styled';
 
@@ -228,9 +229,14 @@ export default function Home(): JSX.Element {
                 class="flex w-full max-w-sm flex-col gap-4 overflow-hidden rounded-panel border-4
                   border-tide bg-paper text-center shadow-window"
               >
-                <header class="flex flex-col gap-1 bg-tide px-4 py-4 text-paper">
+                <header class="relative flex flex-col gap-1 bg-tide px-4 py-4 text-on-accent">
                   <h1 class="text-3xl">Poketerra</h1>
-                  <p class="text-sm text-paper/85">Sign in to walk the overworld.</p>
+                  <p class="text-sm text-on-accent/85">Sign in to walk the overworld.</p>
+                  {/* The theme is worth changing before signing in as
+                      much as after it — the bar that carries it is
+                      behind the sign-in, and this is the whole game
+                      until somebody does */}
+                  <ThemeToggle class="absolute top-3 right-3 px-2.5 text-ink" />
                 </header>
                 <div class="px-4 pb-4">
                   <LoginForm />

@@ -290,6 +290,79 @@ describe('egg moves', () => {
   });
 });
 
+describe('the moves nobody knows', () => {
+  it('numbers them out of the dex', () => {
+    // A move id is a slot in the dex, and these two have no slot: one
+    // is what a confused pokemon hits itself with and the other is
+    // what is left when everything else is shut off. Held past the
+    // range, a record carrying a real move can never be read as
+    // either — the same reason Missingno and the egg are numbered
+    // where they are
+    expect(Moves.Struggle).toBe(100_000);
+    expect(Moves._Confused).toBe(100_001);
+
+    for (const move of getRegisteredMoves()) {
+      if (move !== Moves.Struggle) {
+        expect(move, getMoveData(move).name).toBeLessThan(100_000);
+      }
+    }
+  });
+
+  it('leaves Struggle out of every list a move can be reached from', () => {
+    for (const species of getRegisteredSpecies()) {
+      const { learnSet } = getSpeciesData(species);
+
+      expect(new Set(learnSet.teachable).has(Moves.Struggle), getSpeciesData(species).name).toBe(
+        false,
+      );
+      for (const learned of Object.values(learnSet.level)) {
+        expect(new Set(learned).has(Moves.Struggle)).toBe(false);
+      }
+    }
+
+    // And no machine teaches it: machines are derived from what the
+    // species can be taught, so the check above is what keeps it out
+    expect(new Set(getTeachableMoves()).has(Moves.Struggle)).toBe(false);
+  });
+});
+
+describe('the moves added back to the dex', () => {
+  it('gives Porygon its Conversion and Kadabra its Kinesis', () => {
+    // Both were missing, and both are the move the species is known
+    // for: Porygon knows Conversion from the moment it is switched on,
+    // and Kinesis is the spoon-bending Kadabra is named after
+    expect(new Set(getSpeciesData(Species.Porygon).learnSet.level[1]).has(Moves.Conversion)).toBe(
+      true,
+    );
+    expect(new Set(getSpeciesData(Species.Kadabra).learnSet.level[1]).has(Moves.Kinesis)).toBe(
+      true,
+    );
+    // Alakazam keeps what Kadabra learned
+    expect(new Set(getSpeciesData(Species.Alakazam).learnSet.level[1]).has(Moves.Kinesis)).toBe(
+      true,
+    );
+  });
+
+  it('teaches Soft-Boiled to Chansey, and to the one who was not supposed to exist', () => {
+    const taught = getRegisteredSpecies().filter((species) =>
+      new Set(getSpeciesData(species).learnSet.teachable).has(Moves.SoftBoiled),
+    );
+
+    expect(new Set(taught)).toEqual(new Set([Species.Chansey, Species.Mew]));
+  });
+
+  it('registers all four with data a battle can read', () => {
+    for (const move of [Moves.Conversion, Moves.Kinesis, Moves.SoftBoiled, Moves.Struggle]) {
+      expect(() => getMoveData(move)).not.toThrow();
+    }
+
+    // Struggle is typeless on purpose: `Unknown` is in no column of
+    // the chart, so nothing resists it and nothing is immune to it
+    expect(getMoveData(Moves.Struggle).type).toBe(Types.Unknown);
+    expect(getMoveData(Moves.Struggle).power).toBe(50);
+  });
+});
+
 describe('move cast animations', () => {
   const named = new Set<string>(CAST_ANIMATIONS);
 

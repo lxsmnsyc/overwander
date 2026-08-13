@@ -18,9 +18,11 @@ import { Button as HeadlessButton } from 'terracotta';
 export type ButtonTone = 'primary' | 'ghost' | 'danger';
 
 const TONES: Record<ButtonTone, string> = {
-  primary: 'border-leaf-dark bg-leaf text-paper shadow-pop hover:bg-leaf-dark hover:text-paper',
+  primary:
+    'border-leaf-dark bg-leaf text-on-accent shadow-pop hover:bg-leaf-dark hover:text-on-accent',
   ghost: 'border-line bg-paper text-ink shadow-pop hover:border-tide hover:text-tide-dark',
-  danger: 'border-ember-dark bg-ember text-paper shadow-pop hover:bg-ember-dark hover:text-paper',
+  danger:
+    'border-ember-dark bg-ember text-on-accent shadow-pop hover:bg-ember-dark hover:text-on-accent',
 };
 
 /**

@@ -3,6 +3,7 @@ import setupAbsorb from './absorb';
 import setupBide from './bide';
 import setupBodySlam from './body-slam';
 import setupChargeMoves from './charge';
+import setupConversion from './conversion';
 import setupCounter from './counter';
 import setupCrashMoves from './crash';
 import setupDisable from './disable';
@@ -26,6 +27,7 @@ import setupSelfDestructMoves from './self-destruct';
 import setupSemiInvulnerableMoves from './semi-invulnerable';
 import setupSolarBeam from './solar-beam';
 import setupStageMoves from './stage';
+import setupStruggle from './struggle';
 import { setupStatusMoves } from './status';
 import setupSubstitute from './substitute';
 import setupTransform from './transform';
@@ -72,4 +74,9 @@ export default function setupMoves(battle: Battle): void {
   setupMirrorMove(battle);
   setupMetronome(battle);
   setupWeatherAccuracyMoves(battle);
+  setupConversion(battle);
+
+  // Last, because it is what is left: the fallback only answers when
+  // every resolver above has declined to pick anything
+  setupStruggle(battle);
 }

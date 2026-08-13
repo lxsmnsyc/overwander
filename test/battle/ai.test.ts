@@ -428,3 +428,50 @@ describe('idle AI', () => {
     expect(unit.casting).toBeUndefined();
   });
 });
+
+describe('Struggle', () => {
+  it('is what is left when every move is shut off', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    // With something to throw, it throws that
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+
+    unit.disableMove(Moves.Tackle);
+
+    const choice = chooseMove(battle, unit);
+
+    expect(choice?.move).toBe(Moves.Struggle);
+    expect(choice?.target.type === MoveTargetType.Unit && choice.target.unit).toBe(enemy);
+  });
+
+  it('is not what a cooldown means', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    // A move that is cooling is a move the unit still has: struggling
+    // in the gaps between cooldowns would have every pokemon in every
+    // fight killing itself while it waited
+    unit.startCooldown(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy });
+
+    expect(chooseMove(battle, unit)).toBeUndefined();
+  });
+
+  it('can be cast without being a move the unit knows', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    expect(unit.moves[Moves.Struggle]).toBeUndefined();
+    expect(unit.checkCanCast(Moves.Struggle, { type: MoveTargetType.Unit, unit: enemy })).toBe(
+      true,
+    );
+  });
+});

@@ -45,7 +45,14 @@ const ABRA_STATS = {
 };
 
 const KADABRA_LEVEL_MOVES = {
-  1: [Moves.Teleport, Moves.Confusion, Moves.Disable],
+  // What a Kadabra comes out of the evolution knowing, taken across
+  // both halves of the generation: Red and Blue start it with
+  // Teleport, Confusion and Disable, and Yellow drops the latter two
+  // from the first level and starts it with Kinesis instead — the
+  // spoon-bending it is named for, which nothing at all could learn
+  // in Red and Blue. There is one Kadabra here rather than two, so it
+  // knows what a Gen 1 Kadabra could know
+  1: [Moves.Teleport, Moves.Kinesis, Moves.Confusion, Moves.Disable],
   16: [Moves.Confusion],
   20: [Moves.Disable],
   27: [Moves.Psybeam],

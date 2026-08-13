@@ -73,6 +73,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Flash]: -1,
       [Moves.SandAttack]: -1,
       [Moves.SmokeScreen]: -1,
+      [Moves.Kinesis]: -1,
     },
   ],
   [

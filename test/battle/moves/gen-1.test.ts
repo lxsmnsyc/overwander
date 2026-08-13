@@ -981,3 +981,81 @@ describe('interaction fixes', () => {
     expect(attacker.status[Statuses.Confused]).toBeDefined();
   });
 });
+
+describe('Conversion', () => {
+  it('takes the type of the move in the first slot', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA, [Types.Normal]);
+    unit.addMove(Moves.Conversion);
+    unit.addMove(Moves.Psybeam);
+
+    unit.triggerMoveEffect(Moves.Conversion, NONE_TARGET, 0);
+
+    // Its own move rather than the target's types: the modern reading
+    // of it, which is what this dex follows where the two disagree
+    expect([...unit.types]).toEqual([Types.Psychic]);
+  });
+
+  it('changes nothing when there is no other move to read', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA, [Types.Normal]);
+    unit.addMove(Moves.Conversion);
+
+    unit.triggerMoveEffect(Moves.Conversion, NONE_TARGET, 0);
+
+    expect([...unit.types]).toEqual([Types.Normal]);
+  });
+});
+
+describe('Kinesis', () => {
+  it('lowers the target accuracy', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    unit.triggerMoveEffect(Moves.Kinesis, unitTarget(enemy), 0);
+
+    expect(enemy.stages[Stages.Accuracy]).toBe(-1);
+  });
+});
+
+describe('Soft-Boiled', () => {
+  it('heals half of max health, the way Recover does', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    unit.setHealth(40);
+
+    unit.triggerMoveEffect(Moves.SoftBoiled, NONE_TARGET, 0);
+
+    expect(unit.health).toBe(120); // 40 + 160 / 2
+  });
+});
+
+describe('Struggle', () => {
+  it('hits typelessly and costs the user a quarter of its health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB, [Types.Ghost]);
+
+    attacker.triggerMoveEffect(Moves.Struggle, unitTarget(defender), 0);
+
+    // A Ghost is immune to Normal and to nothing at all here: the
+    // move has no type to be resisted by
+    expect(160 - defender.health).toBeCloseTo(plainDamage(50));
+    expect(attacker.health).toBe(120); // 160 - 160 / 4
+  });
+
+  it('costs the recoil even where the hit did nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    defender.setHealth(1);
+
+    attacker.triggerMoveEffect(Moves.Struggle, unitTarget(defender), 0);
+
+    expect(defender.alive).toBe(false);
+    expect(attacker.health).toBe(120);
+  });
+});

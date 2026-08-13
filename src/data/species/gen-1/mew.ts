@@ -93,6 +93,10 @@ export default function registerMewSpecies(): void {
         Moves.Psywave,
         Moves.Explosion,
         Moves.Rest,
+        // The one machine nobody was told about: TM41 is written for
+        // Chansey, and Mew — who was not supposed to exist — takes it
+        // as well
+        Moves.SoftBoiled,
       ],
     },
   });

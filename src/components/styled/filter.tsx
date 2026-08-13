@@ -41,7 +41,7 @@ const ACTIVE = '[&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark';
 
 const OPTION =
   'cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
-  ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-paper' +
+  ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-on-accent' +
   ' aria-selected:hover:bg-tide-dark ' +
   ACTIVE;
 

@@ -73,7 +73,7 @@ const BLEED = '-mx-4 px-4 sm:-mx-5 sm:px-5';
  * the menu of things that can be done to the pokemon are what a player
  * scrolls back up for
  */
-const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-tide pt-4 text-paper sm:-mt-5 sm:pt-5 ${BLEED}`;
+const STUCK_TOP = `sticky top-0 z-20 -mt-4 bg-tide pt-4 text-on-accent sm:-mt-5 sm:pt-5 ${BLEED}`;
 
 /**
  * And the buttons, held at the bottom for the same reason: the way out
@@ -229,7 +229,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                 )}
               </div>
               <HeadlessDialogDescription
-                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-paper/85'}
+                class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
               >
                 {props.description}
               </HeadlessDialogDescription>

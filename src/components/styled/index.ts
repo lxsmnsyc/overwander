@@ -21,6 +21,8 @@ export { List, ListRow, Meta, RowButton } from './list';
 export { default as Menu } from './menu';
 export type { MenuAction, MenuProps } from './menu';
 export { default as Search, SEARCH_FROM } from './search';
+export { default as StepButton } from './step-button';
+export type { StepButtonProps } from './step-button';
 export type { SearchProps } from './search';
 export type { ListRowProps, RowButtonProps } from './list';
 export { Card, Divider, Panel, Row } from './surface';

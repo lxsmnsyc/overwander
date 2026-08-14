@@ -4,7 +4,7 @@ import { FileRoutes } from '@solidjs/start/router';
 import { type JSX, Suspense } from 'solid-js';
 import AuthProvider from './auth/context';
 import registerGameData from './data';
-import ThemeProvider from './components/theme';
+import ThemeProvider from './components/app/theme';
 import { ToastProvider } from './components/styled';
 import './app.css';
 

@@ -24,9 +24,9 @@ pin `gold` on update and require a new profile to open at zero.
 
 The document is public, so a trainer met in the middle of something — a party in
 a raid lobby, a lot on the auction board — can be opened as the profile they
-already have. [`ProfileDialog`](../../src/components/ProfileDialog.tsx) holds the
+already have. [`ProfileDialog`](../../src/components/profile/ProfileDialog.tsx) holds the
 uid being visited (`game.visiting()`), names the panel by their nickname, and
-renders the ordinary [`ProfileTab`](../../src/components/ProfileTab.tsx) with
+renders the ordinary [`ProfileTab`](../../src/components/profile/ProfileTab.tsx) with
 `viewOnly` set. That flag travels down to the buddy card and the battle history
 and removes everything that writes: the sign-out, the buddy swap, and the button
 that collects what a won raid still owes.
@@ -241,7 +241,7 @@ Private to the owning uid, and read-only to them.
 ### What the screen makes of it
 
 The dex sits behind the menu, beside the catches: a box is what somebody has, and
-a dex is what there is. [`PokedexTab`](../../src/components/PokedexTab.tsx) reads
+a dex is what there is. [`PokedexTab`](../../src/components/dex/PokedexTab.tsx) reads
 the document once and draws **every base form in the registry** — one entry per
 pokemon rather than one per costume, which is the rule `getBaseForms` already
 counts a dex by — as a grid of squares in dex order, thirty at a time in the same
@@ -251,7 +251,7 @@ Each square is in one of three states, and the gaps are the point: a number alon
 for a species never met, its own silhouette for one met and never kept, and the
 pokemon itself for one that has been owned.
 
-Opening a square opens [`DexEntryDialog`](../../src/components/DexEntryDialog.tsx):
+Opening a square opens [`DexEntryDialog`](../../src/components/dex/DexEntryDialog.tsx):
 both coats (each a silhouette until it has been owned), the category, the height
 and weight, the family's candy the reader is holding, the abilities, the base
 stats, **where it lives**, and everything it can learn.

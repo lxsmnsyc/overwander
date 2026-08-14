@@ -2,8 +2,8 @@ import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type Battle from '../../battle/core';
-import BattleCanvas from '../../components/BattleCanvas';
-import BattleParty from '../../components/BattleParty';
+import BattleCanvas from '../../components/battle/BattleCanvas';
+import BattleParty from '../../components/battle/BattleParty';
 import { Badge, Button, Meta, Note } from '../../components/styled';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import {

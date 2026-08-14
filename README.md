@@ -205,7 +205,7 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 | `src/battle/`     | The battle engine: events, units, moves, statuses, abilities, items, AI           |
 | `src/auth/`       | Client-side Firestore reads and the `'use server'` wrappers around the writes     |
 | `src/server/`     | Privileged writes, Admin SDK only, behind a verified caller                       |
-| `src/components/` | The UI, including the styled wrappers over terracotta in `components/styled/`     |
+| `src/components/` | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`     | Sprite sheets and the animation class the map and battle canvases draw with       |
 | `src/core/`       | The shared primitives: seeded RNG, Perlin noise, the event engine                 |
 | `public/sprites/` | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon |

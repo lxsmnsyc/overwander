@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect } from '@playwright/test';
-import { BOX_COLUMNS, BOX_ROWS } from '../src/components/CatchBoxCanvas';
+import { BOX_COLUMNS, BOX_ROWS } from '../src/components/catches/CatchBoxCanvas';
 
 /**
  * What every browser test needs before it can test anything: an

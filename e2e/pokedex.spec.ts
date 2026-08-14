@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { DEX_COLUMNS } from '../src/components/PokedexCanvas';
+import { DEX_COLUMNS } from '../src/components/dex/PokedexCanvas';
 import { patchDocument, uidOf } from './emulator';
 import {
   type Player,

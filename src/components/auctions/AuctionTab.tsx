@@ -97,12 +97,17 @@ function describeRemaining(endsAt: number, at: number): string {
 }
 
 /**
- * What the lot has been bid up to, or what it is still asking for
+ * What the lot stands at: what it has been bid up to, or what it is
+ * asking for where nobody has bid yet.
+ *
+ * One number rather than two. The row used to carry what it stood at
+ * *and* what the next bid would have to be, which is the same figure
+ * said twice over for a reader who is about to be shown it again in
+ * the dialog the Bid button opens — and it made the busiest column on
+ * the board the one nobody reads
  */
-function describeBid(auction: AuctionRecord): string {
-  return isBidOn(auction)
-    ? `${auction.bid} gold bid · ${nextBid(auction)} to take it`
-    : `${auction.startingBid} gold asking`;
+function describeStanding(auction: AuctionRecord): string {
+  return `${isBidOn(auction) ? auction.bid : auction.startingBid} gold`;
 }
 
 /**
@@ -184,92 +189,103 @@ export function BidControls(props: {
    */
   const amount = (): number => Math.max(named(), nextBid(props.auction));
 
-  const affordable = (): boolean => props.gold >= nextBid(props.auction);
-
-  return (
+  /**
+   * Why this player may not bid, or null where they may.
+   *
+   * All three answers used to be a thing standing where the button
+   * would be — a badge reading "yours", a badge reading "winning", a
+   * line about not holding enough — so the column changed shape from
+   * row to row and the eye had to find the button again on each one.
+   * The button is always the button now; the reason rides on it, for
+   * whoever stops on the one that is dead
+   */
+  const refused = (): string | null => {
     // A seller bidding on their own lot would be selling to
     // themselves, and the standing bidder is already winning it:
     // bidding against themselves could only cost them gold
-    <Show when={props.auction.seller !== props.player} fallback={<Badge tone="tide">yours</Badge>}>
-      <Show
-        when={props.auction.bidder !== props.player}
-        fallback={<Badge tone="leaf">winning</Badge>}
-      >
-        <Show
-          when={affordable()}
-          fallback={<Meta>{nextBid(props.auction)} gold is more than you hold</Meta>}
-        >
-          {/* One button on the row, and the amount named in a dialog
-              behind it.
+    if (props.auction.seller === props.player) {
+      return 'Your own lot';
+    }
+    if (props.auction.bidder === props.player) {
+      return 'You are winning this one';
+    }
+    return props.gold >= nextBid(props.auction)
+      ? null
+      : `${nextBid(props.auction)} gold is more than you hold`;
+  };
 
-              A board is a list of lots read at a glance, and a number
-              box on every row of it is a form the length of the board
-              — pressed by accident, tabbed through on the way to
-              anything else, and taking up the room the lot itself
-              should have. What a bid *is* has not changed: the floor
-              is the seller's increment and anything up to what the
-              bidder holds is legal, so it is still typed rather than
-              nudged */}
+  return (
+    <>
+      {/* One button on the row, and the amount named in a dialog
+          behind it.
+
+          A board is a list of lots read at a glance, and a number box
+          on every row of it is a form the length of the board —
+          pressed by accident, tabbed through on the way to anything
+          else, and taking up the room the lot itself should have.
+          What a bid *is* has not changed: the floor is the seller's
+          increment and anything up to what the bidder holds is legal,
+          so it is still typed rather than nudged */}
+      <Button
+        tone="primary"
+        disabled={refused() != null}
+        title={refused() ?? undefined}
+        onClick={() => {
+          setNamed(nextBid(props.auction));
+          setBidding(true);
+        }}
+      >
+        Bid
+      </Button>
+      <Dialog
+        isOpen={bidding()}
+        onClose={() => {
+          setBidding(false);
+        }}
+        title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
+        description="The floor is the seller's least raise. Anything from there to what you are
+              holding is a legal bid, so a lot can be put out of reach in one press."
+      >
+        <Row class="justify-center">
+          <Field label="Bid">
+            <input
+              type="number"
+              min={nextBid(props.auction)}
+              max={props.gold}
+              value={amount()}
+              onInput={(event) => {
+                setNamed(Number(event.currentTarget.value));
+              }}
+            />
+          </Field>
+        </Row>
+        <Row class="justify-center">
+          <Meta>
+            {nextBid(props.auction)} gold to take it · you hold {props.gold}
+          </Meta>
+        </Row>
+
+        <DialogActions>
           <Button
-            tone="primary"
             onClick={() => {
-              setNamed(nextBid(props.auction));
-              setBidding(true);
-            }}
-          >
-            Bid
-          </Button>
-          <Dialog
-            isOpen={bidding()}
-            onClose={() => {
               setBidding(false);
             }}
-            title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
-            description="The floor is the seller's least raise. Anything from there to what you are
-              holding is a legal bid, so a lot can be put out of reach in one press."
           >
-            <Row class="justify-center">
-              <Field label="Bid">
-                <input
-                  type="number"
-                  min={nextBid(props.auction)}
-                  max={props.gold}
-                  value={amount()}
-                  onInput={(event) => {
-                    setNamed(Number(event.currentTarget.value));
-                  }}
-                />
-              </Field>
-            </Row>
-            <Row class="justify-center">
-              <Meta>
-                {nextBid(props.auction)} gold to take it · you hold {props.gold}
-              </Meta>
-            </Row>
-
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  setBidding(false);
-                }}
-              >
-                Never mind
-              </Button>
-              <Button
-                tone="primary"
-                disabled={amount() > props.gold}
-                onClick={() => {
-                  setBidding(false);
-                  props.onBid(amount());
-                }}
-              >
-                Bid {amount()} gold
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Show>
-      </Show>
-    </Show>
+            Never mind
+          </Button>
+          <Button
+            tone="primary"
+            disabled={amount() > props.gold}
+            onClick={() => {
+              setBidding(false);
+              props.onBid(amount());
+            }}
+          >
+            Bid {amount()} gold
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 
@@ -468,13 +484,14 @@ function LotRow(props: {
         <Show when={describeLot(props.caught)}>{(said) => <Meta>{said()}</Meta>}</Show>
       </div>
 
-      {/* What it stands at, and the one thing to do about it. A lot
-          that has stopped taking bids says what it went for instead,
-          since "40 gold to take it" reads as an offer on something
-          nobody may bid on any more */}
+      {/* What it stands at and how long is left, on one line, with
+          the one thing to do about it under them. A lot that has
+          stopped taking bids says what it went for instead, since a
+          price reads as an offer on something nobody may bid on any
+          more */}
       <div class="flex shrink-0 flex-col items-end gap-1">
         <Meta class="text-right">
-          {props.claim == null ? `${describeBid(props.auction)} · ` : `${props.claim.said} · `}
+          {props.claim == null ? describeStanding(props.auction) : props.claim.said},{' '}
           {describeRemaining(props.auction.endsAt, now())}
         </Meta>
         <Show

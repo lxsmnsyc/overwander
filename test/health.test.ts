@@ -1,6 +1,13 @@
 import { registerMoves } from '../src/data/moves';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { ACQUISITION_NAMES, Acquisition, asCaughtPokemon } from '../src/auth/caught-record';
+import {
+  ACQUISITION_NAMES,
+  Acquisition,
+  NICKNAME_LIMIT,
+  asCaughtPokemon,
+  asNickname,
+  getCatchName,
+} from '../src/auth/caught-record';
 import type { HealthSource, HealthState } from '../src/auth/health';
 import {
   NON_VOLATILE_STATUSES,
@@ -329,6 +336,47 @@ describe('stored records', () => {
     const carried = packStatuses([Statuses.Burned, Statuses.Poisoned]);
 
     expect(asCaughtPokemon({ ...stored, statuses: carried }).statuses).toBe(carried);
+  });
+
+  it('calls an unnamed pokemon by its species', () => {
+    const stored = {
+      owner: 'trainer',
+      species: Species.Bulbasaur,
+      level: 50,
+      ivs: packIVs(evenly(31)),
+      effortValues: evenly(0),
+    };
+
+    // A record written before pokemon could be named carries no name
+    expect(asCaughtPokemon(stored).nickname).toBe('');
+    expect(getCatchName(asCaughtPokemon(stored))).toBe('Bulbasaur');
+
+    // The default follows the species rather than being frozen into
+    // the record: an unnamed Bulbasaur is a Venusaur afterwards, not a
+    // Venusaur called Bulbasaur
+    expect(getCatchName(asCaughtPokemon({ ...stored, species: Species.Venusaur }))).toBe(
+      'Venusaur',
+    );
+
+    // ...and a name, once given, survives the same evolution
+    const named = asCaughtPokemon({ ...stored, species: Species.Venusaur, nickname: 'Sprout' });
+
+    expect(named.nickname).toBe('Sprout');
+    expect(getCatchName(named)).toBe('Sprout');
+  });
+
+  it('cleans a name down to what a record can hold', () => {
+    // The ends trimmed, a run of spaces inside counted as one
+    expect(asNickname('  Sir  Scratch  ')).toBe('Sir Scratch');
+    // Control characters dropped rather than stored and drawn as
+    // nothing: a name is what a heading can show
+    expect(asNickname('Fluff\u0007y')).toBe('Fluffy');
+    // Cut to the limit, counted in characters rather than in bytes
+    expect(asNickname('Bulbasaurus Rex')).toBe('Bulbasaurus');
+    expect(asNickname('Bulbasaurus Rex').length).toBeLessThanOrEqual(NICKNAME_LIMIT);
+    // ...and one that comes to nothing is a pokemon with no name,
+    // which is how a name is taken back off one
+    expect(asNickname('   ')).toBe('');
   });
 
   it('says how each owner came by the pokemon', () => {

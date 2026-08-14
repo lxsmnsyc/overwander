@@ -158,6 +158,9 @@ async function writeEgg(
     owner: uid,
     type: EncounterType.Hatched,
     species: fields.species,
+    // Unnamed, and doubly so: nothing in a shell has been introduced
+    // to anybody yet
+    nickname: '',
     level: EGG_LEVEL,
     individualValue: fields.individualValue,
     traitValue: fields.traitValue,

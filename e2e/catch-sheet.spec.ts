@@ -55,11 +55,11 @@ test.describe('the catch sheet', () => {
     await expect(evolve).toBeVisible();
     await expect(evolve).toBeDisabled();
     // What it is working towards reads off the row as a sum with the
-    // picture beside it — that shape, plus a level — and the row
-    // itself spells the shorthand out
-    await expect(
-      sheet.getByRole('listitem', { name: /^To evolve, reach Lv\. \d+\.$/ }).first(),
-    ).toBeVisible();
+    // picture beside it — that shape, plus a level or a stone — and
+    // the row itself spells the shorthand out. Which of them it is
+    // depends on the starter the world handed out this run, so the
+    // sentence is checked rather than the condition inside it
+    await expect(sheet.getByRole('listitem', { name: /^To evolve, .+\.$/ }).first()).toBeVisible();
   });
 
   test('counts out the training points at the end of the list', async ({ page }) => {
@@ -112,5 +112,47 @@ test.describe('the catch sheet', () => {
 
     expect(torn, 'nothing should have been unmounted while the favorite was written').toBe(0);
     await expect(sheet.getByText(SHEET)).toBeVisible();
+  });
+
+  test('names a pokemon and calls it that afterwards', async ({ page }) => {
+    const sheet = await openCatch(page);
+    // Whatever the starter is, the sheet is headed by its species
+    // until somebody says otherwise
+    const species = (await sheet.getByRole('heading', { level: 3 }).first().textContent()) ?? '';
+
+    await sheet.getByRole('button', { name: /Actions/ }).click();
+    await page.getByRole('menuitem', { name: 'Set nickname' }).click();
+
+    // The box is there to type in the moment it opens, rather than
+    // behind a "do you want to rename it?" step
+    const naming = page.getByRole('dialog', { name: 'Change nickname?' });
+    const box = naming.getByRole('textbox');
+
+    await expect(box).toBeVisible();
+    // Opened on the name it has, which for an unnamed one is nothing
+    await expect(box).toHaveValue('');
+
+    // The box holds twelve characters and no more; what it does with
+    // them — the doubled space counted as one — is the cleaning
+    await box.fill('Sir  Scratch');
+    // What it will actually be stored as, said before it is sent
+    await expect(naming.getByText('It will be called Sir Scratch.')).toBeVisible();
+    await naming.getByRole('button', { name: 'Save' }).click();
+
+    // The sheet is headed by the name now, with the species under it
+    await expect(sheet.getByRole('heading', { level: 3, name: 'Sir Scratch' })).toBeVisible();
+    await expect(sheet.getByText(species.replace('✦ ', ''), { exact: true })).toBeVisible();
+
+    // ...and the menu offers to change it rather than to set one
+    await sheet.getByRole('button', { name: /Actions/ }).click();
+    await page.getByRole('menuitem', { name: 'Change nickname' }).click();
+    await expect(box).toHaveValue('Sir Scratch');
+
+    // Emptying the box hands the pokemon back to its species
+    await box.fill('');
+    await naming.getByRole('button', { name: 'Save' }).click();
+    await expect(
+      sheet.getByRole('heading', { level: 3, name: species.replace('✦ ', '') }),
+    ).toBeVisible();
   });
 });

@@ -40,6 +40,15 @@ all, though never the family-day bonus. Letting one go is a decision about space
 rather than a punishment, and what the pokemon was worth does not change on the
 way out.
 
+## Names
+
+A pokemon answers to its species until you name it. **Set nickname** on the catch
+sheet gives it one of up to twelve characters; clearing the box takes the name
+back off, and it goes back to being called by its kind. A name survives evolution
+— that is rather the point of giving one — while a pokemon that was never named
+is called by whatever it has just become. Eggs cannot be named: nothing has been
+introduced yet.
+
 ## Evolution
 
 Only evolutions the game can verify are offered. The rest are never offered

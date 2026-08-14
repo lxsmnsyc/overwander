@@ -16,6 +16,7 @@ the three rule blocks that had to `get()` the parent to find an owner.
 | `owner`                | `string`                | Current owner's uid; changes on trade                      |
 | `type`                 | `EncounterType`         | How it was originally met                                  |
 | `species`              | `Species`               |                                                            |
+| `nickname`             | `string`                | What its owner calls it; empty until named                 |
 | `level`                | `number`                |                                                            |
 | `individualValue`      | `number`                | 32-bit roll the IVs slice from                             |
 | `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature         |
@@ -48,6 +49,20 @@ the three rule blocks that had to `get()` the parent to find an owner.
 | `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                      |
 | `origin.x`, `origin.y` | `number`                | Chunk coordinates                                          |
 | `origin.biome`         | `Biome`                 |                                                            |
+
+`setNickname` is what writes it. The server cleans what it is handed rather than
+trusting it — `asNickname` trims the ends, counts a run of spaces as one, drops
+control characters and cuts the rest to `NICKNAME_LIMIT` — and a name that cleans
+to nothing clears the field. A **guarded** catch may still be named, since what
+guarding protects is everything that changes what a pokemon *is*; a **fighting**
+one may not, for the usual reason.
+
+An empty `nickname` is not a missing one: it means nobody has named this pokemon,
+and every reader calls it by its species instead — `getCatchName`. The species'
+name is **not** copied into the field on creation, because a stored copy goes
+stale the moment the pokemon evolves: an unnamed Bulbasaur should read as
+Venusaur afterwards, not as a Venusaur called Bulbasaur. A pokemon that was named
+keeps its name through evolution, which is the point of having given it one.
 
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.

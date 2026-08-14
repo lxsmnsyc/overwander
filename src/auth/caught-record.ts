@@ -3,6 +3,7 @@
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
+import { getSpeciesData } from '../data/species';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { isPerfectIVs } from '../data/items/bottle-caps';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
@@ -72,6 +73,18 @@ export interface CaughtPokemon {
    */
   type: EncounterType;
   species: Species;
+  /**
+   * What its owner calls it.
+   *
+   * It is stored **empty** until somebody names it, and read back as
+   * the species' own name — see `getCatchName`. An unnamed pokemon
+   * should be called whatever its kind is called, and a stored copy of
+   * that name would go stale the moment it evolved: a Bulbasaur that
+   * nobody ever nicknamed is a Venusaur afterwards, not a Venusaur
+   * called Bulbasaur. A pokemon that **was** named keeps the name
+   * through evolution, which is the whole point of having given it one
+   */
+  nickname: string;
   level: number;
   individualValue: number;
   traitValue: number;
@@ -286,6 +299,49 @@ export interface CaughtPokemon {
     y: number;
     biome: Biome;
   };
+}
+
+/**
+ * The longest a nickname may be. The mainline has settled on twelve
+ * characters for decades, and the reason holds here: the name is drawn
+ * as a heading over a sprite and printed in lists beside a level, and
+ * anything longer stops being a name and starts being a sentence
+ */
+export const NICKNAME_LIMIT = 12;
+
+/**
+ * A name as it will be stored: the ends trimmed, any run of spaces
+ * inside it counted as one, control characters dropped, and the whole
+ * cut to `NICKNAME_LIMIT`.
+ *
+ * It is applied on both sides of the wire — the sheet shows what it is
+ * about to send, and the server writes what it decides for itself —
+ * so what a player sees in the field is what ends up on the record.
+ * Something that comes to nothing is a pokemon with no name at all,
+ * which is how a name is taken back off one
+ */
+export function asNickname(name: string): string {
+  const written = [...name.replace(/\s+/g, ' ')]
+    .filter((character) => (character.codePointAt(0) ?? 0) >= 0x20)
+    .join('')
+    .trim();
+
+  // Trimmed again after the cut: a name shortened in the middle of a
+  // word can end on the space before it, and a stored name ending in
+  // one is a heading with a gap after it
+  return [...written].slice(0, NICKNAME_LIMIT).join('').trim();
+}
+
+/**
+ * What to call a catch: the name its owner gave it, or its species'
+ * own name where nobody has given it one.
+ *
+ * It says nothing about eggs. A caller showing one has to decide that
+ * for itself, because the name of what is inside a shell is exactly
+ * what an egg is not supposed to give away
+ */
+export function getCatchName(caught: { nickname: string; species: Species }): string {
+  return caught.nickname === '' ? getSpeciesData(caught.species).name : caught.nickname;
 }
 
 /**
@@ -510,6 +566,9 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     owner: asString(data.owner),
     type,
     species,
+    // A record written before pokemon could be named carries no name,
+    // which is the same thing as never having been given one
+    nickname: asString(data.nickname),
     level,
     individualValue: asNumber(data.individualValue),
     traitValue: asNumber(data.traitValue),

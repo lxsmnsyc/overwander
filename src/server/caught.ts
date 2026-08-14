@@ -1,5 +1,10 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
+import {
+  Acquisition,
+  asCaughtPokemon,
+  asNickname,
+  isAuctionableCatch,
+} from '../auth/caught-record';
 import { CAUGHT_COLLECTION, ENCOUNTER_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
@@ -123,6 +128,10 @@ export async function writeCaughtRecord(
     owner: uid,
     type: encounter.type,
     species: encounter.species,
+    // Nobody has named it yet, which is what an empty name means: it
+    // is called whatever its species is called until somebody says
+    // otherwise
+    nickname: '',
     level: encounter.level,
     individualValue: encounter.individualValue,
     traitValue: encounter.traitValue,
@@ -333,6 +342,45 @@ async function setCatchMark(
     }
     transaction.update(ref, { [field]: on });
     return on;
+  });
+}
+
+/**
+ * Name one of the player's pokemon, or take its name back off.
+ *
+ * The name is cleaned by the server rather than trusted from the
+ * caller — `asNickname` — so nothing arrives on a record that the
+ * sheet cannot draw: no control characters, no run of spaces standing
+ * in for a name, nothing longer than `NICKNAME_LIMIT`. A name that
+ * cleans to nothing clears the field, and the pokemon goes back to
+ * being called whatever its species is called.
+ *
+ * A **guarded** pokemon may still be named. What guarding protects is
+ * everything that changes what a pokemon *is* — its level, its
+ * values, its species — and what somebody calls it is not among them.
+ * A **fighting** one may not, for the ordinary reason: its record is
+ * held while the battle runs on a snapshot of it.
+ *
+ * Resolves the name as it now stands, or null when the catch is not
+ * the user's or is fighting
+ */
+export async function setNickname(
+  uid: string,
+  catchId: string,
+  nickname: string,
+): Promise<string | null> {
+  const db = getAdminFirestore();
+  const named = asNickname(nickname);
+
+  return db.runTransaction(async (transaction) => {
+    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
+    const caught = docData(await transaction.get(ref));
+
+    if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+      return null;
+    }
+    transaction.update(ref, { nickname: named });
+    return named;
   });
 }
 

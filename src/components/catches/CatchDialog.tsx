@@ -15,11 +15,15 @@ import {
   releaseCatch,
   setFavorite,
   setGuarded,
+  setNickname,
   takeItem,
 } from '../../auth/caught';
 import useHealingItem from '../../auth/healing';
 import {
   ACQUISITION_NAMES,
+  NICKNAME_LIMIT,
+  asNickname,
+  getCatchName,
   getCatchSlots,
   getMovePoints,
   isShadow,
@@ -111,6 +115,7 @@ import {
   DialogActions,
   DialogSection,
   Divider,
+  Field,
   List,
   ListRow,
   Menu,
@@ -810,10 +815,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * What the dialog is called. An egg gives away nothing about what is
-   * inside it — not the species, not even whether it sparkles — and a
-   * record still being read gives away nothing at all, but the dialog
-   * is named either way rather than opening unnamed
+   * What the dialog is called: what its owner calls it, which is the
+   * species' own name until somebody names it otherwise.
+   *
+   * An egg gives away nothing about what is inside it — not the
+   * species, not the name, not even whether it sparkles — and a record
+   * still being read gives away nothing at all, but the dialog is
+   * named either way rather than opening unnamed
    */
   const named = (): string => {
     const loaded = view();
@@ -824,7 +832,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (isEgg(loaded)) {
       return 'Egg';
     }
-    return `${isShiny(loaded) ? '✦ ' : ''}${getSpeciesData(loaded.species).name}`;
+    return `${isShiny(loaded) ? '✦ ' : ''}${getCatchName(loaded)}`;
   };
 
   /**
@@ -1126,6 +1134,65 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       });
   };
 
+  /**
+   * The name being typed, or null while nothing is being named. It is
+   * a draft rather than the record: a player half-way through a name
+   * has not renamed anything yet
+   */
+  const [naming, setNaming] = createSignal<string | null>(null);
+  const [renaming, setRenaming] = createSignal(false);
+
+  /**
+   * What the draft will actually be stored as. The field is left
+   * alone while it is being typed — cleaning every keystroke makes a
+   * space impossible to type, since the trim eats it before the next
+   * letter arrives — so the cleaned name is shown under it instead
+   */
+  const drafted = (): string => asNickname(naming() ?? '');
+
+  /**
+   * What the box will have done, said before it does it: the cleaned
+   * name, or the species it goes back to when the box is left empty
+   */
+  const describeDraft = (): string => {
+    const loaded = view();
+
+    if (drafted() !== '') {
+      return `It will be called ${drafted()}.`;
+    }
+    return loaded == null
+      ? 'It will go back to being called by its species.'
+      : `It will go back to being called ${getSpeciesData(loaded.species).name}.`;
+  };
+
+  const rename = (): void => {
+    const catchId = props.catchId;
+    const draft = naming();
+
+    if (owned() == null || catchId == null || draft == null) {
+      return;
+    }
+    setStatus(null);
+    setRenaming(true);
+    setNickname(catchId, draft)
+      .then(async (given) => {
+        setRenaming(false);
+
+        if (given == null) {
+          setStatus('That name could not be given.');
+          return;
+        }
+        setNaming(null);
+        setStatus(given === '' ? 'Its name is its own again.' : `It answers to ${given} now.`);
+        await refetch();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setRenaming(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
   const favorite = (on: boolean): void => {
     const catchId = props.catchId;
 
@@ -1385,6 +1452,21 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       },
     },
     {
+      // Named for what it does to *this* pokemon: one that has never
+      // been named is being given a name, and one that has is having
+      // the name it answers to changed
+      label: loaded.nickname === '' ? 'Set nickname' : 'Change nickname',
+      // An egg is not named. What is in it has not been met, and a
+      // name given to a shell is a name given to nobody
+      disabled: fighting.latest === true || isEgg(loaded),
+      onSelect: () => {
+        // Opened on the name it already has rather than on an empty
+        // box: renaming is far commoner than naming, and a player
+        // fixing one letter should not have to type the other eleven
+        setNaming(loaded.nickname);
+      },
+    },
+    {
       label: buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
       disabled: buddy.latest === props.catchId,
       onSelect: takeAlong,
@@ -1409,7 +1491,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         // than sitting open behind it: two modals at once fight for the
         // click that closes them, and the sheet is what the player comes
         // back to afterwards
-        isOpen={props.catchId != null && teaching() == null && bottle() == null}
+        isOpen={props.catchId != null && teaching() == null && bottle() == null && naming() == null}
         onClose={() => {
           setStatus(null);
           // A release half-confirmed is a release declined
@@ -1559,6 +1641,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
 
                 <div class="flex flex-col items-center gap-0.5">
                   <h3>{named()}</h3>
+                  {/* What it actually is, under what it is called —
+                      and only where the two differ. A pokemon nobody
+                      has named is headed by its species already, and
+                      printing that twice would be the sheet answering
+                      a question it has just answered */}
+                  <Show when={!isEgg(loaded()) && loaded().nickname !== ''}>
+                    <Meta>{getSpeciesData(loaded().species).name}</Meta>
+                  </Show>
                   {/* Both of the rolls it was made from, drawn rather
                       than printed. Two of the same species with the
                       same sigil are the same individual */}
@@ -1568,10 +1658,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 </div>
 
                 {/* What it is: what the dex calls its kind, the types
-                    it fights as, and which it is. The species' own name
-                    is the heading above this, so saying it twice would
-                    leave the line saying nothing. An egg is none of it
-                    yet */}
+                    it fights as, and which it is. Its species is named
+                    above — as the heading, or under it where a
+                    nickname has taken the heading — so this line does
+                    not say it a third time. An egg is none of it yet */}
                 <Show when={!isEgg(loaded())}>
                   <Row class="justify-center">
                     <span class="font-medium">{getSpeciesData(loaded().species).category}</span>
@@ -2179,6 +2269,66 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
             .catch(() => undefined);
         }}
       />
+
+      {/* Naming, on a dialog of its own for the same reason teaching
+          is: the sheet is long and the field would be somewhere down
+          it, while this is one box and one button.
+
+          The box is filled the moment it opens rather than after a
+          "do you want to rename it?" step, and the button is dead
+          until the name in it is actually different — the question a
+          player came here to answer is what to call it, not whether
+          they meant to */}
+      <Dialog
+        isOpen={naming() != null}
+        onClose={() => {
+          setNaming(null);
+        }}
+        title="Change nickname?"
+        // The sentence is for the screen reader alone: the box under
+        // the heading is labelled, and the line below it already says
+        // what an empty box does. A dialog this small should not
+        // explain itself twice
+        terse
+        description="What you call it. Left empty, it goes back to being called by its species."
+      >
+        <Field label="Name" stacked>
+          <input
+            type="text"
+            value={naming() ?? ''}
+            maxLength={NICKNAME_LIMIT}
+            onInput={(event) => {
+              setNaming(event.currentTarget.value);
+            }}
+          />
+        </Field>
+
+        {/* What it will actually be called: the name cleaned the way
+            the server will clean it, or the species' own name for a
+            box left empty. A player should not have to send it to
+            find out what it did */}
+        <Meta>{describeDraft()}</Meta>
+
+        <DialogActions>
+          <Button
+            disabled={renaming()}
+            onClick={() => {
+              setNaming(null);
+            }}
+          >
+            Never mind
+          </Button>
+          <Button
+            tone="primary"
+            // Nothing to do where the name has not changed: the same
+            // name written again is a write for the sake of one
+            disabled={renaming() || drafted() === (view()?.nickname ?? '')}
+            onClick={rename}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* And the same shape for a bottle: a PP Up is spent on one move
           and nothing takes the points back, so it asks which before it

@@ -21,6 +21,7 @@ import {
   setFavorite as favoriteOnServerSide,
   giveItem as giveOnServer,
   setGuarded as guardedOnServerSide,
+  setNickname as nicknameOnServerSide,
   releaseCatch as releaseOnServerSide,
   takeItem as takeOnServer,
 } from '../server/caught';
@@ -30,7 +31,15 @@ import { CAUGHT_COLLECTION } from './collections';
 import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
-export { HELD_ITEM_LIMIT, asCaughtPokemon, isFavorite, isGuarded } from './caught-record';
+export {
+  HELD_ITEM_LIMIT,
+  NICKNAME_LIMIT,
+  asCaughtPokemon,
+  asNickname,
+  getCatchName,
+  isFavorite,
+  isGuarded,
+} from './caught-record';
 export type { CaughtPokemon, OwnershipRecord } from './caught-record';
 
 const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
@@ -251,6 +260,29 @@ async function setFavoriteOnServer(
 ): Promise<boolean | null> {
   'use server';
   return favoriteOnServerSide(await requireUid(token), catchId, favorite);
+}
+
+/**
+ * Name one of the player's pokemon, or take the name back off by
+ * handing over nothing.
+ *
+ * The server cleans what it is given — see `asNickname` — so what
+ * lands on the record is what the sheet showed while it was being
+ * typed. Resolves the name as it now stands, which is an empty string
+ * for a pokemon back to being called by its species, or null when the
+ * catch is not the user's or is fighting
+ */
+export async function setNickname(catchId: string, nickname: string): Promise<string | null> {
+  return setNicknameOnServer(await getIdToken(), catchId, nickname);
+}
+
+async function setNicknameOnServer(
+  token: string,
+  catchId: string,
+  nickname: string,
+): Promise<string | null> {
+  'use server';
+  return nicknameOnServerSide(await requireUid(token), catchId, nickname);
 }
 
 /**

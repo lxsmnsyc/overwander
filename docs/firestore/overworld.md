@@ -1,7 +1,7 @@
 # Shared overworld stores
 
-These are the synchronization surface: every player observing a chunk must
-derive the same spawns, so the rolls are published once and read by everyone.
+These are the synchronization surface. Every player observing a chunk must derive
+the same spawns, so the rolls are published once and read by everyone.
 
 ## Windows
 
@@ -11,21 +11,21 @@ ground they dig up is slower, and anything worth making a trip for outlives the
 trip. Every interval is a whole number of `SNAPSHOT_INTERVAL`s, so a landmark
 never rolls over halfway through the window a player is standing in.
 
-| Window                | Length     | What it turns over                        |
-| --------------------- | ---------- | ----------------------------------------- |
-| `SNAPSHOT_INTERVAL`   | 5 minutes  | The shared window document and its spawns |
-| `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches            |
-| `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell     |
-| `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies         |
-| `ROCKET_INTERVAL`     | 3 hours    | Team Rocket stops                         |
-| `NPC_INTERVAL`        | 6 hours    | Who is standing at a wandering-NPC cell   |
-| `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                   |
+| Window                | Length     | What it turns over                                                       |
+| --------------------- | ---------- | ------------------------------------------------------------------------ |
+| `SNAPSHOT_INTERVAL`   | 5 minutes  | The shared window document and its spawns                                |
+| `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches                                           |
+| `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell                                    |
+| `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies                                        |
+| `NPC_INTERVAL`        | 6 hours    | Who is at a wandering-NPC cell, and the party a Team Rocket grunt fields |
+| `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                                                  |
 
-All six are derived from the one snapshot the player is standing in
-([`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)):
+All of them derive from the one snapshot the player is standing in
+([`src/overworld/chunk-snapshot.ts`](../../src/overworld/chunk-snapshot.ts)).
 `timestamp` is floored to the spawn window, and `landmarkTimestamp`,
-`raidTimestamp`, `rocketTimestamp`, `npcTimestamp` and `nestTimestamp` floor that
-again to their own. Every claim marker and lobby id is stamped with the window
+`phenomenonTimestamp`, `raidTimestamp`, `npcTimestamp` and `nestTimestamp` floor
+that again to their own. A Team Rocket stop derives against `npcTimestamp`, like
+everything else at a wandering cell. Every claim marker and lobby id is stamped with the window
 its landmark actually runs on, so a stash cannot be re-dug three times while the
 hole is still empty.
 
@@ -41,19 +41,18 @@ Written by `resolveSnapshotWindow` in
 | `timestamp` | `number` | The 5-minute **local** window, floored to `SNAPSHOT_INTERVAL` |
 
 Whoever finds the record missing or expired writes the new window and is told
-they refreshed it; everyone else **in the same zone** adopts the stored
+they refreshed it. Everyone else **in the same zone** adopts the stored
 timestamp. The instant used to judge expiry comes from the
-[server clock](time.md#clock), never the device — only the zone it is read in
-is the player's.
+[server clock](time.md#clock), never the device; only the zone it is read in is
+the player's.
 
-The zone is part of the key because the window is local: a chunk is not one
-world seen from several clocks but one per zone. See
-[Local time](time.md#local-time).
+The zone is part of the key because the window is local: a chunk is not one world
+seen from several clocks but one per zone. See [Local time](time.md#local-time).
 
 ## The window's spawns
 
-They are a **field of the snapshot**, not a collection. A spawn has no life
-apart from the window that rolled it: it is rolled with the window, replaced
+Spawns are a **field of the snapshot**, not a collection. A spawn has no life
+apart from the window that rolled it — it is rolled with the window, replaced
 with it, and never read without it — so `snapshots/{chunkSeed}:{zone}` carries
 `spawns: SpawnRoll[]`, in roll order.
 
@@ -66,74 +65,80 @@ with it, and never read without it — so `snapshots/{chunkSeed}:{zone}` carries
 Where a spawn stands is not stored. The cells are re-derived from the same seed
 and window by `getSpawnCells`, so the nth roll is the nth placed cell on every
 screen. Its **name** is derived too — `{chunkSeed}:{zone}@{timestamp}#{index}`,
-from `spawnId` — which is what an encounter document is keyed by; nothing has to
-keep a document alive to give a spawn a name.
+from `spawnId` — which is what an encounter document is keyed by, so nothing has
+to keep a document alive just to give a spawn a name.
 
 What that replaced: one document per spawn, published in a batch of eight, found
 again by a three-field query on a **composite index** `(chunk, offset,
-timestamp)`, and swept up by a second query and a delete batch every time a
-window turned over. Publishing is now one write inside the same transaction that
-fixes the window, reading is one read, and a window that rolls over overwrites
-its own spawns — there is nothing stale left to clear. The index is gone with it.
+timestamp)`, and swept up by a second query and a delete batch every time a window
+turned over. Publishing is now one write inside the same transaction that fixes
+the window, reading is one read, and a window that rolls over overwrites its own
+spawns — there is nothing stale left to clear. The index is gone with it.
 
-A window publishes `SPAWN_COUNT` (6) spawns plus `LURE_SPAWN_BONUS` (2) more:
-the extras are rolled for every chunk so that all its visitors share one set of
-rolls, and a **lure** buddy — Arena Trap, Illuminate or No Guard — decides who
-can see them rather than whether they exist. A player without one neither sees
-the last two on the map nor may meet them: `meetSpawn` reads the index off the
-spawn id and refuses anything past `visibleSpawnCount`.
+A window publishes `SPAWN_COUNT` (8) spawns plus `LURE_SPAWN_BONUS` (3) more. The
+extras are rolled for every chunk so that all its visitors share one set of rolls,
+and a **lure** buddy — Arena Trap, Illuminate or No Guard — decides who can see
+them rather than whether they exist. A player without one neither sees the last
+three on the map nor may meet them: `meetSpawn` compares the index off the spawn
+id against `checkSpawnCount(SPAWN_COUNT)` and refuses anything past it. A **Pure
+Incense** answers the same question the other way, taking `PURE_INCENSE_QUIET`
+(3) off what its holder can see.
 
-`meetSpawn` also checks the whole name against the live window before it reads
-the roll, so a spawn from a window that has turned over — or from a chunk away —
-is not standing there to be met.
+`meetSpawn` also checks the whole name against the live window before it reads the
+roll, so a spawn from a window that has turned over — or from a chunk away — is
+not standing there to be met.
 
 ## `encounters/{spawnId}:{uid}`
 
 Written by `startEncounter`: the per-player view of a shared spawn (shininess,
 gender, ability, nature, moves, …) derived once and reused afterwards.
 
-Holds every field of `Encounter` plus `spawn` (the spawn document id) and
+It holds every field of `Encounter` plus `spawn` (the spawn document id) and
 `player` (the uid). Its `shiny` and `shadow` fields and its packed `ivs` are the
-same shapes the catch record stores — see [Packed fields](catches.md#packed-fields) — so recording a
-catch copies them across rather than converting them. Only the named player may read or write it.
+same shapes the catch record stores — see
+[Packed fields](catches.md#packed-fields) — so recording a catch copies them
+across rather than converting them. Only the named player may read or write it.
 
-The buddy at the player's side shapes this document, the way a party leader
-shapes a wild encounter in the mainline. The overworld asks for each of these
-through an event engine of its own
+The buddy at the player's side shapes this document, the way a party leader shapes
+a wild encounter in the mainline. The overworld asks for each of these through an
+event engine of its own
 ([`src/overworld/core.ts`](../../src/overworld/core.ts)), built the same way the
 battle engine is: every field ability and held-item effect is written once, in
 [`src/overworld/abilities/gen-1.ts`](../../src/overworld/abilities/gen-1.ts) or
 [`src/overworld/items/key-items.ts`](../../src/overworld/items/key-items.ts), and
 registers itself against the questions it has an opinion about. Nothing that
-stages a spawn or an encounter names an ability. **Synchronize** passes its own
-nature on half the time, and **Cute Charm** brings out the opposite gender two
-draws in three; a buddy holding the **Shiny Charm** lifts the odds eightfold.
-Each rolls on a stream seeded by the spawn id and the uid, so the client shows
-the player exactly what the server will stage, and two players on one cell get
-their own.
+stages a spawn or an encounter names an ability.
+
+**Synchronize** passes its own nature on half the time, **Cute Charm** brings out
+the opposite gender two draws in three, and a buddy holding the **Shiny Charm**
+lifts the odds eightfold. Each rolls on a stream seeded by the spawn id and the
+uid, so the client shows the player exactly what the server will stage, and two
+players on one cell get their own answers.
 
 What a chunk holds is the same for everyone standing in it: no field effect
 changes which species turned up, only how many of them a player can see.
 
-Two of the encounter's own fields are worth calling out. **Shiny** is a resonance
-between the trainer id and the **trait** value, so shininess is independent of
-the IVs a pokemon rolled and the same spawn can sparkle for one player and not
-another. The odds
-are multiplied by the species day (×8 for the featured family) and by the Shiny
-Charm (×8) when the player's buddy is holding it — `startEncounter` checks
-the profile's `buddy` and that catch's held items before deriving. **Shadow**
-marks a shadow raid's reward: `recordCatch` then writes `Abilities.Shadow` into
-the catch's `abilities` alongside the rolled one, so it keeps it for good.
+Two of the encounter's own fields are worth calling out:
+
+- **Shiny** is a resonance between the trainer id and the **trait** value, so
+  shininess is independent of the IVs a pokemon rolled, and the same spawn can
+  sparkle for one player and not another. The odds are multiplied by the species
+  day (×8 for the featured family) and by the Shiny Charm (×8) when the player's
+  buddy is holding it — `startEncounter` checks the profile's `buddy` and that
+  catch's held items before deriving.
+- **Shadow** marks a shadow raid's reward. `recordCatch` then writes
+  `Abilities.Shadow` into the catch's `abilities` alongside the rolled one, so it
+  keeps the ability for good.
 
 A raid reward derived on its family's own day floors every IV at
-`RAID_FAMILY_DAY_MIN_IV` (6); rolls above the floor are left alone. Its level is
+`RAID_FAMILY_DAY_MIN_IV` (6), leaving rolls above the floor alone. Its level is
 fixed rather than rolled — `LEGENDARY_RAID_REWARD_LEVEL` (50) or
 `SHADOW_RAID_REWARD_LEVEL` (25) — so clearing the same kind of raid is worth the
 same to everyone, and the level-up moves follow that level.
 
 ## `cacheClaims/{chunkSeed}@{landmarkTimestamp}${cell}:{uid}`
 
-Written by `claimItemCache` inside a transaction; its existence is the claim
+Written by `claimItemCache` inside a transaction. Its existence is the claim
 marker that stops a player collecting the same cache twice in one window.
 
 | Field    | Type          | Notes                               |
@@ -142,30 +147,32 @@ marker that stops a player collecting the same cache twice in one window.
 | `items`  | `ItemStack[]` | The whole stash: `{ item, amount }` |
 
 A cache holds a **stash**, not an item. `pickItems` reads the band roll as a
-_ceiling_ rather than a choice: it is the best thing in the stash, and one kind
-of it is guaranteed. How many kinds is a separate draw (up to `MAX_KINDS`, 3),
-and every kind after the first rolls its own band on the same odds, clamped to
-that ceiling — so a stash may hold two rares and a base, or three commons, or one
-of each. Rarity and count are independent, which is what stops a good dig from
-being the same three slots every time. Each kind carries up to `MAX_STACK` (3)
-pieces, on a draw of its own; two kinds landing on the same item merge into one
-stack that still never exceeds `MAX_STACK`.
+_ceiling_ rather than a choice: it is the best thing in the stash, and one kind of
+it is guaranteed. How many kinds is a separate draw (up to `MAX_KINDS`, 3), and
+every kind after the first rolls its own band on the same odds, clamped to that
+ceiling. So a stash may hold two rares and a base, or three commons, or one of
+each. Rarity and count being independent is what stops a good dig from being the
+same three slots every time.
+
+Each kind carries up to `MAX_STACK` (3) pieces, on a draw of its own, and two
+kinds landing on the same item merge into one stack that still never exceeds
+`MAX_STACK`.
 
 A special is a ceiling like any other band, so a stash may well be a Master Ball
-and two stones. Two things it may never be: **two specials** — only the opening
-draw reaches that band, and every kind after it is clamped to rare at best — and
-more than one piece of a special, since a Master Ball found three at a time
+and two stones. Two things it may never be: **two specials**, since only the
+opening draw reaches that band and every kind after it is clamped to rare at best,
+and **more than one piece** of a special — a Master Ball found three at a time
 would stop being a Master Ball.
 
 The whole stash is granted stack by stack and recorded on the marker, so what a
 cache paid is readable afterwards rather than only that it paid.
 
-Claims are never updated or deleted — an expired window simply produces a new
+Claims are never updated or deleted: an expired window simply produces a new
 document id. Only the named player may create one.
 
 ## `berryClaims/{chunkSeed}@{landmarkTimestamp}$berry{cell}:{uid}`
 
-Written by `claimBerryPatch`, the same one-claim-per-window marker as an item
+Written by `claimBerryPatch` — the same one-claim-per-window marker as an item
 cache. A berry patch fruits on the 15-minute landmark window: picked or not, the
 next window grows something new.
 
@@ -191,20 +198,20 @@ their slot in the item pool — one thin slot each, so digging up the one that
 answers what a party is about to walk into stays luck rather than shopping.
 
 A berry pool keeps its **prized** band empty. That band is for the things that
-change a pokemon for good — a Bottle Cap, a Purifying Gem — and a berry is
-eaten, so its slice of the roll falls through to the rare band below it, the way
-any empty band does.
+change a pokemon for good, like a Bottle Cap or a Purifying Gem, and a berry is
+eaten. Its slice of the roll falls through to the rare band below, the way any
+empty band does.
 
 A patch is a bush rather than a buried box, so it bears **one kind** and
-`MIN_BERRY_PICK`-`MAX_BERRY_PICK` (3-5) pieces of it: the rarity is the
+`MIN_BERRY_PICK`–`MAX_BERRY_PICK` (3–5) pieces of it: the rarity is the
 interesting draw and the count is only how good a season it had. That is the
-difference from a cache, which rolls several kinds but rarely more than one or
-two of each.
+difference from a cache, which rolls several kinds but rarely more than one or two
+of each.
 
 ## `phenomenonClaims/{chunkSeed}@{phenomenonTimestamp}$happening{cell}:{uid}`
 
-Written by `claimPhenomenon`, the same one-claim-per-window marker as an item
-cache — on the phenomenon's own **one-hour** window.
+Written by `claimPhenomenon` — the same one-claim-per-window marker as an item
+cache, on the phenomenon's own **one-hour** window.
 
 | Field    | Type     | Notes                                          |
 | -------- | -------- | ---------------------------------------------- |
@@ -214,9 +221,9 @@ cache — on the phenomenon's own **one-hour** window.
 A **phenomenon** is the one landmark whose kind is rolled rather than fixed. The
 cell is the chunk's own like any landmark; what is happening on it is drawn each
 hour from `BIOME_PHENOMENA[biome]`
-([`src/data/overworld/phenomenon.ts`](../../src/data/overworld/phenomenon.ts)),
-so water only ripples where there is water and dust only rises where there is
-dust. `getPhenomena()` says which one is showing; `getPhenomenonReward(cell)`
+([`src/data/overworld/phenomenon.ts`](../../src/data/overworld/phenomenon.ts)), so
+water only ripples where there is water and dust only rises where there is dust.
+`getPhenomena()` says which one is showing, and `getPhenomenonReward(cell)`
 resolves what it turns out to be, seeded by chunk, hour and cell so every visitor
 of that cell this hour finds the same thing.
 
@@ -228,14 +235,14 @@ of that cell this hour finds the same thing.
 | **Flying Shadow**  | One wing                          | A pokemon                              |
 
 The pokemon is the biome's **uncommon** band, or its **rare** band one draw in
-eight (`PHENOMENON_RARE_CHANCE`), with either standing in for the other when it
-is empty. The base band is not in it — what a player can meet by walking is not
-worth stopping for — and neither is the special one, so no phenomenon ever stages
-a legendary.
+eight (`PHENOMENON_RARE_CHANCE`), with either standing in for the other when it is
+empty. The base band is not in it — what a player can meet by walking is not worth
+stopping for — and neither is the special one, so no phenomenon ever stages a
+legendary.
 
-An item reward lands in the inventory as part of the claim, one piece: everything
-a phenomenon leaves is worth carrying home on its own. A pokemon reward comes back
-as a spawn tuple whose two rolls derive from
+An item reward lands in the inventory as part of the claim, one piece:
+everything a phenomenon leaves is worth carrying home on its own. A pokemon
+reward comes back as a spawn tuple whose two rolls derive from
 `{seed}{phenomenonTimestamp}happening{cell}spawn`, passed to `startEncounter`
 under the id `{chunkSeed}@{phenomenonTimestamp}$happening{cell}`, which has no
 `spawns` document behind it. A grotto's egg is written by `grantNestEgg`, exactly
@@ -244,8 +251,8 @@ as a nest's is.
 ## `nestClaims/{chunkSeed}{zone}@{nestTimestamp}$nest{cell}:{uid}`
 
 Written by `claimNest` in
-[`src/server/overworld.ts`](../../src/server/overworld.ts), the same
-one-claim-per-window marker as an item cache — except that a nest's window is
+[`src/server/overworld.ts`](../../src/server/overworld.ts) — the same
+one-claim-per-window marker as an item cache, except that a nest's window is
 `NEST_INTERVAL`, **twelve local hours**. A nest refills at midnight and at noon
 where the player is standing, so it gives each of them one egg per half day.
 
@@ -255,25 +262,24 @@ where the player is standing, so it gives each of them one egg per half day.
 | `species` | `Species` | What the nest was holding that window |
 
 The player still has to be standing in the chunk's **live 5-minute window** to
-reach it; the half-day window only decides what is lying there and how often.
-The claim grants an egg by writing a `caught` document with `egg` set — see
+reach it; the half-day window only decides what is lying there and how often. The
+claim grants an egg by writing a `caught` document with `egg` set — see
 [Eggs](catches.md#eggs) — rather than an inventory item or an encounter.
 
 What a nest holds is one draw on the biome's **egg pool** for that window's time
 of day (`getEggPool`): the base, uncommon and rare bands walked back to the first
 stage of each line and merged by species, since a nest holds what hatches rather
-than what it grows into. Merging is what makes it one list and one draw —
-`resolveNest` no longer flattens three bands at every roll — and the distribution
-is unchanged, because everything that reduces to the same egg has its weight
-added to that egg. The pool is built once per registered biome and kept against
-it.
+than what it grows into. Merging is what makes it one list and one draw, so
+`resolveNest` no longer flattens three bands at every roll. The distribution is
+unchanged, because everything that reduces to the same egg has its weight added to
+that egg. The pool is built once per registered biome and kept against it.
 
 Two bands are left out, for different reasons. The **special** tier is not in it
 at all, so no nest ever holds a legendary, and a mythical is still called with a
 relic or not at all. The **prized** tier is left out because a baby is _already_
-in the list — it is the first stage of its line, so every ordinary entry of that
-line walks back to it, and adding the band would count it twice. What that leaves
-out is an unown, which has no line to be walked back along: it is met rather than
+in the list: it is the first stage of its line, so every ordinary entry of that
+line walks back to it, and adding the band would count it twice. That leaves out
+the unown, which has no line to be walked back along — it is met rather than
 hatched.
 
 The hatchling is guaranteed one move off its line's egg list, which is the reason
@@ -288,42 +294,47 @@ chunk stages, so a raid rolling over changes nothing about who is at the cell. A
 player who needs a breeder and finds a daycare lady waits for the afternoon or
 walks to another one.
 
-None of them trusts the caller about who they are talking to:
-`src/server/npcs.ts` re-derives the chunk, the zone and the window and checks
-the NPC standing there **before** doing anything.
+`NPCS` holds **nine** of them. `Npc.RocketGrunt` bars the cell and fights whoever
+accepts, and its state lives in
+[`rocketStops`](raids.md#rocketstopsstopiduid) rather than in a claim marker. The
+eight who do something to a pokemon are below.
+
+None of them trusts the caller about who they are talking to: `src/server/npcs.ts`
+re-derives the chunk, the zone and the window and checks the NPC standing there
+**before** doing anything.
 
 **Each of them serves a player once per window**, the vendor and the fossil
 scientist aside — what those two hand over is paced by a purse and by a bag of
-fossils rather than by the clock. A marker at
-`npcClaims/{npc}{cell}:{uid}`, stamped with the NPC window, records that this
-player has been seen; a second ask before the passer-by changes is turned away
-whatever they can pay. The marker is per cell, so walking to another wandering
-cell finds somebody who has not seen you yet — that walk is what a second egg
-costs.
+fossils rather than by the clock. A marker at `npcClaims/{npc}{cell}:{uid}`,
+stamped with the NPC window, records that this player has been seen, and a second
+ask before the passer-by changes is turned away whatever they can pay. The marker
+is per cell, so walking to another wandering cell finds somebody who has not seen
+you yet. That walk is what a second egg costs.
 
-It is taken as late as each call can manage, once the visit is known to be one
-that will land: a pair that cannot breed, an egg already ready to hatch, or a
+The marker is taken as late as each call can manage, once the visit is known to be
+one that will land: a pair that cannot breed, an egg already ready to hatch, or a
 party that needed nothing is refused without spending it. The two that charge
 claim the visit _before_ taking the gold — a player already seen should not be
 charged to be told so — and both the gold and the visit go back if the write
 behind them fails.
 
 - **Breeder** — takes two of the player's pokemon and `BREEDING_FEE` gold, and
-  writes an egg. Neither parent is consumed, held or locked: they are handed
-  back the moment the egg exists. What the pair may produce is decided by
+  writes an egg. Neither parent is consumed, held or locked: they are handed back
+  the moment the egg exists. What the pair may produce is decided by
   [`src/overworld/breeding.ts`](../../src/overworld/breeding.ts) from the
-  **stored** records: shared egg group, opposite genders (or a Ditto standing in
-  for one, but not for two), nothing from the undiscovered group, and no eggs.
-  The egg is the first stage of the mother's line — the non-Ditto parent's when
-  a Ditto stands in.
-- **Daycare Lady** — takes an egg and `DAYCARE_FEE` gold and adds `hatchSteps /
-2` to wherever it already stood (`boostedSteps`), so an egg a quarter of the
-  way along comes out three quarters of the way. It is a share of the
-  requirement rather than a place on it, which means one past the half-way mark
-  is finished by a single boost and any egg is finished by two — the fee is what
-  paces it. Only an egg already ready to hatch is refused. `steppedAt` moves
-  with the jump, since those steps were not walked and the time they would have
-  taken must not be banked for the next report.
+  **stored** records: a shared egg group, opposite genders (or a Ditto standing in
+  for one, but not for two), nothing from the undiscovered group, and no eggs. The
+  egg is the first stage of the mother's line — the non-Ditto parent's when a
+  Ditto stands in.
+
+- **Daycare Lady** — takes an egg and `DAYCARE_FEE` gold and adds
+  `hatchSteps / 2` to wherever it already stood (`boostedSteps`), so an egg a
+  quarter of the way along comes out three quarters of the way. It is a share of
+  the requirement rather than a fixed place on it, which means one past the
+  half-way mark is finished by a single boost and any egg is finished by two — the
+  fee is what paces it. Only an egg already ready to hatch is refused. `steppedAt`
+  moves with the jump, since those steps were not walked and the time they would
+  have taken must not be banked for the next report.
 
 - **Nurse Joy** — takes up to `NURSE_CARE_LIMIT` (6) of the player's pokemon and
   charges **nothing**. Every one of them comes back at full health with its
@@ -333,14 +344,13 @@ behind them fails.
   handed straight back without spending the visit.
 
 - **Groomer** — takes one of the player's pokemon and `GROOMING_FEE` gold, and
-  hands it back thinking half again as well of them: `groomedFriendship` adds
-  half of whatever is _left_ to give, the same bargain the daycare lady makes
-  with an egg. It is worth a great deal to a pokemon fresh out of a ball and
-  almost nothing to one that is already inseparable, and because it is always
-  half of the remainder it can never buy the last of a friendship — that part
-  is walked for. A pokemon that can gain nothing is refused before anything is
-  charged, and an egg is refused outright: what is inside one has not met
-  anybody yet.
+  hands it back thinking half again as well of them. `groomedFriendship` adds half
+  of whatever is _left_ to give, the same bargain the daycare lady makes with an
+  egg. It is worth a great deal to a pokemon fresh out of a ball and almost
+  nothing to one that is already inseparable, and because it is always half of the
+  remainder it can never buy the last of a friendship — that part is walked for. A
+  pokemon that can gain nothing is refused before anything is charged, and an egg
+  is refused outright: what is inside one has not met anybody yet.
 
 - **Move Reminder** — takes one **Heart Scale** and puts back a move the pokemon
   learned by levelling and has since lost. What he can give back is
@@ -351,64 +361,62 @@ behind them fails.
   only offer a Charizard moves a Charizard never learns.
 
   He shares [`learnMove`](../mechanics/raising.md#teaching-a-move) with the
-  machines, so a full list asks which move goes and a list with room asks
-  nothing. The scale leaves the bag in the **same transaction** the move list is
-  written in, so it is only ever consumed when the move is actually taught, and
-  the window's marker is given back when he refuses.
+  machines, so a full list asks which move goes and a list with room asks nothing.
+  The scale leaves the bag in the **same transaction** the move list is written
+  in, so it is only ever consumed when the move is actually taught, and the
+  window's marker is given back when he refuses.
 
   He is the one wanderer whose price is not gold: a scale is dug out of the
   ground, no vendor stocks one and no vendor takes one, so what paces him is
   walking.
 
 - **Fossil Maniac** — carries **two of the three fossils**, drawn without repeats
-  from the same seed he was (`getFossilOffer`), and will part with **one** of
-  them for `FOSSIL_PRICES` gold while he is standing there. He is the only place
-  in the game a fossil can be bought — everywhere else, one is dug out of the
-  ground — and which two he has is the window's, so a player after a particular
-  one waits for it or walks somewhere else. `buyFossil` claims the visit before
-  the trade and gives it back when the purse will not stretch, and the gold and
-  the rock move in the same transaction the vendor's trades move in.
+  from the same seed he was (`getFossilOffer`), and will part with **one** of them
+  for `FOSSIL_PRICES` gold while he is standing there. He is the only place in the
+  game a fossil can be bought — everywhere else, one is dug out of the ground —
+  and which two he has is the window's, so a player after a particular one waits
+  for it or walks somewhere else. `buyFossil` claims the visit before the trade
+  and gives it back when the purse will not stretch, and the gold and the rock
+  move in the same transaction the vendor's trades move in.
 
 - **Fossil Scientist** — takes a fossil and hands back what was in it, and takes
-  **nothing else**. Which species comes out belongs to the rock
-  (`FOSSIL_SPECIES`), and it arrives at `FOSSIL_REVIVE_LEVEL` (20), so the only
-  thing the player decides is which fossil to hand over. The record is written
-  as an `EncounterType.Revived` catch with `Acquisition.Revived` in its history:
-  nobody met it, and calling it wild would name a chunk the species has not
-  lived in for a very long time.
+  **nothing else**. Which species comes out belongs to the rock (`FOSSIL_SPECIES`),
+  and it arrives at `FOSSIL_REVIVE_LEVEL` (20), so the only thing the player
+  decides is which fossil to hand over. The record is written as an
+  `EncounterType.Revived` catch with `Acquisition.Revived` in its history: nobody
+  met it, and calling it wild would name a chunk the species has not lived in for
+  a very long time.
 
   He is the **second wanderer who takes no marker**. What paces him is how many
-  fossils have been dug up rather than the window — turning away the second of
-  two already carried would only be a walk to the next cell to do the same
-  thing. The fossil leaves the bag first and is put back if the record is never
-  written, since a fossil spent on nothing cannot be walked off.
+  fossils have been dug up rather than the window — turning away the second of two
+  already carried would only be a walk to the next cell to do the same thing. The
+  fossil leaves the bag first and is put back if the record is never written,
+  since a fossil spent on nothing cannot be walked off.
 
 - **Vendor** — the shop, and one of the two who take **no marker at all**. What
-  the others hand over is something the world cannot make twice in six hours;
-  what he hands over is a potion, so a player may deal with him as often as
-  their purse allows while he is standing there.
+  the others hand over is something the world cannot make twice in six hours; what
+  he hands over is a potion, so a player may deal with him as often as their purse
+  allows while he is standing there.
 
-  What he **sells** is a crate of `VENDOR_STOCK_KINDS` (6) kinds, derived from
-  the same seed he was (`getVendorStock`) — so it is part of who walked up
-  rather than anything stored, and every player who reaches him this window is
-  offered the same six things. Two are always the staples, a Poke Ball and a
-  Potion; the rest are drawn without repeats from the balls and the medicine.
-  The price is the registry's `buy`, so an item costs the same from every vendor
-  in the world.
+  What he **sells** is a crate of `VENDOR_STOCK_KINDS` (6) kinds, derived from the
+  same seed he was (`getVendorStock`), so it is part of who walked up rather than
+  anything stored, and every player who reaches him this window is offered the
+  same six things. Two are always the staples, a Poke Ball and a Potion; the rest
+  are drawn without repeats from the balls and the medicine. The price is the
+  registry's `buy`, so an item costs the same from every vendor in the world.
 
   What he **buys** is wider: anything `Marketable` at all, at the registry's
   `sell`, which is where the pearls, star pieces and nuggets a walk turns up
-  finally become gold. `sell` is half of `buy` everywhere, so nothing bought
-  from him can be sold back at a profit.
+  finally become gold. `sell` is half of `buy` everywhere, so nothing bought from
+  him can be sold back at a profit.
 
   The **Master Ball is excluded by arithmetic rather than by a list**: it is the
   one ball registered without `Marketable` and with a `buy` of 0, and both sides
-  of his counter ask that flag first. `buyFromVendor` and `sellToVendor` move
-  the purse and the item stack in **one transaction**, so a player is never
-  charged for something that was never handed over.
+  of his counter ask that flag first. `buyFromVendor` and `sellToVendor` move the
+  purse and the item stack in **one transaction**, so a player is never charged
+  for something that was never handed over.
 
-What a bred egg inherits — and what it does not — is in
-[Eggs](catches.md#eggs).
+What a bred egg inherits — and what it does not — is in [Eggs](catches.md#eggs).
 
 ## Portals
 
@@ -417,53 +425,53 @@ opening it takes a **Portal Key**, the rarest band's newest entry, and the key i
 **spent in the crossing**.
 
 The traveller names a **biome**, never a destination. Where they come out is the
-nearest portal of that biome to the one they are standing in — derived in
+nearest portal of that biome to the one they are standing in, derived in
 [`src/overworld/portal.ts`](../../src/overworld/portal.ts) from the chunk seeds
-alone, so the client lists every destination on offer without asking anything of
-the server, and the server re-derives the same answer when the crossing is
-asked for. There is nothing in the request to lie about except which way to go.
+alone. So the client lists every destination on offer without asking anything of
+the server, and the server re-derives the same answer when the crossing is asked
+for. There is nothing in the request to lie about except which way to go.
 
-`findPortals` walks outward ring by ring and answers for **every biome at once**:
-the first portal of a biome it meets is that biome's nearest, and a biome already
-answered for is not looked at again — so a chunk is only rolled for its landmarks
+`findPortals` walks outward ring by ring and answers for **every biome at once**.
+The first portal of a biome it meets is that biome's nearest, and a biome already
+answered for is not looked at again, so a chunk is only rolled for its landmarks
 where its biome is still wanted. It stops at `PORTAL_RANGE` (96 chunks) or once
 every biome the world grows has been found, whichever comes first. Measured, that
 is about 13ms cold from a standing start, and a fraction of that against a warm
-biome cache; roughly 24 of the 24 biomes are reachable from a typical portal.
+biome cache. Roughly all 24 biomes are reachable from a typical portal.
 
 `usePortal` ([`src/server/portals.ts`](../../src/server/portals.ts)) checks that
 the cell really is a portal in a live window, derives the far end, and takes the
-key **last** — a player refused a destination keeps it. It cannot move anybody:
-the game stores no position, so it answers with the chunk and cell and the client
-walks through.
+key **last**, so a player refused a destination keeps it. It cannot move anybody:
+the game stores no position for it, so it answers with the chunk and cell and the
+client walks through.
 
 ## Derived, never stored
 
-Landmarks, item-cache rewards, berry patches, phenomena, the species a nest
-is holding, the party a Team
-Rocket grunt fields and cell placement are **not** in Firestore. They re-derive from the chunk seed, the zone and the
-snapshot window (`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`),
-so two players in the same zone and window compute identical results from the
-fields `snapshots/{chunkSeed}:{zone}` does store — and two players in different
-zones compute different ones.
+Landmarks, item-cache rewards, berry patches, phenomena, the species a nest is
+holding, the party a Team Rocket grunt fields and cell placement are **not** in
+Firestore. They re-derive from the chunk seed, the zone and the snapshot window
+(`src/overworld/chunk.ts`, `src/overworld/chunk-snapshot.ts`), so two players in
+the same zone and window compute identical results from the fields
+`snapshots/{chunkSeed}:{zone}` does store — and two players in different zones
+compute different ones.
 
 ### Reaching, not treading
 
 Nothing triggers by being walked over. A player steps within the 3x3 around a
 pokemon or a landmark and **clicks** it; passing through a cell springs nothing.
-That is a client rule. A player's position _is_ stored now
+
+That is a client rule. A player's position _is_ stored
 ([`positions/{uid}`](player-stores.md#positionsuid)), but it is their own report
-of themselves, written every second and a half rather than every step — there is
-no path in it, and nothing checks a claim against it. What the server does check
-is that the cell really holds the thing, in a live window, which is what keeps a
-claim honest:
-reach decides what a player _bothers_ to walk to, not what they are allowed to
-claim.
+of themselves, written every second and a half rather than every step. There is no
+path in it, and nothing checks a claim against it. What the server checks is that
+the cell really holds the thing, in a live window, which is what keeps a claim
+honest: reach decides what a player _bothers_ to walk to, not what they are
+allowed to claim.
 
 Placement leaves room to walk. A landmark keeps the ring of cells around it —
-diagonals included — clear of everything: no two landmarks touch, and
-`getSpawns` skips the whole `getLandmarkArea()` rather than only the landmark
-cells, so a pokemon is never standing in the way of one. Placing a landmark
-takes up to nine cells of the central 8x8's sixty-four, so the five a chunk may
-roll always fit; the loop stops early if a chunk ever does run out, taking fewer
+diagonals included — clear of everything: no two landmarks touch, and `getSpawns`
+skips the whole `getLandmarkArea()` rather than only the landmark cells, so a
+pokemon is never standing in the way of one. A chunk rolls **five to seven** of
+them, and placing one takes up to nine of the central 8x8's sixty-four cells, so a
+crowded roll can run out of room. The loop stops early when it does, taking fewer
 landmarks rather than crowding them.

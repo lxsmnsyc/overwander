@@ -108,9 +108,9 @@ const setupPickup = createBuddyAbility(Abilities.Pickup, (overworld) => {
 });
 
 /**
- * The lures, which draw two more pokemon into a chunk, the two
- * abilities that decide what an encounter comes out as, and the two
- * that pay a walk rather than a meeting
+ * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
+ * the two abilities that decide what an encounter comes out as, and
+ * the two that pay a walk rather than a meeting
  */
 const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createLureAbility(Abilities.ArenaTrap),

@@ -1,282 +1,205 @@
 # Raising a pokemon
 
-There is no experience. A pokemon grows because a player spends candy on it,
-trains where its levels are worth spending, and walks with it — all of which are
-decisions rather than a by-product of grinding the right opponents.
-
-## What a pokemon's numbers are
-
-The mainline formula, and it lives in
-[`src/data/constants/stats.ts`](../../src/data/constants/stats.ts) rather than in
-the battle, because the overworld asks the same question: what a catch's health
-is when it is *not* fighting has to be the figure the fight would give it.
-
-```text
-shared = floor((2 × base + IV + floor(effort / 4)) × level / 100)
-health = shared + level + 10
-stat   = floor((shared + 5) × nature)
-```
-
-Four points of effort buy one point of the stat, which is why 252 is the cap
-worth having — the four above it would buy nothing.
-
-**Maximum health is derived, never stored.** Only the current figure is a field,
-so a level, an evolution, a polished value or a point of training moves the
-maximum on its own. When the maximum moves, the **share moves with it**: a
-pokemon at 50 of 100 comes out of an evolution at 60 of 120. Two edges are
-deliberate — a fainted pokemon stays fainted, since an evolution is not a
-revival, and a standing one never rounds down to zero.
+Pokemon in Poketerra do not gain experience from fighting. A pokemon grows
+because its owner spends **candy** on it, assigns its **training points**, and
+walks with it. All three are decisions rather than by-products of grinding.
 
 ## Levels and candy
 
-Candy is kept **per family**, not per species, so anything of a line feeds
-anything else of it.
+Candy is held **per family** rather than per species, so anything in a line feeds
+anything else in it: catching Caterpies levels a Butterfree.
 
-| Rule                    | Value                    |
-| ----------------------- | ------------------------ |
-| Candy a catch pays      | 1, of its own family     |
-| On the family's own day | ×4                       |
-| Candy one level costs   | 1, or **2** for a shadow |
-| Ceiling                 | `MAX_LEVEL` (100)        |
+| Rule                     | Value                    |
+| ------------------------ | ------------------------ |
+| Candy a catch pays       | 1, to its own family     |
+| On that family's own day | ×4                       |
+| Candy one level costs    | 1, or **2** for a shadow |
+| Highest level            | 100                      |
 
-Two held items pay extra candy, each half the time: an **Exp. Share** pays the
-buddy's family, so everything caught feeds the one pokemon being raised, and a
-**Lucky Egg** pays the caught pokemon's family, so it fills out a dex faster.
-Neither is multiplied by the species day, which already pays four times over.
+Two held items pay extra candy, each about half the time. An **Exp. Share** pays
+the buddy's family, so everything caught feeds the one pokemon being raised. A
+**Lucky Egg** pays the caught pokemon's family, filling out a collection faster.
+Neither stacks with the species day, which already pays four times over.
 
-A level is also a heal: the pokemon comes back at full health with a clean slate,
-and thinks a little better of the player for it. Releasing pays no candy —
-catching already did, and paying again would make catch-and-release a way of
-farming the same spawn.
+A level is also a heal: the pokemon returns to full health with its statuses
+cleared, and thinks slightly better of its trainer for it.
+
+Releasing a pokemon pays no candy, since catching it already did.
 
 ## Evolution
 
-Which evolutions are offered comes from the species data, but only the conditions
-the game can **verify against what is stored** are honoured:
+Only evolutions the game can verify are offered. The rest are never offered
+rather than being waved through.
 
-| Method                            | Supported | Notes                                   |
-| --------------------------------- | --------- | --------------------------------------- |
-| **Level**                         | Yes       | Checked against the stored level        |
-| **Used item**                     | Yes       | Spent in the same transaction           |
-| **Held item**                     | Yes       | Required, but not consumed              |
-| Trade, friendship, weather, party | No        | Never offered rather than waved through |
+| Method                            | Supported | Notes                               |
+| --------------------------------- | --------- | ----------------------------------- |
+| **By level**                      | Yes       | Checked against the pokemon's level |
+| **Using an item**                 | Yes       | The stone is consumed               |
+| **Holding an item**               | Yes       | The item is required, not consumed  |
+| Trade, friendship, weather, party | No        | Not offered                         |
 
-An evolution that uses an item decrements the stack and writes the new species
-together, so the stone and the evolution land or neither does. Criteria are
-re-checked against the stored documents inside that transaction, never trusted
-from the caller.
+Evolving preserves the individual's proportions, so a pokemon that was large for
+its species stays large for its new one.
 
-Evolving keeps the individual's proportions: `deriveSize` reads the trait value
-against the *new* species, so a pokemon grows into its evolution's size band
-while staying the same relative size within it.
+## Training
 
-## Effort
+Training points arrive with levels rather than from fighting, and the owner
+decides where they go: five points per level, so 500 across a full hundred
+levels.
 
-The mainline earns effort from whatever a pokemon happened to have fought, a
-species at a time. Here it comes with the levels and the player decides where it
-goes — the same five hundred points over a hundred levels, spent deliberately
-rather than accumulated by fighting the right opponents.
+| Quantity | Meaning                                     |
+| -------- | ------------------------------------------- |
+| Budget   | 5 per level, plus anything wings have added |
+| Spent    | Everything assigned across the six stats    |
+| Unused   | What is left to assign                      |
+| Per stat | Never more than 252                         |
 
-| Quantity     | How it is worked out                         |
-| ------------ | -------------------------------------------- |
-| **budget**   | `level × EFFORT_PER_LEVEL (5) + effortBonus` |
-| **spent**    | The six values added up                      |
-| **unused**   | `budget − spent`, never below zero           |
-| **per stat** | Never more than `MAX_EFFORT_PER_STAT` (252)  |
+Four training points buy one point of a stat, which is why 252 is the cap worth
+having: anything above it would buy nothing.
 
-A freshly caught level 20 pokemon therefore arrives with 100 points nobody has
-assigned. Three things move them:
+A freshly caught level 20 pokemon therefore arrives with 100 unassigned points.
+Three things move them:
 
-- **Assigning** puts unused points into a stat, or takes them back out. Nothing
-  is consumed — the points came with the levels — so retraining is free.
-- **A wing** grants 3 points in its own stat *and* raises `effortBonus` by the
-  same, so a wing adds to the budget rather than spending it. That is what makes
-  one worth the same at level 5 as at 100, and it is the only effort a pokemon
-  ever gets that its levels did not pay for.
-- **A bitter berry** takes 10 points off one stat. They go back to the unspent
-  pool rather than being lost, since the levels that paid for them have not been
-  un-taken, and the pokemon thinks better of the player for eating something
-  unpleasant.
-
-Every one of the three rescales health, the way everything that moves a maximum
-does.
+- **Assigning** puts unused points into a stat or takes them back out. Nothing is
+  consumed, so retraining is free and reversible forever.
+- **A wing** grants 3 points in its own stat *and* raises the pokemon's budget by
+  the same, so a wing adds to what there is to spend rather than spending it. It
+  is the only training a pokemon ever gets that its levels did not pay for, and
+  it is worth the same at level 5 as at level 100.
+- **A bitter berry** removes 10 points from one stat. They return to the unused
+  pool rather than being lost, and the pokemon thinks better of its trainer for
+  swallowing something unpleasant.
 
 ## Friendship
 
-One number per catch, 0 to 255, moved by the things the mainline has moved it by
-since Gen 4. Every gain **shrinks as the number grows**: the first hundred points
-come quickly and the last fifty are a long walk.
+Every pokemon carries a friendship score from 0 to 255. Gains **shrink as the
+score grows**: the first hundred points come quickly and the last fifty are a
+long walk.
 
-| What happened             | 0–99 | 100–199 | 200–255 |
+| Event                     | 0–99 | 100–199 | 200–255 |
 | ------------------------- | ---- | ------- | ------- |
 | A level taken             | +5   | +3      | +2      |
 | 256 steps walked as buddy | +2   | +2      | +1      |
 | A bitter berry eaten      | +10  | +5      | +2      |
+| Herbal medicine, per dose | −5   | −5      | −10     |
 | Knocked out               | −1   | −1      | −1      |
 
-A catch starts at `BASE_FRIENDSHIP` (70); something hatched starts at
-`HATCHED_FRIENDSHIP` (120), because the carrying has already happened.
+A caught pokemon starts at 70; a hatched one starts at 120, because it has
+already been carried.
 
-**A pokemon caught in a Luxury Ball gains twice as much from all of it.** It is
-read off the ball the record was made with rather than anything the player still
-carries, so it is decided once, at the catch, and holds for the pokemon's whole
-life. The factor multiplies what it *gains* and never what it loses: a
-comfortable ball is a reason to think better of somebody, not a reason to take a
-knockout harder.
+A pokemon caught in a **Luxury Ball** gains twice as much from every source for
+its whole life. The doubling applies to gains and never to losses.
 
-A **groomer** — one of the wandering NPCs — adds half of whatever is *left* to
-give for `GROOMING_FEE` (2,500) gold. It is worth a great deal to a pokemon fresh
-out of a ball and almost nothing to one that is already inseparable, and because
-it is always half of the remainder it can never buy the last of a friendship.
-That part is walked for.
+A **groomer** adds half of whatever friendship is left to give. That is worth a
+great deal to a pokemon fresh out of a ball and almost nothing to one that is
+already inseparable, and since it is always half of the remainder it can never
+buy the last of a friendship. See [People you meet](npcs.md).
 
-Friendship is a record of how a pokemon has been kept **by somebody**, so it does
-not survive a sale: a pokemon collected from an auction starts again at
-`BASE_FRIENDSHIP` for its new trainer. Otherwise an inseparable pokemon would be
-a thing that could be bought, and the walking that earned it would be worth gold
-rather than worth doing. A lot that goes back unsold to the seller keeps what it
-had — it never changed hands.
-
-What reads friendship can grow; what moves it is settled.
+Friendship does not survive a sale. A pokemon bought at auction begins again at
+70 for its new trainer, so gold buys the pokemon but never the walking behind it.
+A lot that goes back unsold keeps what it had, having never changed hands.
 
 ## Bottle caps
 
-Individual values are rolled once, when the encounter is staged, and nothing else
-in the game moves them — which is what makes a bad roll on a pokemon somebody
-already raised worth an item of its own.
+A pokemon's individual stats are rolled once, before it is ever met, and nothing
+else in the game changes them. That is what makes a poor roll on an
+already-raised pokemon worth an item of its own.
 
-| Item                  | Band    | What it does                                    |
-| --------------------- | ------- | ----------------------------------------------- |
-| **Golden Bottle Cap** | Special | Raises every value to `MAX_IV` (31)             |
-| **Bottle Cap**        | Rare    | Raises one value, drawn from the imperfect ones |
+| Item                  | Rarity  | Effect                                         |
+| --------------------- | ------- | ---------------------------------------------- |
+| **Golden Bottle Cap** | Special | Raises every stat to perfect                   |
+| **Bottle Cap**        | Prized  | Raises one stat, drawn from the imperfect ones |
 
-Which stat a plain cap lands on is the **server's** roll, seeded by the catch,
-the item and the instant. A client that chose would simply choose the stat it
-wanted, and the cap would stop being a cap. Only imperfect stats are drawn from,
-so a cap is never spent on a stat that needed nothing, and a pokemon that is
-already perfect is refused outright on both sides.
+The stat a plain cap lands on is not the player's choice — otherwise it would not
+be a cap. It never lands on a stat that was already perfect, and a pokemon that
+is perfect all round is refused before it can waste one.
 
-Both caps are found in the overworld and nowhere else: neither is stocked, and
-each is consumed by the use.
+Both caps are found in the overworld and nowhere else; no shop stocks either.
 
 ## Purifying a shadow
 
-A shadow comes out of a shadow raid or off a Team Rocket grunt carrying the
-`Shadow` ability for good, and pays double candy at every level. Two things undo
-that trade — the **Purifying Gem**, a rare find, and **Nurse Joy**, who does it
-for free along with the healing:
+A shadow pokemon comes from a shadow raid or from a Team Rocket grunt. It keeps
+the **Shadow** ability permanently and costs **double candy** at every level.
 
-| Field       | Before             | After                                      |
-| ----------- | ------------------ | ------------------------------------------ |
-| `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                       |
-| `shadow`    | `true`             | `false` — the candy cost reverts           |
-| `ivs`       | As rolled          | Every value `+PURIFY_IV_BOOST` (2), capped |
+Two things undo that: a **Purifying Gem**, which is a prized find, and **Nurse
+Joy**, who does it free of charge along with her healing.
 
-`Purified` is **entirely cosmetic**: nothing reads it, and no battle changes. It
-is the mark left where the ability was, so a pokemon that came out of a shadow
-raid still says so. Purifying changes what it costs, not what it was.
+A purified pokemon costs ordinary candy again, gains **+2 to every individual
+stat**, and is marked Purified. The mark is cosmetic and changes nothing in
+battle: purifying changes what a pokemon costs, not what it was.
 
 ## Teaching a move
 
-Three things change what a pokemon knows after it has been met — everything else
-about a move list is decided at the catch or inherited from a parent:
+Three things change what a pokemon knows after it has been obtained:
 
-- **Growing into one.** A candy that lands a level offers whatever the species
-  learns at that level (`getMovesLearnedAt`), one move at a time where a level
-  hands over two. It costs nothing: the candy already paid for it.
-- A **technical machine**. There is one per teachable move, generated from the
-  species learn sets, so a move any species can learn brings its machine along.
-  What it may teach is the species' `learnSet.teachable`.
-- The **Move Reminder**, a [wandering NPC](../firestore/overworld.md#wandering-npcs),
-  who puts back a move the pokemon learned by levelling and has since lost. What
-  he may give back is `getRecallableMoves` — everything in the species'
-  `learnSet.level` up to the pokemon's level, minus what it still knows — and his
-  price is one **Heart Scale**, which is dug out of the ground and which nothing
-  buys or sells.
+- **Growing into a move.** When candy takes a pokemon to a level its species
+  learns something at, that move is offered. It costs nothing; the candy already
+  paid for it.
+- **A technical machine.** There is one machine per teachable move, and it works
+  on any species able to learn it.
+- **The Move Reminder**, who restores a move the pokemon learned by levelling and
+  has since lost. His price is one **Heart Scale**, which is dug out of the ground
+  and which no shop buys or sells. See [People you meet](npcs.md).
 
-All three are the same call
-([`learnMove` in `src/server/moves.ts`](../../src/server/moves.ts)): only *which
-move is allowed* and *what it is paid in* differ, so the rest — whose pokemon it
-is, how much room the list has, whether the price is carried — is decided once.
-A level-up move passes a **null price**, which is the only way to learn one for
-nothing. What it costs depends on how full the list is:
+A pokemon that knows fewer than four moves simply learns another; one that
+already knows four must forget one, chosen by the player. Nothing is ever spent
+on a move that was not learned.
 
-| The pokemon knows | What happens                                |
-| ----------------- | ------------------------------------------- |
-| Fewer than 4      | It learns a fourth; nothing is given up     |
-| 4                 | The player chooses which one it **forgets** |
+Four cases are refused: a move that source cannot teach, a move the pokemon
+already knows, an egg, and a pokemon locked into a live battle.
 
-How many moves a pokemon may hold is the record's own `Slots.Move` rather than
-the game's four, so one with a fifth slot is offered a fifth move instead of
-being asked to forget one.
+The Move Reminder restores only **level-up** moves, so a machine move given up to
+make room is gone for good, and the choice of what to forget stays a real one.
 
-The price leaves the bag and the move list is written in **one transaction**, so
-nothing is ever spent on a move that was not learned. Four things are refused
-before either happens: a move the source does not allow, a pokemon that knows it
-already, an egg, and a **locked** pokemon — teaching is exactly the kind of
-rewriting a lock is for.
+### Why only the current level
 
-Because the reminder only ever gives back **level-up** moves, a machine move
-dropped to make room is gone for good, and the choice of what to forget stays a
-real one.
+A level-up move is offered for the level a pokemon is standing on and no other.
+Nothing records whether the offer was accepted or declined, so a player may
+change their mind right up until the next candy takes the pokemon past that
+level. After that a Heart Scale is the only route back.
 
-### Why the level, and only the level
+If growing up offered everything a pokemon could have learned by then, it would
+amount to a free Move Reminder and the Heart Scale would be worth nothing.
 
-A level-up move is offered for the level the pokemon is **standing on** and no
-other. Nothing records that the offer was made or declined — the level itself is
-the record — so a player who says no by accident may say yes again until the next
-candy takes the pokemon past it, and a move from any earlier level is gone until
-a Heart Scale buys it back.
+## Healing
 
-That word *exactly* is the whole of the balance. Were the offer "anything it
-could have learned by now", growing up would be a free Move Reminder and the
-Heart Scale would be worth nothing.
+- **A berry** restores or cures exactly what it does in a fight, so an Oran Berry
+  is worth ten points on either side of one. Out of battle the player decides
+  when it is worth using.
+- **Medicine.** A Potion restores 20 points, a Super Potion 60, a Hyper Potion
+  120 and a Max Potion all of it. A cure removes one status, a Full Heal removes
+  all of them, a Full Restore does both, and a Revive lifts a fainted pokemon on
+  half its health — a Max Revive on all of it. **No medicine can be held**, so
+  nothing can be drunk mid-raid, which is what keeps berries worth carrying into
+  one.
+- **Herbal medicine** is cheaper and stronger, and costs friendship instead. An
+  Energy Powder restores 50 points, an Energy Root 200, a Heal Powder clears every
+  status, and a Revival Herb lifts a fainted pokemon on full health. Each dose
+  costs friendship, and stronger preparations count as more doses. A Luxury Ball
+  does not soften the loss. It is a straight choice between a party put right
+  today and a pokemon that adores its trainer in a month.
+- **A level**, which heals as a side effect.
+- **A Heal Ball thrown at something else**, which restores the buddy for free.
+  See [Catching](catching.md#balls).
 
-## Putting a pokemon right
+Two rules apply throughout. **A revive is the only thing that reaches a fainted
+pokemon**, and the only thing that does nothing for one still standing. And
+**anything that would change nothing is refused rather than consumed** — the
+wrong cure, or a pokemon already at full health.
 
-Three things heal, and all of them run through one call so that what an item is
-worth to a given pokemon is decided in one place:
-
-- **A berry.** What each restores or cures is the berry's own table, shared with
-  the battle, so an Oran Berry is worth ten points on either side of a fight. The
-  battle's use-at-a-threshold rule is a battle rule only; out of one, the player
-  decides when it is worth it.
-- **Medicine.** A potion gives health back (20 / 60 / 120 / the whole pool), a
-  cure takes one status off, a Full Heal takes the lot, a Full Restore does both,
-  and a revive brings a fainted pokemon round on half a pool — a Max Revive on a
-  whole one. None of it is holdable: a potion cannot be drunk mid-raid, which is
-  what keeps a berry worth carrying into one.
-- **Herbal medicine**, which answers the same three problems more cheaply and
-  charges the difference to the pokemon. An Energy Powder is 50 points, an Energy
-  Root 200, a Heal Powder takes every status off, and a Revival Herb lifts a
-  fainted pokemon on a whole pool — each one out-doing the bottle it stands next
-  to at a fraction of the gold. Every one of them is bitter, and the pokemon
-  thinks **less** of whoever fed it one: −5 while it hardly knows you, −10 once
-  it does, taken once per mouthful (one for the powders, two for the root, three
-  for the herb). A Luxury Ball does not soften it. It is the choice between a
-  party put right today and a pokemon that thinks the world of you in a month.
-- **A level**, the slow way.
-- **A Heal Ball thrown at something else.** Catching with one mends the pokemon
-  walking beside the player — full health, statuses cleared, for nothing beyond
-  the ball. See [Catching](catching.md#ball-modifiers).
-
-Two rules cut across all of it. **A revive is the only thing that reaches a
-fainted pokemon**, and the only thing that does nothing to one still standing.
-And **an item that would change nothing is refused rather than spent**: the wrong
-cure, or a pokemon already whole.
-
-A fainted pokemon cannot fight — a raid refuses a party holding one, and a party
-of fainted pokemon cannot start a battle at all.
+A fainted pokemon cannot fight. A raid refuses a party containing one, and a
+party of fainted pokemon cannot start a battle at all.
 
 ## Held items
 
-A catch holds `HELD_ITEM_LIMIT` (1) item, matching the battle's per-unit limit,
-and only items flagged holdable can be handed over. The item and the bag stack
-move in one transaction, so an item is never on a pokemon and in the bag at once,
-nor lost between them.
+A pokemon holds **one** item at a time, and only items meant to be held.
 
-One item slot means the overworld held items are a genuine choice: a Shiny Charm,
-an Exp. Share, a Lucky Egg and a Luck Incense all want the same slot on the same
-buddy, and a berry wants it during a raid.
+That single slot is what makes the overworld items a genuine choice: a Shiny
+Charm, an Exp. Share, a Lucky Egg, a Luck Incense and a Pure Incense all want the
+same slot on the same buddy — and a berry wants it during a raid.
 
-The stored side of all of this is in [Catch records](../firestore/catches.md).
+## See also
+
+- [Eggs](eggs.md)
+- [Items and gold](items.md)
+- [Battles](battles.md)

@@ -1,101 +1,82 @@
 # Items and gold
 
 Almost everything a player carries was dug out of the ground. The only shop is a
-vendor who wanders, and he stocks balls and medicine alone — so the overworld
-item pool is still the economy's supply side, and raids are its mint.
+[vendor who wanders](npcs.md), and he stocks balls and medicine alone, so the
+overworld is the game's supply of items and raids are its supply of gold.
 
-## What the ground holds
+## Where items come from
 
-Three landmarks give items, and each rolls on rarity bands: special 1/4096,
-**prized 1/512**, rare 1/64, uncommon 1/8, base for the rest. The three ordinary
-bands are the spawn pools'; the prized band is the item pool's own, since a
-species has no equivalent of a thing that changes a pokemon for good. The widths
-are slices rather than running totals, so adding a band takes its share out of
-**base** and leaves every other band as wide as it was.
+Three landmarks give items — the **item cache**, the **berry patch** and the
+**phenomenon** — and a buddy with **Pickup** finds them while walking. Each source
+rolls first for a rarity band:
+
+| Band     | Odds     |
+| -------- | -------- |
+| Special  | 1/4096   |
+| Prized   | 1/512    |
+| Rare     | 1/64     |
+| Uncommon | 1/8      |
+| Base     | The rest |
 
 ### The item pool
 
-| Band         | What is in it                                                                                                                             |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls and Stardust; the everyday medicine; Energy and Heal Powder                           |
-| **Uncommon** | The utility balls; Big Pearls and Star Pieces; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings             |
-| **Rare**     | Evolution stones; Nuggets; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the plates; the Helix and Dome Fossils |
-| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives, the Old Amber                                                                                |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, Portal Key, and the raid relics                                                              |
+| Band         | Contents                                                                                                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper, Black Sludge; the everyday medicine; Energy and Heal Powder |
+| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings                     |
+| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates; the Helix and Dome Fossils         |
+| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives, the Portal Key, the Old Amber, the ruins                                                                                                         |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                 |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
-something that gets a party through the next fight — a stone, a Revive, a plate.
+something that gets a party through the next fight: a stone, a Revive, a plate.
 Prized is where it turns up something that changes a pokemon for good and cannot
-be undone: a Bottle Cap fixes what it was born with, a Purifying Gem takes a
-shadow off it, a Max Revive is the answer to a lost _party_ rather than a lost
-fight. All three used to be rare, and being drawn as often as an evolution stone
-made them read as ordinary.
+be undone — a Bottle Cap fixes what a pokemon was born with, a Purifying Gem
+removes a shadow, a Max Revive answers a lost *party* rather than a lost fight.
 
-Unlike a special, a prized find is **not** one-of-a-kind: a stash may hold two,
-and they are dug up in stacks like anything else. Two Bottle Caps in one hole is
-a very good dig, not a broken one.
+A prized find is not unique. A stash may hold two, and they come in stacks like
+anything else.
 
-Two placements are deliberate. **Valuables sit a band below what they are worth**
-— they are a steady trickle of gold rather than a jackpot, so the rarest bands
-stay for the things gold cannot buy. And **machines are absent entirely**: they
-are meant to be bought, never found.
+Two placements are deliberate. **Valuables sit one band below what they are
+worth**, making them a steady trickle of gold rather than a jackpot, and
+**machines are never found**: they are meant to be bought. The plates and the
+wings each occupy a very thin slot, so all seventeen plates together are worth
+about one evolution stone.
 
-The plates and the wings each take a single thin slot, so seventeen plates
-together are worth about one stone: digging up the plate you wanted stays luck
-rather than shopping.
+Using a **prized or special** item on a pokemon asks for confirmation. Nothing
+below that does: a Full Restore is a rare find and still only a fight's worth of
+healing, so it goes through on one press like a Potion. What earns a second press
+is what a mistake costs, not what the walk cost.
 
-The bands are read for one thing besides the digging. Spending an item **on a
-pokemon** asks a second time only where the item is `isPreciousItem` — the
-**prized and special** bands, and nothing below them. It is the same line the two
-bands were split on: those are the finds that change a pokemon for good or cannot
-be come by again, and the wrong pokemon is the wrong pokemon for good with them.
+The **Heart Scale** is the one item gold cannot substitute for. No vendor stocks
+one or takes one, so a scale is worth exactly one forgotten move, restored by the
+[Move Reminder](npcs.md).
 
-Scarcity alone is deliberately not the test. A Full Restore is a rare dig and
-still only a fight's worth of healing, so it goes through on one press like a
-Potion — everything a player heals with is spent over and over, and a confirmation
-on each is a click for nothing. What earns the second press is what a mistake
-costs, not what the walk cost.
+The **fossils** are the only items worth a pokemon. Each names one species — a
+Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and
+none of those three appears anywhere in the world, so reviving one at the
+[Fossil Scientist](npcs.md) is the only way to meet them. The two sea fossils sit
+with the stones in **rare**; the amber sits a band above them, in **prized**.
 
-The **Heart Scale** is the one thing in the pool that gold cannot substitute for.
-No vendor stocks one and no vendor takes one, so it is neither bought nor sold:
-what a scale is worth is exactly one forgotten move, put back by the
-[Move Reminder](../firestore/overworld.md#wandering-npcs). That is what keeps
-remembering a move paced by walking rather than by a purse.
+### Item caches
 
-The **fossils** make the same bargain, and are the only items in the pool worth a
-pokemon. Each of the three names exactly one species — a Helix Fossil an Omanyte,
-a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and none of those three
-spawns anywhere in the world any more, so reviving one at the
-[Fossil Scientist](../firestore/overworld.md#wandering-npcs) is the only way any
-of them is ever met. The two sea fossils sit with the stones in the **rare** band
-and the amber a band above them, in **prized**, because what is in it was the
-rarest thing on the mountain when the mountain still had one. No vendor prices
-any of them; the [Fossil Maniac](../firestore/overworld.md#wandering-npcs) is the
-only person who will sell one, and he carries two of the three and parts with one
-a window.
+An **item cache** holds a stash rather than a single item. The rarity it rolled
+is the **best thing in there**, and one of that kind is guaranteed. How many
+*kinds* it holds is a separate roll of up to three, and each further kind rolls
+its own rarity beneath that ceiling. A stash might therefore be two rares and a
+common, three commons, or one of each: rarity and quantity are independent, which
+stops a good dig being the same three slots every time.
 
-### A stash, not an item
+Each kind comes in up to **three pieces**.
 
-An **Item Cache** holds a stash. The band roll is read as a **ceiling** rather
-than a choice — it is the best thing in there, and one of that kind is
-guaranteed. How many _kinds_ is a separate draw (up to `MAX_KINDS`, 3), and every
-kind after the first rolls its own band, clamped to that ceiling. So a stash may
-be two rares and a base, or three commons, or one of each. Rarity and count being
-independent is what stops a good dig from being the same three slots every time.
+A stash can be a Master Ball and two stones. Two things it can never be: **two
+specials**, and **more than one piece** of a special — a Master Ball found three
+at a time would stop being a Master Ball.
 
-Each kind carries up to `MAX_STACK` (3) pieces on a draw of its own, and two
-kinds landing on the same item merge into one stack that still respects the cap.
+### Berry patches
 
-A special is a ceiling like any other, so a stash may well be a Master Ball and
-two stones. Two things it can never be: **two specials**, since only the opening
-draw reaches that band, and **more than one piece** of a special — a Master Ball
-found three at a time would stop being a Master Ball.
-
-### A berry patch
-
-A patch is a bush rather than a buried box, so it bears **one kind** and 3–5
-pieces of it: the rarity is the interesting draw and the count is only how good a
-season it had. It fruits on the 15-minute landmark window — picked or not, the
+A patch is a bush rather than a buried box, so it bears **one kind** of berry and
+**three to five** pieces of it. It fruits every 15 minutes; picked or not, the
 next window grows something new.
 
 | Band         | What grows there                                                        |
@@ -103,174 +84,140 @@ next window grows something new.
 | **Base**     | The five single-status cures                                            |
 | **Uncommon** | Leppa, Oran, Persim, and the five bitter berries                        |
 | **Rare**     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists |
-| **Special**  | The pinch berries, held against the moment the holder is nearly out     |
+| **Special**  | The pinch berries, held for the moment the holder is nearly out         |
 
-### A phenomenon
+### Phenomena
 
-Something going on at a cell rather than something buried in it, and the only
-landmark whose **kind** is rolled: which of the four is happening depends on the
-biome and turns over every hour. Half the time it is something to pick up, half
-the time it is a pokemon — the uncommon band, or the rare one in eight — and
-either way a player gets **one** of them per cell per hour.
+A **phenomenon** is something happening at a cell rather than something buried in
+it. Which of the four is happening depends on the biome and changes every hour.
+Half the time it leaves an item and half the time it produces a pokemon, and
+either way a player gets **one** per cell per hour.
 
-| Phenomenon         | What it leaves behind                            | Where it happens                     |
-| ------------------ | ------------------------------------------------ | ------------------------------------ |
-| **Hidden Grotto**  | Nothing — a pokemon, or 1/64 an egg of the biome | Forests, swamps, scrub               |
-| **Dust Cloud**     | One gem, stone, plate or valuable                | Deserts, mountains, cold open ground |
-| **Rippling Water** | One valuable                                     | Anywhere with water in it            |
-| **Flying Shadow**  | One wing                                         | Open country and high ground         |
+| Phenomenon         | Item half                         | Pokemon half                           |
+| ------------------ | --------------------------------- | -------------------------------------- |
+| **Hidden Grotto**  | Nothing at all                    | A pokemon, or 1/64 an egg of the biome |
+| **Dust Cloud**     | One gem, stone, plate or valuable | A pokemon                              |
+| **Rippling Water** | One valuable                      | A pokemon                              |
+| **Flying Shadow**  | One wing                          | A pokemon                              |
 
-The **dust cloud is the richest**: it is the only place a stone or a plate is
-found outside a cache, and the only ordinary source of gems. The **grotto pays in
-pokemon** instead — it never leaves an item at all, and one grotto in sixty-four
-holds an egg of the biome, which is the same egg a nest would have laid without
-the half-day wait or the walk.
+The pokemon is drawn from the biome's **uncommon** band, or its **rare** band one
+time in eight.
 
-### A buddy with Pickup
+The **dust cloud is the richest** phenomenon: it is the only source of a stone or
+a plate outside an item cache, and the only ordinary source of gems. The
+**grotto** pays in pokemon instead — it never leaves an item at all, and one
+grotto in sixty-four holds an egg of the biome, which is the same egg a nest
+would have laid without the half-day wait.
 
-The one source that is not a landmark. A **Pickup** buddy turns something up
-every `PICKUP_STEP_INTERVAL` (512) steps walked, drawn from the ordinary item
-pool with the **top two bands shut out** — a ball, a potion, now and then a
-stone, but never a Master Ball scuffed off a path, and never a Bottle Cap
-either. A prized find is a walk's worth of luck; one a Meowth turns up on the way
-past would make the band worth nothing, which is the same argument that shut the
-special band out first.
+### Pickup
 
-What it counts is the marks the walk crossed rather than the steps in a report,
-so a player who reports in small handfuls finds exactly as much as one who
-reports in large ones. The find lands in the bag as the steps are credited, and
-the walk is told about it.
+The one source that is not a landmark. A buddy with **Pickup** finds something
+every **512 steps** walked, drawn from the ordinary item pool with the **top two
+bands excluded**: a ball, a potion, occasionally a stone, but never a Master Ball
+scuffed off a path and never a Bottle Cap.
 
-## What a berry does
+## Berries
 
-Berries are the one item class that is worth carrying into a fight, since a
-pokemon holds exactly one item and medicine cannot be used mid-battle. Each is
-written once and triggers on its own.
+Berries are the one class of item worth carrying into a fight, since a pokemon
+holds one item and medicine cannot be used mid-battle. Each triggers on its own.
 
-| Kind                      | When it goes off                  | What it does                                                           |
+| Kind                      | Trigger                           | Effect                                                                 |
 | ------------------------- | --------------------------------- | ---------------------------------------------------------------------- |
-| **Status cures**          | The status lands                  | Takes it off; a Lum takes any of them                                  |
+| **Status cures** (5)      | The status lands                  | Removes it; a Lum removes any of them                                  |
 | **Oran, Sitrus**          | Half health                       | 10 points, or a quarter of the pool                                    |
 | **Type resists** (18)     | A hard-landing blow of their type | Halves it                                                              |
 | **Bitter** (5)            | Half health                       | A third of the pool back, confusing a pokemon whose nature dislikes it |
-| **Pinch stats** (4)       | A quarter health                  | One stage; a Starf gives two of a random stat                          |
-| **Lansat, Custap, Micle** | A quarter health                  | Crit ratio, priority, or accuracy on one move                          |
+| **Pinch stats** (5)       | A quarter health                  | One stat stage; a Starf gives two of a random stat                     |
+| **Lansat, Custap, Micle** | A quarter health                  | Critical hit odds, priority, or accuracy on one move                   |
 | **Enigma**                | Hit super-effectively             | A quarter of the pool back                                             |
-| **Jaboca, Rowap**         | Hit physically or specially       | An eighth of the attacker's pool off them                              |
+| **Jaboca, Rowap**         | Hit physically or specially       | An eighth of the attacker's health off them                            |
 | **Kee, Maranga**          | Hit physically or specially       | A defence stage                                                        |
-| **Effort drops** (6)      | Fed out of battle                 | 10 training points off one stat, and friendship                        |
+| **Effort drops** (6)      | Fed out of battle                 | 10 training points off one stat, and friendship gained                 |
 
-Ten of them can also be fed to a wild encounter to make it easier to catch — see
-[Catching](catching.md).
+Ten berries can also be fed to a wild pokemon to make it easier to catch; see
+[Catching](catching.md#berries).
 
 ## Wings
 
-Six wings, one per stat, each granting 3 points of effort **and** raising the
-pokemon's effort allowance by the same, so a wing adds to the budget instead of
-spending it. They are the only effort a pokemon ever gets that its levels did not
-pay for, which is why they are thin slots in the uncommon band. See
-[Raising](raising.md).
+Six wings, one per stat. Each grants 3 training points **and** raises the
+pokemon's training budget by the same amount, so a wing adds to what there is to
+spend instead of spending it. They are the only training a pokemon ever receives
+that its levels did not pay for. See [Raising a pokemon](raising.md#training).
 
 ## Gold
 
-Gold is a balance on the profile, and the server owns every movement of it.
+### Where it comes from
 
-**Where it comes from:**
+| Source                      | Amount                      |
+| --------------------------- | --------------------------- |
+| Clearing a mythical raid    | 3,000                       |
+| Clearing a legendary raid   | 2,000                       |
+| Clearing a shadow raid      | 1,000                       |
+| Beating a Team Rocket grunt | 500                         |
+| Selling an auction lot      | The winning bid             |
+| Selling to a vendor         | The item's price, per piece |
 
-| Source                      | Amount                             |
-| --------------------------- | ---------------------------------- |
-| Clearing a mythical raid    | 3,000                              |
-| Clearing a legendary raid   | 2,000                              |
-| Clearing a shadow raid      | 1,000                              |
-| Beating a Team Rocket grunt | 500                                |
-| Winning an auction lot      | The seller is paid the winning bid |
-| Selling to a vendor         | The item's `sell` price, per piece |
+Everyone in a raid is paid the same amount, and a **Luck Incense** on the buddy
+doubles a player's share.
 
-Every fighter in a raid is paid the same purse, and a **Luck Incense** held by
-the buddy doubles it.
+### Where it goes
 
-**Where it goes:**
+| Sink                    | Amount                          |
+| ----------------------- | ------------------------------- |
+| A breeder's egg         | 5,000                           |
+| A daycare lady's boost  | 2,500                           |
+| A groomer's visit       | 2,500                           |
+| A fossil off the maniac | 12,000, or 30,000 for the amber |
+| Buying from a vendor    | The item's price, per piece     |
+| An auction bid          | Whatever was named              |
 
-| Sink                    | Amount                            |
-| ----------------------- | --------------------------------- |
-| A breeder's egg         | 5,000                             |
-| A daycare lady's boost  | 2,500                             |
-| A groomer's visit       | 2,500                             |
-| A fossil off the maniac | 12,000, or 30,000 for the amber   |
-| Buying from a vendor    | The item's `buy` price, per piece |
-| An auction bid          | Whatever was named                |
-
-The four paid NPCs are the pacing mechanism as much as the price: each serves a
-player once per six-hour window per cell, so gold buys convenience rather than
-volume. The maniac's fossil is the dearest of them because it is the only one
-that buys a **pokemon** — one of the three the world does not spawn at all.
-
-### The vendor
-
-The **Vendor** is the shop, and he wanders like everyone else. He is the one
-passer-by with **no once-per-window limit** — what the others hand over is
-something the world cannot make twice in six hours, and what he hands over is a
-potion, so his crate and the player's purse are the whole of the limit.
-
-He carries six kinds, derived from the window the same way he is: always a Poke
-Ball and a Potion, the rest drawn from the balls and the medicine. A player who
-wants an Ultra Ball walks until they find somebody carrying one.
-
-He **buys** anything `Marketable`, which is what finally makes the Pearls, Star
-Pieces and Nuggets a walk turns up worth something. He pays the registry's
-`sell`, half of the `buy` he charges for the same item, so nothing bought from
-him can be sold back at a profit. The **Master Ball** is the one ball the
-registry never priced, so it is in neither half of his trade — excluded by the
-missing flag rather than by a list that could fall out of step. The **Heart
-Scale** is out of both halves for the same reason and to the same end: a scale a
-player is carrying is a move they can have back, and a price would let them spend
-it on something else.
+The four paid travellers set the pace as much as the price, since each helps a
+player once per six-hour window at a given cell: gold buys convenience rather
+than volume. The maniac's fossil is the most expensive because it is the only
+purchase that buys a **pokemon** — one of the three the world does not produce at
+all.
 
 ## Auctions
 
-The auction house is the one place something passes from one player to another,
-and two decisions carry the whole feature:
+The auction house is the one place something passes from one player to another.
+Two rules carry the whole feature:
 
 - **A lot is taken when it is listed.** The item leaves the bag, or the pokemon
-  leaves the seller's records, at the moment the auction opens — so a seller
-  cannot list what they have since spent, and nothing has to be checked again a
-  day later. It does not come back.
+  leaves the seller's collection, the moment the auction opens, and it does not
+  return while the auction runs.
 - **A bid is paid when it is made.** The gold is taken as the bid lands and
-  handed straight back to whoever it outbid, so the last bidder standing is by
-  definition somebody whose gold is already in.
+  returned to whoever it outbid, so the last bidder standing has already paid.
 
-A lot runs for `AUCTION_DURATION` (24 hours) and a player may have **one lot at a
-time**, which — since a lot runs a full day — is one a day. The seller may not
-bid, and the standing bidder may not bid against themselves until somebody
-outbids them. There is no ceiling: the increment is the floor on a raise, not its
-size, so a lot worth having can be put out of reach in one bid.
+A lot runs for **24 hours**, and a player may have **one lot at a time**, which
+amounts to one a day. A seller may not bid on their own lot, and a standing
+bidder may not raise their own bid until somebody outbids them. There is no
+ceiling: the increment is the smallest raise allowed rather than the largest, so
+a desirable lot can be put out of reach in a single bid.
 
-A pokemon that changes hands arrives as a stranger: its friendship resets to
-`BASE_FRIENDSHIP`, so gold buys the pokemon and never the walking behind it.
+A pokemon that changes hands arrives as a stranger, its friendship reset. Gold
+buys the pokemon, never the walking behind it.
 
-What may go up is narrow on purpose. An item has to be from the **special** band;
-a pokemon has to have **perfect values** or **no values at all**, be **shiny**,
-or be a **special-tier species**. One listing a day is the scarcest thing a player has, and everything
-outside those is something a bidder could walk out and catch or dig up for
-themselves — a board full of that is a board nobody reads.
+What may be listed is deliberately narrow. An item must be from the **special**
+band. A pokemon must have **perfect stats**, **no stats at all**, be **shiny**, or
+belong to a **special-tier species**. One listing a day is the scarcest thing a
+player has, and anything outside those categories is something a bidder could
+walk out and find for themselves.
 
-Four pokemon cannot be listed even when they qualify: one **fighting**, one
-**waiting in a raid lobby**, an **egg** — a bidder cannot see into one and the
-seller can — and the **buddy** at the player's side. A lot cannot be taken back
-off the block, so the buddy is refused rather than quietly sent home: making that
-sale takes one deliberate press first.
+Four pokemon cannot be listed even when they qualify: one **in a fight**, one
+**waiting in a raid lobby**, an **egg** — a bidder cannot see inside one and the
+seller can — and the **buddy**. A lot cannot be withdrawn once listed, so the
+buddy is refused outright rather than quietly sent home.
 
-Nothing happens when bidding closes, because there is no job to run — somebody
-comes back for the lot. Usually that is the winner; a lot **nobody bid on** has
-no winner, so the seller takes it back instead, unsold and unpaid for. What a
-seller cannot do is take it back _early_: a listing that could be pulled the
-moment a bid looked unlikely is not one anybody would bid on.
+Nothing happens when bidding closes, because somebody must come back for the lot.
+Usually that is the winner; a lot **nobody bid on** has no winner, so the seller
+reclaims it unsold. What a seller cannot do is reclaim it *early*: a listing that
+could be pulled the moment a bid looked unlikely is not one anybody would bid on.
 
-They come back to the same place they bid: the board is **one list, newest lot
-first**, and a lot that has stopped taking bids stays in it with a Collect or a
-Take-it-back where the bid box was. Splitting won and unsold lots into headings
-of their own meant three places to look for one thing, two of them empty nearly
-always — what a player wins is a handful of rows a year on a board they read
-every day.
+The board is a single list, newest lot first. A lot that has stopped taking bids
+stays in place with a Collect or a Take-it-back button where the bid box was.
 
-The details are in [Auctions](../firestore/auctions.md).
+## See also
+
+- [The world](world.md)
+- [People you meet](npcs.md)
+- [Raising a pokemon](raising.md)

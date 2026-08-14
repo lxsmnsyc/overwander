@@ -1,26 +1,27 @@
 # Poketerra
 
-A Pokémon-style overworld you walk rather than one you are given. The map is not
-stored anywhere: one seed fans out into climate noise, the climate classifies
-into biomes, and every chunk rolls its own landmarks, spawns, item stashes and
-raids from that seed and the clock. Two players standing in the same place at the
-same moment compute the same world without exchanging a byte of it, and nothing
-has to be generated in advance.
+A Pokémon-style overworld you walk through, generated as you go. The map is
+never stored. One seed produces climate noise, the climate sorts into biomes,
+and each chunk rolls its own landmarks, spawns, item stashes and raids from that
+seed plus the clock. Two players in the same place at the same time compute the
+same world without exchanging any of it, and nothing is generated ahead of time.
 
-On top of that world sits a game: pokemon to meet and throw balls at, eggs to
-walk, raids that need a party, Team Rocket grunts who bar a cell for three hours,
-an auction house where things pass between players, and a real-time battle engine
-that both sides replay from a seed.
+On top of that world sits the game: pokemon to meet and throw balls at, eggs to
+walk, raids that need a party, Team Rocket grunts who block a cell for six
+hours, an auction house for trading between players, and a real-time battle
+engine both sides replay from a seed.
 
-The dex is Gen 1 — 151 species, their moves, abilities and items — with the
-mechanics taken from the modern games where the two disagree.
+The dex is Gen 1 — 151 species with their moves, abilities and items. Where Gen
+1 and the modern games disagree, the mechanics follow the modern games.
 
-- [Game mechanics](docs/mechanics.md) — how the world, the catching, the fights
-  and the raising actually work.
-- [Firestore](docs/firestore.md) — every store the game writes to, what is in
-  it, and who may touch it.
-- [Credits](docs/credits.md) — who wrote it, what it is built out of, and where
-  the art and the rules come from.
+- [Player's guide](docs/mechanics.md) — how the world, catching, fighting and
+  raising work, written for players rather than for programmers.
+- [The battle engine](docs/engine.md) — how the real-time engine, the AI and the
+  battle canvas actually run.
+- [Firestore](docs/firestore.md) — every store the game writes to, what it
+  holds, and who may touch it.
+- [Credits](docs/credits.md) — who wrote it, what it is built from, and where
+  the art and rules come from.
 
 ## How it is built
 
@@ -38,12 +39,12 @@ mechanics taken from the modern games where the two disagree.
 
 ### What you need
 
-- **Node 22 or newer**, which is what the Vite 8 toolchain expects.
+- **Node 22 or newer**, which the Vite 8 toolchain expects.
 - **pnpm**. This repository is pnpm-managed and its lockfile is
   `pnpm-lock.yaml`; npm and yarn will fight it.
-- **A Firebase project** with **Authentication** and **Cloud Firestore** enabled.
-  Email/password and Google are the two sign-in methods the login form offers, so
-  turn on whichever you intend to use.
+- **A Firebase project** with **Authentication** and **Cloud Firestore**
+  enabled. The login form offers email/password and Google, so enable whichever
+  you plan to use.
 
 ### Install and run
 
@@ -55,11 +56,11 @@ pnpm dev               # http://localhost:3000
 
 ### Configuring Firebase
 
-`.env.example` documents every variable; there are two groups.
+`.env.example` documents every variable. There are two groups.
 
-The **web config** is public by design and is what the browser uses to reach
-Auth and Firestore. Copy it out of the Firebase console under *Project settings →
-Your apps → Web app*:
+The **web config** is public by design and lets the browser reach Auth and
+Firestore. Copy it from the Firebase console under *Project settings → Your apps
+→ Web app*:
 
 | Variable                    | Where it comes from                   |
 | --------------------------- | ------------------------------------- |
@@ -72,7 +73,7 @@ Your apps → Web app*:
 The **service account** is server-only and secret. Everything that creates or
 moves value — recording a catch, paying gold, granting an item, raising a level,
 settling an auction — is written by the Admin SDK from `src/server/*` behind a
-verified caller, and none of it can reach Firestore without credentials:
+verified caller. None of it reaches Firestore without credentials:
 
 ```bash
 # Firebase console -> project settings -> service accounts -> generate new
@@ -80,81 +81,80 @@ verified caller, and none of it can reach Firestore without credentials:
 FIREBASE_SERVICE_ACCOUNT={"type":"service_account",...}
 ```
 
-Leaving it empty falls back to application default credentials, which is what a
-Google-hosted runtime already has. Without either, the game reads fine and
+If you leave it empty, the app falls back to application default credentials,
+which a Google-hosted runtime already has. With neither, the game reads fine and
 refuses every write.
 
 Changing `VITE_WORLD_SEED` changes the world. Chunk seeds, biomes, landmark
-placement, spawn rolls and lair contents all derive from it, so two deployments
-with different seeds are two different planets — and stored records that name a
+placement, spawn rolls and lair contents all derive from it. Two deployments
+with different seeds are two different planets, and stored records naming a
 chunk will point at ground that no longer looks the same.
 
 ### Running against the emulators
 
-A Firebase project is not needed to develop against. `firebase.json` configures
-the **Auth and Firestore emulators**, and a `demo-` project id makes them run
-entirely offline — no account to hold, no key to leak, and nothing a mistake can
-cost.
+You do not need a Firebase project to develop. `firebase.json` configures the
+**Auth and Firestore emulators**, and a `demo-` project id runs them fully
+offline — no account, no key to leak, and no cost to a mistake.
 
 ```bash
 pnpm emulators   # in one terminal: auth on 9099, firestore on 8080, UI on 4000
 pnpm dev         # in another
 ```
 
-`pnpm emulators` clears up after itself before it starts. The Firebase CLI runs
-Firestore as a separate Java process, and a run cut short with Ctrl-C regularly
-leaves that process holding its ports with nothing driving it — which used to
-mean the next start died on `port taken` and had to be untangled by hand. A set
-that is still answering is left alone and said so; only wreckage is cleared.
+`pnpm emulators` cleans up before it starts. The Firebase CLI runs Firestore as
+a separate Java process, and a run killed with Ctrl-C often leaves that process
+holding its ports with nothing driving it — which used to make the next start
+fail with `port taken`. The script clears that wreckage, but leaves a set that
+is still answering alone and says so.
 
-Point the app at them by uncommenting the emulator block at the bottom of
-`.env.example` in your `.env`. The web config above it can stay blank — an
-emulated run fills in its own, because a developer who has no project has nothing
-to copy a key out of, and the emulators verify none of it. Anything you do set is
-still honoured, which is how you point the emulators at a real project's id to
-work against a copy of its data.
+To point the app at the emulators, uncomment the emulator block at the bottom of
+`.env.example` in your `.env`. The web config above it can stay blank: an
+emulated run fills in its own, since a developer without a project has no key to
+copy and the emulators verify none of it. Anything you do set is still used,
+which is how you point the emulators at a real project's id to work against a
+copy of its data.
 
-Both halves of the game have to be told separately, because they are separate
-SDKs: `VITE_FIREBASE_EMULATOR=true` is the browser's half, and
-`FIRESTORE_EMULATOR_HOST` / `FIREBASE_AUTH_EMULATOR_HOST` are read by the Admin
-SDK itself, which is what routes the privileged writes. Both default to the same
-project id, since the emulators keep one store per project — name it on both
-sides or neither.
+Tell both halves of the game separately, because they are separate SDKs.
+`VITE_FIREBASE_EMULATOR=true` is the browser's half.
+`FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` are read by the
+Admin SDK, which routes the privileged writes. Both default to the same project
+id, since the emulators keep one store per project — so name it on both sides or
+neither.
 
-Naming only one is the mistake worth knowing about, because nothing about it
-looks like a mistake: `VITE_FIREBASE_PROJECT_ID=test` with `FIREBASE_PROJECT_ID`
-left at the default puts the browser in one store and the server in another. Both
-halves work, both write successfully, and the player is looking at a store that
-nothing the server writes ever reaches — no catches, no bag, no gold, no profile,
-and no error anywhere. The server refuses to start against a project the browser
-is not using, so this now fails with a message that names both ids instead.
+Naming only one side is the mistake worth knowing about, because nothing about
+it looks wrong. Setting `VITE_FIREBASE_PROJECT_ID=test` while leaving
+`FIREBASE_PROJECT_ID` at the default puts the browser in one store and the
+server in another. Both halves work, both write successfully, and the player
+watches a store the server never reaches — no catches, no bag, no gold, no
+profile, and no error anywhere. The server now refuses to start against a
+project the browser is not using, and the failure message names both ids.
 
-The emulators enforce `firestore.rules`, so a client write the rules refuse fails
-locally the way it would in production — which is the point of developing against
-them rather than against a project where the rules are not deployed yet.
+The emulators enforce `firestore.rules`, so a client write the rules reject
+fails locally exactly as it would in production. That is the point of developing
+against them instead of a project where the rules are not deployed yet.
 
-**The Firestore emulator needs a JDK 21 or newer** (the auth emulator is Node and
-needs nothing). `firebase emulators:start` says so plainly if the one on `PATH`
-is older — having a new enough one installed is not the same as it being the one
+**The Firestore emulator needs JDK 21 or newer** (the auth emulator is Node and
+needs nothing). `firebase emulators:start` says so plainly when the JDK on
+`PATH` is older. Having a new enough one installed is not the same as it being
 found first:
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
 ```
 
-Sign-in against the emulators is worth knowing two things about. The **Emulator
-UI** at <http://localhost:4000/auth> can add a user outright, which is the
-shortest way to a signed-in session. And **Google sign-in opens a popup** served
-from the emulator's own port, which some browsers will not let talk back to the
-page that opened it; the app falls back to a redirect when that happens, but
-email sign-in avoids the question entirely.
+Two things help with emulator sign-in. The **Emulator UI** at
+<http://localhost:4000/auth> can add a user directly, which is the fastest route
+to a signed-in session. And **Google sign-in opens a popup** served from the
+emulator's own port; some browsers block that popup from talking back to the
+page that opened it. The app falls back to a redirect when that happens, but
+email sign-in avoids the problem entirely.
 
 ### Firestore rules and indexes
 
 [`firestore.rules`](firestore.rules) and
-[`firestore.indexes.json`](firestore.indexes.json) are what the code assumes, and
-what [Security](docs/firestore/security.md) explains. Deploy them before the game
-is exposed to anybody:
+[`firestore.indexes.json`](firestore.indexes.json) are what the code assumes and
+what [Security](docs/firestore/security.md) explains. Deploy them before exposing
+the game to anybody:
 
 ```bash
 npx firebase deploy --only firestore:rules,firestore:indexes --project <id>
@@ -163,18 +163,18 @@ npx firebase deploy --only firestore:rules,firestore:indexes --project <id>
 Most collections are read-only to clients on purpose: the server owns anything
 worth cheating for.
 
-The rules have tests of their own, since nothing outside the emulator can say
-what a rule does:
+The rules have their own tests, since nothing outside the emulator can say what
+a rule does:
 
 ```bash
 pnpm test:rules
 ```
 
-It starts a Firestore emulator, runs `test/firestore/`, and stops it again —
-which is why it is not part of `pnpm test`, the rest of which needs nothing
-running. The run **clears the store between cases**, so it wants an emulator to
-itself; if one is already up on 8080, give it a spare port rather than letting
-it empty the one you are using:
+That starts a Firestore emulator, runs `test/firestore/`, and stops it again.
+It is separate from `pnpm test` because the rest of the suite needs nothing
+running. The run **clears the store between cases**, so it needs an emulator to
+itself. If one is already up on 8080, give the test run a spare port rather than
+letting it empty the one you are using:
 
 ```bash
 FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
@@ -198,26 +198,26 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 
 ## Where things live
 
-| Path              | What is in it                                                                 |
-| ----------------- | ----------------------------------------------------------------------------- |
-| `src/data/`       | The dex: species, moves, abilities, items, biomes, spawn and item pools       |
-| `src/overworld/`  | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids  |
-| `src/battle/`     | The battle engine: events, units, moves, statuses, abilities, items, AI       |
-| `src/auth/`       | Client-side Firestore reads and the `'use server'` wrappers around the writes |
-| `src/server/`     | Privileged writes, Admin SDK only, behind a verified caller                   |
-| `src/components/` | The UI, including the styled wrappers over terracotta in `components/styled/` |
-| `src/canvas/`     | Sprite sheets and the animation class the map and battle canvases draw with   |
-| `src/core/`       | The shared primitives: seeded RNG, Perlin noise, the event engine             |
+| Path              | What is in it                                                                     |
+| ----------------- | --------------------------------------------------------------------------------- |
+| `src/data/`       | The dex: species, moves, abilities, items, biomes, spawn and item pools           |
+| `src/overworld/`  | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids      |
+| `src/battle/`     | The battle engine: events, units, moves, statuses, abilities, items, AI           |
+| `src/auth/`       | Client-side Firestore reads and the `'use server'` wrappers around the writes     |
+| `src/server/`     | Privileged writes, Admin SDK only, behind a verified caller                       |
+| `src/components/` | The UI, including the styled wrappers over terracotta in `components/styled/`     |
+| `src/canvas/`     | Sprite sheets and the animation class the map and battle canvases draw with       |
+| `src/core/`       | The shared primitives: seeded RNG, Perlin noise, the event engine                 |
 | `public/sprites/` | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon |
-| `test/`           | Vitest suites, mirroring the source tree                                      |
-| `docs/`           | The mechanics and Firestore documentation                                     |
+| `test/`           | Vitest suites, mirroring the source tree                                          |
+| `docs/`           | The mechanics and Firestore documentation                                         |
 
 Two conventions are worth knowing before reading the source. Every module has a
-single `export default` where it has an obvious main thing, and effects — an
+single `export default` where it has an obvious main export. And effects — an
 ability, a held item, a status — are **written once and register themselves**
-against the events they have an opinion about, rather than being spelled out
-inside whichever function needed them. Nothing that stages a spawn or resolves a
-hit names an ability.
+against the events they care about, instead of being spelled out inside whatever
+function needed them. Nothing that stages a spawn or resolves a hit names an
+ability.
 
 ## License
 

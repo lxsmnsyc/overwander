@@ -2,8 +2,8 @@
 
 ## `profiles/{uid}`
 
-Set by [`src/auth/profile.ts`](../../src/auth/profile.ts). Created on first sign-in
-from whatever the auth provider knows.
+Set by [`src/auth/profile.ts`](../../src/auth/profile.ts), and created on first
+sign-in from whatever the auth provider knows.
 
 | Field      | Type             | Notes                                   |
 | ---------- | ---------------- | --------------------------------------- |
@@ -11,38 +11,37 @@ from whatever the auth provider knows.
 | `avatar`   | `string \| null` | Avatar URL, `null` when unset           |
 | `gold`     | `number`         | Currency balance; starts at zero        |
 
-Read by anyone (other players see nicknames and avatars). The owner writes
-their own `nickname` and `avatar`; `saveProfile` takes only those two and
-merges.
+Anyone may read it, since other players see nicknames and avatars. The owner
+writes their own `nickname` and `avatar`, and `saveProfile` takes only those two
+and merges.
 
-The balance is not theirs to write: `grantGold` and `spendGold` live in
-[`src/server/profile.ts`](../../src/server/profile.ts), each reading and writing
+The balance is not theirs to write. `grantGold` and `spendGold` live in
+[`src/server/profile.ts`](../../src/server/profile.ts), and each reads and writes
 inside a transaction so concurrent rewards cannot clobber each other. The rules
 pin `gold` on update and require a new profile to open at zero.
 
 ### Looking at somebody else
 
-Because the document is public, a trainer met in the middle of something — a
-party in a raid lobby, a lot on the auction board — can be opened as the profile
-they already have. [`ProfileDialog`](../../src/components/ProfileDialog.tsx)
-holds the uid being visited (`game.visiting()`), names the panel by their
-nickname, and renders the ordinary [`ProfileTab`](../../src/components/ProfileTab.tsx)
-with `viewOnly` set. That flag travels down to the buddy card and the battle
-history, and it takes out everything that writes: the sign-out, the buddy swap,
-the button that collects what a won raid still owes.
+The document is public, so a trainer met in the middle of something — a party in
+a raid lobby, a lot on the auction board — can be opened as the profile they
+already have. [`ProfileDialog`](../../src/components/ProfileDialog.tsx) holds the
+uid being visited (`game.visiting()`), names the panel by their nickname, and
+renders the ordinary [`ProfileTab`](../../src/components/ProfileTab.tsx) with
+`viewOnly` set. That flag travels down to the buddy card and the battle history
+and removes everything that writes: the sign-out, the buddy swap, and the button
+that collects what a won raid still owes.
 
 None of it is a permission. The rules refuse every one of those writes for
-anybody but the owner, and the server refuses them again; the flag is so a
-reader is not offered a button that could only fail.
+anybody but the owner, and the server refuses them again. The flag only stops a
+reader being offered a button that could not work.
 
-What a visitor is left with is who they are, who walks with them, and what they
-have fought — no tab bar over it, since a bar holding one tab decides nothing.
-**Bids** are the one part of the board that stays private: `bids/{bidId}` may
-only be listed by the player who placed them. The **bag** is not on the profile
-at all, and `bags/{uid}` is a `get` by the owner alone. Their **catches** are
-readable — `caught/{catchId}` is public, which is what makes a lot on the block
-worth bidding on — but the visited profile does not show them; the box behind
-the menu is only ever the reader's own.
+A visitor is left with who the player is, who walks with them, and what they have
+fought. There is no tab bar over it, since a bar holding one tab decides nothing.
+**Bids** stay private: `bids/{bidId}` may only be listed by the player who placed
+them. The **bag** is not on the profile at all, and `bags/{uid}` is a `get` by
+the owner alone. Their **catches** are readable — `caught/{catchId}` is public,
+which is what makes a lot on the block worth bidding on — but the visited profile
+does not show them. The box behind the menu is only ever the reader's own.
 
 ## `bags/{uid}`
 
@@ -58,27 +57,28 @@ bags/{uid} = { items: { "114": 3, "10007": 1 }, candies: { "0": 12 } }
 | `items`   | `Record<string, number>` | Item id → how many are carried |
 | `candies` | `Record<string, number>` | Family id → how many are held  |
 
-Read through [`src/auth/inventory.ts`](../../src/auth/inventory.ts) and
-[`src/auth/candy.ts`](../../src/auth/candy.ts), which are the bag's two views of
-one document; written only by
-[`src/server/stacks.ts`](../../src/server/stacks.ts), since both maps are
-currency — one mints Master Balls and the other mints levels.
+It is read through [`src/auth/inventory.ts`](../../src/auth/inventory.ts) and
+[`src/auth/candy.ts`](../../src/auth/candy.ts), which are two views of one
+document, and written only by
+[`src/server/stacks.ts`](../../src/server/stacks.ts). Both maps are currency: one
+mints Master Balls and the other mints levels.
 
 ### Why one document
 
-It was a collection each — `inventories/{uid}:{item}` and
-`candies/{uid}:{family}`, one small row per thing. Every picker in the game
-opens by reading the whole bag, and a row per thing billed **a read per kind
-carried**, a number that grows with a player's collection forever. One document
-is one read however much they own, the items and the candies arrive together
-instead of as two queries, and the bag can be watched live for what a row per
-thing would have cost a listener per row.
+It used to be a collection each — `inventories/{uid}:{item}` and
+`candies/{uid}:{family}` — one small row per thing. Every picker in the game
+opens by reading the whole bag, so a row per thing billed **a read per kind
+carried**, a number that grows with a player's collection forever.
 
-What it costs is that a player's whole bag is one document, so their writes
-queue behind each other. That is self-contention — nobody else writes your bag
-— and it is why anything handing over several kinds does it in **one** write:
-`grantStacks` for a dug-up stash and the Pickup finds, and one transaction for
-a whole vendor basket.
+One document is one read however much they own. The items and the candies arrive
+together instead of as two queries, and the bag can be watched live for what a
+row per thing would have cost a listener per row.
+
+The cost is that a player's whole bag is one document, so their writes queue
+behind each other. That is self-contention — nobody else writes your bag — and it
+is why anything handing over several kinds does it in **one** write: `grantStacks`
+for a dug-up stash and the Pickup finds, and one transaction for a whole vendor
+basket.
 
 Both maps are **exempted from indexing**. A key per item id would be an index
 entry per item id, and nothing asks the store which players hold a Master Ball.
@@ -87,52 +87,52 @@ entry per item id, and nothing asks the store which players hold a Master Ball.
 
 [`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which map a kind lives in
 (`ITEM_STACKS`, `CANDY_STACKS`) and reads one out: `getStack` for a count,
-`listStacks` for the id-count pairs every picker wants. Nothing is ever listed
-at zero — a stack spent to its last is **deleted** from the map rather than left
+`listStacks` for the id-count pairs every picker wants. Nothing is ever listed at
+zero — a stack spent to its last is **deleted** from the map rather than left
 sitting at nothing, which is what the old rows did.
 
-[`src/server/stacks.ts`](../../src/server/stacks.ts) has two layers, because
-most callers change a stack **and something else** in one breath — an item
-leaves the bag as a move is learned, a candy leaves the pile as a level lands.
-Those take `readStackIn` / `writeStackIn` / `spendStackIn` and pass their own
-transaction; the rest take `grantStack` / `spendStack` / `grantStacks`, which
-open one of their own.
+[`src/server/stacks.ts`](../../src/server/stacks.ts) has two layers, because most
+callers change a stack **and something else** in one breath: an item leaves the
+bag as a move is learned, a candy leaves the pile as a level lands. Those take
+`readStackIn` / `writeStackIn` / `spendStackIn` and pass their own transaction.
+The rest take `grantStack` / `spendStack` / `grantStacks`, which open one of
+their own.
 
-Every write is a **merge at one field path**, never a whole document: two kinds
-changed in one transaction are two mutations against `items.114` and
-`items.117`, so the second cannot overwrite the first. Reads still come before
-writes — two kinds read in one transaction are two reads of the same document —
-which is Firestore's own rule and the reason the multi-kind callers gather
-before they write.
+Every write is a **merge at one field path**, never a whole document. Two kinds
+changed in one transaction are two mutations, against `items.114` and `items.117`,
+so the second cannot overwrite the first. Reads still come before writes — two
+kinds read in one transaction are two reads of the same document — which is
+Firestore's own rule and the reason the multi-kind callers gather before they
+write.
 
-`useCandy(catchId)` spends `getCandyCost(caught)` candies to raise a catch
-by a level — one for an ordinary catch, two for a shadow. It reads
-the catch and the stack, then writes both **inside one transaction**, so a candy
-can never be spent without the level landing. It resolves the new level, or null
-when the catch is not the user's, its species' family does not match a stack the
-user holds, the stack is empty, or the catch already sits at `MAX_LEVEL`
+`useCandy(catchId)` spends `getCandyCost(caught)` candies to raise a catch by a
+level: one for an ordinary catch, two for a shadow. It reads the catch and the
+stack, then writes both **inside one transaction**, so a candy can never be spent
+without the level landing. It resolves the new level, or null when the catch is
+not the user's, its species' family does not match a stack the user holds, the
+stack is empty, or the catch already sits at `MAX_LEVEL`
 (`src/data/constants/levels.ts`).
 
-Private: only the owning uid may read the stacks, and only the server may
-write them or the catch the level lands on.
+Private: only the owning uid may read the stacks, and only the server may write
+them or the catch the level lands on.
 
 ### What a catch pays
 
 Every catch pays `CANDY_PER_CATCH` of its own family, four times over on the
 family's own day. On top of that, `recordCatch` asks the overworld engine
-`checkCatchCandy` what the player was **carrying** at the time — two held items
+`checkCatchCandy` what the player was **carrying** at the time. Two held items
 answer it, each paying one candy half the time:
 
 - **Exp. Share** pays the _buddy's_ family, so everything caught feeds the one
   pokemon being raised.
 - **Lucky Egg** pays the _caught_ pokemon's family, so it fills out a dex faster.
 
-Neither is touched by the species day: it already pays four times over on the
-catch itself, and a bonus that multiplied with it would make one day worth a
-week of ordinary ones. They are paid through `grantCandy` (flat) rather than
+Neither is touched by the species day. It already pays four times over on the
+catch itself, and a bonus that multiplied with it would make one day worth a week
+of ordinary ones. Both are paid through `grantCandy` (flat) rather than
 `grantCatchCandy` (boosted), and each is one candy however many families are
-owed. A catch holds one item at a time, so the two are a choice, not a stack.
-The effects live in
+owed. A catch holds one item at a time, so the two are a choice rather than a
+stack. The effects live in
 [`src/overworld/items/candy-items.ts`](../../src/overworld/items/candy-items.ts)
 and register themselves the way every other buddy effect does.
 
@@ -142,7 +142,7 @@ Set by [`src/auth/buddy.ts`](../../src/auth/buddy.ts) through the profile's
 `buddy` field: the `caught/{catchId}` walking at the player's side, or an empty
 string when they walk alone.
 
-It was `buddies/{uid}` — one document holding one string — and it is a field
+It used to be `buddies/{uid}`, one document holding one string. It is a field now
 because it is read on nearly **every** overworld action: every encounter
 derivation asks what the buddy changes, every catch asks what it is carrying,
 every step report asks what is being walked. A document of its own was a second
@@ -151,17 +151,17 @@ read for one string, on the hottest path in the game.
 `setBuddy` reads the catch first and refuses to write when the player does not
 own it. Ownership can still lapse afterwards — a trade leaves the field pointing
 at someone else's pokemon — so `resolveBuddy` re-checks `owner` on read and
-resolves null when it no longer matches. `clearBuddy` writes an empty string,
-and `releaseCatch` clears it in the same transaction when the released pokemon
-was the one being followed.
+resolves null when it no longer matches. `clearBuddy` writes an empty string, and
+`releaseCatch` clears it in the same transaction when the released pokemon was
+the one being followed.
 
 An **egg** may be the buddy, and has to be: steps only count for what walks
 beside the player. `resolveBuddy` reports no field effects for one, though — it
 is carried, not accompanied. See [Eggs](catches.md#eggs).
 
 The rules restrict the field to the owning uid, the way the nickname beside it is
-restricted — and `gold` stays server-only, so the profile's rule has to name
-which keys a player may touch rather than allowing the whole document.
+restricted. `gold` stays server-only, so the profile's rule has to name which
+keys a player may touch rather than allowing the whole document.
 
 ## `positions/{uid}`
 
@@ -179,32 +179,33 @@ everything else the overworld holds derives from a seed and a window.
 | `cellY`   | `number` | Cell row within the chunk, 0 to 15            |
 | `movedAt` | `number` | When it was last written, on the server clock |
 
-It exists for one reason: a player who walked forty chunks, or spent a Portal
-Key crossing the world, should not be put back at their starting point by a page
-reload. A player with **no document yet** is dropped somewhere random in the
-starting region by `pickStartPosition`
-([`src/overworld/start.ts`](../../src/overworld/start.ts)) — the draw is a random
-seed rather than their uid, so two players who arrive together arrive in
-different places — and that position is **written immediately**, so the dice are
-rolled once and returning is returning.
+It exists for one reason: a player who walked forty chunks, or spent a Portal Key
+crossing the world, should not be put back at their starting point by a page
+reload.
+
+A player with **no document yet** is dropped somewhere random in the starting
+region by `pickStartPosition`
+([`src/overworld/start.ts`](../../src/overworld/start.ts)). The draw uses a random
+seed rather than their uid, so two players who arrive together arrive in different
+places, and that position is **written immediately**, so the dice are rolled once
+and returning is returning.
 
 Steps and position settle **together**. The paces an egg has walked are reported
-in batches while a walk is in progress, and flushed — batch or not — at the
-moment the position is written, so a player never comes back further along the
-map than their egg is along its walk. A portal crossing settles the same way: the
-walk _to_ the portal counts, the crossing itself is not a walk and adds no steps.
-The server bounds a step report by the time since the last one either way
-(`creditableSteps`), so nothing about moving a position can be turned into
-progress on an egg.
+in batches while a walk is in progress, and flushed — batch or not — the moment
+the position is written, so a player never comes back further along the map than
+their egg is along its walk. A portal crossing settles the same way: the walk _to_
+the portal counts, and the crossing itself adds no steps. Either way the server
+bounds a step report by the time since the last one (`creditableSteps`), so
+nothing about moving a position can be turned into progress on an egg.
 
-It is **the client's word**, and deliberately so. The server clamps the
-coordinates to somewhere that exists and stamps the time; it does not check the
-walk, because positions are written every `SAVE_DELAY` (1.5s) rather than every
-step and there is no path in them to check. Nothing in the game trusts a
-position: reaching a landmark is checked against the landmark and its window, a
-spawn against the store, a portal against the chunk seed. A player who lies
-about where they are stands somewhere they are not and finds exactly what is
-there — see [Reaching, not treading](overworld.md#reaching-not-treading).
+It is **the client's word**, deliberately. The server clamps the coordinates to
+somewhere that exists and stamps the time; it does not check the walk, because
+positions are written every `SAVE_DELAY` (1.5s) rather than every step and there
+is no path in them to check. Nothing in the game trusts a position: reaching a
+landmark is checked against the landmark and its window, a spawn against the
+store, a portal against the chunk seed. A player who lies about where they are
+stands somewhere they are not and finds exactly what is there — see
+[Reaching, not treading](overworld.md#reaching-not-treading).
 
 Private to the owning uid, and read-only to them.
 
@@ -238,39 +239,41 @@ Private to the owning uid, and read-only to them.
 
 ### What the screen makes of it
 
-The dex is behind the menu, beside the catches: a box is what somebody has and
-a dex is what there is. [`PokedexTab`](../../src/components/PokedexTab.tsx)
-reads the document once and draws **every base form in the registry** — one
-entry per pokemon rather than one per costume, which is the rule
-`getBaseForms` already counts a dex by — as a grid of squares in dex order,
-thirty at a time in the same six-by-five box the collection is kept in. Each
-square is in one of three states, and the gaps are the point: a number alone
-for a species never met, its own silhouette for one met and never kept, and
-the pokemon itself for one that has been owned.
+The dex sits behind the menu, beside the catches: a box is what somebody has, and
+a dex is what there is. [`PokedexTab`](../../src/components/PokedexTab.tsx) reads
+the document once and draws **every base form in the registry** — one entry per
+pokemon rather than one per costume, which is the rule `getBaseForms` already
+counts a dex by — as a grid of squares in dex order, thirty at a time in the same
+six-by-five box the collection is kept in.
+
+Each square is in one of three states, and the gaps are the point: a number alone
+for a species never met, its own silhouette for one met and never kept, and the
+pokemon itself for one that has been owned.
 
 Opening a square opens [`DexEntryDialog`](../../src/components/DexEntryDialog.tsx):
-both coats (each a silhouette until it has been owned), the category, the
-height and weight, the family's candy the reader is holding, the abilities, the
-base stats, **where it lives**, and everything it can learn.
+both coats (each a silhouette until it has been owned), the category, the height
+and weight, the family's candy the reader is holding, the abilities, the base
+stats, **where it lives**, and everything it can learn.
 
 "Where it lives" is the spawn pools read backwards. Every other reader asks a
 biome what lives in it; `listSpeciesHabitats` in
-[`src/data/biome/__create.ts`](../../src/data/biome/__create.ts) sweeps every
-pool of every biome at every hour once, keeps the index, and answers the
-opposite question — which biome, at which hour, out of which rarity band. It is
-thrown away whenever a pool is registered, so it cannot go stale. Something met
-around the clock at the same odds says **Anytime** rather than the same badge
-four times, and a species with a **lair** — the four legendaries and Mew — is
-named by the place first: a player who came to that entry came for
+[`src/data/biome/__create.ts`](../../src/data/biome/__create.ts) sweeps every pool
+of every biome at every hour once, keeps the index, and answers the opposite
+question — which biome, at which hour, out of which rarity band. The index is
+thrown away whenever a pool is registered, so it cannot go stale.
+
+Something met around the clock at the same odds says **Anytime** rather than the
+same badge four times. A species with a **lair** — the four legendaries and Mew —
+is named by the place first: a player who came to that entry came for
 [Cerulean Cave](../../src/data/overworld/lair.ts), not for the odds of walking
 into one.
 
 ## `fled/{uid}`
 
-Written by `markFled` in [`src/server/overworld.ts`](../../src/server/overworld.ts),
-read through [`src/auth/safari.ts`](../../src/auth/safari.ts). The key is
-recomputed from the stored encounter, so a player cannot retire a meeting they
-never had.
+Written by `markFled` in
+[`src/server/overworld.ts`](../../src/server/overworld.ts), read through
+[`src/auth/safari.ts`](../../src/auth/safari.ts). The key is recomputed from the
+stored encounter, so a player cannot retire a meeting they never had.
 
 | Field  | Type       | Notes                                          |
 | ------ | ---------- | ---------------------------------------------- |
@@ -280,13 +283,13 @@ An encounter key is `` `${x},${y}@${timestamp}:${individualValue}` `` (see
 `encounterKey` in [`src/overworld/safari.ts`](../../src/overworld/safari.ts)).
 
 **The list is pruned as it is written.** The key carries the window that staged
-the spawn, and a spawn is gone when its window turns over — so a key older than
+the spawn, and a spawn is gone when its window turns over, so a key older than
 `FLED_MEMORY` (1 hour) can never match anything again and is dropped by the same
-write that adds a new one. An hour rather than one 5-minute window because the
-windows are **local**: a player who crosses a zone reads a clock offset from the
-one their last key was written against.
+write that adds a new one. It is an hour rather than one 5-minute window because
+the windows are **local**: a player who crosses a zone reads a clock offset from
+the one their last key was written against.
 
-Without that, the list only grew — one key per encounter a player ever walked
-away from, in a single document, until it met Firestore's megabyte.
+Without the pruning the list only grew — one key per encounter a player ever
+walked away from, in a single document, until it met Firestore's megabyte.
 
 Private to the owning uid, and read-only to them.

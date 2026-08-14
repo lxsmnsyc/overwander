@@ -1,26 +1,33 @@
-# Encounters
+# Meeting pokemon
 
-A pokemon standing in a chunk is two numbers and a species id. Everything else
-about it — its level, its nature, which of its abilities it has, how big it is,
-whether it sparkles for you — is derived from those numbers on demand, so a
-window's worth of pokemon costs three numbers each to publish and nothing at all
-to remember.
+Wild pokemon stand on the cells of a chunk and are met by walking up to one and
+clicking it. Every five minutes a chunk produces a fresh set of them, and every
+player who passes through the chunk during those five minutes sees the same set.
 
-## What a window holds
+Everything about a wild pokemon — its level, nature, gender, ability, individual
+stats, size and moves — is decided before the player arrives and never changes.
+Whether it is **shiny**, however, depends on the player looking at it.
 
-Every 5-minute window, a chunk rolls `SPAWN_COUNT` (6) pokemon and places each on
-its own free cell of the central 12×12, skipping the whole landmark area. Two
-more (`LURE_SPAWN_BONUS`) are rolled on top for every chunk, whether or not
-anybody can see them: a **lure** buddy decides who *may*, not whether they exist,
-so all the visitors of a chunk still share one set of rolls. A player walking
-without one neither sees the last two on the map nor may meet them.
+## How many appear
 
-Three abilities lure, and they are the ones the mainline games gave the job:
-**Arena Trap**, **Illuminate** and **No Guard**.
+An ordinary walker sees **eight** pokemon in a chunk. Three more are always
+present but visible only to a player whose buddy attracts them, and a buddy that
+repels pokemon hides three.
 
-### Which band, then which species
+| Buddy                                              | Pokemon visible |
+| -------------------------------------------------- | --------------- |
+| Holding a Pure Incense                             | 5               |
+| Ordinary                                           | 8               |
+| With Arena Trap, Illuminate or No Guard (a "lure") | 11              |
 
-Each roll picks a rarity band first and a species inside it second, by weight:
+The extra pokemon are rolled for every chunk whether or not anybody can see them,
+so a lure changes who may meet them rather than whether they exist. A player
+without one can neither see nor reach the last three.
+
+## Rarity
+
+Each pokemon that appears rolls first for a rarity band, then for a species
+within that band.
 
 | Band     | Odds     | What is in it                           |
 | -------- | -------- | --------------------------------------- |
@@ -30,145 +37,133 @@ Each roll picks a rarity band first and a species inside it second, by weight:
 | Uncommon | 1/8      | Middle evolutions                       |
 | Base     | The rest | Unevolved species that can still evolve |
 
-The odds are **widths** rather than running totals, so the prized band takes its
-slice out of base and leaves every other band exactly as wide as it was.
+Which species appear inside a band, and how often each does, depends on the
+biome and the time of day. That is why one field is full of Rattata while a
+Chansey is a story worth telling.
 
-Most bands are a property of the species rather than a list somebody maintains:
-`getSpawnRarity` reads what a species evolves into and out of. The **prized band
-is the exception, and has to be** — a baby evolves like any other first stage and
-an unown evolves like any other single-stage species, so nothing about the shape
-of either line says what it is. Both are listed by hand in `BABY_SPECIES` and
-`UNOWN_SPECIES`, and Gen 1 has neither, so every pool in the game today leaves
-the band out. A roll landing in a band the biome keeps nothing in falls to the
-**next band down**, which is how those pools go on rolling their rares unchanged.
+If a biome holds nothing in the band a roll landed on, the roll falls to the next
+band down, so nothing is lost — the player meets a commoner instead.
 
-The prized band exists because meeting one of these should be a story a player
-tells. A baby is not rare for any structural reason — it is an ordinary first
-stage — and an unown is worth hunting only if the letters take months to collect.
-Neither is one-per-world, though: unlike a special, a player may meet a second.
+A prized pokemon is not unique. Unlike a legendary, a second one may be met.
 
-Weights inside a band are the biome's own, which is where "Rattata everywhere,
-Chansey almost never" comes from. The species day multiplies one family's weights
-by four without moving it between bands.
+## What a pokemon comes with
 
-## Deriving one pokemon
+### Level
 
-A spawn is the tuple `[species, individualValue, traitValue]` — the species and
-two 32-bit rolls. `deriveEncounter`
-([`src/overworld/encounter.ts`](../../src/overworld/encounter.ts)) turns it into a
-concrete pokemon, and every derivation of the same tuple agrees.
+Level depends on the rarity band, so a first field does not hand out a level 90
+Rattata and a legendary is never trivial:
 
-**The individual value** is sliced into the six IVs, five bits each in stat
-order, 0 to 31.
+| Band     | Level range |
+| -------- | ----------- |
+| Base     | 5–15        |
+| Prized   | 5–15        |
+| Uncommon | 15–30       |
+| Rare     | 30–45       |
+| Special  | 1–100       |
 
-**The trait value** is sliced four ways, one byte each:
+Legendaries deliberately cover the whole range: there is one of each in the
+world, nobody meets one twice, and a legendary that could only ever be met at one
+strength would be a legendary with a known answer.
 
-| Slice | Bits  | What it decides                                           |
-| ----- | ----- | --------------------------------------------------------- |
-| 0     | 0–7   | Level, spread evenly over 5–100                           |
-| 1     | 8–15  | Gender, against the species' own ratio                    |
-| 2     | 16–23 | Ability: the low eighth of the byte lands the hidden pool |
-| 3     | 24–31 | Nature, one of 25                                         |
+### Ability, nature and gender
 
-A species with no gender ratio is genderless, and a species with no hidden
-ability gives the whole byte to its regular pool. Everything is a slice rather
-than a sequence of draws so that a client and a server derive the same pokemon
-without exchanging it or agreeing on a call order.
+A wild pokemon carries one of its species' ordinary abilities about seven times
+in eight; the remaining eighth is its hidden ability. Nature is one of the usual
+25, and gender follows the species' own ratio — a species with no ratio is
+genderless.
 
-**Size** has no byte left, so it is mixed out of the trait value with a xorshift
-and read as **two** bytes that are averaged. Averaging two rolls makes the
-distribution triangular: most of a species comes out near its listed size and the
-extremes are rare, which is what makes a giant worth showing off. The scale runs
-from `MIN_SIZE_SCALE` (0.85) to `MAX_SIZE_SCALE` (1.15); height scales with it
-directly and weight with its cube, the way volume does, so a tenth taller is a
-third heavier.
+### Moves
 
-Size is **derived rather than stored**, which is why evolving grows a pokemon:
-the trait value keeps the individual's proportions and the species supplies the
-size those proportions apply to.
+A wild pokemon knows the last four moves its species learns by levelling up at or
+below its level.
 
-**Moves** are the last four the species learns by level-up at that level.
+### Size
+
+Size is usually close to normal for the species and rarely far from it, running
+between roughly 0.85× and 1.15×. Height follows the scale directly and weight
+follows its cube, so a pokemon a tenth taller is about a third heavier. Extremes
+are rare, which is what makes a giant worth showing off.
+
+Size belongs to the individual rather than to the number on the record, so
+evolving grows a pokemon into its new species while keeping its place within it:
+a big Bulbasaur becomes a big Ivysaur.
 
 ## Shininess
 
-Shininess is a **resonance between a trainer and a pokemon**, adapted from the
-mainline formula. The user id hashes into a stable 32-bit trainer value, whose
-16-bit halves are XORed against the trait value's halves; a result under
-`SHINY_THRESHOLD` (16) sparkles, which is 16 in 65,536 — the modern 1/4096.
+A shiny pokemon is a match between a **trainer and that pokemon**. The same wild
+pokemon may be shiny for one player and perfectly ordinary for the player
+standing beside them.
 
-Two consequences are deliberate. The same wild pokemon is shiny for one trainer
-and plain for another, since the trainer is half the sum. And it reads the
-**trait** value rather than the individual one, so sparkling is independent of
-the IVs a pokemon rolled: a shiny is not secretly a better pokemon.
+The base chance is **1 in 4,096**, and two bonuses multiply it:
 
-Boosts widen the band that sparkles and multiply together:
+| Bonuses held        | Effective odds |
+| ------------------- | -------------- |
+| None                | 1/4096         |
+| Species day         | 1/512          |
+| Shiny Charm         | 1/512          |
+| Species day + charm | 1/64           |
 
-| Boost       | Factor | Effective odds |
-| ----------- | ------ | -------------- |
-| None        | ×1     | 1/4096         |
-| Species day | ×8     | 1/512          |
-| Shiny Charm | ×8     | 1/512          |
-| Both        | ×64    | 1/64           |
+The Shiny Charm is carried by the buddy rather than in the bag, so it occupies
+the buddy's single held-item slot.
 
-The Shiny Charm is a **held item on the buddy**, not something in the bag, so it
-takes the player's one held-item slot on the pokemon walking beside them.
+Shininess is independent of a pokemon's individual stats. A shiny is not
+secretly a stronger pokemon.
 
 ## What a buddy changes
 
-The overworld asks its questions through an event engine of its own
-([`src/overworld/core.ts`](../../src/overworld/core.ts)), built exactly like the
-battle engine. Nothing that stages a spawn names an ability; each field effect is
-written once and listens for the questions it has an opinion about.
+The pokemon walking beside a player changes what they find. Some effects come
+from the buddy's ability, others from what it is holding.
 
-| Effect                                       | Carried by | What it does                                        |
-| -------------------------------------------- | ---------- | --------------------------------------------------- |
-| **Synchronize**                              | Ability    | Half of all encounters share the buddy's nature     |
-| **Cute Charm**                               | Ability    | Two draws in three come out the opposite gender     |
-| **Arena Trap**, **Illuminate**, **No Guard** | Ability    | The two extra spawns become visible and meetable    |
-| **Flame Body**                               | Ability    | An egg picked up beside it has half as far to go    |
-| **Pickup**                                   | Ability    | Finds something on the path every 512 steps walked  |
-| **Shiny Charm**                              | Held item  | Eight times the shiny odds                          |
-| **Exp. Share**                               | Held item  | Half of catches pay a candy to the *buddy's* family |
-| **Lucky Egg**                                | Held item  | Half of catches pay a candy to the *caught* family  |
-| **Luck Incense**                             | Held item  | Doubles a reward purse                              |
+| Effect                                       | Source    | What it does                                              |
+| -------------------------------------------- | --------- | --------------------------------------------------------- |
+| **Synchronize**                              | Ability   | Half of the pokemon met share the buddy's nature          |
+| **Cute Charm**                               | Ability   | Two in three come out the opposite gender to the buddy    |
+| **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable           |
+| **Flame Body**                               | Ability   | An egg picked up beside it hatches in half the walk       |
+| **Pickup**                                   | Ability   | Finds an item every 512 steps walked                      |
+| **Shiny Charm**                              | Held item | Eight times the shiny odds                                |
+| **Exp. Share**                               | Held item | Half of catches also pay candy to the *buddy's* family    |
+| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the *caught* family    |
+| **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays            |
+| **Pure Incense**                             | Held item | Three fewer pokemon appear, for crossing a chunk in peace |
 
-Each rolls on a stream seeded by the spawn and the player, so the client shows
-exactly what the server will stage, and two players standing on one cell get
-their own answers. A genderless pokemon on either side of Cute Charm leaves the
-gender alone.
+Cute Charm does nothing when either pokemon is genderless.
 
-What a chunk holds is the same for everybody standing in it. No field effect
-changes which species turned up — only how many a player can see, and what the
-ones they meet come out as.
+None of these change *which* species are standing in the chunk — everybody sees
+the same ones — only how many a player can reach, and what the ones they meet
+turn out to be.
 
-An **egg** may be the buddy, and has to be for its steps to count, but it reports
-no field effects at all: it is carried, not accompanied.
+An **egg** may be the buddy, and must be for its steps to count, but an egg
+provides no effects at all: it is carried rather than accompanied.
 
-## The seven ways to meet one
+## How a pokemon was obtained
 
-`EncounterType` records how a pokemon was met, and the record keeps it forever:
+Every pokemon a player owns permanently records how it was obtained:
 
-| Kind               | Where it comes from                                            |
-| ------------------ | -------------------------------------------------------------- |
-| **Wild**           | A spawn standing in a chunk, or a phenomenon's pokemon         |
-| **Hatched**        | An egg walked open                                             |
-| **Legendary Raid** | A cleared legendary raid, at level 50                          |
-| **Shadow Raid**    | A cleared shadow raid, at level 25, keeping the Shadow ability |
-| **Mythical Raid**  | A raid called out with a relic, at level 30                    |
-| **Team Rocket**    | Taken off a beaten grunt: a shadowed commoner at level 10      |
-| **Fateful**        | An event or gift                                               |
+| Kind               | Source                                                           |
+| ------------------ | ---------------------------------------------------------------- |
+| **Wild**           | One standing in a chunk, or one produced by a phenomenon         |
+| **Hatched**        | An egg walked open                                               |
+| **Legendary Raid** | A cleared legendary raid, at level 50                            |
+| **Shadow Raid**    | A cleared shadow raid, at level 25, keeping the Shadow ability   |
+| **Mythical Raid**  | A raid called with a relic, at level 30                          |
+| **Team Rocket**    | Taken from a beaten grunt: a shadowed common pokemon at level 10 |
+| **Revived**        | A fossil opened by the Fossil Scientist, at level 20             |
+| **Fateful**        | An event or a gift                                               |
 
-The three raid kinds are kept apart because they are not the same prize. A
-legendary raid hands over a legendary half-grown; a shadow raid usually stages
-one of the biome's rare species, hands it over lower, and its catch carries the
-Shadow ability for good; a mythical arrives lowest of the three, because the
-prize is the pokemon itself rather than what it comes ready to do.
+The three raid prizes arrive at different levels because they are different
+prizes. A legendary arrives half-grown; a shadow arrives lower and keeps its
+Shadow ability for life; a mythical arrives lowest of all, because the pokemon
+itself is the prize.
 
-A raid prize is derived against the **raid's own** chunk and window rather than
-wherever the player is standing when they claim it, so a late claim meets exactly
-what the raid staged. A mythical's origin is recorded as `Beyond`, since a relic
-calls something out of a place the map does not contain.
+A raid prize may be claimed long after the raid ended and is still exactly what
+the raid staged, wherever the player happens to be standing.
 
-Once a pokemon has been met, the derived encounter is stored per player — see
-[`encounters/{spawnId}:{uid}`](../firestore/overworld.md#encountersspawniduid) —
-so meeting it again shows the same pokemon rather than rolling a new one.
+Once a pokemon has been met it stays as it was. Walking away and returning within
+its five-minute window finds the same pokemon rather than a new roll.
+
+## See also
+
+- [Catching](catching.md)
+- [The world](world.md)
+- [Raising a pokemon](raising.md)

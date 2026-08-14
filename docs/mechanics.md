@@ -1,45 +1,63 @@
-# Game mechanics
+# Poketerra: player's guide
 
-What the game actually does: how the ground under a player is decided, what
-turns up on it, what a thrown ball is worth, how a fight resolves, and what
-raising a pokemon costs. These pages describe the rules; the
-[Firestore pages](firestore.md) describe where the results are written and who
-is allowed to write them.
+**Poketerra** is a Pokémon-style game played on a world that is generated as it
+is walked. Players explore an endless map of chunks, meet wild pokemon, throw
+balls at them, dig items out of the ground, hatch eggs, fight raids and Team
+Rocket grunts, and trade rare finds at an auction house.
 
-## The pages
+The pokemon are the first 151, with the moves, abilities and items of the modern
+games. Battles run in real time rather than in turns, and pokemon grow on candy
+rather than on experience.
 
-| Page                                  | What it covers                                                              |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| [The world](mechanics/world.md)       | Seeds, biomes, chunks, landmarks, the windows they turn over on, portals    |
-| [Encounters](mechanics/encounters.md) | Spawn rolls, how one pokemon is derived, shininess, what a buddy changes    |
-| [Catching](mechanics/catching.md)     | The safari session: balls, feeding, fleeing, and the odds behind each throw |
-| [Battles](mechanics/battles.md)       | The real-time engine, damage, statuses, and the four kinds of fight         |
-| [Raising](mechanics/raising.md)       | Candy, evolution, effort, friendship, bottle caps, purification, healing    |
-| [Eggs](mechanics/eggs.md)             | Nests, breeding, inheritance, and walking one open                          |
-| [Items and gold](mechanics/items.md)  | What the ground holds, what things are worth, and where gold comes and goes |
+This guide describes the rules of the game as a player meets them. It is written
+for players; the developer documentation lives in
+[Firestore](firestore.md) and [The battle engine](engine.md).
 
-## Four ideas behind all of it
+## Contents
 
-**The world is derived, not stored.** A chunk's biome, its landmarks, what is
-buried in them and who is standing on them all come back out of a seed and a
-window. Nothing is generated in advance and nothing is kept, so the world is as
-large as its coordinate space rather than as large as its database. The only
-things stored are the ones players *did*: a catch, a claim, a bid.
+| Page                                       | What it covers                                               |
+| ------------------------------------------ | ------------------------------------------------------------ |
+| [The world](mechanics/world.md)            | The map, biomes, chunks, landmarks, refresh windows, portals |
+| [Meeting pokemon](mechanics/encounters.md) | Which pokemon appear, how rare they are, what they come with |
+| [Catching](mechanics/catching.md)          | Balls, berries, catch odds, and when a pokemon flees         |
+| [Battles](mechanics/battles.md)            | Real-time combat, damage, statuses, raids, Team Rocket       |
+| [Raising a pokemon](mechanics/raising.md)  | Candy, evolution, training, friendship, moves, healing       |
+| [Eggs](mechanics/eggs.md)                  | Nests, breeding, inheritance, hatching                       |
+| [People you meet](mechanics/npcs.md)       | The vendor and the six travelling specialists                |
+| [Items and gold](mechanics/items.md)       | The item pool, berries, the economy, the auction house       |
 
-**Instants belong to the server, calendars belong to the player.** The clock a
-window is measured against is central, so a device cannot move time. The *zone*
-it is read in is the player's own, and it scopes what they find: a chunk is not
-one world seen from several clocks but one per zone, so a player walking at night
-meets what the night pool holds. See [Time](firestore/time.md).
+## Overview
 
-**Effects are written once and register themselves.** A field ability, a held
-item, a status, a move — each is one file that listens for the questions it has
-an opinion about. Nothing that stages a spawn, resolves a hit or prices a reward
-names an ability. Adding one is adding a listener; it is why the overworld and
-the battle look like the same machine at two scales, and they are: both are the
-event engine in [`src/core/event-engine.ts`](../src/core/event-engine.ts).
+### A world that is calculated, not stored
 
-**A fight is a seed, not a recording.** Battles run from the battle document's
-own id, so every participant and every spectator replays identical rolls from
-identical frozen teams. Nothing about a battle is streamed between players, and a
-replay is the same computation run again.
+Nothing about the map is saved anywhere. Biomes, landmarks, buried items and the
+pokemon standing about are all worked out from the world's single seed number at
+the moment somebody looks. Two players standing in the same place at the same
+time therefore see exactly the same things. The only things kept are the results
+of what players did: catches, claims and bids.
+
+### Shared time, local calendars
+
+Every timed event is measured against one central clock, so no device can gain an
+advantage by changing its own. What counts as morning, evening or night, however,
+is read in each player's own timezone, and it decides which pokemon they meet. A
+player on the far side of the world walking the same field at the same instant is
+walking it at a different hour, and finds different pokemon there.
+
+### Deliberate interaction
+
+Nothing is triggered by walking over it. A player steps within reach of a pokemon
+or a landmark and clicks it. Crossing a cell sets nothing off, so nothing is ever
+lost by passing through.
+
+### Reproducible battles
+
+A battle is a calculation rather than a broadcast. Every participant and
+spectator runs the same fight from the same starting point and arrives at the
+same result, which is why a replay costs nothing and pays nothing.
+
+## See also
+
+- [The battle engine](engine.md) — how the real-time engine is built
+- [Firestore](firestore.md) — what the game stores and who may write it
+- [Credits](credits.md) — the people, libraries and art behind the game

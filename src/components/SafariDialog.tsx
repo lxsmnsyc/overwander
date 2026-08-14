@@ -335,6 +335,11 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                   <SpriteDisplay
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
+                    // What the dialog's own title is already saying,
+                    // said by the pokemon instead: a shiny standing in
+                    // front of the player is the one encounter worth
+                    // spending the whole bag on
+                    sparkle={isShiny(active().encounter)}
                     animation="Idle"
                     direction="Down"
                     scale={4}

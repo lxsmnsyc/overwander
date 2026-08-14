@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { dialogNamed, dismissGift, expectOpen, openPanel, signIn } from './game';
-import { stageSeller } from './stranger';
+import { findDocuments, uidOf } from './emulator';
+import { SHEET, dialogNamed, dismissGift, expectOpen, openPanel, signIn } from './game';
+import { stageCatchLot, stageSeller } from './stranger';
 
 /**
  * Looking at somebody else.
@@ -44,5 +45,47 @@ test.describe('another trainer', () => {
     // battles, and one tab is no tabs at all
     await expect(profile.getByRole('tab')).toHaveCount(0);
     await expect(profile.getByText('No battles fought yet.')).toBeVisible();
+  });
+
+  test('opens from the hands a pokemon has passed through', async ({ page }) => {
+    const seller = await stageSeller('Hawthorn');
+    const player = await signIn(page);
+
+    await dismissGift(page);
+
+    // A pokemon of theirs on the block, which is the one place a
+    // player meets a record that was somebody else's. It is a copy of
+    // the player's own starter — a catch has three dozen fields and
+    // the sheet reads every one of them, so the honest way to get a
+    // valid record is to take a valid record
+    const [starter] = await findDocuments('caught', 'owner', await uidOf(player));
+
+    expect(starter, 'the starter should be there').toBeTruthy();
+    await stageCatchLot(seller, starter.fields);
+
+    const board = await openPanel(page, 'Auctions');
+    // Every lot of theirs says who listed it, and the staging put an
+    // item of theirs up as well; the pokemon is the one with a level
+    // on it, and the only one that can be opened in full
+    const lot = board
+      .getByRole('listitem')
+      .filter({ hasText: seller.nickname })
+      .filter({ hasText: /Lv\. \d+/ });
+
+    await expect(lot).toBeVisible({ timeout: 20_000 });
+    await lot.getByRole('button').first().click();
+
+    const sheet = dialogNamed(page, SHEET);
+
+    await expectOpen(sheet);
+
+    // Whose hands it passed through, and the way to them. It is
+    // read-only — this is somebody else's pokemon — and the name is
+    // still a way to the trainer behind it
+    const trainer = sheet.getByRole('button', { name: seller.nickname, exact: true });
+
+    await expect(trainer).toBeVisible();
+    await trainer.click();
+    await expectOpen(dialogNamed(page, seller.nickname));
   });
 });

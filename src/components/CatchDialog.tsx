@@ -110,6 +110,7 @@ import {
   Meta,
   Note,
   Row,
+  RowButton,
   Status,
   TabBar,
   TabButton,
@@ -364,6 +365,16 @@ export interface CatchDialogProps {
    * a dead button on it is worse than one without the button
    */
   onAuction?: (catchId: string) => void;
+  /**
+   * Open somebody's profile, from the ownership history.
+   *
+   * A pokemon that has passed through other hands is the one place in
+   * the game where a player meets a trainer they have never traded a
+   * word with, and the answer to "who had this before me" is the
+   * profile they already have. Absent where there is nowhere to open
+   * one, which leaves the names as plain text
+   */
+  onTrainer?: (uid: string) => void;
   /**
    * Show the record and offer nothing.
    *
@@ -1251,6 +1262,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     },
   ];
 
+  /**
+   * The menu's entries as the bar reads them: nothing at all until the
+   * record is in hand, since every one of them acts on it
+   */
+  const menuActions = (): MenuAction[] => {
+    const loaded = view();
+
+    return loaded == null ? [] : actions(loaded);
+  };
+
   return (
     <>
       <Dialog
@@ -1281,8 +1302,20 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         // the arrows that are there now — and what a player does to a
         // pokemon deserves more room than a corner
         bar={
-          <Show when={owned() == null ? null : view()}>
-            {(loaded) => <Menu label="Actions" actions={actions(loaded())} />}
+          // Kept on a condition that does not flap. The menu used to
+          // hang off the record itself, so every re-read of it — and
+          // this sheet re-reads after everything it writes — threw the
+          // menu away and built a new one, which **closes** it: the
+          // open state lives in the instance. A player who pressed
+          // Actions while the record was still settling watched the
+          // menu shut itself, and pressing it the instant the sheet
+          // opened often did nothing at all.
+          //
+          // Whose sheet it is cannot change under a player, so the
+          // button stands from the first frame and the entries fill in
+          // when the record arrives
+          <Show when={owned() != null}>
+            <Menu label="Actions" actions={menuActions()} />
           </Show>
         }
         terse
@@ -1811,9 +1844,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <For each={loaded().history}>
                         {(entry) => (
                           <ListRow>
-                            <span class="grow text-left font-medium">
-                              {describeOwner(entry.owner)}
-                            </span>
+                            {/* A previous owner is a way to them. The
+                                reader's own name is not: pressing it
+                                would open a read-only copy of the
+                                profile the menu already gives them */}
+                            <Show
+                              when={
+                                entry.owner === auth.user()?.uid ? null : (props.onTrainer ?? null)
+                              }
+                              fallback={
+                                <span class="grow text-left font-medium">
+                                  {describeOwner(entry.owner)}
+                                </span>
+                              }
+                            >
+                              {(visit) => (
+                                <RowButton
+                                  class="grow text-left font-medium"
+                                  onClick={() => {
+                                    visit()(entry.owner);
+                                  }}
+                                >
+                                  {describeOwner(entry.owner)}
+                                </RowButton>
+                              )}
+                            </Show>
                             <Meta>
                               {ACQUISITION_NAMES[entry.kind]} · {describeDate(entry.acquiredAt)}
                             </Meta>

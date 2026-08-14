@@ -48,6 +48,12 @@ const onCI = process.env.CI != null;
  */
 const EMULATED = {
   VITE_FIREBASE_EMULATOR: 'true',
+  /**
+   * A dev run sparkles at 1 in 2 so that the coat and the sparkle can
+   * be worked on at all; these tests are checking what a player meets,
+   * so they ask for the odds the game ships with
+   */
+  VITE_REAL_SHINY_ODDS: 'true',
   VITE_FIREBASE_PROJECT_ID: PROJECT_ID,
   FIREBASE_PROJECT_ID: PROJECT_ID,
   VITE_FIREBASE_API_KEY: 'demo-api-key',

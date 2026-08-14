@@ -1,7 +1,7 @@
 // From the record module rather than from `auth/auctions`, which
 // reaches into the server half of the app: importing it here drags
 // `server-only` into a plain Node test and refuses to load at all
-import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
+import { AUCTION_DURATION, AUCTION_ESCROW, AuctionLot } from '../src/auth/auction-record';
 import { getLocalOffset } from '../src/auth/local-time';
 import { Items } from '../src/data/ids/items';
 import { writeDocument } from './emulator';
@@ -71,4 +71,66 @@ export async function stageSeller(called: string): Promise<Stranger> {
   });
 
   return { uid, nickname };
+}
+
+/**
+ * Put one of the player's own pokemon on the block **under somebody
+ * else's name**, so that the sheet a bidder opens from it has a
+ * stranger in its ownership history.
+ *
+ * A catch is copied rather than made up: a record has three dozen
+ * fields and every one of them is read by the sheet, so the honest way
+ * to get a valid one is to take a valid one. What is rewritten is who
+ * it belonged to — the owner goes to escrow, the way the server puts a
+ * listed pokemon there, and the history says the stranger had it.
+ *
+ * Resolves the id of the copy
+ */
+export async function stageCatchLot(
+  seller: Stranger,
+  fields: Record<string, unknown>,
+): Promise<string> {
+  const stamp = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
+  const caught = `e2e-lot-catch-${stamp}`;
+  const opened = Date.now();
+
+  await writeDocument('caught', caught, {
+    ...fields,
+    // Held by nobody while it is on the block, which is what the
+    // server does to a listing
+    owner: { stringValue: AUCTION_ESCROW },
+    history: {
+      arrayValue: {
+        values: [
+          {
+            mapValue: {
+              fields: {
+                owner: { stringValue: seller.uid },
+                acquiredAt: { stringValue: new Date(opened).toISOString() },
+                kind: { integerValue: '0' },
+              },
+            },
+          },
+        ],
+      },
+    },
+    auctionable: { booleanValue: true },
+  });
+
+  await writeDocument('auctions', `e2e-catch-lot-${stamp}`, {
+    seller: { stringValue: seller.uid },
+    lot: { integerValue: String(AuctionLot.Catch) },
+    item: { integerValue: '0' },
+    caught: { stringValue: caught },
+    startingBid: { integerValue: '10' },
+    increment: { integerValue: '5' },
+    bid: { integerValue: '0' },
+    bidder: { stringValue: '' },
+    createdAt: { integerValue: String(opened) },
+    endsAt: { integerValue: String(opened + AUCTION_DURATION) },
+    offset: { integerValue: String(getLocalOffset()) },
+    settled: { booleanValue: false },
+  });
+
+  return caught;
 }

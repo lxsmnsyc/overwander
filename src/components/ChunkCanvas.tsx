@@ -28,6 +28,7 @@ import {
 } from '../canvas/board';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import { SPRITE_DIRECTIONS } from '../canvas/sprite-sheet';
+import drawSparkle from '../canvas/sparkle';
 import loadSpeciesSprite from '../canvas/species-sprites';
 import { BIOME_COLORS } from '../data/biome';
 import type Biome from '../data/ids/biome';
@@ -246,6 +247,19 @@ export function isTurningPress(event: { button: number; ctrlKey: boolean }): boo
  * chunk sees the same Rattata looking the same way, and it does not
  * change under a camera walking around it
  */
+/**
+ * A pokemon standing in the chunk, and which coat it is wearing.
+ *
+ * Shininess is not the world's — it is a resonance between the trait
+ * value and the player reading the screen, so the same spawn sparkles
+ * for one trainer and not for the next — which is why it travels with
+ * the species rather than being worked out here
+ */
+export interface SpawnCoat {
+  species: Species;
+  shiny: boolean;
+}
+
 function facingOf(index: number, species: Species): number {
   const mixed = Math.imul(index + 1, 2_654_435_761) ^ Math.imul(species + 1, 40_503);
 
@@ -292,7 +306,7 @@ export interface ChunkCanvasProps {
    * what stands there rather than only that something does: the
    * ground draws the pokemon itself
    */
-  spawns: Map<number, Species>;
+  spawns: Map<number, SpawnCoat>;
   /**
    * What to call the cell when the pointer rests on it
    */
@@ -358,24 +372,55 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   const [beat, setBeat] = createSignal(0);
 
   /**
+   * How long the board has been on screen, in milliseconds.
+   *
+   * A clock of the canvas' own rather than the wall's: the sparkle a
+   * shiny throws is measured against the frames that actually ran, so
+   * a tab left in the background comes back with the sparkle where it
+   * was rather than long over
+   */
+  let clock = 0;
+
+  /**
+   * Which cells have already had their shiny announced, and what was
+   * standing on them when it happened.
+   *
+   * A shiny is the one thing on this board worth looking twice at, and
+   * it is a **recolour** — some of them are a shade off the ordinary
+   * coat, and a player who does not know the palette would walk past
+   * one. So the first sight of it throws a handful of stars, once: the
+   * species is kept beside the instant so that the next window rolling
+   * a different shiny onto the same cell announces itself too
+   */
+  const sparkles = new Map<number, { species: Species; at: number }>();
+
+  /**
    * One animation per species standing in the chunk, shared by every
    * cell holding that species. Two Rattata in a field are one sheet
    * and one playhead — they are scenery, and scenery need not be out
    * of step to be believed
    */
-  const sprites = new Map<Species, SpeciesSpriteAnimation | null>();
+  // Keyed by the coat rather than by the species: a shiny Rattata is
+  // a different sheet from the plain one standing beside it, and the
+  // two have to be able to stand in the same chunk
+  const sprites = new Map<string, SpeciesSpriteAnimation | null>();
 
-  const spriteFor = (species: Species): SpeciesSpriteAnimation | null => {
-    if (sprites.has(species)) {
-      return sprites.get(species) ?? null;
+  const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
+    const key = `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+
+    if (sprites.has(key)) {
+      return sprites.get(key) ?? null;
     }
 
-    // Held as null until it lands, so a species is asked for once
+    // Held as null until it lands, so a coat is asked for once
     // rather than once per frame it is drawn in
-    sprites.set(species, null);
-    loadSpeciesSprite(species)
+    sprites.set(key, null);
+    // A species with no shiny drawing falls back to its ordinary one
+    // inside the loader, so a missing sheet costs the sparkle rather
+    // than the pokemon
+    loadSpeciesSprite(coat.species, { shiny: coat.shiny })
       .then((loaded) => {
-        sprites.set(species, loaded);
+        sprites.set(key, loaded);
       })
       .catch(() => {
         // The dot it always was
@@ -733,6 +778,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const elapsed = last === 0 ? 0 : now - last;
 
       last = now;
+      clock += elapsed;
 
       for (const sprite of sprites.values()) {
         sprite?.update(elapsed);
@@ -895,6 +941,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const middle = at(projectCell(index, yaw()));
         const standing = props.spawns.get(index);
 
+        // Whatever was announced here has been caught, walked off or
+        // rolled over, so the next shiny to stand on this cell gets a
+        // sparkle of its own
+        if (standing?.shiny !== true) {
+          sparkles.delete(index);
+        }
+
         if (standing != null) {
           const sprite = spriteFor(standing);
 
@@ -903,7 +956,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // wherever the camera has been walked to: turn a quarter
             // and something that was facing you is facing across you
             sprite.play('Idle', {
-              direction: SPRITE_DIRECTIONS[facingFrom(facingOf(index, standing), yaw())],
+              direction: SPRITE_DIRECTIONS[facingFrom(facingOf(index, standing.species), yaw())],
               loop: true,
             });
 
@@ -935,6 +988,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // and what makes them look like they are standing up out
             // of the board
             sprite.draw(context, middle.x, middle.y, placement);
+
+            if (standing.shiny) {
+              // Announced the first time it is actually drawn rather
+              // than the first time it is known about: a sparkle
+              // thrown while the sheet was still coming would be over
+              // before there was anything to sparkle around
+              const shown = sparkles.get(index);
+
+              if (shown == null || shown.species !== standing.species) {
+                sparkles.set(index, { species: standing.species, at: clock });
+              }
+              drawSparkle(
+                context,
+                index,
+                clock - (sparkles.get(index)?.at ?? clock),
+                middle.x,
+                middle.y,
+                sprite.sourceFrameSize,
+                scale,
+              );
+            }
           } else {
             context.fillStyle = COLORS.spawn;
             context.beginPath();

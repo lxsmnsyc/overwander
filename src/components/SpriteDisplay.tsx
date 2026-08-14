@@ -1,6 +1,7 @@
 import { type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
 import type SpeciesSpriteAnimation from '../canvas/species-sprite-animation';
 import type { SpriteDirection } from '../canvas/sprite-sheet';
+import drawSparkle from '../canvas/sparkle';
 import loadSpeciesSprite from '../canvas/species-sprites';
 import type { Species } from '../data/ids/species';
 
@@ -24,9 +25,27 @@ import type { Species } from '../data/ids/species';
  */
 const DEFAULT_SCALE = 3;
 
+/**
+ * How far to either side of the picture the sparkle's stars may fall.
+ *
+ * Narrower than the board's, because this canvas is cut to the sprite
+ * rather than being a whole field: a star thrown as wide as the
+ * overworld throws them would be clipped off at the edge of the box
+ */
+const SPARKLE_SPREAD = 0.9;
+
 export interface SpriteDisplayProps {
   species: Species;
   shiny?: boolean;
+  /**
+   * Whether to throw a handful of stars over it as it appears, once.
+   *
+   * It is the caller's rather than something read off `shiny`, because
+   * not everywhere that draws a shiny is a place worth announcing one:
+   * a catch sheet is a record being read, and something standing in
+   * front of the player is a thing being met
+   */
+  sparkle?: boolean;
   /**
    * What it should be doing. A sheet that has not got it falls back to
    * standing still, which every sheet has
@@ -95,6 +114,11 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
     const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
     let last = 0;
     let frame = 0;
+    // How long this sprite has been on screen. The sparkle is measured
+    // against the frames that actually ran rather than against the
+    // wall, so a dialog opened behind another tab still gets its
+    // announcement when it is looked at
+    let shown = 0;
 
     const paint = (now: number): void => {
       frame = requestAnimationFrame(paint);
@@ -127,8 +151,11 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
         element.style.height = `${room.height}px`;
       }
 
-      drawn.update(last === 0 ? 0 : now - last);
+      const elapsed = last === 0 ? 0 : now - last;
+
+      drawn.update(elapsed);
       last = now;
+      shown += elapsed;
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, room.width, room.height);
@@ -141,6 +168,16 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
 
       drawn.drawShadow(context, room.width / 2, floor, placement);
       drawn.draw(context, room.width / 2, floor, placement);
+
+      if (props.sparkle === true) {
+        // Seeded by the species, since there is only one pokemon here
+        // to tell apart from another: two of the same shown side by
+        // side glint the same way, which is what a still picture of
+        // one pokemon wants
+        drawSparkle(context, props.species, shown, room.width / 2, floor, drawn.frameSize, scale, {
+          spread: SPARKLE_SPREAD,
+        });
+      }
     };
 
     frame = requestAnimationFrame(paint);

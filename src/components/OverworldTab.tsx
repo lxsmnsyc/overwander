@@ -51,6 +51,7 @@ import { type SnapshotRecord, type SpawnRoll, spawnId } from '../auth/snapshot-r
 import ChunkSnapshot, { SPAWN_COUNT } from '../overworld/chunk-snapshot';
 import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import type { Buddy } from '../overworld/core';
+import deriveEncounter from '../overworld/encounter';
 import createOverworld from '../overworld/setup';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
@@ -222,7 +223,7 @@ interface ChunkView {
    * under, so an interaction can derive the same encounter every
    * observer sees
    */
-  spawns: Map<number, { id: string; spawn: Spawn }>;
+  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean }>;
   caches: Map<number, ItemStack[]>;
 }
 
@@ -248,7 +249,7 @@ function buildChunkView(
   // same window, same count — and is what pins each spawn to a cell
   snapshot.getSpawns(PUBLISHED_SPAWNS);
 
-  const spawns = new Map<number, { id: string; spawn: Spawn }>();
+  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean }>();
   const cells = [...snapshot.getSpawnCells()];
   // The same engine the server stages encounters with: a lure decides
   // how many of the window's rolls are there for this player
@@ -272,11 +273,26 @@ function buildChunkView(
       return;
     }
 
+    // The name is derived from the window rather than stored with
+    // the roll, so the two cannot disagree about which spawn it is
+    const id = spawnId(snapshot.key, timestamp, index);
+    const spawn: Spawn = [stored.species, stored.individualValue, stored.traitValue];
+
     spawns.set(cell, {
-      // The name is derived from the window rather than stored with
-      // the roll, so the two cannot disagree about which spawn it is
-      id: spawnId(snapshot.key, timestamp, index),
-      spawn: [stored.species, stored.individualValue, stored.traitValue],
+      id,
+      spawn,
+      // Whether it sparkles for *this* player, worked out the way the
+      // server will work it out when the meeting is staged: the same
+      // derivation, the same species-day boost, and the same overworld
+      // engine asked what the buddy adds to the odds. A shiny standing
+      // in a field is the one thing in the world worth crossing it
+      // for, so it is drawn in its own coat rather than left as a
+      // surprise sprung after the ball is thrown
+      shiny:
+        player != null &&
+        deriveEncounter(snapshot, spawn, player, {
+          shinyBoost: overworld.checkEncounterShiny(id),
+        }).shiny,
     });
   });
 
@@ -1368,7 +1384,12 @@ export default function OverworldTab(): JSX.Element {
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
                 spawns={
-                  new Map([...loaded().spawns].map(([at, standing]) => [at, standing.spawn[0]]))
+                  new Map(
+                    [...loaded().spawns].map(([at, standing]) => [
+                      at,
+                      { species: standing.spawn[0], shiny: standing.shiny },
+                    ]),
+                  )
                 }
                 label={titleOf}
                 onPress={press}

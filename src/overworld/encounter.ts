@@ -242,6 +242,49 @@ const HALF_BITS = 16;
 const HALF_MASK = 0xffff;
 
 /**
+ * What a development run sparkles on instead: half of the 65536, so
+ * about **one spawn in two** is shiny.
+ *
+ * It is there to be looked at. A shiny is drawn in its own coat and
+ * announces itself with a sparkle when it comes into view, and none
+ * of that can be worked on at odds of 1 in 4096 — a developer would
+ * have to walk for days to see the thing they are changing.
+ *
+ * The two runs that must **not** take it are the ones that check
+ * behaviour rather than show it: the unit tests pin the real odds, and
+ * a production build is the game. `import.meta.env.DEV` is false in
+ * anything Vite builds, so the constant is dead code there and the
+ * bundle keeps the real threshold
+ */
+const DEV_SHINY_THRESHOLD = (HALF_MASK + 1) / 2;
+
+/**
+ * Whether this run is a developer looking at the game rather than the
+ * game itself. Read once, at load, so the odds cannot change under a
+ * session — and so the client and the server of one dev run agree
+ * about what sparkles: the board draws the coat the server will stage.
+ *
+ * Three runs are left at the real odds. A **production build** is the
+ * game. The **unit tests** pin the arithmetic, and a threshold that
+ * moved under them would be a suite that agreed with whatever the
+ * code said. And the **browser tests** drive the dev server, but they
+ * are checking the game a player meets: half a chunk sparkling would
+ * change what is auctionable, what a box says and how much of a sheet
+ * has to load, one run to the next
+ */
+const SHOWING_OFF = ((): boolean => {
+  // Vite fills `import.meta.env` in everything it transforms: the
+  // client, the server and the unit tests. The browser tests are the
+  // one place it is missing — their spec files import this module
+  // straight into Playwright's own Node runner, which transforms
+  // nothing — so it is read through a guard rather than reached into.
+  // Anywhere it is absent is somewhere the real odds belong
+  const env = (import.meta as { env?: Record<string, unknown> }).env ?? {};
+
+  return env.DEV === true && env.MODE !== 'test' && env.VITE_REAL_SHINY_ODDS !== 'true';
+})();
+
+/**
  * The mainline shiny formula, adapted: the user id hashes into a
  * stable 32-bit "trainer value" whose 16-bit halves XOR against the
  * trait value's halves — shininess is a resonance between trainer
@@ -258,8 +301,12 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
     (traitValue & HALF_MASK);
 
   // A boost widens the band that sparkles: at 8x the odds go from
-  // 1/4096 to 1/512, which is the species day's shiny bonus
-  return shininess < SHINY_THRESHOLD * boost;
+  // 1/4096 to 1/512, which is the species day's shiny bonus.
+  //
+  // A dev run opens the band to half of everything before any boost
+  // is applied, so what a charm or a species day multiplies is
+  // already a coin toss and the whole field comes out sparkling
+  return shininess < (SHOWING_OFF ? DEV_SHINY_THRESHOLD : SHINY_THRESHOLD * boost);
 }
 
 /**

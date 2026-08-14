@@ -251,6 +251,12 @@ function GameView(props: { user: User }): JSX.Element {
             onAuction={(catchId) => {
               game.setListing({ lot: AuctionLot.Catch, catchId });
             }}
+            // Whoever had it before them, opened from the history the
+            // record carries: the profile goes over the sheet, the way
+            // it goes over the board and the lobby
+            onTrainer={(uid) => {
+              game.setVisiting(uid);
+            }}
           />
 
           {/* One species in full, opened out of the dex and over it:

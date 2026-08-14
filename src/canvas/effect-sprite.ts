@@ -26,15 +26,17 @@
  * trimmed picture is placed inside it. That is the whole reason this
  * is not four lines of `BasicSprite`.
  *
- * **The frame numbers are a timeline, not a count.** They arrive
- * zero-padded and in order, but with holes in them — effect 1 has
- * `000`, `002`, `004`, then `010`, `011`, `012` — because the packer
- * drops a frame that is byte-identical to the one before it. The hole
- * is not a missing picture, it is the previous picture held for
- * another beat, so the numbers are read as positions on a
- * sixtieth-of-a-second timeline and each frame shows until the next
- * one starts. Reading them as a list instead would play the slow parts
- * of every effect at double speed.
+ * **The frame numbers are a timeline, not a count.** A frame's number
+ * is when it starts, and it holds until the number of the next one —
+ * `000` followed by `002` is one picture shown for two beats. So they
+ * arrive zero-padded and in order but with holes in them, and effect 1
+ * going `000`, `002`, `004`, then `010`, `011`, `012` is an effect
+ * that opens slowly and then speeds up. A hole is a duration, never a
+ * missing picture. Reading the names as a list instead would play the
+ * slow parts of every effect at double speed.
+ *
+ * The last frame is the one the rule cannot answer for: nothing
+ * follows it to say when it ends, so it gets a single beat.
  *
  * The timeline is flattened at construction into one frame per tick,
  * so playback is an array index and drawing is a `drawImage`.

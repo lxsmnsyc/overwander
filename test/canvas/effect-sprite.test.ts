@@ -11,7 +11,14 @@ import EffectSprite, {
  * canvases will be handed, so the tests read those rather than a
  * fixture that agrees with the code by construction.
  */
-const ROOTS = ['public/sprites/effects', 'public/sprites/particles'];
+// The directional sheets are the same description in the same shape,
+// and are meant to be playable as ordinary effects as well as aimed
+// ones, so they are held to the same rules here
+const ROOTS = [
+  'public/sprites/effects',
+  'public/sprites/particles',
+  'public/sprites/directional',
+];
 
 const SHEETS: { name: string; data: EffectSpriteData }[] = ROOTS.flatMap((root) =>
   readdirSync(root)
@@ -276,6 +283,59 @@ describe('EffectSprite', () => {
     expect(sprite.frame?.index).toBe(2);
     expect(other.frame?.index).toBe(0);
     expect(other.finished).toBe(false);
+  });
+
+  it('shows, on every tick of every sheet, the frame the numbering says', () => {
+    for (const { name, data } of SHEETS) {
+      const sprite = loaded(data);
+
+      sprite.play();
+      for (let tick = 0; tick < sprite.length; tick += 1) {
+        // The rule, worked out here from the names alone: a frame
+        // starts on its own number and holds until the next number
+        // there is, so the frame showing is the last one numbered at
+        // or before this tick — and none at all before the first
+        const due = data.frames.filter((frame) => frame.index <= tick).at(-1) ?? null;
+
+        expect(sprite.frame?.index ?? null, `${name} tick ${tick}`).toBe(due?.index ?? null);
+        sprite.advance(EFFECT_TICK);
+      }
+    }
+  });
+
+  it('gives the last frame of every sheet exactly one tick', () => {
+    for (const { name, data } of SHEETS) {
+      const sprite = loaded(data);
+      const last = data.frames.at(-1);
+
+      // Nothing follows the last frame to say when it ends, so the
+      // timeline stops one tick after it starts
+      expect(sprite.length, `${name} length`).toBe((last?.index ?? -1) + 1);
+
+      sprite.play();
+      sprite.advance((sprite.length - 1) * EFFECT_TICK);
+      expect(sprite.frame?.index, `${name} last frame`).toBe(last?.index);
+      expect(sprite.finished, `${name} still running`).toBe(false);
+
+      sprite.advance(EFFECT_TICK);
+      expect(sprite.finished, `${name} finished`).toBe(true);
+    }
+  });
+
+  it('keeps the numbering proportional when the clip is stretched', () => {
+    for (const { name, data } of SHEETS) {
+      const natural = loaded(data);
+      const stretched = loaded(data);
+
+      natural.play();
+      stretched.play({ duration: natural.duration * 3 });
+
+      for (let tick = 0; tick < natural.length; tick += 1) {
+        expect(stretched.frame?.index, `${name} tick ${tick}`).toBe(natural.frame?.index);
+        natural.advance(EFFECT_TICK);
+        stretched.advance(EFFECT_TICK * 3);
+      }
+    }
   });
 
   it('plays every shipped sheet from start to end', () => {

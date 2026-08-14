@@ -41,27 +41,18 @@ import { type UpdateFields, asNumber, docData } from './read';
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.
  *
- * Who is standing there is not the caller's to say: it is re-derived
- * from the chunk, the zone and the window before anything happens, so
- * asking a breeder to push an egg along — or asking either of them
- * from a cell that has neither — is refused rather than paid for.
+ * Who is standing there is re-derived from the chunk, zone and window
+ * before anything happens, so asking the wrong NPC — or any NPC from a
+ * cell that has none — is refused rather than paid for.
  *
- * **Each of them serves a player once per window**, the vendor aside.
- * Whoever is at the cell stands there for `NPC_INTERVAL`, and a marker
- * in `npcClaims` records that this player has been seen; a second ask
- * that window is turned away whatever they can pay. It is taken only
- * where the visit actually lands — a pair that cannot breed, an egg
- * already ready to hatch or a party that needed nothing costs nothing
- * — and it is given back if the write behind it fails.
+ * **Each serves a player once per window**, the vendor aside: a marker
+ * in `npcClaims` records the visit, and it is taken only where the
+ * visit lands and given back if the write fails. The vendor takes no
+ * marker — his crate and the player's purse are the whole limit.
  *
- * The **vendor** takes no marker at all: what the others hand over is
- * something the world cannot make twice in six hours, and what he
- * hands over is a potion. His crate and the player's purse are the
- * whole of the limit.
- *
- * The two that charge take the gold after the visit is claimed and put
- * it back if what it bought was never written. A player who is charged
- * and given nothing is worse off than one who is refused.
+ * The two that charge take gold after the visit is claimed and put it
+ * back if nothing was written: charged and given nothing is worse than
+ * refused.
  */
 
 /**
@@ -144,16 +135,13 @@ function asParent(caught: Record<string, unknown> | null, uid: string): Breeding
 }
 
 /**
- * Leave two pokemon with the breeder. The pair is checked against the
- * breeding rules here, from the stored records rather than from what
- * the caller says about them, and the fee is only taken once the two
- * are known to be compatible.
+ * Leave two pokemon with the breeder. The pair is checked from the
+ * stored records rather than the caller's word, and the fee is taken
+ * only once they are known to be compatible. Neither parent is
+ * consumed or held.
  *
- * Neither parent is consumed or held: they are handed back the moment
- * the egg is written, which is why nothing about them is locked.
- *
- * Resolves the new egg's catch id, or null when the pair cannot
- * breed, the player cannot pay, or no breeder is standing there
+ * Resolves the new egg's catch id, or null when the pair cannot breed,
+ * the player cannot pay, or no breeder is standing there
  */
 export async function breedCatches(
   uid: string,
@@ -408,17 +396,12 @@ export async function boostEgg(
 
 /**
  * Have the groomer see to a pokemon: half of whatever friendship it
- * had left to give is added to what it already thinks of its owner.
- *
- * It is the daycare lady's bargain moved from the egg to the pokemon.
- * A share of the remainder rather than a place on it means the first
- * grooming is worth a great deal to a pokemon fresh out of a ball and
- * almost nothing to one that is already inseparable — gold buys the
- * early half of a friendship and can never buy the last of it.
+ * had left to give. A share of the remainder rather than a place on
+ * it, so gold buys the early half of a friendship and never the last.
  *
  * Resolves what the pokemon now thinks, or null when it is not the
- * player's, is still an egg, is fighting, already thinks as well of
- * them as it can, or no groomer is standing there
+ * player's, is an egg, is fighting, already thinks as well of them as
+ * it can, or no groomer is standing there
  */
 export async function groomCatch(
   uid: string,
@@ -479,10 +462,9 @@ export async function groomCatch(
  * Have the Move Reminder put back a move the pokemon learned by
  * levelling and has since lost, for one Heart Scale.
  *
- * What he may put back is not the caller's to say: the recallable list
- * is derived again here from the **stored** species, level and move
- * list, so a client asking for a move the pokemon never learned — or
- * one it already knows — is refused rather than charged.
+ * The recallable list is derived again from the **stored** species,
+ * level and move list, so a client asking for a move the pokemon never
+ * learned is refused rather than charged.
  *
  * `replaces` names which of the known moves the recalled one goes over
  * and is ignored by a pokemon that still has room. The scale leaves
@@ -614,23 +596,15 @@ function priced(
 }
 
 /**
- * Buy from the vendor's crate.
+ * Buy from the vendor's crate. The crate is derived from the same seed
+ * he is, so the basket has to be what he is actually standing behind,
+ * and the price is the registry's `buy`.
  *
- * What he is carrying is not the caller's to say: the crate is derived
- * from the same seed he was, so everything in the basket has to be one
- * of the six he is actually standing behind this window. The price is
- * the registry's `buy`, which is what makes an item worth the same
- * from every vendor in the world.
+ * The whole basket is one transaction — six kinds or none — and he is
+ * the one wanderer not limited to once per window.
  *
- * The **whole basket is one trade**: one transaction, one write to the
- * purse and one to the bag, so a player who agreed to six kinds gets
- * six kinds or none. He is also the one wanderer who is **not** once
- * per window — a trader who sold a player one potion every six hours
- * would not be a trader.
- *
- * Resolves the balance and what the bag now holds of it, or null when
- * he is not standing there, is not carrying something in the basket,
- * or the player cannot pay
+ * Resolves the balance and what the bag now holds, or null when he is
+ * not there, is not carrying it, or the player cannot pay
  */
 export async function buyFromVendor(
   uid: string,

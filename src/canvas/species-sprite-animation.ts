@@ -12,38 +12,22 @@ import asSpriteSheetJSON, {
 /**
  * A pokemon on a canvas, moving.
  *
- * The description of a sheet lives in
- * [`sprite-sheet`](./sprite-sheet.ts): a packed image with one grid per
- * animation, a column per frame and a row per orientation, plus the
- * anchor points saying where the parts of the pokemon are on every one
- * of those frames.
+ * The whole of reading a sheet — see [`sprite-sheet`](./sprite-sheet.ts)
+ * for what one is. It knows nothing about pokemon, chunks or battles:
+ * it is handed a sheet, told what to play, ticked with elapsed time and
+ * asked to draw at a point, which is what lets the chunk canvas and the
+ * battle canvas share it.
  *
- * This class is the whole of reading that. It knows nothing about
- * pokemon, chunks or battles: it is handed a sheet and a description,
- * told which animation to play, ticked with however much time has
- * passed, and asked to draw itself at a point. That is what lets the
- * chunk canvas use it for a spawn standing in a field and the battle
- * canvas use it for a unit throwing a move, without either of them
- * knowing how a sprite sheet is laid out.
+ * Placement is by **anchor** rather than corner: a caller says which
+ * part of the pokemon it is placing — the shadow for something standing
+ * on a cell, the body centre for a projectile's aim — and the frame is
+ * positioned so that part lands on the point given.
  *
- * Where a sprite goes is an **anchor** rather than a corner. A caller
- * says which part of the pokemon it is placing — the shadow for
- * something standing on a cell, the body centre for something a
- * projectile is flying at — and the frame is positioned so that part
- * lands on the point given. It replaces measuring the empty band under
- * a frame's feet in the browser, which needed a scratch canvas that
- * Safari and Firefox will not always let anybody read back, and which
- * could only ever guess at where a pokemon stands in its own box.
- *
- * Anchors are also what make a **trimmed** sheet no harder to draw than
- * an untrimmed one. A compact sheet holds each frame cropped to the
- * pixels that are lit, so the frame is no longer a fixed box with the
- * pokemon somewhere in the middle of it; every size and every anchor in
- * `sprites` is in that cropped frame's own coordinates, and drawing is
- * the same arithmetic either way. Only two things still ask about the
- * cell the artist drew in — how big a shadow to cast, and
- * `sourceFrameSize` for a caller that wants the authored box — because
- * those are facts about the pokemon rather than about the packing.
+ * Anchors are also what make a trimmed sheet no harder to draw. Frames
+ * are cropped to the lit pixels and every size and anchor is in that
+ * cropped frame's coordinates, so the arithmetic is the same either
+ * way. Only the shadow's width and `sourceFrameSize` ask about the cell
+ * the artist drew in
  */
 
 /**
@@ -55,13 +39,9 @@ import asSpriteSheetJSON, {
 export const SPRITE_TICK = 1000 / 60;
 
 /**
- * How wide a shadow is for each `shadowSize` the collection uses, as a
- * fraction of the width of the cell the frame was drawn in.
- *
- * The sheets carry a size rather than a shape — nought, one or two,
- * for a small, an ordinary and a large pokemon — and the cells grow
- * with what is drawn in them, so a fraction of the cell is a
- * reasonable reading of both at once
+ * How wide a shadow is for each `shadowSize` — small, ordinary, large —
+ * as a fraction of the cell the frame was drawn in. Cells grow with
+ * what is drawn in them, so a fraction reads both at once
  */
 const SHADOW_WIDTHS = [0.16, 0.22, 0.28];
 
@@ -368,13 +348,9 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
-   * How many pixels one frame of the current animation covers, before
-   * any scaling.
-   *
-   * This is what is actually painted, which on a trimmed sheet is
-   * smaller than the cell it was drawn in — a caller sizing a box
-   * around the sprite wants the picture rather than the padding. The
-   * cell is `sourceFrameSize`
+   * How many pixels one frame covers before scaling — what is actually
+   * painted, which on a trimmed sheet is smaller than the cell it was
+   * drawn in. The cell is `sourceFrameSize`
    */
   get frameSize(): { width: number; height: number } {
     return {
@@ -384,13 +360,10 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
-   * How big the frame was before it was trimmed — the cell the artist
-   * drew in, as `AnimData.xml` gives it.
-   *
-   * It is the stable measure of how big a pokemon is: trimming depends
-   * on which pixels happen to be lit in a particular animation, so a
-   * Swing and an Idle of one pokemon trim to different sizes while
-   * their cells agree
+   * The cell the artist drew in, as `AnimData.xml` gives it. It is the
+   * stable measure of a pokemon's size: trimming follows whichever
+   * pixels a particular animation lights, so a Swing and an Idle trim
+   * differently while their cells agree
    */
   get sourceFrameSize(): { width: number; height: number } {
     return {
@@ -553,29 +526,15 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
-   * Where one part of the pokemon is on the frame showing, in frame
-   * pixels from its top left corner.
+   * Where one part of the pokemon is on the current frame, in frame
+   * pixels from its top left. Every kind falls back to something, so a
+   * caller always has a point to place by: a missing shadow becomes the
+   * bottom middle of the box, where feet are.
    *
-   * Markers go missing, and every kind has somewhere to fall back to
-   * so that a caller placing a sprite always has a point to place it
-   * by. The shadow is the one the rest lean on: it is marked on every
-   * frame of every sheet that ships, and a frame without one falls back
-   * to the bottom middle of its box, which is where a pokemon standing
-   * in it has its feet.
-   *
-   * The body centre is the one worth explaining. **No sheet marks it
-   * yet** — the collection's own files carry `center: null` on every
-   * frame — so it is the middle of the parts that *are* marked: the
-   * head and the two hands, averaged.
-   *
-   * Averaging all three is what makes it hold up. They sit around the
-   * body rather than on it, so their middle is the body however they
-   * are arranged, and the two that come in pairs cancel each other out
-   * horizontally — which also means it does not matter if a sheet has
-   * the three of them labelled in some other order. Measured against
-   * the drawn pixels it lands within a few pixels of the middle of the
-   * pokemon on every sheet that ships, including the birds, whose
-   * shadow is a long way below anything drawn
+   * The body centre is averaged from the head and both hands, because
+   * **no sheet marks it** — they sit around the body rather than on it,
+   * so their middle is the body however they are arranged, and the
+   * paired hands cancel out horizontally
    */
   anchor(kind: SpriteAnchor): Point | null {
     const clip = this.clip;

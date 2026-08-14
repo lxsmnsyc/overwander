@@ -39,18 +39,15 @@ export const enum EncounterType {
    */
   Fateful = 3,
   /**
-   * Taken off a beaten Team Rocket grunt. It is its own kind rather
-   * than a raid: a grunt is fought alone, pays a commoner at a fixed
-   * low level, and hands over a shadow, so a record that says "raid"
-   * of one would be saying the wrong thing about where it came from
+   * Taken off a beaten Team Rocket grunt: fought alone, a commoner at
+   * a fixed low level, and shadowed. Not a raid, and a record calling
+   * it one would say the wrong thing about where it came from
    */
   Rocket = 4,
   /**
-   * Fought and caught in a shadow raid lobby. It is kept apart from a
-   * legendary raid because the two are not the same prize: a shadow
-   * raid usually stages one of the biome's rare species rather than a
-   * legendary, hands it over lower, and its catch keeps the Shadow
-   * ability for good
+   * Fought and caught in a shadow raid lobby. Its own kind because the
+   * prize differs: usually one of the biome's rare species, handed
+   * over lower, and it keeps the Shadow ability for good
    */
   ShadowRaid = 5,
   /**
@@ -58,19 +55,17 @@ export const enum EncounterType {
    */
   MythicalRaid = 6,
   /**
-   * Brought back out of a fossil. It is its own kind because it is
-   * the only pokemon in the game nobody met: it was dug up as a rock
-   * and revived at a bench, and a record calling that wild would be
-   * naming a chunk the species has not lived in for a very long time
+   * Brought back out of a fossil — the only pokemon nobody met. A
+   * record calling it wild would name a chunk the species has not
+   * lived in for a very long time
    */
   Revived = 7,
 }
 
 /**
- * Whether the meeting was a raid of either kind. What a raid gives —
- * the species-day IV floor, a prize that never bolts — belongs to
- * both, so the two kinds are told apart in records without having to
- * be listed separately everywhere they are alike
+ * Whether the meeting was a raid of any kind. What a raid gives — the
+ * species-day IV floor, a prize that never bolts — belongs to all of
+ * them, so records tell them apart without listing each one everywhere
  */
 export function isRaidEncounter(type: EncounterType): boolean {
   return (
@@ -81,12 +76,9 @@ export function isRaidEncounter(type: EncounterType): boolean {
 }
 
 /**
- * Whether the meeting happened nowhere.
- *
- * A gift and an event pokemon are handed over, and a mythical is
- * called out of a relic — none of the three was standing anywhere,
- * so none of them has a place to name. They are one thing to a
- * player: met in a fateful encounter
+ * Whether the meeting happened nowhere. A gift, an event pokemon and a
+ * mythical called out of a relic were none of them standing anywhere,
+ * so none has a place to name — to a player they are one thing
  */
 export function isFatefulEncounter(type: EncounterType): boolean {
   return type === EncounterType.Fateful || type === EncounterType.MythicalRaid;
@@ -190,19 +182,13 @@ const TRAIT_MASK = 0xff;
 const TRAIT_RANGE = 256;
 
 /**
- * What a wild pokemon may be, by what it is.
+ * What level a wild pokemon may be, by how rare it is. Rarity already
+ * says roughly where a species belongs in a game, so it sets the band
+ * too — otherwise a level 90 Rattata turns up in the first field.
  *
- * A single range from 5 to 100 put a level 90 Rattata in the first
- * field a new player walked into and a level 7 Dragonite in the last.
- * Rarity already says roughly where a species belongs in a game —
- * what is common is what is met early — so it decides the band as
- * well, and the two questions a player asks of a spawn ("can I catch
- * it" and "is it worth catching") stop pulling against each other.
- *
- * The specials are deliberately the whole range. There is one of each
- * in the world, nobody meets one twice, and a legendary that could
- * only ever be met at one strength is a legendary with a known
- * answer
+ * Specials get the whole range on purpose: there is one of each in the
+ * world, and one that could only be met at a known strength is a
+ * legendary with a known answer
  */
 export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number]> = {
   [SpawnRarity.Base]: [5, 15],
@@ -242,55 +228,36 @@ const HALF_BITS = 16;
 const HALF_MASK = 0xffff;
 
 /**
- * What a development run sparkles on instead: half of the 65536, so
- * about **one spawn in two** is shiny.
- *
- * It is there to be looked at. A shiny is drawn in its own coat and
- * announces itself with a sparkle when it comes into view, and none
- * of that can be worked on at odds of 1 in 4096 — a developer would
- * have to walk for days to see the thing they are changing.
- *
- * The two runs that must **not** take it are the ones that check
- * behaviour rather than show it: the unit tests pin the real odds, and
- * a production build is the game. `import.meta.env.DEV` is false in
- * anything Vite builds, so the constant is dead code there and the
- * bundle keeps the real threshold
+ * What a development run sparkles on instead: half of 65536, so about
+ * one spawn in two. Shiny coats and their sparkle cannot be worked on
+ * at 1 in 4096. `import.meta.env.DEV` is false in anything Vite
+ * builds, so a production bundle keeps the real threshold
  */
 const DEV_SHINY_THRESHOLD = (HALF_MASK + 1) / 2;
 
 /**
  * Whether this run is a developer looking at the game rather than the
- * game itself. Read once, at load, so the odds cannot change under a
- * session — and so the client and the server of one dev run agree
- * about what sparkles: the board draws the coat the server will stage.
+ * game itself. Read once at load, so the odds cannot change under a
+ * session and the client agrees with the server about what sparkles.
  *
- * Three runs are left at the real odds. A **production build** is the
- * game. The **unit tests** pin the arithmetic, and a threshold that
- * moved under them would be a suite that agreed with whatever the
- * code said. And the **browser tests** drive the dev server, but they
- * are checking the game a player meets: half a chunk sparkling would
- * change what is auctionable, what a box says and how much of a sheet
- * has to load, one run to the next
+ * Production builds, unit tests and browser tests all keep the real
+ * odds: the first is the game, and the other two check behaviour a
+ * moving threshold would quietly change
  */
 const SHOWING_OFF = ((): boolean => {
-  // Vite fills `import.meta.env` in everything it transforms: the
-  // client, the server and the unit tests. The browser tests are the
-  // one place it is missing — their spec files import this module
-  // straight into Playwright's own Node runner, which transforms
-  // nothing — so it is read through a guard rather than reached into.
-  // Anywhere it is absent is somewhere the real odds belong
+  // Read through a guard: the browser tests import this module into
+  // Playwright's own Node runner, which transforms nothing, so
+  // `import.meta.env` is missing there — and missing means real odds
   const env = (import.meta as { env?: Record<string, unknown> }).env ?? {};
 
   return env.DEV === true && env.MODE !== 'test' && env.VITE_REAL_SHINY_ODDS !== 'true';
 })();
 
 /**
- * The mainline shiny formula, adapted: the user id hashes into a
- * stable 32-bit "trainer value" whose 16-bit halves XOR against the
- * trait value's halves — shininess is a resonance between trainer
- * and pokemon, so each trainer sees their own shinies. It reads the
- * trait value rather than the individual one, keeping the sparkle
- * independent of the IVs a pokemon rolled
+ * The mainline shiny formula, adapted: the user id hashes to a stable
+ * 32-bit trainer value whose halves XOR against the trait value's, so
+ * each trainer sees their own shinies. It reads the trait value, which
+ * keeps the sparkle independent of the IVs a pokemon rolled
  */
 export function isShinyFor(userId: string, traitValue: number, boost = 1): boolean {
   const trainerValue = new AleaRNG(userId).int32();
@@ -300,23 +267,11 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
     (traitValue >>> HALF_BITS) ^
     (traitValue & HALF_MASK);
 
-  // A boost widens the band that sparkles: at 8x the odds go from
-  // 1/4096 to 1/512, which is the species day's shiny bonus.
-  //
-  // A dev run opens the band to half of everything before any boost
-  // is applied, so what a charm or a species day multiplies is
-  // already a coin toss and the whole field comes out sparkling
+  // A boost widens the band: 8x takes the odds from 1/4096 to 1/512.
+  // A dev run opens it to half of everything before any boost
   return shininess < (SHOWING_OFF ? DEV_SHINY_THRESHOLD : SHINY_THRESHOLD * boost);
 }
 
-/**
- * Derive the concrete encounter behind a snapshot's spawn tuple. The
- * individual value maps to the six 5-bit IVs directly; the level,
- * gender, ability and nature each read their own 8-bit slice of the
- * trait value, so every derivation of the same tuple agrees.
- * Shininess is personal: it needs the observing user's id, and
- * anonymous derivations never sparkle
- */
 /**
  * The ability a trait value picks for the species: the slice's band
  * chooses between the hidden and regular pools, its position within
@@ -393,12 +348,9 @@ export interface Size {
 
 /**
  * The scale one individual is built at, between MIN_SIZE_SCALE and
- * MAX_SIZE_SCALE. The four trait slices are already spoken for —
- * level, gender, ability, nature — so the value is mixed first
- * (xorshift) and read as two bytes that are then averaged. Averaging
- * two rolls makes the distribution triangular: most of a species
- * comes out near its listed size and the extremes are rare, which is
- * what makes a giant worth showing off
+ * MAX_SIZE_SCALE. The four trait slices are already spoken for, so the
+ * value is mixed (xorshift) and read as two bytes averaged together:
+ * a triangular distribution, so extremes are rare enough to show off
  */
 export function deriveSizeScale(traitValue: number): number {
   let mixed = traitValue >>> 0;
@@ -415,15 +367,10 @@ export function deriveSizeScale(traitValue: number): number {
 }
 
 /**
- * The measurements a trait value gives an individual of the species.
- * Height scales directly; weight scales with the cube of it, the way
- * volume does — so a tenth taller is a third heavier. Both are
- * rounded the way a dex prints them, and neither can round to
- * nothing.
- *
- * It is derived rather than stored, so evolving grows the pokemon:
- * the trait value keeps the individual's proportions while the
- * species supplies the size those proportions apply to
+ * The measurements a trait value gives an individual. Height scales
+ * directly and weight with its cube, the way volume does; neither can
+ * round to nothing. Derived rather than stored, so evolving grows the
+ * pokemon while its proportions stay its own
  */
 export function deriveSize(species: Species, traitValue: number): Size {
   const data = getSpeciesData(species);
@@ -450,16 +397,10 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
     .filter((move) => banned?.has(move) !== true);
 
   /**
-   * The same move twice is one move.
-   *
-   * A learn set lists a move at every level it is offered at, and
-   * plenty are offered more than once — a Kadabra is handed Confusion
-   * as an evolution move at level 1 and again at 16, and Disable at 1
-   * and again at 20. Taken as a run, that is four slots holding two
-   * moves: half a move set, and a pokemon that cannot do half of what
-   * it looks like it can.
-   *
-   * The **last** of each is what is kept, so the four are still the
+   * The same move twice is one move. A learn set lists a move at every
+   * level it is offered at — Kadabra is handed Confusion at 1 and
+   * again at 16 — and taken as a run that is four slots holding two
+   * moves. The **last** of each is kept, so the four are still the
    * four most recently learned
    */
   const unique: Moves[] = [];
@@ -478,13 +419,10 @@ export function deriveMoves(species: Species, level: number, banned?: Set<Moves>
 }
 
 /**
- * The moves a hatchling comes out knowing: what its species has
- * learned by the level it hatches at, and one move off its line's egg
- * list, which is what a nest guarantees.
- *
- * The inherited move goes first so it survives the four-move limit —
- * it is the reason to walk an egg at all — and a line with nothing to
- * inherit hatches knowing only its own
+ * The moves a hatchling knows: what its species has learned by its
+ * hatch level, plus one off its line's egg list. The inherited move
+ * goes first so it survives the four-move limit — it is the reason to
+ * walk an egg at all
  */
 export function deriveEggMoves(species: Species, level: number, random: () => number): Moves[] {
   const learned = deriveMoves(species, level);

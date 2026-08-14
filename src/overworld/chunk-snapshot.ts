@@ -42,14 +42,10 @@ export const SPAWN_COUNT = 8;
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
 /**
- * Nothing in a chunk turns over on one clock. A window is as long as
- * what it holds is worth: the spawns a player walks past all day are
- * the fastest thing here, and everything a player would make a trip
- * for is slower than the trip.
- *
- * Every interval below is a multiple of `SNAPSHOT_INTERVAL`, so a
- * window boundary is always a snapshot boundary too — a landmark
- * never turns over halfway through the window a player is standing in
+ * Nothing in a chunk turns over on one clock: a window is as long as
+ * what it holds is worth. Every interval below is a multiple of
+ * `SNAPSHOT_INTERVAL`, so a landmark never turns over halfway through
+ * the window a player is standing in
  */
 
 /**
@@ -100,13 +96,10 @@ export const PHENOMENON_INTERVAL = 60 * 60 * 1000;
 export const SHADOW_RAID_LEGENDARY_CHANCE = 1 / 8;
 
 /**
- * What a lair landmark is staging: the lair itself, whoever is at
- * home in it, and the 32-bit trait value their nature and ability
- * derive from.
- *
- * The lair is null only for a shadow lair that reached for one of the
- * biome's rare species instead — there is no named place behind that
- * one, so it is called after the ground it stands on
+ * What a lair landmark is staging: the lair, who is at home in it, and
+ * the trait value their nature and ability derive from. The lair is
+ * null only for a shadow lair holding one of the biome's rare species,
+ * which has no named place behind it
  */
 export interface RaidRoll {
   lair: Lairs | null;
@@ -115,19 +108,15 @@ export interface RaidRoll {
 }
 
 /**
- * A chunk observed at a point in time: the timestamp snaps back to
- * the last 5-minute boundary, giving each chunk a stable identity
- * per time window. The window is **local** — the instant behind it
- * comes from the server, but it is read in the observer's own zone,
- * so a player walking at night meets what the night pool holds.
+ * A chunk observed at a point in time. The timestamp snaps back to the
+ * last 5-minute boundary, and the window is **local**: the instant
+ * comes from the server but is read in the observer's zone, so a
+ * player walking at night meets the night pool.
  *
- * The zone is part of the seed as well as the window, so a chunk is
- * not one world seen from several clocks but one per zone: what a
- * player in UTC+8 finds there says nothing about what a player in
- * UTC-5 will find, however the two line up their hours. The canonical
- * window still comes from the shared snapshot store rather than a
- * device's own reading; this class only derives deterministically
- * from whatever window and offset it is given
+ * The zone seeds the chunk too, so it is one world per zone rather
+ * than one world on several clocks. This class only derives from the
+ * window and offset it is given; the canonical window comes from the
+ * shared snapshot store
  */
 export default class ChunkSnapshot {
   /**
@@ -181,14 +170,11 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Roll the snapshot's spawns from the biome's spawn pool for this
-   * window's time of day, honoring the rarity bands and weights, and
-   * place each on its own free cell within the central 12x12 — the
-   * chunk's landmark cells are pre-occupied and never receive
-   * spawns, and the outer ring stays clear so a player entering
-   * from an edge meets nothing immediately. The first call fixes the
-   * result for the snapshot's lifetime; later calls return the same
-   * spawns regardless of count
+   * Roll the window's spawns from the biome pool for this time of day
+   * and place each on a free cell of the central 12x12: landmarks are
+   * pre-occupied, and the outer ring stays clear so entering from an
+   * edge meets nothing. The first call fixes the result for the
+   * snapshot's lifetime
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
@@ -500,19 +486,12 @@ export default class ChunkSnapshot {
   private rocketStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Team Rocket stops, keyed by the wandering-NPC cell a
-   * grunt was drawn onto: the three pokemon they fight with, drawn one
-   * from each of the biome's base, uncommon and rare bands for the NPC
-   * window's time of day.
-   *
-   * A band the biome leaves empty at this hour falls back to the
-   * nearest one that has anything — a grunt three pokemon short is no
-   * grunt at all, and somewhere thin should still be patrolled. Only
-   * a pool with nothing awake in it stages nobody.
-   *
-   * Each draw carries its own individual and trait values, so the
-   * grunt's team is as varied as any wild pokemon; what it does not
-   * carry is a level, which the fight fixes for all three
+   * The window's Team Rocket stops, keyed by the NPC cell: three
+   * pokemon, one from each of the biome's base, uncommon and rare
+   * bands. An empty band falls back to the nearest one with anything,
+   * so somewhere thin is still patrolled; only an empty pool stages
+   * nobody. Each draw carries its own rolls but no level, which the
+   * fight fixes for all three
    */
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {

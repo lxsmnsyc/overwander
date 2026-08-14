@@ -74,17 +74,12 @@ export type SafariEventMap = {
 };
 
 /**
- * Flat catch multipliers per ball. Every conditional ball holds a
- * neutral 1 here — their real modifier depends on the encounter or
- * the safari clock and resolves in getBallModifier. The Master
- * Ball's infinity saturates the catch chance to certainty.
+ * Flat catch multipliers per ball. Conditional balls hold a neutral 1
+ * and resolve in `getBallModifier`; the Master Ball's infinity
+ * saturates the chance to certainty.
  *
- * The Premier, Heal and Luxury Balls catch like a plain Poke Ball.
- * That is the whole of the Premier Ball, which is a commemorative
- * ball and nothing else; the other two are worth throwing for what
- * happens after the catch rather than for the catch itself — a Heal
- * Ball mends whatever is walking beside the player, and a pokemon
- * caught in a Luxury Ball warms to them twice as fast
+ * Premier, Heal and Luxury Balls catch like a plain Poke Ball — the
+ * last two are thrown for what happens after the catch
  */
 export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.PokeBall]: 1,
@@ -184,46 +179,29 @@ export const FEED_CATCH_BONUS: Partial<Record<Items, number>> = {
 const MAX_CATCH_BONUS = 4;
 
 /**
- * What each ball already thrown adds to the next one.
- *
- * A player who came in well stocked used to be handed their last ball
- * outright, which is a rule that does nothing at all for the first
- * ninety-nine throws and then decides the encounter by itself — and it
- * asked the session how full the bag was, which is not something a
- * meeting between two pokemon should depend on.
- *
- * This is the same mercy paid out a percent at a time instead. It is
- * compound, so it is nothing for a while and then matters: the tenth
- * throw is worth a tenth more than the first, the seventieth twice as
- * much. Nothing rare falls to it — a Mewtwo would take hundreds of
- * balls before the drift caught up — but a long, patient meeting is
- * worth more than the same number of throws spread over several
+ * What each ball already thrown adds to the next one. Compound, so it
+ * is nothing for a while and then matters: the tenth throw is worth a
+ * tenth more than the first, the seventieth twice as much. Nothing
+ * rare falls to it, but a long patient meeting beats the same number
+ * of throws spread over several
  */
 const THROW_DRIFT = 1.01;
 
 const CATCH_RATE_SCALE = 255;
 
 /**
- * How much of a ball's pull is left against a pokemon at the level
- * cap.
- *
- * The mainline formula reads how hurt the thing is, which is a number
- * an encounter here does not have: nothing is fought before it is
- * caught. Level is what this game knows about how much of a pokemon is
- * standing there, and a full-grown one shrugging off a ball a young one
- * would not is the same fact told the way this game can tell it
+ * How much of a ball's pull is left at the level cap. The mainline
+ * reads how hurt the target is, which nothing here has — nothing is
+ * fought before it is caught — so level stands in for how much pokemon
+ * is standing there
  */
 export const LEVEL_CATCH_FLOOR = 0.45;
 
 /**
  * What the level leaves of a throw: all of it at level 1, falling
- * evenly to `LEVEL_CATCH_FLOOR` at the cap.
- *
- * Evenly rather than on a curve, because a player who has met a few
- * dozen pokemon should be able to feel the rule without being told
- * it — twice the level, about half again as hard. It multiplies rather
- * than replacing anything, so a species that was easy to catch is
- * still the easier of the two at any level
+ * evenly to `LEVEL_CATCH_FLOOR` at the cap. Evenly rather than on a
+ * curve so the rule can be felt without being told. It multiplies, so
+ * an easy species stays the easier one at any level
  */
 export function levelCatchFactor(level: number): number {
   const grown = Math.min(1, Math.max(0, (level - 1) / (MAX_LEVEL - 1)));
@@ -419,18 +397,10 @@ export default class SafariSession<
   }
 
   /**
-   * How fast the thing standing there actually is: its own Speed, with
-   * its level, its individual value and its nature in it rather than
-   * the number printed against its species.
-   *
-   * The species' base Speed said that every Rattata in the world runs
-   * alike — a level 5 one met in the first field bolts exactly as
-   * readily as a level 40 one, and the fast individual with the fast
-   * nature is no harder to hold onto than its slow cousin. Both of
-   * those are facts the game already knows about the pokemon in front
-   * of the player, and neither of them was being asked.
-   *
-   * No effort values: nothing wild has trained
+   * How fast the thing standing there actually is: its own Speed with
+   * level, individual value and nature in it, rather than the number
+   * printed against its species — otherwise every Rattata in the world
+   * runs alike. No effort values: nothing wild has trained
    */
   getSpeed(): number {
     return getOtherStat(
@@ -443,15 +413,10 @@ export default class SafariSession<
   }
 
   /**
-   * The chance the encounter flees after a failed throw: the faster it
-   * is, the more readily it bolts, capped so that even the fastest
-   * stays catchable.
-   *
-   * Reading the real stat makes the flee roll grow with the level the
-   * way the catch chance shrinks with it — a young pokemon is easy to
-   * catch and easy to keep hold of, and a full-grown one is neither.
-   * What was fought for — a raid's legendary, a beaten grunt's parting
-   * gift — never bolts at all
+   * The chance it flees after a failed throw: the faster it is the
+   * readier it bolts, capped so even the fastest stays catchable. It
+   * grows with level as the catch chance shrinks. Anything fought for
+   * — a raid prize, a grunt's parting gift — never bolts
    */
   getFleeChance(): number {
     if (isRaidEncounter(this.encounter.type) || this.encounter.type === EncounterType.Rocket) {

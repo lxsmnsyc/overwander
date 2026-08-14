@@ -30,33 +30,20 @@ export interface ItemRarityGroups {
 }
 
 /**
- * The overworld item pool: the balls, the evolution stones, the
- * valuables the ground hides and the Shiny Charm. Plain balls and
- * the smaller valuables are the commons, utility balls and the
- * bigger valuables uncommon, stones and the Nugget rare, and the
- * Master Ball and Shiny Charm the one-per-world class.
+ * The overworld item pool: balls, evolution stones, the valuables the
+ * ground hides, and the Shiny Charm.
  *
- * The **prized** band sits between rare and special, and the line it
- * draws is permanence. The rare band is where a walk turns up
- * something that gets a party through the next fight — a stone, a
- * Revive, a plate. Prized is where it turns up something that changes
- * a pokemon for good and cannot be undone: a Bottle Cap fixes what it
- * was born with, a Purifying Gem takes a shadow off it, a Max Revive
- * is the only thing that brings a whole party back from nothing. They
- * were all rare, and being drawn as often as a stone made them read as
- * ordinary.
+ * The line between **rare** and **prized** is permanence. Rare is what
+ * gets a party through the next fight — a stone, a Revive. Prized is
+ * what changes a pokemon for good: a Bottle Cap, a Purifying Gem, a
+ * Max Revive.
  *
- * The **valuables** climb through every band, because they are one
- * ladder and it is a long one — two hundred gold for a shell off a
- * beach, six hundred thousand for a crown out of a ruin. A find is
- * banded by what it is worth, so the shore trinkets are commons, the
- * ruins sit with the Bottle Caps, and the crown stands in the rarest
- * band of all. That last one is the exception to what this band is
- * for: everything else there is something gold cannot buy, and the
- * crown is there because it is more gold than the game pays for
- * anything else.
+ * The **valuables** climb through every band, since they are one long
+ * ladder — two hundred gold for a beach shell, six hundred thousand
+ * for a crown. The crown sits in the rarest band as the exception:
+ * everything else there is something gold cannot buy.
  *
- * Machines are deliberately absent: they are bought, never found.
+ * Machines are deliberately absent: they are bought, never found
  */
 export const ITEM_POOL: ItemRarityGroups = {
   base: [
@@ -249,14 +236,9 @@ export type ItemBand = keyof ItemRarityGroups;
 let bands: Map<Items, ItemBand> | null = null;
 
 /**
- * The band the ground hides this item in, or null for something the
- * ground never hides at all — a machine, a berry off a bush, anything
- * only a vendor sells.
- *
- * Built on the first ask rather than at import, and cached, since the
- * pool is a module constant and the answer cannot change under it. An
- * item listed in two bands answers with the rarest, which is the one
- * that decides how hard it was to come by
+ * The band the ground hides this item in, or null for anything only a
+ * vendor sells. Built on first ask and cached, since the pool is a
+ * module constant; an item listed twice answers with the rarest band
  */
 export function getItemBand(item: Items): ItemBand | null {
   if (bands == null) {
@@ -272,17 +254,9 @@ export function getItemBand(item: Items): ItemBand | null {
 }
 
 /**
- * Whether the item is one of the finds worth stopping a player over:
- * the **prized and special** bands — the caps, the Purifying Gem, the
- * Max Revive, the Master Ball.
- *
- * It is what decides whether spending one is asked about twice, and it
- * is the same line the two bands were split on. A prized or special
- * find changes a pokemon for good or cannot be come by again; a rare
- * one gets a party through the next fight, and a Max Potion asked
- * about twice is a click for nothing however scarce it was to dig up.
- *
- * Scarcity alone is not the test — what a mistake costs is
+ * Whether the item is worth stopping a player over — the prized and
+ * special bands. It decides whether spending one is asked about twice.
+ * Scarcity alone is not the test: what a mistake costs is
  */
 export function isPreciousItem(item: Items): boolean {
   const band = getItemBand(item);
@@ -291,13 +265,9 @@ export function isPreciousItem(item: Items): boolean {
 }
 
 /**
- * How wide each band's slice of an item roll is, richest first: the
- * special band owns the opening slice of the draw, the prized band the
- * next, then rare, then uncommon, and whatever remains falls to base.
- *
- * They are widths rather than running totals, so adding a band takes
- * its slice out of **base** and leaves every other band as wide as it
- * was
+ * How wide each band's slice of an item roll is, richest first, with
+ * whatever remains falling to base. Widths rather than running totals,
+ * so adding a band takes its slice out of base and leaves the rest
  */
 export interface ItemBandOdds {
   special: number;
@@ -414,42 +384,23 @@ function stockedBand(
 }
 
 /**
- * Roll a stash: up to `MAX_KINDS` kinds of up to `MAX_STACK` pieces
- * each.
+ * Roll a stash: up to `MAX_KINDS` kinds of up to `MAX_STACK` pieces.
  *
- * The first draw reads exactly as it does for a single item: it picks
- * a band. What differs is what that means. The band is a **ceiling**
- * rather than a choice — it is the best thing in the stash, and one
- * kind of it is guaranteed — and every further kind draws its own
- * band on the same odds, clamped to that ceiling. So a stash may hold
- * two rares and a base, or three commons, or one of each: the rarity
- * of a kind and the number of kinds are separate questions, which is
- * what stops a good dig from being the same three slots every time.
+ * The opening draw picks a band, and that band is a **ceiling** rather
+ * than the answer: one kind of it is guaranteed, and every further
+ * kind draws its own band clamped to it. Rarity and count stay
+ * separate questions, so a good dig is not the same three slots twice.
  *
- * A special is the ceiling like any other band, and the kinds under
- * it are drawn as usual — a stash may well be a Master Ball and two
- * stones. What it may never be is **two specials**: the opening draw
- * is the only one that can reach that band, and everything after it
- * is clamped to prized at best. A special is also always a single
- * piece, whatever else is buried with it: a Master Ball found three
- * at a time would stop being a Master Ball.
+ * A stash may never hold **two specials** — only the opening draw
+ * reaches that band, and a special is always a single piece. Prized is
+ * not held to that: two Bottle Caps in one hole is a very good dig.
  *
- * The prized band is not held to that: a stash that opened on one may
- * hold a second, and the pieces are drawn the way any other band's
- * are. It is scarce rather than one-of-a-kind, and two Bottle Caps in
- * one hole is a very good dig rather than a broken one.
+ * Two kinds landing on the same item merge into one stack, capped at
+ * `MAX_STACK`. Bands summing to 1 shut the base tier out, which is how
+ * a grotto refuses commons; empty bands are skipped.
  *
- * Two kinds landing on the same item are one stack, and a stack never
- * exceeds `MAX_STACK` however they merge.
- *
- * Bands summing to 1 shut the base tier out entirely, which is how a
- * hidden grotto refuses to hold commons. Empty bands are skipped, so
- * a pool with nothing in it hands back nothing.
- *
- * The draws land in order: the ceiling, the special if the ceiling
- * reached one, how many kinds, and then for each kind after the
- * ceiling's own its band, followed in every case by the kind itself
- * and how many pieces of it
+ * The draws land in order: ceiling, the special if it reached one, how
+ * many kinds, then each kind's band, kind and count
  */
 export function pickItems(
   groups: ItemRarityGroups,

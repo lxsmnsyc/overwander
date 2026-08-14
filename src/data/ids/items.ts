@@ -553,6 +553,16 @@ export const enum Items {
   RedCard = 274,
   EjectButton = 275,
   EjectPack = 276,
+
+  /**
+   * The trinkets: held for what they do everywhere except a fight. A
+   * stone keeps its holder as it is, a coin pays its owner better, and
+   * a tag keeps the world at arm's length. See
+   * [`src/data/items/trinkets.ts`](../items/trinkets.ts)
+   */
+  Everstone = 277,
+  AmuletCoin = 278,
+  CleanseTag = 279,
 }
 
 /**

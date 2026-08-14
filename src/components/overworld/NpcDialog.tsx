@@ -18,7 +18,7 @@ import {
   sellToVendor,
   visitNurse,
 } from '../../auth/npcs';
-import type { Items } from '../../data/ids/items';
+import { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import { FOSSIL_SPECIES, getItemData, isFossil } from '../../data/items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
@@ -100,6 +100,8 @@ function asParent(caught: CaughtPokemon): BreedingParent {
     ivs: caught.ivs,
     moves: caught.moves,
     shadow: isShadow(caught),
+    nature: caught.nature,
+    everstone: caught.items.includes(Items.Everstone),
     egg: isEgg(caught),
   };
 }

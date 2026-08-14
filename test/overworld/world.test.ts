@@ -108,6 +108,7 @@ import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
 import { CANDY_ITEM_BONUS } from '../../src/overworld/items/candy-items';
 import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
+import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
 import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
 import World, {
@@ -1141,6 +1142,36 @@ describe('world', () => {
 
     // A player walking alone carries nothing
     expect(createOverworld('player-uid', null).checkGoldReward('raid-id', 2000)).toBe(2000);
+  });
+
+  it('does the same for a buddy wearing a coin or a tag', () => {
+    const rich = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.AmuletCoin],
+    });
+    const tagged = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.CleanseTag],
+    });
+
+    expect(rich.checkGoldReward('raid-id', 2000)).toBe(2000 * AMULET_COIN_BONUS);
+    expect(tagged.checkSpawnCount(SPAWN_COUNT)).toBe(SPAWN_COUNT - CLEANSE_TAG_QUIET);
+    expect(tagged.checkSpawnCount(1)).toBe(0);
+
+    // The coin pays better than the incense it stands against, which
+    // is what not being on any shelf is worth
+    expect(AMULET_COIN_BONUS).toBeGreaterThan(LUCK_INCENSE_BONUS);
+
+    // And each is asked separately, so a buddy carrying both is paid
+    // for both — the way a Shiny Charm stacks with the day's own boost
+    const both = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.AmuletCoin, Items.LuckIncense],
+    });
+
+    expect(both.checkGoldReward('raid-id', 2000)).toBe(
+      2000 * AMULET_COIN_BONUS * LUCK_INCENSE_BONUS,
+    );
   });
 
   it('bounds the world at 4096 chunks a side', () => {

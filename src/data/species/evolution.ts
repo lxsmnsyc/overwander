@@ -1,4 +1,4 @@
-import type { Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
 import { type EvolutionData, getSpeciesData } from './__create';
 
@@ -50,6 +50,16 @@ export function meetsEvolutionCriteria(
   const { method } = evolution;
 
   if (method === 0 || (method & ~SUPPORTED_METHODS) !== 0) {
+    return false;
+  }
+  /**
+   * An Everstone answers every evolution at once, and it answers
+   * here rather than at the moment of evolving so that the catch
+   * sheet stops offering what the stone would refuse. The pokemon is
+   * not held back from anything else: it levels, it learns, it
+   * fights — it simply stays what it is
+   */
+  if (context.held.has(Items.Everstone)) {
     return false;
   }
   if ((method & EvolutionMethod.Level) !== 0) {

@@ -144,6 +144,15 @@ import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/gear';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../src/data/items/one-shots';
+import {
+  FOUND_TRINKETS,
+  MARKET_TRINKETS,
+  TRINKETS,
+  TRINKET_PRICE,
+  isTrinket,
+} from '../src/data/items/trinkets';
+import { LUCK_INCENSE_BONUS } from '../src/overworld/items/incenses';
+import { AMULET_COIN_BONUS } from '../src/overworld/items/trinkets';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
@@ -707,6 +716,27 @@ describe('evolution data', () => {
     ).toEqual([
       { species: Species.Ninetales, method: EvolutionMethod.UsedItem, item: Items.FireStone },
     ]);
+  });
+
+  it('offers nothing at all to a pokemon holding an Everstone', () => {
+    const context = { level: 100, carried: new Set([Items.FireStone]), traded: true };
+
+    // Every door at once: the level one, the stone one and the trade
+    // one, all of them open, and the stone shuts all three
+    expect(
+      getAvailableEvolutions(Species.Charmander, { ...context, held: new Set([Items.Everstone]) }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions(Species.Vulpix, { ...context, held: new Set([Items.Everstone]) }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions(Species.Machoke, { ...context, held: new Set([Items.Everstone]) }),
+    ).toEqual([]);
+
+    // And holding something else changes nothing
+    expect(
+      getAvailableEvolutions(Species.Machoke, { ...context, held: new Set([Items.Leftovers]) }),
+    ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
   });
 
   it('offers trade evolutions only to a pokemon that has changed hands', () => {
@@ -2209,6 +2239,57 @@ describe('type-enhancing items', () => {
     // A one-shot is worth less than the gear it sits beside, because
     // a fight where its moment never comes is a fight it sat out
     expect(ONE_SHOT_PRICE).toBeLessThan(GEAR_PRICE);
+  });
+
+  it('sells the trinkets at what an incense costs, and never spends one', () => {
+    const pooled = new Set(
+      [
+        ...ITEM_POOL.base,
+        ...ITEM_POOL.uncommon,
+        ...ITEM_POOL.rare,
+        ...ITEM_POOL.prized,
+        ...ITEM_POOL.special,
+      ].map((entry) => entry.item),
+    );
+
+    for (const [item, name] of TRINKETS) {
+      const data = getItemData(item);
+
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Nothing about them is spent: a trinket works for as long as
+      // it is carried, like the incense it stands beside
+      expect(data.flags & ItemFlags.Consumable).toBe(0);
+      expect(isTrinket(item)).toBe(true);
+      expect(isGear(item)).toBe(false);
+      expect(isOneShot(item)).toBe(false);
+    }
+
+    for (const [item] of MARKET_TRINKETS) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(TRINKET_PRICE);
+      expect(pooled.has(item)).toBe(false);
+    }
+
+    // The two nobody sells are the two the ground hides
+    for (const [item] of FOUND_TRINKETS) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(data.sell).toBeGreaterThan(0);
+      expect(pooled.has(item)).toBe(true);
+    }
+
+    // The listed one is an incense by another name, and is priced as
+    // one
+    expect(TRINKET_PRICE).toBe(INCENSE_PRICE);
+    // The coin pays more than the incense it stands against, which is
+    // what being unbuyable is worth
+    expect(AMULET_COIN_BONUS).toBeGreaterThan(LUCK_INCENSE_BONUS);
   });
 
   it('makes the Heart Scale worth nothing but a forgotten move', () => {

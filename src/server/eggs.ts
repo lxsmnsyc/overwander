@@ -29,6 +29,7 @@ import {
   SHADOW_HATCH_FACTOR,
   inheritIVs,
   inheritMoves,
+  inheritNature,
   inheritsShadow,
 } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
@@ -325,6 +326,8 @@ export async function grantBredEgg(
   });
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
   const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
+  // Last of the draws, so adding it moved nothing that came before it
+  const nature = inheritNature(parents[0], parents[1], () => rng.random());
 
   return writeEgg(
     uid,
@@ -335,7 +338,8 @@ export async function grantBredEgg(
       // egg's own
       ivs,
       gender: hatchling.gender,
-      nature: hatchling.nature,
+      // Its own, unless a parent was holding an Everstone
+      nature: nature ?? hatchling.nature,
       // It sparkles if it was going to, and carries the shadow if it
       // inherited one
       shiny: hatchling.shiny,

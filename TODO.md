@@ -5,7 +5,6 @@
 - [ ] overworld weather
 - [ ] add Jeweler
 - [ ] add Archaeologist
-- [ ] PP tracking
 - [ ] ability/item descriptions
 - [ ] replace ball feature
 - [ ] catch picker = view catch
@@ -21,11 +20,9 @@
 - [ ] add "attack"
 - [ ] effect sprites
 
-Everstone, Amulet Coin, Cleanse Tag — not battle items at all: block an evolution, pay more gold, thin the encounter rate. All three are server-side work.
+Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room), Protective Pads (every contact reaction in gen-1.ts would have to consult it).
 
-Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Damp/Heat/Icy/Smooth Rock (weather has no duration), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room), Zoom Lens (needs turn order), Protective Pads (every contact reaction in gen-1.ts would have to consult it).
-
-Held items I'd leave alone (22): the switch four (Eject Button, Eject Pack, Red Card, Shed Shell); the Trick/Fling fodder that is pure downside without either move (Iron Ball, Lagging Tail, Ring Target, Sticky Barb, Float Stone); and the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
+Held items I'd leave alone (22): the Trick/Fling fodder that is pure downside without either move (Iron Ball, Lagging Tail, Ring Target, Sticky Barb, Float Stone); and the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
 
 Battle items — all 9 missing, and nothing can use them. X Attack, X Defense, X Sp. Atk, X Sp. Def, X Speed, X Accuracy, Dire Hit, Guard Spec, Max Mushrooms. There is no in-battle item flow anywhere in src/server or src/battle — a player cannot reach into the bag mid-fight. The effects are trivial (stages, crit stage, Mist); the missing piece is the flow.
 

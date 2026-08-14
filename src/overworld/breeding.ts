@@ -1,6 +1,7 @@
 import { MAX_IV, STAT_ORDER, type Stats, getIV, setIV } from '../data/constants/stats';
 import EggGroups from '../data/ids/egg-groups';
 import type { Moves } from '../data/ids/moves';
+import type Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { getBaseSpecies, getEggMoves, getSpeciesData } from '../data/species';
 import { MOVE_LIMIT, deriveMoves } from './encounter';
@@ -54,6 +55,16 @@ export interface BreedingParent {
   ivs: number;
   moves: Moves[];
   shadow: boolean;
+  /**
+   * What this parent is, for an egg that inherits a nature rather
+   * than rolling one
+   */
+  nature: Natures;
+  /**
+   * Whether this parent is holding an Everstone. A stone that keeps
+   * its holder as it is does the same for what its holder passes on
+   */
+  everstone: boolean;
   /**
    * An egg is not a parent. It is listed here rather than checked by
    * the caller because it is the one refusal a player would
@@ -221,4 +232,30 @@ export function inheritsShadow(
   random: () => number,
 ): boolean {
   return (left.shadow || right.shadow) && random() < SHADOW_INHERITANCE_CHANCE;
+}
+
+/**
+ * The nature the egg inherits, or null when it rolls its own.
+ *
+ * An Everstone is the one thing a parent can hold that reaches the
+ * egg: whoever is carrying it passes their nature down whole. Two
+ * stones is two answers, and the pair is not sorted — the caller's
+ * own roll picks between them, so a player breeding two Everstone
+ * holders gets one of the two rather than always the first
+ */
+export function inheritNature(
+  left: BreedingParent,
+  right: BreedingParent,
+  random: () => number,
+): Natures | null {
+  if (left.everstone && right.everstone) {
+    return random() < 0.5 ? left.nature : right.nature;
+  }
+  if (left.everstone) {
+    return left.nature;
+  }
+  if (right.everstone) {
+    return right.nature;
+  }
+  return null;
 }

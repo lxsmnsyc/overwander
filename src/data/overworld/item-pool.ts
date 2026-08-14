@@ -119,6 +119,11 @@ export const ITEM_POOL: ItemRarityGroups = {
     // bought because nothing sells one — a forgotten move costs a walk,
     // which is what the move cost in the first place
     { item: Items.HeartScale, weight: 8 },
+    // A stone that keeps a pokemon exactly as it is. It is dug up as
+    // readily as anything else here because what it is for — holding
+    // a line one stage short of where it would go — is a decision a
+    // player makes early and often
+    { item: Items.Everstone, weight: 6 },
     // The wings, blown along the ground: three points of training
     // each, and the only effort a pokemon gets that its levels did
     // not pay for. Thin slots, because they are the one thing in the
@@ -159,6 +164,13 @@ export const ITEM_POOL: ItemRarityGroups = {
     // and a Farfetch'd leek
     { item: Items.LuckyPunch, weight: 4 },
     { item: Items.Stick, weight: 4 },
+    // Something left behind by whatever wriggled out of it, which is
+    // exactly what it does for whoever picks it up
+    { item: Items.ShedShell, weight: 4 },
+    // Three purses instead of one, for as long as it is carried.
+    // Nothing sells one and this is the only slot it has, so it is
+    // the thinnest thing in the band
+    { item: Items.AmuletCoin, weight: 2 },
     // The plates, buried where they fell. Each is a single thin slot
     // — seventeen of them share about what one stone is worth, so
     // digging one up stays an event

@@ -13,6 +13,7 @@ import {
 } from '../../src/auth/egg';
 import { Stats, getIV, packIVs } from '../../src/data/constants/stats';
 import type { Moves } from '../../src/data/ids/moves';
+import Natures from '../../src/data/ids/natures';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   type BreedingParent,
@@ -21,6 +22,7 @@ import {
   getEggSpecies,
   inheritIVs,
   inheritMoves,
+  inheritNature,
   inheritsShadow,
 } from '../../src/overworld/breeding';
 import {
@@ -113,6 +115,8 @@ function parent(
   iv: number,
   moves: Moves[] = [],
   shadow = false,
+  nature: Natures = Natures.Hardy,
+  everstone = false,
 ): BreedingParent {
   return {
     species,
@@ -127,6 +131,8 @@ function parent(
     }),
     moves,
     shadow,
+    nature,
+    everstone,
     egg: false,
   };
 }
@@ -238,6 +244,27 @@ describe('inherited shadow', () => {
     expect(inheritsShadow(shadow, plain, () => SHADOW_INHERITANCE_CHANCE)).toBe(false);
     // Two shadows are no more certain than one
     expect(inheritsShadow(shadow, shadow, () => 0.9)).toBe(false);
+  });
+});
+
+describe('inherited nature', () => {
+  it('comes from whichever parent is holding the Everstone', () => {
+    const plain = parent(Species.Bulbasaur, Genders.Male, 0, [], false, Natures.Adamant);
+    const held = parent(Species.Bulbasaur, Genders.Female, 0, [], false, Natures.Modest, true);
+
+    // Nobody holding one: the egg rolls its own, so nothing is passed
+    expect(inheritNature(plain, plain, () => 0)).toBeNull();
+
+    expect(inheritNature(plain, held, () => 0)).toBe(Natures.Modest);
+    expect(inheritNature(held, plain, () => 0.999)).toBe(Natures.Modest);
+  });
+
+  it('picks between two stones rather than always taking the first', () => {
+    const left = parent(Species.Bulbasaur, Genders.Male, 0, [], false, Natures.Adamant, true);
+    const right = parent(Species.Bulbasaur, Genders.Female, 0, [], false, Natures.Modest, true);
+
+    expect(inheritNature(left, right, () => 0)).toBe(Natures.Adamant);
+    expect(inheritNature(left, right, () => 0.9)).toBe(Natures.Modest);
   });
 });
 

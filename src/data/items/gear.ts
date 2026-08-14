@@ -50,7 +50,6 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.IcyRock, 'Icy Rock'],
   [Items.SmoothRock, 'Smooth Rock'],
   [Items.ZoomLens, 'Zoom Lens'],
-  [Items.ShedShell, 'Shed Shell'],
 ]);
 
 /**
@@ -64,6 +63,11 @@ export const FOUND_GEAR: Map<Items, string> = new Map([
   [Items.BlackSludge, 'Black Sludge'],
   [Items.LuckyPunch, 'Lucky Punch'],
   [Items.Stick, 'Stick'],
+  // Nobody makes one of these: it is what a pokemon left behind the
+  // last time something had hold of it, so it is picked up off the
+  // ground rather than bought — and it is the half of the Smoke Ball
+  // that a player finds rather than pays for
+  [Items.ShedShell, 'Shed Shell'],
 ]);
 
 export const GEAR_PRICE = 5000;

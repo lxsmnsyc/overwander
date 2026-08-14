@@ -15,7 +15,7 @@ import Npc, {
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../data/overworld/fossil';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../data/overworld/vendor';
 import AleaRNG from '../core/alea';
-import { Balls, type Items } from '../data/ids/items';
+import { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
@@ -135,6 +135,10 @@ function asParent(caught: Record<string, unknown> | null, uid: string): Breeding
     ivs: record.ivs,
     moves: record.moves,
     shadow: isShadow(record),
+    nature: record.nature,
+    // Read off the stored record, like everything else here: what the
+    // egg inherits is decided by what the pokemon is actually holding
+    everstone: record.items.includes(Items.Everstone),
     egg: isEgg(record),
   };
 }

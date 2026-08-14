@@ -1777,6 +1777,35 @@ export default function registerGen1Moves(): void {
    * resists it and nothing is immune — and it costs the user a quarter
    * of its whole health whatever it lands for
    */
+  /**
+   * The plain swing every pokemon has in it.
+   *
+   * Nobody learns it and it is in no move set: the engine reaches for
+   * it when a unit is able to act and has nothing it may cast — every
+   * move it knows still cooling — which on a cartridge is not a state
+   * that exists and here is most of a fight. Standing still through
+   * those gaps made a battle read as two pokemon waiting for timers.
+   *
+   * It is deliberately feeble. Ten power is a tenth of a real move and
+   * the PP is what makes it come back about once a second, so it fills
+   * the gaps without ever being worth choosing over something the
+   * pokemon actually knows.
+   *
+   * Its type is `Unknown` here and resolved when it is thrown — see
+   * [`attack.ts`](../../battle/moves/attack.ts) — to whatever the user
+   * is: a Charmander's swing is Fire, which is the same thing as
+   * saying a pokemon attacks with what it is made of
+   */
+  registerMove(Moves.Attack, {
+    name: 'Attack',
+    type: Types.Unknown,
+    category: MoveCategories.Physical,
+    power: 10,
+    pp: 180,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    flags: MoveFlags.Contact,
+    cast: ['Strike', 'Attack'],
+  });
   registerMove(Moves.Struggle, {
     name: 'Struggle',
     type: Types.Unknown,

@@ -432,37 +432,57 @@ describe('egg moves', () => {
 
 describe('the moves nobody knows', () => {
   it('numbers them out of the dex', () => {
-    // A move id is a slot in the dex, and these two have no slot: one
-    // is what a confused pokemon hits itself with and the other is
-    // what is left when everything else is shut off. Held past the
-    // range, a record carrying a real move can never be read as
-    // either — the same reason Missingno and the egg are numbered
-    // where they are
+    // A move id is a slot in the dex, and these three have no slot:
+    // one is what a confused pokemon hits itself with, one is what is
+    // left when everything else is shut off, and one is the swing
+    // thrown while everything else is cooling. Held past the range, a
+    // record carrying a real move can never be read as any of them —
+    // the same reason Missingno and the egg are numbered where they
+    // are
     expect(Moves.Struggle).toBe(100_000);
     expect(Moves._Confused).toBe(100_001);
+    expect(Moves.Attack).toBe(100_002);
 
     for (const move of getRegisteredMoves()) {
-      if (move !== Moves.Struggle) {
+      if (move !== Moves.Struggle && move !== Moves.Attack) {
         expect(move, getMoveData(move).name).toBeLessThan(100_000);
       }
     }
   });
 
-  it('leaves Struggle out of every list a move can be reached from', () => {
+  it('makes the fallback swing feeble and constant', () => {
+    const attack = getMoveData(Moves.Attack);
+
+    // A tenth of a real move, so it fills the gaps between cooldowns
+    // without ever being worth waiting for
+    expect(attack.power).toBe(10);
+    // And back about once a second: PP here is how often a move comes
+    // round, and the basis it is divided into is 180
+    expect(attack.pp).toBe(180);
+    // Typeless as registered; what it is actually thrown as is read
+    // off the pokemon throwing it
+    expect(attack.type).toBe(Types.Unknown);
+  });
+
+  it('leaves the moves nobody knows out of every list one can be reached from', () => {
     for (const species of getRegisteredSpecies()) {
       const { learnSet } = getSpeciesData(species);
+      const teachable = new Set(learnSet.teachable);
+      const named = getSpeciesData(species).name;
 
-      expect(new Set(learnSet.teachable).has(Moves.Struggle), getSpeciesData(species).name).toBe(
-        false,
-      );
+      expect(teachable.has(Moves.Struggle), named).toBe(false);
+      expect(teachable.has(Moves.Attack), named).toBe(false);
       for (const learned of Object.values(learnSet.level)) {
         expect(new Set(learned).has(Moves.Struggle)).toBe(false);
+        expect(new Set(learned).has(Moves.Attack)).toBe(false);
       }
     }
 
-    // And no machine teaches it: machines are derived from what the
-    // species can be taught, so the check above is what keeps it out
+    // And no machine teaches either: machines are derived from what
+    // the species can be taught, so the check above is what keeps
+    // them out
     expect(new Set(getTeachableMoves()).has(Moves.Struggle)).toBe(false);
+    expect(new Set(getTeachableMoves()).has(Moves.Attack)).toBe(false);
   });
 });
 

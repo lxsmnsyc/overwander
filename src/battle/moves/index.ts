@@ -28,6 +28,7 @@ import setupSemiInvulnerableMoves from './semi-invulnerable';
 import setupSolarBeam from './solar-beam';
 import setupStageMoves from './stage';
 import setupStruggle from './struggle';
+import setupAttack from './attack';
 import { setupStatusMoves } from './status';
 import setupSubstitute from './substitute';
 import setupTransform from './transform';
@@ -78,7 +79,10 @@ export default function setupMoves(battle: Battle): void {
   setupWeatherMoves(battle);
   setupConversion(battle);
 
-  // Last, because it is what is left: the fallback only answers when
-  // every resolver above has declined to pick anything
+  // Last, because they are what is left: both fallbacks only answer
+  // when every resolver above has declined to pick anything. Attack
+  // is for a unit waiting on its cooldowns and Struggle for one shut
+  // out of its move set, which are exclusive conditions
+  setupAttack(battle);
   setupStruggle(battle);
 }

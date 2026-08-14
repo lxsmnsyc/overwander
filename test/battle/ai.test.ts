@@ -102,9 +102,10 @@ describe('choose move', () => {
     unit.addMove(Moves.DreamEater);
 
     // Dream Eater has nothing to eat while the target is awake, so
-    // the unit is left with nothing to cast rather than a move that
-    // would resolve to "but it failed!"
-    expect(chooseMove(battle, unit)).toBeUndefined();
+    // the unit swings instead of casting a move that would resolve to
+    // "but it failed!". The swing is what every unit is fielded with,
+    // and it is what "declined everything else" looks like now
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
 
     enemy.addStatus(Statuses.Sleeping, NONE_CAUSE);
 
@@ -118,7 +119,7 @@ describe('choose move', () => {
     const enemy = createUnit(battle, teamB);
     unit.addMove(Moves.Counter);
 
-    expect(chooseMove(battle, unit)).toBeUndefined();
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
 
     enemy.damage({ type: EffectType.Move, unit: enemy, move: Moves.Tackle }, unit, 10, 0);
 
@@ -136,7 +137,7 @@ describe('choose move', () => {
 
     enemy.addStatus(Statuses.Paralyzed, NONE_CAUSE);
 
-    expect(chooseMove(battle, unit)).toBeUndefined();
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
   });
 
   it('picks nothing when there is nothing left to aim at', () => {
@@ -238,7 +239,7 @@ describe('choose move', () => {
 
     // Ground cannot reach something airborne, so there is nothing
     // worth casting at it
-    expect(chooseMove(battle, unit)).toBeUndefined();
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
 
     // Mold Breaker resolves its moves as though the target had no
     // ability at all, and the AI is asked through the same brackets
@@ -280,7 +281,7 @@ describe('choose move', () => {
 
       // The cast would be refused every tick, so picking it is a tick
       // spent on nothing — for ever, since nothing about it changes
-      expect(chooseMove(battle, unit)).toBeUndefined();
+      expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
     });
 
     it('drains away from Liquid Ooze', () => {
@@ -324,7 +325,7 @@ describe('choose move', () => {
       // The status still lands; the only thing it does does not
       guarded.addAbility(Abilities.MagicGuard);
 
-      expect(chooseMove(battle, unit)).toBeUndefined();
+      expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
     });
 
     it('would rather not touch what punishes touching', () => {
@@ -429,6 +430,74 @@ describe('idle AI', () => {
   });
 });
 
+describe('Attack', () => {
+  it('is what a pokemon does while its own moves are cooling', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+
+    // With something castable it throws that, every time
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
+
+    unit.startCooldown(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy });
+
+    const choice = chooseMove(battle, unit);
+
+    expect(choice?.move).toBe(Moves.Attack);
+    expect(choice?.target.type === MoveTargetType.Unit && choice.target.unit).toBe(enemy);
+  });
+
+  it('leaves a pokemon with nothing at all to Struggle', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+
+    createUnit(battle, teamB);
+    unit.addMove(Moves.Tackle);
+    // Disabled is not cooling: a pokemon shut out of its move set has
+    // nothing coming back, which is the state Struggle is for. The
+    // swing counts as a move it has, so shutting it out means
+    // shutting that out too — which is what Disable on the swing, or
+    // anything that empties a move set, comes to
+    unit.disableMove(Moves.Tackle);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
+
+    unit.disableMove(Moves.Attack);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Struggle);
+  });
+
+  it('is thrown as whatever the pokemon is made of', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    unit.types.clear();
+    unit.types.add(Types.Fire);
+    unit.types.add(Types.Flying);
+
+    // The first of them: a Charizard swings Fire rather than typeless
+    expect(unit.checkMoveType(Moves.Attack, target)).toBe(Types.Fire);
+
+    // Read off the unit rather than off the species, so anything that
+    // changes what it is changes what it swings with
+    unit.types.clear();
+    unit.types.add(Types.Rock);
+    expect(unit.checkMoveType(Moves.Attack, target)).toBe(Types.Rock);
+
+    // Nothing to be made of leaves it as registered: typeless
+    unit.types.clear();
+    expect(unit.checkMoveType(Moves.Attack, target)).toBe(Types.Unknown);
+
+    // And nothing here touches an ordinary move
+    expect(unit.checkMoveType(Moves.Tackle, target)).toBe(Types.Normal);
+  });
+});
+
 describe('Struggle', () => {
   it('is what is left when every move is shut off', () => {
     const { battle, teamA, teamB } = createAIBattle();
@@ -440,7 +509,10 @@ describe('Struggle', () => {
     // With something to throw, it throws that
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Tackle);
 
+    // The swing goes with it: every unit is fielded carrying one, so
+    // "every move shut off" is one more move than it used to be
     unit.disableMove(Moves.Tackle);
+    unit.disableMove(Moves.Attack);
 
     const choice = chooseMove(battle, unit);
 
@@ -457,10 +529,10 @@ describe('Struggle', () => {
 
     // A move that is cooling is a move the unit still has: struggling
     // in the gaps between cooldowns would have every pokemon in every
-    // fight killing itself while it waited
+    // fight killing itself while it waited. It swings instead
     unit.startCooldown(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy });
 
-    expect(chooseMove(battle, unit)).toBeUndefined();
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
   });
 
   it('is cast, lands and is paid for, through the ordinary pipeline', () => {
@@ -479,6 +551,9 @@ describe('Struggle', () => {
     enemy.setHealth(100_000);
     unit.addMove(Moves.Tackle);
     unit.disableMove(Moves.Tackle);
+    // Including the swing every unit is fielded with, or it would
+    // spend the fight throwing that instead
+    unit.disableMove(Moves.Attack);
     unit.enter();
 
     for (let frame = 0; frame < 40; frame++) {

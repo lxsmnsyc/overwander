@@ -120,6 +120,11 @@ export const enum DamageFlags {
    * it
    */
   Cost = 0b1_0000,
+
+  /**
+   * Indirect is negated by abilities, this one is the work-around
+   */
+  Pure = 0b10_0000,
 }
 
 export const enum StatFlags {
@@ -135,18 +140,20 @@ export const enum MoveTargetPriorities {
 
 export const enum Moves {
   /**
-   * The two moves nobody knows.
+   * The three moves nobody knows.
    *
-   * Neither of these is a move a pokemon carries: Struggle is what is
-   * thrown when there is nothing left to throw, and `_Confused` is the
-   * hit a confused pokemon lands on itself. They are numbered a long
-   * way past the rest for the same reason the placeholder species are
-   * — a move id is a slot in the dex, and these two do not have one —
-   * and having them out of the range means a record holding a real
-   * move can never collide with them
+   * None of them is a move a pokemon carries: Struggle is what is
+   * thrown when there is nothing left to throw, `_Confused` is the hit
+   * a confused pokemon lands on itself, and Attack is the plain swing
+   * a pokemon falls back on while everything it actually knows is
+   * cooling. They are numbered a long way past the rest for the same
+   * reason the placeholder species are — a move id is a slot in the
+   * dex, and these do not have one — and having them out of the range
+   * means a record holding a real move can never collide with them
    */
   Struggle = 100000,
   _Confused = 100001,
+  Attack = 100002,
   Tackle = 1,
   Growl = 2,
   LeechSeed = 3,

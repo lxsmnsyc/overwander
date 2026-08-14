@@ -6,6 +6,7 @@ import { For, Index, type JSX, Show, createMemo } from 'solid-js';
 import type { ProgressData } from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
+import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
@@ -151,6 +152,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
        * The numbers underneath were moving the whole time
        */
       moves: Object.values(unit.moves)
+        // The plain swing every unit is fielded with is left off. It
+        // is not one of the pokemon's four — it is what it does with
+        // its hands between them — and it is added before them, so
+        // listing it would push the fourth real move off the card
+        .filter((move) => move.move !== Moves.Attack)
         .slice(0, MOVE_SLOTS)
         .map((move) => ({
           name: getMoveData(move.move).name,

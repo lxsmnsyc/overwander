@@ -180,7 +180,12 @@ function canUnitCastMove(caster: Unit, move: Moves): boolean {
   // that *is* somebody's move has been shut off, so it cannot be asked
   // for from the move set the way the rest are — it would be refused
   // for not being in there, which is the only condition it is ever
-  // used under
+  // used under.
+  //
+  // Attack is **not** exempt, though it is nobody's move either: every
+  // unit is fielded carrying it, so it is in the set like any other
+  // and it cools like any other. Waving it through here would be a
+  // pokemon swinging with no cooldown at all
   if (move === Moves.Struggle) {
     return true;
   }

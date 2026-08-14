@@ -8,11 +8,17 @@ import type Unit from '../unit';
 export default function setupMirrorMove(battle: Battle): void {
   const lastMove = new Map<Unit, Moves>();
 
-  // Track the last move each unit used. Struggle is not one of them:
-  // mirroring what somebody threw because they had nothing left would
-  // charge the mirror a quarter of its own health for the privilege
+  // Track the last move each unit used. Neither of the fallbacks is
+  // one of them: mirroring what somebody threw because they had
+  // nothing left would charge the mirror a quarter of its own health
+  // for the privilege, and mirroring a swing they made while waiting
+  // on a cooldown spends a real move to copy filler
   battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
-    if (event.move !== Moves.MirrorMove && event.move !== Moves.Struggle) {
+    if (
+      event.move !== Moves.MirrorMove &&
+      event.move !== Moves.Struggle &&
+      event.move !== Moves.Attack
+    ) {
       lastMove.set(event.source, event.move);
     }
   });

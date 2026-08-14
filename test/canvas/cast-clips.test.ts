@@ -2,17 +2,27 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
 import asSpriteSheetJSON from '../../src/canvas/sprite-sheet';
-import { COMMON_CAST, pickCast } from '../../src/data/constants/cast';
+import { MoveTargetType } from '../../src/battle/events';
+import { COMMON_CAST, type CastAnimation, pickCast } from '../../src/data/constants/cast';
+import { Moves } from '../../src/data/ids/moves';
+import { getMoveData } from '../../src/data/moves';
+import { createBattle, createUnit } from '../battle/harness';
 
 /**
- * Why a pokemon holds its Idle while it is casting.
+ * Whether a pokemon has something to play while it casts.
  *
- * The canvas asks the **sheet** what it can do, so a pokemon stuck in
- * Idle is a pokemon whose sheet answered no to everything the move
- * offered. That answer comes from the clips the sheet built at load,
- * not from the description as written: a clip whose grid or packed
- * image is missing is dropped on the floor, and the only sign of it is
- * the pokemon standing there.
+ * A pokemon that holds its Idle through its own attack is a pokemon
+ * whose sheet answered no to everything the move offered, and the
+ * answer comes from the clips the sheet **built at load** rather than
+ * from the description as written: a clip whose grid or packed image
+ * is missing is dropped on the floor, and the only sign of it is the
+ * pokemon standing there.
+ *
+ * The chain has four links and this covers all of them — the sheet
+ * carries the clip, the move offers one the sheet has, the engine
+ * reports the cast, and the sprite switches to it. Each was suspected
+ * once and cleared; a regression in any of them looks identical from
+ * the outside, which is why they are pinned down separately.
  */
 const META = 'public/sprites/pokemon/meta';
 
@@ -27,7 +37,10 @@ function loaded(species: number): SpeciesSpriteAnimation {
 
 const SHIPPED = readdirSync(META)
   .filter((name) => name.endsWith('.json'))
-  .map((name) => ({ species: Number.parseInt(name, 10), raw: readFileSync(`${META}/${name}`, 'utf8') }))
+  .map((name) => ({
+    species: Number.parseInt(name, 10),
+    raw: readFileSync(`${META}/${name}`, 'utf8'),
+  }))
   .filter((entry) => entry.raw.trim().length > 0)
   .map((entry) => entry.species)
   .sort((one, two) => one - two);
@@ -74,7 +87,10 @@ describe('cast clips', () => {
     const gengar = loaded(94);
 
     for (const wanted of COMMON_CAST) {
-      expect(pickCast([wanted], (name) => gengar.has(name)), wanted).toBe(wanted);
+      expect(
+        pickCast([wanted], (name) => gengar.has(name)),
+        wanted,
+      ).toBe(wanted);
     }
   });
 
@@ -97,5 +113,52 @@ describe('cast clips', () => {
 
     gengar.update(300);
     expect(gengar.frame, 'half way through a 600ms window').not.toBe(first);
+  });
+});
+
+describe('what the field shows while a move is cast', () => {
+  it('reports a cast on the unit for the frames it is winding up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    caster.addMove(Moves.Tackle);
+    caster.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: target });
+
+    // The canvas reads exactly this pair every frame
+    const busy = caster.casting ?? caster.channeling;
+
+    expect(busy, 'nothing to animate from').not.toBeUndefined();
+    expect(busy?.move).toBe(Moves.Tackle);
+  });
+
+  it('offers a clip Gengar has for every move it can learn', () => {
+    const sprite = loaded(94);
+    const idle: number[] = [];
+    let checked = 0;
+
+    // Walked by id rather than over the enum, which is `const` and has
+    // no values to iterate at runtime. Ids this build has no data for
+    // are not moves anybody can cast
+    for (let id = 1; id < 1000; id += 1) {
+      const move: Moves = id;
+
+      let cast: CastAnimation[];
+
+      try {
+        // The walk is over raw ids because the enum is `const` and has
+        // nothing to iterate at runtime; an id this build has no data
+        // for is not a move anybody can cast
+        cast = getMoveData(move).cast;
+      } catch {
+        continue;
+      }
+      checked += 1;
+      if (pickCast(cast, (name) => sprite.has(name)) === 'Idle') {
+        idle.push(id);
+      }
+    }
+    expect(checked, 'moves to check').toBeGreaterThan(50);
+    expect(idle, 'moves that leave Gengar standing still').toEqual([]);
   });
 });

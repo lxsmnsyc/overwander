@@ -5,14 +5,16 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
- * Moves Metronome never calls. The two nobody knows are in here for
+ * Moves Metronome never calls. The three nobody knows are in here for
  * the same reason as the two it would call on itself: a Metronome
  * that rolled Struggle would charge a quarter of the user's health
- * for a move it was never entitled to
+ * for a move it was never entitled to, and one that rolled Attack
+ * would spend a real move to throw the feeblest thing in the game
  */
 const EXCLUDED = new Set<Moves>([
   Moves._Confused,
   Moves.Struggle,
+  Moves.Attack,
   Moves.Metronome,
   Moves.MirrorMove,
 ]);

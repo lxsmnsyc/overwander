@@ -48,6 +48,19 @@ In a **raid**, a party favours buffing itself early, because against a health
 pool that size the first few moves are better spent making the rest count. The
 raid boss does not do this: it attacks.
 
+**Nothing stands still.** Every pokemon fights knowing one move more than it was
+brought in with: a plain **Attack**, ten power, back about once a second, and
+thrown as whatever the pokemon is — a Charmander's swing is Fire, a Geodude's is
+Rock. Nothing teaches it and it is in no learn set; it is simply what a pokemon
+does with its hands. It is far too weak to be worth choosing, which is the point:
+it is what fills the gaps while the real moves cool, and it never displaces one
+of them.
+
+A pokemon shut out of its move set entirely — everything disabled, the swing
+included — **Struggles** instead, and pays a quarter of its health for it.
+Waiting on a cooldown and having nothing at all are different states, and they
+get different answers.
+
 ### Animation
 
 A move plays the closest animation the pokemon actually has, stretched to fill

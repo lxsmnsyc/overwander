@@ -62,6 +62,14 @@ import {
 } from './__create';
 import { MergedLifecycle } from '../lifecycle';
 
+/**
+ * The swing every unit is fielded with, as the string key a move set
+ * is indexed by. It is compared as a string because that is what the
+ * keys of `unit.moves` are once they have been through
+ * `Object.entries`
+ */
+const SWING = String(Moves.Attack);
+
 // Vetoes the residual weather chip damage carried by the given weather
 // cause (see mechanics/weather.ts)
 function chipImmunity(
@@ -2127,17 +2135,30 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Forewarn_(Ability)
   createAbility(Abilities.Forewarn, (battle) =>
     // Reveal is a visual cue: the trigger fires once per opposing
-    // move-carrying unit as the holder enters the field
+    // unit carrying a move of its own as the holder enters the field.
+    // The swing every unit is fielded with does not count — it is
+    // what a pokemon does with its hands rather than something to be
+    // forewarned about, and counting it would fire this on everything
+    // alive
     battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
       if (!event.source.hasAbility(Abilities.Forewarn)) {
         return;
       }
 
       for (const unit of battle.units(event.source.team.alliance)) {
-        // tsgolint narrows the optional record's values to defined;
-        // at runtime cleared slots hold undefined
-        // oxlint-disable-next-line typescript/no-unnecessary-condition
-        if (unit.alive && Object.values(unit.moves).some((state) => state != null)) {
+        // The swing every unit is fielded with is not something to be
+        // forewarned about: it is what a pokemon does with its hands,
+        // and warning about it would fire this on everything alive
+        const known = Object.entries(unit.moves).filter(
+          // The key is the move's id as a string, which is what makes
+          // the comparison a string one — and tsgolint narrows the
+          // optional record's values to defined, while at runtime a
+          // cleared slot holds undefined
+          // oxlint-disable-next-line typescript/no-unnecessary-condition
+          ([move, state]) => state != null && move !== SWING,
+        );
+
+        if (unit.alive && known.length > 0) {
           event.source.triggerAbility(Abilities.Forewarn);
         }
       }

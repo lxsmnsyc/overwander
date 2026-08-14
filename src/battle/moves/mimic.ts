@@ -10,6 +10,10 @@ const BANNED_MOVES = new Set<Moves>([
   // would be carrying a move that costs a quarter of its health and
   // shuts the fallback off by being the one move it still knows
   Moves.Struggle,
+  // And Attack for the other half of that: a mimicked swing would
+  // fill a move slot with the thing a pokemon already does for free
+  // whenever it has nothing better
+  Moves.Attack,
 ]);
 
 export default function setupMimic(battle: Battle): void {

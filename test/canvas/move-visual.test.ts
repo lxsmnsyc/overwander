@@ -114,7 +114,14 @@ describe('MoveVisual', () => {
     const { context, drawn } = recorder();
 
     visual.advance(50);
-    visual.draw(context, { ...STAGE, targets: [[10, 10], [20, 20], [30, 30]] });
+    visual.draw(context, {
+      ...STAGE,
+      targets: [
+        [10, 10],
+        [20, 20],
+        [30, 30],
+      ],
+    });
     expect(drawn).toHaveLength(3);
   });
 

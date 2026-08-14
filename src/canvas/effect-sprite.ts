@@ -7,7 +7,7 @@
  * extra facts per sub-image, and both of them matter here:
  *
  * ```json
- * { "compact": true, "width": 166, "height": 185,
+ * { "compact": true, "loops": false, "width": 166, "height": 185,
  *   "images": [{ "name": "000.png", "x": 129, "y": 172,
  *                "width": 8, "height": 8,
  *                "sourceWidth": 64, "sourceHeight": 56,
@@ -76,6 +76,18 @@ export interface EffectFrame {
 export interface EffectSpriteData {
   /** Whether the frames were trimmed before packing. */
   compact: boolean;
+  /**
+   * Whether the last frame flows back into the first, so the effect can
+   * be held on screen by running it round and round rather than by
+   * stretching one pass over the wait.
+   *
+   * It is measured off the pictures by `pnpm sprite-loops` rather than
+   * decided by hand: an effect whose seam is a bigger jump than its own
+   * motion, or that ends on a different palette than it starts on,
+   * flickers once a pass when looped. Absent from a description means
+   * no: a sheet nobody has looked at is one to play once
+   */
+  loops: boolean;
   width: number;
   height: number;
   frames: EffectFrame[];
@@ -180,6 +192,7 @@ export function asEffectSpriteData(value: unknown): EffectSpriteData {
 
   return {
     compact: root.compact === true,
+    loops: root.loops === true,
     width: asNumber(root.width),
     height: asNumber(root.height),
     frames,
@@ -317,6 +330,17 @@ export default class EffectSprite {
   /** How many ticks long the effect is. */
   get length(): number {
     return this.timeline.length;
+  }
+
+  /**
+   * Whether this effect can be played on a loop without flickering — a
+   * flame can, an explosion cannot. A caller holding an effect for a
+   * window somebody else decided asks this to know which way to fill
+   * it: `play({ loop: true })` for a flame, `play({ duration })` for
+   * anything else
+   */
+  get loops(): boolean {
+    return this.data.loops;
   }
 
   /** How long one pass takes at the speed it is currently set to play. */

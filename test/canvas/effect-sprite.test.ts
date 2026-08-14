@@ -14,11 +14,7 @@ import EffectSprite, {
 // The directional sheets are the same description in the same shape,
 // and are meant to be playable as ordinary effects as well as aimed
 // ones, so they are held to the same rules here
-const ROOTS = [
-  'public/sprites/effects',
-  'public/sprites/particles',
-  'public/sprites/directional',
-];
+const ROOTS = ['public/sprites/effects', 'public/sprites/particles', 'public/sprites/directional'];
 
 const SHEETS: { name: string; data: EffectSpriteData }[] = ROOTS.flatMap((root) =>
   readdirSync(root)
@@ -31,6 +27,16 @@ const SHEETS: { name: string; data: EffectSpriteData }[] = ROOTS.flatMap((root) 
       data: asEffectSpriteData(JSON.parse(readFileSync(`${root}/${id}/data.json`, 'utf8'))),
     })),
 );
+
+/**
+ * One field of a parsed description, without trusting what the file
+ * turned out to hold
+ */
+function fieldOf(value: unknown, key: string): unknown {
+  return typeof value === 'object' && value != null && key in value
+    ? Object.getOwnPropertyDescriptor(value, key)?.value
+    : undefined;
+}
 
 /**
  * A sheet whose frame numbers have holes in them, which is the case
@@ -146,8 +152,54 @@ describe('effect sprite metadata', () => {
       const indices = data.frames.map((frame) => frame.index);
 
       expect(new Set(indices).size, `${name} distinct ticks`).toBe(indices.length);
-      expect([...indices].sort((a, b) => a - b), `${name} order`).toEqual(indices);
+      expect(
+        [...indices].sort((a, b) => a - b),
+        `${name} order`,
+      ).toEqual(indices);
     }
+  });
+
+  it('says of every shipped sheet whether it can be looped', () => {
+    for (const { name } of SHEETS) {
+      const raw = JSON.parse(readFileSync(`${name}/data.json`, 'utf8')) as unknown;
+
+      // Read off the file rather than through the parser, which fills a
+      // missing answer in as `false`: a sheet nobody has measured and a
+      // sheet measured as unloopable must not look the same here
+      expect(typeof fieldOf(raw, 'loops'), `${name} loops`).toBe('boolean');
+    }
+  });
+
+  it('marks a sheet that ends on the frame it started on as looping', () => {
+    // The one case that needs no judgement: if the last frame is the
+    // same rectangle of the sheet as the first, the seam is invisible by
+    // construction, and anything saying otherwise is measuring wrong
+    for (const { name, data } of SHEETS) {
+      if (data.frames.length < 2) {
+        continue;
+      }
+
+      const first = data.frames[0];
+      const last = data.frames[data.frames.length - 1];
+
+      const same =
+        first.x === last.x &&
+        first.y === last.y &&
+        first.width === last.width &&
+        first.height === last.height;
+
+      if (same) {
+        expect(data.loops, `${name} ends where it began`).toBe(true);
+      }
+    }
+  });
+
+  it('reads a missing loop answer as one to play once', () => {
+    // A description written before anything measured its seam, or by a
+    // tool that does not know the field: the safe reading is that it
+    // does not loop, since a wrong `true` flickers on screen
+    expect(asEffectSpriteData({ compact: true, images: [] }).loops).toBe(false);
+    expect(loaded(asEffectSpriteData({ loops: true, images: [] })).loops).toBe(true);
   });
 
   it('reads a description with nothing in it as an effect that draws nothing', () => {

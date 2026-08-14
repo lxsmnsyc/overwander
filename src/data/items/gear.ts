@@ -25,9 +25,7 @@ import { nameToIcon, registerItem } from './__create';
  * rather than what they can afford
  */
 export const MARKET_GEAR: Map<Items, string> = new Map([
-  [Items.Leftovers, 'Leftovers'],
   [Items.ShellBell, 'Shell Bell'],
-  [Items.BigRoot, 'Big Root'],
   [Items.MuscleBand, 'Muscle Band'],
   [Items.WiseGlasses, 'Wise Glasses'],
   [Items.ExpertBelt, 'Expert Belt'],
@@ -42,32 +40,34 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.UtilityUmbrella, 'Utility Umbrella'],
   [Items.SmokeBall, 'Smoke Ball'],
   [Items.DestinyKnot, 'Destiny Knot'],
-  [Items.LightClay, 'Light Clay'],
   [Items.GripClaw, 'Grip Claw'],
   [Items.BindingBand, 'Binding Band'],
-  [Items.DampRock, 'Damp Rock'],
-  [Items.HeatRock, 'Heat Rock'],
-  [Items.IcyRock, 'Icy Rock'],
-  [Items.SmoothRock, 'Smooth Rock'],
   [Items.ZoomLens, 'Zoom Lens'],
 ]);
 
 /**
- * The gear nobody sells. A Black Sludge is rubbish somebody dropped
- * and the two lenses are the same kind of thing the Thick Club and the
- * Light Ball are — worth a great deal to one species and nothing to
- * anybody else — so all three are found in the world rather than
- * listed, and a vendor will only take one off a player's hands
+ * The gear nobody sells; a vendor will only take one off a player's
+ * hands.
+ *
+ * The line against the shelf is manufacture: a Wide Lens is ground and
+ * a Muscle Band is woven, so a shop stocks as many as a player can pay
+ * for, while rubbish, a leek, a moult and a rock have no supplier but
+ * the ground. Keeping the Leftovers here is also what keeps the flat
+ * shelf price honest — every party wants one, so a listing would make
+ * it the first purchase and everything else the second
  */
 export const FOUND_GEAR: Map<Items, string> = new Map([
   [Items.BlackSludge, 'Black Sludge'],
   [Items.LuckyPunch, 'Lucky Punch'],
   [Items.Stick, 'Stick'],
-  // Nobody makes one of these: it is what a pokemon left behind the
-  // last time something had hold of it, so it is picked up off the
-  // ground rather than bought — and it is the half of the Smoke Ball
-  // that a player finds rather than pays for
   [Items.ShedShell, 'Shed Shell'],
+  [Items.Leftovers, 'Leftovers'],
+  [Items.DampRock, 'Damp Rock'],
+  [Items.HeatRock, 'Heat Rock'],
+  [Items.IcyRock, 'Icy Rock'],
+  [Items.SmoothRock, 'Smooth Rock'],
+  [Items.LightClay, 'Light Clay'],
+  [Items.BigRoot, 'Big Root'],
 ]);
 
 export const GEAR_PRICE = 5000;

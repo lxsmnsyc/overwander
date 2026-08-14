@@ -107,10 +107,8 @@ export default function setupStruggle(battle: Battle): void {
       { type: EffectType.None },
       event.source,
       event.source.checkStat(Stats.HP, 0) * STRUGGLE_RECOIL,
-      // Paid rather than suffered, which is what keeps a Rock Head or
-      // a Magic Guard from getting out of it: Struggle is what is
-      // left when there is nothing left, and it costs the same to
-      // everybody
+      // Paid rather than suffered, so neither Rock Head nor Magic
+      // Guard gets out of it
       DamageFlags.Indirect | DamageFlags.Cost,
     );
   });

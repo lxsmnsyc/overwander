@@ -760,13 +760,9 @@ const setupAbilities = [
         // whoever pays them
         const indirect = event.flags & DamageFlags.Indirect && !(event.flags & DamageFlags.Cost);
 
-        /**
-         * A confusion hit comes through the attack pipeline like any
-         * other blow, because that is how it is worked out — but it is
-         * nobody's move, and the holder is spared it the same as it is
-         * spared a burn. The confusion itself is not: the cast is
-         * still lost, which is what confusion mostly costs anyway
-         */
+        // A confusion hit rides the attack pipeline but is nobody's
+        // move, so the holder is spared it the way it is spared a
+        // burn. The lost cast still costs it
         const confusion =
           event.cause.type === EffectType.Move && event.cause.move === Moves._Confused;
 

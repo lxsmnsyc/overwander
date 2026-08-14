@@ -83,16 +83,10 @@ export const WIDE_LENS_ACCURACY = 1.1;
 export const BRIGHT_POWDER_EVASION = 0.9;
 
 /**
- * What a Zoom Lens is worth against somebody who has already started
- * something.
- *
- * The mainline gives it to whoever moves second in a turn, which is a
- * shape this game does not have: nothing here waits its turn. What it
- * has instead is the same idea made visible — a pokemon winding up a
- * cast or partway through a channel is committed, and committed is
- * exactly what "already moved" meant. So the lens reads the target
- * rather than the order, and it is worth twice a Wide Lens because
- * the moment it wants has to be caught rather than merely waited for
+ * What a Zoom Lens is worth against a target already casting or
+ * channelling. The mainline gives it to whoever moves second, which
+ * has no analog here; a committed pokemon is the same idea. Twice a
+ * Wide Lens, since the moment has to be caught rather than waited for
  */
 export const ZOOM_LENS_ACCURACY = 1.2;
 
@@ -534,12 +528,8 @@ export default createHeldItems(
         }
       }),
 
-      /**
-       * And a Shed Shell does the same by leaving something behind for
-       * whatever has hold of it. It is the plainer half of the smoke:
-       * no trick, no cover — the holder simply steps out of the part
-       * being gripped
-       */
+      // And a Shed Shell does the same by leaving behind the part
+      // being gripped
       battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
         if (!event.success && holds(event.source, Items.ShedShell)) {
           event.success = true;

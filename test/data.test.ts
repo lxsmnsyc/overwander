@@ -1058,13 +1058,15 @@ describe('item data', () => {
     // Nothing else on the shelf is one
     expect(isFossil(Items.Nugget)).toBe(false);
 
-    // The two sea fossils are dug up about as often as a stone; the
-    // amber is a band above both, because Aerodactyl is
-    for (const item of [Items.HelixFossil, Items.DomeFossil]) {
-      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
-      expect(getItemBand(item)).toBe('rare');
+    // All three are prized: reviving one is irreversible and is the
+    // only way to the species inside, which is what that band is for.
+    // The amber is the thinnest slot of the three, because Aerodactyl
+    // is the rarest thing in them
+    for (const item of [Items.HelixFossil, Items.DomeFossil, Items.OldAmber]) {
+      expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
+      expect(getItemBand(item)).toBe('prized');
+      expect(isPreciousItem(item)).toBe(true);
     }
-    expect(getItemBand(Items.OldAmber)).toBe('prized');
     expect(getFossilPrice(Items.OldAmber)).toBeGreaterThan(getFossilPrice(Items.HelixFossil));
 
     // Whatever comes out arrives at the same level for everybody who

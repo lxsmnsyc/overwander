@@ -119,11 +119,20 @@ export const ITEM_POOL: ItemRarityGroups = {
     // bought because nothing sells one — a forgotten move costs a walk,
     // which is what the move cost in the first place
     { item: Items.HeartScale, weight: 8 },
-    // A stone that keeps a pokemon exactly as it is. It is dug up as
-    // readily as anything else here because what it is for — holding
-    // a line one stage short of where it would go — is a decision a
-    // player makes early and often
+    // Holding a line one stage short of where it would go is a
+    // decision players make early and often, so the stone is common
     { item: Items.Everstone, weight: 6 },
+    // The stones that hold a sky out longer, and the clay that does
+    // the same for a screen. Thin slots: each is worth nothing to a
+    // party not built around the thing it lengthens
+    { item: Items.DampRock, weight: 3 },
+    { item: Items.HeatRock, weight: 3 },
+    { item: Items.IcyRock, weight: 3 },
+    { item: Items.SmoothRock, weight: 3 },
+    { item: Items.LightClay, weight: 3 },
+    // Pulled up with them, and about as particular: everything to a
+    // pokemon that drains, nothing to anything else
+    { item: Items.BigRoot, weight: 4 },
     // The wings, blown along the ground: three points of training
     // each, and the only effort a pokemon gets that its levels did
     // not pay for. Thin slots, because they are the one thing in the
@@ -154,33 +163,26 @@ export const ITEM_POOL: ItemRarityGroups = {
     // the two — the Max Revive itself is prized now — because what it
     // asks for is not gold
     { item: Items.RevivalHerb, weight: 4 },
-    // The relics: a Cubone's bone, a Ditto's dust. Found, never
-    // stocked, and worth nothing to anything but their own species
-    { item: Items.LightBall, weight: 4 },
-    { item: Items.ThickClub, weight: 4 },
-    { item: Items.MetalPowder, weight: 4 },
-    { item: Items.QuickPowder, weight: 4 },
+    // The relics: a Cubone's bone, a Ditto's dust. Thinner than the
+    // band's staples because each is worth nothing to anybody who has
+    // not caught that one species, and one to anybody who has
+    { item: Items.LightBall, weight: 3 },
+    { item: Items.ThickClub, weight: 3 },
+    { item: Items.MetalPowder, weight: 3 },
+    { item: Items.QuickPowder, weight: 3 },
     // And the two that sharpen one species' aim: a Chansey's glove
     // and a Farfetch'd leek
-    { item: Items.LuckyPunch, weight: 4 },
-    { item: Items.Stick, weight: 4 },
-    // Something left behind by whatever wriggled out of it, which is
-    // exactly what it does for whoever picks it up
+    { item: Items.LuckyPunch, weight: 3 },
+    { item: Items.Stick, weight: 3 },
+    // Left behind by whatever wriggled out of it, which is what it
+    // does for whoever picks it up
     { item: Items.ShedShell, weight: 4 },
-    // Three purses instead of one, for as long as it is carried.
-    // Nothing sells one and this is the only slot it has, so it is
-    // the thinnest thing in the band
-    { item: Items.AmuletCoin, weight: 2 },
-    // The plates, buried where they fell. Each is a single thin slot
-    // — seventeen of them share about what one stone is worth, so
-    // digging one up stays an event
+    // A stone's weight, because every pokemon a player owns wants one
+    // — a Fire Stone is wanted once, by one line
+    { item: Items.Leftovers, weight: 10 },
+    // The plates, buried where they fell. Seventeen thin slots share
+    // about what one stone is worth, so digging one up stays an event
     ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
-    // The two sea fossils. They sit with the stones because that is
-    // what they are worth: a stone is one evolution a line could not
-    // otherwise reach, and a fossil is one species the world no
-    // longer spawns at all
-    { item: Items.HelixFossil, weight: 4 },
-    { item: Items.DomeFossil, weight: 4 },
   ],
   prized: [
     // A dug-up cap fixes one stat of one pokemon, and nothing else in
@@ -201,11 +203,17 @@ export const ITEM_POOL: ItemRarityGroups = {
     // no network. Prized rather than special: the map is meant to be
     // walked more than once in a lifetime
     { item: Items.PortalKey, weight: 8 },
-    // The amber is a band above the other two fossils, because what
-    // is in it is: Aerodactyl was the rarest thing on the mountain
-    // when the mountain still had one, and nothing else brings one
-    // back
+    // The three fossils. Reviving one is irreversible and is the only
+    // way to the species inside, which is the test this band is for;
+    // the maniac sells them, so the pool is the lucky route rather
+    // than the only one. The amber is thinner because Aerodactyl is
+    { item: Items.HelixFossil, weight: 8 },
+    { item: Items.DomeFossil, weight: 8 },
     { item: Items.OldAmber, weight: 5 },
+    // Three purses instead of one, for good, and nothing sells one.
+    // Here rather than in rare so that parting with it is asked about
+    // twice
+    { item: Items.AmuletCoin, weight: 4 },
     // The ruins. They change nothing about a pokemon, which is what
     // the rest of this band is for — what puts them here is that one
     // of them pays for a season of everything else, and a band that

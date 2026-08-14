@@ -70,13 +70,9 @@ export default createHeldItems(
           return;
         }
 
-        /**
-         * Sheer Force pays for its power by throwing the move's own
-         * effect away, and an orb that took its tenth as well would be
-         * charging twice for the same blow. The boost stays; only the
-         * price is waived, and only on the moves the ability actually
-         * took something from
-         */
+        // Sheer Force already pays for its power with the move's
+        // effect, so the orb does not charge again — but only on the
+        // moves it actually took something from
         if (event.source.hasAbility(Abilities.SheerForce) && hasAttackEffect(event.move)) {
           return;
         }

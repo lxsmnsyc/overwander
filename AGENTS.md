@@ -13,3 +13,15 @@ Stop: "stop caveman" or "normal mode"
 Auto-Clarity: drop caveman for security warnings, irreversible actions, user confused. Resume after.
 
 Boundaries: code/commits/PRs written normal.
+
+## Project skills
+
+Conventions for this repository live in `.agents/skills/*/SKILL.md`. Read the
+one that covers what you are about to do:
+
+- `light-comments` - keep comments short and about the why; most blocks are 1-4
+  lines, and design history belongs in git rather than in a doc block.
+- `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
+- `trigger-driven-abilities` - ability effects that do not mutate their
+  detection event ride `UnitTriggerAbility` at `Exact` priority.
+

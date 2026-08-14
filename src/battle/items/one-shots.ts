@@ -88,14 +88,10 @@ export default createHeldItems(
     const landingHard = createEffectivenessTracker(battle);
 
     /**
-     * Put a unit on the bench and bring a teammate out in its place.
-     *
-     * Whether the swap can be refused is the difference between the
-     * card and the two ejectors, and it is the same difference the
-     * switch-out moves already draw: a Whirlwind drags its target out
-     * of whatever is holding it, while a Teleport is a pokemon
-     * choosing to leave and so has to be able to. A Red Card is thrown
-     * at somebody; an Eject Button is pressed by its own holder
+     * The teammate that would come out, or nothing when the swap
+     * cannot happen. `forced` is the card-versus-ejector difference,
+     * the same one the switch-out moves draw: a Whirlwind drags its
+     * target out of whatever holds it, a Teleport has to be able to go
      */
     function replacementFor(
       unit: Unit,
@@ -104,8 +100,6 @@ export default createHeldItems(
     ): Unit | undefined {
       const replacement = checkTeamUnit(battle, unit.team, priority, unit);
 
-      // Nobody left to come out: the moment the item was waiting for
-      // has arrived and there is nothing to spend it on
       if (replacement == null) {
         return undefined;
       }
@@ -116,13 +110,10 @@ export default createHeldItems(
     }
 
     /**
-     * Send somebody to the bench for an item, if the swap is really
-     * going to happen. The item is asked for first and spent last, so
-     * nothing is thrown away on a swap that was never possible.
-     *
-     * The holder and the one leaving are not always the same pokemon:
-     * an ejector sends its own holder away, and a card sends away
-     * whoever set it off
+     * Send `switched` to the bench for `holder`'s item — the two
+     * differ for a Red Card, which sends away whoever set it off. The
+     * item is spent last, so nothing is thrown away on a swap that was
+     * never possible
      */
     function bench(
       holder: Unit,
@@ -278,19 +269,14 @@ export default createHeldItems(
         }
 
         // A confused pokemon hitting itself has nobody to send away
-        // and nothing to run from
         if (event.source === holder) {
           return;
         }
 
         /**
-         * A Red Card is shown to whoever threw the blow, and what it
-         * costs them depends on whose side they are on. An enemy is
-         * sent away and the worst of their bench comes out in their
-         * place; an ally who has just hit their own side is doing the
-         * holder no good where they are, so the card fetches out the
-         * best of theirs instead. Either way the one holding the card
-         * stays exactly where it is
+         * A Red Card sends away whoever threw the blow. An enemy is
+         * replaced by the worst of their bench; an ally doing its own
+         * side no good where it is, by the best of theirs
          */
         const ally = event.source.team.alliance === holder.team.alliance;
 
@@ -302,8 +288,7 @@ export default createHeldItems(
           true,
         );
 
-        // And an Eject Button takes its own holder out of whatever
-        // that was, with the best of the bench coming in
+        // An Eject Button takes its own holder out instead
         bench(holder, Items.EjectButton, holder, MoveTargetPriorities.Strongest, false);
       }),
 
@@ -364,12 +349,8 @@ export default createHeldItems(
         }
       }),
 
-      /**
-       * An Eject Pack answers a stat going down rather than a blow
-       * landing: whatever just took something off the holder, the
-       * holder is better off somewhere else, and the best of the bench
-       * comes out to deal with it
-       */
+      // An Eject Pack answers a stat going down rather than a blow
+      // landing
       ...lowering((unit) => {
         bench(unit, Items.EjectPack, unit, MoveTargetPriorities.Strongest, false);
       }),

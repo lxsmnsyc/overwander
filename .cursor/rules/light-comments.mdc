@@ -1,0 +1,15 @@
+---
+description: 'Light comments — short blocks that say the why, not history or restatement'
+alwaysApply: true
+---
+
+Keep comments light: short enough to read at a glance, and about the why rather than the what.
+
+- Most blocks are 1–4 lines. Over ~8 needs a real reason: a formula, a protocol, a subtle invariant, a module header.
+- Say the non-obvious reason, the constraint, the trap. Never restate the signature or the line below.
+- No design history ("It used to be…", "This replaced…") — that is in git.
+- No build-up: one statement of the point, not a paragraph arriving at it.
+- Keep verbatim: lint directives, external links, formulas, and any warning that prevents a bug.
+- Light is not cryptic. Full sentences, no shorthand, no unresolvable references.
+
+Full convention with examples: `.agents/skills/light-comments/SKILL.md`.

@@ -1,8 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
-import { DamageFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleModes } from '../core';
 import { BattleEvents, EffectType } from '../events';
@@ -11,6 +12,49 @@ import type Unit from '../unit';
 // Real-time analog of the per-turn residual: 1/16 max HP every second
 const CHIP_INTERVAL = 1000;
 const CHIP_FRACTION = 1 / 16;
+
+/**
+ * What each sky does to the two types it has an opinion about. A sun
+ * that does not make a Flamethrower hurt more is a sun nobody would
+ * call up, so this is most of what the weather is for: the rest of
+ * it — a Chlorophyll, a Rain Dish, a Solar Beam skipping its charge —
+ * is what particular pokemon make of a sky that was already worth
+ * having.
+ *
+ * The primal skies carry the same numbers as their ordinary
+ * counterparts. What makes them primal is the other half of the rule,
+ * below: the type they work against does not merely land softly, it
+ * does not land at all
+ */
+const WEATHER_DAMAGE: { [key in Weathers]?: Map<Types, number> } = {
+  [Weathers.Sunny]: new Map([
+    [Types.Fire, 1.5],
+    [Types.Water, 0.5],
+  ]),
+  [Weathers.ExtremeSunny]: new Map([[Types.Fire, 1.5]]),
+  [Weathers.Rain]: new Map([
+    [Types.Water, 1.5],
+    [Types.Fire, 0.5],
+  ]),
+  [Weathers.HeavyRain]: new Map([[Types.Water, 1.5]]),
+};
+
+/**
+ * What a primal sky refuses outright. Only damaging moves fizzle —
+ * a Sunny Day is a Normal-type move and calls up nothing here, and
+ * neither does anything else a pokemon might do that happens to be
+ * Fire or Water without being an attack
+ */
+const WEATHER_NULLIFIED: { [key in Weathers]?: Types } = {
+  [Weathers.ExtremeSunny]: Types.Water,
+  [Weathers.HeavyRain]: Types.Fire,
+};
+
+/**
+ * What a sandstorm is worth to whatever is built out of the same
+ * thing it is made of
+ */
+const SANDSTORM_DEFENSE_FACTOR = 1.5;
 
 // Damaging weathers, mapped to the types they cannot harm; ability
 // immunities (e.g. Sand Veil, Ice Body) answer CheckUnitCanDamage in
@@ -61,13 +105,76 @@ export default function setupWeatherMechanics(battle: Battle): void {
     }
   });
 
-  // The battle weather outranks team-local weather
-  battle.on(BattleEvents.CheckUnitWeather, EventPriority.Exact, (event) => {
-    const team = event.source.team;
+  /**
+   * The sky a unit is standing under, before anything the unit itself
+   * carries has its say. The battle weather outranks team-local
+   * weather.
+   *
+   * Almost everything wants `checkWeather` instead, which is this
+   * answer put to the unit — a Utility Umbrella holder walks around
+   * under its own clear sky. What wants this one is a rule that
+   * belongs to the field rather than to whoever is standing in it
+   */
+  function skyOver(unit: Unit): Weathers {
+    const team = unit.team;
+
     if (!battle.weather.disabled && battle.weather.current !== Weathers.None) {
-      event.weather = battle.weather.current;
-    } else if (!team.weather.disabled && team.weather.current !== Weathers.None) {
-      event.weather = team.weather.current;
+      return battle.weather.current;
+    }
+    if (!team.weather.disabled && team.weather.current !== Weathers.None) {
+      return team.weather.current;
+    }
+    return Weathers.None;
+  }
+
+  battle.on(BattleEvents.CheckUnitWeather, EventPriority.Exact, (event) => {
+    event.weather = skyOver(event.source);
+  });
+
+  /**
+   * What the sky does to a blow thrown under it. It reads the
+   * attacker's own weather rather than the field's, so an umbrella
+   * keeps its holder's Water moves out of the sun's way
+   */
+  battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+    const parent = event.parent;
+
+    // A fixed-damage move is not calculated, so there is nothing here
+    // for the weather to be a factor of
+    if (parent.category === MoveCategories.Status || parent.flags & MoveAttackFlags.Pure) {
+      return;
+    }
+
+    const factor = WEATHER_DAMAGE[parent.source.checkWeather()]?.get(parent.type);
+
+    if (factor != null) {
+      event.value *= factor;
+    }
+  });
+
+  /**
+   * And what a primal sky refuses. This one reads the field, not the
+   * caster: an umbrella is something to stand under, and no umbrella
+   * lights a fire in that much rain
+   */
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+    if (
+      !event.immune &&
+      getMoveData(event.move).category !== MoveCategories.Status &&
+      WEATHER_NULLIFIED[skyOver(event.source)] === event.type
+    ) {
+      event.immune = true;
+    }
+  });
+
+  // A sandstorm covers whatever is made of the same stuff it is
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+    if (
+      event.stat === Stats.SpecialDefense &&
+      event.source.types.has(Types.Rock) &&
+      event.source.checkWeather() === Weathers.Sandstorm
+    ) {
+      event.value *= SANDSTORM_DEFENSE_FACTOR;
     }
   });
 

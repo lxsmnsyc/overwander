@@ -1,10 +1,12 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
+import { hasAttackEffect } from '../moves/status';
 import type Unit from '../unit';
 import { createHeldItems, holds } from './__create';
 
@@ -65,6 +67,17 @@ export default createHeldItems(
           !holds(event.source, Items.LifeOrb) ||
           !event.source.alive
         ) {
+          return;
+        }
+
+        /**
+         * Sheer Force pays for its power by throwing the move's own
+         * effect away, and an orb that took its tenth as well would be
+         * charging twice for the same blow. The boost stays; only the
+         * price is waived, and only on the moves the ability actually
+         * took something from
+         */
+        if (event.source.hasAbility(Abilities.SheerForce) && hasAttackEffect(event.move)) {
           return;
         }
 

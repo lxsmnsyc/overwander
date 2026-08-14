@@ -750,10 +750,21 @@ const setupAbilities = [
         // holder spends on purpose, which is not damage done to it: a
         // Substitute's price and an Explosion's own life are paid
         // whoever pays them
+        const indirect = event.flags & DamageFlags.Indirect && !(event.flags & DamageFlags.Cost);
+
+        /**
+         * A confusion hit comes through the attack pipeline like any
+         * other blow, because that is how it is worked out — but it is
+         * nobody's move, and the holder is spared it the same as it is
+         * spared a burn. The confusion itself is not: the cast is
+         * still lost, which is what confusion mostly costs anyway
+         */
+        const confusion =
+          event.cause.type === EffectType.Move && event.cause.move === Moves._Confused;
+
         if (
           event.success &&
-          event.flags & DamageFlags.Indirect &&
-          !(event.flags & DamageFlags.Cost) &&
+          (indirect || confusion) &&
           event.target.hasAbility(Abilities.MagicGuard)
         ) {
           event.success = false;

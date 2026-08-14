@@ -5,6 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
+import { isWeatherSunny } from '../utils';
 import createTimedStatus from './__create';
 
 // Real-time equivalent of the ~20%-per-turn thaw chance
@@ -37,6 +38,13 @@ export default function setupFrozenStatus(battle: Battle): void {
       getMoveData(event.cause.move).type === Types.Fire
     ) {
       event.target.removeStatus(Statuses.Frozen, cause);
+    }
+  });
+
+  // Nothing freezes in the sun, however cold what hit it was
+  battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+    if (!event.immune && event.status === Statuses.Frozen && isWeatherSunny(event.source)) {
+      event.immune = true;
     }
   });
 

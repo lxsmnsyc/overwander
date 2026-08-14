@@ -132,9 +132,24 @@ export default function setupWeatherMechanics(battle: Battle): void {
   });
 
   /**
-   * What the sky does to a blow thrown under it. It reads the
-   * attacker's own weather rather than the field's, so an umbrella
-   * keeps its holder's Water moves out of the sun's way
+   * Whether the unit is standing in a weather that is not reaching it:
+   * the field says one thing and the unit answers another, which is
+   * what a Utility Umbrella looks like from the outside.
+   *
+   * It is asked rather than the item, so anything else that ever
+   * shelters a unit from a sky gets the same treatment for free — and
+   * a unit whose team simply has different weather is not sheltered
+   * from anything, it is somewhere else
+   */
+  function sheltered(unit: Unit, weather: Weathers): boolean {
+    return skyOver(unit) === weather && unit.checkWeather() !== weather;
+  }
+
+  /**
+   * What the sky does to a blow thrown under it. Either end of the
+   * blow can be out of the weather: an umbrella keeps its holder's
+   * Water moves out of the sun's way, and keeps the sun off a Fire
+   * move thrown at its holder
    */
   battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
     const parent = event.parent;
@@ -145,10 +160,26 @@ export default function setupWeatherMechanics(battle: Battle): void {
       return;
     }
 
-    const factor = WEATHER_DAMAGE[parent.source.checkWeather()]?.get(parent.type);
+    const weather = parent.source.checkWeather();
+    const factor = WEATHER_DAMAGE[weather]?.get(parent.type);
 
-    if (factor != null) {
+    if (factor != null && !sheltered(parent.target, weather)) {
       event.value *= factor;
+    }
+  });
+
+  /**
+   * What the strong winds are for: nothing gets at a Flying type from
+   * above while they are blowing. The weakness is not turned into a
+   * resistance — the blow lands, it simply lands like anybody else's
+   */
+  battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+    if (
+      event.multiplier > 1 &&
+      event.defendingType === Types.Flying &&
+      skyOver(event.parent.target) === Weathers.StrongWinds
+    ) {
+      event.multiplier = 1;
     }
   });
 

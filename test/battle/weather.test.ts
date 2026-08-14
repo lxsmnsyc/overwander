@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { BattleModes } from '../../src/battle/core';
 import { MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { Stats } from '../../src/data/constants/stats';
@@ -66,6 +67,45 @@ describe('weather damage', () => {
     expect(dealt).toBeCloseTo(burn(Weathers.None), 5);
   });
 
+  it('keeps the sun off whoever is holding the umbrella, either end of the blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+
+    pinRandom(battle, 1);
+
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB, [Types.Normal]);
+
+    target.addItem(Items.UtilityUmbrella);
+    battle.setWeather(Weathers.Sunny);
+    attacker.attack(target, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    const dealt = target.checkStat(Stats.HP, 0) - target.health;
+
+    expect(dealt).toBeCloseTo(burn(Weathers.None), 5);
+  });
+
+  it('counts a raid’s other side as somewhere else, not as sheltered', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+
+    pinRandom(battle, 1);
+
+    const attacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB, [Types.Normal]);
+
+    // The sun is over the caster's side only. The target is not under
+    // it and is holding nothing: the blow is still thrown in sunlight
+    attacker.setWeather(Weathers.Sunny);
+
+    expect(attacker.checkWeather()).toBe(Weathers.Sunny);
+    expect(target.checkWeather()).toBe(Weathers.None);
+
+    attacker.attack(target, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    const dealt = target.checkStat(Stats.HP, 0) - target.health;
+
+    expect(dealt).toBeCloseTo(burn(Weathers.None) * 1.5, 5);
+  });
+
   it('refuses the type a primal sky will not have at all', () => {
     const { battle, teamA, teamB } = createBattle();
 
@@ -119,6 +159,50 @@ describe('weather damage', () => {
     battle.setWeather(Weathers.Rain);
 
     expect(rock.checkStat(Stats.SpecialDefense, 0)).toBe(rockDefense);
+  });
+
+  it('takes a Flying type’s weaknesses away in the strong winds', () => {
+    const { battle, teamA, teamB } = createBattle();
+
+    pinRandom(battle, 1);
+
+    const attacker = createUnit(battle, teamA);
+    const flier = createUnit(battle, teamB, [Types.Flying]);
+    const maxHealth = flier.checkStat(Stats.HP, 0);
+
+    attacker.attack(flier, Moves.Thunderbolt, 40, Types.Electric, MoveCategories.Special, 0);
+
+    const weak = maxHealth - flier.health;
+
+    flier.setHealth(maxHealth);
+    battle.setWeather(Weathers.StrongWinds);
+    attacker.attack(flier, Moves.Thunderbolt, 40, Types.Electric, MoveCategories.Special, 0);
+
+    expect(maxHealth - flier.health).toBeCloseTo(weak / 2, 5);
+  });
+
+  it('takes only the weaknesses, and only the Flying half of them', () => {
+    const { battle, teamA, teamB } = createBattle();
+
+    pinRandom(battle, 1);
+
+    const attacker = createUnit(battle, teamA);
+    // Rock is weak to Water; Flying resists Fighting. Neither is
+    // anything to do with what the winds are holding off
+    const flier = createUnit(battle, teamB, [Types.Flying, Types.Rock]);
+    const maxHealth = flier.checkStat(Stats.HP, 0);
+
+    attacker.attack(flier, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+
+    const soaked = maxHealth - flier.health;
+
+    flier.setHealth(maxHealth);
+    battle.setWeather(Weathers.StrongWinds);
+    attacker.attack(flier, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+
+    // Water is neutral on Flying, so the winds have nothing to take
+    // and the Rock weakness stands
+    expect(maxHealth - flier.health).toBeCloseTo(soaked, 5);
   });
 
   it('will not let anything freeze in the sun', () => {

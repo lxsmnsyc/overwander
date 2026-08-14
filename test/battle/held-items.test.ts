@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { EffectType, MoveTargetType } from '../../src/battle/events';
+import { EventPriority } from '../../src/core/event-emitter';
+import type Battle from '../../src/battle/core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import type Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import {
   BAND_FACTOR,
@@ -19,6 +22,7 @@ import {
   SHELL_BELL_SHARE,
   SPECIES_LENS_CRITICAL_STAGES,
   WIDE_LENS_ACCURACY,
+  ZOOM_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SCREEN_DURATION } from '../../src/battle/status/reflect';
@@ -753,5 +757,213 @@ describe('one-shots', () => {
 
     // And the next one winds up like anything else
     expect(holder.casting?.time.duration).toBe(windUp);
+  });
+});
+
+describe('the gear that reads a moment', () => {
+  it('sharpens a swing at somebody in the middle of their own', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    const accuracy = getMoveData(Moves.Tackle).accuracy ?? 0;
+
+    attacker.addItem(Items.ZoomLens);
+
+    // Standing there, the lens is worth nothing
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(accuracy, 5);
+
+    defender.addMove(Moves.Tackle);
+    defender.cast(Moves.Tackle, unitTarget(attacker));
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(
+      accuracy * ZOOM_LENS_ACCURACY,
+      5,
+    );
+
+    defender.stopCast();
+
+    expect(attacker.checkMoveAccuracy(Moves.Tackle, target)).toBeCloseTo(accuracy, 5);
+  });
+
+  it('gets a Shed Shell holder out of what is holding it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const caught = createUnit(battle, teamA);
+
+    holder.addStatus(Statuses.Trapped, { type: EffectType.None });
+    caught.addStatus(Statuses.Trapped, { type: EffectType.None });
+
+    expect(caught.checkEscape()).toBe(false);
+
+    holder.addItem(Items.ShedShell);
+
+    expect(holder.checkEscape()).toBe(true);
+  });
+});
+
+describe('the one-shots that put somebody on the bench', () => {
+  function recordSwitches(battle: Battle): { source: Unit; target: Unit }[] {
+    const switches: { source: Unit; target: Unit }[] = [];
+
+    battle.on(BattleEvents.UnitSwitch, EventPriority.Post, (event) => {
+      switches.push({ source: event.source, target: event.target });
+    });
+    return switches;
+  }
+
+  /**
+   * A team with somebody worth bringing out and somebody who is not
+   */
+  function bench(battle: Battle, team: Team): { strong: Unit; weak: Unit } {
+    const strong = createUnit(battle, team);
+    const weak = createUnit(battle, team);
+
+    weak.setHealth(20);
+
+    return { strong, weak };
+  }
+
+  it('shows a Red Card to an enemy and takes their worst in trade', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const { strong, weak } = bench(battle, teamB);
+
+    holder.addItem(Items.RedCard);
+
+    const switches = recordSwitches(battle);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(1);
+    expect(switches[0].source).toBe(attacker);
+    expect(switches[0].target).toBe(weak);
+    expect(switches[0].target).not.toBe(strong);
+    expect(holder.items[Items.RedCard]).toBeUndefined();
+  });
+
+  it('fetches an ally’s best out instead, and leaves the holder where it is', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const { strong, weak } = bench(battle, teamA);
+
+    holder.addItem(Items.RedCard);
+
+    const switches = recordSwitches(battle);
+
+    ally.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(1);
+    expect(switches[0].source).toBe(ally);
+    expect(switches[0].target).toBe(strong);
+    expect(switches[0].target).not.toBe(weak);
+  });
+
+  it('drags the one who threw it out of whatever is holding them', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    bench(battle, teamB);
+    holder.addItem(Items.RedCard);
+    attacker.addStatus(Statuses.Trapped, { type: EffectType.None });
+
+    const switches = recordSwitches(battle);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // A card is shown to somebody, not chosen by them
+    expect(switches).toHaveLength(1);
+  });
+
+  it('keeps the card when there is nobody to send out', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.RedCard);
+
+    const switches = recordSwitches(battle);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(0);
+    expect(holder.items[Items.RedCard]).toBe(true);
+  });
+
+  it('presses an Eject Button on the holder’s own behalf', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const { strong, weak } = bench(battle, teamA);
+
+    holder.addItem(Items.EjectButton);
+
+    const switches = recordSwitches(battle);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(1);
+    expect(switches[0].source).toBe(holder);
+    expect(switches[0].target).toBe(strong);
+    expect(switches[0].target).not.toBe(weak);
+    expect(holder.items[Items.EjectButton]).toBeUndefined();
+  });
+
+  it('cannot press one while something has hold of the holder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    bench(battle, teamA);
+    holder.addItem(Items.EjectButton);
+    holder.addStatus(Statuses.Trapped, { type: EffectType.None });
+
+    const switches = recordSwitches(battle);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(0);
+    // And an unpressed button is still a button
+    expect(holder.items[Items.EjectButton]).toBe(true);
+  });
+
+  it('pulls an Eject Pack the moment a stat goes down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const { strong } = bench(battle, teamA);
+
+    holder.addItem(Items.EjectPack);
+
+    const switches = recordSwitches(battle);
+
+    holder.removeStage(Stages.Attack, 1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: attacker,
+    });
+
+    expect(switches).toHaveLength(1);
+    expect(switches[0].source).toBe(holder);
+    expect(switches[0].target).toBe(strong);
+    expect(holder.items[Items.EjectPack]).toBeUndefined();
+  });
+
+  it('leaves the pack alone for a stat going up', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    bench(battle, teamA);
+    holder.addItem(Items.EjectPack);
+
+    const switches = recordSwitches(battle);
+
+    holder.addStage(Stages.Attack, 1, { type: EffectType.None });
+
+    expect(switches).toHaveLength(0);
+    expect(holder.items[Items.EjectPack]).toBe(true);
   });
 });

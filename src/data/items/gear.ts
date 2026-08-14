@@ -49,6 +49,8 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.HeatRock, 'Heat Rock'],
   [Items.IcyRock, 'Icy Rock'],
   [Items.SmoothRock, 'Smooth Rock'],
+  [Items.ZoomLens, 'Zoom Lens'],
+  [Items.ShedShell, 'Shed Shell'],
 ]);
 
 /**

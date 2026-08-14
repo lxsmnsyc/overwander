@@ -7,17 +7,13 @@ import { getItemBand } from '../data/overworld/item-pool';
 import { asNumber, asRecord, asString } from './__normalize';
 
 /**
- * What an auction is, and the rules both sides read it by.
+ * What an auction is, and the rules both sides read it by. The shape
+ * sits apart from the client that watches it and the server that
+ * settles it, since both need it.
  *
- * An auction is the first thing in the game that moves something from
- * one player to another, so the shape sits apart from the client that
- * watches it and the privileged server that settles it — both need it,
- * and neither should have to import the other to get it.
- *
- * The whole of it is one document. The lot is named rather than
- * copied: an item lot names the item, and a catch lot names the
- * `caught/{catchId}` document, which is readable by every signed-in
- * player and so can be shown without duplicating it here.
+ * The whole of it is one document, and the lot is named rather than
+ * copied: a catch lot names a `caught/{catchId}` every signed-in
+ * player can read, so nothing is duplicated here
  */
 
 /**
@@ -42,10 +38,8 @@ export const enum AuctionLot {
 export const AUCTION_DURATION = 24 * 60 * 60 * 1000;
 
 /**
- * What the seller may ask for. The floor is there because a lot has to
- * cost something; the ceiling is there because the terms are a number
- * a caller sends, and a bid nobody could ever meet is a lot nobody can
- * ever win
+ * What the seller may ask for. A lot has to cost something, and a
+ * price nobody could ever meet is a lot nobody can win
  */
 export const MIN_STARTING_BID = 1;
 export const MAX_STARTING_BID = 1_000_000;
@@ -58,12 +52,9 @@ export const MIN_INCREMENT = 1;
 export const MAX_INCREMENT = 1_000_000;
 
 /**
- * Who a catch on the block belongs to while it is there. Nothing owns
- * it: the seller gave it up when they listed it, and the winner does
- * not have it until they claim it. Every write that touches a catch
- * asks whether the caller is its `owner`, and a uid is never empty, so
- * an escrowed pokemon is refused to everybody by the checks that were
- * already there
+ * Who a catch on the block belongs to while it is there: nobody. Every
+ * write asks whether the caller is the `owner` and a uid is never
+ * empty, so escrow is refused to everybody by checks already in place
  */
 export const AUCTION_ESCROW = '';
 
@@ -91,47 +82,30 @@ export type AuctionOffer =
 /**
  * What may go on the block at all.
  *
- * A player runs **one auction a day**, so the block is the scarcest
- * thing in the game and what sits on it decides what the whole feature
- * is for. Left open to anything, a day's listing is spent on whatever
- * happened to be in the bag, and the board fills with Potions nobody
- * would walk to a vendor for. Narrowed to what a player cannot simply
- * go and get for themselves, the same listing is worth reading every
- * day.
- *
- * The rules below are the whole of it, and both sides read them: the
- * pickers leave out everything that fails, and `openAuction` asks
- * again from the stored record before it takes the lot.
+ * A player runs **one auction a day**, so the block is scarce and it
+ * is only worth reading if what sits on it is what a player cannot go
+ * and get for themselves. Both sides read the rules below: the pickers
+ * leave out what fails, and `openAuction` asks again from the stored
+ * record before it takes the lot.
  */
 
 /**
  * Whether the item may be auctioned: the **special** band and nothing
- * else — a Master Ball, a Shiny Charm, a Golden Bottle Cap, a Portal
- * Key, a raid relic.
- *
- * Prized is deliberately below the line. A Bottle Cap is worth asking
- * twice before spending, and it is still something a player turns up
- * by walking; the block is for what walking may never turn up at all
+ * else. Prized is deliberately below the line — a Bottle Cap is still
+ * something walking turns up, and the block is for what it may not
  */
 export function isAuctionableItem(item: Items): boolean {
   return getItemBand(item) === 'special';
 }
 
 /**
- * Whether the pokemon may be auctioned: perfect values, no values at
- * all, shiny, or a special-tier species. It belongs to the record
- * rather than to the auction — a catch is either one of the ones
- * worth somebody's gold or it is not — so it is defined beside the
- * record and only *used* here.
+ * Whether the pokemon may be auctioned: perfect values, none at all,
+ * shiny, or a special-tier species — everything else a bidder could go
+ * and catch. Defined beside the record and only used here.
  *
- * Everything else a bidder could go and catch, which is what makes it
- * not worth a day of the board.
- *
- * The record also carries the answer as a stored `auctionable` field.
- * That field exists so the store can be **asked**; it is never read in
- * place of this, because a stored answer can lag whatever last changed
- * the inputs, and the decision to take somebody's pokemon off them is
- * made from the inputs themselves
+ * The stored `auctionable` field exists so the store can be queried;
+ * it is never read in place of this, since a stored answer can lag the
+ * inputs and this decision takes somebody's pokemon off them
  */
 export { isAuctionableCatch } from './caught-record';
 
@@ -266,23 +240,12 @@ export function nextBid(auction: AuctionRecord): number {
 }
 
 /**
- * Whether this player may bid this much, right now.
+ * Whether this player may bid this much, right now. Three refusals:
+ * the seller cannot buy from themselves, the standing bidder cannot
+ * bid against themselves, and a bid must clear `nextBid`.
  *
- * Three refusals. The **seller** may not bid on their own lot, which
- * would be selling to themselves. The **standing bidder** may not raise
- * their own bid: they are already winning it, so bidding against
- * themselves could only cost them gold and would let a lot be walked up
- * to a price nobody else ever offered — they bid again once somebody
- * outbids them, and not before. And a bid that does not clear
- * `nextBid` is refused, so the standing one is not nudged a gold piece
- * at a time.
- *
- * There is no ceiling here. A bidder may name anything above the
- * minimum — the seller's increment is a floor on the raise, not the
- * size of it — so a lot worth having can be taken out of reach in one
- * bid rather than a hundred. What the bidder can afford is not asked
- * here either: the balance is a document, and it is read where the gold
- * actually moves
+ * There is no ceiling — the increment is a floor on the raise, not its
+ * size — and what the bidder can afford is read where the gold moves
  */
 export function canBid(auction: AuctionRecord, uid: string, amount: number, now: number): boolean {
   return (
@@ -303,18 +266,12 @@ export function canClaim(auction: AuctionRecord, uid: string, now: number): bool
 }
 
 /**
- * Whether the seller may take their lot back.
+ * Whether the seller may take their lot back: only once bidding has
+ * closed with **nobody having bid**. A running lot cannot be pulled,
+ * which is what makes a listing something a bidder can trust.
  *
- * Only once bidding has closed with **nobody having bid at all**. A lot
- * cannot be pulled off the block while it is running — that is what
- * makes a listing something a bidder can trust, and it is why a seller
- * who changes their mind waits the day out rather than cancelling — and
- * a lot somebody bid on belongs to whoever won it, whether or not they
- * have come back for it.
- *
- * It shares `settled` with a collection, which is what stops a lot
- * being both reclaimed and collected: the two are the same handover
- * seen from either end, and only one of them can ever apply
+ * It shares `settled` with a collection, so a lot can never be both
+ * reclaimed and collected
  */
 export function canReclaim(auction: AuctionRecord, uid: string, now: number): boolean {
   return !auction.settled && hasEnded(auction, now) && !isBidOn(auction) && auction.seller === uid;
@@ -323,16 +280,10 @@ export function canReclaim(auction: AuctionRecord, uid: string, now: number): bo
 /**
  * One player's bid on one lot, at bids/{uid}:{auctionId}.
  *
- * The auction itself keeps only the bid that is standing — that is all
- * it needs to settle, and a lot that remembered everyone who ever
- * looked at it would grow without ever being read. A player's own
- * history is a different question asked by a different reader, so it
- * is kept on their side: one document per lot they have bid on,
- * rewritten with the last amount they named.
- *
- * The two together answer everything the Bids panel shows. This says
- * they took part and what it cost them; the auction says whether they
- * are still winning it
+ * The auction keeps only the standing bid — that is all it needs to
+ * settle — so a player's own history lives on their side: one document
+ * per lot, rewritten with the last amount they named. This says they
+ * took part; the auction says whether they are still winning
  */
 export interface PlayerBid {
   player: string;
@@ -373,9 +324,7 @@ export const enum BidState {
   Leading = 0,
   /**
    * Somebody did, and bidding is still open. Their gold came back with
-   * the raise, so nothing is owed either way — and they may bid again,
-   * which is the one state that is worth doing something about while
-   * it lasts
+   * the raise, and they may bid again — the one state worth acting on
    */
   Outbid = 1,
   /**
@@ -395,9 +344,8 @@ export const enum BidState {
 
 /**
  * Where the player stands on the lot. Everything it needs is on the
- * auction — who is winning, whether bidding has closed, whether the
- * lot has been handed over — so a caller holding their own bid record
- * reads the state off the lot rather than off what they paid
+ * auction, so the state is read off the lot rather than off what they
+ * paid
  */
 export function getBidState(auction: AuctionRecord, uid: string, now: number): BidState {
   if (auction.bidder !== uid) {
@@ -413,11 +361,9 @@ export function getBidState(auction: AuctionRecord, uid: string, now: number): B
 }
 
 /**
- * Whether the player can still do something about this lot: they have
- * been outbid, and bidding has not closed. It is what the Bids panel
- * offers a bid box on — a player finds out they were outbid by looking
- * at their own history, and answers it there rather than hunting the
- * lot down on the board again
+ * Whether the player can still do something about this lot: outbid,
+ * and bidding still open. The Bids panel offers a bid box on it, so a
+ * player answers where they found out rather than hunting the board
  */
 export function canRebid(auction: AuctionRecord, uid: string, now: number): boolean {
   return getBidState(auction, uid, now) === BidState.Outbid;

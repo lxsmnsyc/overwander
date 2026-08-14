@@ -83,6 +83,20 @@ export const WIDE_LENS_ACCURACY = 1.1;
 export const BRIGHT_POWDER_EVASION = 0.9;
 
 /**
+ * What a Zoom Lens is worth against somebody who has already started
+ * something.
+ *
+ * The mainline gives it to whoever moves second in a turn, which is a
+ * shape this game does not have: nothing here waits its turn. What it
+ * has instead is the same idea made visible — a pokemon winding up a
+ * cast or partway through a channel is committed, and committed is
+ * exactly what "already moved" meant. So the lens reads the target
+ * rather than the order, and it is worth twice a Wide Lens because
+ * the moment it wants has to be caught rather than merely waited for
+ */
+export const ZOOM_LENS_ACCURACY = 1.2;
+
+/**
  * How much likelier a critical becomes, in stages. The ratio a blow is
  * rolled against opens at zero and doubles the odds with every stage
  * on it, so a Scope Lens is worth one doubling to anybody and the two
@@ -370,11 +384,22 @@ export default createHeldItems(
         if (holds(event.source, Items.WideLens)) {
           event.accuracy *= WIDE_LENS_ACCURACY;
         }
-        if (
-          event.target.type === MoveTargetType.Unit &&
-          holds(event.target.unit, Items.BrightPowder)
-        ) {
+        if (event.target.type !== MoveTargetType.Unit) {
+          return;
+        }
+
+        const target = event.target.unit;
+
+        if (holds(target, Items.BrightPowder)) {
           event.accuracy *= BRIGHT_POWDER_EVASION;
+        }
+        // A target in the middle of its own move is a target that is
+        // not going anywhere
+        if (
+          (target.casting != null || target.channeling != null) &&
+          holds(event.source, Items.ZoomLens)
+        ) {
+          event.accuracy *= ZOOM_LENS_ACCURACY;
         }
       }),
 
@@ -506,6 +531,20 @@ export default createHeldItems(
           event.success = true;
 
           event.source.triggerItem(Items.SmokeBall);
+        }
+      }),
+
+      /**
+       * And a Shed Shell does the same by leaving something behind for
+       * whatever has hold of it. It is the plainer half of the smoke:
+       * no trick, no cover — the holder simply steps out of the part
+       * being gripped
+       */
+      battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+        if (!event.success && holds(event.source, Items.ShedShell)) {
+          event.success = true;
+
+          event.source.triggerItem(Items.ShedShell);
         }
       }),
 

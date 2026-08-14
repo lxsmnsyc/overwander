@@ -1,28 +1,19 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
 
 /**
- * The chunk seen from a chair rather than from a satellite.
+ * The chunk seen from a chair rather than from a satellite: the ground
+ * laid back under the camera, the pokemon on it drawn upright.
  *
- * The board used to be drawn flat: a square of square cells, straight
- * down. That reads as a map, and what it is meant to read as is a
- * *place* — so the ground is laid back under the camera and the
- * pokemon standing on it are drawn upright, which is what makes them
- * look like they are standing on something rather than printed on it.
- *
- * Everything here is one projection and its inverse. Nothing else in
- * the game may work out where a cell is: the painter asks for the
- * corners, the pointer asks which cell it is over, and the browser
- * test asks where to click. Three readings of one transform, so a
- * pitch changed here changes all three at once.
+ * Everything here is one projection and its inverse, and nothing else
+ * in the game may work out where a cell is — the painter asks for
+ * corners, the pointer asks which cell it is over, the browser test
+ * asks where to click. A pitch changed here changes all three.
  */
 
 /**
- * How far above the board the camera sits, in degrees.
- *
- * 90 is straight down — the flat map this replaced. 0 is on the
- * ground, where the board would collapse to a line. 60 leaves the
- * near rows nearly square, foreshortens the far ones, and leaves a
- * sprite room to stand up in front of the row behind it
+ * How far above the board the camera sits, in degrees. 90 is straight
+ * down and 0 collapses it to a line; 60 keeps the near rows nearly
+ * square and leaves a sprite room to stand in front of the row behind
  */
 export const PITCH = 60;
 
@@ -33,14 +24,10 @@ export const PITCH = 60;
 const DEPTH = Math.sin((PITCH * Math.PI) / 180);
 
 /**
- * How far the camera stands back, in board widths.
- *
- * It is what makes the far edge narrower than the near one — the
- * difference between a tilted picture and a perspective one. Small
- * numbers are a wide lens: the board flares out toward the player and
- * the far rows crowd together. Large numbers flatten it back toward a
- * plain squash. This is a middle: the trapezoid is plain to see and
- * the far row is still comfortably wide enough for a sprite
+ * How far the camera stands back, in board widths — what makes the far
+ * edge narrower than the near one. Small numbers are a wide lens and
+ * large ones flatten it to a squash; this middle keeps the trapezoid
+ * plain while leaving the far row wide enough for a sprite
  */
 const FOCAL = 2.4;
 
@@ -57,12 +44,8 @@ export interface GroundPoint {
 
 /**
  * Where a ground point lands on the canvas, and how big things are
- * there.
- *
- * `scale` is the whole of the third dimension: a cell twice as far
- * away is drawn half the size, and a sprite standing on it takes the
- * same factor. Drawing one at `scale` is what makes a row of pokemon
- * recede instead of standing in a line of identical cut-outs
+ * there. `scale` is the whole of the third dimension: a sprite drawn
+ * at it recedes instead of standing in a line of identical cut-outs
  */
 export interface ProjectedPoint {
   x: number;
@@ -71,22 +54,16 @@ export interface ProjectedPoint {
 }
 
 /**
- * Which way round the board is being looked at, in radians, turning
- * about its own middle.
- *
- * Everything below takes it rather than reading it from anywhere: the
- * board has no opinion about where the camera is standing, and the
- * canvas that does hands it in with every question it asks
+ * Which way round the board is being looked at, in radians, about its
+ * own middle. Everything below takes it as an argument: the board has
+ * no opinion about where the camera stands
  */
 export type Yaw = number;
 
 /**
- * A ground point turned about the middle of the board.
- *
- * The turn happens **before** the tilt, which is what makes it a
- * camera walking around a table rather than a picture being spun on
- * the screen: the far edge stays far, and a cell that swings toward
- * the viewer is drawn nearer and larger as it comes
+ * A ground point turned about the middle of the board. The turn is
+ * applied **before** the tilt, so it reads as a camera walking around
+ * a table rather than a picture spun on the screen
  */
 function turn(point: GroundPoint, yaw: Yaw): GroundPoint {
   if (yaw === 0) {
@@ -125,12 +102,9 @@ function raw(point: GroundPoint): ProjectedPoint {
 }
 
 /**
- * How many cells of apron are drawn around the chunk.
- *
- * They are not part of it: nothing is ever placed on one, and standing
- * on one is not a thing a player does for any length of time — a step
- * onto the apron is a step into the chunk next door. It is one cell
- * deep because it is a threshold rather than a road
+ * How many cells of apron are drawn around the chunk. Nothing is ever
+ * placed on one — a step onto the apron is a step into the chunk next
+ * door — so it is one cell deep: a threshold rather than a road
  */
 export const BORDER_CELLS = 1;
 
@@ -141,40 +115,24 @@ export const BORDER_CELLS = 1;
 const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
- * How far from the middle of the board the compass letters stand: past
- * the apron, and then a cell further.
- *
- * Off the board on purpose. They are what the player has instead of a
- * fixed up: the walk is no longer keys, so north is only ever knowable
- * from where the letter for it has been carried to — and a letter lying
- * *on* the ground would be scenery, one more thing painted on the
- * board rather than a note about which way it is facing
+ * How far from the middle the compass letters stand: past the apron
+ * and a cell further. Off the board on purpose — a letter lying on the
+ * ground reads as scenery rather than as which way the board faces
  */
 const COMPASS_REACH = 0.5 + (BORDER_CELLS + 1) / CHUNK_CELLS;
 
 /**
- * Room for the glyph itself when the picture is measured, as a
- * fraction of the picture's own width.
- *
- * A letter is drawn about its point, so fitting to the point alone
- * would clip half of every one of them. It is added **after** the
- * projection rather than to the reach above, which is the whole of why
- * it is here: a bump of ground beyond the near edge is a long way down
- * the screen once perspective has had it, and the picture came out
- * with a band of nothing under the board deep enough to lose a third
- * of the page in
+ * Room for the glyph itself, as a fraction of the picture's width. A
+ * letter is drawn about its point, so fitting to the point alone clips
+ * half of it. Added **after** the projection: ground beyond the near
+ * edge is a long way down the screen once perspective has had it
  */
 const LETTER_ROOM = 0.03;
 
 /**
- * The corners of the board, which is what it has to be fitted by: the
- * near edge is the widest thing in the picture and the far edge the
- * narrowest, so neither the width nor the height is the board's own
- */
-/**
- * Everything that has to be inside the picture: the apron's corners,
- * and the four letters standing off its edges. The chunk's own corners
- * are inside the apron's, so they are not measured separately
+ * Everything that has to be inside the picture: the apron's corners
+ * and the four compass letters. The chunk's own corners sit inside the
+ * apron's, so they are not measured separately
  */
 const OUTER: GroundPoint[] = [
   { u: -APRON, v: -APRON },
@@ -189,16 +147,10 @@ const OUTER: GroundPoint[] = [
 
 const BOUNDS = ((): { left: number; top: number; width: number; height: number } => {
   /**
-   * Measured with the board **facing front**, which is how a player
-   * spends nearly all of their time looking at it.
-   *
-   * It used to be measured over every angle the board could be turned
-   * to, so that the picture never changed size — and the price of that
-   * was paid on every screen at every moment: a square is widest
-   * corner-on and its near corner is magnified by the perspective as
-   * it swings toward the camera, so a frame that could hold *that*
-   * left the board facing front sitting in the middle of a page of
-   * empty country. Turning is what gives way instead — see the fit
+   * Measured with the board **facing front**, which is how it is
+   * nearly always looked at. Fitting every angle instead would size
+   * the frame for a corner-on board and leave the front-facing one
+   * marooned in empty country; turning gives way instead — see the fit
    * below
    */
   const corners = OUTER.map((point) => raw(point));
@@ -230,21 +182,14 @@ const BOUNDS = ((): { left: number; top: number; width: number; height: number }
 const MIDDLE = { x: BOUNDS.left + BOUNDS.width / 2, y: BOUNDS.top + BOUNDS.height / 2 };
 
 /**
- * How large the board may be drawn at each angle, measured a degree at
- * a time through a quarter turn.
+ * How large the board may be drawn at each angle, a degree at a time
+ * through a quarter turn.
  *
- * A square turned corner-on is half as wide again as one facing front,
- * and the corner that swings toward the camera is magnified on top of
- * that. Something has to give: either the picture is fitted to that and
- * the board is small whichever way it is facing, or the board gives up
- * a little of itself while it is turned and has it back when it comes
- * round. This is the second — the far corner never reaches the edge of
- * the screen, and facing front the board is as large as the page
- * allows.
- *
- * A quarter turn is the whole table: the points being measured are a
- * square and a cross, and both are the same set again after ninety
- * degrees
+ * A square corner-on is half as wide again as one facing front, so
+ * either the picture is fitted to that and the board is always small,
+ * or the board gives up a little while turned and has it back when it
+ * comes round. This is the second. A quarter turn is the whole table:
+ * a square and a cross repeat every ninety degrees
  */
 const FIT = ((): number[] => {
   const table: number[] = [];
@@ -287,48 +232,31 @@ function fitAt(yaw: Yaw): number {
 export const ASPECT = BOUNDS.height / BOUNDS.width;
 
 /**
- * How wide the picture is in board widths.
- *
- * The picture is no longer the board: there is an apron around it and
- * four letters standing off that, so a canvas sized to the chunk would
- * draw all of it at whatever is left over. A painter multiplies its
- * cell size by this and gets a canvas whose cells are the size it
- * asked for
+ * How wide the picture is in board widths. The picture is not the
+ * board — there is an apron and four letters around it — so a painter
+ * multiplies its cell size by this to get cells the size it asked for
  */
 export const PICTURE_SPAN = BOUNDS.width;
 
 /**
- * How much of a screen the picture is allowed to take.
- *
- * The board fills the page now rather than sitting in a box in the
- * middle of it, and a picture drawn edge to edge is one whose corners
- * are cut off by the screen the moment the camera is walked round —
- * the board is widest corner-on, and that is exactly the width the
- * picture was fitted to. A little kept back all the way round is what
- * makes the far corner a corner rather than a straight line
+ * How much of a screen the picture may take. Drawn edge to edge, the
+ * corners are cut off the moment the camera is walked round; a little
+ * kept back keeps the far corner a corner rather than a straight line
  */
 const PICTURE_INSET = 0.96;
 
 /**
- * And how much of the bottom is somebody else's.
- *
- * The menu stands there, fixed over the world, and the compass letter
- * for south stands at the bottom middle of the picture — which is the
- * same spot. The picture keeps out of it rather than the menu moving:
- * a button a player reaches for without looking should not move
+ * And how much of the bottom is the menu's. South's compass letter
+ * wants the same spot, so the picture keeps out of it — a button
+ * reached for without looking should not move
  */
 const PICTURE_FLOOR = 0.08;
 
 /**
  * Where the picture goes on a screen of this size, in that screen's
- * own pixels.
- *
- * Everything the projection answers is a fraction of the picture, and
- * the picture is not the screen: it keeps its proportions, is as large
- * as fits, and leaves the edges alone. This is the one place that
- * turns the one into the other — the painter draws through it and the
- * browser test aims through it, so a press lands where it looks like
- * it will
+ * pixels. The projection answers in fractions of the picture, and this
+ * is the one place that turns those into pixels — the painter draws
+ * through it and the browser test aims through it
  */
 export function fitPicture(
   width: number,
@@ -352,13 +280,9 @@ export function fitPicture(
 }
 
 /**
- * Where a ground point lands, in fractions of the drawn picture: 0 to
- * 1 across and 0 to 1 down.
- *
- * Fractions rather than pixels because there are three sizes in play
- * — the canvas' own resolution, the size it is stretched to on
- * screen, and the box a browser test measures — and a fraction is
- * true of all of them
+ * Where a ground point lands, in fractions of the drawn picture.
+ * Fractions rather than pixels because three sizes are in play — the
+ * canvas' resolution, its size on screen, and the box a test measures
  */
 export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint {
   const projected = raw(turn(point, yaw));
@@ -391,12 +315,11 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
 
   /**
    * Solved rather than searched. With `t` for the depth either side of
-   * the middle row, the forward transform is
+   * the middle row the forward transform is
    *
    *     py = t * F * DEPTH / (F - t * DEPTH)
    *
-   * which rearranges to the line below; the across-ness then falls out
-   * of the scale that depth implies
+   * which rearranges to the line below
    */
   const t = (py * FOCAL) / (FOCAL * DEPTH + py * DEPTH);
   const v = t + 0.5;
@@ -407,14 +330,10 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
 }
 
 /**
- * A cell of the drawn board, in cells across and back from the chunk's
- * own top left corner.
- *
- * A chunk cell has both between 0 and `CHUNK_CELLS - 1`. The apron is
- * everything one step outside that: `-1` and `CHUNK_CELLS` are the
- * threshold cells, and the four corners where two of them would meet
- * are not cells at all — a player can only step onto the apron
- * straight, so a corner would be ground nobody could ever stand on
+ * A cell of the drawn board, across and back from the chunk's top left
+ * corner. A chunk cell has both in `0..CHUNK_CELLS - 1`; the apron is
+ * one step outside that. The four apron corners are not cells: a
+ * player only steps onto the apron straight
  */
 export interface BoardCell {
   x: number;
@@ -478,12 +397,9 @@ export function boardCellOf(index: number): BoardCell {
 }
 
 /**
- * The way out of the chunk a threshold cell is: the edge cell a player
- * steps off, and the step that takes them over. Null for anything that
- * is not a threshold.
- *
- * The step is the same one the walk has always taken — off the edge and
- * in from the opposite side of the neighbour — so nothing about
+ * The way out of the chunk a threshold cell is: the edge cell stepped
+ * off, and the step that takes the player over. Null for anything that
+ * is not a threshold. The step is the ordinary one, so nothing about
  * crossing a boundary had to learn that the apron exists
  */
 export function borderExit(cell: BoardCell): { cell: number; step: [number, number] } | null {
@@ -552,13 +468,9 @@ export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
 }
 
 /**
- * Which of the four ways round the compass is pointing, and where the
- * letter for it stands.
- *
- * They are ground points like anything else, so they turn with the
- * board without being told about it: walk the camera a quarter and N
- * walks a quarter with it. The letters themselves are drawn upright —
- * a compass is read by the player rather than by the world
+ * Which way each compass point is, and where its letter stands. They
+ * are ground points, so they turn with the board on their own; the
+ * letters are drawn upright, since a compass is read by the player
  */
 export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { label: string })[] {
   return (
@@ -575,14 +487,10 @@ export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { label: string })
 }
 
 /**
- * The order the cells have to be painted in: furthest from the camera
- * first, so a pokemon standing in front is drawn over the one behind
- * rather than through it.
- *
- * It is the row order only while the board faces front. Turned, the
- * far corner is a corner rather than a row, so the order is read off
- * the projection itself — which is the only thing that knows what
- * "further away" means once the camera has moved
+ * The order cells are painted in: furthest first, so a pokemon in
+ * front is drawn over the one behind. Read off the projection rather
+ * than by row, since a turned board has a far corner rather than a far
+ * row
  */
 export function paintOrder(yaw: Yaw = 0): number[] {
   const cells = [...Array.from({ length: CHUNK_CELLS * CHUNK_CELLS }).keys()];
@@ -599,16 +507,10 @@ export function paintOrder(yaw: Yaw = 0): number[] {
 export const SPRITE_FACINGS = 8;
 
 /**
- * Which way a thing standing on the board is facing, once the camera
- * has been walked around it.
- *
- * A pokemon faces a direction in the **world** — the way it was
- * standing when the window rolled it — and what the player sees is
- * that direction from wherever they are now. Turn the camera a
- * quarter and something that was facing you is facing across you.
- *
- * The eight sheet directions are what it lands on, so the answer is
- * rounded to the nearest of them
+ * Which way a thing on the board faces once the camera has been walked
+ * around it. A pokemon faces a direction in the **world**; turn the
+ * camera a quarter and something facing you is facing across you. The
+ * answer is rounded to the nearest of the eight sheet directions
  */
 export function facingFrom(worldFacing: number, yaw: Yaw = 0): number {
   const eighth = (2 * Math.PI) / SPRITE_FACINGS;

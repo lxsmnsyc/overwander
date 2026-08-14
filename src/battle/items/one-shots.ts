@@ -6,11 +6,12 @@ import {
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
-import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveCategories, MoveFlags, MoveTargetPriorities } from '../../data/ids/moves';
 import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { ONE_SHOTS } from '../../data/items/one-shots';
+import { checkTeamUnit } from '../ai/rating';
 import { BattleEvents, type EffectCause, EffectType, type UnitUpdateStageEvent } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
@@ -85,6 +86,64 @@ export default createHeldItems(
   () => ONE_SHOTS.keys(),
   (battle) => {
     const landingHard = createEffectivenessTracker(battle);
+
+    /**
+     * Put a unit on the bench and bring a teammate out in its place.
+     *
+     * Whether the swap can be refused is the difference between the
+     * card and the two ejectors, and it is the same difference the
+     * switch-out moves already draw: a Whirlwind drags its target out
+     * of whatever is holding it, while a Teleport is a pokemon
+     * choosing to leave and so has to be able to. A Red Card is thrown
+     * at somebody; an Eject Button is pressed by its own holder
+     */
+    function replacementFor(
+      unit: Unit,
+      priority: MoveTargetPriorities,
+      forced: boolean,
+    ): Unit | undefined {
+      const replacement = checkTeamUnit(battle, unit.team, priority, unit);
+
+      // Nobody left to come out: the moment the item was waiting for
+      // has arrived and there is nothing to spend it on
+      if (replacement == null) {
+        return undefined;
+      }
+      if (!forced && !(unit.checkEscape() && replacement.checkEscape())) {
+        return undefined;
+      }
+      return replacement;
+    }
+
+    /**
+     * Send somebody to the bench for an item, if the swap is really
+     * going to happen. The item is asked for first and spent last, so
+     * nothing is thrown away on a swap that was never possible.
+     *
+     * The holder and the one leaving are not always the same pokemon:
+     * an ejector sends its own holder away, and a card sends away
+     * whoever set it off
+     */
+    function bench(
+      holder: Unit,
+      item: Items,
+      switched: Unit,
+      priority: MoveTargetPriorities,
+      forced: boolean,
+    ): boolean {
+      if (!holds(holder, item)) {
+        return false;
+      }
+
+      const replacement = replacementFor(switched, priority, forced);
+
+      if (replacement == null || !spendItem(holder, item)) {
+        return false;
+      }
+
+      switched.forceSwitch(replacement);
+      return true;
+    }
 
     /**
      * Whoever a Power Herb is carrying through a wind-up. In a game
@@ -217,6 +276,35 @@ export default createHeldItems(
             holder.addStage(reaction.stage, REACTION_STAGES, cause);
           }
         }
+
+        // A confused pokemon hitting itself has nobody to send away
+        // and nothing to run from
+        if (event.source === holder) {
+          return;
+        }
+
+        /**
+         * A Red Card is shown to whoever threw the blow, and what it
+         * costs them depends on whose side they are on. An enemy is
+         * sent away and the worst of their bench comes out in their
+         * place; an ally who has just hit their own side is doing the
+         * holder no good where they are, so the card fetches out the
+         * best of theirs instead. Either way the one holding the card
+         * stays exactly where it is
+         */
+        const ally = event.source.team.alliance === holder.team.alliance;
+
+        bench(
+          holder,
+          Items.RedCard,
+          event.source,
+          ally ? MoveTargetPriorities.Strongest : MoveTargetPriorities.Weakest,
+          true,
+        );
+
+        // And an Eject Button takes its own holder out of whatever
+        // that was, with the best of the bench coming in
+        bench(holder, Items.EjectButton, holder, MoveTargetPriorities.Strongest, false);
       }),
 
       // A Blunder Policy pays for a swing that hit nothing: the holder is
@@ -274,6 +362,16 @@ export default createHeldItems(
         for (const stage of taken) {
           unit.addStage(stage, -unit.stages[stage], cause);
         }
+      }),
+
+      /**
+       * An Eject Pack answers a stat going down rather than a blow
+       * landing: whatever just took something off the holder, the
+       * holder is better off somewhere else, and the best of the bench
+       * comes out to deal with it
+       */
+      ...lowering((unit) => {
+        bench(unit, Items.EjectPack, unit, MoveTargetPriorities.Strongest, false);
       }),
 
       // A Mental Herb clears the holder's head the moment it is turned

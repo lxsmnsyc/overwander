@@ -537,6 +537,22 @@ export const enum Items {
   HeatRock = 269,
   IcyRock = 270,
   SmoothRock = 271,
+
+  /**
+   * Gear for the two moments a pokemon is least able to help itself:
+   * a lens that reads a target too busy to dodge, and a shell that
+   * gets its holder out of whatever is holding it
+   */
+  ZoomLens = 272,
+  ShedShell = 273,
+
+  /**
+   * The one-shots that put somebody on the bench. A card sends whoever
+   * threw the blow away, and the two ejectors send the holder
+   */
+  RedCard = 274,
+  EjectButton = 275,
+  EjectPack = 276,
 }
 
 /**

@@ -94,17 +94,46 @@ export function isCommonCast(animation: string): boolean {
 export const DEFAULT_CAST: CommonCast = 'Attack';
 
 /**
+ * What stands in for a clip the sheet has not got.
+ *
+ * A move's list is a preference between *different things to look
+ * like*: a Blizzard asks for Emit, settles for Shoot, and would rather
+ * not be an Attack. That is the right shape for choosing between
+ * clips, and the wrong shape for a sheet with a hole in it — falling
+ * off the end of a list lands on Idle, and a pokemon standing still
+ * through its own attack looks broken rather than looks approximate.
+ *
+ * `Shoot` is the one that needs this. It is nominally common, so lists
+ * end on it and stop looking, but a sheet or two ships without it —
+ * see `100001` — and every one of those moves then plays nothing. An
+ * Attack in its place is the wrong distance and the right idea
+ */
+const CAST_INSTEAD: Partial<Record<CastAnimation, CastAnimation>> = {
+  Shoot: 'Attack',
+};
+
+/**
  * The first clip in the list this sprite actually has.
  *
  * `has` is the sprite's own answer — `SpeciesSpriteAnimation.has` —
  * so the decision is made against the sheet in hand rather than
  * against a table of which species owns what, which would be a second
- * copy of the truth and would rot
+ * copy of the truth and would rot.
+ *
+ * A name the sheet is missing is tried once more as whatever stands in
+ * for it **before** the walk moves on, so a hole in a sheet costs the
+ * move its first choice rather than costing it the whole list
  */
 export function pickCast(cast: readonly CastAnimation[], has: (name: string) => boolean): string {
   for (const animation of cast) {
     if (has(animation)) {
       return animation;
+    }
+
+    const instead = CAST_INSTEAD[animation];
+
+    if (instead != null && has(instead)) {
+      return instead;
     }
   }
   return has(DEFAULT_CAST) ? DEFAULT_CAST : 'Idle';

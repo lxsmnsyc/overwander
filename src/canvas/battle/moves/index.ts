@@ -1,5 +1,6 @@
 import { Moves } from '../../../data/ids/moves';
 import type MoveVisual from './__visual';
+import hydroPump from './hydro-pump';
 import supersonic from './supersonic';
 
 /**
@@ -17,6 +18,7 @@ import supersonic from './supersonic';
  * cache — the second cast of a move is a clone rather than a download
  */
 const VISUALS: Partial<Record<Moves, () => Promise<MoveVisual>>> = {
+  [Moves.HydroPump]: hydroPump,
   [Moves.Supersonic]: supersonic,
 };
 

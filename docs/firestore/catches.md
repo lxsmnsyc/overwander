@@ -516,9 +516,11 @@ same transaction, so nothing is left pointing at a record that has vanished:
   fight is running on a snapshot of a record that has to still be there when it
   ends.
 
-Releasing pays no candy. Catching already pays `CANDY_PER_CATCH`, so paying again
-on the way out would make catch-and-release a way of farming candy from the same
-spawn rather than a way of clearing space.
+Releasing pays the family `getCatchCandy` of the released species — the same
+rarity-scaled amount catching it paid, and written inside the same transaction as
+the deletion, so a record cannot vanish without the candy landing. The family-day
+bonus is not paid again: it belongs to meeting the pokemon, not to parting with
+it.
 
 The dialog asks twice before calling it, and there is no undo.
 

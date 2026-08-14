@@ -331,8 +331,23 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
             <Show
               when={rummaging() && active().state === SafariState.Active}
               fallback={
-                <div class="flex min-h-52 items-center justify-center">
+                // The whole of the space rather than a box cut to the
+                // pokemon: a shiny throws its stars wider and higher
+                // than it stands, and a canvas the size of the sprite
+                // cuts them off in a straight line. Nothing is set
+                // around it either — the picture is the panel here,
+                // and a margin is only somewhere else for a star to
+                // be clipped against.
+                //
+                // The room is still held: the bag stands in the same
+                // space when it is opened, and a panel that changed
+                // height would move the buttons out from under the
+                // finger. It is held **below** the pokemon rather than
+                // around it, so nothing is pushed away from the
+                // heading
+                <div class="min-h-52 w-full">
                   <SpriteDisplay
+                    stretch
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
                     // What the dialog's own title is already saying,

@@ -32,17 +32,24 @@ import { isPerfectIVs } from '../data/items/bottle-caps';
 import { type Profile, getProfile, watchProfile } from '../auth/profile';
 import { MAX_IV_STARS, getIVStars } from '../data/constants/stats';
 import { NATURE_NAMES } from '../data/ids/natures';
+import { Species } from '../data/ids/species';
+import { getSpeciesData } from '../data/species';
+import getSigil from '../data/constants/sigil';
 import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
 import { describeAbility } from './CatchDialog';
 import CatchPicker, { type CatchOption } from './CatchPicker';
 import { describeCatch } from './catch-summary';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
+import SpriteDisplay from './SpriteDisplay';
 import matches from '../core/search';
 import { useGame } from './game-context';
 import {
   Badge,
   Button,
   Card,
+  Dialog,
+  DialogActions,
   Field,
   List,
   ListRow,
@@ -160,9 +167,15 @@ export function BidControls(props: {
   auction: AuctionRecord;
   player: string;
   gold: number;
+  /**
+   * What the lot is called, for the dialog the button opens: a player
+   * naming an amount should be able to see what they are naming it for
+   */
+  name?: string;
   onBid: (amount: number) => void;
 }): JSX.Element {
   const [named, setNamed] = createSignal(0);
+  const [bidding, setBidding] = createSignal(false);
 
   /**
    * What the bid would be: what the player typed, never below the
@@ -180,34 +193,80 @@ export function BidControls(props: {
     <Show when={props.auction.seller !== props.player} fallback={<Badge tone="tide">yours</Badge>}>
       <Show
         when={props.auction.bidder !== props.player}
-        fallback={<Badge tone="leaf">yours unless somebody raises it</Badge>}
+        fallback={<Badge tone="leaf">winning</Badge>}
       >
         <Show
           when={affordable()}
           fallback={<Meta>{nextBid(props.auction)} gold is more than you hold</Meta>}
         >
-          <Row class="gap-1.5">
-            <Field label="Bid">
-              <input
-                type="number"
-                min={nextBid(props.auction)}
-                max={props.gold}
-                value={amount()}
-                onInput={(event) => {
-                  setNamed(Number(event.currentTarget.value));
+          {/* One button on the row, and the amount named in a dialog
+              behind it.
+
+              A board is a list of lots read at a glance, and a number
+              box on every row of it is a form the length of the board
+              — pressed by accident, tabbed through on the way to
+              anything else, and taking up the room the lot itself
+              should have. What a bid *is* has not changed: the floor
+              is the seller's increment and anything up to what the
+              bidder holds is legal, so it is still typed rather than
+              nudged */}
+          <Button
+            tone="primary"
+            onClick={() => {
+              setNamed(nextBid(props.auction));
+              setBidding(true);
+            }}
+          >
+            Bid
+          </Button>
+          <Dialog
+            isOpen={bidding()}
+            onClose={() => {
+              setBidding(false);
+            }}
+            title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
+            description="The floor is the seller's least raise. Anything from there to what you are
+              holding is a legal bid, so a lot can be put out of reach in one press."
+          >
+            <Row class="justify-center">
+              <Field label="Bid">
+                <input
+                  type="number"
+                  min={nextBid(props.auction)}
+                  max={props.gold}
+                  value={amount()}
+                  onInput={(event) => {
+                    setNamed(Number(event.currentTarget.value));
+                  }}
+                />
+              </Field>
+            </Row>
+            <Row class="justify-center">
+              <Meta>
+                {nextBid(props.auction)} gold to take it · you hold {props.gold}
+              </Meta>
+            </Row>
+
+            <DialogActions>
+              <Button
+                onClick={() => {
+                  setBidding(false);
                 }}
-              />
-            </Field>
-            <Button
-              tone="primary"
-              disabled={amount() > props.gold}
-              onClick={() => {
-                props.onBid(amount());
-              }}
-            >
-              Bid {amount()} gold
-            </Button>
-          </Row>
+              >
+                Never mind
+              </Button>
+              <Button
+                tone="primary"
+                disabled={amount() > props.gold}
+                onClick={() => {
+                  setBidding(false);
+                  props.onBid(amount());
+                }}
+              >
+                Bid {amount()} gold
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Show>
       </Show>
     </Show>
@@ -219,6 +278,50 @@ export function BidControls(props: {
  * to come and get it. A won lot is collected and an unsold one is
  * taken back, which are the same row with different words on it
  */
+/**
+ * How big the picture on a row is: how much a pokemon's sheet is blown
+ * up by, and the icon size that comes out about the same for an item.
+ *
+ * The two are drawn to one size on purpose. A board mixes lots of both
+ * kinds now, and an item drawn half the height of the pokemon beside
+ * it reads as a lesser thing rather than as a different thing
+ */
+const LOT_SPRITE_SCALE = 2;
+
+const LOT_ICON = 48;
+
+/**
+ * What a bidder is actually buying, for a pokemon: the sigil it was
+ * rolled from, how good the rolls came out, what its nature bends and
+ * what it can do.
+ *
+ * The stars are the **whole** of the values rather than a count of the
+ * perfect ones — `getIVStars` divides the six added together by what
+ * one of them can reach — so a pokemon that is good everywhere reads
+ * as good, rather than as nothing at all until a stat happens to hit
+ * 31.
+ *
+ * Answers null for an item lot and for an egg: an item is entirely
+ * described by its name, and an egg is a sealed box whose contents are
+ * the buyer's to find out
+ */
+function describeLot(caught?: CaughtPokemon): string | null {
+  if (caught == null || isEgg(caught)) {
+    return null;
+  }
+
+  const stars = getIVStars(caught.ivs);
+
+  return [
+    getSigil(caught.individualValue, caught.traitValue),
+    `${'★'.repeat(stars)}${'☆'.repeat(MAX_IV_STARS - stars)}`,
+    NATURE_NAMES[caught.nature],
+    caught.abilities.map(describeAbility).join(', '),
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
+
 interface LotClaim {
   said: string;
   label: string;
@@ -226,19 +329,28 @@ interface LotClaim {
 }
 
 /**
- * One lot on the board: what it is, what it stands at, how long it has
- * left, and either the bid box or the way to collect it
+ * One lot on the board: what is standing on it, who put it there, and
+ * either the way to bid or the way to collect it.
+ *
+ * A picture, two lines and a button. The picture is what a player
+ * actually recognises a lot by — a board of names all set the same way
+ * is read word by word — and the two lines under it answer the two
+ * questions in the order they are asked: what is it and whose is it,
+ * then what is it worth
  */
 function LotRow(props: {
   auction: AuctionRecord;
   player: string;
   gold: number;
+  /**
+   * What an item lot is called, and what a catch lot is searched by
+   */
   name?: string;
   /**
-   * What the pokemon on the block actually is — its values, nature and
-   * abilities. Absent for an item lot, and for an egg
+   * The pokemon on the block, once its record has arrived. Absent for
+   * an item lot and while the record is still coming
    */
-  detail?: string | null;
+  caught?: CaughtPokemon;
   seller: string;
   /**
    * Open the seller's profile. Absent for the reader's own lot: a
@@ -258,75 +370,132 @@ function LotRow(props: {
   claim?: LotClaim;
   onBid: (amount: number) => void;
 }): JSX.Element {
+  /**
+   * What the lot is, said the way a player would say it: the level
+   * first, then the species, then the mark for a shiny. An item is its
+   * own name, and an egg is an egg — what is inside one is the
+   * buyer's to find out
+   */
+  const called = (): string => {
+    const record = props.caught;
+
+    if (record == null) {
+      return props.name ?? 'A pokemon';
+    }
+    if (isEgg(record)) {
+      return 'Egg';
+    }
+    return `Lv. ${record.level} ${getSpeciesData(record.species).name}${
+      isShiny(record) ? ' ✦' : ''
+    }`;
+  };
+
   return (
-    <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
-      <div class="flex grow flex-col gap-0.5">
-        {/* A pokemon is worth looking at before bidding on, so its
-            name is the way in; an item lot has nothing further to
-            show and stays plain text */}
+    <ListRow class="items-center gap-3">
+      {/* What it looks like. A pokemon is its sprite, an egg is drawn
+          as an egg, and an item is its icon — the same pictures the
+          bag and the box draw, so a lot is recognised rather than
+          read */}
+      <div class="flex w-16 shrink-0 items-end justify-center">
         <Show
-          when={props.onInspect}
+          when={props.caught}
           fallback={
-            <span class="font-medium">
-              <AuctionLotLabel auction={props.auction} name={props.name} />
-            </span>
+            // `?? null` rather than truthiness: item id 0 is a real
+            // item, so a falsy test would draw no picture for one
+            <Show when={props.auction.item ?? null} keyed>
+              {(item) => <ItemSprite item={item} size={LOT_ICON} label="" />}
+            </Show>
           }
         >
-          {(inspect) => (
-            <RowButton class="font-medium" onClick={inspect()}>
-              <AuctionLotLabel auction={props.auction} name={props.name} />
-            </RowButton>
+          {(record) => (
+            <SpriteDisplay
+              species={isEgg(record()) ? Species.Egg : record().species}
+              shiny={!isEgg(record()) && isShiny(record())}
+              animation="Idle"
+              // Turned a little away from the reader, the way the dex
+              // stands its entries: a row of pokemon all facing
+              // straight out reads as a shop window
+              direction="DownLeft"
+              scale={LOT_SPRITE_SCALE}
+              label=""
+            />
           )}
         </Show>
-        {/* What it stands at is what a bidder needs; a lot that has
-            stopped taking bids says what it went for beside the
-            button instead, since "40 gold to take it" reads as an
-            offer on something nobody can bid on any more */}
-        {/* Who listed it is a way to them: a board is a room full of
-            strangers selling things, and what somebody else has caught
-            and fought is most of what says whether their lot is worth
-            bidding on */}
-        <Meta>
-          {props.claim == null ? `${describeBid(props.auction)} · ` : ''}
-          {describeRemaining(props.auction.endsAt, now())} · listed by{' '}
-          <Show when={props.onSeller} fallback={props.seller}>
-            {(visit) => (
-              // Inline and the size of the line it sits in: it is a
-              // word in a sentence rather than a row of its own
-              <RowButton
-                class="inline text-xs underline decoration-dotted underline-offset-2"
-                onClick={visit()}
-              >
-                {props.seller}
+      </div>
+
+      <div class="flex min-w-0 grow flex-col gap-0.5">
+        {/* What it is and whose it is, on one line. A pokemon is worth
+            looking at before bidding on, so its name is the way into
+            the record; an item has nothing further to show and stays
+            plain text */}
+        <span class="flex flex-wrap items-baseline gap-x-1.5 font-medium">
+          <Show when={props.onInspect} fallback={<span>{called()}</span>}>
+            {(inspect) => (
+              // As wide as the name rather than as wide as the row: a
+              // row button stretches by default, which would push the
+              // seller off to the far side of the line it belongs to
+              <RowButton class="grow-0 font-medium" onClick={inspect()}>
+                {called()}
               </RowButton>
             )}
           </Show>
-        </Meta>
-        {/* What is worth paying for, on a line of its own: it is
-            longer than everything above it and read differently —
-            a bidder scans it once and then decides */}
-        <Show when={props.detail}>{(said) => <Meta>{said()}</Meta>}</Show>
+          {/* Who listed it is a way to them: a board is a room full of
+              strangers selling things, and what somebody else has
+              caught and fought is most of what says whether their lot
+              is worth bidding on */}
+          <Meta>
+            by{' '}
+            <Show when={props.onSeller} fallback={props.seller}>
+              {(visit) => (
+                // Inline and the size of the line it sits in: it is a
+                // word in a sentence rather than a row of its own
+                <RowButton
+                  class="inline text-xs underline decoration-dotted underline-offset-2"
+                  onClick={visit()}
+                >
+                  {props.seller}
+                </RowButton>
+              )}
+            </Show>
+          </Meta>
+        </span>
+
+        {/* And what is actually being bought, for a pokemon: the
+            sigil it was rolled from, how good those rolls came out,
+            what its nature bends and what it can do. An item lot has
+            none of that — a Master Ball is a Master Ball — so the
+            line is simply not there */}
+        <Show when={describeLot(props.caught)}>{(said) => <Meta>{said()}</Meta>}</Show>
       </div>
-      <Show
-        when={props.claim}
-        fallback={
-          <BidControls
-            auction={props.auction}
-            player={props.player}
-            gold={props.gold}
-            onBid={props.onBid}
-          />
-        }
-      >
-        {(claim) => (
-          <Row class="gap-1.5">
-            <Meta>{claim().said}</Meta>
+
+      {/* What it stands at, and the one thing to do about it. A lot
+          that has stopped taking bids says what it went for instead,
+          since "40 gold to take it" reads as an offer on something
+          nobody may bid on any more */}
+      <div class="flex shrink-0 flex-col items-end gap-1">
+        <Meta class="text-right">
+          {props.claim == null ? `${describeBid(props.auction)} · ` : `${props.claim.said} · `}
+          {describeRemaining(props.auction.endsAt, now())}
+        </Meta>
+        <Show
+          when={props.claim}
+          fallback={
+            <BidControls
+              auction={props.auction}
+              player={props.player}
+              gold={props.gold}
+              name={called()}
+              onBid={props.onBid}
+            />
+          }
+        >
+          {(claim) => (
             <Button tone="primary" onClick={claim().onClaim}>
               {claim().label}
             </Button>
-          </Row>
-        )}
-      </Show>
+          )}
+        </Show>
+      </div>
     </ListRow>
   );
 }
@@ -464,40 +633,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     const caught = lots()?.get(auction.caught);
 
     return nameItemLot(auction) ?? (caught == null ? undefined : describeCatch(caught));
-  };
-
-  /**
-   * What a bidder is actually buying, for a pokemon: how good its
-   * values are, its nature and its abilities. None of it can be
-   * changed by the seller and none of it is visible from the name, so
-   * a lot without it is a bid placed on a species and a level.
-   *
-   * The values are a **rating** rather than the six numbers. A board
-   * that prints them does the buyer's arithmetic for them and turns
-   * bidding into a lookup; a row of stars says how good the pokemon is
-   * without saying which stat carries it, so the bid stays a judgement
-   * and the last of what is worth knowing is learned by winning it.
-   *
-   * An egg says nothing at all — what is inside one is hidden from
-   * everybody but its owner, and the board is not the place to give it
-   * away
-   */
-  const detailOf = (auction: AuctionRecord): string | null => {
-    const caught = lots()?.get(auction.caught);
-
-    if (caught == null || isEgg(caught)) {
-      return null;
-    }
-
-    const stars = getIVStars(caught.ivs);
-
-    return [
-      `${'★'.repeat(stars)}${'☆'.repeat(MAX_IV_STARS - stars)}`,
-      NATURE_NAMES[caught.nature],
-      caught.abilities.map(describeAbility).join(', '),
-    ]
-      .filter(Boolean)
-      .join(' · ');
   };
 
   /**
@@ -717,29 +852,31 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   /**
-   * The board, split by what is actually on it. An item and a pokemon
-   * are not the same purchase — one is a stack somebody needs and the
-   * other is an individual with its own numbers — and a single column
-   * mixing them means scrolling past everything you are not shopping
-   * for
+   * The board, as one list.
+   *
+   * It was two columns, items on one side and pokemon on the other,
+   * which sorted the board by the one thing a bidder is *not* looking
+   * for: a player comes to a board to see what is up, and what is up
+   * arrives in the order it was listed. Two columns also meant two
+   * half-empty lists on a board with six lots on it, and a lot that
+   * had just gone up could be either side of the panel
    */
-  const lotsOf = (kind: AuctionLot): [string, AuctionRecord][] =>
-    board().filter(([, auction]) => auction.lot === kind);
-
-  const column = (kind: AuctionLot, empty: string): JSX.Element => (
+  const onTheBlock = (): JSX.Element => (
     <Show
-      when={lotsOf(kind).length}
-      fallback={<Note>{query().length === 0 ? empty : 'Nothing here matches.'}</Note>}
+      when={board().length}
+      fallback={
+        <Note>{query().length === 0 ? 'Nothing is up right now.' : 'Nothing here matches.'}</Note>
+      }
     >
       <List>
-        <For each={lotsOf(kind)}>
+        <For each={board()}>
           {([id, auction]) => (
             <LotRow
               auction={auction}
               player={props.player}
               gold={gold()}
               name={nameOf(auction)}
-              detail={detailOf(auction)}
+              caught={lots()?.get(auction.caught)}
               seller={describeSeller(auction)}
               onSeller={
                 auction.seller === props.player
@@ -788,13 +925,12 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         </Show>
       </Row>
 
+      {/* One list, newest first, whatever is standing on each lot.
+          It is the panel rather than a card in it: the board *is* this
+          dialog, and a titled box around the only thing on the screen
+          is a label on a room somebody is already standing in */}
       <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
-        {/* Items on the left, pokemon on the right — side by side
-            where there is room, stacked where there is not */}
-        <div class="grid gap-4 md:grid-cols-2">
-          <Card title="Items">{column(AuctionLot.Item, 'No items are up right now.')}</Card>
-          <Card title="Pokemon">{column(AuctionLot.Catch, 'No pokemon are up right now.')}</Card>
-        </div>
+        {onTheBlock()}
       </Show>
     </>
   );

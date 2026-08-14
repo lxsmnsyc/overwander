@@ -118,8 +118,9 @@ them or the catch the level lands on.
 
 ### What a catch pays
 
-Every catch pays `CANDY_PER_CATCH` of its own family, four times over on the
-family's own day. On top of that, `recordCatch` asks the overworld engine
+Every catch pays `getCatchCandy` of its own family — the species' spawn rarity
+band counted from one, so one for a base stage and five for a legendary — four
+times over on the family's own day. On top of that, `recordCatch` asks the overworld engine
 `checkCatchCandy` what the player was **carrying** at the time. Two held items
 answer it, each paying one candy half the time:
 

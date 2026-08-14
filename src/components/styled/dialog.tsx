@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, onCleanup, onMount } from 'solid-js';
+import { type JSX, type ParentProps, children, onCleanup, onMount } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import {
   DialogOverlay,
@@ -173,6 +173,16 @@ export interface DialogProps extends ParentProps {
    */
   lead?: JSX.Element;
   /**
+   * How the column under the heading is laid out, for a dialog that
+   * wants something other than the default.
+   *
+   * It is one line of a stylesheet rather than a wrapper the caller
+   * puts round its own children, because the sticky heading lives in
+   * the same column: a dialog centring itself by wrapping what it
+   * passes in would centre everything **except** its own title bar
+   */
+  class?: string;
+  /**
    * A second bar under the heading, for what can be *done* to whatever
    * the dialog is showing.
    *
@@ -229,17 +239,33 @@ export function Dialog(props: DialogProps): JSX.Element {
     });
   });
 
+  /**
+   * Each slot resolved **once**.
+   *
+   * A prop holding JSX is a getter, and every read of it builds what
+   * it describes again: `props.bar == null ? null : <div>{props.bar}</div>`
+   * reads it twice, which is two live components where the markup says
+   * one. The second is what lands in the page and the first is left
+   * running beside it — two sprite canvases on their own frame clocks,
+   * two menus with their own idea of whether they are open, and a
+   * button in the page whose component is the copy that was thrown
+   * away. `children` keeps one of each
+   */
+  const lead = children(() => props.lead);
+  const aside = children(() => props.aside);
+  const bar = children(() => props.bar);
+
   return (
     <Portal mount={portalHost()}>
       <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
         <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
         <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
-          <div ref={inside} class={`flex flex-col gap-3 ${INSET}`}>
+          <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
             {/* Both stuck rows travel together: a second `sticky` under
                 the first would have to be told how tall the first is,
                 and the heading is a line taller when it carries its
                 sentence than when it does not */}
-            <div class={props.quiet === true && props.bar == null ? 'sr-only' : STUCK_TOP}>
+            <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
               <header
                 class={
                   props.quiet === true
@@ -257,15 +283,11 @@ export function Dialog(props: DialogProps): JSX.Element {
                   {/* Back to ink: the bar is blue and its text is white,
                       which a button standing on it would otherwise
                       inherit — a white label on a white button */}
-                  {props.lead == null ? null : (
-                    <div class="absolute left-0 text-ink">{props.lead}</div>
-                  )}
+                  {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
                   <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
                     {props.title}
                   </HeadlessDialogTitle>
-                  {props.aside == null ? null : (
-                    <div class="absolute right-0 text-ink">{props.aside}</div>
-                  )}
+                  {aside() == null ? null : <div class="absolute right-0 text-ink">{aside()}</div>}
                 </div>
                 <HeadlessDialogDescription
                   class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
@@ -278,7 +300,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                   fill of its own: it is a row of buttons standing on
                   the page rather than a second header competing with
                   the first */}
-              {props.bar == null ? null : (
+              {bar() == null ? null : (
                 <div
                   // To the right, where the rest of the game keeps what
                   // it can do to a thing: the menu at the foot of a
@@ -286,7 +308,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                   class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
                     ${PAD_IN}`}
                 >
-                  {props.bar}
+                  {bar()}
                 </div>
               )}
             </div>

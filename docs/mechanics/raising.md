@@ -9,12 +9,23 @@ walks with it. All three are decisions rather than by-products of grinding.
 Candy is held **per family** rather than per species, so anything in a line feeds
 anything else in it: catching Caterpies levels a Butterfree.
 
-| Rule                     | Value                    |
-| ------------------------ | ------------------------ |
-| Candy a catch pays       | 1, to its own family     |
-| On that family's own day | ×4                       |
-| Candy one level costs    | 1, or **2** for a shadow |
-| Highest level            | 100                      |
+| Rule                     | Value                     |
+| ------------------------ | ------------------------- |
+| Candy a catch pays       | 1 to 5, by how rare it is |
+| On that family's own day | ×4                        |
+| Candy one level costs    | 1, or **2** for a shadow  |
+| Highest level            | 100                       |
+
+What a catch pays depends on how hard it was to meet, since a candy is a level
+and a level of a legendary is worth more work than a level of a Rattata:
+
+| What was caught                       | Candy |
+| ------------------------------------- | ----- |
+| A first stage that can still evolve   | 1     |
+| A middle evolution                    | 2     |
+| A final evolution, or a one-off line  | 3     |
+| A baby or an unown                    | 4     |
+| A legendary or mythical               | 5     |
 
 Two held items pay extra candy, each about half the time. An **Exp. Share** pays
 the buddy's family, so everything caught feeds the one pokemon being raised. A
@@ -24,7 +35,10 @@ Neither stacks with the species day, which already pays four times over.
 A level is also a heal: the pokemon returns to full health with its statuses
 cleared, and thinks slightly better of its trainer for it.
 
-Releasing a pokemon pays no candy, since catching it already did.
+Releasing a pokemon pays its family the same candy catching it did — rarity and
+all, though never the family-day bonus. Letting one go is a decision about space
+rather than a punishment, and what the pokemon was worth does not change on the
+way out.
 
 ## Evolution
 

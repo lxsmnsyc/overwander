@@ -204,18 +204,23 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
       <Show when={raid()} fallback={<Note>Loading raid…</Note>}>
         {(record) => (
           <div class="flex flex-col gap-3">
-            {/* What is waiting in there, pacing. The lair's name is the
-                panel's own heading, so the picture says the one thing
-                the name cannot */}
+            {/* What is waiting in there, asleep. The lair's name is
+                the panel's own heading, so the picture says the one
+                thing the name cannot */}
             <div class="flex flex-col items-center gap-1 text-center">
               {/* Feet on the floor of the box rather than in the
                   middle of one: a tall boss and a short one put their
                   name on the same line that way */}
-              <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
+              {/* Wide enough for a wingspan: the canvas is the width
+                  of the panel rather than the width of the sprite, so
+                  nothing is clipped off the side of a picture that
+                  happens to be wider than it is tall */}
+              <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
                 <SpriteDisplay
+                  stretch
                   species={record().species}
-                  animation="Idle"
-                  direction="Down"
+                  animation="Sleep"
+                  direction="DownLeft"
                   scale={4}
                   label={`${getSpeciesData(record().species).name}, waiting in the lair`}
                 />

@@ -120,7 +120,7 @@ On its day, the featured family receives four bonuses:
 | -------------------- | ---- | ------------------------------------- |
 | Shiny odds           | ×8   | The chance of meeting a shiny one     |
 | How often it appears | ×4   | Its share of the pokemon that turn up |
-| Candy from a catch   | ×4   | What catching one pays                |
+| Candy from a catch   | ×4   | What catching one pays, whatever it is |
 | Catch chance         | ×2   | How readily a thrown ball sticks      |
 
 Appearing more often does not move a species between rarity bands. A featured

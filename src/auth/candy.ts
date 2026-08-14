@@ -11,10 +11,11 @@ import { getFirebaseFirestore } from './firebase';
 import getIdToken from './session';
 
 export {
-  CANDY_PER_CATCH,
+  CANDY_BY_RARITY,
   CANDY_PER_LEVEL,
   SHADOW_CANDY_MULTIPLIER,
   SPECIES_DAY_CANDY_BOOST,
+  getCatchCandy,
 } from './candy-rules';
 export { default as getCandyCost } from './candy-rules';
 

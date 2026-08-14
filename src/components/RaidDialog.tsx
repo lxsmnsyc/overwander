@@ -209,17 +209,25 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       >
         {(standing) => (
           <>
-            {/* What is waiting in there, pacing, with its name under
-                it and a word about what it is. The sprite stands on
-                the floor of its box rather than in the middle of one,
-                so a tall boss and a short one put their feet on the
-                same line and the name below does not move */}
+            {/* What is waiting in there, asleep until somebody
+                walks in on it, with its name under it and a word about
+                what it is. The sprite stands on the floor of its box
+                rather than in the middle of one, so a tall boss and a
+                short one put their feet on the same line and the name
+                below does not move */}
             <div class="flex flex-col items-center gap-2 py-2 text-center">
-              <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
+              {/* The canvas takes the whole width of the panel rather
+                  than being cut to the picture. A sprite is drawn the
+                  same size either way; what changes is that a wide one
+                  — a legendary bird's wingspan is half again its
+                  height — has room to be wide in instead of being
+                  clipped down the middle of a wing */}
+              <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
                 <SpriteDisplay
+                  stretch
                   species={standing().species}
-                  animation="Walk"
-                  direction="DownRight"
+                  animation="Sleep"
+                  direction="DownLeft"
                   scale={4}
                   label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
                 />

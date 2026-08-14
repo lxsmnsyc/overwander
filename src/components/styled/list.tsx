@@ -22,11 +22,19 @@ export interface ListRowProps extends ParentProps {
    */
   selected?: boolean;
   class?: string;
+  /**
+   * What the row means, in a sentence, for a row that is written in
+   * shorthand — an icon and half a phrase. It is the tooltip and
+   * nothing more: a row whose whole meaning is in it belongs in prose
+   * instead
+   */
+  title?: string;
 }
 
 export function ListRow(props: ListRowProps): JSX.Element {
   return (
     <li
+      title={props.title}
       class={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-2 px-3 py-2 text-sm
         shadow-pop-sm transition-colors ${
           props.selected === true

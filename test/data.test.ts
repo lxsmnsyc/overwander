@@ -47,11 +47,11 @@ import {
 } from '../src/data/ids/status';
 import { EvolutionMethod, Species } from '../src/data/ids/species';
 import {
-  CANDY_PER_CATCH,
   CANDY_PER_LEVEL,
   SHADOW_CANDY_MULTIPLIER,
   SPECIES_DAY_CANDY_BOOST,
   getCandyCost,
+  getCatchCandy,
 } from '../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
@@ -74,6 +74,7 @@ import {
 import BERRY_POOL from '../src/data/overworld/berry-pool';
 import { getMoveData, getRegisteredMoves, registerMoves } from '../src/data/moves';
 import { CAST_ANIMATIONS, DEFAULT_CAST, isCommonCast, pickCast } from '../src/data/constants/cast';
+import pickStatusCast, { STATUS_CAST } from '../src/data/constants/status-cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
 import {
@@ -552,6 +553,73 @@ describe('move cast animations', () => {
   });
 });
 
+describe('status animations', () => {
+  const named = new Set<string>(CAST_ANIMATIONS);
+
+  it('gives every drawn status a preference that cannot run out', () => {
+    for (const [status, cast] of STATUS_CAST) {
+      expect(cast.length, String(status)).toBeGreaterThan(0);
+
+      for (const animation of cast) {
+        expect(named.has(animation), `${status}: ${animation}`).toBe(true);
+      }
+
+      // The same rule the move casts follow, for the same reason: the
+      // walk stops at the first clip the sheet has, so the last entry
+      // has to be one every sheet carries
+      expect(isCommonCast(cast[cast.length - 1]), `${status}: ${cast.join(' → ')}`).toBe(true);
+      expect(new Set(cast).size, String(status)).toBe(cast.length);
+    }
+
+    // A status may be drawn one way only. Two entries for the same one
+    // would make the second unreachable
+    expect(new Set(STATUS_CAST.map(([status]) => status)).size).toBe(STATUS_CAST.length);
+  });
+
+  it('draws what is being done to a pokemon standing about', () => {
+    const anySheet = (): boolean => true;
+
+    expect(pickStatusCast((status) => status === Statuses.Sleeping, anySheet)).toBe('Sleep');
+    expect(pickStatusCast((status) => status === Statuses.Dormant, anySheet)).toBe('Sleep');
+    expect(pickStatusCast((status) => status === Statuses.Flinched, anySheet)).toBe('Hurt');
+
+    // The telling clips are the uncommon ones, so a sheet drawn
+    // without them still has to say something: a paralyzed pokemon on
+    // a sheet with no Shock and no Shake is drawn hurt
+    expect(pickStatusCast((status) => status === Statuses.Paralyzed, anySheet)).toBe('Shock');
+    expect(
+      pickStatusCast(
+        (status) => status === Statuses.Paralyzed,
+        (name) => name === 'Hurt',
+      ),
+    ).toBe('Hurt');
+
+    // Nothing worth drawing is not an animation, it is the absence of
+    // one: the caller idles
+    expect(pickStatusCast(() => false, anySheet)).toBe(null);
+  });
+
+  it('draws the status that decides whether it moves at all', () => {
+    // Confused and paralyzed at once is drawn paralyzed: confusion
+    // costs a pokemon its aim, paralysis costs it the turn
+    expect(
+      pickStatusCast(
+        (status) => status === Statuses.Confused || status === Statuses.Paralyzed,
+        () => true,
+      ),
+    ).toBe('Shock');
+
+    // And a flinch beats everything, because it is the one that is
+    // about to end
+    expect(
+      pickStatusCast(
+        (status) => status === Statuses.Flinched || status === Statuses.Sleeping,
+        () => true,
+      ),
+    ).toBe('Hurt');
+  });
+});
+
 describe('ability data', () => {
   it('names every ability a species can roll', () => {
     // The UI reads these names, so an unregistered ability would
@@ -701,11 +769,20 @@ describe('species day', () => {
     expect(getCandyCost({ shadow: true })).toBe(2);
   });
 
-  it('pays four candies for a catch on the family day', () => {
+  it('pays a catch by how hard it was to meet', () => {
+    // One for a first stage, one more for every band above it, five
+    // for a legendary — the same order the spawn pools sort them in
+    expect(getCatchCandy(Species.Bulbasaur)).toBe(1);
+    expect(getCatchCandy(Species.Ivysaur)).toBe(2);
+    expect(getCatchCandy(Species.Venusaur)).toBe(3);
+    expect(getCatchCandy(Species.Mewtwo)).toBe(5);
+  });
+
+  it('pays four times over for a catch on the family day', () => {
     // The catch reward and the spawn weight share the same fourfold
     // bonus, so a family day is worth the same wherever it lands
     expect(SPECIES_DAY_CANDY_BOOST).toBe(SPECIES_DAY_WEIGHT_BOOST);
-    expect(CANDY_PER_CATCH * SPECIES_DAY_CANDY_BOOST).toBe(4);
+    expect(getCatchCandy(Species.Bulbasaur) * SPECIES_DAY_CANDY_BOOST).toBe(4);
 
     // Bulbasaur's family opens the year, so its line pays the bonus
     // that day and nothing else does

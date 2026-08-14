@@ -1,7 +1,7 @@
 import 'server-only';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { CANDY_STACKS } from '../auth/stacks';
-import getCandyCost, { CANDY_PER_CATCH, SPECIES_DAY_CANDY_BOOST } from '../auth/candy-rules';
+import getCandyCost, { SPECIES_DAY_CANDY_BOOST, getCatchCandy } from '../auth/candy-rules';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import { getMaxHealth } from '../auth/health';
@@ -36,9 +36,11 @@ export async function grantCandy(uid: string, family: Families, count = 1): Prom
 }
 
 /**
- * Reward a catch with its family's candy. Catching on the family's
- * own day pays four times as much — the timestamp comes from the
- * server clock, so the day cannot be chosen by the caller
+ * Reward a catch with its family's candy. What it pays is what the
+ * species is worth meeting — one for a base stage, five for a
+ * legendary — and catching on the family's own day pays four times
+ * that again; the timestamp comes from the server clock, so the day
+ * cannot be chosen by the caller
  */
 export async function grantCatchCandy(
   uid: string,
@@ -46,9 +48,8 @@ export async function grantCatchCandy(
   timestamp: number,
 ): Promise<number> {
   const { family } = getSpeciesData(species);
-  const count = isFeaturedSpecies(species, timestamp)
-    ? CANDY_PER_CATCH * SPECIES_DAY_CANDY_BOOST
-    : CANDY_PER_CATCH;
+  const earned = getCatchCandy(species);
+  const count = isFeaturedSpecies(species, timestamp) ? earned * SPECIES_DAY_CANDY_BOOST : earned;
 
   await grantCandy(uid, family, count);
   return count;

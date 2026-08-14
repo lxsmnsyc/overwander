@@ -8,6 +8,7 @@ import { BattleEvents, MoveTargetType } from '../battle/events';
 import type Unit from '../battle/unit';
 import { EventPriority } from '../core/event-emitter';
 import { pickCast } from '../data/constants/cast';
+import pickStatusCast from '../data/constants/status-cast';
 import { Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
@@ -387,6 +388,19 @@ function animationFor(unit: Unit, sprite: SpeciesSpriteAnimation): Performance {
       duration: working.time.duration,
       loop: false,
     };
+  }
+
+  // Standing about is where what is being done **to** it shows: asleep,
+  // frozen, flinching out of the turn it had. It looks at the sheet in
+  // hand rather than at a table of which species owns which clip, the
+  // same way a cast does
+  const suffering = pickStatusCast(
+    (status) => unit.getStatus(status) != null,
+    (name) => sprite.has(name),
+  );
+
+  if (suffering != null) {
+    return { animation: suffering, duration: null, loop: true };
   }
   return { animation: 'Idle', duration: null, loop: true };
 }

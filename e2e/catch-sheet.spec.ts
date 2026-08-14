@@ -54,8 +54,12 @@ test.describe('the catch sheet', () => {
     // A starter is level 5, so its evolution is listed and refused
     await expect(evolve).toBeVisible();
     await expect(evolve).toBeDisabled();
-    // The reason rides on the button rather than filling the row
-    await expect(evolve).toHaveAttribute('title', /needs|uses|not/);
+    // What it is working towards reads off the row as a sum with the
+    // picture beside it — that shape, plus a level — and the row
+    // itself spells the shorthand out
+    await expect(
+      sheet.getByRole('listitem', { name: /^To evolve, reach Lv\. \d+\.$/ }).first(),
+    ).toBeVisible();
   });
 
   test('counts out the training points at the end of the list', async ({ page }) => {

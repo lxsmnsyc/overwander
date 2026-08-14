@@ -16,13 +16,13 @@ import { getItemData, getSpeciesFossil } from '../data/items';
 import { LAIR_NAMES, getBiomeLairs, getSpeciesLair } from '../data/overworld/lair';
 import { STAT_ORDER, Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
-import { Species } from '../data/ids/species';
+import type { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '../data/species';
 import { STAT_LABELS, describeAbility } from './CatchDialog';
 import MoveCategorySprite from './MoveCategorySprite';
 import { dexLabel } from './PokedexCanvas';
-import SpriteDisplay from './SpriteDisplay';
+import SpeciesCoat from './SpeciesCoat';
 import StepButton from './StepButton';
 import TypeBadge from './TypeBadge';
 import {
@@ -67,6 +67,16 @@ import {
  * own best number
  */
 const STAT_CEILING = 200;
+
+/**
+ * How long one turn on the spot takes, in milliseconds.
+ *
+ * The sheets spin at the speed a battle wants — a pokemon whipping
+ * round mid-fight — which on a page that is being read is a fidget.
+ * Four seconds is slow enough that each of the eight facings is
+ * actually looked at, which is the point of turning at all
+ */
+const ROTATION = 4000;
 
 const STAT_BARS: Record<Stats, string> = {
   [Stats.HP]: 'bg-leaf',
@@ -166,19 +176,6 @@ function describeLair(species: Species): { name: string; where: string[] } | nul
   );
 
   return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
-}
-
-/**
- * What a reader who cannot see the picture is told about one coat:
- * nothing at all about a species nobody has met, the name of one that
- * has been caught, and the name with the reason it is a shadow for
- * everything in between
- */
-function describeCoat(met: boolean, revealed: boolean, called: string): string {
-  if (!met) {
-    return 'A pokemon nobody has met yet';
-  }
-  return revealed ? called : `${called} — not yet caught`;
 }
 
 /**
@@ -303,40 +300,22 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
     const revealed = shiny ? known().shiny : known().owned;
     const name = getSpeciesData(species).name;
     const called = shiny ? `${name}, shiny` : name;
-    /**
-     * What a reader who cannot see the picture is told: nothing at all
-     * about a species nobody has met, the name of one that has been
-     * caught, and the name with the reason it is a shadow otherwise
-     */
-    const said = describeCoat(met, revealed, called);
 
     return (
       <div class="flex flex-col items-center gap-1">
-        <SpriteDisplay
-          // A pokemon nobody has met is not drawn at all — not even as
-          // its own shadow, which would give away the shape somebody
-          // is meant to go and find. What stands in its place is
-          // Missingno, asleep: the game's own picture of a pokemon
-          // that is not there
-          species={met ? species : Species.Missingno}
-          shiny={met && shiny}
+        <SpeciesCoat
+          species={species}
+          met={met}
+          revealed={revealed}
+          shiny={shiny}
           // Turning on the spot, the way a dex shows off what it has
           // on file — a pokemon walking on a page it cannot walk off
-          // is a pokemon going nowhere. Something nobody has met is
-          // asleep instead, since there is nothing to show off
-          animation={met ? 'Rotate' : 'Sleep'}
+          // is a pokemon going nowhere
+          animation="Rotate"
+          duration={ROTATION}
           direction="DownLeft"
           scale={3}
-          // Black by day and white by night: a silhouette is the shape
-          // with the colour taken out of it, and "no colour" is a
-          // different colour on a page that is paper in one theme and
-          // night sky in the other.
-          //
-          // Missingno is shadowed too. It is a picture of a pokemon
-          // that is not there, and drawn in full it reads as a pokemon
-          // whose sprite failed to load rather than as an absence
-          class={revealed ? '' : 'opacity-70 brightness-0 dark:invert'}
-          label={said}
+          called={called}
         />
         <Meta>{shiny ? 'Shiny' : 'Regular'}</Meta>
       </div>

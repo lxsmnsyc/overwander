@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, Index, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../auth/battle-lock';
 import { getBuddy, setBuddy } from '../auth/buddy';
 import { syncServerClock } from '../auth/clock';
@@ -26,6 +26,7 @@ import {
   isShiny,
 } from '../auth/caught-record';
 import { Slots } from '../data/constants/slots';
+import { getPokedex } from '../auth/pokedex';
 import { getProfile } from '../auth/profile';
 import {
   type HealthState,
@@ -38,10 +39,10 @@ import useBottleCap from '../auth/bottle-caps';
 import usePurifyingGem from '../auth/purify';
 import { type InventoryEntry, getInventory } from '../auth/inventory';
 import { isAuctionableCatch } from '../auth/auctions';
-import { getCandyCost, getCandyCount, useCandy } from '../auth/candy';
+import { getCandyCost, getCandyCount, getCatchCandy, useCandy } from '../auth/candy';
 import { learnLevelUpMove } from '../auth/moves';
 import { useAuth } from '../auth/context';
-import { type EvolutionOption, evolveCatch, listEvolutionOptions } from '../auth/evolution';
+import { evolveCatch, listEvolutionOptions } from '../auth/evolution';
 import { assignableEffort, unusedEffort } from '../auth/effort';
 import { type TrainingResult, feedEffortBerry, trainEffort, useEffortItem } from '../auth/training';
 import { getAbilityData } from '../data/abilities';
@@ -72,8 +73,9 @@ import { unpackStatuses } from '../data/ids/status';
 import { PP_UP_LIMIT, getMoveData } from '../data/moves';
 import type { Moves } from '../data/ids/moves';
 import {
+  type EvolutionData,
   SUPPORTED_METHODS,
-  getConsumedItem,
+  getFamilyName,
   getMovesLearnedAt,
   getSpeciesData,
 } from '../data/species';
@@ -90,6 +92,8 @@ import {
 } from '../overworld/encounter';
 import IncreasePPDialog from './IncreasePPDialog';
 import InventoryPicker, { describeItem } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
+import SpeciesCoat from './SpeciesCoat';
 import SpriteDisplay from './SpriteDisplay';
 import StepButton from './StepButton';
 import TeachMoveDialog from './TeachMoveDialog';
@@ -114,6 +118,7 @@ import {
   Status,
   TabBar,
   TabButton,
+  useToast,
 } from './styled';
 
 /**
@@ -281,40 +286,118 @@ function describeHistory(caught: CaughtPokemon): string {
 }
 
 /**
- * What an evolution is waiting for, in the fewest words that answer
- * "why is that button dead".
+ * Whether the game can measure what this evolution asks for at all.
  *
- * One that can be taken says only what it costs, since the button
- * beside it already says it is available. One that cannot says what is
- * missing — a level, a stone, something to hold — and one whose
- * condition the game has no way to measure says so plainly rather than
- * naming a requirement a player could chase forever
+ * Friendship, weather and party composition have no stored
+ * counterpart, so an evolution needing one is never going to happen
+ * here — and saying so plainly is kinder than naming a requirement a
+ * player could chase forever
  */
-function describeEvolutionNeed(option: EvolutionOption): string | null {
-  const { evolution } = option;
+function isMeasurableEvolution(evolution: EvolutionData): boolean {
+  const { method } = evolution;
+
+  return method !== 0 && (method & ~SUPPORTED_METHODS) === 0;
+}
+
+/**
+ * How big an item is drawn inside a condition. Small enough to sit on
+ * a line of text without pushing the row open, large enough to be
+ * recognised as the stone it is
+ */
+const CONDITION_ICON = 24;
+
+/**
+ * What an evolution asks for, read straight off the row after the
+ * picture it leads to: a Haunter's says `+ Trade`, an Eevee's shows
+ * the stone, a Charmander's names the level.
+ *
+ * An item is its icon rather than its name, the way the bag draws it,
+ * with the manner in front — **use** for a stone, spent on the spot,
+ * and **holding** for something the pokemon must be carrying when the
+ * moment comes. The two look nothing alike to play and read alike
+ * written down, which is exactly the confusion a picture cannot fix
+ * on its own.
+ *
+ * It says the same thing whether or not the condition is met, because
+ * this is what the player is working towards rather than a complaint
+ * about today — the button beside it is what reports availability
+ */
+function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Element {
+  const method = (): number => props.evolution.method;
+  const item = (): Items | null => props.evolution.item ?? null;
+  const has = (flag: EvolutionMethod): boolean => (method() & flag) !== 0;
+
+  return (
+    <Show when={isMeasurableEvolution(props.evolution)} fallback={<span>not possible here</span>}>
+      <span class="inline-flex items-center gap-1">
+        <Show when={has(EvolutionMethod.Level) ? props.evolution.level : null}>
+          {(level) => <span>Lv. {level()}</span>}
+        </Show>
+        <Show when={has(EvolutionMethod.UsedItem) ? item() : null} keyed>
+          {(stone) => (
+            <>
+              <span>use</span>
+              <ItemSprite item={stone} size={CONDITION_ICON} label={describeItem(stone)} />
+            </>
+          )}
+        </Show>
+        <Show when={has(EvolutionMethod.HeldItem) ? item() : null} keyed>
+          {(carried) => (
+            <>
+              <span>holding</span>
+              <ItemSprite item={carried} size={CONDITION_ICON} label={describeItem(carried)} />
+            </>
+          )}
+        </Show>
+        <Show when={has(EvolutionMethod.Trade)}>
+          <span>Trade</span>
+        </Show>
+      </span>
+    </Show>
+  );
+}
+
+/**
+ * The same condition as a sentence, for the tooltip over the row.
+ *
+ * The row itself is shorthand — an icon, a word, a level — which is
+ * what makes it readable at a glance and what makes it worth spelling
+ * out for anyone who stops on it. It is also what a screen reader is
+ * given, since a line of pictures and half-sentences is not something
+ * that reads aloud
+ */
+function describeEvolutionMethod(evolution: EvolutionData): string {
+  if (!isMeasurableEvolution(evolution)) {
+    return 'This evolution is not possible here.';
+  }
+
   const { method, item } = evolution;
-
-  if (option.available) {
-    const spent = getConsumedItem(evolution);
-
-    return spent == null ? null : `uses ${describeItem(spent)}`;
-  }
-  if (method === 0 || (method & ~SUPPORTED_METHODS) !== 0) {
-    return 'not possible here';
-  }
-
-  const missing: string[] = [];
+  const steps: string[] = [];
 
   if ((method & EvolutionMethod.Level) !== 0 && evolution.level != null) {
-    missing.push(`Lv. ${evolution.level}`);
+    steps.push(`reach Lv. ${evolution.level}`);
   }
   if ((method & EvolutionMethod.UsedItem) !== 0 && item != null) {
-    missing.push(describeItem(item));
+    steps.push(`use ${withArticle(describeItem(item))}`);
   }
   if ((method & EvolutionMethod.HeldItem) !== 0 && item != null) {
-    missing.push(`${describeItem(item)} in hand`);
+    steps.push(`have it hold ${withArticle(describeItem(item))}`);
   }
-  return missing.length === 0 ? 'not yet' : `needs ${missing.join(' · ')}`;
+  if ((method & EvolutionMethod.Trade) !== 0) {
+    steps.push('trade it away');
+  }
+  if (steps.length === 0) {
+    return 'It evolves on its own.';
+  }
+  return `To evolve, ${steps.join(' and ')}.`;
+}
+
+/**
+ * A name with the article that belongs in front of it. Nothing here
+ * is plural or proper, so the only question is the vowel
+ */
+function withArticle(name: string): string {
+  return `${/^[aeiou]/i.test(name) ? 'an' : 'a'} ${name}`;
 }
 
 /**
@@ -405,6 +488,7 @@ export interface CatchDialogProps {
  */
 export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const auth = useAuth();
+  const toast = useToast();
   const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
   const [status, setStatus] = createSignal<string | null>(null);
 
@@ -539,6 +623,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return 'You';
     }
     return owners.latest?.get(uid) ?? 'A trainer';
+  };
+
+  /**
+   * What the reader's dex says, read once for the whole sheet.
+   *
+   * It is the dex rather than this record because of what it is for:
+   * the evolutions below are drawn to what the **player** has met, so
+   * a line they have never seen the end of is a silhouette here the
+   * same way it is in the dex. One document, one read
+   */
+  const [dex] = createResource(() => auth.user()?.uid ?? null, getPokedex);
+
+  /**
+   * Whether the reader has met this species at all, and whether they
+   * have owned one. A dex that has not arrived yet answers "no" to
+   * both, which draws the shadow — a sheet that flashed the full
+   * picture and then hid it would be worse than one that fills in
+   */
+  const dexKnows = (species: Species): { met: boolean; owned: boolean } => {
+    const entry = dex.latest;
+
+    return {
+      met: entry?.seen.some((tally) => tally.species === species) === true,
+      owned: entry?.caught.some((tally) => tally.species === species) === true,
+    };
   };
 
   const [evolutions, { refetch: refetchEvolutions }] = createResource(
@@ -1047,10 +1156,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
 
   const release = (): void => {
     const catchId = props.catchId;
+    const going = view();
 
-    if (owned() == null || catchId == null) {
+    if (owned() == null || catchId == null || going == null) {
       return;
     }
+    // Read before the record goes: once the release lands there is
+    // nothing left to ask what it was
+    const { family, name } = getSpeciesData(going.species);
+    const paid = getCatchCandy(going.species);
+
     if (!releasing()) {
       setReleasing(true);
       return;
@@ -1064,6 +1179,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           setStatus('It could not be released.');
           return;
         }
+        // Said in passing rather than on the sheet, because the sheet
+        // is about to close: what a player gets for letting a pokemon
+        // go should still be somewhere they can read it afterwards.
+        // The family is named — candy is held per family, so "1 candy"
+        // on its own does not say which pile grew
+        toast.push({
+          message: `${name} was let go. ${paid} ${getFamilyName(family)} candy.`,
+          tone: 'leaf',
+        });
         // The record is gone, so there is nothing left for this
         // dialog to show
         props.onChange?.();
@@ -1294,9 +1418,24 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         title="Pokemon Info"
         // The run this sheet is one of, either side of its name. They
         // are the panel's rather than the pokemon's, so they stay put
-        // however far down the sheet is scrolled
-        lead={<StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />}
-        aside={<StepButton label="Next pokemon" mark="›" onPress={walk(1)} />}
+        // however far down the sheet is scrolled.
+        //
+        // A pokemon that is not the reader's has no run to be one of:
+        // a lot on the block is opened on its own, and there is
+        // nothing either side of it to step to. The arrows are left
+        // out entirely rather than drawn dead, since a pair of greyed
+        // arrows reads as a box that has run out rather than as a box
+        // that was never there
+        lead={
+          props.readOnly === true ? undefined : (
+            <StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />
+          )
+        }
+        aside={
+          props.readOnly === true ? undefined : (
+            <StepButton label="Next pokemon" mark="›" onPress={walk(1)} />
+          )
+        }
         // And what can be done to it, on a bar of its own under the
         // name. It was a button in the corner of the heading, beside
         // the arrows that are there now — and what a player does to a
@@ -1530,24 +1669,61 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       happen */}
                   <Show when={evolutions.latest?.length}>
                     <DialogSection title="Evolution">
-                      <List>
-                        <For each={evolutions.latest}>
+                      {/* `items-center`: a row is as wide as what it
+                          says, and stands in the middle of the sheet.
+                          Stretched, the button ended up an inch of
+                          empty paper away from the picture it acts on,
+                          which reads as belonging to nothing */}
+                      <List class="items-center">
+                        {/* `Index` rather than `For`: the list is
+                            re-read after everything this sheet writes,
+                            and each read hands back fresh objects — so
+                            a keyed-by-value list throws every row away
+                            and builds it again, sprite and all, when
+                            what actually changed is a flag on one of
+                            them. What a line evolves into does not
+                            move; only whether it can yet */}
+                        <Index each={evolutions.latest}>
                           {(option) => (
-                            <ListRow>
-                              <span class="grow text-left font-medium">
-                                {getSpeciesData(option.evolution.species).name}
+                            <ListRow
+                              class="items-center gap-3"
+                              // The shorthand on the row spelled out,
+                              // for anyone who stops on it and for
+                              // anything that reads it aloud
+                              title={describeEvolutionMethod(option().evolution)}
+                            >
+                              {/* What it turns into, drawn rather than
+                                  named — and drawn to what the reader
+                                  has earned of it, the way the dex
+                                  draws one. A line whose end they have
+                                  never met is a shape rather than a
+                                  spoiler, which is the whole reason a
+                                  dex is worth filling in */}
+                              <div class="flex items-end justify-start">
+                                <SpeciesCoat
+                                  species={option().evolution.species}
+                                  met={dexKnows(option().evolution.species).met}
+                                  revealed={dexKnows(option().evolution.species).owned}
+                                  scale={2}
+                                />
+                              </div>
+                              {/* The condition reads as a sum with the
+                                  picture: that shape, plus a trade.
+                                  It stays on the row rather than
+                                  hiding on the button, because it is
+                                  what the player is working towards
+                                  and they need it whether or not they
+                                  are about to press anything */}
+                              <span class="flex items-center gap-1 text-muted">
+                                <span>+</span>
+                                <EvolutionCondition evolution={option().evolution} />
                               </span>
-                              {/* What it is waiting for is on the
-                                  button rather than in the row: a
-                                  player reads the row for the name and
-                                  asks the button why it is dead */}
                               <Show when={owned() != null}>
                                 <Button
                                   tone="primary"
-                                  disabled={frozen() || !option.available}
-                                  title={describeEvolutionNeed(option) ?? undefined}
+                                  disabled={frozen() || !option().available}
                                   onClick={() => {
-                                    evolve(option.evolution.species);
+                                    evolve(option().evolution.species);
                                   }}
                                 >
                                   Evolve
@@ -1555,7 +1731,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                               </Show>
                             </ListRow>
                           )}
-                        </For>
+                        </Index>
                       </List>
                     </DialogSection>
                   </Show>
@@ -1581,7 +1757,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <TabPanel value={StatView.Total}>
                         <List>
                           <ListRow>
-                            <span class="w-28 shrink-0 text-left">Health</span>
+                            {/* Nothing can move health — no nature
+                                touches it — but the column it would be
+                                marked in is still paid for, so the six
+                                names below start where this one does */}
+                            <span class="w-3 shrink-0" />
+                            <span class="w-24 shrink-0 text-left">Health</span>
                             <span class="grow text-left tabular-nums">
                               {loaded().health} / {getMaxHealth(loaded())}
                               {isFainted(loaded()) ? ' · fainted' : ''}
@@ -1590,31 +1771,42 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
                             {(stat) => (
                               <ListRow>
-                                <span class="w-28 shrink-0 text-left">
-                                  {STAT_LABELS[stat]}
-                                  {/* The arrow the games have always
-                                      used, beside the stat it is about.
-                                      The bar and the number are already
-                                      tinted, and a colour is not
-                                      something everybody can read */}
-                                  <Show when={NATURE_MARKS[natureShift(loaded().nature, stat)]}>
-                                    {(arrow) => (
-                                      <span
-                                        class={NATURE_NUMBERS[natureShift(loaded().nature, stat)]}
-                                        title={`${STAT_LABELS[stat]} is ${
+                                {/* The arrow the games have always used,
+                                    in a column of its own at the head of
+                                    the row — the mirror of the number at
+                                    the far end of it. Written after the
+                                    name it pushed the labels out of line
+                                    with each other, since only two of
+                                    the six carry one; given its own
+                                    width it marks the row without moving
+                                    anything. The bar and the number are
+                                    already tinted, and a colour is not
+                                    something everybody can read */}
+                                <span
+                                  class={`w-3 shrink-0 text-left ${
+                                    NATURE_NUMBERS[natureShift(loaded().nature, stat)]
+                                  }`}
+                                  title={
+                                    NATURE_MARKS[natureShift(loaded().nature, stat)] === ''
+                                      ? undefined
+                                      : `${STAT_LABELS[stat]} is ${
                                           NATURE_WORDS[natureShift(loaded().nature, stat)]
-                                        }`}
-                                        aria-label={
-                                          NATURE_WORDS[natureShift(loaded().nature, stat)]
-                                        }
-                                        role="img"
-                                      >
-                                        {' '}
-                                        {arrow()}
-                                      </span>
-                                    )}
-                                  </Show>
+                                        }`
+                                  }
+                                  aria-label={
+                                    NATURE_MARKS[natureShift(loaded().nature, stat)] === ''
+                                      ? undefined
+                                      : NATURE_WORDS[natureShift(loaded().nature, stat)]
+                                  }
+                                  role={
+                                    NATURE_MARKS[natureShift(loaded().nature, stat)] === ''
+                                      ? undefined
+                                      : 'img'
+                                  }
+                                >
+                                  {NATURE_MARKS[natureShift(loaded().nature, stat)]}
                                 </span>
+                                <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
                                 {/* Measured against its own best rather
                                     than against a ceiling: what a player
                                     wants off this list is which end of
@@ -1656,7 +1848,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           <For each={STAT_ORDER}>
                             {(stat) => (
                               <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                {/* The column the Total tab marks a
+                                    nature in, empty here: a stat's name
+                                    should not move when the tab under
+                                    it changes */}
+                                <span class="w-3 shrink-0" />
+                                <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
                                 <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
                                   <div
                                     class="h-full rounded-full bg-gold"
@@ -1679,7 +1876,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           <For each={STAT_ORDER}>
                             {(stat) => (
                               <ListRow>
-                                <span class="w-28 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                                {/* The column the Total tab marks a
+                                    nature in, empty here: a stat's name
+                                    should not move when the tab under
+                                    it changes */}
+                                <span class="w-3 shrink-0" />
+                                <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
                                 <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
                                   <div
                                     class="h-full rounded-full bg-leaf"
@@ -1770,29 +1972,36 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     </Show>
                   </DialogSection>
 
-                  <DialogSection title="Held items">
-                    <Show when={loaded().items.length}>
-                      <List>
-                        <For each={loaded().items}>
-                          {(item) => (
-                            <ListRow>
-                              <span class="grow text-left">{describeItem(item)}</span>
-                              <Show when={owned() != null}>
-                                <Button
-                                  disabled={frozen()}
-                                  onClick={() => {
-                                    moveItem(item, false);
-                                  }}
-                                >
-                                  Take back
-                                </Button>
-                              </Show>
-                            </ListRow>
-                          )}
-                        </For>
-                      </List>
-                    </Show>
-                    {/* A catch holds one item at a time, matching the
+                  {/* On somebody else's sheet the section is only
+                      worth a heading when it has something under it:
+                      there is no giving and no taking back, so an
+                      empty "Held items" is a title with nothing to
+                      say. On the reader's own it stays, since the
+                      button that fills it lives there */}
+                  <Show when={owned() != null || loaded().items.length > 0}>
+                    <DialogSection title="Held items">
+                      <Show when={loaded().items.length}>
+                        <List>
+                          <For each={loaded().items}>
+                            {(item) => (
+                              <ListRow>
+                                <span class="grow text-left">{describeItem(item)}</span>
+                                <Show when={owned() != null}>
+                                  <Button
+                                    disabled={frozen()}
+                                    onClick={() => {
+                                      moveItem(item, false);
+                                    }}
+                                  >
+                                    Take back
+                                  </Button>
+                                </Show>
+                              </ListRow>
+                            )}
+                          </For>
+                        </List>
+                      </Show>
+                      {/* A catch holds one item at a time, matching the
                         battle's per-unit limit. The button carries the
                         count so the section says how full it is
                         without a sentence saying so, and it is dead
@@ -1800,40 +2009,41 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         give: a player who empties their bag should see
                         the same sheet they saw before, with one thing
                         greyed out */}
-                    <Show when={owned() != null}>
-                      <Row class="justify-center">
-                        <Button
-                          disabled={
-                            frozen() ||
-                            holdables().length === 0 ||
-                            loaded().items.length >= getCatchSlots(loaded(), Slots.Item)
-                          }
-                          onClick={() => {
-                            setPanel((open) => (open === 'give' ? null : 'give'));
-                          }}
-                        >
-                          Give item {loaded().items.length}/{getCatchSlots(loaded(), Slots.Item)}
-                        </Button>
-                      </Row>
-                      <Show when={panel() === 'give'}>
-                        <InventoryPicker
-                          inline
-                          entries={bag.latest}
-                          disabled={frozen()}
-                          value={null}
-                          verb="Give"
-                          filter={(entry) => isHoldable(entry.item)}
-                          onPick={(item) => {
-                            setPanel(null);
-
-                            if (item != null) {
-                              moveItem(item, true);
+                      <Show when={owned() != null}>
+                        <Row class="justify-center">
+                          <Button
+                            disabled={
+                              frozen() ||
+                              holdables().length === 0 ||
+                              loaded().items.length >= getCatchSlots(loaded(), Slots.Item)
                             }
-                          }}
-                        />
+                            onClick={() => {
+                              setPanel((open) => (open === 'give' ? null : 'give'));
+                            }}
+                          >
+                            Give item {loaded().items.length}/{getCatchSlots(loaded(), Slots.Item)}
+                          </Button>
+                        </Row>
+                        <Show when={panel() === 'give'}>
+                          <InventoryPicker
+                            inline
+                            entries={bag.latest}
+                            disabled={frozen()}
+                            value={null}
+                            verb="Give"
+                            filter={(entry) => isHoldable(entry.item)}
+                            onPick={(item) => {
+                              setPanel(null);
+
+                              if (item != null) {
+                                moveItem(item, true);
+                              }
+                            }}
+                          />
+                        </Show>
                       </Show>
-                    </Show>
-                  </DialogSection>
+                    </DialogSection>
+                  </Show>
                 </Show>
 
                 {/* Whose hands it has passed through, oldest first, and
@@ -1881,7 +2091,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 </DialogSection>
 
                 {/* There is no undoing it, so it takes two presses —
-                    and whatever it is holding comes back to the bag */}
+                    and whatever it is holding comes back to the bag,
+                    along with the candy the pokemon was worth. The
+                    second press names that candy: what a player gets
+                    for it is part of the decision, and a number that
+                    only turns up afterwards is a number they had to
+                    make the decision without */}
                 <Show when={owned()}>
                   <DialogSection>
                     <Row class="justify-center">
@@ -1890,7 +2105,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         disabled={fighting.latest === true || onlyOne.latest === true}
                         onClick={release}
                       >
-                        {releasing() ? 'Let it go for good?' : 'Release'}
+                        {releasing()
+                          ? `Let it go for ${getCatchCandy(loaded().species)} candy?`
+                          : 'Release'}
                       </Button>
                       <Show when={releasing()}>
                         <Button

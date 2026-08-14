@@ -114,9 +114,17 @@ function lotOf(board: Locator, seller: Trader): Locator {
  * opening bid; anything up to what the bidder holds is legal, so the
  * amount is typed rather than nudged
  */
-async function bid(board: Locator, lot: Locator, amount: number): Promise<void> {
-  await lot.getByLabel('Bid').fill(String(amount));
-  await lot.getByRole('button', { name: `Bid ${amount} gold` }).click();
+async function bid(page: Page, board: Locator, lot: Locator, amount: number): Promise<void> {
+  // The row carries one button; the amount is named in the dialog it
+  // opens, since a number box on every row of a board is a form the
+  // length of the board
+  await lot.getByRole('button', { name: 'Bid', exact: true }).click();
+
+  const naming = dialogNamed(page, /^Bid on /);
+
+  await expectOpen(naming);
+  await naming.getByLabel('Bid').fill(String(amount));
+  await naming.getByRole('button', { name: `Bid ${amount} gold` }).click();
   await expect(
     board.getByText(`Bid ${amount} gold — it is yours unless somebody raises it.`),
   ).toBeVisible();
@@ -143,7 +151,7 @@ test.describe('the auction house', () => {
     // Listed: the board comes back with the lot on it, under the
     // seller's own name
     await expect(sellerBoard.getByText('It is on the block until the day is up.')).toBeVisible();
-    await expect(sellerBoard.getByText(/listed by you/)).toBeVisible();
+    await expect(sellerBoard.getByText(/by you/)).toBeVisible();
 
     // The other side of the board
     await grantGold(buyer, 100);
@@ -153,7 +161,7 @@ test.describe('the auction house', () => {
 
     await expect(lot).toBeVisible({ timeout: 20_000 });
     await expect(lot.getByText('Master Ball')).toBeVisible();
-    await bid(buyerBoard, lot, 10);
+    await bid(buyer.page, buyerBoard, lot, 10);
 
     // The gold left the bidder's purse as the bid was made rather than
     // when the lot closed: a standing bid is always paid for
@@ -229,7 +237,7 @@ test.describe('the auction house', () => {
     // six numbers
     await expect(lot).toBeVisible({ timeout: 20_000 });
     await expect(lot.getByText('★★★★★★')).toBeVisible();
-    await bid(buyerBoard, lot, 20);
+    await bid(buyer.page, buyerBoard, lot, 20);
 
     await closeBidding(seller.uid);
 

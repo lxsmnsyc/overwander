@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
 import { dismissGift, expectShut, openPanel, signIn } from './game';
+import { stageSeller } from './stranger';
 
 /**
  * The board: what is up for auction, and the one thing to do about it
  * that is not reading it.
  *
  * A fresh emulator has an empty board, and that is the interesting
- * state rather than a hole in the coverage — the two columns have to
- * stand up and say they are empty, side by side, rather than
- * collapsing into one line of prose.
+ * state rather than a hole in the coverage — the list has to stand up
+ * and say it is empty rather than leaving the panel looking broken.
  */
 
 test.describe('the auction board', () => {
@@ -17,24 +17,25 @@ test.describe('the auction board', () => {
     await dismissGift(page);
   });
 
-  test('is two boards side by side, items and pokemon', async ({ page }) => {
+  test('is one list, whatever is standing on the lots', async ({ page }) => {
+    // Somebody else's lot, so the board has something on it whatever
+    // the emulator was left holding
+    const seller = await stageSeller('Bracken');
     const board = await openPanel(page, 'Auctions');
 
     await expect(board.getByText('Loading auctions…')).toBeHidden({ timeout: 20_000 });
+    await expect(board.getByRole('listitem').filter({ hasText: seller.nickname })).toBeVisible({
+      timeout: 20_000,
+    });
 
-    const items = board.getByRole('heading', { name: 'Items' });
-    const pokemon = board.getByRole('heading', { name: 'Pokemon', exact: true });
-
-    await expect(items).toBeVisible();
-    await expect(pokemon).toBeVisible();
-
-    // Beside one another rather than stacked: the layout is the whole
-    // of what this dialog was rearranged for
-    const left = await items.boundingBox();
-    const right = await pokemon.boundingBox();
-
-    expect(left?.x ?? 0).toBeLessThan(right?.x ?? 0);
-    expect(Math.abs((left?.y ?? 0) - (right?.y ?? 0))).toBeLessThan(4);
+    // One list rather than a column for items and a column for
+    // pokemon: a board is read in the order things were listed, and
+    // sorting it by what a lot happens to be is sorting it by the one
+    // thing a bidder is not looking for. It carries no heading of its
+    // own either — the dialog is already called Auctions
+    await expect(board.getByRole('heading', { name: 'Items' })).toBeHidden();
+    await expect(board.getByRole('heading', { name: 'Pokemon', exact: true })).toBeHidden();
+    await expect(board.getByRole('list')).toHaveCount(1);
   });
 
   test('offers selling from the top bar rather than from the bottom of the list', async ({
@@ -56,13 +57,11 @@ test.describe('the auction board', () => {
 
     // Selling takes the whole panel: the lots are put away rather than
     // pushed down, since nobody is shopping and listing at once
-    await expect(board.getByRole('heading', { name: 'Items' })).toBeHidden();
-    await expect(board.getByRole('heading', { name: 'Pokemon', exact: true })).toBeHidden();
+    await expect(board.getByText('Search the lots')).toBeHidden();
 
     // And the key that opened it is the way back
     await board.getByRole('button', { name: 'Board', exact: true }).click();
     await expect(board.getByRole('heading', { name: 'Sell' })).toBeHidden();
-    await expect(board.getByRole('heading', { name: 'Items' })).toBeVisible();
   });
 
   test('closes and gives the world back', async ({ page }) => {

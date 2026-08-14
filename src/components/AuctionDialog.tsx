@@ -15,6 +15,7 @@ import type { Items } from '../data/ids/items';
 import { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import { describeItem } from './InventoryPicker';
+import ItemSprite from './ItemSprite';
 import SpriteDisplay from './SpriteDisplay';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from './styled';
 
@@ -55,6 +56,27 @@ export interface AuctionDialogProps {
    */
   onListed?: () => void;
 }
+
+/**
+ * How big the icon over an item lot is drawn. Large enough to be the
+ * subject of the dialog rather than a bullet beside its name
+ */
+const ITEM_SIZE = 64;
+
+/**
+ * Down the middle — the **text**, and nothing else.
+ *
+ * The dialog is one thing being parted with and a price being named
+ * for it, so the picture and the prose share an axis. What it must not
+ * do is centre the column itself: `items-center` shrink-wraps every
+ * child to its own contents, and the two that are supposed to reach
+ * the panel's edges — the heading stuck to the top, the button bar
+ * stuck to the bottom with its rule across it — came in short of them.
+ * A rule that stops an inch from each side reads as a divider inside
+ * the content rather than as the foot of the panel, which is not how
+ * any other dialog in the game ends
+ */
+const CENTRED = 'text-center';
 
 export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
   const [asking, setAsking] = createSignal(MIN_STARTING_BID);
@@ -145,18 +167,22 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
   };
 
   /**
-   * What is standing on the block, drawn the size a dialog can hold.
+   * What is standing on the block, drawn the size a dialog can hold
+   * and set in the middle of it.
    *
-   * A pokemon is its sprite, and an egg is drawn as an egg the way it
-   * is everywhere else. An **item** has no picture yet, so it is its
-   * own name, set large — a placeholder for the icon that belongs
-   * there, rather than an empty frame pretending to be one
+   * A pokemon is its sprite, an egg is drawn as an egg the way it is
+   * everywhere else, and an item is its icon with its name under it —
+   * the same picture the bag draws, so what is about to be parted with
+   * is recognised rather than read
    */
   const portrait = (): JSX.Element => (
     <Show
       when={props.subject?.lot !== AuctionLot.Item}
       fallback={
-        <div class="flex min-h-24 items-center justify-center">
+        <div class="flex min-h-24 flex-col items-center justify-center gap-1">
+          <Show when={props.subject?.lot === AuctionLot.Item ? props.subject.item : null} keyed>
+            {(item) => <ItemSprite item={item} size={ITEM_SIZE} label="" />}
+          </Show>
           <span class="text-center text-lg font-semibold">{named()}</span>
         </div>
       }
@@ -188,10 +214,11 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
         onClose={close}
         title={`Auction ${named()}`}
         description="What it opens at, and the least a bid may raise it by. A lot stands for a day."
+        class={CENTRED}
       >
         {portrait()}
 
-        <Row>
+        <Row class="justify-center">
           <Field label="Opening bid">
             <input
               type="number"
@@ -243,6 +270,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
         }}
         title={`Put ${named()} up for auction?`}
         description="It leaves your records the moment the lot opens."
+        class={CENTRED}
       >
         {portrait()}
 

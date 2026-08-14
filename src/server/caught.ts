@@ -20,6 +20,7 @@ import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
 import resolveBuddy, { resolveBuddyCatch } from './buddy';
 import { grantCandy, grantCatchCandy } from './candy';
+import { getCatchCandy } from '../auth/candy-rules';
 import {
   asLocale,
   isEggRecord,
@@ -30,7 +31,7 @@ import {
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { recordCaughtSpecies } from './pokedex';
-import { ITEM_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { freeFields, isCatchLocked } from './locks';
@@ -507,9 +508,20 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
       ),
     );
 
+    // What the pokemon was worth meeting, paid once more as it goes.
+    // The species' own rarity decides it, the same way catching one
+    // does: a legendary let go is five candies towards raising the
+    // rest of its family, and a Rattata is one. It is read before
+    // anything is written, with the item stacks, because a
+    // transaction that writes before it reads is refused
+    const record = asCaughtPokemon(caught);
+    const { family } = getSpeciesData(record.species);
+    const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
+
     for (const [item, carried] of stacks) {
       writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (returning.get(item) ?? 0));
     }
+    writeStackIn(transaction, CANDY_STACKS, uid, family, candies + getCatchCandy(record.species));
 
     // The buddy is a field of the profile, so it is cleared rather
     // than deleted: the player walks alone, they do not stop having a

@@ -34,6 +34,19 @@ const DEFAULT_SCALE = 3;
  */
 const SPARKLE_SPREAD = 0.9;
 
+/**
+ * How much room a sparkle needs **above** the pokemon, as a share of
+ * the picture's width.
+ *
+ * The stars are thrown up the body and drift further up as they fade,
+ * so the topmost of them sits above the frame the sprite is cut to —
+ * and a canvas cut to the sprite clips it off in a straight line,
+ * which reads as the sparkle hitting a ceiling. The frame is grown
+ * upwards by this and the pokemon put back on its own floor, so it
+ * stands exactly where it stood
+ */
+const SPARKLE_HEADROOM = 0.45;
+
 export interface SpriteDisplayProps {
   species: Species;
   shiny?: boolean;
@@ -47,10 +60,32 @@ export interface SpriteDisplayProps {
    */
   sparkle?: boolean;
   /**
+   * Whether the canvas takes the whole width it is given rather than
+   * being cut to the picture.
+   *
+   * The pokemon is drawn the same size either way and stays in the
+   * middle; what changes is how much room there is **around** it. A
+   * sparkle is thrown wider than the sprite it belongs to, so a box
+   * cut to the sprite clips the outermost stars — and anything showing
+   * one pokemon on its own has a whole dialog's width going spare
+   */
+  stretch?: boolean;
+  /**
    * What it should be doing. A sheet that has not got it falls back to
    * standing still, which every sheet has
    */
   animation?: string;
+  /**
+   * How long one pass of it should take, in milliseconds, instead of
+   * the speed the sheet was drawn at.
+   *
+   * The clip is stretched rather than cut — every frame is held
+   * proportionally longer — so it is a way of saying how leisurely a
+   * loop should be. A turn on the spot is the case that wants it: the
+   * sheets spin fast enough to read as a fidget, and a dex entry is
+   * something looked at rather than glanced at
+   */
+  duration?: number;
   direction?: SpriteDirection;
   scale?: number;
   class?: string;
@@ -102,6 +137,10 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
     drawn.play(drawn.has(wanted) ? wanted : 'Idle', {
       direction: props.direction ?? 'Down',
       loop: true,
+      // Only where a caller asked for a pace: everything else plays at
+      // the speed it was drawn at, which is the speed the rest of the
+      // game shows it at
+      duration: props.duration,
     });
 
     const scale = props.scale ?? DEFAULT_SCALE;
@@ -131,23 +170,43 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
       // off the bottom — which is what it used to do, badly, on the
       // sheets drawn tall enough for a wingspan
       const feet = drawn.anchor('shadow');
-      const floor = feet == null ? height * scale : (feet[1] + 0.5) * scale;
+      // Room over its head for the stars, where there are stars to
+      // make room for. It is added to the frame rather than taken out
+      // of the picture: the pokemon keeps its size and its floor, and
+      // the canvas is simply taller
+      const headroom = props.sparkle === true ? Math.round(width * scale * SPARKLE_HEADROOM) : 0;
+      const floor = (feet == null ? height * scale : (feet[1] + 0.5) * scale) + headroom;
       // Room for the picture and for the shadow under it, whichever
       // reaches lower. On a trimmed sheet they are not the same: a
       // frame is cropped to what is drawn, so the ground a flying
       // pokemon casts its shadow on is below the bottom of its frame
       const room = {
-        width: width * scale,
-        height: Math.max(height * scale, Math.round(floor + drawn.shadowRadius(scale).y + 1)),
+        // As wide as the picture, or as wide as whatever it was given
+        // — the element's own laid-out width, which is what `stretch`
+        // asks the stylesheet for
+        width:
+          props.stretch === true
+            ? Math.max(1, Math.round(element.clientWidth))
+            : Math.round(width * scale),
+        height: Math.max(
+          height * scale + headroom,
+          Math.round(floor + drawn.shadowRadius(scale).y + 1),
+        ),
       };
 
       // The canvas is sized from the animation rather than by the
       // caller: a frame is as big as it is, and a box guessed at
-      // would either crop the pokemon or leave a hole
+      // would either crop the pokemon or leave a hole. The height is
+      // the sprite's own even when the width is the room's, so a
+      // stretched picture is a wider frame rather than a bigger
+      // pokemon
       if (element.width !== room.width * ratio || element.height !== room.height * ratio) {
         element.width = room.width * ratio;
         element.height = room.height * ratio;
-        element.style.width = `${room.width}px`;
+        // Left to the stylesheet where the caller asked for the whole
+        // width: setting it in pixels here would pin the canvas to
+        // whatever the room happened to be on the frame it was read
+        element.style.width = props.stretch === true ? '100%' : `${room.width}px`;
         element.style.height = `${room.height}px`;
       }
 
@@ -175,7 +234,9 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
         // side glint the same way, which is what a still picture of
         // one pokemon wants
         drawSparkle(context, props.species, shown, room.width / 2, floor, drawn.frameSize, scale, {
-          spread: SPARKLE_SPREAD,
+          // Held in where the box is cut to the sprite, and thrown as
+          // wide as the overworld throws them where there is room
+          spread: props.stretch === true ? undefined : SPARKLE_SPREAD,
         });
       }
     };
@@ -191,7 +252,9 @@ export default function SpriteDisplay(props: SpriteDisplayProps): JSX.Element {
       ref={canvas}
       role="img"
       aria-label={props.label}
-      class={`block [image-rendering:pixelated] ${props.class ?? ''}`}
+      class={`block [image-rendering:pixelated] ${props.stretch === true ? 'w-full' : ''} ${
+        props.class ?? ''
+      }`}
     />
   );
 }

@@ -322,7 +322,7 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Big_Pecks_(Ability)
   createAbility(Abilities.BigPecks, (battle) =>
-    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
       if (
         event.success &&
         event.stage === Stages.Defense &&
@@ -967,7 +967,7 @@ const setupAbilities = [
           }
         }),
         // Unfazed by Intimidate (modern mechanics)
-        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
             event.value < 0 &&
@@ -1625,7 +1625,7 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Clear_Body_(Ability)
   createAbility(Abilities.ClearBody, (battle) =>
     // Mutates the in-flight check event, so the effect stays inline
-    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
       if (
         event.success &&
         event.value < 0 &&
@@ -1776,7 +1776,7 @@ const setupAbilities = [
           }
         }),
         // Unfazed by Intimidate (modern mechanics)
-        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
             event.value < 0 &&
@@ -1826,7 +1826,7 @@ const setupAbilities = [
           }
         }),
         // Unfazed by Intimidate (modern mechanics)
-        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
             event.value < 0 &&
@@ -2165,7 +2165,7 @@ const setupAbilities = [
   // Krabby
   // https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
   createAbility(Abilities.HyperCutter, (battle) =>
-    battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
       if (
         event.success &&
         event.stage === Stages.Attack &&
@@ -2552,7 +2552,7 @@ const setupAbilities = [
           }
         }),
         // Unfazed by Intimidate (modern mechanics)
-        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
             event.value < 0 &&

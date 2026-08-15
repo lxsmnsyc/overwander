@@ -54,7 +54,7 @@ export default function setupMistStatus(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
     if (
       event.success &&
       event.value < 0 &&
@@ -66,7 +66,7 @@ export default function setupMistStatus(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.CheckUnitRemoveStage, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
     if (
       event.success &&
       event.value > 0 &&

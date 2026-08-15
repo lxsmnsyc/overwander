@@ -1,4 +1,5 @@
 import type Battle from '../core';
+import setupBattleItems from './battle-items';
 import setupBerries from './berries';
 import setupGear from './gear';
 import setupGems from './gems';
@@ -17,4 +18,5 @@ export default function setupItems(battle: Battle): void {
   setupOrbs(battle);
   setupGear(battle);
   setupOneShots(battle);
+  setupBattleItems(battle);
 }

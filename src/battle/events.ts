@@ -182,8 +182,17 @@ export const enum BattleEvents {
   UnitAddStatusFailed = 117,
   CheckUnitItemThreshold = 118,
   CheckUnitDrain = 119,
-  CheckUnitAddStage = 120,
-  CheckUnitRemoveStage = 121,
+  /**
+   * Whether a stage change may land at all: the verdict every guard
+   * against being weakened answers — Clear Body, a Mist, a Guard Spec.
+   * A drop is a negative on the add side and a positive on the remove
+   * one, which is the same difference the applied events carry.
+   *
+   * Asked only on real attempts, never speculatively, so an item may
+   * be spent answering one
+   */
+  CheckUnitCanAddStage = 120,
+  CheckUnitCanRemoveStage = 121,
   CheckUnitStatusDuration = 122,
   UnitUpdateStatusTimer = 123,
   CheckUnitMoveHits = 124,
@@ -577,7 +586,7 @@ export interface UnitUpdateStatusTimerEvent extends UnitStatusEvent {
  * Keen Eye, a substitute) veto it here instead of disabling the
  * update event
  */
-export interface CheckUnitUpdateStageEvent extends UnitUpdateStageEvent {
+export interface CheckUnitCanUpdateStageEvent extends UnitUpdateStageEvent {
   success: boolean;
 }
 
@@ -962,8 +971,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
-  [BattleEvents.CheckUnitAddStage]: [CheckUnitUpdateStageEvent, EventPriority];
-  [BattleEvents.CheckUnitRemoveStage]: [CheckUnitUpdateStageEvent, EventPriority];
+  [BattleEvents.CheckUnitCanAddStage]: [CheckUnitCanUpdateStageEvent, EventPriority];
+  [BattleEvents.CheckUnitCanRemoveStage]: [CheckUnitCanUpdateStageEvent, EventPriority];
 }
 
 export interface ProgressData {

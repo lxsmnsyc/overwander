@@ -20,11 +20,11 @@
 - [ ] add "attack"
 - [ ] effect sprites
 
-Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room), Protective Pads (every contact reaction in gen-1.ts would have to consult it).
+Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
 
 Held items I'd leave alone (22): the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
 
-Battle items — all 9 missing, and nothing can use them. X Attack, X Defense, X Sp. Atk, X Sp. Def, X Speed, X Accuracy, Dire Hit, Guard Spec, Max Mushrooms. There is no in-battle item flow anywhere in src/server or src/battle — a player cannot reach into the bag mid-fight. The effects are trivial (stages, crit stage, Mist); the missing piece is the flow.
+Battle items — Max Mushrooms. There is no in-battle item flow anywhere in src/server or src/battle — a player cannot reach into the bag mid-fight. The effects are trivial (stages, crit stage, Mist); the missing piece is the flow.
 
 Medicine — 21 missing. The interesting ones: Ether / Max Ether / Elixir / Max Elixir, which map cleanly onto clearing cooldowns the way the Leppa Berry already does; Rare Candy; Sacred Ash (revive the whole party); Ability Capsule. The rest are drinks and regional sweets that are just cheaper potions and a friendship bump — Moomoo Milk, Fresh Water, Soda Pop, Lemonade, Berry Juice, Lava Cookie, Old Gateau, Casteliacone, and so on.
 

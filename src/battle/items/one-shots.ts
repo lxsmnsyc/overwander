@@ -1,8 +1,4 @@
-import {
-  AttackPriority,
-  type EventListenerLifecycle,
-  EventPriority,
-} from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
@@ -12,10 +8,10 @@ import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
-import { BattleEvents, type EffectCause, EffectType, type UnitUpdateStageEvent } from '../events';
+import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { createEffectivenessTracker, createHeldItem, holds, spendItem } from './__create';
+import { createEffectivenessTracker, createHeldItem, holds, lowering, spendItem } from './__create';
 
 /**
  * The one-shots: held against a single moment, and gone once it comes.
@@ -81,14 +77,6 @@ const ALL_STAGES: Stages[] = [
 ];
 
 /**
- * The pair of listeners it takes to catch a stat going down
- */
-type StageListeners = [
-  EventListenerLifecycle<UnitUpdateStageEvent>,
-  EventListenerLifecycle<UnitUpdateStageEvent>,
-];
-
-/**
  * The teammate that would come out, or nothing when the swap cannot
  * happen. `forced` is the card-versus-ejector difference, the same one
  * the switch-out moves draw: a Whirlwind drags its target out of
@@ -136,31 +124,6 @@ function bench(
 
   switched.forceSwitch(replacement);
   return true;
-}
-
-/**
- * A stage can fall two ways: something takes one off, or something adds
- * a negative one — an Intimidate does the latter — so anything
- * answering a stat being lowered has to watch both
- */
-function lowering(
-  battle: Battle,
-  listener: (unit: Unit, cause: EffectCause) => void,
-): StageListeners {
-  // Both events carry the change that was actually applied once they
-  // have been resolved — a stage that was already at the floor comes
-  // back as nothing moved — so a negative is a stat that really did go
-  // down, whichever door it came through
-  const fell = (event: UnitUpdateStageEvent): void => {
-    if (event.value < 0) {
-      listener(event.source, event.cause);
-    }
-  };
-
-  return [
-    battle.on(BattleEvents.UnitRemoveStage, EventPriority.Post, fell),
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Post, fell),
-  ];
 }
 
 /**
@@ -356,7 +319,7 @@ const setupAdrenalineOrb = createHeldItem(
   Items.AdrenalineOrb,
   (battle) =>
     new MergedLifecycle(
-      lowering(battle, (unit, cause) => {
+      lowering(battle, (unit, _stage, cause) => {
         if (cause.type !== EffectType.Ability || cause.ability !== Abilities.Intimidate) {
           return;
         }

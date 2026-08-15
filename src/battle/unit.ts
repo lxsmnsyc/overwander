@@ -16,6 +16,7 @@ import type {
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
   CheckUnitCanDamageEvent,
+  CheckUnitCanUpdateStageEvent,
   CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
   CheckUnitGroundedEvent,
@@ -35,7 +36,6 @@ import type {
   CheckUnitStatEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
-  CheckUnitUpdateStageEvent,
   CheckUnitWeatherDurationEvent,
   CheckUnitWeightEvent,
   EffectCause,
@@ -730,9 +730,9 @@ export default class Unit {
     [Stages.Speed]: 0,
   };
 
-  checkAddStage(stage: Stages, value: number, cause: EffectCause): boolean {
-    const event: CheckUnitUpdateStageEvent = {
-      id: 'CheckUnitAddStage',
+  checkCanAddStage(stage: Stages, value: number, cause: EffectCause): boolean {
+    const event: CheckUnitCanUpdateStageEvent = {
+      id: 'CheckUnitCanAddStage',
       disabled: false,
       source: this,
       stage,
@@ -740,12 +740,12 @@ export default class Unit {
       cause,
       success: true,
     };
-    this.battle.emit(BattleEvents.CheckUnitAddStage, event);
+    this.battle.emit(BattleEvents.CheckUnitCanAddStage, event);
     return event.success;
   }
 
   addStage(stage: Stages, value: number, cause: EffectCause): void {
-    if (this.checkAddStage(stage, value, cause)) {
+    if (this.checkCanAddStage(stage, value, cause)) {
       this.battle.emit(BattleEvents.UnitAddStage, {
         id: 'UnitAddStage',
         disabled: false,
@@ -757,9 +757,9 @@ export default class Unit {
     }
   }
 
-  checkRemoveStage(stage: Stages, value: number, cause: EffectCause): boolean {
-    const event: CheckUnitUpdateStageEvent = {
-      id: 'CheckUnitRemoveStage',
+  checkCanRemoveStage(stage: Stages, value: number, cause: EffectCause): boolean {
+    const event: CheckUnitCanUpdateStageEvent = {
+      id: 'CheckUnitCanRemoveStage',
       disabled: false,
       source: this,
       stage,
@@ -767,12 +767,12 @@ export default class Unit {
       cause,
       success: true,
     };
-    this.battle.emit(BattleEvents.CheckUnitRemoveStage, event);
+    this.battle.emit(BattleEvents.CheckUnitCanRemoveStage, event);
     return event.success;
   }
 
   removeStage(stage: Stages, value: number, cause: EffectCause): void {
-    if (this.checkRemoveStage(stage, value, cause)) {
+    if (this.checkCanRemoveStage(stage, value, cause)) {
       this.battle.emit(BattleEvents.UnitRemoveStage, {
         id: 'UnitRemoveStage',
         disabled: false,

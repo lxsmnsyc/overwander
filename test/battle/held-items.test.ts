@@ -28,6 +28,7 @@ import {
   WIDE_LENS_ACCURACY,
   ZOOM_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
+import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SCREEN_DURATION } from '../../src/battle/status/reflect';
 import { TRAPPED_DURATION, TRAPPED_TICK } from '../../src/battle/status/trapped';
@@ -1208,5 +1209,104 @@ describe('the Sticky Barb', () => {
     attacker.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
 
     expect(holder.items[Items.StickyBarb]).toBe(true);
+  });
+});
+
+describe('the battle items', () => {
+  it('puts an X item’s own stat back up further than it fell', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.XAttack);
+    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+
+    // Down one, then up two: the item is worth carrying only if
+    // answering a drop leaves the holder ahead
+    expect(holder.stages[Stages.Attack]).toBe(-1 + X_ITEM_STAGES_BOOST);
+    expect(holder.items[Items.XAttack]).toBeUndefined();
+  });
+
+  it('leaves an X item alone for a stat it is not for', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.XAttack);
+    holder.removeStage(Stages.Speed, 1, moveCause(attacker, Moves.StringShot));
+
+    expect(holder.stages[Stages.Speed]).toBe(-1);
+    expect(holder.items[Items.XAttack]).toBe(true);
+  });
+
+  it('answers an Intimidate as readily as a Growl', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const intimidator = createUnit(battle, teamB);
+
+    holder.addItem(Items.XAttack);
+    intimidator.addAbility(Abilities.Intimidate);
+    intimidator.enter();
+
+    // Intimidate lowers by adding a negative stage rather than by
+    // taking one off, and the item has to answer both doors
+    expect(holder.stages[Stages.Attack]).toBe(-1 + X_ITEM_STAGES_BOOST);
+  });
+
+  it('sharpens a Dire Hit holder for the rest of the fight', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const hit = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamB);
+
+    holder.addItem(Items.DireHit);
+    holder.removeStage(Stages.Defense, 1, moveCause(hit, Moves.TailWhip));
+
+    expect(holder.items[Items.DireHit]).toBeUndefined();
+
+    // Between the bare odds and the sharpened ones
+    pinRandom(battle, (1 / 16) * 2);
+
+    const beforePlain = bare.health;
+    plain.attack(bare, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, CAN_CRIT);
+
+    const beforeSharp = hit.health;
+    holder.attack(hit, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, CAN_CRIT);
+
+    expect(beforeSharp - hit.health).toBeCloseTo((beforePlain - bare.health) * 2, 5);
+  });
+
+  it('refuses the drop outright with a Guard Spec', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.GuardSpec);
+    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(holder.items[Items.GuardSpec]).toBeUndefined();
+
+    // And it is spent: the next one lands
+    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+    expect(holder.stages[Stages.Attack]).toBe(-1);
+  });
+
+  it('lets a Guard Spec holder lower its own stats', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    // A Belly Drum sort of price is the holder's own choice, and a
+    // guard against everybody else is no reason to refuse it
+    holder.addItem(Items.GuardSpec);
+    holder.removeStage(Stages.Defense, 1, {
+      type: EffectType.Move,
+      move: Moves.Growl,
+      unit: holder,
+    });
+
+    expect(holder.stages[Stages.Defense]).toBe(-1);
+    expect(holder.items[Items.GuardSpec]).toBe(true);
   });
 });

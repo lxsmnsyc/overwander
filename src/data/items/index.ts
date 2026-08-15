@@ -1,4 +1,5 @@
 import registerBalls from './balls';
+import registerBattleItems from './battle-items';
 import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
@@ -46,6 +47,7 @@ export default function registerItems(): void {
   registerStatBoosters();
   registerGear();
   registerOneShots();
+  registerBattleItems();
   registerIncenses();
   registerTrinkets();
   registerGems();

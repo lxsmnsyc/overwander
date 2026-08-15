@@ -288,7 +288,7 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
     targetAbility,
     (battle) =>
       new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitAddStage, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
           if (
             event.success &&
             event.stage === Stages.Accuracy &&

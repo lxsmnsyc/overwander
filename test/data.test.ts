@@ -149,6 +149,7 @@ import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/da
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/gear';
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
+import { BATTLE_ITEMS, BATTLE_ITEM_PRICE, isBattleItem } from '../src/data/items/battle-items';
 import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../src/data/items/one-shots';
 import {
   FOUND_TRINKETS,
@@ -2312,6 +2313,25 @@ describe('type-enhancing items', () => {
     // The coin pays more than the incense it stands against, which is
     // what being unbuyable is worth
     expect(AMULET_COIN_BONUS).toBeGreaterThan(LUCK_INCENSE_BONUS);
+  });
+
+  it('carries the battle items rather than throwing them in', () => {
+    for (const item of BATTLE_ITEMS) {
+      const data = getItemData(item);
+
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      // Spent the moment they answer something, like a one-shot
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Marketable).not.toBe(0);
+      expect(data.buy).toBe(BATTLE_ITEM_PRICE);
+      expect(isBattleItem(item)).toBe(true);
+      expect(isOneShot(item)).toBe(false);
+    }
+
+    // Cheaper than a one-shot, because each answers one thing only
+    expect(BATTLE_ITEM_PRICE).toBeLessThan(ONE_SHOT_PRICE);
+    expect(isBattleItem(Items.Leftovers)).toBe(false);
   });
 
   it('makes the Heart Scale worth nothing but a forgotten move', () => {

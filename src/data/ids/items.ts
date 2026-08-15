@@ -579,6 +579,21 @@ export const enum Items {
    * land on
    */
   ProtectivePads = 285,
+
+  /**
+   * The battle items: what a trainer would have thrown in from the
+   * side of a mainline fight. Here they are carried and answer a stat
+   * being knocked down. See
+   * [`src/data/items/battle-items.ts`](../items/battle-items.ts)
+   */
+  XAttack = 286,
+  XDefense = 287,
+  XSpAtk = 288,
+  XSpDef = 289,
+  XSpeed = 290,
+  XAccuracy = 291,
+  DireHit = 292,
+  GuardSpec = 293,
 }
 
 /**

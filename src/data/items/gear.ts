@@ -47,6 +47,7 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.LaggingTail, 'Lagging Tail'],
   [Items.RingTarget, 'Ring Target'],
   [Items.FloatStone, 'Float Stone'],
+  [Items.ProtectivePads, 'Protective Pads'],
 ]);
 
 /**

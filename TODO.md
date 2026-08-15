@@ -22,7 +22,7 @@
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room), Protective Pads (every contact reaction in gen-1.ts would have to consult it).
 
-Held items I'd leave alone (22): the Trick/Fling fodder that is pure downside without either move (Iron Ball, Lagging Tail, Ring Target, Sticky Barb, Float Stone); and the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
+Held items I'd leave alone (22): the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
 
 Battle items — all 9 missing, and nothing can use them. X Attack, X Defense, X Sp. Atk, X Sp. Def, X Speed, X Accuracy, Dire Hit, Guard Spec, Max Mushrooms. There is no in-battle item flow anywhere in src/server or src/battle — a player cannot reach into the bag mid-fight. The effects are trivial (stages, crit stage, Mist); the missing piece is the flow.
 

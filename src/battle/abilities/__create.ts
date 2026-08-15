@@ -1,8 +1,8 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
-import { MoveFlags, StatFlags } from '../../data/ids/moves';
-import { getMoveData, getWeatherMove } from '../../data/moves';
+import { StatFlags } from '../../data/ids/moves';
+import { getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import type { Statuses, Weathers } from '../../data/ids/status';
@@ -82,7 +82,7 @@ export function createContactHazard(
     if (
       event.target.type === MoveTargetType.Unit &&
       event.target.unit !== event.source &&
-      getMoveData(event.move).flags & MoveFlags.Contact &&
+      event.source.checkMoveContact(event.move, event.target) &&
       event.target.unit.hasAbility(targetAbility)
     ) {
       event.score -= RISKY_PENALTY;

@@ -21,6 +21,7 @@ import type {
   CheckUnitGroundedEvent,
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
+  CheckUnitMoveContactEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
@@ -1029,6 +1030,25 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitWeight, event);
     return Math.max(0.1, event.weight);
+  }
+
+  /**
+   * Whether a blow of this move counts as contact against the target.
+   * Everything that answers being touched reads this rather than the
+   * move's own flag, so a Protective Pads is one veto rather than a
+   * clause in each of them
+   */
+  checkMoveContact(move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitMoveContactEvent = {
+      id: 'CheckUnitMoveContact',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      contact: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveContact, event);
+    return event.contact;
   }
 
   checkGrounded(): boolean {

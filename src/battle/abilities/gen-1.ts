@@ -48,6 +48,7 @@ import {
   isWeatherSandstorm,
   isWeatherSunny,
   onUnitActs,
+  unitTarget,
 } from '../utils';
 import {
   createAbility,
@@ -512,7 +513,7 @@ const setupAbilities = [
           event.cause.type === EffectType.Move &&
           event.cause.unit !== event.target &&
           event.target.hasAbility(Abilities.Static) &&
-          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
           battle.random() < CHANCE
         ) {
           event.target.triggerAbility(Abilities.Static);
@@ -649,7 +650,7 @@ const setupAbilities = [
           event.cause.type === EffectType.Move &&
           event.cause.unit !== event.target &&
           event.target.hasAbility(Abilities.PoisonPoint) &&
-          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
           battle.random() < CHANCE
         ) {
           event.target.triggerAbility(Abilities.PoisonPoint);
@@ -723,7 +724,7 @@ const setupAbilities = [
           event.cause.type === EffectType.Move &&
           event.cause.unit !== event.target &&
           event.target.hasAbility(Abilities.CuteCharm) &&
-          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
           battle.random() < CHANCE
         ) {
           event.target.triggerAbility(Abilities.CuteCharm);
@@ -1059,7 +1060,7 @@ const setupAbilities = [
           event.cause.type === EffectType.Move &&
           event.cause.unit !== event.target &&
           event.target.hasAbility(Abilities.EffectSpore) &&
-          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
           // Grass types and Overcoat holders are immune to spores
           // (modern mechanics; explicit check)
           !event.cause.unit.types.has(Types.Grass) &&
@@ -1731,7 +1732,7 @@ const setupAbilities = [
           event.cause.type === EffectType.Move &&
           event.cause.unit !== event.target &&
           event.target.hasAbility(Abilities.FlameBody) &&
-          getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+          event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
           battle.random() < CHANCE
         ) {
           event.target.triggerAbility(Abilities.FlameBody);
@@ -1995,7 +1996,7 @@ const setupAbilities = [
         event.cause.type === EffectType.Move &&
         event.cause.unit !== event.target &&
         event.cause.unit.hasAbility(Abilities.PoisonTouch) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact &&
+        event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target)) &&
         battle.random() < CHANCE
       ) {
         const attacker = event.cause.unit;
@@ -2223,7 +2224,7 @@ const setupAbilities = [
         event.cause.type === EffectType.Move &&
         event.cause.unit !== event.target &&
         event.target.hasAbility(Abilities.Aftermath) &&
-        getMoveData(event.cause.move).flags & MoveFlags.Contact
+        event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
       ) {
         // A Damp unit on the field suppresses the blast; every
         // holder reacts for the visual cue

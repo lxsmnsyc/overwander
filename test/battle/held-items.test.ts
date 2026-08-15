@@ -1102,6 +1102,62 @@ describe('the gear that costs its own carrier something', () => {
   });
 });
 
+describe('Protective Pads', () => {
+  it('keeps the holder out of everything that answers being touched', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const helmet = createUnit(battle, teamB);
+    const attackerHealth = attacker.checkStat(Stats.HP, 0);
+
+    helmet.addItem(Items.RockyHelmet);
+    attacker.addItem(Items.ProtectivePads);
+    attacker.attack(helmet, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // The blow lands; the hand behind it never touches the helmet
+    expect(helmet.health).toBeLessThan(helmet.checkStat(Stats.HP, 0));
+    expect(attacker.health).toBe(attackerHealth);
+  });
+
+  it('answers the contact check itself, so an ability reads it too', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const target = unitTarget(createUnit(battle, teamB));
+
+    expect(attacker.checkMoveContact(Moves.Tackle, target)).toBe(true);
+    // Ember is nobody's idea of contact, pads or no pads
+    expect(attacker.checkMoveContact(Moves.Ember, target)).toBe(false);
+
+    attacker.addItem(Items.ProtectivePads);
+
+    expect(attacker.checkMoveContact(Moves.Tackle, target)).toBe(false);
+  });
+
+  it('leaves a Static holder unable to answer the blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    pinRandom(battle, 0); // every roll the ability makes passes
+    holder.addAbility(Abilities.Static);
+    attacker.addItem(Items.ProtectivePads);
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(attacker.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+
+  it('does not stop the barb catching on somebody else’s hand', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const barbed = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    // The pads are the toucher's, and here the toucher has none
+    barbed.addItem(Items.StickyBarb);
+    attacker.attack(barbed, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(attacker.items[Items.StickyBarb]).toBe(true);
+  });
+});
+
 describe('the Sticky Barb', () => {
   it('bites whoever is carrying it, whatever they are', () => {
     const { battle, teamA, teamB } = createBattle();

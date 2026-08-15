@@ -10,7 +10,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { countHeldItems, onUnitActs } from '../utils';
+import { countHeldItems, onUnitActs, unitTarget } from '../utils';
 import { TRAPPING_MOVES } from '../moves/status';
 import { createEffectivenessTracker, createHeldItem, holds } from './__create';
 
@@ -293,7 +293,7 @@ const setupStickyBarbTransfer = createHeldItem(Items.StickyBarb, (battle) =>
       event.cause.type !== EffectType.Move ||
       event.cause.unit === event.target ||
       !holds(event.target, Items.StickyBarb) ||
-      !(getMoveData(event.cause.move).flags & MoveFlags.Contact)
+      !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
     ) {
       return;
     }
@@ -374,6 +374,21 @@ const setupRingTarget = createHeldItem(Items.RingTarget, (battle) =>
         event.target.unit.triggerItem(Items.RingTarget);
         return;
       }
+    }
+  }),
+);
+
+/**
+ * Protective Pads answer the contact check rather than each of the
+ * things that read it, so one veto covers a Rocky Helmet, a Static, a
+ * Sticky Barb and everything else that waits to be touched. What the
+ * holder's own abilities make of the blow is their business: a Tough
+ * Claws still reads the move's own flag
+ */
+const setupProtectivePads = createHeldItem(Items.ProtectivePads, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveContact, EventPriority.Post, (event) => {
+    if (event.contact && holds(event.source, Items.ProtectivePads)) {
+      event.contact = false;
     }
   }),
 );
@@ -639,7 +654,7 @@ const setupRockyHelmet = createHeldItem(Items.RockyHelmet, (battle) =>
       event.cause.type !== EffectType.Move ||
       event.cause.unit === event.target ||
       !holds(event.target, Items.RockyHelmet) ||
-      !(getMoveData(event.cause.move).flags & MoveFlags.Contact)
+      !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
     ) {
       return;
     }
@@ -849,6 +864,7 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupFloatStone,
   setupLaggingTail,
   setupRingTarget,
+  setupProtectivePads,
   setupShellBell,
   setupBigRoot,
   ...[...BAND_CATEGORIES].map(([item, category]) => setupBand(item, category)),

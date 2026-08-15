@@ -3,7 +3,13 @@ import { ItemFlags, type Items } from '../data/ids/items';
 import { type Statuses, Weathers } from '../data/ids/status';
 import { getItemData } from '../data/items';
 import type Battle from './core';
-import { BattleEvents, type UnitCastEvent, type UnitChannelEvent } from './events';
+import {
+  BattleEvents,
+  type MoveTarget,
+  MoveTargetType,
+  type UnitCastEvent,
+  type UnitChannelEvent,
+} from './events';
 import type Unit from './unit';
 
 /**
@@ -37,6 +43,14 @@ export function countHeldItems(unit: Unit): number {
   }
 
   return count;
+}
+
+/**
+ * A unit as a move target, for the checks that have the unit in hand
+ * rather than the target that was aimed at
+ */
+export function unitTarget(unit: Unit): MoveTarget {
+  return { type: MoveTargetType.Unit, unit };
 }
 
 /**

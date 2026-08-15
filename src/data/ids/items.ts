@@ -573,6 +573,12 @@ export const enum Items {
   RingTarget = 282,
   StickyBarb = 283,
   FloatStone = 284,
+
+  /**
+   * Gloves: the holder's blows land without ever touching what they
+   * land on
+   */
+  ProtectivePads = 285,
 }
 
 /**

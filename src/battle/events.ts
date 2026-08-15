@@ -237,6 +237,14 @@ export const enum BattleEvents {
    * Float Stone lightens its holder without touching the record
    */
   CheckUnitWeight = 137,
+
+  /**
+   * Whether a blow counts as contact against the one it lands on. It
+   * is what every reaction to being touched reads — a Rocky Helmet, a
+   * Static, a Sticky Barb — so a pair of Protective Pads answers all
+   * of them once
+   */
+  CheckUnitMoveContact = 138,
 }
 
 export const enum MoveTargetType {
@@ -402,6 +410,10 @@ export interface CheckUnitWeatherDurationEvent extends UnitWeatherEvent {
 
 export interface CheckUnitWeightEvent extends UnitEvent {
   weight: number;
+}
+
+export interface CheckUnitMoveContactEvent extends CheckUnitMoveEvent {
+  contact: boolean;
 }
 
 /**
@@ -794,6 +806,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveHits]: [CheckUnitMoveHitsEvent, EventPriority];
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];

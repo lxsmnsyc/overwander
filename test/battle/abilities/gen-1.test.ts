@@ -17,6 +17,7 @@ import { Items } from '../../../src/data/ids/items';
 import { DamageFlags, MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Genders } from '../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import { packSlots } from '../../../src/data/constants/slots';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -1080,10 +1081,12 @@ describe('Pickup', () => {
     expect(holder.items[Items.OranBerry]).toBeUndefined();
   });
 
-  it('scavenges into a spare slot when the limit allows', () => {
-    const { battle, teamA, teamB } = createBattle('test-seed', { items: 2 });
+  it('scavenges into a slot the record left free', () => {
+    const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
     const consumer = createUnit(battle, teamB);
+
+    holder.setSlots(packSlots(1, 2, 4));
     holder.addAbility(Abilities.Pickup);
     holder.addItem(Items.CheriBerry);
 
@@ -1091,6 +1094,20 @@ describe('Pickup', () => {
     consumer.triggerItem(Items.OranBerry);
 
     expect(holder.items[Items.OranBerry]).toBe(true);
+  });
+
+  it('leaves what it finds where it lies while its own hands are full', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const consumer = createUnit(battle, teamB);
+
+    holder.addAbility(Abilities.Pickup);
+    holder.addItem(Items.CheriBerry);
+
+    consumer.addItem(Items.OranBerry);
+    consumer.triggerItem(Items.OranBerry);
+
+    expect(holder.items[Items.OranBerry]).toBeUndefined();
   });
 });
 
@@ -2299,7 +2316,7 @@ describe('Neutralizing Gas', () => {
   });
 
   it('suppresses abilities gained under the gas but spares specials', () => {
-    const { battle, teamA, teamB } = createBattle('test-seed', { abilities: 2 });
+    const { battle, teamA, teamB } = createBattle();
     const gas = createUnit(battle, teamA);
     gas.addAbility(Abilities.NeutralizingGas);
     gas.enter();
@@ -2353,7 +2370,7 @@ describe('Neutralizing Gas', () => {
 
 describe('protected abilities', () => {
   it('Boss and Shadow cannot be disabled', () => {
-    const { battle, teamA } = createBattle('test-seed', { abilities: 2 });
+    const { battle, teamA } = createBattle();
     const unit = createUnit(battle, teamA);
     unit.addAbility(Abilities.Boss);
     unit.addAbility(Abilities.Shadow);

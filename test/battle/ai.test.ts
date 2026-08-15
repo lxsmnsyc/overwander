@@ -16,7 +16,7 @@ import { type BattleHarness, createBattle, createUnit, pinRandom } from './harne
 const NONE_CAUSE = { type: EffectType.None } as const;
 
 function createAIBattle(mode?: BattleModes): BattleHarness {
-  const harness = createBattle('test-seed', undefined, mode);
+  const harness = createBattle('test-seed', mode);
   setupChooseMoveAI(harness.battle);
   return harness;
 }

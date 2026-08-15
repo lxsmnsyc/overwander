@@ -1,7 +1,8 @@
 import { type EventListenerLifecycle, EventPriority } from '../core/event-emitter';
+import { Slots } from '../data/constants/slots';
 import { ItemFlags, type Items } from '../data/ids/items';
-import { type Statuses, Weathers } from '../data/ids/status';
 import { getItemData } from '../data/items';
+import { type Statuses, Weathers } from '../data/ids/status';
 import type Battle from './core';
 import {
   BattleEvents,
@@ -26,9 +27,9 @@ export function holdsAnyItem(unit: Unit): boolean {
 
 /**
  * Holdable items currently occupying the unit's item slots (disabled
- * ones included); compared against the battle's item limit
+ * ones included: a disabled item is still in the grip)
  */
-export function countHeldItems(unit: Unit): number {
+function countHeldItems(unit: Unit): number {
   let count = 0;
 
   for (const key in unit.items) {
@@ -43,6 +44,15 @@ export function countHeldItems(unit: Unit): number {
   }
 
   return count;
+}
+
+/**
+ * Whether the unit has room for another held item. The ceiling is the
+ * record's, carried on the unit as `slots` — nothing about the battle
+ * decides how much a pokemon can hold
+ */
+export function hasFreeItemSlot(unit: Unit): boolean {
+  return countHeldItems(unit) < unit.checkSlots(Slots.Item);
 }
 
 /**

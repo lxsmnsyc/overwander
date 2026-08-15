@@ -12,7 +12,6 @@ import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
   DEFAULT_MOVE_SLOTS,
-  SHADOW_ABILITY_SLOTS,
   Slots,
   getSlots,
   packSlots,
@@ -145,13 +144,9 @@ export async function writeCaughtRecord(
     // A shadow raid's reward keeps its Shadow ability for good, on
     // top of the one it rolled
     abilities: shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
-    // What it has room for. A shadow is the one thing that arrives
-    // with two abilities, and it keeps that room once purified
-    slots: packSlots(
-      shadow ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
-      DEFAULT_ITEM_SLOTS,
-      DEFAULT_MOVE_SLOTS,
-    ),
+    // What it has room for. A shadow needs no extra room for the
+    // shadow: the special tier takes no slot
+    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
     items: [],
     history: [{ owner: uid, acquiredAt: caughtAt, kind }],
     // Whatever was true of the meeting is true of the record: it

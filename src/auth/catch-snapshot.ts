@@ -3,6 +3,7 @@
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Stats } from '../data/constants/stats';
+import { defaultSlots } from '../data/constants/slots';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -67,6 +68,12 @@ export interface CatchSnapshot {
   abilities: Abilities[];
   items: Items[];
   /**
+   * What it has room for, packed as the record packs it. It is frozen
+   * with the rest: a slot bought while a raid is under way changes the
+   * pokemon, not the copy already fighting
+   */
+  slots: number;
+  /**
    * The health it walks in with. A fight picks up where the last one
    * left off, so a pokemon hurt yesterday is hurt at the start of
    * today's raid rather than quietly mended by being fielded
@@ -103,6 +110,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     movePoints: caught.movePoints,
     abilities: caught.abilities,
     items: caught.items,
+    slots: caught.slots,
     health: caught.health,
     statuses: caught.statuses,
   };
@@ -132,6 +140,13 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     movePoints: asMovePoints(data.movePoints),
     abilities: asNumberArray(data.abilities) as Abilities[],
     items: asNumberArray(data.items) as Items[],
+    // A snapshot written before the field existed reads as the room
+    // the game used to give everything, widened for a shadow's second
+    // ability the way a record's own missing field is
+    slots:
+      data.slots == null
+        ? defaultSlots(asNumberArray(data.abilities) as Abilities[])
+        : asNumber(data.slots),
     // A snapshot written before a fight could hurt anything carries
     // no health, and a unit fielded at zero would be down before the
     // first turn: missing means whole

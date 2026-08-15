@@ -113,6 +113,8 @@ import {
   MAX_SLOTS,
   SLOT_BITS,
   Slots,
+  countAbilitySlots,
+  countsAgainstSlots,
   defaultSlots,
   getSlots,
   packSlots,
@@ -1401,12 +1403,21 @@ describe('item data', () => {
     expect(getSlots(clamped, Slots.Move)).toBe(4);
     expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(1);
 
-    // A shadow arrives carrying two abilities, and keeps the room
-    // once the shadow is purified off it
+    // The special tier takes no room at all: a shadow arrives carrying
+    // two abilities and still has its one slot free for the one it
+    // rolled, purified or not
     expect(getSlots(defaultSlots([Abilities.Overgrow]), Slots.Ability)).toBe(1);
-    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Shadow]), Slots.Ability)).toBe(2);
-    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Purified]), Slots.Ability)).toBe(2);
+    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Shadow]), Slots.Ability)).toBe(1);
+    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Purified]), Slots.Ability)).toBe(1);
+    expect(getSlots(defaultSlots([Abilities.Boss, Abilities.Overgrow]), Slots.Ability)).toBe(1);
     expect(getSlots(defaultSlots(), Slots.Move)).toBe(4);
+
+    // What does take room is an ordinary ability, and two of them
+    // widen it
+    expect(countAbilitySlots([Abilities.Overgrow, Abilities.Shadow, Abilities.Boss])).toBe(1);
+    expect(countsAgainstSlots(Abilities.Overgrow)).toBe(true);
+    expect(countsAgainstSlots(Abilities.Shadow)).toBe(false);
+    expect(getSlots(defaultSlots([Abilities.Overgrow, Abilities.Blaze]), Slots.Ability)).toBe(2);
   });
 
   it('draws both of a pokemon\u2019s rolls as eight braille cells', () => {

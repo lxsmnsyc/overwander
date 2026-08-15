@@ -1,3 +1,4 @@
+import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import type { Stats } from '../data/constants/stats';
 import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
@@ -132,6 +133,29 @@ export default class Unit {
       source: this,
       value,
     });
+  }
+
+  /**
+   * What it has room for — abilities, items and moves — packed as the
+   * catch record packs it. Read it with `checkSlots`; a unit nobody
+   * measured has the room the game gives everything
+   */
+  slots = defaultSlots();
+
+  setSlots(value: number): void {
+    this.battle.emit(BattleEvents.UnitSetSlots, {
+      id: 'UnitSetSlots',
+      disabled: false,
+      source: this,
+      value,
+    });
+  }
+
+  /**
+   * How many of that kind it has room for
+   */
+  checkSlots(kind: Slots): number {
+    return getSlots(this.slots, kind);
   }
 
   /**

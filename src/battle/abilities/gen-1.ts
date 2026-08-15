@@ -40,8 +40,8 @@ import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
 import {
-  countHeldItems,
   hasAnyStatus,
+  hasFreeItemSlot,
   holdsAnyItem,
   isWeatherHail,
   isWeatherRainy,
@@ -1292,19 +1292,20 @@ const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Pickup_(Ability)
   createAbility(Abilities.Pickup, (battle) =>
     // In-battle behavior: when another unit consumes its item, a
-    // holder with a free item slot scavenges it
+    // holder with a hand free scavenges it. What counts as free is the
+    // record's business: a pokemon with room for two carries two
     battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, (event) => {
       for (const unit of battle.units()) {
         if (
           unit !== event.source &&
           unit.alive &&
           unit.hasAbility(Abilities.Pickup) &&
-          countHeldItems(unit) < battle.limits.items
+          hasFreeItemSlot(unit)
         ) {
           unit.addItem(event.item);
 
-          // Cue only when the pickup actually landed (the add can
-          // still be vetoed, e.g. by the item limit)
+          // Cue only when the pickup actually landed: the add can
+          // still be vetoed by something else
           if (unit.items[event.item] === true) {
             unit.triggerAbility(Abilities.Pickup);
             return;

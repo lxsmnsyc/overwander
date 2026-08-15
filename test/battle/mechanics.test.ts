@@ -657,35 +657,27 @@ describe('move delay', () => {
   });
 });
 
-describe('battle limits', () => {
-  it('caps items and abilities at the default of one each', () => {
+describe('what a unit may carry', () => {
+  it('leaves the ceiling to the record it was fielded from', () => {
     const { battle, teamA } = createBattle();
     const unit = createUnit(battle, teamA);
 
-    unit.addItem(Items.CheriBerry);
-    unit.addItem(Items.OranBerry); // over the limit
-
-    expect(unit.items[Items.CheriBerry]).toBe(true);
-    expect(unit.items[Items.OranBerry]).toBeUndefined();
-
+    // A raid boss walks in with three abilities and a shadow with two,
+    // which the record's own `slots` field allowed. The battle counts
+    // nothing: a second ceiling here would drop them on the floor
+    unit.addAbility(Abilities.Boss);
+    unit.addAbility(Abilities.Shadow);
     unit.addAbility(Abilities.RunAway);
-    unit.addAbility(Abilities.Limber); // over the limit
 
+    expect(unit.abilities[Abilities.Boss]).toBe(true);
+    expect(unit.abilities[Abilities.Shadow]).toBe(true);
     expect(unit.abilities[Abilities.RunAway]).toBe(true);
-    expect(unit.abilities[Abilities.Limber]).toBeUndefined();
-  });
-
-  it('honors configured limits', () => {
-    const { battle, teamA } = createBattle('test-seed', { items: 2, abilities: 2 });
-    const unit = createUnit(battle, teamA);
 
     unit.addItem(Items.CheriBerry);
     unit.addItem(Items.OranBerry);
-    unit.addAbility(Abilities.RunAway);
-    unit.addAbility(Abilities.Limber);
 
+    expect(unit.items[Items.CheriBerry]).toBe(true);
     expect(unit.items[Items.OranBerry]).toBe(true);
-    expect(unit.abilities[Abilities.Limber]).toBe(true);
   });
 });
 
@@ -802,7 +794,7 @@ describe('damage immunity', () => {
 
 describe('battle modes', () => {
   it('raid weather changes only affect the changing team', () => {
-    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+    const { battle, teamA, teamB } = createBattle('test-seed', BattleModes.Raid);
     const unit = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
 
@@ -815,7 +807,7 @@ describe('battle modes', () => {
   });
 
   it('boss raid weather lands battle-wide', () => {
-    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+    const { battle, teamA, teamB } = createBattle('test-seed', BattleModes.Raid);
     const boss = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     boss.addAbility(Abilities.Boss);

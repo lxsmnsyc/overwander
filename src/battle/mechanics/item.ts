@@ -1,22 +1,15 @@
 import { EventPriority } from '../../core/event-emitter';
-import { ItemFlags } from '../../data/ids/items';
-import { getItemData } from '../../data/items';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
-import { countHeldItems } from '../utils';
 
+/**
+ * How many items a unit may hold is not the battle's business: the
+ * record it was fielded from has a `slots` field, and a unit walks in
+ * carrying exactly what that allowed. A second ceiling here would only
+ * disagree with it — and used to, silently dropping a raid boss'
+ * abilities on the floor
+ */
 export default function setupItemMechanics(battle: Battle): void {
-  // A unit cannot carry more holdable items than the battle allows
-  battle.on(BattleEvents.UnitAddItem, EventPriority.Pre, (event) => {
-    if (
-      event.source.items[event.item] == null &&
-      getItemData(event.item).flags & ItemFlags.Holdable &&
-      countHeldItems(event.source) >= battle.limits.items
-    ) {
-      event.disabled = true;
-    }
-  });
-
   battle.on(BattleEvents.UnitAddItem, EventPriority.Exact, (event) => {
     event.source.items[event.item] = true;
   });

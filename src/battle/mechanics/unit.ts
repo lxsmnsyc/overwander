@@ -266,6 +266,10 @@ function setupUnitSpeciesMechanics(battle: Battle): void {
     event.source.height = Math.max(0.01, event.value);
   });
 
+  battle.on(BattleEvents.UnitSetSlots, EventPriority.Exact, (event) => {
+    event.source.slots = event.value;
+  });
+
   battle.on(BattleEvents.UnitSetWeight, EventPriority.Exact, (event) => {
     event.source.weight = Math.max(0.1, event.value);
   });

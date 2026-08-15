@@ -53,7 +53,7 @@ describe('weather moves', () => {
   });
 
   it('put their weather over the whole field in a PvP fight', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
 
     expect(battle.weather.current).toBe(Weathers.None);
@@ -69,7 +69,7 @@ describe('weather moves', () => {
   });
 
   it('keep to the caster’s own side in a raid', () => {
-    const { battle, teamA, teamB } = createBattle('weather-seed', undefined, BattleModes.Raid);
+    const { battle, teamA, teamB } = createBattle('weather-seed', BattleModes.Raid);
     const caster = createUnit(battle, teamA);
     const other = createUnit(battle, teamB);
 
@@ -80,7 +80,7 @@ describe('weather moves', () => {
   });
 
   it('wear down whoever is not built for the sky they call up', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA, [Types.Rock]);
     const soft = createUnit(battle, teamA, [Types.Normal]);
     const maxHealth = soft.checkStat(Stats.HP, 0);
@@ -94,7 +94,7 @@ describe('weather moves', () => {
   });
 
   it('clear on their own once they have had their run', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
 
     castOnce(caster, Moves.RainDance);
@@ -109,7 +109,7 @@ describe('weather moves', () => {
   });
 
   it('leave weather nobody called up alone', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
 
     createUnit(battle, teamA);
 
@@ -122,7 +122,7 @@ describe('weather moves', () => {
   });
 
   it('cannot argue with a primal sky', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
 
     battle.setWeather(Weathers.HeavyRain);
@@ -135,7 +135,7 @@ describe('weather moves', () => {
   });
 
   it('stay out longer for whoever called them up holding the rock for it', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
 
     caster.addItem(Items.DampRock);
@@ -149,7 +149,7 @@ describe('weather moves', () => {
   });
 
   it('give a rock nothing for a sky it does not keep', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
 
     // A Damp Rock is for rain; the sun runs out on time
@@ -161,7 +161,7 @@ describe('weather moves', () => {
   });
 
   it('are not worth a cast to the AI when the sky is already theirs', () => {
-    const { battle, teamA } = createBattle('weather-seed', undefined, BattleModes.PvP);
+    const { battle, teamA } = createBattle('weather-seed', BattleModes.PvP);
     const caster = createUnit(battle, teamA);
     const target = { type: MoveTargetType.None } as const;
 

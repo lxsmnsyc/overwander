@@ -262,6 +262,13 @@ export const enum BattleEvents {
    * comes back on
    */
   UnitRevives = 139,
+
+  /**
+   * How much room the unit has for abilities, items and moves, packed
+   * as the catch record packs it. It is fielded from the record rather
+   * than decided by the battle
+   */
+  UnitSetSlots = 140,
 }
 
 export const enum MoveTargetType {
@@ -825,6 +832,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
   [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
   [BattleEvents.UnitRevives]: [UnitSetValueEvent, EventPriority];
+  [BattleEvents.UnitSetSlots]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];

@@ -2,6 +2,7 @@ import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import AleaRNG from '../core/alea';
+import { defaultSlots } from '../data/constants/slots';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import { Species } from '../data/ids/species';
@@ -133,6 +134,7 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
     movePoints: {},
     abilities: [deriveAbility(species, traitValue)],
     items: [],
+    slots: defaultSlots(),
     health: getMaxHealth({ species, level, ivs, effortValues }),
     statuses: 0,
   };

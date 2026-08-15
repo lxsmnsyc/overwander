@@ -23,14 +23,15 @@ import Abilities from '../ids/abilities';
 
 export const enum Slots {
   /**
-   * How many abilities it may carry. One for almost everything; a
-   * shadow carries its own on top of the rolled one, and keeps the
-   * room after it is purified
+   * How many abilities it may carry, counting only the ones the
+   * pokemon chose to have. The special tier — see `SPECIAL_ABILITIES`
+   * — rides free
    */
   Ability = 0,
   /**
-   * How many items it may hold at once. One, matching the battle's
-   * per-unit limit
+   * How many items it may hold at once. One by default, and the only
+   * ceiling there is: the battle counts nothing itself, so a unit
+   * fights carrying exactly what its record allowed
    */
   Item = 1,
   /**
@@ -55,10 +56,47 @@ const SLOT_MASK = 0b111;
 export const MAX_SLOTS = 1 << SLOT_BITS;
 
 /**
+ * The abilities nothing has to make room for.
+ *
+ * They are not things a pokemon has: they are marks of what it is. A
+ * Boss carries one because it is a raid, a shadow because of where it
+ * came from, and a purified one keeps the mark of having been one. A
+ * pokemon that had to spend its only ability slot on the shadow it
+ * did not ask for would be a pokemon punished twice
+ */
+export const SPECIAL_ABILITIES = new Set<Abilities>([
+  Abilities.Boss,
+  Abilities.Shadow,
+  Abilities.Purified,
+]);
+
+/**
+ * Whether the ability takes up room. Everything outside the special
+ * tier does
+ */
+export function countsAgainstSlots(ability: Abilities): boolean {
+  return !SPECIAL_ABILITIES.has(ability);
+}
+
+/**
+ * How many of these actually occupy slots
+ */
+export function countAbilitySlots(abilities: Iterable<Abilities>): number {
+  let count = 0;
+
+  for (const ability of abilities) {
+    if (countsAgainstSlots(ability)) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
+/**
  * What a fresh catch has room for, by kind
  */
 export const DEFAULT_ABILITY_SLOTS = 1;
-export const SHADOW_ABILITY_SLOTS = 2;
 export const DEFAULT_ITEM_SLOTS = 1;
 export const DEFAULT_MOVE_SLOTS = 4;
 
@@ -94,17 +132,12 @@ export function packSlots(abilities: number, items: number, moves: number): numb
 }
 
 /**
- * What a pokemon starts with. A **shadow** is the one thing that
- * changes it: it carries the Shadow ability alongside the rolled one,
- * and a purified pokemon keeps that room — the mark of what it was is
- * the ability that replaced the shadow, not a slot taken back
+ * What a pokemon starts with. A shadow needs no extra room for the
+ * shadow itself — the special tier is exempt — so the only thing that
+ * widens this is a pokemon that somehow carries two ordinary abilities
  */
 export function defaultSlots(abilities: Abilities[] = []): number {
-  const carried = new Set(abilities);
-  const room =
-    carried.has(Abilities.Shadow) || carried.has(Abilities.Purified)
-      ? SHADOW_ABILITY_SLOTS
-      : DEFAULT_ABILITY_SLOTS;
+  const room = Math.max(DEFAULT_ABILITY_SLOTS, countAbilitySlots(abilities));
 
-  return packSlots(Math.max(room, abilities.length), DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
+  return packSlots(room, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
 }

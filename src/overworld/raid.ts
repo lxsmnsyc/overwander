@@ -2,6 +2,12 @@ import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type BattleAftermath from '../auth/battle-aftermath';
 import type { TeamSnapshotRecord } from '../auth/teams';
+import {
+  DEFAULT_ABILITY_SLOTS,
+  DEFAULT_ITEM_SLOTS,
+  DEFAULT_MOVE_SLOTS,
+  packSlots,
+} from '../data/constants/slots';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
@@ -161,6 +167,9 @@ export function createRaidBossSnapshot(
       ? [Abilities.Boss, Abilities.Shadow, deriveAbility(species, traitValue)]
       : [Abilities.Boss, deriveAbility(species, traitValue)],
     items: [],
+    // The Boss ability and the shadow are both special, so all a boss
+    // needs room for is the one it rolled
+    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
     // A boss stands for no record either, and every lobby faces it at
     // full strength
     health: getMaxHealth({
@@ -190,6 +199,9 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // The individual's own measurements, not the species' listed ones
   unit.setHeight(snapshot.height);
   unit.setWeight(snapshot.weight);
+  // What it has room for, so anything asking whether a hand is free
+  // asks the record rather than a rule of the battle's own
+  unit.setSlots(snapshot.slots);
 
   for (const stat of STAT_ORDER) {
     unit.setStat(StatsKind.Individual, stat, getIV(snapshot.ivs, stat));
@@ -311,7 +323,6 @@ export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]):
   const battle = createBattle(battleId, {
     mode: BattleModes.Raid,
     realtime: true,
-    limits: { abilities: 3 },
   });
 
   return { battle, ...fieldTeams(battle, teams, BOSS_ALLIANCE) };

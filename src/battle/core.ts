@@ -7,17 +7,6 @@ import { BattleEvents } from './events';
 import type Team from './team';
 import type Unit from './unit';
 
-export interface BattleLimits {
-  /**
-   * Maximum holdable items a unit can carry at once
-   */
-  items: number;
-  /**
-   * Maximum abilities a unit can have at once
-   */
-  abilities: number;
-}
-
 export const enum BattleModes {
   PvP = 0,
   /**
@@ -30,17 +19,11 @@ export const enum BattleModes {
 export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
 
-  limits: BattleLimits;
-
   mode: BattleModes;
 
-  constructor(seed: string, limits?: Partial<BattleLimits>, mode = BattleModes.PvP) {
+  constructor(seed: string, mode = BattleModes.PvP) {
     super();
     this.rng = new AleaRNG(seed);
-    this.limits = {
-      items: limits?.items ?? 1,
-      abilities: limits?.abilities ?? 1,
-    };
     this.mode = mode;
   }
 

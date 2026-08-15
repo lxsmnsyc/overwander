@@ -2,7 +2,7 @@ import { registerMoves } from '../../src/data/moves';
 import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
 import Alliance from '../../src/battle/alliance';
-import Battle, { type BattleLimits, type BattleModes } from '../../src/battle/core';
+import Battle, { type BattleModes } from '../../src/battle/core';
 import setupItems from '../../src/battle/items';
 import setupAbilityMechanics from '../../src/battle/mechanics/ability';
 import setupAllianceMechanics from '../../src/battle/mechanics/alliance';
@@ -42,11 +42,7 @@ export interface BattleHarness {
  * plus one team per side. The frame timer (setupBattleMechanics) is
  * left out; tests drive time with battle.tick().
  */
-export function createBattle(
-  seed = 'test-seed',
-  limits?: Partial<BattleLimits>,
-  mode?: BattleModes,
-): BattleHarness {
+export function createBattle(seed = 'test-seed', mode?: BattleModes): BattleHarness {
   if (!dataRegistered) {
     registerMoves();
     registerSpecies();
@@ -54,7 +50,7 @@ export function createBattle(
     dataRegistered = true;
   }
 
-  const battle = new Battle(seed, limits, mode);
+  const battle = new Battle(seed, mode);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

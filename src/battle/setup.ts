@@ -1,6 +1,6 @@
 import setupAbilities from './abilities';
 import setupAI from './ai';
-import Battle, { type BattleLimits, type BattleModes } from './core';
+import Battle, { type BattleModes } from './core';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
@@ -29,9 +29,9 @@ import setupStatus from './status';
  */
 export default function createBattle(
   seed: string,
-  options?: { limits?: Partial<BattleLimits>; mode?: BattleModes; realtime?: boolean },
+  options?: { mode?: BattleModes; realtime?: boolean },
 ): Battle {
-  const battle = new Battle(seed, options?.limits, options?.mode);
+  const battle = new Battle(seed, options?.mode);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

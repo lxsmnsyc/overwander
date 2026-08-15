@@ -13,7 +13,6 @@ import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
   DEFAULT_MOVE_SLOTS,
-  SHADOW_ABILITY_SLOTS,
   packSlots,
 } from '../data/constants/slots';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -174,13 +173,9 @@ async function writeEgg(
     // A shadow keeps its Shadow ability for good, the way a shadow
     // raid's prize does
     abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
-    // The room it will have when it comes out of the shell. A shadow
-    // egg hatches carrying two abilities, so it is written with two
-    slots: packSlots(
-      fields.shadow ? SHADOW_ABILITY_SLOTS : DEFAULT_ABILITY_SLOTS,
-      DEFAULT_ITEM_SLOTS,
-      DEFAULT_MOVE_SLOTS,
-    ),
+    // The room it will have when it comes out of the shell. The
+    // shadow it may be carrying takes none of it
+    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
     // An egg holds nothing, and cannot be handed anything until it
     // has hatched
     items: [],

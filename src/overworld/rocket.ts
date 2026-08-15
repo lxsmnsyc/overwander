@@ -5,6 +5,7 @@ import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
 import createBattle from '../battle/setup';
 import { Stats } from '../data/constants/stats';
+import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type ChunkSnapshot from './chunk-snapshot';
 import type { Spawn } from './chunk-snapshot';
@@ -100,6 +101,8 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
     movePoints: {},
     abilities: [grunt.ability, Abilities.Shadow],
     items: [],
+    // Room for the shadow it carries alongside its own
+    slots: defaultSlots([grunt.ability, Abilities.Shadow]),
     // A grunt's pokemon has no record to have been hurt on: it is
     // made for this fight and arrives whole
     health: getMaxHealth({
@@ -128,7 +131,6 @@ export function createRocketBattle(battleId: string, teams: TeamSnapshotRecord[]
   const battle: Battle = createBattle(battleId, {
     mode: BattleModes.PvP,
     realtime: true,
-    limits: { abilities: 2 },
   });
 
   return { battle, ...fieldTeams(battle, teams, null) };

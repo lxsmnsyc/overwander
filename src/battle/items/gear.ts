@@ -10,7 +10,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { countHeldItems, onUnitActs, unitTarget } from '../utils';
+import { hasFreeItemSlot, onUnitActs, unitTarget } from '../utils';
 import { TRAPPING_MOVES } from '../moves/status';
 import { createEffectivenessTracker, createHeldItem, holds } from './__create';
 
@@ -300,8 +300,9 @@ const setupStickyBarbTransfer = createHeldItem(Items.StickyBarb, (battle) =>
 
     const attacker = event.cause.unit;
 
-    // A full grip keeps it out: the barb has nowhere to catch
-    if (!attacker.alive || countHeldItems(attacker) >= battle.limits.items) {
+    // A full grip keeps it out: the barb catches on whoever has room
+    // for it, which is the record's answer rather than the battle's
+    if (!attacker.alive || !hasFreeItemSlot(attacker)) {
       return;
     }
 

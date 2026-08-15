@@ -85,7 +85,7 @@ describe('weather damage', () => {
   });
 
   it('counts a raid’s other side as somewhere else, not as sheltered', () => {
-    const { battle, teamA, teamB } = createBattle('test-seed', undefined, BattleModes.Raid);
+    const { battle, teamA, teamB } = createBattle('test-seed', BattleModes.Raid);
 
     pinRandom(battle, 1);
 

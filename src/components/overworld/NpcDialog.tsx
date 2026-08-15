@@ -74,7 +74,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.NurseJoy]:
     'Hand them over, all of them. Nothing to pay — I am only here until the day turns over.',
   [Npc.Groomer]:
-    'Brushed, fussed over and handed straight back thinking the world of you. Works best on one that barely knows you.',
+    'Brushed, fussed over and handed straight back thinking the world of you. Works best on one that barely knows you — and not at all on a shadow.',
   [Npc.Vendor]:
     'Crate is open. I will sell you what is in it and buy near enough anything you are carrying — as often as your purse holds out.',
   [Npc.MoveReminder]:
@@ -487,7 +487,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         setBusy(false);
         setStatus(
           friendship == null
-            ? 'He would not take it — it may think as well of you as it can already, or he has already seen you this while.'
+            ? 'He would not take it — it may be a shadow, it may think as well of you as it can already, or he has already seen you this while.'
             : `Brushed, fussed over and handed back ${describeFriendship(friendship)}. (−${GROOMING_FEE} gold)`,
         );
         await refetch();
@@ -941,6 +941,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
                     filter={(option) =>
                       !isEgg(option.caught) &&
                       !option.fighting &&
+                      !isShadow(option.caught) &&
                       groomedFriendship(option.caught.friendship) > option.caught.friendship
                     }
                     note={(option) =>

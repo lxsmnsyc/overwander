@@ -43,6 +43,7 @@ import {
   BASE_FRIENDSHIP,
   FRIENDSHIP_STEP_INTERVAL,
   HATCHED_FRIENDSHIP,
+  SHADOW_FRIENDSHIP,
   friendshipFactor,
   gainFriendship,
 } from '../data/constants/friendship';
@@ -224,7 +225,7 @@ async function writeEgg(
     locale: asLocale(locale),
     effortValues: zeroEffortValues(),
     effortBonus: 0,
-    friendship: BASE_FRIENDSHIP,
+    friendship: fields.shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP,
     origin: {
       timestamp: fields.timestamp,
       x: snapshot.chunk.x,
@@ -519,8 +520,9 @@ export async function hatchEgg(
       egg: false,
       steps: caught.hatchSteps,
       // Everything that hatches has already been carried every step
-      // of the way, and thinks of whoever carried it accordingly
-      friendship: HATCHED_FRIENDSHIP,
+      // of the way, and thinks of whoever carried it accordingly — a
+      // shadow excepted, which the carrying does nothing for
+      friendship: caught.shadow ? SHADOW_FRIENDSHIP : HATCHED_FRIENDSHIP,
       // The walking starts over: what it did in the shell bought the
       // hatching, and what it does now buys friendship
       walked: 0,

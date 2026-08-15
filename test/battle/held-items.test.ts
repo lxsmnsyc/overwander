@@ -1552,7 +1552,7 @@ describe('the regional treats', () => {
 
     holder.addItem(Items.Casteliacone);
     holder.addStatus(Statuses.Burned, moveCause(burner, Moves.Ember));
-    holder.removeStatus(Statuses.Burned, { type: EffectType.None, unit: holder });
+    holder.removeStatus(Statuses.Burned, { type: EffectType.None });
     battle.tick(TREAT_DELAY);
 
     expect(holder.items[Items.Casteliacone]).toBe(true);

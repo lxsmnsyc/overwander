@@ -8,8 +8,9 @@ import getIdToken from './session';
  *
  * The gem is the one item that takes a shadow off a pokemon: the
  * Shadow ability becomes the cosmetic `Purified`, the doubled candy
- * cost drops back to what everything else pays, and every value it was
- * born with goes up by two. The server decides all of it against the
+ * cost drops back to what everything else pays, every value it was
+ * born with goes up by two, and it is handed the friendship a shadow
+ * never arrived with. The server decides all of it against the
  * stored record; see
  * [`src/data/items/purifying-gem.ts`](../data/items/purifying-gem.ts)
  * for the rules both sides read.

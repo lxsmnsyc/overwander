@@ -4,6 +4,7 @@ import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { purifiedFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import {
   isPurifiable,
@@ -52,6 +53,9 @@ export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
     // Better values mean a bigger pool, and the share of it the
     // pokemon was carrying is what it keeps
     health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth({ ...record, ivs })),
+    // And it is handed the arrival a shadow never got, on top of
+    // whatever it walked for while it was one
+    friendship: purifiedFriendship(record.friendship),
   };
 }
 

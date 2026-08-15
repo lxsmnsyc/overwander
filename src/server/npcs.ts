@@ -431,6 +431,14 @@ export async function groomCatch(
   }
 
   const caught = asCaughtPokemon(stored);
+
+  // A shadow will not be fussed over. Nothing it thinks of anybody can
+  // be bought while it is one, which is what makes purifying worth
+  // walking for
+  if (isShadow(caught)) {
+    return null;
+  }
+
   const groomed = groomedFriendship(caught.friendship);
 
   // Nothing left to buy, so nothing is charged

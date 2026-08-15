@@ -132,7 +132,8 @@ async function boostOnServer(
  * Hand a party to Nurse Joy. Up to `NURSE_CARE_LIMIT` of them come
  * back at full health with nothing left on them, and any shadow among
  * them comes back purified — the Shadow ability replaced, the doubled
- * candy cost gone, every value two higher.
+ * candy cost gone, every value two higher, and the friendship a
+ * shadow never arrived with handed over.
  *
  * She takes nothing for it. What she asks instead is that it be once:
  * the server marks the visit against her window, and a party that

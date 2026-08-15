@@ -32,7 +32,7 @@ import {
   isGuardedRecord,
   zeroEffortValues,
 } from './catch-fields';
-import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { BASE_FRIENDSHIP, SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import { getAdminFirestore } from './firebase';
 import { recordCaughtSpecies } from './pokedex';
 import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
@@ -186,7 +186,9 @@ export async function writeCaughtRecord(
     locale: asLocale(locale),
     effortValues: zeroEffortValues(),
     effortBonus: 0,
-    friendship: BASE_FRIENDSHIP,
+    // A shadow arrives thinking nothing of anybody, and stays that way
+    // until it is put right
+    friendship: shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP,
     origin: {
       timestamp: encounter.timestamp,
       x: encounter.x,

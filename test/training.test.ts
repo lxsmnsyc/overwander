@@ -13,10 +13,13 @@ import {
   HATCHED_FRIENDSHIP,
   LUXURY_FRIENDSHIP_FACTOR,
   MAX_FRIENDSHIP,
+  PURIFIED_FRIENDSHIP_BONUS,
+  SHADOW_FRIENDSHIP,
   describeFriendship,
   friendshipFactor,
   gainFriendship,
   groomedFriendship,
+  purifiedFriendship,
 } from '../src/data/constants/friendship';
 import {
   EFFORT_PER_LEVEL,
@@ -155,6 +158,20 @@ describe('friendship', () => {
   it('starts where a stranger starts, and higher for something carried', () => {
     expect(BASE_FRIENDSHIP).toBeLessThan(HATCHED_FRIENDSHIP);
     expect(describeFriendship(BASE_FRIENDSHIP)).toBe('used to you');
+  });
+
+  it('starts a shadow with nothing, wherever it came from', () => {
+    expect(SHADOW_FRIENDSHIP).toBe(0);
+    expect(describeFriendship(SHADOW_FRIENDSHIP)).toBe('wary');
+  });
+
+  it('hands back the arrival a shadow never had when it is put right', () => {
+    // Purifying is worth the same to every shadow: a fresh catch's
+    // base, on top of whatever it walked for as one
+    expect(purifiedFriendship(SHADOW_FRIENDSHIP)).toBe(BASE_FRIENDSHIP);
+    expect(purifiedFriendship(50)).toBe(BASE_FRIENDSHIP + 50);
+    expect(purifiedFriendship(MAX_FRIENDSHIP)).toBe(MAX_FRIENDSHIP);
+    expect(PURIFIED_FRIENDSHIP_BONUS).toBe(BASE_FRIENDSHIP);
   });
 
   it('pays less the better a pokemon already thinks of you', () => {

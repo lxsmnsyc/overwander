@@ -30,6 +30,26 @@ export const BASE_FRIENDSHIP = 70;
 export const HATCHED_FRIENDSHIP = 120;
 
 /**
+ * What a shadow arrives thinking of anybody, however it arrived. It
+ * has been made to fight and nothing else, so it starts from nothing
+ * and no groomer will take one: everything a shadow thinks of its
+ * owner has to be walked for
+ */
+export const SHADOW_FRIENDSHIP = 0;
+
+/**
+ * What purifying hands back: the base arrival a shadow never got, on
+ * top of whatever it has since earned. A pokemon put right stands
+ * where a fresh catch stands and keeps every step it walked as a
+ * shadow
+ */
+export const PURIFIED_FRIENDSHIP_BONUS = BASE_FRIENDSHIP;
+
+export function purifiedFriendship(friendship: number): number {
+  return Math.min(MAX_FRIENDSHIP, Math.max(0, friendship) + PURIFIED_FRIENDSHIP_BONUS);
+}
+
+/**
  * How far a buddy walks between one point of friendship and the next
  */
 export const FRIENDSHIP_STEP_INTERVAL = 256;

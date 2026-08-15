@@ -33,6 +33,8 @@ import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots
 import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
 import { DRINK_THRESHOLD } from '../../src/battle/items/drinks';
 import { DRINKS } from '../../src/data/items/drinks';
+import { TREAT_DELAY } from '../../src/battle/items/treats';
+import { TREATS } from '../../src/data/items/treats';
 import { SCREEN_DURATION } from '../../src/battle/status/reflect';
 import { TRAPPED_DURATION, TRAPPED_TICK } from '../../src/battle/status/trapped';
 import Abilities from '../../src/data/ids/abilities';
@@ -1503,5 +1505,100 @@ describe('the drinks', () => {
     holder.setHealth(1);
 
     expect(holder.health).toBeLessThanOrEqual(maxHealth);
+  });
+});
+
+describe('the regional treats', () => {
+  it('waits a second before it is unwrapped, then takes the status off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const burner = createUnit(battle, teamB);
+
+    holder.addItem(Items.OldGateau);
+    holder.addStatus(Statuses.Burned, moveCause(burner, Moves.Ember));
+
+    // The pause is the point: the burn is still on and the cake is
+    // still in its wrapper
+    battle.tick(TREAT_DELAY - 1);
+
+    expect(holder.status[Statuses.Burned]).toBeDefined();
+    expect(holder.items[Items.OldGateau]).toBe(true);
+
+    battle.tick(1);
+
+    expect(holder.status[Statuses.Burned]).toBeUndefined();
+    expect(holder.items[Items.OldGateau]).toBeUndefined();
+  });
+
+  it('clears everything it covers in the one mouthful', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const poisoner = createUnit(battle, teamB);
+
+    holder.addItem(Items.LavaCookie);
+    holder.addStatus(Statuses.Poisoned, moveCause(poisoner, Moves.PoisonPowder));
+    holder.addStatus(Statuses.Paralyzed, moveCause(poisoner, Moves.ThunderWave));
+    battle.tick(TREAT_DELAY);
+
+    expect(holder.status[Statuses.Poisoned]).toBeUndefined();
+    expect(holder.status[Statuses.Paralyzed]).toBeUndefined();
+    expect(holder.items[Items.LavaCookie]).toBeUndefined();
+  });
+
+  it('stays wrapped when the status is gone before it is opened', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const burner = createUnit(battle, teamB);
+
+    holder.addItem(Items.Casteliacone);
+    holder.addStatus(Statuses.Burned, moveCause(burner, Moves.Ember));
+    holder.removeStatus(Statuses.Burned, { type: EffectType.None, unit: holder });
+    battle.tick(TREAT_DELAY);
+
+    expect(holder.items[Items.Casteliacone]).toBe(true);
+  });
+
+  it('says nothing about a status no Full Heal answers', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const confuser = createUnit(battle, teamB);
+
+    holder.addItem(Items.BigMalasada);
+    holder.addStatus(Statuses.Confused, moveCause(confuser, Moves.Confusion));
+    battle.tick(TREAT_DELAY);
+
+    expect(holder.status[Statuses.Confused]).toBeDefined();
+    expect(holder.items[Items.BigMalasada]).toBe(true);
+  });
+
+  it('eats the candy bar the way a drink goes down', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const maxHealth = holder.checkStat(Stats.HP, 0);
+    const restore = TREATS.get(Items.RageCandyBar)?.restore ?? 0;
+    const low = maxHealth * DRINK_THRESHOLD;
+
+    holder.addItem(Items.RageCandyBar);
+    holder.setHealth(maxHealth / 4);
+
+    expect(holder.items[Items.RageCandyBar]).toBe(true);
+
+    holder.setHealth(low);
+
+    expect(holder.items[Items.RageCandyBar]).toBeUndefined();
+    expect(holder.health).toBe(low + restore);
+  });
+
+  it('leaves the candy bar alone for a status', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const burner = createUnit(battle, teamB);
+
+    holder.addItem(Items.RageCandyBar);
+    holder.addStatus(Statuses.Burned, moveCause(burner, Moves.Ember));
+    battle.tick(TREAT_DELAY);
+
+    expect(holder.status[Statuses.Burned]).toBeDefined();
+    expect(holder.items[Items.RageCandyBar]).toBe(true);
   });
 });

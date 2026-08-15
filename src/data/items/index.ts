@@ -22,6 +22,7 @@ import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
 import registerTradeItems from './trade-items';
+import registerTreats from './treats';
 import registerTrinkets from './trinkets';
 import registerUtilityBelt from './utility-belt';
 import registerTypeBoosters from './type-boosters';
@@ -45,6 +46,7 @@ export default function registerItems(): void {
   registerBattleBerries();
   registerMedicines();
   registerDrinks();
+  registerTreats();
   registerEvolutionStones();
   registerTradeItems();
   registerTypeBoosters();

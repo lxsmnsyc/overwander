@@ -9,6 +9,7 @@ import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
 import setupSacredAsh from './sacred-ash';
 import setupStatBoosters from './stat-boosters';
+import setupTreats from './treats';
 import setupTypeBoosters from './type-boosters';
 
 export default function setupItems(battle: Battle): void {
@@ -23,4 +24,5 @@ export default function setupItems(battle: Battle): void {
   setupBattleItems(battle);
   setupSacredAsh(battle);
   setupDrinks(battle);
+  setupTreats(battle);
 }

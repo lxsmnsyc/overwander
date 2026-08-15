@@ -24,9 +24,9 @@ Held items blocked on engine features (13): the four terrain seeds and Terrain E
 
 Held items I'd leave alone (22): the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
 
-Battle items — Max Mushrooms. There is no in-battle item flow anywhere in src/server or src/battle — a player cannot reach into the bag mid-fight. The effects are trivial (stages, crit stage, Mist); the missing piece is the flow.
+Battle items — Max Mushrooms. 
 
-Medicine — 21 missing. The interesting ones: Ether / Max Ether / Elixir / Max Elixir, which map cleanly onto clearing cooldowns the way the Leppa Berry already does; Rare Candy; Sacred Ash (revive the whole party); Ability Capsule. The rest are drinks and regional sweets that are just cheaper potions and a friendship bump — Moomoo Milk, Fresh Water, Soda Pop, Lemonade, Berry Juice, Lava Cookie, Old Gateau, Casteliacone, and so on.
+Medicine — 21 missing. The interesting ones: Ether / Max Ether / Elixir / Max Elixir, which map cleanly onto clearing cooldowns the way the Leppa Berry already does; Rare Candy; Sacred Ash (revive the whole party); Ability Capsule.
 
 Poké Balls — 24 missing, 8 of them implementable now with the catch-rate hooks that already exist: Level, Lure, Moon, Friend, Love, Heavy, Fast, Safari/Sport. The rest are Hisui and legend-specific (Beast, Cherish, Dream, Park, Origin, Strange, the Hisuian and feather/wing/jet sets).
 

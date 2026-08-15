@@ -618,6 +618,20 @@ export const enum Items {
    * See [`src/data/items/utility-belt.ts`](../items/utility-belt.ts)
    */
   UtilityBelt = 300,
+
+  /**
+   * Regional treats: a souvenir from somewhere, held and eaten by
+   * whoever needs it. See
+   * [`src/data/items/treats.ts`](../items/treats.ts)
+   */
+  LavaCookie = 301,
+  OldGateau = 302,
+  Casteliacone = 303,
+  LumioseGalette = 304,
+  ShalourSable = 305,
+  BigMalasada = 306,
+  PewterCrunchies = 307,
+  RageCandyBar = 308,
 }
 
 /**

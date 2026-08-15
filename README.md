@@ -182,35 +182,38 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 
 ## Commands
 
-| Command               | What it does                                       |
-| --------------------- | -------------------------------------------------- |
-| `pnpm dev`            | Development server with HMR                        |
-| `pnpm build`          | Production build (client, server and Nitro output) |
-| `pnpm start`          | Serve the built output from `.output/`             |
-| `pnpm preview`        | Preview the build locally                          |
-| `pnpm emulators`      | Local Firebase (auth, Firestore, UI on port 4000)  |
-| `pnpm test`           | The whole test suite, once                         |
-| `pnpm test:rules`     | The Firestore rules, against a throwaway emulator  |
-| `npx tsc --noEmit`    | Type-check                                         |
-| `npx oxlint src test` | Lint                                               |
-| `npx oxfmt src test`  | Format                                             |
-| `pnpm cs:add`         | Add a changeset                                    |
+| Command                | What it does                                        |
+| ---------------------- | --------------------------------------------------- |
+| `pnpm dev`             | Development server with HMR                         |
+| `pnpm build`           | Production build (client, server and Nitro output)  |
+| `pnpm start`           | Serve the built output from `.output/`              |
+| `pnpm preview`         | Preview the build locally                           |
+| `pnpm emulators`       | Local Firebase (auth, Firestore, UI on port 4000)   |
+| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
+| `pnpm sprite-loops`    | Measure which effect sheets can be played on a loop |
+| `pnpm test`            | The whole test suite, once                          |
+| `pnpm test:rules`      | The Firestore rules, against a throwaway emulator   |
+| `npx tsc --noEmit`     | Type-check                                          |
+| `npx oxlint src test`  | Lint                                                |
+| `npx oxfmt src test`   | Format                                              |
+| `pnpm cs:add`          | Add a changeset                                     |
 
 ## Where things live
 
-| Path              | What is in it                                                                     |
-| ----------------- | --------------------------------------------------------------------------------- |
-| `src/data/`       | The dex: species, moves, abilities, items, biomes, spawn and item pools           |
-| `src/overworld/`  | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids      |
-| `src/battle/`     | The battle engine: events, units, moves, statuses, abilities, items, AI           |
-| `src/auth/`       | Client-side Firestore reads and the `'use server'` wrappers around the writes     |
-| `src/server/`     | Privileged writes, Admin SDK only, behind a verified caller                       |
-| `src/components/` | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
-| `src/canvas/`     | Sprite sheets and the animation class the map and battle canvases draw with       |
-| `src/core/`       | The shared primitives: seeded RNG, Perlin noise, the event engine                 |
-| `public/sprites/` | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon |
-| `test/`           | Vitest suites, mirroring the source tree                                          |
-| `docs/`           | The mechanics and Firestore documentation                                         |
+| Path                   | What is in it                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/data/`            | The dex: species, moves, abilities, items, biomes, spawn and item pools                                                   |
+| `src/overworld/`       | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids                                              |
+| `src/battle/`          | The battle engine: events, units, moves, statuses, abilities, items, AI                                                   |
+| `src/auth/`            | Client-side Firestore reads and the `'use server'` wrappers around the writes                                             |
+| `src/server/`          | Privileged writes, Admin SDK only, behind a verified caller                                                               |
+| `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
+| `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
+| `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
+| `public/sprites/`      | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon                                         |
+| `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
+| `test/`                | Vitest suites, mirroring the source tree                                                                                  |
+| `docs/`                | The mechanics and Firestore documentation                                                                                 |
 
 Two conventions are worth knowing before reading the source. Every module has a
 single `export default` where it has an obvious main export. And effects — an

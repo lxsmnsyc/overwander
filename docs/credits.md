@@ -86,9 +86,17 @@ pokemon's shadow, body, head and hands are. There is one file per pokemon rather
 than one per coat, because a shiny is the same animation in different colours.
 `src/canvas/sprite-sheet.ts` is the whole of that contract and
 `src/canvas/species-sprite-animation.ts` plays it, so a sheet from any project
-writing the format plays without conversion. `pnpm compact-sprites` rewrites the
-PNG containers as indexed colour without touching a pixel: it changes bytes, not
-pictures.
+writing the format plays without conversion.
+
+Two passes run over the sheets before they ship, and
+[sprite-pipeline.json](../sprite-pipeline.json) records what each did to which
+version of which sheet. `pnpm compact-sprites` rewrites the PNG containers as
+indexed colour without touching a pixel: it changes bytes, not pictures. `pnpm
+sprite-loops` measures whether an effect's last frame flows back into its first,
+so a flame can be held on screen by looping it and an explosion cannot. Neither
+pass leaves a trace in the file it rewrote, which is what the record is for: a
+sheet whose digest no longer matches its entry has been re-exported since, and
+the tests say so.
 
 ### Where the sheets come from
 

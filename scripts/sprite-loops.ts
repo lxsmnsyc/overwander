@@ -1,6 +1,14 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import decode, { type Image } from './png.ts';
+import now, {
+  type Ledger,
+  digestOf,
+  readLedger,
+  record,
+  sheetKey,
+  writeLedger,
+} from './sprite-ledger.ts';
 
 /**
  * Work out which effect sheets can be played on a loop, and write the
@@ -379,29 +387,47 @@ interface Result {
   verdict: Verdict | null;
   changed: boolean;
   note: string;
+  /** What the sheet is, for the record in `sprite-pipeline.json` */
+  key: string;
+  digest: string;
+  bytes: number;
+  width: number;
+  height: number;
 }
 
 function look(directory: string, dryRun: boolean): Result {
   const sheet = relative(process.cwd(), directory);
   const descriptionPath = join(directory, 'data.json');
   const imagePath = join(directory, 'image.png');
+  const bytes = readFileSync(imagePath);
+  const at = {
+    key: sheetKey(imagePath),
+    digest: digestOf(bytes),
+    bytes: bytes.length,
+    width: 0,
+    height: 0,
+  };
   let parsed: unknown;
 
   try {
     parsed = JSON.parse(readFileSync(descriptionPath, 'utf8'));
   } catch {
-    return { sheet, verdict: null, changed: false, note: 'no description to read' };
+    return { ...at, sheet, verdict: null, changed: false, note: 'no description to read' };
   }
 
   if (!isRecord(parsed) || !Array.isArray(parsed.images)) {
-    return { sheet, verdict: null, changed: false, note: 'not an atlas' };
+    return { ...at, sheet, verdict: null, changed: false, note: 'not an atlas' };
   }
 
-  const image = decode(readFileSync(imagePath));
+  const image = decode(bytes);
+
+  at.width = image.width;
+  at.height = image.height;
+
   const frames = framesOf(parsed.images);
 
   if (frames.length === 0) {
-    return { sheet, verdict: null, changed: false, note: 'no frames' };
+    return { ...at, sheet, verdict: null, changed: false, note: 'no frames' };
   }
 
   const verdict = judge(image, frames);
@@ -410,7 +436,31 @@ function look(directory: string, dryRun: boolean): Result {
   if (changed && !dryRun) {
     writeFileSync(descriptionPath, withLoops(parsed, verdict.loops));
   }
-  return { sheet, verdict, changed, note: verdict.why };
+  return { ...at, sheet, verdict, changed, note: verdict.why };
+}
+
+/**
+ * Note what this run decided, so a later one can tell a sheet that was
+ * measured as unloopable from one nobody has measured
+ */
+function keepRecord(results: Result[]): void {
+  const ledger: Ledger = readLedger();
+  const stamp = now();
+
+  for (const result of results) {
+    const verdict = result.verdict;
+
+    if (verdict == null) {
+      continue;
+    }
+    record(
+      ledger,
+      result.key,
+      { digest: result.digest, bytes: result.bytes, width: result.width, height: result.height },
+      { loops: { at: stamp, loops: verdict.loops, why: verdict.why } },
+    );
+  }
+  writeLedger(ledger);
 }
 
 /**
@@ -449,6 +499,10 @@ if (sheets.length === 0) {
 say(dryRun ? 'sprite-loops: dry run, nothing written\n' : 'sprite-loops\n');
 
 const results = sheets.map((directory) => look(directory, dryRun));
+
+if (!dryRun) {
+  keepRecord(results);
+}
 const width = Math.max(...results.map((result) => result.sheet.length));
 
 for (const result of results) {

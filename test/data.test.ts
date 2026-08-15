@@ -686,7 +686,14 @@ describe('ability data', () => {
       for (const species of getSpeciesByBiome(biome)) {
         for (const ability of getSpeciesAbilities(species)) {
           seen.add(ability);
-          expect(getAbilityData(ability).name.length).toBeGreaterThan(0);
+
+          const data = getAbilityData(ability);
+
+          expect(data.name.length).toBeGreaterThan(0);
+          // Every one says what it does, and says it as a sentence:
+          // the line is what the catch dialog prints under the name
+          expect(data.description, `${data.name} says nothing about itself`).not.toBe('');
+          expect(data.description.endsWith('.'), `${data.name} does not end its line`).toBe(true);
         }
       }
     }

@@ -1,6 +1,15 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative } from 'node:path';
 import decode, { depthFor, encodeIndexed, encodeTruecolor, paletteOf, sameImage } from './png.ts';
+import now, {
+  type Ledger,
+  digestOf,
+  prune,
+  readLedger,
+  record,
+  sheetKey,
+  writeLedger,
+} from './sprite-ledger.ts';
 
 /**
  * Shrink the sprite sheets under `public/sprites` without changing a
@@ -186,6 +195,13 @@ interface Result {
   before: number;
   after: number;
   note: string;
+  /** What the sheet is now, for the record kept in `sprite-pipeline.json` */
+  key: string;
+  digest: string;
+  width: number;
+  height: number;
+  /** How the picture ended up stored, or null when it was left alone */
+  as: string | null;
 }
 
 /**
@@ -205,12 +221,20 @@ function compact(imagePath: string, dryRun: boolean): Result {
   const sheet = fromHere.startsWith('..') ? imagePath : fromHere;
   const image = decode(original);
   const described = describe(imagePath);
+  const at = {
+    key: sheetKey(imagePath),
+    digest: digestOf(original),
+    width: image.width,
+    height: image.height,
+  };
 
   if (described != null && (described.width !== image.width || described.height !== image.height)) {
     return {
+      ...at,
       sheet,
       before: original.length,
       after: original.length,
+      as: null,
       note: `its description says ${described.width}x${described.height}, image is ${image.width}x${image.height} — left alone`,
     };
   }
@@ -250,18 +274,61 @@ function compact(imagePath: string, dryRun: boolean): Result {
       writeFileSync(imagePath, candidate.bytes);
     }
     return {
+      ...at,
+      // The record is about the sheet as it now stands, which after a
+      // rewrite is the candidate rather than what was read in
+      digest: digestOf(candidate.bytes),
       sheet,
       before: original.length,
       after: candidate.bytes.length,
+      as: candidate.label,
       note: `${kind}, ${colors} — ${candidate.label}`,
     };
   }
   return {
+    ...at,
     sheet,
     before: original.length,
     after: original.length,
+    as: 'already compact',
     note: `${kind}, ${colors} — already compact`,
   };
+}
+
+/**
+ * Note what this run did, so a later one — or a person wondering why a
+ * sheet is a quarter of the size it came in at — can look it up.
+ *
+ * A sheet that was left alone because its description disagrees with it
+ * is deliberately **not** recorded as done: nothing was done to it, and
+ * the record is meant to be the list of sheets that have been through
+ * the mill
+ */
+function keepRecord(results: Result[], roots: string[]): number {
+  const ledger: Ledger = readLedger();
+  const stamp = now();
+  let kept = 0;
+
+  for (const result of results) {
+    if (result.as == null) {
+      continue;
+    }
+    record(
+      ledger,
+      result.key,
+      { digest: result.digest, bytes: result.after, width: result.width, height: result.height },
+      { compact: { at: stamp, as: result.as, was: result.before, bytes: result.after } },
+    );
+    kept += 1;
+  }
+
+  // Only a run over the whole collection can say a sheet has gone; one
+  // pointed at a single folder has no opinion about the rest
+  if (roots.length === 0) {
+    prune(ledger, new Set(results.map((result) => result.key)));
+  }
+  writeLedger(ledger);
+  return kept;
 }
 
 /* -------------------------------------------------------------------
@@ -283,6 +350,10 @@ if (sheets.length === 0) {
 const kb = (bytes: number): string => `${(bytes / 1024).toFixed(1)}K`;
 
 const results = sheets.map((path) => compact(path, dryRun));
+
+if (!dryRun) {
+  keepRecord(results, roots);
+}
 const before = results.reduce((total, result) => total + result.before, 0);
 const after = results.reduce((total, result) => total + result.after, 0);
 const width = Math.max(...results.map((result) => result.sheet.length));

@@ -23,6 +23,7 @@ import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
 import registerTradeItems from './trade-items';
 import registerTrinkets from './trinkets';
+import registerUtilityBelt from './utility-belt';
 import registerTypeBoosters from './type-boosters';
 import registerValuables from './valuables';
 import registerVitamins from './vitamins';
@@ -58,6 +59,7 @@ export default function registerItems(): void {
   registerPlates();
   registerCandyItems();
   registerBottleCaps();
+  registerUtilityBelt();
   registerPurifyingGem();
   registerSacredAsh();
   registerPortalKey();

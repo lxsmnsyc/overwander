@@ -2,6 +2,7 @@ import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type BattleAftermath from '../auth/battle-aftermath';
 import type { TeamSnapshotRecord } from '../auth/teams';
+import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
@@ -317,12 +318,17 @@ export function fieldTeams(
  * same rolls, and teams sharing an alliance number fight side by
  * side — the boss stands in its own
  */
-export function createRaidBattle(battleId: string, teams: TeamSnapshotRecord[]): RaidBattle {
+export function createRaidBattle(
+  battleId: string,
+  teams: TeamSnapshotRecord[],
+  limits = UNLIMITED_BATTLE_LIMITS,
+): RaidBattle {
   // The boss carries Boss (and, in a shadow raid, Shadow) alongside
   // its own rolled ability, so the per-unit limit has to fit all three
   const battle = createBattle(battleId, {
     mode: BattleModes.Raid,
     realtime: true,
+    limits,
   });
 
   return { battle, ...fieldTeams(battle, teams, BOSS_ALLIANCE) };

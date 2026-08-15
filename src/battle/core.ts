@@ -1,4 +1,6 @@
 import AleaRNG from '../core/alea';
+import { PVP_BATTLE_LIMITS, UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
+import { type Slots, getSlots } from '../data/constants/slots';
 import { EventEngine } from '../core/event-engine';
 import { Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
@@ -21,10 +23,26 @@ export default class Battle extends EventEngine<BattleEventMap> {
 
   mode: BattleModes;
 
-  constructor(seed: string, mode = BattleModes.PvP) {
+  /**
+   * What this fight allows a unit to bring, packed the way a catch's
+   * own `slots` are. A raid allows everything; a fight between players
+   * is held to the mainline's shape unless the scenario says otherwise
+   */
+  limits: number;
+
+  constructor(seed: string, mode = BattleModes.PvP, limits?: number) {
     super();
     this.rng = new AleaRNG(seed);
     this.mode = mode;
+    this.limits =
+      limits ?? (mode === BattleModes.Raid ? UNLIMITED_BATTLE_LIMITS : PVP_BATTLE_LIMITS);
+  }
+
+  /**
+   * How many of that kind this fight allows at most
+   */
+  checkLimit(kind: Slots): number {
+    return getSlots(this.limits, kind);
   }
 
   random(): number {

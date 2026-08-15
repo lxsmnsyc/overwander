@@ -1,4 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Slots } from '../../data/constants/slots';
 import { Stages, Stats } from '../../data/constants/stats';
 import {
   TYPE_EFFECTIVENESS,
@@ -81,7 +82,41 @@ function createMoveState(source: Unit, move: Moves): MoveState {
   };
 }
 
+/**
+ * Moves occupying the unit's slots. The innate swing is exempt: it is
+ * what a pokemon does when it has nothing else left, so a move set
+ * full to the brim still has it
+ */
+function countMoves(unit: Unit): number {
+  let count = 0;
+
+  for (const key in unit.moves) {
+    // tsc requires the assertion to index the Moves-mapped record;
+    // tsgolint resolves the const enum to number and disagrees
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const move = Number(key) as Moves;
+
+    // oxlint-disable-next-line typescript/no-unnecessary-condition
+    if (unit.moves[move] != null && move !== Moves.Attack) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
 export function setupMoveMechanics(battle: Battle): void {
+  // A unit knows what it has room for, held to what the fight allows
+  battle.on(BattleEvents.UnitAddMove, EventPriority.Pre, (event) => {
+    if (
+      event.source.moves[event.move] == null &&
+      event.move !== Moves.Attack &&
+      countMoves(event.source) >= event.source.checkSlots(Slots.Move)
+    ) {
+      event.disabled = true;
+    }
+  });
+
   battle.on(BattleEvents.UnitAddMove, EventPriority.Exact, (event) => {
     event.source.moves[event.move] = createMoveState(event.source, event.move);
   });

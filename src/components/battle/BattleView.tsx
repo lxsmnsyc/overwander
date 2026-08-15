@@ -95,10 +95,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         }
 
         // A stop's fight is an ordinary trainer battle; a raid runs
-        // under raid rules, with the boss side marked
+        // under raid rules, with the boss side marked. What either
+        // allows a unit to bring is the record's, so a fight replays
+        // under the rules it was fought under
         const built = fighting
-          ? createRocketBattle(props.active.id, teams)
-          : createRaidBattle(props.active.id, teams);
+          ? createRocketBattle(props.active.id, teams, loaded.limits)
+          : createRaidBattle(props.active.id, teams, loaded.limits);
 
         // Built and set up, but not yet running. The canvas says when
         // it has every sheet the fight needs, and the countdown starts

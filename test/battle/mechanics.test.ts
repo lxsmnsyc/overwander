@@ -5,6 +5,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/event
 import type Battle from '../../src/battle/core';
 import type Unit from '../../src/battle/unit';
 import { MOVE_DELAY } from '../../src/battle/mechanics/move';
+import { Slots, packSlots } from '../../src/data/constants/slots';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
@@ -658,13 +659,29 @@ describe('move delay', () => {
 });
 
 describe('what a unit may carry', () => {
-  it('leaves the ceiling to the record it was fielded from', () => {
+  it('holds a fight between players to one item and one ability', () => {
     const { battle, teamA } = createBattle();
     const unit = createUnit(battle, teamA);
 
-    // A raid boss walks in with three abilities and a shadow with two,
-    // which the record's own `slots` field allowed. The battle counts
-    // nothing: a second ceiling here would drop them on the floor
+    unit.addItem(Items.CheriBerry);
+    unit.addItem(Items.OranBerry);
+
+    expect(unit.items[Items.CheriBerry]).toBe(true);
+    expect(unit.items[Items.OranBerry]).toBeUndefined();
+
+    unit.addAbility(Abilities.RunAway);
+    unit.addAbility(Abilities.Limber);
+
+    expect(unit.abilities[Abilities.RunAway]).toBe(true);
+    expect(unit.abilities[Abilities.Limber]).toBeUndefined();
+  });
+
+  it('lets the special tier ride free of the ability count', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    // A boss walks in with three: the Boss ability and the shadow are
+    // marks of what it is rather than abilities it was given
     unit.addAbility(Abilities.Boss);
     unit.addAbility(Abilities.Shadow);
     unit.addAbility(Abilities.RunAway);
@@ -672,12 +689,73 @@ describe('what a unit may carry', () => {
     expect(unit.abilities[Abilities.Boss]).toBe(true);
     expect(unit.abilities[Abilities.Shadow]).toBe(true);
     expect(unit.abilities[Abilities.RunAway]).toBe(true);
+  });
 
+  it('keeps a move set to four, and the innate swing besides', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const known = [Moves.Tackle, Moves.Growl, Moves.Ember, Moves.WaterGun];
+
+    for (const move of known) {
+      unit.addMove(move);
+    }
+    unit.addMove(Moves.Bite);
+
+    for (const move of known) {
+      expect(unit.moves[move]).toBeDefined();
+    }
+    expect(unit.moves[Moves.Bite]).toBeUndefined();
+
+    // What a pokemon does with nothing left to throw is not one of its
+    // four
+    unit.addMove(Moves.Attack);
+
+    expect(unit.moves[Moves.Attack]).toBeDefined();
+  });
+
+  it('holds a raid to the pokemon\u2019s own room and nothing more', () => {
+    const { battle, teamA } = createBattle('test-seed', BattleModes.Raid);
+    const unit = createUnit(battle, teamA);
+
+    // A party brings whatever it has managed to give its pokemon, so
+    // the fight adds no ceiling of its own — but a pokemon with one
+    // item slot still has one
     unit.addItem(Items.CheriBerry);
     unit.addItem(Items.OranBerry);
 
-    expect(unit.items[Items.CheriBerry]).toBe(true);
+    expect(unit.items[Items.OranBerry]).toBeUndefined();
+
+    unit.setSlots(packSlots(2, 2, 4));
+    unit.addItem(Items.OranBerry);
+    unit.addAbility(Abilities.RunAway);
+    unit.addAbility(Abilities.Limber);
+
     expect(unit.items[Items.OranBerry]).toBe(true);
+    expect(unit.abilities[Abilities.Limber]).toBe(true);
+  });
+
+  it('holds a belted pokemon to what the fight allows', () => {
+    const roomy = packSlots(1, 2, 4);
+    const plain = createBattle();
+    const scenario = createBattle('test-seed', BattleModes.PvP, packSlots(1, 2, 4));
+
+    const held = createUnit(plain.battle, plain.teamA);
+    const allowed = createUnit(scenario.battle, scenario.teamA);
+
+    // The belt is the pokemon's; whether it counts is the fight's
+    held.setSlots(roomy);
+    allowed.setSlots(roomy);
+
+    expect(held.checkSlots(Slots.Item)).toBe(1);
+    expect(allowed.checkSlots(Slots.Item)).toBe(2);
+
+    held.addItem(Items.CheriBerry);
+    held.addItem(Items.OranBerry);
+    allowed.addItem(Items.CheriBerry);
+    allowed.addItem(Items.OranBerry);
+
+    expect(held.items[Items.OranBerry]).toBeUndefined();
+    expect(allowed.items[Items.OranBerry]).toBe(true);
   });
 });
 

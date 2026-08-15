@@ -1,5 +1,6 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
+import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import {
   BATTLE_COLLECTION,
   CAUGHT_COLLECTION,
@@ -722,6 +723,9 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     species: raid.species,
     outcome: BattleOutcome.Unfinished,
     startedAt: now,
+    // A raid adds no ceiling of its own: a party brings whatever it
+    // has managed to give its pokemon
+    limits: UNLIMITED_BATTLE_LIMITS,
   });
 
   // The lobby's teams have done their work. What the fight runs on is

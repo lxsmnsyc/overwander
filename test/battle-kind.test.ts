@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../src/auth/battle-kind';
 import type { BattleRecord } from '../src/auth/battles';
 import BattleOutcome from '../src/auth/battle-outcome';
+import { UNLIMITED_BATTLE_LIMITS } from '../src/data/constants/battle-limits';
 import { Species } from '../src/data/ids/species';
 
 function asRecord(fields: Partial<BattleRecord>): BattleRecord {
@@ -12,6 +13,7 @@ function asRecord(fields: Partial<BattleRecord>): BattleRecord {
     species: Species.Bulbasaur,
     outcome: BattleOutcome.Won,
     startedAt: 0,
+    limits: UNLIMITED_BATTLE_LIMITS,
     ...fields,
   };
 }

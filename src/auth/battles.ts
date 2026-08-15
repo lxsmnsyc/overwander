@@ -10,6 +10,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
+import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import type { Species } from '../data/ids/species';
 import { asNumber, asString, asStringArray } from './__normalize';
 import { getFirebaseFirestore } from './firebase';
@@ -51,6 +52,16 @@ export interface BattleRecord {
    * Server-clock milliseconds the battle started
    */
   startedAt: number;
+  /**
+   * What the fight allowed a unit to bring — abilities, items and
+   * moves — packed the way a catch's own `slots` are.
+   *
+   * It is stored rather than derived so a battle replays under the
+   * rules it was fought under: a raid allows everything, a fight
+   * between players is held to the mainline's shape today, and a
+   * scenario that wants two held items writes that here
+   */
+  limits: number;
 }
 
 const converter: FirestoreDataConverter<BattleRecord> = {
@@ -67,6 +78,9 @@ const converter: FirestoreDataConverter<BattleRecord> = {
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       outcome: asNumber(data.outcome) as BattleOutcome,
       startedAt: asNumber(data.startedAt),
+      // A battle written before the field existed was a raid, and a
+      // raid allows everything
+      limits: data.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(data.limits),
     };
   },
 };

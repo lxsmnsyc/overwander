@@ -42,7 +42,11 @@ export interface BattleHarness {
  * plus one team per side. The frame timer (setupBattleMechanics) is
  * left out; tests drive time with battle.tick().
  */
-export function createBattle(seed = 'test-seed', mode?: BattleModes): BattleHarness {
+export function createBattle(
+  seed = 'test-seed',
+  mode?: BattleModes,
+  limits?: number,
+): BattleHarness {
   if (!dataRegistered) {
     registerMoves();
     registerSpecies();
@@ -50,7 +54,7 @@ export function createBattle(seed = 'test-seed', mode?: BattleModes): BattleHarn
     dataRegistered = true;
   }
 
-  const battle = new Battle(seed, mode);
+  const battle = new Battle(seed, mode, limits);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

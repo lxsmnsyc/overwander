@@ -1,5 +1,6 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
+import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import {
   BATTLE_COLLECTION,
   ROCKET_COLLECTION,
@@ -203,6 +204,9 @@ export async function startRocketBattle(
     species: record.party[0]?.species ?? 0,
     outcome: BattleOutcome.Unfinished,
     startedAt: now,
+    // A trainer battle is held to the mainline's shape: one ability,
+    // one held item, four moves apiece
+    limits: PVP_BATTLE_LIMITS,
   });
   await ref.update({ battle: battle.id });
 

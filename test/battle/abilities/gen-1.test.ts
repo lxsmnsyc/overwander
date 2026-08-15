@@ -1082,7 +1082,7 @@ describe('Pickup', () => {
   });
 
   it('scavenges into a slot the record left free', () => {
-    const { battle, teamA, teamB } = createBattle();
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, packSlots(1, 2, 4));
     const holder = createUnit(battle, teamA);
     const consumer = createUnit(battle, teamB);
 

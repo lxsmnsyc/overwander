@@ -29,9 +29,9 @@ import setupStatus from './status';
  */
 export default function createBattle(
   seed: string,
-  options?: { mode?: BattleModes; realtime?: boolean },
+  options?: { mode?: BattleModes; realtime?: boolean; limits?: number },
 ): Battle {
-  const battle = new Battle(seed, options?.mode);
+  const battle = new Battle(seed, options?.mode, options?.limits);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

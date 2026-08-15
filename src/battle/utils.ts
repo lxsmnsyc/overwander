@@ -29,7 +29,7 @@ export function holdsAnyItem(unit: Unit): boolean {
  * Holdable items currently occupying the unit's item slots (disabled
  * ones included: a disabled item is still in the grip)
  */
-function countHeldItems(unit: Unit): number {
+export function countHeldItems(unit: Unit): number {
   let count = 0;
 
   for (const key in unit.items) {

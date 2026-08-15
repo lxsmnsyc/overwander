@@ -135,6 +135,8 @@ import {
   unpackIVs,
 } from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
+import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
+import { PVP_BATTLE_LIMITS, UNLIMITED_BATTLE_LIMITS } from '../src/data/constants/battle-limits';
 import {
   PURIFY_IV_BOOST,
   isPurifiable,
@@ -1169,6 +1171,57 @@ describe('item data', () => {
     }
     expect(ITEM_POOL.uncommon.some((entry) => entry.item === Items.EnergyRoot)).toBe(true);
     expect(ITEM_POOL.rare.some((entry) => entry.item === Items.RevivalHerb)).toBe(true);
+  });
+
+  it('packs a battle\u2019s limits the way a catch packs its slots', () => {
+    // The two are compared, so they have to be the same shape: the
+    // effective room is the smaller of them
+    expect(getSlots(PVP_BATTLE_LIMITS, Slots.Ability)).toBe(1);
+    expect(getSlots(PVP_BATTLE_LIMITS, Slots.Item)).toBe(1);
+    expect(getSlots(PVP_BATTLE_LIMITS, Slots.Move)).toBe(4);
+
+    // A raid adds no ceiling of its own
+    for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
+      expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(MAX_SLOTS);
+    }
+
+    // And a scenario is one packed number, which is why it can be
+    // stored on the battle record
+    const scenario = packSlots(1, 2, 4);
+
+    expect(getSlots(scenario, Slots.Item)).toBe(2);
+    expect(getSlots(scenario, Slots.Ability)).toBe(1);
+  });
+
+  it('buries the Utility Belt with the things that change a pokemon', () => {
+    const data = getItemData(Items.UtilityBelt);
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    expect(data.name).toBe('Utility Belt');
+    // Used on a pokemon and gone. Never held: a belt in the grip
+    // would be a held item taking up the slot it grants
+    expect(data.type).toBe(ItemTypes.Training);
+    expect(data.flags & ItemFlags.Usable).not.toBe(0);
+    expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+    expect(data.flags & ItemFlags.Holdable).toBe(0);
+    expect(data.flags & ItemFlags.Marketable).toBe(0);
+    expect(isUtilityBelt(Items.UtilityBelt)).toBe(true);
+    expect(isUtilityBelt(Items.ExpertBelt)).toBe(false);
+
+    // What it widens, and where it is found: the band for things that
+    // change a pokemon for good
+    expect(UTILITY_BELT_SLOT).toBe(Slots.Item);
+    expect(prized.has(Items.UtilityBelt)).toBe(true);
+    expect(isPreciousItem(Items.UtilityBelt)).toBe(true);
+
+    // One belt is one slot, and the field's own ceiling is the end of
+    // it
+    const roomier = withSlots(defaultSlots(), UTILITY_BELT_SLOT, 2);
+
+    expect(getSlots(roomier, Slots.Item)).toBe(2);
+    expect(getSlots(withSlots(roomier, UTILITY_BELT_SLOT, MAX_SLOTS + 1), Slots.Item)).toBe(
+      MAX_SLOTS,
+    );
   });
 
   it('buries the bottle caps rather than stocking them', () => {

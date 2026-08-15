@@ -152,10 +152,13 @@ export default class Unit {
   }
 
   /**
-   * How many of that kind it has room for
+   * How many of that kind it has room for **in this fight**: what the
+   * pokemon itself has room for, held to whatever the battle allows.
+   * A belt that bought a second item slot is worth nothing in a fight
+   * that allows one
    */
   checkSlots(kind: Slots): number {
-    return getSlots(this.slots, kind);
+    return Math.min(getSlots(this.slots, kind), this.battle.checkLimit(kind));
   }
 
   /**

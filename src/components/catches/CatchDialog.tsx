@@ -2096,14 +2096,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           </For>
                         </List>
                       </Show>
-                      {/* A catch holds one item at a time, matching the
-                        battle's per-unit limit. The button carries the
-                        count so the section says how full it is
-                        without a sentence saying so, and it is dead
-                        rather than absent when there is nothing to
-                        give: a player who empties their bag should see
-                        the same sheet they saw before, with one thing
-                        greyed out */}
+                      {/* How many a catch holds is the record's own
+                        room, which a Utility Belt widens. The button
+                        carries the count so the section says how full
+                        it is without a sentence saying so, and it is
+                        dead rather than absent when there is nothing
+                        to give */}
                       <Show when={owned() != null}>
                         <Row class="justify-center">
                           <Button

@@ -182,6 +182,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The only way a shadow is ever put right, and a shadow is a raid
     // rather than an everyday thing
     { item: Items.PurifyingGem, weight: 8 },
+    // The only thing that widens a pokemon rather than filling it in.
+    // Thin: a second held item is a whole build, and one belt is one
+    // pokemon's worth of it
+    { item: Items.UtilityBelt, weight: 4 },
     // The one item that brings a pokemon back from nothing at full
     // health. The Revive and the Revival Herb are the rare band's
     // answer to a lost fight; this is the answer to a lost party

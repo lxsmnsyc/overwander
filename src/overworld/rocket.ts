@@ -5,6 +5,7 @@ import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
 import createBattle from '../battle/setup';
 import { Stats } from '../data/constants/stats';
+import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type ChunkSnapshot from './chunk-snapshot';
@@ -127,10 +128,15 @@ export function createRocketParty(snapshot: ChunkSnapshot, spawns: Spawn[]): Cat
  * ordinary trainer battle: no raid rules, and the per-unit ability
  * limit only has to fit the rolled ability alongside Shadow
  */
-export function createRocketBattle(battleId: string, teams: TeamSnapshotRecord[]): RaidBattle {
+export function createRocketBattle(
+  battleId: string,
+  teams: TeamSnapshotRecord[],
+  limits = PVP_BATTLE_LIMITS,
+): RaidBattle {
   const battle: Battle = createBattle(battleId, {
     mode: BattleModes.PvP,
     realtime: true,
+    limits,
   });
 
   return { battle, ...fieldTeams(battle, teams, null) };

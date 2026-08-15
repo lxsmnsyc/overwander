@@ -612,6 +612,12 @@ export const enum Items {
   Lemonade = 297,
   MoomooMilk = 298,
   BerryJuice = 299,
+
+  /**
+   * Spent on one pokemon to give it somewhere else to put something.
+   * See [`src/data/items/utility-belt.ts`](../items/utility-belt.ts)
+   */
+  UtilityBelt = 300,
 }
 
 /**

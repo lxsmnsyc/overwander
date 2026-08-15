@@ -1204,12 +1204,12 @@ describe('the Sticky Barb', () => {
   });
 
   it('catches on a hand with a slot still free', () => {
-    const { battle, teamA, teamB } = createBattle();
+    // A scenario that allows two, and a pokemon with room for two:
+    // both have to agree before a second hand exists
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, packSlots(1, 2, 4));
     const barbed = createUnit(battle, teamA);
     const attacker = createUnit(battle, teamB);
 
-    // Room for two, which is the record's business rather than the
-    // battle's: one hand is full and the other is not
     attacker.setSlots(packSlots(1, 2, 4));
     attacker.addItem(Items.Leftovers);
 

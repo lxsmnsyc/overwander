@@ -4,6 +4,7 @@ import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Battle from '../../src/battle/core';
 import type Unit from '../../src/battle/unit';
+import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
@@ -539,8 +540,9 @@ describe('casting flow', () => {
     attacker.cast(Moves.Dig, unitTarget(defender));
 
     // The cast ends with the first step: underground, and out of
-    // reach of anything that does not dig after it
-    advance(battle, 1800);
+    // reach of anything that does not dig after it. The step's own
+    // effect lands a delay after the move goes off, like any other
+    advance(battle, 1800 + MOVE_DELAY);
 
     expect(attacker.casting).toBeUndefined();
     expect(attacker.channeling).toBeDefined();
@@ -552,6 +554,10 @@ describe('casting flow', () => {
 
     expect(attacker.channeling).toBeUndefined();
     expect(attacker.status[Statuses.Invulnerable]).toBeUndefined();
+
+    // The bite lands a moment after the move goes off
+    advance(battle, MOVE_DELAY);
+
     expect(defender.health).toBeLessThan(160);
   });
 
@@ -574,11 +580,11 @@ describe('casting flow', () => {
 
     // Teleport is priority -6, so both its wind-up and its one
     // channelled step run 200 frames (~3333ms)
-    advance(battle, 3400);
+    advance(battle, 3400 + MOVE_DELAY);
 
     expect(attackerIsHidden(unit)).toBe(true);
 
-    advance(battle, 3400);
+    advance(battle, 3400 + MOVE_DELAY);
 
     // Vanishing and never reappearing is the failure this guards: the
     // step that brings the user back is a channelled one, so a channel
@@ -614,8 +620,9 @@ describe('move delay', () => {
 
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
-    // Contact moves have no projectile: defaults to zero
-    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(0);
+    // A move that names no delay takes the default: the swing has to
+    // land somewhere
+    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(MOVE_DELAY);
 
     // Projectile moves declare their flight time in data
     expect(unit.checkMoveDelay(Moves.Ember, target)).toBe(250);
@@ -625,7 +632,25 @@ describe('move delay', () => {
       event.duration += 250;
     });
 
-    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(250);
+    expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(MOVE_DELAY + 250);
+  });
+
+  it('holds a move off until its delay has run', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMove(Moves.Tackle, unitTarget(defender), 0);
+
+    // Nothing has landed yet: the swing is still going out
+    expect(defender.health).toBe(160);
+
+    advance(battle, MOVE_DELAY - 1000 / 60);
+    expect(defender.health).toBe(160);
+
+    advance(battle, 1000 / 60);
+    expect(defender.health).toBeLessThan(160);
   });
 });
 

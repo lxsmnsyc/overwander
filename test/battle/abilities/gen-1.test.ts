@@ -8,6 +8,7 @@ import {
   type UnitAttackEvent,
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
+import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
@@ -754,6 +755,9 @@ describe('Drought', () => {
     expect(battle.weather.current).toBe(Weathers.None);
 
     holder.addAbility(Abilities.Drought);
+    // It calls up the sun by casting the move for it, and the move
+    // lands a delay later like any other
+    battle.tick(MOVE_DELAY);
 
     expect(battle.weather.current).toBe(Weathers.Sunny);
   });

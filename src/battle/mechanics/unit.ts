@@ -224,6 +224,12 @@ function setupUnitSpeciesMechanics(battle: Battle): void {
       event.source.addType(type);
     }
 
+    // The species' listed weight, which whatever built the unit
+    // overwrites with the individual's own if it has one. Seeded here
+    // so a unit that nobody measured still weighs something: Low Kick
+    // reads it, and every unit weighing nothing would make it useless
+    event.source.setWeight(data.weight);
+
     // The appearance follows the actual species unless overridden later
     event.source.setAppearance(event.species);
   });

@@ -7,7 +7,11 @@ import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import Abilities from '../../../src/data/ids/abilities';
 import { Types } from '../../../src/data/constants/types';
 import { Moves } from '../../../src/data/ids/moves';
+import { Species } from '../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import { getMoveData } from '../../../src/data/moves';
+import { getWeightPower } from '../../../src/battle/moves/weight';
+import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -537,9 +541,13 @@ describe('Mirror Move', () => {
     const enemy = createUnit(battle, teamB);
 
     enemy.triggerMove(Moves.Tackle, unitTarget(copier), 0);
+    battle.tick(MOVE_DELAY);
+
     expect(copier.health).toBeCloseTo(160 - plainDamage(40));
 
     copier.triggerMoveEffect(Moves.MirrorMove, unitTarget(enemy), 0);
+    battle.tick(MOVE_DELAY);
+
     expect(enemy.health).toBeCloseTo(160 - plainDamage(40));
   });
 });
@@ -675,6 +683,7 @@ describe('Metronome', () => {
     const enemy = createUnit(battle, teamB);
 
     unit.triggerMoveEffect(Moves.Metronome, unitTarget(enemy), 0);
+    battle.tick(MOVE_DELAY);
 
     // Tackle lands (crit at pin 0, 85% range roll)
     expect(160 - enemy.health).toBeCloseTo(19.6 * 2 * 0.85);
@@ -1061,5 +1070,66 @@ describe('Struggle', () => {
 
     expect(defender.alive).toBe(false);
     expect(attacker.health).toBe(120);
+  });
+});
+
+describe('weight-driven moves', () => {
+  it('reads the brackets off the target rather than the move', () => {
+    expect(getWeightPower(0.1)).toBe(20);
+    expect(getWeightPower(9.9)).toBe(20);
+    expect(getWeightPower(10)).toBe(40);
+    expect(getWeightPower(24.9)).toBe(40);
+    expect(getWeightPower(25)).toBe(60);
+    expect(getWeightPower(50)).toBe(80);
+    expect(getWeightPower(100)).toBe(100);
+    expect(getWeightPower(200)).toBe(120);
+    expect(getWeightPower(460)).toBe(120);
+  });
+
+  it('hits a Snorlax harder than it hits a Gastly', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const light = createUnit(battle, teamB);
+    const heavy = createUnit(battle, teamB);
+
+    // A unit takes its species' listed weight until something
+    // measures the individual
+    light.setSpecies(Species.Gastly);
+    heavy.setSpecies(Species.Snorlax);
+
+    expect(attacker.checkMovePower(Moves.LowKick, unitTarget(light))).toBe(20);
+    expect(attacker.checkMovePower(Moves.LowKick, unitTarget(heavy))).toBe(120);
+
+    // And the individual's own weight is what counts, not the
+    // species' — a small Snorlax is an easier lift
+    heavy.setWeight(150);
+
+    expect(attacker.checkMovePower(Moves.LowKick, unitTarget(heavy))).toBe(100);
+  });
+
+  it('lands for what the target weighs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    defender.setWeight(300);
+    attacker.addMove(Moves.LowKick);
+    attacker.triggerMoveEffect(Moves.LowKick, unitTarget(defender), 0);
+
+    const maxHealth = defender.checkStat(Stats.HP, 0);
+
+    // The Fighting hit is neutral on the harness' typeless defender
+    expect(maxHealth - defender.health).toBeCloseTo(plainDamage(120));
+  });
+
+  it('keeps the registered power when there is nothing to weigh', () => {
+    const { battle, teamA } = createBattle();
+    const attacker = createUnit(battle, teamA);
+
+    // What the dex shows, and what the AI rates before it has a target
+    expect(attacker.checkMovePower(Moves.LowKick, NONE_TARGET)).toBe(
+      getMoveData(Moves.LowKick).power,
+    );
   });
 });

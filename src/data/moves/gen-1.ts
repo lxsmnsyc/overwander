@@ -3,7 +3,7 @@ import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../ids/moves'
 import { registerMove } from './__create';
 
 // Flight time of a thrown/shot projectile before its impact cue
-const PROJECTILE_DELAY = 250;
+const PROJECTILE_DELAY = 500;
 
 export default function registerGen1Moves(): void {
   registerMove(Moves.Tackle, {
@@ -1244,7 +1244,9 @@ export default function registerGen1Moves(): void {
     flags: 0,
     cast: ['Swell', 'RearUp', 'Charge'],
   });
-  // TODO weight-based power once species declare their weight
+  // Power is the target's weight; the registered figure is what the
+  // dex shows and what a targetless rating reads. See
+  // [`src/battle/moves/weight.ts`](../../battle/moves/weight.ts)
   registerMove(Moves.LowKick, {
     name: 'Low Kick',
     type: Types.Fighting,

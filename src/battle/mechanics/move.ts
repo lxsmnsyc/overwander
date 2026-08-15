@@ -41,6 +41,17 @@ const FPS_DURATION = 1000 / FPS;
 const FRAMES_PER_PRIORITY = 16;
 const BASE_FRAMES = 104;
 
+/**
+ * The gap between a move going off and its effect landing, for moves
+ * that do not name their own. It is what the swing takes: without it
+ * the damage lands on the frame the animation starts, and every hit
+ * in the game is over before it is seen.
+ *
+ * A move whose data carries a `delay` keeps it — a projectile's is its
+ * flight time, which is longer than a swing
+ */
+export const MOVE_DELAY = 250;
+
 function getCastTime(priority: number): number {
   return (BASE_FRAMES - priority * FRAMES_PER_PRIORITY) * FPS_DURATION;
 }
@@ -163,7 +174,7 @@ export function setupMoveMechanics(battle: Battle): void {
     event.steps = getMoveData(event.move).steps ?? 0;
   });
   battle.on(BattleEvents.CheckUnitMoveDelay, EventPriority.Exact, (event) => {
-    event.duration = getMoveData(event.move).delay ?? 0;
+    event.duration = getMoveData(event.move).delay ?? MOVE_DELAY;
   });
 }
 

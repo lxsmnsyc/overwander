@@ -36,6 +36,7 @@ import setupTriAttack from './tri-attack';
 import setupSwitchOutMoves from './switch-out';
 import setupWeatherAccuracyMoves from './weather-accuracy';
 import setupWeatherMoves from './weather';
+import setupWeightMoves from './weight';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -56,6 +57,7 @@ export default function setupMoves(battle: Battle): void {
   setupFixedDamageMoves(battle);
   setupSwitchOutMoves(battle);
   setupMultiHitMoves(battle);
+  setupWeightMoves(battle);
 
   // Variations
   setupSolarBeam(battle);

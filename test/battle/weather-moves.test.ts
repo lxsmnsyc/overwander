@@ -4,6 +4,7 @@ import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { WEATHER_ROCK_FACTOR } from '../../src/battle/items/gear';
+import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { WEATHER_DURATION } from '../../src/battle/moves/weather';
 import { Stats } from '../../src/data/constants/stats';
 import { Items } from '../../src/data/ids/items';
@@ -34,6 +35,8 @@ function castOnce(unit: Unit, move: Moves): void {
   unit.addMove(move);
   unit.cast(move, { type: MoveTargetType.None });
   unit.finishCast();
+  // The sky changes when the move lands, not when it goes off
+  unit.battle.tick(MOVE_DELAY);
 }
 
 describe('weather moves', () => {
@@ -96,7 +99,9 @@ describe('weather moves', () => {
 
     castOnce(caster, Moves.RainDance);
 
-    battle.tick(WEATHER_DURATION - 1);
+    // The cast's own delay is already on the clock: the sky started
+    // running out the moment the move landed
+    battle.tick(WEATHER_DURATION - MOVE_DELAY - 1);
     expect(battle.weather.current).toBe(Weathers.Rain);
 
     battle.tick(1);

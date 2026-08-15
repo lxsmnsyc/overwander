@@ -1,6 +1,7 @@
 import type Battle from '../core';
 import setupBattleItems from './battle-items';
 import setupBerries from './berries';
+import setupDrinks from './drinks';
 import setupGear from './gear';
 import setupGems from './gems';
 import setupIncenses from './incenses';
@@ -21,4 +22,5 @@ export default function setupItems(battle: Battle): void {
   setupOneShots(battle);
   setupBattleItems(battle);
   setupSacredAsh(battle);
+  setupDrinks(battle);
 }

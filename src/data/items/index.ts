@@ -3,6 +3,7 @@ import registerBattleItems from './battle-items';
 import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
+import registerDrinks from './drinks';
 import registerFossils from './fossils';
 import registerGear from './gear';
 import registerGems from './gems';
@@ -42,6 +43,7 @@ export default function registerItems(): void {
   registerBalls();
   registerBattleBerries();
   registerMedicines();
+  registerDrinks();
   registerEvolutionStones();
   registerTradeItems();
   registerTypeBoosters();

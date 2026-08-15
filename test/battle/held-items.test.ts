@@ -31,6 +31,8 @@ import {
 import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
+import { DRINK_THRESHOLD } from '../../src/battle/items/drinks';
+import { DRINKS } from '../../src/data/items/drinks';
 import { SCREEN_DURATION } from '../../src/battle/status/reflect';
 import { TRAPPED_DURATION, TRAPPED_TICK } from '../../src/battle/status/trapped';
 import Abilities from '../../src/data/ids/abilities';
@@ -1420,5 +1422,68 @@ describe('the Sacred Ash', () => {
 
     expect(holder.alive).toBe(true);
     expect(enemy.alive).toBe(false);
+  });
+});
+
+describe('the drinks', () => {
+  it('goes down on its own once the holder is nearly out', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const maxHealth = holder.checkStat(Stats.HP, 0);
+    const drink = DRINKS.get(Items.MoomooMilk);
+
+    holder.addItem(Items.MoomooMilk);
+
+    // A quarter left is a berry's moment, not a drink's
+    holder.setHealth(maxHealth / 4);
+
+    expect(holder.items[Items.MoomooMilk]).toBe(true);
+
+    const low = maxHealth * DRINK_THRESHOLD;
+
+    holder.setHealth(low);
+
+    expect(holder.items[Items.MoomooMilk]).toBeUndefined();
+    expect(holder.health).toBe(low + (drink?.restore ?? 0));
+  });
+
+  it('gives back what the bottle holds, whatever the pokemon is', () => {
+    const { battle, teamA } = createBattle();
+    const small = createUnit(battle, teamA);
+    const maxHealth = small.checkStat(Stats.HP, 0);
+    const water = DRINKS.get(Items.FreshWater);
+    const milk = DRINKS.get(Items.MoomooMilk);
+
+    small.addItem(Items.FreshWater);
+    small.setHealth(maxHealth * DRINK_THRESHOLD);
+
+    // Flat, so the cheap bottle is worth less to whoever has more to
+    // fill — and the dear one is worth carrying by anybody
+    expect(small.health).toBe(maxHealth * DRINK_THRESHOLD + (water?.restore ?? 0));
+    expect(water?.restore).toBeLessThan(milk?.restore ?? 0);
+  });
+
+  it('is moved by a Gluttony the way a berry is', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const maxHealth = holder.checkStat(Stats.HP, 0);
+
+    holder.addAbility(Abilities.Gluttony);
+    holder.addItem(Items.Lemonade);
+    holder.setHealth(maxHealth * DRINK_THRESHOLD * 2);
+
+    // Twice the threshold, which is exactly what the ability buys
+    expect(holder.items[Items.Lemonade]).toBeUndefined();
+  });
+
+  it('never spills over the top of its holder', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const maxHealth = holder.checkStat(Stats.HP, 0);
+
+    holder.addItem(Items.MoomooMilk);
+    holder.setHealth(1);
+
+    expect(holder.health).toBeLessThanOrEqual(maxHealth);
   });
 });

@@ -601,6 +601,17 @@ export const enum Items {
    * [`src/data/items/sacred-ash.ts`](../items/sacred-ash.ts)
    */
   SacredAsh = 294,
+
+  /**
+   * The drinks: bottled somewhere in particular and carried into a
+   * fight, drunk by whoever is holding one the moment they are nearly
+   * out. See [`src/data/items/drinks.ts`](../items/drinks.ts)
+   */
+  FreshWater = 295,
+  SodaPop = 296,
+  Lemonade = 297,
+  MoomooMilk = 298,
+  BerryJuice = 299,
 }
 
 /**

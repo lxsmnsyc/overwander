@@ -151,6 +151,7 @@ import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/g
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { BATTLE_ITEMS, BATTLE_ITEM_PRICE, isBattleItem } from '../src/data/items/battle-items';
 import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../src/data/items/one-shots';
+import { DRINKS, isDrink } from '../src/data/items/drinks';
 import { isSacredAsh } from '../src/data/items/sacred-ash';
 import {
   FOUND_TRINKETS,
@@ -2333,6 +2334,36 @@ describe('type-enhancing items', () => {
     // Cheaper than a one-shot, because each answers one thing only
     expect(BATTLE_ITEM_PRICE).toBeLessThan(ONE_SHOT_PRICE);
     expect(isBattleItem(Items.Leftovers)).toBe(false);
+  });
+
+  it('bottles the drinks as held rather than as medicine', () => {
+    for (const [item, drink] of DRINKS) {
+      const data = getItemData(item);
+
+      expect(data.name).toBe(drink.name);
+      // Held, unlike everything else that gives health back over a
+      // counter: a potion cannot be carried into a fight
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(data.flags & ItemFlags.Usable).toBe(0);
+      expect(isDrink(item)).toBe(true);
+      expect(drink.restore).toBeGreaterThan(0);
+    }
+
+    // The four a machine sells are listed; the juice is squeezed
+    expect(getItemData(Items.Lemonade).buy).toBeGreaterThan(0);
+    expect(getItemData(Items.BerryJuice).buy).toBe(0);
+    expect(getItemData(Items.BerryJuice).flags & ItemFlags.Marketable).toBe(0);
+    expect(getItemData(Items.BerryJuice).sell).toBeGreaterThan(0);
+
+    // A drink pays for being carried: the cheapest bottle gives back
+    // more than a Potion does and costs less, and what it charges for
+    // instead is the held slot it takes up
+    const water = DRINKS.get(Items.FreshWater);
+
+    expect(getItemData(Items.FreshWater).buy).toBeLessThan(getItemData(Items.Potion).buy);
+    expect(water?.restore).toBeGreaterThan(MEDICINES.get(Items.Potion)?.restore ?? 0);
   });
 
   it('hides the Sacred Ash rather than selling it', () => {

@@ -4,6 +4,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { hasAnyStatus } from '../utils';
 
 /**
  * The moves that take health back from what they hit. Exported so an
@@ -20,11 +21,19 @@ export const ABSORB_MOVES = new Set<Moves>([
 const HEALING_FACTOR = 0.5;
 
 /**
+ * What counts as having a dream to eat. A dormant boss is not asleep,
+ * but it is not awake either — and a raid where the move is dead
+ * weight against the only thing in the room is a raid where nobody
+ * brings it
+ */
+const DREAMING = new Set<Statuses>([Statuses.Sleeping, Statuses.Dormant]);
+
+/**
  * Dream Eater eats a dream, so there has to be one: it does nothing at
  * all to a target that is awake
  */
 function isDreamEaterUsable(target: MoveTarget): boolean {
-  return target.type === MoveTargetType.Unit && target.unit.status[Statuses.Sleeping] != null;
+  return target.type === MoveTargetType.Unit && hasAnyStatus(target.unit, DREAMING);
 }
 
 export default function setupAbsorb(battle: Battle): void {

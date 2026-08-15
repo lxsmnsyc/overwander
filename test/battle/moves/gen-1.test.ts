@@ -248,6 +248,22 @@ describe('Dream Eater', () => {
     expect(defender.health).toBeCloseTo(160 - plainDamage(100));
     expect(attacker.health).toBeCloseTo(100 + plainDamage(100) / 2);
   });
+
+  it('counts a dormant boss as dreaming', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    attacker.setHealth(100);
+
+    // A boss warming up is not asleep, but it is not awake either
+    defender.addStatus(Statuses.Dormant, NONE_CAUSE);
+
+    attacker.triggerMoveEffect(Moves.DreamEater, unitTarget(defender), 0);
+
+    expect(defender.health).toBeCloseTo(160 - plainDamage(100));
+    expect(attacker.health).toBeCloseTo(100 + plainDamage(100) / 2);
+  });
 });
 
 describe('fixed damage moves', () => {

@@ -8,7 +8,8 @@ import { isFullyEvolved } from '../../data/species';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { createHeldItems, holds } from './__create';
+import type Battle from '../core';
+import { createHeldItem, holds } from './__create';
 
 /**
  * Stat-enhancing held items: what a pokemon carries to be stronger
@@ -84,45 +85,28 @@ const RELICS: RelicBoost[] = [
   },
 ];
 
-export default createHeldItems(
-  () => [
-    ...CHOICE_ITEMS.keys(),
-    Items.AssaultVest,
-    Items.Eviolite,
-    ...RELICS.map((relic) => relic.item),
-  ],
-  (battle) => {
+/**
+ * A Choice item: half again of the stat it buys, paid for by never
+ * throwing anything but the first move reached for
+ */
+function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
+  return createHeldItem(item, (battle) => {
     /**
-     * What each Choice holder opened with. It is the battle's own
-     * bookkeeping rather than the unit's: the lock belongs to the
-     * item, and losing the item — or leaving the field — forgets it
+     * What each holder opened with. It is the battle's own bookkeeping
+     * rather than the unit's: the lock belongs to the item, and losing
+     * the item — or leaving the field — forgets it
      */
     const committed = new Map<Unit, Moves>();
 
-    function choiceItemOf(unit: Unit): Items | null {
-      for (const item of CHOICE_ITEMS.keys()) {
-        if (holds(unit, item)) {
-          return item;
-        }
-      }
-      return null;
-    }
-
     return new MergedLifecycle([
-      // Half again of the stat the item buys
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        for (const [item, stat] of CHOICE_ITEMS) {
-          if (event.stat === stat && holds(event.source, item)) {
-            event.value *= STAT_BOOST_FACTOR;
-            return;
-          }
+        if (event.stat === stat && holds(event.source, item)) {
+          event.value *= STAT_BOOST_FACTOR;
         }
       }),
 
-      // The price of it: the first move a Choice holder reaches for
-      // is the only one it may reach for again
       battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-        if (choiceItemOf(event.source) != null) {
+        if (holds(event.source, item)) {
           committed.set(event.source, event.move);
         }
       }),
@@ -131,29 +115,35 @@ export default createHeldItems(
         const locked = committed.get(event.source);
 
         if (event.success && locked != null && locked !== event.move) {
-          event.success = choiceItemOf(event.source) == null;
+          event.success = !holds(event.source, item);
         }
       }),
 
-      // The lock is the item's, so it goes when the item does;
-      // leaving the field clears it the way switching out does in the
-      // mainline
+      // The lock is the item's, so it goes when the item does; leaving
+      // the field clears it the way switching out does in the mainline
       battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
-        if (CHOICE_ITEMS.has(event.item)) {
+        if (event.item === item) {
           committed.delete(event.source);
         }
       }),
       battle.on(BattleEvents.UnitDisableItem, EventPriority.Post, (event) => {
-        if (CHOICE_ITEMS.has(event.item)) {
+        if (event.item === item) {
           committed.delete(event.source);
         }
       }),
       battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
         committed.delete(event.source);
       }),
+    ]);
+  });
+}
 
-      // An Assault Vest is half again of Special Defense, paid for by
-      // never casting a status move
+// An Assault Vest is half again of Special Defense, paid for by never
+// casting a status move
+const setupAssaultVest = createHeldItem(
+  Items.AssaultVest,
+  (battle) =>
+    new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.stat === Stats.SpecialDefense && holds(event.source, Items.AssaultVest)) {
           event.value *= STAT_BOOST_FACTOR;
@@ -169,35 +159,49 @@ export default createHeldItems(
           event.success = false;
         }
       }),
-
-      // An Eviolite is for what is not finished growing: half again
-      // of both defenses while the species still has somewhere to
-      // evolve to
-      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        if (event.stat !== Stats.Defense && event.stat !== Stats.SpecialDefense) {
-          return;
-        }
-        if (!holds(event.source, Items.Eviolite)) {
-          return;
-        }
-        if (!isFullyEvolved(event.source.species)) {
-          event.value *= STAT_BOOST_FACTOR;
-        }
-      }),
-
-      // The relics, which double a stat for the one species that
-      // knows what to do with them and nothing for anyone else
-      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        for (const relic of RELICS) {
-          if (
-            relic.species.has(event.source.species) &&
-            relic.stats.has(event.stat) &&
-            holds(event.source, relic.item)
-          ) {
-            event.value *= RELIC_BOOST_FACTOR;
-          }
-        }
-      }),
-    ]);
-  },
+    ]),
 );
+
+// An Eviolite is for what is not finished growing: half again of both
+// defenses while the species still has somewhere to evolve to
+const setupEviolite = createHeldItem(Items.Eviolite, (battle) =>
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+    if (event.stat !== Stats.Defense && event.stat !== Stats.SpecialDefense) {
+      return;
+    }
+    if (holds(event.source, Items.Eviolite) && !isFullyEvolved(event.source.species)) {
+      event.value *= STAT_BOOST_FACTOR;
+    }
+  }),
+);
+
+/**
+ * A relic doubles its stats for the one species that knows what to do
+ * with it and does nothing at all for anybody else
+ */
+function setupRelic(relic: RelicBoost): (battle: Battle) => void {
+  return createHeldItem(relic.item, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        relic.species.has(event.source.species) &&
+        relic.stats.has(event.stat) &&
+        holds(event.source, relic.item)
+      ) {
+        event.value *= RELIC_BOOST_FACTOR;
+      }
+    }),
+  );
+}
+
+const SETUPS: ((battle: Battle) => void)[] = [
+  ...[...CHOICE_ITEMS].map(([item, stat]) => setupChoiceItem(item, stat)),
+  setupAssaultVest,
+  setupEviolite,
+  ...RELICS.map(setupRelic),
+];
+
+export default function setupStatBoosters(battle: Battle): void {
+  for (const setup of SETUPS) {
+    setup(battle);
+  }
+}

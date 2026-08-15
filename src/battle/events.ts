@@ -230,6 +230,13 @@ export const enum BattleEvents {
    * weather rocks lengthen
    */
   CheckUnitWeatherDuration = 136,
+
+  /**
+   * What a unit weighs right now, in kilograms. The stored weight is
+   * the individual's own; this is what anything reading it sees, so a
+   * Float Stone lightens its holder without touching the record
+   */
+  CheckUnitWeight = 137,
 }
 
 export const enum MoveTargetType {
@@ -391,6 +398,10 @@ export interface UnitSetWeatherEvent extends UnitEvent {
  */
 export interface CheckUnitWeatherDurationEvent extends UnitWeatherEvent {
   duration: number;
+}
+
+export interface CheckUnitWeightEvent extends UnitEvent {
+  weight: number;
 }
 
 /**
@@ -782,6 +793,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveSteps]: [CheckUnitMoveStepsEvent, EventPriority];
   [BattleEvents.CheckUnitMoveHits]: [CheckUnitMoveHitsEvent, EventPriority];
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
+  [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];

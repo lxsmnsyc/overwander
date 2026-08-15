@@ -563,6 +563,16 @@ export const enum Items {
   Everstone = 277,
   AmuletCoin = 278,
   CleanseTag = 279,
+
+  /**
+   * The handicaps: gear held for what it does to its own carrier, and
+   * worth a slot only because of what comes with it
+   */
+  IronBall = 280,
+  LaggingTail = 281,
+  RingTarget = 282,
+  StickyBarb = 283,
+  FloatStone = 284,
 }
 
 /**

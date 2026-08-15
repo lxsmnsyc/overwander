@@ -23,37 +23,28 @@ export const GEM_FACTOR = 1.5;
 
 export default createHeldItems(
   () => GEMS.keys(),
-  (battle) =>
-    new MergedLifecycle([
+  (battle, item) => {
+    const gemmed = GEMS.get(item);
+
+    return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        if (event.power == null) {
+        if (event.power == null || !holds(event.source, item)) {
           return;
         }
-
-        const type = event.source.checkMoveType(event.move, event.target);
-
-        for (const [item, gemmed] of GEMS) {
-          if (gemmed === type && holds(event.source, item)) {
-            event.power *= GEM_FACTOR;
-            return;
-          }
+        if (event.source.checkMoveType(event.move, event.target) === gemmed) {
+          event.power *= GEM_FACTOR;
         }
       }),
 
       // Spent on the way out of the attack it lifted: the damage is
-      // already resolved, so the gem is paid for rather than wasted
+      // already resolved, so the gem is paid for rather than wasted.
+      // `spendItem` disables it first, so it cannot lift a second hit
+      // on its way out
       battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
-        if (!event.success) {
-          return;
-        }
-
-        for (const [item, gemmed] of GEMS) {
-          // Disabled before the trigger inside `spendItem`, so a gem
-          // cannot lift a second hit on its way out
-          if (gemmed === event.type && spendItem(event.source, item)) {
-            return;
-          }
+        if (event.success && event.type === gemmed) {
+          spendItem(event.source, item);
         }
       }),
-    ]),
+    ]);
+  },
 );

@@ -34,21 +34,18 @@ export const TYPE_BOOSTER_FACTOR = 1.2;
 
 export default createHeldItems(
   () => BOOSTS.keys(),
-  (battle) =>
-    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-      if (event.power == null) {
+  (battle, item) => {
+    const boosted = BOOSTS.get(item);
+
+    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      // Only an enabled item boosts: one that has been disabled is
+      // still in the holder's grip but does nothing
+      if (event.power == null || !holds(event.source, item)) {
         return;
       }
-
-      const type = event.source.checkMoveType(event.move, event.target);
-
-      for (const [item, boosted] of BOOSTS) {
-        // Only an enabled item boosts: one that has been disabled is
-        // still in the holder's grip but does nothing
-        if (boosted === type && holds(event.source, item)) {
-          event.power *= TYPE_BOOSTER_FACTOR;
-          return;
-        }
+      if (event.source.checkMoveType(event.move, event.target) === boosted) {
+        event.power *= TYPE_BOOSTER_FACTOR;
       }
-    }),
+    });
+  },
 );

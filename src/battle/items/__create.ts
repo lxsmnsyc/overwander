@@ -13,86 +13,112 @@ import type Unit from '../unit';
  */
 
 /**
- * Wire up a family of held items, listening only while one is held.
+ * What holds one item's listeners open: who is carrying it, and the
+ * lifecycle that runs while anybody is
+ */
+interface ItemGate {
+  hold: (unit: Unit) => void;
+}
+
+/**
+ * Build the gate for one item. The lifecycle is created here rather
+ * than at wiring time, so an item nobody in the battle ever picks up
+ * costs a set lookup and nothing else — and so the item's own
+ * listeners are registered **before** the gate's, which is what lets
+ * anything it does about the item going away run before the gate
+ * shuts
+ */
+function createItemGate(
+  battle: Battle,
+  item: Items,
+  setup: (battle: Battle, item: Items) => Lifecycle,
+): ItemGate {
+  const lifecycle = setup(battle, item);
+  const holders = new Set<Unit>();
+
+  battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+    // The unit may be carrying another of the same kind where the
+    // battle allows it, so what matters is whether any is left. A
+    // disabled one still counts: it is in the grip, and `spendItem`
+    // disables before the effect runs
+    if (event.item !== item || event.source.items[item] != null) {
+      return;
+    }
+
+    holders.delete(event.source);
+
+    if (holders.size === 0) {
+      lifecycle.stop();
+    }
+  });
+
+  return {
+    hold: (unit: Unit): void => {
+      holders.add(unit);
+
+      if (holders.size === 1) {
+        lifecycle.start();
+      }
+    },
+  };
+}
+
+/**
+ * Wire up held items, one gate each: an item's listeners run while
+ * somebody is carrying that item and at no other time.
  *
  * It is the item half of
- * [`createAbility`](../abilities/__create.ts): the family's listeners
- * are built once and left stopped, started when the first unit picks
- * anything in the family up, and stopped again when the last one puts
- * it down. A raid where nobody carries a berry is a raid that does not
- * run the berry listeners at all.
+ * [`createAbility`](../abilities/__create.ts), and `setup` is called
+ * once per item rather than once per shelf — a Leftovers being carried
+ * starts the Leftovers listeners and nothing else. A table-driven
+ * family reads the item it was called for instead of looping over its
+ * whole table.
  *
- * The gate is deliberately **per family rather than per item**, which
- * is where it differs from an ability. Abilities are one listener
- * each; item modules are table-driven, so one listener already serves
- * every gem, every plate and every berry, and gating each item
- * separately would multiply listeners rather than remove them.
- *
- * It keys on the item being **held**, not on it being enabled. An item
- * that fires is disabled before its effect runs — see `spendItem` —
- * so a gate that closed on the disable would tear its own listeners
- * down halfway through the effect they were listening for. The gate
- * closes on removal, and the family's own listeners are registered
- * ahead of it, so anything the family does about an item going away
- * has already run by the time the switch is thrown.
+ * The gate keys on the item being **held**, not on it being enabled.
+ * An item that fires is disabled before its effect runs — see
+ * `spendItem` — so a gate that closed on the disable would tear down
+ * the listeners halfway through the effect they were listening for.
  *
  * The item list is resolved lazily because a family may be read off
  * the item registry, which is filled after the battle is wired
  */
 export function createHeldItems(
   items: () => Iterable<Items>,
-  setup: (battle: Battle) => Lifecycle,
-) {
+  setup: (battle: Battle, item: Items) => Lifecycle,
+): (battle: Battle) => void {
   return (battle: Battle): void => {
-    const lifecycle = setup(battle);
-
-    // Nobody has picked anything up yet
-    lifecycle.stop();
-
-    let family: Set<Items> | null = null;
-    const holders = new Set<Unit>();
-
-    function inFamily(item: Items): boolean {
-      family ??= new Set(items());
-      return family.has(item);
-    }
-
-    function stillHolding(unit: Unit): boolean {
-      for (const key in unit.items) {
-        // tsc requires the assertion to index the Items-mapped record;
-        // tsgolint resolves the const enum to number and disagrees
-        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-        const item = Number(key) as Items;
-
-        if (unit.items[item] != null && inFamily(item)) {
-          return true;
-        }
-      }
-      return false;
-    }
+    const gates = new Map<Items, ItemGate>();
+    let known: Set<Items> | null = null;
 
     battle.on(BattleEvents.UnitAddItem, EventPriority.Post, (event) => {
-      if (inFamily(event.item)) {
-        holders.add(event.source);
+      known ??= new Set(items());
 
-        if (holders.size === 1) {
-          lifecycle.start();
-        }
+      if (!known.has(event.item)) {
+        return;
       }
-    });
 
-    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
-      // A unit may carry more than one of a family where the battle
-      // allows it, so what matters is whether it has any left
-      if (inFamily(event.item) && !stillHolding(event.source)) {
-        holders.delete(event.source);
+      let gate = gates.get(event.item);
 
-        if (holders.size === 0) {
-          lifecycle.stop();
-        }
+      if (gate == null) {
+        gate = createItemGate(battle, event.item, setup);
+        gates.set(event.item, gate);
       }
+      gate.hold(event.source);
     });
   };
+}
+
+/**
+ * One held item on its own, for a family of exactly one
+ */
+export function createHeldItem(
+  item: Items,
+  setup: (battle: Battle) => Lifecycle,
+): (battle: Battle) => void {
+  return createHeldItems(
+    () => [item],
+    (battle) => setup(battle),
+  );
 }
 
 /**

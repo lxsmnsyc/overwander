@@ -1,18 +1,18 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
-import { Types } from '../../data/constants/types';
+import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories, MoveFlags, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
-import { FOUND_GEAR, MARKET_GEAR } from '../../data/items/gear';
 import { getMoveData } from '../../data/moves';
-import { TRAPPING_MOVES } from '../moves/status';
+import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { onUnitActs } from '../utils';
-import { createEffectivenessTracker, createHeldItems, holds } from './__create';
+import { countHeldItems, onUnitActs } from '../utils';
+import { TRAPPING_MOVES } from '../moves/status';
+import { createEffectivenessTracker, createHeldItem, holds } from './__create';
 
 /**
  * The gear: held items that work for as long as they are carried.
@@ -116,6 +116,27 @@ export const QUICK_CLAW_PRIORITY = 1;
 export const FOCUS_BAND_CHANCE = 0.1;
 
 /**
+ * What a Sticky Barb costs whoever is stuck with it — the Black
+ * Sludge's share, since a barb is rubbish that bites
+ */
+export const STICKY_BARB_SHARE = 1 / 8;
+
+/**
+ * What an Iron Ball and a Float Stone do to their carrier: one halves
+ * its speed and grounds it, the other halves what it weighs
+ */
+export const IRON_BALL_SPEED = 0.5;
+export const FLOAT_STONE_WEIGHT = 0.5;
+
+/**
+ * How much later a Lagging Tail makes its holder act. It is the
+ * mirror of a Quick Claw's hurry, on the same scale a move's own
+ * priority is on — the mainline's "moves last in its bracket" has no
+ * bracket to be last in here
+ */
+export const LAGGING_TAIL_PRIORITY = -1;
+
+/**
  * What touching a Rocky Helmet costs, as a share of the toucher
  */
 export const ROCKY_HELMET_SHARE = 1 / 6;
@@ -203,290 +224,447 @@ interface Streak {
   repeats: number;
 }
 
-export default createHeldItems(
-  // The King's Rock is registered with the trade items, since the
-  // evolution it gates is the other half of what it is for
-  () => [...MARKET_GEAR.keys(), ...FOUND_GEAR.keys(), Items.KingsRock],
-  (battle) => {
-    const landingHard = createEffectivenessTracker(battle);
-
-    /**
-     * What each Metronome holder has been repeating. It is the battle's
-     * bookkeeping rather than the unit's, the way a Choice lock is:
-     * the count belongs to the item, and losing the item — or leaving
-     * the field — is what forgets it
-     */
-    const streaks = new Map<Unit, Streak>();
-
-    /**
-     * Whoever a Quick Claw is hurrying. It is rolled as the cast opens
-     * rather than in the priority check, because the check is asked
-     * over and over — by the AI rating a move it may never throw, and
-     * by the engine working out the wind-up — and a claw that rolled
-     * fresh each time would be a different item on every question
-     */
-    const hurried = new Set<Unit>();
-
-    return new MergedLifecycle([
-      // The residual gear, paid out on the move rather than on the clock
-      ...onUnitActs(battle, (unit) => {
-        if (!unit.alive) {
-          return;
-        }
-
-        const maxHealth = unit.checkStat(Stats.HP, 0);
-
-        // Rubbish is food to the ones that live on it and poison to
-        // everybody else
-        if (holds(unit, Items.BlackSludge) && !unit.types.has(Types.Poison)) {
-          unit.damage(
-            { type: EffectType.Item, item: Items.BlackSludge, unit },
-            unit,
-            Math.max(1, Math.floor(maxHealth * BLACK_SLUDGE_SHARE)),
-            DamageFlags.Indirect | DamageFlags.HealthScaled,
-          );
-          return;
-        }
-
-        for (const item of [Items.Leftovers, Items.BlackSludge]) {
-          if (holds(unit, item) && unit.health < maxHealth) {
-            unit.triggerItem(item);
-            unit.heal(
-              { type: EffectType.Item, item, unit },
-              unit,
-              Math.max(1, Math.floor(maxHealth * LEFTOVERS_SHARE)),
-              0,
-            );
-            return;
+/**
+ * A residual item, paid out as its holder reaches for a move rather
+ * than on a clock
+ */
+function createResidualGear(
+  item: Items,
+  effect: (unit: Unit, maxHealth: number) => void,
+): (battle: Battle) => void {
+  return createHeldItem(
+    item,
+    (battle) =>
+      new MergedLifecycle(
+        onUnitActs(battle, (unit) => {
+          if (unit.alive && holds(unit, item)) {
+            effect(unit, unit.checkStat(Stats.HP, 0));
           }
+        }),
+      ),
+  );
+}
+
+function heal(unit: Unit, item: Items, amount: number): void {
+  unit.triggerItem(item);
+  unit.heal({ type: EffectType.Item, item, unit }, unit, Math.max(1, Math.floor(amount)), 0);
+}
+
+function bite(unit: Unit, item: Items, amount: number): void {
+  unit.damage(
+    { type: EffectType.Item, item, unit },
+    unit,
+    Math.max(1, Math.floor(amount)),
+    DamageFlags.Indirect | DamageFlags.HealthScaled,
+  );
+}
+
+const setupLeftovers = createResidualGear(Items.Leftovers, (unit, maxHealth) => {
+  if (unit.health < maxHealth) {
+    heal(unit, Items.Leftovers, maxHealth * LEFTOVERS_SHARE);
+  }
+});
+
+// Rubbish is food to the ones that live on it and poison to everybody
+// else
+const setupBlackSludge = createResidualGear(Items.BlackSludge, (unit, maxHealth) => {
+  if (!unit.types.has(Types.Poison)) {
+    bite(unit, Items.BlackSludge, maxHealth * BLACK_SLUDGE_SHARE);
+  } else if (unit.health < maxHealth) {
+    heal(unit, Items.BlackSludge, maxHealth * LEFTOVERS_SHARE);
+  }
+});
+
+// A barb sticks in whoever is carrying it, Poison type or not
+const setupStickyBarbResidual = createResidualGear(Items.StickyBarb, (unit, maxHealth) => {
+  bite(unit, Items.StickyBarb, maxHealth * STICKY_BARB_SHARE);
+});
+
+/**
+ * A Sticky Barb changes hands on contact, if the hand it caught is
+ * empty. Nobody is holding it on purpose, so it goes to whoever
+ * touched it rather than costing them anything
+ */
+const setupStickyBarbTransfer = createHeldItem(Items.StickyBarb, (battle) =>
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+    if (
+      !event.success ||
+      event.flags & DamageFlags.Indirect ||
+      event.cause.type !== EffectType.Move ||
+      event.cause.unit === event.target ||
+      !holds(event.target, Items.StickyBarb) ||
+      !(getMoveData(event.cause.move).flags & MoveFlags.Contact)
+    ) {
+      return;
+    }
+
+    const attacker = event.cause.unit;
+
+    // A full grip keeps it out: the barb has nowhere to catch
+    if (!attacker.alive || countHeldItems(attacker) >= battle.limits.items) {
+      return;
+    }
+
+    const cause = { type: EffectType.Item, item: Items.StickyBarb, unit: event.target } as const;
+
+    event.target.triggerItem(Items.StickyBarb);
+    event.target.removeItem(Items.StickyBarb, cause);
+    attacker.addItem(Items.StickyBarb);
+  }),
+);
+
+// An Iron Ball drags its carrier down in both senses
+const setupIronBall = createHeldItem(
+  Items.IronBall,
+  (battle) =>
+    new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (event.stat === Stats.Speed && holds(event.source, Items.IronBall)) {
+          event.value *= IRON_BALL_SPEED;
         }
       }),
 
-      // A Shell Bell takes its share out of what its holder just did to
-      // somebody else. Indirect damage is nobody's blow, so nothing a
-      // status or a recoil does feeds it
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        if (
-          !event.success ||
-          event.flags & DamageFlags.Indirect ||
-          event.cause.type !== EffectType.Move ||
-          event.cause.unit === event.target
-        ) {
-          return;
-        }
-
-        const attacker = event.cause.unit;
-
-        if (!attacker.alive || !holds(attacker, Items.ShellBell)) {
-          return;
-        }
-
-        const healed = Math.max(1, Math.floor(event.value * SHELL_BELL_SHARE));
-
-        attacker.triggerItem(Items.ShellBell);
-        attacker.heal(
-          { type: EffectType.Item, item: Items.ShellBell, unit: attacker },
-          attacker,
-          healed,
-          0,
-        );
-      }),
-
-      // A Big Root deepens every drain. Only a drain that gives health
-      // back: an ability that turns one against the drainer leaves a
-      // negative behind, and a root is no reason to bleed harder for it
-      battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
-        if (event.value > 0 && holds(event.source, Items.BigRoot)) {
-          event.value *= BIG_ROOT_FACTOR;
+      battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
+        if (!event.grounded && holds(event.source, Items.IronBall)) {
+          event.grounded = true;
         }
       }),
+    ]),
+);
 
-      // The bands, each lifting the half of the game it belongs to
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        if (event.power == null) {
-          return;
-        }
+// A Float Stone lifts what its holder weighs, which is what a Low Kick
+// reads
+const setupFloatStone = createHeldItem(Items.FloatStone, (battle) =>
+  battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
+    if (holds(event.source, Items.FloatStone)) {
+      event.weight *= FLOAT_STONE_WEIGHT;
+    }
+  }),
+);
 
-        const category = getMoveData(event.move).category;
+// A Lagging Tail is a Quick Claw backwards, and never rolls for it:
+// whoever carries one is always the later
+const setupLaggingTail = createHeldItem(Items.LaggingTail, (battle) =>
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+    if (holds(event.source, Items.LaggingTail)) {
+      event.priority += LAGGING_TAIL_PRIORITY;
+    }
+  }),
+);
 
-        for (const [item, boosted] of BAND_CATEGORIES) {
-          if (category === boosted && holds(event.source, item)) {
-            event.power *= BAND_FACTOR;
-            return;
-          }
-        }
-      }),
+/**
+ * A Ring Target takes away what its holder's own typing would have
+ * shrugged off. Only that: the immunity is cleared when the holder's
+ * types are what explain it, so a Levitate or an absorbing ability
+ * keeps its answer
+ */
+const setupRingTarget = createHeldItem(Items.RingTarget, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+    if (
+      !event.immune ||
+      event.target.type !== MoveTargetType.Unit ||
+      !holds(event.target.unit, Items.RingTarget)
+    ) {
+      return;
+    }
 
-      /**
-       * An Expert Belt pays only on a blow that was already landing hard,
-       * which is a thing no power check can know: how hard a move lands
-       * is worked out against the defender's types while the damage
-       * resolves. So it rides the damage rather than the power
-       */
-      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-        if (landingHard(event.parent) && holds(event.parent.source, Items.ExpertBelt)) {
-          event.value *= EXPERT_BELT_FACTOR;
-        }
-      }),
+    for (const defending of event.target.unit.types) {
+      if (TYPE_EFFECTIVENESS[event.type][defending] === TypeEffectiveness.Immune) {
+        event.immune = false;
+        event.target.unit.triggerItem(Items.RingTarget);
+        return;
+      }
+    }
+  }),
+);
 
-      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-        if (!holds(event.source, Items.Metronome)) {
-          return;
-        }
+// A Shell Bell takes its share out of what its holder just did to
+// somebody else. Indirect damage is nobody's blow, so nothing a status
+// or a recoil does feeds it
+const setupShellBell = createHeldItem(Items.ShellBell, (battle) =>
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+    if (
+      !event.success ||
+      event.flags & DamageFlags.Indirect ||
+      event.cause.type !== EffectType.Move ||
+      event.cause.unit === event.target
+    ) {
+      return;
+    }
 
-        const streak = streaks.get(event.source);
+    const attacker = event.cause.unit;
 
-        streaks.set(
-          event.source,
-          streak != null && streak.move === event.move
-            ? { move: event.move, repeats: streak.repeats + 1 }
-            : { move: event.move, repeats: 0 },
-        );
-      }),
+    if (attacker.alive && holds(attacker, Items.ShellBell)) {
+      heal(attacker, Items.ShellBell, event.value * SHELL_BELL_SHARE);
+    }
+  }),
+);
 
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        const streak = streaks.get(event.source);
+// A Big Root deepens every drain. Only a drain that gives health back:
+// an ability that turns one against the drainer leaves a negative
+// behind, and a root is no reason to bleed harder for it
+const setupBigRoot = createHeldItem(Items.BigRoot, (battle) =>
+  battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
+    if (event.value > 0 && holds(event.source, Items.BigRoot)) {
+      event.value *= BIG_ROOT_FACTOR;
+    }
+  }),
+);
 
-        if (event.power == null || streak == null || streak.move !== event.move) {
-          return;
-        }
-        if (!holds(event.source, Items.Metronome)) {
-          return;
-        }
+// A band lifts the half of the game it belongs to
+function setupBand(item: Items, boosted: MoveCategories): (battle: Battle) => void {
+  return createHeldItem(item, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        getMoveData(event.move).category === boosted &&
+        holds(event.source, item)
+      ) {
+        event.power *= BAND_FACTOR;
+      }
+    }),
+  );
+}
 
-        event.power *= Math.min(METRONOME_LIMIT, 1 + METRONOME_STEP * streak.repeats);
-      }),
+/**
+ * An Expert Belt pays only on a blow that was already landing hard,
+ * which is a thing no power check can know: how hard a move lands is
+ * worked out against the defender's types while the damage resolves.
+ * So it rides the damage rather than the power
+ */
+const setupExpertBelt = createHeldItem(Items.ExpertBelt, (battle) => {
+  const landingHard = createEffectivenessTracker(battle);
 
-      battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
-        if (event.item === Items.Metronome) {
-          streaks.delete(event.source);
-        }
-      }),
-      battle.on(BattleEvents.UnitDisableItem, EventPriority.Post, (event) => {
-        if (event.item === Items.Metronome) {
-          streaks.delete(event.source);
-        }
-      }),
+  return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+    if (landingHard(event.parent) && holds(event.parent.source, Items.ExpertBelt)) {
+      event.value *= EXPERT_BELT_FACTOR;
+    }
+  });
+});
 
-      // A Wide Lens steadies its holder's aim; a Bright Powder muddles
-      // the aim of whoever is pointing at the holder
-      battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
-        if (event.accuracy == null) {
-          return;
-        }
+const setupMetronome = createHeldItem(Items.Metronome, (battle) => {
+  /**
+   * What each holder has been repeating. It is the battle's own
+   * bookkeeping rather than the unit's, the way a Choice lock is: the
+   * count belongs to the item, and losing it — or leaving the field —
+   * is what forgets it
+   */
+  const streaks = new Map<Unit, Streak>();
 
-        if (holds(event.source, Items.WideLens)) {
-          event.accuracy *= WIDE_LENS_ACCURACY;
-        }
-        if (event.target.type !== MoveTargetType.Unit) {
-          return;
-        }
+  function forget(unit: Unit): void {
+    streaks.delete(unit);
+  }
 
-        const target = event.target.unit;
+  return new MergedLifecycle([
+    battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      if (!holds(event.source, Items.Metronome)) {
+        return;
+      }
 
-        if (holds(target, Items.BrightPowder)) {
-          event.accuracy *= BRIGHT_POWDER_EVASION;
-        }
-        // A target in the middle of its own move is a target that is
-        // not going anywhere
-        if (
-          (target.casting != null || target.channeling != null) &&
-          holds(event.source, Items.ZoomLens)
-        ) {
-          event.accuracy *= ZOOM_LENS_ACCURACY;
-        }
-      }),
+      const streak = streaks.get(event.source);
 
-      // The lenses, general and species
-      battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
-        const source = event.parent.source;
+      streaks.set(
+        event.source,
+        streak != null && streak.move === event.move
+          ? { move: event.move, repeats: streak.repeats + 1 }
+          : { move: event.move, repeats: 0 },
+      );
+    }),
 
-        if (holds(source, Items.ScopeLens)) {
-          event.value += SCOPE_LENS_CRITICAL_STAGES;
-        }
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const streak = streaks.get(event.source);
 
-        for (const [item, species] of SPECIES_LENSES) {
-          if (source.species === species && holds(source, item)) {
-            event.value += SPECIES_LENS_CRITICAL_STAGES;
-          }
-        }
-      }),
+      if (
+        event.power == null ||
+        streak == null ||
+        streak.move !== event.move ||
+        !holds(event.source, Items.Metronome)
+      ) {
+        return;
+      }
 
-      battle.on(BattleEvents.UnitCast, EventPriority.Pre, (event) => {
-        if (holds(event.source, Items.QuickClaw) && battle.random() < QUICK_CLAW_CHANCE) {
-          hurried.add(event.source);
-          event.source.triggerItem(Items.QuickClaw);
-        } else {
-          hurried.delete(event.source);
-        }
-      }),
+      event.power *= Math.min(METRONOME_LIMIT, 1 + METRONOME_STEP * streak.repeats);
+    }),
 
-      battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
-        if (hurried.has(event.source)) {
-          event.priority += QUICK_CLAW_PRIORITY;
-        }
-      }),
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      if (event.item === Items.Metronome) {
+        forget(event.source);
+      }
+    }),
+    battle.on(BattleEvents.UnitDisableItem, EventPriority.Post, (event) => {
+      if (event.item === Items.Metronome) {
+        forget(event.source);
+      }
+    }),
+    battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+      forget(event.source);
+    }),
+  ]);
+});
 
-      // The hurry is the cast's, so it goes when the cast does
-      battle.on(BattleEvents.UnitFinishCast, EventPriority.Post, (event) => {
-        hurried.delete(event.source);
-      }),
-      battle.on(BattleEvents.UnitStopCast, EventPriority.Post, (event) => {
-        hurried.delete(event.source);
-      }),
-      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
-        hurried.delete(event.source);
-        streaks.delete(event.source);
-      }),
+// A Wide Lens steadies its holder's aim
+const setupWideLens = createHeldItem(Items.WideLens, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+    if (event.accuracy != null && holds(event.source, Items.WideLens)) {
+      event.accuracy *= WIDE_LENS_ACCURACY;
+    }
+  }),
+);
 
-      // A Focus Band leaves its holder standing on 1 HP now and then, and
-      // is not spent doing it. Indirect damage is not a blow, so nothing
-      // a status or a recoil does can be endured this way
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-        if (
-          event.target.alive &&
-          !(event.flags & DamageFlags.Indirect) &&
-          event.value >= event.target.health &&
-          holds(event.target, Items.FocusBand) &&
-          battle.random() < FOCUS_BAND_CHANCE
-        ) {
-          event.value = event.target.health - 1;
+// A Bright Powder muddles the aim of whoever is pointing at the holder
+const setupBrightPowder = createHeldItem(Items.BrightPowder, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+    if (
+      event.accuracy != null &&
+      event.target.type === MoveTargetType.Unit &&
+      holds(event.target.unit, Items.BrightPowder)
+    ) {
+      event.accuracy *= BRIGHT_POWDER_EVASION;
+    }
+  }),
+);
 
-          event.target.triggerItem(Items.FocusBand);
-        }
-      }),
+// A target in the middle of its own move is a target that is not going
+// anywhere
+const setupZoomLens = createHeldItem(Items.ZoomLens, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+    if (
+      event.accuracy == null ||
+      event.target.type !== MoveTargetType.Unit ||
+      !holds(event.source, Items.ZoomLens)
+    ) {
+      return;
+    }
 
-      // A Rocky Helmet takes a share out of whoever put a hand on its
-      // holder. Indirect, so nothing about the blow — drain, recoil, an
-      // item of the attacker's own — reads it as a hit of its own
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        if (
-          !event.success ||
-          event.flags & DamageFlags.Indirect ||
-          event.cause.type !== EffectType.Move ||
-          event.cause.unit === event.target ||
-          !holds(event.target, Items.RockyHelmet) ||
-          !(getMoveData(event.cause.move).flags & MoveFlags.Contact)
-        ) {
-          return;
-        }
+    const target = event.target.unit;
 
-        const attacker = event.cause.unit;
+    if (target.casting != null || target.channeling != null) {
+      event.accuracy *= ZOOM_LENS_ACCURACY;
+    }
+  }),
+);
 
-        if (!attacker.alive) {
-          return;
-        }
+const setupScopeLens = createHeldItem(Items.ScopeLens, (battle) =>
+  battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+    if (holds(event.parent.source, Items.ScopeLens)) {
+      event.value += SCOPE_LENS_CRITICAL_STAGES;
+    }
+  }),
+);
 
-        event.target.triggerItem(Items.RockyHelmet);
-        attacker.damage(
-          { type: EffectType.Item, item: Items.RockyHelmet, unit: event.target },
-          attacker,
-          Math.max(1, Math.floor(attacker.checkStat(Stats.HP, 0) * ROCKY_HELMET_SHARE)),
-          DamageFlags.Indirect,
-        );
-      }),
+// A species lens is worth twice a Scope Lens to the one pokemon it was
+// made for, and nothing to anybody else
+function setupSpeciesLens(item: Items, species: Species): (battle: Battle) => void {
+  return createHeldItem(item, (battle) =>
+    battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+      const source = event.parent.source;
 
-      // Safety Goggles: nothing powdered reaches the eyes behind them
+      if (source.species === species && holds(source, item)) {
+        event.value += SPECIES_LENS_CRITICAL_STAGES;
+      }
+    }),
+  );
+}
+
+const setupQuickClaw = createHeldItem(Items.QuickClaw, (battle) => {
+  /**
+   * Whoever the claw is hurrying. It is rolled as the cast opens rather
+   * than in the priority check, because the check is asked over and
+   * over — by the AI rating a move it may never throw, and by the
+   * engine working out the wind-up — and a claw that rolled fresh each
+   * time would be a different item on every question
+   */
+  const hurried = new Set<Unit>();
+
+  function calm(unit: Unit): void {
+    hurried.delete(unit);
+  }
+
+  return new MergedLifecycle([
+    battle.on(BattleEvents.UnitCast, EventPriority.Pre, (event) => {
+      if (holds(event.source, Items.QuickClaw) && battle.random() < QUICK_CLAW_CHANCE) {
+        hurried.add(event.source);
+        event.source.triggerItem(Items.QuickClaw);
+      } else {
+        calm(event.source);
+      }
+    }),
+
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (hurried.has(event.source)) {
+        event.priority += QUICK_CLAW_PRIORITY;
+      }
+    }),
+
+    // The hurry is the cast's, so it goes when the cast does
+    battle.on(BattleEvents.UnitFinishCast, EventPriority.Post, (event) => {
+      calm(event.source);
+    }),
+    battle.on(BattleEvents.UnitStopCast, EventPriority.Post, (event) => {
+      calm(event.source);
+    }),
+    battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+      calm(event.source);
+    }),
+  ]);
+});
+
+// A Focus Band leaves its holder standing on 1 HP now and then, and is
+// not spent doing it. Indirect damage is not a blow, so nothing a
+// status or a recoil does can be endured this way
+const setupFocusBand = createHeldItem(Items.FocusBand, (battle) =>
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+    if (
+      event.target.alive &&
+      !(event.flags & DamageFlags.Indirect) &&
+      event.value >= event.target.health &&
+      holds(event.target, Items.FocusBand) &&
+      battle.random() < FOCUS_BAND_CHANCE
+    ) {
+      event.value = event.target.health - 1;
+
+      event.target.triggerItem(Items.FocusBand);
+    }
+  }),
+);
+
+// A Rocky Helmet takes a share out of whoever put a hand on its holder.
+// Indirect, so nothing about the blow — drain, recoil, an item of the
+// attacker's own — reads it as a hit of its own
+const setupRockyHelmet = createHeldItem(Items.RockyHelmet, (battle) =>
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+    if (
+      !event.success ||
+      event.flags & DamageFlags.Indirect ||
+      event.cause.type !== EffectType.Move ||
+      event.cause.unit === event.target ||
+      !holds(event.target, Items.RockyHelmet) ||
+      !(getMoveData(event.cause.move).flags & MoveFlags.Contact)
+    ) {
+      return;
+    }
+
+    const attacker = event.cause.unit;
+
+    if (!attacker.alive) {
+      return;
+    }
+
+    event.target.triggerItem(Items.RockyHelmet);
+    attacker.damage(
+      { type: EffectType.Item, item: Items.RockyHelmet, unit: event.target },
+      attacker,
+      Math.max(1, Math.floor(attacker.checkStat(Stats.HP, 0) * ROCKY_HELMET_SHARE)),
+      DamageFlags.Indirect,
+    );
+  }),
+);
+
+const setupSafetyGoggles = createHeldItem(
+  Items.SafetyGoggles,
+  (battle) =>
+    new MergedLifecycle([
+      // Nothing powdered reaches the eyes behind them
       battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
         if (
           !event.immune &&
@@ -508,147 +686,198 @@ export default createHeldItems(
           event.success = false;
         }
       }),
-
-      // A Utility Umbrella keeps the sun and the rain off its holder: the
-      // weather is still out there, but as far as this unit is concerned
-      // there is none
-      battle.on(BattleEvents.CheckUnitWeather, EventPriority.Post, (event) => {
-        if (UMBRELLA_WEATHERS.has(event.weather) && holds(event.source, Items.UtilityUmbrella)) {
-          event.weather = Weathers.None;
-        }
-      }),
-
-      // A Smoke Ball gets its holder out of anything, including whatever
-      // was holding on to it
-      battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-        if (!event.success && holds(event.source, Items.SmokeBall)) {
-          event.success = true;
-
-          event.source.triggerItem(Items.SmokeBall);
-        }
-      }),
-
-      // And a Shed Shell does the same by leaving behind the part
-      // being gripped
-      battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-        if (!event.success && holds(event.source, Items.ShedShell)) {
-          event.success = true;
-
-          event.source.triggerItem(Items.ShedShell);
-        }
-      }),
-
-      // A Destiny Knot ties the other end of the infatuation: whoever
-      // charmed the holder is charmed straight back
-      battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
-        if (
-          event.status !== Statuses.Infatuated ||
-          event.cause.type === EffectType.None ||
-          !holds(event.source, Items.DestinyKnot)
-        ) {
-          return;
-        }
-
-        const charmer = event.cause.unit;
-
-        if (charmer === event.source || charmer.status[Statuses.Infatuated] != null) {
-          return;
-        }
-
-        event.source.triggerItem(Items.DestinyKnot);
-        charmer.addStatus(Statuses.Infatuated, {
-          type: EffectType.Item,
-          item: Items.DestinyKnot,
-          unit: event.source,
-        });
-      }),
-
-      /**
-       * A weather rock holds whatever its holder called up out for
-       * longer. It answers where the weather is asked for rather than
-       * where it lands, because the rock belongs to the one calling
-       * it up — a Damp Rock in a raid lengthens its own team's rain
-       * and nobody else's
-       */
-      battle.on(BattleEvents.CheckUnitWeatherDuration, EventPriority.Post, (event) => {
-        for (const rock of WEATHER_ROCKS) {
-          if (rock.weathers.has(event.weather) && holds(event.source, rock.item)) {
-            event.duration *= WEATHER_ROCK_FACTOR;
-            return;
-          }
-        }
-      }),
-
-      // A Light Clay holds a screen up for as long as a rock holds
-      // the sky. It is read off whoever put the screen up, not off
-      // the team standing behind it
-      battle.on(BattleEvents.CheckTeamStatusDuration, EventPriority.Post, (event) => {
-        if (
-          SCREEN_STATUSES.has(event.status) &&
-          event.cause.type !== EffectType.None &&
-          holds(event.cause.unit, Items.LightClay)
-        ) {
-          event.duration *= LIGHT_CLAY_FACTOR;
-        }
-      }),
-
-      // A Grip Claw holds on for longer, and is read off the one doing
-      // the holding rather than the one being held
-      battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
-        if (
-          event.status === Statuses.Trapped &&
-          event.cause.type !== EffectType.None &&
-          holds(event.cause.unit, Items.GripClaw)
-        ) {
-          event.duration *= GRIP_CLAW_FACTOR;
-        }
-      }),
-
-      /**
-       * A Binding Band grips harder: the chip a bind takes every
-       * second is a third bigger. It is the binder's own indirect
-       * damage, so what identifies it is the move that caused it —
-       * anything else that unit is doing to the same target stays
-       * whatever size it was
-       */
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-        if (
-          event.flags & DamageFlags.Indirect &&
-          event.cause.type === EffectType.Move &&
-          TRAPPING_MOVES.has(event.cause.move) &&
-          event.target.status[Statuses.Trapped] != null &&
-          holds(event.cause.unit, Items.BindingBand)
-        ) {
-          event.value *= BINDING_BAND_FACTOR;
-        }
-      }),
-
-      /**
-       * A King's Rock makes whatever its holder throws liable to leave
-       * the target reeling. It rides the attack rather than the move,
-       * so it is a chance on every blow that lands rather than on one
-       * particular kind of blow — and a move that already flinches
-       * does not get a second roll at it
-       */
-      battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
-        if (
-          !event.success ||
-          event.category === MoveCategories.Status ||
-          !event.target.alive ||
-          event.target.status[Statuses.Flinched] != null ||
-          !holds(event.source, Items.KingsRock) ||
-          battle.random() >= KINGS_ROCK_CHANCE
-        ) {
-          return;
-        }
-
-        event.source.triggerItem(Items.KingsRock);
-        event.target.addStatus(Statuses.Flinched, {
-          type: EffectType.Item,
-          item: Items.KingsRock,
-          unit: event.source,
-        });
-      }),
-    ]);
-  },
+    ]),
 );
+
+// A Utility Umbrella keeps the sun and the rain off its holder: the
+// weather is still out there, but as far as this unit is concerned
+// there is none
+const setupUtilityUmbrella = createHeldItem(Items.UtilityUmbrella, (battle) =>
+  battle.on(BattleEvents.CheckUnitWeather, EventPriority.Post, (event) => {
+    if (UMBRELLA_WEATHERS.has(event.weather) && holds(event.source, Items.UtilityUmbrella)) {
+      event.weather = Weathers.None;
+    }
+  }),
+);
+
+/**
+ * Both of the items that get their holder out of whatever has hold of
+ * it: a Smoke Ball by cover, a Shed Shell by leaving behind the part
+ * being gripped
+ */
+function setupEscapeItem(item: Items): (battle: Battle) => void {
+  return createHeldItem(item, (battle) =>
+    battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+      if (!event.success && holds(event.source, item)) {
+        event.success = true;
+
+        event.source.triggerItem(item);
+      }
+    }),
+  );
+}
+
+// A Destiny Knot ties the other end of the infatuation: whoever charmed
+// the holder is charmed straight back
+const setupDestinyKnot = createHeldItem(Items.DestinyKnot, (battle) =>
+  battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+    if (
+      event.status !== Statuses.Infatuated ||
+      event.cause.type === EffectType.None ||
+      !holds(event.source, Items.DestinyKnot)
+    ) {
+      return;
+    }
+
+    const charmer = event.cause.unit;
+
+    if (charmer === event.source || charmer.status[Statuses.Infatuated] != null) {
+      return;
+    }
+
+    event.source.triggerItem(Items.DestinyKnot);
+    charmer.addStatus(Statuses.Infatuated, {
+      type: EffectType.Item,
+      item: Items.DestinyKnot,
+      unit: event.source,
+    });
+  }),
+);
+
+/**
+ * A weather rock holds whatever its holder called up out for longer. It
+ * answers where the weather is asked for rather than where it lands,
+ * because the rock belongs to the one calling it up — a Damp Rock in a
+ * raid lengthens its own team's rain and nobody else's
+ */
+function setupWeatherRock(rock: {
+  item: Items;
+  weathers: Set<Weathers>;
+}): (battle: Battle) => void {
+  return createHeldItem(rock.item, (battle) =>
+    battle.on(BattleEvents.CheckUnitWeatherDuration, EventPriority.Post, (event) => {
+      if (rock.weathers.has(event.weather) && holds(event.source, rock.item)) {
+        event.duration *= WEATHER_ROCK_FACTOR;
+      }
+    }),
+  );
+}
+
+// A Light Clay holds a screen up for as long as a rock holds the sky.
+// It is read off whoever put the screen up, not off the team standing
+// behind it
+const setupLightClay = createHeldItem(Items.LightClay, (battle) =>
+  battle.on(BattleEvents.CheckTeamStatusDuration, EventPriority.Post, (event) => {
+    if (
+      SCREEN_STATUSES.has(event.status) &&
+      event.cause.type !== EffectType.None &&
+      holds(event.cause.unit, Items.LightClay)
+    ) {
+      event.duration *= LIGHT_CLAY_FACTOR;
+    }
+  }),
+);
+
+// A Grip Claw holds on for longer, and is read off the one doing the
+// holding rather than the one being held
+const setupGripClaw = createHeldItem(Items.GripClaw, (battle) =>
+  battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+    if (
+      event.status === Statuses.Trapped &&
+      event.cause.type !== EffectType.None &&
+      holds(event.cause.unit, Items.GripClaw)
+    ) {
+      event.duration *= GRIP_CLAW_FACTOR;
+    }
+  }),
+);
+
+/**
+ * A Binding Band grips harder: the chip a bind takes every second is a
+ * third bigger. It is the binder's own indirect damage, so what
+ * identifies it is the move that caused it — anything else that unit is
+ * doing to the same target stays whatever size it was
+ */
+const setupBindingBand = createHeldItem(Items.BindingBand, (battle) =>
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+    if (
+      event.flags & DamageFlags.Indirect &&
+      event.cause.type === EffectType.Move &&
+      TRAPPING_MOVES.has(event.cause.move) &&
+      event.target.status[Statuses.Trapped] != null &&
+      holds(event.cause.unit, Items.BindingBand)
+    ) {
+      event.value *= BINDING_BAND_FACTOR;
+    }
+  }),
+);
+
+/**
+ * A King's Rock makes whatever its holder throws liable to leave the
+ * target reeling. It rides the attack rather than the move, so it is a
+ * chance on every blow that lands rather than on one particular kind of
+ * blow — and a move that already flinches does not get a second roll
+ */
+const setupKingsRock = createHeldItem(Items.KingsRock, (battle) =>
+  battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+    if (
+      !event.success ||
+      event.category === MoveCategories.Status ||
+      !event.target.alive ||
+      event.target.status[Statuses.Flinched] != null ||
+      !holds(event.source, Items.KingsRock) ||
+      battle.random() >= KINGS_ROCK_CHANCE
+    ) {
+      return;
+    }
+
+    event.source.triggerItem(Items.KingsRock);
+    event.target.addStatus(Statuses.Flinched, {
+      type: EffectType.Item,
+      item: Items.KingsRock,
+      unit: event.source,
+    });
+  }),
+);
+
+const SETUPS: ((battle: Battle) => void)[] = [
+  setupLeftovers,
+  setupBlackSludge,
+  setupStickyBarbResidual,
+  setupStickyBarbTransfer,
+  setupIronBall,
+  setupFloatStone,
+  setupLaggingTail,
+  setupRingTarget,
+  setupShellBell,
+  setupBigRoot,
+  ...[...BAND_CATEGORIES].map(([item, category]) => setupBand(item, category)),
+  setupExpertBelt,
+  setupMetronome,
+  setupWideLens,
+  setupBrightPowder,
+  setupZoomLens,
+  setupScopeLens,
+  ...[...SPECIES_LENSES].map(([item, species]) => setupSpeciesLens(item, species)),
+  setupQuickClaw,
+  setupFocusBand,
+  setupRockyHelmet,
+  setupSafetyGoggles,
+  setupUtilityUmbrella,
+  setupEscapeItem(Items.SmokeBall),
+  setupEscapeItem(Items.ShedShell),
+  setupDestinyKnot,
+  ...WEATHER_ROCKS.map(setupWeatherRock),
+  setupLightClay,
+  setupGripClaw,
+  setupBindingBand,
+  // The King's Rock is registered with the trade items, since the
+  // evolution it gates is the other half of what it is for
+  setupKingsRock,
+];
+
+export default function setupGear(battle: Battle): void {
+  for (const setup of SETUPS) {
+    setup(battle);
+  }
+}

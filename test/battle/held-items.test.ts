@@ -11,7 +11,10 @@ import {
   BLACK_SLUDGE_SHARE,
   BRIGHT_POWDER_EVASION,
   EXPERT_BELT_FACTOR,
+  FLOAT_STONE_WEIGHT,
   GRIP_CLAW_FACTOR,
+  IRON_BALL_SPEED,
+  LAGGING_TAIL_PRIORITY,
   LEFTOVERS_SHARE,
   LIGHT_CLAY_FACTOR,
   METRONOME_LIMIT,
@@ -21,6 +24,7 @@ import {
   SCOPE_LENS_CRITICAL_STAGES,
   SHELL_BELL_SHARE,
   SPECIES_LENS_CRITICAL_STAGES,
+  STICKY_BARB_SHARE,
   WIDE_LENS_ACCURACY,
   ZOOM_LENS_ACCURACY,
 } from '../../src/battle/items/gear';
@@ -35,6 +39,7 @@ import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders, Species } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
+import { createHeldItems } from '../../src/battle/items/__create';
 import { createBattle, createUnit, pinRandom } from './harness';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
@@ -508,7 +513,56 @@ describe('gear that lengthens what is already running', () => {
   });
 });
 
-describe('the family gate', () => {
+describe('the item gate', () => {
+  it('builds one item\u2019s listeners and nobody else\u2019s', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const built: Items[] = [];
+
+    const setup = createHeldItems(
+      () => [Items.Leftovers, Items.ShellBell],
+      (inner, item) => {
+        built.push(item);
+        return inner.on(BattleEvents.Tick, EventPriority.Post, () => {
+          // no-op: the gate is what is under test
+        });
+      },
+    );
+
+    setup(battle);
+
+    // Nothing is wired until somebody actually carries something
+    expect(built).toEqual([]);
+
+    unit.addItem(Items.Leftovers);
+    expect(built).toEqual([Items.Leftovers]);
+
+    // A second holder of the same item reuses the gate that is open
+    createUnit(battle, teamA).addItem(Items.Leftovers);
+    expect(built).toEqual([Items.Leftovers]);
+
+    // And an item outside the list is none of this gate's business
+    unit.addItem(Items.OranBerry);
+    expect(built).toEqual([Items.Leftovers]);
+  });
+
+  it('leaves an item\u2019s own listeners running while it is held', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const attackerHealth = attacker.checkStat(Stats.HP, 0);
+
+    // The helmet is picked up after the Leftovers, so its gate opens
+    // on its own rather than riding the other item's
+    holder.addItem(Items.Leftovers);
+    holder.removeItem(Items.Leftovers, { type: EffectType.None });
+    holder.addItem(Items.RockyHelmet);
+
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(attacker.health).toBe(attackerHealth - Math.floor(attackerHealth * ROCKY_HELMET_SHARE));
+  });
+
   it('wires a family back up when somebody picks one up again', () => {
     const { battle, teamA, teamB } = createBattle();
     const first = createUnit(battle, teamA);
@@ -965,5 +1019,138 @@ describe('the one-shots that put somebody on the bench', () => {
 
     expect(switches).toHaveLength(0);
     expect(holder.items[Items.EjectPack]).toBe(true);
+  });
+});
+
+describe('the gear that costs its own carrier something', () => {
+  it('drags an Iron Ball holder down in both senses', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Flying]);
+    const attacker = createUnit(battle, teamB);
+    const speed = holder.checkStat(Stats.Speed, 0);
+
+    // A Flying type is out of a Ground move's reach until it is
+    // carrying something heavy enough to bring it down
+    expect(holder.checkGrounded()).toBe(false);
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(holder), Types.Ground)).toBe(
+      true,
+    );
+
+    holder.addItem(Items.IronBall);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(speed * IRON_BALL_SPEED, 5);
+    expect(holder.checkGrounded()).toBe(true);
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(holder), Types.Ground)).toBe(
+      false,
+    );
+  });
+
+  it('lifts what a Float Stone holder weighs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.setWeight(300);
+
+    expect(attacker.checkMovePower(Moves.LowKick, unitTarget(holder))).toBe(120);
+
+    holder.addItem(Items.FloatStone);
+
+    // Halved, and the lift it buys is a whole bracket of Low Kick
+    expect(holder.checkWeight()).toBeCloseTo(300 * FLOAT_STONE_WEIGHT, 5);
+    // What it stores is untouched: the stone is carried, not eaten
+    expect(holder.weight).toBe(300);
+    expect(attacker.checkMovePower(Moves.LowKick, unitTarget(holder))).toBe(100);
+  });
+
+  it('makes a Lagging Tail holder the later of the two', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const target = unitTarget(createUnit(battle, teamB));
+    const priority = holder.checkMovePriority(Moves.Tackle, target);
+
+    holder.addItem(Items.LaggingTail);
+
+    expect(holder.checkMovePriority(Moves.Tackle, target)).toBe(priority + LAGGING_TAIL_PRIORITY);
+  });
+
+  it('opens a Ring Target holder to what its typing would have shrugged off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ghost = createUnit(battle, teamA, [Types.Ghost]);
+    const attacker = createUnit(battle, teamB);
+
+    expect(attacker.checkMoveImmunity(Moves.Tackle, unitTarget(ghost), Types.Normal)).toBe(true);
+
+    ghost.addItem(Items.RingTarget);
+
+    expect(attacker.checkMoveImmunity(Moves.Tackle, unitTarget(ghost), Types.Normal)).toBe(false);
+  });
+
+  it('leaves an immunity the holder’s typing does not explain', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const floater = createUnit(battle, teamA, [Types.Normal]);
+    const attacker = createUnit(battle, teamB);
+
+    floater.addAbility(Abilities.Levitate);
+    floater.addItem(Items.RingTarget);
+
+    // The ring is no answer to a pokemon that simply is not standing
+    // on the ground
+    expect(attacker.checkMoveImmunity(Moves.Earthquake, unitTarget(floater), Types.Ground)).toBe(
+      true,
+    );
+  });
+});
+
+describe('the Sticky Barb', () => {
+  it('bites whoever is carrying it, whatever they are', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Poison]);
+    const defender = createUnit(battle, teamB);
+    const maxHealth = holder.checkStat(Stats.HP, 0);
+
+    holder.addMove(Moves.Tackle);
+    holder.addItem(Items.StickyBarb);
+    castOnce(holder, defender);
+
+    // Even a Poison type, which a Black Sludge would have fed
+    expect(maxHealth - holder.health).toBe(Math.floor(maxHealth * STICKY_BARB_SHARE));
+  });
+
+  it('catches on whoever puts a hand on its holder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.StickyBarb);
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.items[Items.StickyBarb]).toBeUndefined();
+    expect(attacker.items[Items.StickyBarb]).toBe(true);
+  });
+
+  it('stays put when the hand it caught is full', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.StickyBarb);
+    attacker.addItem(Items.Leftovers);
+    attacker.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.items[Items.StickyBarb]).toBe(true);
+    expect(attacker.items[Items.StickyBarb]).toBeUndefined();
+  });
+
+  it('keeps to itself when nobody touched it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    // Ember has no contact flag: the barb has nothing to catch on
+    holder.addItem(Items.StickyBarb);
+    attacker.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(holder.items[Items.StickyBarb]).toBe(true);
   });
 });

@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Items } from '../../data/ids/items';
+import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
-import { MergedLifecycle } from '../lifecycle';
-import { createHeldItems, holds } from './__create';
+import { createHeldItem, holds } from './__create';
 
 /**
  * The incenses that do something in a battle other than lift a type.
@@ -24,28 +24,30 @@ export const LAX_INCENSE_EVASION = 0.95;
  */
 export const FULL_INCENSE_PRIORITY = 1;
 
-export default createHeldItems(
-  () => [Items.LaxIncense, Items.FullIncense],
-  (battle) =>
-    new MergedLifecycle([
-      // Lax Incense: harder to hit, so it is read off the unit being
-      // aimed at rather than the one aiming
-      battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
-        if (event.accuracy == null || event.target.type !== MoveTargetType.Unit) {
-          return;
-        }
-        if (holds(event.target.unit, Items.LaxIncense)) {
-          event.accuracy *= LAX_INCENSE_EVASION;
-        }
-      }),
-
-      // Full Incense: its holder acts a bracket later than it
-      // otherwise would, which in a real-time fight is a longer
-      // wind-up
-      battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
-        if (holds(event.source, Items.FullIncense)) {
-          event.priority -= FULL_INCENSE_PRIORITY;
-        }
-      }),
-    ]),
+// Lax Incense: harder to hit, so it is read off the unit being aimed
+// at rather than the one aiming
+const setupLaxIncense = createHeldItem(Items.LaxIncense, (battle) =>
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+    if (event.accuracy == null || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+    if (holds(event.target.unit, Items.LaxIncense)) {
+      event.accuracy *= LAX_INCENSE_EVASION;
+    }
+  }),
 );
+
+// Full Incense: its holder acts a bracket later than it otherwise
+// would, which in a real-time fight is a longer wind-up
+const setupFullIncense = createHeldItem(Items.FullIncense, (battle) =>
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+    if (holds(event.source, Items.FullIncense)) {
+      event.priority -= FULL_INCENSE_PRIORITY;
+    }
+  }),
+);
+
+export default function setupBattleIncenses(battle: Battle): void {
+  setupLaxIncense(battle);
+  setupFullIncense(battle);
+}

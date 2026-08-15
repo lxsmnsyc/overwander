@@ -36,6 +36,7 @@ import type {
   CheckUnitStatusImmunityEvent,
   CheckUnitUpdateStageEvent,
   CheckUnitWeatherDurationEvent,
+  CheckUnitWeightEvent,
   EffectCause,
   MoveState,
   MoveTarget,
@@ -1013,6 +1014,21 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveSteps, event);
     return event.steps;
+  }
+
+  /**
+   * What the unit weighs to anything that reads it, which is not
+   * always what it stores: a Float Stone lightens its holder
+   */
+  checkWeight(): number {
+    const event: CheckUnitWeightEvent = {
+      id: 'CheckUnitWeight',
+      disabled: false,
+      source: this,
+      weight: this.weight,
+    };
+    this.battle.emit(BattleEvents.CheckUnitWeight, event);
+    return Math.max(0.1, event.weight);
   }
 
   checkGrounded(): boolean {

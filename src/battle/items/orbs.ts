@@ -8,7 +8,8 @@ import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { hasAttackEffect } from '../moves/status';
 import type Unit from '../unit';
-import { createHeldItems, holds } from './__create';
+import type Battle from '../core';
+import { createHeldItem, holds } from './__create';
 
 /**
  * The orbs: held for what they do to their own holder.
@@ -36,30 +37,20 @@ const AFFLICTIONS = new Map<Items, Statuses>([
   [Items.ToxicOrb, Statuses.BadlyPoisoned],
 ]);
 
-export default createHeldItems(
-  () => [Items.LifeOrb, ...AFFLICTIONS.keys()],
-  (battle) => {
-    /**
-     * How long each holder has been carrying each affliction orb. It
-     * is kept per orb as well as per unit — one shared tally would
-     * have each orb's pass forgetting what the other had counted —
-     * and it empties once the orb has done what it does, so an orb
-     * afflicts once rather than every few seconds
-     */
-    const carried = new Map<Items, Map<Unit, number>>();
-
-    return new MergedLifecycle([
-      // A Life Orb lifts every damaging move its holder throws
+// A Life Orb lifts every damaging move its holder throws, and takes a
+// tenth of it back for each one that lands
+const setupLifeOrb = createHeldItem(
+  Items.LifeOrb,
+  (battle) =>
+    new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
         if (event.power != null && holds(event.source, Items.LifeOrb)) {
           event.power *= LIFE_ORB_FACTOR;
         }
       }),
 
-      // And takes a tenth of its holder for each one that lands. It
-      // is indirect damage the holder does to itself, so nothing
-      // about the blow — drain, recoil, a foe's own reactions —
-      // reads it as a hit
+      // Indirect damage the holder does to itself, so nothing about the
+      // blow — drain, recoil, a foe's own reactions — reads it as a hit
       battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
         if (
           !event.success ||
@@ -89,33 +80,47 @@ export default createHeldItems(
           DamageFlags.Indirect,
         );
       }),
-
-      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-        for (const [item, status] of AFFLICTIONS) {
-          let holders = carried.get(item);
-
-          if (holders == null) {
-            holders = new Map<Unit, number>();
-            carried.set(item, holders);
-          }
-
-          for (const unit of battle.units()) {
-            if (!holds(unit, item) || !unit.alive) {
-              holders.delete(unit);
-              continue;
-            }
-
-            const held = (holders.get(unit) ?? 0) + event.duration;
-
-            holders.set(unit, held);
-
-            if (held >= ORB_DELAY && unit.status[status] == null) {
-              unit.addStatus(status, { type: EffectType.Item, item, unit });
-              holders.delete(unit);
-            }
-          }
-        }
-      }),
-    ]);
-  },
+    ]),
 );
+
+/**
+ * An affliction orb works on whoever carries it for a few seconds and
+ * then does what it was always going to do, once
+ */
+function setupAfflictionOrb(item: Items, status: Statuses): (battle: Battle) => void {
+  return createHeldItem(item, (battle) => {
+    // How long each holder has been carrying it. It empties once the
+    // orb has done its work, so an orb afflicts once rather than every
+    // few seconds
+    const carried = new Map<Unit, number>();
+
+    return battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      for (const unit of battle.units()) {
+        if (!holds(unit, item) || !unit.alive) {
+          carried.delete(unit);
+          continue;
+        }
+
+        const held = (carried.get(unit) ?? 0) + event.duration;
+
+        carried.set(unit, held);
+
+        if (held >= ORB_DELAY && unit.status[status] == null) {
+          unit.addStatus(status, { type: EffectType.Item, item, unit });
+          carried.delete(unit);
+        }
+      }
+    });
+  });
+}
+
+const SETUPS: ((battle: Battle) => void)[] = [
+  setupLifeOrb,
+  ...[...AFFLICTIONS].map(([item, status]) => setupAfflictionOrb(item, status)),
+];
+
+export default function setupOrbs(battle: Battle): void {
+  for (const setup of SETUPS) {
+    setup(battle);
+  }
+}

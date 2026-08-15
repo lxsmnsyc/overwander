@@ -68,6 +68,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // poisoning to everyone else. It is litter, so it lies where
     // litter lies
     { item: Items.BlackSludge, weight: 4 },
+    // A burr picked up off the same walk, and about as welcome
+    { item: Items.StickyBarb, weight: 4 },
     // The everyday medicine. A walk that turns up a Potion and an
     // Antidote is a walk that paid for the raid it is walking towards
     { item: Items.Potion, weight: 12 },

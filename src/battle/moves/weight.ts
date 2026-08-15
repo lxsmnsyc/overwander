@@ -50,6 +50,7 @@ export default function setupWeightMoves(battle: Battle): void {
       return;
     }
 
-    event.power = getWeightPower(event.target.unit.weight);
+    // Asked rather than read: a Float Stone lightens the target
+    event.power = getWeightPower(event.target.unit.checkWeight());
   });
 }

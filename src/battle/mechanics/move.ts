@@ -142,16 +142,16 @@ export function setupMoveMechanics(battle: Battle): void {
       event.immune = true;
     }
   });
-  // Ground moves cannot reach airborne units (Floating status, Flying
-  // type); the Grounded status drags them back into range
+  /**
+   * Ground moves reach whatever is standing on the ground and nothing
+   * else, so standing is the whole answer — it overrides the type
+   * chart in both directions. A Flying type is out of reach until
+   * something brings it down (the Grounded status, an Iron Ball), and
+   * then it is as reachable as anybody
+   */
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
-    if (
-      !event.immune &&
-      event.type === Types.Ground &&
-      event.target.type === MoveTargetType.Unit &&
-      !event.target.unit.checkGrounded()
-    ) {
-      event.immune = true;
+    if (event.type === Types.Ground && event.target.type === MoveTargetType.Unit) {
+      event.immune = !event.target.unit.checkGrounded();
     }
   });
   battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Exact, (event) => {

@@ -43,6 +43,10 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
   [Items.GripClaw, 'Grip Claw'],
   [Items.BindingBand, 'Binding Band'],
   [Items.ZoomLens, 'Zoom Lens'],
+  [Items.IronBall, 'Iron Ball'],
+  [Items.LaggingTail, 'Lagging Tail'],
+  [Items.RingTarget, 'Ring Target'],
+  [Items.FloatStone, 'Float Stone'],
 ]);
 
 /**
@@ -68,6 +72,8 @@ export const FOUND_GEAR: Map<Items, string> = new Map([
   [Items.SmoothRock, 'Smooth Rock'],
   [Items.LightClay, 'Light Clay'],
   [Items.BigRoot, 'Big Root'],
+  // A burr off a bush, which is why nobody sells one
+  [Items.StickyBarb, 'Sticky Barb'],
 ]);
 
 export const GEAR_PRICE = 5000;

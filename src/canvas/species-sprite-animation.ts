@@ -1,6 +1,7 @@
 import asSpriteSheetJSON, {
   type AnimData,
   type Point,
+  SPRITE_TICK,
   type SheetImageData,
   type SpriteAnchor,
   type SpriteDirection,
@@ -31,12 +32,11 @@ import asSpriteSheetJSON, {
  */
 
 /**
- * How long one unit of a frame's duration lasts. The durations are
- * counted in frames of a sixtieth of a second, which is the same
- * clock the battle runs on — a two-tick frame is a thirtieth of a
- * second whoever is asking
+ * Re-exported so a caller reading a pokemon's clip does not have to
+ * know which module the sheet vocabulary lives in. Every sheet in the
+ * game counts in the same tick — see `SPRITE_FPS`
  */
-export const SPRITE_TICK = 1000 / 60;
+export { SPRITE_TICK } from './sprite-sheet';
 
 /**
  * How wide a shadow is for each `shadowSize` — small, ordinary, large —

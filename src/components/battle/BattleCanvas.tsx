@@ -15,7 +15,7 @@ import loadSpeciesSprite from '../../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { EventPriority } from '../../core/event-emitter';
-import { pickCast } from '../../data/constants/cast';
+import { isLoopingCast, pickCast } from '../../data/constants/cast';
 import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
 import type { Moves } from '../../data/ids/moves';
@@ -519,7 +519,7 @@ function project(standings: Standing[], view: FieldView): Slot[] {
  * species owns which clip: the sheet is the truth, and a second copy
  * of it would rot
  */
-interface Performance {
+export interface Performance {
   animation: string;
   /**
    * How long one pass should take, or null to play at the speed the
@@ -529,7 +529,21 @@ interface Performance {
   loop: boolean;
 }
 
-function animationFor(unit: Unit, sprite: SpeciesSpriteAnimation): Performance {
+/**
+ * A move this unit has thrown and is waiting to land: which move, and
+ * how long the engine is holding it in the air. It is what the unit is
+ * doing between firing and hitting
+ */
+export interface Striking {
+  move: Moves;
+  window: number;
+}
+
+export function animationFor(
+  unit: Unit,
+  sprite: SpeciesSpriteAnimation,
+  striking?: Striking,
+): Performance {
   if (!unit.alive) {
     // A knocked-out pokemon holds the last frame of being hurt rather
     // than looping it, which is the difference between lying there
@@ -537,21 +551,43 @@ function animationFor(unit: Unit, sprite: SpeciesSpriteAnimation): Performance {
     return { animation: 'Hurt', duration: null, loop: false };
   }
 
-  // Both halves of a move carry the same two things — which move, and
-  // how long this window has to run — so neither needs its own case
+  /**
+   * The move going off is when the move is **seen**: the swing, the
+   * jab, the leaf thrown. It is the clip the move asks for, fitted to
+   * the window the engine holds it open for, so the gesture finishes
+   * exactly as the hit lands.
+   *
+   * It is asked before the wind-up below because a unit that has just
+   * fired a multi-step move is both throwing this step and winding up
+   * the next, and what it is doing right now is throwing
+   */
+  if (striking != null) {
+    const animation = pickCast(getMoveData(striking.move).cast, (name) => sprite.has(name));
+
+    // A clip drawn as something repeated keeps its own speed and
+    // repeats for the window instead: stretched, it plays once in slow
+    // motion — see `isLoopingCast`
+    if (isLoopingCast(animation)) {
+      return { animation, duration: null, loop: true };
+    }
+    return { animation, duration: striking.window, loop: false };
+  }
+
+  /**
+   * Winding up is a pokemon gathering itself, whatever it is about to
+   * throw: one clip for every move rather than the move's own.
+   *
+   * The move's clip is the *throw*, and playing it through the wind-up
+   * spent the gesture before the move went off — a Double Slap slapped
+   * for a second and three quarters and then hit, and a slow move
+   * played its one swing in slow motion. Charge is drawn as a loop, so
+   * it fills a window of any length by repeating rather than by
+   * dragging
+   */
   const working = unit.casting ?? unit.channeling;
 
   if (working != null) {
-    return {
-      animation: pickCast(getMoveData(working.move).cast, (name) => sprite.has(name)),
-      // The **whole** window, not what is left of it. A rate worked
-      // out afresh from the remainder every frame is a rate that
-      // climbs as the remainder shrinks, and a clip driven that way
-      // races to its end around two thirds of the way through. The
-      // window is a fixed length; so is the rate that fills it
-      duration: working.time.duration,
-      loop: false,
-    };
+    return { animation: 'Charge', duration: null, loop: true };
   }
 
   // Standing about is where what is being done **to** it shows: asleep,
@@ -634,7 +670,11 @@ function bodyOf(slot: Slot): Point {
  * One unit: the circle, what it is, what it has left, and what it is
  * in the middle of doing
  */
-function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
+function drawSlot(
+  context: CanvasRenderingContext2D,
+  slot: Slot,
+  striking: Map<Unit, Striking>,
+): void {
   const { unit } = slot;
   const maxHealth = unit.checkStat(Stats.HP, 0);
   const share = maxHealth <= 0 ? 0 : unit.health / maxHealth;
@@ -644,7 +684,7 @@ function drawSlot(context: CanvasRenderingContext2D, slot: Slot): void {
   const sprite = slot.sprite;
 
   if (sprite?.ready === true) {
-    const wanted = animationFor(unit, sprite);
+    const wanted = animationFor(unit, sprite, striking.get(unit));
     const playable = sprite.has(wanted.animation) ? wanted.animation : 'Idle';
 
     sprite.play(playable, {
@@ -760,6 +800,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * them
    */
   const casting: Casting[] = [];
+
+  /**
+   * What each unit has thrown and is waiting to land.
+   *
+   * The engine holds the wait rather than the unit — a move in the air
+   * is a timer inside the move mechanics — so the canvas keeps its own
+   * note of it, filled when a move fires and emptied when it lands.
+   * Not a signal, like everything else here: the tick that moves it on
+   * is the tick that draws it
+   */
+  const striking = new Map<Unit, Striking>();
 
   /**
    * Which way round the field is being looked at.
@@ -981,7 +1032,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 
       for (const slot of slots) {
-        drawSlot(context, slot);
+        drawSlot(context, slot, striking);
       }
 
       // Walked backwards so a flight nobody is ticking any more can be
@@ -1057,6 +1108,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
       targets = targets.filter((target) => target !== event.source);
 
+      // The window the engine is actually holding the move open for,
+      // asked of it rather than read off the data — a listener may
+      // have nudged it, and both the throw and its picture belong to
+      // the move that is happening rather than to the one registered
+      const window = event.source.checkMoveDelay(event.move, event.target);
+
+      // What the thrower is doing until it lands: the move's own clip,
+      // which is the gesture the move *is*
+      striking.set(event.source, { move: event.move, window });
+
       const build = moveVisualFor(event.move);
 
       // A move with a picture of its own plays it whether or not it
@@ -1067,6 +1128,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
         build()
           .then((visual) => {
+            // At the speed it was drawn at. An effect fitted to the
+            // flight is an effect in slow motion, and the pace of a
+            // spark or a shockwave is most of what it looks like
             casting.push({ source, targets, visual });
           })
           .catch(() => {
@@ -1119,6 +1183,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       BattleEvents.UnitTriggerMoveEnd,
       EventPriority.Post,
       (event) => {
+        // Thrown and landed: the gesture is over, whatever else the
+        // unit goes on to do
+        striking.delete(event.source);
+
         const flight = flightOf(event.source, event.move);
 
         if (flight != null) {
@@ -1136,6 +1204,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      * on the field is moved on by exactly that much. A fight that is
      * paused is a field of pokemon holding still
      */
+    // A move that never lands leaves nothing hanging: an interrupted
+    // thrower stops throwing, and one that faints has finished with
+    // whatever it was doing
+    const stopping = props.battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
+      striking.delete(event.source);
+    });
+
+    const fainting = props.battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      striking.delete(event.source);
+    });
+
     const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       for (const held of sprites.values()) {
         held.sprite?.update(event.duration);
@@ -1218,6 +1297,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       firing.stop();
       moving.stop();
       landing.stop();
+      stopping.stop();
+      fainting.stop();
       ticking.stop();
     });
   });

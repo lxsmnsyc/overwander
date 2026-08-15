@@ -173,12 +173,20 @@ describe('sprite metadata', () => {
   });
 
   it('marks where the parts of a pokemon are, on every frame', () => {
+    // Gathered and asserted once rather than asserted per frame: every
+    // sheet's every frame is thousands of expectations, and the check
+    // costs more in bookkeeping than in reading the files
+    const missing: string[] = [];
+    const escaped: string[] = [];
+
     for (const { species, data } of DESCRIBED) {
       for (const [name, target] of Object.entries(data.sprites)) {
         for (const frame of target.frames) {
           // The shadow is the one anchor everything else falls back
           // to, since it is what a pokemon stands on
-          expect(frame.shadow, `${species} ${name} shadow`).not.toBeNull();
+          if (frame.shadow == null) {
+            missing.push(`${species} ${name} shadow`);
+          }
 
           // Anchors are in the trimmed frame's coordinates and are
           // allowed to fall outside it: trimming crops to what is
@@ -197,24 +205,20 @@ describe('sprite metadata', () => {
             if (point == null) {
               continue;
             }
-            expect(
-              point[0] + target.trim[0],
-              `${species} ${name} ${part} x`,
-            ).toBeGreaterThanOrEqual(0);
-            expect(point[0] + target.trim[0], `${species} ${name} ${part} x`).toBeLessThan(
-              target.sourceFrameWidth,
-            );
-            expect(
-              point[1] + target.trim[1],
-              `${species} ${name} ${part} y`,
-            ).toBeGreaterThanOrEqual(0);
-            expect(point[1] + target.trim[1], `${species} ${name} ${part} y`).toBeLessThan(
-              target.sourceFrameHeight,
-            );
+
+            const x = point[0] + target.trim[0];
+            const y = point[1] + target.trim[1];
+
+            if (x < 0 || x >= target.sourceFrameWidth || y < 0 || y >= target.sourceFrameHeight) {
+              escaped.push(`${species} ${name} ${part}`);
+            }
           }
         }
       }
     }
+
+    expect(missing).toEqual([]);
+    expect(escaped).toEqual([]);
   });
 
   it('fills in what a broken description leaves out rather than throwing', () => {

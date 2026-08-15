@@ -21,6 +21,8 @@ one that covers what you are about to do:
 
 - `light-comments` - keep comments short and about the why; most blocks are 1-4
   lines, and design history belongs in git rather than in a doc block.
+- `sprite-fps` - every sprite sheet animates at 24fps; count in `SPRITE_TICK` and
+  let clips play at the speed they were drawn at.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.

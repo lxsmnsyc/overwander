@@ -211,7 +211,9 @@ describe('DirectionalEffectSprite', () => {
     expect(sprite.frame?.index).toBe(0);
     sprite.advance(EFFECT_TICK);
     expect(sprite.frame?.index).toBe(1);
-    sprite.advance(1000);
+    // Its own length rather than a round number: how long a timeline
+    // of 39 ticks lasts is whatever a tick is worth
+    sprite.advance(sprite.length * EFFECT_TICK);
     expect(sprite.finished).toBe(true);
   });
 

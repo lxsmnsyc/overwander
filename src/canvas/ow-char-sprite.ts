@@ -33,7 +33,7 @@
  */
 
 import { type BasicSpriteData, asBasicSpriteData } from './basic-sprite';
-import type { SpriteDirection } from './sprite-sheet';
+import { SPRITE_TICK, type SpriteDirection } from './sprite-sheet';
 
 /** The four a character sheet has, in the order sheets lay them out. */
 const CARDINALS: SpriteDirection[] = ['Down', 'Left', 'Right', 'Up'];
@@ -60,11 +60,10 @@ const SNAP: Record<SpriteDirection, SpriteDirection> = {
 
 /**
  * How long one walk frame is held, in milliseconds, when the playhead
- * runs on a clock. Eight sixtieths of a second per frame is a
- * four-frame cycle in a third of a second, which is a walk rather than
- * a scurry
+ * runs on a clock. Three ticks a frame is a four-frame cycle in half a
+ * second, which is a walk rather than a scurry
  */
-const WALK_HOLD = (1000 / 60) * 8;
+const WALK_HOLD = SPRITE_TICK * 3;
 
 /**
  * How far the walker moves, in world pixels, between one frame and the

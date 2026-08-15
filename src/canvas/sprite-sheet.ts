@@ -53,6 +53,24 @@
  * Row order of PMD sprite sheets: one row per orientation, `Down`
  * first, rotating counter-clockwise
  */
+/**
+ * How many frames of a drawn animation go by in a second.
+ *
+ * **Every sheet in the game is 24fps** — pokemon, effects, overworld
+ * characters alike — so a duration counted in ticks means the same
+ * thing wherever it is read. They are hand-drawn clips of a few
+ * frames: run at the sixty a second the battle ticks at, they flicker
+ * rather than move.
+ *
+ * It is the speed a clip plays at when nobody has asked for a length.
+ * Anything fitted to a window — a thrown move ending as its hit lands
+ * — is stretched from here rather than counted in it
+ */
+export const SPRITE_FPS = 24;
+
+/** How long one tick of a frame's duration lasts, in milliseconds. */
+export const SPRITE_TICK = 1000 / SPRITE_FPS;
+
 export type SpriteDirection =
   | 'Down'
   | 'DownRight'

@@ -1,3 +1,4 @@
+import { SPRITE_TICK } from './sprite-sheet';
 /**
  * A hit spark, a puff of smoke, a shockwave — something that plays once
  * and is gone.
@@ -42,8 +43,11 @@
  * so playback is an array index and drawing is a `drawImage`.
  */
 
-/** How long one slot of the timeline lasts — the clock the sheets count in. */
-export const EFFECT_TICK = 1000 / 60;
+/**
+ * How long one slot of the timeline lasts. It is the same tick every
+ * other sheet in the game counts in — see `SPRITE_FPS`
+ */
+export { SPRITE_TICK as EFFECT_TICK } from './sprite-sheet';
 
 /**
  * How near the end counts as the end, in milliseconds.
@@ -265,7 +269,7 @@ export default class EffectSprite {
       }
       this.timeline[tick] = held;
     }
-    this.naturalSpan = ticks * EFFECT_TICK;
+    this.naturalSpan = ticks * SPRITE_TICK;
     this.span = this.naturalSpan;
   }
 

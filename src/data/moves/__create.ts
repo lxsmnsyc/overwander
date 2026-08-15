@@ -25,9 +25,13 @@ export interface MoveData {
   steps?: number;
 
   /**
-   * Visual delay in milliseconds (e.g. a projectile's flight time
-   * before the impact cue); purely presentational, the battle
-   * mechanics never wait on it
+   * How long the move spends between firing and landing, in
+   * milliseconds — a projectile's flight time.
+   *
+   * It is a **mechanical** wait, not a decoration: the effect resolves
+   * when it expires, so anything happening in between happens first.
+   * A move that names none still waits `MOVE_DELAY`; what the field
+   * reads is only whether to draw something travelling
    */
   delay?: number;
 

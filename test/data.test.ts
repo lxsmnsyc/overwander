@@ -73,7 +73,13 @@ import {
 } from '../src/data/items/berries';
 import BERRY_POOL from '../src/data/overworld/berry-pool';
 import { getMoveData, getRegisteredMoves, registerMoves } from '../src/data/moves';
-import { CAST_ANIMATIONS, DEFAULT_CAST, isCommonCast, pickCast } from '../src/data/constants/cast';
+import {
+  CAST_ANIMATIONS,
+  DEFAULT_CAST,
+  isCommonCast,
+  isLoopingCast,
+  pickCast,
+} from '../src/data/constants/cast';
 import pickStatusCast, { STATUS_CAST } from '../src/data/constants/status-cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
@@ -560,6 +566,20 @@ describe('move cast animations', () => {
       // Asking for the same clip twice is a typo rather than a
       // preference: the second ask can never be reached
       expect(new Set(cast).size, name).toBe(cast.length);
+    }
+  });
+
+  it('says which clips repeat rather than filling a window', () => {
+    // Standing about, walking, shivering, gathering itself: things a
+    // pokemon keeps doing. Stretched to a window they play once, in
+    // slow motion
+    for (const looping of ['Charge', 'Sleep', 'Hurt', 'Walk', 'Idle', 'Shake', 'Dance', 'Rotate']) {
+      expect(isLoopingCast(looping), looping).toBe(true);
+    }
+
+    // And the gestures, which are fitted to whatever has to be filled
+    for (const once of ['Attack', 'Shoot', 'Strike', 'Slice', 'Swing', 'Double', 'Hop']) {
+      expect(isLoopingCast(once), once).toBe(false);
     }
   });
 

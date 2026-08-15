@@ -3,7 +3,7 @@ import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../ids/moves'
 import { registerMove } from './__create';
 
 // Flight time of a thrown/shot projectile before its impact cue
-const PROJECTILE_DELAY = 500;
+const PROJECTILE_DELAY = 800;
 
 export default function registerGen1Moves(): void {
   registerMove(Moves.Tackle, {
@@ -68,7 +68,7 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
     delay: PROJECTILE_DELAY,
-    cast: ['Shoot', 'Swing', 'Attack'],
+    cast: ['Slice', 'Shoot', 'Attack'],
   });
   registerMove(Moves.Growth, {
     name: 'Growth',
@@ -242,7 +242,7 @@ export default function registerGen1Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
-    cast: ['Strike', 'MultiScratch', 'Attack'],
+    cast: ['Slice', 'Strike', 'Attack'],
   });
   registerMove(Moves.Substitute, {
     name: 'Substitute',
@@ -295,7 +295,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
-    cast: ['Strike', 'MultiScratch', 'Attack'],
+    cast: ['Slice', 'Strike', 'Attack'],
   });
   registerMove(Moves.Flamethrower, {
     name: 'Flamethrower',
@@ -1214,7 +1214,7 @@ export default function registerGen1Moves(): void {
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
-    cast: ['Strike', 'Jab', 'Attack'],
+    cast: ['Slice', 'Strike', 'Attack'],
   });
   registerMove(Moves.Hypnosis, {
     name: 'Hypnosis',
@@ -1503,7 +1503,7 @@ export default function registerGen1Moves(): void {
     accuracy: 30,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
-    cast: ['Bite', 'Slam', 'Attack'],
+    cast: ['Slice', 'Bite', 'Attack'],
   });
   registerMove(Moves.Crabhammer, {
     name: 'Crabhammer',

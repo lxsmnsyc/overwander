@@ -3,9 +3,15 @@ import { describe, expect, it } from 'vitest';
 import SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
 import asSpriteSheetJSON from '../../src/canvas/sprite-sheet';
 import { MoveTargetType } from '../../src/battle/events';
-import { COMMON_CAST, type CastAnimation, pickCast } from '../../src/data/constants/cast';
+import {
+  COMMON_CAST,
+  type CastAnimation,
+  isLoopingCast,
+  pickCast,
+} from '../../src/data/constants/cast';
 import { Moves } from '../../src/data/ids/moves';
 import { getMoveData } from '../../src/data/moves';
+import { animationFor } from '../../src/components/battle/BattleCanvas';
 import { createBattle, createUnit } from '../battle/harness';
 
 /**
@@ -130,6 +136,66 @@ describe('what the field shows while a move is cast', () => {
 
     expect(busy, 'nothing to animate from').not.toBeUndefined();
     expect(busy?.move).toBe(Moves.Tackle);
+  });
+
+  it('winds up on a looping Charge whatever it is about to throw', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const sprite = loaded(94);
+
+    caster.addMove(Moves.Tackle);
+    caster.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: target });
+
+    // Gathering itself, not swinging: the swing is the throw, and
+    // spending it on the wind-up leaves nothing for the move going off
+    const gathering = animationFor(caster, sprite);
+
+    expect(gathering.animation).toBe('Charge');
+    expect(isLoopingCast(gathering.animation)).toBe(true);
+    expect(gathering.loop).toBe(true);
+    // A loop fills a window of any length by repeating rather than by
+    // being dragged out over it
+    expect(gathering.duration).toBe(null);
+  });
+
+  it('throws the move own clip over the window it is in the air', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const sprite = loaded(94);
+    const striking = { move: Moves.Tackle, window: 250 };
+
+    caster.addMove(Moves.Tackle);
+    caster.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: target });
+
+    // Thrown beats winding up: a unit part-way into the next step of a
+    // multi-step move is still throwing this one
+    const throwing = animationFor(caster, sprite, striking);
+
+    expect(throwing.animation).not.toBe('Charge');
+    expect(throwing.loop).toBe(false);
+    // Fitted to the flight, so the gesture ends as the hit lands
+    expect(throwing.duration).toBe(250);
+  });
+
+  it('repeats a thrown clip that was drawn as a loop', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const sprite = loaded(94);
+
+    caster.addMove(Moves.Confusion);
+    caster.cast(Moves.Confusion, { type: MoveTargetType.Unit, unit: target });
+
+    // Gengar has no Special Attack clip and no Emit, so Confusion
+    // falls through its preference to the Charge every sheet carries —
+    // and a Charge repeats rather than being stretched, throw or not
+    const throwing = animationFor(caster, sprite, { move: Moves.Confusion, window: 250 });
+
+    expect(throwing.animation).toBe('Charge');
+    expect(throwing.loop).toBe(true);
+    expect(throwing.duration).toBe(null);
   });
 
   it('offers a clip Gengar has for every move it can learn', () => {

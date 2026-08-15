@@ -41,6 +41,7 @@ export const COMMON_CAST = [
  * a sheet without it falls through to the next name in the list
  */
 export const UNCOMMON_CAST = [
+  'Slice',
   'SpAttack',
   'Shock',
   'QuickStrike',
@@ -64,6 +65,7 @@ export const UNCOMMON_CAST = [
   'Ricochet',
   'MultiScratch',
   'Bite',
+  'Slice',
 ] as const;
 
 export type CommonCast = (typeof COMMON_CAST)[number];
@@ -77,6 +79,35 @@ export type CastAnimation = CommonCast | UncommonCast;
 export const CAST_ANIMATIONS: CastAnimation[] = [...COMMON_CAST, ...UNCOMMON_CAST];
 
 const COMMON = new Set<string>(COMMON_CAST);
+
+/**
+ * The clips drawn as something a pokemon **keeps doing** rather than
+ * as one gesture: standing about, walking, shivering, gathering itself
+ * for a move.
+ *
+ * They are played at the speed they were drawn at and repeated for as
+ * long as they are wanted. Stretched over a window instead — the way a
+ * swing is, so that it lands exactly when the move does — a loop comes
+ * out as one movement in slow motion, which reads as the game hanging
+ */
+const LOOPING = new Set<string>([
+  'Charge',
+  'Sleep',
+  'Hurt',
+  'Walk',
+  'Idle',
+  'Shake',
+  'Dance',
+  'Rotate',
+]);
+
+/**
+ * Whether the clip is one that repeats rather than one that is fitted
+ * to however long the thing playing it has to fill
+ */
+export function isLoopingCast(animation: string): boolean {
+  return LOOPING.has(animation);
+}
 
 /**
  * Whether the clip is one every sheet carries, which is what makes it

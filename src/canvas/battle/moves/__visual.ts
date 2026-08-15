@@ -60,10 +60,13 @@ export interface Beat {
   /** Milliseconds into the performance that this beat starts. */
   at: number;
   /**
-   * How long the clip is stretched over. The effect sheets are drawn
-   * short — a ring is eight ticks, an eighth of a second — and a move
-   * wants them held for as long as the move takes, so this is nearly
-   * always longer than the sheet's own length
+   * How long this beat lasts in the running order — when the next one
+   * may start, and how long this one is drawn for.
+   *
+   * The sheet inside it plays at **its own speed** and is not fitted
+   * to this: an effect is drawn at the rate it was animated at, and a
+   * span longer than the clip leaves its last frame held rather than
+   * slowing the whole thing down
    */
   span: number;
   /**
@@ -215,7 +218,10 @@ export default class MoveVisual {
     for (const one of this.playing) {
       if (!one.started && this.elapsed >= one.beat.at) {
         one.started = true;
-        one.sprite.play({ duration: one.beat.span });
+        // At the speed it was drawn at: an effect stretched to fill a
+        // window is an effect in slow motion, and these are short
+        // clips whose pace is the whole of what they look like
+        one.sprite.play();
         one.sprite.advance(Math.min(this.elapsed - one.beat.at, one.beat.span));
         continue;
       }

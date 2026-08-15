@@ -624,8 +624,11 @@ describe('move delay', () => {
     // land somewhere
     expect(unit.checkMoveDelay(Moves.Tackle, target)).toBe(MOVE_DELAY);
 
-    // Projectile moves declare their flight time in data
-    expect(unit.checkMoveDelay(Moves.Ember, target)).toBe(250);
+    // Projectile moves declare their flight time in data, and it is
+    // read from there rather than pinned here: what a thrown move
+    // takes to cross the field is a number that gets tuned
+    expect(unit.checkMoveDelay(Moves.Ember, target)).toBe(getMoveData(Moves.Ember).delay);
+    expect(getMoveData(Moves.Ember).delay).toBeGreaterThan(MOVE_DELAY);
 
     // The visual layer can nudge it per battle
     battle.on(BattleEvents.CheckUnitMoveDelay, EventPriority.Post, (event) => {

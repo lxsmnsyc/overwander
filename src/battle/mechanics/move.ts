@@ -50,7 +50,7 @@ const BASE_FRAMES = 104;
  * A move whose data carries a `delay` keeps it — a projectile's is its
  * flight time, which is longer than a swing
  */
-export const MOVE_DELAY = 250;
+export const MOVE_DELAY = 400;
 
 function getCastTime(priority: number): number {
   return (BASE_FRAMES - priority * FRAMES_PER_PRIORITY) * FPS_DURATION;

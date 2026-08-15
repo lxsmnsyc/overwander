@@ -13,12 +13,19 @@ Battles occur in four situations: legendary, shadow and mythical **raids**, and
 
 ## How a move resolves
 
-| Stage           | What happens                   | How long                 |
-| --------------- | ------------------------------ | ------------------------ |
-| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds        |
-| **Landing**     | The move goes off              | Instant                  |
-| **Carrying on** | Multi-step moves continue      | Another wind-up per step |
-| **Cooldown**    | That move cannot be used again | Set by the move's PP     |
+| Stage           | What happens                   | How long                            |
+| --------------- | ------------------------------ | ----------------------------------- |
+| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds                   |
+| **Travel**      | The move is on its way         | 0.4s, or the flight time it names   |
+| **Landing**     | It hits, and the effect lands  | Instant                             |
+| **Carrying on** | Multi-step moves continue      | Another wind-up per step            |
+| **Cooldown**    | That move cannot be used again | Set by the move's PP                |
+
+**A move is in the air for a moment.** Most take about four tenths of a second
+between going off and landing — the time the swing takes — while anything thrown
+names its own flight time, usually twice that, and is drawn crossing the field.
+It is a real gap: a pokemon that faints, or is switched out, or interrupts the
+attacker during it is doing so before the hit arrives.
 
 **Priority shortens the wind-up.** Each point of a move's priority takes time off
 it, so Quick Attack visibly comes out faster than a slower move that started
@@ -63,11 +70,17 @@ get different answers.
 
 ### Animation
 
-A move plays the closest animation the pokemon actually has, stretched to fill
-the whole wind-up rather than looping. Sprite sheets differ — a Machop has a
-punch, a Magikarp does not — so a Fire Punch punches on one pokemon and swings on
-another. The visible result is that speed can be seen: a slow move is a long
-wind-up, and Quick Attack is a short one.
+A pokemon **winding up** gathers itself: one gesture, repeated, for however long
+the wind-up lasts. What it is about to throw makes no difference to it — the
+throw is the next part.
+
+A pokemon **throwing** plays the closest thing to that move its sheet actually
+has, fitted to the moment the move is in the air so the gesture ends as the hit
+lands. Sprite sheets differ — a Machop has a punch, a Magikarp does not — so a
+Fire Punch punches on one pokemon and swings on another.
+
+The visible result is that speed can be seen: a slow move is a long gathering,
+and Quick Attack is a short one.
 
 None of this affects the fight itself.
 

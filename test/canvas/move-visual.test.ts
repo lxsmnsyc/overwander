@@ -184,6 +184,24 @@ describe('MoveVisual', () => {
     expect(drawn).toHaveLength(1);
   });
 
+  it('plays its sheets at the speed they were drawn at', () => {
+    const visual = performance();
+    const { context, drawn } = recorder();
+
+    // A beat's span says when the next one starts and how long this
+    // one is drawn for; the clip inside it is not fitted to that, so a
+    // short sheet under a long span holds its last frame rather than
+    // crawling through it
+    visual.advance(100);
+    visual.draw(context, STAGE);
+    expect(drawn).toHaveLength(1);
+
+    visual.advance(400);
+    expect(visual.finished).toBe(true);
+    // The running order is what ends, on its own clock
+    expect(visual.duration).toBe(500);
+  });
+
   it('rewinds without refetching', () => {
     const visual = performance();
     const { context, drawn } = recorder();

@@ -1,4 +1,4 @@
-import { type JSX, onCleanup, onMount } from 'solid-js';
+import { type JSX, createSignal, onCleanup, onMount } from 'solid-js';
 import type Battle from '../../battle/core';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
@@ -99,6 +99,11 @@ const BAR_WIDTH = 72;
  * recede and a heavy one would sit on the sprite behind it
  */
 const BAR_HEIGHT = 4;
+
+/**
+ * What the field says while the fight's sheets are still coming
+ */
+const LOADING_LABEL = 'Loading…';
 
 const COLORS = {
   field: '#101823',
@@ -730,6 +735,15 @@ export interface BattleCanvasProps {
    * party of their own, and is shown the fighting side instead
    */
   player: string;
+  /**
+   * Fired once every sheet the fight needs has landed.
+   *
+   * The caller is what starts the battle, and it should not start one
+   * nobody can see: the first seconds are when a raid boss winds up
+   * and a party opens on its buffs, and a fight that begins while the
+   * sheets are still coming spends them on an empty field
+   */
+  onReady?: () => void;
 }
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
@@ -771,6 +785,21 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    */
   const sprites = new Map<Unit, { appearance: Species; sprite: SpeciesSpriteAnimation | null }>();
 
+  /**
+   * The load behind each unit's current sheet, so the opening wait can
+   * be told when the field is drawable
+   */
+  const loads = new Map<Unit, Promise<void>>();
+
+  /**
+   * Whether the sheets for everybody on the field are still coming.
+   *
+   * The field is drawn either way — the ground, the slots, the health
+   * bars — but nothing is fought over it until the pokemon are on it,
+   * and the caller holds the battle back while this is true
+   */
+  const [loading, setLoading] = createSignal(true);
+
   const spriteFor = (unit: Unit): SpeciesSpriteAnimation | null => {
     const known = sprites.get(unit);
 
@@ -780,21 +809,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     // Held before the sheet arrives, so a unit is asked for once
     // rather than once per frame it is drawn in
-    const pending = { appearance: unit.appearance, sprite: null as SpeciesSpriteAnimation | null };
+    const waiting = { appearance: unit.appearance, sprite: null as SpeciesSpriteAnimation | null };
 
-    sprites.set(unit, pending);
-    loadSpeciesSprite(unit.appearance)
-      .then((loaded) => {
-        // Only if it is still what the unit looks like: a sheet that
-        // arrives after a Transform belongs to nobody
-        if (sprites.get(unit) === pending) {
-          pending.sprite = loaded;
-        }
-      })
-      .catch(() => {
-        // Drawn as a circle, which is what it was before there were
-        // sprites at all
-      });
+    sprites.set(unit, waiting);
+    loads.set(
+      unit,
+      loadSpeciesSprite(unit.appearance)
+        .then((loaded) => {
+          // Only if it is still what the unit looks like: a sheet that
+          // arrives after a Transform belongs to nobody
+          if (sprites.get(unit) === waiting) {
+            waiting.sprite = loaded;
+          }
+        })
+        .catch(() => {
+          // Drawn as a circle, which is what it was before there were
+          // sprites at all
+        }),
+    );
     return null;
   };
 
@@ -821,6 +853,44 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     if (element == null || context == null) {
       return;
     }
+
+    /**
+     * Every sheet the fight opens with, asked for at once.
+     *
+     * `spriteFor` is what caches them, so this is the ordinary path
+     * walked early rather than a second way of loading a pokemon.
+     * Anything that turns up later — a Transform, a substitute — is
+     * loaded the way it always was: mid-fight is no place to stop.
+     *
+     * `allSettled` rather than `all`: a sheet that will not load
+     * leaves that unit drawn as the circle it was before there were
+     * sprites, and holding the whole battle back for it would mean a
+     * fight nobody can start
+     */
+    let live = true;
+
+    Promise.allSettled(
+      [...props.battle.units()].map(async (unit) => {
+        spriteFor(unit);
+        return loads.get(unit);
+      }),
+    )
+      .then(() => {
+        if (live) {
+          setLoading(false);
+          props.onReady?.();
+        }
+      })
+      .catch(() => {
+        if (live) {
+          setLoading(false);
+          props.onReady?.();
+        }
+      });
+
+    onCleanup(() => {
+      live = false;
+    });
 
     /**
      * Fit the backing store to the room the element has been given,
@@ -871,6 +941,20 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     const draw = (): void => {
       ground();
+
+      // Nothing but the field while the sheets are still coming. The
+      // caller holds the battle back until they land, so there is
+      // nothing happening to draw — and a row of circles standing in
+      // for pokemon reads as a fight that has already gone wrong
+      if (loading()) {
+        context.fillStyle = COLORS.text;
+        context.font = 'bold 18px monospace';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(LOADING_LABEL, WIDTH / 2, HEIGHT / 2);
+        return;
+      }
+
       const field = readField(props.battle, props.player);
       const bossSide = [...props.battle.alliances].some((alliance) => alliance.boss);
 

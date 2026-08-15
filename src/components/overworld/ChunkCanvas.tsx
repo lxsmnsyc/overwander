@@ -90,6 +90,13 @@ const APRON = BORDER_CELLS / CHUNK_CELLS;
  */
 const SPRITE_SCALE = 0.95;
 
+/**
+ * What the board says while the sheets for what is standing on it are
+ * still coming, and how large it is drawn in board pixels
+ */
+const LOADING_LABEL = 'Loading…';
+const LOADING_SIZE = 18;
+
 const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
   /**
@@ -117,6 +124,12 @@ const COLORS = {
    */
   compass: '#1c1c1c',
   compassHalo: 'rgba(255, 255, 255, 0.75)',
+  /**
+   * The word said over the board while its pokemon are still coming,
+   * on a halo for the same reason the compass has one
+   */
+  loading: '#1c1c1c',
+  loadingHalo: 'rgba(255, 255, 255, 0.75)',
   /**
    * The apron: the ring of thresholds around the chunk. Darker than the
    * board and outside its lit surface, because it is not part of the
@@ -405,28 +418,100 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   // two have to be able to stand in the same chunk
   const sprites = new Map<string, SpeciesSpriteAnimation | null>();
 
-  const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
-    const key = `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+  /**
+   * The load behind each coat, so one that is already on its way is
+   * waited on rather than asked for again
+   */
+  const pending = new Map<string, Promise<void>>();
 
-    if (sprites.has(key)) {
-      return sprites.get(key) ?? null;
+  const coatKey = (coat: SpawnCoat): string => `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+
+  /**
+   * Ask for a coat's sheet, and answer when it has landed one way or
+   * the other. A species with no shiny drawing falls back to its
+   * ordinary one inside the loader, so a missing sheet costs the
+   * sparkle rather than the pokemon
+   */
+  const loadCoat = async (coat: SpawnCoat): Promise<void> => {
+    const key = coatKey(coat);
+    const already = pending.get(key);
+
+    if (already != null) {
+      return already;
     }
 
-    // Held as null until it lands, so a coat is asked for once
-    // rather than once per frame it is drawn in
+    // Held as null until it lands, so a coat is asked for once rather
+    // than once per frame it is drawn in
     sprites.set(key, null);
-    // A species with no shiny drawing falls back to its ordinary one
-    // inside the loader, so a missing sheet costs the sparkle rather
-    // than the pokemon
-    loadSpeciesSprite(coat.species, { shiny: coat.shiny })
+
+    const arriving = loadSpeciesSprite(coat.species, { shiny: coat.shiny })
       .then((loaded) => {
         sprites.set(key, loaded);
       })
       .catch(() => {
         // The dot it always was
       });
-    return null;
+
+    pending.set(key, arriving);
+    return arriving;
   };
+
+  const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
+    const key = coatKey(coat);
+
+    if (!sprites.has(key)) {
+      loadCoat(coat).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+    return sprites.get(key) ?? null;
+  };
+
+  /**
+   * Whether the sheets for what is standing in this chunk are still
+   * coming.
+   *
+   * The board used to draw itself the moment it had a chunk and let
+   * the pokemon appear one at a time as their sheets landed, which
+   * reads as a field filling up rather than as a field. It waits
+   * instead: the ground is drawn, nothing is standing on it yet, and
+   * the picture arrives whole.
+   *
+   * It is only ever the **first** wait that shows. Sheets are cached
+   * across chunks, so walking into country whose pokemon have already
+   * been met resolves before the next frame
+   */
+  const [loading, setLoading] = createSignal(true);
+
+  createEffect(() => {
+    const coats = [...props.spawns.values()];
+    let live = true;
+
+    onCleanup(() => {
+      live = false;
+    });
+
+    // Nothing to wait for is not a wait: an empty chunk is finished
+    if (coats.every((coat) => sprites.has(coatKey(coat)))) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    Promise.all(coats.map(async (coat) => loadCoat(coat)))
+      .then(() => {
+        if (live) {
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        // A sheet that will not load is drawn as the dot it always
+        // was; it is not a reason to hold the whole board back
+        if (live) {
+          setLoading(false);
+        }
+      });
+  });
   const [hovered, setHovered] = createSignal<BoardCell | null>(null);
   /**
    * How big the canvas is on screen, in CSS pixels. The picture is
@@ -857,6 +942,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       context.textAlign = 'center';
       context.textBaseline = 'middle';
 
+      // What the wait is, where the board is. It is drawn over the
+      // ground rather than instead of it: the country is already
+      // correct, and only what stands on it is late
+      if (loading()) {
+        const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+
+        context.font = `bold ${Math.round(LOADING_SIZE * magnify)}px monospace`;
+        context.fillStyle = COLORS.loadingHalo;
+        context.fillText(LOADING_LABEL, middle.x, middle.y + 1);
+        context.fillStyle = COLORS.loading;
+        context.fillText(LOADING_LABEL, middle.x, middle.y);
+      }
+
       /**
        * The ground first, all of it, and then everything standing on
        * it.
@@ -939,7 +1037,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        */
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
-        const standing = props.spawns.get(index);
+        // Nothing standing anywhere while the sheets are still coming:
+        // a field that fills in one pokemon at a time reads as a page
+        // loading rather than as a place
+        const standing = loading() ? undefined : props.spawns.get(index);
 
         // Whatever was announced here has been caught, walked off or
         // rolled over, so the next shiny to stand on this cell gets a
@@ -1203,7 +1304,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          props.onPress(cursor());
+
+          if (!loading()) {
+            props.onPress(cursor());
+          }
         }
       }}
       onClick={(event) => {
@@ -1217,9 +1321,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           return;
         }
         // And nothing at all while the board is being carried on or
-        // off: it is not where it is drawn, so a press would land on
-        // whichever cell happened to slide under the pointer
-        if (props.crossing != null) {
+        // off — it is not where it is drawn, so a press would land on
+        // whichever cell slid under the pointer — nor while the
+        // pokemon standing on it have yet to arrive, since a player
+        // cannot see what they would be walking into
+        if (props.crossing != null || loading()) {
           return;
         }
 

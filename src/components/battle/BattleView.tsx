@@ -72,6 +72,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * Seconds left before the fight starts, or null once it has
    */
   const [counting, setCounting] = createSignal<number | null>(null);
+  /**
+   * Whether the canvas has every pokemon's sheet in hand. Nothing is
+   * counted down and nothing is started until it does
+   */
+  const [drawable, setDrawable] = createSignal(false);
 
   createEffect(() => {
     const loaded = record();
@@ -95,11 +100,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           ? createRocketBattle(props.active.id, teams)
           : createRaidBattle(props.active.id, teams);
 
-        // Built and set up, but not yet running: the countdown below
-        // is what lets it go
+        // Built and set up, but not yet running. The canvas says when
+        // it has every sheet the fight needs, and the countdown starts
+        // from there: three, two, one over an empty field is three
+        // seconds of the fight spent on nothing
         built.battle.initialize();
         setInstance(built);
-        setCounting(COUNTDOWN);
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));
@@ -385,7 +391,20 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             </div>
           }
         >
-          {(built) => <BattleCanvas battle={built().battle} player={auth.user()?.uid ?? ''} />}
+          {(built) => (
+            <BattleCanvas
+              battle={built().battle}
+              player={auth.user()?.uid ?? ''}
+              onReady={() => {
+                // Once. A canvas that reported twice would start the
+                // countdown over the top of itself
+                if (!drawable()) {
+                  setDrawable(true);
+                  setCounting(COUNTDOWN);
+                }
+              }}
+            />
+          )}
         </Show>
 
         {/* What the fight is, in the corner it is least in the way */}

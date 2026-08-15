@@ -89,8 +89,9 @@ export default function RaidDemo(): JSX.Element {
   createEffect(() => {
     const staged = createRaidBattle(`demo:${seed()}`, createDemoRaidTeams(seed()));
 
+    // Initialized but not started: the canvas starts it once it has
+    // every sheet, the way a real fight waits
     staged.battle.initialize();
-    staged.battle.start();
     setBuilt(staged);
 
     // A battle left running would keep ticking behind whatever
@@ -185,7 +186,13 @@ export default function RaidDemo(): JSX.Element {
               class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
               shadow-pop"
             >
-              <BattleCanvas battle={staged.battle} player="" />
+              <BattleCanvas
+                battle={staged.battle}
+                player=""
+                onReady={() => {
+                  staged.battle.start();
+                }}
+              />
             </div>
             {/* The demo has no signed-in player, so it stands in as
                 the first party: the cards are about somebody's own

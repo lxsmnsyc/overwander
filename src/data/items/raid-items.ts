@@ -24,6 +24,15 @@ const NAMES: { [key in Items]?: string } = {
 };
 
 /**
+ * Where each relic leads. The line says the place rather than what
+ * lives there: a map is a map, and finding out what it was drawn for
+ * is the reason to follow it
+ */
+const PLACES: { [key in Items]?: string } = {
+  [Items.OldSeaMap]: 'the island it charts, far out to sea',
+};
+
+/**
  * What the item calls, or null when it calls nothing. Only a mythical
  * answers: a relic naming anything else stages no raid
  */
@@ -42,6 +51,7 @@ export default function registerRaidItems(): void {
   for (const item of RAID_ITEMS.keys()) {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
+      description: `Opens a raid at ${PLACES[item] ?? 'the place it leads to'}. Spent on use.`,
       type: ItemTypes.KeyItem,
       icon: nameToIcon('key', NAMES[item] ?? ''),
       // Used to open a raid, and gone once it has been

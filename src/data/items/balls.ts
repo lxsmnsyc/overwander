@@ -11,6 +11,7 @@ export default function registerBalls(): void {
   registerItem(Items.PokeBall, {
     name: 'Poke Ball',
     type: ItemTypes.PokeBall,
+    description: 'The plain ball. No help and no hindrance.',
     icon: 'balls/poke',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 200,
@@ -19,6 +20,7 @@ export default function registerBalls(): void {
   registerItem(Items.GreatBall, {
     name: 'Great Ball',
     type: ItemTypes.PokeBall,
+    description: 'A 1.5x better chance than a plain ball.',
     icon: 'balls/great',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 600,
@@ -27,6 +29,7 @@ export default function registerBalls(): void {
   registerItem(Items.UltraBall, {
     name: 'Ultra Ball',
     type: ItemTypes.PokeBall,
+    description: 'Twice a plain ball’s chance.',
     icon: 'balls/ultra',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1200,
@@ -36,6 +39,7 @@ export default function registerBalls(): void {
   registerItem(Items.MasterBall, {
     name: 'Master Ball',
     type: ItemTypes.PokeBall,
+    description: 'Never fails.',
     icon: 'balls/master',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
@@ -45,6 +49,7 @@ export default function registerBalls(): void {
   registerItem(Items.PremierBall, {
     name: 'Premier Ball',
     type: ItemTypes.PokeBall,
+    description: 'Catches like a plain ball. A keepsake.',
     icon: 'balls/premier',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 200,
@@ -54,6 +59,7 @@ export default function registerBalls(): void {
   registerItem(Items.HealBall, {
     name: 'Heal Ball',
     type: ItemTypes.PokeBall,
+    description: 'Catches like a plain ball, and the catch arrives whole.',
     icon: 'balls/heal',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 300,
@@ -63,6 +69,8 @@ export default function registerBalls(): void {
   registerItem(Items.LuxuryBall, {
     name: 'Luxury Ball',
     type: ItemTypes.PokeBall,
+    description:
+      'Catches like a plain ball. Whatever it holds warms to you twice as fast, for life.',
     icon: 'balls/luxury',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -72,6 +80,7 @@ export default function registerBalls(): void {
   registerItem(Items.NetBall, {
     name: 'Net Ball',
     type: ItemTypes.PokeBall,
+    description: '3.5x against Bug and Water types.',
     icon: 'balls/net',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -81,6 +90,7 @@ export default function registerBalls(): void {
   registerItem(Items.DiveBall, {
     name: 'Dive Ball',
     type: ItemTypes.PokeBall,
+    description: '3.5x on water.',
     icon: 'balls/dive',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -90,6 +100,7 @@ export default function registerBalls(): void {
   registerItem(Items.NestBall, {
     name: 'Nest Ball',
     type: ItemTypes.PokeBall,
+    description: 'Up to 4x against a low-level encounter, fading as the level rises.',
     icon: 'balls/nest',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -99,6 +110,7 @@ export default function registerBalls(): void {
   registerItem(Items.RepeatBall, {
     name: 'Repeat Ball',
     type: ItemTypes.PokeBall,
+    description: '3.5x against a species you already own.',
     icon: 'balls/repeat',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -108,6 +120,7 @@ export default function registerBalls(): void {
   registerItem(Items.TimerBall, {
     name: 'Timer Ball',
     type: ItemTypes.PokeBall,
+    description: 'Grows every turn the encounter runs, up to 4x.',
     icon: 'balls/timer',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -117,6 +130,7 @@ export default function registerBalls(): void {
   registerItem(Items.QuickBall, {
     name: 'Quick Ball',
     type: ItemTypes.PokeBall,
+    description: '5x on the opening turn, plain afterwards.',
     icon: 'balls/quick',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,
@@ -126,6 +140,7 @@ export default function registerBalls(): void {
   registerItem(Items.DuskBall, {
     name: 'Dusk Ball',
     type: ItemTypes.PokeBall,
+    description: '3x in the evening and at night.',
     icon: 'balls/dusk',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,

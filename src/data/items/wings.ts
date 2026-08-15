@@ -1,4 +1,4 @@
-import { Stats } from '../constants/stats';
+import { STAT_NAMES, Stats } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { nameToIcon, registerItem } from './__create';
 
@@ -45,9 +45,10 @@ export function isWing(item: Items): boolean {
 }
 
 export default function registerWings(): void {
-  for (const item of WING_STATS.keys()) {
+  for (const [item, stat] of WING_STATS) {
     registerItem(item, {
       name: NAMES[item] ?? 'Wing',
+      description: `Adds ${WING_EFFORT} ${STAT_NAMES[stat]} effort. Spent on use.`,
       type: ItemTypes.Training,
       // The wings are drawn on the medicine sheet, since that is what
       // they are: something a pokemon swallows for what it does to it

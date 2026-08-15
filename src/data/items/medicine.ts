@@ -129,6 +129,60 @@ export function isHerbal(item: Items): boolean {
   return bitterness(item) > 0;
 }
 
+/**
+ * What a medicine does, in one line, worked out of its own entry
+ * above rather than written twice: a potion that is retuned describes
+ * itself correctly without being edited
+ */
+/**
+ * What a cure takes off, as the thing rather than the state: the two
+ * poisons share a word, so an Antidote reads as one cure rather than
+ * two
+ */
+const CURE_NAMES = new Map<Statuses, string>([
+  [Statuses.Poisoned, 'poison'],
+  [Statuses.BadlyPoisoned, 'poison'],
+  [Statuses.Sleeping, 'sleep'],
+  [Statuses.Paralyzed, 'paralysis'],
+  [Statuses.Burned, 'a burn'],
+  [Statuses.Frozen, 'freezing'],
+]);
+
+export function describeMedicine(item: Items): string {
+  const effect = MEDICINES.get(item);
+
+  if (effect == null) {
+    return '';
+  }
+
+  const parts: string[] = [];
+
+  if (effect.revives > 0) {
+    parts.push(
+      effect.revives >= 1
+        ? 'Revives a fainted pokemon on a full pool.'
+        : `Revives a fainted pokemon on ${effect.revives === 0.5 ? 'half a pool' : `${Math.round(effect.revives * 100)}% of its pool`}.`,
+    );
+  } else if (effect.restore === FULL) {
+    parts.push('Restores a whole pool.');
+  } else if (effect.restore > 0) {
+    parts.push(`Restores ${effect.restore} health.`);
+  }
+
+  if (effect.cures === EVERY_STATUS) {
+    parts.push('Cures every status.');
+  } else if (effect.cures != null) {
+    const cured = new Set([...effect.cures].map((status) => CURE_NAMES.get(status) ?? ''));
+
+    parts.push(`Cures ${[...cured].join(' and ')}.`);
+  }
+
+  if (effect.bitter != null) {
+    parts.push('Bitter: costs friendship.');
+  }
+  return parts.join(' ');
+}
+
 const MEDICINE_RESALE = 0.5;
 
 /**
@@ -139,6 +193,7 @@ const MEDICINE_RESALE = 0.5;
 function registerMedicine(item: Items, name: string, buy: number): void {
   registerItem(item, {
     name,
+    description: describeMedicine(item),
     type: ItemTypes.Medicine,
     icon: nameToIcon('medicine', name),
     // Used on a pokemon and spent doing it; never held, so nothing

@@ -22,23 +22,56 @@ import { nameToIcon, registerItem } from './__create';
  * has one: what a player is picking is the moment they expect to have,
  * not the one they can afford
  */
-export const ONE_SHOTS: Map<Items, string> = new Map([
-  [Items.FocusSash, 'Focus Sash'],
-  [Items.AirBalloon, 'Air Balloon'],
-  [Items.WeaknessPolicy, 'Weakness Policy'],
-  [Items.BlunderPolicy, 'Blunder Policy'],
-  [Items.AbsorbBulb, 'Absorb Bulb'],
-  [Items.CellBattery, 'Cell Battery'],
-  [Items.Snowball, 'Snowball'],
-  [Items.LuminousMoss, 'Luminous Moss'],
-  [Items.ThroatSpray, 'Throat Spray'],
-  [Items.WhiteHerb, 'White Herb'],
-  [Items.MentalHerb, 'Mental Herb'],
-  [Items.PowerHerb, 'Power Herb'],
-  [Items.AdrenalineOrb, 'Adrenaline Orb'],
-  [Items.RedCard, 'Red Card'],
-  [Items.EjectButton, 'Eject Button'],
-  [Items.EjectPack, 'Eject Pack'],
+export const ONE_SHOTS: Map<Items, [name: string, description: string]> = new Map([
+  [
+    Items.FocusSash,
+    ['Focus Sash', 'Leaves its holder on 1 HP the first time a blow would take it from full.'],
+  ],
+  [
+    Items.AirBalloon,
+    ['Air Balloon', 'Its holder floats, so Ground moves miss. Pops on the first hit that lands.'],
+  ],
+  [
+    Items.WeaknessPolicy,
+    ['Weakness Policy', '+2 Attack and +2 Special Attack after a super-effective blow lands.'],
+  ],
+  [Items.BlunderPolicy, ['Blunder Policy', '+1 Speed after its holder misses.']],
+  [Items.AbsorbBulb, ['Absorb Bulb', '+1 Special Attack after a Water move lands on its holder.']],
+  [Items.CellBattery, ['Cell Battery', '+1 Attack after an Electric move lands on its holder.']],
+  [Items.Snowball, ['Snowball', '+1 Attack after an Ice move lands on its holder.']],
+  [
+    Items.LuminousMoss,
+    ['Luminous Moss', '+1 Special Defense after a Water move lands on its holder.'],
+  ],
+  [Items.ThroatSpray, ['Throat Spray', '+1 Special Attack after its holder casts a sound move.']],
+  [Items.WhiteHerb, ['White Herb', 'Puts back every lowered stage at once, then is gone.']],
+  [Items.MentalHerb, ['Mental Herb', 'Clears infatuation the moment it lands.']],
+  [
+    Items.PowerHerb,
+    ['Power Herb', 'Its holder\u2019s next cast goes off instantly, with no wind-up.'],
+  ],
+  [
+    Items.AdrenalineOrb,
+    ['Adrenaline Orb', '+1 Speed when its holder is stared down by an Intimidate.'],
+  ],
+  [
+    Items.RedCard,
+    [
+      'Red Card',
+      'Sends the attacker away — an enemy for their weakest, an ally for their strongest.',
+    ],
+  ],
+  [
+    Items.EjectButton,
+    ['Eject Button', 'Swaps its holder out for the strongest of their bench when a blow lands.'],
+  ],
+  [
+    Items.EjectPack,
+    [
+      'Eject Pack',
+      'Swaps its holder out for the strongest of their bench when a stat is knocked down.',
+    ],
+  ],
 ]);
 
 /**
@@ -56,9 +89,10 @@ export function isOneShot(item: Items): boolean {
 }
 
 export default function registerOneShots(): void {
-  for (const [item, name] of ONE_SHOTS) {
+  for (const [item, [name, description]] of ONE_SHOTS) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,

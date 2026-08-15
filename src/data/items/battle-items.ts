@@ -24,6 +24,22 @@ export const X_ITEM_STAGES: Map<Items, Stages> = new Map([
   [Items.XAccuracy, Stages.Accuracy],
 ]);
 
+/**
+ * What each one is for, said the way this engine spends it: every one
+ * of them answers a stat being knocked down rather than being reached
+ * for from a bag
+ */
+const DESCRIPTIONS: { [key in Items]?: string } = {
+  [Items.XAttack]: '+2 Attack when its holder’s Attack is knocked down.',
+  [Items.XDefense]: '+2 Defense when its holder’s Defense is knocked down.',
+  [Items.XSpAtk]: '+2 Special Attack when its holder’s Special Attack is knocked down.',
+  [Items.XSpDef]: '+2 Special Defense when its holder’s Special Defense is knocked down.',
+  [Items.XSpeed]: '+2 Speed when its holder’s Speed is knocked down.',
+  [Items.XAccuracy]: '+2 Accuracy when its holder’s Accuracy is knocked down.',
+  [Items.DireHit]: 'Sharpens its holder’s criticals by two stages when any stat is knocked down.',
+  [Items.GuardSpec]: 'Refuses the first stat drop anybody else tries on its holder.',
+};
+
 const NAMES: { [key in Items]?: string } = {
   [Items.XAttack]: 'X Attack',
   [Items.XDefense]: 'X Defense',
@@ -59,6 +75,7 @@ export default function registerBattleItems(): void {
 
     registerItem(item, {
       name,
+      description: DESCRIPTIONS[item] ?? '',
       type: ItemTypes.Held,
       icon: nameToIcon('battle-items', name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,

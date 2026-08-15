@@ -1,4 +1,4 @@
-import { Types } from '../constants/types';
+import { TYPE_NAMES, Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -66,10 +66,11 @@ export const PLATE_RESALE = 2000;
  * is dug up rather than bought
  */
 export default function registerPlates(): void {
-  for (const item of PLATES.keys()) {
+  for (const [item, type] of PLATES) {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`,
       // A plate is not named for its type — a Fist Plate is Fighting
       // — so the picture is taken from the plate's own first word,
       // which is what the `plates` sheet names them by

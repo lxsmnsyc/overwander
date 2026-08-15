@@ -15,22 +15,30 @@ import { nameToIcon, registerItem } from './__create';
  * What the market lists. The tag does what a Pure Incense does, so it
  * is priced as one
  */
-export const MARKET_TRINKETS: Map<Items, string> = new Map([[Items.CleanseTag, 'Cleanse Tag']]);
+export const MARKET_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
+  [Items.CleanseTag, ['Cleanse Tag', 'Fewer wild spawns around the buddy carrying it.']],
+]);
 
 /**
  * The two nobody sells: a stone dug out of the ground, and a coin no
  * shopkeeper would part with for gold. Being unbuyable is what keeps
  * the coin from simply being a better Luck Incense on the same shelf
  */
-export const FOUND_TRINKETS: Map<Items, string> = new Map([
-  [Items.Everstone, 'Everstone'],
-  [Items.AmuletCoin, 'Amulet Coin'],
+export const FOUND_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
+  [
+    Items.Everstone,
+    ['Everstone', 'Its holder will not evolve, whatever it meets the conditions for.'],
+  ],
+  [Items.AmuletCoin, ['Amulet Coin', 'Three times the gold from any fight its holder is in.']],
 ]);
 
 /**
  * Every trinket, for callers that only care that it is one
  */
-export const TRINKETS: Map<Items, string> = new Map([...MARKET_TRINKETS, ...FOUND_TRINKETS]);
+export const TRINKETS: Map<Items, [name: string, description: string]> = new Map([
+  ...MARKET_TRINKETS,
+  ...FOUND_TRINKETS,
+]);
 
 /**
  * What a listed one costs. It is the incense price rather than the
@@ -51,9 +59,10 @@ export function isTrinket(item: Items): boolean {
 }
 
 export default function registerTrinkets(): void {
-  for (const [item, name] of MARKET_TRINKETS) {
+  for (const [item, [name, description]] of MARKET_TRINKETS) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
@@ -62,9 +71,10 @@ export default function registerTrinkets(): void {
     });
   }
 
-  for (const [item, name] of FOUND_TRINKETS) {
+  for (const [item, [name, description]] of FOUND_TRINKETS) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable,

@@ -6,6 +6,16 @@ export interface ItemData {
   type: ItemTypes;
 
   /**
+   * What it does, in one line, said the way this engine actually does
+   * it rather than the way the mainline describes it — a Zoom Lens
+   * answers a committed target here, not one that moved second.
+   *
+   * Required, so an item cannot be added without somebody saying what
+   * it is for, and short enough to sit under the name in a list
+   */
+  description: string;
+
+  /**
    * Which picture the game draws for it, as `sheet/name`.
    *
    * The sheets live under `public/sprites/ui/items/{sheet}` — a

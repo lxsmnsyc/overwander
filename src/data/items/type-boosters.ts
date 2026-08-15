@@ -1,4 +1,4 @@
-import { Types } from '../constants/types';
+import { TYPE_NAMES, Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { nameToIcon, registerItem } from './__create';
 
@@ -77,10 +77,11 @@ const TYPE_BOOSTER_RESALE = 0.5;
  * blocks
  */
 export default function registerTypeBoosters(): void {
-  for (const item of TYPE_BOOSTERS.keys()) {
+  for (const [item, type] of TYPE_BOOSTERS) {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`,
       icon: ICONS[item] ?? nameToIcon('held', NAMES[item] ?? ''),
       // Held for as long as its holder keeps it: nothing consumes a
       // Charcoal, and nothing uses one on a pokemon either

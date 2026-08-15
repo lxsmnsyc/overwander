@@ -22,23 +22,44 @@ import { nameToIcon, registerItem } from './__create';
  * The items a shop stocks, and what one costs. They are dear because
  * each is worth half again of a stat
  */
-export const GENERAL_STAT_BOOSTERS: Map<Items, string> = new Map([
-  [Items.ChoiceBand, 'Choice Band'],
-  [Items.ChoiceSpecs, 'Choice Specs'],
-  [Items.ChoiceScarf, 'Choice Scarf'],
-  [Items.AssaultVest, 'Assault Vest'],
-  [Items.Eviolite, 'Eviolite'],
+export const GENERAL_STAT_BOOSTERS: Map<Items, [name: string, description: string]> = new Map([
+  [
+    Items.ChoiceBand,
+    ['Choice Band', '1.5x Attack, but its holder can only cast the move it opened with.'],
+  ],
+  [
+    Items.ChoiceSpecs,
+    ['Choice Specs', '1.5x Special Attack, but its holder can only cast the move it opened with.'],
+  ],
+  [
+    Items.ChoiceScarf,
+    ['Choice Scarf', '1.5x Speed, but its holder can only cast the move it opened with.'],
+  ],
+  [
+    Items.AssaultVest,
+    ['Assault Vest', '1.5x Special Defense. Its holder cannot cast a status move at all.'],
+  ],
+  [
+    Items.Eviolite,
+    ['Eviolite', '1.5x both defenses, for a pokemon with somewhere left to evolve to.'],
+  ],
 ]);
 
 /**
  * The species relics: found in the world, never stocked, and useless
  * in any grip but the right one
  */
-export const RELIC_STAT_BOOSTERS: Map<Items, string> = new Map([
-  [Items.LightBall, 'Light Ball'],
-  [Items.ThickClub, 'Thick Club'],
-  [Items.MetalPowder, 'Metal Powder'],
-  [Items.QuickPowder, 'Quick Powder'],
+export const RELIC_STAT_BOOSTERS: Map<Items, [name: string, description: string]> = new Map([
+  [
+    Items.LightBall,
+    ['Light Ball', 'Doubles a Pikachu’s Attack and Special Attack. Nothing to anybody else.'],
+  ],
+  [
+    Items.ThickClub,
+    ['Thick Club', 'Doubles a Cubone’s or Marowak’s Attack. Nothing to anybody else.'],
+  ],
+  [Items.MetalPowder, ['Metal Powder', 'Doubles a Ditto’s Defense. Nothing to anybody else.']],
+  [Items.QuickPowder, ['Quick Powder', 'Doubles a Ditto’s Speed. Nothing to anybody else.']],
 ]);
 
 export const STAT_BOOSTER_PRICE = 8000;
@@ -57,10 +78,11 @@ const RELIC_RESALE = 1000;
  * a pokemon
  */
 export default function registerStatBoosters(): void {
-  for (const [item, name] of GENERAL_STAT_BOOSTERS) {
+  for (const [item, [name, description]] of GENERAL_STAT_BOOSTERS) {
     registerItem(item, {
       name,
       type: ItemTypes.Held,
+      description,
       icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
       buy: STAT_BOOSTER_PRICE,
@@ -68,10 +90,11 @@ export default function registerStatBoosters(): void {
     });
   }
 
-  for (const [item, name] of RELIC_STAT_BOOSTERS) {
+  for (const [item, [name, description]] of RELIC_STAT_BOOSTERS) {
     registerItem(item, {
       name,
       type: ItemTypes.Held,
+      description,
       icon: nameToIcon('held', name),
       // Found rather than bought: a relic has no listing, only a
       // price somebody will pay for it

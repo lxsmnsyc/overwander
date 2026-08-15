@@ -20,6 +20,7 @@ import {
   METRONOME_LIMIT,
   METRONOME_STEP,
   QUICK_CLAW_PRIORITY,
+  RAZOR_CLAW_CRITICAL_STAGES,
   ROCKY_HELMET_SHARE,
   SCOPE_LENS_CRITICAL_STAGES,
   SHELL_BELL_SHARE,
@@ -517,6 +518,92 @@ describe('gear that lengthens what is already running', () => {
     expect(target.status[Statuses.Flinched]).toBeDefined();
     // Held, not spent — and still the trade item it also is
     expect(holder.items[Items.KingsRock]).toBe(true);
+  });
+
+  it('does the same for a Razor Fang', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    holder.addItem(Items.RazorFang);
+
+    pinRandom(battle, 0.99);
+    holder.attack(target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    expect(target.status[Statuses.Flinched]).toBeUndefined();
+
+    pinRandom(battle, 0);
+    holder.attack(target, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(target.status[Statuses.Flinched]).toBeDefined();
+    expect(holder.items[Items.RazorFang]).toBe(true);
+  });
+
+  it('sharpens its holder with a Razor Claw, the way a Scope Lens does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    // A roll this size only crits once something has added a stage
+    pinRandom(battle, (1 / 16) * 2 ** RAZOR_CLAW_CRITICAL_STAGES);
+
+    const bare = defender.health;
+    holder.attack(defender, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, CAN_CRIT);
+    const plain = bare - defender.health;
+
+    defender.setHealth(defender.checkStat(Stats.HP, 0));
+    holder.addItem(Items.RazorClaw);
+
+    const before = defender.health;
+    holder.attack(defender, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, CAN_CRIT);
+
+    expect(before - defender.health).toBeCloseTo(plain * 2, 5);
+    expect(holder.items[Items.RazorClaw]).toBe(true);
+  });
+});
+
+describe('a Clear Amulet', () => {
+  it('refuses a drop somebody else is trying, and is not spent for it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    holder.addItem(Items.ClearAmulet);
+    holder.addStage(Stages.Attack, -1, moveCause(enemy, Moves.Growl));
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    // Unlike a Guard Spec, it answers the next one too
+    holder.addStage(Stages.Attack, -1, moveCause(enemy, Moves.Growl));
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(holder.items[Items.ClearAmulet]).toBe(true);
+  });
+
+  it('says nothing about a lift, or about what its holder does to itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    holder.addItem(Items.ClearAmulet);
+    holder.addStage(Stages.Attack, 2, moveCause(enemy, Moves.Growth));
+
+    expect(holder.stages[Stages.Attack]).toBe(2);
+
+    // The cost of its own move is its own business
+    holder.addStage(Stages.Defense, -1, moveCause(holder, Moves.Growl));
+
+    expect(holder.stages[Stages.Defense]).toBe(-1);
+  });
+
+  it('refuses a stage being taken back off as well as one being put down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    holder.addStage(Stages.Attack, 2, moveCause(holder, Moves.SwordsDance));
+    holder.addItem(Items.ClearAmulet);
+    holder.removeStage(Stages.Attack, 2, moveCause(enemy, Moves.Growl));
+
+    expect(holder.stages[Stages.Attack]).toBe(2);
   });
 });
 
@@ -1571,23 +1658,26 @@ describe('the regional treats', () => {
     expect(holder.items[Items.BigMalasada]).toBe(true);
   });
 
-  it('eats the candy bar the way a drink goes down', () => {
-    const { battle, teamA } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const maxHealth = holder.checkStat(Stats.HP, 0);
-    const restore = TREATS.get(Items.RageCandyBar)?.restore ?? 0;
-    const low = maxHealth * DRINK_THRESHOLD;
+  it.each([Items.RageCandyBar, Items.SweetHeart])(
+    'eats the sweet one the way a drink goes down',
+    (item) => {
+      const { battle, teamA } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const maxHealth = holder.checkStat(Stats.HP, 0);
+      const restore = TREATS.get(item)?.restore ?? 0;
+      const low = maxHealth * DRINK_THRESHOLD;
 
-    holder.addItem(Items.RageCandyBar);
-    holder.setHealth(maxHealth / 4);
+      holder.addItem(item);
+      holder.setHealth(maxHealth / 4);
 
-    expect(holder.items[Items.RageCandyBar]).toBe(true);
+      expect(holder.items[item]).toBe(true);
 
-    holder.setHealth(low);
+      holder.setHealth(low);
 
-    expect(holder.items[Items.RageCandyBar]).toBeUndefined();
-    expect(holder.health).toBe(low + restore);
-  });
+      expect(holder.items[item]).toBeUndefined();
+      expect(holder.health).toBe(low + restore);
+    },
+  );
 
   it('leaves the candy bar alone for a status', () => {
     const { battle, teamA, teamB } = createBattle();

@@ -1,5 +1,6 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { Species } from '../ids/species';
+import { getSpeciesData } from '../species';
 import { registerItem } from './__create';
 
 /**
@@ -72,9 +73,10 @@ const ICONS: { [key in Items]?: string } = {
 };
 
 export default function registerFossils(): void {
-  for (const item of FOSSIL_SPECIES.keys()) {
+  for (const [item, species] of FOSSIL_SPECIES) {
     registerItem(item, {
       name: NAMES[item] ?? 'Fossil',
+      description: `Revives into ${getSpeciesData(species).name}. Spent doing it.`,
       type: ItemTypes.Fossil,
       icon: ICONS[item] ?? 'key/old-amber',
       // Spent when it is revived, and worth nothing to anybody else:

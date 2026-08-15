@@ -51,6 +51,7 @@ export default function registerDrinks(): void {
 
     registerItem(item, {
       name: drink.name,
+      description: `Restores ${drink.restore} health when its holder drops to a fifth of its pool.`,
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', drink.name),
       flags: stocked

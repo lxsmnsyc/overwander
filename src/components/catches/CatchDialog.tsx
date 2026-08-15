@@ -59,6 +59,7 @@ import { MAX_LEVEL } from '../../data/constants/levels';
 import {
   MAX_EFFORT_PER_STAT,
   MAX_IV,
+  STAT_NAMES,
   STAT_ORDER,
   Stats,
   getIV,
@@ -187,14 +188,7 @@ function natureShift(nature: Natures, stat: Stats): number {
  * species' base stats under the same names: two screens naming the
  * same six differently is two vocabularies for one thing
  */
-export const STAT_LABELS: Record<Stats, string> = {
-  [Stats.HP]: 'HP',
-  [Stats.Attack]: 'Attack',
-  [Stats.Defense]: 'Defense',
-  [Stats.SpecialAttack]: 'Sp. Attack',
-  [Stats.SpecialDefense]: 'Sp. Defense',
-  [Stats.Speed]: 'Speed',
-};
+export const STAT_LABELS: Record<Stats, string> = STAT_NAMES;
 
 const GENDER_LABELS: Record<Genders, string> = {
   [Genders.Genderless]: 'Genderless',

@@ -32,6 +32,7 @@ export function isUtilityBelt(item: Items): boolean {
 export default function registerUtilityBelt(): void {
   registerItem(Items.UtilityBelt, {
     name: 'Utility Belt',
+    description: 'Gives one pokemon a permanent extra item slot. Spent on use.',
     type: ItemTypes.Training,
     // No belt of its own on the sheets; a forager's bag is the same
     // idea — somewhere to put what you are carrying

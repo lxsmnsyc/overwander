@@ -42,9 +42,10 @@ export const TREATS: Map<Items, Treat> = new Map([
   [Items.ShalourSable, { name: 'Shalour Sable', restore: 0, sell: SWEET_RESALE }],
   [Items.BigMalasada, { name: 'Big Malasada', restore: 0, sell: SWEET_RESALE }],
   [Items.PewterCrunchies, { name: 'Pewter Crunchies', restore: 0, sell: SWEET_RESALE }],
-  // The odd one out: it feeds its holder rather than curing them,
-  // which puts it with the drinks and not with the sweets
+  // The two that feed their holder rather than curing them, which
+  // puts them with the drinks and not with the sweets
   [Items.RageCandyBar, { name: 'Rage Candy Bar', restore: 20, sell: 150 }],
+  [Items.SweetHeart, { name: 'Sweet Heart', restore: 20, sell: 150 }],
 ]);
 
 export function isTreat(item: Items): boolean {
@@ -55,6 +56,10 @@ export default function registerTreats(): void {
   for (const [item, treat] of TREATS) {
     registerItem(item, {
       name: treat.name,
+      description:
+        treat.restore > 0
+          ? `Restores ${treat.restore} health when its holder drops to a fifth of its pool.`
+          : 'Cures every status a second after one lands on its holder.',
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', treat.name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable,

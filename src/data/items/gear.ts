@@ -24,30 +24,52 @@ import { nameToIcon, registerItem } from './__create';
  * so what a player is choosing between is what their pokemon needs
  * rather than what they can afford
  */
-export const MARKET_GEAR: Map<Items, string> = new Map([
-  [Items.ShellBell, 'Shell Bell'],
-  [Items.MuscleBand, 'Muscle Band'],
-  [Items.WiseGlasses, 'Wise Glasses'],
-  [Items.ExpertBelt, 'Expert Belt'],
-  [Items.Metronome, 'Metronome'],
-  [Items.WideLens, 'Wide Lens'],
-  [Items.ScopeLens, 'Scope Lens'],
-  [Items.BrightPowder, 'Bright Powder'],
-  [Items.QuickClaw, 'Quick Claw'],
-  [Items.FocusBand, 'Focus Band'],
-  [Items.RockyHelmet, 'Rocky Helmet'],
-  [Items.SafetyGoggles, 'Safety Goggles'],
-  [Items.UtilityUmbrella, 'Utility Umbrella'],
-  [Items.SmokeBall, 'Smoke Ball'],
-  [Items.DestinyKnot, 'Destiny Knot'],
-  [Items.GripClaw, 'Grip Claw'],
-  [Items.BindingBand, 'Binding Band'],
-  [Items.ZoomLens, 'Zoom Lens'],
-  [Items.IronBall, 'Iron Ball'],
-  [Items.LaggingTail, 'Lagging Tail'],
-  [Items.RingTarget, 'Ring Target'],
-  [Items.FloatStone, 'Float Stone'],
-  [Items.ProtectivePads, 'Protective Pads'],
+export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new Map([
+  [Items.ShellBell, ['Shell Bell', 'Hands its holder back an eighth of the damage it deals.']],
+  [Items.MuscleBand, ['Muscle Band', '1.1x damage from physical moves.']],
+  [Items.WiseGlasses, ['Wise Glasses', '1.1x damage from special moves.']],
+  [Items.ExpertBelt, ['Expert Belt', '1.2x damage, but only from super-effective blows.']],
+  [
+    Items.Metronome,
+    ['Metronome', '1.2x damage for each repeat of the same move, up to twice. Resets on a change.'],
+  ],
+  [Items.WideLens, ['Wide Lens', '1.1x accuracy on everything its holder throws.']],
+  [Items.ScopeLens, ['Scope Lens', 'Doubles its holder’s odds of a critical.']],
+  [Items.BrightPowder, ['Bright Powder', 'Anything aimed at its holder is 10% likelier to miss.']],
+  [
+    Items.QuickClaw,
+    ['Quick Claw', 'A fifth of the time, its holder’s next move winds up a bracket faster.'],
+  ],
+  [Items.FocusBand, ['Focus Band', 'A tenth of the time, its holder is left standing on 1 HP.']],
+  [
+    Items.RockyHelmet,
+    ['Rocky Helmet', 'Anything that touches its holder pays a sixth of its own pool.'],
+  ],
+  [
+    Items.SafetyGoggles,
+    ['Safety Goggles', 'No sandstorm or hail damage, and powder moves do nothing.'],
+  ],
+  [
+    Items.UtilityUmbrella,
+    ['Utility Umbrella', 'Its holder stands under clear sky: sun and rain change nothing for it.'],
+  ],
+  [Items.SmokeBall, ['Smoke Ball', 'Its holder can always flee a wild encounter.']],
+  [Items.DestinyKnot, ['Destiny Knot', 'Whoever infatuates its holder is infatuated back.']],
+  [Items.GripClaw, ['Grip Claw', 'Binds its holder lands hold 1.75x as long.']],
+  [Items.BindingBand, ['Binding Band', 'Binds its holder lands chip a third harder.']],
+  [Items.ZoomLens, ['Zoom Lens', '1.2x accuracy against a target already casting or channelling.']],
+  [Items.IronBall, ['Iron Ball', 'Halves its holder’s Speed and drags it to the ground.']],
+  [
+    Items.LaggingTail,
+    ['Lagging Tail', 'Its holder winds up a bracket slower than it otherwise would.'],
+  ],
+  [Items.RingTarget, ['Ring Target', 'Its holder loses every type immunity it has.']],
+  [Items.FloatStone, ['Float Stone', 'Halves what its holder weighs.']],
+  [Items.ProtectivePads, ['Protective Pads', 'Nothing its holder throws counts as contact.']],
+  [
+    Items.ClearAmulet,
+    ['Clear Amulet', 'Refuses every stat drop anybody else tries, and is never spent.'],
+  ],
 ]);
 
 /**
@@ -61,20 +83,41 @@ export const MARKET_GEAR: Map<Items, string> = new Map([
  * shelf price honest — every party wants one, so a listing would make
  * it the first purchase and everything else the second
  */
-export const FOUND_GEAR: Map<Items, string> = new Map([
-  [Items.BlackSludge, 'Black Sludge'],
-  [Items.LuckyPunch, 'Lucky Punch'],
-  [Items.Stick, 'Stick'],
-  [Items.ShedShell, 'Shed Shell'],
-  [Items.Leftovers, 'Leftovers'],
-  [Items.DampRock, 'Damp Rock'],
-  [Items.HeatRock, 'Heat Rock'],
-  [Items.IcyRock, 'Icy Rock'],
-  [Items.SmoothRock, 'Smooth Rock'],
-  [Items.LightClay, 'Light Clay'],
-  [Items.BigRoot, 'Big Root'],
+export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new Map([
+  [
+    Items.BlackSludge,
+    [
+      'Black Sludge',
+      'Feeds a Poison type an eighth of its pool per move; costs anybody else an eighth.',
+    ],
+  ],
+  [
+    Items.LuckyPunch,
+    ['Lucky Punch', 'Sharpens a Chansey’s criticals by two stages. Nothing to anybody else.'],
+  ],
+  [
+    Items.Stick,
+    ['Stick', 'Sharpens a Farfetch’d’s criticals by two stages. Nothing to anybody else.'],
+  ],
+  [Items.ShedShell, ['Shed Shell', 'Its holder can always flee, whatever is holding it.']],
+  [
+    Items.Leftovers,
+    ['Leftovers', 'Hands its holder a sixteenth of its pool back every time it acts.'],
+  ],
+  [Items.DampRock, ['Damp Rock', 'Rain its holder calls lasts 1.6x as long.']],
+  [Items.HeatRock, ['Heat Rock', 'Sun its holder calls lasts 1.6x as long.']],
+  [Items.IcyRock, ['Icy Rock', 'Hail and snow its holder calls last 1.6x as long.']],
+  [Items.SmoothRock, ['Smooth Rock', 'A sandstorm its holder calls lasts 1.6x as long.']],
+  [Items.LightClay, ['Light Clay', 'Screens its holder puts up last 1.6x as long.']],
+  [Items.BigRoot, ['Big Root', '1.3x on everything its holder drains.']],
   // A burr off a bush, which is why nobody sells one
-  [Items.StickyBarb, 'Sticky Barb'],
+  [
+    Items.StickyBarb,
+    [
+      'Sticky Barb',
+      'Costs its holder an eighth of its pool per move, and sticks to whoever touches it.',
+    ],
+  ],
 ]);
 
 export const GEAR_PRICE = 5000;
@@ -87,16 +130,28 @@ const GEAR_RESALE = 0.5;
  */
 const FOUND_GEAR_RESALE = 1000;
 
+/**
+ * TODO: the Clear Amulet has no picture of its own cut yet, so it
+ * borrows the one thing on any sheet that looks like an amulet. Give
+ * it `held/clear-amulet` once the art exists
+ */
+const GEAR_ICONS: Map<Items, string> = new Map([[Items.ClearAmulet, 'key/clear-bell']]);
+
+function gearIcon(item: Items, name: string): string {
+  return GEAR_ICONS.get(item) ?? nameToIcon('held', name);
+}
+
 export function isGear(item: Items): boolean {
   return MARKET_GEAR.has(item) || FOUND_GEAR.has(item);
 }
 
 export default function registerGear(): void {
-  for (const [item, name] of MARKET_GEAR) {
+  for (const [item, [name, description]] of MARKET_GEAR) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
+      icon: gearIcon(item, name),
       // Held for as long as its holder keeps it: none is consumed,
       // and none is used on a pokemon
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
@@ -105,11 +160,12 @@ export default function registerGear(): void {
     });
   }
 
-  for (const [item, name] of FOUND_GEAR) {
+  for (const [item, [name, description]] of FOUND_GEAR) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
+      icon: gearIcon(item, name),
       flags: ItemFlags.Holdable,
       buy: 0,
       sell: FOUND_GEAR_RESALE,

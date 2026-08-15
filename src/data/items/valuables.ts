@@ -83,6 +83,7 @@ export default function registerValuables(): void {
   for (const [item, name, icon, sell] of VALUABLES) {
     registerItem(item, {
       name,
+      description: `Worth ${sell.toLocaleString('en-US')} gold to a vendor. Nothing else.`,
       type: ItemTypes.Valuable,
       icon: `valuables/${icon}`,
       // Found, never stocked: a vendor buys one and cannot sell one

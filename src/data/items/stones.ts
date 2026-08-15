@@ -29,6 +29,7 @@ const LATENT_STONES: [item: Items, name: string, icon: string][] = [
 export default function registerEvolutionStones(): void {
   registerItem(Items.FireStone, {
     name: 'Fire Stone',
+    description: 'Evolves the pokemon it is used on, where a line asks for it.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/fire-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
@@ -37,6 +38,7 @@ export default function registerEvolutionStones(): void {
   });
   registerItem(Items.WaterStone, {
     name: 'Water Stone',
+    description: 'Evolves the pokemon it is used on, where a line asks for it.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/water-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
@@ -45,6 +47,7 @@ export default function registerEvolutionStones(): void {
   });
   registerItem(Items.ThunderStone, {
     name: 'Thunder Stone',
+    description: 'Evolves the pokemon it is used on, where a line asks for it.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/thunder-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
@@ -53,6 +56,7 @@ export default function registerEvolutionStones(): void {
   });
   registerItem(Items.LeafStone, {
     name: 'Leaf Stone',
+    description: 'Evolves the pokemon it is used on, where a line asks for it.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/leaf-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
@@ -61,6 +65,7 @@ export default function registerEvolutionStones(): void {
   });
   registerItem(Items.MoonStone, {
     name: 'Moon Stone',
+    description: 'Evolves the pokemon it is used on, where a line asks for it.',
     type: ItemTypes.Evolution,
     icon: 'evolutions/moon-stone',
     flags: ItemFlags.Usable | ItemFlags.Marketable,
@@ -74,6 +79,7 @@ export default function registerEvolutionStones(): void {
   for (const [item, name, icon] of LATENT_STONES) {
     registerItem(item, {
       name,
+      description: 'Evolves the pokemon it is used on, where a line asks for it.',
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
       flags: ItemFlags.Usable,

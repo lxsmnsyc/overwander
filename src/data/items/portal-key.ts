@@ -25,6 +25,7 @@ export function isPortalKey(item: Items): boolean {
 export default function registerPortalKey(): void {
   registerItem(Items.PortalKey, {
     name: 'Portal Key',
+    description: 'Pays for one crossing at a portal you are standing on. Spent on use.',
     type: ItemTypes.KeyItem,
     // The sheets have no portal key; a key stone is the nearest
     // thing they draw

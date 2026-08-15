@@ -2082,6 +2082,20 @@ describe('item icons', () => {
     }
   });
 
+  it('has every registered item say what it does', () => {
+    const items = ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
+
+    for (const item of items) {
+      const data = getItemData(item);
+
+      // A blank line is what a table-driven description falls back to
+      // when nothing describes the item, so it is the failure worth
+      // catching rather than a missing field
+      expect(data.description, `${data.name} says nothing about itself`).not.toBe('');
+      expect(data.description.endsWith('.'), `${data.name} does not end its line`).toBe(true);
+    }
+  });
+
   it('draws a machine in the colours of the move it teaches', () => {
     // The machines are generated rather than written out, so their
     // pictures are too: one per type, and a move of a type nothing
@@ -2188,7 +2202,7 @@ describe('type-enhancing items', () => {
   });
 
   it('registers the orbs as held costs rather than consumables', () => {
-    for (const [item, name] of ORBS) {
+    for (const [item, [name]] of ORBS) {
       const data = getItemData(item);
 
       expect(data.name).toBe(name);
@@ -2277,7 +2291,7 @@ describe('type-enhancing items', () => {
       ),
     );
 
-    for (const [item, name] of MARKET_GEAR) {
+    for (const [item, [name]] of MARKET_GEAR) {
       const data = getItemData(item);
 
       expect(data.name).toBe(name);
@@ -2312,7 +2326,7 @@ describe('type-enhancing items', () => {
   });
 
   it('spends a one-shot the way it spends a berry', () => {
-    for (const [item, name] of ONE_SHOTS) {
+    for (const [item, [name]] of ONE_SHOTS) {
       const data = getItemData(item);
 
       expect(data.name).toBe(name);
@@ -2341,7 +2355,7 @@ describe('type-enhancing items', () => {
       ].map((entry) => entry.item),
     );
 
-    for (const [item, name] of TRINKETS) {
+    for (const [item, [name]] of TRINKETS) {
       const data = getItemData(item);
 
       expect(data.name).toBe(name);

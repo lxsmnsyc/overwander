@@ -1,5 +1,5 @@
-import { Stages, Stats } from '../constants/stats';
-import { Types } from '../constants/types';
+import { STAGE_NAMES, STAT_NAMES, Stages, Stats } from '../constants/stats';
+import { TYPE_NAMES, Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { Statuses } from '../ids/status';
 import { registerItem } from './__create';
@@ -323,10 +323,72 @@ function berryIcon(name: string): string {
   return `berries/${name.replace(' Berry', '').toLowerCase()}`;
 }
 
+/**
+ * The berries whose line cannot be worked out of a table, because
+ * what they do is their own
+ */
+const BERRY_DESCRIPTIONS: { [key in Items]?: string } = {
+  [Items.CheriBerry]: 'Cures paralysis the moment it lands.',
+  [Items.ChestoBerry]: 'Wakes its holder the moment it falls asleep.',
+  [Items.PechaBerry]: 'Cures poison the moment it lands.',
+  [Items.RawstBerry]: 'Cures a burn the moment it lands.',
+  [Items.AspearBerry]: 'Thaws its holder the moment it freezes.',
+  [Items.PersimBerry]: 'Cures confusion the moment it lands.',
+  [Items.LumBerry]: 'Cures any status the moment it lands.',
+  [Items.LeppaBerry]: 'Clears the cooldown on a move its holder has run down.',
+  [Items.OranBerry]: 'Restores 10 health at half a pool.',
+  [Items.SitrusBerry]: 'Restores a quarter of the pool at half a pool.',
+  [Items.LansatBerry]: 'Sharpens its holder’s criticals by two stages at a quarter pool.',
+  [Items.StarfBerry]: '+2 to one stat at random at a quarter pool.',
+  [Items.CustapBerry]: 'Its holder’s next move winds up a bracket faster, at a quarter pool.',
+  [Items.MicleBerry]: '1.2x accuracy at a quarter pool.',
+  [Items.EnigmaBerry]: 'Restores a quarter of the pool after a super-effective blow lands.',
+  [Items.JabocaBerry]: 'A physical attacker pays an eighth of its own pool.',
+  [Items.RowapBerry]: 'A special attacker pays an eighth of its own pool.',
+  [Items.KeeBerry]: '+1 Defense after a physical blow lands on its holder.',
+  [Items.MarangaBerry]: '+1 Sp. Defense after a special blow lands on its holder.',
+};
+
+/**
+ * What a berry does, in one line. Most of it is read off the tables
+ * above rather than written out again, so a berry moved from one
+ * table to another describes itself correctly without being edited
+ */
+export function describeBerry(item: Items): string {
+  const own = BERRY_DESCRIPTIONS[item];
+
+  if (own != null) {
+    return own;
+  }
+
+  const resisted = BERRY_RESIST_TYPES.get(item);
+
+  if (resisted != null) {
+    return `Halves one ${TYPE_NAMES[resisted]} blow that was landing hard.`;
+  }
+
+  const pinch = BERRY_PINCH_STAGES.get(item);
+
+  if (pinch != null) {
+    return `+1 ${STAGE_NAMES[pinch]} at a quarter pool.`;
+  }
+
+  const nature = BERRY_NATURE_HEALS.get(item);
+
+  if (nature != null) {
+    return `Restores a third of the pool at half a pool. Confuses a pokemon whose nature lowers ${STAT_NAMES[nature]}.`;
+  }
+
+  const effort = BERRY_EFFORT_DROPS.get(item);
+
+  return effort == null ? '' : `Takes 10 ${STAT_NAMES[effort]} effort off a pokemon it is fed to.`;
+}
+
 export default function registerBattleBerries(): void {
   // Cures paralysis
   registerItem(Items.CheriBerry, {
     name: 'Cheri Berry',
+    description: describeBerry(Items.CheriBerry),
     type: ItemTypes.Berry,
     icon: 'berries/cheri',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -336,6 +398,7 @@ export default function registerBattleBerries(): void {
   // Cures sleep
   registerItem(Items.ChestoBerry, {
     name: 'Chesto Berry',
+    description: describeBerry(Items.ChestoBerry),
     type: ItemTypes.Berry,
     icon: 'berries/chesto',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -345,6 +408,7 @@ export default function registerBattleBerries(): void {
   // Cures poison
   registerItem(Items.PechaBerry, {
     name: 'Pecha Berry',
+    description: describeBerry(Items.PechaBerry),
     type: ItemTypes.Berry,
     icon: 'berries/pecha',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -354,6 +418,7 @@ export default function registerBattleBerries(): void {
   // Cures a burn
   registerItem(Items.RawstBerry, {
     name: 'Rawst Berry',
+    description: describeBerry(Items.RawstBerry),
     type: ItemTypes.Berry,
     icon: 'berries/rawst',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -363,6 +428,7 @@ export default function registerBattleBerries(): void {
   // Thaws the holder
   registerItem(Items.AspearBerry, {
     name: 'Aspear Berry',
+    description: describeBerry(Items.AspearBerry),
     type: ItemTypes.Berry,
     icon: 'berries/aspear',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -372,6 +438,7 @@ export default function registerBattleBerries(): void {
   // Restores PP of a depleted move
   registerItem(Items.LeppaBerry, {
     name: 'Leppa Berry',
+    description: describeBerry(Items.LeppaBerry),
     type: ItemTypes.Berry,
     icon: 'berries/leppa',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -381,6 +448,7 @@ export default function registerBattleBerries(): void {
   // Restores a small amount of health when low
   registerItem(Items.OranBerry, {
     name: 'Oran Berry',
+    description: describeBerry(Items.OranBerry),
     type: ItemTypes.Berry,
     icon: 'berries/oran',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -390,6 +458,7 @@ export default function registerBattleBerries(): void {
   // Cures confusion
   registerItem(Items.PersimBerry, {
     name: 'Persim Berry',
+    description: describeBerry(Items.PersimBerry),
     type: ItemTypes.Berry,
     icon: 'berries/persim',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -399,6 +468,7 @@ export default function registerBattleBerries(): void {
   // Cures any status condition
   registerItem(Items.LumBerry, {
     name: 'Lum Berry',
+    description: describeBerry(Items.LumBerry),
     type: ItemTypes.Berry,
     icon: 'berries/lum',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -408,6 +478,7 @@ export default function registerBattleBerries(): void {
   // Restores a quarter of max health when low
   registerItem(Items.SitrusBerry, {
     name: 'Sitrus Berry',
+    description: describeBerry(Items.SitrusBerry),
     type: ItemTypes.Berry,
     icon: 'berries/sitrus',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,
@@ -421,6 +492,7 @@ export default function registerBattleBerries(): void {
   for (const [item, name] of BERRY_NAMES) {
     registerItem(item, {
       name,
+      description: describeBerry(item),
       type: ItemTypes.Berry,
       icon: berryIcon(name),
       flags: ItemFlags.Holdable | ItemFlags.Consumable,

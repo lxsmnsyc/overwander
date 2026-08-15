@@ -23,6 +23,7 @@ export function isSacredAsh(item: Items): boolean {
 export default function registerSacredAsh(): void {
   registerItem(Items.SacredAsh, {
     name: 'Sacred Ash',
+    description: 'Revives its holder’s whole team a second after the holder faints. Once per team.',
     type: ItemTypes.Held,
     icon: 'medicine/sacred-ash',
     flags: ItemFlags.Holdable | ItemFlags.Consumable,

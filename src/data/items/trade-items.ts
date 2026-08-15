@@ -33,40 +33,59 @@ import { registerItem } from './__create';
  * with. They share a shape because they share everything else — the
  * type, the flags and the pricelessness are the same for all of them
  */
-const TRADE_ITEMS: [item: Items, name: string, icon: string][] = [
-  [Items.KingsRock, "King's Rock", 'kings-rock'],
-  [Items.DragonScale, 'Dragon Scale', 'dragon-scale'],
-  [Items.UpGrade, 'Up-Grade', 'up-grade'],
-  [Items.DubiousDisc, 'Dubious Disc', 'dubious-disc'],
-  [Items.Protector, 'Protector', 'protector'],
-  [Items.Electirizer, 'Electirizer', 'electirizer'],
-  [Items.Magmarizer, 'Magmarizer', 'magmarizer'],
-  [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth'],
-  [Items.RazorClaw, 'Razor Claw', 'razor-claw'],
-  [Items.RazorFang, 'Razor Fang', 'razor-fang'],
-  [Items.PrismScale, 'Prism Scale', 'prism-scale'],
-  [Items.DeepSeaTooth, 'Deep Sea Tooth', 'deep-sea-tooth'],
-  [Items.DeepSeaScale, 'Deep Sea Scale', 'deep-sea-scale'],
-  [Items.Sachet, 'Sachet', 'sachet'],
-  [Items.WhippedDream, 'Whipped Dream', 'whipped-dream'],
+const EVOLVES = 'Evolves the pokemon it is used on, where a line asks for it.';
+
+const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
+  [
+    Items.KingsRock,
+    "King's Rock",
+    'kings-rock',
+    'A tenth of its holder’s blows leave the target flinching. Also evolves a line that asks for it.',
+  ],
+  [Items.DragonScale, 'Dragon Scale', 'dragon-scale', EVOLVES],
+  [Items.UpGrade, 'Up-Grade', 'up-grade', EVOLVES],
+  [Items.DubiousDisc, 'Dubious Disc', 'dubious-disc', EVOLVES],
+  [Items.Protector, 'Protector', 'protector', EVOLVES],
+  [Items.Electirizer, 'Electirizer', 'electirizer', EVOLVES],
+  [Items.Magmarizer, 'Magmarizer', 'magmarizer', EVOLVES],
+  [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth', EVOLVES],
+  [
+    Items.RazorClaw,
+    'Razor Claw',
+    'razor-claw',
+    'Doubles its holder’s odds of a critical. Also evolves a line that asks for it.',
+  ],
+  [
+    Items.RazorFang,
+    'Razor Fang',
+    'razor-fang',
+    'A tenth of its holder’s blows leave the target flinching. Also evolves a line that asks for it.',
+  ],
+  [Items.PrismScale, 'Prism Scale', 'prism-scale', EVOLVES],
+  [Items.DeepSeaTooth, 'Deep Sea Tooth', 'deep-sea-tooth', EVOLVES],
+  [Items.DeepSeaScale, 'Deep Sea Scale', 'deep-sea-scale', EVOLVES],
+  [Items.Sachet, 'Sachet', 'sachet', EVOLVES],
+  [Items.WhippedDream, 'Whipped Dream', 'whipped-dream', EVOLVES],
 ];
 
 /**
- * The one trade item that is also a held item.
+ * The trade items that are also held items.
  *
- * A King's Rock does something in a fight — it makes whatever its
- * holder throws liable to leave the target flinching — and that is
- * true whether or not the evolution it also gates is reachable yet.
- * So it carries the Holdable flag alongside the rest of the family's,
- * the way Metal Coat is one id doing two jobs. The battle half is in
+ * Each does something in a fight — a King's Rock and a Razor Fang
+ * leave the target flinching, a Razor Claw sharpens what its holder
+ * throws — and that is true whether or not the evolution it also gates
+ * is reachable yet. So they carry the Holdable flag alongside the rest
+ * of the family's, the way Metal Coat is one id doing two jobs. The
+ * battle half is in
  * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
  */
-const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
+const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock, Items.RazorFang, Items.RazorClaw]);
 
 export default function registerTradeItems(): void {
-  for (const [item, name, icon] of TRADE_ITEMS) {
+  for (const [item, name, icon, description] of TRADE_ITEMS) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
       flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,

@@ -215,6 +215,31 @@ export const enum Stages {
   Accuracy = 6,
 }
 
+/**
+ * What the six stats and the seven stages are called, for anything
+ * that prints one: an item description, a dex entry, a catch sheet.
+ * One vocabulary, so two screens cannot name the same stat
+ * differently
+ */
+export const STAT_NAMES: Record<Stats, string> = {
+  [Stats.HP]: 'HP',
+  [Stats.Attack]: 'Attack',
+  [Stats.Defense]: 'Defense',
+  [Stats.SpecialAttack]: 'Sp. Attack',
+  [Stats.SpecialDefense]: 'Sp. Defense',
+  [Stats.Speed]: 'Speed',
+};
+
+export const STAGE_NAMES: Record<Stages, string> = {
+  [Stages.Attack]: 'Attack',
+  [Stages.Defense]: 'Defense',
+  [Stages.SpecialAttack]: 'Sp. Attack',
+  [Stages.SpecialDefense]: 'Sp. Defense',
+  [Stages.Speed]: 'Speed',
+  [Stages.Evasion]: 'Evasion',
+  [Stages.Accuracy]: 'Accuracy',
+};
+
 export type StagesField = { [key in Stages]: number };
 
 export function createStagesField(): StagesField {

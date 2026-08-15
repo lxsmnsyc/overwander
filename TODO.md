@@ -5,7 +5,8 @@
 - [ ] overworld weather
 - [ ] add Jeweler
 - [ ] add Archaeologist
-- [ ] ability/item descriptions
+- [ ] ability descriptions
+- [ ] show item descriptions in the UI
 - [ ] replace ball feature
 - [ ] catch picker = view catch
 - [ ] friends
@@ -18,6 +19,7 @@
 - [ ] Admin page + role (mystery gift creation)
 - [ ] Make sign in with email + password dev-only
 - [ ] effect sprites
+- [ ] gift page
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
 

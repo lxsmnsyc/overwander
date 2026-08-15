@@ -68,6 +68,8 @@ export function purifyAbilities(abilities: Abilities[]): Abilities[] {
 export default function registerPurifyingGem(): void {
   registerItem(Items.PurifyingGem, {
     name: 'Purifying Gem',
+    description:
+      'Purifies one shadow: the Shadow ability goes, every value rises by two, candy costs halve.',
     // Spent on a pokemon to change what it is rather than what it can
     // do, the way a bottle cap is
     type: ItemTypes.Training,

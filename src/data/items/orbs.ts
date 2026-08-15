@@ -14,10 +14,13 @@ import { nameToIcon, registerItem } from './__create';
  * The battle side lives in
  * [`src/battle/items/orbs.ts`](../../battle/items/orbs.ts).
  */
-export const ORBS = new Map<Items, string>([
-  [Items.FlameOrb, 'Flame Orb'],
-  [Items.ToxicOrb, 'Toxic Orb'],
-  [Items.LifeOrb, 'Life Orb'],
+export const ORBS = new Map<Items, [name: string, description: string]>([
+  [Items.FlameOrb, ['Flame Orb', 'Burns its holder five seconds into the fight.']],
+  [Items.ToxicOrb, ['Toxic Orb', 'Badly poisons its holder five seconds into the fight.']],
+  [
+    Items.LifeOrb,
+    ['Life Orb', '1.3x damage, and its holder pays a tenth of its own pool for every blow.'],
+  ],
 ]);
 
 export const ORB_PRICE = 6000;
@@ -29,9 +32,10 @@ const ORB_RESALE = 0.5;
  * what it does for as long as it is carried, which is the point of it
  */
 export default function registerOrbs(): void {
-  for (const [item, name] of ORBS) {
+  for (const [item, [name, description]] of ORBS) {
     registerItem(item, {
       name,
+      description,
       type: ItemTypes.Held,
       icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable | ItemFlags.Marketable,

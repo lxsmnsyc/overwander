@@ -73,6 +73,7 @@ export default function registerGems(): void {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
+      description: `${TYPE_NAMES[type]} moves hit 1.5x. Spent on the first one that lands.`,
       // The `gems` sheet holds one per type, named after the type, so
       // the gem's own picture is the type it belongs to
       icon: `gems/${TYPE_NAMES[type].toLowerCase()}`,

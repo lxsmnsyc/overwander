@@ -12,6 +12,7 @@ export default function registerKeyItems(): void {
   // Found, never stocked, and never worth parting with
   registerItem(Items.ShinyCharm, {
     name: 'Shiny Charm',
+    description: 'Eight times the odds of a shiny, while your buddy carries it.',
     type: ItemTypes.KeyItem,
     icon: 'key/shiny-charm',
     flags: ItemFlags.Holdable,

@@ -7,7 +7,12 @@ import { Species } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type CheckUnitCanUpdateStageEvent,
+  EffectType,
+  MoveTargetType,
+} from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { hasFreeItemSlot, onUnitActs, unitTarget } from '../utils';
@@ -158,9 +163,16 @@ export const GRIP_CLAW_FACTOR = 1.75;
 export const BINDING_BAND_FACTOR = 4 / 3;
 
 /**
- * How often a King's Rock leaves whoever was hit reeling
+ * How often a King's Rock or a Razor Fang leaves whoever was hit
+ * reeling
  */
 export const KINGS_ROCK_CHANCE = 0.1;
+
+/**
+ * What a Razor Claw is worth: the doubling a Scope Lens buys, since
+ * the two are the same item wearing different names
+ */
+export const RAZOR_CLAW_CRITICAL_STAGES = SCOPE_LENS_CRITICAL_STAGES;
 
 /**
  * The screens a Light Clay holds up. Nothing else a team can be under
@@ -829,32 +841,76 @@ const setupBindingBand = createHeldItem(Items.BindingBand, (battle) =>
 );
 
 /**
- * A King's Rock makes whatever its holder throws liable to leave the
- * target reeling. It rides the attack rather than the move, so it is a
- * chance on every blow that lands rather than on one particular kind of
- * blow — and a move that already flinches does not get a second roll
+ * A King's Rock or a Razor Fang makes whatever its holder throws
+ * liable to leave the target reeling. It rides the attack rather than
+ * the move, so it is a chance on every blow that lands rather than on
+ * one particular kind of blow — and a move that already flinches does
+ * not get a second roll
  */
-const setupKingsRock = createHeldItem(Items.KingsRock, (battle) =>
-  battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
-    if (
-      !event.success ||
-      event.category === MoveCategories.Status ||
-      !event.target.alive ||
-      event.target.status[Statuses.Flinched] != null ||
-      !holds(event.source, Items.KingsRock) ||
-      battle.random() >= KINGS_ROCK_CHANCE
-    ) {
-      return;
-    }
+function setupFlinchItem(item: Items): (battle: Battle) => void {
+  return createHeldItem(item, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (
+        !event.success ||
+        event.category === MoveCategories.Status ||
+        !event.target.alive ||
+        event.target.status[Statuses.Flinched] != null ||
+        !holds(event.source, item) ||
+        battle.random() >= KINGS_ROCK_CHANCE
+      ) {
+        return;
+      }
 
-    event.source.triggerItem(Items.KingsRock);
-    event.target.addStatus(Statuses.Flinched, {
-      type: EffectType.Item,
-      item: Items.KingsRock,
-      unit: event.source,
-    });
+      event.source.triggerItem(item);
+      event.target.addStatus(Statuses.Flinched, {
+        type: EffectType.Item,
+        item,
+        unit: event.source,
+      });
+    }),
+  );
+}
+
+/**
+ * A Razor Claw sharpens its holder the way a Scope Lens does. It is
+ * the other half of what the claw is for, and works whether or not the
+ * evolution it gates is reachable
+ */
+const setupRazorClaw = createHeldItem(Items.RazorClaw, (battle) =>
+  battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+    if (holds(event.parent.source, Items.RazorClaw)) {
+      event.value += RAZOR_CLAW_CRITICAL_STAGES;
+    }
   }),
 );
+
+/**
+ * A Clear Amulet is a Guard Spec nobody has to spend: it refuses every
+ * stat drop somebody else tries, for as long as it is carried, and
+ * says nothing about what its holder does to itself
+ */
+const setupClearAmulet = createHeldItem(Items.ClearAmulet, (battle) => {
+  function refuse(event: CheckUnitCanUpdateStageEvent, lowered: boolean): void {
+    if (
+      event.success &&
+      lowered &&
+      event.cause.type !== EffectType.None &&
+      event.cause.unit !== event.source &&
+      holds(event.source, Items.ClearAmulet)
+    ) {
+      event.success = false;
+    }
+  }
+
+  return new MergedLifecycle([
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+      refuse(event, event.value < 0);
+    }),
+    battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
+      refuse(event, event.value > 0);
+    }),
+  ]);
+});
 
 const SETUPS: ((battle: Battle) => void)[] = [
   setupLeftovers,
@@ -888,9 +944,12 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupLightClay,
   setupGripClaw,
   setupBindingBand,
-  // The King's Rock is registered with the trade items, since the
-  // evolution it gates is the other half of what it is for
-  setupKingsRock,
+  setupClearAmulet,
+  // These three are registered with the trade items, since the
+  // evolution each gates is the other half of what it is for
+  setupFlinchItem(Items.KingsRock),
+  setupFlinchItem(Items.RazorFang),
+  setupRazorClaw,
 ];
 
 export default function setupGear(battle: Battle): void {

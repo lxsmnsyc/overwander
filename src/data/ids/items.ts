@@ -632,6 +632,108 @@ export const enum Items {
   BigMalasada = 306,
   PewterCrunchies = 307,
   RageCandyBar = 308,
+  SweetHeart = 309,
+
+  /**
+   * Refuses a stat drop somebody else is trying, for as long as it is
+   * carried. See [`src/data/items/gear.ts`](../items/gear.ts)
+   */
+  ClearAmulet = 310,
+
+  /**
+   * TODO: everything below is an id and nothing else.
+   *
+   * They are the mainline items this game has decided it wants and has
+   * not written yet, numbered here so that the ids never shift once
+   * one of them is built — an id in a stored record outlives the code
+   * that wrote it. Nothing registers them, so `getItemData` throws for
+   * any of them: implementing one means giving it a data module and a
+   * registration, and taking its name out of the list below.
+   */
+
+  /**
+   * TODO: ball variants the existing catch-rate hooks already cover
+   */
+  LevelBall = 311,
+  LureBall = 312,
+  MoonBall = 313,
+  FriendBall = 314,
+  LoveBall = 315,
+  HeavyBall = 316,
+  FastBall = 317,
+  SafariBall = 318,
+  SportBall = 319,
+
+  /**
+   * TODO: the PP restoratives, which clear cooldowns the way a Leppa
+   * Berry already does
+   */
+  Ether = 320,
+  MaxEther = 321,
+  Elixir = 322,
+  MaxElixir = 323,
+
+  /**
+   * TODO: medicine that changes what a pokemon is rather than how it
+   * is doing
+   */
+  RareCandy = 324,
+  AbilityCapsule = 325,
+  AbilityPatch = 326,
+  MaxHoney = 327,
+
+  /**
+   * TODO: what is used out in the world rather than in a fight —
+   * encounter rates, an escape, a lure
+   */
+  Repel = 328,
+  SuperRepel = 329,
+  MaxRepel = 330,
+  EscapeRope = 331,
+  Honey = 332,
+  PokeDoll = 333,
+  FluffyTail = 334,
+  PokeToy = 335,
+
+  /**
+   * TODO: the flutes. One wakes sleepers; the rest move what the world
+   * spawns
+   */
+  PokeFlute = 336,
+  BlackFlute = 337,
+  WhiteFlute = 338,
+  BlueFlute = 339,
+  YellowFlute = 340,
+  RedFlute = 341,
+
+  /**
+   * TODO: the charms, all shaped like the Shiny Charm that is already
+   * written
+   */
+  ExpCharm = 342,
+  OvalCharm = 343,
+  CatchingCharm = 344,
+  MarkCharm = 345,
+
+  /**
+   * TODO: held items blocked on a battle feature that does not exist —
+   * terrain for the seeds and the extender, entry hazards for the
+   * boots, Trick Room for the service, the Paradox abilities for the
+   * energy
+   */
+  ElectricSeed = 346,
+  GrassySeed = 347,
+  MistySeed = 348,
+  PsychicSeed = 349,
+  TerrainExtender = 350,
+  HeavyDutyBoots = 351,
+  RoomService = 352,
+  BoosterEnergy = 353,
+
+  /**
+   * TODO: blocked on Dynamax, which this game has none of
+   */
+  MaxMushrooms = 354,
 }
 
 /**

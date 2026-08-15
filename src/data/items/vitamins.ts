@@ -1,4 +1,4 @@
-import { Stats } from '../constants/stats';
+import { STAT_NAMES, Stats } from '../constants/stats';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { PP_UP_LIMIT } from '../moves';
 import { nameToIcon, registerItem } from './__create';
@@ -78,11 +78,12 @@ export function isPPItem(item: Items): boolean {
 }
 
 export default function registerVitamins(): void {
-  for (const item of VITAMIN_STATS.keys()) {
+  for (const [item, stat] of VITAMIN_STATS) {
     const name = NAMES[item] ?? 'Vitamin';
 
     registerItem(item, {
       name,
+      description: `Adds ${VITAMIN_EFFORT} ${STAT_NAMES[stat]} effort. Spent on use.`,
       type: ItemTypes.Training,
       // Drawn on the medicine sheet, which is what a vitamin is:
       // something a pokemon swallows for what it does to it
@@ -97,6 +98,7 @@ export default function registerVitamins(): void {
   // they change is permanent and there is no berry that takes it back
   registerItem(Items.PPUp, {
     name: 'PP Up',
+    description: 'Shortens one move’s cooldown by a step, for good. Spent on use.',
     type: ItemTypes.Training,
     icon: 'medicine/pp-up',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
@@ -105,6 +107,7 @@ export default function registerVitamins(): void {
   });
   registerItem(Items.PPMax, {
     name: 'PP Max',
+    description: 'Shortens one move’s cooldown as far as it will go, for good. Spent on use.',
     type: ItemTypes.Training,
     icon: 'medicine/pp-max',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,

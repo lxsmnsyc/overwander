@@ -75,6 +75,7 @@ export function polishIVs(ivs: number, count: number, random: () => number): num
 export default function registerBottleCaps(): void {
   registerItem(Items.GoldenBottleCap, {
     name: 'Golden Bottle Cap',
+    description: 'Perfects every one of a pokemon’s values. Spent on use.',
     type: ItemTypes.Training,
     // Neither cap is drawn anywhere on the sheets. The relic coins
     // are the nearest thing: a small metal disc, and gold against
@@ -87,6 +88,7 @@ export default function registerBottleCaps(): void {
 
   registerItem(Items.BottleCap, {
     name: 'Bottle Cap',
+    description: 'Perfects one of a pokemon’s values. Spent on use.',
     type: ItemTypes.Training,
     icon: 'valuables/relic-silver',
     flags: ItemFlags.Usable | ItemFlags.Consumable,

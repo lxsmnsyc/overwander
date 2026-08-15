@@ -30,6 +30,7 @@ import {
 } from '../../src/battle/items/gear';
 import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
+import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
 import { SCREEN_DURATION } from '../../src/battle/status/reflect';
 import { TRAPPED_DURATION, TRAPPED_TICK } from '../../src/battle/status/trapped';
 import Abilities from '../../src/data/ids/abilities';
@@ -1308,5 +1309,116 @@ describe('the battle items', () => {
 
     expect(holder.stages[Stages.Defense]).toBe(-1);
     expect(holder.items[Items.GuardSpec]).toBe(true);
+  });
+});
+
+describe('the Sacred Ash', () => {
+  /**
+   * Everything on the team on the floor, the holder last
+   */
+  function wipe(units: Unit[], attacker: Unit): void {
+    for (const unit of units) {
+      unit.damage(moveCause(attacker), unit, unit.checkStat(Stats.HP, 0) * 2, 0);
+    }
+  }
+
+  it('brings a whole team back a second after its holder falls', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.SacredAsh);
+    wipe([ally, holder], attacker);
+
+    // Everyone is down and the ash is gone, but nothing has happened
+    // yet: it is a moment, not a reflex
+    expect(holder.alive).toBe(false);
+    expect(ally.alive).toBe(false);
+    expect(holder.items[Items.SacredAsh]).toBeUndefined();
+
+    battle.tick(SACRED_ASH_DELAY - 1);
+    expect(holder.alive).toBe(false);
+
+    battle.tick(1);
+
+    expect(holder.alive).toBe(true);
+    expect(ally.alive).toBe(true);
+    expect(holder.health).toBe(holder.checkStat(Stats.HP, 0));
+    expect(ally.health).toBe(ally.checkStat(Stats.HP, 0));
+  });
+
+  it('brings them back ready to act rather than waiting on a cooldown', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addMove(Moves.Tackle);
+    holder.addItem(Items.SacredAsh);
+
+    // A move thrown, then a faint while it is still cooling
+    holder.cast(Moves.Tackle, unitTarget(attacker));
+    holder.finishCast();
+
+    expect(holder.moves[Moves.Tackle]?.cooldown).toBeDefined();
+
+    wipe([holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    expect(holder.alive).toBe(true);
+    expect(holder.moves[Moves.Tackle]?.cooldown).toBeUndefined();
+  });
+
+  it('is one to a team, however many the team is carrying', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.SacredAsh);
+    second.addItem(Items.SacredAsh);
+
+    wipe([holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    expect(holder.alive).toBe(true);
+    // The other one is still in its holder's grip and worth nothing
+    expect(second.items[Items.SacredAsh]).toBe(false);
+
+    wipe([second, holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    expect(holder.alive).toBe(false);
+    expect(second.alive).toBe(false);
+  });
+
+  it('deadens one picked up after the team has spent theirs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const later = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.SacredAsh);
+    wipe([holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    later.addItem(Items.SacredAsh);
+
+    expect(later.items[Items.SacredAsh]).toBe(false);
+  });
+
+  it('leaves the other side to look after itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const attacker = createUnit(battle, teamB);
+
+    holder.addItem(Items.SacredAsh);
+    wipe([enemy], attacker);
+    wipe([holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    expect(holder.alive).toBe(true);
+    expect(enemy.alive).toBe(false);
   });
 });

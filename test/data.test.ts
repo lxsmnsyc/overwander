@@ -151,6 +151,7 @@ import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/g
 import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../src/data/items/incenses';
 import { BATTLE_ITEMS, BATTLE_ITEM_PRICE, isBattleItem } from '../src/data/items/battle-items';
 import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../src/data/items/one-shots';
+import { isSacredAsh } from '../src/data/items/sacred-ash';
 import {
   FOUND_TRINKETS,
   MARKET_TRINKETS,
@@ -2332,6 +2333,24 @@ describe('type-enhancing items', () => {
     // Cheaper than a one-shot, because each answers one thing only
     expect(BATTLE_ITEM_PRICE).toBeLessThan(ONE_SHOT_PRICE);
     expect(isBattleItem(Items.Leftovers)).toBe(false);
+  });
+
+  it('hides the Sacred Ash rather than selling it', () => {
+    const data = getItemData(Items.SacredAsh);
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    expect(isSacredAsh(Items.SacredAsh)).toBe(true);
+    expect(data.type).toBe(ItemTypes.Held);
+    expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+    expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+    // Nobody stocks one; a vendor will only take it off your hands
+    expect(data.flags & ItemFlags.Marketable).toBe(0);
+    expect(data.buy).toBe(0);
+    expect(data.sell).toBeGreaterThan(0);
+
+    // A second chance for a whole party, and one nothing else offers
+    expect(prized.has(Items.SacredAsh)).toBe(true);
+    expect(isPreciousItem(Items.SacredAsh)).toBe(true);
   });
 
   it('makes the Heart Scale worth nothing but a forgotten move', () => {

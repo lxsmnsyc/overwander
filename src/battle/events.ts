@@ -254,6 +254,14 @@ export const enum BattleEvents {
    * of them once
    */
   CheckUnitMoveContact = 138,
+
+  /**
+   * A fainted unit put back on its feet. The only thing that does it
+   * is a Sacred Ash, and it is an event rather than a flag flipped
+   * from outside so the field can be told: `value` is the health it
+   * comes back on
+   */
+  UnitRevives = 139,
 }
 
 export const enum MoveTargetType {
@@ -816,6 +824,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
   [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
+  [BattleEvents.UnitRevives]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];

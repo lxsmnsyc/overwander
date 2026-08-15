@@ -16,6 +16,7 @@ import registerOrbs from './orbs';
 import registerPlates from './plates';
 import registerPortalKey from './portal-key';
 import registerPurifyingGem from './purifying-gem';
+import registerSacredAsh from './sacred-ash';
 import registerRaidItems from './raid-items';
 import registerStatBoosters from './stat-boosters';
 import registerEvolutionStones from './stones';
@@ -56,6 +57,7 @@ export default function registerItems(): void {
   registerCandyItems();
   registerBottleCaps();
   registerPurifyingGem();
+  registerSacredAsh();
   registerPortalKey();
   registerKeyItems();
   registerRaidItems();

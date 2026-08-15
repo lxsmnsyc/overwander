@@ -192,6 +192,13 @@ export const ITEM_POOL: ItemRarityGroups = {
     // no network. Prized rather than special: the map is meant to be
     // walked more than once in a lifetime
     { item: Items.PortalKey, weight: 8 },
+    /**
+     * The one thing in the game that answers a party being wiped out,
+     * and it answers once. Thin, and prized rather than special
+     * because a team that finds one has found a second chance rather
+     * than something nobody else will ever see
+     */
+    { item: Items.SacredAsh, weight: 4 },
     // The three fossils. Reviving one is irreversible and is the only
     // way to the species inside, which is the test this band is for;
     // the maniac sells them, so the pool is the lucky route rather

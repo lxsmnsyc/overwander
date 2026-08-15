@@ -6,6 +6,7 @@ import setupGems from './gems';
 import setupIncenses from './incenses';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
+import setupSacredAsh from './sacred-ash';
 import setupStatBoosters from './stat-boosters';
 import setupTypeBoosters from './type-boosters';
 
@@ -19,4 +20,5 @@ export default function setupItems(battle: Battle): void {
   setupGear(battle);
   setupOneShots(battle);
   setupBattleItems(battle);
+  setupSacredAsh(battle);
 }

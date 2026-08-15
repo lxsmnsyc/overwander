@@ -896,6 +896,20 @@ export default class Unit {
     });
   }
 
+  /**
+   * Put a fainted unit back on its feet on the given health. It is a
+   * re-entry rather than a fresh one: nothing that happens once on
+   * arrival happens again
+   */
+  revive(value: number): void {
+    this.battle.emit(BattleEvents.UnitRevives, {
+      id: 'UnitRevives',
+      disabled: false,
+      source: this,
+      value,
+    });
+  }
+
   enter(reactivation = false): void {
     this.battle.emit(BattleEvents.UnitEntersField, {
       id: 'UnitEntersField',

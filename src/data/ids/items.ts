@@ -594,6 +594,13 @@ export const enum Items {
   XAccuracy = 291,
   DireHit = 292,
   GuardSpec = 293,
+
+  /**
+   * A pinch of ash off a bird that burns and comes back. Held, and
+   * paid once for a whole team. See
+   * [`src/data/items/sacred-ash.ts`](../items/sacred-ash.ts)
+   */
+  SacredAsh = 294,
 }
 
 /**

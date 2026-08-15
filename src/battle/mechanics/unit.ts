@@ -117,6 +117,18 @@ function setupUnitDamageMechanics(battle: Battle): void {
     event.source.interrupt();
     event.source.alive = false;
   });
+
+  battle.on(BattleEvents.UnitRevives, EventPriority.Exact, (event) => {
+    if (event.source.alive) {
+      return;
+    }
+
+    event.source.alive = true;
+    event.source.setHealth(event.value);
+    // Re-entry, so whatever the unit is tracked by picks it up again
+    // without anything that fires on arrival firing twice
+    event.source.enter(true);
+  });
 }
 
 function setupUnitStatMechancis(battle: Battle): void {

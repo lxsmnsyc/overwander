@@ -145,7 +145,9 @@ test.describe('the auction house', () => {
     const sellerBoard = await openPanel(seller.page, 'Auctions');
 
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
-    await sellerBoard.getByRole('button', { name: 'Sell Master Ball' }).click();
+    // The bag is a tray of pictures, so the square says what pressing
+    // it does and how many are in it
+    await sellerBoard.getByRole('button', { name: /^Sell Master Ball,/ }).click();
     await putItUp(seller.page, /^Auction Master Ball$/, 5);
 
     // Listed: the board comes back with the lot on it, under the
@@ -183,7 +185,7 @@ test.describe('the auction house', () => {
 
     const bag = await openPanel(buyer.page, 'Inventory');
 
-    await expect(bag.getByText('Master Ball')).toBeVisible();
+    await expect(bag.getByRole('button', { name: /^Master Ball, 1 carried/ })).toBeVisible();
 
     // And the purse is the seller's, paid when the winner collected
     await expect(sellerBoard.getByText('10 gold', { exact: true })).toBeVisible({

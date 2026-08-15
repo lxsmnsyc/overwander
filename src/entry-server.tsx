@@ -49,6 +49,10 @@ export default createHandler(() => (
               stacked under, whatever the page happened to build around
               the button that opened it */}
           <div id="portals" />
+          {/* And where the tooltips are, after the dialogs: a card over
+              a square in a dialog has to be over the dialog too, and
+              standing later in the document is what puts it there */}
+          <div id="tooltip" />
           {scripts}
         </body>
       </html>

@@ -1,27 +1,9 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createResource } from 'solid-js';
 import { getCandies } from '../../auth/candy';
 import { getFamilyName } from '../../data/species';
-import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import {
-  EVERY_CATEGORY,
-  type ItemCategory,
-  describeItem,
-  isInCategory,
-  listCategories,
-} from './InventoryPicker';
-import ItemSprite from './ItemSprite';
-import matches from '../../core/search';
-import {
-  Badge,
-  Filter,
-  type FilterOption,
-  List,
-  ListRow,
-  Note,
-  Row,
-  SEARCH_FROM,
-  Search,
-} from '../styled';
+import { getInventory } from '../../auth/inventory';
+import ItemGrid from './ItemGrid';
+import { Badge, List, ListRow, Note } from '../styled';
 
 export interface InventoryListProps {
   player: string;
@@ -35,71 +17,17 @@ export default function InventoryList(props: InventoryListProps): JSX.Element {
   const [items] = createResource(() => props.player, getInventory);
   const [candies] = createResource(() => props.player, getCandies);
 
-  /**
-   * Which shelf of the bag is being looked at. It narrows what is
-   * shown and nothing else — the bag is unchanged, and `All` is always
-   * one press away
-   */
-  const [category, setCategory] = createSignal<ItemCategory>(EVERY_CATEGORY);
-
-  const categories = (): FilterOption<ItemCategory>[] =>
-    listCategories((items() ?? []).map((entry) => entry.item));
-
-  /**
-   * What was typed. The shelf and the search narrow the same list from
-   * two directions — a category is what kind of thing, a search is
-   * which one — so they are asked separately and answered together
-   */
-  const [query, setQuery] = createSignal('');
-
-  const shown = (): InventoryEntry[] =>
-    (items() ?? []).filter(
-      (entry) => isInCategory(entry.item, category()) && matches(describeItem(entry.item), query()),
-    );
-
   return (
     <>
-      <Row>
-        <h4 class="grow">Items</h4>
-        {/* Neither is worth offering over a bag small enough to read */}
-        <Show when={(items()?.length ?? 0) > SEARCH_FROM}>
-          <Search
-            placeholder="Search the bag"
-            value={query()}
-            onChange={(typed) => {
-              setQuery(typed);
-            }}
-          />
-        </Show>
-        <Show when={categories().length > 2}>
-          <Filter
-            label="Category"
-            value={category()}
-            options={categories()}
-            onChange={(picked) => {
-              setCategory(picked);
-            }}
-          />
-        </Show>
-      </Row>
+      <h4>Items</h4>
       <Show when={!items.loading} fallback={<Note>Loading items…</Note>}>
         <Show when={items()?.length} fallback={<Note>Carrying nothing.</Note>}>
-          <Show when={shown().length} fallback={<Note>Nothing here matches.</Note>}>
-            <List>
-              <For each={shown()}>
-                {(entry) => (
-                  <ListRow>
-                    {/* The picture, then the name. Hidden from a
-                        screen reader, which is already being read the
-                        name written beside it */}
-                    <ItemSprite item={entry.item} size={28} label="" />
-                    <span class="grow">{describeItem(entry.item)}</span>
-                    <Badge>× {entry.amount}</Badge>
-                  </ListRow>
-                )}
-              </For>
-            </List>
-          </Show>
+          {/* The same tray the picker uses, taking no picks: what the
+              bag holds is a thing to look at rather than read, and the
+              search and the shelves come with it */}
+          <ItemGrid
+            entries={(items() ?? []).map((entry) => ({ item: entry.item, amount: entry.amount }))}
+          />
         </Show>
       </Show>
 

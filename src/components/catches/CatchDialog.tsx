@@ -101,7 +101,8 @@ import {
   isRaidEncounter,
 } from '../../overworld/encounter';
 import IncreasePPDialog from './IncreasePPDialog';
-import InventoryPicker, { describeItem } from '../items/InventoryPicker';
+import InventoryPicker from '../items/InventoryPicker';
+import { describeItem, detailItem } from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import SpeciesCoat from '../sprites/SpeciesCoat';
 import SpriteDisplay from '../sprites/SpriteDisplay';
@@ -129,6 +130,7 @@ import {
   StepButton,
   TabBar,
   TabButton,
+  TooltipHost,
   useToast,
 } from '../styled';
 
@@ -427,6 +429,20 @@ export function describeAbility(ability: Abilities): string {
     return getAbilityData(ability).name;
   } catch {
     return `Ability #${ability}`;
+  }
+}
+
+/**
+ * What the card over an ability says. An unregistered one has nothing
+ * to say about itself, which is said rather than left blank
+ */
+export function detailAbility(ability: Abilities): { name: string; description: string } {
+  try {
+    const data = getAbilityData(ability);
+
+    return { name: data.name, description: data.description };
+  } catch {
+    return { name: describeAbility(ability), description: 'Nothing is known about this.' };
   }
 }
 
@@ -2047,17 +2063,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
 
                   <DialogSection title="Abilities">
                     <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
-                      <List>
+                      {/* Names in a row rather than a column of rows:
+                          a pokemon has one or two, and what each does
+                          is on the card that comes up over it */}
+                      <Row class="justify-center">
                         <For each={loaded().abilities}>
                           {(ability) => (
-                            <ListRow>
-                              <span class="grow text-left font-medium">
-                                {describeAbility(ability)}
-                              </span>
-                            </ListRow>
+                            <TooltipHost {...detailAbility(ability)}>
+                              <Badge>{describeAbility(ability)}</Badge>
+                            </TooltipHost>
                           )}
                         </For>
-                      </List>
+                      </Row>
                     </Show>
                   </DialogSection>
 
@@ -2074,7 +2091,18 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           <For each={loaded().items}>
                             {(item) => (
                               <ListRow>
-                                <span class="grow text-left">{describeItem(item)}</span>
+                                {/* The picture, then the name, with
+                                    what it does on the card that comes
+                                    up over the pair. Silent to a screen
+                                    reader, which is being read the name
+                                    beside it */}
+                                <TooltipHost
+                                  class="flex grow items-center gap-2"
+                                  {...detailItem(item)}
+                                >
+                                  <ItemSprite item={item} size={28} label="" />
+                                  <span class="grow text-left">{describeItem(item)}</span>
+                                </TooltipHost>
                                 <Show when={owned() != null}>
                                   <Button
                                     disabled={frozen()}
@@ -2111,23 +2139,31 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             Give item {loaded().items.length}/{getCatchSlots(loaded(), Slots.Item)}
                           </Button>
                         </Row>
-                        <Show when={panel() === 'give'}>
-                          <InventoryPicker
-                            inline
-                            entries={bag.latest}
-                            disabled={frozen()}
-                            value={null}
-                            verb="Give"
-                            filter={(entry) => isHoldable(entry.item)}
-                            onPick={(item) => {
-                              setPanel(null);
+                        {/* The bag opens as its own window rather than
+                            unfolding inside the sheet: the sheet is
+                            already a long column, and a tray of thirty
+                            squares pushed everything under it off the
+                            screen */}
+                        <InventoryPicker
+                          open={panel() === 'give'}
+                          onClose={() => {
+                            setPanel(null);
+                          }}
+                          title="Give an item"
+                          description="Choose what it should carry."
+                          entries={bag.latest}
+                          disabled={frozen()}
+                          value={null}
+                          verb="Give"
+                          filter={(entry) => isHoldable(entry.item)}
+                          onPick={(item) => {
+                            setPanel(null);
 
-                              if (item != null) {
-                                moveItem(item, true);
-                              }
-                            }}
-                          />
-                        </Show>
+                            if (item != null) {
+                              moveItem(item, true);
+                            }
+                          }}
+                        />
                       </Show>
                     </DialogSection>
                   </Show>

@@ -30,3 +30,5 @@ export type { CardProps, PanelProps } from './surface';
 export { default as ToastProvider, useToast } from './toast';
 export type { ToastRequest, ToastState, ToastTone } from './toast';
 export { TabBar, TabButton, TabPane } from './tabs';
+export { Tooltip, TooltipHost } from './tooltip';
+export type { TooltipHostProps, TooltipProps } from './tooltip';

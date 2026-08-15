@@ -19,7 +19,7 @@ import type { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '../../data/species';
-import { STAT_LABELS, describeAbility } from '../catches/CatchDialog';
+import { STAT_LABELS, describeAbility, detailAbility } from '../catches/CatchDialog';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import { dexLabel } from './PokedexCanvas';
 import SpeciesCoat from '../sprites/SpeciesCoat';
@@ -39,6 +39,7 @@ import {
   TabBar,
   TabButton,
   TabPane,
+  TooltipHost,
 } from '../styled';
 
 /**
@@ -426,27 +427,28 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
               </DialogSection>
 
               <DialogSection title="Abilities">
-                <List>
+                {/* Names in a row, with what each does on the card that
+                    comes up over it */}
+                <Row class="justify-center">
                   <For each={entry().data.abilities}>
                     {(ability) => (
-                      <ListRow>
-                        <span class="grow text-left font-medium">{describeAbility(ability)}</span>
-                      </ListRow>
+                      <TooltipHost {...detailAbility(ability)}>
+                        <Badge>{describeAbility(ability)}</Badge>
+                      </TooltipHost>
                     )}
                   </For>
                   <Show when={entry().data.hiddenAbility}>
                     {(hidden) => (
-                      <ListRow>
-                        <span class="grow text-left font-medium">{describeAbility(hidden())}</span>
-                        {/* Said rather than left to be worked out from the
-                          order: a hidden ability is rolled far less
-                          often, which is the whole of what makes one
-                          worth hunting */}
-                        <Badge tone="tide">Hidden</Badge>
-                      </ListRow>
+                      // Said rather than left to be worked out from the
+                      // order: a hidden ability is rolled far less
+                      // often, which is the whole of what makes one
+                      // worth hunting
+                      <TooltipHost {...detailAbility(hidden())}>
+                        <Badge tone="tide">{describeAbility(hidden())} · Hidden</Badge>
+                      </TooltipHost>
                     )}
                   </Show>
-                </List>
+                </Row>
               </DialogSection>
 
               <DialogSection title="Base stats">

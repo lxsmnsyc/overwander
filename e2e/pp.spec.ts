@@ -35,7 +35,7 @@ test.describe('a PP Up', () => {
     // The bag, filtered to what would do this pokemon any good
     await sheet.getByRole('button', { name: /Actions/ }).click();
     await page.getByRole('menuitem', { name: 'Use item' }).click();
-    await sheet.getByRole('button', { name: 'Use PP Up' }).click();
+    await sheet.getByRole('button', { name: /^Use PP Up,/ }).click();
 
     // Nothing has been spent yet: the item asks which move first
     const asked = dialogNamed(page, INCREASE);
@@ -49,13 +49,12 @@ test.describe('a PP Up', () => {
 
     await sheet.getByRole('button', { name: /Actions/ }).click();
     await page.getByRole('menuitem', { name: 'Use item' }).click();
-    await expect(sheet.getByRole('button', { name: 'Use PP Up' })).toBeVisible();
     // Both bottles still in the bag: backing out of the question spent
-    // nothing
-    await expect(sheet.getByText('× 2')).toBeVisible();
+    // nothing, and the square in the bag is what says how many are left
+    await expect(sheet.getByRole('button', { name: /^Use PP Up, 2 carried/ })).toBeVisible();
 
     // Round again, and through it this time
-    await sheet.getByRole('button', { name: 'Use PP Up' }).click();
+    await sheet.getByRole('button', { name: /^Use PP Up,/ }).click();
     await expectOpen(asked);
 
     // Every move it knows, with what the points would buy: the wait

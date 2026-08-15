@@ -1,27 +1,9 @@
-import { For, type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
 import { useAuth } from '../../auth/context';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import type { ItemTypes, Items } from '../../data/ids/items';
-import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items';
-import ItemSprite from './ItemSprite';
-import matches from '../../core/search';
-import {
-  Badge,
-  Button,
-  Dialog,
-  DialogActions,
-  Field,
-  Filter,
-  type FilterOption,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Row,
-  RowButton,
-  SEARCH_FROM,
-  Search,
-} from '../styled';
+import type { Items } from '../../data/ids/items';
+import ItemGrid, { type ItemCell, describeItem } from './ItemGrid';
+import { Button, Dialog, DialogActions, Note, Row } from '../styled';
 
 /**
  * Picking something out of the bag.
@@ -43,62 +25,7 @@ import {
  */
 export type ItemAmount = [item: Items, amount: number];
 
-/**
- * An item the registry does not know shows as its id rather than a
- * guess
- */
-export function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
-}
-
-/**
- * The bag unfiltered. A category filter always offers this first,
- * because a player who has narrowed the bag down needs the way back
- */
-export const EVERY_CATEGORY = 'all';
-
-/**
- * What the bag can be narrowed to: one kind of item, or all of them
- */
-export type ItemCategory = ItemTypes | typeof EVERY_CATEGORY;
-
-/**
- * Which shelf an item belongs on, or nothing for an item the registry
- * does not know — an unknown item is shown under `All` and nowhere
- * else, which is the honest place for it
- */
-function categoryOf(item: Items): ItemTypes | null {
-  try {
-    return getItemData(item).type;
-  } catch {
-    return null;
-  }
-}
-
-export function isInCategory(item: Items, category: ItemCategory): boolean {
-  return category === EVERY_CATEGORY || categoryOf(item) === category;
-}
-
-/**
- * The categories worth offering: the ones the player is actually
- * carrying something from. A filter listing eight empty shelves is a
- * filter that makes the bag harder to read rather than easier
- */
-export function listCategories(items: Items[]): FilterOption<ItemCategory>[] {
-  const carried = new Set(items.map(categoryOf));
-
-  return [
-    { value: EVERY_CATEGORY, label: 'All' },
-    ...ITEM_TYPE_ORDER.filter((type) => carried.has(type)).map((type) => ({
-      value: type,
-      label: ITEM_TYPE_NAMES[type],
-    })),
-  ];
-}
+export { describeItem };
 
 interface InventoryPickerCommonProps {
   /**
@@ -138,6 +65,11 @@ interface InventoryPickerCommonProps {
    * live battle, say, where every row is refused for the same reason
    */
   disabled?: boolean;
+  /**
+   * Whether a square says how many there are. A vendor's crate is
+   * bottomless, so the number on it would never move
+   */
+  counts?: boolean;
   /**
    * Why one particular row cannot be picked, or null when it can.
    *
@@ -232,27 +164,6 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   const offered = (): InventoryEntry[] =>
     (props.entries ?? bag() ?? []).filter((entry) => props.filter?.(entry) ?? true);
 
-  const [category, setCategory] = createSignal<ItemCategory>(EVERY_CATEGORY);
-
-  const categories = (): FilterOption<ItemCategory>[] =>
-    listCategories(offered().map((entry) => entry.item));
-
-  /**
-   * The shelf being looked at, if it is still a shelf this list has.
-   * What the caller accepts can change under the picker — a held item
-   * given away, a stack spent — and a filter left pointing at an empty
-   * shelf would read as an empty bag
-   */
-  const shelf = (): ItemCategory =>
-    categories().some((option) => option.value === category()) ? category() : EVERY_CATEGORY;
-
-  const [query, setQuery] = createSignal('');
-
-  const stacks = (): InventoryEntry[] =>
-    offered().filter(
-      (entry) => isInCategory(entry.item, shelf()) && matches(describeItem(entry.item), query()),
-    );
-
   const chosen = (): ItemAmount[] => (props.multiple === true ? props.value : []);
 
   // The draft is the caller's value until the picker is done with it,
@@ -264,6 +175,19 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   });
 
   const amountOf = (item: Items): number => draft().find(([picked]) => picked === item)?.[1] ?? 0;
+
+  /**
+   * The tray, square by square: what is in the bag, what the caller
+   * has taken and what it refuses
+   */
+  const cells = (): ItemCell[] =>
+    offered().map((entry) => ({
+      item: entry.item,
+      amount: props.counts === false ? undefined : entry.amount,
+      selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
+      blocked: props.blocked?.(entry) ?? null,
+      note: props.note?.(entry) ?? null,
+    }));
 
   /**
    * What the picker is asking for. A caller with something more
@@ -331,12 +255,6 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     pickOne(entry.item);
   };
 
-  const setAmount = (item: Items, amount: number, stock: number): void => {
-    const kept = Math.max(1, Math.min(stock, Math.floor(amount)));
-
-    setDraft(draft().map((entry) => (entry[0] === item ? [item, kept] : entry)));
-  };
-
   /**
    * A basket is asked about twice when anything in it is: the
    * question is about the trade, and one thing worth a second look
@@ -357,130 +275,50 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
 
   const list = (): JSX.Element => (
     <div class="flex flex-col gap-3">
-      {/* A shelf to choose between, or a bag too long to read down:
-          either is worth a way of narrowing it, and neither is worth
-          the room over a handful of rows */}
-      <Show when={categories().length > 2 || offered().length > SEARCH_FROM}>
-        <Row>
-          <Show when={offered().length > SEARCH_FROM}>
-            <Search
-              placeholder="Search the bag"
-              value={query()}
-              onChange={(typed) => {
-                setQuery(typed);
-              }}
-            />
-          </Show>
-          <Show when={categories().length > 2}>
-            {/* The word at one end of the row and the control at the
-                other, rather than the pair of them huddled on the
-                left: what a player presses is the dropdown, and it is
-                easier to find on an edge than in the middle of a line
-                of text */}
-            <Filter
-              class="grow justify-between"
-              label="Category"
-              value={shelf()}
-              options={categories()}
-              onChange={(picked) => {
-                setCategory(picked);
-              }}
-            />
-          </Show>
-        </Row>
-      </Show>
-
+      {/* Searching and the shelves belong to the tray, which lays them
+          out the same way wherever the bag is opened */}
       <Show when={!loading()} fallback={<Note>Looking through the bag…</Note>}>
         <Show
-          when={stacks().length}
-          fallback={
-            <Note>
-              {shelf() === EVERY_CATEGORY && query().length === 0
-                ? (props.empty ?? 'Nothing in the bag for this.')
-                : 'Nothing here matches.'}
-            </Note>
-          }
+          when={offered().length}
+          fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
         >
-          <List>
-            <For each={stacks()}>
-              {(entry) => (
-                <ListRow
-                  selected={
-                    props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item
-                  }
-                  class="flex-col items-stretch"
+          <ItemGrid
+            entries={cells()}
+            verb={props.verb}
+            disabled={props.disabled}
+            onPress={(item) => {
+              const entry = offered().find((one) => one.item === item);
+
+              if (entry != null) {
+                press(entry);
+              }
+            }}
+          />
+
+          {/* Asked once more, since picking it is what spends it.
+              There is no room for a question under a picture, so it is
+              asked below the tray */}
+          <Show when={offered().find((entry) => entry.item === pending())} keyed>
+            {(asked) => (
+              <Row class="justify-center">
+                <Button
+                  tone="primary"
+                  onClick={() => {
+                    pickOne(asked.item);
+                  }}
                 >
-                  <div class="flex flex-wrap items-center gap-2">
-                    {/* What it looks like, in front of what it is
-                        called. Silent to a screen reader: the button
-                        beside it already names the item */}
-                    <ItemSprite item={entry.item} size={28} label="" />
-                    <RowButton
-                      pressed={
-                        props.multiple === true
-                          ? amountOf(entry.item) > 0
-                          : props.value === entry.item
-                      }
-                      disabled={props.disabled === true || props.blocked?.(entry) != null}
-                      onClick={() => {
-                        press(entry);
-                      }}
-                    >
-                      {amountOf(entry.item) > 0 ? '✓ ' : ''}
-                      {props.verb == null ? '' : `${props.verb} `}
-                      {describeItem(entry.item)}
-                    </RowButton>
-                    <Badge>× {entry.amount}</Badge>
-                    <Show when={props.note?.(entry) ?? undefined} keyed>
-                      {(note) => <Meta>{note}</Meta>}
-                    </Show>
-                    {/* And why it cannot be pressed, where the row is
-                        shown but refused */}
-                    <Show when={props.blocked?.(entry) ?? undefined} keyed>
-                      {(why) => <Badge tone="ember">{why}</Badge>}
-                    </Show>
-                    {/* How many of the stack, once the row is in: a
-                        caller asking for items usually wants a count as
-                        well as a name */}
-                    <Show when={props.multiple === true && amountOf(entry.item) > 0}>
-                      <Field label="Take">
-                        <input
-                          type="number"
-                          min={1}
-                          max={entry.amount}
-                          value={amountOf(entry.item)}
-                          onInput={(event) => {
-                            setAmount(entry.item, Number(event.currentTarget.value), entry.amount);
-                          }}
-                        />
-                      </Field>
-                    </Show>
-                  </div>
-                  {/* Asked once more, since picking it is what spends
-                      it */}
-                  <Show when={pending() === entry.item}>
-                    <Row>
-                      <Button
-                        tone="primary"
-                        onClick={() => {
-                          pickOne(entry.item);
-                        }}
-                      >
-                        {props.verb ?? 'Pick'} {describeItem(entry.item)}?
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setPending(null);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Row>
-                  </Show>
-                </ListRow>
-              )}
-            </For>
-          </List>
+                  {props.verb ?? 'Pick'} {describeItem(asked.item)}?
+                </Button>
+                <Button
+                  onClick={() => {
+                    setPending(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Row>
+            )}
+          </Show>
         </Show>
       </Show>
 
@@ -505,13 +343,18 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
 
   return (
     <Show when={props.inline !== true} fallback={list()}>
-      <Button
-        onClick={() => {
-          setOpened(true);
-        }}
-      >
-        {props.label ?? props.title ?? 'Pick an item'}
-      </Button>
+      {/* A caller that says whether the bag is open has its own way of
+          opening it, and a second button beside that one is a button
+          nobody presses */}
+      <Show when={props.open == null}>
+        <Button
+          onClick={() => {
+            setOpened(true);
+          }}
+        >
+          {props.label ?? props.title ?? 'Pick an item'}
+        </Button>
+      </Show>
       <Dialog
         isOpen={showing()}
         onClose={close}

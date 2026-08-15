@@ -1,0 +1,345 @@
+import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import type { ItemTypes, Items } from '../../data/ids/items';
+import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items';
+import ItemSprite from './ItemSprite';
+import matches from '../../core/search';
+import {
+  Button,
+  Filter,
+  type FilterOption,
+  Meta,
+  Note,
+  Row,
+  SEARCH_FROM,
+  Search,
+  TooltipHost,
+} from '../styled';
+
+/**
+ * The bag as a tray of pictures rather than a column of names.
+ *
+ * It is the pokemon box, for items: six across and five down, a page
+ * at a time, with what a square holds said by the picture and how many
+ * by the number in its corner. A name is what a card over the square
+ * says while the pointer is on it — the bag is looked at far more
+ * often than it is read, and thirty lines of text is reading.
+ *
+ * The tray carries its own furniture — a search on the left, the
+ * shelves on the right, the pages under it — so the bag is laid out
+ * the same way wherever it is opened: the inventory tab, a vendor's
+ * crate, the picker a catch sheet puts up.
+ */
+
+export const GRID_COLUMNS = 6;
+export const GRID_ROWS = 5;
+export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
+
+/**
+ * How big a picture is drawn inside its square. The square itself is
+ * whatever a sixth of the tray comes to
+ */
+const SPRITE = 36;
+
+/**
+ * An item the registry does not know shows as its id rather than a
+ * guess
+ */
+export function describeItem(item: Items): string {
+  try {
+    return getItemData(item).name;
+  } catch {
+    return `Item #${item}`;
+  }
+}
+
+/**
+ * What the card over a square says. An unknown item has nothing to say
+ * about itself, which is said rather than left blank
+ */
+export function detailItem(item: Items): { name: string; description: string } {
+  try {
+    const data = getItemData(item);
+
+    return { name: data.name, description: data.description };
+  } catch {
+    return { name: describeItem(item), description: 'Nothing is known about this.' };
+  }
+}
+
+/**
+ * The bag unfiltered. A category filter always offers this first,
+ * because a player who has narrowed the bag down needs the way back
+ */
+export const EVERY_CATEGORY = 'all';
+
+/**
+ * What the bag can be narrowed to: one kind of item, or all of them
+ */
+export type ItemCategory = ItemTypes | typeof EVERY_CATEGORY;
+
+/**
+ * Which shelf an item belongs on, or nothing for an item the registry
+ * does not know — an unknown item is shown under `All` and nowhere
+ * else, which is the honest place for it
+ */
+function categoryOf(item: Items): ItemTypes | null {
+  try {
+    return getItemData(item).type;
+  } catch {
+    return null;
+  }
+}
+
+export function isInCategory(item: Items, category: ItemCategory): boolean {
+  return category === EVERY_CATEGORY || categoryOf(item) === category;
+}
+
+/**
+ * The categories worth offering: the ones the player is actually
+ * carrying something from. A filter listing eight empty shelves is a
+ * filter that makes the bag harder to read rather than easier
+ */
+export function listCategories(items: Items[]): FilterOption<ItemCategory>[] {
+  const carried = new Set(items.map(categoryOf));
+
+  return [
+    { value: EVERY_CATEGORY, label: 'All' },
+    ...ITEM_TYPE_ORDER.filter((type) => carried.has(type)).map((type) => ({
+      value: type,
+      label: ITEM_TYPE_NAMES[type],
+    })),
+  ];
+}
+
+/**
+ * One square: what is in it, how many, and what the caller thinks of
+ * it
+ */
+export interface ItemCell {
+  item: Items;
+  /**
+   * How many, in the corner. Left out where the number would say
+   * nothing — a vendor's crate is bottomless, so a count on it is a
+   * number that never moves
+   */
+  amount?: number;
+  /**
+   * Whether the caller has taken this one. A taken square is drawn as
+   * taken, since picking several is done by looking at what is already
+   * picked
+   */
+  selected?: boolean;
+  /**
+   * Why this one cannot be pressed, or nothing when it can. The square
+   * stays on the tray either way — a vendor's crate lists what he
+   * stocks whether or not the purse stretches to it
+   */
+  blocked?: string | null;
+  /**
+   * A word about this square from whoever is asking — a price, most of
+   * the time
+   */
+  note?: string | null;
+}
+
+export interface ItemGridProps {
+  entries: ItemCell[];
+  /**
+   * What pressing a square does — "Use", "Sell". A picture cannot
+   * carry the word, so it is said to whoever is listening rather than
+   * drawn
+   */
+  verb?: string;
+  /**
+   * The whole tray is showing but taking nothing: a bag opened during
+   * a battle, say
+   */
+  disabled?: boolean;
+  onPress?: (item: Items) => void;
+}
+
+export default function ItemGrid(props: ItemGridProps): JSX.Element {
+  const [page, setPage] = createSignal(0);
+  const [query, setQuery] = createSignal('');
+  const [category, setCategory] = createSignal<ItemCategory>(EVERY_CATEGORY);
+
+  const categories = (): FilterOption<ItemCategory>[] =>
+    listCategories(props.entries.map((cell) => cell.item));
+
+  /**
+   * The shelf being looked at, if it is still a shelf this tray has.
+   * What the bag holds can change under it — a stack spent, an item
+   * given away — and a filter left pointing at an empty shelf would
+   * read as an empty bag
+   */
+  const shelf = (): ItemCategory =>
+    categories().some((option) => option.value === category()) ? category() : EVERY_CATEGORY;
+
+  const narrowed = (): ItemCell[] =>
+    props.entries.filter(
+      (cell) => isInCategory(cell.item, shelf()) && matches(describeItem(cell.item), query()),
+    );
+
+  const pages = (): number => Math.max(1, Math.ceil(narrowed().length / GRID_SIZE));
+
+  // Spending a stack or narrowing a search can empty the page being
+  // looked at, and a player left staring at an empty tray reads it as
+  // an empty bag
+  createEffect(() => {
+    setPage((at) => Math.min(at, pages() - 1));
+  });
+
+  const shown = (): ItemCell[] => narrowed().slice(page() * GRID_SIZE, (page() + 1) * GRID_SIZE);
+
+  /**
+   * How many squares the tray draws, filled or not. A bag that runs to
+   * more than one page keeps its full height so paging does not move
+   * the buttons under it; a smaller one only fills out the row it is on
+   */
+  const squares = (): number =>
+    pages() > 1
+      ? GRID_SIZE
+      : Math.max(GRID_COLUMNS, Math.ceil(shown().length / GRID_COLUMNS) * GRID_COLUMNS);
+
+  const empties = (): number[] => Array.from({ length: squares() - shown().length }, (_, at) => at);
+
+  const press = (cell: ItemCell): void => {
+    if (props.disabled === true || cell.blocked != null) {
+      return;
+    }
+    props.onPress?.(cell.item);
+  };
+
+  return (
+    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
+      {/* What narrows the tray stands above it, and always in the same
+          corners: what is being looked for on the left, which shelf it
+          is on at the right */}
+      <Show when={props.entries.length > SEARCH_FROM || categories().length > 2}>
+        <Row class="flex-nowrap items-start justify-between gap-2">
+          <Show when={props.entries.length > SEARCH_FROM}>
+            <Search
+              placeholder="Search the bag"
+              value={query()}
+              onChange={(typed) => {
+                setQuery(typed);
+              }}
+            />
+          </Show>
+          <Show when={categories().length > 2}>
+            <Filter
+              class="ml-auto"
+              label="Category"
+              value={shelf()}
+              options={categories()}
+              onChange={(picked) => {
+                setCategory(picked);
+              }}
+            />
+          </Show>
+        </Row>
+      </Show>
+
+      {/* Narrowed to nothing is the tray's own news to break: what the
+          caller says when the bag is empty is a different sentence */}
+      <Show when={narrowed().length === 0 && props.entries.length > 0}>
+        <Note class="text-center">Nothing here matches.</Note>
+      </Show>
+
+      <div
+        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+          shadow-pop"
+      >
+        <For each={shown()}>
+          {(cell) => (
+            <TooltipHost class="block" {...detailItem(cell.item)}>
+              <button
+                type="button"
+                disabled={props.disabled === true || cell.blocked != null}
+                aria-label={`${props.verb == null ? '' : `${props.verb} `}${describeItem(
+                  cell.item,
+                )}${cell.amount == null ? '' : `, ${cell.amount} carried`}${
+                  cell.blocked == null ? '' : ` — ${cell.blocked}`
+                }`}
+                aria-pressed={cell.selected === true}
+                onClick={() => {
+                  press(cell);
+                }}
+                class={`relative flex aspect-square w-full items-center justify-center rounded-lg
+                  border-2 p-1 transition-colors disabled:cursor-not-allowed ${
+                    cell.selected === true
+                      ? 'border-leaf bg-leaf-soft'
+                      : 'border-line bg-paper hover:bg-line-soft'
+                  } ${
+                    cell.blocked == null
+                      ? 'cursor-pointer'
+                      : // Greyed rather than marked: a square he will
+                        // not part with is still worth seeing, and a
+                        // red edge reads as something having gone wrong
+                        'border-line-soft opacity-45 grayscale'
+                  }`}
+              >
+                <ItemSprite item={cell.item} size={SPRITE} label="" />
+                {/* How many, in the corner the games put it in */}
+                <Show when={cell.amount != null}>
+                  <span
+                    class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
+                      border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+                  >
+                    {cell.amount}
+                  </span>
+                </Show>
+                {/* And the asking price, where there is one */}
+                <Show when={cell.note} keyed>
+                  {(note) => (
+                    <span
+                      class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate
+                        rounded-full border border-gold bg-gold-soft px-1 text-[10px] leading-tight
+                        font-bold text-gold"
+                    >
+                      {note}
+                    </span>
+                  )}
+                </Show>
+              </button>
+            </TooltipHost>
+          )}
+        </For>
+        {/* The rest of the tray, drawn empty rather than left out: a
+            half-built grid reads as a broken one */}
+        <For each={empties()}>
+          {() => (
+            <span
+              aria-hidden="true"
+              class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+            />
+          )}
+        </For>
+      </div>
+
+      <Show when={pages() > 1}>
+        <Row class="justify-center">
+          <Button
+            disabled={page() === 0}
+            onClick={() => {
+              setPage((at) => Math.max(0, at - 1));
+            }}
+          >
+            ‹
+          </Button>
+          <Meta>
+            Page {page() + 1} of {pages()}
+          </Meta>
+          <Button
+            disabled={page() >= pages() - 1}
+            onClick={() => {
+              setPage((at) => Math.min(pages() - 1, at + 1));
+            }}
+          >
+            ›
+          </Button>
+        </Row>
+      </Show>
+    </div>
+  );
+}

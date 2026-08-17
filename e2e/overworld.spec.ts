@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openMenu, openPanel, signIn } from './game';
+import { claimStarter, expectShut, openMenu, openPanel, signIn } from './game';
 
 /**
  * The page a player spends nearly all of their time on: the chunk they
@@ -9,7 +9,7 @@ import { dismissGift, expectShut, openMenu, openPanel, signIn } from './game';
 test.describe('the overworld', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('draws the chunk and nothing else', async ({ page }) => {

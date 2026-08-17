@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openPanel, signIn } from './game';
+import { claimStarter, expectShut, openPanel, signIn } from './game';
 import { stageSeller } from './stranger';
 
 /**
@@ -14,7 +14,7 @@ import { stageSeller } from './stranger';
 test.describe('the auction board', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('draws its lots as trays of squares rather than a list of names', async ({ page }) => {

@@ -403,7 +403,7 @@ received it — a local ISO 8601 string in _their_ own zone, the way a catch dat
 | `Egg`         | `writeEgg`         | It came to them as an egg, nest or breeder     |
 | `Auction`     | `claimAuction`     | They won it on the block                       |
 | `Trade`       | nothing yet        | Reserved for trading                           |
-| `Gift`        | `claimStarterGift` | It was handed to them — today, a first pokemon |
+| `Gift`        | `claimMysteryGift` | They took it out of a mystery gift             |
 | `Revived`     | `reviveFossil`     | They carried a fossil to somebody with a bench |
 
 It is a different question from the record's own `type`

@@ -30,7 +30,7 @@ import {
   CAUGHT_COLLECTION,
   ENCOUNTER_COLLECTION,
   FLED_COLLECTION,
-  GIFT_CLAIM_COLLECTION,
+  GIFT_COLLECTION,
   NEST_CLAIM_COLLECTION,
   NPC_CLAIM_COLLECTION,
   PHENOMENON_CLAIM_COLLECTION,
@@ -369,21 +369,21 @@ describe('encounters', () => {
   });
 });
 
-describe('giftClaims', () => {
+describe('gifts', () => {
   // The one collection a client cannot touch at all: a gift is
-  // decided, given and marked in a single server call, and a marker a
-  // player could delete is a gift they could ask for twice
+  // offered, listed and claimed through the server, and a gift a
+  // player could clear is a gift they could take twice
   beforeEach(async () => {
-    await seed(`${GIFT_CLAIM_COLLECTION}/starter:${ALICE}`, { player: ALICE });
+    await seed(`${GIFT_COLLECTION}/starter:${ALICE}`, { player: ALICE, claimedAt: null });
   });
 
   it('is closed to everybody, signed in or not', async () => {
-    await assertFails(getDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, `starter:${ALICE}`)));
-    await assertFails(getDocs(collection(as(ALICE), GIFT_CLAIM_COLLECTION)));
+    await assertFails(getDoc(doc(as(ALICE), GIFT_COLLECTION, `starter:${ALICE}`)));
+    await assertFails(getDocs(collection(as(ALICE), GIFT_COLLECTION)));
     await assertFails(
-      setDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, `starter:${ALICE}`), { player: ALICE }),
+      setDoc(doc(as(ALICE), GIFT_COLLECTION, `starter:${ALICE}`), { player: ALICE }),
     );
-    await assertFails(deleteDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, `starter:${ALICE}`)));
+    await assertFails(deleteDoc(doc(as(ALICE), GIFT_COLLECTION, `starter:${ALICE}`)));
   });
 });
 

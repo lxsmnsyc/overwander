@@ -20,16 +20,10 @@ import { type Locator, type Page, expect } from '@playwright/test';
 export const SHEET = 'Pokemon Info';
 
 /**
- * And what the gift is called, since a new player meets it before
- * anything else
+ * And what the shelf of gifts is called, since a new player has to go
+ * to it before they have a pokemon at all
  */
-export const GIFT = 'Mystery Gift';
-
-/**
- * And what the second half of a giving is called: the pokemon is the
- * congratulation, and what came with it is its own notice
- */
-export const ROAD = 'For the road';
+export const GIFT = 'Gifts';
 
 export interface Player {
   email: string;
@@ -128,11 +122,10 @@ export async function expectOpen(dialog: Locator, timeout?: number): Promise<voi
 /**
  * How long to wait for something the server has to build first.
  *
- * The starter gift is the one dialog nobody pressed a button for: it
- * opens when a token has been fetched and a transaction has picked a
- * pokemon and written the record, the balls and the claim marker.
- * That has been measured at a little over three seconds, which makes
- * the default five a coin toss rather than a limit
+ * Opening the gifts is a round trip that rolls a pokemon and writes it
+ * down before it can list anything, and that has been measured at a
+ * little over three seconds — which makes the default five a coin toss
+ * rather than a limit
  */
 export const CLAIMED = 30_000;
 
@@ -153,38 +146,8 @@ const MENU_DIALOGS: Record<string, string> = {
   Inventory: 'Inventory',
   Raids: 'Raids',
   Auctions: 'Auctions',
+  Gifts: 'Gifts',
 };
-
-/**
- * Wait for the starter gift and take it.
- *
- * It is waited for rather than checked for. The claim is a round trip
- * — the server picks the pokemon, writes the record and the balls, and
- * only then does the dialog open — so it lands a second or two after
- * the world does. A spec that merely looked for it would usually find
- * nothing, walk on, and have the gift open over whatever it opened
- * next; every new player gets one, so the right thing to do is wait.
- *
- * A spec that is *about* the gift asserts on it first and calls this
- * afterwards
- */
-export async function dismissGift(page: Page): Promise<void> {
-  // Scoped to a dialog that is still open: one on its way out is inert
-  // and lasts the length of the fade, which is long enough to be found
-  // beside the one replacing it
-  const thanks = openDialogs(page).getByRole('button', { name: 'Thanks' });
-
-  await expect(thanks).toBeVisible({ timeout: CLAIMED });
-
-  // A giving is two notices — the pokemon, then what came with it —
-  // and a spec that only wanted the world back has to see both off.
-  // Bounded rather than looped on the button alone, so a Thanks that
-  // stopped closing anything fails here instead of spinning
-  for (let step = 0; step < 3 && (await thanks.isVisible()); step++) {
-    await thanks.click();
-  }
-  await expect(thanks).toBeHidden();
-}
 
 /**
  * Pull out the menu at the bottom of the world. Everything that is not
@@ -213,6 +176,60 @@ export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): P
 }
 
 /**
+ * Take one gift off the shelf. The square is a picture and the Claim
+ * button is in the card over it, so it is taken the way a player takes
+ * one: hover, wait for the card, press it
+ */
+async function claimGift(page: Page, square: Locator): Promise<void> {
+  const card = page.getByRole('dialog', { name: /^(Gift|Info)$/ });
+
+  // Hovered again from scratch on each attempt. A card that closes
+  // while the button in it is being pressed — the shelf redrawing
+  // underneath, the pointer crossing a corner — is gone for good
+  // otherwise: a retried click never hovers anything again
+  await expect(async () => {
+    // Out of the way first: a hover that moves the pointer nowhere
+    // sends no `mouseenter`, and the card never opens
+    await page.mouse.move(0, 0);
+    await square.hover();
+    await expect(card).toBeVisible({ timeout: 2000 });
+    await card.getByRole('button', { name: 'Claim', exact: true }).click({ timeout: 2000 });
+  }).toPass({ timeout: CLAIMED });
+}
+
+/**
+ * Go and get the starter, which is where every account begins.
+ *
+ * Nothing is handed to anybody any more: a new player owns no pokemon
+ * until they open the gifts and take the two waiting there. Most specs
+ * want the pokemon and the balls rather than the shelf, and call this
+ * before anything else; a spec that is *about* the gifts asserts on
+ * them itself
+ */
+export async function claimStarter(page: Page): Promise<void> {
+  const gifts = await openPanel(page, 'Gifts');
+  // Waited for rather than looked for: the shelf is empty until the
+  // server has rolled the pokemon and written it down
+  const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
+
+  await expect(pokemon).toBeVisible({ timeout: CLAIMED });
+  await claimGift(page, pokemon);
+  // The shelf is read again after a claim, so the square goes when the
+  // server answers. Going for the next one before that is going for a
+  // node that is about to be replaced
+  await expect(pokemon).toHaveCount(0);
+
+  const balls = gifts.getByRole('button', { name: /^Claim \d+ × / });
+
+  await expect(balls).toBeVisible();
+  await claimGift(page, balls);
+
+  await expect(gifts.getByText('Nothing is waiting for you.')).toBeVisible();
+  await gifts.getByRole('button', { name: 'Close' }).click();
+  await expectShut(gifts);
+}
+
+/**
  * Open the player's collection, drawn as a box of squares
  */
 export async function openBox(page: Page): Promise<Locator> {
@@ -230,10 +247,9 @@ export async function openBox(page: Page): Promise<Locator> {
 /**
  * Take whatever a square of a box offers.
  *
- * A square is a picture; the button that acts on it is in the card that
- * comes up when the pointer rests there. So a square is pressed the way
- * a player presses one — hover, wait for the card, press what it says —
- * rather than by clicking the picture, which does nothing
+ * What acts on a square is in the card that comes up when the pointer
+ * rests there, so a square is pressed the way a player presses one:
+ * hover, wait for the card, press what it says
  */
 export async function pressBoxSquare(
   page: Page,
@@ -241,8 +257,10 @@ export async function pressBoxSquare(
   verb: string,
   index = 0,
 ): Promise<void> {
-  await box.getByRole('img').nth(index).hover();
+  await box.getByRole('button').nth(index).hover();
 
+  // Not one of `openDialogs`: a hover card is our own element rather
+  // than a terracotta dialog, and carries no `tc-dialog`
   const card = page.getByRole('dialog', { name: 'Info' });
 
   await expect(card).toBeVisible();

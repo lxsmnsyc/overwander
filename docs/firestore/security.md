@@ -91,12 +91,12 @@ it. What follows is what a signed-in client may still do.
 | `bags/{uid}`, `pokedex/{uid}`, `positions/{uid}`, `fled/{uid}`, `auctionSellers/{uid}` | Owner, by id (`get`)                                       | None                                      |
 | `encounters/{spawnId}:{uid}`                                                           | The named player, by id                                    | None                                      |
 | `bids/{uid}:{auctionId}`                                                               | The named player: `get` by id, `list` filtered on `player` | None                                      |
-| `giftClaims`                                                                           | None                                                       | None                                      |
+| `gifts`                                                                                | None                                                       | None                                      |
 
-`giftClaims` is the one collection no client touches at all. A mystery gift is
-decided, written and marked in the same server call, so the marker is neither
-read nor written from a browser — and a client that could delete its own marker
-could ask for the same gift twice.
+`gifts` is the one collection no client touches at all. A mystery gift is
+offered, listed and claimed through the server, so the document is neither read
+nor written from a browser — and a client that could clear its own gift could
+take it twice.
 
 ### `get` and `list` are different questions
 

@@ -14,7 +14,6 @@
 - [ ] Make sign in with email + password dev-only
 - [ ] effect sprites
 - [ ] gift page
-- [ ] move tooltip
 - [ ] catch tags
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)

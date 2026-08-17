@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dialogNamed, dismissGift, expectShut, openPanel, signIn } from './game';
+import { claimStarter, dialogNamed, expectShut, openPanel, signIn } from './game';
 
 /**
  * The lobbies gathering in the current window.
@@ -22,7 +22,7 @@ const LIST_TITLE = 'Raids';
 test.describe('the raids panel', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('settles on either a list of lobbies or the fact that there are none', async ({ page }) => {

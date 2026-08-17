@@ -1,8 +1,9 @@
 import 'server-only';
-import { GIFT_CLAIM_COLLECTION, POSITION_COLLECTION } from '../auth/collections';
+import { GIFT_COLLECTION, POSITION_COLLECTION } from '../auth/collections';
 import { Acquisition } from '../auth/caught-record';
+import type { EncounterRecord } from '../auth/encounter-record';
 import type { MysteryGift } from '../auth/gift-record';
-import { GiftKind } from '../auth/gift-record';
+import { GiftKind, asGiftRecord } from '../auth/gift-record';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import { asPositionRecord } from '../auth/position-record';
 import AleaRNG from '../core/alea';
@@ -17,7 +18,6 @@ import deriveEncounter, { EncounterType } from '../overworld/encounter';
 import { hasAnyCaught, writeCaughtRecord } from './caught';
 import { grantItem } from './inventory';
 import { getAdminFirestore } from './firebase';
-import { claim } from './overworld';
 import { docData } from './read';
 
 /**
@@ -25,10 +25,12 @@ import { docData } from './read';
  *
  * A mystery gift is the one thing a player receives without doing
  * anything: no landmark to walk to, no throw to land, nothing to
- * spend. Today there is exactly one — the pokemon somebody is handed
- * when they have none — and everything about it is decided here,
- * because a client that could name its own gift could name a
- * legendary.
+ * spend. Everything about one is decided here, because a client that
+ * could name its own gift could name a legendary — the player's only
+ * say is whether to take it.
+ *
+ * Today there is one giving, in two parts: the pokemon somebody with
+ * none is handed, and the balls to catch the next one with.
  */
 
 /**
@@ -46,12 +48,20 @@ export const STARTER_LEVEL = 5;
 export const STARTER_BALLS = 20;
 
 /**
- * Which gift this is, in the marker that says it was given. Naming it
- * rather than keying the marker by the player alone is what lets a
- * second gift be added without the first one having taken the only
- * slot there is
+ * Which gifts these are, in the documents that hold them. Naming them
+ * rather than keying by the player alone is what lets a second gift be
+ * added without the first one having taken the only slot there is
  */
 const STARTER_GIFT = 'starter';
+const STARTER_BALL_GIFT = 'starterBalls';
+
+/**
+ * A gift's document, "{gift}:{uid}". The client names the gift and the
+ * server names the player, so nobody can ask for somebody else's
+ */
+function giftId(gift: string, uid: string): string {
+  return `${gift}:${uid}`;
+}
 
 /**
  * What a starter may be: the unevolved species that still have
@@ -63,7 +73,7 @@ const STARTER_GIFT = 'starter';
  * stages, babies and the one-per-world specials are all left out by
  * being something other than Base.
  *
- * A species that lives nowhere is left out as well. The fossils are
+ * A species that lives nowhere is left out as well: the fossils are
  * Base by the shape of their line and extinct by where they live, and
  * handing one over as a first pokemon would give away for nothing the
  * only thing a fossil is for
@@ -98,38 +108,63 @@ async function whereTheyStand(uid: string, now: number, zone: number): Promise<C
 }
 
 /**
- * Hand a player their first pokemon, if they have none.
- *
- * The two checks do different jobs and both are needed. Owning
- * nothing is what makes the gift *due* — somebody who released their
- * last one is owed another, or the game is over for them — and the
- * marker is what makes it happen **once**, since two tabs opened
- * together would otherwise both find an empty collection and both be
- * answered.
- *
- * Resolves what was given — a pokemon and the balls to throw at the
- * next one — or nothing at all for a player who already has a pokemon
- * or has already been given one
+ * One gift, ready to be written down
  */
-export async function claimStarterGift(
-  uid: string,
-  now: number,
-  offset: number,
-  locale: string,
-): Promise<MysteryGift[]> {
+interface Offer {
+  gift: MysteryGift;
+  encounter: EncounterRecord | null;
+}
+
+/**
+ * Put a giving on the shelf, all of it or none of it.
+ *
+ * The documents are read and written in one transaction, so two tabs
+ * signing in together cannot both find nothing there and both offer
+ * it. Resolves false when any part of the giving already exists,
+ * which is the ordinary answer for anybody who has played before
+ */
+async function offer(uid: string, offers: Offer[], now: number): Promise<boolean> {
+  const db = getAdminFirestore();
+  const refs = offers.map(({ gift }) => db.collection(GIFT_COLLECTION).doc(giftId(gift.id, uid)));
+
+  return db.runTransaction(async (transaction) => {
+    const stored = await transaction.getAll(...refs);
+
+    if (stored.some((document) => document.exists)) {
+      return false;
+    }
+    refs.forEach((ref, at) => {
+      transaction.set(ref, {
+        player: uid,
+        gift: offers[at].gift,
+        offeredAt: now,
+        claimedAt: null,
+        encounter: offers[at].encounter,
+      });
+    });
+    return true;
+  });
+}
+
+/**
+ * Roll the first pokemon and shelve it with the balls, for a player
+ * who has none and has never been offered one.
+ *
+ * Owning nothing is what makes the giving *due* — somebody who
+ * released their last one is owed another, or the game is over for
+ * them — and the documents are what make it happen once
+ */
+async function offerStarter(uid: string, now: number, offset: number): Promise<void> {
   if (await hasAnyCaught(uid)) {
-    return [];
-  }
-  if (!(await claim(GIFT_CLAIM_COLLECTION, `${STARTER_GIFT}:${uid}`, { player: uid, at: now }))) {
-    return [];
+    return;
   }
 
   const zone = asOffset(offset);
   const pool = getStarterPool();
-  // Seeded by the player, so the same person is handed the same first
+  // Seeded by the player, so the same person is offered the same first
   // pokemon however many times the call is retried on the way to the
   // one that lands — and so what somebody gets is not a matter of
-  // when they happened to press the button
+  // when they happened to sign in
   const rng = new AleaRNG(`${uid}:${STARTER_GIFT}`);
   const species = pool[Math.floor(rng.random() * pool.length)];
   const snapshot = await whereTheyStand(uid, now, zone);
@@ -145,31 +180,131 @@ export async function claimStarterGift(
     // from
     { type: EncounterType.Fateful, level: STARTER_LEVEL, biome: Biome.Beyond },
   );
+
+  await offer(
+    uid,
+    [
+      {
+        gift: {
+          kind: GiftKind.Catch,
+          id: STARTER_GIFT,
+          reason: 'A first partner, for a trainer with none.',
+          species: encounter.species,
+          level: encounter.level,
+          shiny: encounter.shiny,
+          individualValue: encounter.individualValue,
+          traitValue: encounter.traitValue,
+        },
+        encounter: { ...encounter, spawn: giftId(STARTER_GIFT, uid), player: uid },
+      },
+      {
+        gift: {
+          kind: GiftKind.Item,
+          id: STARTER_BALL_GIFT,
+          reason: 'Something to throw at the next one.',
+          item: Items.PokeBall,
+          amount: STARTER_BALLS,
+        },
+        encounter: null,
+      },
+    ],
+    now,
+  );
+}
+
+/**
+ * Everything waiting for a player, offering first whatever they have
+ * become owed. Resolves empty far more often than not, which is the
+ * ordinary case — a player who has taken their gifts is owed nothing
+ */
+export async function listMysteryGifts(
+  uid: string,
+  now: number,
+  offset: number,
+): Promise<MysteryGift[]> {
+  await offerStarter(uid, now, offset);
+
+  // Claimed gifts are sorted out here rather than asked for: a player
+  // has a handful of these at most, and a second equality filter is a
+  // composite index for a query that reads nothing either way
+  const owed = await getAdminFirestore()
+    .collection(GIFT_COLLECTION)
+    .where('player', '==', uid)
+    .get();
+
+  return owed.docs
+    .map((document) => asGiftRecord(document.data()))
+    .filter((record) => record.claimedAt == null)
+    .map((record) => record.gift);
+}
+
+/**
+ * What taking one left behind: the gift itself, and — for a pokemon —
+ * the record it landed in, so the sheet can be opened on it
+ */
+export interface GiftClaim {
+  gift: MysteryGift;
+  catchId: string | null;
+}
+
+/**
+ * Take one gift.
+ *
+ * It is marked taken before anything is handed over, so a second
+ * press or a second tab finds it already gone rather than being paid
+ * twice. Resolves null for a gift that is not this player's, was
+ * never offered, or has already been claimed
+ */
+export async function claimMysteryGift(
+  uid: string,
+  gift: string,
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<GiftClaim | null> {
+  const db = getAdminFirestore();
+  const ref = db.collection(GIFT_COLLECTION).doc(giftId(gift, uid));
+
+  const taken = await db.runTransaction(async (transaction) => {
+    const stored = await transaction.get(ref);
+
+    if (!stored.exists) {
+      return null;
+    }
+
+    const record = asGiftRecord(stored.data());
+
+    if (record.player !== uid || record.claimedAt != null) {
+      return null;
+    }
+    transaction.update(ref, { claimedAt: now });
+    return record;
+  });
+
+  if (taken == null) {
+    return null;
+  }
+
+  if (taken.gift.kind === GiftKind.Item) {
+    await grantItem(uid, taken.gift.item, taken.gift.amount);
+    return { gift: taken.gift, catchId: null };
+  }
+
   // A Premier Ball is the commemorative one, which is the whole of
   // what it is for: nothing was thrown, and the record still has to
   // say which ball it is in
-  const catchId = await writeCaughtRecord(
-    uid,
-    { ...encounter, spawn: `${STARTER_GIFT}:${uid}`, player: uid },
-    Balls.PremierBall,
-    Acquisition.Gift,
-    now,
-    offset,
-    locale,
-  );
+  const catchId =
+    taken.encounter == null
+      ? null
+      : await writeCaughtRecord(
+          uid,
+          taken.encounter,
+          Balls.PremierBall,
+          Acquisition.Gift,
+          now,
+          offset,
+          locale,
+        );
 
-  await grantItem(uid, Items.PokeBall, STARTER_BALLS);
-
-  return [
-    {
-      kind: GiftKind.Catch,
-      catchId,
-      species: encounter.species,
-      level: encounter.level,
-      shiny: encounter.shiny,
-      individualValue: encounter.individualValue,
-      traitValue: encounter.traitValue,
-    },
-    { kind: GiftKind.Item, item: Items.PokeBall, amount: STARTER_BALLS },
-  ];
+  return { gift: taken.gift, catchId };
 }

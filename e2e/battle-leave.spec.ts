@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, newPlayer, signIn } from './game';
+import { claimStarter, newPlayer, signIn } from './game';
 import { enterRaid, stageRaid } from './raid';
 
 /**
@@ -31,7 +31,7 @@ test.describe('leaving a battle', () => {
     });
 
     await signIn(page, player);
-    await dismissGift(page);
+    await claimStarter(page);
     await stageRaid(player);
     await enterRaid(page);
 
@@ -70,7 +70,7 @@ test.describe('leaving a battle', () => {
     const player = newPlayer();
 
     await signIn(page, player);
-    await dismissGift(page);
+    await claimStarter(page);
     await stageRaid(player);
     await enterRaid(page);
 

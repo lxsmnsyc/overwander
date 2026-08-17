@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, openPanel, signIn } from './game';
+import { claimStarter, openPanel, signIn } from './game';
 
 /**
  * The bag, with pictures in it.
@@ -14,7 +14,7 @@ import { dismissGift, openPanel, signIn } from './game';
 test.describe('item icons', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('draws a picture beside everything in the bag', async ({ page }) => {

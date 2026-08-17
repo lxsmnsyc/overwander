@@ -4,8 +4,8 @@ import { Items } from '../src/data/ids/items';
 import { findDocuments, patchDocument, uidOf, writeDocument } from './emulator';
 import {
   type Player,
+  claimStarter,
   dialogNamed,
-  dismissGift,
   expectOpen,
   openPanel,
   pressBoxSquare,
@@ -52,7 +52,7 @@ async function arrive(browser: Browser): Promise<Trader> {
   const page = await context.newPage();
   const player = await signIn(page);
 
-  await dismissGift(page);
+  await claimStarter(page);
   return { page, player, uid: await uidOf(player) };
 }
 

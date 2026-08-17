@@ -18,8 +18,6 @@ import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import { getPosition, savePosition } from '../../auth/positions';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
-import type { MysteryGift } from '../../auth/gift-record';
-import claimMysteryGift from '../../auth/gifts';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
 import pickStartPosition, { type StartPosition } from '../../overworld/start';
@@ -58,6 +56,10 @@ export const enum GameDialog {
    * between the two is the game
    */
   Pokedex = 7,
+  /**
+   * What the game is holding for the player until they come for it
+   */
+  Gifts = 8,
 }
 
 /**
@@ -156,12 +158,6 @@ export interface GameState {
    */
   encounter: Accessor<EncounterRecord | null>;
   setEncounter: Setter<EncounterRecord | null>;
-  /**
-   * What the game has just given them, until they have seen it. Empty
-   * whenever there is nothing to show, which is nearly always
-   */
-  gifts: Accessor<MysteryGift[]>;
-  setGifts: Setter<MysteryGift[]>;
   /**
    * The catch sheet, which is a screen rather than a panel.
    *
@@ -307,40 +303,11 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       cancelled = true;
     });
   });
-  const [gifts, setGifts] = createSignal<MysteryGift[]>([]);
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
   const [visiting, setVisiting] = createSignal<string | null>(null);
   const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
-
-  // Whether the game owes them anything, asked once a session. Today
-  // that is the pokemon somebody with none is handed: a player who
-  // has walked out of their last one is otherwise standing in a world
-  // they cannot do anything in — no raid to join, nothing to bring to
-  // a grunt, and a safari they can throw nothing at.
-  //
-  // Asked the moment there is somebody to ask for, rather than after
-  // they have been put on the map. The record is stamped `Beyond` —
-  // a fateful encounter happened nowhere, and the sheet shows no
-  // place for one — so nothing about it needs a position, and waiting
-  // for one put a second round trip in front of the first thing a new
-  // player ever sees
-  createEffect(() => {
-    if (auth.user() == null) {
-      return;
-    }
-    claimMysteryGift()
-      .then((given) => {
-        if (given.length > 0) {
-          setGifts(given);
-        }
-      })
-      .catch(() => {
-        // A gift that could not be asked for is one the next sign-in
-        // asks for again: nothing has been given, so nothing is lost
-      });
-  });
 
   const [raid, setRaid] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
@@ -393,8 +360,6 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setReward,
         encounter,
         setEncounter,
-        gifts,
-        setGifts,
         sheet,
         setSheet,
         listing,

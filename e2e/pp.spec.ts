@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { Items } from '../src/data/ids/items';
 import { patchDocument, uidOf } from './emulator';
-import { SHEET, dialogNamed, dismissGift, expectOpen, openCatch, signIn } from './game';
+import { SHEET, claimStarter, dialogNamed, expectOpen, openCatch, signIn } from './game';
 
 /**
  * A PP Up, spent.
@@ -23,7 +23,7 @@ test.describe('a PP Up', () => {
   test('is spent on a chosen move, and only once it is confirmed', async ({ page }) => {
     const player = await signIn(page);
 
-    await dismissGift(page);
+    await claimStarter(page);
     await patchDocument('bags', await uidOf(player), {
       items: { mapValue: { fields: { [String(Items.PPUp)]: { integerValue: '2' } } } },
     });

@@ -16,10 +16,11 @@ import { ThemeToggle } from './theme';
  *
  * It was a bar with four words on it, which worked while there were
  * four. There are ten now — the player's catches and their bag came
- * out of the profile, the dex arrived beside them, and there is room
- * kept for the friends, the gifts and the settings that are not built
- * yet — and a row of ten across the bottom of the world is a strip of
- * map taken away from every screen to say words that never change.
+ * out of the profile, the dex and the gifts arrived beside them, and
+ * there is room kept for the friends and the settings that are not
+ * built yet — and a row of ten across the bottom of the world is a
+ * strip of map taken away from every screen to say words that never
+ * change.
  *
  * So it is one button, and the ten live in a panel that opens above
  * it. A grid rather than a list: ten things read as a keypad at a
@@ -56,7 +57,7 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Raids', dialog: GameDialog.Raids },
   { label: 'Auctions', dialog: GameDialog.Auctions },
   { label: 'Friends' },
-  { label: 'Gifts' },
+  { label: 'Gifts', dialog: GameDialog.Gifts },
   { label: 'Settings' },
 ];
 

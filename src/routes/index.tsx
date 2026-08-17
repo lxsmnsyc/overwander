@@ -12,7 +12,7 @@ import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import InventoryList from '../components/items/InventoryList';
 import LoginForm from '../components/app/LoginForm';
-import MysteryGiftDialog from '../components/overworld/MysteryGiftDialog';
+import GiftsTab from '../components/gifts/GiftsTab';
 import DexEntryDialog from '../components/dex/DexEntryDialog';
 import OverworldTab from '../components/overworld/OverworldTab';
 import PokedexTab from '../components/dex/PokedexTab';
@@ -46,7 +46,8 @@ type Panelled =
   | GameDialog.Auctions
   | GameDialog.Catches
   | GameDialog.Inventory
-  | GameDialog.Pokedex;
+  | GameDialog.Pokedex
+  | GameDialog.Gifts;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
@@ -55,6 +56,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Catches]: 'Catches',
   [GameDialog.Inventory]: 'Inventory',
   [GameDialog.Pokedex]: 'Pokedex',
+  [GameDialog.Gifts]: 'Gifts',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -64,6 +66,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',
   [GameDialog.Inventory]: 'Everything you are carrying.',
   [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
+  [GameDialog.Gifts]: 'What the game is holding for you, until you come for it.',
 };
 
 /**
@@ -146,6 +149,22 @@ function GameView(props: { user: User }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Inventory]}
           >
             <InventoryList player={props.user.uid} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* What the game owes them, which is a shelf rather than an
+              announcement: nothing is theirs until they take it */}
+          <Dialog
+            isOpen={showing(GameDialog.Gifts)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Gifts]}
+            description={DESCRIPTIONS[GameDialog.Gifts]}
+          >
+            <GiftsTab />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -291,15 +310,6 @@ function GameView(props: { user: User }): JSX.Element {
               game.setListing(null);
             }}
             onListed={game.touchRecords}
-          />
-
-          {/* And this one is nobody's doing: it opens when the game
-              has given them something, over whatever else is open */}
-          <MysteryGiftDialog
-            gifts={game.gifts()}
-            onClose={() => {
-              game.setGifts([]);
-            }}
           />
         </div>
       }

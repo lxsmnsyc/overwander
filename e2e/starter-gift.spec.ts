@@ -1,83 +1,65 @@
 import { expect, test } from '@playwright/test';
-import {
-  CLAIMED,
-  GIFT,
-  ROAD,
-  dialogNamed,
-  dismissGift,
-  expectOpen,
-  expectShut,
-  offCentre,
-  signIn,
-} from './game';
+import { CLAIMED, GIFT, claimStarter, openBox, openPanel, signIn } from './game';
 
 /**
  * The first thing that happens to anybody.
  *
  * A new player has no pokemon, and a game whose every screen is about
- * pokemon has nothing to show them. So the world hands one over before
- * they have done anything to earn it, with the balls to catch the next
- * one, and says so in the only dialog in the game that asks nothing.
+ * pokemon has nothing to show them. So the world sets one aside for
+ * them, with the balls to catch the next one, and waits on the gift
+ * shelf until they come for it.
  */
 
 test.describe('the starter gift', () => {
-  test('greets a new player with a pokemon and the balls to catch more', async ({ page }) => {
+  test('waits on the shelf for a new player', async ({ page }) => {
     await signIn(page);
 
-    const gift = dialogNamed(page, GIFT);
+    const gifts = await openPanel(page, GIFT);
+    const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
 
-    await expectOpen(gift, CLAIMED);
-    // Exactly, because the sentence a screen reader is given starts
-    // with the same word and would match a loose search as well
-    await expect(gift.getByText('Congratulations!', { exact: true })).toBeVisible();
+    await expect(pokemon).toBeVisible({ timeout: CLAIMED });
+    // The balls are a gift of their own rather than a footnote under
+    // the pokemon: they are what makes the world playable at all
+    await expect(gifts.getByRole('button', { name: /^Claim \d+ × Poke Ball/ })).toBeVisible();
 
-    // What it is, written the way the sheet writes it
-    await expect(gift.getByText(/^Lv\. \d+ /)).toBeVisible();
+    // What is waiting is named the way the sheet names it
+    await pokemon.hover();
 
-    // The balls are the *second* notice rather than a row of badges
-    // under the sprite: they are what makes the world playable, not a
-    // footnote to the pokemon
-    await gift.getByRole('button', { name: 'Thanks' }).click();
-    await expectShut(gift);
+    const card = page.getByRole('dialog', { name: 'Gift' });
 
-    const bag = dialogNamed(page, ROAD);
-
-    await expectOpen(bag);
-    await expect(bag.getByText('Poke Ball')).toBeVisible();
-    await expect(bag.getByText(/× \d+/)).toBeVisible();
-    // Drawn rather than named
-    await expect(bag.locator('canvas')).toBeVisible();
-
-    await bag.getByRole('button', { name: 'Thanks' }).click();
-    await expectShut(bag);
+    await expect(card).toBeVisible();
+    await expect(card.getByText(/^Lv\. \d+ /)).toBeVisible();
   });
 
-  test('names itself in the middle of the panel', async ({ page }) => {
+  test('hands over the pokemon and the balls when they are taken', async ({ page }) => {
     await signIn(page);
+    await claimStarter(page);
 
-    const gift = dialogNamed(page, GIFT);
-    const title = gift.getByText(GIFT);
+    // One square in the box, and it is the pokemon that was waiting
+    const box = await openBox(page);
 
-    await expectOpen(gift, CLAIMED);
-    await expect(title).toBeVisible();
-    expect(await offCentre(gift, title)).toBeLessThan(4);
+    await expect(box.getByRole('button', { name: /Lv\. \d+/ })).toHaveCount(1);
+    await page.getByRole('button', { name: 'Close' }).last().click();
+
+    const bag = await openPanel(page, 'Inventory');
+
+    await expect(bag.getByRole('button', { name: /Poke Ball, \d+ carried/ })).toBeVisible();
   });
 
   test('is given once and not again', async ({ page }) => {
     const player = await signIn(page);
-    const gift = dialogNamed(page, GIFT);
 
-    await expectOpen(gift, CLAIMED);
-    await dismissGift(page);
-    await expectShut(gift);
+    await claimStarter(page);
 
-    // Coming back is not another pokemon. The claim is written down
-    // server-side, and a reload that handed out a second starter would
-    // be a way to farm them
+    // Coming back is not another pokemon. The gift is marked taken
+    // server-side, and a reload that offered a second starter would be
+    // a way to farm them
     await page.reload();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Thanks' })).toBeHidden();
 
+    const gifts = await openPanel(page, GIFT);
+
+    await expect(gifts.getByText('Nothing is waiting for you.')).toBeVisible({ timeout: CLAIMED });
     expect(player.email).toContain('@example.com');
   });
 });

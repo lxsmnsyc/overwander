@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { SHEET, dismissGift, offCentre, openCatch, signIn } from './game';
+import { SHEET, claimStarter, offCentre, openCatch, signIn } from './game';
 
 /**
  * One pokemon in full.
@@ -25,7 +25,7 @@ declare global {
 test.describe('the catch sheet', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('is named for what it is, with the pokemon named inside it', async ({ page }) => {

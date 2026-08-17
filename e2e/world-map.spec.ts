@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test';
-import { dismissGift, expectShut, openPanel, signIn } from './game';
+import { claimStarter, expectShut, openPanel, signIn } from './game';
 
 /**
  * The world, as a picture of where the player is and what is around
@@ -25,7 +25,7 @@ async function lookingAt(page: Page): Promise<string> {
 test.describe('the world map', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('opens as a picture of the world', async ({ page }) => {

@@ -193,11 +193,11 @@ service cloud.firestore {
       allow read: if signedIn();
       allow write: if false;
     }
-    // What the game has already given a player. A gift is decided,
-    // written and marked on the server in one go, so this is nobody's
-    // to read and nobody's to write: a client that could delete its
-    // own marker could ask for the same gift twice
-    match /giftClaims/{claimId} {
+    // What the game is holding for a player, and what it has already
+    // handed over. Gifts are offered, listed and claimed through the
+    // server, so this is nobody's to read and nobody's to write: a
+    // client that could clear its own gift could take it twice
+    match /gifts/{giftId} {
       allow read: if false;
       allow write: if false;
     }

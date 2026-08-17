@@ -1,28 +1,41 @@
 import type { MysteryGift } from './gift-record';
 import { requireUid } from '../server/firebase';
-import { claimStarterGift } from '../server/gifts';
+import type { GiftClaim } from '../server/gifts';
+import { claimMysteryGift as claimOne, listMysteryGifts as listOwed } from '../server/gifts';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
 import getIdToken from './session';
 
 /**
- * Ask whether the game owes this player anything.
+ * What the game is holding for this player.
  *
- * It is asked rather than announced because the answer is the
- * server's alone: what is given, and whether anything is, depends on
- * what the player already has. Resolves an empty list far more often
- * than not, which is the ordinary case — a player with a pokemon is
- * owed nothing
+ * Asking is what puts a gift on the shelf as well as what reads the
+ * shelf: whether anything is owed depends on what the player already
+ * has, which is the server's to decide
  */
-export default async function claimMysteryGift(): Promise<MysteryGift[]> {
-  return claimOnServer(await getIdToken(), getLocalOffset(), getLocale());
+export async function listMysteryGifts(): Promise<MysteryGift[]> {
+  return listOnServer(await getIdToken(), getLocalOffset());
+}
+
+async function listOnServer(token: string, offset: number): Promise<MysteryGift[]> {
+  'use server';
+  return listOwed(await requireUid(token), await syncServerClock(), offset);
+}
+
+/**
+ * Take one. Resolves null for a gift that was never offered or has
+ * already been taken, which is what a second press looks like
+ */
+export async function claimMysteryGift(gift: string): Promise<GiftClaim | null> {
+  return claimOnServer(await getIdToken(), gift, getLocalOffset(), getLocale());
 }
 
 async function claimOnServer(
   token: string,
+  gift: string,
   offset: number,
   locale: string,
-): Promise<MysteryGift[]> {
+): Promise<GiftClaim | null> {
   'use server';
-  return claimStarterGift(await requireUid(token), await syncServerClock(), offset, locale);
+  return claimOne(await requireUid(token), gift, await syncServerClock(), offset, locale);
 }

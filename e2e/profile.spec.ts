@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissGift, openBox, openPanel, signIn } from './game';
+import { claimStarter, openBox, openPanel, signIn } from './game';
 
 /**
  * Who the player is, and what they were given to start with.
@@ -15,7 +15,7 @@ import { dismissGift, openBox, openPanel, signIn } from './game';
 test.describe('the profile', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('says who the player is and what they are worth', async ({ page }) => {

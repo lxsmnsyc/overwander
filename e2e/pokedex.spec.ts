@@ -3,8 +3,8 @@ import { patchDocument, uidOf } from './emulator';
 import {
   type Player,
   SHEET,
+  claimStarter,
   dialogNamed,
-  dismissGift,
   expectOpen,
   openPanel,
   pressBoxSquare,
@@ -69,7 +69,7 @@ test.describe('the pokedex', () => {
 
   test.beforeEach(async ({ page }) => {
     player = await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
   });
 
   test('counts what has been met against everything there is', async ({ page }) => {

@@ -2,7 +2,7 @@ import { type Locator, type Page, expect, test } from '@playwright/test';
 import { type BoardCell, fitPicture, projectBoardCell, projectCell } from '../src/canvas/board';
 import { CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from '../src/overworld/chunk';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
-import { SHEET, dialogNamed, dismissGift, expectOpen, signIn } from './game';
+import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
 
 /**
  * Meeting something and catching it.
@@ -254,7 +254,7 @@ test.describe('the safari', () => {
     test.slow();
 
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
 
     const world = page.locator('main canvas').first();
 

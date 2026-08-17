@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { findDocuments, uidOf } from './emulator';
-import { SHEET, dialogNamed, dismissGift, expectOpen, openPanel, signIn } from './game';
+import { SHEET, claimStarter, dialogNamed, expectOpen, openPanel, signIn } from './game';
 import { stageCatchLot, stageSeller } from './stranger';
 
 /**
@@ -19,7 +19,7 @@ test.describe('another trainer', () => {
     const seller = await stageSeller('Wisteria');
 
     await signIn(page);
-    await dismissGift(page);
+    await claimStarter(page);
 
     const board = await openPanel(page, 'Auctions');
     const square = board.getByRole('button', { name: new RegExp(`by ${seller.nickname}`) });
@@ -58,7 +58,7 @@ test.describe('another trainer', () => {
     const seller = await stageSeller('Hawthorn');
     const player = await signIn(page);
 
-    await dismissGift(page);
+    await claimStarter(page);
 
     // A pokemon of theirs on the block, which is the one place a
     // player meets a record that was somebody else's. It is a copy of

@@ -70,12 +70,12 @@ export const BID_COLLECTION = 'bids';
 export const NPC_CLAIM_COLLECTION = 'npcClaims';
 
 /**
- * One marker per gift and player, "{gift}:{uid}". A gift is given
- * once: the marker is what says it already was, and it is taken
- * before anything is handed over, so two tabs asking at the same
- * moment cannot both be answered
+ * One document per gift and player, "{gift}:{uid}". It is the offer
+ * and the marker at once: it exists from the moment the game decides
+ * somebody is owed something, and carries the instant it was taken.
+ * Writing it is what stops two tabs offering the same gift twice
  */
-export const GIFT_CLAIM_COLLECTION = 'giftClaims';
+export const GIFT_COLLECTION = 'gifts';
 
 /**
  * Where each player last was, one document per uid. It is the only

@@ -1,6 +1,23 @@
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import {
+  type Accessor,
+  For,
+  type JSX,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../../canvas/species-sprites';
+import {
+  SPARKLE_COLORS,
+  SPARKLE_SPREAD,
+  SPARKLE_STARS,
+  SPARKLE_STAR_LIFE,
+  SPARKLE_STAR_SIZE,
+  sparkleStar,
+} from '../../canvas/sparkle';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
 import type { Species } from '../../data/ids/species';
 
@@ -108,6 +125,70 @@ function groundOf(drawn: Drawn): JSX.CSSProperties | null {
 }
 
 /**
+ * The four-pointed glint a sparkle is made of, as a shape rather than a
+ * glyph: a diamond with its sides pulled in, which is how a star has
+ * been drawn for as long as anything has been drawn sparkling
+ */
+const STAR = 'polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 50%, 42% 42%)';
+
+/**
+ * Where each star of a sparkle sits, in shares of the cell, and when it
+ * lights.
+ *
+ * The placement is the canvas sparkle's own — same seed, same scatter —
+ * so a shiny met in the overworld and the same shiny met in a dialog
+ * glint the same way. What differs is that the browser runs the star
+ * rather than a draw loop: one keyframe, one delay each
+ */
+function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
+  const across = drawn.frame.width / drawn.cell.width;
+  const up = drawn.frame.height / drawn.cell.height;
+  // The stars are thrown up from the point the pokemon stands on, which
+  // on a trimmed sheet is not the bottom of the cell
+  const floor = drawn.feet == null ? 1 : (drawn.feet[1] + 0.5 + drawn.trim[1]) / drawn.cell.height;
+  const size = across * SPARKLE_STAR_SIZE * 2;
+
+  return Array.from({ length: SPARKLE_STARS }, (_, star) => {
+    const spot = sparkleStar(seed, star, SPARKLE_SPREAD);
+
+    return {
+      position: 'absolute',
+      left: `${(0.5 + spot.x * across - size / 2) * 100}%`,
+      top: `${(floor + spot.y * up - size / 2) * 100}%`,
+      width: `${size * 100}%`,
+      'aspect-ratio': '1',
+      background: SPARKLE_COLORS.fill,
+      'clip-path': STAR,
+      animation: `sparkle-star ${SPARKLE_STAR_LIFE}ms ease-out ${spot.delay}ms both`,
+    };
+  });
+}
+
+/**
+ * The stars, thrown once.
+ *
+ * They are placed from the first frame that is drawn and then left
+ * alone: the picture changes twenty-four times a second, and a list of
+ * stars rebuilt on every frame is a list of *new* elements every frame,
+ * each starting its animation from the beginning. That reads as a
+ * pokemon that glitters permanently rather than one that announces
+ * itself — which is the thing a sparkle is not
+ */
+function Sparkle(props: { drawn: Accessor<Drawn | null>; seed: number }): JSX.Element {
+  const thrown = createMemo((placed: JSX.CSSProperties[] | undefined) => {
+    if (placed != null) {
+      return placed;
+    }
+
+    const showing = props.drawn();
+
+    return showing == null ? undefined : starsOf(showing, props.seed);
+  });
+
+  return <For each={thrown()}>{(star) => <span style={star} />}</For>;
+}
+
+/**
  * Every sprite on the page, ticked together. One clock rather than one
  * each: thirty squares of a box would otherwise be thirty animation
  * frames the browser has to schedule and thirty places for them to
@@ -162,10 +243,23 @@ export interface AnimatedSpriteProps {
    */
   speed?: number;
   /**
-   * The longest side of the cell, in pixels. Left out, the cell is
-   * drawn at the size it was cut
+   * How long one pass of the clip should take, in milliseconds, instead
+   * of the time the sheet says. The clip is stretched rather than cut, so
+   * it is how a dex turns a pokemon on the spot leisurely enough to read
    */
-  size?: number;
+  duration?: number;
+  /**
+   * Whether it holds its first frame instead of playing. A reference is
+   * looked at rather than watched — thirty idling sprites in a dex say
+   * nothing the first frame did not
+   */
+  still?: boolean;
+  /**
+   * How many times bigger than the sheet has it. The sprites are a few
+   * dozen pixels, so anything worth looking at is drawn at two or three
+   * — whole numbers, since half a pixel of pixel art is a smear
+   */
+  scale?: number;
   /**
    * Whether the cell is fitted to the box it is put in rather than
    * taking a number of pixels. **The box has to be square**: the cell
@@ -175,6 +269,15 @@ export interface AnimatedSpriteProps {
   fill?: boolean;
   /** Whether to draw the ground under it */
   shadow?: boolean;
+  /**
+   * Whether to throw a handful of stars over it as it appears, once.
+   *
+   * It is the caller's rather than something read off `shiny`, because
+   * not everywhere that draws a shiny is a place worth announcing one: a
+   * dex is a record being read, and something standing in front of the
+   * player is a thing being met
+   */
+  sparkle?: boolean;
   /**
    * What a screen reader is told. An empty string is for a caller that
    * has already named the pokemon beside the picture
@@ -225,6 +328,9 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     drawn.play(drawn.has(wanted) ? wanted : 'Idle', {
       direction: props.direction ?? 'Down',
       loop: true,
+      // Only where a caller asked for a pace: everything else plays at
+      // the speed it was drawn at
+      duration: props.duration,
     });
     setStep((count) => count + 1);
   });
@@ -232,7 +338,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   createEffect(() => {
     const drawn = sprite();
 
-    if (drawn == null) {
+    if (drawn == null || props.still === true) {
       return;
     }
     onCleanup(
@@ -291,7 +397,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       };
     }
 
-    const scale = props.size == null ? 1 : props.size / longest;
+    const scale = props.scale ?? 1;
 
     return { width: `${cell.width * scale}px`, height: `${cell.height * scale}px` };
   };
@@ -311,6 +417,12 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
               {(ground) => <span style={ground()} />}
             </Show>
             <span style={pictureOf(showing())} />
+            {/* Keyed on which pokemon it is, so meeting a second shiny
+                throws a fresh handful rather than leaving the first
+                one's finished animation on screen */}
+            <Show when={props.sparkle === true ? props.species : null} keyed>
+              {(seed) => <Sparkle drawn={drawn} seed={seed} />}
+            </Show>
           </>
         )}
       </Show>

@@ -28,7 +28,6 @@ import Npc, {
   DAYCARE_FEE,
   GROOMING_FEE,
   NPC_NAMES,
-  NURSE_CARE_LIMIT,
   REMINDER_FEE,
   getRecallableMoves,
 } from '../../data/overworld/npc';
@@ -167,12 +166,6 @@ export interface NpcDialogProps {
 export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<string[]>([]);
-  /**
-   * What has been put in front of Nurse Joy but not yet handed over.
-   * The picker reports every press and this holds it, so the button
-   * that hands them over can live on the bar with the way out
-   */
-  const [party, setParty] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
   // Which side of the counter is being looked at, or null while the
   // player has only been offered the two words
@@ -349,7 +342,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const close = (): void => {
     setStatus(null);
     setChosen([]);
-    setParty([]);
     setCounter(null);
     forget();
     setReminding(null);
@@ -401,15 +393,10 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     visitNurse(snapshot, standing[0], picked)
       .then(async (tended) => {
         setBusy(false);
-        // Handed back, so the counter is empty again: the picker
-        // follows what this holds, and leaving them lit would leave
-        // the button offering to hand over the six she has just
-        // returned
-        setParty([]);
         setStatus(
           tended == null
-            ? 'She looked them over and handed them straight back — there was nothing to do, or she has already seen you this while.'
-            : `She looked after ${tended.length} of them. Right as rain.`,
+            ? 'She looked it over and handed it straight back — there was nothing to do, or she has already seen you this while.'
+            : 'She looked after it. Right as rain.',
         );
         await refetch();
         props.onChange?.();
@@ -647,19 +634,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         </Button>
       );
     }
-    if (npc === Npc.NurseJoy) {
-      return (
-        <Button
-          tone="primary"
-          disabled={busy() || party().length === 0}
-          onClick={() => {
-            tendParty(party());
-          }}
-        >
-          {party().length === 0 ? 'Hand over' : `Hand over ${party().length}`}
-        </Button>
-      );
-    }
     if (npc === Npc.MoveReminder) {
       return (
         <Button
@@ -824,26 +798,27 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
 
               <Show when={standing()[1] === Npc.NurseJoy}>
                 <DialogSection class={CENTRED}>
-                  {/* She is free, so what keeps her from being a tap is
-                    the window: one visit per player while she is
-                    standing here */}
+                  {/* One press, one pokemon seen to. She is free, so
+                    there is nothing to weigh up before handing one over
+                    — and a counter that took a party first and a button
+                    second was two presses for a decision nobody makes.
+                    What keeps her from being a tap is the window: one
+                    visit per player while she is standing here */}
                   <CatchPicker
                     inline
-                    multiple
-                    live
-                    max={NURSE_CARE_LIMIT}
                     options={offers()}
-                    value={party()}
-                    verb="Hand over"
+                    value={null}
+                    verb="Heal"
                     empty="You have nothing for her to look at."
                     filter={(option) => !isEgg(option.caught) && !option.fighting}
                     reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
                     note={(option) =>
                       isShadow(option.caught) ? 'shadow — she would purify it' : null
                     }
-                    onPick={(picked) => {
-                      setStatus(null);
-                      setParty(picked);
+                    onPick={(id) => {
+                      if (id != null) {
+                        tendParty([id]);
+                      }
                     }}
                   />
                 </DialogSection>

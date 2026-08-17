@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, from, on } from 'solid-js';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -25,34 +25,26 @@ import {
   isFavorite,
   listCaughtMarked,
 } from '../../auth/caught';
-import { isShiny } from '../../auth/caught-record';
-import { SpawnRarity, getSpawnRarity } from '../../data/biome';
 import { isEgg } from '../../auth/egg';
-import { isPerfectIVs } from '../../data/items/bottle-caps';
 import { type Profile, getProfile, watchProfile } from '../../auth/profile';
-import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
-import { NATURE_NAMES } from '../../data/ids/natures';
-import { Species } from '../../data/ids/species';
-import { getSpeciesData } from '../../data/species';
-import getSigil from '../../data/constants/sigil';
 import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
-import { describeAbility } from '../catches/CatchDialog';
+import CatchBox, { BOX_SIZE, type BoxEntry } from '../catches/CatchBox';
+import CatchCard from '../catches/CatchCard';
 import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
-import { describeCatch } from '../catches/catch-summary';
+import { asBoxEntry, describeCatch } from '../catches/catch-summary';
+import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import InventoryPicker, { describeItem } from '../items/InventoryPicker';
-import ItemSprite from '../items/ItemSprite';
-import SpriteDisplay from '../sprites/SpriteDisplay';
 import matches from '../../core/search';
 import { useGame } from '../app/game-context';
 import {
   Badge,
   Button,
   Card,
+  Detail,
   Dialog,
   DialogActions,
   Field,
-  List,
-  ListRow,
+  HoverCard,
   Meta,
   Note,
   Panel,
@@ -155,370 +147,186 @@ export function AuctionLotLabel(props: { auction: AuctionRecord; name?: string }
 }
 
 /**
- * What this player may do about a lot: nothing, if it is their own or
- * they are already winning it, and otherwise a bid.
+ * Why this player may not bid on a lot, or null where they may.
  *
- * The amount is theirs to name. The seller's increment sets the floor
- * — a lot cannot be nudged up a gold piece at a time — but anything
- * from there to what the bidder is holding is a legal bid, so somebody
- * who wants a lot can put it out of reach in one press instead of
- * fifty.
+ * All three answers used to be a thing standing where the button would
+ * be — a badge reading "yours", a badge reading "winning", a line about
+ * not holding enough — so the eye had to find the button again on every
+ * lot. The button is always the button now; the reason rides on it, for
+ * whoever stops on the one that is dead
+ */
+export function bidRefusal(auction: AuctionRecord, player: string, gold: number): string | null {
+  // A seller may not bid on their own lot, and no purse or outbidding
+  // will ever change that
+  if (auction.seller === player) {
+    return 'Your own lot';
+  }
+  // The standing bidder is already winning it: bidding against
+  // themselves could only cost them gold
+  if (auction.bidder === player) {
+    return 'You are winning this one';
+  }
+  return gold >= nextBid(auction) ? null : `${nextBid(auction)} gold is more than you hold`;
+}
+
+/**
+ * Naming an amount for a lot.
  *
- * It is used from the board and from the player's own bidding history,
- * where the lot they were outbid on is answered without going looking
- * for it again
+ * A dialog rather than a number box beside every lot: a board is read at
+ * a glance, and a form the length of it is one more thing to press by
+ * accident and tab through on the way to anywhere else.
+ *
+ * It is **its own component**, opened by whoever holds the board rather
+ * than by the button that asks for it. A hover card is where the button
+ * lives now, and a card goes away the moment the pointer does — taking
+ * anything mounted inside it, this dialog included, with it
+ */
+export function BidDialog(props: {
+  /** The lot being bid on, or null while nobody is bidding */
+  lot: AuctionRecord | null;
+  gold: number;
+  /**
+   * What the lot is called: a player naming an amount should be able to
+   * see what they are naming it for
+   */
+  name?: string;
+  onClose: () => void;
+  onBid: (amount: number) => void;
+}): JSX.Element {
+  const [named, setNamed] = createSignal(0);
+
+  /**
+   * The floor, for whichever lot is being bid on. Nothing is a lot that
+   * cannot be bid on, and its floor is one — the dialog is shut
+   */
+  const floor = (): number => (props.lot == null ? 1 : nextBid(props.lot));
+
+  /**
+   * What the bid would be: what the player typed, never below the floor.
+   * The floor moves whenever somebody else bids, and this moves with it
+   * rather than leaving a stale number in the box
+   */
+  const amount = (): number => Math.max(named(), floor());
+
+  // Opened on a fresh lot, so the box starts at what that lot actually
+  // costs rather than at what the last one did — and on opening alone,
+  // since a raise landing while somebody is typing should move the floor
+  // under them rather than retype their bid
+  createEffect(
+    on(
+      () => props.lot != null,
+      (open) => {
+        if (open) {
+          setNamed(floor());
+        }
+      },
+    ),
+  );
+
+  return (
+    <Dialog
+      isOpen={props.lot != null}
+      onClose={props.onClose}
+      title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
+      description="The floor is the seller's least raise. Anything from there to what you are
+            holding is a legal bid, so a lot can be put out of reach in one press."
+    >
+      <Row class="justify-center">
+        <Field label="Bid">
+          <input
+            type="number"
+            min={floor()}
+            max={props.gold}
+            value={amount()}
+            onInput={(event) => {
+              setNamed(Number(event.currentTarget.value));
+            }}
+          />
+        </Field>
+      </Row>
+      <Row class="justify-center">
+        <Meta>
+          {floor()} gold to take it · you hold {props.gold}
+        </Meta>
+      </Row>
+
+      <DialogActions>
+        <Button onClick={props.onClose}>Never mind</Button>
+        <Button
+          tone="primary"
+          disabled={amount() > props.gold}
+          onClick={() => {
+            props.onBid(amount());
+            props.onClose();
+          }}
+        >
+          Bid {amount()} gold
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+/**
+ * What this player may do about a lot: nothing, if it is their own, and
+ * otherwise a bid.
+ *
+ * It is the button and the dialog together, for a caller drawing rows —
+ * the player's own bidding history, where the lot they were outbid on is
+ * answered without going looking for it again. The board keeps the two
+ * apart, since its buttons live in cards
  */
 export function BidControls(props: {
   auction: AuctionRecord;
   player: string;
   gold: number;
-  /**
-   * What the lot is called, for the dialog the button opens: a player
-   * naming an amount should be able to see what they are naming it for
-   */
   name?: string;
   onBid: (amount: number) => void;
 }): JSX.Element {
-  const [named, setNamed] = createSignal(0);
   const [bidding, setBidding] = createSignal(false);
 
-  /**
-   * What the bid would be: what the player typed, never below the
-   * floor. The floor moves whenever somebody else bids, and this moves
-   * with it rather than leaving a stale number in the box
-   */
-  const amount = (): number => Math.max(named(), nextBid(props.auction));
+  const refused = (): string | null => bidRefusal(props.auction, props.player, props.gold);
 
-  /**
-   * Why this player may not bid, or null where they may.
-   *
-   * All three answers used to be a thing standing where the button
-   * would be — a badge reading "yours", a badge reading "winning", a
-   * line about not holding enough — so the column changed shape from
-   * row to row and the eye had to find the button again on each one.
-   * The button is always the button now; the reason rides on it, for
-   * whoever stops on the one that is dead
-   */
-  const refused = (): string | null => {
-    // The standing bidder is already winning it: bidding against
-    // themselves could only cost them gold
-    if (props.auction.bidder === props.player) {
-      return 'You are winning this one';
-    }
-    return props.gold >= nextBid(props.auction)
-      ? null
-      : `${nextBid(props.auction)} gold is more than you hold`;
-  };
-
-  // A seller sees no button at all on their own lot. It is the one
-  // refusal that can never lift — the others are a purse that may fill
-  // or a bid somebody may outbid — so a dead button on it is a control
-  // offered to the one person it will never work for
+  // A seller sees no button at all on their own lot: a dead button on it
+  // is a control offered to the one person it will never work for
   if (props.auction.seller === props.player) {
     return null;
   }
 
   return (
     <>
-      {/* One button on the row, and the amount named in a dialog
-          behind it.
-
-          A board is a list of lots read at a glance, and a number box
-          on every row of it is a form the length of the board —
-          pressed by accident, tabbed through on the way to anything
-          else, and taking up the room the lot itself should have.
-          What a bid *is* has not changed: the floor is the seller's
-          increment and anything up to what the bidder holds is legal,
-          so it is still typed rather than nudged */}
       <Button
         tone="primary"
         disabled={refused() != null}
         title={refused() ?? undefined}
         onClick={() => {
-          setNamed(nextBid(props.auction));
           setBidding(true);
         }}
       >
         Bid
       </Button>
-      <Dialog
-        isOpen={bidding()}
+      <BidDialog
+        lot={bidding() ? props.auction : null}
+        gold={props.gold}
+        name={props.name}
         onClose={() => {
           setBidding(false);
         }}
-        title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
-        description="The floor is the seller's least raise. Anything from there to what you are
-              holding is a legal bid, so a lot can be put out of reach in one press."
-      >
-        <Row class="justify-center">
-          <Field label="Bid">
-            <input
-              type="number"
-              min={nextBid(props.auction)}
-              max={props.gold}
-              value={amount()}
-              onInput={(event) => {
-                setNamed(Number(event.currentTarget.value));
-              }}
-            />
-          </Field>
-        </Row>
-        <Row class="justify-center">
-          <Meta>
-            {nextBid(props.auction)} gold to take it · you hold {props.gold}
-          </Meta>
-        </Row>
-
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setBidding(false);
-            }}
-          >
-            Never mind
-          </Button>
-          <Button
-            tone="primary"
-            disabled={amount() > props.gold}
-            onClick={() => {
-              setBidding(false);
-              props.onBid(amount());
-            }}
-          >
-            Bid {amount()} gold
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onBid={props.onBid}
+      />
     </>
   );
 }
 
 /**
- * What a lot that has stopped taking bids is waiting for: the player
- * to come and get it. A won lot is collected and an unsold one is
- * taken back, which are the same row with different words on it
+ * What a lot that has stopped taking bids is waiting for: the player to
+ * come and get it. A won lot is collected and an unsold one is taken
+ * back, which are the same button with different words on it
  */
-/**
- * How big the picture on a row is: how much a pokemon's sheet is blown
- * up by, and the icon size that comes out about the same for an item.
- *
- * The two are drawn to one size on purpose. A board mixes lots of both
- * kinds now, and an item drawn half the height of the pokemon beside
- * it reads as a lesser thing rather than as a different thing
- */
-const LOT_SPRITE_SCALE = 2;
-
-const LOT_ICON = 48;
-
-/**
- * What a bidder is actually buying, for a pokemon: the sigil it was
- * rolled from, how good the rolls came out, what its nature bends and
- * what it can do.
- *
- * The stars are the **whole** of the values rather than a count of the
- * perfect ones — `getIVStars` divides the six added together by what
- * one of them can reach — so a pokemon that is good everywhere reads
- * as good, rather than as nothing at all until a stat happens to hit
- * 31.
- *
- * Answers null for an item lot and for an egg: an item is entirely
- * described by its name, and an egg is a sealed box whose contents are
- * the buyer's to find out
- */
-function describeLot(caught?: CaughtPokemon): string | null {
-  if (caught == null || isEgg(caught)) {
-    return null;
-  }
-
-  const stars = getIVStars(caught.ivs);
-
-  return [
-    getSigil(caught.individualValue, caught.traitValue),
-    `${'★'.repeat(stars)}${'☆'.repeat(MAX_IV_STARS - stars)}`,
-    NATURE_NAMES[caught.nature],
-    caught.abilities.map(describeAbility).join(', '),
-  ]
-    .filter(Boolean)
-    .join(' · ');
-}
-
 interface LotClaim {
   said: string;
   label: string;
   onClaim: () => void;
-}
-
-/**
- * One lot on the board: what is standing on it, who put it there, and
- * either the way to bid or the way to collect it.
- *
- * A picture, two lines and a button. The picture is what a player
- * actually recognises a lot by — a board of names all set the same way
- * is read word by word — and the two lines under it answer the two
- * questions in the order they are asked: what is it and whose is it,
- * then what is it worth
- */
-function LotRow(props: {
-  auction: AuctionRecord;
-  player: string;
-  gold: number;
-  /**
-   * What an item lot is called, and what a catch lot is searched by
-   */
-  name?: string;
-  /**
-   * The pokemon on the block, once its record has arrived. Absent for
-   * an item lot and while the record is still coming
-   */
-  caught?: CaughtPokemon;
-  seller: string;
-  /**
-   * Open the seller's profile. Absent for the reader's own lot: a
-   * player pressing their own name on the board would be opening a
-   * read-only copy of the profile the menu already gives them
-   */
-  onSeller?: () => void;
-  /**
-   * Open the pokemon on the block in full. Absent for an item lot,
-   * which is already entirely described by its name
-   */
-  onInspect?: () => void;
-  /**
-   * Set when bidding is over and this lot is the player's to take,
-   * which is what a row offers instead of a bid
-   */
-  claim?: LotClaim;
-  onBid: (amount: number) => void;
-}): JSX.Element {
-  /**
-   * What the lot is, said the way a player would say it: the level
-   * first, then the species, then the mark for a shiny. An item is its
-   * own name, and an egg is an egg — what is inside one is the
-   * buyer's to find out
-   */
-  const called = (): string => {
-    const record = props.caught;
-
-    if (record == null) {
-      return props.name ?? 'A pokemon';
-    }
-    if (isEgg(record)) {
-      return 'Egg';
-    }
-    return `Lv. ${record.level} ${getSpeciesData(record.species).name}${
-      isShiny(record) ? ' ✦' : ''
-    }`;
-  };
-
-  return (
-    <ListRow class="items-center gap-3">
-      {/* What it looks like. A pokemon is its sprite, an egg is drawn
-          as an egg, and an item is its icon — the same pictures the
-          bag and the box draw, so a lot is recognised rather than
-          read */}
-      <div class="flex w-16 shrink-0 items-end justify-center">
-        <Show
-          when={props.caught}
-          fallback={
-            // `?? null` rather than truthiness: item id 0 is a real
-            // item, so a falsy test would draw no picture for one
-            <Show when={props.auction.item ?? null} keyed>
-              {(item) => <ItemSprite item={item} size={LOT_ICON} label="" />}
-            </Show>
-          }
-        >
-          {(record) => (
-            <SpriteDisplay
-              species={isEgg(record()) ? Species.Egg : record().species}
-              shiny={!isEgg(record()) && isShiny(record())}
-              animation="Idle"
-              // Turned a little away from the reader, the way the dex
-              // stands its entries: a row of pokemon all facing
-              // straight out reads as a shop window
-              direction="DownLeft"
-              scale={LOT_SPRITE_SCALE}
-              label=""
-            />
-          )}
-        </Show>
-      </div>
-
-      <div class="flex min-w-0 grow flex-col gap-0.5">
-        {/* What it is and whose it is, on one line. A pokemon is worth
-            looking at before bidding on, so its name is the way into
-            the record; an item has nothing further to show and stays
-            plain text */}
-        <span class="flex flex-wrap items-baseline gap-x-1.5 font-medium">
-          <Show when={props.onInspect} fallback={<span>{called()}</span>}>
-            {(inspect) => (
-              // As wide as the name rather than as wide as the row: a
-              // row button stretches by default, which would push the
-              // seller off to the far side of the line it belongs to
-              <RowButton class="grow-0 font-medium" onClick={inspect()}>
-                {called()}
-              </RowButton>
-            )}
-          </Show>
-          {/* Who listed it is a way to them: a board is a room full of
-              strangers selling things, and what somebody else has
-              caught and fought is most of what says whether their lot
-              is worth bidding on */}
-          <Meta>
-            by{' '}
-            <Show when={props.onSeller} fallback={props.seller}>
-              {(visit) => (
-                // Inline and the size of the line it sits in: it is a
-                // word in a sentence rather than a row of its own
-                <RowButton
-                  class="inline text-xs underline decoration-dotted underline-offset-2"
-                  onClick={visit()}
-                >
-                  {props.seller}
-                </RowButton>
-              )}
-            </Show>
-          </Meta>
-        </span>
-
-        {/* And what is actually being bought, for a pokemon: the
-            sigil it was rolled from, how good those rolls came out,
-            what its nature bends and what it can do. An item lot has
-            none of that — a Master Ball is a Master Ball — so the
-            line is simply not there */}
-        <Show when={describeLot(props.caught)}>{(said) => <Meta>{said()}</Meta>}</Show>
-      </div>
-
-      {/* What it stands at and how long is left, on one line, with
-          the one thing to do about it under them. A lot that has
-          stopped taking bids says what it went for instead, since a
-          price reads as an offer on something nobody may bid on any
-          more */}
-      <div class="flex shrink-0 flex-col items-end gap-1">
-        <Meta class="text-right">
-          {props.claim == null ? describeStanding(props.auction) : props.claim.said},{' '}
-          {describeRemaining(props.auction.endsAt, now())}
-        </Meta>
-        <Show
-          when={props.claim}
-          fallback={
-            <BidControls
-              auction={props.auction}
-              player={props.player}
-              gold={props.gold}
-              name={called()}
-              onBid={props.onBid}
-            />
-          }
-        >
-          {(claim) => (
-            <Button tone="primary" onClick={claim().onClaim}>
-              {claim().label}
-            </Button>
-          )}
-        </Show>
-      </div>
-    </ListRow>
-  );
 }
 
 export interface AuctionTabProps {
@@ -742,26 +550,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   /**
-   * Why this one is worth a listing, in a word. It is the same three
-   * answers `isAuctionableCatch` accepts, said back to the player so
-   * the list reads as a reason rather than as an arbitrary shortlist
-   */
-  const sellingWorth = (option: CatchOption): string | null => {
-    const worth: string[] = [];
-
-    if (isShiny(option.caught)) {
-      worth.push('shiny');
-    }
-    if (isPerfectIVs(option.caught.ivs)) {
-      worth.push('perfect');
-    }
-    if (getSpawnRarity(option.caught.species) === SpawnRarity.Special) {
-      worth.push('legendary');
-    }
-    return worth.length === 0 ? null : worth.join(' · ');
-  };
-
-  /**
    * What the player has picked to put up, if anything. Picking is the
    * whole of the sell card's business: the price, the confirmation and
    * the listing itself all belong to the dialog it opens
@@ -873,14 +661,157 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   };
 
   /**
-   * The board, as one list.
+   * Whose lot it is and what it stands at, for the card that comes up
+   * over a square.
    *
-   * It was two columns, items on one side and pokemon on the other,
-   * which sorted the board by the one thing a bidder is *not* looking
-   * for: a player comes to a board to see what is up, and what is up
-   * arrives in the order it was listed. Two columns also meant two
-   * half-empty lists on a board with six lots on it, and a lot that
-   * had just gone up could be either side of the panel
+   * A tray of squares has nowhere to write either — a picture is what a
+   * lot is recognised by, which is the whole reason the board is drawn
+   * this way — so both are in the window over one, and the seller is the
+   * way to their profile: what somebody else has caught and fought is
+   * most of what says whether their lot is worth bidding on
+   */
+  const lotDetails = (auction: AuctionRecord): JSX.Element => (
+    <>
+      <Detail label="Owned by">
+        <Show when={auction.seller !== props.player} fallback={<span>you</span>}>
+          <RowButton
+            class="inline underline decoration-dotted underline-offset-2"
+            onClick={() => {
+              game.setVisiting(auction.seller);
+            }}
+          >
+            {describeSeller(auction)}
+          </RowButton>
+        </Show>
+      </Detail>
+      <Detail label="Bidding">
+        {describeStanding(auction)} · {describeRemaining(auction.endsAt, now())}
+      </Detail>
+    </>
+  );
+
+  /**
+   * The one thing to do about a lot: bid on it, or come and get it once
+   * bidding is over. A seller's own lot offers neither, which is
+   * `BidControls` answering with nothing
+   */
+  /**
+   * Which lot is being bid on, by id rather than by record: a bid landing
+   * anywhere rewrites the listing, and the dialog should be naming an
+   * amount against what the lot stands at now
+   */
+  const [bidding, setBidding] = createSignal<string | null>(null);
+
+  const bidLot = (): AuctionRecord | null =>
+    (auctions() ?? []).find(([id]) => id === bidding())?.[1] ?? null;
+
+  const biddingName = (): string | undefined => {
+    const lot = bidLot();
+
+    return lot == null ? undefined : nameOf(lot);
+  };
+
+  const lotActions = (id: string, auction: AuctionRecord): JSX.Element => (
+    <Show
+      when={claimOf(id, auction)}
+      fallback={
+        // The button asks; the dialog it asks for stands with the panel
+        // rather than inside this card. A card is put away the moment
+        // the pointer leaves it, and it takes whatever is mounted inside
+        // it — which was this dialog, gone before it could be typed in
+        <Show when={auction.seller !== props.player}>
+          <Button
+            tone="primary"
+            disabled={bidRefusal(auction, props.player, gold()) != null}
+            title={bidRefusal(auction, props.player, gold()) ?? undefined}
+            onClick={() => {
+              setBidding(id);
+            }}
+          >
+            Bid
+          </Button>
+        </Show>
+      }
+    >
+      {(taking) => (
+        <Button tone="primary" onClick={taking().onClaim}>
+          {taking().label}
+        </Button>
+      )}
+    </Show>
+  );
+
+  /**
+   * The items on the block, as the bag's own tray reads them: the icon
+   * says what it is, the badge says what it stands at, and the card over
+   * it says whose it is and carries the bid
+   */
+  const itemLots = (): ItemCell[] =>
+    board().flatMap(([id, auction]): ItemCell[] =>
+      auction.lot === AuctionLot.Item && auction.item != null
+        ? [
+            {
+              item: auction.item,
+              note: claimOf(id, auction)?.said ?? describeStanding(auction),
+              said: `${describeItem(auction.item)} — ${describeStanding(
+                auction,
+              )}, by ${describeSeller(auction)}`,
+              card: lotDetails(auction),
+              footer: lotActions(id, auction),
+            },
+          ]
+        : [],
+    );
+
+  /**
+   * And the pokemon, as a box of squares. A lot whose record has not
+   * arrived yet has no square: there is nothing to draw in one
+   */
+  const catchLots = (): [string, AuctionRecord][] =>
+    board().filter(([, auction]) => auction.lot === AuctionLot.Catch);
+
+  const boxed = (): BoxEntry[] =>
+    catchLots().flatMap(([, auction]): BoxEntry[] => {
+      const caught = lots()?.get(auction.caught);
+
+      if (caught == null) {
+        return [];
+      }
+
+      const square = asBoxEntry([auction.caught, caught]);
+
+      // Whose it is, in what the square is announced as. Two sellers
+      // with the same pokemon up are otherwise two identical squares
+      return [{ ...square, label: `${square.label} — by ${describeSeller(auction)}` }];
+    });
+
+  const [box, setBox] = createSignal(0);
+
+  const boxes = (): number => Math.max(1, Math.ceil(boxed().length / BOX_SIZE));
+
+  // Lots close while the board is being read, so the last box can empty
+  // under somebody standing on it
+  createEffect(() => {
+    setBox((at) => Math.min(at, boxes() - 1));
+  });
+
+  const shownCatches = (): BoxEntry[] => boxed().slice(box() * BOX_SIZE, (box() + 1) * BOX_SIZE);
+
+  /**
+   * Which lot a square belongs to. The squares are named by the catch id
+   * the lot is holding, since that is what a box draws
+   */
+  const lotOf = (catchId: string): [string, AuctionRecord] | undefined =>
+    catchLots().find(([, auction]) => auction.caught === catchId);
+
+  /**
+   * The board: the items on one tray and the pokemon on another.
+   *
+   * Both are the trays the rest of the game keeps the same things in —
+   * the bag's squares and the box's — because a lot is recognised by its
+   * picture rather than read: a board of names all set the same way is
+   * read word by word. What a row used to carry beside the name is in
+   * the card that comes up over a square
    */
   const onTheBlock = (): JSX.Element => (
     <Show
@@ -889,41 +820,75 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         <Note>{query().length === 0 ? 'Nothing is up right now.' : 'Nothing here matches.'}</Note>
       }
     >
-      <List>
-        <For each={board()}>
-          {([id, auction]) => (
-            <LotRow
-              auction={auction}
-              player={props.player}
-              gold={gold()}
-              name={nameOf(auction)}
-              caught={lots()?.get(auction.caught)}
-              seller={describeSeller(auction)}
-              onSeller={
-                auction.seller === props.player
-                  ? undefined
-                  : () => {
-                      game.setVisiting(auction.seller);
-                    }
-              }
-              claim={claimOf(id, auction)}
-              onInspect={
-                auction.lot === AuctionLot.Catch
-                  ? () => {
-                      // A pokemon on the block is somebody else's, so
-                      // it opens read-only: the whole record, and
-                      // nothing to press
-                      game.setSheet({ catchId: auction.caught, readOnly: true });
-                    }
-                  : undefined
-              }
-              onBid={(amount) => {
-                bid(id, amount);
-              }}
-            />
+      <Show when={itemLots().length}>
+        <h4>Items</h4>
+        {/* Narrowed by the board's own search, so the tray draws none of
+            its own — and card-only, since a press on a picture is not a
+            bid */}
+        <ItemGrid bare cardOnly entries={itemLots()} />
+      </Show>
+
+      <Show when={shownCatches().length}>
+        <h4>Pokemon</h4>
+        <CatchBox
+          cardOnly
+          entries={shownCatches()}
+          cell={(entry) => (
+            <Show when={lotOf(entry().id)}>
+              {(lot) => (
+                <HoverCard
+                  class="block size-full"
+                  trigger={<span class="block size-full" />}
+                  title="Info"
+                  footer={(close) => (
+                    <>
+                      {/* The whole record, read-only: a pokemon on the
+                          block is somebody else's */}
+                      <Button
+                        onClick={() => {
+                          close();
+                          game.setSheet({ catchId: lot()[1].caught, readOnly: true });
+                        }}
+                      >
+                        View
+                      </Button>
+                      {lotActions(lot()[0], lot()[1])}
+                    </>
+                  )}
+                >
+                  <Show when={lots()?.get(entry().id)}>
+                    {(caught) => <CatchCard caught={caught()} />}
+                  </Show>
+                  {lotDetails(lot()[1])}
+                </HoverCard>
+              )}
+            </Show>
           )}
-        </For>
-      </List>
+        />
+        <Show when={boxes() > 1}>
+          <Row class="justify-center">
+            <Button
+              disabled={box() === 0}
+              onClick={() => {
+                setBox((at) => Math.max(0, at - 1));
+              }}
+            >
+              ‹
+            </Button>
+            <Meta>
+              Box {box() + 1} of {boxes()}
+            </Meta>
+            <Button
+              disabled={box() >= boxes() - 1}
+              onClick={() => {
+                setBox((at) => Math.min(boxes() - 1, at + 1));
+              }}
+            >
+              ›
+            </Button>
+          </Row>
+        </Show>
+      </Show>
     </Show>
   );
 
@@ -1007,7 +972,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
               empty="Nothing of yours is rare enough for the block."
               filter={(option) => isAuctionableCatch(option.caught)}
               reason={sellingReason}
-              note={sellingWorth}
               onPick={(picked) => {
                 if (picked != null) {
                   setOffered({ lot: AuctionLot.Catch, catchId: picked });
@@ -1031,6 +995,27 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
       </Show>
 
       <Status message={status()} />
+
+      {/* Naming an amount. It stands with the panel rather than in the
+          card the Bid button was pressed in: a card is put away as soon
+          as the pointer leaves it, and it would have taken this with it.
+          The lot is looked up rather than held, so a raise that lands
+          while the dialog is open moves the floor under it */}
+      <BidDialog
+        lot={bidLot()}
+        gold={gold()}
+        name={biddingName()}
+        onClose={() => {
+          setBidding(null);
+        }}
+        onBid={(amount) => {
+          const id = bidding();
+
+          if (id != null) {
+            bid(id, amount);
+          }
+        }}
+      />
 
       {/* Putting something up: what it is, the terms, and a second
           dialog that says what listing actually means */}

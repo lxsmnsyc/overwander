@@ -110,11 +110,33 @@ function nicknameOf(trader: Trader): string {
 }
 
 /**
- * The seller's lot, among whatever else is on the board. Every row
- * says who listed it, and no two runs share a name
+ * The seller's lot on the board: a square with a picture on it, in the
+ * tray its kind belongs to. Squares are announced with who listed them,
+ * and no two runs share a name
  */
-function lotOf(board: Locator, seller: Trader): Locator {
-  return board.getByRole('listitem').filter({ hasText: nicknameOf(seller) });
+function lotOf(board: Locator, seller: Trader, kind: 'item' | 'catch'): Locator {
+  return board.getByRole(kind === 'item' ? 'button' : 'img', {
+    name: new RegExp(`by ${nicknameOf(seller)}`),
+  });
+}
+
+/**
+ * Everything a lot has to say, and every button it offers: the card that
+ * comes up when the pointer rests on its square.
+ *
+ * The pointer is taken away first, because hovering where it already is
+ * moves nothing and opens nothing — a card is opened by *arriving* at a
+ * square
+ */
+async function cardOf(page: Page, lot: Locator): Promise<Locator> {
+  await expect(lot).toBeVisible({ timeout: 20_000 });
+  await page.mouse.move(0, 0);
+  await lot.hover();
+
+  const card = page.getByRole('dialog', { name: 'Info' });
+
+  await expect(card).toBeVisible();
+  return card;
 }
 
 /**
@@ -123,10 +145,9 @@ function lotOf(board: Locator, seller: Trader): Locator {
  * amount is typed rather than nudged
  */
 async function bid(page: Page, board: Locator, lot: Locator, amount: number): Promise<void> {
-  // The row carries one button; the amount is named in the dialog it
-  // opens, since a number box on every row of a board is a form the
-  // length of the board
-  await lot.getByRole('button', { name: 'Bid', exact: true }).click();
+  // The card carries one bid button, wearing the floor as a badge; the
+  // amount itself is named in the dialog it opens
+  await (await cardOf(page, lot)).getByRole('button', { name: /^Bid/ }).click();
 
   const naming = dialogNamed(page, /^Bid on /);
 
@@ -158,18 +179,21 @@ test.describe('the auction house', () => {
     await sellerBoard.getByRole('button', { name: /^Sell Master Ball,/ }).click();
     await putItUp(seller.page, /^Auction Master Ball$/, 5);
 
-    // Listed: the board comes back with the lot on it, under the
-    // seller's own name
-    await expect(sellerBoard.getByText(/by you/)).toBeVisible();
+    // Listed: the board comes back with the lot on it, on the tray the
+    // items are kept in and under the seller's own name
+    await expect(sellerBoard.getByRole('button', { name: /^Master Ball —.*by you/ })).toBeVisible();
 
     // The other side of the board
     await grantGold(buyer, 100);
 
     const buyerBoard = await openPanel(buyer.page, 'Auctions');
-    const lot = lotOf(buyerBoard, seller);
+    const lot = lotOf(buyerBoard, seller, 'item');
 
-    await expect(lot).toBeVisible({ timeout: 20_000 });
-    await expect(lot.getByText('Master Ball')).toBeVisible();
+    // What it is and whose it is, in the card the square puts up
+    const card = await cardOf(buyer.page, lot);
+
+    await expect(card.getByText('Master Ball')).toBeVisible();
+    await expect(card.getByText(nicknameOf(seller))).toBeVisible();
     await bid(buyer.page, buyerBoard, lot, 10);
 
     // The gold left the bidder's purse as the bid was made rather than
@@ -179,11 +203,14 @@ test.describe('the auction house', () => {
     await closeBidding(seller.uid);
 
     // Nothing happens at the closing instant — the winner collects
-    // when they come back for it
-    const collect = lot.getByRole('button', { name: 'Collect' });
+    // when they come back for it. The square wears what it went for and
+    // the card carries the way to take it
+    await expect(lot.getByText('won for 10 gold')).toBeVisible({ timeout: 20_000 });
+
+    const won = await cardOf(buyer.page, lot);
+    const collect = won.getByRole('button', { name: 'Collect' });
 
     await expect(collect).toBeVisible({ timeout: 20_000 });
-    await expect(lot.getByText('won for 10 gold')).toBeVisible();
     await collect.click();
     await expect(buyerBoard.getByText('Collected.')).toBeVisible();
 
@@ -232,22 +259,26 @@ test.describe('the auction house', () => {
     await pressBoxSquare(seller.page, box, 'Sell');
     await putItUp(seller.page, /^Auction /, 5);
 
-    await expect(sellerBoard.getByText(/by you/)).toBeVisible();
+    await expect(sellerBoard.getByRole('img', { name: /by you/ })).toBeVisible({
+      timeout: 20_000,
+    });
 
     await grantGold(buyer, 100);
 
     const buyerBoard = await openPanel(buyer.page, 'Auctions');
-    const lot = lotOf(buyerBoard, seller);
+    const lot = lotOf(buyerBoard, seller, 'catch');
 
-    // What a bidder is buying: the values, said as stars rather than as
-    // six numbers
-    await expect(lot).toBeVisible({ timeout: 20_000 });
-    await expect(lot.getByText('★★★★★★')).toBeVisible();
+    // What a bidder is buying, on the card the square puts up: the
+    // values, said as stars rather than as six numbers
+    const card = await cardOf(buyer.page, lot);
+
+    await expect(card.getByText('★★★★★★')).toBeVisible();
     await bid(buyer.page, buyerBoard, lot, 20);
 
     await closeBidding(seller.uid);
 
-    const collect = lot.getByRole('button', { name: 'Collect' });
+    const won = await cardOf(buyer.page, lot);
+    const collect = won.getByRole('button', { name: 'Collect' });
 
     await expect(collect).toBeVisible({ timeout: 20_000 });
     await collect.click();

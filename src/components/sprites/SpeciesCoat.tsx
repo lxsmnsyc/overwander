@@ -2,7 +2,7 @@ import type { JSX } from 'solid-js';
 import type { SpriteDirection } from '../../canvas/sprite-sheet';
 import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
-import SpriteDisplay from './SpriteDisplay';
+import AnimatedSprite from './AnimatedSprite';
 
 /**
  * A pokemon drawn to what the reader has earned of it.
@@ -74,7 +74,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
   const named = (): string => props.called ?? getSpeciesData(props.species).name;
 
   return (
-    <SpriteDisplay
+    <AnimatedSprite
       species={props.met ? props.species : Species.Missingno}
       shiny={props.met && props.shiny === true}
       animation={props.met ? (props.animation ?? 'Idle') : 'Sleep'}
@@ -84,6 +84,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       duration={props.met ? props.duration : undefined}
       direction={props.direction ?? 'Down'}
       scale={props.scale}
+      shadow
       // Black by day and white by night: a silhouette is the shape
       // with the colour taken out of it, and "no colour" is a
       // different colour on a page that is paper in one theme and

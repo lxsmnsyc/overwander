@@ -105,7 +105,7 @@ import InventoryPicker from '../items/InventoryPicker';
 import { describeItem, detailItem } from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import SpeciesCoat from '../sprites/SpeciesCoat';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeachMoveDialog from './TeachMoveDialog';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import TypeBadge from '../sprites/TypeBadge';
@@ -1645,12 +1645,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     that was above the pokemon is better spent under
                     the header than between the pokemon and its name */}
                 <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
-                  <SpriteDisplay
+                  <AnimatedSprite
                     species={isEgg(loaded()) ? Species.Egg : loaded().species}
                     shiny={!isEgg(loaded()) && isShiny(loaded())}
                     animation="Walk"
                     direction="DownLeft"
                     scale={4}
+                    shadow
                     label={named()}
                   />
                 </div>
@@ -2208,8 +2209,22 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                                 </RowButton>
                               )}
                             </Show>
+                            {/* How they came by it, when, and what it
+                                cost them where it cost anything: a lot
+                                off the block is the one handover with a
+                                price on it, and the price is most of
+                                what the entry is worth reading for */}
                             <Meta>
                               {ACQUISITION_NAMES[entry.kind]} · {describeDate(entry.acquiredAt)}
+                              {/* Grouped, since a winning bid runs to
+                                  five figures and a bare 12000 is read
+                                  digit by digit. Tested for absence
+                                  rather than truth: nought gold is a
+                                  price, and nothing is not */}
+                              <Show when={entry.paid != null}>
+                                {' '}
+                                · {(entry.paid ?? 0).toLocaleString('en-US')} gold
+                              </Show>
                             </Meta>
                           </ListRow>
                         )}

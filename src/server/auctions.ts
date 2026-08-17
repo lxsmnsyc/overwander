@@ -352,7 +352,16 @@ export async function claimAuction(
         owner: uid,
         history: [
           ...record.history,
-          { owner: uid, acquiredAt: toLocalISO(now, offset), kind: Acquisition.Auction },
+          {
+            owner: uid,
+            acquiredAt: toLocalISO(now, offset),
+            kind: Acquisition.Auction,
+            // What it went for, kept with the handover rather than with
+            // the pokemon: the lot is settled and gone a moment later,
+            // so this is the only place the figure survives — and a
+            // pokemon that comes round the block twice keeps both
+            paid: auction.bid,
+          },
         ],
         friendship: BASE_FRIENDSHIP,
       });

@@ -8,7 +8,7 @@ import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import CatchPicker from './CatchPicker';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
 
 /**
@@ -160,12 +160,13 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
                   half of three is not a whole number of pixels, which
                   for pixel art is the one scale that looks wrong */}
               <div class="flex shrink-0 items-end justify-center">
-                <SpriteDisplay
+                <AnimatedSprite
                   species={isEgg(pair()[1]) ? Species.Egg : pair()[1].species}
                   shiny={!isEgg(pair()[1]) && isShiny(pair()[1])}
                   animation="Walk"
                   direction="DownLeft"
                   scale={2}
+                  shadow
                   label={
                     isEgg(pair()[1])
                       ? `An egg, walking with ${walker()}`

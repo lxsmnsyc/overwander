@@ -297,3 +297,26 @@
       shadow-pop-sm;
   }
 }
+
+/**
+ * One star of a shiny's sparkle: it opens, holds an instant at its
+ * widest, drifts up and is gone. It runs once — a pokemon that
+ * glittered permanently would be scenery within a minute — so the
+ * element it is on is recreated rather than replayed
+ */
+@keyframes sparkle-star {
+  from {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-30%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-65%) scale(0.3);
+  }
+}

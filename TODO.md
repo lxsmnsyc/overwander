@@ -17,10 +17,9 @@
 - [ ] Make sign in with email + password dev-only
 - [ ] effect sprites
 - [ ] gift page
-- [ ] unified catch picker
-- [ ] catch tooltip
 - [ ] move tooltip
 - [ ] catch tags
+- [ ] candy like catch box
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
 

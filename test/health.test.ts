@@ -399,6 +399,48 @@ describe('stored records', () => {
     expect(ACQUISITION_NAMES[Acquisition.Trade]).not.toBe('');
   });
 
+  it('keeps what a lot was won for with the handover that paid it', () => {
+    const owned = asCaughtPokemon({
+      ...bulbasaur,
+      owner: 'second',
+      type: EncounterType.Wild,
+      history: [
+        { owner: 'catcher', acquiredAt: '2026-01-01T00:00:00+08:00', kind: Acquisition.Caught },
+        {
+          owner: 'first',
+          acquiredAt: '2026-02-01T00:00:00+08:00',
+          kind: Acquisition.Auction,
+          paid: 500,
+        },
+        {
+          owner: 'second',
+          acquiredAt: '2026-03-01T00:00:00+08:00',
+          kind: Acquisition.Auction,
+          paid: 12_000,
+        },
+      ],
+    });
+
+    // A pokemon that has been round the block twice keeps both figures:
+    // what the second winner paid says nothing about what the first did
+    expect(owned.history.map((entry) => entry.paid)).toEqual([null, 500, 12_000]);
+  });
+
+  it('reads a sale written before the price was kept', () => {
+    const owned = asCaughtPokemon({
+      ...bulbasaur,
+      type: EncounterType.Wild,
+      history: [
+        { owner: 'catcher', acquiredAt: '2026-01-01T00:00:00+08:00', kind: Acquisition.Caught },
+        { owner: 'buyer', acquiredAt: '2026-02-01T00:00:00+08:00', kind: Acquisition.Auction },
+      ],
+    });
+
+    // Nothing rather than nought: the figure was never written, which
+    // is not the same as a lot won for no gold
+    expect(owned.history[1].paid).toBeNull();
+  });
+
   it('reads a history written before the kind existed', () => {
     // The first entry is where the pokemon began, which the record's
     // own type knows; anything after it can only be a sale, since the

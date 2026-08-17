@@ -7,7 +7,7 @@ import { getSpeciesData } from '../../data/species';
 import { ROCKET_PARTY_LEVEL } from '../../overworld/rocket';
 import { NPC_QUOTES } from './NpcDialog';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Dialog, DialogActions, Meta, Status } from '../styled';
 import { useGame } from '../app/game-context';
 
@@ -101,11 +101,12 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                           spilling over. The box is whatever the sprite
                           is, and the row lines their feet up */}
                       <div class="flex items-end justify-center">
-                        <SpriteDisplay
+                        <AnimatedSprite
                           species={entry.species}
                           animation="Idle"
                           direction="Down"
                           scale={3}
+                          shadow
                           label={`${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`}
                         />
                       </div>

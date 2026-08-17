@@ -22,11 +22,18 @@ test.describe('another trainer', () => {
     await dismissGift(page);
 
     const board = await openPanel(page, 'Auctions');
-    const named = board.getByRole('button', { name: seller.nickname, exact: true });
+    const square = board.getByRole('button', { name: new RegExp(`by ${seller.nickname}`) });
 
     // The board follows the auctions collection, so the staged lot
-    // lands a subscription's round trip after the panel does
-    await expect(named).toBeVisible({ timeout: 20_000 });
+    // lands a subscription's round trip after the panel does. Who listed
+    // it is in the card the square puts up, and it is the way to them
+    await expect(square).toBeVisible({ timeout: 20_000 });
+    await square.hover();
+
+    const card = page.getByRole('dialog', { name: 'Info' });
+    const named = card.getByRole('button', { name: seller.nickname, exact: true });
+
+    await expect(named).toBeVisible();
     await named.click();
 
     const profile = dialogNamed(page, seller.nickname);
@@ -65,15 +72,17 @@ test.describe('another trainer', () => {
 
     const board = await openPanel(page, 'Auctions');
     // Every lot of theirs says who listed it, and the staging put an
-    // item of theirs up as well; the pokemon is the one with a level
-    // on it, and the only one that can be opened in full
-    const lot = board
-      .getByRole('listitem')
-      .filter({ hasText: seller.nickname })
-      .filter({ hasText: /Lv\. \d+/ });
+    // item of theirs up as well; the pokemon is a square of the box
+    // rather than of the bag, and the card over it opens the record
+    const lot = board.getByRole('img', { name: new RegExp(`by ${seller.nickname}`) });
 
     await expect(lot).toBeVisible({ timeout: 20_000 });
-    await lot.getByRole('button').first().click();
+    await lot.hover();
+
+    const card = page.getByRole('dialog', { name: 'Info' });
+
+    await expect(card).toBeVisible();
+    await card.getByRole('button', { name: 'View' }).click();
 
     const sheet = dialogNamed(page, SHEET);
 

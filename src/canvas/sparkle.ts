@@ -26,18 +26,18 @@ export const SPARKLE_LIFE = 1100;
  * How long one star of it lasts. They are staggered across the whole
  * of the sparkle, so the last one is fading as the sparkle ends
  */
-const SPARKLE_STAR_LIFE = 520;
+export const SPARKLE_STAR_LIFE = 520;
 
 /**
  * How many stars one sparkle throws
  */
-const SPARKLE_STARS = 7;
+export const SPARKLE_STARS = 7;
 
 /**
  * How big a star is at its widest, as a share of the sprite's own
  * width
  */
-const SPARKLE_STAR_SIZE = 0.34;
+export const SPARKLE_STAR_SIZE = 0.34;
 
 /**
  * The smallest a star is ever drawn, in pixels. A pokemon standing
@@ -58,7 +58,7 @@ const SPARKLE_RISE = 0.12;
  * middle, so they spread a little past the picture — a caller drawing
  * into a box cut to the sprite passes a narrower one
  */
-const SPARKLE_SPREAD = 1.4;
+export const SPARKLE_SPREAD = 1.4;
 
 export const SPARKLE_COLORS = {
   /**
@@ -91,7 +91,7 @@ export interface SparkleOptions {
  * sparkle that re-rolled on every frame would shimmer rather than
  * sparkle
  */
-function sparkleStar(
+export function sparkleStar(
   seed: number,
   star: number,
   spread: number,

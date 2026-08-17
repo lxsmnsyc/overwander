@@ -21,7 +21,7 @@ import { getMoveData } from '../../data/moves';
 import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '../../data/species';
 import { STAT_LABELS, describeAbility, detailAbility } from '../catches/CatchDialog';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
-import { dexLabel } from './PokedexCanvas';
+import { dexLabel } from './PokedexGrid';
 import SpeciesCoat from '../sprites/SpeciesCoat';
 import TypeBadge from '../sprites/TypeBadge';
 import {

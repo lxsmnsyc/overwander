@@ -11,7 +11,7 @@ import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 
 import MovePicker, { MoveLine } from './MovePicker';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, List, Meta, Note, Status } from '../styled';
 
 /**
@@ -153,12 +153,13 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
     <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
       {(record) => (
         <div class="flex justify-center">
-          <SpriteDisplay
+          <AnimatedSprite
             species={isEgg(record()) ? Species.Egg : record().species}
             shiny={!isEgg(record()) && isShiny(record())}
             animation="Idle"
             direction="Down"
             scale={4}
+            shadow
             label={named()}
           />
         </div>

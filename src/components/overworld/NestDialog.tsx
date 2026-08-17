@@ -1,6 +1,6 @@
 import { type JSX, Show } from 'solid-js';
 import { Species } from '../../data/ids/species';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
 
 /**
@@ -99,11 +99,12 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
               {/* On the floor of its box, so the line under it sits
                   where it sits for every other sprite in the game */}
               <div class="flex items-end justify-center">
-                <SpriteDisplay
+                <AnimatedSprite
                   species={Species.Egg}
                   animation="Idle"
                   direction="Down"
                   scale={4}
+                  shadow
                   label="An egg"
                 />
               </div>

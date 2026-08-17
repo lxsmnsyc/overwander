@@ -318,6 +318,12 @@ claim the visit _before_ taking the gold — a player already seen should not be
 charged to be told so — and both the gold and the visit go back if the write
 behind them fails.
 
+Nurse Joy's marker **counts** rather than merely existing. She is pressed one
+pokemon at a time, and her window is still one visit of up to
+`NURSE_CARE_LIMIT` pokemon, so the marker holds the ids she has already seen to
+and each press takes what room is left. Handing the same pokemon over twice takes
+no room — the first press left it whole.
+
 - **Breeder** — takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed back
   the moment the egg exists. What the pair may produce is decided by
@@ -336,12 +342,12 @@ behind them fails.
   moves with the jump, since those steps were not walked and the time they would
   have taken must not be banked for the next report.
 
-- **Nurse Joy** — takes up to `NURSE_CARE_LIMIT` (6) of the player's pokemon and
-  charges **nothing**. Every one of them comes back at full health with its
-  statuses cleared, and any shadow among them is
+- **Nurse Joy** — takes the player's pokemon a press at a time, up to
+  `NURSE_CARE_LIMIT` (6) in a window, and charges **nothing**. Each comes back at
+  full health with its statuses cleared, and a shadow is
   [purified](catches.md#purifying-a-shadow) on the way. What paces her is the
-  window alone, since there is no fee to pace her: a party that needed nothing is
-  handed straight back without spending the visit.
+  window alone, since there is no fee to pace her: one that needed nothing is
+  handed straight back without taking any of her room.
 
 - **Groomer** — takes one of the player's pokemon and `GROOMING_FEE` gold, and
   hands it back thinking half again as well of them. `groomedFriendship` adds half

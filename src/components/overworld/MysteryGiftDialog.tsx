@@ -3,7 +3,7 @@ import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../..
 import getSigil from '../../data/constants/sigil';
 import { getSpeciesData } from '../../data/species';
 import ItemStash from './ItemStash';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta } from '../styled';
 
 /**
@@ -115,12 +115,13 @@ export default function MysteryGiftDialog(props: MysteryGiftDialogProps): JSX.El
           {(given) => (
             <div class="flex flex-col items-center gap-2 text-center">
               <p class="text-lg font-semibold">Congratulations!</p>
-              <SpriteDisplay
+              <AnimatedSprite
                 species={given().species}
                 shiny={given().shiny}
                 animation="Idle"
                 direction="DownLeft"
                 scale={4}
+                shadow
                 label={describeGiven(given())}
               />
               <div class="flex flex-col items-center gap-0.5">

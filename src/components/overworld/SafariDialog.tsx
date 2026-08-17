@@ -11,7 +11,7 @@ import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../../overworld/safari';
 import InventoryPicker, { describeItem } from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Status } from '../styled';
 
 /**
@@ -331,23 +331,15 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
             <Show
               when={rummaging() && active().state === SafariState.Active}
               fallback={
-                // The whole of the space rather than a box cut to the
-                // pokemon: a shiny throws its stars wider and higher
-                // than it stands, and a canvas the size of the sprite
-                // cuts them off in a straight line. Nothing is set
-                // around it either — the picture is the panel here,
-                // and a margin is only somewhere else for a star to
-                // be clipped against.
-                //
-                // The room is still held: the bag stands in the same
-                // space when it is opened, and a panel that changed
+                // The room is held whatever is standing in it: the bag
+                // opens into the same space, and a panel that changed
                 // height would move the buttons out from under the
                 // finger. It is held **below** the pokemon rather than
                 // around it, so nothing is pushed away from the
-                // heading
-                <div class="min-h-52 w-full">
-                  <SpriteDisplay
-                    stretch
+                // heading — and the stars a shiny throws fall outside
+                // the picture, which nothing here clips
+                <div class="flex min-h-52 w-full items-end justify-center">
+                  <AnimatedSprite
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
                     // What the dialog's own title is already saying,

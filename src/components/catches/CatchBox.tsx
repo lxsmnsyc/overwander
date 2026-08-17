@@ -72,7 +72,11 @@ export interface BoxEntry {
 
 export interface CatchBoxProps {
   entries: BoxEntry[];
-  onOpen: (id: string) => void;
+  /**
+   * What a press on a square does. A card-only box has none — the
+   * buttons are in the card that comes up over it
+   */
+  onOpen?: (id: string) => void;
   /**
    * What stands over an occupied square: a hover card, usually. It is
    * laid over the square rather than beside the sprite, so whatever is
@@ -222,7 +226,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   aria-pressed={entry().mark === 'picked'}
                   class={`${SQUARE} cursor-pointer ${toneOf(entry())}`}
                   onClick={() => {
-                    props.onOpen(entry().id);
+                    props.onOpen?.(entry().id);
                   }}
                 >
                   {inside(entry)}

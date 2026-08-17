@@ -4,7 +4,7 @@ import { getLairTitle } from '../../data/overworld/lair';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';
 
@@ -216,19 +216,16 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                 short one put their feet on the same line and the name
                 below does not move */}
             <div class="flex flex-col items-center gap-2 py-2 text-center">
-              {/* The canvas takes the whole width of the panel rather
-                  than being cut to the picture. A sprite is drawn the
-                  same size either way; what changes is that a wide one
-                  — a legendary bird's wingspan is half again its
-                  height — has room to be wide in instead of being
-                  clipped down the middle of a wing */}
+              {/* Room kept for a wingspan: the row is the width of the
+                  panel and the picture is as wide as it happens to be,
+                  so a legendary bird has somewhere to put its wings */}
               <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
-                <SpriteDisplay
-                  stretch
+                <AnimatedSprite
                   species={standing().species}
                   animation="Sleep"
                   direction="DownLeft"
                   scale={4}
+                  shadow
                   label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
                 />
               </div>

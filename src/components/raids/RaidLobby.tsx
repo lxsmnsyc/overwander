@@ -23,7 +23,7 @@ import { getProfile } from '../../auth/profile';
 import { type TeamRecord, getTeam } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import TypeBadge from '../sprites/TypeBadge';
 import matches from '../../core/search';
@@ -211,17 +211,16 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
               {/* Feet on the floor of the box rather than in the
                   middle of one: a tall boss and a short one put their
                   name on the same line that way */}
-              {/* Wide enough for a wingspan: the canvas is the width
-                  of the panel rather than the width of the sprite, so
-                  nothing is clipped off the side of a picture that
-                  happens to be wider than it is tall */}
+              {/* Wide enough for a wingspan: the row is the width of
+                  the panel and the picture is as wide as it happens to
+                  be */}
               <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
-                <SpriteDisplay
-                  stretch
+                <AnimatedSprite
                   species={record().species}
                   animation="Sleep"
                   direction="DownLeft"
                   scale={4}
+                  shadow
                   label={`${getSpeciesData(record().species).name}, waiting in the lair`}
                 />
               </div>

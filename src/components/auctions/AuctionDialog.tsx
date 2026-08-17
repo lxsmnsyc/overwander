@@ -16,7 +16,7 @@ import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { describeItem } from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
 
 /**
@@ -190,12 +190,13 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
       <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
         {(record) => (
           <div class="flex justify-center">
-            <SpriteDisplay
+            <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
               shiny={!isEgg(record()) && isShiny(record())}
               animation="Idle"
               direction="Down"
               scale={4}
+              shadow
               label={named()}
             />
           </div>

@@ -2,7 +2,7 @@ import { type JSX, Show, createEffect, createResource, createSignal } from 'soli
 import { getPokedex } from '../../auth/pokedex';
 import type { Species } from '../../data/ids/species';
 import { getBaseForms, getSpeciesData } from '../../data/species';
-import PokedexCanvas, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexCanvas';
+import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
 import { Badge, Button, Meta, Note, Panel, Row } from '../styled';
 import { useGame } from '../app/game-context';
 
@@ -132,7 +132,7 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
       </Row>
 
       <Show when={dex.latest != null} fallback={<Note>Reading the dex…</Note>}>
-        <PokedexCanvas entries={shown()} onOpen={open} />
+        <PokedexGrid entries={shown()} onOpen={open} />
       </Show>
     </Panel>
   );

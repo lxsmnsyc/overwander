@@ -64,15 +64,16 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | -------------------- | ---------------------------------------- | ------------------------------------------ |
 | **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately  |
 | **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained             |
-| **Nurse Joy**        | Up to six pokemon, free                  | All healed, and any shadow purified        |
+| **Nurse Joy**        | Up to six pokemon, one at a time, free   | Each healed, and any shadow purified       |
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
-cleared, and any shadow pokemon among them purified on the way. Only the six-hour
-window paces her.
+cleared, and any shadow pokemon purified on the way. Press a pokemon and she sees
+to that one; she will see to six of them while she is standing there, so there is
+nothing to gather up first. Only the six-hour window paces her.
 
 **The Groomer** always adds half of what friendship remains, so he is worth a
 great deal to a pokemon fresh out of a ball and almost nothing to one that is

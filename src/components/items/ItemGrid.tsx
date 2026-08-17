@@ -5,16 +5,7 @@ import { describeItem, detailItem } from '../details';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matches from '../../core/search';
-import {
-  Button,
-  Filter,
-  type FilterOption,
-  HoverCard,
-  Meta,
-  Note,
-  Row,
-  Search,
-} from '../styled';
+import { Button, Filter, type FilterOption, HoverCard, Meta, Note, Row, Search } from '../styled';
 
 /**
  * The bag as a tray of pictures rather than a column of names.
@@ -126,6 +117,25 @@ export interface ItemCell {
    * picker that treats every square alike says it once
    */
   action?: string | null;
+  /**
+   * More about this square, under what the item itself says. It is for
+   * a tray whose squares are not simply things — a lot on the auction
+   * board is an item *and* whose it is and what it stands at
+   */
+  card?: JSX.Element;
+  /**
+   * What a reader is told about this square, instead of the sentence the
+   * tray writes from the item and the count. A board of lots needs whose
+   * it is in there: two sellers with a Poke Ball up are two squares that
+   * would otherwise be announced identically
+   */
+  said?: string;
+  /**
+   * What stands in this square's card instead of the one button the
+   * tray would draw. A caller that has its own buttons — bid, collect,
+   * take it back — writes them here
+   */
+  footer?: JSX.Element;
 }
 
 export interface ItemGridProps {
@@ -147,6 +157,12 @@ export interface ItemGridProps {
    * vendor's crate, where a stray click on a picture was a purchase
    */
   cardOnly?: boolean;
+  /**
+   * Whether the caller narrows the tray itself, so it draws no search
+   * and no shelves of its own. A screen with one search over two trays
+   * would otherwise have three of them
+   */
+  bare?: boolean;
   onPress?: (item: Items) => void;
 }
 
@@ -221,24 +237,26 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           is on at the right. Both are drawn whatever the tray holds —
           a bag that grew a search box once it passed eight things was
           a screen that changed shape as the player filled it */}
-      <Row class="flex-nowrap items-start justify-between gap-2">
-        <Search
-          placeholder="Search the bag"
-          value={query()}
-          onChange={(typed) => {
-            setQuery(typed);
-          }}
-        />
-        <Filter
-          class="ml-auto"
-          label="Category"
-          value={shelf()}
-          options={categories()}
-          onChange={(picked) => {
-            setCategory(picked);
-          }}
-        />
-      </Row>
+      <Show when={props.bare !== true}>
+        <Row class="flex-nowrap items-start justify-between gap-2">
+          <Search
+            placeholder="Search the bag"
+            value={query()}
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
+          <Filter
+            class="ml-auto"
+            label="Category"
+            value={shelf()}
+            options={categories()}
+            onChange={(picked) => {
+              setCategory(picked);
+            }}
+          />
+        </Row>
+      </Show>
 
       {/* Narrowed to nothing is the tray's own news to break: what the
           caller says when the bag is empty is a different sentence */}
@@ -258,33 +276,37 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             <HoverCard
               class="block w-full"
               title="Info"
-              // One button and nothing else. What it costs is on the
-              // square and so is why it is refused — a card repeating
-              // both is the same square said twice
+              // One button and nothing else, unless the caller brought
+              // its own. What it costs is on the square and so is why it
+              // is refused — a card repeating both is the same square
+              // said twice
               footer={
-                <Show when={cell.action ?? props.verb}>
-                  {(verb) => (
-                    <Button
-                      tone="primary"
-                      disabled={props.disabled === true || cell.blocked != null}
-                      onClick={() => {
-                        press(cell);
-                      }}
-                    >
-                      {verb()}
-                    </Button>
-                  )}
-                </Show>
+                cell.footer ?? (
+                  <Show when={cell.action ?? props.verb}>
+                    {(verb) => (
+                      <Button
+                        tone="primary"
+                        disabled={props.disabled === true || cell.blocked != null}
+                        onClick={() => {
+                          press(cell);
+                        }}
+                      >
+                        {verb()}
+                      </Button>
+                    )}
+                  </Show>
+                )
               }
               trigger={
                 <button
                   type="button"
                   disabled={props.disabled === true || cell.blocked != null}
-                  aria-label={`${props.verb == null ? '' : `${props.verb} `}${describeItem(
-                    cell.item,
-                  )}${cell.amount == null ? '' : `, ${cell.amount} carried`}${
-                    cell.blocked == null ? '' : ` — ${cell.blocked}`
-                  }`}
+                  aria-label={
+                    cell.said ??
+                    `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell.item)}${
+                      cell.amount == null ? '' : `, ${cell.amount} carried`
+                    }${cell.blocked == null ? '' : ` — ${cell.blocked}`}`
+                  }
                   aria-pressed={cell.selected === true}
                   onClick={() => {
                     if (props.cardOnly !== true) {
@@ -334,6 +356,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               }
             >
               <ItemCard item={cell.item} carried={cell.carried ?? cell.amount} />
+              {cell.card}
             </HoverCard>
           )}
         </For>

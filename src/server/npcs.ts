@@ -36,7 +36,7 @@ import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
-import { type UpdateFields, asNumber, docData } from './read';
+import { type UpdateFields, asNumber, asStringArray, docData } from './read';
 
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.
@@ -96,6 +96,69 @@ async function takeVisit(
   const id = `${snapshot.key}@${snapshot.npcTimestamp}$${tag}${cell}:${uid}`;
 
   return (await claim(NPC_CLAIM_COLLECTION, id, { player: uid, ...record })) ? id : null;
+}
+
+/**
+ * Take room in Nurse Joy's window for the pokemon she is about to see
+ * to.
+ *
+ * Hers counts rather than merely existing, because she is pressed one
+ * pokemon at a time: her window is still one visit, and one visit is
+ * still `NURSE_CARE_LIMIT` pokemon, so the marker holds which ones she
+ * has already had and refuses once the room is used up. Handing the same
+ * one over twice takes no room — the first press left it whole.
+ *
+ * Resolves the ids she has room for, which is empty when she has none
+ * left
+ */
+async function takeCare(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  uid: string,
+  catches: string[],
+): Promise<string[]> {
+  const db = getAdminFirestore();
+  const ref = db
+    .collection(NPC_CLAIM_COLLECTION)
+    .doc(`${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`);
+
+  return db.runTransaction(async (transaction) => {
+    const seen = asStringArray(docData(await transaction.get(ref))?.catches);
+    const already = new Set(seen);
+    const room = catches
+      .filter((one) => !already.has(one))
+      .slice(0, NURSE_CARE_LIMIT - seen.length);
+
+    if (room.length === 0) {
+      return [];
+    }
+    transaction.set(ref, { player: uid, catches: [...seen, ...room] });
+    return room;
+  });
+}
+
+/**
+ * Give room in her window back, for pokemon she turned out not to tend
+ */
+async function dropCare(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  uid: string,
+  catches: string[],
+): Promise<void> {
+  const db = getAdminFirestore();
+  const ref = db
+    .collection(NPC_CLAIM_COLLECTION)
+    .doc(`${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`);
+  const given = new Set(catches);
+
+  await db.runTransaction(async (transaction) => {
+    const seen = asStringArray(docData(await transaction.get(ref))?.catches).filter(
+      (one) => !given.has(one),
+    );
+
+    transaction.set(ref, { player: uid, catches: seen });
+  });
 }
 
 /**
@@ -304,28 +367,36 @@ export async function visitNurse(
     return null;
   }
 
-  const visit = await takeVisit(snapshot, 'nurse', cell, uid, { catches });
+  const room = new Set(
+    await takeCare(
+      snapshot,
+      cell,
+      uid,
+      care.map(([ref]) => ref.id),
+    ),
+  );
 
-  if (visit == null) {
+  if (room.size === 0) {
     return null;
   }
 
   const batch = db.batch();
+  const tending = care.filter(([ref]) => room.has(ref.id));
 
-  for (const [ref, fields] of care) {
+  for (const [ref, fields] of tending) {
     batch.update(ref, fields);
   }
 
   try {
     await batch.commit();
   } catch (error) {
-    // She was asked and did nothing; the window is given back rather
-    // than spent on a write that never landed
-    await releaseVisit(visit);
+    // She was asked and did nothing; the room is given back rather than
+    // spent on a write that never landed
+    await dropCare(snapshot, cell, uid, [...room]);
     throw error;
   }
 
-  return care.map(([ref]) => ref.id);
+  return tending.map(([ref]) => ref.id);
 }
 
 /**

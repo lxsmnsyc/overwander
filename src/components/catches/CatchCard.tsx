@@ -72,7 +72,14 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
    */
   const slots = (): null[] =>
     Array.from(
-      { length: Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item)) },
+      {
+        // Room is only worth drawing to somebody who can fill it: on a
+        // stranger's pokemon an empty slot is a button nobody may press
+        length:
+          props.owned === true
+            ? Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item))
+            : caught().items.length,
+      },
       () => null,
     );
 

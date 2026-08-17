@@ -17,25 +17,34 @@ test.describe('the auction board', () => {
     await dismissGift(page);
   });
 
-  test('is one list, whatever is standing on the lots', async ({ page }) => {
+  test('draws its lots as trays of squares rather than a list of names', async ({ page }) => {
     // Somebody else's lot, so the board has something on it whatever
     // the emulator was left holding
     const seller = await stageSeller('Bracken');
     const board = await openPanel(page, 'Auctions');
 
     await expect(board.getByText('Loading auctions…')).toBeHidden({ timeout: 20_000 });
-    await expect(board.getByRole('listitem').filter({ hasText: seller.nickname })).toBeVisible({
-      timeout: 20_000,
+
+    // The same trays the rest of the game keeps these things in: an
+    // item lot is a square of the bag, a pokemon lot is a square of the
+    // box. A lot is recognised by its picture rather than read
+    const square = board.getByRole('button', {
+      name: new RegExp(`^Poke Ball —.*by ${seller.nickname}`),
     });
 
-    // One list rather than a column for items and a column for
-    // pokemon: a board is read in the order things were listed, and
-    // sorting it by what a lot happens to be is sorting it by the one
-    // thing a bidder is not looking for. It carries no heading of its
-    // own either — the dialog is already called Auctions
-    await expect(board.getByRole('heading', { name: 'Items' })).toBeHidden();
-    await expect(board.getByRole('heading', { name: 'Pokemon', exact: true })).toBeHidden();
-    await expect(board.getByRole('list')).toHaveCount(1);
+    await expect(square).toBeVisible({ timeout: 20_000 });
+    await expect(board.getByRole('heading', { name: 'Items' })).toBeVisible();
+
+    // Everything a row used to carry is in the card the square puts up,
+    // including whose lot it is and the one thing to do about it
+    await square.hover();
+
+    const card = page.getByRole('dialog', { name: 'Info' });
+
+    await expect(card).toBeVisible();
+    await expect(card.getByText('Owned by')).toBeVisible();
+    await expect(card.getByRole('button', { name: seller.nickname })).toBeVisible();
+    await expect(card.getByRole('button', { name: /^Bid/ })).toBeVisible();
   });
 
   test('offers selling from the top bar rather than from the bottom of the list', async ({

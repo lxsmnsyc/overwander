@@ -27,7 +27,7 @@ the three rule blocks that had to `get()` the parent to find an owner.
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch         |
 | `slots`                | `number`                | Room for abilities, held items and moves — three bits each |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`          |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind }`, oldest first                |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind, paid }`, oldest first           |
 | `shiny`                | `boolean`               | Sparkled for whoever caught it                             |
 | `shadow`               | `boolean`               | Out of a shadow raid; cleared by purifying                 |
 | `egg`                  | `boolean`               | Still in the shell                                         |
@@ -411,6 +411,14 @@ something its second owner bought, and the two fields say so separately.
 `Trade` exists before trading does on purpose: a member added later would leave
 old records needing to be told apart from new ones by their shape.
 
+An entry also carries `paid`: what that owner spent in gold, where the handover
+cost gold at all. Only `claimAuction` writes it, with the winning bid. It belongs
+to the **handover** rather than to the pokemon — a Mewtwo may come round the block
+twice, and what the second winner paid says nothing about what the first did — and
+it is the only place the figure survives, since the lot is settled and gone a
+moment later. A sale written before the price was kept reads as `null`, which is
+not the same as a lot won for nothing.
+
 A record written before the field existed still reads correctly, because both
 cases are knowable. The **first** entry is where the pokemon began, which the
 record's `type` already says — `Hatched` means an egg, anything else means a catch
@@ -550,7 +558,8 @@ everyone else by the checks that were already there — while staying **readable
 which is what lets a bidder see what they are bidding on.
 
 Collecting the lot writes the winner's uid into `owner`, appends the sale to
-`history` and resets `friendship` to `BASE_FRIENDSHIP`: the pokemon has just met
+`history` — with what it went for in `paid` — and resets `friendship` to
+`BASE_FRIENDSHIP`: the pokemon has just met
 its new trainer, and what it thought of the last one was theirs. A lot nobody bid
 on goes back to the seller instead, which restores `owner` and leaves both
 `history` and `friendship` alone — it never changed hands. See

@@ -379,6 +379,17 @@ export interface OwnershipRecord {
    * How they came by it
    */
   kind: Acquisition;
+  /**
+   * What they paid for it in gold, where it changed hands for gold at
+   * all — the winning bid, for a lot off the block. Null for a pokemon
+   * somebody caught, hatched or was given, and for a sale recorded
+   * before the figure was kept.
+   *
+   * It is part of the history rather than of the pokemon because it is
+   * a fact about *that* handover: a Mewtwo may be won twice, and what
+   * the second winner paid says nothing about what the first did
+   */
+  paid: number | null;
 }
 
 /**
@@ -402,6 +413,9 @@ function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecor
       owner: asString(record.owner),
       acquiredAt: asString(record.acquiredAt),
       kind: record.kind == null ? older : (asNumber(record.kind) as Acquisition),
+      // A sale written before the price was kept says nothing about it,
+      // which is not the same as having been won for nothing
+      paid: typeof record.paid === 'number' ? asNumber(record.paid) : null,
     };
   });
 }

@@ -11,7 +11,7 @@ import { getSpeciesData } from '../../data/species';
 import { PP_ITEMS } from '../../data/items/vitamins';
 import { describeItem } from '../items/InventoryPicker';
 import MovePicker from './MovePicker';
-import SpriteDisplay from '../sprites/SpriteDisplay';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 
 /**
@@ -182,12 +182,13 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
       <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
         {(record) => (
           <div class="flex justify-center">
-            <SpriteDisplay
+            <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
               shiny={!isEgg(record()) && isShiny(record())}
               animation="Idle"
               direction="Down"
               scale={4}
+              shadow
               label={named()}
             />
           </div>

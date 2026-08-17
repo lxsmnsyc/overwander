@@ -1,5 +1,4 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { DEX_COLUMNS } from '../src/components/dex/PokedexCanvas';
 import { patchDocument, uidOf } from './emulator';
 import {
   type Player,
@@ -30,13 +29,6 @@ import {
 const DEX = 'Dex Entry';
 
 /**
- * Press one square of the dex. The grid is one canvas rather than a
- * hundred and fifty elements, so which species is where has to be
- * worked out from the geometry — the same way the canvas works it out
- * from the pointer. Squares are square, so the height of one is the
- * width of one
- */
-/**
  * Put a species in the player's dex, as met and kept.
  *
  * Which pokemon a new account is handed is the game's own roll, so a
@@ -52,20 +44,16 @@ async function stageDex(page: Page, player: Player, species: number): Promise<vo
   await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 }
 
+/**
+ * Press one square of the dex, counted in the order the page shows them.
+ * Every square is a button, whether or not the species behind it has
+ * been met
+ */
 async function pressSquare(dex: Locator, index: number): Promise<void> {
-  const grid = dex.getByRole('application', { name: /^Pokedex/ });
+  const grid = dex.getByRole('group', { name: /^Pokedex/ });
 
   await expect(grid).toBeVisible();
-
-  const bounds = await grid.boundingBox();
-  const cell = (bounds?.width ?? 0) / DEX_COLUMNS;
-
-  await grid.click({
-    position: {
-      x: (index % DEX_COLUMNS) * cell + cell / 2,
-      y: Math.floor(index / DEX_COLUMNS) * cell + cell / 2,
-    },
-  });
+  await grid.getByRole('button').nth(index).click();
 }
 
 async function openEntry(page: Page, index: number): Promise<void> {
@@ -93,15 +81,16 @@ test.describe('the pokedex', () => {
     await expect(dex.getByText(/\d+ caught/)).toBeVisible();
     await expect(dex.getByText(/of 151/)).toBeVisible();
 
-    const grid = dex.getByRole('application', { name: /^Pokedex/ });
+    const grid = dex.getByRole('group', { name: /^Pokedex/ });
 
     await expect(grid).toBeVisible();
 
-    // Wide enough to be a grid of squares. A canvas that failed to be
-    // measured draws itself a pixel wide and is otherwise visible
+    // Wide enough to be a grid of squares, and thirty of them: a page is
+    // full whatever the dex holds
     const bounds = await grid.boundingBox();
 
     expect(bounds?.width ?? 0).toBeGreaterThan(200);
+    await expect(grid.getByRole('button')).toHaveCount(30);
     // Six across and five down, whatever page it is on: the dex is
     // paged rather than drawn in one column twenty-six rows long
     expect(bounds?.height ?? 0).toBeLessThan(bounds?.width ?? 0);

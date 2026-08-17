@@ -361,6 +361,9 @@ export async function claimAuction(
             // so this is the only place the figure survives — and a
             // pokemon that comes round the block twice keeps both
             paid: auction.bid,
+            // And the ball it was in when it came across, which the
+            // winner is free to change afterwards
+            ball: record.ball,
           },
         ],
         friendship: BASE_FRIENDSHIP,

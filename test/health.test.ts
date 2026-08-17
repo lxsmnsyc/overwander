@@ -20,7 +20,7 @@ import {
   rescaleHealth,
 } from '../src/auth/health';
 import { Stats, getHealthStat, packIVs } from '../src/data/constants/stats';
-import { Items } from '../src/data/ids/items';
+import { Balls, Items } from '../src/data/ids/items';
 import { bitterness, isHerbal } from '../src/data/items/medicine';
 import { Species } from '../src/data/ids/species';
 import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
@@ -424,6 +424,56 @@ describe('stored records', () => {
     // A pokemon that has been round the block twice keeps both figures:
     // what the second winner paid says nothing about what the first did
     expect(owned.history.map((entry) => entry.paid)).toEqual([null, 500, 12_000]);
+  });
+
+  it('keeps the ball each owner received it in', () => {
+    const owned = asCaughtPokemon({
+      ...bulbasaur,
+      owner: 'second',
+      type: EncounterType.Wild,
+      // The pokemon sits in a Luxury Ball today, whoever put it there
+      ball: Balls.LuxuryBall,
+      history: [
+        {
+          owner: 'catcher',
+          acquiredAt: '2026-01-01T00:00:00+08:00',
+          kind: Acquisition.Caught,
+          ball: Balls.DuskBall,
+        },
+        {
+          owner: 'second',
+          acquiredAt: '2026-02-01T00:00:00+08:00',
+          kind: Acquisition.Auction,
+          ball: Balls.DuskBall,
+        },
+      ],
+    });
+
+    // The entries say how it arrived, which a later re-balling does not
+    // rewrite: it was caught and bought in a Dusk Ball, and somebody
+    // has moved it since
+    expect(owned.history.map((entry) => entry.ball)).toEqual([Balls.DuskBall, Balls.DuskBall]);
+    expect(owned.ball).toBe(Balls.LuxuryBall);
+  });
+
+  it('reads a handover written before the ball was kept', () => {
+    const owned = asCaughtPokemon({
+      ...bulbasaur,
+      type: EncounterType.Wild,
+      ball: Balls.NetBall,
+      history: [
+        { owner: 'catcher', acquiredAt: '2026-01-01T00:00:00+08:00', ball: 'great' },
+        { owner: 'buyer', acquiredAt: '2026-02-01T00:00:00+08:00', kind: Acquisition.Auction },
+      ],
+    });
+
+    // Where the pokemon began is answerable without the field: nothing
+    // could re-ball a record written before re-balling existed, so the
+    // ball it is in is the one it was caught in. A stored value that is
+    // not a ball at all is no better than a missing one
+    expect(owned.history[0].ball).toBe(Balls.NetBall);
+    // A later sale is not answerable, and says so
+    expect(owned.history[1].ball).toBeNull();
   });
 
   it('reads a sale written before the price was kept', () => {

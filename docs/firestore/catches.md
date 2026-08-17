@@ -27,7 +27,7 @@ the three rule blocks that had to `get()` the parent to find an owner.
 | `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch         |
 | `slots`                | `number`                | Room for abilities, held items and moves — three bits each |
 | `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`          |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind, paid }`, oldest first           |
+| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind, paid, ball }`, oldest first    |
 | `shiny`                | `boolean`               | Sparkled for whoever caught it                             |
 | `shadow`               | `boolean`               | Out of a shadow raid; cleared by purifying                 |
 | `egg`                  | `boolean`               | Still in the shell                                         |
@@ -54,7 +54,7 @@ the three rule blocks that had to `get()` the parent to find an owner.
 trusting it — `asNickname` trims the ends, counts a run of spaces as one, drops
 control characters and cuts the rest to `NICKNAME_LIMIT` — and a name that cleans
 to nothing clears the field. A **guarded** catch may still be named, since what
-guarding protects is everything that changes what a pokemon *is*; a **fighting**
+guarding protects is everything that changes what a pokemon _is_; a **fighting**
 one may not, for the usual reason.
 
 An empty `nickname` is not a missing one: it means nobody has named this pokemon,
@@ -119,8 +119,11 @@ something horrible and shrugs, while one that trusted them takes it badly.
 
 Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**
 (`friendshipFactor`); neither loss is. The ball is a field of the record, so the
-bonus is decided at the catch and holds for good, and no writer has to look
-anything else up to apply it.
+bonus follows whatever ball the pokemon is in now — and since `useBall`
+([`balls.ts`](../../src/server/balls.ts)) lets an owner spend a spare ball to
+replace it, the bonus can be bought for a pokemon that was caught in something
+else. What a ball did at the moment of the catch — a Heal Ball mending it, the
+odds a Dusk Ball improved — was settled then and is not revisited.
 
 ### Packed fields
 
@@ -418,6 +421,11 @@ twice, and what the second winner paid says nothing about what the first did —
 it is the only place the figure survives, since the lot is settled and gone a
 moment later. A sale written before the price was kept reads as `null`, which is
 not the same as a lot won for nothing.
+
+And `ball`: the ball it was in when that owner received it. The pokemon's own
+`ball` is whatever it sits in **today**, since any owner can spend a spare ball
+from the bag to re-ball it, so the entry keeps the one it arrived in. A handover
+written before the ball was kept reads as `null`.
 
 A record written before the field existed still reads correctly, because both
 cases are knowable. The **first** entry is where the pokemon began, which the

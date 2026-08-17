@@ -34,6 +34,10 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   return (
     <CatchPicker
       inline
+      // Browsing, so the square is the button: a press opens the
+      // record. The card over it still says what is in the square, for
+      // deciding which one to open
+      pressable
       player={props.player}
       viewOnly={props.viewOnly}
       value={null}

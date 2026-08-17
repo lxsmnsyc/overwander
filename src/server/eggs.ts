@@ -182,7 +182,7 @@ async function writeEgg(
     items: [],
     // It was never anybody else's: this owner is where the pokemon
     // begins, egg and all
-    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg }],
+    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: Balls.NestBall }],
     // An egg on top of whatever the pokemon inside is, and never
     // locked: an egg cannot be fielded
     shiny: fields.shiny,

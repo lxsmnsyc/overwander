@@ -150,7 +150,9 @@ export async function writeCaughtRecord(
     // Whatever it was carrying when it was met comes with it, cut to
     // the room the line above just gave it
     items: encounter.items.slice(0, DEFAULT_ITEM_SLOTS),
-    history: [{ owner: uid, acquiredAt: caughtAt, kind }],
+    // The ball is on the entry as well as on the pokemon: this is the
+    // one it arrived in, and a later owner may put it in another
+    history: [{ owner: uid, acquiredAt: caughtAt, kind, ball }],
     // Whatever was true of the meeting is true of the record: it
     // sparkled for this player, or it came out of a shadow raid
     shiny: encounter.shiny,

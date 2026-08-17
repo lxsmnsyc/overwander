@@ -84,6 +84,21 @@ are worth throwing for what happens afterwards:
 
 The Premier Ball is commemorative and nothing more.
 
+### Changing a ball
+
+A pokemon can be moved into a different ball at any time: open its sheet, choose
+**Use item**, and pick a ball out of the bag. The ball is spent, and the one it
+was in is gone.
+
+Mostly this is for how a pokemon looks in its records, but a Luxury Ball is worth
+moving into — the friendship bonus follows whatever ball the pokemon is in now,
+not the one it was caught in. What a ball did at the moment of the catch does
+not come back: putting a pokemon in a Heal Ball today heals nobody.
+
+The record remembers regardless. Each line of a pokemon's history shows the ball
+it was in when that owner received it, so a Beedrill caught in a Dusk Ball still
+says so after it has been moved.
+
 ### Berries
 
 Ten berries may be fed, each worth **25% more** catch chance. They stack
@@ -109,7 +124,7 @@ it is that individual's **own Speed** — its level, its individual stats and it
 nature all count, not merely its species' reputation. Effort training is not
 counted, since nothing wild has trained.
 
-A young pokemon is therefore easy to catch *and* easy to hold on to, while a
+A young pokemon is therefore easy to catch _and_ easy to hold on to, while a
 fully grown fast one is neither. Even the fastest pokemon flees at most half the
 time, so nothing is impossible to keep.
 

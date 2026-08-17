@@ -390,6 +390,13 @@ export interface OwnershipRecord {
    * the second winner paid says nothing about what the first did
    */
   paid: number | null;
+  /**
+   * The ball it was in when this owner received it. The pokemon's own
+   * `ball` is whatever it sits in today — a later owner can put it in
+   * another — so the entry keeps the one it arrived in. Null for a
+   * handover recorded before the ball was kept
+   */
+  ball: Balls | null;
 }
 
 /**
@@ -398,7 +405,11 @@ export interface OwnershipRecord {
  * the field existed — the caller knows whether it was caught or
  * hatched, and the history does not
  */
-function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecord[] {
+function asOwnershipHistory(
+  value: unknown,
+  origin: Acquisition,
+  caughtIn: Balls | null,
+): OwnershipRecord[] {
   if (!Array.isArray(value)) {
     return [];
   }
@@ -408,6 +419,10 @@ function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecor
     // first is where the pokemon began and every later one can only be
     // a sale: the auction house is the one thing that ever appended
     const older = at === 0 ? origin : Acquisition.Auction;
+    // And the same for the ball: where the pokemon began is answerable
+    // from the record's own — nothing could have re-balled a catch
+    // written before re-balling existed — while a later sale is not
+    const wore = at === 0 ? caughtIn : null;
 
     return {
       owner: asString(record.owner),
@@ -416,6 +431,7 @@ function asOwnershipHistory(value: unknown, origin: Acquisition): OwnershipRecor
       // A sale written before the price was kept says nothing about it,
       // which is not the same as having been won for nothing
       paid: typeof record.paid === 'number' ? asNumber(record.paid) : null,
+      ball: typeof record.ball === 'number' ? (asNumber(record.ball) as Balls) : wore,
     };
   });
 }
@@ -497,6 +513,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     history: asOwnershipHistory(
       data.history,
       type === EncounterType.Hatched ? Acquisition.Egg : Acquisition.Caught,
+      typeof data.ball === 'number' ? (asNumber(data.ball) as Balls) : null,
     ),
     lockedAt: asNumber(data.lockedAt),
     steps: asNumber(data.steps),

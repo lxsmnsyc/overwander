@@ -3,7 +3,7 @@ import type { User } from 'firebase/auth';
 import { getInventory } from '../../auth/inventory';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
-import { BALL_ITEMS, Balls, type Items } from '../../data/ids/items';
+import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
 import { isShiny } from '../../auth/caught-record';
 import { getSpeciesData } from '../../data/species';
@@ -13,14 +13,6 @@ import InventoryPicker, { describeItem } from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Status } from '../styled';
-
-/**
- * The ball a carried item stands for, so the bag can be filtered
- * down to what is throwable
- */
-const BALLS_BY_ITEM = new Map<Items, Balls>(
-  Object.entries(BALL_ITEMS).map(([ball, item]) => [item, Number(ball)]),
-);
 
 /**
  * Whether the item is something the encounter would eat
@@ -148,7 +140,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
 
     if (active != null && carried != null) {
       active.ballsLeft = carried
-        .filter((entry) => BALLS_BY_ITEM.has(entry.item))
+        .filter((entry) => getBall(entry.item) != null)
         .reduce((total, entry) => total + entry.amount, 0);
       setRevision((value) => value + 1);
     }
@@ -156,7 +148,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
 
   const balls = (): [Balls, number][] =>
     (bag() ?? [])
-      .map((entry): [Balls | undefined, number] => [BALLS_BY_ITEM.get(entry.item), entry.amount])
+      .map((entry): [Balls | null, number] => [getBall(entry.item), entry.amount])
       .filter((pair): pair is [Balls, number] => pair[0] != null);
 
   /**
@@ -205,7 +197,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
    * session throws from here on; a treat is only for the next throw
    */
   const take = (item: Items): void => {
-    const ball = BALLS_BY_ITEM.get(item);
+    const ball = getBall(item);
 
     setRummaging(false);
     setStatus(null);
@@ -365,7 +357,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 value={inHand()}
                 empty="Nothing in the bag to throw."
                 filter={(entry) =>
-                  BALLS_BY_ITEM.has(entry.item) || (isTreat(entry.item) && active().canFeed())
+                  getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
                 }
                 entries={bag()}
                 onPick={(item) => {

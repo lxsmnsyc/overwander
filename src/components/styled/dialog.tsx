@@ -260,11 +260,13 @@ export function Dialog(props: DialogProps): JSX.Element {
 
   return (
     <Portal mount={portalHost()}>
-      {/* The overlay and the panel fade together, as one thing arriving
-          over the page. The transition is what mounts and unmounts the
-          dialog now — terracotta's own `unmount` is turned off, or a
-          closed dialog would be gone before it could fade */}
-      <Transition appear show={props.isOpen} {...FADE}>
+      {/* This says *when* the dialog is there and nothing about how it
+          looks getting there: the overlay and the panel carry the fade
+          themselves. An animated wrapper would multiply its opacity
+          into theirs and unmount them the moment its own transition
+          ended. Terracotta's `unmount` is turned off below, so the
+          mounting is entirely this one's */}
+      <Transition appear show={props.isOpen}>
         <HeadlessDialog
           isOpen
           unmount={false}
@@ -294,12 +296,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             and needs the ground behind it to fall back */}
           <DialogOverlay
             as={TransitionChild}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            {...FADE}
             class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]"
           />
           {/* This element is to trick the browser into centering the modal contents. */}
@@ -308,12 +305,7 @@ export function Dialog(props: DialogProps): JSX.Element {
           </span>
           <DialogPanel
             as={TransitionChild}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
+            {...FADE}
             class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}
           >
             <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>

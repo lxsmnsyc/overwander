@@ -39,6 +39,7 @@ import {
   healedByItem,
   isFainted,
 } from '../../auth/health';
+import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import usePurifyingGem from '../../auth/purify';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
@@ -71,7 +72,15 @@ import { isPPItem, isVitamin } from '../../data/items/vitamins';
 import { isWing } from '../../data/items/wings';
 import type Natures from '../../data/ids/natures';
 import { NATURE_NAMES, getNatureFactor } from '../../data/ids/natures';
-import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data/ids/items';
+import {
+  BALL_ITEMS,
+  Balls,
+  ItemFlags,
+  type Items,
+  getBall,
+  getMachineMove,
+  isMachineItem,
+} from '../../data/ids/items';
 import { EvolutionMethod, Species } from '../../data/ids/species';
 import { getItemData } from '../../data/items';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
@@ -126,10 +135,10 @@ import {
   Note,
   Row,
   RowButton,
-  Status,
   StepButton,
   TabBar,
   TabButton,
+  type ToastTone,
   TooltipHost,
   useToast,
 } from '../styled';
@@ -294,6 +303,13 @@ function isMeasurableEvolution(evolution: EvolutionData): boolean {
  * recognised as the stone it is
  */
 const CONDITION_ICON = 24;
+
+/**
+ * And how big the ball on a history row is: the same size as the text
+ * beside it, since it is read as part of the line rather than as a
+ * picture of its own
+ */
+const HISTORY_BALL = 20;
 
 /**
  * What an evolution asks for, read straight off the row after the
@@ -480,7 +496,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const auth = useAuth();
   const toast = useToast();
   const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
-  const [status, setStatus] = createSignal<string | null>(null);
+
+  /**
+   * What an action has to say for itself. It is said in the corner
+   * rather than at the foot of the sheet: the sheet is a long column,
+   * and a line under the bottom of it is a line nobody scrolled to
+   */
+  const say = (message: string, tone: ToastTone = 'neutral'): void => {
+    toast.push({ message, tone });
+  };
 
   const view = (): CaughtPokemon | null => {
     // `latest` rather than the resource itself: everything on this
@@ -557,7 +581,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return undefined;
     }
     return () => {
-      setStatus(null);
       open(next);
     };
   };
@@ -776,10 +799,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (uid == null || catchId == null) {
       return;
     }
-    setStatus(null);
     useCandy(catchId)
       .then(async (level) => {
-        setStatus(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+        say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
         await refetch();
         await refetchCandies();
         await refetchEvolutions();
@@ -790,7 +812,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         }
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -820,8 +842,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * below: some of it can be handed over, some of it can be spent on
    * the pokemon, and the two lists move together when either does
    */
+  /**
+   * Keyed on the sheet as well as the owner, so each pokemon opened
+   * re-reads it. The sheet is mounted for the whole session — it is
+   * the route's, not a list's — so a bag read once on mount is the bag
+   * as it was before the player had played: a new account's read
+   * landed before the starter gift did, and Use item stayed empty for
+   * good
+   */
   const [bag, { refetch: refetchBag }] = createResource(
-    () => owned(),
+    () => (props.catchId == null ? null : owned()),
     async (uid) => getInventory(uid),
   );
 
@@ -864,10 +894,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (uid == null || catchId == null) {
       return;
     }
-    setStatus(null);
     (give ? giveItem(catchId, item) : takeItem(catchId, item))
       .then(async (moved) => {
-        setStatus(
+        say(
           moved
             ? `${describeItem(item)} ${give ? 'handed over' : 'taken back'}.`
             : `${describeItem(item)} could not be ${give ? 'handed over' : 'taken back'}.`,
@@ -878,7 +907,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -888,10 +917,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (owned() == null || catchId == null) {
       return;
     }
-    setStatus(null);
     useHealingItem(catchId, item)
       .then(async (state: HealthState | null) => {
-        setStatus(
+        say(
           state == null
             ? `${describeItem(item)} would do nothing for it.`
             : // Herbal medicine is swallowed, and the pokemon holds it
@@ -905,7 +933,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -920,16 +948,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     refused: string,
     landed: (result: TrainingResult) => string,
   ): void => {
-    setStatus(null);
     running
       .then(async (result) => {
-        setStatus(result == null ? refused : landed(result));
+        say(result == null ? refused : landed(result));
         await refetch();
         await refetchBag();
         props.onChange?.();
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        say(thrown instanceof Error ? thrown.message : String(thrown), 'ember');
       });
   };
 
@@ -986,10 +1013,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (owned() == null || catchId == null) {
       return;
     }
-    setStatus(null);
     usePurifyingGem(catchId, item)
       .then(async (ivs) => {
-        setStatus(
+        say(
           ivs == null
             ? `${describeItem(item)} could not be used.`
             : `The shadow is gone — ${describeIVs(ivs)}.`,
@@ -999,7 +1025,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1009,10 +1035,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (owned() == null || catchId == null) {
       return;
     }
-    setStatus(null);
     useBottleCap(catchId, item)
       .then(async (ivs) => {
-        setStatus(
+        say(
           ivs == null
             ? `${describeItem(item)} could not be used.`
             : `${describeItem(item)} polished it — ${describeIVs(ivs)}.`,
@@ -1022,7 +1047,34 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
+  };
+
+  /**
+   * Put it in the ball that was just spent on it. The history is not
+   * touched: what each owner received it in is a fact about the
+   * handover, not about the ball it sits in today
+   */
+  const reball = (item: Items): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    useBall(catchId, item)
+      .then(async (ball) => {
+        say(
+          ball == null
+            ? `${describeItem(item)} could not be used.`
+            : `It is in ${withArticle(describeItem(item))} now.`,
+        );
+        await refetch();
+        await refetchBag();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1039,14 +1091,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (uid == null || catchId == null) {
       return;
     }
-    setStatus(null);
     setBuddy(uid, catchId)
       .then(async (set) => {
-        setStatus(set ? 'Walking with you now.' : 'That one cannot come along.');
+        say(set ? 'Walking with you now.' : 'That one cannot come along.');
         await refetchBuddy();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1056,10 +1107,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (owned() == null || catchId == null) {
       return;
     }
-    setStatus(null);
     hatchEgg(catchId)
       .then(async (species) => {
-        setStatus(
+        say(
           species == null
             ? 'It is not ready yet.'
             : `It hatched into ${getSpeciesData(species).name}!`,
@@ -1070,7 +1120,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1081,18 +1131,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (uid == null || catchId == null) {
       return;
     }
-    setStatus(null);
     evolveCatch(catchId, into)
       .then(async (species) => {
-        setStatus(
-          species == null ? 'That evolution is no longer available.' : 'Evolution complete.',
-        );
+        say(species == null ? 'That evolution is no longer available.' : 'Evolution complete.');
         await refetch();
         await refetchEvolutions();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1102,15 +1149,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * the same way: write, re-read, say what happened
    */
   const mark = (setting: Promise<boolean | null>, said: string, refused: string): void => {
-    setStatus(null);
     setting
       .then(async (marked) => {
-        setStatus(marked == null ? refused : said);
+        say(marked == null ? refused : said);
         await refetch();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1152,24 +1198,23 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (owned() == null || catchId == null || draft == null) {
       return;
     }
-    setStatus(null);
     setRenaming(true);
     setNickname(catchId, draft)
       .then(async (given) => {
         setRenaming(false);
 
         if (given == null) {
-          setStatus('That name could not be given.');
+          say('That name could not be given.', 'ember');
           return;
         }
         setNaming(null);
-        setStatus(given === '' ? 'Its name is its own again.' : `It answers to ${given} now.`);
+        say(given === '' ? 'Its name is its own again.' : `It answers to ${given} now.`);
         await refetch();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setRenaming(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1222,13 +1267,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       setReleasing(true);
       return;
     }
-    setStatus(null);
     releaseCatch(catchId)
       .then((released) => {
         setReleasing(false);
 
         if (!released) {
-          setStatus('It could not be released.');
+          say('It could not be released.', 'ember');
           return;
         }
         // Said in passing rather than on the sheet, because the sheet
@@ -1247,7 +1291,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setReleasing(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -1315,6 +1359,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (isBottleCap(item)) {
       return !isPerfectIVs(caught.ivs);
     }
+    // A ball re-balls it, so the one it is already in would be spent
+    // on nothing
+    const ball = getBall(item);
+
+    if (ball != null) {
+      return ball !== caught.ball;
+    }
     if (isPurifyingGem(item)) {
       return isShadow(caught);
     }
@@ -1368,7 +1419,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       setBottle(item);
       return;
     }
-    if (isBottleCap(item)) {
+    if (getBall(item) != null) {
+      reball(item);
+    } else if (isBottleCap(item)) {
       polish(item);
     } else if (isPurifyingGem(item)) {
       purify(item);
@@ -1400,7 +1453,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (isUsable(item)) {
       useOn(item);
     } else {
-      setStatus(`${describeItem(item)} would do this one no good.`);
+      say(`${describeItem(item)} would do this one no good.`, 'ember');
     }
   });
 
@@ -1509,7 +1562,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         // back to afterwards
         isOpen={props.catchId != null && teaching() == null && bottle() == null && naming() == null}
         onClose={() => {
-          setStatus(null);
           // A release half-confirmed is a release declined
           setReleasing(false);
           setPanel(null);
@@ -2191,6 +2243,17 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <For each={loaded().history}>
                         {(entry) => (
                           <ListRow>
+                            {/* The ball it arrived in, which is not
+                                always the one it sits in now: a later
+                                owner can re-ball it, and the entry is
+                                the record of how it came across */}
+                            <Show when={entry.ball != null}>
+                              <ItemSprite
+                                item={BALL_ITEMS[entry.ball ?? Balls.PokeBall]}
+                                size={HISTORY_BALL}
+                                label={describeItem(BALL_ITEMS[entry.ball ?? Balls.PokeBall])}
+                              />
+                            </Show>
                             {/* A previous owner is a way to them. The
                                 reader's own name is not: pressing it
                                 would open a read-only copy of the
@@ -2253,7 +2316,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <Row class="justify-center">
                       <Button
                         tone="danger"
-                        disabled={fighting.latest === true || onlyOne.latest === true}
+                        // A favorite and a locked one are both marks a
+                        // player put on the record to stop exactly
+                        // this, so the button is dead rather than
+                        // pressable and refused
+                        disabled={
+                          fighting.latest === true ||
+                          onlyOne.latest === true ||
+                          isFavorite(loaded()) ||
+                          isGuarded(loaded())
+                        }
                         onClick={release}
                       >
                         {releasing()
@@ -2273,6 +2345,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <Show when={isFavorite(loaded())}>
                       <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
                     </Show>
+                    <Show when={isGuarded(loaded())}>
+                      <Meta>A locked pokemon cannot be released. Unlock it first.</Meta>
+                    </Show>
                     {/* Nothing takes the last one: a player with an
                           empty collection has no way back into the
                           game except the gift that would replace it */}
@@ -2282,15 +2357,12 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   </DialogSection>
                 </Show>
               </div>
-
-              <Status message={status()} />
             </>
           )}
         </Show>
         <DialogActions>
           <Button
             onClick={() => {
-              setStatus(null);
               setReleasing(false);
               setPanel(null);
               props.onClose();
@@ -2317,7 +2389,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
         onClose={nextTeaching}
         onTaught={() => {
-          setStatus(teaching()?.levelled === true ? 'Learned.' : 'Taught.');
+          say(teaching()?.levelled === true ? 'Learned.' : 'Taught.', 'leaf');
           Promise.all([refetch(), refetchBag()])
             .then(() => {
               props.onChange?.();
@@ -2396,7 +2468,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           setBottle(null);
         }}
         onUsed={(said) => {
-          setStatus(said);
+          say(said);
           Promise.all([refetch(), refetchBag()])
             .then(() => {
               props.onChange?.();

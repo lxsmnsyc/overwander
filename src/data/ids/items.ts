@@ -788,3 +788,17 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.QuickBall]: Items.QuickBall,
   [Balls.DuskBall]: Items.DuskBall,
 };
+
+const BALLS_BY_ITEM = new Map<Items, Balls>(
+  // The keys of a numeric enum record come back as strings
+  Object.entries(BALL_ITEMS).map(([ball, item]) => [item, Number(ball)]),
+);
+
+/**
+ * The ball an item stands for, or null for anything that is not one.
+ * The pairing is read both ways — a throw spends the item, a record
+ * names the ball — so the reverse is derived rather than written twice
+ */
+export function getBall(item: Items): Balls | null {
+  return BALLS_BY_ITEM.get(item) ?? null;
+}

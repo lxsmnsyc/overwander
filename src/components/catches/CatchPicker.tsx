@@ -99,6 +99,17 @@ interface CatchPickerCommonProps {
    */
   viewOnly?: boolean;
   /**
+   * Whether a press on the square itself takes the pick, instead of
+   * only the button on the card over it.
+   *
+   * For a list that is *browsing* rather than choosing: opening a
+   * record is what a player does to square after square, and hovering
+   * for a card each time is a step in the way of it. A picker whose
+   * pick costs something keeps the card's button, since a stray press
+   * there spends a fee
+   */
+  pressable?: boolean;
+  /**
    * Render the list on its own, with no dialog and no button to open
    * one
    */
@@ -493,7 +504,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           <CatchBox
             entries={page()}
             onOpen={pressById}
-            cardOnly
+            cardOnly={props.pressable !== true}
             cell={(entry) => (
               <Show when={options().find((option) => option.id === entry().id)}>
                 {(option) => (

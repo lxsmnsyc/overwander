@@ -123,20 +123,30 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
       >
         {/* The nature rather than the species: the line above already
             says what it is called, and a nature is the one thing about
-            an individual that changes how it fights */}
-        <div class="flex items-baseline gap-1 truncate">
-          <span class="text-muted">Lv. {caught().level}</span>
+            an individual that changes how it fights. How well it rolled
+            ends the same line, pinned to the right — coarsely, since
+            the six numbers are on the sheet and a card is for deciding
+            whether to open one */}
+        <div class="flex items-baseline gap-1">
+          <span class="shrink-0 text-muted">Lv. {caught().level}</span>
           <span class="truncate">{NATURE_NAMES[caught().nature]}</span>
           <Show when={GENDER_MARKS[caught().gender] !== ''}>
-            <span role="img" aria-label={GENDER_LABELS[caught().gender]}>
+            <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]}>
               {GENDER_MARKS[caught().gender]}
             </span>
           </Show>
           <Show when={isShiny(caught())}>
-            <span role="img" aria-label="Shiny" class="text-gold">
+            <span role="img" aria-label="Shiny" class="shrink-0 text-gold">
               ✦
             </span>
           </Show>
+          <span
+            role="img"
+            aria-label={`${getIVStars(caught().ivs)} of ${MAX_IV_STARS} stars`}
+            class="ml-auto shrink-0 tracking-[0.2em] text-gold"
+          >
+            {stars()}
+          </span>
         </div>
 
         <div class="flex items-center gap-1">
@@ -150,16 +160,6 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             {Math.max(0, Math.round(caught().health))}/{getMaxHealth(caught())}
           </span>
         </div>
-
-        {/* How well it rolled, coarsely. The six numbers are on the
-            sheet; a card is for deciding whether to open one */}
-        <span
-          role="img"
-          aria-label={`${getIVStars(caught().ivs)} of ${MAX_IV_STARS} stars`}
-          class="tracking-[0.2em] text-gold"
-        >
-          {stars()}
-        </span>
 
         {/* Three columns, because they answer three different
             questions and one stack of pills reads as a single list of

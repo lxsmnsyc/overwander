@@ -78,6 +78,14 @@
    */
   --color-on-accent: #ffffff;
 
+  /**
+   * What is drawn *over* the page to push it back — the veil behind a
+   * dialog. Dark in both themes, like `on-accent` is white in both:
+   * `bg-ink` would have flipped to near-white at night and washed the
+   * page out instead of dimming it
+   */
+  --color-shade: #0b1222;
+
   /* Rounded rather than neutral. Nothing is downloaded for this: the
      platforms that have a rounded face use it and the rest fall back
      to what they were using before */

@@ -258,7 +258,10 @@ export function Dialog(props: DialogProps): JSX.Element {
   return (
     <Portal mount={portalHost()}>
       <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
-        <DialogOverlay class="fixed inset-0 bg-ink/55 backdrop-blur-[1px]" />
+        {/* Dark in both themes, and dark enough to read as a page put
+            away rather than a page tinted: the panel is white by day
+            and needs the ground behind it to fall back */}
+        <DialogOverlay class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]" />
         <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
           <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
             {/* Both stuck rows travel together: a second `sticky` under

@@ -8,9 +8,9 @@ import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
 import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
-import { getMoveData } from '../../data/moves';
-import { detailAbility, detailMove } from '../details';
+import { describeMove, detailAbility } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
+import MoveHoverCard from '../moves/MoveHoverCard';
 import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
 import { Button, HoverCard, Meta, TooltipHost } from '../styled';
@@ -171,11 +171,11 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().moves} fallback={<Meta>No move</Meta>}>
               {(move) => (
                 <li>
-                  <TooltipHost class="block" {...detailMove(move)}>
+                  <MoveHoverCard class="block" move={move}>
                     <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
-                      {getMoveData(move).name}
+                      {describeMove(move)}
                     </span>
-                  </TooltipHost>
+                  </MoveHoverCard>
                 </li>
               )}
             </For>

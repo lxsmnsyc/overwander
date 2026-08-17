@@ -278,6 +278,11 @@ export function Dialog(props: DialogProps): JSX.Element {
           // one: nothing in it can be pressed, tabbed to or read out.
           // Two dialogs in a row otherwise overlap for the length of
           // the fade, each with a button offering the same thing
+          // `inert` is the whole of it: the browser takes the focus
+          // out of a subtree that has just become inert and leaves it
+          // out of the accessibility tree, which `aria-hidden` would
+          // have been refused for doing while the focus was still in
+          // there
           inert={!props.isOpen}
           // And out of the way of the pointer: a dialog fading out
           // still covers the screen, and the page underneath has to

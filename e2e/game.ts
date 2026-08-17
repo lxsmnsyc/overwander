@@ -77,8 +77,23 @@ export async function signIn(page: Page, player: Player = newPlayer()): Promise<
  * named, and the name is what a player sees at the top of it, so that
  * is what these ask for
  */
+/**
+ * Every dialog that is still open.
+ *
+ * A dialog that has been answered stays in the page for the length of
+ * its fade, `inert` and out of the accessibility tree — which the
+ * browser honours and Playwright's own role engine does not. `data-open`
+ * is what the dialogs mark themselves with, and it is the only thing
+ * that tells the two apart from out here
+ */
+export function openDialogs(page: Page): Locator {
+  return page.locator('[tc-dialog][data-open]');
+}
+
 export function dialogNamed(page: Page, name: string | RegExp): Locator {
-  return page.getByRole('dialog', { name });
+  // `and` rather than a descendant search: the marked element is the
+  // dialog itself, not something inside it
+  return page.getByRole('dialog', { name }).and(openDialogs(page));
 }
 
 /**
@@ -154,7 +169,10 @@ const MENU_DIALOGS: Record<string, string> = {
  * afterwards
  */
 export async function dismissGift(page: Page): Promise<void> {
-  const thanks = page.getByRole('button', { name: 'Thanks' });
+  // Scoped to a dialog that is still open: one on its way out is inert
+  // and lasts the length of the fade, which is long enough to be found
+  // beside the one replacing it
+  const thanks = openDialogs(page).getByRole('button', { name: 'Thanks' });
 
   await expect(thanks).toBeVisible({ timeout: CLAIMED });
 

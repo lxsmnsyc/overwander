@@ -6,6 +6,7 @@ import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
+import type { Items } from '../data/ids/items';
 import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 import {
@@ -15,6 +16,7 @@ import {
   getSpeciesData,
   isFeaturedSpecies,
 } from '../data/species';
+import { getSpeciesHeldItems, pickHeldItem } from '../data/species/held-items';
 import type ChunkSnapshot from './chunk-snapshot';
 import type { Spawn } from './chunk-snapshot';
 
@@ -155,6 +157,12 @@ export interface Encounter {
    */
   moves: Moves[];
   /**
+   * What it is carrying, which is nothing for most of them. A wild
+   * pokemon holds at most one thing, so this is empty or a single
+   * item
+   */
+  items: Items[];
+  /**
    * The snapshot window the spawn belongs to
    */
   timestamp: number;
@@ -199,6 +207,13 @@ export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number
   [SpawnRarity.Prized]: [5, 15],
   [SpawnRarity.Special]: [1, 100],
 };
+
+/**
+ * The held-item roll reads sixteen bits rather than eight: a slot
+ * worth one percent cannot be told apart from nothing at 256 steps
+ */
+const HELD_ITEM_MASK = 0xffff;
+const HELD_ITEM_RANGE = 0x10000;
 
 /**
  * Share of the ability slice that lands a hidden ability (1/8)
@@ -322,6 +337,33 @@ export function deriveNature(traitValue: number): Natures {
   // Natures; tsgolint resolves the const enum to number and disagrees
   // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
   return Math.floor((natureSlice / TRAIT_RANGE) * NATURE_COUNT) as Natures;
+}
+
+/**
+ * What a wild pokemon of the species is carrying.
+ *
+ * The trait value is mixed before it is read, the way the size roll
+ * mixes it: every 8-bit slice of it is already spoken for, and a
+ * one-in-a-hundred item needs finer odds than 256 steps anyway
+ */
+export function deriveHeldItems(species: Species, traitValue: number): Items[] {
+  const held = getSpeciesHeldItems(species);
+
+  if (held == null) {
+    return [];
+  }
+
+  let mixed = traitValue >>> 0;
+
+  mixed ^= mixed << 7;
+  mixed >>>= 0;
+  mixed ^= mixed >>> 9;
+  mixed ^= mixed << 8;
+  mixed >>>= 0;
+
+  const item = pickHeldItem(held, (mixed & HELD_ITEM_MASK) / HELD_ITEM_RANGE);
+
+  return item == null ? [] : [item];
 }
 
 /**
@@ -541,6 +583,10 @@ export default function deriveEncounter(
       ),
     shadow: options.shadow === true,
     moves,
+    // Wild meetings only: a raid prize and a hatchling arrive with
+    // empty hands, and a Rocket's pokemon is carrying whatever its
+    // trainer gave it rather than what its species picks up
+    items: type === EncounterType.Wild ? deriveHeldItems(species, traitValue) : [],
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,
     y: snapshot.chunk.y,

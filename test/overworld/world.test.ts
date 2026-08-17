@@ -28,6 +28,7 @@ import {
   registerSpecies,
 } from '../../src/data/species';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
+import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
 import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
 import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
@@ -1868,6 +1869,68 @@ describe('chunk snapshot', () => {
         for (const cell of landmarks.keys()) {
           expect(chunk.getDecorationArea().has(cell)).toBe(false);
         }
+      }
+    }
+  });
+
+  it('hands a wild pokemon whatever its species carries', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(3, -7), 12 * 60 * 60 * 1000);
+
+    // A species that carries nothing is met empty-handed whatever it
+    // rolled
+    for (const trait of [0, 0x4000_0000, 0xffff_ffff]) {
+      expect(deriveEncounter(snapshot, [Species.Eevee, 0, trait]).items).toEqual([]);
+    }
+
+    // Three slots, three items, and the rarest is the one only that
+    // species can use
+    const pikachu = new Map<Items, number>();
+
+    for (let trait = 0; trait < 4000; trait++) {
+      for (const item of deriveEncounter(snapshot, [Species.Pikachu, 0, trait]).items) {
+        pikachu.set(item, (pikachu.get(item) ?? 0) + 1);
+      }
+    }
+
+    expect(pikachu.get(Items.LightBall)).toBeGreaterThan(0);
+    expect(pikachu.get(Items.LightBall)).toBeLessThan(pikachu.get(Items.Magnet) ?? 0);
+    expect(pikachu.get(Items.Magnet)).toBeLessThan(pikachu.get(Items.OranBerry) ?? 0);
+
+    // A Paras is either carrying the big mushroom, the small one, or
+    // nothing — never two of them
+    const carried = new Set<Items>();
+    let empty = 0;
+
+    for (let trait = 0; trait < 4000; trait++) {
+      const { items } = deriveEncounter(snapshot, [Species.Paras, 0, trait]);
+
+      expect(items.length).toBeLessThanOrEqual(1);
+
+      if (items.length === 0) {
+        empty++;
+      } else {
+        carried.add(items[0]);
+      }
+    }
+
+    expect(carried).toEqual(new Set([Items.TinyMushroom, Items.BigMushroom]));
+    // Roughly the mainline's odds: half carry the common one, a
+    // twentieth the rare one, and the rest nothing
+    expect(empty / 4000).toBeCloseTo(1 - WILD_HELD_COMMON - WILD_HELD_UNCOMMON, 1);
+  });
+
+  it('leaves a raid prize and a hatchling empty-handed', () => {
+    const world = new World('overworld');
+    const snapshot = new ChunkSnapshot(world.getChunk(3, -7), 12 * 60 * 60 * 1000);
+
+    // The species carries something in the wild, so the type is the
+    // only thing deciding this
+    for (const type of [EncounterType.LegendaryRaid, EncounterType.Hatched]) {
+      for (let trait = 0; trait < 200; trait++) {
+        expect(
+          deriveEncounter(snapshot, [Species.Paras, 0, trait], undefined, { type }).items,
+        ).toEqual([]);
       }
     }
   });

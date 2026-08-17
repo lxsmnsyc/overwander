@@ -10,7 +10,6 @@
 - [ ] friends
 - [ ] trading
 - [ ] egg move by parent
-- [ ] held item on encounter
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] Battle summary

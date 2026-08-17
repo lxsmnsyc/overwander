@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
+import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
@@ -50,6 +51,9 @@ export function asEncounterRecord(value: unknown): EncounterRecord {
     shiny: asBoolean(data.shiny),
     shadow: asBoolean(data.shadow),
     moves: asNumberArray(data.moves) as Moves[],
+    // Missing on a record written before wild pokemon carried
+    // anything: empty-handed, which is what it was
+    items: asNumberArray(data.items) as Items[],
     timestamp: asNumber(data.timestamp),
     x: asNumber(data.x),
     y: asNumber(data.y),

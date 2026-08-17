@@ -147,7 +147,9 @@ export async function writeCaughtRecord(
     // What it has room for. A shadow needs no extra room for the
     // shadow: the special tier takes no slot
     slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
-    items: [],
+    // Whatever it was carrying when it was met comes with it, cut to
+    // the room the line above just gave it
+    items: encounter.items.slice(0, DEFAULT_ITEM_SLOTS),
     history: [{ owner: uid, acquiredAt: caughtAt, kind }],
     // Whatever was true of the meeting is true of the record: it
     // sparkled for this player, or it came out of a shadow raid

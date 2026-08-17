@@ -20,6 +20,7 @@ import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
 import { FOSSIL_SPECIES } from '../data/items/fossils';
+import { getHeldPowerStat } from '../data/items/power-items';
 import { isPurifiable, purifyIVs } from '../data/items/purifying-gem';
 import { type BreedingParent, getEggSpecies } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
@@ -182,6 +183,7 @@ function asParent(caught: Record<string, unknown> | null, uid: string): Breeding
   }
 
   const record = asCaughtPokemon(caught);
+  const held = new Set(record.items);
 
   return {
     species: record.species,
@@ -190,9 +192,15 @@ function asParent(caught: Record<string, unknown> | null, uid: string): Breeding
     moves: record.moves,
     shadow: isShadow(record),
     nature: record.nature,
+    // The one it is actually fielding. A pokemon with room for several
+    // passes the first, which is the one it leads with
+    ability: record.abilities[0],
+    ball: record.ball,
     // Read off the stored record, like everything else here: what the
     // egg inherits is decided by what the pokemon is actually holding
-    everstone: record.items.includes(Items.Everstone),
+    everstone: held.has(Items.Everstone),
+    destinyKnot: held.has(Items.DestinyKnot),
+    powerStat: getHeldPowerStat(record.items),
     egg: isEgg(record),
   };
 }

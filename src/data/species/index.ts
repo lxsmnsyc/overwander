@@ -15,6 +15,7 @@ export {
   isBaseForm,
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';
+export { DEFAULT_EGG_CYCLES, getEggCycles } from './egg-cycles';
 export {
   SPECIES_DAY_CATCH_BOOST,
   SPECIES_DAY_SHINY_BOOST,

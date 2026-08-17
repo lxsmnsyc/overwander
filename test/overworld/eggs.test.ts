@@ -6,27 +6,40 @@ import {
   EGG_LEVEL,
   MAX_STEP_REPORT,
   MIN_STEP_INTERVAL,
+  STEPS_PER_EGG_CYCLE,
   boostedSteps,
   canHatch,
   creditableSteps,
+  getEggHatchSteps,
   stepsRemaining,
 } from '../../src/auth/egg';
-import { Stats, getIV, packIVs } from '../../src/data/constants/stats';
+import { STAT_ORDER, Stats, getIV, packIVs } from '../../src/data/constants/stats';
+import Abilities from '../../src/data/ids/abilities';
+import { Balls } from '../../src/data/ids/items';
 import type { Moves } from '../../src/data/ids/moves';
 import Natures from '../../src/data/ids/natures';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
+  ABILITY_INHERITANCE_CHANCE,
   type BreedingParent,
+  DESTINY_KNOT_IVS,
+  HIDDEN_ABILITY_INHERITANCE_CHANCE,
+  INHERITED_IVS,
   SHADOW_INHERITANCE_CHANCE,
   canBreed,
   getEggSpecies,
+  inheritAbility,
+  inheritBall,
   inheritIVs,
   inheritMoves,
   inheritNature,
   inheritsShadow,
+  rollEggSpecies,
 } from '../../src/overworld/breeding';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
+  DEFAULT_EGG_CYCLES,
+  getEggCycles,
   getEggMoves,
   getLevelUpMoves,
   getRegisteredSpecies,
@@ -109,9 +122,6 @@ describe('credited steps', () => {
 });
 
 /**
- * A parent as the breeding rules read one
- */
-/**
  * The first move in the list that matches, or a thrown failure. The
  * move tests pick theirs out of the real learn sets rather than naming
  * one, so a data change moves the test instead of silently emptying it
@@ -125,14 +135,16 @@ function findMove(moves: Moves[], keep: (move: Moves) => boolean): Moves {
   return found;
 }
 
+/**
+ * A parent as the breeding rules read one. Everything past the moves
+ * is passed by name, since most tests care about exactly one of them
+ */
 function parent(
   species: Species,
   gender: Genders,
   iv: number,
   moves: Moves[] = [],
-  shadow = false,
-  nature: Natures = Natures.Hardy,
-  everstone = false,
+  extra: Partial<BreedingParent> = {},
 ): BreedingParent {
   return {
     species,
@@ -146,10 +158,15 @@ function parent(
       [Stats.Speed]: iv,
     }),
     moves,
-    shadow,
-    nature,
-    everstone,
+    shadow: false,
+    nature: Natures.Hardy,
+    ability: Abilities.Overgrow,
+    ball: Balls.PokeBall,
+    everstone: false,
+    destinyKnot: false,
+    powerStat: null,
     egg: false,
+    ...extra,
   };
 }
 
@@ -250,10 +267,181 @@ describe('inherited stats', () => {
   });
 });
 
+describe('a Destiny Knot', () => {
+  it('copies five of the six instead of three', () => {
+    const left = parent(Species.Bulbasaur, Genders.Male, 31, [], { destinyKnot: true });
+    const right = parent(Species.Bulbasaur, Genders.Female, 15);
+    // Pinned to the floor: the pool is taken from the front, every
+    // copy comes off the left parent, and whatever is left is rolled
+    // at the bottom of the range
+    const ivs = inheritIVs(left, right, () => 0);
+    const copied = STAT_ORDER.filter((stat) => getIV(ivs, stat) === 31);
+
+    expect(copied).toHaveLength(DESTINY_KNOT_IVS);
+    expect(getIV(ivs, Stats.Speed)).toBe(0);
+
+    // Either parent's knot is the pair's knot
+    expect(
+      STAT_ORDER.filter(
+        (stat) =>
+          getIV(
+            inheritIVs(right, left, () => 0),
+            stat,
+          ) > 0,
+      ),
+    ).toHaveLength(DESTINY_KNOT_IVS);
+  });
+});
+
+describe('a power item', () => {
+  it('copies its own stat off whoever is holding it', () => {
+    const holder = parent(Species.Bulbasaur, Genders.Male, 31, [], { powerStat: Stats.Speed });
+    const other = parent(Species.Bulbasaur, Genders.Female, 15);
+    const ivs = inheritIVs(holder, other, () => 0);
+
+    // Speed is last in the pool and would have been rolled to nothing
+    // at this floor; the item is the only way it is 31 here
+    expect(getIV(ivs, Stats.Speed)).toBe(31);
+    // And it counts against the three: two more are copied, not three
+    expect(STAT_ORDER.filter((stat) => getIV(ivs, stat) > 0)).toHaveLength(INHERITED_IVS);
+  });
+
+  it('takes the stat off its holder rather than off either parent', () => {
+    const plain = parent(Species.Bulbasaur, Genders.Male, 31);
+    const holder = parent(Species.Bulbasaur, Genders.Female, 15, [], { powerStat: Stats.Speed });
+
+    // Every drawn copy comes off the left parent at this floor, so the
+    // 15 can only have come from the item
+    expect(
+      getIV(
+        inheritIVs(plain, holder, () => 0),
+        Stats.Speed,
+      ),
+    ).toBe(15);
+  });
+
+  it('forces one stat however many are being worn', () => {
+    const left = parent(Species.Bulbasaur, Genders.Male, 31, [], { powerStat: Stats.Attack });
+    const right = parent(Species.Bulbasaur, Genders.Female, 15, [], { powerStat: Stats.Speed });
+    const ivs = inheritIVs(left, right, () => 0);
+
+    // The floor picks the left holder, so Attack is forced and Speed
+    // is left to the draw — which rolls it to nothing
+    expect(getIV(ivs, Stats.Attack)).toBe(31);
+    expect(getIV(ivs, Stats.Speed)).toBe(0);
+  });
+});
+
+describe('a two-species line', () => {
+  it('rolls which half of Nidoran is in the shell', () => {
+    expect(rollEggSpecies(Species.NidoranF, () => 0)).toBe(Species.NidoranF);
+    expect(rollEggSpecies(Species.NidoranF, () => 0.9)).toBe(Species.NidoranM);
+    // The male half lays the same pair, for the Ditto pairing that is
+    // the only way it is ever the parent an egg is read off
+    expect(rollEggSpecies(Species.NidoranM, () => 0.9)).toBe(Species.NidoranM);
+    expect(rollEggSpecies(Species.NidoranM, () => 0)).toBe(Species.NidoranF);
+
+    // Everything else is only ever itself
+    expect(rollEggSpecies(Species.Bulbasaur, () => 0.9)).toBe(Species.Bulbasaur);
+  });
+
+  it('still reads the line off the mother', () => {
+    // The pair answers her line; which half of it hatched is the
+    // roll's business, not the pairing's
+    expect(
+      getEggSpecies(
+        parent(Species.NidoranM, Genders.Male, 0),
+        parent(Species.Nidorina, Genders.Female, 0),
+      ),
+    ).toBe(Species.NidoranF);
+  });
+});
+
+describe('inherited ability', () => {
+  it('comes off the mother, and not every time', () => {
+    const mother = parent(Species.Bulbasaur, Genders.Female, 0, [], {
+      ability: Abilities.Overgrow,
+    });
+    const father = parent(Species.Bulbasaur, Genders.Male, 0, [], {
+      ability: Abilities.Chlorophyll,
+    });
+
+    expect(inheritAbility(Species.Bulbasaur, father, mother, () => 0)).toBe(Abilities.Overgrow);
+    expect(
+      inheritAbility(Species.Bulbasaur, father, mother, () => ABILITY_INHERITANCE_CHANCE),
+    ).toBeNull();
+  });
+
+  it('passes a hidden ability across a narrower gap', () => {
+    const mother = parent(Species.Bulbasaur, Genders.Female, 0, [], {
+      ability: Abilities.Chlorophyll,
+    });
+    const father = parent(Species.Bulbasaur, Genders.Male, 0);
+    const between = (HIDDEN_ABILITY_INHERITANCE_CHANCE + ABILITY_INHERITANCE_CHANCE) / 2;
+
+    expect(inheritAbility(Species.Bulbasaur, father, mother, () => 0)).toBe(Abilities.Chlorophyll);
+    // A draw an ordinary ability would have survived, and this one
+    // does not
+    expect(inheritAbility(Species.Bulbasaur, father, mother, () => between)).toBeNull();
+  });
+
+  it('refuses an ability the egg’s own line has never had', () => {
+    // A cross-group pair can leave the mother holding something the
+    // hatchling could not have
+    const mother = parent(Species.Vulpix, Genders.Female, 0, [], { ability: Abilities.FlashFire });
+    const father = parent(Species.Rattata, Genders.Male, 0);
+
+    expect(inheritAbility(Species.Rattata, father, mother, () => 0)).toBeNull();
+  });
+});
+
+describe('the ball an egg is laid into', () => {
+  it('is the mother’s own', () => {
+    const mother = parent(Species.Bulbasaur, Genders.Female, 0, [], { ball: Balls.LuxuryBall });
+    const father = parent(Species.Bulbasaur, Genders.Male, 0, [], { ball: Balls.DuskBall });
+
+    expect(inheritBall(father, mother)).toBe(Balls.LuxuryBall);
+    expect(inheritBall(mother, father)).toBe(Balls.LuxuryBall);
+
+    // A Ditto stands in for her, so the ball is the other parent's
+    expect(inheritBall(parent(Species.Ditto, Genders.Genderless, 0), father)).toBe(Balls.DuskBall);
+  });
+
+  it('is never a Master Ball', () => {
+    const mother = parent(Species.Bulbasaur, Genders.Female, 0, [], { ball: Balls.MasterBall });
+    const father = parent(Species.Bulbasaur, Genders.Male, 0);
+
+    expect(inheritBall(father, mother)).toBe(Balls.PokeBall);
+  });
+});
+
+describe('what an egg costs to open', () => {
+  it('is what its own species costs, not one figure for the dex', () => {
+    expect(getEggHatchSteps(Species.Magikarp)).toBe(
+      getEggCycles(Species.Magikarp) * STEPS_PER_EGG_CYCLE,
+    );
+    // The ordinary egg is the one the shared constant describes
+    expect(getEggHatchSteps(Species.Bulbasaur)).toBe(EGG_HATCH_STEPS);
+    expect(getEggCycles(Species.Bulbasaur)).toBe(DEFAULT_EGG_CYCLES);
+
+    // And the ends of the table are a long way apart
+    expect(getEggHatchSteps(Species.Magikarp)).toBeLessThan(getEggHatchSteps(Species.Bulbasaur));
+    expect(getEggHatchSteps(Species.Snorlax)).toBeGreaterThan(getEggHatchSteps(Species.Bulbasaur));
+  });
+
+  it('is the line’s figure, whichever stage is asked', () => {
+    // A raid can hand out an egg of something already evolved, and a
+    // Gyarados egg is still a Magikarp's walk
+    expect(getEggCycles(Species.Gyarados)).toBe(getEggCycles(Species.Magikarp));
+    expect(getEggCycles(Species.Dragonite)).toBe(getEggCycles(Species.Dratini));
+    expect(getEggCycles(Species.Golem)).toBe(getEggCycles(Species.Geodude));
+  });
+});
+
 describe('inherited shadow', () => {
   it('comes only from a shadow parent, and only half the time', () => {
     const plain = parent(Species.Bulbasaur, Genders.Male, 0);
-    const shadow = parent(Species.Bulbasaur, Genders.Female, 0, [], true);
+    const shadow = parent(Species.Bulbasaur, Genders.Female, 0, [], { shadow: true });
 
     expect(inheritsShadow(plain, plain, () => 0)).toBe(false);
     expect(inheritsShadow(plain, shadow, () => 0)).toBe(true);
@@ -265,8 +453,11 @@ describe('inherited shadow', () => {
 
 describe('inherited nature', () => {
   it('comes from whichever parent is holding the Everstone', () => {
-    const plain = parent(Species.Bulbasaur, Genders.Male, 0, [], false, Natures.Adamant);
-    const held = parent(Species.Bulbasaur, Genders.Female, 0, [], false, Natures.Modest, true);
+    const plain = parent(Species.Bulbasaur, Genders.Male, 0, [], { nature: Natures.Adamant });
+    const held = parent(Species.Bulbasaur, Genders.Female, 0, [], {
+      nature: Natures.Modest,
+      everstone: true,
+    });
 
     // Nobody holding one: the egg rolls its own, so nothing is passed
     expect(inheritNature(plain, plain, () => 0)).toBeNull();
@@ -276,8 +467,14 @@ describe('inherited nature', () => {
   });
 
   it('picks between two stones rather than always taking the first', () => {
-    const left = parent(Species.Bulbasaur, Genders.Male, 0, [], false, Natures.Adamant, true);
-    const right = parent(Species.Bulbasaur, Genders.Female, 0, [], false, Natures.Modest, true);
+    const left = parent(Species.Bulbasaur, Genders.Male, 0, [], {
+      nature: Natures.Adamant,
+      everstone: true,
+    });
+    const right = parent(Species.Bulbasaur, Genders.Female, 0, [], {
+      nature: Natures.Modest,
+      everstone: true,
+    });
 
     expect(inheritNature(left, right, () => 0)).toBe(Natures.Adamant);
     expect(inheritNature(left, right, () => 0.9)).toBe(Natures.Modest);

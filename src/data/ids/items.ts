@@ -734,6 +734,18 @@ export const enum Items {
    * TODO: blocked on Dynamax, which this game has none of
    */
   MaxMushrooms = 354,
+
+  /**
+   * The power items: each one names a stat, and an egg takes that
+   * stat's individual value straight off whichever parent was holding
+   * it. See [`src/data/items/power-items.ts`](../items/power-items.ts)
+   */
+  PowerWeight = 355,
+  PowerBracer = 356,
+  PowerBelt = 357,
+  PowerLens = 358,
+  PowerBand = 359,
+  PowerAnklet = 360,
 }
 
 /**

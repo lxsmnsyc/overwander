@@ -21,6 +21,7 @@ import {
 import { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import { FOSSIL_SPECIES, getItemData, isFossil } from '../../data/items';
+import { getHeldPowerStat } from '../../data/items/power-items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
 import { getSpeciesData } from '../../data/species';
 import Npc, {
@@ -93,6 +94,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
  * A catch as the breeding rules read one
  */
 function asParent(caught: CaughtPokemon): BreedingParent {
+  const held = new Set(caught.items);
+
   return {
     species: caught.species,
     gender: caught.gender,
@@ -100,7 +103,11 @@ function asParent(caught: CaughtPokemon): BreedingParent {
     moves: caught.moves,
     shadow: isShadow(caught),
     nature: caught.nature,
-    everstone: caught.items.includes(Items.Everstone),
+    ability: caught.abilities[0],
+    ball: caught.ball,
+    everstone: held.has(Items.Everstone),
+    destinyKnot: held.has(Items.DestinyKnot),
+    powerStat: getHeldPowerStat(caught.items),
     egg: isEgg(caught),
   };
 }

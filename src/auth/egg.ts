@@ -1,3 +1,6 @@
+import { DEFAULT_EGG_CYCLES, getEggCycles } from '../data/species/egg-cycles';
+import type { Species } from '../data/ids/species';
+
 /**
  * What an egg is, and what hatching one costs.
  *
@@ -20,11 +23,27 @@
 export const EGG_LEVEL = 1;
 
 /**
- * How far an egg has to be carried. It is half a mainline hatch cycle
- * — far enough that an egg is something a player is still working on
- * tomorrow, near enough that a nest found today is worth walking to
+ * What one hatch cycle costs in steps. It is half the mainline's own
+ * figure — far enough that an egg is something a player is still
+ * working on tomorrow, near enough that a nest found today is worth
+ * walking to
  */
-export const EGG_HATCH_STEPS = 2560;
+export const STEPS_PER_EGG_CYCLE = 128;
+
+/**
+ * How far the ordinary egg has to be carried: what most of the dex
+ * takes, and what anything without a species to ask costs
+ */
+export const EGG_HATCH_STEPS = DEFAULT_EGG_CYCLES * STEPS_PER_EGG_CYCLE;
+
+/**
+ * How far this species' egg has to be carried. A Magikarp is out in a
+ * quarter of what an ordinary egg costs and a Snorlax takes twice it,
+ * which is the whole point of asking rather than charging one figure
+ */
+export function getEggHatchSteps(species: Species): number {
+  return getEggCycles(species) * STEPS_PER_EGG_CYCLE;
+}
 
 /**
  * The fastest a step may count, in milliseconds. Walking is the

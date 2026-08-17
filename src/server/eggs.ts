@@ -2,10 +2,10 @@ import 'server-only';
 import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { CAUGHT_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import {
-  EGG_HATCH_STEPS,
   EGG_LEVEL,
   MAX_STEP_REPORT,
   creditableSteps,
+  getEggHatchSteps,
   stepsRemaining,
 } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
@@ -26,10 +26,13 @@ import type { Genders, Species } from '../data/ids/species';
 import {
   type BreedingParent,
   SHADOW_HATCH_FACTOR,
+  inheritAbility,
+  inheritBall,
   inheritIVs,
   inheritMoves,
   inheritNature,
   inheritsShadow,
+  rollEggSpecies,
 } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
@@ -123,6 +126,11 @@ interface EggFields {
   traitValue: number;
   hatchSteps: number;
   /**
+   * The ball the egg is recorded under: a nest's own, or the mother's
+   * when the egg was bred
+   */
+  ball: Balls;
+  /**
    * The window the egg belongs to, recorded as its origin
    */
   timestamp: number;
@@ -182,7 +190,7 @@ async function writeEgg(
     items: [],
     // It was never anybody else's: this owner is where the pokemon
     // begins, egg and all
-    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: Balls.NestBall }],
+    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],
     // An egg on top of whatever the pokemon inside is, and never
     // locked: an egg cannot be fielded
     shiny: fields.shiny,
@@ -218,9 +226,10 @@ async function writeEgg(
     // picking up a Ponyta afterwards
     hatchSteps,
     steppedAt: now,
-    // An egg was never thrown at; the ball it is recorded under is
-    // the one named for where eggs come from
-    ball: Balls.NestBall,
+    // An egg was never thrown at. A nest's is recorded under the ball
+    // named for where eggs come from; a bred one is laid into whatever
+    // its mother was caught in
+    ball: fields.ball,
     caughtAt: foundAt,
     locale: asLocale(locale),
     effortValues: zeroEffortValues(),
@@ -281,7 +290,10 @@ export async function grantNestEgg(
       ability: hatchling.ability,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
-      hatchSteps: EGG_HATCH_STEPS,
+      hatchSteps: getEggHatchSteps(species),
+      // Nothing laid it: the ball is the one named for where eggs
+      // come from
+      ball: Balls.NestBall,
       timestamp: snapshot.nestTimestamp,
     },
     now,
@@ -293,9 +305,13 @@ export async function grantNestEgg(
 /**
  * Lay the egg a breeder made of two pokemon. What it inherits is
  * decided in [`src/overworld/breeding.ts`](../overworld/breeding.ts)
- * and passed in; what it rolls for itself — its nature, its ability,
- * whether it sparkles — comes from the same trait value any hatchling
- * would have.
+ * and passed in; what it rolls for itself — whether it sparkles, and
+ * an ability its mother did not pass — comes from the same trait value
+ * any hatchling would have.
+ *
+ * `line` is the mother's line rather than the egg's own species: a
+ * Nidoran is one of two, and which one is the first thing the stream
+ * decides.
  *
  * The stream is seeded by the pair and the window, so the egg is this
  * visit's egg rather than one a player can re-roll by asking again.
@@ -306,15 +322,18 @@ export async function grantBredEgg(
   uid: string,
   snapshot: ChunkSnapshot,
   seed: string,
-  species: Species,
+  line: Species,
   parents: [BreedingParent, BreedingParent],
   now: number,
   offset: number,
   locale: string,
 ): Promise<string> {
   const rng = new AleaRNG(seed);
-  // The draws land in order: the individual value the egg would have
-  // rolled, its trait value, the inheritance, then the shadow
+  // The draws land in order: which half of the line it is, the
+  // individual value it would have rolled, its trait value, the
+  // inheritance, the shadow, the nature, then the ability. Anything
+  // new goes on the end, so adding it moves nothing already decided
+  const species = rollEggSpecies(line, () => rng.random());
   const spawn: Spawn = [species, rng.int32(), rng.int32()];
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
@@ -322,16 +341,16 @@ export async function grantBredEgg(
   });
   const ivs = inheritIVs(parents[0], parents[1], () => rng.random());
   const shadow = inheritsShadow(parents[0], parents[1], () => rng.random());
-  // Last of the draws, so adding it moved nothing that came before it
   const nature = inheritNature(parents[0], parents[1], () => rng.random());
+  const ability = inheritAbility(species, parents[0], parents[1], () => rng.random());
 
   return writeEgg(
     uid,
     snapshot,
     {
       species,
-      // Three of the six come off the parents; the rest are the
-      // egg's own
+      // Three of the six come off the parents, or five under a Destiny
+      // Knot; the rest are the egg's own
       ivs,
       gender: hatchling.gender,
       // Its own, unless a parent was holding an Everstone
@@ -341,12 +360,15 @@ export async function grantBredEgg(
       shiny: hatchling.shiny,
       shadow,
       moves: inheritMoves(species, parents[0], parents[1], EGG_LEVEL),
-      ability: hatchling.ability,
+      // Its mother's, most of the time; its own when she did not pass
+      // it on
+      ability: ability ?? hatchling.ability,
       individualValue: hatchling.individualValue,
       traitValue: hatchling.traitValue,
       // Something that should not be in there takes twice as long to
       // come out
-      hatchSteps: shadow ? EGG_HATCH_STEPS * SHADOW_HATCH_FACTOR : EGG_HATCH_STEPS,
+      hatchSteps: getEggHatchSteps(species) * (shadow ? SHADOW_HATCH_FACTOR : 1),
+      ball: inheritBall(parents[0], parents[1]),
       timestamp: snapshot.npcTimestamp,
     },
     now,

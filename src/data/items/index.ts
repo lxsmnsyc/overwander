@@ -16,6 +16,7 @@ import registerOneShots from './one-shots';
 import registerOrbs from './orbs';
 import registerPlates from './plates';
 import registerPortalKey from './portal-key';
+import registerPowerItems from './power-items';
 import registerPurifyingGem from './purifying-gem';
 import registerSacredAsh from './sacred-ash';
 import registerRaidItems from './raid-items';
@@ -56,6 +57,7 @@ export default function registerItems(): void {
   registerBattleItems();
   registerIncenses();
   registerTrinkets();
+  registerPowerItems();
   registerGems();
   registerOrbs();
   registerPlates();

@@ -26,9 +26,7 @@ export default function registerHeartScale(): void {
     name: 'Heart Scale',
     description: 'Traded to the move reminder for a move a pokemon has forgotten.',
     type: ItemTypes.Valuable,
-    // No scale of its own on the sheets; the heart is the half of it
-    // a player recognises, so that is what it borrows
-    icon: 'medicine/sweet-heart',
+    icon: 'other/heart-scale',
     flags: ItemFlags.Consumable,
     buy: 0,
     sell: 0,

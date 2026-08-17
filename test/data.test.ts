@@ -2089,6 +2089,30 @@ describe('item icons', () => {
     }
   });
 
+  it('draws no two items with the same picture', () => {
+    const drawn = new Map<string, string>();
+
+    for (const item of ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type))) {
+      // The machines are the deliberate exception: a TM is drawn by
+      // the type of the move it teaches, so every Normal-type machine
+      // is the same picture on purpose and the name on it is the news
+      if (isMachineItem(item)) {
+        continue;
+      }
+
+      const data = getItemData(item);
+      const first = drawn.get(data.icon);
+
+      // The bag is a tray of pictures with the name on a card nobody
+      // is reading while they scan it, so two items sharing one
+      // picture are one item as far as a player can tell. Several
+      // items have no art of their own and borrow — that is fine, so
+      // long as each borrows something different
+      expect(first, `${data.name} is drawn as ${first ?? ''} is: ${data.icon}`).toBeUndefined();
+      drawn.set(data.icon, data.name);
+    }
+  });
+
   it('has every registered item say what it does', () => {
     const items = ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
 

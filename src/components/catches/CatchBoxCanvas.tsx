@@ -137,6 +137,12 @@ export interface CatchBoxCanvasProps {
    * anchored to one
    */
   cell?: (entry: Accessor<BoxEntry>) => JSX.Element;
+  /**
+   * Whether a square itself does nothing and whatever stands over it
+   * is the only way to act. A press on a square is a press on a
+   * picture; the card over it has the button that says what it does
+   */
+  cardOnly?: boolean;
 }
 
 /**
@@ -261,7 +267,7 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
   const open = (index: number): void => {
     const entry = entryAt(index);
 
-    if (entry != null) {
+    if (entry != null && props.cardOnly !== true) {
       props.onOpen(entry.id);
     }
   };
@@ -442,7 +448,7 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
         <Index each={SQUARES}>
           {(_, index) => (
             <div
-              class={entryAt(index) == null ? '' : 'cursor-pointer'}
+              class={entryAt(index) == null || props.cardOnly === true ? '' : 'cursor-pointer'}
               title={props.cell == null && entryAt(index) != null ? named(index) : undefined}
               onMouseEnter={() => {
                 setHovered(index);

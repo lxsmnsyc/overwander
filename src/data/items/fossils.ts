@@ -61,15 +61,14 @@ const NAMES: { [key in Items]?: string } = {
 };
 
 /**
- * The picture each one is drawn with. Only the amber has a sheet
- * entry of its own; the other two borrow the nearest thing the sheets
- * carry — a spiral sea shell for the Helix, and the domed shell the
- * Rocky Helmet is drawn as for the Dome
+ * The picture each one is drawn with. The `fossils` sheet names them
+ * by the rock rather than by the item, so the word "fossil" is the
+ * part that is dropped
  */
 const ICONS: { [key in Items]?: string } = {
-  [Items.HelixFossil]: 'valuables/shoal-shell',
-  [Items.DomeFossil]: 'held/rocky-helmet',
-  [Items.OldAmber]: 'key/old-amber',
+  [Items.HelixFossil]: 'fossils/helix',
+  [Items.DomeFossil]: 'fossils/dome',
+  [Items.OldAmber]: 'fossils/old-amber',
 };
 
 export default function registerFossils(): void {
@@ -78,7 +77,7 @@ export default function registerFossils(): void {
       name: NAMES[item] ?? 'Fossil',
       description: `Revives into ${getSpeciesData(species).name}. Spent doing it.`,
       type: ItemTypes.Fossil,
-      icon: ICONS[item] ?? 'key/old-amber',
+      icon: ICONS[item] ?? 'fossils/old-amber',
       // Spent when it is revived, and worth nothing to anybody else:
       // no vendor stocks one and no vendor takes one
       flags: ItemFlags.Consumable,

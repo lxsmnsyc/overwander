@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { BasicSpriteData } from '../../src/canvas/basic-sprite';
+import { type BasicSpriteData, asBasicSpriteData } from '../../src/canvas/basic-sprite';
 import OWCharSprite from '../../src/canvas/ow-char-sprite';
 
 /**
@@ -7,14 +7,14 @@ import OWCharSprite from '../../src/canvas/ow-char-sprite';
  * four by four grid, packed at an offset so the tests catch a class
  * that assumes the grid starts at the top left of the sheet.
  */
-const SHEET: BasicSpriteData = {
+const SHEET: BasicSpriteData = asBasicSpriteData({
   width: 256,
   height: 256,
   images: [
     { name: 'hero.png', x: 64, y: 32, width: 128, height: 128 },
     { name: 'dust.png', x: 0, y: 0, width: 16, height: 16 },
   ],
-};
+});
 
 /**
  * Somewhere to draw, and a record of what was asked for. The class
@@ -76,7 +76,7 @@ describe('OWCharSprite', () => {
   });
 
   it('draws nothing at all from a sheet with no grid on it', () => {
-    const sprite = loaded({ width: 0, height: 0, images: [] });
+    const sprite = loaded(asBasicSpriteData({ width: 0, height: 0, images: [] }));
     const { context, drawn } = recorder();
 
     expect(sprite.ready).toBe(false);

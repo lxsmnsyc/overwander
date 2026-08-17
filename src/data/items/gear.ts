@@ -132,10 +132,11 @@ const FOUND_GEAR_RESALE = 1000;
 
 /**
  * TODO: the Clear Amulet has no picture of its own cut yet, so it
- * borrows the one thing on any sheet that looks like an amulet. Give
- * it `held/clear-amulet` once the art exists
+ * borrows the Oval Charm — a charm hanging from a cord, which is the
+ * only amulet shape the sheets carry. Give it `held/clear-amulet`
+ * once the art exists
  */
-const GEAR_ICONS: Map<Items, string> = new Map([[Items.ClearAmulet, 'key/clear-bell']]);
+const GEAR_ICONS: Map<Items, string> = new Map([[Items.ClearAmulet, 'key/oval-charm']]);
 
 function gearIcon(item: Items, name: string): string {
   return GEAR_ICONS.get(item) ?? nameToIcon('held', name);

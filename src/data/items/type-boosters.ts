@@ -56,11 +56,14 @@ const NAMES: { [key in Items]?: string } = {
 
 /**
  * The one whose name points at nothing. Every other booster is on the
- * `held` sheet under its own name; there is no fairy feather drawn
- * anywhere, so it borrows the one feather the sheets do have
+ * `held` sheet under its own name; no fairy feather is drawn anywhere,
+ * so it borrows the Silver Wing — a plain pale feather, and one no
+ * other item is using. The Pretty Wing it used to borrow belongs to
+ * the Pretty Wing, and two items drawn the same picture are one item
+ * as far as a tray of pictures is concerned
  */
 const ICONS: { [key in Items]?: string } = {
-  [Items.FairyFeather]: 'valuables/pretty-wing',
+  [Items.FairyFeather]: 'key/silver-wing',
 };
 
 /**

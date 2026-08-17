@@ -4,8 +4,9 @@ import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { MAX_FRIENDSHIP, describeFriendship } from '../../data/constants/friendship';
 import getSigil from '../../data/constants/sigil';
-import { Genders, Species } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
+import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import CatchPicker from './CatchPicker';
 import SpriteDisplay from '../sprites/SpriteDisplay';
 import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
@@ -22,22 +23,6 @@ import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
  * about the same pokemon: what it is, what it looks like, and the mark
  * that tells one Rattata from another.
  */
-
-/**
- * How a gender is shown. Something genderless says nothing rather than
- * saying so — an empty column is not information
- */
-const GENDER_MARKS: Record<Genders, string> = {
-  [Genders.Genderless]: '',
-  [Genders.Male]: '♂',
-  [Genders.Female]: '♀',
-};
-
-const GENDER_LABELS: Record<Genders, string> = {
-  [Genders.Genderless]: 'Genderless',
-  [Genders.Male]: 'Male',
-  [Genders.Female]: 'Female',
-};
 
 /**
  * A number as a length, with the words for it beside.

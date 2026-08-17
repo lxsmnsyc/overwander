@@ -54,7 +54,6 @@ import {
   trainEffort,
   useEffortItem,
 } from '../../auth/training';
-import { getAbilityData } from '../../data/abilities';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import {
   MAX_EFFORT_PER_STAT,
@@ -70,11 +69,10 @@ import getSigil from '../../data/constants/sigil';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import { isPPItem, isVitamin } from '../../data/items/vitamins';
 import { isWing } from '../../data/items/wings';
-import type Abilities from '../../data/ids/abilities';
 import type Natures from '../../data/ids/natures';
 import { NATURE_NAMES, getNatureFactor } from '../../data/ids/natures';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data/ids/items';
-import { EvolutionMethod, Genders, Species } from '../../data/ids/species';
+import { EvolutionMethod, Species } from '../../data/ids/species';
 import { getItemData } from '../../data/items';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { isHerbal } from '../../data/items/medicine';
@@ -100,6 +98,8 @@ import {
   isFatefulEncounter,
   isRaidEncounter,
 } from '../../overworld/encounter';
+import { describeAbility, detailAbility } from '../details';
+import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import IncreasePPDialog from './IncreasePPDialog';
 import InventoryPicker from '../items/InventoryPicker';
 import { describeItem, detailItem } from '../items/ItemGrid';
@@ -191,23 +191,6 @@ function natureShift(nature: Natures, stat: Stats): number {
  * same six differently is two vocabularies for one thing
  */
 export const STAT_LABELS: Record<Stats, string> = STAT_NAMES;
-
-const GENDER_LABELS: Record<Genders, string> = {
-  [Genders.Genderless]: 'Genderless',
-  [Genders.Male]: 'Male',
-  [Genders.Female]: 'Female',
-};
-
-/**
- * The sign a gender is shown by, beside the types rather than in a
- * line of its own. Something genderless shows nothing: the mark for it
- * would be one more symbol to learn for a fact that changes nothing
- */
-const GENDER_MARKS: Record<Genders, string> = {
-  [Genders.Genderless]: '',
-  [Genders.Male]: '♂',
-  [Genders.Female]: '♀',
-};
 
 /**
  * The six values as a dex prints them, used in the record, in what a
@@ -421,30 +404,10 @@ async function loadDetail(catchId: string): Promise<{ id: string; caught: Caught
 }
 
 /**
- * An ability with no registered data shows as its id rather than a
- * guess; every Gen 1 ability is registered
+ * Re-exported from where the battle card reads them too: an ability on
+ * a sheet and one on a card are named the same way
  */
-export function describeAbility(ability: Abilities): string {
-  try {
-    return getAbilityData(ability).name;
-  } catch {
-    return `Ability #${ability}`;
-  }
-}
-
-/**
- * What the card over an ability says. An unregistered one has nothing
- * to say about itself, which is said rather than left blank
- */
-export function detailAbility(ability: Abilities): { name: string; description: string } {
-  try {
-    const data = getAbilityData(ability);
-
-    return { name: data.name, description: data.description };
-  } catch {
-    return { name: describeAbility(ability), description: 'Nothing is known about this.' };
-  }
-}
+export { describeAbility, detailAbility };
 
 export interface CatchDialogProps {
   /**

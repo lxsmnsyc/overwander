@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { ItemTypes, Items } from '../../data/ids/items';
 import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items';
+import { describeItem, detailItem } from '../details';
 import ItemSprite from './ItemSprite';
 import matches from '../../core/search';
 import {
@@ -41,30 +42,10 @@ export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
 const SPRITE = 36;
 
 /**
- * An item the registry does not know shows as its id rather than a
- * guess
+ * Re-exported from where the battle card reads them too: a tray of
+ * items and a pokemon's held item are named the same way
  */
-export function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
-}
-
-/**
- * What the card over a square says. An unknown item has nothing to say
- * about itself, which is said rather than left blank
- */
-export function detailItem(item: Items): { name: string; description: string } {
-  try {
-    const data = getItemData(item);
-
-    return { name: data.name, description: data.description };
-  } catch {
-    return { name: describeItem(item), description: 'Nothing is known about this.' };
-  }
-}
+export { describeItem, detailItem };
 
 /**
  * The bag unfiltered. A category filter always offers this first,

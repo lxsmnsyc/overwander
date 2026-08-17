@@ -89,6 +89,12 @@ test.describe('the catch sheet', () => {
       window.torn = torn;
       new MutationObserver((records) => {
         for (const record of records) {
+          // The tooltip layer is where hover cards come and go, and one
+          // of those is a `role=dialog` of its own: a card put away is
+          // not a screen being torn down
+          if (record.target instanceof Element && record.target.closest('#tooltip') != null) {
+            continue;
+          }
           for (const gone of record.removedNodes) {
             if (gone instanceof Element && gone.querySelector('[role=dialog], canvas') != null) {
               torn.count += 1;

@@ -1,4 +1,13 @@
-import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  type Accessor,
+  Index,
+  type JSX,
+  Show,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import { Species } from '../../data/ids/species';
@@ -121,6 +130,13 @@ export interface BoxEntry {
 export interface CatchBoxCanvasProps {
   entries: BoxEntry[];
   onOpen: (id: string) => void;
+  /**
+   * What stands over an occupied square, in the layer above the
+   * drawing: a hover card, usually. The squares are boxes of the
+   * document rather than places on a canvas so that something can be
+   * anchored to one
+   */
+  cell?: (entry: Accessor<BoxEntry>) => JSX.Element;
 }
 
 /**
@@ -168,6 +184,12 @@ function drawMark(
  * an egg has to say, so it says it with the only thing it has
  */
 const EGG_SPEED = [0.6, 2.4] as const;
+
+/**
+ * The squares, as something to iterate: what stands in each is read
+ * off the entries by index
+ */
+const SQUARES: null[] = Array.from({ length: BOX_SIZE }, () => null);
 
 /**
  * Which way each arrow moves the cursor, in squares
@@ -228,23 +250,6 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
     // Iterated over a copy on purpose: the keys are being deleted as
     // they are walked
   });
-
-  const cellAt = (event: MouseEvent): number | null => {
-    const element = canvas;
-
-    if (element == null) {
-      return null;
-    }
-
-    const bounds = element.getBoundingClientRect();
-    const x = Math.floor(((event.clientX - bounds.left) / bounds.width) * BOX_COLUMNS);
-    const y = Math.floor(((event.clientY - bounds.top) / bounds.height) * BOX_ROWS);
-
-    if (x < 0 || y < 0 || x >= BOX_COLUMNS || y >= BOX_ROWS) {
-      return null;
-    }
-    return y * BOX_COLUMNS + x;
-  };
 
   /**
    * What is standing in a square, if anything. The last box of a
@@ -392,28 +397,22 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
   const named = (index: number): string => entryAt(index)?.label ?? 'Empty square';
 
   return (
-    <canvas
-      ref={canvas}
+    // The box is the frame, the drawing and the squares over it. It
+    // carries the role and the keyboard, so what a reader is told about
+    // the box does not change now that the squares are boxes of the
+    // document as well as places on a canvas.
+    //
+    // Narrower than the panel it sits in, with air around it: a box
+    // stretched to the full width of a wide dialog is thirty large
+    // squares to sweep the eye across rather than one thing to look at
+    <div
       tabindex={0}
       role="application"
       aria-label={`Box of pokemon, ${props.entries.length} of ${BOX_SIZE} squares filled. ${named(
         cursor(),
       )} under the cursor.`}
-      title={hovered() == null ? '' : named(hovered() ?? 0)}
-      // Narrower than the panel it sits in, with air around it: a box
-      // stretched to the full width of a wide dialog is thirty large
-      // squares to sweep the eye across rather than one thing to look
-      // at
-      class={`mx-auto my-2 block h-auto w-full max-w-lg rounded-xl border-4 border-tide
-        bg-parchment shadow-pop focus-visible:outline-none ${
-          hovered() != null && entryAt(hovered() ?? 0) != null ? 'cursor-pointer' : 'cursor-default'
-        }`}
-      onMouseMove={(event) => {
-        setHovered(cellAt(event));
-      }}
-      onMouseLeave={() => {
-        setHovered(null);
-      }}
+      class="relative mx-auto my-2 w-full max-w-lg overflow-hidden rounded-xl border-4 border-tide
+        bg-parchment shadow-pop focus-visible:outline-none"
       onFocus={() => {
         setFocused(true);
       }}
@@ -433,14 +432,34 @@ export default function CatchBoxCanvas(props: CatchBoxCanvasProps): JSX.Element 
           open(cursor());
         }
       }}
-      onClick={(event) => {
-        const index = cellAt(event);
+    >
+      <canvas ref={canvas} aria-hidden="true" class="block h-auto w-full" />
 
-        if (index != null) {
-          setCursor(index);
-          open(index);
-        }
-      }}
-    />
+      {/* Six across and five down, the same grid the canvas is drawn
+          on. Nothing is drawn in these — they are where a press lands
+          and where a card is anchored */}
+      <div class="absolute inset-0 grid grid-cols-6 grid-rows-5">
+        <Index each={SQUARES}>
+          {(_, index) => (
+            <div
+              class={entryAt(index) == null ? '' : 'cursor-pointer'}
+              title={props.cell == null && entryAt(index) != null ? named(index) : undefined}
+              onMouseEnter={() => {
+                setHovered(index);
+              }}
+              onMouseLeave={() => {
+                setHovered((at) => (at === index ? null : at));
+              }}
+              onClick={() => {
+                setCursor(index);
+                open(index);
+              }}
+            >
+              <Show when={entryAt(index)}>{(entry) => props.cell?.(entry)}</Show>
+            </div>
+          )}
+        </Index>
+      </div>
+    </div>
   );
 }

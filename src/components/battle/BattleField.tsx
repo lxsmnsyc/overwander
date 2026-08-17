@@ -24,6 +24,14 @@ import UnitCard from './UnitCard';
  */
 const CARD_ROOM = 260;
 
+/**
+ * How long the card waits after the pointer leaves the pokemon. It is
+ * the time it takes to cross the gap onto the card itself, which a
+ * player has to be able to do: what an ability or an item does is on a
+ * card over the card
+ */
+const CLOSE_DELAY = 140;
+
 export interface BattleFieldProps {
   battle: Battle;
   /**
@@ -75,13 +83,36 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
     });
   });
 
+  let leaving: ReturnType<typeof setTimeout> | undefined;
+
+  const keep = (): void => {
+    if (leaving != null) {
+      clearTimeout(leaving);
+      leaving = undefined;
+    }
+  };
+
+  const drop = (): void => {
+    keep();
+    leaving = setTimeout(() => {
+      setHovered(null);
+    }, CLOSE_DELAY);
+  };
+
+  onCleanup(keep);
+
   return (
     <>
       <BattleCanvas
         battle={props.battle}
         player={props.player}
         onHover={(unit, at) => {
-          setHovered(unit == null || at == null ? null : { unit, at });
+          if (unit == null || at == null) {
+            drop();
+            return;
+          }
+          keep();
+          setHovered({ unit, at });
         }}
         onPick={(unit) => {
           props.onPick?.(unit);
@@ -98,12 +129,17 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
         {(spot) => (
           <ul
             aria-label="The pokemon under the pointer"
-            class={`pointer-events-none fixed z-20 m-0 flex list-none -translate-x-1/2 p-0
+            // Pressable, so the pointer can be moved onto it. Leaving
+            // the pokemon starts a short wait rather than clearing the
+            // card, and arriving here calls the wait off
+            class={`fixed z-20 m-0 flex list-none -translate-x-1/2 p-0
               ${spot().at.top < CARD_ROOM ? '' : '-translate-y-full'}`}
             style={{
               left: `${spot().at.x}px`,
               top: `${spot().at.top < CARD_ROOM ? spot().at.bottom : spot().at.top}px`,
             }}
+            onMouseEnter={keep}
+            onMouseLeave={drop}
           >
             <UnitCard unit={spot().unit} revision={beat} />
           </ul>

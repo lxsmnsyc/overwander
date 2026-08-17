@@ -10,11 +10,10 @@ import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { getAbilityData } from '../../data/abilities';
-import { getItemData } from '../../data/items';
+import { detailAbility, detailItem } from '../details';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
-import { Meta } from '../styled';
+import { Meta, TooltipHost } from '../styled';
 
 /**
  * One pokemon in a fight, read in full: what it is, how much of it is
@@ -90,31 +89,6 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
 };
-
-/**
- * What an ability or an item is called, falling back to its id.
- *
- * The registries are keyed by the enum's number, and `Object.keys`
- * hands back strings — so the ids are put back through `Number` before
- * they get here. A lookup that throws would take the whole field down
- * with it, so an entry that is genuinely missing is named rather than
- * fatal
- */
-function nameOfAbility(ability: Abilities): string {
-  try {
-    return getAbilityData(ability).name;
-  } catch {
-    return `Ability #${ability}`;
-  }
-}
-
-function nameOfItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
-}
 
 /**
  * How many move boxes the column holds: what a pokemon carries
@@ -198,10 +172,10 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
        */
       abilities: (Object.keys(unit.abilities).map(Number) as Abilities[])
         .filter((ability) => unit.abilities[ability] === true)
-        .map(nameOfAbility),
+        .map(detailAbility),
       items: (Object.keys(unit.items).map(Number) as Items[])
         .filter((item) => unit.items[item] === true)
-        .map(nameOfItem),
+        .map(detailItem),
       /**
        * What it is in the middle of doing, if anything. A move being
        * wound up is the one thing on a card that says what is about
@@ -323,15 +297,21 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           </Index>
         </ul>
 
+        {/* What each of these does is the half worth reading, and
+            neither fits in a box this wide: the name is what is
+            shown, and the card over it says the rest */}
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
             {(ability) => (
-              <li
-                class="truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
-                  text-tide-dark"
-                title={ability}
-              >
-                {ability}
+              <li>
+                <TooltipHost class="block" {...ability}>
+                  <span
+                    class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
+                      text-tide-dark"
+                  >
+                    {ability.name}
+                  </span>
+                </TooltipHost>
               </li>
             )}
           </For>
@@ -340,11 +320,15 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           <For each={view().items} fallback={<Meta>No item</Meta>}>
             {(item) => (
-              <li
-                class="truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5 text-gold"
-                title={item}
-              >
-                {item}
+              <li>
+                <TooltipHost class="block" {...item}>
+                  <span
+                    class="block truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5
+                      text-gold"
+                  >
+                    {item.name}
+                  </span>
+                </TooltipHost>
               </li>
             )}
           </For>

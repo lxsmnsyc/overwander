@@ -2,6 +2,7 @@ import type { CaughtPokemon } from '../../auth/caught';
 import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
+import { Genders } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
 import type { BoxEntry } from './CatchBoxCanvas';
@@ -16,6 +17,23 @@ import type { BoxEntry } from './CatchBoxCanvas';
  * cycle, and a cycle is the module system saying that neither of them
  * owns this.
  */
+
+/**
+ * The sign a gender is shown by. Something genderless shows nothing:
+ * a mark for it would be one more symbol to learn for a fact that
+ * changes nothing
+ */
+export const GENDER_MARKS: Record<Genders, string> = {
+  [Genders.Genderless]: '',
+  [Genders.Male]: '♂',
+  [Genders.Female]: '♀',
+};
+
+export const GENDER_LABELS: Record<Genders, string> = {
+  [Genders.Genderless]: 'Genderless',
+  [Genders.Male]: 'Male',
+  [Genders.Female]: 'Female',
+};
 
 /**
  * A one-line summary of a catch: the species name plus the details

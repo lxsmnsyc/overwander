@@ -4,9 +4,20 @@ import { type CaughtPokemon, listCaught } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
 import { useAuth } from '../../auth/context';
 import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
+import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
 import matches from '../../core/search';
-import { Button, Dialog, DialogActions, Meta, Note, Row, SEARCH_FROM, Search } from '../styled';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  HoverCard,
+  Meta,
+  Note,
+  Row,
+  SEARCH_FROM,
+  Search,
+} from '../styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -21,6 +32,7 @@ import { Button, Dialog, DialogActions, Meta, Note, Row, SEARCH_FROM, Search } f
  * callers that are already inside a dialog of their own, since a
  * dialog opened over a dialog fights it for the click that closes it.
  */
+
 
 /**
  * One of the player's pokemon, with the one thing a caller cannot read
@@ -342,6 +354,21 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         return taken ? { ...square, mark: 'picked' as const } : square;
       });
 
+  /**
+   * What the button on a card says it will do. A box being browsed
+   * opens the record; a box being picked from takes one, and a pokemon
+   * already taken is handed back rather than taken twice
+   */
+  const verb = (option: CatchOption): string => {
+    if (props.viewOnly === true) {
+      return 'Open';
+    }
+    if (props.multiple === true) {
+      return isDrafted(option.id) ? 'Remove' : 'Add';
+    }
+    return props.verb ?? 'Pick';
+  };
+
   const pressById = (id: string): void => {
     const option = options().find((entry) => entry.id === id);
 
@@ -399,8 +426,42 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         >
           {/* The same box the player keeps their collection in. Picking
               a party out of a hundred pokemon is looking rather than
-              reading, and a list of a hundred lines was reading */}
-          <CatchBoxCanvas entries={page()} onOpen={pressById} />
+              reading, and a list of a hundred lines was reading.
+
+              Every square carries a card: what is in it, and the button
+              that takes it. The bar is titled "Info" because the card
+              under it already names the pokemon on its first line */}
+          <CatchBoxCanvas
+            entries={page()}
+            onOpen={pressById}
+            cell={(entry) => (
+              <Show when={options().find((option) => option.id === entry().id)}>
+                {(option) => (
+                  <HoverCard
+                    class="size-full"
+                    trigger={<span class="block size-full" />}
+                    title="Info"
+                    footer={
+                      <>
+                        <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
+                        <Button
+                          tone="primary"
+                          disabled={props.disabled === true || props.reason?.(option()) != null}
+                          onClick={() => {
+                            pressById(option().id);
+                          }}
+                        >
+                          {verb(option())}
+                        </Button>
+                      </>
+                    }
+                  >
+                    <CatchCard caught={option().caught} />
+                  </HoverCard>
+                )}
+              </Show>
+            )}
+          />
 
           <Show when={boxes() > 1}>
             <Row class="justify-center">

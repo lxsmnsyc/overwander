@@ -70,6 +70,14 @@ function tooltipHost(): HTMLElement | undefined {
   return document.getElementById('tooltip') ?? undefined;
 }
 
+/**
+ * Anything else that has to float over a dialog — a card placed by its
+ * own caller rather than by `TooltipHost`
+ */
+export function TooltipLayer(props: ParentProps): JSX.Element {
+  return <Portal mount={tooltipHost()}>{props.children}</Portal>;
+}
+
 export interface TooltipHostProps extends ParentProps, TooltipProps {
   /**
    * What the wrapper itself is. It has to be a box of its own rather

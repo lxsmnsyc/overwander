@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { type CaughtPokemon, isGuarded, listCaught } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
@@ -280,11 +280,26 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   };
 
   /**
+   * Who the dialog is about, held past the moment they are dismissed.
+   *
+   * A dialog is on screen for the length of its fade after it closes,
+   * and `standing` is null for all of it — so a panel read straight off
+   * the prop empties as it leaves and shows a nameless dialog belonging
+   * to nobody. The hold is for **showing** only: anything that acts on
+   * the person still reads `props.standing`, which is what makes the
+   * buttons dead the moment they are gone
+   */
+  const showing = createMemo<[cell: number, npc: Npc] | null>(
+    (held) => props.standing ?? held ?? null,
+    null,
+  );
+
+  /**
    * Who is standing there. The dialog is named after them, and it is
    * named whether or not somebody has been walked up to yet
    */
   const who = (): string => {
-    const npc = props.standing?.[1];
+    const npc = showing()?.[1];
 
     return npc == null ? 'Somebody' : NPC_NAMES[npc];
   };
@@ -733,7 +748,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         turns over, and each of them takes you up on it once while they are here — the vendor
         as often as your purse allows."
       >
-        <Show when={props.standing}>
+        <Show when={showing()}>
           {(standing) => (
             <>
               {/* Where they will stand once there is somebody drawn.
@@ -1076,7 +1091,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
               is 0, and a `Show` asked about it is a `Show` asked about
               a falsy value — the breeder's own button was the one
               thing this row never drew */}
-          <Show when={props.standing} keyed>
+          <Show when={showing()} keyed>
             {(standing) => npcActions(standing[1])}
           </Show>
           <Button onClick={close}>Walk on</Button>

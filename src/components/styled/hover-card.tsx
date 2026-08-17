@@ -43,11 +43,15 @@ const GAP = 8;
 const MARGIN = 8;
 
 /**
- * How far behind the pointer the safe triangle's apex sits. It is what
- * gives the triangle a width to leave through at the point the pointer
- * is actually at
+ * How far from the apex a pointer still counts as being on its way.
+ *
+ * The triangle is one point wide where the pointer left, so the first
+ * position the browser reports — a fraction of a pixel to the side —
+ * is outside it by the maths and on the way out by any other reading.
+ * This is that much room around the exit point itself; the shape is
+ * otherwise exact
  */
-const SLACK = 12;
+const GRACE = 12;
 
 /**
  * Where the answer to "why did the card close" is remembered. Chasing
@@ -138,6 +142,11 @@ const FOOT =
 interface Point {
   x: number;
   y: number;
+}
+
+/** How far apart two points are */
+function apart(one: Point, two: Point): number {
+  return Math.hypot(one.x - two.x, one.y - two.y);
 }
 
 /**
@@ -364,10 +373,9 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * — leaving a trigger diagonally is the one move a plain
    * mouse-leave gets wrong.
    *
-   * The apex is set back `SLACK` behind the pointer rather than put
-   * on it: at the pointer itself the triangle is one point wide, and
-   * the first move the browser reports lands beside the way out rather
-   * than along it — which is outside a triangle that starts there
+   * The apex is exactly where the pointer left, and `GRACE` around it
+   * is what keeps the first reported move — which lands beside the way
+   * out rather than along it — from reading as having left
    */
   const cross = (from: Point): void => {
     const box = card();
@@ -380,12 +388,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     const rect = box.getBoundingClientRect();
     const above = rect.bottom <= from.y;
     const edge = above ? rect.bottom : rect.top;
-    const back = above ? from.y + SLACK : from.y - SLACK;
-    const safe: Point[] = [
-      { x: from.x, y: back },
-      { x: rect.right, y: edge },
-      { x: rect.left, y: edge },
-    ];
+    const safe: Point[] = [from, { x: rect.right, y: edge }, { x: rect.left, y: edge }];
 
     drawSafeArea({ corners: safe, live: true, at: null });
 
@@ -402,7 +405,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     const onMove = (event: PointerEvent): void => {
       const at = { x: event.clientX, y: event.clientY };
 
-      if (!within(at, safe)) {
+      if (!within(at, safe) && apart(at, from) > GRACE) {
         stop();
         // Drawn again after the teardown cleared it, this time as the
         // triangle that failed and the point it failed at
@@ -658,8 +661,17 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 stroke-width="2"
                 stroke-dasharray="6 4"
               />
-              {/* The apex, which sits `SLACK` behind where the pointer
-                  actually left rather than on it */}
+              {/* The apex — where the pointer actually left — and the
+                  grace around it, which is the rest of what counts as
+                  still being on the way */}
+              <circle
+                cx={drawn().corners[0].x}
+                cy={drawn().corners[0].y}
+                r={GRACE}
+                class={drawn().live ? 'fill-leaf/15 stroke-leaf' : 'fill-ember/20 stroke-ember'}
+                stroke-width="1"
+                stroke-dasharray="3 3"
+              />
               <circle
                 cx={drawn().corners[0].x}
                 cy={drawn().corners[0].y}

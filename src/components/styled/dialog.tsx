@@ -7,6 +7,7 @@ import {
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
   Transition,
+  TransitionChild,
 } from 'terracotta';
 import FADE, { holdFade } from './transition';
 
@@ -263,9 +264,9 @@ export function Dialog(props: DialogProps): JSX.Element {
           over the page. The transition is what mounts and unmounts the
           dialog now — terracotta's own `unmount` is turned off, or a
           closed dialog would be gone before it could fade */}
-      <Transition show={props.isOpen} {...FADE}>
+      <Transition appear show={props.isOpen} {...FADE}>
         <HeadlessDialog
-          isOpen={props.isOpen}
+          isOpen
           unmount={false}
           onClose={props.onClose}
           onTransitionEnd={holdFade}
@@ -278,7 +279,6 @@ export function Dialog(props: DialogProps): JSX.Element {
           // Two dialogs in a row otherwise overlap for the length of
           // the fade, each with a button offering the same thing
           inert={!props.isOpen}
-          aria-hidden={props.isOpen ? undefined : 'true'}
           // And out of the way of the pointer: a dialog fading out
           // still covers the screen, and the page underneath has to
           // answer a hover the moment the dialog stops being one
@@ -287,8 +287,30 @@ export function Dialog(props: DialogProps): JSX.Element {
           {/* Dark in both themes, and dark enough to read as a page put
             away rather than a page tinted: the panel is white by day
             and needs the ground behind it to fall back */}
-          <DialogOverlay class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]" />
-          <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+          <DialogOverlay
+            as={TransitionChild}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]"
+          />
+          {/* This element is to trick the browser into centering the modal contents. */}
+          <span class="inline-block h-screen align-middle" aria-hidden="true">
+            &#8203;
+          </span>
+          <DialogPanel
+            as={TransitionChild}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+            class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}
+          >
             <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
               {/* Both stuck rows travel together: a second `sticky` under
                 the first would have to be told how tall the first is,

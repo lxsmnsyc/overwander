@@ -1,4 +1,4 @@
-import { type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, Show, Suspense, createResource, createSignal } from 'solid-js';
 import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../../auth/gift-record';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
 import getSigil from '../../data/constants/sigil';
@@ -31,6 +31,15 @@ function describeGift(gift: MysteryGift): string {
   return gift.kind === GiftKind.Item
     ? `${gift.amount} × ${describeItem(gift.item)}`
     : describeGiven(gift);
+}
+
+/**
+ * What stands in the shelf's place while it is being read. The
+ * boundary and the first read both show it, and only one of them can
+ * be on screen at a time
+ */
+function looking(): JSX.Element {
+  return <Note class="text-center">Looking…</Note>;
 }
 
 /**
@@ -96,84 +105,90 @@ export default function GiftsTab(): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col gap-4">
-      <Show when={owed.loading && owed.latest == null}>
-        <Note class="text-center">Looking…</Note>
-      </Show>
+    // The shelf's own boundary. The list is read through `latest` and
+    // does not suspend, but the nearest boundary above this is the one
+    // around the whole page — so anything in here that ever does
+    // suspend would take the world down with it
+    <Suspense fallback={looking()}>
+      <div class="flex flex-col gap-4">
+        {/* What the boundary cannot show: `latest` never throws, so
+            the first read is waited out here rather than caught */}
+        <Show when={owed.loading && owed.latest == null}>{looking()}</Show>
 
-      <Show when={!owed.loading && gifts().length === 0}>
-        <Note class="text-center">Nothing is waiting for you.</Note>
-      </Show>
+        <Show when={!owed.loading && gifts().length === 0}>
+          <Note class="text-center">Nothing is waiting for you.</Note>
+        </Show>
 
-      <Show when={pokemon().length > 0}>
-        <DialogSection title="Pokemon">
-          <CatchBox
-            entries={pokemon().map(asSquare)}
-            // The square is a picture; the card over it holds the one
-            // button, so a stray press cannot take a gift
-            cardOnly
-            cell={(entry) => (
-              <HoverCard
-                class="block size-full"
-                trigger={<span class="block size-full" />}
-                title="Gift"
-                footer={
+        <Show when={pokemon().length > 0}>
+          <DialogSection title="Pokemon">
+            <CatchBox
+              entries={pokemon().map(asSquare)}
+              // The square is a picture; the card over it holds the one
+              // button, so a stray press cannot take a gift
+              cardOnly
+              cell={(entry) => (
+                <HoverCard
+                  class="block size-full"
+                  trigger={<span class="block size-full" />}
+                  title="Gift"
+                  footer={
+                    <Button
+                      tone="primary"
+                      disabled={taking() != null}
+                      onClick={() => {
+                        take(entry().id);
+                      }}
+                    >
+                      Claim
+                    </Button>
+                  }
+                >
+                  <Show when={found(entry().id)}>
+                    {(gift) => (
+                      <div class="flex flex-col gap-1">
+                        <span class="font-semibold">{describeGiven(gift())}</span>
+                        {/* The mark it will be known by: two of the same
+                            species with the same sigil are the same
+                            individual */}
+                        <Meta class="font-mono tracking-[0.2em]">
+                          {getSigil(gift().individualValue, gift().traitValue)}
+                        </Meta>
+                        <Meta>{gift().reason}</Meta>
+                      </div>
+                    )}
+                  </Show>
+                </HoverCard>
+              )}
+            />
+          </DialogSection>
+        </Show>
+
+        <Show when={things().length > 0}>
+          <DialogSection title="Items">
+            <ItemGrid
+              bare
+              cardOnly
+              entries={things().map((gift) => ({
+                item: gift.item,
+                amount: gift.amount,
+                said: `Claim ${describeGift(gift)}`,
+                card: <Meta>{gift.reason}</Meta>,
+                footer: (
                   <Button
                     tone="primary"
                     disabled={taking() != null}
                     onClick={() => {
-                      take(entry().id);
+                      take(gift.id);
                     }}
                   >
                     Claim
                   </Button>
-                }
-              >
-                <Show when={found(entry().id)}>
-                  {(gift) => (
-                    <div class="flex flex-col gap-1">
-                      <span class="font-semibold">{describeGiven(gift())}</span>
-                      {/* The mark it will be known by: two of the same
-                          species with the same sigil are the same
-                          individual */}
-                      <Meta class="font-mono tracking-[0.2em]">
-                        {getSigil(gift().individualValue, gift().traitValue)}
-                      </Meta>
-                      <Meta>{gift().reason}</Meta>
-                    </div>
-                  )}
-                </Show>
-              </HoverCard>
-            )}
-          />
-        </DialogSection>
-      </Show>
-
-      <Show when={things().length > 0}>
-        <DialogSection title="Items">
-          <ItemGrid
-            bare
-            cardOnly
-            entries={things().map((gift) => ({
-              item: gift.item,
-              amount: gift.amount,
-              said: `Claim ${describeGift(gift)}`,
-              card: <Meta>{gift.reason}</Meta>,
-              footer: (
-                <Button
-                  tone="primary"
-                  disabled={taking() != null}
-                  onClick={() => {
-                    take(gift.id);
-                  }}
-                >
-                  Claim
-                </Button>
-              ),
-            }))}
-          />
-        </DialogSection>
-      </Show>
-    </div>
+                ),
+              }))}
+            />
+          </DialogSection>
+        </Show>
+      </div>
+    </Suspense>
   );
 }

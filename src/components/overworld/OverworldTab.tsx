@@ -372,7 +372,7 @@ export default function OverworldTab(): JSX.Element {
     for (const stack of items) {
       toast.push({
         message: `${describeItem(stack.item)} ×${stack.amount}`,
-        art: <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
+        art: () => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
         tone: 'leaf',
       });
     }

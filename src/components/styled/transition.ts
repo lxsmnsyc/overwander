@@ -42,12 +42,14 @@ export function holdFade(event: TransitionEvent): void {
 }
 
 const FADE = {
-  enterFrom: 'opacity-0',
-  enterTo: 'transition-opacity duration-400 ease-out motion-reduce:duration-75 opacity-100',
+  enterFrom: 'opacity-0 scale-50',
+  enterTo:
+    'transition-opacity transition-transform transform duration-250 ease-out motion-reduce:duration-75 opacity-100 scale-100',
   /** Held after the fade in, since `enterTo` is taken off at the end */
-  entered: 'opacity-100',
-  leaveFrom: 'opacity-100',
-  leaveTo: 'transition-opacity duration-400 ease-in motion-reduce:duration-75 opacity-0',
+  entered: 'opacity-100 scale-100',
+  leaveFrom: 'opacity-100 scale-100',
+  leaveTo:
+    'transition-opacity transition-transform transform duration-250 ease-in motion-reduce:duration-75 opacity-0 scale-50',
 } as const;
 
 export default FADE;

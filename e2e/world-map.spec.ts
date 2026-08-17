@@ -34,9 +34,9 @@ test.describe('the world map', () => {
 
     await expect(picture).toBeVisible();
 
-    const bounds = await picture.boundingBox();
-
-    expect(bounds?.width ?? 0).toBeGreaterThan(300);
+    // Polled rather than measured once: a dialog grows into place, and
+    // the first box a freshly visible canvas has is a frame of that
+    await expect.poll(async () => (await picture.boundingBox())?.width ?? 0).toBeGreaterThan(300);
     expect(await lookingAt(page)).toContain('chunks across');
   });
 

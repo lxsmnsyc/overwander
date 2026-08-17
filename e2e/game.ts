@@ -154,6 +154,21 @@ const MENU_DIALOGS: Record<string, string> = {
  * the world is behind it, and it is one button rather than a row of
  * them, so every one of these is two presses
  */
+/**
+ * Wait until nothing on screen is still moving.
+ *
+ * Dialogs and cards grow into place, so anything measured or hovered
+ * the instant it appears is measured mid-animation — a panel half its
+ * final width, or a square that slides out from under the pointer
+ */
+export async function settled(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => document.getAnimations().every((animation) => animation.playState !== 'running'),
+    undefined,
+    { timeout: 5_000 },
+  );
+}
+
 export async function openMenu(page: Page): Promise<Locator> {
   const menu = page.getByRole('navigation', { name: 'Game' });
 
@@ -257,6 +272,9 @@ export async function pressBoxSquare(
   verb: string,
   index = 0,
 ): Promise<void> {
+  // The dialog it sits in grows into place; hovering before that is
+  // over puts the pointer where the square is about to stop being
+  await settled(page);
   await box.getByRole('button').nth(index).hover();
 
   // Not one of `openDialogs`: a hover card is our own element rather
@@ -286,6 +304,8 @@ export async function openCatch(page: Page, index = 0): Promise<Locator> {
  * that is laid out from the left is off by half the panel
  */
 export async function offCentre(dialog: Locator, inside: Locator): Promise<number> {
+  await settled(dialog.page());
+
   const outer = await panelOf(dialog).boundingBox();
   const inner = await inside.boundingBox();
 

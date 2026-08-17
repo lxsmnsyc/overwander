@@ -72,10 +72,16 @@ export interface ToastRequest {
    */
   message?: string;
   /**
-   * A picture of whatever is being reported, above the words. It is
-   * how a stash of items is shown rather than listed
+   * A picture of whatever is being reported, beside the words. It is
+   * how a stash of items is shown rather than listed.
+   *
+   * Written as a function, and it has to be: a toast is pushed from a
+   * handler or a promise, where there is no owner to build markup
+   * under. Markup made there keeps whatever computations its
+   * components create for the life of the page, and Solid says so.
+   * Called here, it is built under the card that draws it
    */
-  art?: JSX.Element;
+  art?: () => JSX.Element;
   tone?: ToastTone;
   /**
    * How long it stays, in milliseconds
@@ -132,8 +138,8 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       class={`pointer-events-auto flex ${WIDTH} shrink-0 items-center gap-2 rounded-panel border-2
         px-2 py-1.5 text-left shadow-pop ${TONES[props.toast.tone ?? 'neutral']}`}
     >
-      <Show when={props.toast.art}>
-        {(art) => <div class="flex shrink-0 items-center justify-center">{art()}</div>}
+      <Show when={props.toast.art != null}>
+        <div class="flex shrink-0 items-center justify-center">{props.toast.art?.()}</div>
       </Show>
       <div class="flex min-w-0 grow flex-col">
         <Show when={props.toast.title}>

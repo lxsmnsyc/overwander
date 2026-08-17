@@ -35,11 +35,10 @@ test.describe('the profile', () => {
     const box = await openBox(page);
 
     // Wide enough to be a box of squares, with the pokemon the account
-    // was handed standing in one of them
-    const bounds = await box.boundingBox();
-
-    expect(bounds?.width ?? 0).toBeGreaterThan(200);
-    await expect(box.getByRole('img').first()).toBeVisible();
+    // was handed standing in one of them. Polled, since the dialog
+    // holding it grows into place
+    await expect.poll(async () => (await box.boundingBox())?.width ?? 0).toBeGreaterThan(200);
+    await expect(box.getByRole('button').first()).toBeVisible();
   });
 
   test('carries the balls a new player was handed', async ({ page }) => {

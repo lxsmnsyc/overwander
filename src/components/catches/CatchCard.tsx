@@ -162,12 +162,18 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             </For>
           </ul>
 
-          {/* Pictures rather than names: a held item is one square,
-              and the column beside it is already two of words */}
-          <ul class="m-0 flex list-none flex-wrap content-start gap-0.5 p-0">
+          {/* Pictures rather than names, two to a row: a held item is
+              one square, and the column beside it is already two of
+              words. Only what is held is drawn — a pokemon carries one
+              thing, and a tray of empty squares beside it said nothing
+              eight times over */}
+          <ul class="m-0 grid list-none grid-cols-2 gap-0.5 p-0">
             <For each={caught().items} fallback={<Meta>No item</Meta>}>
               {(item) => (
-                <li class="flex">
+                <li
+                  class="flex aspect-square items-center justify-center rounded border
+                    border-line-soft bg-paper/60"
+                >
                   <TooltipHost {...detailItem(item)}>
                     <ItemSprite item={item} size={ITEM_SPRITE} />
                   </TooltipHost>

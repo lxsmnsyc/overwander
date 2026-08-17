@@ -2,18 +2,18 @@ import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { ItemTypes, Items } from '../../data/ids/items';
 import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items';
 import { describeItem, detailItem } from '../details';
+import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matches from '../../core/search';
 import {
   Button,
   Filter,
   type FilterOption,
+  HoverCard,
   Meta,
   Note,
   Row,
-  SEARCH_FROM,
   Search,
-  TooltipHost,
 } from '../styled';
 
 /**
@@ -37,9 +37,11 @@ export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
 
 /**
  * How big a picture is drawn inside its square. The square itself is
- * whatever a sixth of the tray comes to
+ * whatever a sixth of the tray comes to — around eighty pixels — so
+ * this is the icon at twice the size it was cut, which is both a whole
+ * number of pixels and as large as the square takes
  */
-const SPRITE = 36;
+const SPRITE = 64;
 
 /**
  * Re-exported from where the battle card reads them too: a tray of
@@ -121,6 +123,17 @@ export interface ItemCell {
    * the time
    */
   note?: string | null;
+  /**
+   * How many of it the bag holds, for the card. A crate's squares are
+   * not the player's, so the two counts are different questions
+   */
+  carried?: number;
+  /**
+   * What the button on this square's card says, or nothing where this
+   * one cannot be acted on. It falls back to the tray's own verb, so a
+   * picker that treats every square alike says it once
+   */
+  action?: string | null;
 }
 
 export interface ItemGridProps {
@@ -136,6 +149,12 @@ export interface ItemGridProps {
    * a battle, say
    */
   disabled?: boolean;
+  /**
+   * Whether a square itself does nothing and the card over it is the
+   * only way to act. It is for a tray where the press *spends* — a
+   * vendor's crate, where a stray click on a picture was a purchase
+   */
+  cardOnly?: boolean;
   onPress?: (item: Items) => void;
 }
 
@@ -184,6 +203,18 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
 
   const empties = (): number[] => Array.from({ length: squares() - shown().length }, (_, at) => at);
 
+  /**
+   * How a square reads to the pointer. One that is refused is greyed
+   * rather than marked — a square he will not part with is still worth
+   * seeing, and a red edge reads as something having gone wrong
+   */
+  const handOf = (cell: ItemCell): string => {
+    if (cell.blocked != null) {
+      return 'border-line-soft opacity-45 grayscale';
+    }
+    return props.cardOnly === true ? 'cursor-default' : 'cursor-pointer';
+  };
+
   const press = (cell: ItemCell): void => {
     if (props.disabled === true || cell.blocked != null) {
       return;
@@ -195,31 +226,27 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
       {/* What narrows the tray stands above it, and always in the same
           corners: what is being looked for on the left, which shelf it
-          is on at the right */}
-      <Show when={props.entries.length > SEARCH_FROM || categories().length > 2}>
-        <Row class="flex-nowrap items-start justify-between gap-2">
-          <Show when={props.entries.length > SEARCH_FROM}>
-            <Search
-              placeholder="Search the bag"
-              value={query()}
-              onChange={(typed) => {
-                setQuery(typed);
-              }}
-            />
-          </Show>
-          <Show when={categories().length > 2}>
-            <Filter
-              class="ml-auto"
-              label="Category"
-              value={shelf()}
-              options={categories()}
-              onChange={(picked) => {
-                setCategory(picked);
-              }}
-            />
-          </Show>
-        </Row>
-      </Show>
+          is on at the right. Both are drawn whatever the tray holds —
+          a bag that grew a search box once it passed eight things was
+          a screen that changed shape as the player filled it */}
+      <Row class="flex-nowrap items-start justify-between gap-2">
+        <Search
+          placeholder="Search the bag"
+          value={query()}
+          onChange={(typed) => {
+            setQuery(typed);
+          }}
+        />
+        <Filter
+          class="ml-auto"
+          label="Category"
+          value={shelf()}
+          options={categories()}
+          onChange={(picked) => {
+            setCategory(picked);
+          }}
+        />
+      </Row>
 
       {/* Narrowed to nothing is the tray's own news to break: what the
           caller says when the bag is empty is a different sentence */}
@@ -233,57 +260,79 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       >
         <For each={shown()}>
           {(cell) => (
-            <TooltipHost class="block" {...detailItem(cell.item)}>
-              <button
-                type="button"
-                disabled={props.disabled === true || cell.blocked != null}
-                aria-label={`${props.verb == null ? '' : `${props.verb} `}${describeItem(
-                  cell.item,
-                )}${cell.amount == null ? '' : `, ${cell.amount} carried`}${
-                  cell.blocked == null ? '' : ` — ${cell.blocked}`
-                }`}
-                aria-pressed={cell.selected === true}
-                onClick={() => {
-                  press(cell);
-                }}
-                class={`relative flex aspect-square w-full items-center justify-center rounded-lg
-                  border-2 p-1 transition-colors disabled:cursor-not-allowed ${
-                    cell.selected === true
-                      ? 'border-leaf bg-leaf-soft'
-                      : 'border-line bg-paper hover:bg-line-soft'
-                  } ${
-                    cell.blocked == null
-                      ? 'cursor-pointer'
-                      : // Greyed rather than marked: a square he will
-                        // not part with is still worth seeing, and a
-                        // red edge reads as something having gone wrong
-                        'border-line-soft opacity-45 grayscale'
-                  }`}
-              >
-                <ItemSprite item={cell.item} size={SPRITE} label="" />
-                {/* How many, in the corner the games put it in */}
-                <Show when={cell.amount != null}>
-                  <span
-                    class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
-                      border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
-                  >
-                    {cell.amount}
-                  </span>
-                </Show>
-                {/* And the asking price, where there is one */}
-                <Show when={cell.note} keyed>
-                  {(note) => (
-                    <span
-                      class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate
-                        rounded-full border border-gold bg-gold-soft px-1 text-[10px] leading-tight
-                        font-bold text-gold"
+            // A window rather than a label, because what a square is
+            // worth doing is a button rather than a sentence: use it,
+            // buy it, sell it
+            <HoverCard
+              class="block w-full"
+              title="Info"
+              // One button and nothing else. What it costs is on the
+              // square and so is why it is refused — a card repeating
+              // both is the same square said twice
+              footer={
+                <Show when={cell.action ?? props.verb}>
+                  {(verb) => (
+                    <Button
+                      tone="primary"
+                      disabled={props.disabled === true || cell.blocked != null}
+                      onClick={() => {
+                        press(cell);
+                      }}
                     >
-                      {note}
-                    </span>
+                      {verb()}
+                    </Button>
                   )}
                 </Show>
-              </button>
-            </TooltipHost>
+              }
+              trigger={
+                <button
+                  type="button"
+                  disabled={props.disabled === true || cell.blocked != null}
+                  aria-label={`${props.verb == null ? '' : `${props.verb} `}${describeItem(
+                    cell.item,
+                  )}${cell.amount == null ? '' : `, ${cell.amount} carried`}${
+                    cell.blocked == null ? '' : ` — ${cell.blocked}`
+                  }`}
+                  aria-pressed={cell.selected === true}
+                  onClick={() => {
+                    if (props.cardOnly !== true) {
+                      press(cell);
+                    }
+                  }}
+                  class={`relative flex aspect-square w-full items-center justify-center rounded-lg
+                    border-2 p-1 transition-colors disabled:cursor-not-allowed ${
+                      cell.selected === true
+                        ? 'border-leaf bg-leaf-soft'
+                        : 'border-line bg-paper hover:bg-line-soft'
+                    } ${handOf(cell)}`}
+                >
+                  <ItemSprite item={cell.item} size={SPRITE} label="" />
+                  {/* How many, in the corner the games put it in */}
+                  <Show when={cell.amount != null}>
+                    <span
+                      class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
+                        border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+                    >
+                      {cell.amount}
+                    </span>
+                  </Show>
+                  {/* And the asking price, where there is one */}
+                  <Show when={cell.note} keyed>
+                    {(note) => (
+                      <span
+                        class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate
+                          rounded-full border border-gold bg-gold-soft px-1 text-[10px]
+                          leading-tight font-bold text-gold"
+                      >
+                        {note}
+                      </span>
+                    )}
+                  </Show>
+                </button>
+              }
+            >
+              <ItemCard item={cell.item} carried={cell.carried ?? cell.amount} />
+            </HoverCard>
           )}
         </For>
         {/* The rest of the tray, drawn empty rather than left out: a

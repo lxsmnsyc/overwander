@@ -1,4 +1,4 @@
-import { For, Index, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { type CaughtPokemon, isGuarded, listCaught } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
@@ -117,15 +117,6 @@ function asParent(caught: CaughtPokemon): BreedingParent {
 const CENTRED = 'items-center text-center';
 
 /**
- * A trade the player has put together but not yet agreed to: which way
- * it goes, and what is in it
- */
-interface Basket {
-  buying: boolean;
-  picks: ItemAmount[];
-}
-
-/**
  * What is inside a fossil, said in the one word a player is actually
  * deciding on. It is no secret — the rock names the species — and a
  * fossil bought or opened without being told which one it is would be
@@ -146,18 +137,6 @@ function priceOf(item: Items, buying: boolean): number {
   const data = getItemData(item);
 
   return buying ? data.buy : data.sell;
-}
-
-/**
- * What the whole basket comes to
- */
-function totalOf(basket: Basket): number {
-  let total = 0;
-
-  for (const [item, amount] of basket.picks) {
-    total += priceOf(item, basket.buying) * amount;
-  }
-  return total;
 }
 
 export interface NpcDialogProps {
@@ -195,11 +174,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    */
   const [party, setParty] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
-  // What has been picked out of the crate or the bag but not yet
-  // agreed to. A trade is two steps on purpose: the picker is where
-  // the player says what they want, and the summary is where they see
-  // what it comes to before any gold moves
-  const [basket, setBasket] = createSignal<Basket | null>(null);
   // Which side of the counter is being looked at, or null while the
   // player has only been offered the two words
   const [counter, setCounter] = createSignal<'buy' | 'sell' | null>(null);
@@ -377,7 +351,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setChosen([]);
     setParty([]);
     setCounter(null);
-    setBasket(null);
     forget();
     setReminding(null);
     setBuying(null);
@@ -500,92 +473,64 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   };
 
   /**
-   * Agree to what is in the basket.
-   *
-   * The whole of it is one trade — one call, one transaction, one
-   * write to the purse and one to the bag — so a basket a player
-   * agreed to lands entire or not at all. A line the vendor will not
-   * price, or a stack sold from another tab, refuses the trade rather
-   * than quietly selling the rest of it
+   * How many of it the player is carrying. It is what the crate cannot
+   * say — his counts are his — and what a player buying a third potion
+   * is actually deciding with
    */
-  const settle = (): void => {
+  const carrying = (item: Items): number =>
+    (bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+
+  /**
+   * Trade one of something, either way across the counter.
+   *
+   * One press, one item, one transaction. It was a basket filled and
+   * then checked over, which is two screens and three presses for the
+   * thing a player does most: buying a potion. The price is on the
+   * square and what it leaves the purse at is the badge above the
+   * crate, so the card's button is the whole of the decision
+   */
+  const trade = (item: Items, buyingIt: boolean): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
-    const deal = basket();
 
-    if (snapshot == null || standing == null || deal == null || deal.picks.length === 0) {
+    if (snapshot == null || standing == null) {
       return;
     }
+
+    const picks: ItemAmount[] = [[item, 1]];
+
     setStatus(null);
     setBusy(true);
-    (deal.buying
-      ? buyFromVendor(snapshot, standing[0], deal.picks)
-      : sellToVendor(snapshot, standing[0], deal.picks)
+    (buyingIt
+      ? buyFromVendor(snapshot, standing[0], picks)
+      : sellToVendor(snapshot, standing[0], picks)
     )
       .then((done) => {
         setBusy(false);
-        setBasket(null);
 
         if (done == null) {
           setStatus(
-            deal.buying
-              ? 'He would not sell you that — something in it is not in his crate, or your purse will not cover the lot.'
-              : 'He would not take that — something in it is worth nothing to him, or you have not got it.',
+            buyingIt
+              ? 'He would not sell you that — it is not in his crate, or your purse will not cover it.'
+              : 'He would not take that — it is worth nothing to him, or you have not got it.',
           );
           return;
         }
 
-        const moved = totalOf(deal);
+        const moved = priceOf(item, buyingIt);
 
         setStatus(
-          deal.buying
-            ? `He handed it over and counted your gold. (−${moved} gold)`
-            : `He looked it over and paid up. (+${moved} gold)`,
+          buyingIt
+            ? `He handed over a ${describeItem(item)} and counted your gold. (−${moved} gold)`
+            : `He looked your ${describeItem(item)} over and paid up. (+${moved} gold)`,
         );
         setTraded(traded() + 1);
-        // The tray goes with it: what was just bought is gone from the
-        // basket, and a crate still glowing with the last order reads
-        // as an order not yet placed
-        setCounter(null);
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
         setStatus(caught instanceof Error ? caught.message : String(caught));
       });
-  };
-
-  /**
-   * How many of one line he will deal in at once: everything he stocks
-   * is capped per trade, and what a player sells is capped by what
-   * they are carrying
-   */
-  const ceilingOf = (item: Items, fromCrate: boolean): number =>
-    fromCrate
-      ? VENDOR_TRADE_LIMIT
-      : ((bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 1);
-
-  /**
-   * Move one line of the basket up or down. A line taken to nothing is
-   * taken out, and a basket taken to nothing shuts — which puts the
-   * player back on the crate they were filling it from
-   */
-  const adjust = (item: Items, step: number): void => {
-    const deal = basket();
-
-    if (deal == null) {
-      return;
-    }
-
-    const picks = deal.picks
-      .map(([held, amount]): ItemAmount =>
-        held === item
-          ? [held, Math.max(0, Math.min(ceilingOf(item, deal.buying), amount + step))]
-          : [held, amount],
-      )
-      .filter(([, amount]) => amount > 0);
-
-    setBasket(picks.length === 0 ? null : { ...deal, picks });
   };
 
   /**
@@ -1169,22 +1114,31 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
           thirty squares unfolded into the dialog pushed everything
           under it — the total, the buttons — off the screen */}
       <InventoryPicker
-        multiple
         open={counter() != null}
+        keepOpen
         onClose={() => {
           setCounter(null);
         }}
         player={props.player}
-        title={counter() === 'sell' ? 'Sell to him' : 'Buy from him'}
+        title={counter() === 'sell' ? 'Sell' : 'Buy'}
+        // The squares say what he has and what it costs, so the
+        // sentence is kept for the screen reader and off the screen
+        terse
+        cardOnly
+        // What is in the purse, under the crate it is spent on: it is
+        // the number every press on this window changes, and it was
+        // one screen behind on the counter
+        below={<Badge tone="gold">{gold.latest ?? 0} gold</Badge>}
         description={
           counter() === 'sell'
-            ? 'Pick what he can have, then say how many.'
-            : 'Pick what you want, then say how many.'
+            ? 'One at a time, off the card over whatever he can have.'
+            : 'One at a time, off the card over whatever you want.'
         }
         verb={counter() === 'sell' ? 'Sell' : 'Buy'}
         entries={counter() === 'sell' ? bag.latest : crate()}
         disabled={busy()}
-        value={[]}
+        value={null}
+        carried={(entry) => carrying(entry.item)}
         // He has as many of anything as a player wants, so a count on
         // his crate is a number that never moves
         counts={counter() === 'sell'}
@@ -1205,109 +1159,12 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         // Short enough to sit in the corner of a square: the tray has no
         // room for a sentence, and the number is the news
         note={(entry) => `${priceOf(entry.item, counter() !== 'sell')}g`}
-        onPick={(picks) => {
-          setBasket(picks.length === 0 ? null : { buying: counter() !== 'sell', picks });
-        }}
-      />
-
-      {/* The basket, checked over before any gold moves.
-
-          It is a window rather than another section of the counter: a
-          player who has filled a crate wants to see what they picked
-          and what it comes to without the crate scrolling under it,
-          and this is the last press before the trade lands */}
-      <Dialog
-        isOpen={basket() != null}
-        onClose={() => {
-          if (!busy()) {
-            setBasket(null);
+        onPick={(item) => {
+          if (item != null) {
+            trade(item, counter() !== 'sell');
           }
         }}
-        title={basket()?.buying === false ? 'Sell items?' : 'Buy items?'}
-        description={
-          basket()?.buying === false
-            ? 'Set how many of each, then let him have them.'
-            : 'Set how many of each, then hand over the gold.'
-        }
-      >
-        {/* Not keyed: every step of a counter makes a new basket, and a
-            keyed block would tear the window down and build it again
-            under the finger that pressed it */}
-        <Show when={basket()}>
-          {(deal) => (
-            <>
-              <List>
-                {/* By position rather than by value: a step makes a new
-                    tuple for the line it changed, and a keyed list would
-                    rebuild the row under the button being pressed */}
-                <Index each={deal().picks}>
-                  {(line) => (
-                    <ListRow>
-                      <ItemSprite item={line()[0]} size={28} label="" />
-                      <span class="grow text-left">{describeItem(line()[0])}</span>
-                      <Meta>{priceOf(line()[0], deal().buying) * line()[1]} gold</Meta>
-                      {/* How many of this line, changed a step at a time:
-                          the counts are small, and a number field asks a
-                          player to type where a press would do */}
-                      <Row class="flex-nowrap">
-                        <Button
-                          disabled={busy()}
-                          aria-label={`One fewer ${describeItem(line()[0])}`}
-                          onClick={() => {
-                            adjust(line()[0], -1);
-                          }}
-                        >
-                          −
-                        </Button>
-                        <Badge>{line()[1]}</Badge>
-                        <Button
-                          disabled={busy() || line()[1] >= ceilingOf(line()[0], deal().buying)}
-                          aria-label={`One more ${describeItem(line()[0])}`}
-                          onClick={() => {
-                            adjust(line()[0], 1);
-                          }}
-                        >
-                          +
-                        </Button>
-                      </Row>
-                    </ListRow>
-                  )}
-                </Index>
-              </List>
-
-              <Row class="justify-center">
-                <Badge tone={deal().buying ? 'gold' : 'leaf'}>
-                  {deal().buying ? '−' : '+'}
-                  {totalOf(deal())} gold
-                </Badge>
-                <Meta>
-                  {deal().buying
-                    ? `Leaves you ${(gold.latest ?? 0) - totalOf(deal())}.`
-                    : `Leaves you ${(gold.latest ?? 0) + totalOf(deal())}.`}
-                </Meta>
-              </Row>
-
-              <DialogActions>
-                <Button
-                  tone="primary"
-                  disabled={busy() || (deal().buying && totalOf(deal()) > (gold.latest ?? 0))}
-                  onClick={settle}
-                >
-                  {deal().buying ? 'Buy' : 'Sell'} ({totalOf(deal())} gold)
-                </Button>
-                <Button
-                  disabled={busy()}
-                  onClick={() => {
-                    setBasket(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </>
-          )}
-        </Show>
-      </Dialog>
+      />
 
       {/* The last step of the reminder is the teaching itself, which is
         the same question a machine asks — whether there is room, and

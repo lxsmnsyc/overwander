@@ -12,8 +12,8 @@ import { Listbox, ListboxButton, ListboxLabel, ListboxOption, ListboxOptions } f
  * Terracotta's listbox brings what a listbox is expected to do —
  * arrow keys, Home and End, type-ahead, Escape, closing when the focus
  * leaves — and the options are unmounted while it is shut. The label
- * is rendered rather than offered, because the listbox names itself by
- * one whether or not there is one to name.
+ * is written but not shown: the listbox names itself by one whether or
+ * not there is one to name.
  */
 export interface FilterOption<V> {
   value: V;
@@ -22,8 +22,8 @@ export interface FilterOption<V> {
 
 export interface FilterProps<V> {
   /**
-   * What is being narrowed — "Category", "Kind". It is the word beside
-   * the control, and the one the listbox is announced by
+   * What is being narrowed — "Category", "Kind". It is what the
+   * listbox is announced by rather than anything drawn
    */
   label: string;
   value: V;
@@ -73,7 +73,10 @@ export default function Filter<V>(props: {
       }}
       class={`relative inline-flex items-center gap-2 text-sm ${props.class ?? ''}`}
     >
-      <ListboxLabel class="text-muted">{props.label}</ListboxLabel>
+      {/* Written for the screen reader alone: the button already says
+          which shelf is showing, and the word beside it was a second
+          label for the same control */}
+      <ListboxLabel class="sr-only">{props.label}</ListboxLabel>
       <ListboxButton
         class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-3
           py-1 text-sm font-bold shadow-pop-sm transition-colors hover:border-tide

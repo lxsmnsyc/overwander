@@ -316,7 +316,11 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
         // described rather than labelled: the trigger already says
         // what it is
         tabIndex={0}
-        class={`inline-flex ${props.class ?? ''}`}
+        // The caller's classes *replace* the default rather than
+        // joining it: a trigger filling a grid cell has to say so, and
+        // two display utilities in one list are settled by the order
+        // Tailwind emits them in rather than by the order written here
+        class={props.class ?? 'inline-flex'}
         onMouseEnter={show}
         onMouseLeave={(event) => {
           if (open()) {

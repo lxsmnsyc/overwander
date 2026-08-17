@@ -30,7 +30,12 @@ const WIDTH = 240;
 const GAP = 8;
 const ROOM = 160;
 
-function Line(props: { label: string; children: JSX.Element }): JSX.Element {
+/**
+ * One labelled box: a word for what this is, and the thing itself in a
+ * box of its own. Exported because a hover card says the same things
+ * about an item in the same shape, only larger
+ */
+export function Detail(props: { label: string; children: JSX.Element }): JSX.Element {
   return (
     <div class="flex flex-col gap-0.5">
       <span class="text-[10px] font-bold tracking-wide text-muted uppercase">{props.label}</span>
@@ -52,8 +57,8 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       class={`flex flex-col gap-1.5 rounded-panel border-2 border-line bg-line-soft p-1.5
         shadow-window ${props.class ?? ''}`}
     >
-      <Line label="Name">{props.name}</Line>
-      <Line label="Description">{props.description}</Line>
+      <Detail label="Name">{props.name}</Detail>
+      <Detail label="Description">{props.description}</Detail>
     </div>
   );
 }

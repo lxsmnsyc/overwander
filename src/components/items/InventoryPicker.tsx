@@ -103,6 +103,39 @@ interface InventoryPickerCommonProps {
    */
   note?: (entry: InventoryEntry) => string | null;
   /**
+   * How many of it the player is carrying, where the stack being shown
+   * is not theirs — a vendor's crate, whose counts are his
+   */
+  carried?: (entry: InventoryEntry) => number;
+  /**
+   * What the button on one square's card says. It falls back to the
+   * picker's verb, so a caller only answers per square where the
+   * squares differ — a bag where only some of it can be used
+   */
+  action?: (entry: InventoryEntry) => string | null;
+  /**
+   * Whether a square does nothing and its card is the only way to act.
+   * A crate spends gold on a press, and a stray click on a picture
+   * should not be a purchase
+   */
+  cardOnly?: boolean;
+  /**
+   * Whether the sentence under the title is for the screen reader
+   * alone — a window whose squares already say what they are
+   */
+  terse?: boolean;
+  /**
+   * Something to stand under the tray, off to the right — the purse,
+   * for a window that spends it
+   */
+  below?: JSX.Element;
+  /**
+   * Whether the list stays up after a pick. A crate being bought from
+   * is opened once and traded with several times, and a window that
+   * shut on every purchase would be opened again for the next one
+   */
+  keepOpen?: boolean;
+  /**
    * The bag, already in hand. A caller showing two pickers over one
    * inventory reads it once and passes it to both rather than paying
    * for the same query twice
@@ -187,6 +220,8 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
       selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
       blocked: props.blocked?.(entry) ?? null,
       note: props.note?.(entry) ?? null,
+      carried: props.carried?.(entry) ?? entry.amount,
+      action: props.action?.(entry) ?? props.verb ?? null,
     }));
 
   /**
@@ -215,6 +250,10 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
       return;
     }
     props.onPick(item);
+    if (props.keepOpen === true) {
+      setPending(null);
+      return;
+    }
     close();
   };
 
@@ -286,6 +325,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
             entries={cells()}
             verb={props.verb}
             disabled={props.disabled}
+            cardOnly={props.cardOnly}
             onPress={(item) => {
               const entry = offered().find((one) => one.item === item);
 
@@ -321,6 +361,11 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
           </Show>
         </Show>
       </Show>
+
+      {/* Whatever the caller keeps under the tray — the purse, where
+          the tray spends it. Off to the right, out of the way of the
+          squares and next to nothing it could be mistaken for */}
+      <Show when={props.below}>{(extra) => <Row class="justify-end">{extra()}</Row>}</Show>
 
       <Show when={props.multiple === true}>
         <Row>
@@ -360,6 +405,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
         onClose={close}
         title={props.title ?? 'The bag'}
         description={purpose()}
+        terse={props.terse}
       >
         {list()}
         <DialogActions>

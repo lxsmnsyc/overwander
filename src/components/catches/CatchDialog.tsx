@@ -1,4 +1,4 @@
-import { For, Index, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, Index, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { getBuddy, setBuddy } from '../../auth/buddy';
 import { syncServerClock } from '../../auth/clock';
@@ -455,6 +455,13 @@ export interface CatchDialogProps {
    * This is so the buttons are not offered in the first place
    */
   readOnly?: boolean;
+  /**
+   * Something out of the bag to spend on this pokemon the moment the
+   * sheet opens. It is how the bag uses an item: the item is chosen
+   * first and the pokemon second, which is the way round the sheet
+   * cannot ask it
+   */
+  useItem?: Items | null;
   /**
    * Open a different one of the player's pokemon — the one before this
    * in the box, or the one after.
@@ -1253,6 +1260,19 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const [panel, setPanel] = createSignal<'items' | 'give' | null>(null);
 
   /**
+   * Whether the item the bag sent along has already been spent. It is
+   * cleared whenever the sheet is pointed at something new, so a
+   * second potion out of the bag is a second potion spent
+   */
+  let spent = false;
+
+  createEffect(() => {
+    props.catchId;
+    props.useItem;
+    spent = false;
+  });
+
+  /**
    * One stat as the pokemon actually has it: the species' base, the
    * value it was born with, the effort put into it, and — for
    * everything but health — what its nature makes of that
@@ -1360,6 +1380,29 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       heal(item);
     }
   };
+
+  /**
+   * Something the bag asked to be spent on this one.
+   *
+   * The pokemon was chosen after the item, so that choice is the
+   * agreement and the sheet spends it on arrival. Once only — the
+   * record changes underneath and the sheet reads it again — and a
+   * cap on a flawless pokemon is said rather than quietly swallowed
+   */
+  createEffect(() => {
+    const item = props.useItem;
+    const caught = view();
+
+    if (item == null || caught == null || spent) {
+      return;
+    }
+    spent = true;
+    if (isUsable(item)) {
+      useOn(item);
+    } else {
+      setStatus(`${describeItem(item)} would do this one no good.`);
+    }
+  });
 
   /**
    * What the menu offers. Everything in it is occasional — the things

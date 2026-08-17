@@ -14,6 +14,7 @@ import type { EncounterRecord } from '../../auth/encounter-record';
 import { claimRaidReward } from '../../auth/raids';
 import { claimRocketReward } from '../../auth/rockets';
 import type { PositionRecord } from '../../auth/position-record';
+import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import { getPosition, savePosition } from '../../auth/positions';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
@@ -96,6 +97,11 @@ export type PendingReward = { raid: string; stop?: undefined } | { stop: string;
 export interface OpenSheet {
   catchId: string;
   readOnly?: boolean;
+  /**
+   * Something out of the bag to spend on it as the sheet opens: the
+   * bag chooses the item first and the pokemon second
+   */
+  useItem?: Items;
 }
 
 export interface GameState {

@@ -28,8 +28,12 @@ gold or any visit is spent.
 The **Vendor** is the game's only shop, and the one person with no
 once-per-window limit. What everybody else hands over is something the world
 cannot produce twice in six hours; what he hands over is a potion, so a player may
-trade with him as often as their purse allows while he is standing there. Any one
-trade moves at most 99 of a kind.
+trade with him as often as their purse allows while he is standing there.
+
+Buying and selling are both one thing at a time. His crate and the bag are the
+same tray of pictures the bag is always shown as, and resting on a square brings
+up a card saying what the thing is, what it does, how many are already carried,
+and the button that buys or sells it at the price on the square.
 
 ### What he sells
 

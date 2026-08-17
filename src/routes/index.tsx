@@ -239,6 +239,7 @@ function GameView(props: { user: User }): JSX.Element {
             player={props.user.uid}
             catchId={game.sheet()?.catchId ?? null}
             readOnly={game.sheet()?.readOnly === true}
+            useItem={game.sheet()?.useItem ?? null}
             onClose={() => {
               game.setSheet(null);
             }}

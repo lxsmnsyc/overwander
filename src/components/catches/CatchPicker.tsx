@@ -434,11 +434,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           <CatchBoxCanvas
             entries={page()}
             onOpen={pressById}
+            cardOnly
             cell={(entry) => (
               <Show when={options().find((option) => option.id === entry().id)}>
                 {(option) => (
                   <HoverCard
-                    class="size-full"
+                    class="block size-full"
                     trigger={<span class="block size-full" />}
                     title="Info"
                     footer={

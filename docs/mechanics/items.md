@@ -4,6 +4,13 @@ Almost everything a player carries was dug out of the ground. The only shop is a
 [vendor who wanders](npcs.md), and he stocks balls and medicine alone, so the
 overworld is the game's supply of items and raids are its supply of gold.
 
+## Using what you carry
+
+The bag is a tray of pictures. Resting on one brings up a card saying what the
+thing is, what it does and how many are carried, and — for anything that is spent
+on a pokemon rather than held, sold or handed to somebody — a **Use** button.
+Pressing it asks which pokemon, and that pokemon's sheet spends it.
+
 ## Where items come from
 
 Three landmarks give items — the **item cache**, the **berry patch** and the

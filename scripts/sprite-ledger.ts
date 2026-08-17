@@ -49,6 +49,19 @@ export interface CompactStep {
 }
 
 /**
+ * Why a pass would not touch a sheet.
+ *
+ * A refusal is worth recording rather than passing over in silence: a
+ * sheet nobody has looked at and a sheet that cannot be processed are
+ * different problems, and the second one is invisible everywhere else —
+ * the tool prints it once and moves on
+ */
+export interface SkippedStep {
+  at: string;
+  why: string;
+}
+
+/**
  * What the loop pass decided about an effect sheet
  */
 export interface LoopStep {
@@ -66,6 +79,7 @@ export interface SheetRecord {
   height: number;
   compact?: CompactStep;
   loops?: LoopStep;
+  skipped?: SkippedStep;
 }
 
 export interface Ledger {
@@ -108,6 +122,13 @@ function compactStepOf(value: unknown): CompactStep | undefined {
     return undefined;
   }
   return { at: value.at, as: value.as, was: value.was, bytes: value.bytes };
+}
+
+function skippedStepOf(value: unknown): SkippedStep | undefined {
+  if (!isRecord(value) || typeof value.at !== 'string' || typeof value.why !== 'string') {
+    return undefined;
+  }
+  return { at: value.at, why: value.why };
 }
 
 function loopStepOf(value: unknown): LoopStep | undefined {
@@ -164,6 +185,7 @@ export function readLedger(): Ledger {
         height: numberOf(entry.height),
         compact: compactStepOf(entry.compact),
         loops: loopStepOf(entry.loops),
+        skipped: skippedStepOf(entry.skipped),
       });
     }
   }
@@ -186,7 +208,10 @@ export function isRecorded(ledger: Ledger, key: string, digest: string): boolean
  * answer was reached, and an unchanged answer reached again is the same
  * answer
  */
-function same(before: CompactStep | LoopStep, after: CompactStep | LoopStep): boolean {
+function same(
+  before: CompactStep | LoopStep | SkippedStep,
+  after: CompactStep | LoopStep | SkippedStep,
+): boolean {
   const { at: _wasAt, ...was } = before;
   const { at: _isAt, ...is } = after;
 
@@ -208,20 +233,27 @@ export function record(
   ledger: Ledger,
   key: string,
   sheet: { digest: string; bytes: number; width: number; height: number },
-  step: { compact?: CompactStep; loops?: LoopStep },
+  step: { compact?: CompactStep; loops?: LoopStep; skipped?: SkippedStep },
 ): void {
   const known = ledger.sheets.get(key);
   const carried = known != null && known.digest === sheet.digest ? known : null;
   let compact = carried?.compact;
   let loops = carried?.loops;
+  let skipped = carried?.skipped;
 
   if (step.compact != null) {
     compact = compact != null && same(compact, step.compact) ? compact : step.compact;
+    // A sheet that has just been processed is no longer a sheet that
+    // was refused
+    skipped = undefined;
   }
   if (step.loops != null) {
     loops = loops != null && same(loops, step.loops) ? loops : step.loops;
   }
-  ledger.sheets.set(key, { ...sheet, compact, loops });
+  if (step.skipped != null) {
+    skipped = skipped != null && same(skipped, step.skipped) ? skipped : step.skipped;
+  }
+  ledger.sheets.set(key, { ...sheet, compact, loops, skipped });
 }
 
 /**

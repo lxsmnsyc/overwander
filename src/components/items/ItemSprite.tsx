@@ -84,15 +84,20 @@ export default function ItemSprite(props: ItemSpriteProps): JSX.Element {
       return;
     }
 
-    const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
+    // The canvas is the cell the icon was cut in, drawn one to one,
+    // and the box it fills is the element's own size — a browser
+    // enlarging pixels is crisp at any size, where the same picture
+    // drawn at 1.125 on a canvas is not
+    const cell = drawn?.sprite.sizeOf(drawn.name);
+    const side = Math.max(cell?.width ?? 0, cell?.height ?? 0) || room;
 
-    element.width = room * ratio;
-    element.height = room * ratio;
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.clearRect(0, 0, room, room);
+    element.width = side;
+    element.height = side;
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, side, side);
     // Drawn from the middle so a picture that is not square sits in
     // the middle of its column rather than against one edge
-    drawn?.sprite.draw(context, drawn.name, room / 2, room / 2, { size: room });
+    drawn?.sprite.draw(context, drawn.name, side / 2, side / 2);
   });
 
   const label = (): string => props.label ?? getItemData(props.item).name;

@@ -299,10 +299,10 @@ function compact(imagePath: string, dryRun: boolean): Result {
  * Note what this run did, so a later one — or a person wondering why a
  * sheet is a quarter of the size it came in at — can look it up.
  *
- * A sheet that was left alone because its description disagrees with it
- * is deliberately **not** recorded as done: nothing was done to it, and
- * the record is meant to be the list of sheets that have been through
- * the mill
+ * A sheet this could not touch is recorded as **skipped, with the
+ * reason**, rather than passed over. The reason is otherwise printed
+ * once and lost, and a sheet that cannot be processed is a different
+ * problem from one nobody has run the tools over yet
  */
 function keepRecord(results: Result[], roots: string[]): number {
   const ledger: Ledger = readLedger();
@@ -310,14 +310,35 @@ function keepRecord(results: Result[], roots: string[]): number {
   let kept = 0;
 
   for (const result of results) {
+    const sheet = {
+      digest: result.digest,
+      bytes: result.after,
+      width: result.width,
+      height: result.height,
+    };
+
     if (result.as == null) {
+      record(ledger, result.key, sheet, { skipped: { at: stamp, why: result.note } });
       continue;
     }
+
+    // A run that found nothing to do must not overwrite the run that
+    // did something. `already compact` is true of a sheet this pass
+    // rewrote last week and true of one that arrived that way, and only
+    // the first of those knows what it used to weigh — which is the
+    // question this file exists to answer
+    const known = ledger.sheets.get(result.key);
+    const untouched = result.after === result.before;
+    const older =
+      untouched && known?.digest === result.digest && known.compact != null ? known.compact : null;
+
     record(
       ledger,
       result.key,
-      { digest: result.digest, bytes: result.after, width: result.width, height: result.height },
-      { compact: { at: stamp, as: result.as, was: result.before, bytes: result.after } },
+      sheet,
+      older == null
+        ? { compact: { at: stamp, as: result.as, was: result.before, bytes: result.after } }
+        : {},
     );
     kept += 1;
   }

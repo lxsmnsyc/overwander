@@ -3725,160 +3725,302 @@
         "bytes": 354498
       }
     },
-    "public/sprites/ui/items/balls/image.png": {
-      "digest": "f99f11b64f1717b5",
-      "bytes": 13687,
-      "width": 192,
-      "height": 224,
+    "public/sprites/ui/items/apricorn/image.png": {
+      "digest": "308d7f1a496a2385",
+      "bytes": 833,
+      "width": 36,
+      "height": 72,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 13687,
-        "bytes": 13687
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 2152,
+        "bytes": 833
+      }
+    },
+    "public/sprites/ui/items/balls/image.png": {
+      "digest": "b7cac6d101cfa3e3",
+      "bytes": 12036,
+      "width": 110,
+      "height": 129,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 17567,
+        "bytes": 12036
       }
     },
     "public/sprites/ui/items/battle-items/image.png": {
-      "digest": "88186885e4ca7c25",
-      "bytes": 2461,
-      "width": 96,
-      "height": 96,
+      "digest": "b3d0e9f61f30cd4a",
+      "bytes": 2384,
+      "width": 60,
+      "height": 86,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2461,
-        "bytes": 2461
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 5205,
+        "bytes": 2384
       }
     },
     "public/sprites/ui/items/berries/image.png": {
-      "digest": "cdef0d47e2e5b2d0",
-      "bytes": 17348,
-      "width": 256,
-      "height": 320,
+      "digest": "ac084d17b8335d9b",
+      "bytes": 15303,
+      "width": 181,
+      "height": 187,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 17348,
-        "bytes": 17348
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 30997,
+        "bytes": 15303
+      }
+    },
+    "public/sprites/ui/items/candies/image.png": {
+      "digest": "1e3caedf4ed187df",
+      "bytes": 1419,
+      "width": 48,
+      "height": 64,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 3103,
+        "bytes": 1419
+      }
+    },
+    "public/sprites/ui/items/curry-ingredient/image.png": {
+      "digest": "09b65f05dbb20981",
+      "bytes": 17451,
+      "width": 101,
+      "height": 124,
+      "skipped": {
+        "at": "2026-08-17T06:34:36Z",
+        "why": "its description says 0x0, image is 101x124 — left alone"
+      }
+    },
+    "public/sprites/ui/items/ev-items/image.png": {
+      "digest": "fc5af32618182d4b",
+      "bytes": 1382,
+      "width": 44,
+      "height": 85,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 3278,
+        "bytes": 1382
       }
     },
     "public/sprites/ui/items/evolutions/image.png": {
-      "digest": "4781ee9e424c9047",
-      "bytes": 11478,
-      "width": 192,
-      "height": 224,
+      "digest": "9df92dbcce61208b",
+      "bytes": 10382,
+      "width": 121,
+      "height": 139,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 11478,
-        "bytes": 11478
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 18581,
+        "bytes": 10382
       }
     },
     "public/sprites/ui/items/flutes/image.png": {
-      "digest": "e1f8ae2498d575f3",
-      "bytes": 776,
-      "width": 64,
-      "height": 96,
+      "digest": "a27fbf8b04831d9b",
+      "bytes": 736,
+      "width": 42,
+      "height": 63,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 776,
-        "bytes": 776
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 1851,
+        "bytes": 736
+      }
+    },
+    "public/sprites/ui/items/fossils/image.png": {
+      "digest": "48a2f2643863bf89",
+      "bytes": 5700,
+      "width": 87,
+      "height": 91,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 10412,
+        "bytes": 5700
       }
     },
     "public/sprites/ui/items/gems/image.png": {
-      "digest": "5c2ce3ba6f6c19fd",
-      "bytes": 2364,
-      "width": 128,
-      "height": 160,
+      "digest": "193c855aa4e0e820",
+      "bytes": 2179,
+      "width": 72,
+      "height": 75,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2364,
-        "bytes": 2364
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 4849,
+        "bytes": 2179
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "0d79fe408cff922a",
-      "bytes": 22982,
-      "width": 320,
-      "height": 352,
+      "digest": "8ea4092b8bcfdd13",
+      "bytes": 20568,
+      "width": 202,
+      "height": 213,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 22982,
-        "bytes": 22982
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 39158,
+        "bytes": 20568
       }
     },
     "public/sprites/ui/items/incense/image.png": {
-      "digest": "88d3df62581ac14b",
-      "bytes": 1765,
-      "width": 96,
-      "height": 96,
+      "digest": "003d49236d3eb6e5",
+      "bytes": 1641,
+      "width": 60,
+      "height": 57,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1765,
-        "bytes": 1765
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 3566,
+        "bytes": 1641
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "a445617f88c3867b",
-      "bytes": 60124,
-      "width": 512,
-      "height": 512,
+      "digest": "243ebd48101f73ce",
+      "bytes": 54189,
+      "width": 328,
+      "height": 326,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 60124,
-        "bytes": 60124
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 103599,
+        "bytes": 54189
       }
     },
     "public/sprites/ui/items/medicine/image.png": {
-      "digest": "ce672335b590022f",
-      "bytes": 10023,
-      "width": 224,
-      "height": 256,
+      "digest": "ea48d98b48755f38",
+      "bytes": 8617,
+      "width": 134,
+      "height": 141,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 10023,
-        "bytes": 10023
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 16496,
+        "bytes": 8617
+      }
+    },
+    "public/sprites/ui/items/mega-stones/image.png": {
+      "digest": "83d1ec62b4c82f20",
+      "bytes": 5514,
+      "width": 98,
+      "height": 98,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 10052,
+        "bytes": 5514
+      }
+    },
+    "public/sprites/ui/items/memories/image.png": {
+      "digest": "33d7cb7ffa11fb8b",
+      "bytes": 3671,
+      "width": 80,
+      "height": 100,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 7829,
+        "bytes": 3671
+      }
+    },
+    "public/sprites/ui/items/mints/image.png": {
+      "digest": "45aa1f95d5f5192c",
+      "bytes": 2374,
+      "width": 52,
+      "height": 57,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 4252,
+        "bytes": 2374
+      }
+    },
+    "public/sprites/ui/items/mulch/image.png": {
+      "digest": "99fdd079c627d58f",
+      "bytes": 835,
+      "width": 54,
+      "height": 57,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, adaptive",
+        "was": 2025,
+        "bytes": 835
+      }
+    },
+    "public/sprites/ui/items/other/image.png": {
+      "digest": "eb0adc5452b1b4cf",
+      "bytes": 7145,
+      "width": 107,
+      "height": 119,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "truecolour, none",
+        "was": 13255,
+        "bytes": 7145
+      }
+    },
+    "public/sprites/ui/items/partner/image.png": {
+      "digest": "397fe1451621a45d",
+      "bytes": 1993,
+      "width": 66,
+      "height": 81,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 4511,
+        "bytes": 1993
+      }
+    },
+    "public/sprites/ui/items/petals/image.png": {
+      "digest": "c6bf28ca49ea81f1",
+      "bytes": 799,
+      "width": 41,
+      "height": 46,
+      "compact": {
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 1703,
+        "bytes": 799
       }
     },
     "public/sprites/ui/items/plates/image.png": {
-      "digest": "0bba5d8590603282",
-      "bytes": 1375,
-      "width": 128,
-      "height": 160,
+      "digest": "c8e21a128a2263e8",
+      "bytes": 1247,
+      "width": 88,
+      "height": 110,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1375,
-        "bytes": 1375
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, adaptive",
+        "was": 3860,
+        "bytes": 1247
       }
     },
     "public/sprites/ui/items/tm/image.png": {
-      "digest": "5379e91bb71055c0",
-      "bytes": 3901,
-      "width": 128,
-      "height": 160,
+      "digest": "352df209b00ce311",
+      "bytes": 3681,
+      "width": 80,
+      "height": 100,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3901,
-        "bytes": 3901
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 8204,
+        "bytes": 3681
       }
     },
     "public/sprites/ui/items/valuables/image.png": {
-      "digest": "b3742b7103040dd7",
-      "bytes": 2950,
-      "width": 128,
-      "height": 192,
+      "digest": "55f8351eb5735976",
+      "bytes": 2683,
+      "width": 73,
+      "height": 93,
       "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2950,
-        "bytes": 2950
+        "at": "2026-08-17T06:50:23Z",
+        "as": "indexed 8-bit, none",
+        "was": 6072,
+        "bytes": 2683
       }
     },
     "public/sprites/ui/move-categories/image.png": {

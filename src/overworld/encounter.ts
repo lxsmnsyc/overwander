@@ -10,6 +10,7 @@ import type { Items } from '../data/ids/items';
 import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 import {
+  SPECIES_DAY_HIDDEN_ABILITY_BOOST,
   SPECIES_DAY_SHINY_BOOST,
   getEggMoves,
   getSpeciesAbilityPools,
@@ -290,19 +291,23 @@ export function isShinyFor(userId: string, traitValue: number, boost = 1): boole
 /**
  * The ability a trait value picks for the species: the slice's band
  * chooses between the hidden and regular pools, its position within
- * the band chooses the entry
+ * the band chooses the entry.
+ *
+ * `boost` widens the hidden band without moving anything else — the
+ * species day is what passes one
  */
-export function deriveAbility(species: Species, traitValue: number): Abilities {
+export function deriveAbility(species: Species, traitValue: number, boost = 1): Abilities {
   const abilitySlice = (traitValue >>> (TRAIT_BITS * 2)) & TRAIT_MASK;
   const pools = getSpeciesAbilityPools(species);
+  const band = Math.min(TRAIT_RANGE, HIDDEN_ABILITY_BAND * boost);
 
-  if (pools.hidden.length > 0 && abilitySlice < HIDDEN_ABILITY_BAND) {
-    const fraction = abilitySlice / HIDDEN_ABILITY_BAND;
+  if (pools.hidden.length > 0 && abilitySlice < band) {
+    const fraction = abilitySlice / band;
 
     return pools.hidden[Math.floor(fraction * pools.hidden.length)];
   }
 
-  const start = pools.hidden.length > 0 ? HIDDEN_ABILITY_BAND : 0;
+  const start = pools.hidden.length > 0 ? band : 0;
   const fraction = (abilitySlice - start) / (TRAIT_RANGE - start);
 
   return pools.regular[Math.floor(fraction * pools.regular.length)];
@@ -550,8 +555,13 @@ export default function deriveEncounter(
   });
 
   // The ability slice serves twice: its band picks the pool, and its
-  // position within the band picks the pool index
-  const ability = deriveAbility(species, traitValue);
+  // position within the band picks the pool index. On the family's own
+  // day the hidden band is the wider one
+  const ability = deriveAbility(
+    species,
+    traitValue,
+    featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1,
+  );
 
   // Modern mechanics: gender is a pure ratio roll independent of any
   // stat, from its own dedicated slice

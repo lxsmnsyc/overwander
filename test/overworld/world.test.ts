@@ -21,6 +21,7 @@ import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
+  SPECIES_DAY_HIDDEN_ABILITY_BOOST,
   getBaseSpecies,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
@@ -1871,6 +1872,55 @@ describe('chunk snapshot', () => {
         }
       }
     }
+  });
+
+  it('opens the hidden ability band on the family’s own day', () => {
+    // The ability reads the third of the trait value's four slices
+    const ABILITY_SHIFT = 16;
+    const SLICES = 256;
+    const hidden = (boost: number): number => {
+      let found = 0;
+
+      for (let slice = 0; slice < SLICES; slice++) {
+        if (
+          deriveAbility(Species.Bulbasaur, slice << ABILITY_SHIFT, boost) === Abilities.Chlorophyll
+        ) {
+          found++;
+        }
+      }
+      return found;
+    };
+    const ordinary = hidden(1);
+
+    expect(ordinary).toBeGreaterThan(0);
+    expect(ordinary).toBeLessThan(SLICES);
+    expect(hidden(SPECIES_DAY_HIDDEN_ABILITY_BOOST)).toBe(
+      ordinary * SPECIES_DAY_HIDDEN_ABILITY_BOOST,
+    );
+    // And the day is actually worth something, whatever the boost is
+    // set to
+    expect(hidden(SPECIES_DAY_HIDDEN_ABILITY_BOOST)).toBeGreaterThan(ordinary);
+  });
+
+  it('meets a featured wild pokemon on the wider band', () => {
+    const world = new World('overworld');
+    // Family 0 is Bulbasaur's, so the first day of the year is its own
+    const YEAR_START = Date.UTC(2026, 0, 1);
+    const featured = new ChunkSnapshot(world.getChunk(3, -7), YEAR_START);
+    const ordinary = new ChunkSnapshot(
+      world.getChunk(3, -7),
+      YEAR_START + 200 * 24 * 60 * 60 * 1000,
+    );
+    // A slice inside the widened band but outside the ordinary one:
+    // the only thing that decides it is which day the meeting is on
+    const trait = ((256 / 8 + 1) << 16) >>> 0;
+
+    expect(deriveEncounter(featured, [Species.Bulbasaur, 0, trait]).ability).toBe(
+      Abilities.Chlorophyll,
+    );
+    expect(deriveEncounter(ordinary, [Species.Bulbasaur, 0, trait]).ability).toBe(
+      Abilities.Overgrow,
+    );
   });
 
   it('hands a wild pokemon whatever its species carries', () => {

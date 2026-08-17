@@ -1,4 +1,5 @@
 import { DEFAULT_EGG_CYCLES, getEggCycles } from '../data/species/egg-cycles';
+import { SPECIES_DAY_STEP_BOOST, isFeaturedSpecies } from '../data/species/day';
 import type { Species } from '../data/ids/species';
 
 /**
@@ -43,6 +44,19 @@ export const EGG_HATCH_STEPS = DEFAULT_EGG_CYCLES * STEPS_PER_EGG_CYCLE;
  */
 export function getEggHatchSteps(species: Species): number {
   return getEggCycles(species) * STEPS_PER_EGG_CYCLE;
+}
+
+/**
+ * What a walk is worth to this egg today: an egg of the day's featured
+ * family gets 1.2 paces for every one, and every other egg gets what
+ * was walked.
+ *
+ * Asked on each report rather than frozen onto the egg, because the
+ * perk belongs to the day rather than to the egg — carrying a Bulbasaur
+ * egg through Bulbasaur's day is what earns it
+ */
+export function creditedEggSteps(species: Species, steps: number, timestamp: number): number {
+  return isFeaturedSpecies(species, timestamp) ? Math.floor(steps * SPECIES_DAY_STEP_BOOST) : steps;
 }
 
 /**

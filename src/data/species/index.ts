@@ -18,7 +18,9 @@ export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } fr
 export { DEFAULT_EGG_CYCLES, getEggCycles } from './egg-cycles';
 export {
   SPECIES_DAY_CATCH_BOOST,
+  SPECIES_DAY_HIDDEN_ABILITY_BOOST,
   SPECIES_DAY_SHINY_BOOST,
+  SPECIES_DAY_STEP_BOOST,
   SPECIES_DAY_WEIGHT_BOOST,
   getDayOfYear,
   getFeaturedFamily,

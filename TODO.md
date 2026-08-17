@@ -5,8 +5,6 @@
 - [ ] overworld weather
 - [ ] add Jeweler
 - [ ] add Archaeologist
-- [ ] replace ball feature
-- [ ] catch picker = view catch
 - [ ] friends
 - [ ] trading
 - [ ] adjacent chunk preload

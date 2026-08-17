@@ -10,6 +10,7 @@ import {
   boostedSteps,
   canHatch,
   creditableSteps,
+  creditedEggSteps,
   getEggHatchSteps,
   stepsRemaining,
 } from '../../src/auth/egg';
@@ -39,6 +40,7 @@ import {
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
   DEFAULT_EGG_CYCLES,
+  SPECIES_DAY_STEP_BOOST,
   getEggCycles,
   getEggMoves,
   getLevelUpMoves,
@@ -91,6 +93,26 @@ describe('a warmed egg', () => {
     expect(boostedSteps(egg(half))).toBe(EGG_HATCH_STEPS);
     // And it never overshoots
     expect(boostedSteps(egg(EGG_HATCH_STEPS))).toBe(EGG_HATCH_STEPS);
+  });
+});
+
+describe('a species day walk', () => {
+  it('is worth more to an egg of the day’s own family', () => {
+    // Family 0 is Bulbasaur's, so the first day of the year is its own
+    const YEAR_START = Date.UTC(2026, 0, 1);
+    const BLANK_DAY = YEAR_START + 200 * 24 * 60 * 60 * 1000;
+
+    expect(creditedEggSteps(Species.Bulbasaur, 100, YEAR_START)).toBe(
+      Math.floor(100 * SPECIES_DAY_STEP_BOOST),
+    );
+    // The whole family, and nobody outside it
+    expect(creditedEggSteps(Species.Venusaur, 100, YEAR_START)).toBeGreaterThan(100);
+    expect(creditedEggSteps(Species.Charmander, 100, YEAR_START)).toBe(100);
+    // And on a day featuring nobody, a pace is a pace
+    expect(creditedEggSteps(Species.Bulbasaur, 100, BLANK_DAY)).toBe(100);
+
+    // It rounds down rather than handing out a part-step
+    expect(Number.isInteger(creditedEggSteps(Species.Bulbasaur, 7, YEAR_START))).toBe(true);
   });
 });
 

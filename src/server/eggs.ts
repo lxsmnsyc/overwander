@@ -5,6 +5,7 @@ import {
   EGG_LEVEL,
   MAX_STEP_REPORT,
   creditableSteps,
+  creditedEggSteps,
   getEggHatchSteps,
   stepsRemaining,
 } from '../auth/egg';
@@ -492,8 +493,12 @@ export async function recordSteps(
       return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
     }
 
-    const credited = creditableSteps(reported, now - caught.steppedAt, stepsRemaining(caught));
-    const steps = caught.steps + credited;
+    const remaining = stepsRemaining(caught);
+    const paced = creditableSteps(reported, now - caught.steppedAt, remaining);
+    // An egg of the day's own family walks further on the same paces.
+    // The credit is clamped again afterwards, since the pacing was
+    // measured against what is left rather than what it is worth
+    const steps = caught.steps + Math.min(remaining, creditedEggSteps(caught.species, paced, now));
 
     // The stamp moves whether or not anything was credited: it is
     // what the next report is measured from, and a refused report

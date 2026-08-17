@@ -13,11 +13,26 @@ export const SPECIES_DAY_SHINY_BOOST = 8;
 export const SPECIES_DAY_WEIGHT_BOOST = 4;
 
 /**
- * ...and they come along twice as readily when a ball lands — a
- * lighter touch than the rest, since the catch chance is already
- * stacked with the ball and whatever the encounter has been fed
+ * ...they come along twice as readily when a ball lands — a lighter
+ * touch than the rest, since the catch chance is already stacked with
+ * the ball and whatever the encounter has been fed...
  */
 export const SPECIES_DAY_CATCH_BOOST = 2;
+
+/**
+ * ...twice as many of them turn up with the ability their species
+ * usually keeps hidden, so the day is when a line's hidden ability is
+ * worth hunting for...
+ */
+export const SPECIES_DAY_HIDDEN_ABILITY_BOOST = 2;
+
+/**
+ * ...and an egg of theirs counts every pace as 1.2 while the day
+ * lasts. It is credit rather than a discount, so it is worth exactly
+ * the walking done today — an egg carried past midnight goes back to
+ * ordinary paces with whatever it has already banked
+ */
+export const SPECIES_DAY_STEP_BOOST = 1.2;
 
 const DAY = 24 * 60 * 60 * 1000;
 

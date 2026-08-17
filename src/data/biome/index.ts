@@ -21,6 +21,7 @@ import registerTemperateRainforestSpawns from './temperate-rainforest';
 import registerTropicalRainforestSpawns from './tropical-rainforest';
 import registerTropicalSeasonalForestSpawns from './tropical-seasonal-forest';
 import registerTundraSpawns from './tundra';
+import registerVolcanoSpawns from './volcano';
 import registerWoodlandSpawns from './woodland';
 
 export {
@@ -70,5 +71,6 @@ export default function registerBiomeSpawns(): void {
   registerTropicalRainforestSpawns();
   registerTropicalSeasonalForestSpawns();
   registerTundraSpawns();
+  registerVolcanoSpawns();
   registerWoodlandSpawns();
 }

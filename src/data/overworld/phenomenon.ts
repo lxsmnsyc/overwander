@@ -85,6 +85,7 @@ export const BIOME_PHENOMENA: Record<Biome, Phenomenon[]> = {
   [Biome.Tundra]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
   [Biome.Mountain]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
   [Biome.AlpineTundra]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
+  [Biome.Volcano]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
   [Biome.Glacier]: [Phenomenon.DustCloud],
   [Biome.Woodland]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
   [Biome.Steppe]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],

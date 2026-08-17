@@ -19,7 +19,7 @@ import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import { TYPE_COLORS, TYPE_NAMES, Types } from '../src/data/constants/types';
-import Biome, { AnyTimeOfDay, TimeOfDay, getBiome } from '../src/data/ids/biome';
+import Biome, { AnyTimeOfDay, TimeOfDay, getBiome, isWaterBiome } from '../src/data/ids/biome';
 import {
   BALL_ITEMS,
   ItemFlags,
@@ -2564,6 +2564,27 @@ describe('biome data', () => {
     // Off-target samples resolve to the nearest neighbor
     expect(getBiome(-1, 1, 0.1)).toBe(Biome.Desert);
     expect(getBiome(0, -0.7, 0.35)).toBe(Biome.Tundra);
+  });
+
+  it('lets elevation decide before anything else does', () => {
+    // Below sea level is water whatever the other two axes say: a dry,
+    // freezing trench is still a trench
+    for (let humidity = -1; humidity <= 1; humidity += 0.25) {
+      for (let temperature = -1; temperature <= 1; temperature += 0.25) {
+        expect(
+          isWaterBiome(getBiome(humidity, temperature, -0.6)),
+          `h=${humidity} t=${temperature} is not water`,
+        ).toBe(true);
+      }
+    }
+  });
+
+  it('puts the hot and the high together on a volcano', () => {
+    expect(getBiome(-0.4, 0.9, 0.8)).toBe(Biome.Volcano);
+    // Cold peaks are somebody else's
+    expect(getBiome(-0.4, -0.6, 0.85)).toBe(Biome.AlpineTundra);
+    // And so is hot ground
+    expect(getBiome(-0.9, 0.9, 0.2)).toBe(Biome.Desert);
   });
 
   it('assigns habitat biomes to species', () => {

@@ -90,6 +90,8 @@ const DECORATIONS: Record<Biome, Decoration[]> = {
   [Biome.Tundra]: [Decoration.Rock, Decoration.Shrub, Decoration.Ice],
   [Biome.Mountain]: [Decoration.Boulder, Decoration.Rock, Decoration.Pine],
   [Biome.AlpineTundra]: [Decoration.Rock, Decoration.Ice, Decoration.Shrub],
+  // Nothing grows on it: bare stone and what the last eruption left
+  [Biome.Volcano]: [Decoration.Boulder, Decoration.Boulder, Decoration.Rock],
   [Biome.Glacier]: [Decoration.Ice, Decoration.Ice, Decoration.Rock],
   [Biome.Woodland]: [Decoration.Tree, Decoration.Grass, Decoration.Flower],
   [Biome.Steppe]: [Decoration.Grass, Decoration.Grass, Decoration.Rock],

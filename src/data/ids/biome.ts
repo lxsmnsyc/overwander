@@ -32,6 +32,12 @@ const enum Biome {
   MontaneForest = 22,
   PolarOcean = 23,
   /**
+   * The one place that is both hot and high. Everything else above
+   * the tree line is cold, so a fire pokemon had nowhere of its own
+   * to be until this
+   */
+  Volcano = 25,
+  /**
    * Nowhere on the map: where a mythical comes from.
    *
    * A relic calls something out of a place the world does not
@@ -135,7 +141,9 @@ export interface BiomeConfig {
    */
   temperature: number;
   /**
-   * -1 (ocean floor) to 1 (highest peaks); sea level sits at 0
+   * -1 (ocean floor) to 1 (highest peaks). The shoreline is
+   * `SEA_LEVEL`, not zero: a third of the noise range is below it,
+   * which is how much of the world is sea
    */
   elevation: number;
 }
@@ -151,9 +159,9 @@ export interface BiomeConfig {
  */
 export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig } = {
   // Aquatic: fully saturated, sorted by depth
-  [Biome.DeepOcean]: { humidity: 1, temperature: -0.2, elevation: -0.8 },
-  [Biome.Ocean]: { humidity: 1, temperature: 0, elevation: -0.4 },
-  [Biome.CoralReef]: { humidity: 1, temperature: 0.7, elevation: -0.2 },
+  [Biome.DeepOcean]: { humidity: 1, temperature: -0.2, elevation: -0.85 },
+  [Biome.Ocean]: { humidity: 1, temperature: 0, elevation: -0.5 },
+  [Biome.CoralReef]: { humidity: 1, temperature: 0.7, elevation: -0.32 },
   [Biome.Beach]: { humidity: 0.4, temperature: 0.4, elevation: 0 },
 
   // Wetlands: waterlogged lowlands just above sea level
@@ -161,14 +169,14 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
   [Biome.Swamp]: { humidity: 0.8, temperature: 0.3, elevation: 0.05 },
 
   // Tropical: hot lowlands, arranged wet to dry
-  [Biome.TropicalRainforest]: { humidity: 0.9, temperature: 0.9, elevation: 0.2 },
-  [Biome.TropicalSeasonalForest]: { humidity: 0.4, temperature: 0.8, elevation: 0.2 },
-  [Biome.Savanna]: { humidity: -0.2, temperature: 0.8, elevation: 0.2 },
+  [Biome.TropicalRainforest]: { humidity: 0.9, temperature: 0.9, elevation: 0.15 },
+  [Biome.TropicalSeasonalForest]: { humidity: 0.4, temperature: 0.8, elevation: 0.15 },
+  [Biome.Savanna]: { humidity: -0.2, temperature: 0.8, elevation: 0.18 },
   [Biome.Desert]: { humidity: -0.9, temperature: 0.9, elevation: 0.2 },
 
   // Temperate: mild midlands, arranged dry to wet
   [Biome.Shrubland]: { humidity: -0.5, temperature: 0.4, elevation: 0.3 },
-  [Biome.Grassland]: { humidity: -0.2, temperature: 0.2, elevation: 0.2 },
+  [Biome.Grassland]: { humidity: -0.2, temperature: 0.2, elevation: 0.18 },
   [Biome.TemperateForest]: { humidity: 0.4, temperature: 0.2, elevation: 0.3 },
   [Biome.TemperateRainforest]: { humidity: 0.8, temperature: 0.1, elevation: 0.3 },
 
@@ -185,27 +193,56 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
   // Gap fillers
   // Open-canopy woodland sits near the climate origin, between
   // grassland and closed forest
-  [Biome.Woodland]: { humidity: 0.1, temperature: 0.3, elevation: 0.15 },
+  [Biome.Woodland]: { humidity: 0.1, temperature: 0.3, elevation: 0.12 },
   // Eurasian-style dry cool grassland between prairie and cold desert
   [Biome.Steppe]: { humidity: -0.5, temperature: -0.1, elevation: 0.25 },
   // Humid cloud-forest slopes between rainforest and bare mountain
   [Biome.MontaneForest]: { humidity: 0.5, temperature: 0, elevation: 0.55 },
   // High-latitude seas so cold coasts don't jump straight to land
-  [Biome.PolarOcean]: { humidity: 1, temperature: -0.8, elevation: -0.5 },
+  [Biome.PolarOcean]: { humidity: 1, temperature: -0.8, elevation: -0.6 },
+  // Bare, baking and above everything: the corner of the climate
+  // cube nothing else reaches
+  [Biome.Volcano]: { humidity: -0.4, temperature: 0.9, elevation: 0.8 },
 };
 
 /**
- * Classify a climate sample into the biome with the nearest target
- * point (squared Euclidean distance over the three axes)
+ * Where the shoreline is on the elevation axis.
+ *
+ * It is a gate rather than a preference: a sample below it can only
+ * be a water biome and one above it can only be a land biome, so a
+ * dry, freezing trench is still a trench. Humidity and temperature
+ * are independent noise fields, and left to argue on equal terms they
+ * would put a Steppe on the ocean floor
+ */
+export const SEA_LEVEL = -0.25;
+
+/**
+ * How much harder elevation counts than the other two axes, within
+ * one side of the shoreline: a place's height decides which band of
+ * biomes it is choosing between, and how wet or warm it is picks from
+ * that band
+ */
+export const ELEVATION_WEIGHT = 2;
+
+/**
+ * Classify a climate sample into the nearest biome on its own side of
+ * the shoreline (squared Euclidean distance, elevation weighted)
  */
 export function getBiome(humidity: number, temperature: number, elevation: number): Biome {
   let nearest = Biome.DeepOcean;
   let nearestDistance = Number.POSITIVE_INFINITY;
 
+  const submerged = elevation < SEA_LEVEL;
+
   for (const [key, config] of Object.entries(BIOME_CONFIGS)) {
+    // Never across the shoreline: the two sides are separate lists
+    if (config.elevation < SEA_LEVEL !== submerged) {
+      continue;
+    }
+
     const dh = config.humidity - humidity;
     const dt = config.temperature - temperature;
-    const de = config.elevation - elevation;
+    const de = (config.elevation - elevation) * ELEVATION_WEIGHT;
     const distance = dh * dh + dt * dt + de * de;
 
     if (distance < nearestDistance) {

@@ -2,11 +2,13 @@ import {
   type JSX,
   type ParentProps,
   Show,
+  createContext,
   createEffect,
   createSignal,
   createUniqueId,
   onCleanup,
   onMount,
+  useContext,
 } from 'solid-js';
 import { TooltipLayer } from './tooltip';
 
@@ -130,6 +132,23 @@ function holds(box: HTMLElement | undefined, target: EventTarget | null): boolea
   return target instanceof Node && box?.contains(target) === true;
 }
 
+/**
+ * What a card offers whatever is inside it: a way to shut itself, and
+ * a way to keep it open.
+ *
+ * A card opened from inside another card is a portal of its own, so
+ * moving the pointer into it *leaves* the card it came from — which
+ * would take both down. The inner one holds the outer one open for as
+ * long as it is up, and lets go when it closes
+ */
+interface CardHold {
+  hold: () => void;
+  release: () => void;
+  close: () => void;
+}
+
+const Holding = createContext<CardHold>();
+
 export interface HoverCardProps extends ParentProps {
   /**
    * What is hovered. It is wrapped in a focusable span, so the card
@@ -143,8 +162,12 @@ export interface HoverCardProps extends ParentProps {
   title: JSX.Element;
   /** A line under the title, still in the bar */
   description?: JSX.Element;
-  /** The quieter bar along the bottom — where it is, what it costs */
-  footer?: JSX.Element;
+  /**
+   * The quieter bar along the bottom — where it is, what it costs.
+   * Written as a function where what stands there has to put the card
+   * away, since a button inside a card is the one press that does not
+   */
+  footer?: JSX.Element | ((close: () => void) => JSX.Element);
   /**
    * Which side the card prefers. It goes to the other one when there
    * is no room on this one
@@ -158,6 +181,10 @@ export interface HoverCardProps extends ParentProps {
 export default function HoverCard(props: HoverCardProps): JSX.Element {
   /** What the card is named by, since the title may be any markup */
   const titleId = createUniqueId();
+  /** The card this one was opened from, if it was opened from one */
+  const outer = useContext(Holding);
+  /** How many cards opened from inside this one are still up */
+  let inner = 0;
   const [open, setOpen] = createSignal(false);
   /**
    * Where the card is, once it has been measured. Until then it is
@@ -190,8 +217,52 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   const hide = (delay = CLOSE_DELAY): void => {
     cancel();
     timer = setTimeout(() => {
-      setOpen(false);
+      // A card with one of its own open stays: the pointer is in the
+      // card it opened, which is not this one's box but is this one's
+      // business
+      if (inner === 0) {
+        setOpen(false);
+      }
     }, delay);
+  };
+
+  /**
+   * What to do once the last card opened from inside this one has
+   * gone. Closing on the spot is wrong — a card usually goes because
+   * what it was about has just been acted on, and the pointer is still
+   * on the card that offered it — so this waits for the pointer to say
+   * where it is and closes only if the answer is somewhere else
+   */
+  const settle = (): void => {
+    const check = (event: PointerEvent): void => {
+      if (holds(card, event.target) || holds(trigger, event.target)) {
+        return;
+      }
+      document.removeEventListener('pointermove', check);
+      hide(0);
+    };
+
+    document.addEventListener('pointermove', check);
+    onCleanup(() => {
+      document.removeEventListener('pointermove', check);
+    });
+  };
+
+  const holding: CardHold = {
+    hold: () => {
+      inner += 1;
+      cancel();
+    },
+    release: () => {
+      inner = Math.max(0, inner - 1);
+      if (inner === 0) {
+        settle();
+      }
+    },
+    close: () => {
+      cancel();
+      setOpen(false);
+    },
   };
 
   /**
@@ -256,7 +327,10 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * next click. A press inside the card is the card's own business
    */
   const away = (event: PointerEvent): void => {
-    if (holds(card, event.target)) {
+    // A press inside a card this one opened is that card's business —
+    // the Take button on a held item is a press in another portal
+    // entirely, and reading it as "elsewhere" shut both windows
+    if (inner > 0 || holds(card, event.target)) {
       return;
     }
     cancel();
@@ -304,6 +378,25 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
       window.removeEventListener('scroll', put, true);
       window.removeEventListener('resize', put);
     });
+  });
+
+  /**
+   * What the bottom bar comes to. A caller that needs to put the card
+   * away writes a function and is handed the way to do it
+   */
+  const standing = (foot: NonNullable<HoverCardProps['footer']>): JSX.Element =>
+    typeof foot === 'function' ? foot(holding.close) : foot;
+
+  /**
+   * While this card is up, the card it was opened from stays up: the
+   * pointer being in here is the reason that one is still wanted
+   */
+  createEffect(() => {
+    if (!open() || outer == null) {
+      return;
+    }
+    outer.hold();
+    onCleanup(outer.release);
   });
 
   onCleanup(cancel);
@@ -385,8 +478,12 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
               </Show>
             </header>
-            <div class={BODY}>{props.children}</div>
-            <Show when={props.footer}>{(foot) => <footer class={FOOT}>{foot()}</footer>}</Show>
+            <Holding.Provider value={holding}>
+              <div class={BODY}>{props.children}</div>
+              <Show when={props.footer}>
+                {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
+              </Show>
+            </Holding.Provider>
           </div>
         </TooltipLayer>
       </Show>

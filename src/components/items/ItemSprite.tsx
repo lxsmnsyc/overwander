@@ -1,6 +1,9 @@
-import { type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
-import loadItemIcon, { type ItemIcon } from '../../canvas/item-icons';
+import type { JSX } from 'solid-js';
+import { Show } from 'solid-js';
+import AtlasSprite from '../sprites/AtlasSprite';
+import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
 import type { Items } from '../../data/ids/items';
+import { describeItem } from '../details';
 import { getItemData } from '../../data/items';
 
 /**
@@ -12,27 +15,38 @@ import { getItemData } from '../../data/items';
  * `public/sprites/ui/items`; nothing drew them, so nothing showed
  * them.
  *
- * It is one still frame, so it draws once per change rather than
- * running a frame loop: an icon has nothing to animate, and a bag of
- * thirty rows should not be thirty `requestAnimationFrame` callbacks.
+ * It is the item's half of `AtlasSprite`: which sheet and which
+ * picture comes off the item's own registration, and the drawing is
+ * the browser's.
  */
 
 /**
- * How wide the box is by default, in pixels. The sheets are cut at
- * around thirty-two, so this is roughly one-to-one — a picture drawn
- * smaller than it was cut is the one size a pixel sprite looks worst
- * at
+ * How wide the box is by default. The sheets are cut at thirty-two, so
+ * this is one to one
  */
 const DEFAULT_SIZE = 32;
+
+/**
+ * Where the item sheets live. An item names its picture as
+ * `sheet/name`, which is the whole of the mapping — it sits beside the
+ * price and the flags rather than in a table somewhere else
+ */
+const ITEM_ICON_ROOT = `${UI_SPRITE_ROOT}/items`;
 
 export interface ItemSpriteProps {
   item: Items;
   /**
-   * The side of the square it is drawn in. The picture is fitted to
-   * it without being stretched, so a sheet cut at another size still
+   * The side of the square it is drawn in. The picture is fitted to it
+   * without being stretched, so a sheet cut at another size still
    * lines up in a column with the rest
    */
   size?: number;
+  /**
+   * Whether it fills the square it is put in instead of taking a
+   * number of pixels. A tray whose squares are a sixth of the screen
+   * asks for this; a row of fixed-height lines asks for a size
+   */
+  fill?: boolean;
   class?: string;
   /**
    * What a screen reader is told. It falls back to the item's name,
@@ -43,73 +57,59 @@ export interface ItemSpriteProps {
   label?: string;
 }
 
+/**
+ * Which sheet and which picture, from what the item says about itself.
+ * An item the registry has never heard of names nothing, and nothing
+ * is what gets drawn
+ */
+function iconOf(item: Items): { sheet: string; name: string } | null {
+  let icon: string;
+
+  try {
+    icon = getItemData(item).icon;
+  } catch {
+    return null;
+  }
+
+  const cut = icon.lastIndexOf('/');
+
+  return cut <= 0
+    ? null
+    : { sheet: `${ITEM_ICON_ROOT}/${icon.slice(0, cut)}`, name: icon.slice(cut + 1) };
+}
+
 export default function ItemSprite(props: ItemSpriteProps): JSX.Element {
-  let canvas: HTMLCanvasElement | undefined;
-  const [icon, setIcon] = createSignal<ItemIcon | null>(null);
+  const icon = (): { sheet: string; name: string } | null => iconOf(props.item);
 
   const size = (): number => props.size ?? DEFAULT_SIZE;
 
-  createEffect(() => {
-    const item = props.item;
-    let live = true;
-
-    onCleanup(() => {
-      live = false;
-    });
-
-    loadItemIcon(item)
-      .then((loaded) => {
-        if (live) {
-          setIcon(loaded);
-        }
-      })
-      .catch(() => {
-        // A picture that will not load is one the row does without;
-        // the name beside it says what the item is
-      });
-  });
-
-  createEffect(() => {
-    const drawn = icon();
-    const element = canvas;
-    const room = size();
-
-    if (element == null) {
-      return;
-    }
-
-    const context = element.getContext('2d');
-
-    if (context == null) {
-      return;
-    }
-
-    // The canvas is the cell the icon was cut in, drawn one to one,
-    // and the box it fills is the element's own size — a browser
-    // enlarging pixels is crisp at any size, where the same picture
-    // drawn at 1.125 on a canvas is not
-    const cell = drawn?.sprite.sizeOf(drawn.name);
-    const side = Math.max(cell?.width ?? 0, cell?.height ?? 0) || room;
-
-    element.width = side;
-    element.height = side;
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, side, side);
-    // Drawn from the middle so a picture that is not square sits in
-    // the middle of its column rather than against one edge
-    drawn?.sprite.draw(context, drawn.name, side / 2, side / 2);
-  });
-
-  const label = (): string => props.label ?? getItemData(props.item).name;
+  const label = (): string => props.label ?? describeItem(props.item);
 
   return (
-    <canvas
-      ref={canvas}
-      role="img"
-      aria-label={label()}
-      aria-hidden={label() === '' ? true : undefined}
-      style={{ width: `${size()}px`, height: `${size()}px` }}
-      class={`block shrink-0 [image-rendering:pixelated] ${props.class ?? ''}`}
-    />
+    // Square whatever the sheet holds: a bag is a grid of squares, and
+    // one icon a few pixels shorter than the rest sets its whole row
+    // off. The picture is centred in it rather than stretched to it
+    <span
+      role={icon() == null ? 'img' : undefined}
+      aria-label={icon() == null ? label() : undefined}
+      style={
+        props.fill === true
+          ? { width: '100%', 'aspect-ratio': '1 / 1' }
+          : { width: `${size()}px`, height: `${size()}px` }
+      }
+      class={`flex shrink-0 items-center justify-center ${props.class ?? ''}`}
+    >
+      <Show when={icon()}>
+        {(found) => (
+          <AtlasSprite
+            sheet={found().sheet}
+            name={found().name}
+            size={props.fill === true ? undefined : size()}
+            fill={props.fill}
+            label={label()}
+          />
+        )}
+      </Show>
+    </span>
   );
 }

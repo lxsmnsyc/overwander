@@ -36,14 +36,6 @@ export const GRID_ROWS = 5;
 export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
 
 /**
- * How big a picture is drawn inside its square. The square itself is
- * whatever a sixth of the tray comes to — around eighty pixels — so
- * this is the icon at twice the size it was cut, which is both a whole
- * number of pixels and as large as the square takes
- */
-const SPRITE = 64;
-
-/**
  * Re-exported from where the battle card reads them too: a tray of
  * items and a pokemon's held item are named the same way
  */
@@ -306,7 +298,17 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                         : 'border-line bg-paper hover:bg-line-soft'
                     } ${handOf(cell)}`}
                 >
-                  <ItemSprite item={cell.item} size={SPRITE} label="" />
+                  {/* Laid over the square rather than inside it: the
+                      picture is a fixed number of pixels and the square
+                      is a sixth of whatever the tray was given, so an
+                      icon in the flow would stretch a narrow square
+                      taller than it is wide */}
+                  <span
+                    class="pointer-events-none absolute inset-1.5 flex items-center
+                      justify-center"
+                  >
+                    <ItemSprite item={cell.item} fill label="" />
+                  </span>
                   {/* How many, in the corner the games put it in */}
                   <Show when={cell.amount != null}>
                     <span

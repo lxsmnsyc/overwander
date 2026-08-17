@@ -1,6 +1,6 @@
-import { type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
-import type BasicSprite from '../../canvas/basic-sprite';
-import loadBasicSprite, { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
+import type { JSX } from 'solid-js';
+import AtlasSprite from './AtlasSprite';
+import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
 import { MOVE_CATEGORY_NAMES, MoveCategories } from '../../data/ids/moves';
 
 /**
@@ -26,11 +26,10 @@ const PICTURES: Record<MoveCategories, string> = {
 };
 
 /**
- * How wide the badge is drawn. The sheet cuts them at 32×14, so this
+ * How wide the badge is drawn. The sheet cuts them at 32x14, so this
  * is one to one — a pixel badge drawn at any other size is a smudge
  */
 const WIDTH = 32;
-const HEIGHT = 14;
 
 export interface MoveCategorySpriteProps {
   category: MoveCategories;
@@ -38,60 +37,13 @@ export interface MoveCategorySpriteProps {
 }
 
 export default function MoveCategorySprite(props: MoveCategorySpriteProps): JSX.Element {
-  let canvas: HTMLCanvasElement | undefined;
-  const [sheet, setSheet] = createSignal<BasicSprite | null>(null);
-
-  createEffect(() => {
-    let live = true;
-
-    onCleanup(() => {
-      live = false;
-    });
-
-    loadBasicSprite(SHEET)
-      .then((loaded) => {
-        if (live) {
-          setSheet(loaded);
-        }
-      })
-      .catch(() => {
-        // The badge is a picture of something the row already names in
-        // its tooltip; a sheet that will not load leaves a gap
-      });
-  });
-
-  createEffect(() => {
-    const drawn = sheet();
-    const element = canvas;
-    const name = PICTURES[props.category];
-
-    if (element == null) {
-      return;
-    }
-
-    const context = element.getContext('2d');
-
-    if (context == null) {
-      return;
-    }
-
-    const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
-
-    element.width = WIDTH * ratio;
-    element.height = HEIGHT * ratio;
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.clearRect(0, 0, WIDTH, HEIGHT);
-    drawn?.draw(context, name, 0, 0, { anchor: 'top-left' });
-  });
-
   return (
-    <canvas
-      ref={canvas}
-      role="img"
-      aria-label={MOVE_CATEGORY_NAMES[props.category]}
-      title={MOVE_CATEGORY_NAMES[props.category]}
-      style={{ width: `${WIDTH}px`, height: `${HEIGHT}px` }}
-      class={`block shrink-0 [image-rendering:pixelated] ${props.class ?? ''}`}
+    <AtlasSprite
+      sheet={SHEET}
+      name={PICTURES[props.category]}
+      size={WIDTH}
+      label={MOVE_CATEGORY_NAMES[props.category]}
+      class={props.class}
     />
   );
 }

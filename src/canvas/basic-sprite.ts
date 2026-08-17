@@ -234,6 +234,15 @@ export default class BasicSprite {
   }
 
   /**
+   * Where one picture sits on the sheet, for a caller drawing it some
+   * other way than through `draw` — the CSS background the interface
+   * uses for a still icon needs the same four numbers plus the cell
+   */
+  frameOf(name: string): BasicSpriteImage | null {
+    return this.images.get(name) ?? null;
+  }
+
+  /**
    * How big one picture is, before any scaling: the cell it was drawn
    * in rather than what survived the cropping, since a caller laying
    * out a row of icons is laying out cells. A name the sheet has not

@@ -1,16 +1,19 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Index, type JSX, Show } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
-import { getCatchName, isShiny } from '../../auth/caught-record';
+import { getCatchName, getCatchSlots, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { getMaxHealth, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
 import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
+import { Slots } from '../../data/constants/slots';
+import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { getMoveData } from '../../data/moves';
-import { detailAbility, detailItem } from '../details';
+import { detailAbility } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
+import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
-import { Meta, TooltipHost } from '../styled';
+import { Button, HoverCard, Meta, TooltipHost } from '../styled';
 
 /**
  * One of the player's pokemon, read at a glance: which individual it
@@ -30,6 +33,16 @@ const ITEM_SPRITE = 24;
 
 export interface CatchCardProps {
   caught: CaughtPokemon;
+  /**
+   * Whether this pokemon is the reader's. Somebody else's is read and
+   * nothing more — there is no giving it anything and no taking what
+   * it holds
+   */
+  owned?: boolean;
+  /** Pressing an empty slot: the bag, to give it something */
+  onGive?: () => void;
+  /** Taking one of its items back into the bag */
+  onTake?: (item: Items) => void;
   class?: string;
 }
 
@@ -50,6 +63,18 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
    */
   const hatching = (): number =>
     caught().hatchSteps <= 0 ? 1 : Math.min(1, caught().steps / caught().hatchSteps);
+
+  /**
+   * The tray of held-item squares: what it is holding, plus the room
+   * it still has. A pokemon's own record says how many it may carry —
+   * a Utility Belt widens it — so the tray is the pokemon's rather
+   * than the game's
+   */
+  const slots = (): null[] =>
+    Array.from(
+      { length: Math.max(caught().items.length, getCatchSlots(caught(), Slots.Item)) },
+      () => null,
+    );
 
   const stars = (): string => {
     const filled = getIVStars(caught().ivs);
@@ -168,18 +193,66 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
               thing, and a tray of empty squares beside it said nothing
               eight times over */}
           <ul class="m-0 grid list-none grid-cols-2 gap-0.5 p-0">
-            <For each={caught().items} fallback={<Meta>No item</Meta>}>
-              {(item) => (
-                <li
-                  class="flex aspect-square items-center justify-center rounded border
-                    border-line-soft bg-paper/60"
-                >
-                  <TooltipHost {...detailItem(item)}>
-                    <ItemSprite item={item} size={ITEM_SPRITE} />
-                  </TooltipHost>
+            <Index each={slots()}>
+              {(_, at) => (
+                <li class="contents">
+                  <Show
+                    when={at < caught().items.length}
+                    fallback={
+                      // An empty slot is room the pokemon has, so it is
+                      // drawn as room: a press on it is what fills it
+                      <button
+                        type="button"
+                        disabled={props.owned !== true}
+                        aria-label="Give it an item"
+                        class={`flex aspect-square items-center justify-center rounded border
+                          border-dashed border-line-soft bg-paper/40 text-muted ${
+                            props.owned === true
+                              ? 'cursor-pointer hover:border-tide hover:text-tide-dark'
+                              : ''
+                          }`}
+                        onClick={() => {
+                          props.onGive?.();
+                        }}
+                      >
+                        +
+                      </button>
+                    }
+                  >
+                    <HoverCard
+                      class="block"
+                      title="Info"
+                      footer={(close) => (
+                        <Show
+                          when={props.owned === true}
+                          fallback={<Button onClick={close}>Close</Button>}
+                        >
+                          <Button
+                            tone="primary"
+                            onClick={() => {
+                              close();
+                              props.onTake?.(caught().items[at]);
+                            }}
+                          >
+                            Take
+                          </Button>
+                        </Show>
+                      )}
+                      trigger={
+                        <span
+                          class="flex aspect-square w-full items-center justify-center rounded
+                            border border-line-soft bg-paper/60"
+                        >
+                          <ItemSprite item={caught().items[at]} size={ITEM_SPRITE} label="" />
+                        </span>
+                      }
+                    >
+                      <ItemCard item={caught().items[at]} />
+                    </HoverCard>
+                  </Show>
                 </li>
               )}
-            </For>
+            </Index>
           </ul>
         </div>
       </Show>

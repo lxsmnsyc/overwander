@@ -87,9 +87,12 @@ export default function Filter<V>(props: {
         <span aria-hidden="true">▾</span>
       </ListboxButton>
       {/* Over the list it filters rather than pushing it down the
-          page: the rows underneath are what the choice is about */}
+          page: the rows underneath are what the choice is about. It
+          hangs from the right edge, since the control itself sits in
+          the right corner and a list wider than it would otherwise
+          run off the screen */}
       <ListboxOptions
-        class="absolute top-full left-0 z-20 mt-1.5 flex max-h-64 w-max min-w-full list-none
+        class="absolute top-full right-0 z-20 mt-1.5 flex max-h-64 w-max min-w-full list-none
           flex-col gap-0.5 overflow-y-auto rounded-xl border-2 border-tide bg-paper p-1
           shadow-pop"
       >

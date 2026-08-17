@@ -1,8 +1,11 @@
 import { type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
-import { type CaughtPokemon, listCaught } from '../../auth/caught';
+import { type CaughtPokemon, giveItem, listCaught, takeItem } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
 import { useAuth } from '../../auth/context';
+import { ItemFlags, type Items } from '../../data/ids/items';
+import { getItemData } from '../../data/items';
+import InventoryPicker from '../items/InventoryPicker';
 import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
@@ -33,6 +36,19 @@ import {
  * dialog opened over a dialog fights it for the click that closes it.
  */
 
+
+/**
+ * Whether a pokemon is allowed to hold it at all. An item the registry
+ * has never heard of has no flags to read, so it is left out rather
+ * than assumed holdable
+ */
+function isHoldable(item: Items): boolean {
+  try {
+    return (getItemData(item).flags & ItemFlags.Holdable) !== 0;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * One of the player's pokemon, with the one thing a caller cannot read
@@ -158,10 +174,22 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const owner = (): string => props.player ?? auth.user()?.uid ?? '';
 
+  /**
+   * Which pokemon the bag is open for, while something is being picked
+   * to give it
+   */
+  const [giving, setGiving] = createSignal<string | null>(null);
+  /** Bumped by a give or a take, so the records are read again */
+  const [handled, setHandled] = createSignal(0);
+
+
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
   const [owned] = createResource(
-    () => (showing() && props.options == null ? ([owner(), props.revision] as const) : null),
+    () =>
+      showing() && props.options == null
+        ? ([owner(), props.revision, handled()] as const)
+        : null,
     async ([player]): Promise<CatchOption[]> => {
       // The clock is the server's, so a lock that has timed out reads
       // as free rather than as whatever this device believes
@@ -199,6 +227,37 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
 
   const [query, setQuery] = createSignal('');
+  /**
+   * Whether these are the reader's own pokemon. Somebody else's box is
+   * read and nothing else: there is nothing of theirs to hand an item
+   * to and nothing of theirs to take one from
+   */
+  const mine = (): boolean => props.viewOnly !== true && owner() === auth.user()?.uid;
+
+  /**
+   * Hand something over, or take it back. Both are the server's — the
+   * bag and the record move together — and both leave the list to be
+   * read again so the card shows what the pokemon is holding now
+   */
+  const settle = (done: Promise<boolean>): void => {
+    done
+      .then(() => {
+        setHandled((count) => count + 1);
+      })
+      .catch(() => {
+        // A refusal leaves the record as it was, which the card is
+        // already showing
+      });
+  };
+
+  const give = (catchId: string, item: Items): void => {
+    setGiving(null);
+    settle(giveItem(catchId, item));
+  };
+
+  const take = (catchId: string, item: Items): void => {
+    settle(takeItem(catchId, item));
+  };
 
   /**
    * A search hides rows rather than refusing them: a pokemon already
@@ -457,7 +516,16 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
                       </>
                     }
                   >
-                    <CatchCard caught={option().caught} />
+                    <CatchCard
+                      caught={option().caught}
+                      owned={mine()}
+                      onGive={() => {
+                        setGiving(option().id);
+                      }}
+                      onTake={(item) => {
+                        take(option().id, item);
+                      }}
+                    />
                   </HoverCard>
                 )}
               </Show>
@@ -528,6 +596,32 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       >
         <Row class="justify-center">{confirm()}</Row>
       </Show>
+
+      {/* The bag, opened from an empty slot on a pokemon's card. It is
+          a window of its own for the reason every other tray is: a
+          list of thirty squares unfolded into this one would push the
+          box it was opened from off the screen */}
+      <InventoryPicker
+        open={giving() != null}
+        onClose={() => {
+          setGiving(null);
+        }}
+        player={owner()}
+        title="Give an item"
+        description="Choose what it should carry."
+        verb="Give"
+        value={null}
+        filter={(entry) => isHoldable(entry.item)}
+        empty="Nothing in the bag can be held."
+        onPick={(item) => {
+          const catchId = giving();
+
+          setGiving(null);
+          if (catchId != null && item != null) {
+            give(catchId, item);
+          }
+        }}
+      />
     </div>
   );
 

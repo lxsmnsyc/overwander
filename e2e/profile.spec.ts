@@ -34,11 +34,12 @@ test.describe('the profile', () => {
   test('draws the catches as a box rather than a list of names', async ({ page }) => {
     const box = await openBox(page);
 
-    // Wide enough to be a box of squares. A canvas that failed to be
-    // measured draws itself one pixel wide and is otherwise visible
+    // Wide enough to be a box of squares, with the pokemon the account
+    // was handed standing in one of them
     const bounds = await box.boundingBox();
 
     expect(bounds?.width ?? 0).toBeGreaterThan(200);
+    await expect(box.getByRole('img').first()).toBeVisible();
   });
 
   test('carries the balls a new player was handed', async ({ page }) => {

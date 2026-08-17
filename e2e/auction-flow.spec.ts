@@ -2,7 +2,15 @@ import { type Browser, type Locator, type Page, expect, test } from '@playwright
 import { PERFECT_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
 import { findDocuments, patchDocument, uidOf, writeDocument } from './emulator';
-import { type Player, dialogNamed, dismissGift, expectOpen, openPanel, signIn } from './game';
+import {
+  type Player,
+  dialogNamed,
+  dismissGift,
+  expectOpen,
+  openPanel,
+  pressBoxSquare,
+  signIn,
+} from './game';
 
 /**
  * The auction house, end to end: a lot goes up, somebody bids on it,
@@ -216,15 +224,12 @@ test.describe('the auction house', () => {
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
 
     // The records are a box of squares rather than a list of names, so
-    // the one thing worth listing is pressed where it sits. It is the
-    // only square: everything that does not qualify is left out
-    const box = sellerBoard.getByRole('application', { name: /^Box of pokemon/ });
+    // the one thing worth listing is taken from its card. It is the only
+    // square: everything that does not qualify is left out
+    const box = sellerBoard.getByRole('group', { name: /^Box of pokemon/ });
 
     await expect(box).toBeVisible();
-
-    const bounds = await box.boundingBox();
-
-    await box.click({ position: { x: (bounds?.width ?? 0) / 12, y: (bounds?.height ?? 0) / 10 } });
+    await pressBoxSquare(seller.page, box, 'Sell');
     await putItUp(seller.page, /^Auction /, 5);
 
     await expect(sellerBoard.getByText(/by you/)).toBeVisible();
@@ -255,7 +260,7 @@ test.describe('the auction house', () => {
     const catches = await openPanel(buyer.page, 'Catches');
 
     await expect(
-      catches.getByRole('application', { name: /^Box of pokemon, 2 of 30 squares filled/ }),
+      catches.getByRole('group', { name: /^Box of pokemon, 2 of 30 squares filled/ }),
     ).toBeVisible();
   });
 });

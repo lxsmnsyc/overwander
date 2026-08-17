@@ -383,6 +383,30 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
+   * Where the frame showing sits on the packed sheet.
+   *
+   * It is what a caller drawing the sheet as a CSS background needs:
+   * `draw` works this out for itself, and a background has to be
+   * scrolled to the same rectangle by hand
+   */
+  get frameBox(): { x: number; y: number; width: number; height: number } | null {
+    const clip = this.clip;
+
+    if (clip == null) {
+      return null;
+    }
+
+    const { frameWidth, frameHeight } = clip.target;
+
+    return {
+      x: clip.image.x + this.frame * frameWidth,
+      y: clip.image.y + this.row * frameHeight,
+      width: frameWidth,
+      height: frameHeight,
+    };
+  }
+
+  /**
    * Play an animation from the start, or carry on the one already
    * playing. Answers whether this sheet has it at all, so a caller can
    * fall back — not every pokemon has a Dance

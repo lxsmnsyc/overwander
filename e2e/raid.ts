@@ -5,7 +5,7 @@ import { Species } from '../src/data/ids/species';
 import { RaidKind } from '../src/auth/raid-record';
 import { RAID_INTERVAL } from '../src/overworld/chunk-snapshot';
 import { uidOf, writeDocument } from './emulator';
-import type { Player } from './game';
+import { type Player, pressBoxSquare } from './game';
 
 /**
  * Staging a raid, so the fight can be tested at all.
@@ -120,18 +120,16 @@ export async function enterRaid(page: Page): Promise<void> {
   await expect(lobby).toBeVisible({ timeout: 20_000 });
   await lobby.click();
 
-  // Bring the starter. The picker is the ordinary catch picker, drawn
-  // as a box of squares, so the pokemon is pressed by where it sits
+  // Bring the starter. The picker is the ordinary catch picker, drawn as
+  // a box of squares, so the pokemon is added from the card its square
+  // puts up
   await page.getByRole('button', { name: 'Form a team' }).click();
 
   const team = page.getByRole('dialog', { name: 'Form a team' });
-  const box = team.getByRole('application', { name: /^Box of pokemon/ });
+  const box = team.getByRole('group', { name: /^Box of pokemon/ });
 
   await expect(box).toBeVisible();
-
-  const bounds = await box.boundingBox();
-
-  await box.click({ position: { x: (bounds?.width ?? 0) / 12, y: (bounds?.height ?? 0) / 10 } });
+  await pressBoxSquare(page, box, 'Add');
   await team.getByRole('button', { name: /^Join with 1/ }).click();
 
   // The host's own button. It is refused until a party has joined, so

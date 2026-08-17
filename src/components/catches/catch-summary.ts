@@ -5,7 +5,7 @@ import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
 import { Genders } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
-import type { BoxEntry } from './CatchBoxCanvas';
+import type { BoxEntry } from './CatchBox';
 
 /**
  * How one of the player's pokemon is said and drawn, wherever a

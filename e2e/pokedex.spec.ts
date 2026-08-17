@@ -8,6 +8,7 @@ import {
   dismissGift,
   expectOpen,
   openPanel,
+  pressBoxSquare,
   signIn,
 } from './game';
 
@@ -196,15 +197,10 @@ test.describe('the pokedex', () => {
 
   test('steps between the player`s own pokemon from the catch sheet', async ({ page }) => {
     const catches = await openPanel(page, 'Catches');
-    const box = catches.getByRole('application', { name: /^Box of pokemon/ });
+    const box = catches.getByRole('group', { name: /^Box of pokemon/ });
 
     await expect(box).toBeVisible();
-
-    const bounds = await box.boundingBox();
-
-    await box.click({
-      position: { x: (bounds?.width ?? 0) / 12, y: (bounds?.height ?? 0) / 10 },
-    });
+    await pressBoxSquare(page, box, 'Open');
 
     const sheet = dialogNamed(page, SHEET);
 

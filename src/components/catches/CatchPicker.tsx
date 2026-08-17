@@ -6,7 +6,7 @@ import { useAuth } from '../../auth/context';
 import { ItemFlags, type Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
 import InventoryPicker from '../items/InventoryPicker';
-import CatchBoxCanvas, { BOX_SIZE, type BoxEntry } from './CatchBoxCanvas';
+import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
 import matches from '../../core/search';
@@ -35,7 +35,6 @@ import {
  * callers that are already inside a dialog of their own, since a
  * dialog opened over a dialog fights it for the click that closes it.
  */
-
 
 /**
  * Whether a pokemon is allowed to hold it at all. An item the registry
@@ -182,14 +181,11 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   /** Bumped by a give or a take, so the records are read again */
   const [handled, setHandled] = createSignal(0);
 
-
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
   const [owned] = createResource(
     () =>
-      showing() && props.options == null
-        ? ([owner(), props.revision, handled()] as const)
-        : null,
+      showing() && props.options == null ? ([owner(), props.revision, handled()] as const) : null,
     async ([player]): Promise<CatchOption[]> => {
       // The clock is the server's, so a lock that has timed out reads
       // as free rather than as whatever this device believes
@@ -459,7 +455,11 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   );
 
   const list = (): JSX.Element => (
-    <div class="flex flex-col gap-3">
+    // As wide as it is given, said out loud: a caller that centres what
+    // it holds — Nurse Joy's counter, the daycare's — sizes its children
+    // by their content, and a box of squares asked how wide it would
+    // like to be answers with the width of thirty sprites
+    <div class="flex w-full flex-col gap-3">
       <Show when={offered().length > SEARCH_FROM}>
         <Row>
           <Search
@@ -490,7 +490,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
               Every square carries a card: what is in it, and the button
               that takes it. The bar is titled "Info" because the card
               under it already names the pokemon on its first line */}
-          <CatchBoxCanvas
+          <CatchBox
             entries={page()}
             onOpen={pressById}
             cardOnly

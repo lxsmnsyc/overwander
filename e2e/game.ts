@@ -1,5 +1,4 @@
 import { type Locator, type Page, expect } from '@playwright/test';
-import { BOX_COLUMNS, BOX_ROWS } from '../src/components/catches/CatchBoxCanvas';
 
 /**
  * What every browser test needs before it can test anything: an
@@ -201,40 +200,43 @@ export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): P
 export async function openBox(page: Page): Promise<Locator> {
   const catches = await openPanel(page, 'Catches');
 
-  // By its own name rather than "the canvas in the panel": a bare
-  // `canvas` lookup matches whatever else is drawn beside it
-  const box = catches.getByRole('application', { name: /^Box of pokemon/ });
+  // By its own name rather than "the grid in the panel": the squares are
+  // laid out inside it, and a bare lookup matches whatever else the
+  // panel draws beside it
+  const box = catches.getByRole('group', { name: /^Box of pokemon/ });
 
   await expect(box).toBeVisible();
   return box;
 }
 
 /**
- * Press a square of the box.
+ * Take whatever a square of a box offers.
  *
- * The box is one canvas rather than thirty elements, so there is
- * nothing to press by name: which pokemon is where has to be worked
- * out from the geometry, the same way the canvas works it out from the
- * pointer. The grid is imported from the component so the two cannot
- * drift apart
+ * A square is a picture; the button that acts on it is in the card that
+ * comes up when the pointer rests there. So a square is pressed the way
+ * a player presses one — hover, wait for the card, press what it says —
+ * rather than by clicking the picture, which does nothing
+ */
+export async function pressBoxSquare(
+  page: Page,
+  box: Locator,
+  verb: string,
+  index = 0,
+): Promise<void> {
+  await box.getByRole('img').nth(index).hover();
+
+  const card = page.getByRole('dialog', { name: 'Info' });
+
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: verb, exact: true }).click();
+}
+
+/**
+ * Open the record behind a square. The squares are newest first, so
+ * nothing is the pokemon the account was handed
  */
 export async function openCatch(page: Page, index = 0): Promise<Locator> {
-  const box = await openBox(page);
-  const bounds = await box.boundingBox();
-
-  expect(bounds, 'the box should have been drawn').not.toBeNull();
-
-  const cell = {
-    width: (bounds?.width ?? 0) / BOX_COLUMNS,
-    height: (bounds?.height ?? 0) / BOX_ROWS,
-  };
-
-  await box.click({
-    position: {
-      x: (index % BOX_COLUMNS) * cell.width + cell.width / 2,
-      y: Math.floor(index / BOX_COLUMNS) * cell.height + cell.height / 2,
-    },
-  });
+  await pressBoxSquare(page, await openBox(page), 'Open', index);
 
   const sheet = dialogNamed(page, SHEET);
 

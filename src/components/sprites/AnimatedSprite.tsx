@@ -341,11 +341,18 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     if (drawn == null || props.still === true) {
       return;
     }
+
+    // Read here rather than inside the tick: the clock is a plain
+    // animation frame with no owner and nothing tracking, so a prop
+    // first read in there builds its memo ownerless and keeps it
+    // forever. Taking it in the effect re-registers when it changes
+    const speed = props.speed ?? 1;
+
     onCleanup(
       ticking((elapsed) => {
         const showing = drawn.frame;
 
-        drawn.update(elapsed * (props.speed ?? 1));
+        drawn.update(elapsed * speed);
         if (drawn.frame !== showing) {
           setStep((count) => count + 1);
         }

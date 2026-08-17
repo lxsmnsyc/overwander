@@ -10,7 +10,10 @@ import {
   onMount,
   useContext,
 } from 'solid-js';
+import { isServer } from 'solid-js/web';
+import { Transition } from 'terracotta';
 import { TooltipLayer } from './tooltip';
+import FADE, { holdFade } from './transition';
 
 /**
  * A card that opens on hover: what a row is about, without opening it.
@@ -34,23 +37,75 @@ import { TooltipLayer } from './tooltip';
 const OPEN_DELAY = 180;
 const CLOSE_DELAY = 140;
 
-/**
- * How long the pointer may spend crossing the gap to the card before
- * the card gives up on it. Without this a pointer parked inside the
- * triangle holds the card open for as long as it sits there
- */
-const CROSSING = 500;
-
 /** The gap between the trigger and the card, and from the card to the
  * edge of the window */
 const GAP = 8;
 const MARGIN = 8;
 
 /**
- * How much room the safe wedge is given around the pointer's way out.
- * It is what makes leaving the trigger sideways survivable
+ * How far behind the pointer the safe triangle's apex sits. It is what
+ * gives the triangle a width to leave through at the point the pointer
+ * is actually at
  */
 const SLACK = 12;
+
+/**
+ * Where the answer to "why did the card close" is remembered. Chasing
+ * a triangle takes more than one reload, so the choice outlives the page
+ */
+const SAFE_AREA_KEY = 'hover-card:safe-area';
+
+/**
+ * How long a triangle that has just failed stays on screen. The card goes
+ * with the failure, so without this the one drawing worth seeing is
+ * the one that is never seen
+ */
+const LINGER = 1200;
+
+/**
+ * A triangle as it is drawn: green while the pointer is still inside it,
+ * red where it left, with `at` marking the point that failed
+ */
+interface SafeShape {
+  corners: Point[];
+  live: boolean;
+  at: Point | null;
+}
+
+/**
+ * Whether the safe triangles are painted. It is a development tool: every
+ * use of it is behind `import.meta.env.DEV`, so the build drops the
+ * drawing along with this signal
+ */
+const [painting, setPainting] = createSignal(false);
+
+/**
+ * Dev-only: paint each card's safe triangle while the pointer is crossing
+ * to it, so a card that closes too early shows why. Also on `window`
+ * as `hoverCardSafeAreas()`, which is where it is actually reached
+ * from — a triangle is something to look at rather than something to
+ * write a call for
+ */
+export function showSafeAreas(on = true): void {
+  if (!import.meta.env.DEV) {
+    return;
+  }
+  setPainting(on);
+  try {
+    localStorage.setItem(SAFE_AREA_KEY, on ? '1' : '');
+  } catch {
+    // A browser refusing storage still gets the triangles this session
+  }
+}
+
+if (import.meta.env.DEV && !isServer) {
+  try {
+    setPainting(localStorage.getItem(SAFE_AREA_KEY) === '1');
+  } catch {
+    // Nothing remembered means nothing painted
+  }
+  window.hoverCardSafeAreas = showSafeAreas;
+}
 
 export type HoverCardPlacement = 'top' | 'bottom';
 
@@ -192,9 +247,46 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * size, and a card placed at the corner first is a card that jumps
    */
   const [spot, setSpot] = createSignal<Point | null>(null);
+  /**
+   * Whether the card is on screen at all, which lasts past `open` by
+   * the length of the fade. The portal is what it gates: a portal
+   * inside the fade is content drawn somewhere else, where an opacity
+   * set out here never reaches it
+   */
+  const [present, setPresent] = createSignal(false);
+  /** Dev-only: the triangle on screen, if one is being drawn */
+  const [shape, setShape] = createSignal<SafeShape | null>(null);
+  let fading: ReturnType<typeof setTimeout> | undefined;
+
+  /**
+   * Dev-only: put a triangle on screen, or take the last one down. A
+   * failed triangle is held for a moment — the card it belonged to has
+   * already gone, and it is the drawing worth reading
+   */
+  const drawSafeArea = (drawn: SafeShape | null): void => {
+    if (!import.meta.env.DEV) {
+      return;
+    }
+    if (fading != null) {
+      clearTimeout(fading);
+      fading = undefined;
+    }
+    setShape(drawn);
+    if (drawn != null && !drawn.live) {
+      fading = setTimeout(() => {
+        setShape(null);
+      }, LINGER);
+    }
+  };
 
   let trigger: HTMLSpanElement | undefined;
-  let card: HTMLDivElement | undefined;
+  /**
+   * The card element, as a signal rather than a plain ref: it is what
+   * the placement is measured from, and a signal is what lets the
+   * measuring wait for the element to exist instead of guessing when
+   * it does
+   */
+  const [card, setCard] = createSignal<HTMLDivElement>();
   let timer: ReturnType<typeof setTimeout> | undefined;
   /** The pointer's way in, while it is crossing the gap to the card */
   let crossing: (() => void) | undefined;
@@ -235,7 +327,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    */
   const settle = (): void => {
     const check = (event: PointerEvent): void => {
-      if (holds(card, event.target) || holds(trigger, event.target)) {
+      if (holds(card(), event.target) || holds(trigger, event.target)) {
         return;
       }
       document.removeEventListener('pointermove', check);
@@ -268,55 +360,79 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   /**
    * The safe triangle: the pointer's last spot on the trigger and the
    * two corners of the card's near edge. While the pointer stays
-   * inside that wedge it is on its way to the card, so the card waits
+   * inside it the pointer is on its way to the card, so the card waits
    * — leaving a trigger diagonally is the one move a plain
    * mouse-leave gets wrong.
    *
-   * A wedge rather than a true triangle: the apex is widened by
-   * `SLACK` and set back behind the pointer, because at the apex
-   * itself a triangle is one point wide and the first move sideways
-   * would fall outside it
+   * The apex is set back `SLACK` behind the pointer rather than put
+   * on it: at the pointer itself the triangle is one point wide, and
+   * the first move the browser reports lands beside the way out rather
+   * than along it — which is outside a triangle that starts there
    */
   const cross = (from: Point): void => {
-    if (card == null) {
+    const box = card();
+
+    if (box == null) {
       hide();
       return;
     }
 
-    const rect = card.getBoundingClientRect();
+    const rect = box.getBoundingClientRect();
     const above = rect.bottom <= from.y;
     const edge = above ? rect.bottom : rect.top;
     const back = above ? from.y + SLACK : from.y - SLACK;
     const safe: Point[] = [
-      { x: from.x - SLACK, y: back },
-      { x: from.x + SLACK, y: back },
+      { x: from.x, y: back },
       { x: rect.right, y: edge },
       { x: rect.left, y: edge },
     ];
 
-    // Declared empty and filled in below: the watch and its deadline
-    // each end the other, so whichever is written first has to be able
-    // to name a teardown that does not exist yet
+    drawSafeArea({ corners: safe, live: true, at: null });
+
+    // Declared empty and filled in below: each of the watches ends the
+    // others, so whichever is written first has to be able to name a
+    // teardown that does not exist yet
     let stop = (): void => {};
 
+    /**
+     * Nothing hurries the pointer along: the card waits for as long as
+     * it stays inside the triangle, however slowly it crosses or however
+     * long it rests there. It is only leaving the triangle that closes it
+     */
     const onMove = (event: PointerEvent): void => {
-      if (!within({ x: event.clientX, y: event.clientY }, safe)) {
+      const at = { x: event.clientX, y: event.clientY };
+
+      if (!within(at, safe)) {
         stop();
+        // Drawn again after the teardown cleared it, this time as the
+        // triangle that failed and the point it failed at
+        drawSafeArea({ corners: safe, live: false, at });
         hide(0);
       }
     };
-    const giveUp = setTimeout(() => {
-      stop();
-      hide(0);
-    }, CROSSING);
+
+    /**
+     * A pointer that has left the window is not on its way anywhere.
+     * Without this the triangle is held by the last place the pointer was
+     * seen, and the card sits there until something else takes it down
+     */
+    const onOut = (event: PointerEvent): void => {
+      if (event.relatedTarget == null) {
+        stop();
+        drawSafeArea({ corners: safe, live: false, at: null });
+        hide(0);
+      }
+    };
 
     stop = (): void => {
       document.removeEventListener('pointermove', onMove);
-      clearTimeout(giveUp);
+      document.removeEventListener('pointerout', onOut);
       crossing = undefined;
+      drawSafeArea(null);
     };
 
     document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerout', onOut);
     crossing = stop;
   };
 
@@ -330,7 +446,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     // A press inside a card this one opened is that card's business —
     // the Take button on a held item is a press in another portal
     // entirely, and reading it as "elsewhere" shut both windows
-    if (inner > 0 || holds(card, event.target)) {
+    if (inner > 0 || holds(card(), event.target)) {
       return;
     }
     cancel();
@@ -352,17 +468,20 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * it: the trigger is usually a row in a list that scrolls
    */
   createEffect(() => {
-    if (!open()) {
-      setSpot(null);
+    const box = card();
+
+    // Where it is stands until the card has finished fading out —
+    // cleared on the way in, it would vanish instead of fading
+    if (!open() || box == null) {
       return;
     }
 
     const put = (): void => {
-      if (trigger != null && card != null) {
+      if (trigger != null) {
         setSpot(
           place(
             trigger.getBoundingClientRect(),
-            card.getBoundingClientRect(),
+            box.getBoundingClientRect(),
             props.placement ?? 'top',
           ),
         );
@@ -399,7 +518,17 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     onCleanup(outer.release);
   });
 
-  onCleanup(cancel);
+  /** Opening puts the card on screen; the fade decides when it leaves */
+  createEffect(() => {
+    if (open()) {
+      setPresent(true);
+    }
+  });
+
+  onCleanup(() => {
+    cancel();
+    drawSafeArea(null);
+  });
 
   return (
     <>
@@ -433,9 +562,13 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
           setOpen(true);
         }}
         onFocusOut={(event) => {
-          if (!holds(card, event.relatedTarget)) {
-            hide(0);
+          // The pointer outranks the focus: a dialog opening moves the
+          // focus off whatever the pointer is resting on, and a card
+          // that read that as "the pointer left" never opened at all
+          if (holds(card(), event.relatedTarget) || trigger?.matches(':hover') === true) {
+            return;
           }
+          hide(0);
         }}
         onKeyDown={(event) => {
           if (event.key === 'Escape' && open()) {
@@ -447,45 +580,106 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
       >
         {props.trigger}
       </span>
-      <Show when={open()}>
+      <Show when={present()}>
         {/* Drawn in the tooltip layer, which stands after the dialogs:
             a card opened from a row inside a dialog has to clear it */}
         <TooltipLayer>
-          <div
-            ref={card}
-            role="dialog"
-            aria-labelledby={titleId}
-            class={`${CARD} ${WIDTHS[props.width ?? 'narrow']}`}
-            style={{
-              transform: `translate(${spot()?.x ?? 0}px, ${spot()?.y ?? 0}px)`,
-              visibility: spot() == null ? 'hidden' : 'visible',
-            }}
-            onMouseEnter={cancel}
-            onMouseLeave={() => {
-              hide();
-            }}
-            onFocusOut={(event) => {
-              if (!holds(card, event.relatedTarget) && !holds(trigger, event.relatedTarget)) {
-                hide(0);
-              }
+          <Transition
+            show={open()}
+            {...FADE}
+            afterLeave={() => {
+              setPresent(false);
+              setSpot(null);
             }}
           >
-            <header class={BAR}>
-              <strong id={titleId} class="text-sm font-extrabold tracking-tight">
-                {props.title}
-              </strong>
-              <Show when={props.description}>
-                {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
-              </Show>
-            </header>
-            <Holding.Provider value={holding}>
-              <div class={BODY}>{props.children}</div>
-              <Show when={props.footer}>
-                {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
-              </Show>
-            </Holding.Provider>
-          </div>
+            <div
+              ref={(element) => {
+                setCard(element);
+              }}
+              role="dialog"
+              aria-labelledby={titleId}
+              onTransitionEnd={holdFade}
+              // Nothing to press or read while it fades: a card on its
+              // way out would otherwise swallow the click that follows
+              inert={!open()}
+              aria-hidden={open() ? undefined : 'true'}
+              class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
+                open() ? '' : 'pointer-events-none'
+              }`}
+              style={{
+                transform: `translate(${spot()?.x ?? 0}px, ${spot()?.y ?? 0}px)`,
+                visibility: spot() == null ? 'hidden' : 'visible',
+              }}
+              onMouseEnter={cancel}
+              onMouseLeave={() => {
+                hide();
+              }}
+              onFocusOut={(event) => {
+                if (!holds(card(), event.relatedTarget) && !holds(trigger, event.relatedTarget)) {
+                  hide(0);
+                }
+              }}
+            >
+              <header class={BAR}>
+                <strong id={titleId} class="text-sm font-extrabold tracking-tight">
+                  {props.title}
+                </strong>
+                <Show when={props.description}>
+                  {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
+                </Show>
+              </header>
+              <Holding.Provider value={holding}>
+                <div class={BODY}>{props.children}</div>
+                <Show when={props.footer}>
+                  {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
+                </Show>
+              </Holding.Provider>
+            </div>
+          </Transition>
         </TooltipLayer>
+      </Show>
+      {/* Dev-only: the triangle the pointer is being measured against,
+          drawn in window coordinates because that is what it is in. It
+          stands outside the card's own branch so that a triangle which
+          has just failed is still there once the card has gone.
+          `import.meta.env.DEV` is what keeps all of it out of a build */}
+      <Show when={import.meta.env.DEV && painting() ? shape() : null}>
+        {(drawn) => (
+          <TooltipLayer>
+            <svg
+              aria-hidden="true"
+              class="pointer-events-none fixed inset-0 h-full w-full overflow-visible"
+            >
+              <polygon
+                points={drawn()
+                  .corners.map((corner) => `${corner.x},${corner.y}`)
+                  .join(' ')}
+                class={drawn().live ? 'fill-leaf/15 stroke-leaf' : 'fill-ember/20 stroke-ember'}
+                stroke-width="2"
+                stroke-dasharray="6 4"
+              />
+              {/* The apex, which sits `SLACK` behind where the pointer
+                  actually left rather than on it */}
+              <circle
+                cx={drawn().corners[0].x}
+                cy={drawn().corners[0].y}
+                r="3"
+                class={drawn().live ? 'fill-leaf' : 'fill-ember'}
+              />
+              <Show when={drawn().at}>
+                {(at) => (
+                  <circle
+                    cx={at().x}
+                    cy={at().y}
+                    r="5"
+                    class="fill-ember stroke-on-accent"
+                    stroke-width="2"
+                  />
+                )}
+              </Show>
+            </svg>
+          </TooltipLayer>
+        )}
       </Show>
     </>
   );

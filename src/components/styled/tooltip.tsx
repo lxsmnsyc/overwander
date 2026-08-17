@@ -1,5 +1,7 @@
 import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
+import { Transition } from 'terracotta';
+import FADE, { holdFade } from './transition';
 
 /**
  * What a thing is, said where the pointer already is.
@@ -53,6 +55,9 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   return (
     <div
       role="tooltip"
+      // The card's own transitions stay with it; the fade above ends on
+      // the first one it hears
+      onTransitionEnd={holdFade}
       style={{ 'max-width': `${WIDTH}px` }}
       class={`flex flex-col gap-1.5 rounded-panel border-2 border-line bg-line-soft p-1.5
         shadow-window ${props.class ?? ''}`}
@@ -101,6 +106,12 @@ export interface TooltipHostProps extends ParentProps, TooltipProps {
 export function TooltipHost(props: TooltipHostProps): JSX.Element {
   let host: HTMLSpanElement | undefined;
   const [at, setAt] = createSignal<{ x: number; y: number; below: boolean } | null>(null);
+  /**
+   * Whether the card is wanted, which is not the same as whether it is
+   * on screen: it is still there, fading, for a moment after the
+   * pointer has gone. Where it goes is forgotten only once that is over
+   */
+  const [wanted, setWanted] = createSignal(false);
 
   const show = (): void => {
     const bounds = host?.getBoundingClientRect();
@@ -118,10 +129,11 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     );
 
     setAt({ x, y: below ? bounds.bottom + GAP : bounds.top - GAP, below });
+    setWanted(true);
   };
 
   const hide = (): void => {
-    setAt(null);
+    setWanted(false);
   };
 
   return (
@@ -134,10 +146,22 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
       onFocusOut={hide}
     >
       {props.children}
+      {/* The portal stands outside the fade rather than inside it: the
+          card is drawn somewhere else in the document, where an opacity
+          set on an ancestor here would never reach it */}
       <Show when={at()} keyed>
         {(spot) => (
           <Portal mount={tooltipHost()}>
-            <div
+            <Transition
+              show={wanted()}
+              {...FADE}
+              // Once it has faded out there is nowhere for it to be
+              afterLeave={() => {
+                setAt(null);
+              }}
+              // Read out only while it is wanted: one fading out and
+              // the next arriving are two labels for one thing
+              aria-hidden={wanted() ? undefined : 'true'}
               // Nothing to click: the card is a label, and a pointer
               // that landed on it would leave whatever it describes
               class={`pointer-events-none fixed z-50 -translate-x-1/2 ${
@@ -146,7 +170,7 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
               style={{ left: `${spot.x}px`, top: `${spot.y}px` }}
             >
               <Tooltip name={props.name} description={props.description} />
-            </div>
+            </Transition>
           </Portal>
         )}
       </Show>

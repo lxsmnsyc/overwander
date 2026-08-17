@@ -6,7 +6,9 @@ import {
   Dialog as HeadlessDialog,
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
+  Transition,
 } from 'terracotta';
+import FADE, { holdFade } from './transition';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -218,7 +220,7 @@ export function Dialog(props: DialogProps): JSX.Element {
 
   onMount(() => {
     const onKey = (event: KeyboardEvent): void => {
-      const dialogs = [...document.querySelectorAll('[tc-dialog]')];
+      const dialogs = [...document.querySelectorAll('[tc-dialog][data-open]')];
 
       if (
         !props.isOpen ||
@@ -257,68 +259,97 @@ export function Dialog(props: DialogProps): JSX.Element {
 
   return (
     <Portal mount={portalHost()}>
-      <HeadlessDialog isOpen={props.isOpen} onClose={props.onClose}>
-        {/* Dark in both themes, and dark enough to read as a page put
+      {/* The overlay and the panel fade together, as one thing arriving
+          over the page. The transition is what mounts and unmounts the
+          dialog now — terracotta's own `unmount` is turned off, or a
+          closed dialog would be gone before it could fade */}
+      <Transition show={props.isOpen} {...FADE}>
+        <HeadlessDialog
+          isOpen={props.isOpen}
+          unmount={false}
+          onClose={props.onClose}
+          onTransitionEnd={holdFade}
+          // A dialog on its way out is still in the page for as long
+          // as the fade lasts. This is what tells the two apart, and
+          // what the Escape handler counts dialogs by
+          data-open={props.isOpen ? '' : undefined}
+          // And while it fades it is a picture of a dialog rather than
+          // one: nothing in it can be pressed, tabbed to or read out.
+          // Two dialogs in a row otherwise overlap for the length of
+          // the fade, each with a button offering the same thing
+          inert={!props.isOpen}
+          aria-hidden={props.isOpen ? undefined : 'true'}
+          // And out of the way of the pointer: a dialog fading out
+          // still covers the screen, and the page underneath has to
+          // answer a hover the moment the dialog stops being one
+          class={props.isOpen ? undefined : 'pointer-events-none'}
+        >
+          {/* Dark in both themes, and dark enough to read as a page put
             away rather than a page tinted: the panel is white by day
             and needs the ground behind it to fall back */}
-        <DialogOverlay class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]" />
-        <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
-          <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
-            {/* Both stuck rows travel together: a second `sticky` under
+          <DialogOverlay class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]" />
+          <DialogPanel class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+            <div ref={inside} class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
+              {/* Both stuck rows travel together: a second `sticky` under
                 the first would have to be told how tall the first is,
                 and the heading is a line taller when it carries its
                 sentence than when it does not */}
-            <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
-              <header
-                class={
-                  props.quiet === true
-                    ? 'sr-only'
-                    : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
+              <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
+                <header
+                  class={
+                    props.quiet === true
+                      ? 'sr-only'
+                      : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
                       text-on-accent sm:pt-5 sm:pb-4 ${PAD_IN}`
-                }
-              >
-                {/* A heading rather than bold text: it is what a screen
+                  }
+                >
+                  {/* A heading rather than bold text: it is what a screen
                     reader announces the dialog by. It sits in the middle
                     of the panel, and anything standing beside it is
                     pinned to an edge rather than allowed to push it off
                     centre */}
-                <div class="relative flex min-h-8 items-center justify-center">
-                  {/* Back to ink: the bar is blue and its text is white,
+                  <div class="relative flex min-h-8 items-center justify-center">
+                    {/* Back to ink: the bar is blue and its text is white,
                       which a button standing on it would otherwise
                       inherit — a white label on a white button */}
-                  {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
-                  <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
-                    {props.title}
-                  </HeadlessDialogTitle>
-                  {aside() == null ? null : <div class="absolute right-0 text-ink">{aside()}</div>}
-                </div>
-                <HeadlessDialogDescription
-                  class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
-                >
-                  {props.description}
-                </HeadlessDialogDescription>
-              </header>
-              {/* What can be done to whatever the dialog is showing,
+                    {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
+                    <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
+                      {props.title}
+                    </HeadlessDialogTitle>
+                    {aside() == null ? null : (
+                      <div class="absolute right-0 text-ink">{aside()}</div>
+                    )}
+                  </div>
+                  <HeadlessDialogDescription
+                    class={
+                      props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'
+                    }
+                  >
+                    {props.description}
+                  </HeadlessDialogDescription>
+                </header>
+                {/* What can be done to whatever the dialog is showing,
                   under the heading and stuck with it. It carries no
                   fill of its own: it is a row of buttons standing on
                   the page rather than a second header competing with
                   the first */}
-              {bar() == null ? null : (
-                <div
-                  // To the right, where the rest of the game keeps what
-                  // it can do to a thing: the menu at the foot of a
-                  // dialog ends there too
-                  class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
+                {bar() == null ? null : (
+                  <div
+                    // To the right, where the rest of the game keeps what
+                    // it can do to a thing: the menu at the foot of a
+                    // dialog ends there too
+                    class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
                     ${PAD_IN}`}
-                >
-                  {bar()}
-                </div>
-              )}
+                  >
+                    {bar()}
+                  </div>
+                )}
+              </div>
+              {props.children}
             </div>
-            {props.children}
-          </div>
-        </DialogPanel>
-      </HeadlessDialog>
+          </DialogPanel>
+        </HeadlessDialog>
+      </Transition>
     </Portal>
   );
 }

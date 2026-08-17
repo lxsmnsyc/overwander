@@ -14,7 +14,7 @@ export type { BadgeTone, StatusProps } from './feedback';
 export { default as Field } from './field';
 export type { FieldProps } from './field';
 export { default as Filter } from './filter';
-export { default as HoverCard } from './hover-card';
+export { default as HoverCard, showSafeAreas } from './hover-card';
 export type { HoverCardPlacement, HoverCardProps, HoverCardWidth } from './hover-card';
 export { default as IconSlot } from './icon';
 export type { IconSlotProps } from './icon';

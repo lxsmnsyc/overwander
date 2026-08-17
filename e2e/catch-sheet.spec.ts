@@ -89,14 +89,13 @@ test.describe('the catch sheet', () => {
       window.torn = torn;
       new MutationObserver((records) => {
         for (const record of records) {
-          // The tooltip layer is where hover cards come and go, and one
-          // of those is a `role=dialog` of its own: a card put away is
-          // not a screen being torn down
-          if (record.target instanceof Element && record.target.closest('#tooltip') != null) {
-            continue;
-          }
           for (const gone of record.removedNodes) {
-            if (gone instanceof Element && gone.querySelector('[role=dialog], canvas') != null) {
+            // Counted by what a screen is made of — a terracotta dialog
+            // or a sprite canvas. Hover cards are `role=dialog` too and
+            // come and go with the pointer, and their fade means they
+            // are taken down from a container that has already been
+            // detached, where no ancestor is left to tell them apart by
+            if (gone instanceof Element && gone.querySelector('[tc-dialog], canvas') != null) {
               torn.count += 1;
             }
           }

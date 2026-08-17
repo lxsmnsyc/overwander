@@ -1,5 +1,13 @@
-import { For, type JSX } from 'solid-js';
-import { Listbox, ListboxButton, ListboxLabel, ListboxOption, ListboxOptions } from 'terracotta';
+import { For, type JSX, createSignal } from 'solid-js';
+import {
+  Listbox,
+  ListboxButton,
+  ListboxLabel,
+  ListboxOption,
+  ListboxOptions,
+  Transition,
+} from 'terracotta';
+import FADE, { holdFade } from './transition';
 
 /**
  * Narrowing a list down to one kind of thing.
@@ -58,10 +66,19 @@ export default function Filter<V>(props: {
    */
   const showing = (): string =>
     props.options.find((option) => option.value === props.value)?.label ?? props.label;
+  /**
+   * Whether the list is down. Terracotta would keep this to itself,
+   * but the fade has to be told when to run — and the options are kept
+   * mounted for it, so the list is still there to fade out
+   */
+  const [open, setOpen] = createSignal(false);
 
   return (
     <Listbox
-      defaultOpen={false}
+      isOpen={open()}
+      onDisclosureChange={(state) => {
+        setOpen(state);
+      }}
       toggleable={false}
       value={props.value}
       onSelectChange={(value) => {
@@ -91,19 +108,31 @@ export default function Filter<V>(props: {
           hangs from the right edge, since the control itself sits in
           the right corner and a list wider than it would otherwise
           run off the screen */}
-      <ListboxOptions
-        class="absolute top-full right-0 z-20 mt-1.5 flex max-h-64 w-max min-w-full list-none
-          flex-col gap-0.5 overflow-y-auto rounded-xl border-2 border-tide bg-paper p-1
-          shadow-pop"
+      <Transition
+        show={open()}
+        {...FADE}
+        class="absolute top-full right-0 z-20 mt-1.5 w-max min-w-full"
       >
-        <For each={props.options}>
-          {(option) => (
-            <ListboxOption class={OPTION} value={option.value}>
-              {option.label}
-            </ListboxOption>
-          )}
-        </For>
-      </ListboxOptions>
+        <ListboxOptions
+          // Kept mounted, since the fade needs something to fade
+          unmount={false}
+          onTransitionEnd={holdFade}
+          // A list that has been dismissed is not one to pick from,
+          // however long it takes to go
+          inert={!open()}
+          aria-hidden={open() ? undefined : 'true'}
+          class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
+            border-2 border-tide bg-paper p-1 shadow-pop"
+        >
+          <For each={props.options}>
+            {(option) => (
+              <ListboxOption class={OPTION} value={option.value}>
+                {option.label}
+              </ListboxOption>
+            )}
+          </For>
+        </ListboxOptions>
+      </Transition>
     </Listbox>
   );
 }

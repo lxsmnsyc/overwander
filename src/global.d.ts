@@ -17,3 +17,13 @@ interface ImportMetaEnv {
    */
   readonly VITE_WORLD_SEED: string;
 }
+
+interface Window {
+  /**
+   * Dev-only: paint the hover cards' safe wedges, so a card that
+   * closes while the pointer is on its way to it shows why. Set by
+   * [`hover-card.tsx`](./components/styled/hover-card.tsx) and absent
+   * from a production build
+   */
+  hoverCardSafeAreas?: (on?: boolean) => void;
+}

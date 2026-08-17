@@ -2044,23 +2044,30 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       <List>
                         <For each={loaded().moves}>
                           {(move) => (
-                            <ListRow class="justify-between">
-                              <span class="flex items-center gap-2">
-                                <TypeBadge type={getMoveData(move).type} />
-                                {/* Which of the three kinds it is, as
-                                    the badge every game since Diamond
-                                    has used. It carries its own name
-                                    for anyone who cannot see it, so
-                                    nothing rests on the picture alone */}
-                                <MoveCategorySprite category={getMoveData(move).category} />
-                                <span class="font-medium">{getMoveData(move).name}</span>
+                            <ListRow class="flex-col items-stretch gap-1">
+                              <span class="flex items-center justify-between gap-2">
+                                <span class="flex items-center gap-2">
+                                  <TypeBadge type={getMoveData(move).type} />
+                                  {/* Which of the three kinds it is, as
+                                      the badge every game since Diamond
+                                      has used. It carries its own name
+                                      for anyone who cannot see it, so
+                                      nothing rests on the picture alone */}
+                                  <MoveCategorySprite category={getMoveData(move).category} />
+                                  <span class="font-medium">{getMoveData(move).name}</span>
+                                </span>
+                                <Meta>
+                                  {getMoveData(move).power == null
+                                    ? ''
+                                    : `${getMoveData(move).power} power · `}
+                                  {getMoveData(move).pp} PP
+                                </Meta>
                               </span>
-                              <Meta>
-                                {getMoveData(move).power == null
-                                  ? ''
-                                  : `${getMoveData(move).power} power · `}
-                                {getMoveData(move).pp} PP
-                              </Meta>
+                              {/* Written out rather than left to a card
+                                  over the row: the sheet is the page a
+                                  player reads a pokemon on, and a move
+                                  set is four lines */}
+                              <Meta class="text-left">{getMoveData(move).description}</Meta>
                             </ListRow>
                           )}
                         </For>

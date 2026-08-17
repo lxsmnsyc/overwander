@@ -30,6 +30,7 @@ import { registerMove } from './__create';
 const WEATHER_MOVES: {
   move: Moves;
   name: string;
+  description: string;
   type: Types;
   weather: Weathers;
   pp: number;
@@ -38,6 +39,7 @@ const WEATHER_MOVES: {
   {
     move: Moves.RainDance,
     name: 'Rain Dance',
+    description: 'Calls up rain for ten seconds.',
     type: Types.Water,
     weather: Weathers.Rain,
     pp: 5,
@@ -46,6 +48,7 @@ const WEATHER_MOVES: {
   {
     move: Moves.SunnyDay,
     name: 'Sunny Day',
+    description: 'Calls up sun for ten seconds.',
     type: Types.Fire,
     weather: Weathers.Sunny,
     pp: 5,
@@ -54,6 +57,7 @@ const WEATHER_MOVES: {
   {
     move: Moves.Sandstorm,
     name: 'Sandstorm',
+    description: 'Calls up a sandstorm for ten seconds.',
     type: Types.Rock,
     weather: Weathers.Sandstorm,
     pp: 10,
@@ -62,6 +66,7 @@ const WEATHER_MOVES: {
   {
     move: Moves.Hail,
     name: 'Hail',
+    description: 'Calls up hail for ten seconds.',
     type: Types.Ice,
     weather: Weathers.Hail,
     pp: 10,
@@ -88,9 +93,10 @@ export function getWeatherMove(weather: Weathers): Moves | undefined {
 }
 
 export default function registerWeatherMoves(): void {
-  for (const { move, name, type, pp, cast } of WEATHER_MOVES) {
+  for (const { move, name, description, type, pp, cast } of WEATHER_MOVES) {
     registerMove(move, {
       name,
+      description,
       type,
       category: MoveCategories.Status,
       pp,

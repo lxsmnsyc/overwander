@@ -9,7 +9,7 @@ import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
 import { getMoveData } from '../../data/moves';
-import { detailAbility } from '../details';
+import { detailAbility, detailMove } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
@@ -165,18 +165,22 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             questions and one stack of pills reads as a single list of
             words */}
         <div class="grid grid-cols-3 gap-1">
+          {/* The name is all that fits in a third of a card; what a
+              move or an ability does is on the card over it */}
           <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
             <For each={caught().moves} fallback={<Meta>No move</Meta>}>
               {(move) => (
-                <li class="truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
-                  {getMoveData(move).name}
+                <li>
+                  <TooltipHost class="block" {...detailMove(move)}>
+                    <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
+                      {getMoveData(move).name}
+                    </span>
+                  </TooltipHost>
                 </li>
               )}
             </For>
           </ul>
 
-          {/* The name is all that fits; what it does is on the card
-              that comes up over it */}
           <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
             <For each={caught().abilities} fallback={<Meta>No ability</Meta>}>
               {(ability) => (

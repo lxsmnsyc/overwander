@@ -545,6 +545,57 @@ describe('the moves added back to the dex', () => {
   });
 });
 
+describe('move descriptions', () => {
+  it('has every registered move say what it does', () => {
+    const moves = getRegisteredMoves();
+
+    expect(moves.length).toBeGreaterThan(0);
+
+    for (const move of moves) {
+      const data = getMoveData(move);
+
+      // The line is what the picker prints under the name and what a
+      // card over a move shows, so a blank one is a move a player is
+      // asked to choose blind
+      expect(data.description, `${data.name} says nothing about itself`).not.toBe('');
+      expect(data.description.endsWith('.'), `${data.name} does not end its line`).toBe(true);
+    }
+  });
+});
+
+describe('move damage', () => {
+  /**
+   * The damaging moves that carry no power because they work out their
+   * own figure: the fixed-damage group, Counter's return and Bide's.
+   * Everything else with a category and no power lands nothing at all,
+   * since the shared hit resolver needs a base power to attack with
+   */
+  const COMPUTES_ITS_OWN = new Set<Moves>([
+    Moves.SeismicToss,
+    Moves.NightShade,
+    Moves.DragonRage,
+    Moves.SonicBoom,
+    Moves.Fissure,
+    Moves.HornDrill,
+    Moves.Guillotine,
+    Moves.SuperFang,
+    Moves.Psywave,
+    Moves.Counter,
+    Moves.Bide,
+  ]);
+
+  it('gives every damaging move something to hit with', () => {
+    for (const move of getRegisteredMoves()) {
+      const data = getMoveData(move);
+
+      if (data.category === MoveCategories.Status || COMPUTES_ITS_OWN.has(move)) {
+        continue;
+      }
+      expect(data.power, `${data.name} deals no damage at all`).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('move cast animations', () => {
   const named = new Set<string>(CAST_ANIMATIONS);
 

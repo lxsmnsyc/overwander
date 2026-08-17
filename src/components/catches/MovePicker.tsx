@@ -24,20 +24,25 @@ import { Badge, Meta } from '../styled';
  */
 export function MoveLine(props: { move: Moves }): JSX.Element {
   return (
-    <span class="flex flex-wrap items-center gap-2">
-      <TypeBadge type={getMoveData(props.move).type} />
-      <span
-        class="size-3 shrink-0 rounded-sm"
-        style={{ 'background-color': MOVE_CATEGORY_COLORS[getMoveData(props.move).category] }}
-        title={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
-        aria-label={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
-        role="img"
-      />
-      <span class="font-medium">{getMoveData(props.move).name}</span>
-      <Meta>
-        {getMoveData(props.move).power == null ? '' : `${getMoveData(props.move).power} power · `}
-        {getMoveData(props.move).pp} PP
-      </Meta>
+    <span class="flex flex-col gap-0.5 text-left">
+      <span class="flex flex-wrap items-center gap-2">
+        <TypeBadge type={getMoveData(props.move).type} />
+        <span
+          class="size-3 shrink-0 rounded-sm"
+          style={{ 'background-color': MOVE_CATEGORY_COLORS[getMoveData(props.move).category] }}
+          title={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
+          aria-label={MOVE_CATEGORY_NAMES[getMoveData(props.move).category]}
+          role="img"
+        />
+        <span class="font-medium">{getMoveData(props.move).name}</span>
+        <Meta>
+          {getMoveData(props.move).power == null ? '' : `${getMoveData(props.move).power} power · `}
+          {getMoveData(props.move).pp} PP
+        </Meta>
+      </span>
+      {/* What it actually does, which is what a player is choosing
+          between — the figures above only say how hard and how often */}
+      <Meta>{getMoveData(props.move).description}</Meta>
     </span>
   );
 }

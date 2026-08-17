@@ -5,6 +5,16 @@ import type { MoveCategories, Moves } from '../ids/moves';
 export interface MoveData {
   name: string;
 
+  /**
+   * What it does beyond its power and its PP, in a line, said the way
+   * this engine resolves it rather than the way the mainline reads —
+   * priority is a shorter wind-up here, not a turn taken first.
+   *
+   * Required, so a move cannot be added without somebody saying what
+   * it is for, and short enough to sit under the name in a list
+   */
+  description: string;
+
   type: Types;
 
   category: MoveCategories;

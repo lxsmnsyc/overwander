@@ -2,6 +2,7 @@ import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'soli
 import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { serverNow, syncServerClock } from '../../auth/clock';
+import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
 import { GameDialog, useGame } from './game-context';
@@ -74,21 +75,41 @@ const TILE =
  */
 const CLOCK_TICK = 60_000;
 
+/**
+ * The hour the world is reading, as a clock. It is the player's own
+ * wall clock — the same reading the chunk under them derives its
+ * pokemon from — so a word that disagrees with the window outside
+ * shows up as the bug it is
+ */
+function worldClock(at: number): string {
+  const minutes = Math.floor(at / 60_000) % (24 * 60);
+
+  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+}
+
 export default function GameMenu(): JSX.Element {
   const auth = useAuth();
   const game = useGame();
   const [open, setOpen] = createSignal(false);
-  const [now, setNow] = createSignal(serverNow());
+  const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
 
-  // The server's clock rather than the machine's: what walks about in
-  // a chunk is decided by the same reading, and a device an hour out
-  // would name a period the world is not in
+  /**
+   * The instant, read the way the world reads it: the server's clock
+   * for *when* — a device cannot move time — put into the player's own
+   * zone for *which hour*. The chunk under them derives its pokemon
+   * from exactly this, so the bar said Night over a field of day
+   * pokemon while it was reading raw UTC
+   */
+  const local = (at: number): number => toLocalTime(at, getLocalOffset());
+
   const beat = setInterval(() => {
     syncServerClock()
-      .then(setNow)
+      .then((at) => {
+        setNow(local(at));
+      })
       .catch(() => {
-        setNow(serverNow());
+        setNow(local(serverNow()));
       });
   }, CLOCK_TICK);
 
@@ -97,9 +118,11 @@ export default function GameMenu(): JSX.Element {
   });
 
   syncServerClock()
-    .then(setNow)
+    .then((at) => {
+      setNow(local(at));
+    })
     .catch(() => {
-      // The local clock stands in until a reading lands
+      // The device's own clock stands in until a reading lands
     });
 
   // Watched rather than read once: gold moves at a vendor, on the
@@ -164,7 +187,10 @@ export default function GameMenu(): JSX.Element {
 
         {/* What hour the world is in, which is what decides what walks
             about in it */}
-        <span class="shrink-0 text-sm whitespace-nowrap text-muted">
+        <span
+          class="shrink-0 text-sm whitespace-nowrap text-muted"
+          title={`World time ${worldClock(now())}`}
+        >
           {TIME_OF_DAY_NAMES[getTimeOfDay(now())]}
         </span>
 

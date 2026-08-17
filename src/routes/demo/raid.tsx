@@ -2,7 +2,7 @@ import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type Battle from '../../battle/core';
-import BattleCanvas from '../../components/battle/BattleCanvas';
+import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
 import { Badge, Button, Meta, Note } from '../../components/styled';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
@@ -186,7 +186,11 @@ export default function RaidDemo(): JSX.Element {
               class="h-[60vh] w-full overflow-hidden rounded-panel border-4 border-tide
               shadow-pop"
             >
-              <BattleCanvas
+              {/* The same field the game plays on, cards and all:
+                  hovering a pokemon reads it in full. Nothing is
+                  opened by pressing one — a demo's pokemon stand for
+                  no record, so there is no sheet behind them */}
+              <BattleField
                 battle={staged.battle}
                 player=""
                 onReady={() => {

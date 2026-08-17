@@ -1,5 +1,4 @@
-import { type JSX, createEffect, createSignal, onMount } from 'solid-js';
-import drawCaption from '../../canvas/caption';
+import { type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
 
@@ -194,10 +193,6 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         context.lineWidth = 1;
       }
 
-      // What the pointer is over, in the corner. It is drawn last so
-      // the ground cannot be painted over it
-      drawCaption(context, naming());
-
       // A border while the keyboard is in here, so it is clear which
       // thing the arrow keys are moving
       if (focused()) {
@@ -210,48 +205,66 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
   });
 
   return (
-    <canvas
-      ref={canvas}
-      tabindex={0}
-      role="application"
-      aria-label={`World map, ${props.span} chunks across, centred on ${
-        props.originX + Math.floor(props.span / 2)
-      }, ${props.originY + Math.floor(props.span / 2)}. Arrow keys pan.`}
-      // Blown up from a few hundred pixels, so the chunks stay squares
-      // rather than being smeared into each other
-      class="mx-auto block h-auto w-[min(100%,34rem)] rounded-xl border-4 border-tide shadow-pop
+    // The map, with its caption standing over the corner of it rather
+    // than painted into it. Drawn into the picture the words were
+    // pixels: the canvas is a few hundred across and blown up to fit,
+    // so every letter was blown up with it
+    <div class="relative mx-auto w-[min(100%,34rem)]">
+      <Show when={naming()} keyed>
+        {(place) => (
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute top-1.5 left-1.5 z-10 rounded-lg bg-ink/70 px-1.5
+              py-0.5 text-xs font-semibold text-parchment"
+          >
+            {place}
+          </span>
+        )}
+      </Show>
+
+      <canvas
+        ref={canvas}
+        tabindex={0}
+        role="application"
+        aria-label={`World map, ${props.span} chunks across, centred on ${
+          props.originX + Math.floor(props.span / 2)
+        }, ${props.originY + Math.floor(props.span / 2)}. Arrow keys pan.`}
+        // Blown up from a few hundred pixels, so the chunks stay squares
+        // rather than being smeared into each other
+        class="block h-auto w-full rounded-xl border-4 border-tide shadow-pop
         [image-rendering:pixelated] focus-visible:outline-none"
-      title={naming()}
-      onMouseMove={(event) => {
-        setHovered(chunkAt(event));
-      }}
-      onMouseLeave={() => {
-        setHovered(null);
-      }}
-      onFocus={() => {
-        setFocused(true);
-      }}
-      onBlur={() => {
-        setFocused(false);
-      }}
-      onKeyDown={(event) => {
-        const step = PAN_KEYS.get(event.key);
+        title={naming()}
+        onMouseMove={(event) => {
+          setHovered(chunkAt(event));
+        }}
+        onMouseLeave={() => {
+          setHovered(null);
+        }}
+        onFocus={() => {
+          setFocused(true);
+        }}
+        onBlur={() => {
+          setFocused(false);
+        }}
+        onKeyDown={(event) => {
+          const step = PAN_KEYS.get(event.key);
 
-        if (step != null) {
-          event.preventDefault();
+          if (step != null) {
+            event.preventDefault();
 
-          const distance = event.shiftKey ? PAN_STRIDE : PAN_STEP;
+            const distance = event.shiftKey ? PAN_STRIDE : PAN_STEP;
 
-          props.onPan(step[0] * distance, step[1] * distance);
-          return;
-        }
-        // Back to where the player actually is, for a camera that has
-        // wandered off
-        if (event.key === 'Home' || event.key === 'c') {
-          event.preventDefault();
-          props.onRecenter();
-        }
-      }}
-    />
+            props.onPan(step[0] * distance, step[1] * distance);
+            return;
+          }
+          // Back to where the player actually is, for a camera that has
+          // wandered off
+          if (event.key === 'Home' || event.key === 'c') {
+            event.preventDefault();
+            props.onRecenter();
+          }
+        }}
+      />
+    </div>
   );
 }

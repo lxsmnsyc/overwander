@@ -80,8 +80,13 @@ const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
 
 /**
- * The day-cycle period a timestamp falls in, per the documented
- * hour ranges
+ * The day-cycle period a timestamp falls in, per the documented hour
+ * ranges.
+ *
+ * The hours are read off the timestamp as UTC, so the caller passes a
+ * **local** one — `toLocalTime(now, offset)`. Everything the world
+ * derives per player does: a snapshot window is local, and a player
+ * walking at night should meet the night pool wherever they are
  */
 export function getTimeOfDay(timestamp: number): TimeOfDay {
   const hour = (timestamp % DAY) / HOUR;

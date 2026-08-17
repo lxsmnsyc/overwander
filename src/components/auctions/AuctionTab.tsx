@@ -200,12 +200,8 @@ export function BidControls(props: {
    * whoever stops on the one that is dead
    */
   const refused = (): string | null => {
-    // A seller bidding on their own lot would be selling to
-    // themselves, and the standing bidder is already winning it:
-    // bidding against themselves could only cost them gold
-    if (props.auction.seller === props.player) {
-      return 'Your own lot';
-    }
+    // The standing bidder is already winning it: bidding against
+    // themselves could only cost them gold
     if (props.auction.bidder === props.player) {
       return 'You are winning this one';
     }
@@ -213,6 +209,14 @@ export function BidControls(props: {
       ? null
       : `${nextBid(props.auction)} gold is more than you hold`;
   };
+
+  // A seller sees no button at all on their own lot. It is the one
+  // refusal that can never lift — the others are a purse that may fill
+  // or a bid somebody may outbid — so a dead button on it is a control
+  // offered to the one person it will never work for
+  if (props.auction.seller === props.player) {
+    return null;
+  }
 
   return (
     <>
@@ -1036,7 +1040,9 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           setOffered(null);
         }}
         onListed={() => {
-          setStatus('It is on the block until the day is up.');
+          // Nothing said back: the lot is on the board a line below,
+          // under the seller's own name, which says it better than a
+          // sentence about it does
           props.onAdding?.(false);
           // The board and the seller's one-a-day standing both move
           // with it; a failed re-read leaves the last good board up

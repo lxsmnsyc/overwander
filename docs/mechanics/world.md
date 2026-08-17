@@ -33,24 +33,40 @@ rather than bringing them out on the opposite side of the world.
 
 ### Inside a chunk
 
-Two rings of every chunk are deliberately kept clear:
+| Area               | Size  | What may occupy it                   |
+| ------------------ | ----- | ------------------------------------ |
+| The whole chunk    | 16×16 | The player, walking                  |
+| The placement area | 14×14 | Scenery, landmarks and pokemon alike |
 
-| Area              | Size  | What may occupy it        |
-| ----------------- | ----- | ------------------------- |
-| The whole chunk   | 16×16 | The player, walking       |
-| The spawn area    | 12×12 | Pokemon, on any free cell |
-| The landmark area | 8×8   | Landmarks, one per cell   |
+The placement area sits in the middle, so a clear cell runs all the way round
+the chunk: a player walking in from a neighbouring chunk always arrives on
+ground with nothing on it.
 
-Because landmarks stay near the middle, a player arriving from a neighbouring
-chunk never lands on top of one.
+Scenery and landmarks keep a clear cell on every side of them, diagonals
+included: no two fixtures are ever adjacent, so there is always somewhere to
+stand beside whatever a player has walked over to. Pokemon keep no such berth —
+they take any cell a fixture is not standing on, and a walk goes straight
+through one rather than round it. Scenery and landmarks are walked round: both
+are standing there, so a route goes past them.
+
+The three kinds are laid down in order — **scenery, then landmarks, then
+pokemon** — because the first two are fixed forever and the last is rolled again
+every few minutes. A window's pokemon fit themselves around the chunk rather
+than the chunk being rearranged around them.
+
+## Scenery
+
+Every chunk carries **eight to twelve** pieces of scenery: trees, rocks, cactus,
+reeds, ice — whatever its biome is made of. None of it can be pressed and none
+of it does anything; it is there so a taiga looks like a taiga. Like landmarks,
+scenery belongs to the chunk permanently.
 
 ## Landmarks
 
-Every chunk contains **five to seven landmarks**, and they never move. The same
-chunk has the same landmarks on the same cells permanently; only their contents
-change. No two landmarks are ever adjacent, and no pokemon is ever placed in the
-ring of cells around one, so there is always somewhere to stand beside a
-landmark. Duplicates are allowed, so one chunk may hold two berry patches.
+Every chunk contains **eight to twelve landmarks**, and they never move. The
+same chunk has the same landmarks on the same cells permanently; only their
+contents change. Duplicates are allowed, so one chunk may hold two berry
+patches.
 
 | Landmark           | Description                                                      |
 | ------------------ | ---------------------------------------------------------------- |

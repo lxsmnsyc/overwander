@@ -44,6 +44,8 @@ import type Biome from '../../data/ids/biome';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import type { ItemStack } from '../../data/overworld/item-pool';
+import type Decoration from '../../data/overworld/decoration';
+import { DECORATION_NAMES } from '../../data/overworld/decoration';
 import Landmark, { LANDMARK_NAMES } from '../../data/overworld/landmark';
 import Npc, { NPC_NAMES } from '../../data/overworld/npc';
 import { PHENOMENON_NAMES } from '../../data/overworld/phenomenon';
@@ -225,6 +227,12 @@ interface ChunkView {
   snapshot: ChunkSnapshot;
   landmarks: Map<number, Landmark>;
   /**
+   * The chunk's scenery by cell. Nothing is done with it — it is what
+   * makes a taiga look like a taiga rather than a grassland in another
+   * colour
+   */
+  decorations: Map<number, Decoration>;
+  /**
    * The window's spawns by cell, each with the id it was published
    * under, so an interaction can derive the same encounter every
    * observer sees
@@ -308,6 +316,7 @@ function buildChunkView(
     biome: chunk.biome,
     snapshot,
     landmarks: chunk.getLandmarkCells(),
+    decorations: chunk.getDecorationCells(),
     spawns,
     caches: snapshot.getItemCaches(),
   };
@@ -1206,7 +1215,13 @@ export default function OverworldTab(): JSX.Element {
     }
 
     const here = cell();
-    const passable = (index: number): boolean => !holdsSomething(loaded, index);
+    // The chunk's fixtures stop a walk: a landmark is walked up to and
+    // a tree is walked round, because both are standing there. A
+    // pokemon is not — where one is this window is not a fact about
+    // the ground, and a route that bent round every spawn made a busy
+    // chunk feel like a maze
+    const passable = (index: number): boolean =>
+      !loaded.landmarks.has(index) && !loaded.decorations.has(index);
     const route = plan.act
       ? findPathBeside(here, plan.goal, passable)
       : findPath(here, plan.goal, passable);
@@ -1298,6 +1313,13 @@ export default function OverworldTab(): JSX.Element {
       }
       return;
     }
+    // Scenery is not a destination and not a thing to reach for: a
+    // tree is walked round, so pressing one is a press on ground
+    // nobody can stand on
+    if (loaded.decorations.has(index)) {
+      setJourney(null);
+      return;
+    }
     setJourney(index === cell() ? null : { goal: index, exit: null, act: false });
   };
 
@@ -1312,7 +1334,11 @@ export default function OverworldTab(): JSX.Element {
       return getSpeciesData(spawn.spawn[0]).name;
     }
     if (landmark == null) {
-      return '';
+      // Scenery is named and nothing more: it is worth knowing what
+      // is standing there, and there is nothing to do about it
+      const decoration = loaded?.decorations.get(index);
+
+      return decoration == null ? '' : DECORATION_NAMES[decoration];
     }
 
     // A wandering cell is named for whoever is on it this window, and
@@ -1389,6 +1415,7 @@ export default function OverworldTab(): JSX.Element {
                 player={frozen()?.player ?? cell()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
+                decorations={loaded().decorations}
                 spawns={
                   new Map(
                     [...loaded().spawns].map(([at, standing]) => [

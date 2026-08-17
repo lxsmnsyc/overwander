@@ -6,25 +6,29 @@ import { For, Index, type JSX, Show, createMemo } from 'solid-js';
 import type { ProgressData } from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
+import type Abilities from '../../data/ids/abilities';
+import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { getAbilityData } from '../../data/abilities';
+import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
+import { Meta } from '../styled';
 
 /**
- * One of the player's own pokemon, as a card under the field.
+ * One pokemon in a fight, read in full: what it is, how much of it is
+ * left, what it can throw, what it carries and what is stuck to it.
  *
  * A real-time battle asks two things of a player at once: watch what
- * is happening, and know when their own side can act again. The field
- * answers the first — sprites, flying moves, who is still standing —
- * and cannot answer the second, because a cooldown is a number and a
+ * is happening, and know the numbers underneath it. The field answers
+ * the first — sprites, flying moves, who is still standing — and
+ * cannot answer the second, because a cooldown is a number and a
  * picture of a Pikachu is not.
  *
- * So this is the second answer, and only the second: what the pokemon
- * is, how much of it is left, which of its four moves are ready, and
- * what is stuck to it. It is a column rather than a row because six of
- * them stand side by side along the bottom of the screen, and the
- * screen is wider than it is tall.
+ * It is shown over the pokemon it is about rather than parked along an
+ * edge, so the two answers are in the same place and none of the field
+ * is spent on a row of cards.
  */
 
 /**
@@ -88,9 +92,32 @@ const STATUS_NAMES: Record<Statuses, string> = {
 };
 
 /**
- * How many move boxes the grid holds. Four, in two rows of two: it is
- * what a pokemon carries, and a fixed grid keeps the card the same
- * height whether it knows one move or four
+ * What an ability or an item is called, falling back to its id.
+ *
+ * The registries are keyed by the enum's number, and `Object.keys`
+ * hands back strings — so the ids are put back through `Number` before
+ * they get here. A lookup that throws would take the whole field down
+ * with it, so an entry that is genuinely missing is named rather than
+ * fatal
+ */
+function nameOfAbility(ability: Abilities): string {
+  try {
+    return getAbilityData(ability).name;
+  } catch {
+    return `Ability #${ability}`;
+  }
+}
+
+function nameOfItem(item: Items): string {
+  try {
+    return getItemData(item).name;
+  } catch {
+    return `Item #${item}`;
+  }
+}
+
+/**
+ * How many move boxes the column holds: what a pokemon carries
  */
 const MOVE_SLOTS = 4;
 
@@ -164,6 +191,18 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           ready: fractionOf(move.cooldown),
         })),
       /**
+       * What it knows besides its moves. Both are read as the enabled
+       * half of what the engine is holding: an ability suppressed by
+       * Neutralizing Gas, or an item already eaten, is one the pokemon
+       * no longer has
+       */
+      abilities: (Object.keys(unit.abilities).map(Number) as Abilities[])
+        .filter((ability) => unit.abilities[ability] === true)
+        .map(nameOfAbility),
+      items: (Object.keys(unit.items).map(Number) as Items[])
+        .filter((item) => unit.items[item] === true)
+        .map(nameOfItem),
+      /**
        * What it is in the middle of doing, if anything. A move being
        * wound up is the one thing on a card that says what is about
        * to happen rather than what has already happened
@@ -189,7 +228,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
   return (
     <li
-      class={`flex w-32 shrink-0 flex-col gap-1 rounded-xl border-2 border-line bg-paper/95 px-2
+      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line bg-paper/95 px-2
         py-1.5 text-left text-xs shadow-pop-sm ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
@@ -200,12 +239,33 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         <strong class="truncate">{getSpeciesData(unit().species).name}</strong>
       </div>
 
+      {/* One bar cut in two: what it has left on top, what it is
+          winding up underneath. They were two bars in two places, which
+          asked a player watching a boss to read one thing in two —
+          and the answer to "will it get the move off" is both halves
+          at once */}
       <div class="flex items-center gap-1">
-        <div class="h-1.5 grow overflow-hidden rounded-full bg-line-soft">
-          <div
-            class={`h-full rounded-full ${unit().alive ? 'bg-leaf' : 'bg-muted'}`}
-            style={{ width: `${health() * 100}%` }}
-          />
+        <div class="grow overflow-hidden rounded-full border border-line-soft bg-line-soft">
+          <div class="h-1.5">
+            <div
+              class={`h-full ${unit().alive ? 'bg-leaf' : 'bg-muted'}`}
+              style={{ width: `${health() * 100}%` }}
+            />
+          </div>
+          {/* The lower half is empty while nothing is being wound up,
+              rather than absent: a bar that changed height every time
+              its pokemon threw a move would push the card about */}
+          <div class="h-1.5">
+            <Show when={view().acting}>
+              {(acting) => (
+                <div
+                  class={`h-full ${acting().channelling ? 'bg-arcane' : 'bg-gold'}`}
+                  style={{ width: `${acting().done * 100}%` }}
+                  title={`${acting().channelling ? 'Channelling' : 'Casting'} ${acting().name}`}
+                />
+              )}
+            </Show>
+          </div>
         </div>
         {/* Rounded, and it has to be: health is carried as a real
             number — a berry heals a sixteenth of a maximum that is
@@ -217,61 +277,79 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         </span>
       </div>
 
-      {/* What it is doing right now, which is the one line on the card
-          about the next second rather than the last one. The room is
-          held whether or not anything is being wound up: a card that
-          grew a line every time its pokemon threw a move would push
-          the whole party up and down the screen all fight */}
-      <div class="flex h-4 flex-col justify-center">
-        <Show when={view().acting}>
-          {(acting) => (
-            <div
-              class="relative overflow-hidden rounded-full border border-line-soft bg-line-soft"
-              title={`${acting().channelling ? 'Channelling' : 'Casting'} ${acting().name}`}
-            >
-              <div
-                class={`absolute inset-y-0 left-0 ${
-                  acting().channelling ? 'bg-leaf/40' : 'bg-gold/50'
-                }`}
-                style={{ width: `${acting().done * 100}%` }}
-              />
-              <span class="relative block truncate px-1 text-[0.625rem] leading-4">
-                {acting().name}
-              </span>
-            </div>
-          )}
-        </Show>
+      {/* What it is winding up, said in words under the bar it is
+          moving */}
+      <Show when={view().acting}>
+        {(acting) => (
+          <Meta class="truncate">
+            {acting().channelling ? 'Channelling' : 'Casting'} {acting().name}
+          </Meta>
+        )}
+      </Show>
+
+      {/* What it can do, what it is, and what it carries — three
+          columns, because they answer three different questions and a
+          single stack of pills reads as one long list of words */}
+      <div class="grid grid-cols-3 gap-1">
+        {/* The moves, each box a bar of its own cooldown. A full box is
+            a move that can be thrown now.
+
+            `Index` rather than `For`: the boxes are four slots that go
+            on saying different things, not a list of things that come
+            and go. `For` keys on the item, and an item reduced to what
+            it draws is a new object on every tick — which would rebuild
+            all four rows sixty times a second. `Index` keys on the slot
+            and hands the row a signal, so a tick moves four widths and
+            touches nothing else */}
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+          <Index each={view().moves}>
+            {(move) => (
+              <li
+                class="relative overflow-hidden rounded border border-line-soft bg-line-soft px-1
+                  py-0.5"
+                title={`${move().name}${move().disabled ? ' — disabled' : ''}`}
+              >
+                <div
+                  class={`absolute inset-y-0 left-0 ${
+                    move().disabled ? 'bg-muted/30' : 'bg-tide/30'
+                  }`}
+                  style={{ width: `${move().ready * 100}%` }}
+                />
+                <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
+                  {move().name}
+                </span>
+              </li>
+            )}
+          </Index>
+        </ul>
+
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+          <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
+            {(ability) => (
+              <li
+                class="truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
+                  text-tide-dark"
+                title={ability}
+              >
+                {ability}
+              </li>
+            )}
+          </For>
+        </ul>
+
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+          <For each={view().items} fallback={<Meta>No item</Meta>}>
+            {(item) => (
+              <li
+                class="truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5 text-gold"
+                title={item}
+              >
+                {item}
+              </li>
+            )}
+          </For>
+        </ul>
       </div>
-
-      {/* The four moves, each box a bar of its own cooldown. A full
-          box is a move that can be thrown now.
-
-          `Index` rather than `For`: the boxes are four slots that go
-          on saying different things, not a list of things that come
-          and go. `For` keys on the item, and an item reduced to what
-          it draws is a new object on every tick — which would rebuild
-          all four rows sixty times a second. `Index` keys on the slot
-          and hands the row a signal, so a tick moves four widths and
-          touches nothing else */}
-      <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0">
-        <Index each={view().moves}>
-          {(move) => (
-            <li
-              class="relative overflow-hidden rounded border border-line-soft bg-line-soft px-1
-                py-0.5"
-              title={`${move().name}${move().disabled ? ' — disabled' : ''}`}
-            >
-              <div
-                class={`absolute inset-y-0 left-0 ${move().disabled ? 'bg-muted/30' : 'bg-tide/30'}`}
-                style={{ width: `${move().ready * 100}%` }}
-              />
-              <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
-                {move().name}
-              </span>
-            </li>
-          )}
-        </Index>
-      </ul>
 
       {/* And whatever is stuck to it, as colours. There is a name on
           each for anyone hovering or listening, since a colour on its

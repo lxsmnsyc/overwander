@@ -35,7 +35,7 @@ import UnitCard from './UnitCard';
  * about stages, abilities or held items, so it does not redraw for
  * them
  */
-const CARD_EVENTS = [
+export const CARD_EVENTS = [
   BattleEvents.UnitSetHealth,
   BattleEvents.UnitSetMaxHealth,
   BattleEvents.UnitSetStat,
@@ -89,7 +89,7 @@ const ROSTER_EVENTS = [
  * The units an event concerns: the one that acted, and the one it
  * landed on when there is one
  */
-function unitsOf(event: BaseEvent): Unit[] {
+export function unitsOf(event: BaseEvent): Unit[] {
   const units: Unit[] = [];
 
   if ('source' in event && event.source instanceof Unit) {

@@ -1,6 +1,6 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
 import { type BoardCell, fitPicture, projectBoardCell, projectCell } from '../src/canvas/board';
-import { CHUNK_CELLS, SPAWN_AREA, centeredCells } from '../src/overworld/chunk';
+import { CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from '../src/overworld/chunk';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, dialogNamed, dismissGift, expectOpen, signIn } from './game';
 
@@ -184,7 +184,7 @@ async function findSpawns(page: Page, world: Locator): Promise<number[]> {
   // rows — a player walking in from an edge would land on top of it —
   // so sweeping them is a hundred round trips to be told about bare
   // ground
-  for (const cell of centeredCells(SPAWN_AREA)) {
+  for (const cell of centeredCells(PLACEMENT_AREA)) {
     if (SPECIES_NAMES.has(await nameAt(page, world, cell))) {
       standing.push(cell);
     }

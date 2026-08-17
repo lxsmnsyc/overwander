@@ -37,7 +37,8 @@ import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import type Chunk from '../../src/overworld/chunk';
-import { neighborCells } from '../../src/overworld/chunk';
+import { PLACEMENT_AREA, centeredCells, neighborCells } from '../../src/overworld/chunk';
+import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   LANDMARK_INTERVAL,
   NEST_INTERVAL,
@@ -215,17 +216,17 @@ describe('world', () => {
       const chunk = world.getChunk(x, 0);
       const landmarks = chunk.getLandmarks();
 
-      expect(landmarks.length).toBeGreaterThanOrEqual(5);
-      expect(landmarks.length).toBeLessThanOrEqual(7);
+      expect(landmarks.length).toBeGreaterThanOrEqual(8);
+      expect(landmarks.length).toBeLessThanOrEqual(12);
 
       // One cell each: the cell map holds every landmark, all
-      // within the central 8x8
+      // within the central 15x15
       expect(chunk.getLandmarkCells().size).toBe(landmarks.length);
       for (const cell of chunk.getLandmarkCells().keys()) {
-        expect(cell % 16).toBeGreaterThanOrEqual(4);
-        expect(cell % 16).toBeLessThanOrEqual(11);
-        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(4);
-        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(11);
+        expect(cell % 16).toBeGreaterThanOrEqual(1);
+        expect(cell % 16).toBeLessThanOrEqual(14);
+        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
+        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
       }
 
       // Fixed forever: a fresh resolution of the chunk agrees
@@ -1762,8 +1763,10 @@ describe('chunk snapshot', () => {
     const snapshot = new ChunkSnapshot(chunk, NOON);
     const spawns = snapshot.getSpawns(4);
 
-    // Scanning the grid recovers every spawn exactly once; no spawn
-    // sits on a landmark's cell or outside the central 12x12
+    // Scanning the grid recovers every spawn exactly once. A spawn
+    // shares no cell with a landmark or with scenery, and takes no
+    // berth from either — a pokemon is walked through rather than
+    // round, so standing beside one costs nothing
     const placed: unknown[] = [];
     for (let y = 0; y < 16; y++) {
       for (let x = 0; x < 16; x++) {
@@ -1772,13 +1775,11 @@ describe('chunk snapshot', () => {
         if (occupant != null) {
           placed.push(occupant);
           expect(chunk.getLandmarkAt(x, y)).toBeNull();
-          // Nor beside one: the ring around a landmark is the room a
-          // player walks up to it through
-          expect(chunk.getLandmarkArea().has(y * 16 + x)).toBe(false);
-          expect(x).toBeGreaterThanOrEqual(2);
-          expect(x).toBeLessThanOrEqual(13);
-          expect(y).toBeGreaterThanOrEqual(2);
-          expect(y).toBeLessThanOrEqual(13);
+          expect(chunk.getDecorationCells().has(y * 16 + x)).toBe(false);
+          expect(x).toBeGreaterThanOrEqual(1);
+          expect(x).toBeLessThanOrEqual(14);
+          expect(y).toBeGreaterThanOrEqual(1);
+          expect(y).toBeLessThanOrEqual(14);
         }
       }
     }
@@ -1796,18 +1797,45 @@ describe('chunk snapshot', () => {
       }
     }
 
-    // A snapshot can never hold more spawns than free cells of the
-    // central 12x12 — the landmarks and their rings are not free
-    const blocked = [...chunk.getLandmarkArea()].filter((cell) => {
-      const x = cell % 16;
-      const y = Math.floor(cell / 16);
-
-      return x >= 2 && x <= 13 && y >= 2 && y <= 13;
-    });
+    // Asked for more than the chunk can hold, it fills every cell the
+    // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
+    const room = centeredCells(PLACEMENT_AREA).filter(
+      (cell) => !chunk.getLandmarkCells().has(cell) && !chunk.getDecorationCells().has(cell),
+    );
 
-    expect(blocked.length).toBeGreaterThan(chunk.getLandmarkCells().size);
-    expect(packed.getSpawns(1000)).toHaveLength(144 - blocked.length);
+    expect(packed.getSpawns(1000)).toHaveLength(room.length);
+  });
+
+  it('furnishes a chunk with the biome scenery, spaced like everything else', () => {
+    const world = new World('overworld');
+
+    for (let y = -20; y < 20; y += 7) {
+      for (let x = -20; x < 20; x += 7) {
+        const chunk = world.getChunk(x, y);
+        const scenery = chunk.getDecorationCells();
+        const kinds = new Set(getBiomeDecorations(chunk.biome));
+
+        expect(scenery.size).toBeGreaterThanOrEqual(8);
+        expect(scenery.size).toBeLessThanOrEqual(12);
+
+        for (const [cell, decoration] of scenery) {
+          // Of this biome, inside the placement area, and touching
+          // nothing
+          expect(kinds.has(decoration)).toBe(true);
+          expect(cell % 16).toBeGreaterThanOrEqual(1);
+          expect(cell % 16).toBeLessThanOrEqual(14);
+          expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
+          expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
+          for (const neighbor of neighborCells(cell)) {
+            expect(scenery.has(neighbor)).toBe(false);
+          }
+        }
+
+        // Fixed forever, like the landmarks it was laid down before
+        expect([...world.getChunk(x, y).getDecorationCells()]).toEqual([...scenery]);
+      }
+    }
   });
 
   it('leaves a cell of room around every landmark', () => {
@@ -1826,14 +1854,20 @@ describe('chunk snapshot', () => {
           }
         }
 
-        // Nine cells at most per landmark, out of the central 8x8's
-        // sixty-four: the ring never costs a chunk one of its five
-        // to seven
-        expect(landmarks.size).toBeGreaterThanOrEqual(5);
-        expect(landmarks.size).toBeLessThanOrEqual(7);
+        // Nine cells at most per landmark, out of the central 15x15's
+        // two hundred and twenty-five: the ring never costs a chunk
+        // one of its eight to twelve
+        expect(landmarks.size).toBeGreaterThanOrEqual(8);
+        expect(landmarks.size).toBeLessThanOrEqual(12);
         // The area is the landmarks plus their rings, and a ring
-        // inside the central 8x8 is never empty
+        // inside the placement area is never empty
         expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);
+
+        // Nor does anything touch the scenery, which was placed
+        // before them
+        for (const cell of landmarks.keys()) {
+          expect(chunk.getDecorationArea().has(cell)).toBe(false);
+        }
       }
     }
   });

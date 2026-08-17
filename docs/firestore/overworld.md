@@ -468,10 +468,17 @@ the cell really holds the thing, in a live window, which is what keeps a claim
 honest: reach decides what a player _bothers_ to walk to, not what they are
 allowed to claim.
 
-Placement leaves room to walk. A landmark keeps the ring of cells around it —
-diagonals included — clear of everything: no two landmarks touch, and `getSpawns`
-skips the whole `getLandmarkArea()` rather than only the landmark cells, so a
-pokemon is never standing in the way of one. A chunk rolls **five to seven** of
-them, and placing one takes up to nine of the central 8x8's sixty-four cells, so a
-crowded roll can run out of room. The loop stops early when it does, taking fewer
-landmarks rather than crowding them.
+Placement leaves room to walk. Every **fixture** — scenery and landmarks — keeps
+the ring of cells around it clear, diagonals included, so no two of them touch.
+Spawns are exempt: `getSpawns` skips the decoration and landmark **cells** and
+nothing more, and keeps no ring of its own. The walk's `passable` test blocks
+both fixtures and neither spawn — a tree is walked round, a pokemon is walked
+through.
+
+They are placed in order — decorations, then landmarks, then spawns — into the
+central 14x14, which leaves a clear cell all the way round the chunk. The first two are fixed to the chunk seed forever; only the spawns
+roll again each window, so the fixed furniture is laid down first and the pokemon
+fit around it. A chunk rolls **eight to twelve** decorations and as many
+landmarks, and each placement costs up to nine cells, so a crowded roll can run
+out of room. Every loop stops early when it does, taking fewer rather than
+crowding them.

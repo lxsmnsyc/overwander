@@ -32,6 +32,7 @@ import drawSparkle from '../../canvas/sparkle';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import { BIOME_COLORS } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
+import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
 import type { Species } from '../../data/ids/species';
 import { CHUNK_CELLS } from '../../overworld/chunk';
@@ -284,6 +285,71 @@ function facingOf(index: number, species: Species): number {
  * chunk was a picture — they are short enough to read at this size and
  * a player already knows them
  */
+/**
+ * How each piece of scenery is drawn: a colour and a shape.
+ *
+ * Shapes rather than pictures, because there are no sheets for any of
+ * this yet — a green cone is a tree in the way a letter in a circle is
+ * a landmark, and it says what a chunk is made of at a glance. What is
+ * standing there is named to a screen reader instead
+ */
+const DECORATION_LOOKS: Record<Decoration, { color: string; shape: 'tall' | 'round' | 'tuft' }> = {
+  [Decoration.Tree]: { color: '#3f7a3f', shape: 'tall' },
+  [Decoration.Pine]: { color: '#2f5f4a', shape: 'tall' },
+  [Decoration.Palm]: { color: '#4f8f5f', shape: 'tall' },
+  [Decoration.Cactus]: { color: '#5f8f4f', shape: 'tall' },
+  [Decoration.Shrub]: { color: '#5f8a4a', shape: 'round' },
+  [Decoration.Grass]: { color: '#6faa55', shape: 'tuft' },
+  [Decoration.Flower]: { color: '#c9739f', shape: 'tuft' },
+  [Decoration.Rock]: { color: '#8a8a8a', shape: 'round' },
+  [Decoration.Boulder]: { color: '#6f6f6f', shape: 'round' },
+  [Decoration.Reed]: { color: '#7a8f4a', shape: 'tuft' },
+  [Decoration.Coral]: { color: '#d1707f', shape: 'tall' },
+  [Decoration.Ice]: { color: '#a9d8e8', shape: 'round' },
+  [Decoration.Mushroom]: { color: '#b0603f', shape: 'round' },
+  [Decoration.Stump]: { color: '#7a5a3a', shape: 'round' },
+};
+
+/**
+ * One piece of scenery, drawn on the ground it stands on. A cone for
+ * anything that grows upward, a mound for anything that lies about,
+ * and three strokes for anything low enough to walk through
+ */
+function drawDecoration(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  decoration: Decoration,
+  magnify: number,
+): void {
+  const look = DECORATION_LOOKS[decoration];
+  const size = CELL * 0.32 * spot.scale * magnify;
+
+  context.save();
+  context.fillStyle = look.color;
+  context.strokeStyle = look.color;
+  context.lineWidth = Math.max(1, size * 0.22);
+  context.lineCap = 'round';
+  context.beginPath();
+
+  if (look.shape === 'tall') {
+    context.moveTo(spot.x, spot.y - size * 1.4);
+    context.lineTo(spot.x + size * 0.8, spot.y + size * 0.6);
+    context.lineTo(spot.x - size * 0.8, spot.y + size * 0.6);
+    context.closePath();
+    context.fill();
+  } else if (look.shape === 'round') {
+    context.ellipse(spot.x, spot.y, size * 0.9, size * 0.65, 0, 0, Math.PI * 2);
+    context.fill();
+  } else {
+    for (const lean of [-0.7, 0, 0.7]) {
+      context.moveTo(spot.x + size * lean * 0.9, spot.y + size * 0.5);
+      context.lineTo(spot.x + size * lean * 1.3, spot.y - size * 0.7);
+    }
+    context.stroke();
+  }
+  context.restore();
+}
+
 const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'C',
   [Landmark.Phenomenon]: '!',
@@ -314,6 +380,11 @@ export interface ChunkCanvasProps {
    */
   player: number;
   landmarks: Map<number, Landmark>;
+  /**
+   * The chunk's scenery by cell. It is drawn and nothing else: a tree
+   * cannot be pressed, and standing on one does nothing
+   */
+  decorations: Map<number, Decoration>;
   /**
    * Which cells hold a pokemon this window, and which pokemon. It is
    * what stands there rather than only that something does: the
@@ -983,6 +1054,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         context.stroke();
 
         const index = square.y * CHUNK_CELLS + square.x;
+        const decoration = props.decorations.get(index);
+
+        // Scenery goes down with the ground, under everything else:
+        // it is what the chunk is made of rather than something
+        // standing on it
+        if (decoration != null) {
+          drawDecoration(context, at(projectCell(index, yaw())), decoration, magnify);
+        }
+
         const landmark = props.landmarks.get(index);
 
         if (landmark != null) {

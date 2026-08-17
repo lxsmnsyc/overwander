@@ -152,7 +152,6 @@ test.describe('the auction house', () => {
 
     // Listed: the board comes back with the lot on it, under the
     // seller's own name
-    await expect(sellerBoard.getByText('It is on the block until the day is up.')).toBeVisible();
     await expect(sellerBoard.getByText(/by you/)).toBeVisible();
 
     // The other side of the board
@@ -228,7 +227,7 @@ test.describe('the auction house', () => {
     await box.click({ position: { x: (bounds?.width ?? 0) / 12, y: (bounds?.height ?? 0) / 10 } });
     await putItUp(seller.page, /^Auction /, 5);
 
-    await expect(sellerBoard.getByText('It is on the block until the day is up.')).toBeVisible();
+    await expect(sellerBoard.getByText(/by you/)).toBeVisible();
 
     await grantGold(buyer, 100);
 

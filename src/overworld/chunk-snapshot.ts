@@ -17,7 +17,7 @@ import { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
-import { CELL_COUNT, CHUNK_CELLS, SPAWN_AREA, centeredCells } from './chunk';
+import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
 import type { PhenomenonReward } from './landmarks';
 import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
 
@@ -171,20 +171,24 @@ export default class ChunkSnapshot {
 
   /**
    * Roll the window's spawns from the biome pool for this time of day
-   * and place each on a free cell of the central 12x12: landmarks are
-   * pre-occupied, and the outer ring stays clear so entering from an
-   * edge meets nothing. The first call fixes the result for the
-   * snapshot's lifetime
+   * and place each on a free cell.
+   *
+   * They are placed **last**, on whatever cell the chunk's own
+   * furniture is not standing on. Spacing is the fixtures' rule and
+   * not theirs: a pokemon keeps no ring of its own and takes none from
+   * a landmark, since it is walked through rather than round and is
+   * gone again in a few minutes. The first call fixes the result for
+   * the snapshot's lifetime
    */
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
-      // A landmark and the ring around it are both out: the ring is
-      // the room a player has to walk up to one, and a pokemon
-      // standing in it would be met on the way rather than chosen
-      const occupied = this.chunk.getLandmarkArea();
-      const free = centeredCells(SPAWN_AREA).filter((cell) => !occupied.has(cell));
+      const occupied = new Set([
+        ...this.chunk.getDecorationCells().keys(),
+        ...this.chunk.getLandmarkCells().keys(),
+      ]);
+      const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
 
       for (let i = 0; i < count && free.length > 0; i++) {
         const species = pickSpawn(pool, () => this.rng.random());

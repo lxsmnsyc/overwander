@@ -10,9 +10,8 @@ import { CELL_COUNT, CHUNK_CELLS } from './chunk';
  * at rather than a form being filled in.
  *
  * What that needs is the route, and the route has to be walked rather
- * than teleported along: a step is a step, the egg being carried counts
- * them, and a pokemon standing in the way is walked around rather than
- * through. This is that route — plain A* over the chunk's own grid.
+ * than teleported along: a step is a step, and the egg being carried
+ * counts them. This is that route — plain A* over the chunk's own grid.
  *
  * Straight steps only. Nothing in this game moves diagonally: a cell is
  * north, south, east or west of its neighbour, which is also what makes
@@ -33,9 +32,10 @@ export const CARDINALS: readonly [number, number][] = [
 ];
 
 /**
- * Whether a cell may be walked on. Landmarks and whatever is standing
- * in the chunk are not: a player steps up beside those and reaches out,
- * so they are obstacles to a walk rather than places to end one
+ * Whether a cell may be walked on. What counts is the caller's:
+ * landmarks are fixtures and are walked round, while a pokemon is
+ * walked straight through — nothing springs by being passed over, and
+ * a route that bent round every spawn made a busy chunk a maze
  */
 export type Passable = (cell: number) => boolean;
 

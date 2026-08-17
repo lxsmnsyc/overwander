@@ -622,6 +622,32 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
+   * The box the pokemon would be drawn in, on the canvas.
+   *
+   * It is what a pointer is tested against: a sprite is a tall trimmed
+   * frame rather than a circle round its feet, so anything guessing at
+   * its size from the slot it stands on misses the head of a Charizard
+   * and answers for empty ground beside a Diglett
+   */
+  bounds(
+    x: number,
+    y: number,
+    options: DrawOptions = {},
+  ): { left: number; top: number; width: number; height: number } | null {
+    const placed = this.place(x, y, options);
+
+    if (placed == null) {
+      return null;
+    }
+    return {
+      left: placed.originX,
+      top: placed.originY,
+      width: placed.width,
+      height: placed.height,
+    };
+  }
+
+  /**
    * Where a part of the pokemon lands on the canvas, if it were drawn
    * at this point with these options.
    *

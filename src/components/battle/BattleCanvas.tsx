@@ -12,7 +12,12 @@ import projectField, {
 } from '../../canvas/battle/field';
 import facingToward from '../../canvas/facing';
 import loadSpeciesSprite from '../../canvas/species-sprites';
-import { BattleEvents, MoveTargetType } from '../../battle/events';
+import {
+  BattleEvents,
+  type MoveTarget,
+  MoveTargetType,
+  type ProgressData,
+} from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { EventPriority } from '../../core/event-emitter';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
@@ -101,6 +106,20 @@ const BAR_WIDTH = 72;
 const BAR_HEIGHT = 4;
 
 /**
+ * The lower half of the same bar, where a cast fills up. Thinner than
+ * the health above it: what a pokemon has left is the reading being
+ * watched, and what it is winding up is the one underneath it
+ */
+const CAST_HEIGHT = 3;
+
+/**
+ * How far past its own radius a pokemon answers the pointer, for the
+ * few slots with no sheet yet. Anything drawn answers for the box it
+ * was actually drawn in
+ */
+const HIT_REACH = 1.4;
+
+/**
  * What the field says while the fight's sheets are still coming
  */
 const LOADING_LABEL = 'Loading…';
@@ -138,18 +157,9 @@ interface Slot {
    */
   sprite: SpeciesSpriteAnimation | null;
   /**
-   * Whether the pokemon writes its name under itself.
-   *
-   * The player's own side does not: every one of them has a card
-   * along the bottom of the screen carrying its name, its level and a
-   * great deal more, and the same six names painted on the field as
-   * well is the field saying what the cards already said
-   */
-  quiet?: boolean;
-  /**
-   * Which way it is facing: everybody looks at whatever they are up
-   * against, which is worked out after the camera has turned rather
-   * than fixed to a side of the screen
+   * Which way it is facing: at whatever it is aiming at, worked out
+   * after the camera has turned rather than fixed to a side of the
+   * screen
    */
   facing: SpriteDirection;
   /**
@@ -206,68 +216,67 @@ interface Casting {
 }
 
 /**
- * The field as it is to be drawn.
+ * The field as it is to be drawn: whatever is in the middle, and the
+ * teams ringed around it.
  *
- * A raid is watched from behind one's own party: the other players'
- * teams are left out entirely — a ten-player raid would otherwise be
- * sixty pokemon, most of them nobody's business — and the boss stands
- * alone at the top. A battle with no boss is drawn as two sides, the
- * viewer's below and everyone else's above.
+ * **Every** fight is laid out this way, not only a raid. Two trainers
+ * used to be drawn as two rows facing each other across a line, which
+ * is a picture of a menu rather than of a place — and it threw away
+ * the depth the plane is drawn with, since both rows stood at the same
+ * distance from the camera. Given a ring, the near team is nearer:
+ * bigger, in front, and unmistakably the viewer's own.
  *
- * A **spectator** of a raid has no party to stand behind, and no
- * reason to leave anybody out: they are shown the whole lobby, drawn
- * as what it is rather than as a line — see `ringLayout`
+ * A raid boss is what stands at the origin. A fight without one has an
+ * empty middle and its teams facing across it
  */
 interface Field {
   /**
-   * Set only when the viewer is watching a raid they are not in: the
-   * boss, and every party facing it, kept apart so each can be drawn
-   * as a party rather than as thirty units in a row
+   * The pokemon at the origin: a raid boss, and nothing else. Empty
+   * for an ordinary fight
    */
-  lobby: { boss: Unit[]; teams: Unit[][] } | null;
-  mine: Unit[];
-  theirs: Unit[];
+  middle: Unit[];
+  /**
+   * Every team facing it, each drawn as a cluster of its own so a
+   * party reads as a party
+   */
+  teams: { units: Unit[]; friendly: boolean }[];
+  /**
+   * Which of those teams is the viewer's, so the ring can be turned to
+   * put it nearest the camera. Null for a spectator, who has none
+   */
+  mine: number | null;
 }
 
 function readField(battle: Battle, player: string): Field {
-  const boss: Unit[] = [];
-  const owned: Unit[] = [];
-  const others: Unit[] = [];
-  const teams: Unit[][] = [];
-  let staged = false;
+  const middle: Unit[] = [];
+  const teams: { units: Unit[]; friendly: boolean }[] = [];
+  let mine: number | null = null;
+
+  /**
+   * Which alliance the viewer is fighting in, so everybody else can be
+   * told friend from foe. A spectator is in none of them, and is shown
+   * every party as one of the fight's own
+   */
+  const own = [...battle.alliances].find((alliance) =>
+    [...alliance.teams].some((team) => team.player === player && player !== ''),
+  );
 
   for (const alliance of battle.alliances) {
     for (const team of alliance.teams) {
-      const fielded: Unit[] = [];
-
-      for (const unit of team.units) {
-        if (alliance.boss) {
-          staged = true;
-          boss.push(unit);
-        } else if (team.player === player && player !== '') {
-          owned.push(unit);
-        } else {
-          others.push(unit);
-          fielded.push(unit);
-        }
+      if (alliance.boss) {
+        middle.push(...team.units);
+        continue;
       }
-      if (fielded.length > 0) {
-        teams.push(fielded);
+      if (team.units.size === 0) {
+        continue;
       }
+      if (team.player === player && player !== '') {
+        mine = teams.length;
+      }
+      teams.push({ units: [...team.units], friendly: own == null || alliance === own });
     }
   }
-
-  if (staged) {
-    // Somebody watching a raid they are not in owns nothing on the
-    // field, which is exactly when the whole lobby is worth drawing
-    if (owned.length === 0) {
-      return { lobby: { boss, teams }, mine: others, theirs: boss };
-    }
-    return { lobby: null, mine: owned, theirs: boss };
-  }
-  return owned.length > 0
-    ? { lobby: null, mine: owned, theirs: others }
-    : { lobby: null, mine: others, theirs: [] };
+  return { middle, teams, mine };
 }
 
 /**
@@ -282,26 +291,16 @@ function readField(battle: Battle, player: string): Field {
 interface Standing {
   unit: Unit;
   place: FieldPoint;
-  /** What it turns to look at, in field units. */
+  /**
+   * What it turns to look at while it is aiming at nothing, in field
+   * units
+   */
   look: FieldPoint;
   /** Its size on screen at the middle of the field. */
   radius: number;
   color: string;
   sprite: SpeciesSpriteAnimation | null;
-  quiet?: boolean;
 }
-
-/**
- * How far from the middle of the field each side stands, and how wide
- * a ring its members make.
- *
- * A side is a **ring** rather than a row: a row of six is a row from
- * every angle, and the point of a field with depth is that a group
- * looks like a group. The two numbers together are what keep the sides
- * clear of one another with six on each
- */
-const SIDE_X = 26;
-const PARTY_RADIUS = 5.5;
 
 /**
  * The ring of parties around a boss: a **circle**, on the ground,
@@ -330,6 +329,12 @@ const TEAM_RADIUS = 4.5;
 const LOBBY_GAP = 17;
 
 /**
+ * The point on the ring closest to the camera. `z` counts away from
+ * it, so the near side of the circle is the negative quarter
+ */
+const NEAREST = -Math.PI / 2;
+
+/**
  * How far back the camera stands for a lobby, and how wide its ring
  * is.
  *
@@ -352,8 +357,9 @@ function lobbyCamera(teams: number): { radius: number; zoom: number } {
 }
 
 /**
- * A side of a fight: a ring of pokemon around a point, all looking at
- * whatever they are up against
+ * A side of a fight: a ring of pokemon around a point, each looking at
+ * whatever it is up against by default — until it is aiming at
+ * something, which `project` lets it turn to
  */
 function side(
   units: Unit[],
@@ -363,7 +369,6 @@ function side(
   slotRadius: number,
   color: string,
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
-  quiet = false,
 ): Standing[] {
   return ringOf(units.length, centre, radius).map((place, at) => ({
     unit: units[at],
@@ -372,7 +377,6 @@ function side(
     radius: slotRadius,
     color,
     sprite: spriteFor(units[at]),
-    quiet,
   }));
 }
 
@@ -386,24 +390,24 @@ function side(
  * the fight is**, which is one thing in the middle with a lobby closed
  * around it
  */
-function lobbyStandings(
-  lobby: { boss: Unit[]; teams: Unit[][] },
+function ringStandings(
+  field: Field,
   spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
 ): Standing[] {
-  const middle: FieldPoint = { x: 0, z: 0 };
+  const origin: FieldPoint = { x: 0, z: 0 };
   const standings: Standing[] = [];
-  // A busy lobby stands further out rather than closer together, and
+  // A busy field stands further out rather than closer together, and
   // is drawn smaller for it: the camera has stepped back with the ring
-  const { radius, zoom } = lobbyCamera(lobby.teams.length);
+  const { radius, zoom } = lobbyCamera(field.teams.length);
 
   // Normally one. Two would be a raid nothing stages yet, so they
   // stand side by side rather than on top of one another
-  lobby.boss.forEach((unit, at) => {
+  field.middle.forEach((unit, at) => {
     standings.push({
       unit,
-      place: { x: (at - (lobby.boss.length - 1) / 2) * 4, z: 0 },
-      // The one thing on the field with nothing to look at: it is
-      // being looked at, so it faces the viewer
+      place: { x: (at - (field.middle.length - 1) / 2) * 4, z: 0 },
+      // Nothing of its own to look at until it aims at something, so
+      // it faces the camera
       look: { x: 0, z: -radius },
       radius: BOSS_RADIUS * zoom,
       color: COLORS.boss,
@@ -411,50 +415,60 @@ function lobbyStandings(
     });
   });
 
-  lobby.teams.forEach((units, at) => {
-    const around = (at / lobby.teams.length) * Math.PI * 2 + Math.PI / 2;
+  // Where the ring starts. Whoever is looking at the fight is stood at
+  // the front of it — their own team nearest the camera, biggest and
+  // never behind anybody — and the rest fall in around from there. A
+  // spectator has no team to favour, so the ring starts at the back
+  const step = (Math.PI * 2) / field.teams.length;
+  const start = field.mine == null ? Math.PI / 2 : NEAREST - field.mine * step;
+
+  field.teams.forEach((team, at) => {
+    const around = at * step + start;
     const centre: FieldPoint = {
       x: Math.cos(around) * radius,
       z: Math.sin(around) * radius,
     };
 
     standings.push(
-      ...side(units, centre, TEAM_RADIUS, middle, PARTY_SLOT * zoom, COLORS.mine, spriteFor),
+      ...side(
+        team.units,
+        centre,
+        TEAM_RADIUS,
+        // Across the field by default: at the boss where there is one,
+        // and otherwise at whatever is standing opposite
+        origin,
+        PARTY_SLOT * zoom,
+        team.friendly ? COLORS.mine : COLORS.theirs,
+        spriteFor,
+      ),
     );
   });
   return standings;
 }
 
 /**
- * The two sides of an ordinary fight, and of a raid seen by somebody
- * in it.
+ * What a unit is turned toward: whatever it is aiming at.
  *
- * The viewer's own team is on the **left** and whatever it is facing
- * is on the right, which is the one thing about the field a player in
- * it should never have to work out
+ * A pokemon that faces the middle of the field all fight is a pokemon
+ * that never looks at anything — on a ring the thing it is hitting is
+ * rarely straight ahead. This is the move it is winding up, the move
+ * it has in the air, or nothing while it is standing about. A move
+ * aimed at a whole team looks at the first of them, which is where the
+ * cluster is
  */
-function sidesOf(
-  field: Field,
-  bossSide: boolean,
-  spriteFor: (unit: Unit) => SpeciesSpriteAnimation | null,
-): Standing[] {
-  const mine: FieldPoint = { x: -SIDE_X, z: 0 };
-  const theirs: FieldPoint = { x: SIDE_X, z: 0 };
+function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
+  const aim = unit.casting?.target ?? unit.channeling?.target ?? thrown?.at;
 
-  return [
-    ...side(
-      field.theirs,
-      theirs,
-      PARTY_RADIUS,
-      mine,
-      bossSide ? BOSS_RADIUS : PARTY_SLOT,
-      bossSide ? COLORS.boss : COLORS.theirs,
-      spriteFor,
-    ),
-    // The near side keeps its names to itself: they are on the cards
-    // under the field
-    ...side(field.mine, mine, PARTY_RADIUS, theirs, PARTY_SLOT, COLORS.mine, spriteFor, true),
-  ];
+  if (aim == null) {
+    return null;
+  }
+  if (aim.type === MoveTargetType.Unit) {
+    return aim.unit === unit ? null : aim.unit;
+  }
+  if (aim.type === MoveTargetType.Team) {
+    return [...aim.team.units].find((other) => other !== unit) ?? null;
+  }
+  return null;
 }
 
 /**
@@ -465,11 +479,19 @@ function sidesOf(
  * stands in front of one further off, and the only thing that makes
  * that true on a canvas is the order the two were painted in
  */
-function project(standings: Standing[], view: FieldView): Slot[] {
+function project(standings: Standing[], view: FieldView, striking: Map<Unit, Striking>): Slot[] {
+  // Where everybody is, so a unit can be turned to look at whichever
+  // of them it is aiming at
+  const places = new Map(standings.map((standing) => [standing.unit, standing.place]));
+
   return standings
     .map((standing) => {
       const on = projectField(standing.place, view);
-      const at = projectField(standing.look, view);
+      const watched = watchedBy(standing.unit, striking.get(standing.unit));
+      const at = projectField(
+        (watched == null ? null : places.get(watched)) ?? standing.look,
+        view,
+      );
 
       return {
         unit: standing.unit,
@@ -478,7 +500,6 @@ function project(standings: Standing[], view: FieldView): Slot[] {
         radius: Math.max(MIN_RADIUS, standing.radius * on.scale),
         color: standing.color,
         sprite: standing.sprite,
-        quiet: standing.quiet,
         facing: facingToward(on.x, on.y, at.x, at.y),
         depth: on.scale,
         visible: on.visible,
@@ -537,6 +558,11 @@ export interface Performance {
 export interface Striking {
   move: Moves;
   window: number;
+  /**
+   * What it was thrown at, so the thrower goes on facing it while the
+   * move is in the air rather than turning away the moment it fires
+   */
+  at?: MoveTarget;
 }
 
 export function animationFor(
@@ -619,11 +645,22 @@ function drawBar(
   share: number,
   color: string,
   width = BAR_WIDTH,
+  height = BAR_HEIGHT,
 ): void {
   context.fillStyle = COLORS.track;
-  context.fillRect(x - width / 2, y, width, BAR_HEIGHT);
+  context.fillRect(x - width / 2, y, width, height);
   context.fillStyle = color;
-  context.fillRect(x - width / 2, y, width * Math.max(0, Math.min(1, share)), BAR_HEIGHT);
+  context.fillRect(x - width / 2, y, width * Math.max(0, Math.min(1, share)), height);
+}
+
+/**
+ * How far along a timed thing is, as a fraction of itself. Nothing
+ * timed at all is finished by definition
+ */
+function fractionOf(progress: ProgressData): number {
+  return progress.duration <= 0
+    ? 1
+    : Math.min(1, Math.max(0, progress.progress / progress.duration));
 }
 
 function drawLabel(
@@ -664,6 +701,36 @@ function bodyOf(slot: Slot): Point {
       : null;
 
   return placed ?? [slot.x, slot.y];
+}
+
+/**
+ * The box a slot's pokemon was drawn in, or nothing while its sheet is
+ * still coming
+ */
+function boxOf(slot: Slot): { left: number; top: number; width: number; height: number } | null {
+  const sprite = slot.sprite;
+
+  return sprite?.ready === true
+    ? sprite.bounds(slot.x, slot.y, { scale: scaleOf(slot), anchor: 'shadow' })
+    : null;
+}
+
+/**
+ * Whether a point is on the pokemon.
+ *
+ * The **sprite's own box**, which is the picture a player is pointing
+ * at: a trimmed frame is tight to what was drawn, so a tall pokemon
+ * answers for its head and a small one does not answer for the ground
+ * beside it. A slot whose sheet has not landed is still a circle,
+ * since a circle is what is drawn there
+ */
+function withinSlot(slot: Slot, x: number, y: number): boolean {
+  const box = boxOf(slot);
+
+  if (box == null) {
+    return Math.hypot(x - slot.x, y - slot.y) <= slot.radius * HIT_REACH;
+  }
+  return x >= box.left && x <= box.left + box.width && y >= box.top && y <= box.top + box.height;
 }
 
 /**
@@ -726,43 +793,47 @@ function drawSlot(
   // Whether there is room to write anything at all on this slot. A
   // crowded far side is one where forty-eight overlapping words say
   // less than none
-  const roomy = slot.radius >= NAMED_RADIUS && slot.quiet !== true;
+  const roomy = slot.radius >= NAMED_RADIUS;
 
   context.font = '12px sans-serif';
 
   // No name and no level. The field says who is still up and what is
-  // landing on them; **which** pokemon each one is belongs to the
-  // readout underneath, where there is room to say it once and say it
-  // properly. Painted on the field it is forty-eight words competing
-  // with the fight they are captioning — and the fight is the thing
-  // worth watching
+  // landing on them; **which** pokemon each one is belongs to the card
+  // that comes up over it, where there is room to say it once and say
+  // it properly. Painted on the field it is forty-eight words
+  // competing with the fight they are captioning — and the fight is
+  // the thing worth watching
   //
   // Under the feet rather than under the box: the pokemon stands on
   // its slot, so what it is labelled with hangs off the ground it is
   // standing on
+  //
+  // One bar cut in two: what it has left on top, what it is winding up
+  // underneath. The cast bar used to float above the head, which asked
+  // a player watching a boss to read one pokemon in two places
+  const busy = unit.casting ?? unit.channeling;
+  const wound = busy == null || !unit.alive ? 0 : fractionOf(busy.time);
+
   drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar);
+  drawBar(
+    context,
+    slot.x,
+    slot.y + 10 + BAR_HEIGHT,
+    wound,
+    unit.casting == null ? COLORS.channel : COLORS.cast,
+    bar,
+    CAST_HEIGHT,
+  );
 
   // What it is in the middle of, named above its head: a cast the
   // other side can still interrupt, or a channel already landing
-  const busy = unit.casting ?? unit.channeling;
-
-  if (busy != null && unit.alive) {
-    if (roomy) {
-      drawLabel(
-        context,
-        getMoveData(busy.move).name,
-        slot.x,
-        slot.y - slot.radius * 2 - 12,
-        COLORS.text,
-      );
-    }
-    drawBar(
+  if (busy != null && unit.alive && roomy) {
+    drawLabel(
       context,
+      getMoveData(busy.move).name,
       slot.x,
       slot.y - slot.radius * 2 - 8,
-      busy.time.duration <= 0 ? 1 : busy.time.progress / busy.time.duration,
-      unit.casting == null ? COLORS.channel : COLORS.cast,
-      bar,
+      COLORS.text,
     );
   }
   context.globalAlpha = 1;
@@ -784,6 +855,30 @@ export interface BattleCanvasProps {
    * sheets are still coming spends them on an empty field
    */
   onReady?: () => void;
+  /**
+   * Which pokemon the pointer is over, and where on the screen it is
+   * standing, so the caller can put a card over it. Null when the
+   * pointer is over the field itself
+   */
+  onHover?: (unit: Unit | null, at: UnitSpot | null) => void;
+  /**
+   * A pokemon that was pressed. The field itself does nothing with a
+   * press — a real-time battle is fought by the engine — so what
+   * opening one means is the caller's
+   */
+  onPick?: (unit: Unit) => void;
+}
+
+/**
+ * Where a pokemon is on the **screen**, in client coordinates: the
+ * middle of it, and the top and bottom of the room it takes up. It is
+ * what a card floating over the field is placed against, so it is
+ * measured in the page's own units rather than the field's
+ */
+export interface UnitSpot {
+  x: number;
+  top: number;
+  bottom: number;
 }
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
@@ -813,19 +908,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   const striking = new Map<Unit, Striking>();
 
   /**
-   * Which way round the field is being looked at.
-   *
-   * Not a signal, and not a thing anybody in the fight can change: a
-   * player is shown their own side on the left and left there, because
-   * a camera that could be spun is one more thing to manage while
-   * something is trying to knock your pokemon over. A **spectator** has
-   * nothing to manage and a lobby worth walking round, so they get the
-   * handle
+   * What the last frame drew, for the pointer to hit-test against. Not
+   * a signal, like the rest of the frame's state: it is written by the
+   * draw and read by whatever the pointer does next
+   */
+  let placed: Slot[] = [];
+
+  /**
+   * Which way round the field is being looked at. It starts behind the
+   * viewer's own team and can be dragged from there — a ring always
+   * has a far side, and the fight is worth walking round. Not a
+   * signal: the frame that changes it is the frame that redraws
    */
   let yaw = 0;
-
-  /** Whether the viewer is watching rather than fighting. */
-  const spectating = (): boolean => readField(props.battle, props.player).lobby != null;
 
   /**
    * One animation per unit, keyed by what that unit currently looks
@@ -1007,29 +1102,26 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
 
       const field = readField(props.battle, props.player);
-      const bossSide = [...props.battle.alliances].some((alliance) => alliance.boss);
 
-      // The camera. A spectator may walk round the fight; anybody in
-      // it is shown their own side on the left, which is the one thing
-      // about the field a player should never have to work out
+      // The camera. It starts behind whoever is looking at the fight,
+      // which is the one thing about the field a player should never
+      // have to work out, and it can be walked round from there
       const view: FieldView = {
         width: WIDTH,
         height: HEIGHT,
-        // A lobby that has outgrown its ring is looked at from further
+        // A ring that has outgrown its room is looked at from further
         // back, so a raid of sixteen fills the same picture a raid of
         // four does
-        unit: FIELD_UNIT * (field.lobby == null ? 1 : lobbyCamera(field.lobby.teams.length).zoom),
-        yaw: field.lobby == null ? 0 : yaw,
+        unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
+        yaw,
       };
-      // Watching a raid from outside it: the whole lobby, drawn around
-      // the thing it came for. Anything else is two sides facing off
-      const slots = project(
-        field.lobby == null
-          ? sidesOf(field, bossSide, spriteFor)
-          : lobbyStandings(field.lobby, spriteFor),
-        view,
-      );
+      const slots = project(ringStandings(field, spriteFor), view, striking);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
+
+      // Kept for the pointer: what was drawn where, as of the last
+      // frame. Hit-testing a canvas means asking the drawing, and the
+      // drawing is this list
+      placed = slots;
 
       for (const slot of slots) {
         drawSlot(context, slot, striking);
@@ -1116,7 +1208,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       // What the thrower is doing until it lands: the move's own clip,
       // which is the gesture the move *is*
-      striking.set(event.source, { move: event.move, window });
+      striking.set(event.source, { move: event.move, window, at: event.target });
 
       const build = moveVisualFor(event.move);
 
@@ -1238,11 +1330,70 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // goes, so a drag that runs off the edge does not stick
     let turning: number | null = null;
 
+    /**
+     * Which pokemon the pointer is over, from where they were last
+     * drawn. The last match wins: `placed` is painted back to front,
+     * so on a crowded field that is the one in front — the one it
+     * looks like the pointer is over
+     */
+    const under = (event: PointerEvent | MouseEvent): Slot | null => {
+      const bounds = element.getBoundingClientRect();
+
+      if (bounds.width <= 0 || bounds.height <= 0) {
+        return null;
+      }
+
+      const x = ((event.clientX - bounds.left) / bounds.width) * WIDTH;
+      const y = ((event.clientY - bounds.top) / bounds.height) * HEIGHT;
+      let found: Slot | null = null;
+
+      for (const slot of placed) {
+        if (slot.visible && withinSlot(slot, x, y)) {
+          found = slot;
+        }
+      }
+      return found;
+    };
+
+    /**
+     * The same slot in the page's own coordinates, for a card placed
+     * over it. The box is the drawn sprite's where there is one, so a
+     * card clears the top of a tall pokemon rather than cutting across
+     * it
+     */
+    const spotOf = (slot: Slot): UnitSpot => {
+      const bounds = element.getBoundingClientRect();
+      const scaleX = bounds.width / WIDTH;
+      const scaleY = bounds.height / HEIGHT;
+      const box = boxOf(slot);
+
+      return {
+        x: bounds.left + (box == null ? slot.x : box.left + box.width / 2) * scaleX,
+        top: bounds.top + (box == null ? slot.y - slot.radius * 2 : box.top) * scaleY,
+        // Under the feet, where the bars are: a card dropped below a
+        // pokemon should clear what it is standing on
+        bottom: bounds.top + (slot.y + 16) * scaleY,
+      };
+    };
+
+    let hovered: Unit | null = null;
+
+    const report = (slot: Slot | null): void => {
+      const unit = slot?.unit ?? null;
+
+      // Reported on every move rather than only on a change: the
+      // pokemon walks about under a still pointer, and a card left at
+      // the coordinates it opened at drifts off its own sprite
+      hovered = unit;
+      element.style.cursor = unit == null ? 'default' : 'pointer';
+      props.onHover?.(unit, slot == null ? null : spotOf(slot));
+    };
+
     const grab = (event: PointerEvent): void => {
       // The left button and nothing else. A right-drag belongs to the
       // browser — on a Mac it is also what a ctrl-click is — and a
       // canvas that swallowed it would take the context menu with it
-      if (!event.isPrimary || event.button !== 0 || !spectating()) {
+      if (!event.isPrimary || event.button !== 0) {
         return;
       }
       event.preventDefault();
@@ -1252,7 +1403,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     const turn = (event: PointerEvent): void => {
       if (turning == null) {
+        report(under(event));
         return;
+      }
+      // Nothing is hovered while the field is being turned: the pointer
+      // is dragging the camera rather than pointing at anything on it
+      if (hovered != null) {
+        report(null);
       }
       // A drag across the whole width is one turn all the way round,
       // which is slow enough to aim and quick enough to get behind
@@ -1279,7 +1436,21 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       event.preventDefault();
     };
 
+    const leave = (): void => {
+      report(null);
+    };
+
+    const press = (event: MouseEvent): void => {
+      const slot = under(event);
+
+      if (slot != null) {
+        props.onPick?.(slot.unit);
+      }
+    };
+
     element.addEventListener('contextmenu', menu);
+    element.addEventListener('pointerleave', leave);
+    element.addEventListener('click', press);
     element.addEventListener('pointerdown', grab);
     element.addEventListener('pointermove', turn);
     element.addEventListener('pointerup', release);
@@ -1290,6 +1461,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     onCleanup(() => {
       element.removeEventListener('contextmenu', menu);
+      element.removeEventListener('pointerleave', leave);
+      element.removeEventListener('click', press);
       element.removeEventListener('pointerdown', grab);
       element.removeEventListener('pointermove', turn);
       element.removeEventListener('pointerup', release);

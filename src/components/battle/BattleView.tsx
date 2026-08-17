@@ -1,4 +1,5 @@
 import { type JSX, Show, batch, createEffect, createSignal, from, onCleanup } from 'solid-js';
+import type Unit from '../../battle/unit';
 import {
   BattleOutcome,
   type BattleRecord,
@@ -11,8 +12,8 @@ import { useAuth } from '../../auth/context';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../auth/raids';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../../overworld/raid';
 import { createRocketBattle } from '../../overworld/rocket';
-import BattleCanvas from './BattleCanvas';
-import BattleParty from './BattleParty';
+import BattleField from './BattleField';
+import CatchDialog from '../catches/CatchDialog';
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
 import { type ActiveBattle, GameDialog, useGame } from '../app/game-context';
 
@@ -77,7 +78,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * counted down and nothing is started until it does
    */
   const [drawable, setDrawable] = createSignal(false);
-
+  /**
+   * The catch sheet a pressed pokemon opened, if it stands for a
+   * record at all: a raid boss belongs to nobody and has none
+   */
+  const [opened, setOpened] = createSignal<Unit | null>(null);
   createEffect(() => {
     const loaded = record();
 
@@ -361,29 +366,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   return (
     <section class="flex h-full w-full flex-col overflow-hidden">
-      {/* The field is **between** the two sets of cards rather than
-          under both of them.
-
-          It used to take the whole page with the cards floating over
-          it, which cost the fight the two strips it most needed: a
-          raid boss is drawn at the top of the field and the player's
-          own row at the bottom, so a card row lying over each end
-          covered exactly the pokemon a player was watching. Sandwiched,
-          the canvas gets whatever is left and the sprites are never
-          behind anything */}
-      {/* In a fight between two trainers, the other side is at the top,
-          on their end of the field. A raid gets none of this: the boss
-          is one pokemon drawn twice the size of everything else and
-          needs no card, and a lobby of strangers' parties is a wall of
-          them */}
-      <Show when={props.active.rocket == null ? null : instance()}>
-        {(built) => (
-          <div class="shrink-0 overflow-x-auto px-3 pt-3">
-            <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} theirs />
-          </div>
-        )}
-      </Show>
-
+      {/* The field is the page. What each pokemon is — its level, its
+          moves, what it carries, what is stuck to it — is a card that
+          comes up over whichever one the pointer is on, rather than a
+          row of them along each edge: a row lying over each end of the
+          field covered exactly the pokemon a player was watching */}
       <div class="relative min-h-0 grow">
         <Show
           when={instance()}
@@ -394,9 +381,17 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           }
         >
           {(built) => (
-            <BattleCanvas
+            <BattleField
               battle={built().battle}
               player={auth.user()?.uid ?? ''}
+              onPick={(unit) => {
+                // A pokemon that stands for no record — the raid boss,
+                // and anything a demo or a test builds outright — has
+                // no sheet to open
+                if (unit.caught !== '') {
+                  setOpened(unit);
+                }
+              }}
               onReady={() => {
                 // Once. A canvas that reported twice would start the
                 // countdown over the top of itself
@@ -459,15 +454,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         </div>
       </div>
 
-      {/* The player's own pokemon along the bottom: what each of them
-          has left, and which of their moves are off cooldown */}
-      <Show when={instance()}>
-        {(built) => (
-          <div class="shrink-0 overflow-x-auto px-3 pb-3">
-            <BattleParty battle={built().battle} player={auth.user()?.uid ?? ''} />
-          </div>
-        )}
-      </Show>
+      {/* Pressing a pokemon opens its sheet. Anybody else's — a
+          teammate's in a raid, the other trainer's in a stop — is
+          shown and nothing more, since none of it is the reader's to
+          change */}
+      <CatchDialog
+        player={auth.user()?.uid ?? ''}
+        catchId={opened()?.caught ?? null}
+        readOnly={opened() != null && opened()?.team.player !== auth.user()?.uid}
+        onClose={() => {
+          setOpened(null);
+        }}
+      />
 
       {/* A fight that has been won or lost says so rather than leaving
           a line of text under a field that is no longer moving. It
@@ -483,7 +481,14 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             }}
             title={said().title}
             description={said().said}
+            terse
           >
+            {/* What happened, in the panel rather than on the bar. The
+                bar carries the word — Victory, Defeat — and a sentence
+                set under it in the header's own smaller type reads as
+                a caption to the title rather than as the news */}
+            <p class="text-center">{said().said}</p>
+
             {/* Centred, like everything else in the panel. The
                 verdict is one line about what happened and two things
                 to do about it, and buttons pushed to the right of a

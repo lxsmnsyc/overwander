@@ -9,7 +9,7 @@
 - [ ] catch picker = view catch
 - [ ] friends
 - [ ] trading
-- [ ] egg move by parent
+- [x] egg move by parent
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] Battle summary

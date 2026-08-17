@@ -3,7 +3,8 @@ import EggGroups from '../data/ids/egg-groups';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
-import { getBaseSpecies, getEggMoves, getSpeciesData } from '../data/species';
+import { MAX_LEVEL } from '../data/constants/levels';
+import { getBaseSpecies, getEggMoves, getLevelUpMoves, getSpeciesData } from '../data/species';
 import { MOVE_LIMIT, deriveMoves } from './encounter';
 
 /**
@@ -16,10 +17,11 @@ import { MOVE_LIMIT, deriveMoves } from './encounter';
  *
  * What an egg gets from its parents is what makes breeding worth
  * paying for: three of its six individual values are copied straight
- * off one parent or the other, and the moves its line can only
- * inherit come from whichever parent actually knows them. What it
- * does not get is a level, a nature or an ability — those are its
- * own, rolled the way any hatchling's are.
+ * off one parent or the other, the moves its line can only inherit
+ * come from whichever parent actually knows them, and anything both
+ * parents know that it would have grown into is handed to it now
+ * instead. What it does not get is a level, a nature or an ability —
+ * those are its own, rolled the way any hatchling's are.
  */
 
 /**
@@ -198,11 +200,18 @@ export function inheritIVs(
 }
 
 /**
- * The moves the hatchling comes out knowing. Whatever its line can
- * only inherit and one of its parents actually knows is passed on —
- * that is what makes breeding a way to teach a move rather than a way
- * to roll one — and the rest of the four is filled with what the
- * species knows at the level it hatches
+ * The moves the hatchling comes out knowing, in the order they beat
+ * each other to a slot.
+ *
+ * Two things come off the parents. Whatever its line can only inherit
+ * and **either** parent knows is passed on — that is what makes
+ * breeding a way to teach a move rather than a way to roll one. Then
+ * anything **both** parents know that the species would have levelled
+ * into anyway, which is how a hatchling comes out knowing a move years
+ * before it is due one.
+ *
+ * The rest of the four is what the species knows at the level it
+ * hatches
  */
 export function inheritMoves(
   species: Species,
@@ -210,16 +219,26 @@ export function inheritMoves(
   right: BreedingParent,
   level: number,
 ): Moves[] {
+  const knownLeft = new Set(left.moves);
+  const knownRight = new Set(right.moves);
   const known = new Set([...left.moves, ...right.moves]);
-  const inherited = getEggMoves(species).filter((move) => known.has(move));
-  const passed = new Set(inherited);
+  const eggMoves = getEggMoves(species).filter((move) => known.has(move));
+  const inherited = new Set(eggMoves);
+  // Early is the whole point: a move the species is owed at level 40
+  // is worth a slot at level 1, so it goes ahead of what it hatches
+  // with rather than competing with it
+  const shared = getLevelUpMoves(species, MAX_LEVEL).filter(
+    (move) => knownLeft.has(move) && knownRight.has(move) && !inherited.has(move),
+  );
+  const passed = new Set([...eggMoves, ...shared]);
 
   // Inherited first, so they survive the four-move limit: they are
   // the ones the pair was put together for
-  return [...inherited, ...deriveMoves(species, level).filter((move) => !passed.has(move))].slice(
-    0,
-    MOVE_LIMIT,
-  );
+  return [
+    ...eggMoves,
+    ...shared,
+    ...deriveMoves(species, level).filter((move) => !passed.has(move)),
+  ].slice(0, MOVE_LIMIT);
 }
 
 /**

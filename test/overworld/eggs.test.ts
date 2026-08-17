@@ -25,8 +25,10 @@ import {
   inheritNature,
   inheritsShadow,
 } from '../../src/overworld/breeding';
+import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
   getEggMoves,
+  getLevelUpMoves,
   getRegisteredSpecies,
   getSpeciesData,
   registerSpecies,
@@ -109,6 +111,20 @@ describe('credited steps', () => {
 /**
  * A parent as the breeding rules read one
  */
+/**
+ * The first move in the list that matches, or a thrown failure. The
+ * move tests pick theirs out of the real learn sets rather than naming
+ * one, so a data change moves the test instead of silently emptying it
+ */
+function findMove(moves: Moves[], keep: (move: Moves) => boolean): Moves {
+  const found = moves.find(keep);
+
+  if (found == null) {
+    throw new Error('No move in the list matched');
+  }
+  return found;
+}
+
 function parent(
   species: Species,
   gender: Genders,
@@ -303,6 +319,43 @@ describe('hatchling moves', () => {
 
     expect(new Set(getEggMoves(Species.Bulbasaur)).has(bare[0])).toBe(false);
     expect(bare).toEqual(deriveMoves(Species.Bulbasaur, EGG_LEVEL));
+  });
+
+  it('hands down a move both parents know, years before it is due', () => {
+    const hatchesWith = new Set(deriveMoves(Species.Bulbasaur, EGG_LEVEL));
+    // Something the line is owed much later, so a hatchling knowing it
+    // can only have been given it
+    const late = findMove(
+      getLevelUpMoves(Species.Bulbasaur, MAX_LEVEL),
+      (move) => !hatchesWith.has(move),
+    );
+    const father = parent(Species.Bulbasaur, Genders.Male, 0, [late]);
+    const mother = parent(Species.Bulbasaur, Genders.Female, 0, [late]);
+
+    expect(inheritMoves(Species.Bulbasaur, father, mother, EGG_LEVEL)).toContain(late);
+
+    // One parent knowing it is not enough: it is the pair that teaches
+    const alone = parent(Species.Bulbasaur, Genders.Female, 0);
+
+    expect(inheritMoves(Species.Bulbasaur, father, alone, EGG_LEVEL)).not.toContain(late);
+  });
+
+  it('hands down nothing the line could not have levelled into', () => {
+    const learnable = new Set(getLevelUpMoves(Species.Bulbasaur, MAX_LEVEL));
+    const inheritable = new Set(getEggMoves(Species.Bulbasaur));
+    const foreign = findMove(
+      getLevelUpMoves(Species.Pikachu, MAX_LEVEL),
+      (move) => !learnable.has(move) && !inheritable.has(move),
+    );
+    const passed = inheritMoves(
+      Species.Bulbasaur,
+      parent(Species.Bulbasaur, Genders.Male, 0, [foreign]),
+      parent(Species.Bulbasaur, Genders.Female, 0, [foreign]),
+      EGG_LEVEL,
+    );
+
+    expect(passed).not.toContain(foreign);
+    expect(passed).toEqual(deriveMoves(Species.Bulbasaur, EGG_LEVEL));
   });
 
   it('hatches a line with nothing to inherit knowing only its own', () => {

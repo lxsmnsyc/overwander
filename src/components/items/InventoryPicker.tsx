@@ -112,6 +112,13 @@ interface InventoryPickerCommonProps {
    */
   note?: (entry: InventoryEntry) => string | null;
   /**
+   * More about one row, under what the item itself says. The corner
+   * badge holds a number and nothing else, so a price that needs
+   * saying in words — what it costs, what he pays for it — is said
+   * here instead
+   */
+  card?: (entry: InventoryEntry) => JSX.Element;
+  /**
    * How many of it the player is carrying, where the stack being shown
    * is not theirs — a vendor's crate, whose counts are his
    */
@@ -226,6 +233,7 @@ function PickerList(
       selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
       blocked: props.blocked?.(entry) ?? null,
       note: props.note?.(entry) ?? null,
+      card: props.card?.(entry),
       carried: props.carried?.(entry) ?? entry.amount,
       action: props.action?.(entry) ?? props.verb ?? null,
     }));

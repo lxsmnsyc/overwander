@@ -52,6 +52,7 @@ import TeachMoveDialog, { MoveLine } from '../catches/TeachMoveDialog';
 import {
   Badge,
   Button,
+  Detail,
   Dialog,
   DialogActions,
   DialogSection,
@@ -1000,6 +1001,7 @@ function NpcCounter(
                         selected: buying() === item,
                         note: `${getFossilPrice(item)} gold`,
                         said: `Choose ${describeItem(item)} — ${getFossilPrice(item)} gold`,
+                        card: <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
                       }))}
                       onPress={(item) => {
                         setStatus(null);
@@ -1137,6 +1139,15 @@ function NpcCounter(
         // Short enough to sit in the corner of a square: the tray has no
         // room for a sentence, and the number is the news
         note={(entry) => `${priceOf(entry.item, counter() !== 'sell')}g`}
+        // The same number again, in words, over the button that spends
+        // it. The corner badge is four characters read at a glance
+        // across thirty squares; the card is where one square is being
+        // decided on, and "200g" there is a number without a currency
+        card={(entry) => (
+          <Detail label={counter() === 'sell' ? 'He pays' : 'Costs'}>
+            {priceOf(entry.item, counter() !== 'sell')} gold
+          </Detail>
+        )}
         onPick={(item) => {
           if (item != null) {
             trade(item, counter() !== 'sell');

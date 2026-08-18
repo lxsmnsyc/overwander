@@ -277,9 +277,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               class="block w-full"
               title="Info"
               // One button and nothing else, unless the caller brought
-              // its own. What it costs is on the square and so is why it
-              // is refused — a card repeating both is the same square
-              // said twice
+              // its own. Why a square is refused stays off the card —
+              // a greyed picture with a dead button under it has
+              // already said it
               footer={
                 cell.footer ?? (
                   <Show when={cell.action ?? props.verb}>

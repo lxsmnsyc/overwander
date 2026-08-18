@@ -29,6 +29,9 @@ import {
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import { SPRITE_DIRECTIONS } from '../../canvas/sprite-sheet';
 import drawSparkle from '../../canvas/sparkle';
+import { type Cast, getCast, paintAmbient } from '../../canvas/daylight';
+import { getLocalOffset, toLocalTime } from '../../auth/local-time';
+import { serverNow } from '../../auth/clock';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import { BIOME_COLORS } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -922,6 +925,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     };
 
     /**
+     * The hour the world is standing in, on the player's own clock.
+     *
+     * It is the same number the spawn pools are picked from —
+     * `toLocalTime(serverNow(), …)` — so what is out there and how it
+     * is lit agree. Read per frame rather than kept in a signal: it is
+     * only ever asked for while a frame is being drawn, and a signal
+     * ticking every second would redraw the board for the sake of a
+     * light that has barely moved
+     */
+    const worldTime = (): number => toLocalTime(serverNow(), getLocalOffset());
+
+    /** Where this hour's light throws a shadow, if it throws one */
+    const cast = (): Cast | undefined => {
+      const thrown = getCast(worldTime());
+
+      return thrown.length <= 0 ? undefined : thrown;
+    };
+
+    /**
      * The pokemon standing about are the only thing here that moves
      * on its own, so the chunk keeps a frame clock of its own — the
      * battle canvas can borrow the fight's, and there is no fight
@@ -1163,6 +1185,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               ...placement,
               color: COLORS.shadow,
               squash: GROUND_SQUASH,
+              // Thrown by whatever light there is at this hour: long
+              // and faint near the horizons, short and hard at noon,
+              // and nothing at all once the sun is down
+              cast: cast(),
             });
             // Upright, and at its own size: the ground is tilted and
             // the pokemon on it are not, which is what a billboard is
@@ -1237,6 +1263,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // what is drawn from here is the player's own instruments, and
       // they are not the thing being carried off
       context.restore();
+
+      // The hour's own light, over everything standing in the world
+      // and under everything the player reads: a compass tinted by the
+      // evening is a compass that is harder to read at night for
+      // nothing
+      paintAmbient(context, screen.width, screen.height, worldTime());
 
       /**
        * And the compass: four letters standing off the four edges of

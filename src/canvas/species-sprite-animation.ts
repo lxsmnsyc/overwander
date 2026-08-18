@@ -9,6 +9,7 @@ import asSpriteSheetJSON, {
   type SpriteSheetJSON,
   type SpriteTargetData,
 } from './sprite-sheet';
+import type { Cast } from './daylight';
 
 /**
  * A pokemon on a canvas, moving.
@@ -108,6 +109,12 @@ export interface DrawOptions {
 
 export interface ShadowOptions extends DrawOptions {
   color?: string;
+  /**
+   * Where the light is coming from, so the patch is thrown away from
+   * it rather than sitting under the feet. Left out for a light with
+   * no direction — an overcast field, a lit room, the small hours
+   */
+  cast?: Cast;
   /**
    * How flat the ellipse lies, as a fraction of its width, instead of
    * the flatness a sprite standing on level ground gets. It is for a
@@ -716,14 +723,30 @@ export default class SpeciesSpriteAnimation {
     }
 
     const radius = this.shadowRadius(options.scale ?? 1, options.squash);
+    const cast = options.cast;
+    // Thrown away from the light: the patch slides out from under the
+    // feet by half its own reach and stretches along the way it went,
+    // which is what a shadow on flat ground does. The near end stays
+    // at the feet — a shadow that let go of its caster reads as a
+    // second thing lying on the floor
+    const reach = cast == null ? 0 : cast.length * radius.x * 2;
+    const angle = cast == null ? 0 : Math.atan2(cast.dy, cast.dx);
 
     context.save();
     context.beginPath();
-    context.ellipse(spot[0], spot[1], radius.x, radius.y, 0, 0, Math.PI * 2);
+    context.ellipse(
+      spot[0] + (cast?.dx ?? 0) * reach * 0.5,
+      spot[1] + (cast?.dy ?? 0) * reach * 0.5,
+      radius.x + reach * 0.5,
+      radius.y,
+      angle,
+      0,
+      Math.PI * 2,
+    );
     context.fillStyle = options.color ?? SHADOW_COLOR;
 
-    if (options.alpha != null) {
-      context.globalAlpha = options.alpha;
+    if (options.alpha != null || cast != null) {
+      context.globalAlpha = options.alpha ?? cast?.alpha ?? 1;
     }
     context.fill();
     context.restore();

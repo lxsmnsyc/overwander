@@ -1,6 +1,5 @@
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { Species } from '../ids/species';
-import { getSpeciesData } from '../species';
 import { registerItem } from './__create';
 
 /**
@@ -72,10 +71,13 @@ const ICONS: { [key in Items]?: string } = {
 };
 
 export default function registerFossils(): void {
-  for (const [item, species] of FOSSIL_SPECIES) {
+  for (const item of FOSSIL_SPECIES.keys()) {
     registerItem(item, {
       name: NAMES[item] ?? 'Fossil',
-      description: `Revives into ${getSpeciesData(species).name}. Spent doing it.`,
+      // What is in the rock is not written on it. The bench is where
+      // a player finds out, and a description that named the species
+      // would settle it before they ever paid for one
+      description: 'Something ancient is still in the rock. Spent bringing it back.',
       type: ItemTypes.Fossil,
       icon: ICONS[item] ?? 'fossils/old-amber',
       // Spent when it is revived, and worth nothing to anybody else:

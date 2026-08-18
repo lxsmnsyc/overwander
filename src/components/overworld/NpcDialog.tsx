@@ -29,7 +29,7 @@ import {
 } from '../../auth/npcs';
 import { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
-import { FOSSIL_SPECIES, getItemData, isFossil } from '../../data/items';
+import { getItemData, isFossil } from '../../data/items';
 import { getHeldPowerStat } from '../../data/items/power-items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
 import { getSpeciesData } from '../../data/species';
@@ -46,6 +46,7 @@ import { type BreedingParent, canBreed } from '../../overworld/breeding';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
 import InventoryPicker, { type ItemAmount, describeItem } from '../items/InventoryPicker';
+import ItemGrid from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import TeachMoveDialog, { MoveLine } from '../catches/TeachMoveDialog';
 import {
@@ -130,18 +131,6 @@ function asParent(caught: CaughtPokemon): BreedingParent {
  * centred portrait read as two screens stuck together
  */
 const CENTRED = 'items-center text-center';
-
-/**
- * What is inside a fossil, said in the one word a player is actually
- * deciding on. It is no secret — the rock names the species — and a
- * fossil bought or opened without being told which one it is would be
- * a decision made blind
- */
-function fossilHolds(item: Items): string {
-  const species = FOSSIL_SPECIES.get(item);
-
-  return species == null ? '' : getSpeciesData(species).name;
-}
 
 /**
  * What one of these costs, from whichever side of the counter it is
@@ -990,37 +979,33 @@ function NpcCounter(
                     <Badge tone="gold">{props.gold() ?? 0} gold</Badge>
                   </Row>
 
-                  {/* Two rocks, and what is in each of them. It is no
-                    secret which species a fossil holds, and buying one
-                    for the price of a nugget without being told would
-                    be a decision made blind */}
+                  {/* Two rocks, and nothing about what is in them.
+                    He is selling the dig rather than the pokemon, and
+                    a player who knew which species each held would be
+                    buying a name off a shelf */}
                   <Show
                     when={offer().length > 0}
                     fallback={<Note>He has nothing on him just now.</Note>}
                   >
-                    <List>
-                      <For each={offer()}>
-                        {(item) => (
-                          <ListRow selected={buying() === item}>
-                            <RowButton
-                              pressed={buying() === item}
-                              disabled={busy()}
-                              onClick={() => {
-                                setStatus(null);
-                                setBuying(item);
-                              }}
-                            >
-                              <ItemSprite item={item} size={24} label="" />
-                              <span class="grow text-left">
-                                {describeItem(item)}
-                                <Meta class="block">{fossilHolds(item)}</Meta>
-                              </span>
-                              <Meta>{getFossilPrice(item)} gold</Meta>
-                            </RowButton>
-                          </ListRow>
-                        )}
-                      </For>
-                    </List>
+                    {/* The bag's own tray, so two rocks on a stranger
+                        read the way everything else the player is
+                        offered does: a picture with the price on it,
+                        and what is inside on the card over it */}
+                    <ItemGrid
+                      bare
+                      verb="Choose"
+                      disabled={busy()}
+                      entries={offer().map((item) => ({
+                        item,
+                        selected: buying() === item,
+                        note: `${getFossilPrice(item)} gold`,
+                        said: `Choose ${describeItem(item)} — ${getFossilPrice(item)} gold`,
+                      }))}
+                      onPress={(item) => {
+                        setStatus(null);
+                        setBuying(item);
+                      }}
+                    />
                   </Show>
                 </DialogSection>
               </Show>
@@ -1048,18 +1033,16 @@ function NpcCounter(
                               }}
                             >
                               <ItemSprite item={entry.item} size={24} label="" />
-                              <span class="grow text-left">
-                                {describeItem(entry.item)}
-                                <Meta class="block">{fossilHolds(entry.item)}</Meta>
-                              </span>
+                              <span class="grow text-left">{describeItem(entry.item)}</span>
                               <Meta>× {entry.amount}</Meta>
                             </RowButton>
                           </ListRow>
                         )}
                       </For>
                     </List>
-                    {/* The one thing about the outcome that is not
-                        said by the rock itself */}
+                    {/* What comes out is the rock's business, but the
+                        level is not — a party picked around it is
+                        worth planning before the fossil is spent */}
                     <Meta class="block">
                       Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.
                     </Meta>

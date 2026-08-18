@@ -30,11 +30,29 @@ const BADGE_TONES: Record<BadgeTone, string> = {
  * spends it. A badge half the height of its neighbour makes a row of
  * them read as a mistake rather than as a row
  */
-export function Badge(props: ParentProps & { tone?: BadgeTone; class?: string }): JSX.Element {
+export function Badge(
+  props: ParentProps & {
+    tone?: BadgeTone;
+    /**
+     * Whether it may break across lines. A badge holds itself to one
+     * by default — it is a label, and a wrapped label reads as a
+     * paragraph in a pill — but one in a column narrower than its own
+     * words has to break or spill out of its own border. It is a prop
+     * rather than a class the caller passes because `whitespace-nowrap`
+     * is in this template, and two utilities for one property are
+     * settled by the order Tailwind emits them in rather than the
+     * order they are written in
+     */
+    wrap?: boolean;
+    class?: string;
+  },
+): JSX.Element {
   return (
     <span
       class={`inline-flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-sm font-bold
-        whitespace-nowrap ${BADGE_TONES[props.tone ?? 'neutral']} ${props.class ?? ''}`}
+        ${props.wrap === true ? 'break-words whitespace-normal' : 'whitespace-nowrap'} ${
+          BADGE_TONES[props.tone ?? 'neutral']
+        } ${props.class ?? ''}`}
     >
       {props.children}
     </span>

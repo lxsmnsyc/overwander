@@ -79,38 +79,36 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                 <span class="pb-2">Grunt</span>
               </div>
 
-              {/* What they are fielding, drawn rather than listed. A
-                  row of names says how many; a row of pokemon says
-                  what a player is walking into */}
-              {/* One row, whatever is on it. Wrapped, a party of
-                  three would sometimes drop its last pokemon onto a
-                  line of its own, which reads as two groups rather
-                  than one team — it scrolls sideways instead */}
-              <ul
-                class="m-0 flex w-full list-none flex-row flex-nowrap items-end justify-center
-                  gap-3 overflow-x-auto p-0"
-              >
+              {/* What they are fielding, drawn rather than listed: a
+                  row of names says how many, a row of pokemon says
+                  what a player is walking into.
+
+                  One column each, sized to whatever room the panel
+                  has. Nothing scrolls sideways — a lineup a player has
+                  to drag into view is a lineup they will not see the
+                  end of */}
+              <ul class="m-0 grid w-full list-none grid-cols-3 items-end gap-3 p-0">
                 <For each={record().party}>
                   {(entry) => (
-                    <li class="flex flex-col items-center gap-1">
-                      {/* No fixed height on the box. `overflow-x-auto`
-                          on the row makes it a scroll container in
-                          *both* directions — that is what the property
-                          does — so a sprite taller than the box it was
-                          given had its head cut off rather than
-                          spilling over. The box is whatever the sprite
-                          is, and the row lines their feet up */}
-                      <div class="flex items-end justify-center">
+                    <li class="flex min-w-0 flex-col items-center gap-1">
+                      {/* Square, and as wide as the column allows: a
+                          filled sprite is drawn as a share of the box
+                          it is given, so the box is what decides how
+                          big the pokemon is */}
+                      <span class="flex aspect-square w-full max-w-24 items-end justify-center">
                         <AnimatedSprite
                           species={entry.species}
                           animation="Idle"
                           direction="Down"
-                          scale={3}
+                          fill
                           shadow
                           label={`${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`}
                         />
-                      </div>
-                      <Badge tone="ember">
+                      </span>
+                      {/* Wrapped rather than held to one line: three
+                          pills that each refuse to break are three
+                          columns the panel has to widen for */}
+                      <Badge tone="ember" wrap class="max-w-full text-center">
                         Lv. {ROCKET_PARTY_LEVEL} {getSpeciesData(entry.species).name}
                       </Badge>
                     </li>

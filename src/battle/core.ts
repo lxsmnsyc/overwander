@@ -16,6 +16,17 @@ export const enum BattleModes {
    * own team, unless a Boss unit triggers them
    */
   Raid = 1,
+  /**
+   * A fight staged to be looked at rather than won.
+   *
+   * It runs every mechanic the others do — the same casting, the same
+   * damage, the same animations — and leaves out the two things that
+   * make a fight a fight: nothing decides an outcome, so it never
+   * settles, and nobody chooses moves on their own, so what happens is
+   * what somebody asked for. It stands for no record and is never
+   * stored; the rules it fights under are the ordinary ones
+   */
+  Demo = 2,
 }
 
 export default class Battle extends EventEngine<BattleEventMap> {

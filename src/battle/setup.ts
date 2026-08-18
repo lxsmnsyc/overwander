@@ -1,6 +1,6 @@
 import setupAbilities from './abilities';
 import setupAI from './ai';
-import Battle, { type BattleModes } from './core';
+import Battle, { BattleModes } from './core';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
@@ -49,9 +49,15 @@ export default function createBattle(
   setupStatus(battle);
   setupAbilities(battle);
   setupItems(battle);
-  setupAI(battle);
-  // Last, so the scan sees a tick's actions already settled
-  setupOutcomeMechanics(battle);
+  // A demo has nobody to choose for and nothing to win: the units
+  // stand until somebody casts through them, and a field with one
+  // side left is a field somebody wanted to look at rather than a
+  // fight that is over
+  if (battle.mode !== BattleModes.Demo) {
+    setupAI(battle);
+    // Last, so the scan sees a tick's actions already settled
+    setupOutcomeMechanics(battle);
+  }
 
   if (options?.realtime === true) {
     setupBattleMechanics(battle);

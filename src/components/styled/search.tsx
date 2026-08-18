@@ -43,6 +43,13 @@ export interface SearchProps {
    * since the box is always doing the same thing
    */
   placeholder?: string;
+  /**
+   * How long the box waits before handing the letters on. The default
+   * suits a list already in hand; a search the **server** answers is
+   * worth waiting longer for, since every settled keystroke there is a
+   * scan rather than a filter
+   */
+  wait?: number;
   class?: string;
 }
 
@@ -98,7 +105,7 @@ export default function Search(props: SearchProps): JSX.Element {
           waiting = setTimeout(() => {
             waiting = undefined;
             props.onChange(value);
-          }, SEARCH_DEBOUNCE);
+          }, props.wait ?? SEARCH_DEBOUNCE);
         }}
         onKeyDown={(event) => {
           // Somebody who has finished typing and pressed Enter has

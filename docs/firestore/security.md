@@ -69,9 +69,11 @@ Three things stay client-side by design, and the rules carry them:
   honest client recomputes the same set, and a dishonest one only lies to itself:
   the server re-derives every reward from the seed regardless.
 - **Profile details** — nickname and avatar are the player's to set. The balance
-  in the same document is not, and neither is the `role` field: the rules pin
-  both on update, require `gold` to open at zero, and refuse a create that names
-  a role at all. A role is granted out of band.
+  in the same document is not, and neither is the `role` field or the `banned`
+  flag: the rules pin all of them on update, require `gold` to open at zero, and
+  refuse a create that names a role or arrives already banned. A role is granted
+  out of band — on a development build, by the server handing every new account
+  `admin` as it is created.
 - **Buddies** — setting one is a preference, and the rule `get()`s the catch to
   confirm the player owns it.
 
@@ -91,12 +93,50 @@ it. What follows is what a signed-in client may still do.
 | `bags/{uid}`, `pokedex/{uid}`, `positions/{uid}`, `fled/{uid}`, `auctionSellers/{uid}` | Owner, by id (`get`)                                       | None                                      |
 | `encounters/{spawnId}:{uid}`                                                           | The named player, by id                                    | None                                      |
 | `bids/{uid}:{auctionId}`                                                               | The named player: `get` by id, `list` filtered on `player` | None                                      |
-| `gifts`                                                                                | None                                                       | None                                      |
+| `gifts`, `giftClaims`                                                                  | None                                                       | None                                      |
 
-`gifts` is the one collection no client touches at all. A mystery gift is
-offered, listed and claimed through the server, so the document is neither read
-nor written from a browser — and a client that could clear its own gift could
-take it twice.
+`gifts` and `giftClaims` are the collections no client touches at all. A mystery
+gift is offered, listed and claimed through the server, so neither the offer nor
+the claim is read or written from a browser — and a client that could write its
+own claim could take an open gift as many times as it liked.
+
+`positions/{uid}` is readable by its owner and nobody else, which is the right
+rule for a document a client could otherwise sweep the whole collection of — and
+the wrong answer for the profile a raid lobby opens. Where a trainer is standing
+is shown through a server call instead, which reads one document for one uid.
+
+### Roles, and what each may do
+
+Four roles, and they are a ladder rather than a set of flags
+([`src/auth/staff.ts`](../../src/auth/staff.ts)). Every rung may do what the rung
+below it may:
+
+| Role        | May                                                                     |
+| ----------- | ----------------------------------------------------------------------- |
+| _(player)_  | Play                                                                    |
+| `moderator` | Open the dashboard, read the accounts and the world, ban players        |
+| `admin`     | Also run the game: mystery gifts, raids, auctions. Makes moderators     |
+| `owner`     | Also makes admins                                                       |
+
+What separates them is who they may act **on**: strictly below themselves.
+An admin cannot ban or demote another admin, a moderator cannot touch a
+moderator, nobody touches the owner, and nobody may take their own authority off
+— an account that could would be one nobody can give it back to. The owner's own
+role is granted where the project is deployed rather than from any screen.
+
+The checks live on the server: `requireStaff` for anything the dashboard reads,
+`requireAdmin` for anything that runs the game, and `setRole`/`setBan` compare
+the caller's stored role against the target's before writing. The dashboard hides
+what a role cannot use, which is a courtesy rather than a defence.
+
+### A ban is one line
+
+`banned` on the profile, written by the server alone. `requireUid` refuses a
+banned account before it reads anything, and **every** privileged call passes
+through it — so one check shuts all of them rather than each remembering to ask.
+A banned player can still sign in and read: the game tells them they are banned
+and why, since a ban that looked like a broken game would be worse than one that
+says so.
 
 ### `get` and `list` are different questions
 

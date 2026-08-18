@@ -10,9 +10,10 @@ import type Biome from '../../data/ids/biome';
  * page. The camera is the caller's — this paints where it is pointed
  * and reports which way somebody asked to move it.
  *
- * There is no click target and no hover: the map is read, not used.
  * What it is *for* is knowing which way to walk, which is why the
  * player's own chunk is marked and everything else is just ground.
+ * A caller that wants a chunk chosen from it passes `onPick`; without
+ * one the map is read and not used.
  */
 
 /**
@@ -31,6 +32,8 @@ const COLORS = {
    */
   player: '#ffffff',
   focus: '#3b82f6',
+  /** The chunk somebody chose, ringed the way the player's own is */
+  picked: '#facc15',
 } as const;
 
 /**
@@ -83,6 +86,17 @@ export interface WorldMapCanvasProps {
    * Take the camera back to the player
    */
   onRecenter: () => void;
+  /**
+   * A chunk chosen out of the view, ringed where the camera is
+   * looking at it. Absent where nothing is chosen
+   */
+  pickedX?: number;
+  pickedY?: number;
+  /**
+   * Fired with the chunk a click landed in. Passing it is what makes
+   * the map something to use rather than something to read
+   */
+  onPick?: (chunkX: number, chunkY: number) => void;
 }
 
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
@@ -193,6 +207,19 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         context.lineWidth = 1;
       }
 
+      // The chosen chunk, ringed in a colour of its own: it is often
+      // the chunk the player is standing in, and two rings the same
+      // colour would say one thing
+      const pickedColumn = (props.pickedX ?? Number.NaN) - props.originX;
+      const pickedRow = (props.pickedY ?? Number.NaN) - props.originY;
+
+      if (pickedColumn >= 0 && pickedRow >= 0 && pickedColumn < across && pickedRow < across) {
+        context.strokeStyle = COLORS.picked;
+        context.lineWidth = 2;
+        context.strokeRect(pickedColumn * TILE - 1, pickedRow * TILE - 1, TILE + 2, TILE + 2);
+        context.lineWidth = 1;
+      }
+
       // A border while the keyboard is in here, so it is clear which
       // thing the arrow keys are moving
       if (focused()) {
@@ -236,6 +263,16 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         title={naming()}
         onMouseMove={(event) => {
           setHovered(chunkAt(event));
+        }}
+        onClick={(event) => {
+          const at = chunkAt(event);
+
+          if (at != null && props.biomes[at] != null) {
+            props.onPick?.(
+              props.originX + (at % props.span),
+              props.originY + Math.floor(at / props.span),
+            );
+          }
         }}
         onMouseLeave={() => {
           setHovered(null);

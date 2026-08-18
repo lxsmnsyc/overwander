@@ -383,6 +383,13 @@ export default class SafariSession<
    * already shaken off
    */
   getCatchChance(): number {
+    // A distributed pokemon is a gift, and a gift that could break out
+    // of the ball would be a gift somebody loses. The throw still
+    // happens — the ball is the player's, and the record names it
+    if (this.encounter.type === EncounterType.Fateful) {
+      return 1;
+    }
+
     const rate = getSpeciesData(this.encounter.species).catchRate;
     const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
     const grown = levelCatchFactor(this.encounter.level);
@@ -416,10 +423,17 @@ export default class SafariSession<
    * The chance it flees after a failed throw: the faster it is the
    * readier it bolts, capped so even the fastest stays catchable. It
    * grows with level as the catch chance shrinks. Anything fought for
-   * — a raid prize, a grunt's parting gift — never bolts
+   * or given — a raid prize, a grunt's parting gift, a distribution —
+   * never bolts
    */
   getFleeChance(): number {
-    if (isRaidEncounter(this.encounter.type) || this.encounter.type === EncounterType.Rocket) {
+    if (
+      isRaidEncounter(this.encounter.type) ||
+      this.encounter.type === EncounterType.Rocket ||
+      // Nor does a gift: it was put there for this player, and one
+      // that could run off is a gift the game took back
+      this.encounter.type === EncounterType.Fateful
+    ) {
       return 0;
     }
     return Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);

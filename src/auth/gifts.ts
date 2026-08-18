@@ -14,12 +14,12 @@ import getIdToken from './session';
  * has, which is the server's to decide
  */
 export async function listMysteryGifts(): Promise<MysteryGift[]> {
-  return listOnServer(await getIdToken(), getLocalOffset());
+  return listOnServer(await getIdToken());
 }
 
-async function listOnServer(token: string, offset: number): Promise<MysteryGift[]> {
+async function listOnServer(token: string): Promise<MysteryGift[]> {
   'use server';
-  return listOwed(await requireUid(token), await syncServerClock(), offset);
+  return listOwed(await requireUid(token), await syncServerClock());
 }
 
 /**

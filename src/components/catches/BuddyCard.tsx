@@ -263,11 +263,15 @@ function BuddyBody(
       <Status message={status()} tone="alert" />
 
       {/* The ordinary picker: an egg is as valid a buddy as anything
-          else, so nothing is left out of it */}
+          else, so nothing is left out of it. A press on a square is
+          the pick — choosing who walks beside you costs nothing and is
+          undone by choosing somebody else, so a card and a button in
+          the way of it is a step for nothing */}
       <Show when={props.viewOnly !== true}>
         <CatchPicker
           player={props.player}
           open={picking()}
+          pressable
           value={buddy()?.[0] ?? null}
           title="Walk with"
           verb="Walk with"

@@ -25,6 +25,25 @@ import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './__norm
 export interface EncounterRecord extends Encounter {
   spawn: string;
   player: string;
+  /**
+   * What the place is called, for a meeting that happened somewhere
+   * with a name rather than at a coordinate — a distribution received
+   * in a particular town. Absent for everything met in the world,
+   * which is named by the chunk it stands in
+   */
+  place?: string;
+  /**
+   * The room the pokemon walks in with, packed. Absent for an ordinary
+   * meeting, which arrives with what the game gives everything; a
+   * gift may be written with more, and the record has to say so
+   */
+  slots?: number;
+  /**
+   * Every ability it walks in with, where it walks in with more than
+   * the one it rolled. Absent for an ordinary meeting, which carries
+   * `ability` and nothing else
+   */
+  abilities?: Abilities[];
 }
 
 /**
@@ -58,5 +77,12 @@ export function asEncounterRecord(value: unknown): EncounterRecord {
     x: asNumber(data.x),
     y: asNumber(data.y),
     biome: asNumber(data.biome) as Biome,
+    // Both are absent from every meeting but a written one, and left
+    // off rather than defaulted: a place nobody named has no name
+    ...(typeof data.place === 'string' && data.place !== '' ? { place: data.place } : {}),
+    ...(typeof data.slots === 'number' ? { slots: asNumber(data.slots) } : {}),
+    ...(Array.isArray(data.abilities)
+      ? { abilities: asNumberArray(data.abilities) as Abilities[] }
+      : {}),
   };
 }

@@ -9,6 +9,7 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from './firebase';
+import claimDevAdmin from './roles';
 
 /**
  * The minimal personal details a player can set, plus their gold
@@ -44,6 +45,21 @@ export interface Profile {
    */
   role: string;
   /**
+   * Whether the account is shut out of the game.
+   *
+   * A banned account can still sign in and read — there is nothing to
+   * gain by hiding what has happened to it — and can do nothing else:
+   * every privileged call refuses it before it reads a thing. Like the
+   * role, it is written by the server alone
+   */
+  banned: boolean;
+  /**
+   * Why, in a sentence, for the player to read on the way in. Empty
+   * for an account nobody has banned, and for one banned without a
+   * word said
+   */
+  banReason: string;
+  /**
    * The `caught/{catchId}` walking at the player's side, or an empty
    * string when they walk alone.
    *
@@ -73,6 +89,9 @@ const converter: FirestoreDataConverter<Profile> = {
       // Everybody is a player until somebody says otherwise, so a
       // record without the field is one
       role: typeof data.role === 'string' ? data.role : '',
+      // Everybody is welcome until somebody says otherwise
+      banned: data.banned === true,
+      banReason: typeof data.banReason === 'string' ? data.banReason : '',
     };
   },
 };
@@ -131,8 +150,11 @@ export function deriveProfileDefaults(user: User): Profile {
     avatar: user.photoURL,
     gold: 0,
     buddy: '',
-    // An account opens as a player, whatever it may be made later
+    // An account opens as a player, and welcome, whatever it may be
+    // made later
     role: '',
+    banned: false,
+    banReason: '',
   };
 }
 
@@ -162,5 +184,18 @@ export async function ensureProfile(user: User): Promise<Profile> {
   // The whole document, balance included: saveProfile deliberately
   // cannot write gold
   await setDoc(getProfileRef(user.uid), defaults);
+
+  // A development build opens every account as staff, which is a
+  // thing only the server can do — the rules refuse a browser that
+  // names its own role. It is asked for after the profile exists so
+  // the grant has a document to merge into, and a refusal is nothing
+  // to stop a sign-up over
+  if (import.meta.env.DEV) {
+    try {
+      return { ...defaults, role: await claimDevAdmin() };
+    } catch {
+      return defaults;
+    }
+  }
   return defaults;
 }

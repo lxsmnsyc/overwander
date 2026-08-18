@@ -111,9 +111,16 @@ export function FormSection(props: FormSectionProps): JSX.Element {
  * Fields side by side where they fit and stacked where they do not.
  * Two is the useful width: a name and a code, a from and a to
  */
-export function FormGrid(props: ParentProps<{ columns?: 1 | 2; class?: string }>): JSX.Element {
+/** How many across, by how many the row was asked for */
+const COLUMNS: Record<1 | 2 | 3, string> = {
+  1: '',
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-3',
+};
+
+export function FormGrid(props: ParentProps<{ columns?: 1 | 2 | 3; class?: string }>): JSX.Element {
   return (
-    <div class={`grid gap-3 ${props.columns === 1 ? '' : 'sm:grid-cols-2'} ${props.class ?? ''}`}>
+    <div class={`grid gap-3 ${COLUMNS[props.columns ?? 2]} ${props.class ?? ''}`}>
       {props.children}
     </div>
   );

@@ -343,6 +343,22 @@ describe('safari session', () => {
     }
   });
 
+  it('hands a gift over whatever is thrown at it', () => {
+    // A gift cannot run and cannot break out: the throw is a
+    // formality, and the ball the player used is the one the record
+    // ends up naming. The roll is the worst one there is, and it is
+    // caught anyway
+    const session = new SafariSession(
+      makeEncounter(Species.Tauros, EncounterType.Fateful),
+      rolls([0.999]),
+    );
+
+    expect(session.getFleeChance()).toBe(0);
+    expect(session.getCatchChance()).toBe(1);
+    expect(session.throwBall()).toBe(ThrowResult.Caught);
+    expect(session.state).toBe(SafariState.Caught);
+  });
+
   it('exits on run away without burning the encounter', () => {
     const session = new SafariSession(makeEncounter(), rolls([]));
 

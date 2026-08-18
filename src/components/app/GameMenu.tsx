@@ -1,5 +1,5 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
+import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { serverNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
@@ -8,6 +8,7 @@ import { getTimeOfDay } from '../../data/ids/biome';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import { Divider, IconSlot } from '../styled';
+import { SHEER, holdFade } from '../styled/transition';
 import { ThemeToggle } from './theme';
 
 /**
@@ -206,48 +207,58 @@ export default function GameMenu(): JSX.Element {
             into. Centred on the button and pulled back by half its own
             width, so the panel stays over the middle of the screen
             however wide it turns out to be */}
-        <PopoverPanel
-          class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2 rounded-panel
-            border-2 border-tide bg-paper p-2 shadow-pop"
+        <Transition
+          show={open()}
+          {...SHEER}
+          class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
         >
-          {/* Day or night, over the keypad: it changes how the game
+          <PopoverPanel
+            // Kept mounted, since the fade needs something to fade,
+            // and out of reach while it is going
+            unmount={false}
+            onTransitionEnd={holdFade}
+            inert={!open()}
+            class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
+          >
+            {/* Day or night, over the keypad: it changes how the game
               looks rather than what is on the screen, so it is not one
               of the ten keys */}
-          <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
-            <ThemeToggle
-              class="cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink
+            <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
+              <ThemeToggle
+                class="cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink
                 shadow-none transition-colors hover:border-0 hover:bg-tide hover:text-on-accent
                 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2
                 focus-visible:outline-tide"
-            />
-          </div>
+              />
+            </div>
 
-          <div class="grid grid-cols-3 gap-1 pt-2">
-            <For each={ENTRIES}>
-              {(entry) => (
-                <button
-                  type="button"
-                  class={`${TILE} w-20`}
-                  disabled={entry.dialog == null}
-                  // What a screen reader is told about a key that is
-                  // kept rather than built. The word alone reads as
-                  // something the game can do and will not
-                  title={entry.dialog == null ? `${entry.label} — not yet` : entry.label}
-                  onClick={() => {
-                    if (entry.dialog == null) {
-                      return;
-                    }
-                    setOpen(false);
-                    game.setDialog(entry.dialog);
-                  }}
-                >
-                  <IconSlot />
-                  {entry.label}
-                </button>
-              )}
-            </For>
-          </div>
-        </PopoverPanel>
+            <div class="grid grid-cols-3 gap-1 pt-2">
+              <For each={ENTRIES}>
+                {(entry) => (
+                  <button
+                    type="button"
+                    class={`${TILE} w-20`}
+                    disabled={entry.dialog == null}
+                    // What a screen reader is told about a key that is
+                    // kept rather than built. The word alone reads as
+                    // something the game can do and will not
+                    title={entry.dialog == null ? `${entry.label} — not yet` : entry.label}
+                    onClick={() => {
+                      if (entry.dialog == null) {
+                        return;
+                      }
+                      setOpen(false);
+                      game.setDialog(entry.dialog);
+                    }}
+                  >
+                    <IconSlot />
+                    {entry.label}
+                  </button>
+                )}
+              </For>
+            </div>
+          </PopoverPanel>
+        </Transition>
       </Popover>
     </nav>
   );

@@ -1,15 +1,22 @@
-import { type JSX, createSignal, onMount } from 'solid-js';
+import { type JSX, Show, createSignal, onMount } from 'solid-js';
 import {
   registerWithEmail,
   signInWithEmail,
+  signInWithGithub,
   signInWithGoogle,
   takeRedirectResult,
 } from '../../auth/actions';
 import { Button, Row, Status } from '../styled';
 
 /**
- * Email and Google sign-in. Registration shares the email form —
- * the same pair of fields either signs in or creates the account
+ * The way in: Google or GitHub, and — on a development build alone —
+ * an address and a password.
+ *
+ * The email pair is kept for local work and for the browser tests,
+ * which need an account they can make and throw away without another
+ * site in the loop. A player meets the two buttons and nothing
+ * else: an account the game holds a password for is an account the
+ * game has to keep one safe for
  */
 export default function LoginForm(): JSX.Element {
   const [email, setEmail] = createSignal('');
@@ -37,49 +44,57 @@ export default function LoginForm(): JSX.Element {
 
   return (
     <div class="flex flex-col gap-3 text-left">
-      <form
-        class="flex flex-col gap-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-        }}
-      >
-        <input
-          type="email"
-          placeholder="Email"
-          autocomplete="email"
-          value={email()}
-          onInput={(event) => {
-            setEmail(event.currentTarget.value);
+      {/* Not drawn in a build: the pair of fields is here for a
+          local run and for the browser tests, which make and
+          throw away accounts of their own */}
+      <Show when={import.meta.env.DEV}>
+        <form
+          class="flex flex-col gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
           }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          autocomplete="current-password"
-          value={password()}
-          onInput={(event) => {
-            setPassword(event.currentTarget.value);
-          }}
-        />
-        <Row>
-          <Button
-            type="submit"
-            tone="primary"
-            class="grow justify-center"
-            onClick={run(async () => signInWithEmail(email(), password()))}
-          >
-            Sign in
-          </Button>
-          <Button
-            class="grow justify-center"
-            onClick={run(async () => registerWithEmail(email(), password()))}
-          >
-            Register
-          </Button>
-        </Row>
-      </form>
+        >
+          <input
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+            value={email()}
+            onInput={(event) => {
+              setEmail(event.currentTarget.value);
+            }}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+            value={password()}
+            onInput={(event) => {
+              setPassword(event.currentTarget.value);
+            }}
+          />
+          <Row>
+            <Button
+              type="submit"
+              tone="primary"
+              class="grow justify-center"
+              onClick={run(async () => signInWithEmail(email(), password()))}
+            >
+              Sign in
+            </Button>
+            <Button
+              class="grow justify-center"
+              onClick={run(async () => registerWithEmail(email(), password()))}
+            >
+              Register
+            </Button>
+          </Row>
+        </form>
+      </Show>
       <Button class="justify-center" onClick={run(signInWithGoogle)}>
         Sign in with Google
+      </Button>
+      <Button class="justify-center" onClick={run(signInWithGithub)}>
+        Sign in with GitHub
       </Button>
       <Status message={error()} tone="alert" />
     </div>

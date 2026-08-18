@@ -1,7 +1,9 @@
 import { Title } from '@solidjs/meta';
 import type { User } from 'firebase/auth';
-import { type JSX, Show, createSignal } from 'solid-js';
+import { type JSX, type ParentProps, Show, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
+import { type Profile, watchProfile } from '../auth/profile';
+import { signOut } from '../auth/actions';
 import { useAuth } from '../auth/context';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/AuctionTab';
@@ -321,6 +323,46 @@ function GameView(props: { user: User }): JSX.Element {
   );
 }
 
+/**
+ * The game, unless the account has been shut out of it.
+ *
+ * A ban is enforced on the server — every privileged call refuses a
+ * banned account before it reads anything — and this is so the player
+ * is told rather than left pressing buttons that quietly do nothing.
+ * The profile is followed rather than read once, so a ban lifted while
+ * somebody is sitting here opens the world under them
+ */
+function Banned(props: ParentProps<{ uid: string }>): JSX.Element {
+  const profile = from<Profile | null>((set) =>
+    watchProfile(props.uid, (record) => {
+      set(record);
+    }),
+  );
+
+  return (
+    <Show when={profile()?.banned === true} fallback={props.children}>
+      <div class="flex h-full items-center justify-center px-4">
+        <div class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
+          text-center shadow-pop">
+          <h1>This account is banned.</h1>
+          <Note>
+            {profile()?.banReason === ''
+              ? 'Nothing else was said about it.'
+              : profile()?.banReason}
+          </Note>
+          <Button
+            onClick={() => {
+              signOut().catch(() => undefined);
+            }}
+          >
+            Sign out
+          </Button>
+        </div>
+      </div>
+    </Show>
+  );
+}
+
 export default function Home(): JSX.Element {
   const auth = useAuth();
 
@@ -360,9 +402,11 @@ export default function Home(): JSX.Element {
         }
       >
         {(user) => (
-          <GameProvider>
-            <GameView user={user()} />
-          </GameProvider>
+          <Banned uid={user().uid}>
+            <GameProvider>
+              <GameView user={user()} />
+            </GameProvider>
+          </Banned>
         )}
       </Show>
     </main>

@@ -128,8 +128,12 @@ A young pokemon is therefore easy to catch _and_ easy to hold on to, while a
 fully grown fast one is neither. Even the fastest pokemon flees at most half the
 time, so nothing is impossible to keep.
 
-Two pokemon never flee: a **raid prize**, and the pokemon a **beaten Team Rocket
-grunt** hands over. Both were already fought for.
+Three pokemon never flee: a **raid prize**, the pokemon a **beaten Team Rocket
+grunt** hands over, and one that arrives as a **gift**. The first two were
+already fought for, and the third was set aside for you — a gift that could run
+off would be a gift taken back. A gifted pokemon is also caught by the first ball
+that reaches it, whichever ball that is: the throw is a formality, and the ball
+you use is the one the record ends up naming.
 
 A pokemon that flees cannot be met again. Walking away is different: it remains
 standing there until its five-minute window turns over, and may be tried again.

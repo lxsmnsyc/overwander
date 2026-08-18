@@ -65,6 +65,7 @@ import deriveEncounter from '../../overworld/encounter';
 import createOverworld from '../../overworld/setup';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
+import namePlace from '../../overworld/place';
 import { isInWorld } from '../../overworld/world';
 import type SafariSession from '../../overworld/safari';
 import { spawnKey } from '../../overworld/safari';
@@ -219,7 +220,7 @@ function stateOf(offer: NestOffer): EggState {
  * board, which is the same fact twice and so is written once
  */
 function naming(chunk: ChunkView): string {
-  return `${BIOME_NAMES[chunk.biome]} (${chunk.x}, ${chunk.y})`;
+  return namePlace(chunk.x, chunk.y);
 }
 
 interface ChunkView {

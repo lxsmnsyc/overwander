@@ -1,7 +1,13 @@
 import 'server-only';
 import { POSITION_COLLECTION } from '../auth/collections';
-import { asCellCoordinate, asChunkCoordinate } from '../auth/position-record';
+import {
+  type PositionRecord,
+  asCellCoordinate,
+  asChunkCoordinate,
+  asPositionRecord,
+} from '../auth/position-record';
 import { getAdminFirestore } from './firebase';
+import { docData } from './read';
 
 /**
  * Where a player is, written with admin credentials.
@@ -42,4 +48,19 @@ export default async function savePosition(
       cellY: asCellCoordinate(cellY),
       movedAt: now,
     });
+}
+
+/**
+ * Where anybody is standing, or null for a player who has never
+ * walked. It is read here rather than from a browser because the
+ * rules let a player read only their own — which is the right rule
+ * for a document a client could otherwise sweep the whole collection
+ * of, and the wrong answer for the profile a lobby opens
+ */
+export async function readPosition(uid: string): Promise<PositionRecord | null> {
+  const stored = docData(
+    await getAdminFirestore().collection(POSITION_COLLECTION).doc(uid).get(),
+  );
+
+  return stored == null ? null : asPositionRecord(stored);
 }

@@ -15,7 +15,7 @@ import { FieldFrame } from './form';
  * offers and what the browser fills in, so it is worth saying even
  * where the field looks the same
  */
-export type TextFieldKind = 'text' | 'email' | 'password' | 'url' | 'search' | 'number';
+export type TextFieldKind = 'text' | 'email' | 'password' | 'url' | 'search' | 'number' | 'date';
 
 export interface TextFieldProps {
   label: string;
@@ -27,8 +27,22 @@ export interface TextFieldProps {
   required?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  /**
+   * The range a number may be typed in. It is the browser's own
+   * check — the arrows stop at it and a typed value outside it is
+   * refused — for a field whose limits are worth showing rather than
+   * explaining
+   */
+  min?: number;
+  max?: number;
   /** What the browser may fill in — `off` for anything account-specific */
   autocomplete?: string;
+  /**
+   * What Enter does, for a field whose value is submitted rather than
+   * merely typed. Leaving it out is right for a field inside a form —
+   * the form's own submit already answers Enter
+   */
+  onEnter?: () => void;
   class?: string;
 }
 
@@ -50,6 +64,8 @@ export default function TextField(props: TextFieldProps): JSX.Element {
           type={props.kind ?? 'text'}
           value={props.value}
           placeholder={props.placeholder}
+          min={props.min}
+          max={props.max}
           disabled={props.disabled}
           autocomplete={props.autocomplete}
           aria-describedby={parts.describedBy}
@@ -58,6 +74,11 @@ export default function TextField(props: TextFieldProps): JSX.Element {
           class={`w-full ${props.error == null ? '' : WRONG}`}
           onInput={(event) => {
             props.onChange(event.currentTarget.value);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              props.onEnter?.();
+            }
           }}
         />
       )}

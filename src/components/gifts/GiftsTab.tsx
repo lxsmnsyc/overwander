@@ -1,12 +1,27 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
-import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../../auth/gift-record';
+import {
+  type CatchGift,
+  type EncounterGift,
+  GiftKind,
+  type ItemGift,
+  type MysteryGift,
+} from '../../auth/gift-record';
+import { GameDialog,useGame } from '../app/game-context';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
-import getSigil from '../../data/constants/sigil';
+import type { CaughtPokemon } from '../../auth/caught';
+import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
+import { createStatsField } from '../../data/constants/stats';
+import Biome from '../../data/ids/biome';
+import { Balls } from '../../data/ids/items';
+import Natures from '../../data/ids/natures';
+import { Genders } from '../../data/ids/species';
+import { EncounterType } from '../../overworld/encounter';
+import { getMaxHealth } from '../../auth/health';
 import { getSpeciesData } from '../../data/species';
+import CatchCard from '../catches/CatchCard';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import ItemGrid from '../items/ItemGrid';
 import { describeItem } from '../details';
-import { useGame } from '../app/game-context';
 import { Button, DialogSection, HoverCard, Meta, Note, type ToastTone, useToast } from '../styled';
 
 /**
@@ -23,7 +38,7 @@ import { Button, DialogSection, HoverCard, Meta, Note, type ToastTone, useToast 
  * What a gifted pokemon is, written the way it is written everywhere
  * else: the level, the name, and the star that says it sparkles
  */
-function describeGiven(gift: CatchGift): string {
+function describeGiven(gift: CatchGift | EncounterGift): string {
   return `Lv. ${gift.level} ${getSpeciesData(gift.species).name}${gift.shiny ? ' ✦' : ''}`;
 }
 
@@ -31,6 +46,14 @@ function describeGift(gift: MysteryGift): string {
   return gift.kind === GiftKind.Item
     ? `${gift.amount} × ${describeItem(gift.item)}`
     : describeGiven(gift);
+}
+
+/**
+ * What the button on a square says. A meeting is not handed over: it
+ * is put in front of the player, and the ball is theirs to throw
+ */
+function verbFor(gift: CatchGift | EncounterGift): string {
+  return gift.kind === GiftKind.Encounter ? 'Meet' : 'Claim';
 }
 
 /**
@@ -43,11 +66,67 @@ function looking(): JSX.Element {
 }
 
 /**
+ * The waiting pokemon written as a record, so the card that reads a
+ * catch can read a gift.
+ *
+ * Everything on a gift's card is a fact about the individual — the
+ * sigil, the nature, the stars, what it knows and what it carries —
+ * and the box already has a card that says all of it. The fields
+ * below that a gift has no answer for are what a fresh catch has:
+ * nothing spent, nothing fought, nobody's yet
+ */
+function asPreview(gift: CatchGift | EncounterGift): CaughtPokemon {
+  const values = createStatsField();
+  const preview = {
+    owner: '',
+    type: EncounterType.Fateful,
+    species: gift.species,
+    nickname: '',
+    level: gift.level,
+    individualValue: gift.individualValue,
+    traitValue: gift.traitValue,
+    ivs: gift.ivs ?? gift.individualValue,
+    gender: gift.gender ?? Genders.Genderless,
+    nature: gift.nature ?? Natures.Hardy,
+    shiny: gift.shiny,
+    shadow: false,
+    egg: false,
+    favorite: false,
+    guarded: false,
+    traded: false,
+    auctionable: false,
+    moves: gift.moves,
+    movePoints: {},
+    abilities: gift.abilities,
+    slots: gift.slots,
+    items: gift.items,
+    history: [],
+    lockedAt: 0,
+    steps: 0,
+    hatchSteps: 0,
+    steppedAt: 0,
+    statuses: 0,
+    lair: null,
+    ball: gift.kind === GiftKind.Catch ? gift.ball : Balls.PokeBall,
+    caughtAt: '',
+    locale: '',
+    effortValues: values,
+    effortBonus: 0,
+    walked: 0,
+    friendship: BASE_FRIENDSHIP,
+    origin: { timestamp: 0, x: 0, y: 0, biome: Biome.Beyond, place: gift.place },
+  };
+
+  // Whole, because nothing has happened to it yet
+  return { ...preview, health: getMaxHealth(preview) };
+}
+
+/**
  * A waiting pokemon as a square of the box. It has no record yet — the
  * record is what claiming it writes — so what is drawn comes off the
  * gift itself
  */
-function asSquare(gift: CatchGift): BoxEntry {
+function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
   return {
     id: gift.id,
     species: gift.species,
@@ -55,7 +134,7 @@ function asSquare(gift: CatchGift): BoxEntry {
     egg: false,
     progress: 0,
     fainted: false,
-    label: `Claim ${describeGiven(gift)}`,
+    label: `${verbFor(gift)} ${describeGiven(gift)}`,
   };
 }
 
@@ -66,7 +145,11 @@ function asSquare(gift: CatchGift): BoxEntry {
  * `Suspense` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
-function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void }): JSX.Element {
+function GiftShelf(props: {
+  owed: Resource<MysteryGift[]>;
+  viewOnly?: boolean;
+  onClaimed: () => void;
+}): JSX.Element {
   const game = useGame();
   const toast = useToast();
   /**
@@ -77,12 +160,15 @@ function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void
   const [taking, setTaking] = createSignal<string | null>(null);
 
   const gifts = (): MysteryGift[] => props.owed() ?? [];
-  const pokemon = (): CatchGift[] =>
-    gifts().filter((gift): gift is CatchGift => gift.kind === GiftKind.Catch);
+  const pokemon = (): (CatchGift | EncounterGift)[] =>
+    gifts().filter(
+      (gift): gift is CatchGift | EncounterGift => gift.kind !== GiftKind.Item,
+    );
   const things = (): ItemGift[] =>
     gifts().filter((gift): gift is ItemGift => gift.kind === GiftKind.Item);
 
-  const found = (id: string): CatchGift | undefined => pokemon().find((gift) => gift.id === id);
+  const found = (id: string): CatchGift | EncounterGift | undefined =>
+    pokemon().find((gift) => gift.id === id);
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -94,6 +180,14 @@ function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void
       .then((claimed) => {
         if (claimed == null) {
           say('That gift is no longer waiting.', 'ember');
+          return;
+        }
+        // A meeting is not received: it is standing there, and the
+        // shelf gets out of the way so the player can throw at it
+        if (claimed.encounter != null) {
+          say(`${describeGift(claimed.gift)} is waiting for you.`, 'leaf');
+          game.setDialog(GameDialog.None);
+          game.setEncounter(claimed.encounter);
           return;
         }
         say(`Received ${describeGift(claimed.gift)}.`, 'leaf');
@@ -129,27 +223,29 @@ function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void
                 trigger={<span class="block size-full" />}
                 title="Gift"
                 footer={
-                  <Button
-                    tone="primary"
-                    disabled={taking() != null}
-                    onClick={() => {
-                      take(entry().id);
-                    }}
-                  >
-                    Claim
-                  </Button>
+                  <Show when={props.viewOnly !== true && found(entry().id)}>
+                    {(gift) => (
+                      <Button
+                        tone="primary"
+                        disabled={taking() != null}
+                        onClick={() => {
+                          take(entry().id);
+                        }}
+                      >
+                        {verbFor(gift())}
+                      </Button>
+                    )}
+                  </Show>
                 }
               >
                 <Show when={found(entry().id)}>
                   {(gift) => (
-                    <div class="flex flex-col gap-1">
-                      <span class="font-semibold">{describeGiven(gift())}</span>
-                      {/* The mark it will be known by: two of the same
-                            species with the same sigil are the same
-                            individual */}
-                      <Meta class="font-mono tracking-[0.2em]">
-                        {getSigil(gift().individualValue, gift().traitValue)}
-                      </Meta>
+                    <div class="flex flex-col gap-1.5">
+                      {/* The box's own card, reading the gift as the
+                          record it is about to become: the same sigil,
+                          stars, moves and held items a pokemon in the
+                          box is read by */}
+                      <CatchCard caught={asPreview(gift())} />
                       <Meta>{gift().reason}</Meta>
                     </div>
                   )}
@@ -168,19 +264,22 @@ function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void
             entries={things().map((gift) => ({
               item: gift.item,
               amount: gift.amount,
-              said: `Claim ${describeGift(gift)}`,
+              said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
               card: <Meta>{gift.reason}</Meta>,
-              footer: (
-                <Button
-                  tone="primary"
-                  disabled={taking() != null}
-                  onClick={() => {
-                    take(gift.id);
-                  }}
-                >
-                  Claim
-                </Button>
-              ),
+              footer:
+                props.viewOnly === true ? (
+                  <></>
+                ) : (
+                  <Button
+                    tone="primary"
+                    disabled={taking() != null}
+                    onClick={() => {
+                      take(gift.id);
+                    }}
+                  >
+                    Claim
+                  </Button>
+                ),
             }))}
           />
         </DialogSection>
@@ -194,13 +293,24 @@ function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void
  * component down, under this boundary, so a shelf still arriving
  * replaces itself rather than the page it is standing on
  */
-export default function GiftsTab(): JSX.Element {
+export interface GiftsTabProps {
+  /**
+   * Whether the shelf is being read rather than taken from. The
+   * dashboard shows it that way: a gift is taken in the world — a
+   * meeting has to be stood in front of somebody who is standing
+   * somewhere — so a button here would be one that led nowhere
+   */
+  viewOnly?: boolean;
+}
+
+export default function GiftsTab(props: GiftsTabProps): JSX.Element {
   const [owed, { refetch }] = createResource(listMysteryGifts);
 
   return (
     <Suspense fallback={looking()}>
       <GiftShelf
         owed={owed}
+        viewOnly={props.viewOnly}
         onClaimed={() => {
           Promise.resolve(refetch()).catch(() => undefined);
         }}

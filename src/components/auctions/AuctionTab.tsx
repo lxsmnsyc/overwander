@@ -357,6 +357,12 @@ export interface AuctionTabProps {
   adding?: boolean;
   onAdding?: (open: boolean) => void;
   player: string;
+  /**
+   * Whether the board is only being looked at. The dashboard reads it
+   * this way: every lot is still drawn and still opens its record, and
+   * nothing on it bids, collects or takes anything back
+   */
+  viewOnly?: boolean;
 }
 
 /**
@@ -625,32 +631,34 @@ function AuctionBoard(
   };
 
   const lotActions = (id: string, auction: AuctionRecord): JSX.Element => (
-    <Show
-      when={claimOf(id, auction)}
-      fallback={
-        // The button asks; the dialog it asks for stands with the panel
-        // rather than inside this card. A card is put away the moment
-        // the pointer leaves it, and it takes whatever is mounted inside
-        // it — which was this dialog, gone before it could be typed in
-        <Show when={auction.seller !== props.player}>
-          <Button
-            tone="primary"
-            disabled={bidRefusal(auction, props.player, gold()) != null}
-            title={bidRefusal(auction, props.player, gold()) ?? undefined}
-            onClick={() => {
-              setBidding(id);
-            }}
-          >
-            Bid
+    <Show when={props.viewOnly !== true}>
+      <Show
+        when={claimOf(id, auction)}
+        fallback={
+          // The button asks; the dialog it asks for stands with the panel
+          // rather than inside this card. A card is put away the moment
+          // the pointer leaves it, and it takes whatever is mounted inside
+          // it — which was this dialog, gone before it could be typed in
+          <Show when={auction.seller !== props.player}>
+            <Button
+              tone="primary"
+              disabled={bidRefusal(auction, props.player, gold()) != null}
+              title={bidRefusal(auction, props.player, gold()) ?? undefined}
+              onClick={() => {
+                setBidding(id);
+              }}
+            >
+              Bid
+            </Button>
+          </Show>
+        }
+      >
+        {(taking) => (
+          <Button tone="primary" onClick={taking().onClaim}>
+            {taking().label}
           </Button>
-        </Show>
-      }
-    >
-      {(taking) => (
-        <Button tone="primary" onClick={taking().onClaim}>
-          {taking().label}
-        </Button>
-      )}
+        )}
+      </Show>
     </Show>
   );
 
@@ -812,7 +820,9 @@ function AuctionBoard(
   const shopping = (): JSX.Element => (
     <>
       <Row class="justify-center">
-        <Badge tone="gold">{gold()} gold</Badge>
+        <Show when={props.viewOnly !== true}>
+          <Badge tone="gold">{gold()} gold</Badge>
+        </Show>
         <Show when={board().length > SEARCH_FROM}>
           <Search
             placeholder="Search the lots"

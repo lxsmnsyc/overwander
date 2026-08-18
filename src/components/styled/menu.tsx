@@ -1,5 +1,13 @@
 import { For, type JSX, createSignal } from 'solid-js';
-import { Menu as HeadlessMenu, MenuItem, Popover, PopoverButton, PopoverPanel } from 'terracotta';
+import {
+  Menu as HeadlessMenu,
+  MenuItem,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from 'terracotta';
+import { SHEER, holdFade } from './transition';
 
 /**
  * A short list of things that can be done to whatever is on screen,
@@ -65,32 +73,39 @@ export default function Menu(props: MenuProps): JSX.Element {
           header, so a panel laid out rightwards from there runs off
           the side of the screen — and a menu you have to scroll the
           page sideways to read is a menu with nothing in it */}
-      <PopoverPanel
-        class="absolute top-full right-0 z-30 mt-1.5 w-max min-w-44 rounded-xl border-2
-          border-tide bg-paper p-1 shadow-pop"
-      >
-        <HeadlessMenu class="flex list-none flex-col gap-0.5">
-          <For each={props.actions}>
-            {(action) => (
-              <MenuItem
-                as="button"
-                type="button"
-                class={ITEM}
-                aria-disabled={action.disabled === true}
-                onClick={() => {
-                  if (action.disabled === true) {
-                    return;
-                  }
-                  setOpen(false);
-                  action.onSelect();
-                }}
-              >
-                {action.label}
-              </MenuItem>
-            )}
-          </For>
-        </HeadlessMenu>
-      </PopoverPanel>
+      <Transition show={open()} {...SHEER} class="absolute top-full right-0 z-30 mt-1.5 w-max">
+        <PopoverPanel
+          // Kept mounted, since the fade needs something to fade, and
+          // out of reach while it is going: a menu that has been
+          // dismissed is not one to pick from
+          unmount={false}
+          onTransitionEnd={holdFade}
+          inert={!open()}
+          class="min-w-44 rounded-xl border-2 border-tide bg-paper p-1 shadow-pop"
+        >
+          <HeadlessMenu class="flex list-none flex-col gap-0.5">
+            <For each={props.actions}>
+              {(action) => (
+                <MenuItem
+                  as="button"
+                  type="button"
+                  class={ITEM}
+                  aria-disabled={action.disabled === true}
+                  onClick={() => {
+                    if (action.disabled === true) {
+                      return;
+                    }
+                    setOpen(false);
+                    action.onSelect();
+                  }}
+                >
+                  {action.label}
+                </MenuItem>
+              )}
+            </For>
+          </HeadlessMenu>
+        </PopoverPanel>
+      </Transition>
     </Popover>
   );
 }

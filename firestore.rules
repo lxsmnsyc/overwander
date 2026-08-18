@@ -21,7 +21,11 @@ service cloud.firestore {
       // as anything else
       allow create: if isOwner(uid)
         && request.resource.data.gold == 0
-        && request.resource.data.get('role', '') == '';
+        && request.resource.data.get('role', '') == ''
+        // Nor may it arrive already banned or already forgiven: the
+        // field is the server's, and a client that could write it
+        // could unban itself by opening its profile again
+        && request.resource.data.get('banned', false) == false;
       // The buddy lives here too: it is the player's to set, and it
       // is read on nearly every action they take
       allow update: if isOwner(uid)
@@ -198,6 +202,13 @@ service cloud.firestore {
     // server, so this is nobody's to read and nobody's to write: a
     // client that could clear its own gift could take it twice
     match /gifts/{giftId} {
+      allow read: if false;
+      allow write: if false;
+    }
+    // And who has taken what. Written inside the transaction that
+    // hands a gift over, which is what stops an open gift being taken
+    // twice by the same player
+    match /giftClaims/{claimId} {
       allow read: if false;
       allow write: if false;
     }

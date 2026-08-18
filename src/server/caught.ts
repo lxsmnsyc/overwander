@@ -104,7 +104,12 @@ export async function hasSpareCatch(uid: string): Promise<boolean> {
  * lines is the same either way: what it rolled, what room it has,
  * what it is worth to somebody else, and the fact that it arrives
  * whole. What differs is the ball it is in and what the history says
- * it was, so those are asked for
+ * it was, so those are asked for.
+ *
+ * `from` is the trainer it belonged to before this one, for a
+ * distribution written as somebody else's pokemon — "owned by Red".
+ * It is a name rather than an account: there is no such player, and
+ * the entry is there so the sheet can say where the pokemon came from
  */
 export async function writeCaughtRecord(
   uid: string,
@@ -114,8 +119,11 @@ export async function writeCaughtRecord(
   now: number,
   offset: number,
   locale: string,
+  from = '',
 ): Promise<string> {
   const ref = getAdminFirestore().collection(CAUGHT_COLLECTION).doc();
+  const room =
+    encounter.slots ?? packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS);
   // The instant is the server's, the calendar the owner's: the stamp
   // is written in their zone, and the species day is the day it was
   // where they were standing
@@ -137,22 +145,36 @@ export async function writeCaughtRecord(
     ivs: encounter.ivs,
     gender: encounter.gender,
     nature: encounter.nature,
-    moves: encounter.moves,
+    // Cut to the room below: a record that knew more moves than it
+    // has slots for would be one the sheet could not draw
+    moves: encounter.moves.slice(0, getSlots(room, Slots.Move)),
     // Nothing has been spent on any of them: what a pokemon arrives
     // knowing is what its species and its rolls gave it
     movePoints: {},
-    // A shadow raid's reward keeps its Shadow ability for good, on
-    // top of the one it rolled
-    abilities: shadow ? [encounter.ability, Abilities.Shadow] : [encounter.ability],
-    // What it has room for. A shadow needs no extra room for the
-    // shadow: the special tier takes no slot
-    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
+    // Whatever it walks in with — the one it rolled, or the list a
+    // gift was written with — plus Shadow for good where it came out
+    // of one. Shadow is added once however it arrived
+    abilities: [
+      ...new Set([
+        ...(encounter.abilities ?? [encounter.ability]),
+        ...(shadow ? [Abilities.Shadow] : []),
+      ]),
+    ],
+    // What it has room for: the game's own, unless the meeting was
+    // written with more. A shadow needs no extra room for the shadow
+    // itself — the special tier takes no slot
+    slots: room,
     // Whatever it was carrying when it was met comes with it, cut to
     // the room the line above just gave it
-    items: encounter.items.slice(0, DEFAULT_ITEM_SLOTS),
+    items: encounter.items.slice(0, getSlots(room, Slots.Item)),
     // The ball is on the entry as well as on the pokemon: this is the
     // one it arrived in, and a later owner may put it in another
-    history: [{ owner: uid, acquiredAt: caughtAt, kind, ball }],
+    history: [
+      // Whoever had it first, where the gift says somebody did. It
+      // holds no uid: nobody signs in as Red
+      ...(from === '' ? [] : [{ owner: '', name: from, acquiredAt: caughtAt, kind, ball }]),
+      { owner: uid, acquiredAt: caughtAt, kind, ball },
+    ],
     // Whatever was true of the meeting is true of the record: it
     // sparkled for this player, or it came out of a shadow raid
     shiny: encounter.shiny,
@@ -198,6 +220,9 @@ export async function writeCaughtRecord(
       x: encounter.x,
       y: encounter.y,
       biome: encounter.biome,
+      // A meeting that happened somewhere with a name says the name;
+      // one met in the world is named by its chunk
+      ...(encounter.place == null ? {} : { place: encounter.place }),
     },
   });
   // Every arrival ends here — thrown at and caught, or handed over —

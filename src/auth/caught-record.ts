@@ -228,6 +228,12 @@ export interface CaughtPokemon {
     x: number;
     y: number;
     biome: Biome;
+    /**
+     * What the place is called, where somebody named it: a
+     * distribution says the town it was received in, since a gift
+     * happened at no coordinate anybody walked to
+     */
+    place?: string;
   };
 }
 
@@ -371,6 +377,13 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
 export interface OwnershipRecord {
   owner: string;
   /**
+   * What to call this owner when the uid names nobody the store knows:
+   * the original trainer of a distributed pokemon, who is a name in a
+   * story rather than an account. Absent for every hand a pokemon has
+   * actually passed through, which is named by its profile
+   */
+  name?: string;
+  /**
    * When this owner obtained it, as a local ISO 8601 string in their
    * own zone
    */
@@ -426,6 +439,11 @@ function asOwnershipHistory(
 
     return {
       owner: asString(record.owner),
+      // Left off rather than stored empty: a name is only there for an
+      // owner no profile can name
+      ...(typeof record.name === 'string' && record.name !== ''
+        ? { name: asString(record.name) }
+        : {}),
       acquiredAt: asString(record.acquiredAt),
       kind: record.kind == null ? older : (asNumber(record.kind) as Acquisition),
       // A sale written before the price was kept says nothing about it,
@@ -541,6 +559,11 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
       x: asNumber(origin.x),
       y: asNumber(origin.y),
       biome: asNumber(origin.biome) as Biome,
+      // Named only where somebody named it, so a record from the world
+      // is not given an empty name to show
+      ...(typeof origin.place === 'string' && origin.place !== ''
+        ? { place: asString(origin.place) }
+        : {}),
     },
   };
 }

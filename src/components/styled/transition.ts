@@ -10,10 +10,11 @@
  * <Transition show={isOpen} {...FADE}>…</Transition>
  * ```
  *
- * There are two. `FADE` fades and grows, and belongs to a **panel** —
- * a dialog's, a popover's. `SHEER` is the same fade with nothing else
- * in it, for the veil behind a dialog and for anything placed against
- * the window rather than laid out in it.
+ * There are two. `FADE` fades and grows, and belongs to a **dialog's
+ * panel**. `SHEER` is the same fade with nothing else in it, and is
+ * what everything else takes: the veil behind a dialog, a tooltip or
+ * card placed against the window, and anything dropped from a control
+ * it is attached to — a popover, a listbox, a combobox.
  *
  * The element it is spread onto has to be the one the portal already
  * contains, since opacity on an ancestor does not reach through a
@@ -49,11 +50,12 @@ export function holdFade(event: TransitionEvent): void {
 /**
  * The same arrival with the scale taken out: opacity alone.
  *
- * It is for whatever is not a panel. A veil behind a dialog has no
- * edges to grow from, and a hover card or a tooltip is placed against
- * the window — a scale on those is a transform, and a transform makes
- * the element the containing block for anything fixed inside it, which
- * put a card a whole viewport down the page
+ * A veil behind a dialog has no edges to grow from, and a list
+ * dropped from a button grows from the button rather than from
+ * itself. It also keeps a transform off anything placed against the
+ * window: a transform makes the element the containing block for
+ * whatever is fixed inside it, which put a hover card a whole
+ * viewport down the page
  */
 export const SHEER = {
   enterFrom: 'opacity-0',
@@ -65,8 +67,8 @@ export const SHEER = {
 } as const;
 
 /**
- * The arrival for a panel: it fades and grows from half its size.
- * Everything else takes `SHEER`
+ * The arrival for a dialog's panel: it fades and grows from half its
+ * size. Everything else takes `SHEER`
  */
 const FADE = {
   enterFrom: 'opacity-0 scale-50',

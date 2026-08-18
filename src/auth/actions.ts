@@ -1,4 +1,6 @@
 import {
+  type AuthProvider,
+  GithubAuthProvider,
   GoogleAuthProvider,
   type UserCredential,
   createUserWithEmailAndPassword,
@@ -65,14 +67,14 @@ function isPopupProblem(error: unknown): boolean {
 }
 
 /**
- * Sign in with Google. Resolves to the credential when the popup
- * carried it, and to null when the browser is being sent to Google
- * instead — the page is on its way out at that point, and what comes
- * back arrives through the auth listener rather than through here
+ * Sign in through somebody else, popup first and redirect after.
+ * Resolves to the credential when the popup carried it, and to null
+ * when the browser is being sent away instead — the page is on its
+ * way out at that point, and what comes back arrives through the auth
+ * listener rather than through here
  */
-export async function signInWithGoogle(): Promise<UserCredential | null> {
+async function signInWithProvider(provider: AuthProvider): Promise<UserCredential | null> {
   const auth = getFirebaseAuth();
-  const provider = new GoogleAuthProvider();
 
   try {
     return await signInWithPopup(auth, provider);
@@ -83,6 +85,14 @@ export async function signInWithGoogle(): Promise<UserCredential | null> {
     await signInWithRedirect(auth, provider);
     return null;
   }
+}
+
+export async function signInWithGoogle(): Promise<UserCredential | null> {
+  return signInWithProvider(new GoogleAuthProvider());
+}
+
+export async function signInWithGithub(): Promise<UserCredential | null> {
+  return signInWithProvider(new GithubAuthProvider());
 }
 
 /**
@@ -98,6 +108,14 @@ export async function takeRedirectResult(): Promise<UserCredential | null> {
   return getRedirectResult(getFirebaseAuth());
 }
 
+/**
+ * The two below are the development sign-in: an address and a
+ * password, with no other site in the loop. They are what the browser
+ * tests use and what a local run with nothing configured falls back
+ * on, and the form that reaches them is drawn on a development build
+ * alone — a live account belongs to whoever the player already signs
+ * in as elsewhere
+ */
 export async function signInWithEmail(email: string, password: string): Promise<UserCredential> {
   return signInWithEmailAndPassword(getFirebaseAuth(), email, password);
 }

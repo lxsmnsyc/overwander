@@ -1,11 +1,24 @@
 import { type JSX, Show, createSignal, from } from 'solid-js';
 import { TabGroup } from 'terracotta';
 import { signOut } from '../../auth/actions';
-import { type Profile, watchProfile } from '../../auth/profile';
+import { type Profile, saveProfile, watchProfile } from '../../auth/profile';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
 import BidsList from '../auctions/BidsList';
-import { Badge, Button, Card, Note, Panel, Status, TabBar, TabButton, TabPane } from '../styled';
+import PlayerPlace from './PlayerPlace';
+import {
+  Badge,
+  Button,
+  Card,
+  Note,
+  Panel,
+  Row,
+  Status,
+  TabBar,
+  TabButton,
+  TabPane,
+  TextField,
+} from '../styled';
 
 /**
  * What is left under the tabs.
@@ -54,6 +67,37 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
     }),
   );
   const [error, setError] = createSignal<string | null>(null);
+  const [said, setSaid] = createSignal<string | null>(null);
+  /**
+   * What is in the box, or null while nobody has typed in it. Null
+   * rather than the stored name so the field follows the profile until
+   * it is edited — a name changed in another tab should show here
+   */
+  const [typed, setTyped] = createSignal<string | null>(null);
+  const [saving, setSaving] = createSignal(false);
+
+  const rename = (record: Profile): void => {
+    const wanted = (typed() ?? record.nickname).trim();
+
+    if (wanted === '' || wanted === record.nickname) {
+      return;
+    }
+    setError(null);
+    setSaving(true);
+    saveProfile(props.player, { nickname: wanted, avatar: record.avatar })
+      .then(() => {
+        // Back to following the record: what was typed has become what
+        // is stored, and the two should not be kept apart
+        setTyped(null);
+        setSaid('Name changed.');
+      })
+      .catch((caught: unknown) => {
+        setError(caught instanceof Error ? caught.message : String(caught));
+      })
+      .finally(() => {
+        setSaving(false);
+      });
+  };
 
   const leave = (): void => {
     setError(null);
@@ -96,9 +140,39 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 />
               )}
             </Show>
-            <div class="flex grow flex-wrap items-center gap-2">
-              <span class="text-lg font-semibold">{loaded().nickname}</span>
-              <Badge tone="gold">{loaded().gold} gold</Badge>
+            <div class="flex grow flex-col gap-2">
+              {/* Theirs to set, and the only thing on the profile that
+                  is: what a player is called is what everybody else on
+                  the board and in a lobby sees them as */}
+              <Show
+                when={props.viewOnly !== true}
+                fallback={<span class="text-lg font-semibold">{loaded().nickname}</span>}
+              >
+                <Row class="items-end">
+                  <TextField
+                    class="grow"
+                    label="Nickname"
+                    value={typed() ?? loaded().nickname}
+                    autocomplete="nickname"
+                    disabled={saving()}
+                    onChange={(value) => {
+                      setTyped(value);
+                    }}
+                  />
+                  <Button
+                    tone="primary"
+                    disabled={saving() || (typed() ?? loaded().nickname).trim() === ''}
+                    onClick={() => {
+                      rename(loaded());
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Row>
+              </Show>
+              <Badge tone="gold" class="self-start">
+                {loaded().gold} gold
+              </Badge>
             </div>
             {/* The way out. It lived on a sign-in page of its own,
                 which is a page for the one moment a player is not
@@ -111,6 +185,10 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </Card>
         )}
       </Show>
+
+      {/* Where in the world they are, which is the one fact about a
+          trainer that changes while somebody is reading it */}
+      <PlayerPlace player={props.player} />
 
       {/* Who is walking with them, which is the one thing on this
           page that changes what happens outside it: a buddy draws
@@ -153,6 +231,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </TabPane>
         </TabGroup>
       </Show>
+      <Status message={said()} />
       <Status message={error()} tone="alert" />
     </Panel>
   );

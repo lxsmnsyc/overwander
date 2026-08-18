@@ -224,22 +224,27 @@ async function claimGift(page: Page, square: Locator): Promise<void> {
 export async function claimStarter(page: Page): Promise<void> {
   const gifts = await openPanel(page, 'Gifts');
   // Waited for rather than looked for: the shelf is empty until the
-  // server has rolled the pokemon and written it down
+  // server has written the offers down. The three starters stand on
+  // every shelf, so one of them is taken and the rest are left
   const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
+  const taking = pokemon.first();
 
-  await expect(pokemon).toBeVisible({ timeout: CLAIMED });
-  await claimGift(page, pokemon);
+  await expect(taking).toBeVisible({ timeout: CLAIMED });
+
+  const before = await pokemon.count();
+
+  await claimGift(page, taking);
   // The shelf is read again after a claim, so the square goes when the
   // server answers. Going for the next one before that is going for a
   // node that is about to be replaced
-  await expect(pokemon).toHaveCount(0);
+  await expect(pokemon).toHaveCount(before - 1);
 
   const balls = gifts.getByRole('button', { name: /^Claim \d+ × / });
 
   await expect(balls).toBeVisible();
   await claimGift(page, balls);
+  await expect(balls).toHaveCount(0);
 
-  await expect(gifts.getByText('Nothing is waiting for you.')).toBeVisible();
   await gifts.getByRole('button', { name: 'Close' }).click();
   await expectShut(gifts);
 }

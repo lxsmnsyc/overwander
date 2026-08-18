@@ -30,6 +30,7 @@ import {
   CAUGHT_COLLECTION,
   ENCOUNTER_COLLECTION,
   FLED_COLLECTION,
+  GIFT_CLAIM_COLLECTION,
   GIFT_COLLECTION,
   NEST_CLAIM_COLLECTION,
   NPC_CLAIM_COLLECTION,
@@ -188,6 +189,19 @@ describe('profiles', () => {
     await seed(`${PROFILE_COLLECTION}/${ALICE}`, { nickname: 'Alice', gold: 40, role: '' });
 
     await assertFails(updateDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { role: 'admin' }));
+  });
+
+  it('refuses a player writing their own ban, either way', async () => {
+    // A ban is the server's word about an account. One a client could
+    // write is one it could lift by opening its profile again — and a
+    // banned player deleting their profile and making a new one is
+    // the same escape by another door
+    await assertFails(
+      setDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { gold: 0, role: '', banned: true }),
+    );
+    await seed(`${PROFILE_COLLECTION}/${ALICE}`, { nickname: 'Alice', gold: 0, banned: true });
+    await assertFails(updateDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE), { banned: false }));
+    await assertFails(deleteDoc(doc(as(ALICE), PROFILE_COLLECTION, ALICE)));
   });
 
   it('is created only by the player it belongs to', async () => {
@@ -374,7 +388,12 @@ describe('gifts', () => {
   // offered, listed and claimed through the server, and a gift a
   // player could clear is a gift they could take twice
   beforeEach(async () => {
-    await seed(`${GIFT_COLLECTION}/starter:${ALICE}`, { player: ALICE, claimedAt: null });
+    await seed(`${GIFT_COLLECTION}/starter:${ALICE}`, { player: ALICE, offeredAt: 0 });
+    await seed(`${GIFT_CLAIM_COLLECTION}/starter:${ALICE}:${ALICE}`, {
+      gift: `starter:${ALICE}`,
+      player: ALICE,
+      claimedAt: 0,
+    });
   });
 
   it('is closed to everybody, signed in or not', async () => {
@@ -384,6 +403,26 @@ describe('gifts', () => {
       setDoc(doc(as(ALICE), GIFT_COLLECTION, `starter:${ALICE}`), { player: ALICE }),
     );
     await assertFails(deleteDoc(doc(as(ALICE), GIFT_COLLECTION, `starter:${ALICE}`)));
+  });
+
+  // A claim is the whole of what stops an open gift being taken
+  // twice, so a player who could write one could take it as many
+  // times as they liked
+  it('keeps the claims closed too', async () => {
+    const claim = `starter:${ALICE}:${ALICE}`;
+
+    await assertFails(getDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, claim)));
+    await assertFails(getDocs(collection(as(ALICE), GIFT_CLAIM_COLLECTION)));
+    await assertFails(
+      deleteDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, claim)),
+    );
+    await assertFails(
+      setDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, `open-gift:${ALICE}`), {
+        gift: 'open-gift',
+        player: ALICE,
+        claimedAt: 0,
+      }),
+    );
   });
 });
 

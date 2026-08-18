@@ -272,14 +272,18 @@ function describeMet(caught: CaughtPokemon): string {
  * The line under the ownership history: where this pokemon came from,
  * when, and what it is in.
  *
- * A gift and an event pokemon get a sentence instead of a list. There
- * is no place, the ball is a formality, and the date is already on
- * the line above — what is left worth saying is that it was never met
- * anywhere, so that is all it says
+ * A gift and an event pokemon get a sentence instead of a list. The
+ * ball is a formality and the date is already on the line above, so
+ * what is left worth saying is that it was never met anywhere — or,
+ * where the gift named one, the place it says it came from
  */
 function describeHistory(caught: CaughtPokemon): string {
   if (caught.type === EncounterType.Fateful) {
-    return 'Met in a fateful encounter.';
+    // Where a distribution says it happened, which is a name rather
+    // than a chunk: nobody walked anywhere to meet this one
+    return caught.origin.place == null
+      ? 'Met in a fateful encounter.'
+      : `Met in a fateful encounter at ${caught.origin.place}.`;
   }
   // The ball is left out. It is on the record and it decides nothing
   // afterwards — what a pokemon was caught in says less about it than
@@ -613,11 +617,13 @@ function CatchSheetBody(
    * somebody — an owner is a fact about the pokemon, so a missing
    * profile must not take the entry off the list
    */
-  const describeOwner = (uid: string): string => {
-    if (uid === auth.user()?.uid) {
+  const describeOwner = (entry: { owner: string; name?: string }): string => {
+    if (entry.owner === auth.user()?.uid) {
       return 'You';
     }
-    return props.owners()?.get(uid) ?? 'A trainer';
+    // A distributed pokemon names the trainer it came from, who has no
+    // account to look up — so what the record says is what it is called
+    return props.owners()?.get(entry.owner) ?? entry.name ?? 'A trainer';
   };
 
   /**
@@ -2164,11 +2170,16 @@ function CatchSheetBody(
                                 profile the menu already gives them */}
                             <Show
                               when={
-                                entry.owner === auth.user()?.uid ? null : (props.onTrainer ?? null)
+                                // A trainer with no account behind them —
+                                // the original owner of a distribution —
+                                // is a name rather than a way to anybody
+                                entry.owner === '' || entry.owner === auth.user()?.uid
+                                  ? null
+                                  : (props.onTrainer ?? null)
                               }
                               fallback={
                                 <span class="grow text-left font-medium">
-                                  {describeOwner(entry.owner)}
+                                  {describeOwner(entry)}
                                 </span>
                               }
                             >
@@ -2179,7 +2190,7 @@ function CatchSheetBody(
                                     visit()(entry.owner);
                                   }}
                                 >
-                                  {describeOwner(entry.owner)}
+                                  {describeOwner(entry)}
                                 </RowButton>
                               )}
                             </Show>

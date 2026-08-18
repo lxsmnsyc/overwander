@@ -1,4 +1,5 @@
 import 'server-only';
+import { PROFILE_COLLECTION } from '../auth/collections';
 import './timezone';
 import { type App, cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 import { type Auth, getAuth } from 'firebase-admin/auth';
@@ -124,10 +125,19 @@ export function getAdminFirestore(): Firestore {
 }
 
 /**
+ * What a banned account is told, wherever it tries to act
+ */
+export const BANNED_MESSAGE = 'This account is banned.';
+
+/**
  * The caller is whoever their Firebase ID token says they are, never
  * whoever the request claims. Every privileged write starts here:
  * the token is verified against the project's signing keys, and a
  * missing, expired or forged one is refused rather than defaulted.
+ *
+ * A **banned** account is refused here too, which is what makes a ban
+ * a ban: every call that writes anything passes through this line, so
+ * one check shuts all of them rather than each remembering to ask.
  *
  * Resolves the caller's uid
  */
@@ -135,5 +145,12 @@ export async function requireUid(token: string): Promise<string> {
   if (token === '') {
     throw new Error('Not signed in');
   }
-  return (await getAdminAuth().verifyIdToken(token)).uid;
+
+  const { uid } = await getAdminAuth().verifyIdToken(token);
+  const stored = await getAdminFirestore().collection(PROFILE_COLLECTION).doc(uid).get();
+
+  if (stored.data()?.banned === true) {
+    throw new Error(BANNED_MESSAGE);
+  }
+  return uid;
 }

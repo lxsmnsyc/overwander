@@ -1,54 +1,112 @@
 # Mystery gifts
 
-A gift is something the game decides a player is owed and then waits with. It is
-**offered** — written down whole, with whatever it holds already rolled — and
-**claimed** later from the gifts dialog. Nothing is theirs until they take it.
+A gift is something the game — or the staff — decides somebody is owed and then
+waits with. It is **offered**, written down whole with the pokemon it holds
+already rolled, and **claimed** later from the gifts dialog. Nothing is theirs
+until they take it.
 
-`gifts/{gift}:{uid}` ([`src/auth/gift-record.ts`](../../src/auth/gift-record.ts))
+An offer is for **one player or for everybody**. A personal one is written under
+its player's uid; an open one names nobody, stands on every shelf at once, and is
+taken once each. That is why taking one is a document of its own: a single offer
+has as many claims as there are players.
 
-| Field       | Type            | What it is                                            |
-| ----------- | --------------- | ----------------------------------------------------- |
-| `player`    | `string`        | Whose gift it is                                      |
-| `gift`      | map             | What the player sees: `MysteryGift`, below            |
-| `offeredAt` | `number`        | When the game shelved it                              |
-| `claimedAt` | `number ǀ null` | When it was taken, or null while it is still waiting  |
-| `encounter` | map ǀ null      | The rolled pokemon, for a catch gift and nothing else |
+`gifts/{giftId}` ([`src/auth/gift-record.ts`](../../src/auth/gift-record.ts))
 
-`gift` is one of two shapes, both carrying an `id` — the gift's name, which is
-what a claim asks for — and a `reason` sentence shown on its card:
+| Field       | Type            | What it is                                                     |
+| ----------- | --------------- | -------------------------------------------------------------- |
+| `player`    | `string ǀ null` | Whose it is; null for one anybody may take                     |
+| `gift`      | map             | What the player sees: `MysteryGift`, below                     |
+| `offeredAt` | `number`        | When it was shelved                                            |
+| `encounter` | map ǀ null      | The rolled meeting, for a catch gift and nothing else          |
 
-| Kind    | Id  | Extra fields                                                 |
-| ------- | --- | ------------------------------------------------------------ |
-| `Catch` | 0   | `species`, `level`, `shiny`, `individualValue`, `traitValue` |
-| `Item`  | 1   | `item`, `amount`                                             |
+A personal gift's document id is `{gift}:{uid}`, which is what stops a second
+one being opened for the same player; an open gift's id is its own. Either way
+the id is what the gift calls itself, and what a claim names.
 
-## The pokemon is frozen at the offer
+`gift` is one of three shapes, each carrying an `id`, a `reason` sentence shown
+on its card, and an `expiresAt` after which it is neither listed nor claimable:
+
+| Kind        | Id  | Extra fields                                                                                     |
+| ----------- | --- | ------------------------------------------------------------------------------------------------ |
+| `Catch`     | 0   | the pokemon fields below, plus `ball` and `owner`                                                  |
+| `Item`      | 1   | `item`, `amount`                                                                                   |
+| `Encounter` | 2   | the pokemon fields below                                                                           |
+
+The pokemon fields are `species`, `level`, `shiny`, `shadow`, `individualValue`,
+`traitValue`, `gender`, `nature`, `ivs`, `abilities`, `moves`, `items`, the
+`place` it says it happened — a name, since a fateful meeting is at no
+coordinate anybody walked to — and the `slots` of room it walks in with.
+`abilities` and `moves` are whole lists rather than one each: a gift may be
+written with as many of either as it has room for, and a shadowed one keeps the
+`Shadow` ability on top of them.
+
+Everything beyond the species and the level is optional: a null field, or an
+empty list, is whatever the roll produced. What is set is written over the roll
+rather than searched for — an ability or a nature that had to be rolled until it
+came up would be a search with no end. **Shininess is set the same way**: a coat
+is otherwise the observer's id against the trait value, and a gift is the one
+pokemon whose coat was decided by whoever wrote it.
+
+A **`Catch`** is handed over finished, in the `ball` the gift names, and `owner`
+is a trainer's *name* — "Red" — written as the first entry of the record's
+ownership history. There is no such account, so the sheet reads the name off the
+entry instead of looking up a profile.
+
+An **`Encounter`** is not handed over at all. Claiming it stages the meeting at
+`encounters/{giftId}:{uid}` and the player throws their own ball at it, which is
+why it names none: a `Fateful` meeting never flees and never breaks out, so what
+the record ends up saying is whichever ball they threw.
+
+`giftClaims/{giftId}:{uid}`
+
+| Field       | Type            | What it is                                    |
+| ----------- | --------------- | --------------------------------------------- |
+| `gift`      | `string`        | Which offer was taken                         |
+| `player`    | `string`        | Who took it                                   |
+| `claimedAt` | `number`        | When                                          |
+| `catchId`   | `string ǀ null` | The record a pokemon landed in; null for items |
+
+## The gift encounter
 
 A catch gift stores the whole `EncounterRecord` it will become
-([Encounter kinds](encounters.md)), rather than a seed to re-roll on the way out.
-A species day passing between the offer and the claim would otherwise change the
-pokemon the box already showed. Claiming writes that record through
-`writeCaughtRecord` with `Acquisition.Gift`, in a Premier Ball — nothing was
-thrown, and the record still has to name a ball.
+([Encounter kinds](encounters.md)) rather than a seed to re-roll on the way out,
+and that one rolled meeting is what **every** taker receives. Two people taking
+one open gift get the same individual, which is what a distribution is.
 
-## Offered once, taken once
+The rolls are drawn against one fixed chunk and the world's own window rather
+than against wherever the taker is standing: an offer that took its place from
+whoever opened it would be a different meeting for every player who took it.
+Where it says it happened is the gift's `place` — "Pallet Town" — which the
+record keeps in `origin.place` and the sheet reads back.
 
-The document is the offer and the marker at once. Offering reads and writes the
-whole giving in one transaction, so two tabs signing in together cannot both find
-nothing there. Claiming stamps `claimedAt` in a transaction **before** anything is
-handed over, so a second press finds it already gone rather than being paid twice.
+The `place` and the `slots` travel on the meeting itself rather than beside it,
+so a gift caught out of an `Encounter` keeps both: the record is written by the
+ordinary catch, which knows nothing about gifts.
 
-A claimed gift is kept rather than deleted: what the game has given somebody
-stays readable.
+A `Catch` is written through `writeCaughtRecord` with `Acquisition.Gift` when it
+is claimed; an `Encounter` is staged and written the ordinary way, by being
+caught.
+
+## Offered once, taken once each
+
+Offering reads and writes the whole giving in one transaction, so two tabs
+signing in together cannot both find nothing there. Claiming writes the claim
+document **before** anything is handed over, so a second press or a second tab
+finds it already taken rather than being paid twice.
+
+Offers and claims are both kept rather than deleted: what has been given out, and
+to whom, stays readable.
 
 ## What is given today
 
-One giving, in two gifts, to a player who owns no pokemon and has never been
-offered one:
+Four open offers, standing on every shelf:
 
-- `starter` — a `Base`-rarity species that still has somewhere to evolve, at
-  level 5, seeded by the player's uid so retries offer the same pokemon.
+- `starter-{species}` — Bulbasaur, Charmander and Squirtle, each at level 5.
 - `starterBalls` — 20 Poke Balls.
 
-Owning nothing is what makes the giving due; the documents are what make it
-happen once. See [`src/server/gifts.ts`](../../src/server/gifts.ts).
+They are written the first time anybody asks for their shelf, all four in one
+transaction, and every later ask reads what is already there. Each is taken once
+per player, so what a first partner is is a choice rather than a die the game
+throws — and nothing stops somebody taking all three.
+
+See [`src/server/gifts.ts`](../../src/server/gifts.ts).

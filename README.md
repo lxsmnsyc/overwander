@@ -144,10 +144,15 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
 
 Two things help with emulator sign-in. The **Emulator UI** at
 <http://localhost:4000/auth> can add a user directly, which is the fastest route
-to a signed-in session. And **Google sign-in opens a popup** served from the
+to a signed-in session. And **a provider sign-in opens a popup** served from the
 emulator's own port; some browsers block that popup from talking back to the
 page that opened it. The app falls back to a redirect when that happens, but
 email sign-in avoids the problem entirely.
+
+The email and password form is drawn on a **development build alone** — a
+deployed game offers Google and GitHub and nothing else. A development
+build also hands every account it creates the `admin` role, which is granted on
+the server: the rules refuse a browser that names its own.
 
 ### Firestore rules and indexes
 

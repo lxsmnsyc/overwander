@@ -1,7 +1,8 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
-import FADE, { holdFade } from './transition';
+import { SHEER, holdFade } from './transition';
+import dismissOutside from './dismiss';
 
 /**
  * One choice out of a list that is too long to show at once.
@@ -49,6 +50,12 @@ const OPTION =
 
 export default function Select<V>(props: SelectProps<V>): JSX.Element {
   const [open, setOpen] = createSignal(false);
+  /** The whole control, for working out what is a press away from it */
+  const [root, setRoot] = createSignal<HTMLElement>();
+
+  dismissOutside(root, open, () => {
+    setOpen(false);
+  });
   /** The name of what is chosen, or the placeholder standing in for it */
   const showing = (): string =>
     props.options.find((option) => option.value === props.value)?.label ??
@@ -65,6 +72,9 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
     >
       {(parts) => (
         <Listbox
+          ref={(element: HTMLElement) => {
+            setRoot(element);
+          }}
           isOpen={open()}
           onDisclosureChange={(state) => {
             setOpen(state);
@@ -91,7 +101,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
             {showing()}
             <span aria-hidden="true">▾</span>
           </ListboxButton>
-          <Transition show={open()} {...FADE} class="absolute top-full left-0 z-20 mt-1.5 w-full">
+          <Transition show={open()} {...SHEER} class="absolute top-full left-0 z-20 mt-1.5 w-full">
             <ListboxOptions
               unmount={false}
               onTransitionEnd={holdFade}

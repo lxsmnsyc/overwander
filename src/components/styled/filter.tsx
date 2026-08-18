@@ -7,7 +7,8 @@ import {
   ListboxOptions,
   Transition,
 } from 'terracotta';
-import FADE, { holdFade } from './transition';
+import { SHEER, holdFade } from './transition';
+import dismissOutside from './dismiss';
 
 /**
  * Narrowing a list down to one kind of thing.
@@ -72,9 +73,18 @@ export default function Filter<V>(props: {
    * mounted for it, so the list is still there to fade out
    */
   const [open, setOpen] = createSignal(false);
+  /** The whole control, for working out what is a press away from it */
+  const [root, setRoot] = createSignal<HTMLElement>();
+
+  dismissOutside(root, open, () => {
+    setOpen(false);
+  });
 
   return (
     <Listbox
+      ref={(element: HTMLElement) => {
+        setRoot(element);
+      }}
       isOpen={open()}
       onDisclosureChange={(state) => {
         setOpen(state);
@@ -110,7 +120,7 @@ export default function Filter<V>(props: {
           run off the screen */}
       <Transition
         show={open()}
-        {...FADE}
+        {...SHEER}
         class="absolute top-full right-0 z-20 mt-1.5 w-max min-w-full"
       >
         <ListboxOptions

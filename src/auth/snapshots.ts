@@ -5,9 +5,13 @@
 import {
   type FirestoreDataConverter,
   type Unsubscribe,
+  collection,
   doc,
+  getDocs,
   onSnapshot,
+  query,
   runTransaction,
+  where,
 } from 'firebase/firestore';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
@@ -113,6 +117,24 @@ export async function getChunkSnapshot(
   const { timestamp } = await resolveSnapshotWindow(chunk, offset, count);
 
   return new ChunkSnapshot(chunk, timestamp, offset);
+}
+
+/**
+ * Every window ever stored for a chunk, whichever zone wrote it.
+ *
+ * A chunk holds one window per zone and each is overwritten as it
+ * turns over, so this is a handful of documents: what the chunk is
+ * showing right now, once per zone anybody has walked it from
+ */
+export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> {
+  const found = await getDocs(
+    query(
+      collection(getFirebaseFirestore(), SNAPSHOT_COLLECTION).withConverter(snapshotConverter),
+      where('seed', '==', seed),
+    ),
+  );
+
+  return found.docs.map((document) => document.data());
 }
 
 /**

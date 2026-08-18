@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { requireUid } from '../server/firebase';
-import savePositionOnServerSide from '../server/positions';
+import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
 import { POSITION_COLLECTION } from './collections';
 import { getFirebaseFirestore } from './firebase';
@@ -27,6 +27,24 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
   const data = snapshot.data();
 
   return data == null ? null : asPositionRecord(data);
+}
+
+/**
+ * Where anybody is standing, read through the server.
+ *
+ * A player may read their own position document and nobody else's, so
+ * a profile opened from a lobby has to ask somebody who can. Signing
+ * in is all it takes — where a trainer is standing is as public as
+ * their nickname, and it is what the profile is for
+ */
+export async function getPlayerPosition(uid: string): Promise<PositionRecord | null> {
+  return positionOnServer(await getIdToken(), uid);
+}
+
+async function positionOnServer(token: string, uid: string): Promise<PositionRecord | null> {
+  'use server';
+  await requireUid(token);
+  return readPosition(uid);
 }
 
 /**

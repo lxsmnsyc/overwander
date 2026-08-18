@@ -1,4 +1,13 @@
-import { type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+  untrack,
+} from 'solid-js';
 import { useAuth } from '../../auth/context';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import type { Items } from '../../data/ids/items';
@@ -166,26 +175,23 @@ export type InventoryPickerProps = InventoryPickerCommonProps &
       }
   );
 
-export default function InventoryPicker(props: InventoryPickerProps): JSX.Element {
-  const auth = useAuth();
-  const [opened, setOpened] = createSignal(false);
+/**
+ * The tray itself, which is where the bag is read.
+ *
+ * A resource read in the body that declared it throws past every
+ * `Suspense` written there, so the reading half is a component of its
+ * own with the boundary above it
+ */
+function PickerList(
+  props: InventoryPickerProps & {
+    bag: Resource<InventoryEntry[]>;
+    showing: boolean;
+    onDone: () => void;
+  },
+): JSX.Element {
   const [pending, setPending] = createSignal<Items | null>(null);
   const [confirming, setConfirming] = createSignal(false);
   const [draft, setDraft] = createSignal<ItemAmount[]>([]);
-
-  const owner = (): string => props.player ?? auth.user()?.uid ?? '';
-
-  /**
-   * Whether the list is being shown at all: always, when it is inline
-   */
-  const showing = (): boolean => props.inline === true || (props.open ?? opened());
-
-  const [bag] = createResource(
-    () => (showing() && props.entries == null ? ([owner(), props.revision] as const) : null),
-    async ([player]) => getInventory(player),
-  );
-
-  const loading = (): boolean => props.entries == null && bag.loading;
 
   /**
    * What the caller will accept, before the player narrows it further.
@@ -195,14 +201,14 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
    * actually has something on
    */
   const offered = (): InventoryEntry[] =>
-    (props.entries ?? bag() ?? []).filter((entry) => props.filter?.(entry) ?? true);
+    (props.entries ?? props.bag() ?? []).filter((entry) => props.filter?.(entry) ?? true);
 
   const chosen = (): ItemAmount[] => (props.multiple === true ? props.value : []);
 
   // The draft is the caller's value until the picker is done with it,
   // so opening the list again starts from what is actually picked
   createEffect(() => {
-    if (showing()) {
+    if (props.showing) {
       setDraft(untrack(chosen));
     }
   });
@@ -224,25 +230,10 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
       action: props.action?.(entry) ?? props.verb ?? null,
     }));
 
-  /**
-   * What the picker is asking for. A caller with something more
-   * specific to say says it; otherwise it is one item or several, and
-   * several come with a count each
-   */
-  const purpose = (): string => {
-    if (props.description != null) {
-      return props.description;
-    }
-    return props.multiple === true
-      ? 'Choose what to take out of the bag, and how many of each.'
-      : 'Choose one thing out of the bag.';
-  };
-
   const close = (): void => {
     setPending(null);
     setConfirming(false);
-    setOpened(false);
-    props.onClose?.();
+    props.onDone();
   };
 
   const pickOne = (item: Items | null): void => {
@@ -312,53 +303,51 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     pickMany();
   };
 
-  const list = (): JSX.Element => (
+  return (
     <div class="flex flex-col gap-3">
       {/* Searching and the shelves belong to the tray, which lays them
           out the same way wherever the bag is opened */}
-      <Show when={!loading()} fallback={<Note>Looking through the bag…</Note>}>
-        <Show
-          when={offered().length}
-          fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
-        >
-          <ItemGrid
-            entries={cells()}
-            verb={props.verb}
-            disabled={props.disabled}
-            cardOnly={props.cardOnly}
-            onPress={(item) => {
-              const entry = offered().find((one) => one.item === item);
+      <Show
+        when={offered().length}
+        fallback={<Note>{props.empty ?? 'Nothing in the bag for this.'}</Note>}
+      >
+        <ItemGrid
+          entries={cells()}
+          verb={props.verb}
+          disabled={props.disabled}
+          cardOnly={props.cardOnly}
+          onPress={(item) => {
+            const entry = offered().find((one) => one.item === item);
 
-              if (entry != null) {
-                press(entry);
-              }
-            }}
-          />
+            if (entry != null) {
+              press(entry);
+            }
+          }}
+        />
 
-          {/* Asked once more, since picking it is what spends it.
+        {/* Asked once more, since picking it is what spends it.
               There is no room for a question under a picture, so it is
               asked below the tray */}
-          <Show when={offered().find((entry) => entry.item === pending())} keyed>
-            {(asked) => (
-              <Row class="justify-center">
-                <Button
-                  tone="primary"
-                  onClick={() => {
-                    pickOne(asked.item);
-                  }}
-                >
-                  {props.verb ?? 'Pick'} {describeItem(asked.item)}?
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPending(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Row>
-            )}
-          </Show>
+        <Show when={offered().find((entry) => entry.item === pending())} keyed>
+          {(asked) => (
+            <Row class="justify-center">
+              <Button
+                tone="primary"
+                onClick={() => {
+                  pickOne(asked.item);
+                }}
+              >
+                {props.verb ?? 'Pick'} {describeItem(asked.item)}?
+              </Button>
+              <Button
+                onClick={() => {
+                  setPending(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </Row>
+          )}
         </Show>
       </Show>
 
@@ -385,9 +374,59 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
       </Show>
     </div>
   );
+}
+
+/**
+ * Picking something out of the bag: the button that opens it, the
+ * dialog it opens into, and the tray inside that.
+ *
+ * The bag is read one component down, under the boundary this puts
+ * around the tray — so a bag still arriving replaces the tray rather
+ * than the dialog holding it
+ */
+export default function InventoryPicker(props: InventoryPickerProps): JSX.Element {
+  const auth = useAuth();
+  const [opened, setOpened] = createSignal(false);
+
+  const owner = (): string => props.player ?? auth.user()?.uid ?? '';
+
+  /**
+   * Whether the list is being shown at all: always, when it is inline
+   */
+  const showing = (): boolean => props.inline === true || (props.open ?? opened());
+
+  const [bag] = createResource(
+    () => (showing() && props.entries == null ? ([owner(), props.revision] as const) : null),
+    async ([player]) => getInventory(player),
+  );
+
+  /**
+   * What the picker is asking for. A caller with something more
+   * specific to say says it; otherwise it is one item or several, and
+   * several come with a count each
+   */
+  const purpose = (): string => {
+    if (props.description != null) {
+      return props.description;
+    }
+    return props.multiple === true
+      ? 'Choose what to take out of the bag, and how many of each.'
+      : 'Choose one thing out of the bag.';
+  };
+
+  const close = (): void => {
+    setOpened(false);
+    props.onClose?.();
+  };
+
+  const tray = (): JSX.Element => (
+    <Suspense fallback={<Note>Looking through the bag…</Note>}>
+      <PickerList {...props} bag={bag} showing={showing()} onDone={close} />
+    </Suspense>
+  );
 
   return (
-    <Show when={props.inline !== true} fallback={list()}>
+    <Show when={props.inline !== true} fallback={tray()}>
       {/* A caller that says whether the bag is open has its own way of
           opening it, and a second button beside that one is a button
           nobody presses */}
@@ -407,14 +446,17 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
         description={purpose()}
         terse={props.terse}
       >
-        {list()}
+        {tray()}
         <DialogActions>
           {/* A single pick can also be no pick: the caller asked for an
               item, and "none" is an answer to that */}
           <Show when={props.multiple !== true && props.value != null}>
             <Button
               onClick={() => {
-                pickOne(null);
+                if (props.multiple !== true) {
+                  props.onPick(null);
+                }
+                close();
               }}
             >
               Pick none

@@ -34,6 +34,6 @@ Never give the parent `Transition` enter/leave classes — no `{...FADE}`, no `e
 
 ## Around it
 
-- The fade itself lives in [`transition.ts`](../../../src/components/styled/transition.ts) as `FADE`, spread into each child.
+- The fades live in [`transition.ts`](../../../src/components/styled/transition.ts), spread into each child. `FADE` fades **and grows**, and is for panels — a dialog's, a popover's. `SHEER` is the same fade without the scale, for the overlay and for anything placed against the window: hover cards and tooltips. A scale is a transform, and a transform makes the element the containing block for anything `fixed` inside it, which put a hover card a whole viewport down the page.
 - `holdFade` goes on whatever a transition wraps, so a button finishing its own hover does not end the dialog's fade — `transitionend` bubbles and terracotta ends on the first one it hears.
 - A dialog on its way out keeps `inert` and `pointer-events-none` while it fades; nothing else marks it, and `data-open` is how anything outside tells an open dialog from a leaving one.

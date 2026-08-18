@@ -1,4 +1,13 @@
-import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createMemo,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import { getItemCount } from '../../auth/inventory';
 import usePortalOnServer from '../../auth/portals';
 import { BIOME_NAMES } from '../../data/biome';
@@ -45,7 +54,16 @@ export interface PortalDialogProps {
   onTravel: (destination: PortalDestination) => void;
 }
 
-export default function PortalDialog(props: PortalDialogProps): JSX.Element {
+/**
+ * What the portal has to say, which is where the keys are counted.
+ *
+ * A key count read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the page,
+ * so the reading half is its own component under one of its own
+ */
+function PortalBody(
+  props: PortalDialogProps & { keys: Resource<number>; onSpent: () => void; onDone: () => void },
+): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   /**
    * The biome the player has their finger on. Choosing is not going:
@@ -54,16 +72,6 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
    */
   const [picked, setPicked] = createSignal<Biome | null>(null);
   const [busy, setBusy] = createSignal(false);
-
-  /**
-   * Whether there is a key to spend. The server checks it again, but a
-   * player should be told what the portal wants before they pick a
-   * biome rather than after
-   */
-  const [keys, { refetch: refetchKeys }] = createResource(
-    () => (props.cell == null ? null : props.player),
-    async (player) => getItemCount(player, Items.PortalKey),
-  );
 
   /**
    * Everywhere this portal reaches, nearest first. It is one walk
@@ -85,7 +93,7 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
     setStatus(null);
     setPicked(null);
     setBusy(false);
-    props.onClose();
+    props.onDone();
   };
 
   const cross = (): void => {
@@ -100,12 +108,12 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     usePortalOnServer(snapshot, cell, destination.biome)
-      .then(async (arrived) => {
+      .then((arrived) => {
         setBusy(false);
 
         if (arrived == null) {
           setStatus('The portal stayed shut. A key opens one, and only one.');
-          await refetchKeys();
+          props.onSpent();
           return;
         }
         props.onTravel(arrived);
@@ -118,20 +126,13 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
   };
 
   return (
-    <Dialog
-      isOpen={props.cell != null}
-      onClose={close}
-      title="Portal"
-      terse
-      description="A ring of standing stones, and a way through. Name a biome and it opens onto the
-        nearest portal in one — the key is spent going through."
-    >
+    <>
       {/* What it costs, said as a count rather than as a sentence. It
           is why the button at the bottom is dead, so it is the one
           thing above the list worth a line */}
       <div class="flex justify-center">
-        <Badge tone={(keys.latest ?? 0) > 0 ? 'tide' : 'neutral'}>
-          {keys.latest ?? 0} Portal {(keys.latest ?? 0) === 1 ? 'Key' : 'Keys'}
+        <Badge tone={(props.keys() ?? 0) > 0 ? 'tide' : 'neutral'}>
+          {props.keys() ?? 0} Portal {(props.keys() ?? 0) === 1 ? 'Key' : 'Keys'}
         </Badge>
       </div>
 
@@ -170,13 +171,54 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       <DialogActions center>
         <Button
           tone="primary"
-          disabled={busy() || picked() == null || (keys.latest ?? 0) === 0}
+          disabled={busy() || picked() == null || (props.keys() ?? 0) === 0}
           onClick={cross}
         >
           Confirm
         </Button>
         <Button onClick={close}>Close</Button>
       </DialogActions>
+    </>
+  );
+}
+
+/**
+ * A ring of standing stones and a way through it.
+ *
+ * The keys are counted one component down, under this boundary: a
+ * count still arriving replaces the inside of the panel rather than
+ * the page the panel is standing on
+ */
+export default function PortalDialog(props: PortalDialogProps): JSX.Element {
+  /**
+   * Whether there is a key to spend. The server checks it again, but a
+   * player should be told what the portal wants before they pick a
+   * biome rather than after
+   */
+  const [keys, { refetch }] = createResource(
+    () => (props.cell == null ? null : props.player),
+    async (player) => getItemCount(player, Items.PortalKey),
+  );
+
+  return (
+    <Dialog
+      isOpen={props.cell != null}
+      onClose={props.onClose}
+      title="Portal"
+      terse
+      description="A ring of standing stones, and a way through. Name a biome and it opens onto the
+        nearest portal in one — the key is spent going through."
+    >
+      <Suspense fallback={<Note class="text-center">Counting keys…</Note>}>
+        <PortalBody
+          {...props}
+          keys={keys}
+          onSpent={() => {
+            Promise.resolve(refetch()).catch(() => undefined);
+          }}
+          onDone={props.onClose}
+        />
+      </Suspense>
     </Dialog>
   );
 }

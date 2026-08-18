@@ -1,6 +1,15 @@
-import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+  on,
+} from 'solid-js';
 import type { User } from 'firebase/auth';
-import { getInventory } from '../../auth/inventory';
+import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
 import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
@@ -81,7 +90,16 @@ export interface SafariDialogProps {
  * persistence layer, so the bag and the catch records move with the
  * session
  */
-export default function SafariDialog(props: SafariDialogProps): JSX.Element {
+/**
+ * The encounter itself, which is where the bag is read.
+ *
+ * A bag read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page, taking the world down mid-throw
+ */
+function SafariBody(
+  props: SafariDialogProps & { bag: Resource<InventoryEntry[]>; onSpent: () => void },
+): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   // Whether the bag is open over the three actions. The picker is not
   // a dialog of its own: this is already one, and a modal over a
@@ -97,12 +115,6 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
    * The sheet opens from here rather than from the throw
    */
   const [caught, setCaught] = createSignal<string | null>(null);
-  // Read once per opened session: throwing and feeding both spend
-  // from the bag, so it is refetched after each action
-  const [bag, { refetch }] = createResource(
-    () => (props.session == null ? null : props.user.uid),
-    getInventory,
-  );
   // The session mutates in place, so the view needs a nudge after
   // every action to re-read its state, turn count and bonus
   const [revision, setRevision] = createSignal(0);
@@ -136,7 +148,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   // counts down and what says there is nothing left to throw
   createEffect(() => {
     const active = props.session;
-    const carried = bag();
+    const carried = props.bag();
 
     if (active != null && carried != null) {
       active.ballsLeft = carried
@@ -147,7 +159,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   });
 
   const balls = (): [Balls, number][] =>
-    (bag() ?? [])
+    (props.bag() ?? [])
       .map((entry): [Balls | null, number] => [getBall(entry.item), entry.amount])
       .filter((pair): pair is [Balls, number] => pair[0] != null);
 
@@ -156,7 +168,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
    * has run out of, which is the number worth showing on the button
    */
   const stockOf = (item: Items): number =>
-    (bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+    (props.bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
   // A session opens on the Poke Ball, which is not necessarily what
   // the player has. The first ball in the bag stands in, so the throw
@@ -178,10 +190,10 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
    */
   const inHand = (): Items => treat() ?? BALL_ITEMS[props.session?.ball ?? Balls.PokeBall];
 
-  const settle = async (message: string | null): Promise<void> => {
+  const settle = (message: string | null): void => {
     setStatus(message);
     setRevision((value) => value + 1);
-    await refetch();
+    props.onSpent();
   };
 
   const act = (action: () => Promise<string | null>): void => {
@@ -359,7 +371,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
                 filter={(entry) =>
                   getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
                 }
-                entries={bag()}
+                entries={props.bag()}
                 onPick={(item) => {
                   if (item != null) {
                     take(item);
@@ -444,5 +456,31 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
         </Button>
       </DialogActions>
     </Dialog>
+  );
+}
+
+/**
+ * One safari encounter. The bag is read one component down, under
+ * this boundary: a throw spends from it and re-reads it, and that
+ * read must not reach the page the world is drawn on
+ */
+export default function SafariDialog(props: SafariDialogProps): JSX.Element {
+  // Read once per opened session: throwing and feeding both spend
+  // from the bag, so it is refetched after each action
+  const [bag, { refetch }] = createResource(
+    () => (props.session == null ? null : props.user.uid),
+    getInventory,
+  );
+
+  return (
+    <Suspense>
+      <SafariBody
+        {...props}
+        bag={bag}
+        onSpent={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

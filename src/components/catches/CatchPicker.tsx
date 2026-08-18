@@ -1,4 +1,13 @@
-import { type JSX, Show, createEffect, createResource, createSignal, untrack } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+  untrack,
+} from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { type CaughtPokemon, giveItem, listCaught, takeItem } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
@@ -175,9 +184,22 @@ export type CatchPickerProps = CatchPickerCommonProps &
       }
   );
 
-export default function CatchPicker(props: CatchPickerProps): JSX.Element {
+/**
+ * The box itself, which is where the records are read.
+ *
+ * A list read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page, so the reading half is a component of its own
+ */
+function PickerBox(
+  props: CatchPickerProps & {
+    owned: Resource<CatchOption[]>;
+    showing: boolean;
+    onHandled: () => void;
+    onDone: () => void;
+  },
+): JSX.Element {
   const auth = useAuth();
-  const [opened, setOpened] = createSignal(false);
   const [pending, setPending] = createSignal<string | null>(null);
   const [confirming, setConfirming] = createSignal(false);
   const [draft, setDraft] = createSignal<string[]>([]);
@@ -189,28 +211,8 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * to give it
    */
   const [giving, setGiving] = createSignal<string | null>(null);
-  /** Bumped by a give or a take, so the records are read again */
-  const [handled, setHandled] = createSignal(0);
 
-  const showing = (): boolean => props.inline === true || (props.open ?? opened());
-
-  const [owned] = createResource(
-    () =>
-      showing() && props.options == null ? ([owner(), props.revision, handled()] as const) : null,
-    async ([player]): Promise<CatchOption[]> => {
-      // The clock is the server's, so a lock that has timed out reads
-      // as free rather than as whatever this device believes
-      const [records, now] = await Promise.all([listCaught(player), syncServerClock()]);
-
-      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
-    },
-  );
-
-  /**
-   * Whether there is nothing to show yet — as opposed to a list on
-   * screen being read again, which keeps what it has
-   */
-  const loading = (): boolean => props.options == null && owned.latest == null && owned.loading;
+  const showing = (): boolean => props.showing;
 
   /**
    * What the caller will accept, before the player narrows it further.
@@ -229,7 +231,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * round trip
    */
   const offered = (): CatchOption[] =>
-    (props.options ?? owned.latest ?? [])
+    (props.options ?? props.owned() ?? [])
       .filter((option) => props.filter?.(option) ?? true)
       .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
 
@@ -249,7 +251,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   const settle = (done: Promise<boolean>): void => {
     done
       .then(() => {
-        setHandled((count) => count + 1);
+        props.onHandled();
       })
       .catch(() => {
         // A refusal leaves the record as it was, which the card is
@@ -297,31 +299,10 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const isDrafted = (id: string): boolean => new Set(draft()).has(id);
 
-  /**
-   * What the picker is asking for. A caller with something more
-   * specific to say says it; otherwise the question is how many, which
-   * the picker already knows
-   */
-  const purpose = (): string => {
-    if (props.description != null) {
-      return props.description;
-    }
-    if (props.viewOnly === true) {
-      return 'What this trainer has caught.';
-    }
-    if (props.multiple !== true) {
-      return 'Choose one of your pokemon.';
-    }
-    return limit() === Number.POSITIVE_INFINITY
-      ? 'Choose from your pokemon.'
-      : `Choose from your pokemon — up to ${limit()} of them.`;
-  };
-
   const close = (): void => {
     setPending(null);
     setConfirming(false);
-    setOpened(false);
-    props.onClose?.();
+    props.onDone();
   };
 
   const pickOne = (id: string | null): void => {
@@ -465,7 +446,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     </Button>
   );
 
-  const list = (): JSX.Element => (
+  return (
     // As wide as it is given, said out loud: a caller that centres what
     // it holds — Nurse Joy's counter, the daycare's — sizes its children
     // by their content, and a box of squares asked how wide it would
@@ -483,89 +464,87 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         </Row>
       </Show>
 
-      <Show when={!loading()} fallback={<Note>Looking them over…</Note>}>
-        <Show
-          when={options().length}
-          fallback={
-            <Note>
-              {query().length === 0
-                ? (props.empty ?? 'You have nothing for this.')
-                : `None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
-            </Note>
-          }
-        >
-          {/* The same box the player keeps their collection in. Picking
+      <Show
+        when={options().length}
+        fallback={
+          <Note>
+            {query().length === 0
+              ? (props.empty ?? 'You have nothing for this.')
+              : `None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
+          </Note>
+        }
+      >
+        {/* The same box the player keeps their collection in. Picking
               a party out of a hundred pokemon is looking rather than
               reading, and a list of a hundred lines was reading.
 
               Every square carries a card: what is in it, and the button
               that takes it. The bar is titled "Info" because the card
               under it already names the pokemon on its first line */}
-          <CatchBox
-            entries={page()}
-            onOpen={pressById}
-            cardOnly={props.pressable !== true}
-            cell={(entry) => (
-              <Show when={options().find((option) => option.id === entry().id)}>
-                {(option) => (
-                  <HoverCard
-                    class="block size-full"
-                    trigger={<span class="block size-full" />}
-                    title="Info"
-                    footer={
-                      <>
-                        <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
-                        <Button
-                          tone="primary"
-                          disabled={props.disabled === true || props.reason?.(option()) != null}
-                          onClick={() => {
-                            pressById(option().id);
-                          }}
-                        >
-                          {verb(option())}
-                        </Button>
-                      </>
-                    }
-                  >
-                    <CatchCard
-                      caught={option().caught}
-                      owned={mine()}
-                      onGive={() => {
-                        setGiving(option().id);
-                      }}
-                      onTake={(item) => {
-                        take(option().id, item);
-                      }}
-                    />
-                  </HoverCard>
-                )}
-              </Show>
-            )}
-          />
+        <CatchBox
+          entries={page()}
+          onOpen={pressById}
+          cardOnly={props.pressable !== true}
+          cell={(entry) => (
+            <Show when={options().find((option) => option.id === entry().id)}>
+              {(option) => (
+                <HoverCard
+                  class="block size-full"
+                  trigger={<span class="block size-full" />}
+                  title="Info"
+                  footer={
+                    <>
+                      <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
+                      <Button
+                        tone="primary"
+                        disabled={props.disabled === true || props.reason?.(option()) != null}
+                        onClick={() => {
+                          pressById(option().id);
+                        }}
+                      >
+                        {verb(option())}
+                      </Button>
+                    </>
+                  }
+                >
+                  <CatchCard
+                    caught={option().caught}
+                    owned={mine()}
+                    onGive={() => {
+                      setGiving(option().id);
+                    }}
+                    onTake={(item) => {
+                      take(option().id, item);
+                    }}
+                  />
+                </HoverCard>
+              )}
+            </Show>
+          )}
+        />
 
-          <Show when={boxes() > 1}>
-            <Row class="justify-center">
-              <Button
-                disabled={box() === 0}
-                onClick={() => {
-                  setBox((at) => Math.max(0, at - 1));
-                }}
-              >
-                ‹
-              </Button>
-              <Meta>
-                Box {box() + 1} of {boxes()}
-              </Meta>
-              <Button
-                disabled={box() >= boxes() - 1}
-                onClick={() => {
-                  setBox((at) => Math.min(boxes() - 1, at + 1));
-                }}
-              >
-                ›
-              </Button>
-            </Row>
-          </Show>
+        <Show when={boxes() > 1}>
+          <Row class="justify-center">
+            <Button
+              disabled={box() === 0}
+              onClick={() => {
+                setBox((at) => Math.max(0, at - 1));
+              }}
+            >
+              ‹
+            </Button>
+            <Meta>
+              Box {box() + 1} of {boxes()}
+            </Meta>
+            <Button
+              disabled={box() >= boxes() - 1}
+              onClick={() => {
+                setBox((at) => Math.min(boxes() - 1, at + 1));
+              }}
+            >
+              ›
+            </Button>
+          </Row>
         </Show>
       </Show>
 
@@ -635,9 +614,82 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       />
     </div>
   );
+}
+
+/**
+ * Picking one of the player's pokemon: the button that opens it, the
+ * dialog it opens into, and the box inside that.
+ *
+ * The records are read one component down, under the boundary this
+ * puts around the box — a list read here would throw past it and take
+ * the page with it
+ */
+export default function CatchPicker(props: CatchPickerProps): JSX.Element {
+  const auth = useAuth();
+  const [opened, setOpened] = createSignal(false);
+  /** Bumped by a give or a take, so the records are read again */
+  const [handled, setHandled] = createSignal(0);
+
+  const owner = (): string => props.player ?? auth.user()?.uid ?? '';
+
+  const showing = (): boolean => props.inline === true || (props.open ?? opened());
+
+  const [owned] = createResource(
+    () =>
+      showing() && props.options == null ? ([owner(), props.revision, handled()] as const) : null,
+    async ([player]): Promise<CatchOption[]> => {
+      // The clock is the server's, so a lock that has timed out reads
+      // as free rather than as whatever this device believes
+      const [records, now] = await Promise.all([listCaught(player), syncServerClock()]);
+
+      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+    },
+  );
+
+  const limit = (): number =>
+    props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
+
+  /**
+   * What the picker is asking for. A caller with something more
+   * specific to say says it; otherwise the question is how many, which
+   * the picker already knows
+   */
+  const purpose = (): string => {
+    if (props.description != null) {
+      return props.description;
+    }
+    if (props.viewOnly === true) {
+      return 'What this trainer has caught.';
+    }
+    if (props.multiple !== true) {
+      return 'Choose one of your pokemon.';
+    }
+    return limit() === Number.POSITIVE_INFINITY
+      ? 'Choose from your pokemon.'
+      : `Choose from your pokemon — up to ${limit()} of them.`;
+  };
+
+  const close = (): void => {
+    setOpened(false);
+    props.onClose?.();
+  };
+
+  const box = (): JSX.Element => (
+    <Suspense fallback={<Note>Looking them over…</Note>}>
+      <PickerBox
+        {...props}
+        owned={owned}
+        showing={showing()}
+        onHandled={() => {
+          setHandled((count) => count + 1);
+        }}
+        onDone={close}
+      />
+    </Suspense>
+  );
 
   return (
-    <Show when={props.inline !== true} fallback={list()}>
+    <Show when={props.inline !== true} fallback={box()}>
       {/* The button that opens it, for a caller that has not said
           when it opens. One that passes `open` has a trigger of its
           own — a grunt's challenge, a lair — and this one turned up
@@ -658,18 +710,20 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         title={props.title ?? (props.viewOnly === true ? 'Their pokemon' : 'Your pokemon')}
         description={purpose()}
       >
-        {list()}
+        {box()}
         <DialogActions>
           <Show when={props.multiple !== true && props.value != null && props.viewOnly !== true}>
             <Button
               onClick={() => {
-                pickOne(null);
+                if (props.multiple !== true) {
+                  props.onPick(null);
+                }
+                close();
               }}
             >
               Pick none
             </Button>
           </Show>
-          <Show when={props.multiple === true && props.viewOnly !== true}>{confirm()}</Show>
           <Button onClick={close}>Close</Button>
         </DialogActions>
       </Dialog>

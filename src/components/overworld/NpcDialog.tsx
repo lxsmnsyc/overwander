@@ -1,4 +1,13 @@
-import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createMemo,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { type CaughtPokemon, isGuarded, listCaught } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
@@ -170,16 +179,29 @@ export interface NpcDialogProps {
  * nothing at all, and gives a party back whole once a window. Any of
  * them can be walked away from
  */
-export default function NpcDialog(props: NpcDialogProps): JSX.Element {
+/**
+ * What the person has to offer, which is where the box, the purse and
+ * the bag are all read.
+ *
+ * Any of them read in the body that declared it would throw past every
+ * `Suspense` written there and land on the boundary around the whole
+ * page, taking the world down while somebody was being served
+ */
+function NpcCounter(
+  props: NpcDialogProps & {
+    catches: Resource<CatchOption[]>;
+    gold: Resource<number>;
+    bag: Resource<InventoryEntry[]>;
+    onServed: () => void;
+    onTraded: () => void;
+  },
+): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
   // Which side of the counter is being looked at, or null while the
   // player has only been offered the two words
   const [counter, setCounter] = createSignal<'buy' | 'sell' | null>(null);
-  // Bumped after every trade, so the purse and the bag catch up with
-  // what was just bought or sold
-  const [traded, setTraded] = createSignal(0);
   // What the Move Reminder has been told so far: which pokemon, and
   // which of the moves it has lost. `reminding` is the two of them
   // agreed to, and while it is set this dialog is closed — the
@@ -194,31 +216,10 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const [buying, setBuying] = createSignal<Items | null>(null);
   const [opening, setOpening] = createSignal<Items | null>(null);
 
-  // Both lists are drawn from this one read: the pair the breeder
-  // wants and the egg the daycare lady wants are the same records,
-  // asked two different questions
-  const [catches, { refetch }] = createResource(
-    () => (props.standing == null ? null : props.player),
-    async (player): Promise<CatchOption[]> => {
-      const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
-
-      return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
-    },
-  );
-
   /**
    * The purse and the bag. Both are re-read after every trade, since a
    * sale moves one and a purchase moves both
    */
-  const [gold] = createResource(
-    () => (props.standing == null ? null : ([props.player, traded()] as const)),
-    async ([player]) => (await getProfile(player))?.gold ?? 0,
-  );
-
-  const [bag] = createResource(
-    () => (props.standing == null ? null : ([props.player, traded()] as const)),
-    async ([player]) => getInventory(player),
-  );
 
   /**
    * What the vendor is carrying. It is derived from the window the
@@ -264,7 +265,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * entire page down for the length of the round trip and brought it
    * back with the dialog shut
    */
-  const offers = (): CatchOption[] => catches.latest ?? [];
+  const offers = (): CatchOption[] => props.catches() ?? [];
 
   const pair = (): [CatchOption, CatchOption] | null => {
     const picked = chosen();
@@ -316,7 +317,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * price, and it is read off the same bag the vendor's picker reads
    */
   const scales = (): number =>
-    (bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+    (props.bag() ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
   /**
    * Which pokemon has been picked out for the reminder
@@ -359,7 +360,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * What is in the bag that the scientist can open
    */
   const fossils = (): InventoryEntry[] =>
-    (bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
+    (props.bag() ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
 
   const close = (): void => {
     setStatus(null);
@@ -383,7 +384,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     breed(snapshot, standing[0], [chosenPair[0].id, chosenPair[1].id])
-      .then(async (egg) => {
+      .then((egg) => {
         setBusy(false);
 
         if (egg == null) {
@@ -394,7 +395,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         }
         setChosen([]);
         setStatus(`An egg. It is yours — carry it as your buddy and walk. (−${BREEDING_FEE} gold)`);
-        await refetch();
+        props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -413,14 +414,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     visitNurse(snapshot, standing[0], picked)
-      .then(async (tended) => {
+      .then((tended) => {
         setBusy(false);
         setStatus(
           tended == null
             ? 'She looked it over and handed it straight back — there was nothing to do, or she has already seen you this while.'
             : 'She looked after it. Right as rain.',
         );
-        await refetch();
+        props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -439,14 +440,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     boostEgg(snapshot, standing[0], id)
-      .then(async (steps) => {
+      .then((steps) => {
         setBusy(false);
         setStatus(
           steps == null
             ? 'She would not take it — it may be ready already, or she has already warmed one for you this while.'
             : `She warmed it along to ${steps} steps. (−${DAYCARE_FEE} gold)`,
         );
-        await refetch();
+        props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -465,14 +466,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     groomCatch(snapshot, standing[0], id)
-      .then(async (friendship) => {
+      .then((friendship) => {
         setBusy(false);
         setStatus(
           friendship == null
             ? 'He would not take it — it may be a shadow, it may think as well of you as it can already, or he has already seen you this while.'
             : `Brushed, fussed over and handed back ${describeFriendship(friendship)}. (−${GROOMING_FEE} gold)`,
         );
-        await refetch();
+        props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -487,7 +488,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
    * is actually deciding with
    */
   const carrying = (item: Items): number =>
-    (bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+    (props.bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
   /**
    * Trade one of something, either way across the counter.
@@ -533,7 +534,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             ? `He handed over a ${describeItem(item)} and counted your gold. (−${moved} gold)`
             : `He looked your ${describeItem(item)} over and paid up. (+${moved} gold)`,
         );
-        setTraded(traded() + 1);
+        props.onTraded();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -569,7 +570,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         }
         setBuying(null);
         setStatus(`He wrapped it up and counted your gold. (−${getFossilPrice(item)} gold)`);
-        setTraded(traded() + 1);
+        props.onTraded();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -595,7 +596,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     setStatus(null);
     setBusy(true);
     reviveFossil(snapshot, standing[0], item)
-      .then(async (revived) => {
+      .then((revived) => {
         setBusy(false);
 
         if (revived == null) {
@@ -608,8 +609,8 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
             revived.level
           }.${revived.shiny ? ' It sparkles.' : ''}`,
         );
-        setTraded(traded() + 1);
-        await refetch();
+        props.onTraded();
+        props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -680,7 +681,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       return (
         <Button
           tone="primary"
-          disabled={busy() || item == null || getFossilPrice(item) > (gold.latest ?? 0)}
+          disabled={busy() || item == null || getFossilPrice(item) > (props.gold() ?? 0)}
           onClick={buyRock}
         >
           {item == null ? 'Buy' : `Buy (${getFossilPrice(item)} gold)`}
@@ -736,12 +737,9 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   const remembered = (): void => {
     forget();
     setStatus('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
-    setTraded(traded() + 1);
-    Promise.resolve(refetch())
-      .then(() => {
-        props.onChange?.();
-      })
-      .catch(() => undefined);
+    props.onTraded();
+    props.onServed();
+    props.onChange?.();
   };
 
   return (
@@ -989,7 +987,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
               <Show when={standing()[1] === Npc.FossilManiac}>
                 <DialogSection class={CENTRED}>
                   <Row class="justify-center">
-                    <Badge tone="gold">{gold.latest ?? 0} gold</Badge>
+                    <Badge tone="gold">{props.gold() ?? 0} gold</Badge>
                   </Row>
 
                   {/* Two rocks, and what is in each of them. It is no
@@ -1072,7 +1070,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
               <Show when={standing()[1] === Npc.Vendor}>
                 <DialogSection title="Trading" class={CENTRED}>
                   <Row class="justify-center">
-                    <Badge tone="gold">{gold.latest ?? 0} gold</Badge>
+                    <Badge tone="gold">{props.gold() ?? 0} gold</Badge>
                   </Row>
 
                   {/* His crate and the player's bag are windows of
@@ -1125,14 +1123,14 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         // What is in the purse, under the crate it is spent on: it is
         // the number every press on this window changes, and it was
         // one screen behind on the counter
-        below={<Badge tone="gold">{gold.latest ?? 0} gold</Badge>}
+        below={<Badge tone="gold">{props.gold() ?? 0} gold</Badge>}
         description={
           counter() === 'sell'
             ? 'One at a time, off the card over whatever he can have.'
             : 'One at a time, off the card over whatever you want.'
         }
         verb={counter() === 'sell' ? 'Sell' : 'Buy'}
-        entries={counter() === 'sell' ? bag.latest : crate()}
+        entries={counter() === 'sell' ? props.bag() : crate()}
         disabled={busy()}
         value={null}
         carried={(entry) => carrying(entry.item)}
@@ -1149,7 +1147,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         // rather than left out: what he stocks is the same crate
         // whatever a player is carrying
         blocked={(entry) =>
-          counter() !== 'sell' && priceOf(entry.item, true) > (gold.latest ?? 0)
+          counter() !== 'sell' && priceOf(entry.item, true) > (props.gold() ?? 0)
             ? 'More than you hold'
             : null
         }
@@ -1178,5 +1176,57 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
         onTaught={remembered}
       />
     </>
+  );
+}
+
+/**
+ * Somebody standing out in the world with an offer.
+ *
+ * The box, the purse and the bag are read one component down, under
+ * this boundary: read here they would throw to the page and take the
+ * world with them in the middle of a trade
+ */
+export default function NpcDialog(props: NpcDialogProps): JSX.Element {
+  // Bumped after every trade, so the purse and the bag catch up with
+  // what was just bought or sold
+  const [traded, setTraded] = createSignal(0);
+
+  // Both lists are drawn from this one read: the pair the breeder
+  // wants and the egg the daycare lady wants are the same records,
+  // asked two different questions
+  const [catches, { refetch }] = createResource(
+    () => (props.standing == null ? null : props.player),
+    async (player): Promise<CatchOption[]> => {
+      const [owned, now] = await Promise.all([listCaught(player), syncServerClock()]);
+
+      return owned.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
+    },
+  );
+
+  const [gold] = createResource(
+    () => (props.standing == null ? null : ([props.player, traded()] as const)),
+    async ([player]) => (await getProfile(player))?.gold ?? 0,
+  );
+
+  const [bag] = createResource(
+    () => (props.standing == null ? null : ([props.player, traded()] as const)),
+    async ([player]) => getInventory(player),
+  );
+
+  return (
+    <Suspense>
+      <NpcCounter
+        {...props}
+        catches={catches}
+        gold={gold}
+        bag={bag}
+        onServed={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+        onTraded={() => {
+          setTraded((count) => count + 1);
+        }}
+      />
+    </Suspense>
   );
 }

@@ -1,5 +1,13 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
-import { getCaught } from '../../auth/caught';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+} from 'solid-js';
+import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../auth/caught-record';
 import { Slots } from '../../data/constants/slots';
 import { isEgg } from '../../auth/egg';
@@ -69,16 +77,24 @@ export interface TeachMoveDialogProps {
  */
 export { MoveLine };
 
-export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Element {
+/**
+ * The two dialogs, which is where the record is read.
+ *
+ * Which of them opens depends on how much room the pokemon has, so
+ * the record is read before either exists — and a record read in the
+ * body that declared it throws past every `Suspense` written there,
+ * onto the boundary around the whole page
+ */
+function TeachBody(
+  props: TeachMoveDialogProps & { caught: Resource<CaughtPokemon | null> },
+): JSX.Element {
   const [forgetting, setForgetting] = createSignal(0);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  const [caught] = createResource(() => props.catchId, getCaught);
-
   const open = (): boolean => props.catchId != null && props.move != null;
 
-  const known = (): Moves[] => caught()?.moves ?? [];
+  const known = (): Moves[] => props.caught()?.moves ?? [];
 
   /**
    * Whether the list is full. It is what decides which of the two
@@ -87,7 +103,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
    * a fifth move instead of being asked to forget one
    */
   const full = (): boolean => {
-    const record = caught();
+    const record = props.caught();
 
     return record != null && known().length >= getCatchSlots(record, Slots.Move);
   };
@@ -100,7 +116,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
   const spent = (): string => props.cost ?? 'The machine';
 
   const named = (): string => {
-    const record = caught();
+    const record = props.caught();
 
     if (record == null) {
       return 'This pokemon';
@@ -150,7 +166,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
    * What is being taught, drawn the size a dialog can hold
    */
   const portrait = (): JSX.Element => (
-    <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
+    <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
       {(record) => (
         <div class="flex justify-center">
           <AnimatedSprite
@@ -203,7 +219,7 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
           <Button disabled={busy()} onClick={close}>
             Cancel
           </Button>
-          <Button tone="primary" disabled={busy() || caught() == null} onClick={teach}>
+          <Button tone="primary" disabled={busy() || props.caught() == null} onClick={teach}>
             {busy() ? 'Teaching…' : `Forget ${getMoveData(known()[forgetting()] ?? 0).name}`}
           </Button>
         </DialogActions>
@@ -246,11 +262,28 @@ export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Elemen
           <Button disabled={busy()} onClick={close}>
             Cancel
           </Button>
-          <Button tone="primary" disabled={busy() || caught() == null} onClick={teach}>
+          <Button tone="primary" disabled={busy() || props.caught() == null} onClick={teach}>
             {busy() ? 'Teaching…' : 'Teach it'}
           </Button>
         </DialogActions>
       </Dialog>
     </>
+  );
+}
+
+/**
+ * Teaching a move, and choosing what it costs.
+ *
+ * The record is read one component down, under this boundary: which
+ * of the two panels opens is decided by how much room the pokemon
+ * has, so nothing is drawn until the record has arrived
+ */
+export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Element {
+  const [caught] = createResource(() => props.catchId, getCaught);
+
+  return (
+    <Suspense>
+      <TeachBody {...props} caught={caught} />
+    </Suspense>
   );
 }

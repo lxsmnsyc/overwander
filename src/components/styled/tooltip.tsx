@@ -1,7 +1,7 @@
 import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
-import FADE, { holdFade } from './transition';
+import { SHEER, holdFade } from './transition';
 
 /**
  * What a thing is, said where the pointer already is.
@@ -154,7 +154,7 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
           <Portal mount={tooltipHost()}>
             <Transition
               show={wanted()}
-              {...FADE}
+              {...SHEER}
               // Once it has faded out there is nowhere for it to be
               afterLeave={() => {
                 setAt(null);

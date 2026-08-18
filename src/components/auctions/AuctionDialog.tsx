@@ -1,4 +1,4 @@
-import { type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import {
   AuctionLot,
   MAX_INCREMENT,
@@ -8,7 +8,7 @@ import {
   openCatchAuction,
   openItemAuction,
 } from '../../auth/auctions';
-import { getCaught } from '../../auth/caught';
+import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import type { Items } from '../../data/ids/items';
@@ -78,7 +78,16 @@ const ITEM_SIZE = 64;
  */
 const CENTRED = 'text-center';
 
-export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
+/**
+ * The listing itself, which is where the record is read.
+ *
+ * A record read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the page,
+ * so the reading half stands on its own
+ */
+function ListingBody(
+  props: AuctionDialogProps & { caught: Resource<CaughtPokemon | null>; onDone: () => void },
+): JSX.Element {
   const [asking, setAsking] = createSignal(MIN_STARTING_BID);
   const [raise, setRaise] = createSignal(MIN_INCREMENT);
   const [status, setStatus] = createSignal<string | null>(null);
@@ -86,11 +95,6 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
   // the terms are named; this one is where they are agreed to
   const [confirming, setConfirming] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
-
-  const [caught] = createResource(
-    () => (props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null),
-    getCaught,
-  );
 
   /**
    * What is being sold, by name. An egg says only that it is one —
@@ -104,7 +108,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
       return describeItem(subject.item);
     }
 
-    const record = caught();
+    const record = props.caught();
 
     if (record == null) {
       return 'This pokemon';
@@ -124,7 +128,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
     setStatus(null);
     setConfirming(false);
     setBusy(false);
-    props.onClose();
+    props.onDone();
   };
 
   const list = (): void => {
@@ -187,7 +191,7 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
         </div>
       }
     >
-      <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
+      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -250,7 +254,9 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
           <Button onClick={close}>Never mind</Button>
           <Button
             tone="primary"
-            disabled={!sensible() || (props.subject?.lot === AuctionLot.Catch && caught() == null)}
+            disabled={
+              !sensible() || (props.subject?.lot === AuctionLot.Catch && props.caught() == null)
+            }
             onClick={() => {
               setStatus(null);
               setConfirming(true);
@@ -301,5 +307,25 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
         </DialogActions>
       </Dialog>
     </>
+  );
+}
+
+/**
+ * Putting one thing on the block.
+ *
+ * The pokemon is read one component down, under this boundary: a
+ * record read here would throw to the page and take the world with
+ * it, and a lot is listed from the middle of somewhere else
+ */
+export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
+  const [caught] = createResource(
+    () => (props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null),
+    getCaught,
+  );
+
+  return (
+    <Suspense>
+      <ListingBody {...props} caught={caught} onDone={props.onClose} />
+    </Suspense>
   );
 }

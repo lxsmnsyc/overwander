@@ -17,7 +17,7 @@ import {
   Transition,
   TransitionChild,
 } from 'terracotta';
-import FADE, { holdFade } from './transition';
+import FADE, { SHEER, holdFade } from './transition';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -338,11 +338,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             and needs the ground behind it to fall back */}
           <DialogOverlay
             as={TransitionChild}
-            enterFrom="opacity-0"
-            enterTo="transition-opacity duration-250 ease-out motion-reduce:duration-75 opacity-100"
-            entered="opacity-100"
-            leaveFrom="opacity-100"
-            leaveTo="transition-opacity duration-250 ease-in motion-reduce:duration-75 opacity-0"
+            {...SHEER}
             class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]"
           />
           {/* This element is to trick the browser into centering the modal contents. */}

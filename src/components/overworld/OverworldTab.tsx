@@ -2,7 +2,9 @@ import type { User } from 'firebase/auth';
 import {
   For,
   type JSX,
+  type Resource,
   Show,
+  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -328,7 +330,21 @@ function buildChunkView(
  * adjacent chunk, and landing on a spawn or a landmark triggers its
  * interaction
  */
-export default function OverworldTab(): JSX.Element {
+/**
+ * The world itself, which is where the relics, the buddy and what has
+ * fled are all read.
+ *
+ * Any of them read in the body that declared it would throw past every
+ * `Suspense` written there and land on the boundary around the whole
+ * page — the world is what that boundary would blank
+ */
+function OverworldBoard(props: {
+  relics: Resource<{ item: Items; amount: number; species: Species }[]>;
+  buddy: Resource<Buddy | null>;
+  fled: Resource<Set<string>>;
+  onRelicSpent: () => void;
+  onFled: () => void;
+}): JSX.Element {
   const auth = useAuth();
   const [chunkX, setChunkX] = createSignal(0);
   const [chunkY, setChunkY] = createSignal(0);
@@ -423,19 +439,8 @@ export default function OverworldTab(): JSX.Element {
    * are used where the player stands, so they live here rather than
    * in the bag listing
    */
-  const [relics, { refetch: refetchRelics }] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => {
-      const carried = await getInventory(uid);
-
-      return carried
-        .map((entry) => ({ ...entry, species: getRaidSpecies(entry.item) }))
-        .filter(
-          (entry): entry is typeof entry & { species: Species } =>
-            entry.species != null && entry.amount > 0,
-        );
-    },
-  );
+  const relics = (): { item: Items; amount: number; species: Species }[] | undefined =>
+    props.relics();
 
   /**
    * Spend a relic: the lobby opens where the player is standing, and
@@ -443,8 +448,8 @@ export default function OverworldTab(): JSX.Element {
    */
   const callMythical = (snapshot: ChunkSnapshot, item: Items): void => {
     hostMythicalRaid(snapshot, item)
-      .then(async (lobby) => {
-        await refetchRelics();
+      .then((lobby) => {
+        props.onRelicSpent();
 
         if (lobby == null) {
           remark('That relic called nothing.');
@@ -575,16 +580,13 @@ export default function OverworldTab(): JSX.Element {
 
   // What walks beside the player changes what the chunk holds, so the
   // buddy's effects are read alongside it
-  const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
+  const buddy = (): Buddy | null | undefined => props.buddy();
 
   /**
    * What has run from this player. Re-read when a meeting ends, since
    * the one that just fled is the one that has to stop being drawn
    */
-  const [fled, { refetch: refetchFled }] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => getRetiredKeys(uid),
-  );
+  const fled = (): Set<string> | undefined => props.fled();
 
   const view = (): ChunkView | null => {
     const record = window();
@@ -1480,19 +1482,16 @@ export default function OverworldTab(): JSX.Element {
                 // from this player's world the same way one that ran
                 // off is, so the cell it was standing on is empty
                 // ground now rather than a pokemon already in the bag
-                Promise.resolve(refetchFled()).catch(() => {
-                  // Worst case it is drawn until the window turns over
-                });
+                // Worst case it is drawn until the window turns over
+                props.onFled();
               }}
               onClose={() => {
                 setSession(null);
                 // A meeting that ended in a flight leaves the chunk
                 // with one fewer pokemon in it for this player
-                Promise.resolve(refetchFled()).catch(() => {
-                  // Worst case the spawn is drawn until the window
-                  // turns over, and interacting with it says it has
-                  // already fled — which is what happened before
-                });
+                // Worst case the spawn is drawn until the window turns
+                // over, and interacting with it says it has already fled
+                props.onFled();
               }}
             />
             <RocketStopDialog
@@ -1561,5 +1560,63 @@ export default function OverworldTab(): JSX.Element {
         )}
       </Show>
     </div>
+  );
+}
+
+/**
+ * The chunk the player is standing in, drawn to fill the screen.
+ *
+ * The three things about the player that the board is drawn from —
+ * what they carry that calls a raid, who walks with them, and what
+ * has run from them — are read one component down, under this
+ * boundary
+ */
+export default function OverworldTab(): JSX.Element {
+  const auth = useAuth();
+
+  /**
+   * The raid items the player carries, each with what it calls. They
+   * are used where the player stands, so they live here rather than
+   * in the bag listing
+   */
+  const [relics, { refetch: refetchRelics }] = createResource(
+    () => auth.user()?.uid ?? null,
+    async (uid) => {
+      const carried = await getInventory(uid);
+
+      return carried
+        .map((entry) => ({ ...entry, species: getRaidSpecies(entry.item) }))
+        .filter(
+          (entry): entry is typeof entry & { species: Species } =>
+            entry.species != null && entry.amount > 0,
+        );
+    },
+  );
+
+  const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
+
+  /**
+   * What has run from this player. Re-read when a meeting ends, since
+   * the one that just fled is the one that has to stop being drawn
+   */
+  const [fled, { refetch: refetchFled }] = createResource(
+    () => auth.user()?.uid ?? null,
+    async (uid) => getRetiredKeys(uid),
+  );
+
+  return (
+    <Suspense fallback={<Note>Reading the world…</Note>}>
+      <OverworldBoard
+        relics={relics}
+        buddy={buddy}
+        fled={fled}
+        onRelicSpent={() => {
+          Promise.resolve(refetchRelics()).catch(() => undefined);
+        }}
+        onFled={() => {
+          Promise.resolve(refetchFled()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

@@ -13,7 +13,7 @@ import {
 import { isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import { TooltipLayer } from './tooltip';
-import FADE, { holdFade } from './transition';
+import { SHEER, holdFade } from './transition';
 
 /**
  * A card that opens on hover: what a row is about, without opening it.
@@ -121,8 +121,18 @@ const WIDTHS: Record<HoverCardWidth, string> = {
 };
 
 const CARD =
-  'pointer-events-auto fixed top-0 left-0 overflow-hidden rounded-panel border-4' +
+  'pointer-events-auto overflow-hidden rounded-panel border-4' +
   ' border-tide bg-paper text-left shadow-window';
+
+/**
+ * The box the card is placed in, which is **outside** the fade.
+ *
+ * A transform on an ancestor becomes the containing block for
+ * anything fixed inside it, and the fade scales what it wraps — so a
+ * card fixed under it was placed against the fade's own box instead
+ * of the window, a whole viewport down the page
+ */
+const PLACED = 'pointer-events-none fixed top-0 left-0';
 
 /**
  * The two bars read as the window's own furniture rather than as rows
@@ -171,7 +181,11 @@ function within(point: Point, corners: Point[]): boolean {
  * Where the card goes: centred on the trigger, on the asked-for side
  * unless there is no room for it there, and never off the window
  */
-function place(anchor: DOMRect, card: DOMRect, wanted: HoverCardPlacement): Point {
+function place(
+  anchor: DOMRect,
+  card: { width: number; height: number },
+  wanted: HoverCardPlacement,
+): Point {
   const above = anchor.top - card.height - GAP;
   const below = anchor.bottom + GAP;
   const fitsAbove = above >= MARGIN;
@@ -481,10 +495,13 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
 
     const put = (): void => {
       if (trigger != null) {
+        // The card's laid-out size rather than its drawn one: it is
+        // scaled while the fade runs, and a box measured mid-fade is
+        // half the box it is about to be
         setSpot(
           place(
             trigger.getBoundingClientRect(),
-            box.getBoundingClientRect(),
+            { width: box.offsetWidth, height: box.offsetHeight },
             props.placement ?? 'top',
           ),
         );
@@ -587,58 +604,62 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
         {/* Drawn in the tooltip layer, which stands after the dialogs:
             a card opened from a row inside a dialog has to clear it */}
         <TooltipLayer>
-          <Transition
-            show={open()}
-            {...FADE}
-            afterLeave={() => {
-              setPresent(false);
-              setSpot(null);
+          <div
+            class={PLACED}
+            style={{
+              transform: `translate(${spot()?.x ?? 0}px, ${spot()?.y ?? 0}px)`,
+              visibility: spot() == null ? 'hidden' : 'visible',
             }}
           >
-            <div
-              ref={(element) => {
-                setCard(element);
-              }}
-              role="dialog"
-              aria-labelledby={titleId}
-              onTransitionEnd={holdFade}
-              // Nothing to press or read while it fades: a card on its
-              // way out would otherwise swallow the click that follows
-              inert={!open()}
-              aria-hidden={open() ? undefined : 'true'}
-              class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
-                open() ? '' : 'pointer-events-none'
-              }`}
-              style={{
-                transform: `translate(${spot()?.x ?? 0}px, ${spot()?.y ?? 0}px)`,
-                visibility: spot() == null ? 'hidden' : 'visible',
-              }}
-              onMouseEnter={cancel}
-              onMouseLeave={() => {
-                hide();
-              }}
-              onFocusOut={(event) => {
-                if (!holds(card(), event.relatedTarget) && !holds(trigger, event.relatedTarget)) {
-                  hide(0);
-                }
+            <Transition
+              show={open()}
+              {...SHEER}
+              afterLeave={() => {
+                setPresent(false);
+                setSpot(null);
               }}
             >
-              <header class={BAR}>
-                <strong id={titleId} class="text-sm font-extrabold tracking-tight">
-                  {props.title}
-                </strong>
-                <Show when={props.description}>
-                  {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
-                </Show>
-              </header>
-              <Holding.Provider value={holding}>
-                <div class={BODY}>{props.children}</div>
-                <Show when={props.footer}>
-                  {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
-                </Show>
-              </Holding.Provider>
-            </div>
-          </Transition>
+              <div
+                ref={(element) => {
+                  setCard(element);
+                }}
+                role="dialog"
+                aria-labelledby={titleId}
+                onTransitionEnd={holdFade}
+                // Nothing to press or read while it fades: a card on its
+                // way out would otherwise swallow the click that follows
+                inert={!open()}
+                aria-hidden={open() ? undefined : 'true'}
+                class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
+                  open() ? '' : 'pointer-events-none'
+                }`}
+                onMouseEnter={cancel}
+                onMouseLeave={() => {
+                  hide();
+                }}
+                onFocusOut={(event) => {
+                  if (!holds(card(), event.relatedTarget) && !holds(trigger, event.relatedTarget)) {
+                    hide(0);
+                  }
+                }}
+              >
+                <header class={BAR}>
+                  <strong id={titleId} class="text-sm font-extrabold tracking-tight">
+                    {props.title}
+                  </strong>
+                  <Show when={props.description}>
+                    {(said) => <span class="text-xs text-on-accent/85">{said()}</span>}
+                  </Show>
+                </header>
+                <Holding.Provider value={holding}>
+                  <div class={BODY}>{props.children}</div>
+                  <Show when={props.footer}>
+                    {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
+                  </Show>
+                </Holding.Provider>
+              </div>
+            </Transition>
+          </div>
         </TooltipLayer>
       </Show>
       {/* Dev-only: the triangle the pointer is being measured against,

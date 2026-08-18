@@ -1,8 +1,8 @@
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { TabGroup } from 'terracotta';
 import { getCandyCount } from '../../auth/candy';
 import { EGG_HATCH_STEPS } from '../../auth/egg';
-import { getSpeciesDexEntry } from '../../auth/pokedex';
+import { type SpeciesDexEntry, getSpeciesDexEntry } from '../../auth/pokedex';
 import {
   BIOME_NAMES,
   SPAWN_RARITY_NAMES,
@@ -209,7 +209,19 @@ export interface DexEntryDialogProps {
   onSpecies: (species: Species) => void;
 }
 
-export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element {
+/**
+ * The entry itself, which is where the dex and the candy are read.
+ *
+ * Either read in the body that declared it would throw past every
+ * `Suspense` written there and land on the boundary around the page,
+ * taking the dialog with it — so the reading half stands on its own
+ */
+function DexEntryBody(
+  props: DexEntryDialogProps & {
+    dex: Resource<SpeciesDexEntry | null>;
+    candy: Resource<number>;
+  },
+): JSX.Element {
   /**
    * The species and its data together, so everything below can be
    * written against one non-null thing rather than checking twice
@@ -220,23 +232,6 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
     return species == null ? null : { species, data: getSpeciesData(species) };
   };
 
-  // What the reader has met. It decides which sprites are drawn in
-  // full and nothing else on the page
-  const [dex] = createResource(
-    () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getSpeciesDexEntry(player, species),
-  );
-
-  const [candy] = createResource(
-    () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getCandyCount(player, getSpeciesData(species).family),
-  );
-
-  /**
-   * Read through `latest` rather than the resource: a read that
-   * suspends unmounts the panel, and the nearest boundary to a dialog
-   * is the root of the whole app
-   */
   const known = (): {
     met: boolean;
     owned: boolean;
@@ -244,7 +239,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
     seen: number;
     caught: number;
   } => {
-    const entry = dex.latest;
+    const entry = props.dex();
 
     if (entry == null || entry.species !== props.species) {
       return { met: false, owned: false, shiny: false, seen: 0, caught: 0 };
@@ -257,37 +252,6 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       // hundredth Pidgey as for the first
       seen: entry.seen.total,
       caught: entry.caught.total,
-    };
-  };
-
-  /**
-   * The entry either side of this one. The ends of the dex are ends
-   * rather than a loop: somebody pressing "next" through the whole of
-   * it should stop at the last one instead of finding themselves back
-   * at the first wondering what they missed
-   */
-  const neighbour = (step: number): Species | null => {
-    const species = props.species;
-
-    if (species == null) {
-      return null;
-    }
-
-    const listed = dexOrder();
-    const at = listed.indexOf(species);
-    const wanted = at + step;
-
-    return at < 0 || wanted < 0 || wanted >= listed.length ? null : listed[wanted];
-  };
-
-  const walk = (step: number): (() => void) | undefined => {
-    const next = neighbour(step);
-
-    if (next == null) {
-      return undefined;
-    }
-    return () => {
-      props.onSpecies(next);
     };
   };
 
@@ -348,22 +312,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
   );
 
   return (
-    <Dialog
-      width="wide"
-      isOpen={props.species != null}
-      onClose={props.onClose}
-      // Named apart from the dex it was opened out of: two dialogs
-      // both called "Pokedex" are two panels a player cannot tell
-      // apart when one is standing on the other
-      title="Dex Entry"
-      // The dex either side of this entry. In the top bar rather than
-      // beside the sprite: they walk the dex rather than the pokemon,
-      // and they stay put however far down the entry is scrolled
-      lead={<StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />}
-      aside={<StepButton label="Next pokemon" mark="›" onPress={walk(1)} />}
-      terse
-      description="One species in full: what it is, where it lives, and everything it can learn."
-    >
+    <>
       <Show when={showing()} fallback={<Note>No such species.</Note>}>
         {(entry) => (
           <div
@@ -421,7 +370,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
                       than the species': candy is held per family, and
                       it is what a level costs */}
                   <Badge tone="gold">
-                    {candy.latest ?? 0} {getFamilyName(entry().data.family)} candy
+                    {props.candy() ?? 0} {getFamilyName(entry().data.family)} candy
                   </Badge>
                 </Row>
               </DialogSection>
@@ -589,6 +538,81 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
           </div>
         )}
       </Show>
+    </>
+  );
+}
+
+/**
+ * One species in full, opened out of the dex and over it.
+ *
+ * What the reader has met and what candy they hold are read one
+ * component down, under the boundary this puts inside the panel: a
+ * dex still arriving replaces the entry rather than the page
+ */
+export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element {
+  // What the reader has met. It decides which sprites are drawn in
+  // full and nothing else on the page
+  const [dex] = createResource(
+    () => (props.species == null ? null : ([props.player, props.species] as const)),
+    async ([player, species]) => getSpeciesDexEntry(player, species),
+  );
+
+  const [candy] = createResource(
+    () => (props.species == null ? null : ([props.player, props.species] as const)),
+    async ([player, species]) => getCandyCount(player, getSpeciesData(species).family),
+  );
+
+  /**
+   * The entry either side of this one. The ends of the dex are ends
+   * rather than a loop: somebody pressing "next" through the whole of
+   * it should stop at the last one instead of finding themselves back
+   * at the first wondering what they missed
+   */
+  const neighbour = (step: number): Species | null => {
+    const species = props.species;
+
+    if (species == null) {
+      return null;
+    }
+
+    const listed = dexOrder();
+    const at = listed.indexOf(species);
+    const wanted = at + step;
+
+    return at < 0 || wanted < 0 || wanted >= listed.length ? null : listed[wanted];
+  };
+
+  const walk = (step: number): (() => void) | undefined => {
+    const next = neighbour(step);
+
+    if (next == null) {
+      return undefined;
+    }
+    return () => {
+      props.onSpecies(next);
+    };
+  };
+
+  return (
+    <Dialog
+      width="wide"
+      isOpen={props.species != null}
+      onClose={props.onClose}
+      // Named apart from the dex it was opened out of: two dialogs
+      // both called "Pokedex" are two panels a player cannot tell
+      // apart when one is standing on the other
+      title="Dex Entry"
+      // The dex either side of this entry. In the top bar rather than
+      // beside the sprite: they walk the dex rather than the pokemon,
+      // and they stay put however far down the entry is scrolled
+      lead={<StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />}
+      aside={<StepButton label="Next pokemon" mark="›" onPress={walk(1)} />}
+      terse
+      description="One species in full: what it is, where it lives, and everything it can learn."
+    >
+      <Suspense fallback={<Note>Reading the dex…</Note>}>
+        <DexEntryBody {...props} dex={dex} candy={candy} />
+      </Suspense>
 
       <DialogActions>
         <Button onClick={props.onClose}>Close</Button>

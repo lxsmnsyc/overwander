@@ -1,5 +1,13 @@
-import { type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
-import { getCaught } from '../../auth/caught';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+} from 'solid-js';
+import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getMovePoints, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { usePPItem } from '../../auth/training';
@@ -46,19 +54,25 @@ export interface IncreasePPDialogProps {
   onUsed?: (said: string) => void;
 }
 
-export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Element {
+/**
+ * The choosing itself, which is where the record is read.
+ *
+ * A record read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the page,
+ * taking the dialog with it — so the reading half stands on its own
+ */
+function BottleBody(
+  props: IncreasePPDialogProps & {
+    caught: Resource<CaughtPokemon | null>;
+    onUsedUp: () => void;
+    onDone: () => void;
+  },
+): JSX.Element {
   const [chosen, setChosen] = createSignal(0);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  const [caught, { refetch }] = createResource(
-    () => (props.item == null ? null : props.catchId),
-    getCaught,
-  );
-
-  const open = (): boolean => props.catchId != null && props.item != null;
-
-  const known = (): Moves[] => caught()?.moves ?? [];
+  const known = (): Moves[] => props.caught()?.moves ?? [];
 
   /**
    * What one bottle of this is worth: a point for a PP Up, the whole
@@ -67,7 +81,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
   const worth = (): number => (props.item == null ? 0 : (PP_ITEMS.get(props.item) ?? 0));
 
   const spent = (move: Moves): number => {
-    const record = caught();
+    const record = props.caught();
 
     return record == null ? 0 : getMovePoints(record, move);
   };
@@ -92,7 +106,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
   };
 
   const named = (): string => {
-    const record = caught();
+    const record = props.caught();
 
     if (record == null) {
       return 'This pokemon';
@@ -113,7 +127,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
     setStatus(null);
     setChosen(0);
     setBusy(false);
-    props.onClose();
+    props.onDone();
   };
 
   /**
@@ -157,7 +171,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
           );
           // What the record says may be what refused it, so it is read
           // again rather than left as it was
-          Promise.resolve(refetch()).catch(() => undefined);
+          props.onUsedUp();
           return;
         }
         props.onUsed?.(
@@ -172,14 +186,8 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
   };
 
   return (
-    <Dialog
-      isOpen={open()}
-      onClose={close}
-      title="Increase PP"
-      description={`${bottle()} is spent on one move, and nothing takes the points back. Choose the
-        move it goes on.`}
-    >
-      <Show when={caught()} fallback={<Note>Reading the record…</Note>}>
+    <>
+      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -225,6 +233,43 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
           {busy() ? 'Using…' : `Use ${bottle()}`}
         </Button>
       </DialogActions>
+    </>
+  );
+}
+
+/**
+ * Spending a PP Up or a PP Max on one of a pokemon's moves.
+ *
+ * The record is read one component down, under the boundary inside
+ * the panel: a record still arriving replaces the choosing rather
+ * than the page the panel stands on
+ */
+export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Element {
+  const [caught, { refetch }] = createResource(
+    () => (props.item == null ? null : props.catchId),
+    getCaught,
+  );
+
+  const bottle = (): string => (props.item == null ? 'It' : describeItem(props.item));
+
+  return (
+    <Dialog
+      isOpen={props.catchId != null && props.item != null}
+      onClose={props.onClose}
+      title="Increase PP"
+      description={`${bottle()} is spent on one move, and nothing takes the points back. Choose the
+        move it goes on.`}
+    >
+      <Suspense fallback={<Note>Reading the record…</Note>}>
+        <BottleBody
+          {...props}
+          caught={caught}
+          onUsedUp={() => {
+            Promise.resolve(refetch()).catch(() => undefined);
+          }}
+          onDone={props.onClose}
+        />
+      </Suspense>
     </Dialog>
   );
 }

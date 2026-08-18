@@ -1,4 +1,14 @@
-import { For, Index, type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
+import {
+  For,
+  Index,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
 import { getBuddy, setBuddy } from '../../auth/buddy';
 import { syncServerClock } from '../../auth/clock';
@@ -30,7 +40,7 @@ import {
   isShiny,
 } from '../../auth/caught-record';
 import { Slots } from '../../data/constants/slots';
-import { getPokedex } from '../../auth/pokedex';
+import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { getProfile } from '../../auth/profile';
 import {
   type HealthState,
@@ -47,7 +57,7 @@ import { isAuctionableCatch } from '../../auth/auctions';
 import { getCandyCost, getCandyCount, getCatchCandy, useCandy } from '../../auth/candy';
 import { learnLevelUpMove } from '../../auth/moves';
 import { useAuth } from '../../auth/context';
-import { evolveCatch, listEvolutionOptions } from '../../auth/evolution';
+import { type EvolutionOption, evolveCatch, listEvolutionOptions } from '../../auth/evolution';
 import { assignableEffort, unusedEffort } from '../../auth/effort';
 import {
   type TrainingResult,
@@ -492,10 +502,35 @@ export interface CatchDialogProps {
 /**
  * One catch in full, shown over the list it was opened from
  */
-export default function CatchDialog(props: CatchDialogProps): JSX.Element {
+/**
+ * The sheet itself, which is where every one of these is read.
+ *
+ * A read in the body that declared it throws past every `Suspense`
+ * written there and lands on the boundary around the whole page, so
+ * all ten of them are read here, one component below where they are
+ * asked for
+ */
+function CatchSheetBody(
+  props: CatchDialogProps & {
+    detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
+    siblings: Resource<string[]>;
+    owners: Resource<Map<string, string>>;
+    dex: Resource<PokedexView>;
+    evolutions: Resource<EvolutionOption[]>;
+    fighting: Resource<boolean>;
+    onlyOne: Resource<boolean>;
+    candies: Resource<number>;
+    bag: Resource<InventoryEntry[]>;
+    buddy: Resource<string | null>;
+    onRecordChanged: () => void;
+    onBagChanged: () => void;
+    onBuddyChanged: () => void;
+    onCandiesChanged: () => void;
+    onEvolutionsChanged: () => void;
+  },
+): JSX.Element {
   const auth = useAuth();
   const toast = useToast();
-  const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
 
   /**
    * What an action has to say for itself. It is said in the corner
@@ -514,7 +549,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     // while the next one arrives is what makes a favorite land without
     // the screen blinking. It is only kept while it is about the
     // pokemon being looked at
-    const held = detail.latest;
+    const held = props.detail();
     const loaded = held?.id === props.catchId ? held.caught : null;
 
     if (loaded == null) {
@@ -528,39 +563,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * The rest of the box, in the order the box draws it — newest first,
-   * the same sort the picker uses, so "next" means the square to the
-   * right of this one rather than some other order nobody can see.
-   *
-   * Read once per player rather than per pokemon: stepping through a
-   * collection would otherwise pay for the whole listing at every
-   * press. It goes stale when a record leaves the box, which is a
-   * release or a listing — and both of those shut the sheet
-   */
-  const [siblings] = createResource(
-    // Read again each time the sheet **opens** rather than once for
-    // the session: a pokemon caught since the last look belongs in the
-    // run. Stepping does not re-read it — the source is the player
-    // rather than the pokemon — so walking a box of three hundred is
-    // still one query
-    () =>
-      props.readOnly === true || props.onCatch == null || props.catchId == null
-        ? null
-        : props.player,
-    async (player) =>
-      (await listCaught(player))
-        .sort(([, one], [, other]) => other.caughtAt.localeCompare(one.caughtAt))
-        .map(([id]) => id),
-  );
-
-  /**
    * The catch either side of this one, or null at the ends of the box.
    * The ends are ends rather than a loop: somebody stepping through
    * three hundred pokemon should stop at the last one instead of
    * quietly starting again
    */
   const neighbour = (step: number): string | null => {
-    const listed = siblings.latest;
+    const listed = props.siblings();
     const catchId = props.catchId;
 
     if (listed == null || catchId == null) {
@@ -599,33 +608,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * What everyone who has owned it is called. Profiles are readable by
-   * every signed-in player — that is what nicknames are for — and the
-   * chain is short, so they are read once for the whole of it and
-   * looked up by uid as the rows draw
-   */
-  const [owners] = createResource(
-    () => [...new Set(view()?.history.map((entry) => entry.owner) ?? [])].sort().join(','),
-    async (key): Promise<Map<string, string>> => {
-      const named = new Map<string, string>();
-
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const profile = await getProfile(uid);
-
-            if (profile != null) {
-              named.set(uid, profile.nickname);
-            }
-          }),
-      );
-      return named;
-    },
-  );
-
-  /**
    * Who an entry names. The player reading it is "you" rather than
    * their own nickname, and a trainer whose profile has gone is still
    * somebody — an owner is a fact about the pokemon, so a missing
@@ -635,18 +617,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     if (uid === auth.user()?.uid) {
       return 'You';
     }
-    return owners.latest?.get(uid) ?? 'A trainer';
+    return props.owners()?.get(uid) ?? 'A trainer';
   };
-
-  /**
-   * What the reader's dex says, read once for the whole sheet.
-   *
-   * It is the dex rather than this record because of what it is for:
-   * the evolutions below are drawn to what the **player** has met, so
-   * a line they have never seen the end of is a silhouette here the
-   * same way it is in the dex. One document, one read
-   */
-  const [dex] = createResource(() => auth.user()?.uid ?? null, getPokedex);
 
   /**
    * Whether the reader has met this species at all, and whether they
@@ -655,44 +627,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * picture and then hid it would be worse than one that fills in
    */
   const dexKnows = (species: Species): { met: boolean; owned: boolean } => {
-    const entry = dex.latest;
+    const entry = props.dex();
 
     return {
       met: entry?.seen.some((tally) => tally.species === species) === true,
       owned: entry?.caught.some((tally) => tally.species === species) === true,
     };
   };
-
-  const [evolutions, { refetch: refetchEvolutions }] = createResource(
-    () => {
-      const uid = owned();
-      const catchId = props.catchId;
-
-      return uid == null || catchId == null ? null : ([uid, catchId, view()?.species] as const);
-    },
-    async ([uid, catchId]) => listEvolutionOptions(uid, catchId),
-  );
-
-  /**
-   * Whether this pokemon is fighting right now. A battle runs on a
-   * frozen snapshot of the party, so the record it was copied from
-   * holds still until the fight ends — the server refuses the writes
-   * either way; this is only so the buttons say so first
-   */
-  const [fighting] = createResource(
-    () => view(),
-    async (caught) => isLockLive(caught, await syncServerClock()),
-  );
-
-  /**
-   * Whether this is the only pokemon they have. The server refuses to
-   * release it either way; this is so the button says so before it is
-   * pressed twice
-   */
-  const [onlyOne] = createResource(
-    () => owned(),
-    async (uid) => (await countCaught(uid)) <= 1,
-  );
 
   /**
    * Whether the record is being held as it is, for either of the two
@@ -705,21 +646,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const frozen = (): boolean => {
     const loaded = view();
 
-    return fighting.latest === true || (loaded != null && isGuarded(loaded));
+    return props.fighting() === true || (loaded != null && isGuarded(loaded));
   };
-
-  /**
-   * The candies behind this catch: the stack is keyed by family, so
-   * every stage of the line spends the same pile
-   */
-  const [candies, { refetch: refetchCandies }] = createResource(
-    () => {
-      const species = view()?.species;
-
-      return species == null ? null : ([props.player, getSpeciesData(species).family] as const);
-    },
-    async ([player, family]) => getCandyCount(player, family),
-  );
 
   /**
    * A move about to be learned, and where it came from. The dialog it
@@ -800,11 +728,11 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     useCandy(catchId)
-      .then(async (level) => {
+      .then((level) => {
         say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
-        await refetch();
-        await refetchCandies();
-        await refetchEvolutions();
+        props.onRecordChanged();
+        props.onCandiesChanged();
+        props.onEvolutionsChanged();
         props.onChange?.();
 
         if (level != null) {
@@ -838,24 +766,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   };
 
   /**
-   * What the player is carrying. The bag is read once and split
-   * below: some of it can be handed over, some of it can be spent on
-   * the pokemon, and the two lists move together when either does
-   */
-  /**
-   * Keyed on the sheet as well as the owner, so each pokemon opened
-   * re-reads it. The sheet is mounted for the whole session — it is
-   * the route's, not a list's — so a bag read once on mount is the bag
-   * as it was before the player had played: a new account's read
-   * landed before the starter gift did, and Use item stayed empty for
-   * good
-   */
-  const [bag, { refetch: refetchBag }] = createResource(
-    () => (props.catchId == null ? null : owned()),
-    async (uid) => getInventory(uid),
-  );
-
-  /**
    * Whether a catch is allowed to hold it at all
    */
   const isHoldable = (item: Items): boolean => {
@@ -873,7 +783,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * bag asks this rather than opening onto an empty list
    */
   const holdables = (): InventoryEntry[] =>
-    (bag.latest ?? []).filter((entry) => isHoldable(entry.item));
+    (props.bag() ?? []).filter((entry) => isHoldable(entry.item));
 
   /**
    * Whether the item would do this pokemon some good — a berry, a
@@ -895,15 +805,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     (give ? giveItem(catchId, item) : takeItem(catchId, item))
-      .then(async (moved) => {
+      .then((moved) => {
         say(
           moved
             ? `${describeItem(item)} ${give ? 'handed over' : 'taken back'}.`
             : `${describeItem(item)} could not be ${give ? 'handed over' : 'taken back'}.`,
         );
-        await refetch();
-        await refetchBag();
-        await refetchEvolutions();
+        props.onRecordChanged();
+        props.onBagChanged();
+        props.onEvolutionsChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -918,7 +828,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     useHealingItem(catchId, item)
-      .then(async (state: HealthState | null) => {
+      .then((state: HealthState | null) => {
         say(
           state == null
             ? `${describeItem(item)} would do nothing for it.`
@@ -928,8 +838,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                 isHerbal(item) ? ' It did not enjoy that.' : ''
               }`,
         );
-        await refetch();
-        await refetchBag();
+        props.onRecordChanged();
+        props.onBagChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -949,10 +859,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     landed: (result: TrainingResult) => string,
   ): void => {
     running
-      .then(async (result) => {
+      .then((result) => {
         say(result == null ? refused : landed(result));
-        await refetch();
-        await refetchBag();
+        props.onRecordChanged();
+        props.onBagChanged();
         props.onChange?.();
       })
       .catch((thrown: unknown) => {
@@ -1014,14 +924,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     usePurifyingGem(catchId, item)
-      .then(async (ivs) => {
+      .then((ivs) => {
         say(
           ivs == null
             ? `${describeItem(item)} could not be used.`
             : `The shadow is gone — ${describeIVs(ivs)}.`,
         );
-        await refetch();
-        await refetchBag();
+        props.onRecordChanged();
+        props.onBagChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1036,14 +946,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     useBottleCap(catchId, item)
-      .then(async (ivs) => {
+      .then((ivs) => {
         say(
           ivs == null
             ? `${describeItem(item)} could not be used.`
             : `${describeItem(item)} polished it — ${describeIVs(ivs)}.`,
         );
-        await refetch();
-        await refetchBag();
+        props.onRecordChanged();
+        props.onBagChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1063,26 +973,20 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     useBall(catchId, item)
-      .then(async (ball) => {
+      .then((ball) => {
         say(
           ball == null
             ? `${describeItem(item)} could not be used.`
             : `It is in ${withArticle(describeItem(item))} now.`,
         );
-        await refetch();
-        await refetchBag();
+        props.onRecordChanged();
+        props.onBagChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         say(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
-
-  /**
-   * Which catch is currently walking with the player, so the button
-   * can say whether this is the one
-   */
-  const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
 
   const takeAlong = (): void => {
     const uid = owned();
@@ -1092,9 +996,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     setBuddy(uid, catchId)
-      .then(async (set) => {
+      .then((set) => {
         say(set ? 'Walking with you now.' : 'That one cannot come along.');
-        await refetchBuddy();
+        props.onBuddyChanged();
       })
       .catch((caught: unknown) => {
         say(caught instanceof Error ? caught.message : String(caught), 'ember');
@@ -1108,15 +1012,15 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     hatchEgg(catchId)
-      .then(async (species) => {
+      .then((species) => {
         say(
           species == null
             ? 'It is not ready yet.'
             : `It hatched into ${getSpeciesData(species).name}!`,
         );
-        await refetch();
-        await refetchCandies();
-        await refetchEvolutions();
+        props.onRecordChanged();
+        props.onCandiesChanged();
+        props.onEvolutionsChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1132,10 +1036,10 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       return;
     }
     evolveCatch(catchId, into)
-      .then(async (species) => {
+      .then((species) => {
         say(species == null ? 'That evolution is no longer available.' : 'Evolution complete.');
-        await refetch();
-        await refetchEvolutions();
+        props.onRecordChanged();
+        props.onEvolutionsChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1150,9 +1054,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    */
   const mark = (setting: Promise<boolean | null>, said: string, refused: string): void => {
     setting
-      .then(async (marked) => {
+      .then((marked) => {
         say(marked == null ? refused : said);
-        await refetch();
+        props.onRecordChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1200,7 +1104,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     }
     setRenaming(true);
     setNickname(catchId, draft)
-      .then(async (given) => {
+      .then((given) => {
         setRenaming(false);
 
         if (given == null) {
@@ -1209,7 +1113,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         }
         setNaming(null);
         say(given === '' ? 'Its name is its own again.' : `It answers to ${given} now.`);
-        await refetch();
+        props.onRecordChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1395,7 +1299,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * knows whether there would be a list in it
    */
   const hasUsableItem = (): boolean =>
-    (bag.latest ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
+    (props.bag() ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
 
   /**
    * Spend it, whatever it is. Each kind already has its own call and
@@ -1466,14 +1370,14 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const actions = (loaded: CaughtPokemon): MenuAction[] => [
     {
       label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
-      disabled: fighting.latest === true,
+      disabled: props.fighting() === true,
       onSelect: () => {
         favorite(!isFavorite(loaded));
       },
     },
     {
       label: isGuarded(loaded) ? 'Unlock' : 'Lock',
-      disabled: fighting.latest === true,
+      disabled: props.fighting() === true,
       onSelect: () => {
         guard(!isGuarded(loaded));
       },
@@ -1503,7 +1407,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       // and catch. The server asks the same of the stored record
       disabled:
         props.onAuction == null ||
-        fighting.latest === true ||
+        props.fighting() === true ||
         isFavorite(loaded) ||
         isEgg(loaded) ||
         !isAuctionableCatch(loaded),
@@ -1527,7 +1431,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       label: loaded.nickname === '' ? 'Set nickname' : 'Change nickname',
       // An egg is not named. What is in it has not been met, and a
       // name given to a shell is a name given to nobody
-      disabled: fighting.latest === true || isEgg(loaded),
+      disabled: props.fighting() === true || isEgg(loaded),
       onSelect: () => {
         // Opened on the name it already has rather than on an empty
         // box: renaming is far commoner than naming, and a player
@@ -1536,8 +1440,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       },
     },
     {
-      label: buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
-      disabled: buddy.latest === props.catchId,
+      label: props.buddy() === props.catchId ? 'Walking with you' : 'Set buddy',
+      disabled: props.buddy() === props.catchId,
       onSelect: takeAlong,
     },
   ];
@@ -1627,7 +1531,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
             screen for the length of one round trip */}
         <Show
           when={view()}
-          fallback={<Note>{detail.loading ? 'Loading catch…' : 'No such catch.'}</Note>}
+          fallback={<Note>{props.detail() == null ? 'Loading catch…' : 'No such catch.'}</Note>}
         >
           {(loaded) => (
             <>
@@ -1636,7 +1540,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   is where they are turned on and off; a raid is the one
                   nobody chose, so it is the one worth a sentence */}
               <Show when={owned()}>
-                <Show when={fighting.latest}>
+                <Show when={props.fighting()}>
                   <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
                 </Show>
 
@@ -1649,7 +1553,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                   <DialogSection title="Use item">
                     <InventoryPicker
                       inline
-                      entries={bag.latest}
+                      entries={props.bag()}
                       disabled={frozen()}
                       // Only the prized and special bands ask twice.
                       // Everything a player heals with — a Potion, a
@@ -1768,7 +1672,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <Button
                       tone="primary"
                       disabled={
-                        (candies.latest ?? 0) < getCandyCost(loaded()) ||
+                        (props.candies() ?? 0) < getCandyCost(loaded()) ||
                         loaded().level >= MAX_LEVEL ||
                         frozen()
                       }
@@ -1785,7 +1689,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
                   </Show>
                   <Badge tone="gold">
-                    {candies.latest ?? 0} {(candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
+                    {props.candies() ?? 0} {(props.candies() ?? 0) === 1 ? 'candy' : 'candies'}
                   </Badge>
                 </Row>
 
@@ -1805,7 +1709,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     </div>
                     <Note>
                       {loaded().steps} / {loaded().hatchSteps} steps
-                      {buddy.latest === props.catchId
+                      {props.buddy() === props.catchId
                         ? '.'
                         : ' — it only moves while it is the one being carried.'}
                     </Note>
@@ -1831,7 +1735,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                       not evolve": most of a full-grown box would carry
                       a ruled-off paragraph saying nothing was going to
                       happen */}
-                  <Show when={evolutions.latest?.length}>
+                  <Show when={props.evolutions()?.length}>
                     <DialogSection title="Evolution">
                       {/* `items-center`: a row is as wide as what it
                           says, and stands in the middle of the sheet.
@@ -1847,7 +1751,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                             what actually changed is a flag on one of
                             them. What a line evolves into does not
                             move; only whether it can yet */}
-                        <Index each={evolutions.latest}>
+                        <Index each={props.evolutions()}>
                           {(option) => (
                             <ListRow
                               class="items-center gap-3"
@@ -2217,7 +2121,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                           }}
                           title="Give an item"
                           description="Choose what it should carry."
-                          entries={bag.latest}
+                          entries={props.bag()}
                           disabled={frozen()}
                           value={null}
                           verb="Give"
@@ -2321,8 +2225,8 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                         // this, so the button is dead rather than
                         // pressable and refused
                         disabled={
-                          fighting.latest === true ||
-                          onlyOne.latest === true ||
+                          props.fighting() === true ||
+                          props.onlyOne() === true ||
                           isFavorite(loaded()) ||
                           isGuarded(loaded())
                         }
@@ -2351,7 +2255,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
                     {/* Nothing takes the last one: a player with an
                           empty collection has no way back into the
                           game except the gift that would replace it */}
-                    <Show when={onlyOne.latest}>
+                    <Show when={props.onlyOne()}>
                       <Meta>The only pokemon you have cannot be released.</Meta>
                     </Show>
                   </DialogSection>
@@ -2390,11 +2294,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         onClose={nextTeaching}
         onTaught={() => {
           say(teaching()?.levelled === true ? 'Learned.' : 'Taught.', 'leaf');
-          Promise.all([refetch(), refetchBag()])
-            .then(() => {
-              props.onChange?.();
-            })
-            .catch(() => undefined);
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
         }}
       />
 
@@ -2469,13 +2371,247 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
         }}
         onUsed={(said) => {
           say(said);
-          Promise.all([refetch(), refetchBag()])
-            .then(() => {
-              props.onChange?.();
-            })
-            .catch(() => undefined);
+          props.onRecordChanged();
+          props.onBagChanged();
+          props.onChange?.();
         }}
       />
     </>
+  );
+}
+
+/**
+ * The sheet with its record read, which is where everything derived
+ * from that record is asked for: what it can evolve into, whose
+ * hands it has been through, its candies, and whether it is fighting.
+ * All four are keyed on the record, so they belong to a body below
+ * the one holding it
+ */
+function CatchSheet(
+  props: CatchDialogProps & {
+    detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
+    siblings: Resource<string[]>;
+    dex: Resource<PokedexView>;
+    onlyOne: Resource<boolean>;
+    bag: Resource<InventoryEntry[]>;
+    buddy: Resource<string | null>;
+    onRecordChanged: () => void;
+    onBagChanged: () => void;
+    onBuddyChanged: () => void;
+  },
+): JSX.Element {
+  const auth = useAuth();
+
+  const owned = (): string | null => {
+    const user = auth.user();
+
+    if (props.readOnly === true) {
+      return null;
+    }
+    return user != null && user.uid === props.player ? user.uid : null;
+  };
+
+  const view = (): CaughtPokemon | null => {
+    const held = props.detail();
+    const loaded = held?.id === props.catchId ? held.caught : null;
+
+    if (loaded == null) {
+      return null;
+    }
+    return props.readOnly === true || loaded.owner === props.player ? loaded : null;
+  };
+
+  /**
+   * What everyone who has owned it is called. Profiles are readable by
+   * every signed-in player — that is what nicknames are for — and the
+   * chain is short, so they are read once for the whole of it and
+   * looked up by uid as the rows draw
+   */
+  const [owners] = createResource(
+    () => [...new Set(view()?.history.map((entry) => entry.owner) ?? [])].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const named = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const profile = await getProfile(uid);
+
+            if (profile != null) {
+              named.set(uid, profile.nickname);
+            }
+          }),
+      );
+      return named;
+    },
+  );
+
+  const [evolutions, { refetch: refetchEvolutions }] = createResource(
+    () => {
+      const uid = owned();
+      const catchId = props.catchId;
+
+      return uid == null || catchId == null ? null : ([uid, catchId, view()?.species] as const);
+    },
+    async ([uid, catchId]) => listEvolutionOptions(uid, catchId),
+  );
+
+  /**
+   * Whether this pokemon is fighting right now. A battle runs on a
+   * frozen snapshot of the party, so the record it was copied from
+   * holds still until the fight ends — the server refuses the writes
+   * either way; this is only so the buttons say so first
+   */
+  const [fighting] = createResource(
+    () => view(),
+    async (caught) => isLockLive(caught, await syncServerClock()),
+  );
+
+  /**
+   * The candies behind this catch: the stack is keyed by family, so
+   * every stage of the line spends the same pile
+   */
+  const [candies, { refetch: refetchCandies }] = createResource(
+    () => {
+      const species = view()?.species;
+
+      return species == null ? null : ([props.player, getSpeciesData(species).family] as const);
+    },
+    async ([player, family]) => getCandyCount(player, family),
+  );
+
+  return (
+    <Suspense>
+      <CatchSheetBody
+        {...props}
+        owners={owners}
+        evolutions={evolutions}
+        fighting={fighting}
+        candies={candies}
+        onCandiesChanged={() => {
+          Promise.resolve(refetchCandies()).catch(() => undefined);
+        }}
+        onEvolutionsChanged={() => {
+          Promise.resolve(refetchEvolutions()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
+  );
+}
+
+/**
+ * One pokemon in full.
+ *
+ * Everything the sheet is drawn from is read below this body rather
+ * than in it: a record still arriving would otherwise throw to the
+ * boundary around the whole page and take the world with it
+ */
+export default function CatchDialog(props: CatchDialogProps): JSX.Element {
+  const auth = useAuth();
+
+  const owned = (): string | null => {
+    const user = auth.user();
+
+    if (props.readOnly === true) {
+      return null;
+    }
+    return user != null && user.uid === props.player ? user.uid : null;
+  };
+
+  const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
+
+  /**
+   * The rest of the box, in the order the box draws it — newest first,
+   * the same sort the picker uses, so "next" means the square to the
+   * right of this one rather than some other order nobody can see.
+   *
+   * Read once per player rather than per pokemon: stepping through a
+   * collection would otherwise pay for the whole listing at every
+   * press. It goes stale when a record leaves the box, which is a
+   * release or a listing — and both of those shut the sheet
+   */
+  const [siblings] = createResource(
+    // Read again each time the sheet **opens** rather than once for
+    // the session: a pokemon caught since the last look belongs in the
+    // run. Stepping does not re-read it — the source is the player
+    // rather than the pokemon — so walking a box of three hundred is
+    // still one query
+    () =>
+      props.readOnly === true || props.onCatch == null || props.catchId == null
+        ? null
+        : props.player,
+    async (player) =>
+      (await listCaught(player))
+        .sort(([, one], [, other]) => other.caughtAt.localeCompare(one.caughtAt))
+        .map(([id]) => id),
+  );
+
+  /**
+   * What the reader's dex says, read once for the whole sheet.
+   *
+   * It is the dex rather than this record because of what it is for:
+   * the evolutions below are drawn to what the **player** has met, so
+   * a line they have never seen the end of is a silhouette here the
+   * same way it is in the dex. One document, one read
+   */
+  const [dex] = createResource(() => auth.user()?.uid ?? null, getPokedex);
+
+  /**
+   * Whether this is the only pokemon they have. The server refuses to
+   * release it either way; this is so the button says so before it is
+   * pressed twice
+   */
+  const [onlyOne] = createResource(
+    () => owned(),
+    async (uid) => (await countCaught(uid)) <= 1,
+  );
+
+  /**
+   * What the player is carrying. The bag is read once and split
+   * below: some of it can be handed over, some of it can be spent on
+   * the pokemon, and the two lists move together when either does
+   */
+  /**
+   * Keyed on the sheet as well as the owner, so each pokemon opened
+   * re-reads it. The sheet is mounted for the whole session — it is
+   * the route's, not a list's — so a bag read once on mount is the bag
+   * as it was before the player had played: a new account's read
+   * landed before the starter gift did, and Use item stayed empty for
+   * good
+   */
+  const [bag, { refetch: refetchBag }] = createResource(
+    () => (props.catchId == null ? null : owned()),
+    async (uid) => getInventory(uid),
+  );
+
+  /**
+   * Which catch is currently walking with the player, so the button
+   * can say whether this is the one
+   */
+  const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
+
+  return (
+    <Suspense>
+      <CatchSheet
+        {...props}
+        detail={detail}
+        siblings={siblings}
+        dex={dex}
+        onlyOne={onlyOne}
+        bag={bag}
+        buddy={buddy}
+        onRecordChanged={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+        onBagChanged={() => {
+          Promise.resolve(refetchBag()).catch(() => undefined);
+        }}
+        onBuddyChanged={() => {
+          Promise.resolve(refetchBuddy()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

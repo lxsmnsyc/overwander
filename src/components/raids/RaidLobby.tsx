@@ -2,7 +2,9 @@ import type { User } from 'firebase/auth';
 import {
   For,
   type JSX,
+  type Resource,
   Show,
+  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -54,66 +56,32 @@ export interface RaidLobbyProps {
 }
 
 /**
- * One raid lobby, filling the Raids tab: who has joined, a way to
- * bring a party, and — for the host — the button that starts the
- * fight. Going back leaves the lobby, taking the player's teams with
- * them
+ * What is in the lobby, which is where the teams, the names and the
+ * player's own standing are all read.
+ *
+ * Any of them read in the body that declared it would throw past
+ * every `Suspense` written there and land on the boundary around the
+ * whole page, taking the tab down with it
  */
-export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
+function LobbyRows(
+  props: RaidLobbyProps & {
+    raid: () => RaidRecord | null;
+    teams: Resource<TeamRecord[]>;
+    names: Resource<Map<string, string>>;
+    canJoin: Resource<boolean>;
+  },
+): JSX.Element {
   const game = useGame();
-  // The lobby is shared: parties join and leave it while the player
-  // is looking at it, and the host's start lands here too
-  const raid = from<RaidRecord | null>((set) =>
-    watchRaid(props.raidId, (record) => {
-      set(record);
-    }),
-  );
   const [picking, setPicking] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
 
-  const [teams] = createResource(
-    () => raid()?.teams ?? null,
-    async (ids) =>
-      (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
-  );
+  const raid = (): RaidRecord | null => props.raid();
 
-  /**
-   * What everybody in the lobby is called. A party is named by its
-   * player's uid in the record, and a uid is not a person: the row is
-   * the way into their profile, so it should say the name that profile
-   * opens under. Read once for the whole lobby, keyed on who is in it,
-   * and falling back to the uid — a lobby of thirty rows all reading
-   * "a trainer" tells nobody which is which
-   */
-  const [names] = createResource(
-    () => [...new Set((teams() ?? []).map((team) => team.player))].sort().join(','),
-    async (key): Promise<Map<string, string>> => {
-      const found = new Map<string, string>();
+  const teams = (): TeamRecord[] | undefined => props.teams();
 
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const profile = await getProfile(uid);
+  const canJoin = (): boolean | undefined => props.canJoin();
 
-            if (profile != null) {
-              found.set(uid, profile.nickname);
-            }
-          }),
-      );
-      return found;
-    },
-  );
-
-  const named = (uid: string): string => names()?.get(uid) ?? uid;
-
-  // A player with no pokemon of their own can stand in the lobby and
-  // watch, but has nothing to field
-  const [canJoin] = createResource(
-    () => props.user.uid,
-    async (uid) => canJoinRaids(uid),
-  );
+  const named = (uid: string): string => props.names()?.get(uid) ?? uid;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
@@ -364,5 +332,88 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
         }}
       />
     </>
+  );
+}
+
+/**
+ * The lobby with its teams read, which is where the names are asked
+ * for: who is in it decides whose profiles have to be looked up, so
+ * that read has to be a body below the one holding the teams
+ */
+function LobbyTeams(
+  props: RaidLobbyProps & {
+    raid: () => RaidRecord | null;
+    teams: Resource<TeamRecord[]>;
+    canJoin: Resource<boolean>;
+  },
+): JSX.Element {
+  /**
+   * What everybody in the lobby is called. A party is named by its
+   * player's uid in the record, and a uid is not a person: the row is
+   * the way into their profile, so it should say the name that profile
+   * opens under. Read once for the whole lobby, keyed on who is in it,
+   * and falling back to the uid — a lobby of thirty rows all reading
+   * "a trainer" tells nobody which is which
+   */
+  const [names] = createResource(
+    () => [...new Set((props.teams() ?? []).map((team) => team.player))].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const found = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const profile = await getProfile(uid);
+
+            if (profile != null) {
+              found.set(uid, profile.nickname);
+            }
+          }),
+      );
+      return found;
+    },
+  );
+
+  return (
+    <Suspense fallback={<Note>Loading raid…</Note>}>
+      <LobbyRows {...props} names={names} />
+    </Suspense>
+  );
+}
+
+/**
+ * One raid lobby, filling the Raids tab: who has joined, a way to
+ * bring a party, and — for the host — the button that starts the
+ * fight. Going back leaves the lobby, taking the player's teams with
+ * them
+ */
+export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
+  // The lobby is shared: parties join and leave it while the player
+  // is looking at it, and the host's start lands here too
+  const raid = from<RaidRecord | null>((set) =>
+    watchRaid(props.raidId, (record) => {
+      set(record);
+    }),
+  );
+
+  const [teams] = createResource(
+    () => raid()?.teams ?? null,
+    async (ids) =>
+      (await Promise.all(ids.map(getTeam))).filter((team): team is TeamRecord => team != null),
+  );
+
+  // A player with no pokemon of their own can stand in the lobby and
+  // watch, but has nothing to field
+  const [canJoin] = createResource(
+    () => props.user.uid,
+    async (uid) => canJoinRaids(uid),
+  );
+
+  return (
+    <Suspense fallback={<Note>Loading raid…</Note>}>
+      <LobbyTeams {...props} raid={() => raid() ?? null} teams={teams} canJoin={canJoin} />
+    </Suspense>
   );
 }

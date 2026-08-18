@@ -4,11 +4,16 @@
  * A dialog, a tooltip, a hover card and the list a filter drops are
  * all the same event — something appearing on top of what the player
  * was looking at — so they all fade rather than each picking their
- * own way in. Spread it into terracotta's `Transition`:
+ * own way in. Spread one into terracotta's `Transition`:
  *
  * ```tsx
  * <Transition show={isOpen} {...FADE}>…</Transition>
  * ```
+ *
+ * There are two. `FADE` fades and grows, and belongs to a **panel** —
+ * a dialog's, a popover's. `SHEER` is the same fade with nothing else
+ * in it, for the veil behind a dialog and for anything placed against
+ * the window rather than laid out in it.
  *
  * The element it is spread onto has to be the one the portal already
  * contains, since opacity on an ancestor does not reach through a
@@ -41,6 +46,28 @@ export function holdFade(event: TransitionEvent): void {
   event.stopPropagation();
 }
 
+/**
+ * The same arrival with the scale taken out: opacity alone.
+ *
+ * It is for whatever is not a panel. A veil behind a dialog has no
+ * edges to grow from, and a hover card or a tooltip is placed against
+ * the window — a scale on those is a transform, and a transform makes
+ * the element the containing block for anything fixed inside it, which
+ * put a card a whole viewport down the page
+ */
+export const SHEER = {
+  enterFrom: 'opacity-0',
+  enterTo: 'transition-opacity duration-250 ease-out motion-reduce:duration-75 opacity-100',
+  /** Held after the fade in, since `enterTo` is taken off at the end */
+  entered: 'opacity-100',
+  leaveFrom: 'opacity-100',
+  leaveTo: 'transition-opacity duration-250 ease-in motion-reduce:duration-75 opacity-0',
+} as const;
+
+/**
+ * The arrival for a panel: it fades and grows from half its size.
+ * Everything else takes `SHEER`
+ */
 const FADE = {
   enterFrom: 'opacity-0 scale-50',
   enterTo:

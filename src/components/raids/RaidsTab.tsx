@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { type RaidRecord, getRaidTitle, watchLiveRaids } from '../../auth/raids';
@@ -20,35 +20,23 @@ export interface RaidsTabProps {
 }
 
 /**
- * The lobbies still gathering this window, and the one the player is
- * standing in. A lobby fills the tab rather than opening over it, so
- * going back is a walk out of the raid and into the list again
+ * The lobbies themselves, which is where the window is read.
+ *
+ * A window read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page, so the read lives one component down
  */
-export default function RaidsTab(props: RaidsTabProps): JSX.Element {
+function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: number }): JSX.Element {
   const game = useGame();
-  // The raid window comes from the server's clock; the listing then
-  // follows every lobby that opens, fills, starts or clears
-  // The window is the player's own: the instant comes from the server,
-  // read in their zone, so a lobby they see is one staged where they
-  // are standing in the day
-  const zone = getLocalOffset();
-  const [window] = createResource(async () => {
-    const now = toLocalTime(await syncServerClock(), zone);
-
-    return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
-  });
-
-  // The window is not known when this is first asked for — it comes
-  // from a round trip to the server's clock — so the listing has to
-  // be opened again once it arrives. `from` would ask once and never
-  // again, and the tab would say "Loading raids…" for ever
+  // The listing follows every lobby that opens, fills, starts or
+  // clears in the window the tab was opened for
   const raids = watchLive<[string, RaidRecord][]>((set) => {
-    const raidWindow = window();
+    const raidWindow = props.window();
 
     if (raidWindow == null) {
       return null;
     }
-    return watchLiveRaids(raidWindow, zone, (live) => {
+    return watchLiveRaids(raidWindow, props.zone, (live) => {
       set(live);
     });
   });
@@ -87,5 +75,34 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
         {(id) => <RaidLobby user={props.user} raidId={id()} onTitle={props.onTitle} />}
       </Show>
     </Panel>
+  );
+}
+
+/**
+ * The lobbies still gathering this window, and the one the player is
+ * standing in. A lobby fills the tab rather than opening over it, so
+ * going back is a walk out of the raid and into the list again
+ */
+export default function RaidsTab(props: RaidsTabProps): JSX.Element {
+  // The window is the player's own: the instant comes from the server,
+  // read in their zone, so a lobby they see is one staged where they
+  // are standing in the day
+  const zone = getLocalOffset();
+  const [window] = createResource(async () => {
+    const now = toLocalTime(await syncServerClock(), zone);
+
+    return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
+  });
+
+  return (
+    <Suspense
+      fallback={
+        <Panel>
+          <Note>Loading raids…</Note>
+        </Panel>
+      }
+    >
+      <RaidList user={props.user} onTitle={props.onTitle} window={window} zone={zone} />
+    </Suspense>
   );
 }

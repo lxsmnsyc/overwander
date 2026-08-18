@@ -1,4 +1,4 @@
-import { type JSX, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import { resolveBuddy, setBuddy } from '../../auth/buddy';
 import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
@@ -79,25 +79,23 @@ export interface BuddyCardProps {
   viewOnly?: boolean;
 }
 
-export default function BuddyCard(props: BuddyCardProps): JSX.Element {
-  const [revision, setRevision] = createSignal(0);
+/**
+ * The card itself, which is where the buddy is read.
+ *
+ * A buddy read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page — and this card re-reads every time a buddy is set
+ */
+function BuddyBody(
+  props: BuddyCardProps & {
+    record: Resource<Awaited<ReturnType<typeof resolveBuddy>>>;
+    onChosen: () => void;
+  },
+): JSX.Element {
   const [picking, setPicking] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
-  const [record, { refetch }] = createResource(
-    () => [props.player, revision()] as const,
-    async ([player]) => resolveBuddy(player),
-  );
 
-  /**
-   * Who is walking along, without suspending anything.
-   *
-   * `latest` rather than the resource itself: reading a resource that
-   * is still loading throws to the nearest Suspense boundary, and the
-   * nearest one to this card is the root of the whole app. A profile
-   * that re-read its buddy — which it does every time one is set —
-   * would take the page down with it for as long as the read took
-   */
-  const buddy = (): Awaited<ReturnType<typeof resolveBuddy>> => record.latest ?? null;
+  const buddy = (): Awaited<ReturnType<typeof resolveBuddy>> => props.record() ?? null;
 
   /**
    * Swap who is walking along. An egg counts — walking is the only
@@ -110,11 +108,10 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
     }
     setStatus(null);
     setBuddy(props.player, catchId)
-      .then(async (changed) => {
+      .then((changed) => {
         setStatus(changed ? null : 'That one cannot walk with you right now.');
-        setRevision((count) => count + 1);
         props.onChange?.();
-        await refetch();
+        props.onChosen();
       })
       .catch((failed: unknown) => {
         setStatus(failed instanceof Error ? failed.message : String(failed));
@@ -282,5 +279,30 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
         />
       </Show>
     </Card>
+  );
+}
+
+/**
+ * Who is walking along with the player. The record is read one
+ * component down, under this boundary, so setting a buddy re-reads
+ * the card rather than the page it is on
+ */
+export default function BuddyCard(props: BuddyCardProps): JSX.Element {
+  const [revision, setRevision] = createSignal(0);
+  const [record] = createResource(
+    () => [props.player, revision()] as const,
+    async ([player]) => resolveBuddy(player),
+  );
+
+  return (
+    <Suspense fallback={<Note>Reading the buddy…</Note>}>
+      <BuddyBody
+        {...props}
+        record={record}
+        onChosen={() => {
+          setRevision((count) => count + 1);
+        }}
+      />
+    </Suspense>
   );
 }

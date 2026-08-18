@@ -1,4 +1,14 @@
-import { type JSX, Show, createEffect, createResource, createSignal, from, on } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+  from,
+  on,
+} from 'solid-js';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -108,13 +118,21 @@ function describeStanding(auction: AuctionRecord): string {
  * is — and it stays readable, which is what lets a bidder see what
  * they are bidding on
  */
+function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
+  return (
+    <Show when={props.caught()} fallback={<span>A pokemon</span>}>
+      {(loaded) => <span>{describeCatch(loaded())}</span>}
+    </Show>
+  );
+}
+
 function CatchLot(props: { catchId: string }): JSX.Element {
   const [caught] = createResource(() => props.catchId, getCaught);
 
   return (
-    <Show when={caught()} fallback={<span>A pokemon</span>}>
-      {(loaded) => <span>{describeCatch(loaded())}</span>}
-    </Show>
+    <Suspense fallback={<span>A pokemon</span>}>
+      <CatchLotName caught={caught} />
+    </Suspense>
   );
 }
 
@@ -358,9 +376,46 @@ export interface AuctionTabProps {
  * Only a lot the day ended on without a bid comes back, and it comes
  * back to the same row it was listed in
  */
-export default function AuctionTab(props: AuctionTabProps): JSX.Element {
+/**
+ * The board itself, which is where every one of these is read.
+ *
+ * A read in the body that declared it throws past every `Suspense`
+ * written there and lands on the boundary around the whole page, so
+ * the reading half is a component of its own
+ */
+function AuctionBoard(
+  props: AuctionTabProps & {
+    auctions: () => [string, AuctionRecord][] | undefined;
+    lots: Resource<Map<string, CaughtPokemon>>;
+    sellers: Resource<Map<string, string>>;
+    buddy: Resource<string | null>;
+    onlyOne: Resource<boolean>;
+    sellable: Resource<CatchOption[]>;
+    standing: Resource<{ auction: string; endsAt: number } | null>;
+    revision: number;
+    onChanged: () => void;
+  },
+): JSX.Element {
   const game = useGame();
   const [status, setStatus] = createSignal<string | null>(null);
+
+  const lots = (): Map<string, CaughtPokemon> | undefined => props.lots();
+
+  const sellers = (): Map<string, string> | undefined => props.sellers();
+
+  const buddy = (): string | null | undefined => props.buddy();
+
+  const onlyOne = (): boolean | undefined => props.onlyOne();
+
+  const sellable = (): CatchOption[] | undefined => props.sellable();
+
+  const standing = (): { auction: string; endsAt: number } | null | undefined => props.standing();
+
+  const revision = (): number => props.revision;
+
+  const refresh = (): void => {
+    props.onChanged();
+  };
 
   // The balance moves with every bid placed and every one handed back,
   // so it is followed rather than read once
@@ -372,81 +427,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
 
   const gold = (): number => profile()?.gold ?? 0;
 
-  // Everything nobody has collected yet: a bid raises a listing under
-  // whoever is looking at it, so the board is followed rather than
-  // read once
-  const auctions = from<[string, AuctionRecord][]>((set) =>
-    watchOpenAuctions((open) => {
-      // Newest first. Every lot runs exactly a day, so when it closes
-      // is when it was listed — the most recently put up is the one
-      // nobody has seen yet, and the one worth opening the board for
-      set(open.sort(([, one], [, other]) => other.endsAt - one.endsAt));
-    }),
-  );
-
-  /**
-   * The pokemon on the block, read once for the whole board.
-   *
-   * It is keyed on which catches are up rather than on the listings
-   * themselves, so a bid landing somewhere on the board — which
-   * rewrites a listing every time — does not send the board back to
-   * read every pokemon on it again
-   */
-  const [lots] = createResource(
-    () =>
-      [
-        ...new Set(
-          (auctions() ?? [])
-            .filter(([, auction]) => auction.lot === AuctionLot.Catch)
-            .map(([, auction]) => auction.caught),
-        ),
-      ]
-        .sort()
-        .join(','),
-    async (key): Promise<Map<string, CaughtPokemon>> => {
-      const found = new Map<string, CaughtPokemon>();
-
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (id) => {
-            const caught = await getCaught(id);
-
-            if (caught != null) {
-              found.set(id, caught);
-            }
-          }),
-      );
-      return found;
-    },
-  );
-
-  /**
-   * Everyone who has a lot on the board, by what they are called.
-   * Profiles are readable by every signed-in player, and a board of
-   * lots with no sellers on it is a shop with the labels torn off
-   */
-  const [sellers] = createResource(
-    () => [...new Set((auctions() ?? []).map(([, auction]) => auction.seller))].sort().join(','),
-    async (key): Promise<Map<string, string>> => {
-      const named = new Map<string, string>();
-
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const seller = await getProfile(uid);
-
-            if (seller != null) {
-              named.set(uid, seller.nickname);
-            }
-          }),
-      );
-      return named;
-    },
-  );
+  const auctions = (): [string, AuctionRecord][] | undefined => props.auctions();
 
   /**
    * Who listed it. The reader is "you" rather than their own nickname,
@@ -471,38 +452,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    */
   const [query, setQuery] = createSignal('');
 
-  // Bumped whenever something leaves the player's hands or lands in
-  // them, so the two pickers below re-read what there is to sell
-  const [revision, setRevision] = createSignal(0);
-
-  const refresh = (): void => {
-    setRevision(revision() + 1);
-  };
-
-  /**
-   * The pokemon at the player's side, which is not for sale. It is
-   * re-read on the same revision the pickers are, since sending the
-   * buddy home is how a player makes that one sellable
-   */
-  const [buddy] = createResource(
-    () => [props.player, revision()] as const,
-    async ([player]) => getBuddy(player),
-  );
-
-  /**
-   * Why a pokemon in the list cannot be put up. The server decides all
-   * three again when the listing actually arrives; this is so a player
-   * is told before they press rather than after
-   */
-  /**
-   * Whether this is the only pokemon they have, which is the one that
-   * may not be sold
-   */
-  const [onlyOne] = createResource(
-    () => props.player,
-    async (uid) => (await countCaught(uid)) <= 1,
-  );
-
   const sellingReason = (option: CatchOption): string | null => {
     // A lot leaves its owner's hands as it is listed, so the last one
     // may not be listed at all — the same rule that stops it being
@@ -521,33 +470,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
     }
     return buddy() === option.id ? 'your buddy' : null;
   };
-
-  /**
-   * The pokemon that could go on the block, asked of the **store**
-   * rather than read out of the whole box and sifted here.
-   *
-   * That is what the record's `auctionable` field is for: a player with
-   * three hundred catches has perhaps three that qualify, and the
-   * question "which of mine are worth a listing" is otherwise three
-   * hundred document reads to answer.
-   *
-   * `filter` below still asks `isAuctionableCatch` of every row that
-   * comes back. The field is an index, not an authority — a record
-   * written before it existed, or by something that forgot to keep it,
-   * is caught here rather than shown as sellable and refused by the
-   * server
-   */
-  const [sellable] = createResource(
-    () => [props.player, revision()] as const,
-    async ([player]): Promise<CatchOption[]> => {
-      const [records, clock] = await Promise.all([
-        listCaughtMarked(player, 'auctionable'),
-        syncServerClock(),
-      ]);
-
-      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, clock) }));
-    },
-  );
 
   /**
    * What the player has picked to put up, if anything. Picking is the
@@ -644,15 +566,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
 
         return name == null || matches(name, query());
       });
-
-  /**
-   * The auction the player has running, if any. A seller runs one at a
-   * time, so this is what the sell form asks before it offers anything
-   */
-  const [standing, { refetch: refetchStanding }] = createResource(
-    () => props.player,
-    getSellerStanding,
-  );
 
   const running = (): number | null => {
     const mine = standing();
@@ -1031,11 +944,182 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           props.onAdding?.(false);
           // The board and the seller's one-a-day standing both move
           // with it; a failed re-read leaves the last good board up
-          Promise.resolve(refetchStanding())
-            .then(refresh)
-            .catch(() => undefined);
+          props.onChanged();
         }}
       />
     </Panel>
+  );
+}
+
+/**
+ * The auction board and the seller's side of it.
+ *
+ * Everything it is drawn from — the lots on it, who listed them, the
+ * player's buddy, what they may sell and what they already have
+ * running — is read one component down, under this boundary
+ */
+export default function AuctionTab(props: AuctionTabProps): JSX.Element {
+  // Everything nobody has collected yet: a bid raises a listing under
+  // whoever is looking at it, so the board is followed rather than
+  // read once
+  const auctions = from<[string, AuctionRecord][]>((set) =>
+    watchOpenAuctions((open) => {
+      // Newest first. Every lot runs exactly a day, so when it closes
+      // is when it was listed — the most recently put up is the one
+      // nobody has seen yet, and the one worth opening the board for
+      set(open.sort(([, one], [, other]) => other.endsAt - one.endsAt));
+    }),
+  );
+
+  /**
+   * The pokemon on the block, read once for the whole board.
+   *
+   * It is keyed on which catches are up rather than on the listings
+   * themselves, so a bid landing somewhere on the board — which
+   * rewrites a listing every time — does not send the board back to
+   * read every pokemon on it again
+   */
+  const [lots] = createResource(
+    () =>
+      [
+        ...new Set(
+          (auctions() ?? [])
+            .filter(([, auction]) => auction.lot === AuctionLot.Catch)
+            .map(([, auction]) => auction.caught),
+        ),
+      ]
+        .sort()
+        .join(','),
+    async (key): Promise<Map<string, CaughtPokemon>> => {
+      const found = new Map<string, CaughtPokemon>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (id) => {
+            const caught = await getCaught(id);
+
+            if (caught != null) {
+              found.set(id, caught);
+            }
+          }),
+      );
+      return found;
+    },
+  );
+
+  /**
+   * Everyone who has a lot on the board, by what they are called.
+   * Profiles are readable by every signed-in player, and a board of
+   * lots with no sellers on it is a shop with the labels torn off
+   */
+  const [sellers] = createResource(
+    () => [...new Set((auctions() ?? []).map(([, auction]) => auction.seller))].sort().join(','),
+    async (key): Promise<Map<string, string>> => {
+      const named = new Map<string, string>();
+
+      await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (uid) => {
+            const seller = await getProfile(uid);
+
+            if (seller != null) {
+              named.set(uid, seller.nickname);
+            }
+          }),
+      );
+      return named;
+    },
+  );
+
+  // Bumped whenever something leaves the player's hands or lands in
+  // them, so the two pickers below re-read what there is to sell
+  const [revision, setRevision] = createSignal(0);
+
+  const refresh = (): void => {
+    setRevision(revision() + 1);
+  };
+
+  /**
+   * The pokemon at the player's side, which is not for sale. It is
+   * re-read on the same revision the pickers are, since sending the
+   * buddy home is how a player makes that one sellable
+   */
+  const [buddy] = createResource(
+    () => [props.player, revision()] as const,
+    async ([player]) => getBuddy(player),
+  );
+
+  /**
+   * Why a pokemon in the list cannot be put up. The server decides all
+   * three again when the listing actually arrives; this is so a player
+   * is told before they press rather than after
+   */
+  /**
+   * Whether this is the only pokemon they have, which is the one that
+   * may not be sold
+   */
+  const [onlyOne] = createResource(
+    () => props.player,
+    async (uid) => (await countCaught(uid)) <= 1,
+  );
+
+  /**
+   * The pokemon that could go on the block, asked of the **store**
+   * rather than read out of the whole box and sifted here.
+   *
+   * That is what the record's `auctionable` field is for: a player with
+   * three hundred catches has perhaps three that qualify, and the
+   * question "which of mine are worth a listing" is otherwise three
+   * hundred document reads to answer.
+   *
+   * `filter` below still asks `isAuctionableCatch` of every row that
+   * comes back. The field is an index, not an authority — a record
+   * written before it existed, or by something that forgot to keep it,
+   * is caught here rather than shown as sellable and refused by the
+   * server
+   */
+  const [sellable] = createResource(
+    () => [props.player, revision()] as const,
+    async ([player]): Promise<CatchOption[]> => {
+      const [records, clock] = await Promise.all([
+        listCaughtMarked(player, 'auctionable'),
+        syncServerClock(),
+      ]);
+
+      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, clock) }));
+    },
+  );
+
+  /**
+   * The auction the player has running, if any. A seller runs one at a
+   * time, so this is what the sell form asks before it offers anything
+   */
+  const [standing, { refetch: refetchStanding }] = createResource(
+    () => props.player,
+    getSellerStanding,
+  );
+
+  return (
+    <Suspense fallback={<Note>Reading the board…</Note>}>
+      <AuctionBoard
+        {...props}
+        auctions={() => auctions() ?? undefined}
+        lots={lots}
+        sellers={sellers}
+        buddy={buddy}
+        onlyOne={onlyOne}
+        sellable={sellable}
+        standing={standing}
+        revision={revision()}
+        onChanged={() => {
+          Promise.resolve(refetchStanding()).catch(() => undefined);
+          refresh();
+        }}
+      />
+    </Suspense>
   );
 }

@@ -1,5 +1,12 @@
-import { type JSX, Show, createEffect, createResource, createSignal } from 'solid-js';
-import { getPokedex } from '../../auth/pokedex';
+import {
+  type JSX,
+  type Resource,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+} from 'solid-js';
+import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import type { Species } from '../../data/ids/species';
 import { getBaseForms, getSpeciesData } from '../../data/species';
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
@@ -24,21 +31,18 @@ export interface PokedexTabProps {
   player: string;
 }
 
-export default function PokedexTab(props: PokedexTabProps): JSX.Element {
+/**
+ * The dex as a box of squares, which is where the record is read.
+ *
+ * A dex read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page, so the reading half is its own component
+ */
+function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
   const game = useGame();
 
-  // Re-read whenever anything the player owns changes: catching one is
-  // the whole point, and a dex that needed reopening to notice would
-  // be the one screen in the game that lies about what just happened
-  const [dex] = createResource(
-    () => [props.player, game.records()] as const,
-    async ([player]) => getPokedex(player),
-  );
-
   const entries = (): DexEntry[] => {
-    // `latest` rather than the resource: a read that suspends unmounts
-    // the panel and takes the page under it down with it
-    const view = dex.latest;
+    const view = props.dex();
     const seen = new Set(view?.seen.map((tally) => tally.species) ?? []);
     const caught = new Set(view?.caught.map((tally) => tally.species) ?? []);
 
@@ -100,8 +104,8 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
       {/* The two figures a dex is kept for, over the squares that
           explain them */}
       <Row class="justify-center">
-        <Badge tone="tide">{dex.latest?.seenSpecies ?? 0} seen</Badge>
-        <Badge tone="leaf">{dex.latest?.caughtSpecies ?? 0} caught</Badge>
+        <Badge tone="tide">{props.dex()?.seenSpecies ?? 0} seen</Badge>
+        <Badge tone="leaf">{props.dex()?.caughtSpecies ?? 0} caught</Badge>
         <Badge>of {entries().length}</Badge>
       </Row>
 
@@ -131,9 +135,38 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
         </Button>
       </Row>
 
-      <Show when={dex.latest != null} fallback={<Note>Reading the dex…</Note>}>
-        <PokedexGrid entries={shown()} onOpen={open} />
-      </Show>
+      <PokedexGrid entries={shown()} onOpen={open} />
     </Panel>
+  );
+}
+
+/**
+ * Every pokemon there is, and how many of each the player has met.
+ *
+ * The record is read one component down, under this boundary: read
+ * here it would throw to the page and take the world with it, and
+ * this panel is re-read every time anything the player owns changes
+ */
+export default function PokedexTab(props: PokedexTabProps): JSX.Element {
+  const game = useGame();
+
+  // Re-read whenever anything the player owns changes: catching one is
+  // the whole point, and a dex that needed reopening to notice would
+  // be the one screen in the game that lies about what just happened
+  const [dex] = createResource(
+    () => [props.player, game.records()] as const,
+    async ([player]) => getPokedex(player),
+  );
+
+  return (
+    <Suspense
+      fallback={
+        <Panel>
+          <Note>Reading the dex…</Note>
+        </Panel>
+      }
+    >
+      <PokedexBox dex={dex} />
+    </Suspense>
   );
 }

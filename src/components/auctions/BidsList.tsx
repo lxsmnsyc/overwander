@@ -1,6 +1,16 @@
-import { For, type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  from,
+} from 'solid-js';
 import {
   type AuctionRecord,
+  type BidHistoryEntry,
   BidState,
   canClaim,
   canRebid,
@@ -65,8 +75,9 @@ export interface BidsListProps {
  * clock against the closing time the listing was written with, and the
  * server checks it again for real when a bid or a claim arrives
  */
-export default function BidsList(props: BidsListProps): JSX.Element {
-  const [history, { refetch }] = createResource(() => props.player, listBidHistory);
+function BidRows(
+  props: BidsListProps & { history: Resource<BidHistoryEntry[]>; onChanged: () => void },
+): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
 
   // Bidding again spends gold, so the balance the bid box is bounded
@@ -82,13 +93,13 @@ export default function BidsList(props: BidsListProps): JSX.Element {
   const bid = (id: string, amount: number): void => {
     setStatus(null);
     placeBid(id, amount)
-      .then(async (placed) => {
+      .then((placed) => {
         setStatus(
           placed == null
             ? 'That bid could not be placed.'
             : `Bid ${placed} gold — it is yours unless somebody raises it.`,
         );
-        await refetch();
+        props.onChanged();
       })
       .catch((thrown: unknown) => {
         setStatus(thrown instanceof Error ? thrown.message : String(thrown));
@@ -98,9 +109,9 @@ export default function BidsList(props: BidsListProps): JSX.Element {
   const collect = (id: string): void => {
     setStatus(null);
     claimAuction(id)
-      .then(async (claimed) => {
+      .then((claimed) => {
         setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
-        await refetch();
+        props.onChanged();
       })
       .catch((thrown: unknown) => {
         setStatus(thrown instanceof Error ? thrown.message : String(thrown));
@@ -109,56 +120,77 @@ export default function BidsList(props: BidsListProps): JSX.Element {
 
   return (
     <>
-      <Show when={!history.loading} fallback={<Note>Loading bids…</Note>}>
-        <Show when={history()?.length} fallback={<Note>You have not bid on anything.</Note>}>
-          <List>
-            <For each={history()}>
-              {(entry) => {
-                const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
+      <Show when={props.history()?.length} fallback={<Note>You have not bid on anything.</Note>}>
+        <List>
+          <For each={props.history()}>
+            {(entry) => {
+              const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
 
-                return (
-                  <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
-                    <div class="flex grow flex-col gap-0.5">
-                      <span class="font-medium">
-                        <AuctionLotLabel auction={entry.lot} />
-                      </span>
-                      <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
-                    </div>
-                    <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]}</Badge>
-                    {/* Outbid, and the lot is still open: the raise is
+              return (
+                <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
+                  <div class="flex grow flex-col gap-0.5">
+                    <span class="font-medium">
+                      <AuctionLotLabel auction={entry.lot} />
+                    </span>
+                    <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
+                  </div>
+                  <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]}</Badge>
+                  {/* Outbid, and the lot is still open: the raise is
                         made here rather than by finding it again on
                         the board */}
-                    <Show when={canRebid(entry.lot, props.player, Date.now())}>
-                      <BidControls
-                        auction={entry.lot}
-                        player={props.player}
-                        gold={gold()}
-                        onBid={(amount) => {
-                          bid(entry.auction, amount);
-                        }}
-                      />
-                    </Show>
-                    {/* Nothing is handed over when bidding closes, so a
+                  <Show when={canRebid(entry.lot, props.player, Date.now())}>
+                    <BidControls
+                      auction={entry.lot}
+                      player={props.player}
+                      gold={gold()}
+                      onBid={(amount) => {
+                        bid(entry.auction, amount);
+                      }}
+                    />
+                  </Show>
+                  {/* Nothing is handed over when bidding closes, so a
                         won lot is collected here too */}
-                    <Show when={canClaim(entry.lot, props.player, Date.now())}>
-                      <Button
-                        tone="primary"
-                        onClick={() => {
-                          collect(entry.auction);
-                        }}
-                      >
-                        Collect
-                      </Button>
-                    </Show>
-                  </ListRow>
-                );
-              }}
-            </For>
-          </List>
-        </Show>
+                  <Show when={canClaim(entry.lot, props.player, Date.now())}>
+                    <Button
+                      tone="primary"
+                      onClick={() => {
+                        collect(entry.auction);
+                      }}
+                    >
+                      Collect
+                    </Button>
+                  </Show>
+                </ListRow>
+              );
+            }}
+          </For>
+        </List>
       </Show>
 
       <Status message={status()} />
     </>
+  );
+}
+
+/**
+ * Everything the player has bid on, newest first.
+ *
+ * The history is read one component down, under this boundary: read in
+ * the body that declared it, a loading history would throw past every
+ * `Suspense` written here and blank the page instead of this panel
+ */
+export default function BidsList(props: BidsListProps): JSX.Element {
+  const [history, { refetch }] = createResource(() => props.player, listBidHistory);
+
+  return (
+    <Suspense fallback={<Note>Loading bids…</Note>}>
+      <BidRows
+        player={props.player}
+        history={history}
+        onChanged={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

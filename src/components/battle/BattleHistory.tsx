@@ -1,4 +1,13 @@
-import { For, type JSX, Show, createResource, createSignal, from } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  from,
+} from 'solid-js';
 import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../auth/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
@@ -66,23 +75,20 @@ export interface BattleHistoryProps {
 }
 
 /**
- * The player's finished battles. Replaying one hands the whole page
- * over to the battle view, which rebuilds the fight from the same
- * seed and the same frozen teams — so it plays out as it did, and
- * awards nothing. A won raid whose legendary was never collected —
- * the player ran from it, or left before the end — is claimed from
- * here instead
+ * The list itself, which is where the claims are read.
+ *
+ * It is a component of its own so that the read has a boundary above
+ * it: a resource read in the body that declared it throws past every
+ * `Suspense` written there, and the next one up is the whole page
  */
-export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
+function BattleList(
+  props: BattleHistoryProps & { claimed: Resource<Set<string>>; onClaimed: () => void },
+): JSX.Element {
   const game = useGame();
   const battles = from<[string, BattleRecord][]>((set) =>
     watchBattleHistory(props.player, (records) => {
       set(records);
     }),
-  );
-  const [claimed, { refetch: refetchClaimed }] = createResource(
-    () => props.player,
-    listClaimedRaids,
   );
 
   /**
@@ -93,7 +99,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
     props.viewOnly !== true &&
     record.outcome === BattleOutcome.Won &&
     record.raid.length > 0 &&
-    claimed()?.has(record.raid) === false;
+    props.claimed()?.has(record.raid) === false;
 
   /**
    * Which kind of fight is being looked at. A raid and a grunt read
@@ -162,7 +168,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
                         // from the raid's own chunk and window
                         game.setReward({ raid: record.raid });
                         game.setDialog(GameDialog.None);
-                        Promise.resolve(refetchClaimed()).catch(() => undefined);
+                        props.onClaimed();
                       }}
                     >
                       Claim {getSpeciesData(record.species).name}
@@ -175,5 +181,30 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
         </Show>
       </Show>
     </Show>
+  );
+}
+
+/**
+ * The player's finished battles. Replaying one hands the whole page
+ * over to the battle view, which rebuilds the fight from the same
+ * seed and the same frozen teams — so it plays out as it did, and
+ * awards nothing. A won raid whose legendary was never collected —
+ * the player ran from it, or left before the end — is claimed from
+ * here instead
+ */
+export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
+  const [claimed, { refetch }] = createResource(() => props.player, listClaimedRaids);
+
+  return (
+    <Suspense fallback={<Note>Loading battles…</Note>}>
+      <BattleList
+        player={props.player}
+        viewOnly={props.viewOnly}
+        claimed={claimed}
+        onClaimed={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

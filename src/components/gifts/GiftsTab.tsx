@@ -1,4 +1,4 @@
-import { type JSX, Show, Suspense, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../../auth/gift-record';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
 import getSigil from '../../data/constants/sigil';
@@ -59,10 +59,16 @@ function asSquare(gift: CatchGift): BoxEntry {
   };
 }
 
-export default function GiftsTab(): JSX.Element {
+/**
+ * The shelf itself, which is where the gifts are read.
+ *
+ * A list read in the body that declared it throws past every
+ * `Suspense` written there and lands on the boundary around the whole
+ * page, so the reading half is its own component
+ */
+function GiftShelf(props: { owed: Resource<MysteryGift[]>; onClaimed: () => void }): JSX.Element {
   const game = useGame();
   const toast = useToast();
-  const [owed, { refetch }] = createResource(listMysteryGifts);
   /**
    * Which gift is being taken, or null when none is. One at a time:
    * every button on the shelf goes dead while a claim is in the air,
@@ -70,7 +76,7 @@ export default function GiftsTab(): JSX.Element {
    */
   const [taking, setTaking] = createSignal<string | null>(null);
 
-  const gifts = (): MysteryGift[] => owed.latest ?? [];
+  const gifts = (): MysteryGift[] => props.owed() ?? [];
   const pokemon = (): CatchGift[] =>
     gifts().filter((gift): gift is CatchGift => gift.kind === GiftKind.Catch);
   const things = (): ItemGift[] =>
@@ -100,95 +106,105 @@ export default function GiftsTab(): JSX.Element {
       })
       .finally(() => {
         setTaking(null);
-        Promise.resolve(refetch()).catch(() => undefined);
+        props.onClaimed();
       });
   };
 
   return (
-    // The shelf's own boundary. The list is read through `latest` and
-    // does not suspend, but the nearest boundary above this is the one
-    // around the whole page — so anything in here that ever does
-    // suspend would take the world down with it
-    <Suspense fallback={looking()}>
-      <div class="flex flex-col gap-4">
-        {/* What the boundary cannot show: `latest` never throws, so
-            the first read is waited out here rather than caught */}
-        <Show when={owed.loading && owed.latest == null}>{looking()}</Show>
+    <div class="flex flex-col gap-4">
+      <Show when={gifts().length === 0}>
+        <Note class="text-center">Nothing is waiting for you.</Note>
+      </Show>
 
-        <Show when={!owed.loading && gifts().length === 0}>
-          <Note class="text-center">Nothing is waiting for you.</Note>
-        </Show>
-
-        <Show when={pokemon().length > 0}>
-          <DialogSection title="Pokemon">
-            <CatchBox
-              entries={pokemon().map(asSquare)}
-              // The square is a picture; the card over it holds the one
-              // button, so a stray press cannot take a gift
-              cardOnly
-              cell={(entry) => (
-                <HoverCard
-                  class="block size-full"
-                  trigger={<span class="block size-full" />}
-                  title="Gift"
-                  footer={
-                    <Button
-                      tone="primary"
-                      disabled={taking() != null}
-                      onClick={() => {
-                        take(entry().id);
-                      }}
-                    >
-                      Claim
-                    </Button>
-                  }
-                >
-                  <Show when={found(entry().id)}>
-                    {(gift) => (
-                      <div class="flex flex-col gap-1">
-                        <span class="font-semibold">{describeGiven(gift())}</span>
-                        {/* The mark it will be known by: two of the same
-                            species with the same sigil are the same
-                            individual */}
-                        <Meta class="font-mono tracking-[0.2em]">
-                          {getSigil(gift().individualValue, gift().traitValue)}
-                        </Meta>
-                        <Meta>{gift().reason}</Meta>
-                      </div>
-                    )}
-                  </Show>
-                </HoverCard>
-              )}
-            />
-          </DialogSection>
-        </Show>
-
-        <Show when={things().length > 0}>
-          <DialogSection title="Items">
-            <ItemGrid
-              bare
-              cardOnly
-              entries={things().map((gift) => ({
-                item: gift.item,
-                amount: gift.amount,
-                said: `Claim ${describeGift(gift)}`,
-                card: <Meta>{gift.reason}</Meta>,
-                footer: (
+      <Show when={pokemon().length > 0}>
+        <DialogSection title="Pokemon">
+          <CatchBox
+            entries={pokemon().map(asSquare)}
+            // The square is a picture; the card over it holds the one
+            // button, so a stray press cannot take a gift
+            cardOnly
+            cell={(entry) => (
+              <HoverCard
+                class="block size-full"
+                trigger={<span class="block size-full" />}
+                title="Gift"
+                footer={
                   <Button
                     tone="primary"
                     disabled={taking() != null}
                     onClick={() => {
-                      take(gift.id);
+                      take(entry().id);
                     }}
                   >
                     Claim
                   </Button>
-                ),
-              }))}
-            />
-          </DialogSection>
-        </Show>
-      </div>
+                }
+              >
+                <Show when={found(entry().id)}>
+                  {(gift) => (
+                    <div class="flex flex-col gap-1">
+                      <span class="font-semibold">{describeGiven(gift())}</span>
+                      {/* The mark it will be known by: two of the same
+                            species with the same sigil are the same
+                            individual */}
+                      <Meta class="font-mono tracking-[0.2em]">
+                        {getSigil(gift().individualValue, gift().traitValue)}
+                      </Meta>
+                      <Meta>{gift().reason}</Meta>
+                    </div>
+                  )}
+                </Show>
+              </HoverCard>
+            )}
+          />
+        </DialogSection>
+      </Show>
+
+      <Show when={things().length > 0}>
+        <DialogSection title="Items">
+          <ItemGrid
+            bare
+            cardOnly
+            entries={things().map((gift) => ({
+              item: gift.item,
+              amount: gift.amount,
+              said: `Claim ${describeGift(gift)}`,
+              card: <Meta>{gift.reason}</Meta>,
+              footer: (
+                <Button
+                  tone="primary"
+                  disabled={taking() != null}
+                  onClick={() => {
+                    take(gift.id);
+                  }}
+                >
+                  Claim
+                </Button>
+              ),
+            }))}
+          />
+        </DialogSection>
+      </Show>
+    </div>
+  );
+}
+
+/**
+ * What the game is holding for the player. The shelf is read one
+ * component down, under this boundary, so a shelf still arriving
+ * replaces itself rather than the page it is standing on
+ */
+export default function GiftsTab(): JSX.Element {
+  const [owed, { refetch }] = createResource(listMysteryGifts);
+
+  return (
+    <Suspense fallback={looking()}>
+      <GiftShelf
+        owed={owed}
+        onClaimed={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
     </Suspense>
   );
 }

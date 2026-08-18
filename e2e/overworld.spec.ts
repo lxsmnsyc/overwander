@@ -39,10 +39,11 @@ test.describe('the overworld', () => {
       'Profile',
       'Raids',
       'Auctions',
+      'Gifts',
     ]) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
     }
-    for (const label of ['Friends', 'Gifts', 'Settings']) {
+    for (const label of ['Friends', 'Settings']) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeDisabled();
     }
   });

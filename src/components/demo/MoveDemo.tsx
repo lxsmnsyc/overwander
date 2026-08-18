@@ -32,8 +32,13 @@ import { getMoveData, getRegisteredMoves } from '../../data/moves';
  * The move is in the address, so a link is a demonstration.
  */
 
-/** How often the readout re-reads the units the engine mutates */
-const POLL_INTERVAL = 250;
+/**
+ * How often the readout re-reads the units the engine mutates. Short
+ * enough to catch a cooldown ending: a move cools in a second or so,
+ * and a button that stays grey for a quarter of it afterwards reads as
+ * a button that does not work
+ */
+const POLL_INTERVAL = 120;
 
 /**
  * What a bare `/demo/move` opens on: the plainest move there is, so
@@ -165,6 +170,39 @@ export default function MoveDemo(): JSX.Element {
     return demo?.caster.alive === true && demo.target.alive;
   };
 
+  /**
+   * Whether pressing Cast would do anything.
+   *
+   * Asked of the engine rather than guessed at, because the engine is
+   * what refuses: a caster part-way through a cast, or one whose move
+   * has not cooled, drops the cast on the floor. Without this the
+   * button looked broken — the second press did nothing and said
+   * nothing about why
+   */
+  const ready = (): boolean => {
+    revision();
+
+    const demo = staged();
+    const move = chosen();
+
+    return demo != null && move != null && demo.caster.checkCanCast(move, aimFor(demo, move));
+  };
+
+  /** What it is waiting for, when it is not ready. */
+  const waiting = (): string | null => {
+    revision();
+
+    const demo = staged();
+
+    if (demo == null || ready() || !standing()) {
+      return null;
+    }
+    if (demo.caster.casting != null || demo.caster.channeling != null) {
+      return 'Casting…';
+    }
+    return 'Cooling down…';
+  };
+
   const cast = (): void => {
     const demo = staged();
     const move = chosen();
@@ -197,7 +235,7 @@ export default function MoveDemo(): JSX.Element {
       {detail()}
 
       <Row>
-        <Button tone="primary" disabled={!standing()} onClick={cast}>
+        <Button tone="primary" disabled={!standing() || !ready()} onClick={cast}>
           Cast
         </Button>
         <Button
@@ -210,6 +248,7 @@ export default function MoveDemo(): JSX.Element {
         <Show when={staged()}>
           {(demo) => <Meta>{aiming(demo())}</Meta>}
         </Show>
+        <Show when={waiting()}>{(said) => <Meta>{said()}</Meta>}</Show>
         <Show when={staged() != null && !standing()}>
           <Meta>Somebody is down. Stage it again to carry on.</Meta>
         </Show>

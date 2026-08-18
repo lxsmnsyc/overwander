@@ -6,7 +6,7 @@ import { PERFECT_IVS, Stats } from '../data/constants/stats';
 import { MoveTargetFlags, type Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
-import { deriveAbility, deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
+import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
 import { fieldTeams } from '../overworld/raid';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { BattleEvents, type MoveTarget, MoveTargetType } from './events';
@@ -73,6 +73,18 @@ export const DEMO_TARGET = Species.Lickitung;
  */
 export const DEMO_APPEARANCE = Species.Substitute;
 
+/**
+ * How many times the move can be cast before the page has to be
+ * staged again.
+ *
+ * A demo is somebody pressing the same move over and over to watch it,
+ * and the registered PP of a strong move is five — five presses and
+ * the page is spent. It is set through the check event every other
+ * PP effect already answers, so nothing about how PP works is special
+ * here, only the number it comes out at
+ */
+export const DEMO_MOVE_PP = 180;
+
 /** The two sides of the field, whether or not both are used */
 export const CASTER_ALLIANCE = 0;
 export const TARGET_ALLIANCE = 1;
@@ -120,7 +132,11 @@ function dummy(species: Species): CatchSnapshot {
     // at and nothing else, and the target knows nothing at all
     moves: [],
     movePoints: {},
-    abilities: [deriveAbility(species, 0)],
+    // None at all. A dummy's job is to be neutral, and an ability is
+    // the loudest way it can fail to be: the target's own Cloud Nine
+    // was quietly cancelling the weather a Rain Dance had just put up,
+    // which reads as the move not working
+    abilities: [],
     items: [],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level: DEMO_LEVEL, ivs: PERFECT_IVS, effortValues }),
@@ -202,6 +218,12 @@ export function createMoveDemo(move: Moves): MoveDemo {
   }
   casting.setAppearance(DEMO_APPEARANCE);
   receiving.setAppearance(DEMO_APPEARANCE);
+  // Enough of it to keep pressing. Answered after the ordinary rule
+  // rather than instead of it, so a move that has already been cast
+  // still spends what it spends
+  battle.on(BattleEvents.CheckUnitMovePP, EventPriority.Post, (event) => {
+    event.pp = DEMO_MOVE_PP;
+  });
   // Nothing here can be hurt. A dummy that faints stops being a place
   // to aim the next cast, and the page is for watching a move go off
   // over and over — so damage is refused at the one question the

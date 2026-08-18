@@ -1,0 +1,534 @@
+import Abilities from '../../data/ids/abilities';
+import { ItemTypes, Items } from '../../data/ids/items';
+import { getItemData } from '../../data/items';
+import { Statuses } from '../../data/ids/status';
+import PaintedVisual, { type Painter } from './moves/__painted';
+import type { Point, Stage } from './stage';
+import {
+  type Painted,
+  bolt,
+  burst,
+  chevrons,
+  decay,
+  heart,
+  motes,
+  noise,
+  orb,
+  ring,
+  shards,
+  star,
+  swell,
+} from './moves/__paint';
+
+/**
+ * What the field says about a pokemon that is not a move: a status
+ * landing or biting, an ability firing.
+ *
+ * These were played off the sheets under `public/sprites/effects` and
+ * are now drawn, for the same reason moves are — the atlas was made
+ * for another game, and the nearest sheet to "poisoned" is a picture
+ * of somebody else's move. Drawn, a poisoning is bubbles in poison
+ * purple over the pokemon that has it, every time, at any size.
+ *
+ * A cue is about **one** pokemon, so it is drawn on the stage's
+ * source. It is small on purpose: whatever else is happening on the
+ * field is the thing being watched, and a status that shouts over a
+ * move is a status nobody can read past.
+ */
+
+/** How big a cue is, in canvas pixels before the field's scale. */
+const REACH = 15;
+
+/** How high above the body a mark hangs. */
+const LIFT = 22;
+
+/** One cue, as a picture. */
+interface Cue {
+  paint: (context: CanvasRenderingContext2D, stage: Stage, share: number, draw: Painted) => void;
+  color: string;
+  /** How long it takes, in milliseconds. */
+  span: number;
+}
+
+function over(stage: Stage, lift = LIFT): Point {
+  return [stage.source[0], stage.source[1] - lift * stage.scale];
+}
+
+/**
+ * Something rising off the body: gas, embers, spores. What most of the
+ * lasting statuses look like
+ */
+function rising(count: number, seed: number) {
+  return (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted): void => {
+    motes(context, stage.source, REACH * stage.scale * 1.4, count, seed, share, {
+      ...paint,
+      alpha: swell(share) * 0.9,
+      width: 2.4 * stage.scale,
+    });
+  };
+}
+
+/** Marks turning over the head: what a pokemon is seeing rather than wearing. */
+function orbiting(count: number) {
+  return (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted): void => {
+    const at = over(stage);
+    const size = REACH * stage.scale;
+
+    for (let mark = 0; mark < count; mark += 1) {
+      const angle = share * Math.PI * 2 + (mark / count) * Math.PI * 2;
+
+      star(
+        context,
+        [at[0] + Math.cos(angle) * size, at[1] + Math.sin(angle) * size * 0.45],
+        size * 0.38,
+        angle,
+        { ...paint, alpha: swell(share) + 0.2 },
+      );
+    }
+  };
+}
+
+const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
+  // Bubbles coming off it, in the colour the game already writes
+  // poison in
+  [Statuses.Poisoned]: { paint: rising(7, 3), color: '#9141cb', span: 620 },
+  [Statuses.BadlyPoisoned]: { paint: rising(12, 5), color: '#6e2f9c', span: 720 },
+  [Statuses.Burned]: {
+    paint: (context, stage, share, paint) => {
+      orb(context, stage.source, REACH * stage.scale * (0.5 + swell(share) * 0.4), {
+        ...paint,
+        alpha: swell(share) * 0.75,
+      });
+      motes(context, stage.source, REACH * stage.scale * 1.3, 6, 11, share, {
+        ...paint,
+        alpha: decay(share),
+        width: 2.2 * stage.scale,
+      });
+    },
+    color: '#e62829',
+    span: 620,
+  },
+  [Statuses.Paralyzed]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let arc = 0; arc < 2; arc += 1) {
+        const angle = noise(13, arc) * Math.PI * 2 + share * 2;
+
+        bolt(
+          context,
+          [stage.source[0] - Math.cos(angle) * size, stage.source[1] - Math.sin(angle) * size],
+          [stage.source[0] + Math.cos(angle) * size, stage.source[1] + Math.sin(angle) * size],
+          arc + 1,
+          { ...paint, alpha: decay(share) * 1.2, width: 2 * stage.scale },
+        );
+      }
+    },
+    color: '#fac000',
+    span: 480,
+  },
+  [Statuses.Frozen]: {
+    paint: (context, stage, share, paint) => {
+      shards(context, stage.source, REACH * stage.scale * 1.2, 6, 7, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 2.6 * stage.scale,
+      });
+      ring(context, stage.source, REACH * stage.scale * (1 + share * 0.4), {
+        ...paint,
+        alpha: swell(share) * 0.7,
+        width: 2 * stage.scale,
+      });
+    },
+    color: '#3dcef3',
+    span: 620,
+  },
+  // Rings lifting off the head, one after another, the way a snore is
+  // drawn as a rising note
+  [Statuses.Sleeping]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      for (let puff = 0; puff < 3; puff += 1) {
+        const held = (share * 1.3 + puff * 0.33) % 1;
+
+        ring(context, [at[0] + held * size * 0.6, at[1] - held * size * 1.2], size * 0.3 * held, {
+          ...paint,
+          alpha: swell(held) * 0.8,
+          width: 2 * stage.scale,
+        });
+      }
+    },
+    color: '#8fa2d8',
+    span: 900,
+  },
+  [Statuses.Confused]: { paint: orbiting(3), color: '#ef70ef', span: 900 },
+  [Statuses.Flinched]: {
+    paint: (context, stage, share, paint) => {
+      burst(context, over(stage), REACH * stage.scale * (0.6 + share), 6, 23, {
+        ...paint,
+        alpha: decay(share),
+        width: 2 * stage.scale,
+      });
+    },
+    color: '#e6ecf5',
+    span: 380,
+  },
+  [Statuses.Raging]: {
+    paint: (context, stage, share, paint) => {
+      burst(context, stage.source, REACH * stage.scale * (0.8 + share * 0.8), 8, 29, {
+        ...paint,
+        alpha: decay(share),
+        width: 2.6 * stage.scale,
+      });
+    },
+    color: '#ff5a3c',
+    span: 520,
+  },
+  [Statuses.Infatuated]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let beat = 0; beat < 3; beat += 1) {
+        const held = (share * 1.2 + beat * 0.3) % 1;
+        const drift = (noise(31, beat) - 0.5) * size * 1.6;
+
+        heart(
+          context,
+          [stage.source[0] + drift, stage.source[1] - held * size * 2],
+          size * 0.4 * (0.6 + held * 0.5),
+          { ...paint, alpha: swell(held) },
+        );
+      }
+    },
+    color: '#ef70ef',
+    span: 820,
+  },
+  [Statuses.Seeding]: { paint: rising(6, 37), color: '#3fa129', span: 620 },
+  // The doll standing in for it: a shell around the body
+  [Statuses.Substituted]: {
+    paint: (context, stage, share, paint) => {
+      for (let shell = 0; shell < 2; shell += 1) {
+        ring(context, stage.source, REACH * stage.scale * (1.2 + shell * 0.3) * (0.7 + share * 0.4), {
+          ...paint,
+          alpha: swell(share) * (0.9 - shell * 0.3),
+          width: 2 * stage.scale,
+        });
+      }
+    },
+    color: '#9a9a6a',
+    span: 620,
+  },
+  [Statuses.FocusEnergy]: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, stage.source, REACH * stage.scale, 3, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 2.4 * stage.scale,
+      });
+    },
+    color: '#fac000',
+    span: 640,
+  },
+};
+
+/** How much quieter a status is each time it bites than when it landed. */
+const TICK_ALPHA = 0.7;
+const TICK_SCALE = 0.75;
+
+function played(cue: Cue, scale = 1, alpha = 1): PaintedVisual {
+  const paint: Painted = { color: cue.color, alpha };
+  const painter: Painter = (context, stage, share) => {
+    cue.paint(context, { ...stage, scale: stage.scale * scale }, share, paint);
+  };
+
+  return new PaintedVisual(cue.span, painter);
+}
+
+/** The moment a status lands. */
+export function statusCueFor(status: Statuses): PaintedVisual | null {
+  const cue = STATUS_CUES[status];
+
+  return cue == null ? null : played(cue);
+}
+
+/** Each moment it bites afterwards: the same picture, quieter. */
+export function statusTickFor(status: Statuses): PaintedVisual | null {
+  const cue = STATUS_CUES[status];
+
+  return cue == null ? null : played(cue, TICK_SCALE, TICK_ALPHA);
+}
+
+/**
+ * What an ability looks like when it fires.
+ *
+ * An ability is the quietest thing in a fight — no cast, no flight,
+ * and the only sign of one is a number that came out different — so
+ * **every** trigger draws something. The default is a ring and a
+ * sparkle over the head, which says "that was the ability" without
+ * claiming to say which; the kinds below are for the ones where the
+ * shape can say more than that
+ */
+type CueKind =
+  | 'Pulse'
+  | 'Rise'
+  | 'Mend'
+  | 'Menace'
+  | 'Spark'
+  | 'Ail'
+  | 'Rush'
+  | 'Notice'
+  | 'Berry'
+  | 'Guard'
+  | 'Barb';
+
+const CUE_KINDS: Record<CueKind, Cue> = {
+  Pulse: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+
+      ring(context, at, REACH * stage.scale * (0.4 + share * 1.1), {
+        ...paint,
+        alpha: decay(share),
+        width: 2 * stage.scale,
+      });
+      star(context, at, REACH * stage.scale * 0.3 * swell(share), share * 3, { ...paint });
+    },
+    color: '#e6ecf5',
+    span: 480,
+  },
+  Rise: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, stage.source, REACH * stage.scale, 3, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 2.4 * stage.scale,
+      });
+    },
+    color: '#f0d264',
+    span: 560,
+  },
+  Mend: {
+    paint: (context, stage, share, paint) => {
+      for (let mote = 0; mote < 6; mote += 1) {
+        const held = (share + noise(41, mote)) % 1;
+        const drift = (noise(41, mote + 9) - 0.5) * REACH * stage.scale * 2;
+
+        orb(
+          context,
+          [stage.source[0] + drift, stage.source[1] - held * REACH * stage.scale * 2],
+          2.4 * stage.scale,
+          { ...paint, alpha: swell(held) },
+        );
+      }
+    },
+    color: '#4cc46a',
+    span: 640,
+  },
+  Menace: {
+    paint: (context, stage, share, paint) => {
+      ring(context, stage.source, REACH * stage.scale * (1.6 - share * 1.1), {
+        ...paint,
+        alpha: swell(share),
+        width: 3 * stage.scale,
+      });
+    },
+    color: '#624d4e',
+    span: 520,
+  },
+  Spark: {
+    paint: (context, stage, share, paint) => {
+      burst(context, stage.source, REACH * stage.scale * (0.5 + share), 6, 53, {
+        ...paint,
+        alpha: decay(share),
+        width: 2 * stage.scale,
+      });
+    },
+    color: '#fac000',
+    span: 420,
+  },
+  Ail: { paint: rising(6, 59), color: '#9141cb', span: 560 },
+  Rush: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      context.strokeStyle = '';
+      for (let streak = 0; streak < 3; streak += 1) {
+        const held = (share * 1.5 + streak * 0.3) % 1;
+
+        ring(
+          context,
+          [stage.source[0] + (held - 0.5) * size * 3, stage.source[1] - streak * size * 0.5],
+          size * 0.14,
+          { ...paint, alpha: swell(held) * 0.9, width: 2 * stage.scale },
+        );
+      }
+    },
+    color: '#81b9ef',
+    span: 420,
+  },
+  Notice: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+
+      star(context, at, REACH * stage.scale * 0.5 * (0.5 + swell(share)), 0, {
+        ...paint,
+        alpha: swell(share) + 0.2,
+      });
+    },
+    color: '#fac000',
+    span: 480,
+  },
+  // Something eaten: it is held over the head, and then it is not
+  Berry: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      if (share < 0.45) {
+        orb(context, at, size * 0.42 * (0.6 + share), { ...paint, alpha: 1 });
+      } else {
+        motes(context, at, size * 1.3, 6, 67, share, {
+          ...paint,
+          alpha: decay(share) * 1.6,
+          width: 2.2 * stage.scale,
+        });
+      }
+    },
+    color: '#e0566a',
+    span: 520,
+  },
+  // Something held that took the blow: a shell flashing where it was
+  // hit and going again
+  Guard: {
+    paint: (context, stage, share, paint) => {
+      for (let shell = 0; shell < 2; shell += 1) {
+        ring(context, stage.source, REACH * stage.scale * (1.1 + shell * 0.3), {
+          ...paint,
+          alpha: swell(Math.max(0, share * 1.4 - shell * 0.25)),
+          width: 2.6 * stage.scale,
+        });
+      }
+    },
+    color: '#c8d2e0',
+    span: 460,
+  },
+  // Something held that hurt whoever touched it
+  Barb: {
+    paint: (context, stage, share, paint) => {
+      shards(context, stage.source, REACH * stage.scale * 1.2, 5, 71, share, {
+        ...paint,
+        alpha: decay(share),
+        width: 2.6 * stage.scale,
+      });
+    },
+    color: '#8a5a4a',
+    span: 440,
+  },
+};
+
+const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
+  // What the toucher catches
+  [Abilities.Static]: 'Spark',
+  [Abilities.LightningRod]: 'Spark',
+  [Abilities.FlashFire]: 'Spark',
+  [Abilities.FlameBody]: 'Ail',
+  [Abilities.PoisonPoint]: 'Ail',
+  [Abilities.PoisonTouch]: 'Ail',
+  [Abilities.LiquidOoze]: 'Ail',
+  [Abilities.Stench]: 'Ail',
+  [Abilities.EffectSpore]: 'Ail',
+  [Abilities.CuteCharm]: 'Ail',
+
+  // Something rose
+  [Abilities.AngerPoint]: 'Rise',
+  [Abilities.Moxie]: 'Rise',
+  [Abilities.Justified]: 'Rise',
+  [Abilities.Defiant]: 'Rise',
+  [Abilities.Competitive]: 'Rise',
+  [Abilities.Download]: 'Rise',
+
+  // Something got faster
+  [Abilities.Rattled]: 'Rush',
+  [Abilities.Steadfast]: 'Rush',
+  [Abilities.Unburden]: 'Rush',
+  [Abilities.WeakArmor]: 'Rush',
+  [Abilities.RunAway]: 'Rush',
+  [Abilities.SwiftSwim]: 'Rush',
+  [Abilities.Chlorophyll]: 'Rush',
+
+  // Something mended
+  [Abilities.Regenerator]: 'Mend',
+  [Abilities.RainDish]: 'Mend',
+  [Abilities.IceBody]: 'Mend',
+  [Abilities.DrySkin]: 'Mend',
+  [Abilities.ShedSkin]: 'Mend',
+  [Abilities.NaturalCure]: 'Mend',
+  [Abilities.Healer]: 'Mend',
+
+  // Something was noticed before it happened
+  [Abilities.Anticipation]: 'Notice',
+  [Abilities.Forewarn]: 'Notice',
+  [Abilities.Frisk]: 'Notice',
+  [Abilities.Trace]: 'Notice',
+  [Abilities.Pickup]: 'Notice',
+  [Abilities.Harvest]: 'Notice',
+
+  // Something weighs on the other side of the field
+  [Abilities.Pressure]: 'Menace',
+  [Abilities.Unnerve]: 'Menace',
+  [Abilities.NeutralizingGas]: 'Menace',
+  [Abilities.MoldBreaker]: 'Menace',
+  [Abilities.Intimidate]: 'Menace',
+  [Abilities.Boss]: 'Menace',
+};
+
+export default function abilityCueFor(ability: Abilities): PaintedVisual {
+  return played(CUE_KINDS[ABILITY_CUES[ability] ?? 'Pulse']);
+}
+
+/**
+ * The gear whose trigger the item's own kind cannot describe. A berry
+ * is eaten whatever it does, but a held thing does one of several
+ * things and the shape should say which
+ */
+const ITEM_CUES: Partial<Record<Items, CueKind>> = {
+  // It took the hit so the holder did not
+  [Items.FocusBand]: 'Guard',
+  [Items.FocusSash]: 'Guard',
+  [Items.AirBalloon]: 'Guard',
+  [Items.EjectButton]: 'Guard',
+  // It hurt whoever touched it
+  [Items.RockyHelmet]: 'Barb',
+  [Items.StickyBarb]: 'Barb',
+  [Items.DestinyKnot]: 'Barb',
+  [Items.RingTarget]: 'Barb',
+  // It got there first
+  [Items.QuickClaw]: 'Rush',
+  [Items.ChoiceScarf]: 'Rush',
+};
+
+/**
+ * What an item looks like when it goes off.
+ *
+ * Held items are the quietest thing on the field after abilities — a
+ * berry is eaten and a number comes out different — so every trigger
+ * draws, and what it draws comes off the item's own kind when nothing
+ * more specific is known
+ */
+export function itemCueFor(item: Items): PaintedVisual {
+  const named = ITEM_CUES[item];
+
+  if (named != null) {
+    return played(CUE_KINDS[named]);
+  }
+  try {
+    // Eaten rather than worn: berries are the one kind whose trigger
+    // is always the same event
+    return played(CUE_KINDS[getItemData(item).type === ItemTypes.Berry ? 'Berry' : 'Pulse']);
+  } catch {
+    // An item with no entry is still an item that fired
+    return played(CUE_KINDS.Pulse);
+  }
+}

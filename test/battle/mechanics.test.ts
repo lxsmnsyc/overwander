@@ -1,17 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { EventPriority } from '../../src/core/event-emitter';
+import { AttackPriority, EventPriority } from '../../src/core/event-emitter';
 import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Battle from '../../src/battle/core';
+import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
-import { MOVE_DELAY } from '../../src/battle/mechanics/move';
+import { MOVE_DELAY, resolveMoveTargets } from '../../src/battle/mechanics/move';
 import { Slots, packSlots } from '../../src/data/constants/slots';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import Natures from '../../src/data/ids/natures';
-import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../src/data/ids/moves';
+import {
+  DamageFlags,
+  MoveCategories,
+  MoveTargetFlags,
+  Moves,
+  StatFlags,
+} from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
 import { PP_UP_LIMIT, getMoveData } from '../../src/data/moves';
@@ -930,5 +937,119 @@ describe('natures', () => {
     expect(unit.checkStat(Stats.SpecialAttack, 0)).toBe(Math.floor(105 * 0.9));
     expect(unit.checkStat(Stats.Defense, 0)).toBe(105);
     expect(unit.checkStat(Stats.HP, 0)).toBe(160); // HP is nature-neutral
+  });
+});
+
+describe('who a spread move reaches', () => {
+  /**
+   * Every pokemon a move was aimed at, in the order the engine picked
+   * them. A move that goes out to everybody walks the roster itself,
+   * so this is the only place to see what it decided
+   */
+  function aimedAt(battle: Battle, caster: Unit): Unit[] {
+    const reached: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Prepare, (event) => {
+      if (event.source === caster && event.target.type === MoveTargetType.Unit) {
+        reached.push(event.target.unit);
+      }
+    });
+    return reached;
+  }
+
+  it('leaves out a pokemon that is already down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const standing = createUnit(battle, teamB);
+    const fallen = createUnit(battle, teamB);
+
+    caster.addMove(Moves.Growl);
+
+    const reached = aimedAt(battle, caster);
+
+    fallen.setHealth(0);
+    fallen.faint(caster);
+
+    caster.cast(Moves.Growl, unitTarget(standing));
+    battle.tick(2200);
+
+    expect(reached).toContain(standing);
+    expect(reached).not.toContain(fallen);
+  });
+
+  it('leaves out a team with nobody left standing', () => {
+    const { battle, allianceB, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const standing = createUnit(battle, teamB);
+    // A second party on the far side, wiped out before this move
+    const wipedTeam = new Team(battle, allianceB);
+
+    allianceB.addTeam(wipedTeam);
+
+    const fallen = createUnit(battle, wipedTeam);
+
+    caster.addMove(Moves.Growl);
+
+    const reached = aimedAt(battle, caster);
+
+    fallen.setHealth(0);
+    fallen.faint(caster);
+
+    caster.cast(Moves.Growl, unitTarget(standing));
+    battle.tick(2200);
+
+    expect(reached).toContain(standing);
+    expect(reached).not.toContain(fallen);
+  });
+
+  it('answers with one target per pokemon before the move lands', () => {
+    // What the field draws crossing the gap comes from here: a move
+    // that goes out to everybody carries one picked target while it is
+    // in the air, so asking it what it was aimed at drew one thing
+    // flying at one pokemon however many it was about to hit
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    const third = createUnit(battle, teamB);
+
+    third.setHealth(0);
+    third.faint(caster);
+
+    const flags = caster.checkMoveTargetFlags(Moves.Growl);
+    const reached = resolveMoveTargets(battle, caster, unitTarget(first), flags);
+    const units = reached.map((target) =>
+      target.type === MoveTargetType.Unit ? target.unit : null,
+    );
+
+    expect(units).toContain(first);
+    expect(units).toContain(second);
+    expect(units).not.toContain(third);
+  });
+
+  it('reaches them when the move says it does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const standing = createUnit(battle, teamB);
+    const fallen = createUnit(battle, teamB);
+
+    caster.addMove(Moves.Growl);
+    // The flags resolve through the event engine, so a move that wants
+    // the fallen is a move whose flags say `Fainted` by the time the
+    // roster is walked
+    battle.on(BattleEvents.CheckUnitMoveTargetFlags, EventPriority.Post, (event) => {
+      event.flags |= MoveTargetFlags.Fainted;
+    });
+
+    const reached = aimedAt(battle, caster);
+
+    fallen.setHealth(0);
+    fallen.faint(caster);
+
+    caster.cast(Moves.Growl, unitTarget(standing));
+    battle.tick(2200);
+
+    expect(reached).toContain(standing);
+    expect(reached).toContain(fallen);
   });
 });

@@ -40,8 +40,11 @@ export interface MoveData {
    *
    * It is a **mechanical** wait, not a decoration: the effect resolves
    * when it expires, so anything happening in between happens first.
-   * A move that names none still waits `MOVE_DELAY`; what the field
-   * reads is only whether to draw something travelling
+   * A move that names none still waits `MOVE_DELAY`, so a delay is
+   * never what makes a move a projectile — naming one here is. The
+   * field reads it that way: a move that named its own delay is drawn
+   * with something crossing the gap, and everything else spends the
+   * wait some other way
    */
   delay?: number;
 

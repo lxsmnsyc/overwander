@@ -23,6 +23,7 @@ import type {
   CheckUnitAttackEffectChanceEvent,
   CheckUnitAttackEffectEvent,
   MoveState,
+  MoveTarget,
   TriggerMoveData,
   UnitAttackEvent,
   UnitAttackResolveAmountEvent,
@@ -51,7 +52,7 @@ const BASE_FRAMES = 104;
  * A move whose data carries a `delay` keeps it — a projectile's is its
  * flight time, which is longer than a swing
  */
-export const MOVE_DELAY = 400;
+export const MOVE_DELAY = 250;
 
 function getCastTime(priority: number): number {
   return (BASE_FRAMES - priority * FRAMES_PER_PRIORITY) * FPS_DURATION;
@@ -629,46 +630,118 @@ export function setupCooldownMechanics(battle: Battle): void {
   });
 }
 
-function targetTeamUnits(source: Unit, move: Moves, team: Team, steps: number): void {
+/**
+ * Whether this move reaches whoever is being considered.
+ *
+ * A move aimed at one pokemon is refused before it is cast if that
+ * pokemon is down (`CheckUnitCanCast`), but a move that goes out to
+ * everybody has nobody to refuse: it walks the roster. So the roster
+ * is what is filtered, and the fallen are left out of it unless the
+ * move asked for them
+ */
+function reaches(flags: number, unit: Unit): boolean {
+  return unit.alive || (flags & MoveTargetFlags.Fainted) !== 0;
+}
+
+/** The same question about a whole team: is there anybody left on it. */
+function reachesTeam(flags: number, team: Team): boolean {
+  if ((flags & MoveTargetFlags.Fainted) !== 0) {
+    return true;
+  }
   for (const unit of team.units) {
-    if (source !== unit) {
-      source.triggerMoveTarget(
-        move,
-        {
-          type: MoveTargetType.Unit,
-          unit,
-        },
-        steps,
-      );
+    if (unit.alive) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function teamUnits(source: Unit, team: Team, flags: number, found: MoveTarget[]): void {
+  for (const unit of team.units) {
+    if (source !== unit && reaches(flags, unit)) {
+      found.push({ type: MoveTargetType.Unit, unit });
     }
   }
 }
 
-function targetAllianceUnits(source: Unit, move: Moves, alliance: Alliance, steps: number): void {
+function allianceUnits(source: Unit, alliance: Alliance, flags: number, found: MoveTarget[]): void {
   for (const team of alliance.teams) {
     if (team !== source.team) {
-      targetTeamUnits(source, move, team, steps);
+      teamUnits(source, team, flags, found);
     }
   }
 }
 
-function targetTeam(source: Unit, move: Moves, team: Team, steps: number): void {
-  source.triggerMoveTarget(
-    move,
-    {
-      type: MoveTargetType.Team,
-      team,
-    },
-    steps,
-  );
+function wholeTeam(team: Team, flags: number, found: MoveTarget[]): void {
+  if (reachesTeam(flags, team)) {
+    found.push({ type: MoveTargetType.Team, team });
+  }
 }
 
-function targetAllianceTeams(source: Unit, move: Moves, alliance: Alliance, steps: number): void {
+function allianceTeams(source: Unit, alliance: Alliance, flags: number, found: MoveTarget[]): void {
   for (const team of alliance.teams) {
     if (team !== source.team) {
-      targetTeam(source, move, team, steps);
+      wholeTeam(team, flags, found);
     }
   }
+}
+
+/**
+ * Everybody a move is about to land on.
+ *
+ * A move aimed at one pokemon is that pokemon. One that goes out to
+ * everybody is worked out here instead, from the flags: which sides it
+ * reaches, whether it lands per pokemon or per team, and whether it
+ * counts the fallen.
+ *
+ * It is exported because the **field** needs the same answer as the
+ * engine and half a beat earlier: a move is drawn crossing the gap
+ * during the wait, and it has to know how many gaps that is before the
+ * engine walks the roster. The two can differ — somebody may go down
+ * mid-flight — so this is a picture of the field as the move left,
+ * which is exactly what a thing in the air is
+ */
+export function resolveMoveTargets(
+  battle: Battle,
+  source: Unit,
+  aimed: MoveTarget,
+  flags: number,
+): MoveTarget[] {
+  if ((flags & MoveTargetFlags.Multiple) === 0) {
+    return [aimed];
+  }
+
+  const found: MoveTarget[] = [];
+
+  if (flags & MoveTargetFlags.Unit) {
+    if (flags & MoveTargetFlags.Self) {
+      found.push({ type: MoveTargetType.Unit, unit: source });
+    }
+    if (flags & MoveTargetFlags.Own) {
+      teamUnits(source, source.team, flags, found);
+    }
+    if (flags & MoveTargetFlags.Ally) {
+      allianceUnits(source, source.team.alliance, flags, found);
+    }
+    if (flags & MoveTargetFlags.Enemy) {
+      for (const team of battle.teams(source.team.alliance)) {
+        teamUnits(source, team, flags, found);
+      }
+    }
+  } else if (flags & MoveTargetFlags.Team) {
+    if (flags & MoveTargetFlags.Own) {
+      wholeTeam(source.team, flags, found);
+    }
+    if (flags & MoveTargetFlags.Ally) {
+      allianceTeams(source, source.team.alliance, flags, found);
+    }
+    if (flags & MoveTargetFlags.Enemy) {
+      for (const team of battle.teams(source.team.alliance)) {
+        wholeTeam(team, flags, found);
+      }
+    }
+  }
+  return found;
 }
 
 export function setupTriggerMoveMechanics(battle: Battle): void {
@@ -739,57 +812,18 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, (event) => {
-    const targetFlags = event.source.checkMoveTargetFlags(event.move);
+    // A move that goes out to everybody has no pre-picked target: who
+    // it lands on is worked out now, from the flags and whoever is
+    // still standing
+    const targets = resolveMoveTargets(
+      battle,
+      event.source,
+      event.target,
+      event.source.checkMoveTargetFlags(event.move),
+    );
 
-    /**
-     * For multiple target type, the casting doesn't require a pre-defined
-     * target unit/team.
-     *
-     * Singular target types require a casting target.
-     */
-    if (targetFlags & MoveTargetFlags.Multiple) {
-      // Check if target mode is per-unit
-      if (targetFlags & MoveTargetFlags.Unit) {
-        // Target the source first
-        if (targetFlags & MoveTargetFlags.Self) {
-          event.source.triggerMoveTarget(
-            event.move,
-            {
-              type: MoveTargetType.Unit,
-              unit: event.source,
-            },
-            event.steps,
-          );
-        }
-        // Target the units from own team
-        if (targetFlags & MoveTargetFlags.Own) {
-          targetTeamUnits(event.source, event.move, event.source.team, event.steps);
-        }
-        if (targetFlags & MoveTargetFlags.Ally) {
-          targetAllianceUnits(event.source, event.move, event.source.team.alliance, event.steps);
-        }
-        if (targetFlags & MoveTargetFlags.Enemy) {
-          for (const team of battle.teams(event.source.team.alliance)) {
-            targetTeamUnits(event.source, event.move, team, event.steps);
-          }
-        }
-        // Otherwise, target by team
-      } else if (targetFlags & MoveTargetFlags.Team) {
-        if (targetFlags & MoveTargetFlags.Own) {
-          targetTeam(event.source, event.move, event.source.team, event.steps);
-        }
-        if (targetFlags & MoveTargetFlags.Ally) {
-          targetAllianceTeams(event.source, event.move, event.source.team.alliance, event.steps);
-        }
-        if (targetFlags & MoveTargetFlags.Enemy) {
-          for (const team of battle.teams(event.source.team.alliance)) {
-            targetTeam(event.source, event.move, team, event.steps);
-          }
-        }
-      }
-    } else {
-      // Just forward the target by default
-      event.source.triggerMoveTarget(event.move, event.target, event.steps);
+    for (const target of targets) {
+      event.source.triggerMoveTarget(event.move, target, event.steps);
     }
   });
 

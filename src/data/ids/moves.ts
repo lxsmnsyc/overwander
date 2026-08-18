@@ -43,6 +43,23 @@ export const enum MoveTargetFlags {
 
   // Target multiple units/teams
   Multiple = 0b1000000,
+
+  /**
+   * Reaches pokemon that are already down, and teams with nobody left
+   * standing.
+   *
+   * Off by default, which is the whole point of it: a move that goes
+   * out to everybody used to go out to the fallen as well — a spread
+   * attack spent a hit on every knocked-out pokemon on the far side,
+   * and a team wiped out an hour ago still counted as somewhere to
+   * aim. Nothing came of it, because the damage refuses a unit that is
+   * not alive, but it happened, and anything watching the field saw it
+   * happen.
+   *
+   * A move that genuinely wants them — a revival, something that acts
+   * on the fallen — says so here
+   */
+  Fainted = 0b10000000,
 }
 
 export const enum MoveFlags {

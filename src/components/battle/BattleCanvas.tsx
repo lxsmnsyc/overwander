@@ -2,11 +2,11 @@ import { type JSX, createSignal, onCleanup, onMount } from 'solid-js';
 import type Battle from '../../battle/core';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
-import type MoveVisual from '../../canvas/battle/moves/__visual';
-import abilityCueFor from '../../canvas/battle/abilities';
-import moveVisualFor from '../../canvas/battle/moves';
-import type { MoveVisualBuilder } from '../../canvas/battle/moves/__shapes';
-import { statusCueFor, statusTickFor } from '../../canvas/battle/statuses';
+import type { FieldVisual } from '../../canvas/battle/moves/__painted';
+import attackMarkVisual from '../../canvas/battle/attack';
+import abilityCueFor, { itemCueFor, statusCueFor, statusTickFor } from '../../canvas/battle/cues';
+import paintWeather from '../../canvas/battle/weather';
+import { moveDelayVisual, moveEffectVisual, moveMissVisual } from '../../canvas/battle/moves';
 import projectField, {
   type FieldPoint,
   type FieldView,
@@ -23,11 +23,11 @@ import {
 } from '../../battle/events';
 import type Abilities from '../../data/ids/abilities';
 import type Unit from '../../battle/unit';
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
 import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
-import type { Moves } from '../../data/ids/moves';
+import { MoveFlags, type Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 
@@ -170,6 +170,13 @@ interface Slot {
    * Larger is nearer, and it is what the field is painted in order of
    */
   depth: number;
+  /**
+   * How far the **body** is drawn from its slot, for a pokemon
+   * throwing itself at another one. The slot is where it stands, and
+   * where its bar and its name stay: furniture that jumps about with
+   * the body is furniture nobody can read
+   */
+  offset: Point;
   /** Whether it is in front of the camera at all. */
   visible: boolean;
 }
@@ -181,6 +188,27 @@ interface Slot {
 const CUE_GAP = 700;
 
 /**
+ * A pokemon throwing itself at another one.
+ *
+ * A contact move is the pokemon *being* the projectile — there is
+ * nothing in the air to draw, because the thing crossing the gap is
+ * the body. So the sprite goes: out toward whatever it is hitting and
+ * back to where it stands, on the battle's own clock
+ */
+interface Lunge {
+  source: Unit;
+  target: Unit;
+  elapsed: number;
+  window: number;
+}
+
+/** How long the whole out-and-back takes, in battle milliseconds. */
+const LUNGE_SPAN = 480;
+
+/** How much of the gap it crosses. Not all of it: they do not overlap */
+const LUNGE_REACH = 0.42;
+
+/**
  * A move going off: its own picture, played where it happened.
  *
  * It covers the whole of the move, the time in the air included — a
@@ -190,7 +218,7 @@ const CUE_GAP = 700;
 interface Casting {
   source: Unit;
   targets: Unit[];
-  visual: MoveVisual;
+  visual: FieldVisual;
 }
 
 /**
@@ -480,6 +508,7 @@ function project(standings: Standing[], view: FieldView, striking: Map<Unit, Str
         sprite: standing.sprite,
         facing: facingToward(on.x, on.y, at.x, at.y),
         depth: on.scale,
+        offset: [0, 0] as Point,
         visible: on.visible,
       };
     })
@@ -673,12 +702,13 @@ function scaleOf(slot: Slot): number {
  */
 function bodyOf(slot: Slot): Point {
   const sprite = slot.sprite;
+  const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
   const placed =
     sprite?.ready === true
-      ? sprite.locate('center', slot.x, slot.y, { scale: scaleOf(slot), anchor: 'shadow' })
+      ? sprite.locate('center', x, y, { scale: scaleOf(slot), anchor: 'shadow' })
       : null;
 
-  return placed ?? [slot.x, slot.y];
+  return placed ?? [x, y];
 }
 
 /**
@@ -754,12 +784,13 @@ function drawSlot(
     // there instead buries half of a tall pokemon under the ground and
     // leaves a short one hovering
     const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
+    const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
 
-    sprite.drawShadow(context, slot.x, slot.y, placement);
-    sprite.draw(context, slot.x, slot.y, placement);
+    sprite.drawShadow(context, x, y, placement);
+    sprite.draw(context, x, y, placement);
   } else {
     context.beginPath();
-    context.arc(slot.x, slot.y, slot.radius, 0, Math.PI * 2);
+    context.arc(slot.x + slot.offset[0], slot.y + slot.offset[1], slot.radius, 0, Math.PI * 2);
     context.fillStyle = unit.alive ? slot.color : COLORS.down;
     context.fill();
   }
@@ -861,6 +892,12 @@ export interface UnitSpot {
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
+  /**
+   * Who is mid-throw at whom. Not a signal, like everything else the
+   * tick moves along
+   */
+  const lunging: Lunge[] = [];
+
   /**
    * How long this battle has been running, by its own clock rather
    * than the wall's — what spaces out a cue that keeps firing
@@ -1079,6 +1116,26 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const slots = project(ringStandings(field, spriteFor), view, striking);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 
+      // Whoever is throwing itself at somebody is drawn part of the
+      // way there. It is done to the slot rather than to the standing
+      // so everything measured off the slot comes with it: the bars,
+      // the name, and the move's own picture, which should go off
+      // where the body actually is
+      for (const lunge of lunging) {
+        const from = at.get(lunge.source);
+        const to = at.get(lunge.target);
+
+        if (from == null || to == null) {
+          continue;
+        }
+        // Out and back on a half sine: it leaves fastest at the start
+        // and is still for an instant at the far end, which is where
+        // the hit lands
+        const share = Math.sin(Math.PI * Math.min(1, lunge.elapsed / lunge.window)) * LUNGE_REACH;
+
+        from.offset = [(to.x - from.x) * share, (to.y - from.y) * share];
+      }
+
       // Kept for the pointer: what was drawn where, as of the last
       // frame. Hit-testing a canvas means asking the drawing, and the
       // drawing is this list
@@ -1087,6 +1144,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       for (const slot of slots) {
         drawSlot(context, slot, striking);
       }
+
+      // The sky, over the pokemon and under whatever is going off:
+      // weather is the field's own state rather than anybody's move,
+      // and it belongs behind the thing being watched.
+      //
+      // Asked of a pokemon rather than of the battle, because outside
+      // a fight between players the weather is the **team's**: a raid
+      // has one side standing in rain and the other in the dry, and
+      // what the viewer should see is the sky over their own side
+      const watcher = slots.find((slot) => slot.unit.alive);
+      const sky = watcher == null ? props.battle.weather.current : watcher.unit.checkWeather();
+
+      paintWeather(context, sky, { width: WIDTH, height: HEIGHT }, clock);
 
       // Move effects go on top of everything: they are the loudest
       // thing on the field for as long as they last, and a ring drawn
@@ -1109,34 +1179,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
     };
 
-    /**
-     * Build a picture and put it on the field. A sheet that would not
-     * load leaves whatever it was about looking the way it looked
-     * before any of this: nothing to see
-     */
-    const show = (build: MoveVisualBuilder, source: Unit, targets: Unit[], window = 0): void => {
-      build(window)
-        .then((visual) => {
-          casting.push({ source, targets, visual });
-        })
-        .catch(() => undefined);
+    /** Put a picture on the field. */
+    const paint = (visual: FieldVisual, source: Unit, targets: Unit[]): void => {
+      casting.push({ source, targets, visual });
     };
 
     // A move announces itself when it fires, and its picture is built
     // and started here — the one moment the canvas hears about a move
     // as a whole rather than about what it did
     const firing = props.battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
-      // A move aimed at a team lands on every unit on it: what a
-      // spread move looks like is several things arriving at once. One
-      // aimed at the caster has nowhere to travel
-      let targets: Unit[] = [];
+      // What the caster aimed at, and nothing more.
+      //
+      // A move that goes out to everybody could be asked who it is
+      // about to reach, and drawing one thing crossing to each of them
+      // was worse rather than better: a spread move in a raid is forty
+      // gaps at once, and forty things in the air is a screen nobody
+      // can read. One flight, at what it was pointed at
+      let crossing: Unit[] = [];
 
       if (event.target.type === MoveTargetType.Unit) {
-        targets = [event.target.unit];
+        crossing = [event.target.unit];
       } else if (event.target.type === MoveTargetType.Team) {
-        targets = [...event.target.team.units];
+        crossing = [...event.target.team.units];
       }
-      targets = targets.filter((target) => target !== event.source);
+      crossing = crossing.filter((target) => target !== event.source);
 
       // The window the engine is actually holding the move open for,
       // asked of it rather than read off the data — a listener may
@@ -1148,24 +1214,86 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // which is the gesture the move *is*
       striking.set(event.source, { move: event.move, window, at: event.target });
 
-      const build = moveVisualFor(event.move);
+      // A contact move has nothing in the air to draw, because the
+      // thing crossing the gap is the pokemon itself
+      if ((getMoveData(event.move).flags & MoveFlags.Contact) !== 0 && crossing.length > 0) {
+        const already = lunging.findIndex((lunge) => lunge.source === event.source);
 
-      // The picture is handed the same window: a move held in the air
-      // waits it out before it lands, and one that resolves where it
-      // stands is handed nothing to wait for
-      if (build != null) {
-        show(build, event.source, targets, window);
+        if (already >= 0) {
+          lunging.splice(already, 1);
+        }
+        lunging.push({
+          source: event.source,
+          target: crossing[0],
+          elapsed: 0,
+          // A move held in the air is one the pokemon is still
+          // crossing, so the throw lasts as long as the crossing does
+          window: Math.max(LUNGE_SPAN, window),
+        });
+      }
+
+      // What fills the gap, for exactly as long as the engine holds
+      // it. A contact move fills it with the pokemon and draws nothing
+      const gap = moveDelayVisual(event.move, event.steps, window);
+
+      if (gap != null) {
+        paint(gap, event.source, crossing);
       }
     });
+
+    // The move resolving, which the engine says once per pokemon it
+    // actually landed on. A miss never arrives here, and a spread move
+    // arrives once for each one it caught — so the landing is drawn
+    // where it happened rather than where it was aimed
+    const landed = props.battle.on(
+      BattleEvents.UnitTriggerMoveEffect,
+      EventPriority.Post,
+      (event) => {
+        const struck: Unit[] = [];
+
+        if (event.target.type === MoveTargetType.Unit) {
+          struck.push(event.target.unit);
+        } else if (event.target.type === MoveTargetType.Team) {
+          struck.push(...event.target.team.units);
+        }
+
+        // Nothing on a step that was only the wind-up: what happened
+        // is that the caster went underground, which the gap drew
+        const landing = moveEffectVisual(event.move, event.steps);
+
+        if (landing != null) {
+          paint(landing, event.source, struck);
+        }
+      },
+    );
+
+    // It went past. Drawn, because a move that misses and shows
+    // nothing reads as a move that never happened — and the one-hit
+    // knockouts miss far more often than they land
+    const missing = props.battle.on(
+      BattleEvents.UnitTriggerMoveMissed,
+      EventPriority.Post,
+      (event) => {
+        const { parent } = event;
+        const struck: Unit[] = [];
+
+        if (parent.target.type === MoveTargetType.Unit) {
+          struck.push(parent.target.unit);
+        } else if (parent.target.type === MoveTargetType.Team) {
+          struck.push(...parent.target.team.units);
+        }
+        paint(moveMissVisual(parent.move), parent.source, struck);
+      },
+    );
 
     // A status landing, and each time it bites afterwards. Both are
     // about one pokemon and nobody else, so the cue is drawn on it —
     // the stage's source with nothing aimed at
     const ailing = props.battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
-      const build = statusCueFor(event.status);
+      const cue = statusCueFor(event.status);
 
-      if (build != null) {
-        show(build, event.source, []);
+      if (cue != null) {
+        paint(cue, event.source, []);
       }
     });
 
@@ -1173,10 +1301,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       BattleEvents.UnitTriggerStatus,
       EventPriority.Post,
       (event) => {
-        const build = statusTickFor(event.status);
+        const cue = statusTickFor(event.status);
 
-        if (build != null) {
-          show(build, event.source, []);
+        if (cue != null) {
+          paint(cue, event.source, []);
         }
       },
     );
@@ -1190,6 +1318,73 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      * pokemon and per ability, so the first of a run still shows
      */
     const cued = new WeakMap<Unit, Map<Abilities, number>>();
+
+    /**
+     * What each blow is resolving as, while it resolves.
+     *
+     * The engine works a blow out in pieces — the type multipliers one
+     * defending type at a time, then whether it crits — and each piece
+     * is its own event carrying the attack it belongs to. They are
+     * collected here against that attack and read when it lands, which
+     * is the only moment all of it is known
+     */
+    const resolving = new WeakMap<object, { effectiveness: number; critical: boolean }>();
+
+    const resolved = (parent: object): { effectiveness: number; critical: boolean } => {
+      let found = resolving.get(parent);
+
+      if (found == null) {
+        found = { effectiveness: 1, critical: false };
+        resolving.set(parent, found);
+      }
+      return found;
+    };
+
+    const typing = props.battle.on(
+      BattleEvents.UnitAttackResolveEffectiveness,
+      EventPriority.Post,
+      (event) => {
+        resolved(event.parent).effectiveness *= event.multiplier;
+      },
+    );
+
+    const critting = props.battle.on(
+      BattleEvents.UnitAttackResolveCriticalHit,
+      EventPriority.Post,
+      (event) => {
+        resolved(event.parent).critical = event.critical;
+      },
+    );
+
+    // One blow landing. A move's own picture says what the move is;
+    // this says what it did to this pokemon, which is a different
+    // answer every time it lands — five times over for a barrage,
+    // dull for a resistance, loud for a critical
+    const blowing = props.battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      const known = resolved(event);
+      const maxHealth = event.target.checkStat(Stats.HP, 0);
+
+      paint(
+        attackMarkVisual({
+          move: event.move,
+          type: event.type,
+          share: maxHealth <= 0 ? 0 : event.value / maxHealth,
+          effectiveness: known.effectiveness,
+          critical: known.critical,
+          struck: event.success,
+        }),
+        event.source,
+        [event.target],
+      );
+    });
+
+    // A held item going off: a berry eaten, a band that took the blow,
+    // a claw that got there first. Not throttled the way an ability
+    // is — most of them are spent as they fire, so a second one is a
+    // second item rather than the same one shouting
+    const spending = props.battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, (event) => {
+      paint(itemCueFor(event.item), event.source, []);
+    });
 
     // An ability going off. It is the quietest thing in a fight —
     // no cast, no flight, just a number that came out different — so
@@ -1208,7 +1403,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           return;
         }
         held.set(event.ability, clock);
-        show(abilityCueFor(event.ability), event.source, []);
+        paint(abilityCueFor(event.ability), event.source, []);
       },
     );
 
@@ -1243,6 +1438,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
     const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       clock += event.duration;
+      for (let index = lunging.length - 1; index >= 0; index--) {
+        lunging[index].elapsed += event.duration;
+        if (lunging[index].elapsed >= lunging[index].window) {
+          lunging.splice(index, 1);
+        }
+      }
       for (const held of sprites.values()) {
         held.sprite?.update(event.duration);
       }
@@ -1403,9 +1604,15 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       element.removeEventListener('pointerup', release);
       element.removeEventListener('pointercancel', release);
       firing.stop();
+      landed.stop();
+      missing.stop();
       ailing.stop();
       biting.stop();
       triggering.stop();
+      spending.stop();
+      typing.stop();
+      critting.stop();
+      blowing.stop();
       landing.stop();
       stopping.stop();
       fainting.stop();

@@ -75,6 +75,9 @@ art with a description saying where the frames are.
 | `public/sprites/pokemon/regular`    | One `{species}.png` per pokemon, an animated sheet: idle, walk, attack, hurt, sleep |
 | `public/sprites/pokemon/shiny`      | The same pokemon again in their shiny colours                                       |
 | `public/sprites/pokemon/meta`       | One `{species}.json` per pokemon: the animation both coats share, and the anchors   |
+| `public/sprites/effects`            | Move and status effect animations, one numbered folder each                         |
+| `public/sprites/directional`        | Effects that are drawn once per facing, so a gust blows the way it was aimed        |
+| `public/sprites/particles`          | The small repeating ones — sparks, motes, dust                                      |
 | `public/sprites/ui/items`           | Item icons, one sheet per kind — balls, berries, medicine, machines, plates         |
 | `public/sprites/ui/move-categories` | The three marks a move's category is shown by                                       |
 
@@ -100,12 +103,13 @@ the tests say so.
 
 ### Where the sheets come from
 
-| Sheets                             | Source                                                              | Licence                                                                                        |
-| ---------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `pokemon/regular`, `pokemon/shiny` | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC — attribution, **non-commercial**                                                     |
-| `pokemon/meta`                     | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
-| `ui/items`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
-| `ui/move-categories`               | Not recorded yet                                                    | Unknown                                                                                        |
+| Sheets                                | Source                                                              | Licence                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `pokemon/regular`, `pokemon/shiny`    | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC — attribution, **non-commercial**                                                     |
+| `pokemon/meta`                        | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
+| `ui/items`                            | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
+| `effects`, `directional`, `particles` | Not recorded yet                                                    | Unknown                                                                                        |
+| `ui/move-categories`                  | Not recorded yet                                                    | Unknown                                                                                        |
 
 **SpriteCollab** is the Pokémon Mystery Dungeon sprite collection this game's
 pokemon are animated from. The eight facing rows, the frame duration table, and
@@ -126,9 +130,10 @@ names in `src/data`.
 > **What is still missing.** Three of the sheets under `pokemon` are not pokemon
 > — the Missingno placeholder, an egg and a substitute, numbered past a hundred
 > thousand — and nobody wrote down which entry of which pack each came from. The
-> source of the three move-category marks is also unrecorded. Both need filling
-> in before this is published anywhere. Any pokemon added later needs its own
-> credit row pulled from `sprite/{dex}/credits.txt` when its sheet is added.
+> effect, directional and particle sheets carry no provenance either, and neither
+> do the three move-category marks. All of it needs filling in before this is
+> published anywhere. Any pokemon added later needs its own credit row pulled
+> from `sprite/{dex}/credits.txt` when its sheet is added.
 >
 > **The art is not MIT.** The licence at the root of this repository covers the
 > code; it does not and cannot cover this directory. `CC BY-NC` makes a

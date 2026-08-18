@@ -95,6 +95,16 @@ const PALETTE_FLOOR = 0.15;
 const PALETTE_SLACK = 2;
 
 /**
+ * A palette distance this close to 1 means the two ends share almost no
+ * colours at all, and a picture that comes back in different colours is
+ * a different picture however wildly the animation moved in between.
+ * Chaotic sheets earn a large ordinary step, so without this ceiling
+ * `PALETTE_SLACK` lets a hard cut through: a burst that starts yellow
+ * and ends pink reads as looping because every frame of it is a jump
+ */
+const HARD_CUT = 0.9;
+
+/**
  * How much of a cell has to be covered before its colours mean
  * anything. A frame with a dozen lit pixels has no palette to speak of
  */
@@ -342,31 +352,62 @@ function judge(sheet: Image, frames: Frame[]): Verdict {
   const paletteAllowed = Math.max(PALETTE_FLOOR, paletteStep * PALETTE_SLACK);
 
   const smooth = seam <= allowed;
-  const sameThing = paletteSeam == null || paletteSeam <= paletteAllowed;
+  const sameThing =
+    paletteSeam == null || (paletteSeam <= paletteAllowed && paletteSeam < HARD_CUT);
   const shared = { frames: cells.length, seam, step, paletteSeam, paletteStep };
 
   if (!smooth) {
     return { ...shared, loops: false, why: `seam ${(seam / allowed).toFixed(1)}x its own motion` };
   }
   if (!sameThing) {
-    return {
-      ...shared,
-      loops: false,
-      why: `ends on other colours (${(paletteSeam / paletteAllowed).toFixed(1)}x)`,
-    };
+    const how =
+      paletteSeam >= HARD_CUT
+        ? 'ends on colours of its own'
+        : `ends on other colours (${(paletteSeam / paletteAllowed).toFixed(1)}x)`;
+
+    return { ...shared, loops: false, why: how };
   }
   return { ...shared, loops: true, why: 'seam is within its own motion' };
 }
 
 /**
- * The description with `loops` written into it, in the order the file
- * already had, and minified the way the packer writes it.
+ * The tick a frame starts on, which is the number its name begins with.
+ * A name with no number in it keeps the place it already had
+ */
+function tickOf(entry: unknown, fallback: number): number {
+  const named = Number.parseInt(
+    isRecord(entry) && typeof entry.name === 'string' ? entry.name : '',
+    10,
+  );
+
+  return Number.isFinite(named) ? named : fallback;
+}
+
+/**
+ * The frames in the order they play.
+ *
+ * The packer lists them in the order it placed them in the atlas, which
+ * is now and then a frame out of sequence. Everything here and in the
+ * runtime sorts by tick as it loads, so the order in the file is only a
+ * trap for the next reader that takes it at face value — a preview
+ * script, a diff, a tool nobody has written yet
+ */
+function inTickOrder(images: unknown[]): unknown[] {
+  return images
+    .map((entry, at) => ({ entry, tick: tickOf(entry, at) }))
+    .sort((a, b) => a.tick - b.tick)
+    .map((held) => held.entry);
+}
+
+/**
+ * The description with `loops` written into it and its frames in tick
+ * order, minified the way the packer writes it.
  *
  * Rebuilt key by key rather than spread, so `loops` lands beside
  * `compact` — the other thing about a sheet as a whole — instead of
  * after a few hundred frames
  */
-function withLoops(data: Record<string, unknown>, loops: boolean): string {
+function withLoops(data: Record<string, unknown>, images: unknown[], loops: boolean): string {
   const next: Record<string, unknown> = {};
 
   if ('compact' in data) {
@@ -376,7 +417,7 @@ function withLoops(data: Record<string, unknown>, loops: boolean): string {
 
   for (const [key, value] of Object.entries(data)) {
     if (key !== 'compact' && key !== 'loops') {
-      next[key] = value;
+      next[key] = key === 'images' ? images : value;
     }
   }
   return `${JSON.stringify(next)}\n`;
@@ -431,12 +472,17 @@ function look(directory: string, dryRun: boolean): Result {
   }
 
   const verdict = judge(image, frames);
-  const changed = parsed.loops !== verdict.loops;
+  const images = parsed.images;
+  const ordered = inTickOrder(images);
+  const reordered = ordered.some((entry, index) => entry !== images[index]);
+  const changed = parsed.loops !== verdict.loops || reordered;
 
   if (changed && !dryRun) {
-    writeFileSync(descriptionPath, withLoops(parsed, verdict.loops));
+    writeFileSync(descriptionPath, withLoops(parsed, ordered, verdict.loops));
   }
-  return { ...at, sheet, verdict, changed, note: verdict.why };
+  const note = reordered ? `${verdict.why}, frames put in tick order` : verdict.why;
+
+  return { ...at, sheet, verdict, changed, note };
 }
 
 /**

@@ -9,8 +9,9 @@ import { getMoveData } from '../data/moves';
 import { deriveAbility, deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
 import { fieldTeams } from '../overworld/raid';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { type MoveTarget, MoveTargetType } from './events';
+import { BattleEvents, type MoveTarget, MoveTargetType } from './events';
 import { BattleModes } from './core';
+import { EventPriority } from '../core/event-emitter';
 import type Battle from './core';
 import createBattle from './setup';
 import type Unit from './unit';
@@ -50,11 +51,27 @@ export const DEMO_LEVEL = 50;
  *
  * Two ordinary pokemon, picked for their sheets rather than for
  * anything about them: a plain four-limbed caster whose sheet carries
- * most of the cast clips, and something round and hardy to aim at. A
- * dummy is worth more standing than fainting
+ * most of the cast clips, and something round and hardy to aim at.
+ * Neither is named on the page — what they are is a set of stats for
+ * the move to resolve against
  */
 export const DEMO_CASTER = Species.Golduck;
 export const DEMO_TARGET = Species.Lickitung;
+
+/**
+ * What both dummies are drawn as.
+ *
+ * A pokemon on the field is a distraction here: its own colours, its
+ * own silhouette and its own idle are all things to read that have
+ * nothing to do with the move. The substitute doll is the game's own
+ * word for a stand-in, and two identical dolls make the move the only
+ * thing on the field that differs between one cast and the next.
+ *
+ * It is the **appearance** rather than the species: the doll has no
+ * stats, no types and no sheet in the registry, so the units stay the
+ * pokemon they were staged as and only the drawing changes
+ */
+export const DEMO_APPEARANCE = Species.Substitute;
 
 /** The two sides of the field, whether or not both are used */
 export const CASTER_ALLIANCE = 0;
@@ -183,5 +200,18 @@ export function createMoveDemo(move: Moves): MoveDemo {
   if (casting == null || receiving == null) {
     throw new Error('The demo could not be staged');
   }
+  casting.setAppearance(DEMO_APPEARANCE);
+  receiving.setAppearance(DEMO_APPEARANCE);
+  // Nothing here can be hurt. A dummy that faints stops being a place
+  // to aim the next cast, and the page is for watching a move go off
+  // over and over — so damage is refused at the one question the
+  // engine asks before it lands. Heals ride the same event as a
+  // negative amount, and drains ride them, so only what would take
+  // health off is refused
+  battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+    if (event.value > 0) {
+      event.success = false;
+    }
+  });
   return { battle, caster: casting, target: receiving, allied };
 }

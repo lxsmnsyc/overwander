@@ -1,7 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import moveVisualFor from '../../src/canvas/battle/moves';
 import MoveVisual, { type Beat, type MoveStage } from '../../src/canvas/battle/moves/__visual';
+import { onTarget, onUser } from '../../src/canvas/battle/moves/__shapes';
 import { HYDRO_PUMP } from '../../src/canvas/battle/moves/hydro-pump';
 import { SUPERSONIC } from '../../src/canvas/battle/moves/supersonic';
 import DirectionalEffectSprite from '../../src/canvas/directional-effect-sprite';
@@ -249,7 +250,7 @@ describe('supersonic', () => {
 
   it('has a visual, and a move without one says so', () => {
     expect(moveVisualFor(Moves.Supersonic)).not.toBeNull();
-    expect(moveVisualFor(Moves.Tackle)).toBeNull();
+    expect(moveVisualFor(Moves.Growl)).toBeNull();
   });
 });
 
@@ -304,5 +305,52 @@ describe('hydro pump', () => {
     // Source is due left of the target, so the crown is turned a
     // quarter turn to face back along the jet
     expect(turns[0]).toBeCloseTo(Math.PI / 2);
+  });
+});
+
+describe('the table', () => {
+  /**
+   * Every sheet any visual names — moves, statuses, abilities — read
+   * out of the modules that name them. A sheet that is not there costs one 404 and draws nothing —
+   * silently, since a visual carries on without a sheet that would not
+   * load — so a typo would never show up anywhere else
+   */
+  const named = (): string[] => {
+    const roots = ['src/canvas/battle', 'src/canvas/battle/moves'];
+    const sheets = new Set<string>();
+
+    for (const root of roots) {
+      for (const file of readdirSync(root)) {
+        if (!file.endsWith('.ts')) {
+          continue;
+        }
+        for (const [, name] of readFileSync(`${root}/${file}`, 'utf8').matchAll(
+          /'((?:effects|directional)\/\d+)'/g,
+        )) {
+          sheets.add(name);
+        }
+      }
+    }
+    return [...sheets];
+  };
+
+  it('names sheets that are actually on disk', () => {
+    const sheets = named();
+
+    expect(sheets.length).toBeGreaterThan(0);
+    for (const name of sheets) {
+      expect(sheet(name).length, `${name} ticks`).toBeGreaterThan(0);
+    }
+  });
+
+  it('waits a thrown move out and plays a held one at once', async () => {
+    // Built with nothing fetched, so what is being read is the running
+    // order rather than any sheet: an arrival waits out the flight, and
+    // a move that never left the caster has no flight to wait for
+    const thrown = await onTarget('effects/195')(800);
+    const held = await onUser('effects/140')(800);
+
+    expect(thrown.duration).toBeGreaterThan(800);
+    expect(held.duration).toBeLessThanOrEqual(800);
   });
 });

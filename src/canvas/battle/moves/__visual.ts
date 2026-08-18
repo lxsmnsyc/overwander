@@ -80,6 +80,23 @@ export interface Beat {
   places: (stage: MoveStage, share: number) => Point[];
   /** Multiplier on the stage's scale, for a beat drawn bigger or smaller. */
   scale?: number;
+  /**
+   * The box to draw the cell in, in pixels before the stage's scale.
+   *
+   * It is the answer to sheets that were authored at wildly different
+   * cell sizes: the same `scale` on a 64-pixel cell and a 192-pixel
+   * one is two effects three times apart on screen. A box makes them
+   * the same size whatever they were drawn at, which is what anything
+   * standing for a state — weather over the field, a mark over a
+   * pokemon — wants. Set, it replaces `scale` rather than joining it
+   */
+  size?: number;
+  /**
+   * Where the point this is placed at sits on the cell. Centred by
+   * default; `foot` stands a tall sheet on the body it was placed on
+   * rather than burying half of it in the ground
+   */
+  anchor?: 'center' | 'foot';
   /** How solid it is drawn, from 0 to 1. */
   alpha?: number;
   /**
@@ -248,7 +265,9 @@ export default class MoveVisual {
       const share = Math.min(1, Math.max(0, (this.elapsed - one.beat.at) / span));
       const placement = {
         scale: stage.scale * (one.beat.scale ?? 1),
+        size: one.beat.size == null ? undefined : one.beat.size * stage.scale,
         alpha: one.beat.alpha,
+        anchor: one.beat.anchor,
       };
       const aim = one.beat.aim;
       const sprite = one.sprite;

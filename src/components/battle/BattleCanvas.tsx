@@ -3,7 +3,10 @@ import type Battle from '../../battle/core';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
 import type MoveVisual from '../../canvas/battle/moves/__visual';
+import abilityCueFor from '../../canvas/battle/abilities';
 import moveVisualFor from '../../canvas/battle/moves';
+import type { MoveVisualBuilder } from '../../canvas/battle/moves/__shapes';
+import { statusCueFor, statusTickFor } from '../../canvas/battle/statuses';
 import projectField, {
   type FieldPoint,
   type FieldView,
@@ -18,6 +21,7 @@ import {
   MoveTargetType,
   type ProgressData,
 } from '../../battle/events';
+import type Abilities from '../../data/ids/abilities';
 import type Unit from '../../battle/unit';
 import { EventPriority } from '../../core/event-emitter';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
@@ -137,7 +141,6 @@ const COLORS = {
   channel: '#9a6ac4',
   track: '#26303e',
   text: '#e6ecf5',
-  projectile: '#f0d264',
 } as const;
 
 /**
@@ -172,42 +175,17 @@ interface Slot {
 }
 
 /**
- * A move on its way from whoever cast it to whatever it was aimed at.
- *
- * None of the flight is invented here. A move with a `delay` is one
- * the engine holds in the air before it lands, and it ticks that delay
- * down itself (`UnitTriggerMoveUpdate`); `share` is that progress and
- * nothing else, so the dot is wherever the battle says the move is. A
- * move with no delay — a touch, a status, anything that happens where
- * it stands — never starts a flight at all
+ * How long one ability has to wait before it draws a cue again, in
+ * battle milliseconds
  */
-interface Flight {
-  source: Unit;
-  move: Moves;
-  targets: Unit[];
-  /**
-   * How far along the engine says it is, from 0 to 1
-   */
-  share: number;
-  /**
-   * Ticks since the engine last said anything about it. A move that is
-   * interrupted stops being ticked without ever landing, so a flight
-   * nobody has mentioned for a few frames is dropped rather than left
-   * hanging in the air
-   */
-  idle: number;
-}
-
-const STALE_TICKS = 8;
+const CUE_GAP = 700;
 
 /**
- * A move going off, for the few moves that have a picture of their
- * own.
+ * A move going off: its own picture, played where it happened.
  *
- * It is not a flight and does not replace one: a flight is where the
- * engine says the move *is*, and this is what the move looks like
- * while it happens. A move with both draws both — the dot arrives, the
- * effect goes off around it
+ * It covers the whole of the move, the time in the air included — a
+ * move the engine holds before it lands is handed that window and
+ * spends it, so nothing else has to draw where the move currently is
  */
 interface Casting {
   source: Unit;
@@ -768,7 +746,7 @@ function drawSlot(
     });
     // Its body over the middle of the slot, which is the point
     // everything else on the field is measured from: the bars, the
-    // name, and whatever is flying at it.
+    // name, and whatever a move draws on it.
     //
     // Placed by its **shadow**, which on a ground plane is the only
     // honest answer: the slot is a spot on the floor, and what sits on
@@ -884,15 +862,14 @@ export interface UnitSpot {
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   /**
-   * Not a signal: nothing renders off it. The engine moves these along
-   * and the next tick draws them where it left them
+   * How long this battle has been running, by its own clock rather
+   * than the wall's — what spaces out a cue that keeps firing
    */
-  const flying: Flight[] = [];
+  let clock = 0;
 
   /**
-   * The move effects playing right now. Also not a signal, and for the
-   * same reason: the tick moves them along and the same tick draws
-   * them
+   * The move effects playing right now. Not a signal: nothing renders
+   * off it — the tick moves them along and the same tick draws them
    */
   const casting: Casting[] = [];
 
@@ -974,22 +951,6 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         }),
     );
     return null;
-  };
-
-  /**
-   * The flight a move update or a landing is talking about. A move is
-   * held in the air by its caster and its name, and one unit is not
-   * casting the same move twice at once, so the two of them name it
-   */
-  const flightOf = (source: Unit, move: Moves): Flight | undefined =>
-    flying.find((flight) => flight.source === source && flight.move === move);
-
-  const drop = (flight: Flight | undefined): void => {
-    const at = flight == null ? -1 : flying.indexOf(flight);
-
-    if (at >= 0) {
-      flying.splice(at, 1);
-    }
   };
 
   onMount(() => {
@@ -1127,42 +1088,6 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         drawSlot(context, slot, striking);
       }
 
-      // Walked backwards so a flight nobody is ticking any more can be
-      // dropped as it is passed. It is drawn before it is dropped, so
-      // the one that just landed is seen arriving rather than
-      // disappearing a frame short of the target
-      for (let index = flying.length - 1; index >= 0; index--) {
-        const flight = flying[index];
-        const from = at.get(flight.source);
-
-        flight.idle += 1;
-
-        for (const target of flight.targets) {
-          const to = at.get(target);
-
-          if (from == null || to == null) {
-            continue;
-          }
-          const [fromX, fromY] = bodyOf(from);
-          const [toX, toY] = bodyOf(to);
-
-          context.beginPath();
-          context.arc(
-            fromX + (toX - fromX) * flight.share,
-            fromY + (toY - fromY) * flight.share,
-            5,
-            0,
-            Math.PI * 2,
-          );
-          context.fillStyle = COLORS.projectile;
-          context.fill();
-        }
-
-        if (from == null || flight.idle > STALE_TICKS) {
-          flying.splice(index, 1);
-        }
-      }
-
       // Move effects go on top of everything: they are the loudest
       // thing on the field for as long as they last, and a ring drawn
       // under a pokemon is a ring nobody sees. A caster that has since
@@ -1184,13 +1109,26 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
     };
 
-    // A move announces itself when it fires. Whether it spends any time
-    // in the air is the engine's to say — a delay of nothing resolves
-    // in the same frame, and there is no flight to draw
+    /**
+     * Build a picture and put it on the field. A sheet that would not
+     * load leaves whatever it was about looking the way it looked
+     * before any of this: nothing to see
+     */
+    const show = (build: MoveVisualBuilder, source: Unit, targets: Unit[], window = 0): void => {
+      build(window)
+        .then((visual) => {
+          casting.push({ source, targets, visual });
+        })
+        .catch(() => undefined);
+    };
+
+    // A move announces itself when it fires, and its picture is built
+    // and started here — the one moment the canvas hears about a move
+    // as a whole rather than about what it did
     const firing = props.battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
-      // A move aimed at a team is drawn as one dot per unit on it:
-      // what a spread move looks like is several things arriving at
-      // once. One aimed at the caster has nowhere to travel
+      // A move aimed at a team lands on every unit on it: what a
+      // spread move looks like is several things arriving at once. One
+      // aimed at the caster has nowhere to travel
       let targets: Unit[] = [];
 
       if (event.target.type === MoveTargetType.Unit) {
@@ -1212,79 +1150,75 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       const build = moveVisualFor(event.move);
 
-      // A move with a picture of its own plays it whether or not it
-      // spends any time in the air: what a status move looks like is
-      // the whole of what there is to see of it
+      // The picture is handed the same window: a move held in the air
+      // waits it out before it lands, and one that resolves where it
+      // stands is handed nothing to wait for
       if (build != null) {
-        const source = event.source;
-
-        build()
-          .then((visual) => {
-            // At the speed it was drawn at. An effect fitted to the
-            // flight is an effect in slow motion, and the pace of a
-            // spark or a shockwave is most of what it looks like
-            casting.push({ source, targets, visual });
-          })
-          .catch(() => {
-            // A sheet that would not load leaves the move looking the
-            // way it looked before any of this: nothing to see
-          });
-      }
-
-      // Whether it spends any time in the air is the engine's to say —
-      // a delay of nothing resolves in the same frame, and there is no
-      // flight to draw
-      if ((getMoveData(event.move).delay ?? 0) <= 0) {
-        return;
-      }
-
-      if (targets.length > 0) {
-        drop(flightOf(event.source, event.move));
-        flying.push({ source: event.source, move: event.move, targets, share: 0, idle: 0 });
+        show(build, event.source, targets, window);
       }
     });
 
-    // The engine ticks the delay down itself, so where the dot is comes
-    // from its progress rather than from a clock of this component's.
-    // A battle that stalls, or is stepped through, drags its
-    // projectiles along with it
-    const moving = props.battle.on(
-      BattleEvents.UnitTriggerMoveUpdate,
+    // A status landing, and each time it bites afterwards. Both are
+    // about one pokemon and nobody else, so the cue is drawn on it —
+    // the stage's source with nothing aimed at
+    const ailing = props.battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+      const build = statusCueFor(event.status);
+
+      if (build != null) {
+        show(build, event.source, []);
+      }
+    });
+
+    const biting = props.battle.on(
+      BattleEvents.UnitTriggerStatus,
       EventPriority.Post,
       (event) => {
-        const { parent, time } = event.data;
+        const build = statusTickFor(event.status);
 
-        if (parent == null || time == null) {
-          return;
-        }
-
-        const flight = flightOf(parent.source, parent.move);
-
-        if (flight != null) {
-          flight.share = time.duration <= 0 ? 1 : Math.min(1, time.progress / time.duration);
-          flight.idle = 0;
+        if (build != null) {
+          show(build, event.source, []);
         }
       },
     );
 
-    // It landed, and the hit it was carrying is resolving in this same
-    // frame. The last update the engine sent was a tick short of the
-    // target, so the dot is put the rest of the way home and retired
-    // after the frame that shows it there
+    /**
+     * When each ability last drew a cue, on the battle's own clock.
+     *
+     * Some of them fire constantly — a raid boss refuses something
+     * dozens of times a minute — and a cue per refusal is a strobe
+     * rather than an answer. Held back to one every `CUE_GAP`, per
+     * pokemon and per ability, so the first of a run still shows
+     */
+    const cued = new WeakMap<Unit, Map<Abilities, number>>();
+
+    // An ability going off. It is the quietest thing in a fight —
+    // no cast, no flight, just a number that came out different — so
+    // every trigger draws something, however small
+    const triggering = props.battle.on(
+      BattleEvents.UnitTriggerAbility,
+      EventPriority.Post,
+      (event) => {
+        let held = cued.get(event.source);
+
+        if (held == null) {
+          held = new Map();
+          cued.set(event.source, held);
+        }
+        if (clock - (held.get(event.ability) ?? -CUE_GAP) < CUE_GAP) {
+          return;
+        }
+        held.set(event.ability, clock);
+        show(abilityCueFor(event.ability), event.source, []);
+      },
+    );
+
+    // Thrown and landed: the gesture is over, whatever else the unit
+    // goes on to do
     const landing = props.battle.on(
       BattleEvents.UnitTriggerMoveEnd,
       EventPriority.Post,
       (event) => {
-        // Thrown and landed: the gesture is over, whatever else the
-        // unit goes on to do
         striking.delete(event.source);
-
-        const flight = flightOf(event.source, event.move);
-
-        if (flight != null) {
-          flight.share = 1;
-          flight.idle = STALE_TICKS;
-        }
       },
     );
 
@@ -1308,6 +1242,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     });
 
     const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      clock += event.duration;
       for (const held of sprites.values()) {
         held.sprite?.update(event.duration);
       }
@@ -1468,7 +1403,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       element.removeEventListener('pointerup', release);
       element.removeEventListener('pointercancel', release);
       firing.stop();
-      moving.stop();
+      ailing.stop();
+      biting.stop();
+      triggering.stop();
       landing.stop();
       stopping.stop();
       fainting.stop();

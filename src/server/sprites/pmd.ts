@@ -291,14 +291,29 @@ function targetFor(entry: Entry): SpriteTarget {
   };
 }
 
-/** Draws one animation into the sheet, frame by frame when compacted. */
-function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
+/**
+ * Draws one animation into the sheet, frame by frame when compacted.
+ * Exported for the test that pins the whole-image shortcut, which is
+ * the one place a wrong answer is invisible in the numbers
+ */
+export function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
   const drawing = entry.images.animation;
 
   if (drawing == null) {
     return;
   }
-  if (entry.trim[0] === 0 && entry.trim[1] === 0 && entry.frameWidth === entry.sourceFrameWidth) {
+  // Only when the grid was left completely alone. Checking the width
+  // and ignoring the height let a sheet that was trimmed **only** at
+  // the bottom take this path: the whole untrimmed image was copied
+  // into a box sized for the shorter frames, so every row after the
+  // first landed too low and the bottom of the sheet was cut off
+  const whole =
+    entry.trim[0] === 0 &&
+    entry.trim[1] === 0 &&
+    entry.frameWidth === entry.sourceFrameWidth &&
+    entry.frameHeight === entry.sourceFrameHeight;
+
+  if (whole) {
     blit(sheet, drawing, { x: 0, y: 0, width: entry.w, height: entry.h }, at);
     return;
   }

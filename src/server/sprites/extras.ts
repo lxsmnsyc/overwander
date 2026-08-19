@@ -1,5 +1,5 @@
 import 'server-only';
-import type { SheetName } from './files';
+import type { Drawing, SheetName } from './files';
 import { extraDestination, writeSheet } from './files';
 import pack from './packing';
 import type { Raster } from './raster';
@@ -62,9 +62,8 @@ export interface ProcessResult {
   width: number;
   height: number;
   images: number;
-  /** What the drawing was stored as, and how big that came out */
-  as: string;
-  bytes: number;
+  /** The sheet itself: what it cost, and what it cost before */
+  drawing: Drawing;
 }
 
 async function entryFor(image: UploadedImage, compact: boolean): Promise<Entry> {
@@ -127,17 +126,17 @@ export default async function processExtras(
   };
 
   const drawn = encode(sheet);
+  const written = await writeSheet(
+    extraDestination(options),
+    drawn.bytes,
+    JSON.stringify(data, null, 2),
+  );
 
   return {
-    written: await writeSheet(
-      extraDestination(options),
-      drawn.bytes,
-      JSON.stringify(data, null, 2),
-    ),
+    written: written.map((file) => file.path),
     width: data.width,
     height: data.height,
     images: data.images.length,
-    as: drawn.as,
-    bytes: drawn.bytes.length,
+    drawing: { ...written[0], as: drawn.as, bytes: drawn.bytes.length, plain: drawn.plain },
   };
 }

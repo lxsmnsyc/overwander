@@ -2,6 +2,7 @@ import 'server-only';
 import { TextWriter, Uint8ArrayReader, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js';
 import type { AnimData } from './anim-data';
 import readAnimData from './anim-data';
+import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
 import markersFor, { SPRITE_DIRECTIONS } from './markers';
@@ -101,20 +102,13 @@ interface SheetData {
   sprites: Record<string, SpriteTarget>;
 }
 
-/** One drawing, as it came out. */
-export interface CoatResult {
-  path: string;
-  /** What it was stored as, and how big that came out. */
-  as: string;
-  bytes: number;
-}
-
 export interface PmdResult {
   written: string[];
   width: number;
   height: number;
   anims: string[];
-  coats: CoatResult[];
+  /** One a coat, in the order they were written. */
+  coats: Drawing[];
 }
 
 /** Which of the three images a file is, read off the end of its name. */
@@ -372,7 +366,7 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     sprites,
   };
   const written: string[] = [];
-  const drawn: CoatResult[] = [];
+  const drawn: Drawing[] = [];
 
   /** One coat onto the layout every coat shares. */
   const put = async (
@@ -381,14 +375,19 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     meta: string | null,
   ): Promise<void> => {
     const encoded = encode(raster);
-    const paths = await writeSheet(
+    const files = await writeSheet(
       pokemonDestination({ species: options.species, ...name }),
       encoded.bytes,
       meta,
     );
 
-    written.push(...paths);
-    drawn.push({ path: paths[0], as: encoded.as, bytes: encoded.bytes.length });
+    written.push(...files.map((file) => file.path));
+    drawn.push({
+      ...files[0],
+      as: encoded.as,
+      bytes: encoded.bytes.length,
+      plain: encoded.plain,
+    });
   };
 
   // The plain coat carries the description, and the rest are the same

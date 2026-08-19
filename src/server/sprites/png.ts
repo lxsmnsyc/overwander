@@ -535,6 +535,12 @@ export interface Encoded {
   bytes: Buffer;
   /** The container chosen, e.g. `indexed 4-bit, none` */
   as: string;
+  /**
+   * What the same sheet costs written the plainest way PNG can say it —
+   * truecolour, unfiltered. It is what the choosing is worth, and it is
+   * free to report since that candidate is always encoded anyway
+   */
+  plain: number;
 }
 
 /**
@@ -550,23 +556,28 @@ export function encodeSmallest(image: Image): Encoded {
   const palette = paletteOf(image);
   const candidates: Encoded[] = [];
 
+  let plain = 0;
+
   for (const filtering of ['none', 'adaptive'] as const) {
     if (palette != null) {
       candidates.push({
         as: `indexed ${depthFor(palette.colors.length)}-bit, ${filtering}`,
         bytes: encodeIndexed(image, palette, filtering),
+        plain: 0,
       });
     }
-    candidates.push({
-      as: `truecolour, ${filtering}`,
-      bytes: encodeTruecolor(image, filtering),
-    });
+    const truecolour = encodeTruecolor(image, filtering);
+
+    if (filtering === 'none') {
+      plain = truecolour.length;
+    }
+    candidates.push({ as: `truecolour, ${filtering}`, bytes: truecolour, plain: 0 });
   }
   candidates.sort((one, two) => one.bytes.length - two.bytes.length);
 
   for (const candidate of candidates) {
     if (sameImage(image, decode(candidate.bytes))) {
-      return candidate;
+      return { ...candidate, plain };
     }
   }
   // Truecolour with no filtering is the plainest thing PNG can say, so

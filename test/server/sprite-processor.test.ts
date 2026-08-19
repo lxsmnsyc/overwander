@@ -7,6 +7,7 @@ import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
 import { animFilter } from '../../src/server/sprites/pmd';
 import { extraDestination, pokemonDestination } from '../../src/server/sprites/files';
+import { storedAs } from '../../src/components/admin/SpriteProcessor';
 
 /**
  * The sprite processor's arithmetic.
@@ -300,6 +301,36 @@ describe('where a sheet is written', () => {
     // a whole number before it is written into one
     expect(pokemonDestination({ species: 7.9, female: false, shiny: false }).image).toBe(
       'sprites/pokemon/regular/7.png',
+    );
+  });
+});
+
+describe('what the page says a drawing cost', () => {
+  const sheet = { path: 'sprites/pokemon/regular/1.png', as: 'indexed 4-bit, none' };
+
+  it('says what the container saved', () => {
+    expect(storedAs({ ...sheet, bytes: 2048, plain: 8192, before: null })).toBe(
+      '2.0K as indexed 4-bit, none, 75% off plain',
+    );
+  });
+
+  it('says nothing about a saving there was not', () => {
+    // The plainest container winning is not a saving, and a line
+    // claiming 0% off would read as one
+    expect(storedAs({ ...sheet, bytes: 4096, plain: 4096, before: null })).toBe(
+      '4.0K as indexed 4-bit, none',
+    );
+  });
+
+  it('measures a sheet against the one it replaced', () => {
+    // The number worth noticing: a sheet that grew when it was
+    // reprocessed is a sheet somebody should look at
+    expect(storedAs({ ...sheet, bytes: 5000, plain: 9000, before: 4000 })).toBe(
+      '4.9K as indexed 4-bit, none, 44% off plain, +1000B on 3.9K',
+    );
+    expect(storedAs({ ...sheet, bytes: 3000, plain: 9000, before: 4000 })).toContain('−1000B on');
+    expect(storedAs({ ...sheet, bytes: 4000, plain: 9000, before: 4000 })).toContain(
+      'same as before',
     );
   });
 });

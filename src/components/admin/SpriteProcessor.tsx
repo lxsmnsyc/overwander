@@ -3,6 +3,7 @@ import { useSubmission } from '@solidjs/router';
 import { TabGroup } from 'terracotta';
 import {
   Button,
+  Combobox,
   Field,
   FormActions,
   FormGrid,
@@ -14,11 +15,13 @@ import {
   TabButton,
   TabPane,
   TextArea,
-  TextField,
 } from '../styled';
 import { canProcessSprites, packExtras, packPmd } from '../../auth/sprites';
 import getIdToken from '../../auth/session';
+import type { Drawing } from '../../auth/sprites';
 import DEFAULT_PMD_ANIMS from '../../data/constants/pmd-anims';
+import { Species } from '../../data/ids/species';
+import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 
 /**
  * The sprite processor: the packer tool, moved into the game.
@@ -51,18 +54,36 @@ const enum Mode {
 
 /** How a sheet is named. */
 interface Naming {
-  species: string;
+  species: Species | null;
   female: boolean;
   compact: boolean;
 }
 
-const START: Naming = { species: '', female: false, compact: true };
+const START: Naming = { species: null, female: false, compact: true };
 
-/** The species a sheet is for, or nothing where the box is not a number. */
-function speciesOf(naming: Naming): number | null {
-  const value = Number.parseInt(naming.species, 10);
+/**
+ * The three that appear on a field without being anybody's pokemon.
+ * They have sheets and dex numbers of their own but no species entry,
+ * so a list built from the registry alone cannot name them
+ */
+const NAMELESS: { value: Species; label: string }[] = [
+  { value: Species.Missingno, label: 'Missingno' },
+  { value: Species.Egg, label: 'Egg' },
+  { value: Species.Substitute, label: 'Substitute' },
+];
 
-  return Number.isFinite(value) && value > 0 ? value : null;
+/** Everything a sheet can be filed under, by the name it is known by. */
+function speciesOptions(): { value: Species; label: string }[] {
+  return [
+    ...getRegisteredSpecies().map((species) => ({
+      value: species,
+      // The number is in the label as well as the value: the files are
+      // named after it, and it is what somebody checking a sheet on
+      // disk has in front of them
+      label: `${getSpeciesData(species).name} · ${species}`,
+    })),
+    ...NAMELESS.map((entry) => ({ ...entry, label: `${entry.label} · ${entry.value}` })),
+  ];
 }
 
 /** The file picker, dressed like the rest of the forms. */
@@ -115,20 +136,21 @@ function NamingFields(props: {
       {/* The controls above are the game's own rather than native
           inputs, so what the form actually posts is written out
           beside them: a toggle carries the same `on` a checkbox would */}
-      <input type="hidden" name="species" value={props.naming.species} />
+      <input type="hidden" name="species" value={props.naming.species ?? ''} />
       <Show when={props.female}>
         <input type="hidden" name="female" value={props.naming.female ? 'on' : ''} />
       </Show>
       <input type="hidden" name="compact" value={props.naming.compact ? 'on' : ''} />
-      <TextField
+      <Combobox
         label="Species"
-        kind="number"
-        min={1}
+        required
         value={props.naming.species}
+        options={speciesOptions()}
+        placeholder="Search species"
         onChange={(value) => {
           set({ species: value });
         }}
-        hint="The dex number the sheet is filed under, which is what names the files."
+        hint="What the sheet is filed under. Its number is what names the files."
       />
       <Show when={props.female}>
         <Switch
@@ -154,22 +176,81 @@ function NamingFields(props: {
 }
 
 /**
- * How the drawing came out: the container the compactor picked and what
- * that cost. Worth saying out loud — the difference between a sheet
- * stored indexed and the same sheet stored RGBA is most of its weight
+ * How the drawing came out: the container the compactor picked, what
+ * that cost, and the two comparisons worth having — what the same sheet
+ * would have weighed written plainly, and what the file it replaced
+ * weighed. A sheet that grew is the thing worth noticing, and without
+ * the second number nothing on the screen would say so
  */
-function storedAs(bytes: number, as: string): string {
-  return `${(bytes / 1024).toFixed(1)}K as ${as}`;
+export function storedAs(drawing: Drawing): string {
+  // Bytes under a kilobyte rather than `0.0K`: the number that matters
+  // most here is a difference, and a difference is usually small
+  const size = (bytes: number): string =>
+    bytes < 1024 ? `${bytes}B` : `${(bytes / 1024).toFixed(1)}K`;
+  const said = [`${size(drawing.bytes)} as ${drawing.as}`];
+
+  if (drawing.plain > 0 && drawing.bytes < drawing.plain) {
+    said.push(`${Math.round((1 - drawing.bytes / drawing.plain) * 100)}% off plain`);
+  }
+  if (drawing.before != null) {
+    const change = drawing.bytes - drawing.before;
+
+    said.push(
+      change === 0
+        ? `same as before at ${size(drawing.before)}`
+        : `${change > 0 ? '+' : '−'}${size(Math.abs(change))} on ${size(drawing.before)}`,
+    );
+  }
+  return said.join(', ');
 }
 
-/** What the server wrote, once it has. */
-function Written(props: { paths: string[]; note?: string }): JSX.Element {
+/**
+ * What the server wrote, once it has: every file, what each drawing
+ * cost, and the drawing itself.
+ *
+ * The picture is fetched back out of `public/` rather than sent along
+ * with the answer. The file is already there and the dev server is
+ * already serving it, so the shortest way to show what was just packed
+ * is to ask for it — and asking for it proves it landed where the page
+ * says it did, which the bytes would not.
+ *
+ * A stamp on the address is what makes that work twice: the second run
+ * writes over the same path, and a browser that already has that path
+ * shows the sheet from before it
+ */
+function Written(props: { paths: string[]; drawings: Drawing[]; note?: string }): JSX.Element {
+  const stamp = Date.now();
+  const found = (path: string): Drawing | undefined =>
+    props.drawings.find((written) => written.path === path);
+
   return (
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-2">
       <Show when={props.note}>{(said) => <Note>{said()}</Note>}</Show>
-      <ul class="m-0 flex list-none flex-col gap-1 p-0">
+      <ul class="m-0 flex list-none flex-col gap-2 p-0">
         <For each={props.paths}>
-          {(path) => <li class="font-mono text-xs text-muted">public/{path}</li>}
+          {(path) => {
+            const drawing = found(path);
+
+            return (
+              <li class="flex flex-col gap-1">
+                <span class="font-mono text-xs text-muted">
+                  public/{path}
+                  {drawing == null ? '' : ` — ${storedAs(drawing)}`}
+                </span>
+                <Show when={drawing != null}>
+                  <img
+                    src={`/${path}?packed=${stamp}`}
+                    alt={path}
+                    // Nearest-neighbour and no bigger than the panel: a
+                    // sheet is pixel art, and a smoothed one says
+                    // nothing about what was packed
+                    class="max-h-64 max-w-full self-start rounded-lg border-2 border-line
+                      bg-parchment object-contain p-1 [image-rendering:pixelated]"
+                  />
+                </Show>
+              </li>
+            );
+          }}
         </For>
       </ul>
     </div>
@@ -232,7 +313,7 @@ function PmdForm(): JSX.Element {
   const [anims, setAnims] = createSignal(DEFAULT_PMD_ANIMS.join(' '));
   const packing = useSubmission(packPmd);
 
-  const ready = (): boolean => picked() && speciesOf(naming()) != null && !packing.pending;
+  const ready = (): boolean => picked() && naming().species != null && !packing.pending;
 
   return (
     <form action={packPmd} method="post" enctype="multipart/form-data">
@@ -276,28 +357,26 @@ function PmdForm(): JSX.Element {
           hint="Names to keep, separated by spaces. Matched from the start of the name."
           rows={3}
         />
-        <FormActions
-          note={
-            <Show when={packing.result} fallback="Writes the sheet and the description it shares.">
-              {(done) => (
-                <Written
-                  paths={done().written}
-                  note={`${done().anims.length} animations kept, ${done().coats.length} ${
-                    done().coats.length === 1 ? 'coat' : 'coats'
-                  } at ${done().width} × ${done().height}, ${storedAs(
-                    done().coats[0].bytes,
-                    done().coats[0].as,
-                  )}.`}
-                />
-              )}
-            </Show>
-          }
-        >
+        {/* Above what it produced rather than under it: a sheet and
+            its four coats are taller than the screen, and a button at
+            the end of that is a button nobody can find twice */}
+        <FormActions note="Writes the sheet and the description it shares.">
           <Button type="submit" tone="primary" disabled={!ready()}>
             {packing.pending ? 'Processing…' : 'Process'}
           </Button>
         </FormActions>
         <Status message={refusalOf(packing.error)} tone="alert" />
+        <Show when={packing.result}>
+          {(done) => (
+            <Written
+              paths={done().written}
+              drawings={done().coats}
+              note={`${done().anims.length} animations kept, ${done().coats.length} ${
+                done().coats.length === 1 ? 'coat' : 'coats'
+              } at ${done().width} × ${done().height}.`}
+            />
+          )}
+        </Show>
       </FormSection>
     </form>
   );
@@ -310,7 +389,7 @@ function ExtrasForm(): JSX.Element {
   const [naming, setNaming] = createSignal<Naming>(START);
   const packing = useSubmission(packExtras);
 
-  const ready = (): boolean => count() > 0 && speciesOf(naming()) != null && !packing.pending;
+  const ready = (): boolean => count() > 0 && naming().species != null && !packing.pending;
 
   return (
     <form action={packExtras} method="post" enctype="multipart/form-data">
@@ -339,26 +418,21 @@ function ExtrasForm(): JSX.Element {
           }}
           female
         />
-        <FormActions
-          note={
-            <Show when={packing.result} fallback="Writes the sheet and its description.">
-              {(done) => (
-                <Written
-                  paths={done().written}
-                  note={`${done().images} images, ${done().width} × ${done().height}, ${storedAs(
-                    done().bytes,
-                    done().as,
-                  )}.`}
-                />
-              )}
-            </Show>
-          }
-        >
+        <FormActions note="Writes the sheet and its description.">
           <Button type="submit" tone="primary" disabled={!ready()}>
             {packing.pending ? 'Packing…' : 'Pack'}
           </Button>
         </FormActions>
         <Status message={refusalOf(packing.error)} tone="alert" />
+        <Show when={packing.result}>
+          {(done) => (
+            <Written
+              paths={done().written}
+              drawings={[done().drawing]}
+              note={`${done().images} images, ${done().width} × ${done().height}.`}
+            />
+          )}
+        </Show>
       </FormSection>
     </form>
   );

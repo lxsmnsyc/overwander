@@ -1,5 +1,5 @@
 import 'server-only';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /**
@@ -59,25 +59,50 @@ export function extraDestination(name: SheetName): Destination {
 
 /**
  * Writes one file under `public/`, making the directory if it is the
- * first sheet to land there
+ * first sheet to land there. Resolves what was there before it, since
+ * a sheet is usually being processed again rather than for the first
+ * time and whether it grew is the thing worth knowing
  */
-async function put(path: string, body: Buffer | string): Promise<string> {
+async function put(path: string, body: Buffer | string): Promise<Written> {
   const full = join(process.cwd(), 'public', path);
+  const before = await stat(full).then(
+    (found) => found.size,
+    // Nothing there is not an error: it is the first time
+    () => null,
+  );
 
   await mkdir(join(full, '..'), { recursive: true });
   await writeFile(full, body);
-  return path;
+  return { path, before };
+}
+
+/** One file put down, and the size of whatever it stood on. */
+export interface Written {
+  path: string;
+  /** What the file it replaced weighed, or nothing where there was none. */
+  before: number | null;
 }
 
 /**
- * Puts a finished sheet where it belongs. Resolves the paths written,
+ * A drawing as it ended up: where it went, what it was stored as, what
+ * that cost, and the two numbers worth comparing it against — the same
+ * sheet written plainly, and whatever it replaced
+ */
+export interface Drawing extends Written {
+  as: string;
+  bytes: number;
+  plain: number;
+}
+
+/**
+ * Puts a finished sheet where it belongs. Resolves what was written,
  * which is what the page reports back
  */
 export async function writeSheet(
   destination: Destination,
   image: Buffer,
   meta: string | null,
-): Promise<string[]> {
+): Promise<Written[]> {
   if (!canWrite()) {
     throw new Error('Sprites can only be processed on a development build');
   }

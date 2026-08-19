@@ -1,6 +1,7 @@
 import { action } from '@solidjs/router';
 import type { ProcessResult, UploadedImage } from '../server/sprites/extras';
 import processExtras from '../server/sprites/extras';
+import type { Drawing } from '../server/sprites/files';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
 import { requireAdmin } from '../server/roles';
@@ -20,7 +21,7 @@ import { requireAdmin } from '../server/roles';
  * pair a deployed build runs.
  */
 
-export type { Coats, ProcessResult, PmdResult, UploadedImage };
+export type { Coats, Drawing, ProcessResult, PmdResult, UploadedImage };
 
 /** Only a development build can process sprites at all. */
 export function canProcessSprites(): boolean {

@@ -47,10 +47,16 @@ export const SPRITE_ROOT = '/sprites/pokemon';
 export const FALLBACK_SPECIES = Species.Missingno;
 
 /**
- * The drawing of one coat of one pokemon
+ * The drawing of one coat of one pokemon.
+ *
+ * A **female** sheet is the same species drawn again — Venusaur's
+ * flower, Pikachu's tail — and lives beside the ordinary one under
+ * the same coat, suffixed `_f`. Only a few species have one, which is
+ * why asking for it is a preference rather than a promise: see
+ * `loadSpeciesSprite`
  */
-export function spriteImagePath(species: Species, shiny = false): string {
-  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}.png`;
+export function spriteImagePath(species: Species, shiny = false, female = false): string {
+  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}${female ? '_f' : ''}.png`;
 }
 
 /**
@@ -101,7 +107,11 @@ async function description(species: Species): Promise<SpriteSheetJSON | null> {
   return loading;
 }
 
-async function loadSheet(species: Species, shiny: boolean): Promise<SpeciesSpriteAnimation | null> {
+async function loadSheet(
+  species: Species,
+  shiny: boolean,
+  female: boolean,
+): Promise<SpeciesSpriteAnimation | null> {
   const data = await description(species);
 
   if (data == null) {
@@ -109,7 +119,7 @@ async function loadSheet(species: Species, shiny: boolean): Promise<SpeciesSprit
   }
 
   try {
-    const sprite = new SpeciesSpriteAnimation(spriteImagePath(species, shiny), data);
+    const sprite = new SpeciesSpriteAnimation(spriteImagePath(species, shiny, female), data);
 
     await sprite.load();
     return sprite;
@@ -121,15 +131,19 @@ async function loadSheet(species: Species, shiny: boolean): Promise<SpeciesSprit
   }
 }
 
-async function sheet(species: Species, shiny: boolean): Promise<SpeciesSpriteAnimation | null> {
-  const path = spriteImagePath(species, shiny);
+async function sheet(
+  species: Species,
+  shiny: boolean,
+  female: boolean,
+): Promise<SpeciesSpriteAnimation | null> {
+  const path = spriteImagePath(species, shiny, female);
   const known = SHEETS.get(path);
 
   if (known != null) {
     return known;
   }
 
-  const loading = loadSheet(species, shiny);
+  const loading = loadSheet(species, shiny, female);
 
   SHEETS.set(path, loading);
   return loading;
@@ -137,6 +151,12 @@ async function sheet(species: Species, shiny: boolean): Promise<SpeciesSpriteAni
 
 export interface SpriteRequest {
   shiny?: boolean;
+  /**
+   * Whether to prefer the female drawing where the species has one.
+   * Most do not, and a species without one is drawn the ordinary way
+   * rather than not at all
+   */
+  female?: boolean;
   /**
    * Whether to fall back to Missingno when the species has no sheet.
    * On by default: a canvas asking for a pokemon wants something to
@@ -152,26 +172,55 @@ export interface SpriteRequest {
  * it about affects this caller alone. Resolves null only when there
  * is no sheet and no fallback either
  */
+/**
+ * Whether this species was drawn a second time for its females.
+ *
+ * `loadSpeciesSprite` falls back silently, which is right for drawing
+ * and useless for **deciding**: a dex wanting to show the two forms
+ * side by side would otherwise show the same picture twice. This asks
+ * for the female drawing and nothing else, so a species without one
+ * answers no rather than answering with its ordinary sheet
+ */
+export async function hasFemaleSheet(species: Species, shiny = false): Promise<boolean> {
+  return (await sheet(species, shiny, true)) != null;
+}
+
 export default async function loadSpeciesSprite(
   species: Species,
   request: SpriteRequest = {},
 ): Promise<SpeciesSpriteAnimation | null> {
-  // A shiny with no shiny drawing is still that pokemon: the ordinary
-  // coat is a better answer than Missingno
-  const wanted: [Species, boolean][] =
-    request.shiny === true
-      ? [
-          [species, true],
-          [species, false],
-        ]
-      : [[species, false]];
+  const shiny = request.shiny === true;
+  const female = request.female === true;
+  /**
+   * What to try, best first.
+   *
+   * Two things can be missing and they are not worth the same. A
+   * **coat** is the whole colour of the pokemon and a player looking
+   * for a shiny is looking for exactly that, so it is kept as long as
+   * there is any drawing carrying it; a **form** is a flower or a tail
+   * a few species differ by, and losing it costs a detail rather than
+   * the point. So the shiny form is asked for first, then the shiny
+   * without it, and only then the ordinary coat
+   */
+  const wanted: [Species, boolean, boolean][] = [];
+
+  if (shiny) {
+    if (female) {
+      wanted.push([species, true, true]);
+    }
+    wanted.push([species, true, false]);
+  }
+  if (female) {
+    wanted.push([species, false, true]);
+  }
+  wanted.push([species, false, false]);
 
   if (request.fallback !== false) {
-    wanted.push([FALLBACK_SPECIES, false]);
+    wanted.push([FALLBACK_SPECIES, false, false]);
   }
 
-  for (const [wantedSpecies, shiny] of wanted) {
-    const loaded = await sheet(wantedSpecies, shiny);
+  for (const [wantedSpecies, wantedShiny, wantedFemale] of wanted) {
+    const loaded = await sheet(wantedSpecies, wantedShiny, wantedFemale);
 
     if (loaded != null) {
       return loaded.clone();

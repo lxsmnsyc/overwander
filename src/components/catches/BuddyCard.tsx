@@ -4,7 +4,7 @@ import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { MAX_FRIENDSHIP, describeFriendship } from '../../data/constants/friendship';
 import getSigil from '../../data/constants/sigil';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import CatchPicker from './CatchPicker';
@@ -160,6 +160,7 @@ function BuddyBody(
                 <AnimatedSprite
                   species={isEgg(pair()[1]) ? Species.Egg : pair()[1].species}
                   shiny={!isEgg(pair()[1]) && isShiny(pair()[1])}
+                  female={!isEgg(pair()[1]) && pair()[1].gender === Genders.Female}
                   animation="Walk"
                   direction="DownLeft"
                   scale={2}

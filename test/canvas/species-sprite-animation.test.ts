@@ -728,9 +728,13 @@ describe('where the sheets are', () => {
       expect(files.length, `${coat} drawings should ship`).toBeGreaterThan(0);
 
       for (const file of files) {
-        const species = Number(file.slice(0, -'.png'.length));
+        // A drawing suffixed `_f` is the female form of the same
+        // species, not a species of its own
+        const name = file.slice(0, -'.png'.length);
+        const female = name.endsWith('_f');
+        const species = Number(female ? name.slice(0, -'_f'.length) : name);
 
-        expect(spriteImagePath(species, shiny)).toBe(`/sprites/pokemon/${coat}/${file}`);
+        expect(spriteImagePath(species, shiny, female)).toBe(`/sprites/pokemon/${coat}/${file}`);
       }
     }
   });
@@ -740,18 +744,23 @@ describe('where the sheets are', () => {
 
     for (const coat of ['regular', 'shiny']) {
       for (const file of readdirSync(`public/sprites/pokemon/${coat}`)) {
-        const species = Number(file.slice(0, -'.png'.length));
+        const name = file.slice(0, -'.png'.length);
+        const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
 
-        // The two coats are two drawings of one animation, so the
-        // description is neither one's: it is the species'
+        // Every drawing of a species is a drawing of the one
+        // animation — two coats, and a female form where there is one
+        // — so the description is none of theirs: it is the species'
         expect(described.has(species), `${coat}/${file} has a description`).toBe(true);
         expect(spriteMetaPath(species)).toBe(`/sprites/pokemon/meta/${species}.json`);
       }
     }
   });
 
-  it('keeps the two coats apart', () => {
+  it('keeps the two coats, and the two forms, apart', () => {
     expect(spriteImagePath(Species.Bulbasaur)).not.toBe(spriteImagePath(Species.Bulbasaur, true));
+    expect(spriteImagePath(Species.Bulbasaur)).not.toBe(
+      spriteImagePath(Species.Bulbasaur, false, true),
+    );
     // ...and both of them share the one description
     expect(spriteMetaPath(Species.Bulbasaur)).toBe('/sprites/pokemon/meta/1.json');
   });

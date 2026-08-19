@@ -90,6 +90,9 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
           class="relative"
         >
           <ListboxButton
+            // A form does not lose what is being typed into it
+            // because somebody opened a dropdown
+            type="button"
             id={parts.id}
             aria-describedby={parts.describedBy}
             aria-invalid={props.error == null ? undefined : true}

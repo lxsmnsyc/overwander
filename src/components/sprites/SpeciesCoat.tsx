@@ -50,6 +50,11 @@ export interface SpeciesCoatProps {
    * as caught sparkling
    */
   shiny?: boolean;
+  /**
+   * Whether to draw the female form. Only worth setting where the
+   * species has one — see `hasFemaleSheet`
+   */
+  female?: boolean;
   scale?: number;
   /**
    * What it should be doing. Something nobody has met is asleep
@@ -77,6 +82,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
     <AnimatedSprite
       species={props.met ? props.species : Species.Missingno}
       shiny={props.met && props.shiny === true}
+      female={props.female === true}
       animation={props.met ? (props.animation ?? 'Idle') : 'Sleep'}
       // The pace belongs to the animation that was asked for. A
       // species nobody has met is asleep instead, and sleeping at

@@ -26,6 +26,12 @@ export interface AdminSection {
    * handing out legendaries is not what the rank is for
    */
   runs?: boolean;
+  /**
+   * Whether it is a tool rather than a screen: something that only
+   * works on a developer's own machine, and is left off the sidebar
+   * of anything built for deployment
+   */
+  dev?: boolean;
 }
 
 export const ADMIN_SECTIONS: AdminSection[] = [
@@ -69,6 +75,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     runs: true,
   },
   {
+    href: '/admin/sprite-processor',
+    label: 'Sprites',
+    title: 'Sprite Processor',
+    lede: 'Pack a PMD archive or a set of loose images into a sheet, written straight into public/.',
+    runs: true,
+    dev: true,
+  },
+  {
     href: '/admin/player',
     label: 'Player',
     title: 'Player',
@@ -84,7 +98,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
  */
 export function linksFor(role: string): AdminSection[] {
   return ADMIN_SECTIONS.filter(
-    (entry) => entry.hidden !== true && (entry.runs !== true || runsTheGame(role)),
+    (entry) =>
+      entry.hidden !== true &&
+      (entry.runs !== true || runsTheGame(role)) &&
+      // A tool that writes into the working tree is a door onto
+      // nothing anywhere else, so it is not offered there
+      (entry.dev !== true || import.meta.env.DEV),
   );
 }
 

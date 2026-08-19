@@ -1,16 +1,22 @@
 import { constants, deflateSync, inflateSync } from 'node:zlib';
 
 /**
- * As much of PNG as the sprite scripts need, and no more.
+ * As much of PNG as this project needs, and no more.
  *
- * Both [`compact-sprites`](./compact-sprites.ts) and
- * [`sprite-meta`](./sprite-meta.ts) have to read the sheets pixel by
- * pixel — one to write them back out smaller, the other to find the
- * anchor markers painted on an `offset.png` — and neither can use a
- * canvas, because there is no browser in a script. There is no
- * dependency for it either: the project ships no image library, and
- * PNG is a signature, a handful of length-tagged chunks and a deflate
- * stream, which `node:zlib` already has the hard half of.
+ * `sharp` reads and writes PNGs perfectly well, but it will not say
+ * *which* container to write: it hands back 8-bit RGBA whatever the
+ * sheet holds, and its palette mode quantises. Choosing the smallest
+ * container that gives the same pixels back means encoding candidates
+ * and comparing them, which needs a codec that can be pointed at a
+ * specific colour type — so here is one. PNG is a signature, a handful
+ * of length-tagged chunks and a deflate stream, and `node:zlib` already
+ * has the hard half.
+ *
+ * [`raster.ts`](./raster.ts) encodes the sheets the processors write
+ * with it, and [`compact-sprites`](../../../scripts/compact-sprites.ts)
+ * rewrites sheets that arrive from anywhere else. It is the one module
+ * here without `server-only`: that script imports it from plain Node,
+ * where the marker throws, so its consumers carry the marker instead.
  *
  * What is supported is what the collection contains: 8-bit samples,
  * any of the five colour types, indexed sheets down to one bit a
@@ -522,4 +528,50 @@ export function sameImage(one: Image, two: Image): boolean {
     }
   }
   return true;
+}
+
+/** A sheet encoded, and what it was stored as. */
+export interface Encoded {
+  bytes: Buffer;
+  /** The container chosen, e.g. `indexed 4-bit, none` */
+  as: string;
+}
+
+/**
+ * The smallest container this sheet fits in without losing a pixel.
+ *
+ * Both encodings are tried at both filterings and the smallest one that
+ * **decodes back to the same picture** wins — the check is the whole
+ * point, since a container that gives different pixels back is not a
+ * smaller version of the sheet but a different sheet. A pokemon drawn in
+ * sixteen colours ends up a fifth of the size it left `sharp` at
+ */
+export function encodeSmallest(image: Image): Encoded {
+  const palette = paletteOf(image);
+  const candidates: Encoded[] = [];
+
+  for (const filtering of ['none', 'adaptive'] as const) {
+    if (palette != null) {
+      candidates.push({
+        as: `indexed ${depthFor(palette.colors.length)}-bit, ${filtering}`,
+        bytes: encodeIndexed(image, palette, filtering),
+      });
+    }
+    candidates.push({
+      as: `truecolour, ${filtering}`,
+      bytes: encodeTruecolor(image, filtering),
+    });
+  }
+  candidates.sort((one, two) => one.bytes.length - two.bytes.length);
+
+  for (const candidate of candidates) {
+    if (sameImage(image, decode(candidate.bytes))) {
+      return candidate;
+    }
+  }
+  // Truecolour with no filtering is the plainest thing PNG can say, so
+  // it failing to round-trip means the codec is wrong rather than the
+  // sheet being unusual — and a sheet written wrong is worse than a run
+  // that stops
+  throw new Error('No encoding of this sheet decoded back to itself');
 }

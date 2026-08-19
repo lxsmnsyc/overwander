@@ -15,6 +15,11 @@ export interface TextAreaProps {
   value: string;
   onChange: (value: string) => void;
   rows?: number;
+  /**
+   * What the field is called when the form it stands in is submitted.
+   * Left out for a field read through its own signal
+   */
+  name?: string;
   hint?: string;
   error?: string;
   required?: boolean;
@@ -37,6 +42,7 @@ export default function TextArea(props: TextAreaProps): JSX.Element {
       {(parts) => (
         <textarea
           id={parts.id}
+          name={props.name}
           rows={props.rows ?? 3}
           value={props.value}
           placeholder={props.placeholder}

@@ -6,20 +6,19 @@ import { relative } from 'node:path';
  * What has been done to every sheet under `public/sprites`, and to
  * which version of it.
  *
- * The sprites arrive from outside this repository and are put through a
- * couple of passes before they ship: `compact-sprites` rewrites the PNG
- * container, `sprite-loops` measures whether an effect's last frame
- * flows back into its first. Both are quiet about what they did once
- * they have done it — a compacted sheet looks like any other PNG — so
- * without a record there is no way to answer the two questions that
- * come up every time a new batch lands: *has this one been through the
- * mill yet*, and *what did it look like before*.
+ * The sprites arrive from outside this repository and are put through
+ * `compact-sprites` before they ship, which rewrites the PNG container.
+ * It is quiet about what it did once it has done it — a compacted sheet
+ * looks like any other PNG — so without a record there is no way to
+ * answer the two questions that come up every time a new batch lands:
+ * *has this one been through the mill yet*, and *what did it look like
+ * before*.
  *
- * So each pass writes what it did here. The entry is keyed by the
+ * So the pass writes what it did here. The entry is keyed by the
  * sheet's path and carries a **digest of the image as it stands**,
  * which is what makes the record falsifiable: a sheet re-exported by
  * the packing tool no longer matches its entry, and that mismatch is
- * the signal that the passes have to run again. A record that could
+ * the signal that the pass has to run again. A record that could
  * only ever agree with itself would be decoration.
  *
  * It is a build record rather than an asset, so it lives outside
@@ -61,16 +60,6 @@ export interface SkippedStep {
   why: string;
 }
 
-/**
- * What the loop pass decided about an effect sheet
- */
-export interface LoopStep {
-  at: string;
-  loops: boolean;
-  /** The measurement behind it, in the words the pass reports */
-  why: string;
-}
-
 export interface SheetRecord {
   /** The first `DIGEST_LENGTH` characters of the image's SHA-256 */
   digest: string;
@@ -78,15 +67,14 @@ export interface SheetRecord {
   width: number;
   height: number;
   compact?: CompactStep;
-  loops?: LoopStep;
   skipped?: SkippedStep;
 }
 
 export interface Ledger {
   /**
    * The shape of this file. A pass that reads a version it does not
-   * know starts the record again rather than writing a shape the other
-   * passes cannot read
+   * know starts the record again rather than writing a shape nothing
+   * else can read
    */
   version: number;
   /**
@@ -131,18 +119,6 @@ function skippedStepOf(value: unknown): SkippedStep | undefined {
   return { at: value.at, why: value.why };
 }
 
-function loopStepOf(value: unknown): LoopStep | undefined {
-  if (
-    !isRecord(value) ||
-    typeof value.at !== 'string' ||
-    typeof value.loops !== 'boolean' ||
-    typeof value.why !== 'string'
-  ) {
-    return undefined;
-  }
-  return { at: value.at, loops: value.loops, why: value.why };
-}
-
 export function digestOf(bytes: Buffer): string {
   return createHash('sha256').update(bytes).digest('hex').slice(0, DIGEST_LENGTH);
 }
@@ -168,7 +144,7 @@ export function readLedger(): Ledger {
     parsed = JSON.parse(readFileSync(LEDGER_PATH, 'utf8'));
   } catch {
     // A ledger nobody can read is a ledger to start again, since every
-    // entry in it can be rebuilt by running the passes
+    // entry in it can be rebuilt by running the pass again
     return empty;
   }
 
@@ -184,7 +160,6 @@ export function readLedger(): Ledger {
         width: numberOf(entry.width),
         height: numberOf(entry.height),
         compact: compactStepOf(entry.compact),
-        loops: loopStepOf(entry.loops),
         skipped: skippedStepOf(entry.skipped),
       });
     }
@@ -208,10 +183,7 @@ export function isRecorded(ledger: Ledger, key: string, digest: string): boolean
  * answer was reached, and an unchanged answer reached again is the same
  * answer
  */
-function same(
-  before: CompactStep | LoopStep | SkippedStep,
-  after: CompactStep | LoopStep | SkippedStep,
-): boolean {
+function same(before: CompactStep | SkippedStep, after: CompactStep | SkippedStep): boolean {
   const { at: _wasAt, ...was } = before;
   const { at: _isAt, ...is } = after;
 
@@ -222,9 +194,9 @@ function same(
  * Note what a pass did to a sheet.
  *
  * Two things are deliberate here. A digest that differs from the one on
- * file drops the other passes' entries, since they were about the
- * picture that used to be there and keeping them would be the record
- * telling a comfortable lie. And a pass that reached the answer it had
+ * file drops what was recorded before, since it was about the picture
+ * that used to be there and keeping it would be the record telling a
+ * comfortable lie. And a pass that reached the answer it had
  * already recorded keeps the **old timestamp**, so running the tools
  * over an unchanged collection leaves this file untouched rather than
  * filling a diff with new dates
@@ -233,12 +205,11 @@ export function record(
   ledger: Ledger,
   key: string,
   sheet: { digest: string; bytes: number; width: number; height: number },
-  step: { compact?: CompactStep; loops?: LoopStep; skipped?: SkippedStep },
+  step: { compact?: CompactStep; skipped?: SkippedStep },
 ): void {
   const known = ledger.sheets.get(key);
   const carried = known != null && known.digest === sheet.digest ? known : null;
   let compact = carried?.compact;
-  let loops = carried?.loops;
   let skipped = carried?.skipped;
 
   if (step.compact != null) {
@@ -247,13 +218,10 @@ export function record(
     // was refused
     skipped = undefined;
   }
-  if (step.loops != null) {
-    loops = loops != null && same(loops, step.loops) ? loops : step.loops;
-  }
   if (step.skipped != null) {
     skipped = skipped != null && same(skipped, step.skipped) ? skipped : step.skipped;
   }
-  ledger.sheets.set(key, { ...sheet, compact, loops, skipped });
+  ledger.sheets.set(key, { ...sheet, compact, skipped });
 }
 
 /**

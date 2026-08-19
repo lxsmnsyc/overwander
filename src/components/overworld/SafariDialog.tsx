@@ -346,6 +346,7 @@ function SafariBody(
                   <AnimatedSprite
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
+                    female={active().encounter.gender === Genders.Female}
                     // What the dialog's own title is already saying,
                     // said by the pokemon instead: a shiny standing in
                     // front of the player is the one encounter worth

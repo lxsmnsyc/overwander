@@ -22,6 +22,7 @@ import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '.
 import { STAT_LABELS, describeAbility, detailAbility } from '../catches/CatchDialog';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import { dexLabel } from './PokedexGrid';
+import { hasFemaleSheet } from '../../canvas/species-sprites';
 import SpeciesCoat from '../sprites/SpeciesCoat';
 import TypeBadge from '../sprites/TypeBadge';
 import {
@@ -220,6 +221,8 @@ function DexEntryBody(
   props: DexEntryDialogProps & {
     dex: Resource<SpeciesDexEntry | null>;
     candy: Resource<number>;
+    /** Whether this species was drawn a second time for its females. */
+    female: Resource<boolean>;
   },
 ): JSX.Element {
   /**
@@ -260,11 +263,19 @@ function DexEntryBody(
    * as a shadow rather than left out: the shape is the half of a dex
    * entry that sends somebody out looking
    */
-  const coat = (species: Species, shiny: boolean): JSX.Element => {
+  const coat = (species: Species, shiny: boolean, female = false): JSX.Element => {
     const met = known().met;
     const revealed = shiny ? known().shiny : known().owned;
     const name = getSpeciesData(species).name;
-    const called = shiny ? `${name}, shiny` : name;
+    const sex = female ? '♀' : '♂';
+    // Only worth marking which sex it is where the two were drawn
+    // differently; everywhere else it is one picture and the mark
+    // would be answering a question nobody asked
+    const marked = props.female() === true;
+    const named = female ? 'female' : 'male';
+    const called = [name, shiny ? 'shiny' : null, marked ? named : null]
+      .filter((part) => part != null)
+      .join(', ');
 
     return (
       <div class="flex flex-col items-center gap-1">
@@ -273,6 +284,7 @@ function DexEntryBody(
           met={met}
           revealed={revealed}
           shiny={shiny}
+          female={female}
           // Turning on the spot, the way a dex shows off what it has
           // on file — a pokemon walking on a page it cannot walk off
           // is a pokemon going nowhere
@@ -282,7 +294,10 @@ function DexEntryBody(
           scale={3}
           called={called}
         />
-        <Meta>{shiny ? 'Shiny' : 'Regular'}</Meta>
+        <Meta>
+          {shiny ? 'Shiny' : 'Regular'}
+          {marked ? ` ${sex}` : ''}
+        </Meta>
       </div>
     );
   };
@@ -322,9 +337,14 @@ function DexEntryBody(
             {/* Both coats, standing on the floor of a box with room
                 above them, so a tall pokemon and a short one put their
                 feet on the same line */}
-            <div class="-mb-2 flex min-h-28 items-end justify-center gap-4 pt-2">
+            <div class="-mb-2 flex min-h-28 flex-wrap items-end justify-center gap-4 pt-2">
               {coat(entry().species, false)}
+              {/* Beside its own coat rather than after both of them: a
+                  female Venusaur belongs next to the Venusaur it
+                  differs from, not at the end of a row of four */}
+              <Show when={props.female() === true}>{coat(entry().species, false, true)}</Show>
               {coat(entry().species, true)}
+              <Show when={props.female() === true}>{coat(entry().species, true, true)}</Show>
             </div>
 
             {/* The number is the dex's own and it is known before the
@@ -563,6 +583,16 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
   );
 
   /**
+   * Whether there is a second drawing to show. Asked here and read in
+   * the body, so the page waits for the answer with everything else
+   * rather than growing a column halfway through being looked at
+   */
+  const [female] = createResource(
+    () => props.species ?? null,
+    async (species) => hasFemaleSheet(species),
+  );
+
+  /**
    * The entry either side of this one. The ends of the dex are ends
    * rather than a loop: somebody pressing "next" through the whole of
    * it should stop at the last one instead of finding themselves back
@@ -611,7 +641,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       description="One species in full: what it is, where it lives, and everything it can learn."
     >
       <Suspense fallback={<Note>Reading the dex…</Note>}>
-        <DexEntryBody {...props} dex={dex} candy={candy} />
+        <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
       </Suspense>
 
       <DialogActions>

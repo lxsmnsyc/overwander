@@ -12,8 +12,6 @@
     "preview": "vite preview",
     "emulators": "node scripts/emulators.ts demo-poketerra",
     "compact-sprites": "node scripts/compact-sprites.ts",
-    "sprite-loops": "node scripts/sprite-loops.ts",
-    "effect-atlas": "node scripts/effect-atlas.ts",
     "test": "vitest run",
     "test:rules": "firebase emulators:exec --project demo-poketerra --only firestore \"vitest run --config vitest.rules.ts\"",
     "test:e2e": "playwright test",
@@ -42,13 +40,16 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.0",
+    "@zip.js/zip.js": "^2.8.53",
     "date-fns": "^4.4.0",
     "firebase": "^12.17.1",
     "firebase-admin": "^14.2.0",
     "nitro": "^3.0.260610-beta",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.3",
     "solid-js": "^1.9.14",
     "terracotta": "^1.1.1",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "xml-js": "^1.6.11"
   }
 }

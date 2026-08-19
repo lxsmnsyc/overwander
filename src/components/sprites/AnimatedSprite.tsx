@@ -231,6 +231,11 @@ export interface AnimatedSpriteProps {
   species: Species;
   shiny?: boolean;
   /**
+   * Whether to draw the female form, for the few species with one of
+   * their own. A species without it is drawn the ordinary way
+   */
+  female?: boolean;
+  /**
    * What it should be doing. A sheet without it falls back to standing
    * still, which every sheet has
    */
@@ -298,13 +303,14 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   createEffect(() => {
     const species = props.species;
     const shiny = props.shiny === true;
+    const female = props.female === true;
     let live = true;
 
     onCleanup(() => {
       live = false;
     });
 
-    loadSpeciesSprite(species, { shiny })
+    loadSpeciesSprite(species, { shiny, female })
       .then((loaded) => {
         if (live) {
           setSprite(loaded);

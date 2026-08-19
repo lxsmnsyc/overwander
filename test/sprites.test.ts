@@ -7,15 +7,14 @@ import { describe, expect, it } from 'vitest';
  * The sprites and what has been done to them.
  *
  * The pictures under `public/sprites` come from outside this repository
- * and go through two passes before they ship — `pnpm compact-sprites`
- * rewrites the PNG container, `pnpm sprite-loops` measures whether an
- * effect can be played round and round — and `sprite-pipeline.json`
- * records both. This is what stops that record drifting: a sheet
- * re-exported by the packing tool no longer matches its entry, and a
- * sheet dropped in and forgotten has no entry at all.
+ * and go through `pnpm compact-sprites` before they ship, which rewrites
+ * the PNG container; `sprite-pipeline.json` records what it did. This is
+ * what stops that record drifting: a sheet re-exported by the packing
+ * tool no longer matches its entry, and a sheet dropped in and forgotten
+ * has no entry at all.
  *
- * Either way the fix is to run the two commands, which is why the
- * failures below say so.
+ * Either way the fix is to run the command, which is why the failures
+ * below say so.
  */
 
 const SPRITE_ROOT = 'public/sprites';
@@ -28,7 +27,6 @@ const DIGEST_LENGTH = 16;
 interface SheetRecord {
   digest: unknown;
   compact: unknown;
-  loops: unknown;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -51,7 +49,6 @@ function readLedger(): Map<string, SheetRecord> {
     found.set(key, {
       digest: fieldOf(entry, 'digest'),
       compact: fieldOf(entry, 'compact'),
-      loops: fieldOf(entry, 'loops'),
     });
   }
   return found;
@@ -80,9 +77,6 @@ function digestOf(path: string): string {
 const SHEETS = findSheets(SPRITE_ROOT);
 const LEDGER = readLedger();
 
-/** The atlases whose seams the loop pass measures */
-const EFFECT_ROOTS = ['directional', 'effects', 'particles'].map((kind) => join(SPRITE_ROOT, kind));
-
 describe('the sprite pipeline record', () => {
   it('has an entry for every sheet that ships', () => {
     expect(SHEETS.length).toBeGreaterThan(0);
@@ -103,7 +97,7 @@ describe('the sprite pipeline record', () => {
 
     expect(
       stale,
-      `these have been re-exported since they were processed, run \`pnpm compact-sprites\` and \`pnpm sprite-loops\`: ${stale.join(', ')}`,
+      `these have been re-exported since they were processed, run \`pnpm compact-sprites\`: ${stale.join(', ')}`,
     ).toEqual([]);
   });
 
@@ -111,17 +105,5 @@ describe('the sprite pipeline record', () => {
     const gone = [...LEDGER.keys()].filter((path) => !existsSync(path));
 
     expect(gone, `run \`pnpm compact-sprites\` to clear: ${gone.join(', ')}`).toEqual([]);
-  });
-
-  it('has measured the seam of every effect sheet', () => {
-    const effects = SHEETS.filter((path) => EFFECT_ROOTS.some((root) => path.startsWith(root)));
-
-    expect(effects.length).toBeGreaterThan(0);
-
-    const unmeasured = effects.filter((path) => LEDGER.get(path)?.loops == null);
-
-    expect(unmeasured, `run \`pnpm sprite-loops\` — unmeasured: ${unmeasured.join(', ')}`).toEqual(
-      [],
-    );
   });
 });

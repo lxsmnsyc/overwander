@@ -38,7 +38,7 @@ import { isLoopingCast, pickCast } from '../../data/constants/cast';
 import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
 import { MoveFlags, type Moves } from '../../data/ids/moves';
-import type { Species } from '../../data/ids/species';
+import { Genders, type Species } from '../../data/ids/species';
 import type { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 
@@ -1015,7 +1015,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     sprites.set(unit, waiting);
     loads.set(
       unit,
-      loadSpeciesSprite(unit.appearance)
+      // A female pokemon is drawn from its own sheet where the species
+      // has one. Its **appearance** is what is asked for and its own
+      // gender is what asks: a Transform copies the look, not the sex
+      loadSpeciesSprite(unit.appearance, { female: unit.gender === Genders.Female })
         .then((loaded) => {
           // Only if it is still what the unit looks like: a sheet that
           // arrives after a Transform belongs to nobody

@@ -1,4783 +1,6 @@
 {
   "version": 1,
   "sheets": {
-    "public/sprites/directional/1/image.png": {
-      "digest": "173a5c2ae4cdd5b7",
-      "bytes": 1078,
-      "width": 284,
-      "height": 456,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1078,
-        "bytes": 1078
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/directional/2/image.png": {
-      "digest": "7dae64adf3c43ff6",
-      "bytes": 914,
-      "width": 80,
-      "height": 84,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 914,
-        "bytes": 914
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.1x)"
-      }
-    },
-    "public/sprites/directional/3/image.png": {
-      "digest": "a32df564a08fffc1",
-      "bytes": 1682,
-      "width": 212,
-      "height": 224,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1682,
-        "bytes": 1682
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.9x)"
-      }
-    },
-    "public/sprites/directional/4/image.png": {
-      "digest": "a9d24ff658bcf37b",
-      "bytes": 1694,
-      "width": 337,
-      "height": 422,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1694,
-        "bytes": 1694
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/directional/5/image.png": {
-      "digest": "27d3b3ad04692bc6",
-      "bytes": 15804,
-      "width": 563,
-      "height": 761,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 15804,
-        "bytes": 15804
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/directional/6/image.png": {
-      "digest": "52cb4b9eb9186c61",
-      "bytes": 3937,
-      "width": 288,
-      "height": 416,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3937,
-        "bytes": 3937
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/directional/7/image.png": {
-      "digest": "e20a4be2e6dde10d",
-      "bytes": 2037,
-      "width": 111,
-      "height": 217,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2037,
-        "bytes": 2037
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/directional/8/image.png": {
-      "digest": "86c728189a3f5660",
-      "bytes": 3290,
-      "width": 166,
-      "height": 247,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3290,
-        "bytes": 3290
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/1/image.png": {
-      "digest": "c56b2b55f58a6dd5",
-      "bytes": 2371,
-      "width": 166,
-      "height": 185,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2371,
-        "bytes": 2371
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/10/image.png": {
-      "digest": "e8df75583d863c4f",
-      "bytes": 4223,
-      "width": 240,
-      "height": 291,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4223,
-        "bytes": 4223
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.0x its own motion"
-      }
-    },
-    "public/sprites/effects/100/image.png": {
-      "digest": "bbfd5acd08ef7879",
-      "bytes": 3166,
-      "width": 153,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3166,
-        "bytes": 3166
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/101/image.png": {
-      "digest": "6303de289741bee1",
-      "bytes": 1308,
-      "width": 132,
-      "height": 138,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1308,
-        "bytes": 1308
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/102/image.png": {
-      "digest": "769be7746522c04d",
-      "bytes": 1344,
-      "width": 184,
-      "height": 213,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1344,
-        "bytes": 1344
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/103/image.png": {
-      "digest": "6c15fa61cd2becff",
-      "bytes": 2141,
-      "width": 129,
-      "height": 158,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2141,
-        "bytes": 2141
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (4.4x)"
-      }
-    },
-    "public/sprites/effects/104/image.png": {
-      "digest": "6b4c579f61482d01",
-      "bytes": 257,
-      "width": 39,
-      "height": 54,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 257,
-        "bytes": 257
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 3.3x its own motion"
-      }
-    },
-    "public/sprites/effects/105/image.png": {
-      "digest": "a7e128994d251c03",
-      "bytes": 322,
-      "width": 46,
-      "height": 50,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 322,
-        "bytes": 322
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/106/image.png": {
-      "digest": "e2931204952bd319",
-      "bytes": 2820,
-      "width": 180,
-      "height": 206,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2820,
-        "bytes": 2820
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/107/image.png": {
-      "digest": "9c88187da88eb839",
-      "bytes": 637,
-      "width": 94,
-      "height": 128,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 637,
-        "bytes": 637
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/108/image.png": {
-      "digest": "287cad7d07ae71d3",
-      "bytes": 503,
-      "width": 48,
-      "height": 64,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 503,
-        "bytes": 503
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/109/image.png": {
-      "digest": "9e3e2eba113cb7c9",
-      "bytes": 2541,
-      "width": 260,
-      "height": 354,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2541,
-        "bytes": 2541
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 7.0x its own motion"
-      }
-    },
-    "public/sprites/effects/11/image.png": {
-      "digest": "84a040a328851e10",
-      "bytes": 14393,
-      "width": 365,
-      "height": 392,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 14393,
-        "bytes": 14393
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/110/image.png": {
-      "digest": "ce1be860a589d990",
-      "bytes": 896,
-      "width": 68,
-      "height": 86,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 896,
-        "bytes": 896
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/111/image.png": {
-      "digest": "a2d008f451ff7b18",
-      "bytes": 725,
-      "width": 101,
-      "height": 126,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 725,
-        "bytes": 725
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/112/image.png": {
-      "digest": "66ec107c14f3e9c9",
-      "bytes": 2504,
-      "width": 260,
-      "height": 354,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2504,
-        "bytes": 2504
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 7.3x its own motion"
-      }
-    },
-    "public/sprites/effects/113/image.png": {
-      "digest": "2bc8d577ca733028",
-      "bytes": 628,
-      "width": 53,
-      "height": 62,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 628,
-        "bytes": 628
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.0x its own motion"
-      }
-    },
-    "public/sprites/effects/114/image.png": {
-      "digest": "088e39e293b0df17",
-      "bytes": 667,
-      "width": 88,
-      "height": 128,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 667,
-        "bytes": 667
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 3.7x its own motion"
-      }
-    },
-    "public/sprites/effects/115/image.png": {
-      "digest": "480c3ce6bb32c7c2",
-      "bytes": 595,
-      "width": 57,
-      "height": 82,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 595,
-        "bytes": 595
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.6x)"
-      }
-    },
-    "public/sprites/effects/116/image.png": {
-      "digest": "c0b1944de7b722d4",
-      "bytes": 408,
-      "width": 48,
-      "height": 56,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 408,
-        "bytes": 408
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.9x its own motion"
-      }
-    },
-    "public/sprites/effects/117/image.png": {
-      "digest": "872503a59f47303f",
-      "bytes": 4425,
-      "width": 217,
-      "height": 244,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4425,
-        "bytes": 4425
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/118/image.png": {
-      "digest": "219e52939cbcd126",
-      "bytes": 1865,
-      "width": 80,
-      "height": 96,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1865,
-        "bytes": 1865
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/119/image.png": {
-      "digest": "a6c2197c6bc710ec",
-      "bytes": 2141,
-      "width": 129,
-      "height": 158,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2141,
-        "bytes": 2141
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (4.4x)"
-      }
-    },
-    "public/sprites/effects/12/image.png": {
-      "digest": "9c4649c2c5b51efb",
-      "bytes": 29580,
-      "width": 594,
-      "height": 634,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 29580,
-        "bytes": 29580
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/120/image.png": {
-      "digest": "49a07cc941cdbc6b",
-      "bytes": 776,
-      "width": 128,
-      "height": 180,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 776,
-        "bytes": 776
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 20.9x its own motion"
-      }
-    },
-    "public/sprites/effects/121/image.png": {
-      "digest": "ca7091cfd7bdbeb1",
-      "bytes": 4813,
-      "width": 288,
-      "height": 343,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4813,
-        "bytes": 4813
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.4x its own motion"
-      }
-    },
-    "public/sprites/effects/122/image.png": {
-      "digest": "02a0ed8739fd9ce8",
-      "bytes": 3366,
-      "width": 242,
-      "height": 258,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3366,
-        "bytes": 3366
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/123/image.png": {
-      "digest": "33386561896dfcf4",
-      "bytes": 4764,
-      "width": 242,
-      "height": 258,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4764,
-        "bytes": 4764
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/124/image.png": {
-      "digest": "405f6c00f7bb9e2d",
-      "bytes": 1256,
-      "width": 141,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1256,
-        "bytes": 1256
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/125/image.png": {
-      "digest": "cd39e34318ccf1f9",
-      "bytes": 2168,
-      "width": 137,
-      "height": 175,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2168,
-        "bytes": 2168
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (3.0x)"
-      }
-    },
-    "public/sprites/effects/126/image.png": {
-      "digest": "dd391615d778bce8",
-      "bytes": 838,
-      "width": 52,
-      "height": 102,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 838,
-        "bytes": 838
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/127/image.png": {
-      "digest": "304247ce6b7e17df",
-      "bytes": 2995,
-      "width": 181,
-      "height": 257,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2995,
-        "bytes": 2995
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/128/image.png": {
-      "digest": "9f8d05dfba205f4e",
-      "bytes": 1222,
-      "width": 88,
-      "height": 169,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1222,
-        "bytes": 1222
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/129/image.png": {
-      "digest": "a0bace2907ddfd95",
-      "bytes": 305,
-      "width": 35,
-      "height": 56,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 305,
-        "bytes": 305
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.3x its own motion"
-      }
-    },
-    "public/sprites/effects/13/image.png": {
-      "digest": "75fa5ca48d9fdaf1",
-      "bytes": 2049,
-      "width": 140,
-      "height": 160,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2049,
-        "bytes": 2049
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 6.2x its own motion"
-      }
-    },
-    "public/sprites/effects/130/image.png": {
-      "digest": "5932e2c051bd7500",
-      "bytes": 934,
-      "width": 106,
-      "height": 120,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 934,
-        "bytes": 934
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/131/image.png": {
-      "digest": "f94a49ff11a658b5",
-      "bytes": 9931,
-      "width": 382,
-      "height": 412,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 9931,
-        "bytes": 9931
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/132/image.png": {
-      "digest": "ab079312b35fbeba",
-      "bytes": 457,
-      "width": 46,
-      "height": 50,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 457,
-        "bytes": 457
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.6x its own motion"
-      }
-    },
-    "public/sprites/effects/133/image.png": {
-      "digest": "cf68a5435b7ef77a",
-      "bytes": 1934,
-      "width": 166,
-      "height": 185,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1934,
-        "bytes": 1934
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.5x its own motion"
-      }
-    },
-    "public/sprites/effects/134/image.png": {
-      "digest": "a419cff466e374be",
-      "bytes": 1295,
-      "width": 102,
-      "height": 126,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1295,
-        "bytes": 1295
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.5x)"
-      }
-    },
-    "public/sprites/effects/135/image.png": {
-      "digest": "b1215e2d716f970b",
-      "bytes": 4380,
-      "width": 170,
-      "height": 222,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4380,
-        "bytes": 4380
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/136/image.png": {
-      "digest": "7065cc27f0986b5f",
-      "bytes": 387,
-      "width": 38,
-      "height": 59,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 387,
-        "bytes": 387
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/137/image.png": {
-      "digest": "eea24497db151263",
-      "bytes": 518,
-      "width": 59,
-      "height": 110,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 518,
-        "bytes": 518
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/138/image.png": {
-      "digest": "aeae1c8bbb852373",
-      "bytes": 2954,
-      "width": 246,
-      "height": 276,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2954,
-        "bytes": 2954
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/139/image.png": {
-      "digest": "790e9322db05e5f8",
-      "bytes": 396,
-      "width": 53,
-      "height": 69,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 396,
-        "bytes": 396
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/14/image.png": {
-      "digest": "4e86028d566bb20b",
-      "bytes": 2113,
-      "width": 138,
-      "height": 160,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2113,
-        "bytes": 2113
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/140/image.png": {
-      "digest": "612ab175e7cc57ec",
-      "bytes": 1288,
-      "width": 162,
-      "height": 189,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1288,
-        "bytes": 1288
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/141/image.png": {
-      "digest": "74a1fbb6d0756798",
-      "bytes": 2395,
-      "width": 192,
-      "height": 193,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2395,
-        "bytes": 2395
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/142/image.png": {
-      "digest": "8f4f3848d17c052f",
-      "bytes": 1142,
-      "width": 81,
-      "height": 114,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1142,
-        "bytes": 1142
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.8x its own motion"
-      }
-    },
-    "public/sprites/effects/143/image.png": {
-      "digest": "d0b2874b8b5ddb8f",
-      "bytes": 7388,
-      "width": 287,
-      "height": 313,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 7388,
-        "bytes": 7388
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/144/image.png": {
-      "digest": "7ce03575f885c2bc",
-      "bytes": 14799,
-      "width": 343,
-      "height": 362,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 14799,
-        "bytes": 14799
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (5.7x)"
-      }
-    },
-    "public/sprites/effects/145/image.png": {
-      "digest": "059a4021a0e21b99",
-      "bytes": 301,
-      "width": 43,
-      "height": 54,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 301,
-        "bytes": 301
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/146/image.png": {
-      "digest": "5c6f01ae9b084bca",
-      "bytes": 3489,
-      "width": 157,
-      "height": 173,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3489,
-        "bytes": 3489
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/147/image.png": {
-      "digest": "206637b10006f844",
-      "bytes": 3446,
-      "width": 175,
-      "height": 211,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3446,
-        "bytes": 3446
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/148/image.png": {
-      "digest": "8ff4d90b4c99092b",
-      "bytes": 1843,
-      "width": 77,
-      "height": 111,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1843,
-        "bytes": 1843
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.0x its own motion"
-      }
-    },
-    "public/sprites/effects/149/image.png": {
-      "digest": "0043cbc71dc0df64",
-      "bytes": 713,
-      "width": 70,
-      "height": 86,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 713,
-        "bytes": 713
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/15/image.png": {
-      "digest": "08b2295132d54e75",
-      "bytes": 1571,
-      "width": 90,
-      "height": 128,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1571,
-        "bytes": 1571
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.6x its own motion"
-      }
-    },
-    "public/sprites/effects/150/image.png": {
-      "digest": "c52e30556dea3ffe",
-      "bytes": 4405,
-      "width": 220,
-      "height": 246,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4405,
-        "bytes": 4405
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/151/image.png": {
-      "digest": "fb04002a21dfbf81",
-      "bytes": 2107,
-      "width": 166,
-      "height": 203,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2107,
-        "bytes": 2107
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/effects/152/image.png": {
-      "digest": "611498fefb4e5162",
-      "bytes": 4504,
-      "width": 217,
-      "height": 234,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4504,
-        "bytes": 4504
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 3.9x its own motion"
-      }
-    },
-    "public/sprites/effects/153/image.png": {
-      "digest": "d38f1a68f83cef13",
-      "bytes": 4449,
-      "width": 188,
-      "height": 239,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4449,
-        "bytes": 4449
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/154/image.png": {
-      "digest": "2f970826ba6f97cc",
-      "bytes": 1700,
-      "width": 92,
-      "height": 116,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1700,
-        "bytes": 1700
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.2x)"
-      }
-    },
-    "public/sprites/effects/155/image.png": {
-      "digest": "7ab8289ac3bcc4c5",
-      "bytes": 3007,
-      "width": 220,
-      "height": 246,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3007,
-        "bytes": 3007
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/156/image.png": {
-      "digest": "cc5d9e0955185106",
-      "bytes": 462,
-      "width": 30,
-      "height": 43,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 462,
-        "bytes": 462
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/157/image.png": {
-      "digest": "1fe0f7d96814859b",
-      "bytes": 1316,
-      "width": 128,
-      "height": 144,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1316,
-        "bytes": 1316
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 13.7x its own motion"
-      }
-    },
-    "public/sprites/effects/158/image.png": {
-      "digest": "3eff54c9ca504fcd",
-      "bytes": 1657,
-      "width": 112,
-      "height": 124,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1657,
-        "bytes": 1657
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.9x its own motion"
-      }
-    },
-    "public/sprites/effects/159/image.png": {
-      "digest": "76d5bdc3189853af",
-      "bytes": 6585,
-      "width": 313,
-      "height": 335,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 6585,
-        "bytes": 6585
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/16/image.png": {
-      "digest": "fb11e80332eade2e",
-      "bytes": 1093,
-      "width": 96,
-      "height": 125,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1093,
-        "bytes": 1093
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/160/image.png": {
-      "digest": "ab51d263c77a7654",
-      "bytes": 2458,
-      "width": 126,
-      "height": 168,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2458,
-        "bytes": 2458
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/161/image.png": {
-      "digest": "bfb8873272b1930c",
-      "bytes": 3073,
-      "width": 292,
-      "height": 319,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3073,
-        "bytes": 3073
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/162/image.png": {
-      "digest": "7e757d4467c2e796",
-      "bytes": 1624,
-      "width": 137,
-      "height": 162,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1624,
-        "bytes": 1624
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/163/image.png": {
-      "digest": "e5041aeace0e2194",
-      "bytes": 3147,
-      "width": 146,
-      "height": 185,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3147,
-        "bytes": 3147
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/164/image.png": {
-      "digest": "2fd3abc04ac1b23e",
-      "bytes": 2750,
-      "width": 220,
-      "height": 287,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2750,
-        "bytes": 2750
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/165/image.png": {
-      "digest": "bf3be78869f6e717",
-      "bytes": 3363,
-      "width": 122,
-      "height": 146,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3363,
-        "bytes": 3363
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.2x its own motion"
-      }
-    },
-    "public/sprites/effects/166/image.png": {
-      "digest": "435c8053e5d9600b",
-      "bytes": 4958,
-      "width": 286,
-      "height": 309,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4958,
-        "bytes": 4958
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/167/image.png": {
-      "digest": "c4558ecf2b34d66d",
-      "bytes": 987,
-      "width": 103,
-      "height": 108,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 987,
-        "bytes": 987
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/168/image.png": {
-      "digest": "40d3ee251e499df3",
-      "bytes": 4290,
-      "width": 242,
-      "height": 269,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4290,
-        "bytes": 4290
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/169/image.png": {
-      "digest": "f7ec4e63afe42a89",
-      "bytes": 7462,
-      "width": 293,
-      "height": 319,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 7462,
-        "bytes": 7462
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/17/image.png": {
-      "digest": "fc5378a9841ed242",
-      "bytes": 519,
-      "width": 46,
-      "height": 57,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 519,
-        "bytes": 519
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/170/image.png": {
-      "digest": "c3a101ba444e560a",
-      "bytes": 12863,
-      "width": 290,
-      "height": 305,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 12863,
-        "bytes": 12863
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/171/image.png": {
-      "digest": "518592083ee63d45",
-      "bytes": 3617,
-      "width": 218,
-      "height": 243,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3617,
-        "bytes": 3617
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/172/image.png": {
-      "digest": "149c7a6072197c67",
-      "bytes": 2431,
-      "width": 147,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2431,
-        "bytes": 2431
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/173/image.png": {
-      "digest": "c063c07ae2a9b697",
-      "bytes": 510,
-      "width": 85,
-      "height": 102,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 2-bit, none",
-        "was": 1543,
-        "bytes": 510
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/174/image.png": {
-      "digest": "4a3768556dba0c03",
-      "bytes": 822,
-      "width": 105,
-      "height": 115,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 2-bit, none",
-        "was": 2271,
-        "bytes": 822
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/175/image.png": {
-      "digest": "8ea0f3134bbf3edb",
-      "bytes": 1354,
-      "width": 150,
-      "height": 182,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 4460,
-        "bytes": 1354
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/176/image.png": {
-      "digest": "a257e855ecbb4b08",
-      "bytes": 3440,
-      "width": 246,
-      "height": 320,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 21157,
-        "bytes": 3440
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/177/image.png": {
-      "digest": "303f3eb16f8a88d0",
-      "bytes": 2332,
-      "width": 178,
-      "height": 251,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 8033,
-        "bytes": 2332
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/178/image.png": {
-      "digest": "ffafa978c6de223f",
-      "bytes": 1675,
-      "width": 95,
-      "height": 135,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 5083,
-        "bytes": 1675
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/179/image.png": {
-      "digest": "b10046a5fe8c5f41",
-      "bytes": 1197,
-      "width": 98,
-      "height": 110,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 2959,
-        "bytes": 1197
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/18/image.png": {
-      "digest": "f97b9e9d4465030c",
-      "bytes": 1400,
-      "width": 110,
-      "height": 146,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1400,
-        "bytes": 1400
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/180/image.png": {
-      "digest": "3f07b89245fb30b8",
-      "bytes": 711,
-      "width": 115,
-      "height": 121,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 1963,
-        "bytes": 711
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/181/image.png": {
-      "digest": "84c704a91babd3fd",
-      "bytes": 7226,
-      "width": 278,
-      "height": 300,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 20608,
-        "bytes": 7226
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/182/image.png": {
-      "digest": "a134add18742751a",
-      "bytes": 9104,
-      "width": 335,
-      "height": 351,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 26601,
-        "bytes": 9104
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/183/image.png": {
-      "digest": "0258063f834dd96d",
-      "bytes": 2356,
-      "width": 164,
-      "height": 186,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 7521,
-        "bytes": 2356
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/184/image.png": {
-      "digest": "da6b418c44bcc94d",
-      "bytes": 4616,
-      "width": 203,
-      "height": 260,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 18626,
-        "bytes": 4616
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 3.1x its own motion"
-      }
-    },
-    "public/sprites/effects/185/image.png": {
-      "digest": "bf81ef303dbbcf5d",
-      "bytes": 1766,
-      "width": 87,
-      "height": 132,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 5452,
-        "bytes": 1766
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 4.2x its own motion"
-      }
-    },
-    "public/sprites/effects/186/image.png": {
-      "digest": "c936e9cbc7dec2a4",
-      "bytes": 1727,
-      "width": 150,
-      "height": 186,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 5679,
-        "bytes": 1727
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/187/image.png": {
-      "digest": "0647c670ee2b06b1",
-      "bytes": 3168,
-      "width": 129,
-      "height": 163,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 11946,
-        "bytes": 3168
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "ends on other colours (1.9x)"
-      }
-    },
-    "public/sprites/effects/188/image.png": {
-      "digest": "678830fc03981428",
-      "bytes": 2872,
-      "width": 162,
-      "height": 201,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 13026,
-        "bytes": 2872
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/189/image.png": {
-      "digest": "117f5aacdae13682",
-      "bytes": 1598,
-      "width": 126,
-      "height": 141,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 5956,
-        "bytes": 1598
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/19/image.png": {
-      "digest": "51492d1ef0a1f86b",
-      "bytes": 1160,
-      "width": 124,
-      "height": 160,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1160,
-        "bytes": 1160
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (4.4x)"
-      }
-    },
-    "public/sprites/effects/190/image.png": {
-      "digest": "05f541b7f093f858",
-      "bytes": 982,
-      "width": 105,
-      "height": 120,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 2-bit, none",
-        "was": 3417,
-        "bytes": 982
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "ends on other colours (1.5x)"
-      }
-    },
-    "public/sprites/effects/191/image.png": {
-      "digest": "d53bc79b2355797d",
-      "bytes": 3078,
-      "width": 136,
-      "height": 152,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 11721,
-        "bytes": 3078
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/192/image.png": {
-      "digest": "0c904e9d1dae3c05",
-      "bytes": 2450,
-      "width": 204,
-      "height": 223,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 8346,
-        "bytes": 2450
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/193/image.png": {
-      "digest": "25b225d17aa2eef3",
-      "bytes": 4155,
-      "width": 175,
-      "height": 194,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 12397,
-        "bytes": 4155
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/effects/194/image.png": {
-      "digest": "f0527b46cef152e5",
-      "bytes": 6532,
-      "width": 260,
-      "height": 297,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 19863,
-        "bytes": 6532
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/195/image.png": {
-      "digest": "001ba1cb0a5b5896",
-      "bytes": 741,
-      "width": 100,
-      "height": 114,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 2601,
-        "bytes": 741
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/196/image.png": {
-      "digest": "29e280c304adaebf",
-      "bytes": 5058,
-      "width": 192,
-      "height": 255,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 18642,
-        "bytes": 5058
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 6.5x its own motion"
-      }
-    },
-    "public/sprites/effects/197/image.png": {
-      "digest": "772410b85a39d52b",
-      "bytes": 4879,
-      "width": 293,
-      "height": 377,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 15435,
-        "bytes": 4879
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/198/image.png": {
-      "digest": "c5da5a3d350aa3ac",
-      "bytes": 2195,
-      "width": 152,
-      "height": 191,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 6004,
-        "bytes": 2195
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/effects/199/image.png": {
-      "digest": "75f7b5e95c440124",
-      "bytes": 8213,
-      "width": 241,
-      "height": 279,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 28507,
-        "bytes": 8213
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/2/image.png": {
-      "digest": "da2ca71d84b79d4d",
-      "bytes": 2314,
-      "width": 106,
-      "height": 133,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2314,
-        "bytes": 2314
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/20/image.png": {
-      "digest": "a42d8c7a714d8bd7",
-      "bytes": 2740,
-      "width": 250,
-      "height": 292,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2740,
-        "bytes": 2740
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 10.1x its own motion"
-      }
-    },
-    "public/sprites/effects/200/image.png": {
-      "digest": "63b9fc72abc23dc6",
-      "bytes": 9260,
-      "width": 248,
-      "height": 282,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 32392,
-        "bytes": 9260
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/201/image.png": {
-      "digest": "9d48d615a9fcec87",
-      "bytes": 4045,
-      "width": 201,
-      "height": 222,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 13950,
-        "bytes": 4045
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/202/image.png": {
-      "digest": "7def2e5196c8cda4",
-      "bytes": 2728,
-      "width": 200,
-      "height": 222,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 8407,
-        "bytes": 2728
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/203/image.png": {
-      "digest": "4010a3620d5c0bbc",
-      "bytes": 7119,
-      "width": 279,
-      "height": 321,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 23319,
-        "bytes": 7119
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/204/image.png": {
-      "digest": "1875c2c9a706441f",
-      "bytes": 2475,
-      "width": 163,
-      "height": 172,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 7535,
-        "bytes": 2475
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/205/image.png": {
-      "digest": "b22e270f95278d3e",
-      "bytes": 1951,
-      "width": 150,
-      "height": 176,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 5453,
-        "bytes": 1951
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/206/image.png": {
-      "digest": "336430d633bd1f2e",
-      "bytes": 2991,
-      "width": 153,
-      "height": 173,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 12210,
-        "bytes": 2991
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "ends on other colours (2.7x)"
-      }
-    },
-    "public/sprites/effects/207/image.png": {
-      "digest": "77eb002e9efdda3a",
-      "bytes": 6321,
-      "width": 318,
-      "height": 354,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 32829,
-        "bytes": 6321
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/208/image.png": {
-      "digest": "58ece16f34a0073c",
-      "bytes": 2440,
-      "width": 197,
-      "height": 244,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 8563,
-        "bytes": 2440
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/209/image.png": {
-      "digest": "f040f5a99c73f24c",
-      "bytes": 2820,
-      "width": 216,
-      "height": 258,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 11151,
-        "bytes": 2820
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.8x its own motion"
-      }
-    },
-    "public/sprites/effects/21/image.png": {
-      "digest": "29935b5c0a754f50",
-      "bytes": 2937,
-      "width": 186,
-      "height": 219,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2937,
-        "bytes": 2937
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.6x its own motion"
-      }
-    },
-    "public/sprites/effects/210/image.png": {
-      "digest": "78881b1a1188611b",
-      "bytes": 7189,
-      "width": 264,
-      "height": 296,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 25457,
-        "bytes": 7189
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/211/image.png": {
-      "digest": "7520c92004e5c651",
-      "bytes": 3077,
-      "width": 269,
-      "height": 311,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 9525,
-        "bytes": 3077
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/212/image.png": {
-      "digest": "522b9d97919d9f50",
-      "bytes": 6456,
-      "width": 222,
-      "height": 254,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 22051,
-        "bytes": 6456
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "ends on other colours (1.0x)"
-      }
-    },
-    "public/sprites/effects/213/image.png": {
-      "digest": "c0a5b83ec8cf9cba",
-      "bytes": 8871,
-      "width": 284,
-      "height": 320,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 34703,
-        "bytes": 8871
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/214/image.png": {
-      "digest": "ee92916df3e05910",
-      "bytes": 3828,
-      "width": 190,
-      "height": 227,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 12687,
-        "bytes": 3828
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/215/image.png": {
-      "digest": "a86527d63547c73e",
-      "bytes": 4799,
-      "width": 276,
-      "height": 292,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 19822,
-        "bytes": 4799
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.8x its own motion"
-      }
-    },
-    "public/sprites/effects/216/image.png": {
-      "digest": "f257e9b9066cd7e0",
-      "bytes": 5112,
-      "width": 182,
-      "height": 195,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 16378,
-        "bytes": 5112
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 4.4x its own motion"
-      }
-    },
-    "public/sprites/effects/217/image.png": {
-      "digest": "797c42bee1ba2587",
-      "bytes": 2697,
-      "width": 166,
-      "height": 188,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 9504,
-        "bytes": 2697
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/218/image.png": {
-      "digest": "38d468c2171af0f1",
-      "bytes": 9652,
-      "width": 348,
-      "height": 457,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 33887,
-        "bytes": 9652
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/219/image.png": {
-      "digest": "a8004520c5008860",
-      "bytes": 9278,
-      "width": 312,
-      "height": 354,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 34472,
-        "bytes": 9278
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/22/image.png": {
-      "digest": "832820dd7353a731",
-      "bytes": 653,
-      "width": 210,
-      "height": 248,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 653,
-        "bytes": 653
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 3.1x its own motion"
-      }
-    },
-    "public/sprites/effects/220/image.png": {
-      "digest": "f94c72357da3d7ab",
-      "bytes": 17925,
-      "width": 559,
-      "height": 601,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 59366,
-        "bytes": 17925
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/221/image.png": {
-      "digest": "4d8183e6298b7b72",
-      "bytes": 3282,
-      "width": 178,
-      "height": 209,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 11489,
-        "bytes": 3282
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/222/image.png": {
-      "digest": "17c1e5b6e8425e8f",
-      "bytes": 1461,
-      "width": 123,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 5095,
-        "bytes": 1461
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/223/image.png": {
-      "digest": "f09138189b5ffbd8",
-      "bytes": 6199,
-      "width": 226,
-      "height": 243,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 8-bit, none",
-        "was": 20396,
-        "bytes": 6199
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/224/image.png": {
-      "digest": "e4314af8b13801fa",
-      "bytes": 4835,
-      "width": 183,
-      "height": 230,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 17065,
-        "bytes": 4835
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 3.7x its own motion"
-      }
-    },
-    "public/sprites/effects/225/image.png": {
-      "digest": "d94459805e7bf2d5",
-      "bytes": 3635,
-      "width": 178,
-      "height": 201,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 4-bit, none",
-        "was": 12646,
-        "bytes": 3635
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/226/image.png": {
-      "digest": "79fe172731be96da",
-      "bytes": 1684,
-      "width": 129,
-      "height": 162,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 5443,
-        "bytes": 1684
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/227/image.png": {
-      "digest": "8ae70edd6c15fd2c",
-      "bytes": 3160,
-      "width": 202,
-      "height": 234,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 7578,
-        "bytes": 3160
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/228/image.png": {
-      "digest": "516ecf47d1640cd8",
-      "bytes": 5155,
-      "width": 188,
-      "height": 219,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 8-bit, none",
-        "was": 17713,
-        "bytes": 5155
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/229/image.png": {
-      "digest": "d67b4785eaa23f55",
-      "bytes": 4706,
-      "width": 164,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 15900,
-        "bytes": 4706
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/23/image.png": {
-      "digest": "fb11c90b06ba3910",
-      "bytes": 821,
-      "width": 91,
-      "height": 100,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 821,
-        "bytes": 821
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/230/image.png": {
-      "digest": "f6786872b7c0f953",
-      "bytes": 4423,
-      "width": 159,
-      "height": 175,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 15696,
-        "bytes": 4423
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/231/image.png": {
-      "digest": "0c778bdaf1ef3c9e",
-      "bytes": 4323,
-      "width": 174,
-      "height": 195,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 13959,
-        "bytes": 4323
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/232/image.png": {
-      "digest": "9edd4536abca841a",
-      "bytes": 4324,
-      "width": 245,
-      "height": 263,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 20362,
-        "bytes": 4324
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.8x its own motion"
-      }
-    },
-    "public/sprites/effects/233/image.png": {
-      "digest": "368cde091b404831",
-      "bytes": 4000,
-      "width": 227,
-      "height": 231,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 18533,
-        "bytes": 4000
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/234/image.png": {
-      "digest": "00792da382bf3304",
-      "bytes": 3170,
-      "width": 155,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 10767,
-        "bytes": 3170
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/235/image.png": {
-      "digest": "422522cb6bf04b52",
-      "bytes": 1369,
-      "width": 103,
-      "height": 121,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 3929,
-        "bytes": 1369
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/236/image.png": {
-      "digest": "5873b74c1495298b",
-      "bytes": 5245,
-      "width": 208,
-      "height": 234,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 15984,
-        "bytes": 5245
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/237/image.png": {
-      "digest": "1f916ea01d77c762",
-      "bytes": 2657,
-      "width": 140,
-      "height": 151,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 8858,
-        "bytes": 2657
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 5.2x its own motion"
-      }
-    },
-    "public/sprites/effects/238/image.png": {
-      "digest": "b85b2ef1d02217e9",
-      "bytes": 3624,
-      "width": 180,
-      "height": 200,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 12295,
-        "bytes": 3624
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "ends on other colours (2.6x)"
-      }
-    },
-    "public/sprites/effects/239/image.png": {
-      "digest": "e0f85f417fa9adb9",
-      "bytes": 4086,
-      "width": 158,
-      "height": 176,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 12676,
-        "bytes": 4086
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/24/image.png": {
-      "digest": "72cda05e1dc2048b",
-      "bytes": 781,
-      "width": 120,
-      "height": 154,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 781,
-        "bytes": 781
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/240/image.png": {
-      "digest": "da077cff53493ab3",
-      "bytes": 5496,
-      "width": 288,
-      "height": 305,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 16166,
-        "bytes": 5496
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/241/image.png": {
-      "digest": "e2f4edc3e066b372",
-      "bytes": 5598,
-      "width": 246,
-      "height": 279,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 22445,
-        "bytes": 5598
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "ends on other colours (1.1x)"
-      }
-    },
-    "public/sprites/effects/242/image.png": {
-      "digest": "40ed811a1ed645fd",
-      "bytes": 2849,
-      "width": 167,
-      "height": 183,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 7901,
-        "bytes": 2849
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/243/image.png": {
-      "digest": "47a514c3649b8150",
-      "bytes": 4950,
-      "width": 221,
-      "height": 286,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 14758,
-        "bytes": 4950
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.9x its own motion"
-      }
-    },
-    "public/sprites/effects/244/image.png": {
-      "digest": "ff89db46d485b365",
-      "bytes": 3000,
-      "width": 111,
-      "height": 148,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 7980,
-        "bytes": 3000
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/245/image.png": {
-      "digest": "afdcae45b1f7411c",
-      "bytes": 5015,
-      "width": 222,
-      "height": 266,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 17445,
-        "bytes": 5015
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/246/image.png": {
-      "digest": "bb5305b82602b549",
-      "bytes": 3154,
-      "width": 195,
-      "height": 250,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 11301,
-        "bytes": 3154
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/247/image.png": {
-      "digest": "741e08e2fabc5457",
-      "bytes": 3874,
-      "width": 173,
-      "height": 194,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 13768,
-        "bytes": 3874
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/248/image.png": {
-      "digest": "9966fa842fab5e5f",
-      "bytes": 1243,
-      "width": 91,
-      "height": 109,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 4565,
-        "bytes": 1243
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/249/image.png": {
-      "digest": "4a36f9ceeb4d5a39",
-      "bytes": 20724,
-      "width": 807,
-      "height": 861,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 8-bit, none",
-        "was": 86841,
-        "bytes": 20724
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/25/image.png": {
-      "digest": "7a17a47e14003896",
-      "bytes": 2028,
-      "width": 384,
-      "height": 441,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2028,
-        "bytes": 2028
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/250/image.png": {
-      "digest": "fd7f5184309e6499",
-      "bytes": 7434,
-      "width": 255,
-      "height": 288,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 19005,
-        "bytes": 7434
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/251/image.png": {
-      "digest": "9a7186a006aa8b09",
-      "bytes": 3613,
-      "width": 183,
-      "height": 203,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 10762,
-        "bytes": 3613
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/26/image.png": {
-      "digest": "078487016a97c1d7",
-      "bytes": 1179,
-      "width": 136,
-      "height": 161,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1179,
-        "bytes": 1179
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/27/image.png": {
-      "digest": "1e3dcc6b759ec499",
-      "bytes": 3331,
-      "width": 149,
-      "height": 172,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3331,
-        "bytes": 3331
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/28/image.png": {
-      "digest": "d4ca379dbefb7b81",
-      "bytes": 8293,
-      "width": 320,
-      "height": 374,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 8293,
-        "bytes": 8293
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/29/image.png": {
-      "digest": "c5dfd7dccd8fd9a4",
-      "bytes": 2553,
-      "width": 139,
-      "height": 155,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2553,
-        "bytes": 2553
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/3/image.png": {
-      "digest": "cf46d1458794b3f8",
-      "bytes": 2011,
-      "width": 154,
-      "height": 158,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2011,
-        "bytes": 2011
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.1x)"
-      }
-    },
-    "public/sprites/effects/30/image.png": {
-      "digest": "9c254e05178057be",
-      "bytes": 7456,
-      "width": 220,
-      "height": 245,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 7456,
-        "bytes": 7456
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.2x its own motion"
-      }
-    },
-    "public/sprites/effects/31/image.png": {
-      "digest": "6228f1fa3933a040",
-      "bytes": 9695,
-      "width": 427,
-      "height": 447,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 9695,
-        "bytes": 9695
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.0x its own motion"
-      }
-    },
-    "public/sprites/effects/32/image.png": {
-      "digest": "653665e937586307",
-      "bytes": 1253,
-      "width": 130,
-      "height": 192,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1253,
-        "bytes": 1253
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.0x its own motion"
-      }
-    },
-    "public/sprites/effects/33/image.png": {
-      "digest": "596b777bb5f0876b",
-      "bytes": 2214,
-      "width": 131,
-      "height": 147,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2214,
-        "bytes": 2214
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/34/image.png": {
-      "digest": "f523b979574609f7",
-      "bytes": 2753,
-      "width": 188,
-      "height": 206,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2753,
-        "bytes": 2753
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.4x its own motion"
-      }
-    },
-    "public/sprites/effects/35/image.png": {
-      "digest": "7891aa1b390818ba",
-      "bytes": 5552,
-      "width": 291,
-      "height": 317,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 5552,
-        "bytes": 5552
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/36/image.png": {
-      "digest": "4807067daa269bd7",
-      "bytes": 7242,
-      "width": 297,
-      "height": 388,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 7242,
-        "bytes": 7242
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/37/image.png": {
-      "digest": "e679ca131d350e8b",
-      "bytes": 5081,
-      "width": 231,
-      "height": 254,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 5081,
-        "bytes": 5081
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/38/image.png": {
-      "digest": "35abd19fe35db7c1",
-      "bytes": 2531,
-      "width": 211,
-      "height": 229,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2531,
-        "bytes": 2531
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/39/image.png": {
-      "digest": "5e1d1edf1fb23f0f",
-      "bytes": 1964,
-      "width": 206,
-      "height": 226,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1964,
-        "bytes": 1964
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/4/image.png": {
-      "digest": "adfbef8036636ded",
-      "bytes": 3866,
-      "width": 189,
-      "height": 199,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3866,
-        "bytes": 3866
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/40/image.png": {
-      "digest": "6b7cb5af3075b0c8",
-      "bytes": 1541,
-      "width": 101,
-      "height": 112,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1541,
-        "bytes": 1541
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.2x)"
-      }
-    },
-    "public/sprites/effects/41/image.png": {
-      "digest": "624d15a8fd3b22d1",
-      "bytes": 6803,
-      "width": 356,
-      "height": 365,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 6803,
-        "bytes": 6803
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.9x its own motion"
-      }
-    },
-    "public/sprites/effects/42/image.png": {
-      "digest": "5a2ccffb36e27b63",
-      "bytes": 2234,
-      "width": 175,
-      "height": 241,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2234,
-        "bytes": 2234
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/43/image.png": {
-      "digest": "04c1ab49f04a9b62",
-      "bytes": 2005,
-      "width": 149,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2005,
-        "bytes": 2005
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.8x its own motion"
-      }
-    },
-    "public/sprites/effects/44/image.png": {
-      "digest": "04c1ab49f04a9b62",
-      "bytes": 2005,
-      "width": 149,
-      "height": 187,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2005,
-        "bytes": 2005
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.8x its own motion"
-      }
-    },
-    "public/sprites/effects/45/image.png": {
-      "digest": "fb378a8af53f0687",
-      "bytes": 1016,
-      "width": 101,
-      "height": 139,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1016,
-        "bytes": 1016
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/46/image.png": {
-      "digest": "31e96d549fad38e1",
-      "bytes": 3207,
-      "width": 134,
-      "height": 185,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3207,
-        "bytes": 3207
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.6x its own motion"
-      }
-    },
-    "public/sprites/effects/47/image.png": {
-      "digest": "99c61cdb02fb76bf",
-      "bytes": 4207,
-      "width": 528,
-      "height": 640,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4207,
-        "bytes": 4207
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/48/image.png": {
-      "digest": "fc41f00a8e93f585",
-      "bytes": 4770,
-      "width": 256,
-      "height": 277,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4770,
-        "bytes": 4770
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/49/image.png": {
-      "digest": "3c95bb1b779579b1",
-      "bytes": 1268,
-      "width": 126,
-      "height": 154,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1268,
-        "bytes": 1268
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.7x its own motion"
-      }
-    },
-    "public/sprites/effects/5/image.png": {
-      "digest": "a86bb640da35ee5d",
-      "bytes": 3278,
-      "width": 169,
-      "height": 204,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3278,
-        "bytes": 3278
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.6x)"
-      }
-    },
-    "public/sprites/effects/50/image.png": {
-      "digest": "90a9f1212033e50a",
-      "bytes": 1288,
-      "width": 95,
-      "height": 107,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1288,
-        "bytes": 1288
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.7x its own motion"
-      }
-    },
-    "public/sprites/effects/51/image.png": {
-      "digest": "7f5258e2d1457965",
-      "bytes": 3452,
-      "width": 196,
-      "height": 210,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3452,
-        "bytes": 3452
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/52/image.png": {
-      "digest": "cf91f8da88c5067f",
-      "bytes": 2198,
-      "width": 129,
-      "height": 134,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2198,
-        "bytes": 2198
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 5.3x its own motion"
-      }
-    },
-    "public/sprites/effects/53/image.png": {
-      "digest": "326d730c9a436f79",
-      "bytes": 3890,
-      "width": 289,
-      "height": 314,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3890,
-        "bytes": 3890
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/54/image.png": {
-      "digest": "e507bf4ab9cbdb8c",
-      "bytes": 1556,
-      "width": 99,
-      "height": 99,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1556,
-        "bytes": 1556
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/effects/55/image.png": {
-      "digest": "fc8ea7344576f20e",
-      "bytes": 651,
-      "width": 57,
-      "height": 74,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 651,
-        "bytes": 651
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/56/image.png": {
-      "digest": "979889f2b96bbe06",
-      "bytes": 4580,
-      "width": 300,
-      "height": 315,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4580,
-        "bytes": 4580
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.0x its own motion"
-      }
-    },
-    "public/sprites/effects/57/image.png": {
-      "digest": "7d06ce65bf829c31",
-      "bytes": 951,
-      "width": 70,
-      "height": 94,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 951,
-        "bytes": 951
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/58/image.png": {
-      "digest": "c413f2cb9ef049d6",
-      "bytes": 1325,
-      "width": 126,
-      "height": 174,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1325,
-        "bytes": 1325
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/59/image.png": {
-      "digest": "4977eeed1d87f9e4",
-      "bytes": 1867,
-      "width": 127,
-      "height": 133,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1867,
-        "bytes": 1867
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/6/image.png": {
-      "digest": "5fd4398775ac0206",
-      "bytes": 4537,
-      "width": 210,
-      "height": 231,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4537,
-        "bytes": 4537
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/60/image.png": {
-      "digest": "9990728d08cdda96",
-      "bytes": 1530,
-      "width": 118,
-      "height": 132,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1530,
-        "bytes": 1530
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/61/image.png": {
-      "digest": "698c05adf1f8ff2d",
-      "bytes": 2055,
-      "width": 142,
-      "height": 157,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2055,
-        "bytes": 2055
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/62/image.png": {
-      "digest": "4ff9683b8ce14b24",
-      "bytes": 1387,
-      "width": 211,
-      "height": 263,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1387,
-        "bytes": 1387
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 5.2x its own motion"
-      }
-    },
-    "public/sprites/effects/63/image.png": {
-      "digest": "ffbc8c595a107fba",
-      "bytes": 2952,
-      "width": 179,
-      "height": 198,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2952,
-        "bytes": 2952
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/64/image.png": {
-      "digest": "e76ad0e757e5118c",
-      "bytes": 3735,
-      "width": 376,
-      "height": 414,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3735,
-        "bytes": 3735
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/65/image.png": {
-      "digest": "4de3955c67075378",
-      "bytes": 851,
-      "width": 63,
-      "height": 74,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 851,
-        "bytes": 851
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.0x its own motion"
-      }
-    },
-    "public/sprites/effects/66/image.png": {
-      "digest": "5299d42cd37203ab",
-      "bytes": 296,
-      "width": 28,
-      "height": 39,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 296,
-        "bytes": 296
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/67/image.png": {
-      "digest": "d481a1d0d74c4ac6",
-      "bytes": 373,
-      "width": 32,
-      "height": 42,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 373,
-        "bytes": 373
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.0x its own motion"
-      }
-    },
-    "public/sprites/effects/68/image.png": {
-      "digest": "2e747c9c7133bc3a",
-      "bytes": 228,
-      "width": 34,
-      "height": 30,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 228,
-        "bytes": 228
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/69/image.png": {
-      "digest": "d205a1b154f0e40b",
-      "bytes": 322,
-      "width": 46,
-      "height": 62,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 322,
-        "bytes": 322
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 10.8x its own motion"
-      }
-    },
-    "public/sprites/effects/7/image.png": {
-      "digest": "8404865d4385cef9",
-      "bytes": 1158,
-      "width": 115,
-      "height": 120,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1158,
-        "bytes": 1158
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/effects/70/image.png": {
-      "digest": "4a9865a4a344e736",
-      "bytes": 181,
-      "width": 15,
-      "height": 20,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 181,
-        "bytes": 181
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.9x its own motion"
-      }
-    },
-    "public/sprites/effects/71/image.png": {
-      "digest": "77208468d69b3e98",
-      "bytes": 408,
-      "width": 48,
-      "height": 65,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 408,
-        "bytes": 408
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/72/image.png": {
-      "digest": "fea43b93b9937ce3",
-      "bytes": 192,
-      "width": 22,
-      "height": 35,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 192,
-        "bytes": 192
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 8.6x its own motion"
-      }
-    },
-    "public/sprites/effects/73/image.png": {
-      "digest": "3d8195b845c21634",
-      "bytes": 1570,
-      "width": 91,
-      "height": 117,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1570,
-        "bytes": 1570
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.5x its own motion"
-      }
-    },
-    "public/sprites/effects/74/image.png": {
-      "digest": "abe7bc8d6ea7e33d",
-      "bytes": 686,
-      "width": 66,
-      "height": 80,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 686,
-        "bytes": 686
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/75/image.png": {
-      "digest": "35fd7f5598fc7638",
-      "bytes": 1556,
-      "width": 122,
-      "height": 132,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1556,
-        "bytes": 1556
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/76/image.png": {
-      "digest": "08b79415efecd743",
-      "bytes": 1009,
-      "width": 93,
-      "height": 124,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1009,
-        "bytes": 1009
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/77/image.png": {
-      "digest": "0adddf6dedaba20a",
-      "bytes": 871,
-      "width": 84,
-      "height": 113,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 871,
-        "bytes": 871
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/effects/78/image.png": {
-      "digest": "f68387b2e2cba583",
-      "bytes": 2004,
-      "width": 145,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2004,
-        "bytes": 2004
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/79/image.png": {
-      "digest": "f03c68b31e7db8e1",
-      "bytes": 793,
-      "width": 83,
-      "height": 96,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 793,
-        "bytes": 793
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/8/image.png": {
-      "digest": "b0f804c96457909e",
-      "bytes": 3154,
-      "width": 193,
-      "height": 217,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3154,
-        "bytes": 3154
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/80/image.png": {
-      "digest": "299e0200ece64c28",
-      "bytes": 1518,
-      "width": 128,
-      "height": 160,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1518,
-        "bytes": 1518
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 3.9x its own motion"
-      }
-    },
-    "public/sprites/effects/81/image.png": {
-      "digest": "550f1704a8f6a89d",
-      "bytes": 745,
-      "width": 46,
-      "height": 67,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 745,
-        "bytes": 745
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.5x)"
-      }
-    },
-    "public/sprites/effects/82/image.png": {
-      "digest": "7a2dfe0d38a96d42",
-      "bytes": 4546,
-      "width": 275,
-      "height": 447,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4546,
-        "bytes": 4546
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/83/image.png": {
-      "digest": "bf146aabd5b86d3d",
-      "bytes": 4980,
-      "width": 257,
-      "height": 310,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4980,
-        "bytes": 4980
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/84/image.png": {
-      "digest": "2a5df614fcbb1b27",
-      "bytes": 1452,
-      "width": 107,
-      "height": 126,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1452,
-        "bytes": 1452
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/85/image.png": {
-      "digest": "d4e13ef9957748cc",
-      "bytes": 751,
-      "width": 102,
-      "height": 120,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 751,
-        "bytes": 751
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/86/image.png": {
-      "digest": "969d777afa678a44",
-      "bytes": 2301,
-      "width": 153,
-      "height": 191,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2301,
-        "bytes": 2301
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.2x its own motion"
-      }
-    },
-    "public/sprites/effects/87/image.png": {
-      "digest": "aedba347e61a63b0",
-      "bytes": 7639,
-      "width": 374,
-      "height": 419,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 7639,
-        "bytes": 7639
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/effects/88/image.png": {
-      "digest": "afeed27b48c08ef2",
-      "bytes": 1427,
-      "width": 150,
-      "height": 186,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1427,
-        "bytes": 1427
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/89/image.png": {
-      "digest": "37aeaf268bb40b03",
-      "bytes": 245,
-      "width": 32,
-      "height": 35,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 245,
-        "bytes": 245
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 10.0x its own motion"
-      }
-    },
-    "public/sprites/effects/9/image.png": {
-      "digest": "a4e8f130e2af928c",
-      "bytes": 5348,
-      "width": 241,
-      "height": 310,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 5348,
-        "bytes": 5348
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 9.6x its own motion"
-      }
-    },
-    "public/sprites/effects/90/image.png": {
-      "digest": "176e1e80f3b2e7a7",
-      "bytes": 996,
-      "width": 89,
-      "height": 93,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 996,
-        "bytes": 996
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 36.9x its own motion"
-      }
-    },
-    "public/sprites/effects/91/image.png": {
-      "digest": "9376ec962ce39278",
-      "bytes": 1863,
-      "width": 149,
-      "height": 186,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1863,
-        "bytes": 1863
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.1x its own motion"
-      }
-    },
-    "public/sprites/effects/92/image.png": {
-      "digest": "d8894e576f8dd402",
-      "bytes": 1516,
-      "width": 138,
-      "height": 159,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1516,
-        "bytes": 1516
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 10.5x its own motion"
-      }
-    },
-    "public/sprites/effects/93/image.png": {
-      "digest": "e7a043254c3c346d",
-      "bytes": 362,
-      "width": 32,
-      "height": 37,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 362,
-        "bytes": 362
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/94/image.png": {
-      "digest": "23b3da50061de59a",
-      "bytes": 1047,
-      "width": 126,
-      "height": 149,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1047,
-        "bytes": 1047
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.7x)"
-      }
-    },
-    "public/sprites/effects/95/image.png": {
-      "digest": "c35867ff96b7d3d7",
-      "bytes": 1684,
-      "width": 150,
-      "height": 199,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1684,
-        "bytes": 1684
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.7x)"
-      }
-    },
-    "public/sprites/effects/96/image.png": {
-      "digest": "7a2f958f284c1937",
-      "bytes": 3270,
-      "width": 144,
-      "height": 150,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3270,
-        "bytes": 3270
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/effects/97/image.png": {
-      "digest": "4370b114218bc73e",
-      "bytes": 4932,
-      "width": 310,
-      "height": 365,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4932,
-        "bytes": 4932
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/98/image.png": {
-      "digest": "9f45a62aeed1f240",
-      "bytes": 3166,
-      "width": 153,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3166,
-        "bytes": 3166
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/effects/99/image.png": {
-      "digest": "5ddacf90f4c3b3a7",
-      "bytes": 3160,
-      "width": 153,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3160,
-        "bytes": 3160
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/1/image.png": {
-      "digest": "343d972c178a8023",
-      "bytes": 1392,
-      "width": 78,
-      "height": 101,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1392,
-        "bytes": 1392
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/10/image.png": {
-      "digest": "24708a2fe5e12ad5",
-      "bytes": 2342,
-      "width": 133,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2342,
-        "bytes": 2342
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/11/image.png": {
-      "digest": "1d6da6ac39e8197c",
-      "bytes": 2342,
-      "width": 133,
-      "height": 166,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2342,
-        "bytes": 2342
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/12/image.png": {
-      "digest": "2275151cbeba6ae2",
-      "bytes": 2836,
-      "width": 141,
-      "height": 170,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2836,
-        "bytes": 2836
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
-    "public/sprites/particles/13/image.png": {
-      "digest": "605269de042340d4",
-      "bytes": 463,
-      "width": 36,
-      "height": 60,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 463,
-        "bytes": 463
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (2.2x)"
-      }
-    },
-    "public/sprites/particles/14/image.png": {
-      "digest": "bc251666e804f235",
-      "bytes": 1106,
-      "width": 104,
-      "height": 118,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1106,
-        "bytes": 1106
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.9x its own motion"
-      }
-    },
-    "public/sprites/particles/15/image.png": {
-      "digest": "57af76dac64b0a0a",
-      "bytes": 386,
-      "width": 36,
-      "height": 41,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 386,
-        "bytes": 386
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.2x)"
-      }
-    },
-    "public/sprites/particles/16/image.png": {
-      "digest": "786d20fc3bb0c88b",
-      "bytes": 450,
-      "width": 48,
-      "height": 52,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 450,
-        "bytes": 450
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.9x its own motion"
-      }
-    },
-    "public/sprites/particles/17/image.png": {
-      "digest": "e6a26b90f32cf44a",
-      "bytes": 768,
-      "width": 52,
-      "height": 102,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 768,
-        "bytes": 768
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/18/image.png": {
-      "digest": "3a2009e3c3a3acf6",
-      "bytes": 1153,
-      "width": 76,
-      "height": 98,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1153,
-        "bytes": 1153
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.1x its own motion"
-      }
-    },
-    "public/sprites/particles/19/image.png": {
-      "digest": "b762dcb2de59522e",
-      "bytes": 716,
-      "width": 76,
-      "height": 91,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 716,
-        "bytes": 716
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.3x)"
-      }
-    },
-    "public/sprites/particles/2/image.png": {
-      "digest": "ebde436c797c4556",
-      "bytes": 1149,
-      "width": 78,
-      "height": 101,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1149,
-        "bytes": 1149
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/20/image.png": {
-      "digest": "d01a8f1777f2cb55",
-      "bytes": 360,
-      "width": 40,
-      "height": 42,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 360,
-        "bytes": 360
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 4.0x its own motion"
-      }
-    },
-    "public/sprites/particles/21/image.png": {
-      "digest": "43f1a8e32c005b62",
-      "bytes": 376,
-      "width": 46,
-      "height": 48,
-      "compact": {
-        "at": "2026-08-18T13:19:48Z",
-        "as": "indexed 2-bit, none",
-        "was": 1164,
-        "bytes": 376
-      },
-      "loops": {
-        "at": "2026-08-18T13:20:52Z",
-        "loops": false,
-        "why": "seam 1.3x its own motion"
-      }
-    },
-    "public/sprites/particles/22/image.png": {
-      "digest": "0bd0225b19c0ac9a",
-      "bytes": 2369,
-      "width": 140,
-      "height": 164,
-      "compact": {
-        "at": "2026-08-18T14:43:43Z",
-        "as": "indexed 4-bit, none",
-        "was": 8659,
-        "bytes": 2369
-      },
-      "loops": {
-        "at": "2026-08-18T14:43:46Z",
-        "loops": false,
-        "why": "ends on other colours (5.1x)"
-      }
-    },
-    "public/sprites/particles/3/image.png": {
-      "digest": "402e9b1d988ad9f1",
-      "bytes": 4088,
-      "width": 197,
-      "height": 260,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 4088,
-        "bytes": 4088
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/4/image.png": {
-      "digest": "7a47a964bb84cbb1",
-      "bytes": 3687,
-      "width": 122,
-      "height": 151,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 3687,
-        "bytes": 3687
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 2.2x its own motion"
-      }
-    },
-    "public/sprites/particles/5/image.png": {
-      "digest": "7b1c7a798799578f",
-      "bytes": 219,
-      "width": 26,
-      "height": 37,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 219,
-        "bytes": 219
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": true,
-        "why": "seam is within its own motion"
-      }
-    },
-    "public/sprites/particles/6/image.png": {
-      "digest": "cfb910ab0a762ac7",
-      "bytes": 829,
-      "width": 59,
-      "height": 84,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 829,
-        "bytes": 829
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.0x its own motion"
-      }
-    },
-    "public/sprites/particles/7/image.png": {
-      "digest": "432ba7ad8cce7065",
-      "bytes": 2043,
-      "width": 120,
-      "height": 146,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 2043,
-        "bytes": 2043
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "ends on other colours (1.0x)"
-      }
-    },
-    "public/sprites/particles/8/image.png": {
-      "digest": "61225ae713d5e1a2",
-      "bytes": 828,
-      "width": 96,
-      "height": 128,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 828,
-        "bytes": 828
-      },
-      "loops": {
-        "at": "2026-08-15T06:46:17Z",
-        "loops": false,
-        "why": "seam 1.4x its own motion"
-      }
-    },
-    "public/sprites/particles/9/image.png": {
-      "digest": "f90a31c9592f9ba3",
-      "bytes": 1887,
-      "width": 88,
-      "height": 121,
-      "compact": {
-        "at": "2026-08-15T06:46:16Z",
-        "as": "already compact",
-        "was": 1887,
-        "bytes": 1887
-      },
-      "loops": {
-        "at": "2026-08-18T13:27:05Z",
-        "loops": false,
-        "why": "ends on colours of its own"
-      }
-    },
     "public/sprites/pokemon/regular/1.png": {
       "digest": "1256b9b4df64ad87",
       "bytes": 47498,
@@ -4788,6 +11,18 @@
         "as": "already compact",
         "was": 47498,
         "bytes": 47498
+      }
+    },
+    "public/sprites/pokemon/regular/10.png": {
+      "digest": "8308d29bdeeb022a",
+      "bytes": 40957,
+      "width": 1203,
+      "height": 1096,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 162333,
+        "bytes": 40957
       }
     },
     "public/sprites/pokemon/regular/100000.png": {
@@ -4838,6 +73,54 @@
         "bytes": 87806
       }
     },
+    "public/sprites/pokemon/regular/11.png": {
+      "digest": "2fc7144380d5e70f",
+      "bytes": 49485,
+      "width": 1326,
+      "height": 1208,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 203935,
+        "bytes": 49485
+      }
+    },
+    "public/sprites/pokemon/regular/12.png": {
+      "digest": "9af1e8b93c7a1a3a",
+      "bytes": 160845,
+      "width": 1597,
+      "height": 1256,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 347254,
+        "bytes": 160845
+      }
+    },
+    "public/sprites/pokemon/regular/12_f.png": {
+      "digest": "b9d25ea9e012709d",
+      "bytes": 159899,
+      "width": 1597,
+      "height": 1256,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 349067,
+        "bytes": 159899
+      }
+    },
+    "public/sprites/pokemon/regular/13.png": {
+      "digest": "bd1a0a92d27bd23d",
+      "bytes": 115024,
+      "width": 1452,
+      "height": 1368,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 225124,
+        "bytes": 115024
+      }
+    },
     "public/sprites/pokemon/regular/138.png": {
       "digest": "090aceaf0359cd66",
       "bytes": 45011,
@@ -4848,6 +131,18 @@
         "as": "already compact",
         "was": 45011,
         "bytes": 45011
+      }
+    },
+    "public/sprites/pokemon/regular/14.png": {
+      "digest": "c73d1cadeb5620f7",
+      "bytes": 41916,
+      "width": 1412,
+      "height": 1104,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 180930,
+        "bytes": 41916
       }
     },
     "public/sprites/pokemon/regular/144.png": {
@@ -4886,6 +181,150 @@
         "bytes": 497113
       }
     },
+    "public/sprites/pokemon/regular/15.png": {
+      "digest": "394388106597a016",
+      "bytes": 159468,
+      "width": 2097,
+      "height": 1456,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 337252,
+        "bytes": 159468
+      }
+    },
+    "public/sprites/pokemon/regular/16.png": {
+      "digest": "2038775b54f9b6c1",
+      "bytes": 77167,
+      "width": 1444,
+      "height": 1064,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 181113,
+        "bytes": 77167
+      }
+    },
+    "public/sprites/pokemon/regular/17.png": {
+      "digest": "2c0222f5dc080712",
+      "bytes": 66296,
+      "width": 1485,
+      "height": 1176,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 254382,
+        "bytes": 66296
+      }
+    },
+    "public/sprites/pokemon/regular/18.png": {
+      "digest": "daacd2159e266ca8",
+      "bytes": 116661,
+      "width": 1548,
+      "height": 1224,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 280586,
+        "bytes": 116661
+      }
+    },
+    "public/sprites/pokemon/regular/19.png": {
+      "digest": "bf3874a77e1089f0",
+      "bytes": 113606,
+      "width": 1545,
+      "height": 1184,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 246612,
+        "bytes": 113606
+      }
+    },
+    "public/sprites/pokemon/regular/2.png": {
+      "digest": "b106050fb44efb35",
+      "bytes": 47424,
+      "width": 1188,
+      "height": 1048,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 206214,
+        "bytes": 47424
+      }
+    },
+    "public/sprites/pokemon/regular/20.png": {
+      "digest": "51a5c07fe042468f",
+      "bytes": 54506,
+      "width": 1418,
+      "height": 1168,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 234455,
+        "bytes": 54506
+      }
+    },
+    "public/sprites/pokemon/regular/21.png": {
+      "digest": "045ad85466b19bbe",
+      "bytes": 112539,
+      "width": 1439,
+      "height": 1120,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 224767,
+        "bytes": 112539
+      }
+    },
+    "public/sprites/pokemon/regular/22.png": {
+      "digest": "8ba5dc7da70f1105",
+      "bytes": 92569,
+      "width": 1638,
+      "height": 1584,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 359967,
+        "bytes": 92569
+      }
+    },
+    "public/sprites/pokemon/regular/3.png": {
+      "digest": "7059e2a5623d38a9",
+      "bytes": 75278,
+      "width": 1376,
+      "height": 1136,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 285527,
+        "bytes": 75278
+      }
+    },
+    "public/sprites/pokemon/regular/3_f.png": {
+      "digest": "4bc883aa8e9703b8",
+      "bytes": 75985,
+      "width": 1376,
+      "height": 1152,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 288815,
+        "bytes": 75985
+      }
+    },
+    "public/sprites/pokemon/regular/4.png": {
+      "digest": "acce989b590e1d7d",
+      "bytes": 124856,
+      "width": 2015,
+      "height": 1112,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 263109,
+        "bytes": 124856
+      }
+    },
     "public/sprites/pokemon/regular/40.png": {
       "digest": "98e8c2f2d0009dfe",
       "bytes": 131886,
@@ -4910,6 +349,18 @@
         "bytes": 72149
       }
     },
+    "public/sprites/pokemon/regular/5.png": {
+      "digest": "a4995fa2130f7295",
+      "bytes": 137110,
+      "width": 1902,
+      "height": 1480,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 316137,
+        "bytes": 137110
+      }
+    },
     "public/sprites/pokemon/regular/55.png": {
       "digest": "cded72d5ec9bdb17",
       "bytes": 197180,
@@ -4922,6 +373,30 @@
         "bytes": 197180
       }
     },
+    "public/sprites/pokemon/regular/6.png": {
+      "digest": "df9ba132c92d0708",
+      "bytes": 111033,
+      "width": 2236,
+      "height": 1640,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 431533,
+        "bytes": 111033
+      }
+    },
+    "public/sprites/pokemon/regular/7.png": {
+      "digest": "b5d59b0ee334e0b0",
+      "bytes": 44618,
+      "width": 1450,
+      "height": 1112,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 191953,
+        "bytes": 44618
+      }
+    },
     "public/sprites/pokemon/regular/73.png": {
       "digest": "3f836a3c7ee34f58",
       "bytes": 80610,
@@ -4932,6 +407,30 @@
         "as": "already compact",
         "was": 80610,
         "bytes": 80610
+      }
+    },
+    "public/sprites/pokemon/regular/8.png": {
+      "digest": "c3bd87105cf22c9d",
+      "bytes": 123102,
+      "width": 1564,
+      "height": 1384,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 297201,
+        "bytes": 123102
+      }
+    },
+    "public/sprites/pokemon/regular/9.png": {
+      "digest": "db384d0234df6d1a",
+      "bytes": 226117,
+      "width": 1790,
+      "height": 1664,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 475100,
+        "bytes": 226117
       }
     },
     "public/sprites/pokemon/regular/94.png": {
@@ -4970,6 +469,18 @@
         "bytes": 48589
       }
     },
+    "public/sprites/pokemon/shiny/10.png": {
+      "digest": "0da10debbb0980a3",
+      "bytes": 40957,
+      "width": 1203,
+      "height": 1096,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 167806,
+        "bytes": 40957
+      }
+    },
     "public/sprites/pokemon/shiny/108.png": {
       "digest": "a3360dfa31d4ffbe",
       "bytes": 90761,
@@ -4982,6 +493,54 @@
         "bytes": 90761
       }
     },
+    "public/sprites/pokemon/shiny/11.png": {
+      "digest": "ee72225cc20908f1",
+      "bytes": 49485,
+      "width": 1326,
+      "height": 1208,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 205439,
+        "bytes": 49485
+      }
+    },
+    "public/sprites/pokemon/shiny/12.png": {
+      "digest": "15da5e5e6c635b0d",
+      "bytes": 161958,
+      "width": 1597,
+      "height": 1256,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 357102,
+        "bytes": 161958
+      }
+    },
+    "public/sprites/pokemon/shiny/12_f.png": {
+      "digest": "9a54cb7bdb460911",
+      "bytes": 160957,
+      "width": 1597,
+      "height": 1256,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 356484,
+        "bytes": 160957
+      }
+    },
+    "public/sprites/pokemon/shiny/13.png": {
+      "digest": "b4a328035b820950",
+      "bytes": 115584,
+      "width": 1452,
+      "height": 1368,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 228076,
+        "bytes": 115584
+      }
+    },
     "public/sprites/pokemon/shiny/138.png": {
       "digest": "76d83e17d502151c",
       "bytes": 45011,
@@ -4992,6 +551,18 @@
         "as": "already compact",
         "was": 45011,
         "bytes": 45011
+      }
+    },
+    "public/sprites/pokemon/shiny/14.png": {
+      "digest": "dc4d309b56ddc31e",
+      "bytes": 41916,
+      "width": 1412,
+      "height": 1104,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 182490,
+        "bytes": 41916
       }
     },
     "public/sprites/pokemon/shiny/144.png": {
@@ -5030,6 +601,162 @@
         "bytes": 501288
       }
     },
+    "public/sprites/pokemon/shiny/15.png": {
+      "digest": "20efd5cfd80d72bc",
+      "bytes": 159790,
+      "width": 2097,
+      "height": 1456,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 350524,
+        "bytes": 159790
+      }
+    },
+    "public/sprites/pokemon/shiny/16.png": {
+      "digest": "773e37c0500931e0",
+      "bytes": 77032,
+      "width": 1444,
+      "height": 1064,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 181454,
+        "bytes": 77032
+      }
+    },
+    "public/sprites/pokemon/shiny/17.png": {
+      "digest": "49afe40d14b6e8ae",
+      "bytes": 66343,
+      "width": 1485,
+      "height": 1176,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 254464,
+        "bytes": 66343
+      }
+    },
+    "public/sprites/pokemon/shiny/18.png": {
+      "digest": "8b03ecdccc82de8f",
+      "bytes": 116918,
+      "width": 1548,
+      "height": 1224,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 284006,
+        "bytes": 116918
+      }
+    },
+    "public/sprites/pokemon/shiny/19.png": {
+      "digest": "1a3a932f9d9e0876",
+      "bytes": 114614,
+      "width": 1545,
+      "height": 1184,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 245743,
+        "bytes": 114614
+      }
+    },
+    "public/sprites/pokemon/shiny/2.png": {
+      "digest": "4428f556c507d3a8",
+      "bytes": 47424,
+      "width": 1188,
+      "height": 1048,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 210819,
+        "bytes": 47424
+      }
+    },
+    "public/sprites/pokemon/shiny/20.png": {
+      "digest": "c902d45a657e169b",
+      "bytes": 54506,
+      "width": 1418,
+      "height": 1168,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 233540,
+        "bytes": 54506
+      }
+    },
+    "public/sprites/pokemon/shiny/21.png": {
+      "digest": "8a5513b6c19def4d",
+      "bytes": 111543,
+      "width": 1439,
+      "height": 1120,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "truecolour, none",
+        "was": 223522,
+        "bytes": 111543
+      }
+    },
+    "public/sprites/pokemon/shiny/22.png": {
+      "digest": "6d8821c4b3ee52a8",
+      "bytes": 92569,
+      "width": 1638,
+      "height": 1584,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 362527,
+        "bytes": 92569
+      }
+    },
+    "public/sprites/pokemon/shiny/23.png": {
+      "digest": "04df039372636cd6",
+      "bytes": 64876,
+      "width": 1843,
+      "height": 1336,
+      "compact": {
+        "at": "2026-08-19T13:02:05Z",
+        "as": "indexed 4-bit, none",
+        "was": 286365,
+        "bytes": 64876
+      }
+    },
+    "public/sprites/pokemon/shiny/3.png": {
+      "digest": "6a64161be67e7641",
+      "bytes": 75278,
+      "width": 1376,
+      "height": 1136,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 288472,
+        "bytes": 75278
+      }
+    },
+    "public/sprites/pokemon/shiny/3_f.png": {
+      "digest": "4eae549c5a5b0323",
+      "bytes": 75985,
+      "width": 1376,
+      "height": 1152,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 293440,
+        "bytes": 75985
+      }
+    },
+    "public/sprites/pokemon/shiny/4.png": {
+      "digest": "b904a8ac3b2b4739",
+      "bytes": 128306,
+      "width": 2015,
+      "height": 1112,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 269613,
+        "bytes": 128306
+      }
+    },
     "public/sprites/pokemon/shiny/40.png": {
       "digest": "00cfa89c2d1c534d",
       "bytes": 131643,
@@ -5054,6 +781,18 @@
         "bytes": 73459
       }
     },
+    "public/sprites/pokemon/shiny/5.png": {
+      "digest": "4f797d7d5ed4d784",
+      "bytes": 88053,
+      "width": 1902,
+      "height": 1480,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 8-bit, none",
+        "was": 323030,
+        "bytes": 88053
+      }
+    },
     "public/sprites/pokemon/shiny/55.png": {
       "digest": "2404e5e14eb4c1cd",
       "bytes": 197289,
@@ -5066,6 +805,30 @@
         "bytes": 197289
       }
     },
+    "public/sprites/pokemon/shiny/6.png": {
+      "digest": "ed5218e2378947f8",
+      "bytes": 112653,
+      "width": 2236,
+      "height": 1640,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 432661,
+        "bytes": 112653
+      }
+    },
+    "public/sprites/pokemon/shiny/7.png": {
+      "digest": "77f82d8e9d91fb79",
+      "bytes": 44808,
+      "width": 1450,
+      "height": 1112,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "indexed 4-bit, none",
+        "was": 194778,
+        "bytes": 44808
+      }
+    },
     "public/sprites/pokemon/shiny/73.png": {
       "digest": "51c282b1fb74c0f9",
       "bytes": 80610,
@@ -5076,6 +839,30 @@
         "as": "already compact",
         "was": 80610,
         "bytes": 80610
+      }
+    },
+    "public/sprites/pokemon/shiny/8.png": {
+      "digest": "ecfa5731af78ffb4",
+      "bytes": 126286,
+      "width": 1564,
+      "height": 1384,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 300665,
+        "bytes": 126286
+      }
+    },
+    "public/sprites/pokemon/shiny/9.png": {
+      "digest": "1163b15e5c52ffe7",
+      "bytes": 227487,
+      "width": 1790,
+      "height": 1664,
+      "compact": {
+        "at": "2026-08-19T11:56:56Z",
+        "as": "truecolour, none",
+        "was": 474859,
+        "bytes": 227487
       }
     },
     "public/sprites/pokemon/shiny/94.png": {

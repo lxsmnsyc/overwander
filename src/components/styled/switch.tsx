@@ -38,6 +38,10 @@ export default function Switch(props: SwitchProps): JSX.Element {
         </Show>
       </span>
       <Toggle
+        // A bare button inside a form submits it. A switch takes
+        // effect as it is pressed and has nothing to do with saving,
+        // so it says what it is rather than inheriting the default
+        type="button"
         pressed={props.checked}
         disabled={props.disabled}
         onChange={(state: boolean) => {

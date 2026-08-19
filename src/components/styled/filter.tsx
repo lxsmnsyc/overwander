@@ -105,6 +105,7 @@ export default function Filter<V>(props: {
           label for the same control */}
       <ListboxLabel class="sr-only">{props.label}</ListboxLabel>
       <ListboxButton
+        type="button"
         class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-3
           py-1 text-sm font-bold shadow-pop-sm transition-colors hover:border-tide
           hover:text-tide-dark focus-visible:outline-2 focus-visible:outline-offset-2

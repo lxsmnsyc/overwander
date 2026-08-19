@@ -45,6 +45,7 @@ export default function Checkbox(props: CheckboxProps): JSX.Element {
       } ${props.class ?? ''}`}
     >
       <CheckboxIndicator
+        type="button"
         // Terracotta marks the box with `tc-checked` and nothing a
         // screen reader reads, so a `role="checkbox"` that never says
         // whether it is ticked

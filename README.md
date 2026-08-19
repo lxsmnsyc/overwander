@@ -195,7 +195,6 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 | `pnpm preview`         | Preview the build locally                           |
 | `pnpm emulators`       | Local Firebase (auth, Firestore, UI on port 4000)   |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
-| `pnpm sprite-loops`    | Measure which effect sheets can be played on a loop |
 | `pnpm test`            | The whole test suite, once                          |
 | `pnpm test:rules`      | The Firestore rules, against a throwaway emulator   |
 | `npx tsc --noEmit`     | Type-check                                          |

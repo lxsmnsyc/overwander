@@ -91,7 +91,7 @@ import {
   getMachineMove,
   isMachineItem,
 } from '../../data/ids/items';
-import { EvolutionMethod, Species } from '../../data/ids/species';
+import { EvolutionMethod, Genders, Species } from '../../data/ids/species';
 import { getItemData } from '../../data/items';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { isHerbal } from '../../data/items/medicine';
@@ -1610,6 +1610,7 @@ function CatchSheetBody(
                   <AnimatedSprite
                     species={isEgg(loaded()) ? Species.Egg : loaded().species}
                     shiny={!isEgg(loaded()) && isShiny(loaded())}
+                    female={!isEgg(loaded()) && loaded().gender === Genders.Female}
                     animation="Walk"
                     direction="DownLeft"
                     scale={4}

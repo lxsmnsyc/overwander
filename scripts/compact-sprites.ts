@@ -1,6 +1,12 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative } from 'node:path';
-import decode, { depthFor, encodeIndexed, encodeTruecolor, paletteOf, sameImage } from './png.ts';
+import decode, {
+  depthFor,
+  encodeIndexed,
+  encodeTruecolor,
+  paletteOf,
+  sameImage,
+} from '../src/server/sprites/png.ts';
 import now, {
   type Ledger,
   digestOf,

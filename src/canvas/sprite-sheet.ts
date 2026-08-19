@@ -161,6 +161,19 @@ export interface SpriteFrameData {
   head: Point | null;
   left: Point | null;
   right: Point | null;
+  /**
+   * Which packed picture this frame is drawn from, as an index into
+   * the clip's `cells` grid.
+   *
+   * Half of a sheet is the same picture twice — a pose held for ten
+   * frames, a left-facing row that is the right-facing one mirrored —
+   * so the pictures are packed once and the frames point at them. A
+   * sheet packed before that says nothing here, and its frames are its
+   * pictures: see `cells`
+   */
+  cell: number | null;
+  /** Whether that picture is drawn mirrored to make this frame. */
+  flip: boolean;
 }
 
 export interface SpriteTargetData {
@@ -186,6 +199,15 @@ export interface SpriteTargetData {
    * orientation and frame index sits at `direction * columns + frame`
    */
   frames: SpriteFrameData[];
+  /**
+   * How the distinct pictures are laid out in the sheet, for a clip
+   * whose repeats were packed once.
+   *
+   * Nothing here means the old arrangement, where the region is the
+   * grid itself: `rows` orientations down and `columns` frames across,
+   * every frame drawn even where it repeats one beside it
+   */
+  cells: { columns: number; rows: number } | null;
 }
 
 export interface SpriteSheetJSON {
@@ -235,6 +257,18 @@ function asPoint(value: unknown): Point | null {
   return pair.length >= 2 ? [asNumber(pair[0]), asNumber(pair[1])] : null;
 }
 
+/** The grid of distinct pictures, or nothing where a clip has none. */
+function asCells(value: unknown): { columns: number; rows: number } | null {
+  if (typeof value !== 'object' || value == null) {
+    return null;
+  }
+  const held = asRecord(value);
+  const columns = asNumber(held.columns);
+  const rows = asNumber(held.rows);
+
+  return columns > 0 && rows > 0 ? { columns, rows } : null;
+}
+
 function asDirections(value: unknown): SpriteDirection[] {
   const known = new Set<string>(SPRITE_DIRECTIONS);
 
@@ -278,6 +312,7 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
       directions: asDirections(target.directions),
       frames: asArray(target.frames).map((frame) => {
         const anchors = asRecord(frame);
+        const cell = anchors.cell;
 
         return {
           shadow: asPoint(anchors.shadow),
@@ -285,8 +320,11 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
           head: asPoint(anchors.head),
           left: asPoint(anchors.left),
           right: asPoint(anchors.right),
+          cell: typeof cell === 'number' ? cell : null,
+          flip: anchors.flip === true,
         };
       }),
+      cells: asCells(target.cells),
     };
   }
 

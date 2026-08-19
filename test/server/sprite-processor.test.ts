@@ -5,7 +5,8 @@ import pack from '../../src/server/sprites/packing';
 import { blank, blit } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import { animFilter, draw } from '../../src/server/sprites/pmd';
+import { animFilter } from '../../src/server/sprites/pmd';
+import dedupe, { drawCells } from '../../src/server/sprites/dedupe';
 import { extraDestination, pokemonDestination } from '../../src/server/sprites/files';
 import { storedAs } from '../../src/components/admin/SpriteProcessor';
 
@@ -357,31 +358,30 @@ describe('drawing an animation into the sheet', () => {
 
   it('copies each frame out of its own cell when the grid was cropped', () => {
     const sheet = blank(4, 4);
+    const source = twoFrames();
+    const grid = {
+      x: 0,
+      y: 0,
+      pitchX: 4,
+      // Cropped at the bottom only, which is the case that used to
+      // take a whole-image shortcut: the untrimmed picture was copied
+      // into a box sized for the shorter frames, so the second frame
+      // landed too low and the sheet lost its bottom
+      pitchY: 4,
+      offsetX: 0,
+      offsetY: 0,
+      frameWidth: 4,
+      frameHeight: 2,
+      columns: 1,
+      rows: 2,
+    };
+    const kept = dedupe([{ raster: source, grid }]);
 
-    draw(
-      sheet,
-      {
-        name: 'Walk',
-        images: { animation: twoFrames() },
-        sourceFrameWidth: 4,
-        sourceFrameHeight: 4,
-        frameWidth: 4,
-        // Cropped at the bottom only, which is the case that used to
-        // take the whole-image shortcut: the untrimmed picture was
-        // copied into a box sized for the shorter frames, so the
-        // second frame landed too low and the sheet lost its bottom
-        frameHeight: 2,
-        trim: [0, 0],
-        columns: 1,
-        rows: 2,
-        w: 4,
-        h: 4,
-      },
-      { x: 0, y: 0 },
-    );
+    drawCells(sheet, source, grid, { x: 0, y: 0 }, kept);
 
     const at = (y: number): number => sheet.data[y * 4 * 4];
 
+    expect(kept.cells, 'two different frames, both kept').toHaveLength(2);
     expect([at(0), at(1)], 'the first frame').toEqual([40, 40]);
     expect([at(2), at(3)], 'the second frame, not the first frame padding').toEqual([90, 90]);
   });

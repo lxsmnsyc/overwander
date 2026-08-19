@@ -157,15 +157,25 @@ describe('sprite metadata', () => {
         );
         expect(target.directions.length, `${species} ${anim.target} rows`).toBe(target.rows);
         expect(anim.durations.length, `${species} ${anim.name} durations`).toBe(target.columns);
-        // The grid on the sheet is cut at the size the frames are
-        // actually stored at, which on a compact sheet is the trimmed
-        // one
+        // What is packed is the **pictures**, which on a deduped sheet
+        // is fewer than the frames: half of a grid is a pose held or a
+        // row mirrored, and those are kept once
+        const cells = target.cells ?? { columns: target.columns, rows: target.rows };
+
         expect(packed?.width, `${species} ${anim.target} grid width`).toBe(
-          target.columns * target.frameWidth,
+          cells.columns * target.frameWidth,
         );
         expect(packed?.height, `${species} ${anim.target} grid height`).toBe(
-          target.rows * target.frameHeight,
+          cells.rows * target.frameHeight,
         );
+        // And every frame is drawn from one of them
+        for (const frame of target.frames) {
+          if (frame.cell != null) {
+            expect(frame.cell, `${species} ${anim.target} cell`).toBeLessThan(
+              cells.columns * cells.rows,
+            );
+          }
+        }
         // `anims` stays faithful to the file it came from, so its sizes
         // are the untrimmed ones however the sheet was packed
         expect(anim.frameWidth, `${species} ${anim.name} source width`).toBe(
@@ -773,6 +783,145 @@ describe('where the sheets are', () => {
         expect(target.directions, `${species} ${name}`).toEqual(
           SPRITE_DIRECTIONS.slice(0, target.rows),
         );
+      }
+    }
+  });
+});
+
+/**
+ * Where a frame is actually read from.
+ *
+ * A deduped sheet keeps one of every repeated picture, so the source
+ * rectangle is no longer the frame's own square in a grid: it is
+ * whichever square the frame points at, drawn mirrored where it was
+ * kept the other way round. Nothing else about drawing changed, which
+ * is why this asks the drawing rather than the description.
+ */
+describe('drawing from a deduped sheet', () => {
+  /** A stub that records what was asked of `drawImage`. */
+  function taking(): {
+    context: CanvasRenderingContext2D;
+    rects: [number, number, number, number][];
+    mirrored: () => boolean;
+  } {
+    const rects: [number, number, number, number][] = [];
+    let flipped = false;
+    const context = {
+      save: () => {},
+      restore: () => {},
+      translate: () => {},
+      scale: (x: number) => {
+        if (x < 0) {
+          flipped = true;
+        }
+      },
+      beginPath: () => {},
+      ellipse: () => {},
+      fill: () => {},
+      imageSmoothingEnabled: true,
+      globalAlpha: 1,
+      fillStyle: '',
+      drawImage: (_image: unknown, left: number, top: number, width: number, height: number) => {
+        rects.push([left, top, width, height]);
+      },
+    };
+
+    return {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      context: context as unknown as CanvasRenderingContext2D,
+      rects,
+      mirrored: () => flipped,
+    };
+  }
+
+  it('reads each frame from the picture it was packed as', () => {
+    for (const { species, data } of DESCRIBED.slice(0, 6)) {
+      const sprite = loaded(data);
+      const name = Object.keys(data.sprites)[0];
+      const target = data.sprites[name];
+
+      if (target.cells == null) {
+        continue;
+      }
+      const box = data.sheet.images.find((image) => image.name === name);
+
+      expect(box, `${species} ${name} is packed`).toBeDefined();
+      sprite.play(name, { loop: true });
+
+      const { context, rects } = taking();
+
+      sprite.draw(context, 0, 0);
+      expect(rects, `${species} ${name} drew once`).toHaveLength(1);
+
+      const [left, top, width, height] = rects[0];
+      const frame = target.frames[0];
+      const cell = frame.cell ?? 0;
+
+      expect(width).toBe(target.frameWidth);
+      expect(height).toBe(target.frameHeight);
+      expect(left).toBe((box?.x ?? 0) + (cell % target.cells.columns) * target.frameWidth);
+      expect(top).toBe(
+        (box?.y ?? 0) + Math.floor(cell / target.cells.columns) * target.frameHeight,
+      );
+      // And it stays inside the box the layout gave the clip
+      expect(left).toBeLessThan((box?.x ?? 0) + (box?.width ?? 0));
+      expect(top).toBeLessThan((box?.y ?? 0) + (box?.height ?? 0));
+    }
+  });
+
+  it('hands a background the same picture it draws itself', () => {
+    for (const { species, data } of DESCRIBED) {
+      for (const [name, target] of Object.entries(data.sprites)) {
+        const at = target.frames.findIndex((frame) => frame.flip);
+
+        if (at < 0 || target.cells == null) {
+          continue;
+        }
+        const sprite = loaded(data);
+        const box = data.sheet.images.find((image) => image.name === name);
+        const direction = target.directions[Math.floor(at / target.columns)];
+
+        sprite.play(name, { loop: true, direction });
+
+        const frame = sprite.frameBox;
+        const cell = target.frames[Math.floor(at / target.columns) * target.columns]?.cell ?? 0;
+
+        // The same rectangle `draw` reads, and the same answer about
+        // whether it is stored the other way round: a background has
+        // to turn it over itself
+        expect(frame?.x).toBe((box?.x ?? 0) + (cell % target.cells.columns) * target.frameWidth);
+        expect(frame?.y).toBe(
+          (box?.y ?? 0) + Math.floor(cell / target.cells.columns) * target.frameHeight,
+        );
+        expect(frame?.width).toBe(target.frameWidth);
+        expect(frame?.mirrored, `${species} ${name} ${direction}`).toBe(
+          target.frames[Math.floor(at / target.columns) * target.columns].flip,
+        );
+        return;
+      }
+    }
+  });
+
+  it('mirrors a frame that was kept the other way round', () => {
+    for (const { species, data } of DESCRIBED) {
+      for (const [name, target] of Object.entries(data.sprites)) {
+        const at = target.frames.findIndex((frame) => frame.flip);
+
+        if (at < 0 || target.cells == null) {
+          continue;
+        }
+        const sprite = loaded(data);
+        const direction = target.directions[Math.floor(at / target.columns)];
+
+        sprite.play(name, { loop: true, direction });
+
+        const { context, mirrored } = taking();
+
+        sprite.draw(context, 0, 0);
+        // The row this frame sits in is one the packer kept as a
+        // reflection, so drawing it un-flipped is drawing it backwards
+        expect(mirrored(), `${species} ${name} ${direction}`).toBe(true);
+        return;
       }
     }
   });

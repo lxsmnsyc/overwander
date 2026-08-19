@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Coat } from '../src/canvas/sprite-coats';
-import { asSpriteCoats, coatOf, drawn } from '../src/canvas/sprite-coats';
+import { asSpriteCoats, coatOf, drawn, stamped } from '../src/canvas/sprite-coats';
 
 /**
  * The list of which pokemon were drawn in which coat.
@@ -76,6 +76,26 @@ describe('the coat list', () => {
     // request the list exists to save
     expect(drawn(listed, 1, 'regular')).toBe(true);
     expect(drawn(listed, 1, 'female')).toBe(false);
+  });
+
+  it('stamps every pokemon it lists', () => {
+    const listed = asSpriteCoats(JSON.parse(readFileSync(LIST, 'utf8')));
+
+    for (const species of Object.keys(listed.coats)) {
+      expect(listed.stamps[species], `${species} has no stamp`).toMatch(/^[0-9a-f]{8}$/);
+    }
+    // The stamp is what makes a repacked sheet a new address, so two
+    // pokemon drawn differently must not share one
+    const marks = Object.values(listed.stamps);
+
+    expect(new Set(marks).size, 'stamps collide').toBe(marks.length);
+    expect(stamped('/sprites/pokemon/meta/1.json', listed, 1)).toBe(
+      `/sprites/pokemon/meta/1.json?v=${listed.stamps['1']}`,
+    );
+    // A sheet nobody has recorded is asked for by its plain address
+    expect(stamped('/sprites/pokemon/meta/9999.json', listed, 9999)).toBe(
+      '/sprites/pokemon/meta/9999.json',
+    );
   });
 
   it('says yes to a species it has never heard of', () => {

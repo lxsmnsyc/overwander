@@ -59,7 +59,14 @@ interface Drawn {
   source: string;
   sheet: { width: number; height: number };
   cell: { width: number; height: number };
-  frame: { x: number; y: number; width: number; height: number };
+  /**
+   * The picture on the sheet, and whether it is this frame reflected.
+   *
+   * A sheet keeps one copy of every repeated drawing, so a frame drawn
+   * facing left may be the right-facing picture stored once and turned
+   * over — which a background has to do for itself
+   */
+  frame: { x: number; y: number; width: number; height: number; mirrored: boolean };
   trim: Point;
   /** Where the pokemon touches the ground, in cell pixels */
   feet: Point | null;
@@ -97,6 +104,8 @@ function pictureOf(drawn: Drawn): JSX.CSSProperties {
     )}`,
     'background-repeat': 'no-repeat',
     'image-rendering': 'pixelated',
+    // Turned over where the sheet kept only the other side of the pair
+    transform: drawn.frame.mirrored ? 'scaleX(-1)' : undefined,
   };
 }
 

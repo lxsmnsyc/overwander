@@ -1260,10 +1260,22 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // What the thrower is doing: the move's own clip, played at its
       // own speed for the flight and the rest that follows it. The
       // rest is the AI's, and it is what gives a gesture room — a
-      // 250ms flight is not long enough to see a throw in
+      // 250ms flight is not long enough to see a throw in.
+      //
+      // Never shorter than the clip itself, whatever the engine's
+      // timings add up to. A gesture cut off partway is a pokemon
+      // snapping back to standing mid-swing: the last frame of a
+      // Strike is 83ms, and the window it was being held for ran out
+      // 42ms before it
+      const sprite = spriteFor(event.source);
+      const gesture =
+        sprite == null
+          ? 0
+          : sprite.lengthOf(pickCast(getMoveData(event.move).cast, (name) => sprite.has(name)));
+
       striking.set(event.source, {
         move: event.move,
-        window: window + AI_REST_PERIOD,
+        window: Math.max(window + AI_REST_PERIOD, gesture),
         elapsed: 0,
         at: event.target,
       });
@@ -1373,28 +1385,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      */
     const bitten = new WeakMap<Unit, Map<Statuses, number>>();
 
-    const biting = props.battle.on(
-      BattleEvents.UnitTriggerStatus,
-      EventPriority.Post,
-      (event) => {
-        const cue = statusTriggerFor(event.status);
+    const biting = props.battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Post, (event) => {
+      const cue = statusTriggerFor(event.status);
 
-        if (cue == null) {
-          return;
-        }
-        let held = bitten.get(event.source);
+      if (cue == null) {
+        return;
+      }
+      let held = bitten.get(event.source);
 
-        if (held == null) {
-          held = new Map();
-          bitten.set(event.source, held);
-        }
-        if (clock - (held.get(event.status) ?? -CUE_GAP) < CUE_GAP) {
-          return;
-        }
-        held.set(event.status, clock);
-        paint(cue, event.source, []);
-      },
-    );
+      if (held == null) {
+        held = new Map();
+        bitten.set(event.source, held);
+      }
+      if (clock - (held.get(event.status) ?? -CUE_GAP) < CUE_GAP) {
+        return;
+      }
+      held.set(event.status, clock);
+      paint(cue, event.source, []);
+    });
 
     /**
      * When each ability last drew a cue, on the battle's own clock.
@@ -1540,9 +1548,20 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // lands, so a pokemon is seen finishing what it threw
       for (const [unit, thrown] of striking) {
         thrown.elapsed = (thrown.elapsed ?? 0) + event.duration;
-        if (thrown.elapsed >= thrown.window) {
-          striking.delete(unit);
+        if (thrown.elapsed < thrown.window) {
+          continue;
         }
+        // The window says when the engine is done with the move; the
+        // drawing says when the pokemon is. A one-shot still running
+        // is a swing part-way through, and dropping it there is what
+        // made the last frame of a Strike flash by
+        const sprite = spriteFor(unit);
+        const playing = sprite?.playing;
+
+        if (sprite != null && playing != null && !isLoopingCast(playing) && !sprite.finished) {
+          continue;
+        }
+        striking.delete(unit);
       }
       // Back on the field once there is nothing left to be away for.
       // The striking step normally brings it up, but a move that

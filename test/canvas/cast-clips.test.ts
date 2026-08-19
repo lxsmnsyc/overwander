@@ -12,6 +12,8 @@ import {
 import { Moves } from '../../src/data/ids/moves';
 import { getMoveData } from '../../src/data/moves';
 import { animationFor } from '../../src/components/battle/BattleCanvas';
+import { AI_REST_PERIOD } from '../../src/battle/ai/idle';
+import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { createBattle, createUnit } from '../battle/harness';
 
 /**
@@ -157,6 +159,22 @@ describe('what the field shows while a move is cast', () => {
     // A loop fills a window of any length by repeating rather than by
     // being dragged out over it
     expect(gathering.duration).toBe(null);
+  });
+
+  it('knows how long a gesture takes, so it is not cut off', () => {
+    const gengar = loaded(94);
+    const strike = gengar.data.anims.anims.find((anim) => anim.name === 'Strike');
+    const ticks = strike?.durations.reduce((sum, held) => sum + held, 0) ?? 0;
+
+    // A clip runs for as long as its frames say, at the 24 a second
+    // every sheet is drawn at
+    expect(gengar.lengthOf('Strike')).toBeCloseTo((ticks * 1000) / 24, 3);
+    expect(gengar.lengthOf('Nothing')).toBe(0);
+    // And it outlasts the window the engine holds a plain move open
+    // for, which is why the field waits for the drawing rather than
+    // for the timer: a gesture dropped at the timer loses its last
+    // frame
+    expect(gengar.lengthOf('Strike')).toBeGreaterThan(MOVE_DELAY + AI_REST_PERIOD);
   });
 
   it('throws the move own clip at the speed it was drawn at', () => {

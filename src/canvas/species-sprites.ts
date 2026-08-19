@@ -1,7 +1,7 @@
 import { Species } from '../data/ids/species';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { SpriteCoats } from './sprite-coats';
-import { COATS_PATH, asSpriteCoats, coatOf, drawn } from './sprite-coats';
+import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
 import asSpriteSheetJSON, { type SpriteSheetJSON } from './sprite-sheet';
 
 /**
@@ -98,7 +98,10 @@ async function coats(): Promise<SpriteCoats | null> {
 
 async function loadDescription(species: Species): Promise<SpriteSheetJSON | null> {
   try {
-    const response = await fetch(spriteMetaPath(species));
+    // Asked for with the digest of the sheets it describes, so a
+    // repacked pokemon is a new address rather than whatever the
+    // browser kept from last time
+    const response = await fetch(stamped(spriteMetaPath(species), await coats(), species));
 
     if (!response.ok) {
       return null;
@@ -143,7 +146,10 @@ async function loadSheet(
   }
 
   try {
-    const sprite = new SpeciesSpriteAnimation(spriteImagePath(species, shiny, female), data);
+    const sprite = new SpeciesSpriteAnimation(
+      stamped(spriteImagePath(species, shiny, female), await coats(), species),
+      data,
+    );
 
     await sprite.load();
     return sprite;

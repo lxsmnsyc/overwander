@@ -160,7 +160,19 @@ interface Placement {
   width: number;
   height: number;
   scale: number;
+  /**
+   * Whether the pokemon is being drawn facing the other way. It is the
+   * caller's flip alone, so a point on the frame lands where the eye
+   * sees it
+   */
   flip: boolean;
+  /**
+   * Whether the **picture** is drawn mirrored, which is the caller's
+   * flip and the frame's own together: a deduped sheet keeps one of a
+   * mirrored pair and marks the other as its reflection, and mirroring
+   * that reflection twice is the pokemon facing the way it was drawn
+   */
+  mirror: boolean;
 }
 
 /**
@@ -380,6 +392,14 @@ export default class SpeciesSpriteAnimation {
   /**
    * What is playing, or null before anything has been asked for
    */
+  /**
+   * How long one clip runs at the speed it was drawn at, in
+   * milliseconds, or nothing for a clip this sheet does not carry
+   */
+  lengthOf(name: string): number {
+    return this.clips.get(name)?.duration ?? 0;
+  }
+
   get playing(): string | null {
     return this.clip?.anim.name ?? null;
   }
@@ -436,26 +456,63 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
-   * Where the frame showing sits on the packed sheet.
+   * Which picture on the sheet the frame showing is drawn from, and
+   * whether it is that picture reflected.
    *
-   * It is what a caller drawing the sheet as a CSS background needs:
-   * `draw` works this out for itself, and a background has to be
-   * scrolled to the same rectangle by hand
+   * A sheet keeps one copy of every repeated drawing, so the frame's
+   * rectangle is the one it points at rather than its own square in a
+   * grid — and a frame the packer kept the other way round is that
+   * picture mirrored
    */
-  get frameBox(): { x: number; y: number; width: number; height: number } | null {
+  private get picture(): { x: number; y: number; mirrored: boolean } | null {
     const clip = this.clip;
 
     if (clip == null) {
       return null;
     }
-
-    const { frameWidth, frameHeight } = clip.target;
+    const { frameWidth, frameHeight, cells } = clip.target;
+    const at = this.anchorsAt(this.frame);
+    // An old sheet says nothing about pictures, and its frames **are**
+    // its pictures: the frame's own square in the grid
+    const column = cells == null || at?.cell == null ? this.frame : at.cell % cells.columns;
+    const row = cells == null || at?.cell == null ? this.row : Math.floor(at.cell / cells.columns);
 
     return {
-      x: clip.image.x + this.frame * frameWidth,
-      y: clip.image.y + this.row * frameHeight,
-      width: frameWidth,
-      height: frameHeight,
+      x: clip.image.x + column * frameWidth,
+      y: clip.image.y + row * frameHeight,
+      mirrored: at?.flip === true,
+    };
+  }
+
+  /**
+   * Where the frame showing sits on the packed sheet, and whether the
+   * picture there is the frame reflected.
+   *
+   * It is what a caller drawing the sheet as a CSS background needs:
+   * `draw` works this out for itself, and a background has to be
+   * scrolled to the same rectangle — and mirrored the same way — by
+   * hand
+   */
+  get frameBox(): {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    mirrored: boolean;
+  } | null {
+    const clip = this.clip;
+    const picture = this.picture;
+
+    if (clip == null || picture == null) {
+      return null;
+    }
+
+    return {
+      x: picture.x,
+      y: picture.y,
+      width: clip.target.frameWidth,
+      height: clip.target.frameHeight,
+      mirrored: picture.mirrored,
     };
   }
 
@@ -682,6 +739,9 @@ export default class SpeciesSpriteAnimation {
 
     const { frameWidth, frameHeight } = clip.target;
     const scale = options.scale ?? 1;
+    // Where the picture for this frame actually sits, which is its own
+    // square on an old sheet and a shared one on a deduped sheet
+    const picture = this.picture;
     const flip = options.flip === true;
     const anchor = this.resting(options.anchor ?? 'center') ?? [
       (frameWidth - 1) / 2,
@@ -692,8 +752,8 @@ export default class SpeciesSpriteAnimation {
     const acrossFrame = flip ? frameWidth - 1 - anchor[0] : anchor[0];
 
     return {
-      left: clip.image.x + this.frame * frameWidth,
-      top: clip.image.y + this.row * frameHeight,
+      left: picture?.x ?? clip.image.x,
+      top: picture?.y ?? clip.image.y,
       frameWidth,
       frameHeight,
       // The middle of the marked pixel rather than its corner: a
@@ -705,6 +765,8 @@ export default class SpeciesSpriteAnimation {
       height: frameHeight * scale,
       scale,
       flip,
+      // Two mirrors make a pokemon facing the way it was drawn
+      mirror: flip !== (picture?.mirrored === true),
     };
   }
 
@@ -829,7 +891,7 @@ export default class SpeciesSpriteAnimation {
       context.globalAlpha = options.alpha;
     }
 
-    if (placed.flip) {
+    if (placed.mirror) {
       context.translate(placed.originX + placed.width, placed.originY);
       context.scale(-1, 1);
       context.drawImage(

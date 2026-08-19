@@ -3,13 +3,15 @@ import { TextWriter, Uint8ArrayReader, Uint8ArrayWriter, ZipReader } from '@zip.
 import type { AnimData } from './anim-data';
 import readAnimData from './anim-data';
 import writeCoats from './coats';
+import type { Deduped, SourceGrid } from './dedupe';
+import dedupe, { drawCells } from './dedupe';
 import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
 import markersFor, { SPRITE_DIRECTIONS } from './markers';
 import pack from './packing';
 import type { Raster } from './raster';
-import { blank, blit, decode, encode } from './raster';
+import { blank, decode, encode } from './raster';
 import type { Trim } from './trim';
 import computeTrim from './trim';
 
@@ -72,10 +74,13 @@ interface Entry {
   rows: number;
   w: number;
   h: number;
+  /** Which frames are the same picture, once every coat has been read. */
+  kept?: Deduped;
 }
 
 /** What the description says about one animation's frames. */
 interface SpriteTarget {
+  cells: { columns: number; rows: number };
   frameWidth: number;
   frameHeight: number;
   sourceFrameWidth: number;
@@ -257,6 +262,22 @@ function widest(trims: Trim[]): Trim {
   };
 }
 
+/** Where one animation's frames sit in the archive it came from. */
+function gridOf(entry: Entry): SourceGrid {
+  return {
+    x: 0,
+    y: 0,
+    pitchX: entry.sourceFrameWidth,
+    pitchY: entry.sourceFrameHeight,
+    offsetX: entry.trim[0],
+    offsetY: entry.trim[1],
+    frameWidth: entry.frameWidth,
+    frameHeight: entry.frameHeight,
+    columns: entry.columns,
+    rows: entry.rows,
+  };
+}
+
 /** Where every anchor of every frame of one animation ended up. */
 function targetFor(entry: Entry): SpriteTarget {
   const frames: FrameMarkers[] = [];
@@ -279,7 +300,10 @@ function targetFor(entry: Entry): SpriteTarget {
     }
   }
 
+  const kept = entry.kept;
+
   return {
+    cells: { columns: kept?.columns ?? entry.columns, rows: kept?.rows ?? entry.rows },
     frameWidth: entry.frameWidth,
     frameHeight: entry.frameHeight,
     sourceFrameWidth: entry.sourceFrameWidth,
@@ -288,51 +312,27 @@ function targetFor(entry: Entry): SpriteTarget {
     columns: entry.columns,
     rows: entry.rows,
     directions: [...SPRITE_DIRECTIONS].slice(0, entry.rows),
-    frames,
+    // Every frame says which picture it is drawn from, and whether it
+    // is that picture reflected
+    frames: frames.map((markers, at) => ({
+      ...markers,
+      cell: kept?.frames[at]?.cell ?? at,
+      flip: kept?.frames[at]?.flip ?? false,
+    })),
   };
 }
 
-/**
- * Draws one animation into the sheet, frame by frame when compacted.
- * Exported for the test that pins the whole-image shortcut, which is
- * the one place a wrong answer is invisible in the numbers
- */
-export function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
+/** Draws one animation into the sheet: one copy of each picture. */
+function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
   const drawing = entry.images.animation;
 
-  if (drawing == null) {
+  if (drawing == null || entry.kept == null) {
     return;
   }
-  // Only when the grid was left completely alone. Checking the width
-  // and ignoring the height let a sheet that was trimmed **only** at
-  // the bottom take this path: the whole untrimmed image was copied
-  // into a box sized for the shorter frames, so every row after the
-  // first landed too low and the bottom of the sheet was cut off
-  const whole =
-    entry.trim[0] === 0 &&
-    entry.trim[1] === 0 &&
-    entry.frameWidth === entry.sourceFrameWidth &&
-    entry.frameHeight === entry.sourceFrameHeight;
-
-  if (whole) {
-    blit(sheet, drawing, { x: 0, y: 0, width: entry.w, height: entry.h }, at);
-    return;
-  }
-  for (let row = 0; row < entry.rows; row += 1) {
-    for (let column = 0; column < entry.columns; column += 1) {
-      blit(
-        sheet,
-        drawing,
-        {
-          x: column * entry.sourceFrameWidth + entry.trim[0],
-          y: row * entry.sourceFrameHeight + entry.trim[1],
-          width: entry.frameWidth,
-          height: entry.frameHeight,
-        },
-        { x: at.x + column * entry.frameWidth, y: at.y + row * entry.frameHeight },
-      );
-    }
-  }
+  // One copy of each picture, wherever it came from in the archive.
+  // There is no shortcut for an untrimmed grid any more: the frames
+  // are not laid out the way they arrived, so every one is placed
+  drawCells(sheet, drawing, gridOf(entry), at, entry.kept);
 }
 
 /** One coat's archive, read for its pictures alone. */
@@ -361,6 +361,23 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
 
   if (entries.length === 0) {
     throw new Error('The archive holds none of the animations asked for');
+  }
+  // Which frames are the same picture, decided across every coat at
+  // once: they share one description, so a pair is only a pair when it
+  // is a pair in all of them. The box a clip needs is what is left
+  for (const entry of entries) {
+    const drawings = [
+      entry.images.animation,
+      ...others.map((coat) => coat.get(entry.name)?.animation),
+    ];
+
+    entry.kept = dedupe(
+      drawings
+        .filter((raster): raster is Raster => raster != null)
+        .map((raster) => ({ raster, grid: gridOf(entry) })),
+    );
+    entry.w = entry.kept.columns * entry.frameWidth;
+    entry.h = entry.kept.rows * entry.frameHeight;
   }
   const layout = pack(entries);
   const placed: SheetImage[] = [];

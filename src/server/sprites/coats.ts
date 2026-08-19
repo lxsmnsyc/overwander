@@ -1,4 +1,5 @@
-import { readdir, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Coat, SpriteCoats } from '../../canvas/sprite-coats';
 
@@ -54,13 +55,52 @@ export async function readCoats(): Promise<SpriteCoats> {
   }
 
   const coats: Record<string, Coat[]> = {};
+  const stamps: Record<string, string> = {};
 
   // By number rather than by string, so 9 comes before 10 and the file
   // reads like the dex
   for (const species of [...found.keys()].sort((one, two) => one - two)) {
-    coats[String(species)] = ORDER.filter((coat) => found.get(species)?.has(coat) === true);
+    const kept = ORDER.filter((coat) => found.get(species)?.has(coat) === true);
+
+    coats[String(species)] = kept;
+    stamps[String(species)] = await stampOf(species, kept);
   }
-  return { version: 1, coats };
+  return { version: 1, coats, stamps };
+}
+
+/**
+ * How much of the digest is kept: eight hex characters, which is four
+ * bytes of SHA-256. Far past any accident among a few hundred sheets,
+ * and short enough that the address still reads
+ */
+const STAMP_LENGTH = 8;
+
+/** Where each coat's drawing lives, relative to `public/`. */
+function pathOf(species: number, coat: Coat): string {
+  const side = coat === 'shiny' || coat === 'shinyFemale' ? 'shiny' : 'regular';
+  const female = coat === 'female' || coat === 'shinyFemale' ? '_f' : '';
+
+  return `${ROOT}/${side}/${species}${female}.png`;
+}
+
+/**
+ * A digest of everything a pokemon is drawn from: its description and
+ * every coat. Either changing is a reason to fetch both again, which is
+ * the whole point — a new drawing read against an old description draws
+ * from wherever those coordinates now land
+ */
+async function stampOf(species: number, coats: Coat[]): Promise<string> {
+  const hash = createHash('sha256');
+  const files = [`${ROOT}/meta/${species}.json`, ...coats.map((coat) => pathOf(species, coat))];
+
+  for (const file of files) {
+    const held = await readFile(join(process.cwd(), 'public', file)).catch(() => null);
+
+    if (held != null) {
+      hash.update(held);
+    }
+  }
+  return hash.digest('hex').slice(0, STAMP_LENGTH);
 }
 
 /**
@@ -74,8 +114,14 @@ function formatCoats(listed: SpriteCoats): string {
   const lines = Object.entries(listed.coats).map(
     ([species, coats]) => `    "${species}": ${JSON.stringify(coats)}`,
   );
+  const marks = Object.entries(listed.stamps).map(
+    ([species, stamp]) => `    "${species}": "${stamp}"`,
+  );
 
-  return `{\n  "version": 1,\n  "coats": {\n${lines.join(',\n')}\n  }\n}\n`;
+  return (
+    `{\n  "version": 1,\n  "coats": {\n${lines.join(',\n')}\n  },\n` +
+    `  "stamps": {\n${marks.join(',\n')}\n  }\n}\n`
+  );
 }
 
 /**

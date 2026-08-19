@@ -1,0 +1,10612 @@
+{
+  "compact": true,
+  "sheet": {
+    "width": 1314,
+    "height": 1176,
+    "images": [
+      {
+        "name": "Swing",
+        "x": 0,
+        "y": 0,
+        "width": 630,
+        "height": 520
+      },
+      {
+        "name": "Attack",
+        "x": 630,
+        "y": 0,
+        "width": 684,
+        "height": 512
+      },
+      {
+        "name": "Double",
+        "x": 0,
+        "y": 520,
+        "width": 928,
+        "height": 424
+      },
+      {
+        "name": "Walk",
+        "x": 928,
+        "y": 520,
+        "width": 159,
+        "height": 352
+      },
+      {
+        "name": "Hurt",
+        "x": 1087,
+        "y": 520,
+        "width": 76,
+        "height": 280
+      },
+      {
+        "name": "Hop",
+        "x": 0,
+        "y": 944,
+        "width": 238,
+        "height": 232
+      },
+      {
+        "name": "Charge",
+        "x": 238,
+        "y": 944,
+        "width": 340,
+        "height": 224
+      },
+      {
+        "name": "Idle",
+        "x": 1163,
+        "y": 520,
+        "width": 64,
+        "height": 224
+      },
+      {
+        "name": "Rotate",
+        "x": 578,
+        "y": 944,
+        "width": 288,
+        "height": 216
+      },
+      {
+        "name": "Sleep",
+        "x": 1227,
+        "y": 520,
+        "width": 62,
+        "height": 27
+      }
+    ]
+  },
+  "anims": {
+    "shadowSize": 2,
+    "anims": [
+      {
+        "name": "Walk",
+        "index": 0,
+        "frameWidth": 56,
+        "frameHeight": 48,
+        "durations": [
+          8,
+          8,
+          8
+        ],
+        "target": "Walk"
+      },
+      {
+        "name": "Attack",
+        "index": 1,
+        "frameWidth": 80,
+        "frameHeight": 72,
+        "durations": [
+          2,
+          6,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "Sleep",
+        "index": 5,
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "durations": [
+          30,
+          35
+        ],
+        "target": "Sleep"
+      },
+      {
+        "name": "Hurt",
+        "index": 6,
+        "frameWidth": 40,
+        "frameHeight": 40,
+        "durations": [
+          2,
+          8
+        ],
+        "target": "Hurt"
+      },
+      {
+        "name": "Idle",
+        "index": 7,
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "durations": [
+          12,
+          16
+        ],
+        "target": "Idle"
+      },
+      {
+        "name": "Swing",
+        "index": 8,
+        "frameWidth": 72,
+        "frameHeight": 80,
+        "durations": [
+          2,
+          1,
+          2,
+          2,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "target": "Swing"
+      },
+      {
+        "name": "Double",
+        "index": 9,
+        "frameWidth": 64,
+        "frameHeight": 56,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          2,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Double"
+      },
+      {
+        "name": "Hop",
+        "index": 10,
+        "frameWidth": 40,
+        "frameHeight": 40,
+        "durations": [
+          2,
+          10,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Hop"
+      },
+      {
+        "name": "Charge",
+        "index": 11,
+        "frameWidth": 40,
+        "frameHeight": 32,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Charge"
+      },
+      {
+        "name": "Rotate",
+        "index": 12,
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Rotate"
+      },
+      {
+        "name": "Strike",
+        "index": 2,
+        "frameWidth": 80,
+        "frameHeight": 72,
+        "durations": [
+          2,
+          6,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Attack"
+      },
+      {
+        "name": "Shoot",
+        "index": 3,
+        "frameWidth": 40,
+        "frameHeight": 32,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Charge"
+      },
+      {
+        "name": "SpAttack",
+        "index": 4,
+        "frameWidth": 40,
+        "frameHeight": 32,
+        "durations": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "target": "Charge"
+      }
+    ]
+  },
+  "sprites": {
+    "Swing": {
+      "frameWidth": 70,
+      "frameHeight": 65,
+      "sourceFrameWidth": 72,
+      "sourceFrameHeight": 80,
+      "trim": [
+        1,
+        3
+      ],
+      "columns": 9,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            24,
+            39
+          ],
+          "left": [
+            34,
+            33
+          ],
+          "right": [
+            43,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            45
+          ],
+          "center": null,
+          "head": [
+            34,
+            35
+          ],
+          "left": [
+            40,
+            39
+          ],
+          "right": [
+            44,
+            43
+          ]
+        },
+        {
+          "shadow": [
+            43,
+            48
+          ],
+          "center": null,
+          "head": [
+            44,
+            38
+          ],
+          "left": [
+            42,
+            41
+          ],
+          "right": [
+            47,
+            46
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            54
+          ],
+          "center": null,
+          "head": [
+            49,
+            44
+          ],
+          "left": [
+            43,
+            47
+          ],
+          "right": [
+            34,
+            50
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            57
+          ],
+          "center": null,
+          "head": [
+            44,
+            51
+          ],
+          "left": [
+            33,
+            51
+          ],
+          "right": [
+            26,
+            51
+          ]
+        },
+        {
+          "shadow": [
+            28,
+            54
+          ],
+          "center": null,
+          "head": [
+            30,
+            52
+          ],
+          "left": [
+            27,
+            47
+          ],
+          "right": [
+            25,
+            43
+          ]
+        },
+        {
+          "shadow": [
+            27,
+            50
+          ],
+          "center": null,
+          "head": [
+            24,
+            49
+          ],
+          "left": [
+            27,
+            46
+          ],
+          "right": [
+            30,
+            41
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            45
+          ],
+          "center": null,
+          "head": [
+            21,
+            43
+          ],
+          "left": [
+            27,
+            38
+          ],
+          "right": [
+            33,
+            37
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            24,
+            39
+          ],
+          "left": [
+            34,
+            33
+          ],
+          "right": [
+            43,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            27,
+            39
+          ],
+          "left": [
+            33,
+            34
+          ],
+          "right": [
+            39,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            41
+          ],
+          "center": null,
+          "head": [
+            30,
+            39
+          ],
+          "left": [
+            40,
+            33
+          ],
+          "right": [
+            49,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            52,
+            44
+          ],
+          "center": null,
+          "head": [
+            45,
+            34
+          ],
+          "left": [
+            51,
+            38
+          ],
+          "right": [
+            55,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            54,
+            49
+          ],
+          "center": null,
+          "head": [
+            55,
+            39
+          ],
+          "left": [
+            53,
+            42
+          ],
+          "right": [
+            58,
+            47
+          ]
+        },
+        {
+          "shadow": [
+            52,
+            56
+          ],
+          "center": null,
+          "head": [
+            59,
+            46
+          ],
+          "left": [
+            53,
+            49
+          ],
+          "right": [
+            44,
+            52
+          ]
+        },
+        {
+          "shadow": [
+            44,
+            57
+          ],
+          "center": null,
+          "head": [
+            53,
+            51
+          ],
+          "left": [
+            42,
+            51
+          ],
+          "right": [
+            35,
+            51
+          ]
+        },
+        {
+          "shadow": [
+            37,
+            53
+          ],
+          "center": null,
+          "head": [
+            39,
+            51
+          ],
+          "left": [
+            36,
+            46
+          ],
+          "right": [
+            34,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            48
+          ],
+          "center": null,
+          "head": [
+            32,
+            47
+          ],
+          "left": [
+            35,
+            44
+          ],
+          "right": [
+            38,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            27,
+            39
+          ],
+          "left": [
+            33,
+            34
+          ],
+          "right": [
+            39,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            32,
+            40
+          ],
+          "left": [
+            35,
+            37
+          ],
+          "right": [
+            38,
+            32
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            37
+          ],
+          "center": null,
+          "head": [
+            30,
+            35
+          ],
+          "left": [
+            36,
+            30
+          ],
+          "right": [
+            42,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            46,
+            35
+          ],
+          "center": null,
+          "head": [
+            35,
+            33
+          ],
+          "left": [
+            45,
+            27
+          ],
+          "right": [
+            54,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            52,
+            37
+          ],
+          "center": null,
+          "head": [
+            45,
+            27
+          ],
+          "left": [
+            51,
+            31
+          ],
+          "right": [
+            55,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            53,
+            42
+          ],
+          "center": null,
+          "head": [
+            54,
+            32
+          ],
+          "left": [
+            52,
+            35
+          ],
+          "right": [
+            57,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            50,
+            46
+          ],
+          "center": null,
+          "head": [
+            57,
+            36
+          ],
+          "left": [
+            51,
+            39
+          ],
+          "right": [
+            42,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            47,
+            48
+          ],
+          "center": null,
+          "head": [
+            56,
+            42
+          ],
+          "left": [
+            45,
+            42
+          ],
+          "right": [
+            38,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            46
+          ],
+          "center": null,
+          "head": [
+            41,
+            44
+          ],
+          "left": [
+            38,
+            39
+          ],
+          "right": [
+            36,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            32,
+            40
+          ],
+          "left": [
+            35,
+            37
+          ],
+          "right": [
+            38,
+            32
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            37,
+            39
+          ],
+          "left": [
+            34,
+            34
+          ],
+          "right": [
+            32,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            34,
+            35
+          ],
+          "center": null,
+          "head": [
+            31,
+            34
+          ],
+          "left": [
+            34,
+            31
+          ],
+          "right": [
+            37,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            25
+          ],
+          "center": null,
+          "head": [
+            31,
+            23
+          ],
+          "left": [
+            37,
+            18
+          ],
+          "right": [
+            43,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            44,
+            21
+          ],
+          "center": null,
+          "head": [
+            33,
+            19
+          ],
+          "left": [
+            43,
+            13
+          ],
+          "right": [
+            52,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            51,
+            19
+          ],
+          "center": null,
+          "head": [
+            44,
+            9
+          ],
+          "left": [
+            50,
+            13
+          ],
+          "right": [
+            54,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            53,
+            26
+          ],
+          "center": null,
+          "head": [
+            54,
+            16
+          ],
+          "left": [
+            52,
+            19
+          ],
+          "right": [
+            57,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            51,
+            35
+          ],
+          "center": null,
+          "head": [
+            58,
+            25
+          ],
+          "left": [
+            52,
+            28
+          ],
+          "right": [
+            43,
+            31
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            40
+          ],
+          "center": null,
+          "head": [
+            51,
+            34
+          ],
+          "left": [
+            40,
+            34
+          ],
+          "right": [
+            33,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            37,
+            39
+          ],
+          "left": [
+            34,
+            34
+          ],
+          "right": [
+            32,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            44,
+            35
+          ],
+          "left": [
+            33,
+            35
+          ],
+          "right": [
+            26,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            37
+          ],
+          "center": null,
+          "head": [
+            31,
+            35
+          ],
+          "left": [
+            28,
+            30
+          ],
+          "right": [
+            26,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            27,
+            31
+          ],
+          "center": null,
+          "head": [
+            24,
+            30
+          ],
+          "left": [
+            27,
+            27
+          ],
+          "right": [
+            30,
+            22
+          ]
+        },
+        {
+          "shadow": [
+            28,
+            23
+          ],
+          "center": null,
+          "head": [
+            20,
+            21
+          ],
+          "left": [
+            26,
+            16
+          ],
+          "right": [
+            32,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            19
+          ],
+          "center": null,
+          "head": [
+            24,
+            17
+          ],
+          "left": [
+            34,
+            11
+          ],
+          "right": [
+            43,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            23
+          ],
+          "center": null,
+          "head": [
+            35,
+            13
+          ],
+          "left": [
+            41,
+            17
+          ],
+          "right": [
+            45,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            43,
+            33
+          ],
+          "center": null,
+          "head": [
+            44,
+            23
+          ],
+          "left": [
+            42,
+            26
+          ],
+          "right": [
+            47,
+            31
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            37
+          ],
+          "center": null,
+          "head": [
+            48,
+            27
+          ],
+          "left": [
+            42,
+            30
+          ],
+          "right": [
+            33,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            44,
+            35
+          ],
+          "left": [
+            33,
+            35
+          ],
+          "right": [
+            26,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            42,
+            31
+          ],
+          "left": [
+            36,
+            34
+          ],
+          "right": [
+            27,
+            37
+          ]
+        },
+        {
+          "shadow": [
+            36,
+            35
+          ],
+          "center": null,
+          "head": [
+            37,
+            25
+          ],
+          "left": [
+            35,
+            28
+          ],
+          "right": [
+            40,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            31,
+            25
+          ],
+          "center": null,
+          "head": [
+            24,
+            15
+          ],
+          "left": [
+            30,
+            19
+          ],
+          "right": [
+            34,
+            23
+          ]
+        },
+        {
+          "shadow": [
+            27,
+            21
+          ],
+          "center": null,
+          "head": [
+            16,
+            19
+          ],
+          "left": [
+            26,
+            13
+          ],
+          "right": [
+            35,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            19
+          ],
+          "center": null,
+          "head": [
+            11,
+            17
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            23,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            26
+          ],
+          "center": null,
+          "head": [
+            14,
+            25
+          ],
+          "left": [
+            17,
+            22
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            35
+          ],
+          "center": null,
+          "head": [
+            21,
+            33
+          ],
+          "left": [
+            18,
+            28
+          ],
+          "right": [
+            16,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            28,
+            40
+          ],
+          "center": null,
+          "head": [
+            37,
+            34
+          ],
+          "left": [
+            26,
+            34
+          ],
+          "right": [
+            19,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            42,
+            31
+          ],
+          "left": [
+            36,
+            34
+          ],
+          "right": [
+            27,
+            37
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            36,
+            31
+          ],
+          "left": [
+            34,
+            34
+          ],
+          "right": [
+            39,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            32,
+            37
+          ],
+          "center": null,
+          "head": [
+            25,
+            27
+          ],
+          "left": [
+            31,
+            31
+          ],
+          "right": [
+            35,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            24,
+            35
+          ],
+          "center": null,
+          "head": [
+            13,
+            33
+          ],
+          "left": [
+            23,
+            27
+          ],
+          "right": [
+            32,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            37
+          ],
+          "center": null,
+          "head": [
+            10,
+            35
+          ],
+          "left": [
+            16,
+            30
+          ],
+          "right": [
+            22,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            42
+          ],
+          "center": null,
+          "head": [
+            14,
+            41
+          ],
+          "left": [
+            17,
+            38
+          ],
+          "right": [
+            20,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            46
+          ],
+          "center": null,
+          "head": [
+            22,
+            44
+          ],
+          "left": [
+            19,
+            39
+          ],
+          "right": [
+            17,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            25,
+            48
+          ],
+          "center": null,
+          "head": [
+            34,
+            42
+          ],
+          "left": [
+            23,
+            42
+          ],
+          "right": [
+            16,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            31,
+            46
+          ],
+          "center": null,
+          "head": [
+            38,
+            36
+          ],
+          "left": [
+            32,
+            39
+          ],
+          "right": [
+            23,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            36,
+            31
+          ],
+          "left": [
+            34,
+            34
+          ],
+          "right": [
+            39,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            28,
+            31
+          ],
+          "left": [
+            34,
+            35
+          ],
+          "right": [
+            38,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            41
+          ],
+          "center": null,
+          "head": [
+            18,
+            39
+          ],
+          "left": [
+            28,
+            33
+          ],
+          "right": [
+            37,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            44
+          ],
+          "center": null,
+          "head": [
+            10,
+            42
+          ],
+          "left": [
+            16,
+            37
+          ],
+          "right": [
+            22,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            49
+          ],
+          "center": null,
+          "head": [
+            13,
+            48
+          ],
+          "left": [
+            16,
+            45
+          ],
+          "right": [
+            19,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            56
+          ],
+          "center": null,
+          "head": [
+            20,
+            54
+          ],
+          "left": [
+            17,
+            49
+          ],
+          "right": [
+            15,
+            45
+          ]
+        },
+        {
+          "shadow": [
+            26,
+            57
+          ],
+          "center": null,
+          "head": [
+            35,
+            51
+          ],
+          "left": [
+            24,
+            51
+          ],
+          "right": [
+            17,
+            51
+          ]
+        },
+        {
+          "shadow": [
+            33,
+            53
+          ],
+          "center": null,
+          "head": [
+            40,
+            43
+          ],
+          "left": [
+            34,
+            46
+          ],
+          "right": [
+            25,
+            49
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            48
+          ],
+          "center": null,
+          "head": [
+            36,
+            38
+          ],
+          "left": [
+            34,
+            41
+          ],
+          "right": [
+            39,
+            46
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            41
+          ],
+          "center": null,
+          "head": [
+            28,
+            31
+          ],
+          "left": [
+            34,
+            35
+          ],
+          "right": [
+            38,
+            39
+          ]
+        }
+      ]
+    },
+    "Attack": {
+      "frameWidth": 76,
+      "frameHeight": 64,
+      "sourceFrameWidth": 80,
+      "sourceFrameHeight": 72,
+      "trim": [
+        2,
+        3
+      ],
+      "columns": 9,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            38,
+            35
+          ],
+          "center": null,
+          "head": [
+            28,
+            27
+          ],
+          "left": [
+            38,
+            24
+          ],
+          "right": [
+            45,
+            31
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            34
+          ],
+          "center": null,
+          "head": [
+            28,
+            26
+          ],
+          "left": [
+            38,
+            23
+          ],
+          "right": [
+            45,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            46
+          ],
+          "center": null,
+          "head": [
+            28,
+            40
+          ],
+          "left": [
+            37,
+            41
+          ],
+          "right": [
+            45,
+            46
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            55
+          ],
+          "center": null,
+          "head": [
+            28,
+            49
+          ],
+          "left": [
+            37,
+            50
+          ],
+          "right": [
+            45,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            55
+          ],
+          "center": null,
+          "head": [
+            29,
+            49
+          ],
+          "left": [
+            38,
+            50
+          ],
+          "right": [
+            46,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            55
+          ],
+          "center": null,
+          "head": [
+            28,
+            49
+          ],
+          "left": [
+            37,
+            50
+          ],
+          "right": [
+            45,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            55
+          ],
+          "center": null,
+          "head": [
+            29,
+            49
+          ],
+          "left": [
+            38,
+            50
+          ],
+          "right": [
+            46,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            43
+          ],
+          "center": null,
+          "head": [
+            28,
+            35
+          ],
+          "left": [
+            38,
+            32
+          ],
+          "right": [
+            45,
+            39
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            40
+          ],
+          "center": null,
+          "head": [
+            28,
+            32
+          ],
+          "left": [
+            38,
+            29
+          ],
+          "right": [
+            45,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            36,
+            35
+          ],
+          "center": null,
+          "head": [
+            26,
+            32
+          ],
+          "left": [
+            32,
+            27
+          ],
+          "right": [
+            39,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            34
+          ],
+          "center": null,
+          "head": [
+            25,
+            31
+          ],
+          "left": [
+            31,
+            26
+          ],
+          "right": [
+            38,
+            23
+          ]
+        },
+        {
+          "shadow": [
+            47,
+            46
+          ],
+          "center": null,
+          "head": [
+            39,
+            43
+          ],
+          "left": [
+            47,
+            40
+          ],
+          "right": [
+            55,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            55
+          ],
+          "center": null,
+          "head": [
+            48,
+            52
+          ],
+          "left": [
+            56,
+            49
+          ],
+          "right": [
+            64,
+            49
+          ]
+        },
+        {
+          "shadow": [
+            55,
+            56
+          ],
+          "center": null,
+          "head": [
+            47,
+            53
+          ],
+          "left": [
+            55,
+            50
+          ],
+          "right": [
+            63,
+            50
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            55
+          ],
+          "center": null,
+          "head": [
+            48,
+            52
+          ],
+          "left": [
+            56,
+            49
+          ],
+          "right": [
+            64,
+            49
+          ]
+        },
+        {
+          "shadow": [
+            55,
+            56
+          ],
+          "center": null,
+          "head": [
+            47,
+            53
+          ],
+          "left": [
+            55,
+            50
+          ],
+          "right": [
+            63,
+            50
+          ]
+        },
+        {
+          "shadow": [
+            44,
+            43
+          ],
+          "center": null,
+          "head": [
+            34,
+            40
+          ],
+          "left": [
+            40,
+            35
+          ],
+          "right": [
+            47,
+            32
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            40
+          ],
+          "center": null,
+          "head": [
+            31,
+            37
+          ],
+          "left": [
+            37,
+            32
+          ],
+          "right": [
+            44,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            36,
+            37
+          ],
+          "center": null,
+          "head": [
+            34,
+            36
+          ],
+          "left": [
+            32,
+            31
+          ],
+          "right": [
+            35,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            37
+          ],
+          "center": null,
+          "head": [
+            33,
+            36
+          ],
+          "left": [
+            31,
+            31
+          ],
+          "right": [
+            34,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            46,
+            37
+          ],
+          "center": null,
+          "head": [
+            47,
+            38
+          ],
+          "left": [
+            46,
+            32
+          ],
+          "right": [
+            50,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            37
+          ],
+          "center": null,
+          "head": [
+            57,
+            38
+          ],
+          "left": [
+            56,
+            32
+          ],
+          "right": [
+            60,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            36
+          ],
+          "center": null,
+          "head": [
+            57,
+            37
+          ],
+          "left": [
+            56,
+            31
+          ],
+          "right": [
+            60,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            37
+          ],
+          "center": null,
+          "head": [
+            57,
+            38
+          ],
+          "left": [
+            56,
+            32
+          ],
+          "right": [
+            60,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            36
+          ],
+          "center": null,
+          "head": [
+            57,
+            37
+          ],
+          "left": [
+            56,
+            31
+          ],
+          "right": [
+            60,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            44,
+            37
+          ],
+          "center": null,
+          "head": [
+            42,
+            36
+          ],
+          "left": [
+            40,
+            31
+          ],
+          "right": [
+            43,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            37
+          ],
+          "center": null,
+          "head": [
+            39,
+            36
+          ],
+          "left": [
+            37,
+            31
+          ],
+          "right": [
+            40,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            36,
+            39
+          ],
+          "center": null,
+          "head": [
+            39,
+            37
+          ],
+          "left": [
+            33,
+            34
+          ],
+          "right": [
+            32,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            40
+          ],
+          "center": null,
+          "head": [
+            38,
+            38
+          ],
+          "left": [
+            32,
+            35
+          ],
+          "right": [
+            31,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            47,
+            28
+          ],
+          "center": null,
+          "head": [
+            56,
+            27
+          ],
+          "left": [
+            48,
+            24
+          ],
+          "right": [
+            46,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            19
+          ],
+          "center": null,
+          "head": [
+            65,
+            18
+          ],
+          "left": [
+            57,
+            15
+          ],
+          "right": [
+            55,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            55,
+            18
+          ],
+          "center": null,
+          "head": [
+            64,
+            17
+          ],
+          "left": [
+            56,
+            14
+          ],
+          "right": [
+            54,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            56,
+            19
+          ],
+          "center": null,
+          "head": [
+            65,
+            18
+          ],
+          "left": [
+            57,
+            15
+          ],
+          "right": [
+            55,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            55,
+            18
+          ],
+          "center": null,
+          "head": [
+            64,
+            17
+          ],
+          "left": [
+            56,
+            14
+          ],
+          "right": [
+            54,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            44,
+            31
+          ],
+          "center": null,
+          "head": [
+            47,
+            29
+          ],
+          "left": [
+            41,
+            26
+          ],
+          "right": [
+            40,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            34
+          ],
+          "center": null,
+          "head": [
+            44,
+            32
+          ],
+          "left": [
+            38,
+            29
+          ],
+          "right": [
+            37,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            39
+          ],
+          "center": null,
+          "head": [
+            46,
+            33
+          ],
+          "left": [
+            36,
+            33
+          ],
+          "right": [
+            29,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            40
+          ],
+          "center": null,
+          "head": [
+            46,
+            34
+          ],
+          "left": [
+            36,
+            34
+          ],
+          "right": [
+            29,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            27
+          ],
+          "center": null,
+          "head": [
+            47,
+            22
+          ],
+          "left": [
+            37,
+            24
+          ],
+          "right": [
+            29,
+            22
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            19
+          ],
+          "center": null,
+          "head": [
+            47,
+            14
+          ],
+          "left": [
+            37,
+            16
+          ],
+          "right": [
+            29,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            19
+          ],
+          "center": null,
+          "head": [
+            48,
+            14
+          ],
+          "left": [
+            38,
+            16
+          ],
+          "right": [
+            30,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            19
+          ],
+          "center": null,
+          "head": [
+            47,
+            14
+          ],
+          "left": [
+            37,
+            16
+          ],
+          "right": [
+            29,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            19
+          ],
+          "center": null,
+          "head": [
+            48,
+            14
+          ],
+          "left": [
+            38,
+            16
+          ],
+          "right": [
+            30,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            31
+          ],
+          "center": null,
+          "head": [
+            46,
+            25
+          ],
+          "left": [
+            36,
+            25
+          ],
+          "right": [
+            29,
+            25
+          ]
+        },
+        {
+          "shadow": [
+            38,
+            34
+          ],
+          "center": null,
+          "head": [
+            46,
+            28
+          ],
+          "left": [
+            36,
+            28
+          ],
+          "right": [
+            29,
+            28
+          ]
+        },
+        {
+          "shadow": [
+            40,
+            39
+          ],
+          "center": null,
+          "head": [
+            48,
+            29
+          ],
+          "left": [
+            40,
+            32
+          ],
+          "right": [
+            34,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            40
+          ],
+          "center": null,
+          "head": [
+            49,
+            30
+          ],
+          "left": [
+            41,
+            33
+          ],
+          "right": [
+            35,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            28
+          ],
+          "center": null,
+          "head": [
+            36,
+            18
+          ],
+          "left": [
+            29,
+            21
+          ],
+          "right": [
+            21,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            19
+          ],
+          "center": null,
+          "head": [
+            27,
+            9
+          ],
+          "left": [
+            20,
+            12
+          ],
+          "right": [
+            12,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            18
+          ],
+          "center": null,
+          "head": [
+            28,
+            8
+          ],
+          "left": [
+            21,
+            11
+          ],
+          "right": [
+            13,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            19
+          ],
+          "center": null,
+          "head": [
+            27,
+            9
+          ],
+          "left": [
+            20,
+            12
+          ],
+          "right": [
+            12,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            18
+          ],
+          "center": null,
+          "head": [
+            28,
+            8
+          ],
+          "left": [
+            21,
+            11
+          ],
+          "right": [
+            13,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            32,
+            31
+          ],
+          "center": null,
+          "head": [
+            40,
+            21
+          ],
+          "left": [
+            32,
+            24
+          ],
+          "right": [
+            26,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            34
+          ],
+          "center": null,
+          "head": [
+            43,
+            24
+          ],
+          "left": [
+            35,
+            27
+          ],
+          "right": [
+            29,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            36,
+            37
+          ],
+          "center": null,
+          "head": [
+            34,
+            36
+          ],
+          "left": [
+            32,
+            31
+          ],
+          "right": [
+            35,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            37
+          ],
+          "center": null,
+          "head": [
+            41,
+            26
+          ],
+          "left": [
+            43,
+            30
+          ],
+          "right": [
+            41,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            30,
+            37
+          ],
+          "center": null,
+          "head": [
+            22,
+            25
+          ],
+          "left": [
+            28,
+            30
+          ],
+          "right": [
+            29,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            37
+          ],
+          "center": null,
+          "head": [
+            12,
+            25
+          ],
+          "left": [
+            18,
+            30
+          ],
+          "right": [
+            19,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            36
+          ],
+          "center": null,
+          "head": [
+            12,
+            24
+          ],
+          "left": [
+            18,
+            29
+          ],
+          "right": [
+            19,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            37
+          ],
+          "center": null,
+          "head": [
+            12,
+            25
+          ],
+          "left": [
+            18,
+            30
+          ],
+          "right": [
+            19,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            36
+          ],
+          "center": null,
+          "head": [
+            12,
+            24
+          ],
+          "left": [
+            18,
+            29
+          ],
+          "right": [
+            19,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            32,
+            37
+          ],
+          "center": null,
+          "head": [
+            32,
+            26
+          ],
+          "left": [
+            34,
+            30
+          ],
+          "right": [
+            32,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            37
+          ],
+          "center": null,
+          "head": [
+            35,
+            26
+          ],
+          "left": [
+            37,
+            30
+          ],
+          "right": [
+            35,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            40,
+            35
+          ],
+          "center": null,
+          "head": [
+            33,
+            21
+          ],
+          "left": [
+            40,
+            25
+          ],
+          "right": [
+            42,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            34
+          ],
+          "center": null,
+          "head": [
+            34,
+            20
+          ],
+          "left": [
+            41,
+            24
+          ],
+          "right": [
+            43,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            46
+          ],
+          "center": null,
+          "head": [
+            26,
+            35
+          ],
+          "left": [
+            28,
+            39
+          ],
+          "right": [
+            30,
+            45
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            55
+          ],
+          "center": null,
+          "head": [
+            17,
+            44
+          ],
+          "left": [
+            19,
+            48
+          ],
+          "right": [
+            21,
+            54
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            56
+          ],
+          "center": null,
+          "head": [
+            18,
+            45
+          ],
+          "left": [
+            20,
+            49
+          ],
+          "right": [
+            22,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            20,
+            55
+          ],
+          "center": null,
+          "head": [
+            17,
+            44
+          ],
+          "left": [
+            19,
+            48
+          ],
+          "right": [
+            21,
+            54
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            56
+          ],
+          "center": null,
+          "head": [
+            18,
+            45
+          ],
+          "left": [
+            20,
+            49
+          ],
+          "right": [
+            22,
+            55
+          ]
+        },
+        {
+          "shadow": [
+            32,
+            43
+          ],
+          "center": null,
+          "head": [
+            25,
+            29
+          ],
+          "left": [
+            32,
+            33
+          ],
+          "right": [
+            34,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            40
+          ],
+          "center": null,
+          "head": [
+            28,
+            26
+          ],
+          "left": [
+            35,
+            30
+          ],
+          "right": [
+            37,
+            39
+          ]
+        }
+      ]
+    },
+    "Double": {
+      "frameWidth": 58,
+      "frameHeight": 53,
+      "sourceFrameWidth": 64,
+      "sourceFrameHeight": 56,
+      "trim": [
+        3,
+        0
+      ],
+      "columns": 16,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            18,
+            30
+          ],
+          "left": [
+            28,
+            24
+          ],
+          "right": [
+            37,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            32
+          ],
+          "center": null,
+          "head": [
+            24,
+            30
+          ],
+          "left": [
+            34,
+            24
+          ],
+          "right": [
+            43,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            32
+          ],
+          "center": null,
+          "head": [
+            12,
+            30
+          ],
+          "left": [
+            22,
+            24
+          ],
+          "right": [
+            31,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            32
+          ],
+          "center": null,
+          "head": [
+            28,
+            30
+          ],
+          "left": [
+            38,
+            24
+          ],
+          "right": [
+            47,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            32
+          ],
+          "center": null,
+          "head": [
+            8,
+            30
+          ],
+          "left": [
+            18,
+            24
+          ],
+          "right": [
+            27,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            32
+          ],
+          "center": null,
+          "head": [
+            30,
+            30
+          ],
+          "left": [
+            40,
+            24
+          ],
+          "right": [
+            49,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            32
+          ],
+          "center": null,
+          "head": [
+            6,
+            30
+          ],
+          "left": [
+            16,
+            24
+          ],
+          "right": [
+            25,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            32
+          ],
+          "center": null,
+          "head": [
+            31,
+            30
+          ],
+          "left": [
+            41,
+            24
+          ],
+          "right": [
+            50,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            32
+          ],
+          "center": null,
+          "head": [
+            5,
+            30
+          ],
+          "left": [
+            15,
+            24
+          ],
+          "right": [
+            24,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            32
+          ],
+          "center": null,
+          "head": [
+            30,
+            30
+          ],
+          "left": [
+            40,
+            24
+          ],
+          "right": [
+            49,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            32
+          ],
+          "center": null,
+          "head": [
+            6,
+            30
+          ],
+          "left": [
+            16,
+            24
+          ],
+          "right": [
+            25,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            32
+          ],
+          "center": null,
+          "head": [
+            28,
+            30
+          ],
+          "left": [
+            38,
+            24
+          ],
+          "right": [
+            47,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            32
+          ],
+          "center": null,
+          "head": [
+            8,
+            30
+          ],
+          "left": [
+            18,
+            24
+          ],
+          "right": [
+            27,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            32
+          ],
+          "center": null,
+          "head": [
+            24,
+            30
+          ],
+          "left": [
+            34,
+            24
+          ],
+          "right": [
+            43,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            32
+          ],
+          "center": null,
+          "head": [
+            12,
+            30
+          ],
+          "left": [
+            22,
+            24
+          ],
+          "right": [
+            31,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            18,
+            30
+          ],
+          "left": [
+            28,
+            24
+          ],
+          "right": [
+            37,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            21,
+            30
+          ],
+          "left": [
+            27,
+            25
+          ],
+          "right": [
+            33,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            26
+          ],
+          "center": null,
+          "head": [
+            27,
+            24
+          ],
+          "left": [
+            33,
+            19
+          ],
+          "right": [
+            39,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            38
+          ],
+          "center": null,
+          "head": [
+            15,
+            36
+          ],
+          "left": [
+            21,
+            31
+          ],
+          "right": [
+            27,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            22
+          ],
+          "center": null,
+          "head": [
+            31,
+            20
+          ],
+          "left": [
+            37,
+            15
+          ],
+          "right": [
+            43,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            42
+          ],
+          "center": null,
+          "head": [
+            11,
+            40
+          ],
+          "left": [
+            17,
+            35
+          ],
+          "right": [
+            23,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            20
+          ],
+          "center": null,
+          "head": [
+            33,
+            18
+          ],
+          "left": [
+            39,
+            13
+          ],
+          "right": [
+            45,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            44
+          ],
+          "center": null,
+          "head": [
+            9,
+            42
+          ],
+          "left": [
+            15,
+            37
+          ],
+          "right": [
+            21,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            19
+          ],
+          "center": null,
+          "head": [
+            34,
+            17
+          ],
+          "left": [
+            40,
+            12
+          ],
+          "right": [
+            46,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            45
+          ],
+          "center": null,
+          "head": [
+            8,
+            43
+          ],
+          "left": [
+            14,
+            38
+          ],
+          "right": [
+            20,
+            37
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            20
+          ],
+          "center": null,
+          "head": [
+            33,
+            18
+          ],
+          "left": [
+            39,
+            13
+          ],
+          "right": [
+            45,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            44
+          ],
+          "center": null,
+          "head": [
+            9,
+            42
+          ],
+          "left": [
+            15,
+            37
+          ],
+          "right": [
+            21,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            22
+          ],
+          "center": null,
+          "head": [
+            31,
+            20
+          ],
+          "left": [
+            37,
+            15
+          ],
+          "right": [
+            43,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            42
+          ],
+          "center": null,
+          "head": [
+            11,
+            40
+          ],
+          "left": [
+            17,
+            35
+          ],
+          "right": [
+            23,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            26
+          ],
+          "center": null,
+          "head": [
+            27,
+            24
+          ],
+          "left": [
+            33,
+            19
+          ],
+          "right": [
+            39,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            38
+          ],
+          "center": null,
+          "head": [
+            15,
+            36
+          ],
+          "left": [
+            21,
+            31
+          ],
+          "right": [
+            27,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            21,
+            30
+          ],
+          "left": [
+            27,
+            25
+          ],
+          "right": [
+            33,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            26,
+            31
+          ],
+          "left": [
+            29,
+            28
+          ],
+          "right": [
+            32,
+            23
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            26
+          ],
+          "center": null,
+          "head": [
+            26,
+            25
+          ],
+          "left": [
+            29,
+            22
+          ],
+          "right": [
+            32,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            38
+          ],
+          "center": null,
+          "head": [
+            26,
+            37
+          ],
+          "left": [
+            29,
+            34
+          ],
+          "right": [
+            32,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            22
+          ],
+          "center": null,
+          "head": [
+            26,
+            21
+          ],
+          "left": [
+            29,
+            18
+          ],
+          "right": [
+            32,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            42
+          ],
+          "center": null,
+          "head": [
+            26,
+            41
+          ],
+          "left": [
+            29,
+            38
+          ],
+          "right": [
+            32,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            19
+          ],
+          "left": [
+            29,
+            16
+          ],
+          "right": [
+            32,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            44
+          ],
+          "center": null,
+          "head": [
+            26,
+            43
+          ],
+          "left": [
+            29,
+            40
+          ],
+          "right": [
+            32,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            19
+          ],
+          "center": null,
+          "head": [
+            26,
+            18
+          ],
+          "left": [
+            29,
+            15
+          ],
+          "right": [
+            32,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            45
+          ],
+          "center": null,
+          "head": [
+            26,
+            44
+          ],
+          "left": [
+            29,
+            41
+          ],
+          "right": [
+            32,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            19
+          ],
+          "left": [
+            29,
+            16
+          ],
+          "right": [
+            32,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            44
+          ],
+          "center": null,
+          "head": [
+            26,
+            43
+          ],
+          "left": [
+            29,
+            40
+          ],
+          "right": [
+            32,
+            35
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            22
+          ],
+          "center": null,
+          "head": [
+            26,
+            21
+          ],
+          "left": [
+            29,
+            18
+          ],
+          "right": [
+            32,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            42
+          ],
+          "center": null,
+          "head": [
+            26,
+            41
+          ],
+          "left": [
+            29,
+            38
+          ],
+          "right": [
+            32,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            26
+          ],
+          "center": null,
+          "head": [
+            26,
+            25
+          ],
+          "left": [
+            29,
+            22
+          ],
+          "right": [
+            32,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            38
+          ],
+          "center": null,
+          "head": [
+            26,
+            37
+          ],
+          "left": [
+            29,
+            34
+          ],
+          "right": [
+            32,
+            29
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            26,
+            31
+          ],
+          "left": [
+            29,
+            28
+          ],
+          "right": [
+            32,
+            23
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            31,
+            30
+          ],
+          "left": [
+            28,
+            25
+          ],
+          "right": [
+            26,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            26
+          ],
+          "center": null,
+          "head": [
+            25,
+            24
+          ],
+          "left": [
+            22,
+            19
+          ],
+          "right": [
+            20,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            38
+          ],
+          "center": null,
+          "head": [
+            37,
+            36
+          ],
+          "left": [
+            34,
+            31
+          ],
+          "right": [
+            32,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            22
+          ],
+          "center": null,
+          "head": [
+            21,
+            20
+          ],
+          "left": [
+            18,
+            15
+          ],
+          "right": [
+            16,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            42
+          ],
+          "center": null,
+          "head": [
+            41,
+            40
+          ],
+          "left": [
+            38,
+            35
+          ],
+          "right": [
+            36,
+            31
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            44
+          ],
+          "center": null,
+          "head": [
+            43,
+            42
+          ],
+          "left": [
+            40,
+            37
+          ],
+          "right": [
+            38,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            45
+          ],
+          "center": null,
+          "head": [
+            44,
+            43
+          ],
+          "left": [
+            41,
+            38
+          ],
+          "right": [
+            39,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            44
+          ],
+          "center": null,
+          "head": [
+            43,
+            42
+          ],
+          "left": [
+            40,
+            37
+          ],
+          "right": [
+            38,
+            33
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            22
+          ],
+          "center": null,
+          "head": [
+            21,
+            20
+          ],
+          "left": [
+            18,
+            15
+          ],
+          "right": [
+            16,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            42
+          ],
+          "center": null,
+          "head": [
+            41,
+            40
+          ],
+          "left": [
+            38,
+            35
+          ],
+          "right": [
+            36,
+            31
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            26
+          ],
+          "center": null,
+          "head": [
+            25,
+            24
+          ],
+          "left": [
+            22,
+            19
+          ],
+          "right": [
+            20,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            38
+          ],
+          "center": null,
+          "head": [
+            37,
+            36
+          ],
+          "left": [
+            34,
+            31
+          ],
+          "right": [
+            32,
+            27
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            31,
+            30
+          ],
+          "left": [
+            28,
+            25
+          ],
+          "right": [
+            26,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            38,
+            26
+          ],
+          "left": [
+            27,
+            26
+          ],
+          "right": [
+            20,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            32
+          ],
+          "center": null,
+          "head": [
+            44,
+            26
+          ],
+          "left": [
+            33,
+            26
+          ],
+          "right": [
+            26,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            32
+          ],
+          "center": null,
+          "head": [
+            32,
+            26
+          ],
+          "left": [
+            21,
+            26
+          ],
+          "right": [
+            14,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            32
+          ],
+          "center": null,
+          "head": [
+            48,
+            26
+          ],
+          "left": [
+            37,
+            26
+          ],
+          "right": [
+            30,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            32
+          ],
+          "center": null,
+          "head": [
+            28,
+            26
+          ],
+          "left": [
+            17,
+            26
+          ],
+          "right": [
+            10,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            32
+          ],
+          "center": null,
+          "head": [
+            50,
+            26
+          ],
+          "left": [
+            39,
+            26
+          ],
+          "right": [
+            32,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            32
+          ],
+          "center": null,
+          "head": [
+            26,
+            26
+          ],
+          "left": [
+            15,
+            26
+          ],
+          "right": [
+            8,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            32
+          ],
+          "center": null,
+          "head": [
+            51,
+            26
+          ],
+          "left": [
+            40,
+            26
+          ],
+          "right": [
+            33,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            32
+          ],
+          "center": null,
+          "head": [
+            25,
+            26
+          ],
+          "left": [
+            14,
+            26
+          ],
+          "right": [
+            7,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            32
+          ],
+          "center": null,
+          "head": [
+            50,
+            26
+          ],
+          "left": [
+            39,
+            26
+          ],
+          "right": [
+            32,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            32
+          ],
+          "center": null,
+          "head": [
+            26,
+            26
+          ],
+          "left": [
+            15,
+            26
+          ],
+          "right": [
+            8,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            32
+          ],
+          "center": null,
+          "head": [
+            48,
+            26
+          ],
+          "left": [
+            37,
+            26
+          ],
+          "right": [
+            30,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            32
+          ],
+          "center": null,
+          "head": [
+            28,
+            26
+          ],
+          "left": [
+            17,
+            26
+          ],
+          "right": [
+            10,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            32
+          ],
+          "center": null,
+          "head": [
+            44,
+            26
+          ],
+          "left": [
+            33,
+            26
+          ],
+          "right": [
+            26,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            32
+          ],
+          "center": null,
+          "head": [
+            32,
+            26
+          ],
+          "left": [
+            21,
+            26
+          ],
+          "right": [
+            14,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            38,
+            26
+          ],
+          "left": [
+            27,
+            26
+          ],
+          "right": [
+            20,
+            26
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            36,
+            22
+          ],
+          "left": [
+            30,
+            25
+          ],
+          "right": [
+            21,
+            28
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            26
+          ],
+          "center": null,
+          "head": [
+            42,
+            16
+          ],
+          "left": [
+            36,
+            19
+          ],
+          "right": [
+            27,
+            22
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            38
+          ],
+          "center": null,
+          "head": [
+            30,
+            28
+          ],
+          "left": [
+            24,
+            31
+          ],
+          "right": [
+            15,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            22
+          ],
+          "center": null,
+          "head": [
+            46,
+            12
+          ],
+          "left": [
+            40,
+            15
+          ],
+          "right": [
+            31,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            42
+          ],
+          "center": null,
+          "head": [
+            26,
+            32
+          ],
+          "left": [
+            20,
+            35
+          ],
+          "right": [
+            11,
+            38
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            20
+          ],
+          "center": null,
+          "head": [
+            48,
+            10
+          ],
+          "left": [
+            42,
+            13
+          ],
+          "right": [
+            33,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            44
+          ],
+          "center": null,
+          "head": [
+            24,
+            34
+          ],
+          "left": [
+            18,
+            37
+          ],
+          "right": [
+            9,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            19
+          ],
+          "center": null,
+          "head": [
+            49,
+            9
+          ],
+          "left": [
+            43,
+            12
+          ],
+          "right": [
+            34,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            45
+          ],
+          "center": null,
+          "head": [
+            23,
+            35
+          ],
+          "left": [
+            17,
+            38
+          ],
+          "right": [
+            8,
+            41
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            20
+          ],
+          "center": null,
+          "head": [
+            48,
+            10
+          ],
+          "left": [
+            42,
+            13
+          ],
+          "right": [
+            33,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            44
+          ],
+          "center": null,
+          "head": [
+            24,
+            34
+          ],
+          "left": [
+            18,
+            37
+          ],
+          "right": [
+            9,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            22
+          ],
+          "center": null,
+          "head": [
+            46,
+            12
+          ],
+          "left": [
+            40,
+            15
+          ],
+          "right": [
+            31,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            42
+          ],
+          "center": null,
+          "head": [
+            26,
+            32
+          ],
+          "left": [
+            20,
+            35
+          ],
+          "right": [
+            11,
+            38
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            26
+          ],
+          "center": null,
+          "head": [
+            42,
+            16
+          ],
+          "left": [
+            36,
+            19
+          ],
+          "right": [
+            27,
+            22
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            38
+          ],
+          "center": null,
+          "head": [
+            30,
+            28
+          ],
+          "left": [
+            24,
+            31
+          ],
+          "right": [
+            15,
+            34
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            36,
+            22
+          ],
+          "left": [
+            30,
+            25
+          ],
+          "right": [
+            21,
+            28
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            30,
+            22
+          ],
+          "left": [
+            28,
+            25
+          ],
+          "right": [
+            33,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            26
+          ],
+          "center": null,
+          "head": [
+            30,
+            16
+          ],
+          "left": [
+            28,
+            19
+          ],
+          "right": [
+            33,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            38
+          ],
+          "center": null,
+          "head": [
+            30,
+            28
+          ],
+          "left": [
+            28,
+            31
+          ],
+          "right": [
+            33,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            22
+          ],
+          "center": null,
+          "head": [
+            30,
+            12
+          ],
+          "left": [
+            28,
+            15
+          ],
+          "right": [
+            33,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            42
+          ],
+          "center": null,
+          "head": [
+            30,
+            32
+          ],
+          "left": [
+            28,
+            35
+          ],
+          "right": [
+            33,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            20
+          ],
+          "center": null,
+          "head": [
+            30,
+            10
+          ],
+          "left": [
+            28,
+            13
+          ],
+          "right": [
+            33,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            44
+          ],
+          "center": null,
+          "head": [
+            30,
+            34
+          ],
+          "left": [
+            28,
+            37
+          ],
+          "right": [
+            33,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            19
+          ],
+          "center": null,
+          "head": [
+            30,
+            9
+          ],
+          "left": [
+            28,
+            12
+          ],
+          "right": [
+            33,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            45
+          ],
+          "center": null,
+          "head": [
+            30,
+            35
+          ],
+          "left": [
+            28,
+            38
+          ],
+          "right": [
+            33,
+            43
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            20
+          ],
+          "center": null,
+          "head": [
+            30,
+            10
+          ],
+          "left": [
+            28,
+            13
+          ],
+          "right": [
+            33,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            44
+          ],
+          "center": null,
+          "head": [
+            30,
+            34
+          ],
+          "left": [
+            28,
+            37
+          ],
+          "right": [
+            33,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            22
+          ],
+          "center": null,
+          "head": [
+            30,
+            12
+          ],
+          "left": [
+            28,
+            15
+          ],
+          "right": [
+            33,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            42
+          ],
+          "center": null,
+          "head": [
+            30,
+            32
+          ],
+          "left": [
+            28,
+            35
+          ],
+          "right": [
+            33,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            26
+          ],
+          "center": null,
+          "head": [
+            30,
+            16
+          ],
+          "left": [
+            28,
+            19
+          ],
+          "right": [
+            33,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            38
+          ],
+          "center": null,
+          "head": [
+            30,
+            28
+          ],
+          "left": [
+            28,
+            31
+          ],
+          "right": [
+            33,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            30,
+            22
+          ],
+          "left": [
+            28,
+            25
+          ],
+          "right": [
+            33,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            22,
+            22
+          ],
+          "left": [
+            28,
+            26
+          ],
+          "right": [
+            32,
+            30
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            26
+          ],
+          "center": null,
+          "head": [
+            16,
+            16
+          ],
+          "left": [
+            22,
+            20
+          ],
+          "right": [
+            26,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            38
+          ],
+          "center": null,
+          "head": [
+            28,
+            28
+          ],
+          "left": [
+            34,
+            32
+          ],
+          "right": [
+            38,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            22
+          ],
+          "center": null,
+          "head": [
+            12,
+            12
+          ],
+          "left": [
+            18,
+            16
+          ],
+          "right": [
+            22,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            42
+          ],
+          "center": null,
+          "head": [
+            32,
+            32
+          ],
+          "left": [
+            38,
+            36
+          ],
+          "right": [
+            42,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            44
+          ],
+          "center": null,
+          "head": [
+            34,
+            34
+          ],
+          "left": [
+            40,
+            38
+          ],
+          "right": [
+            44,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            42,
+            45
+          ],
+          "center": null,
+          "head": [
+            35,
+            35
+          ],
+          "left": [
+            41,
+            39
+          ],
+          "right": [
+            45,
+            43
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            41,
+            44
+          ],
+          "center": null,
+          "head": [
+            34,
+            34
+          ],
+          "left": [
+            40,
+            38
+          ],
+          "right": [
+            44,
+            42
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            22
+          ],
+          "center": null,
+          "head": [
+            12,
+            12
+          ],
+          "left": [
+            18,
+            16
+          ],
+          "right": [
+            22,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            39,
+            42
+          ],
+          "center": null,
+          "head": [
+            32,
+            32
+          ],
+          "left": [
+            38,
+            36
+          ],
+          "right": [
+            42,
+            40
+          ]
+        },
+        {
+          "shadow": [
+            23,
+            26
+          ],
+          "center": null,
+          "head": [
+            16,
+            16
+          ],
+          "left": [
+            22,
+            20
+          ],
+          "right": [
+            26,
+            24
+          ]
+        },
+        {
+          "shadow": [
+            35,
+            38
+          ],
+          "center": null,
+          "head": [
+            28,
+            28
+          ],
+          "left": [
+            34,
+            32
+          ],
+          "right": [
+            38,
+            36
+          ]
+        },
+        {
+          "shadow": [
+            29,
+            32
+          ],
+          "center": null,
+          "head": [
+            22,
+            22
+          ],
+          "left": [
+            28,
+            26
+          ],
+          "right": [
+            32,
+            30
+          ]
+        }
+      ]
+    },
+    "Walk": {
+      "frameWidth": 53,
+      "frameHeight": 44,
+      "sourceFrameWidth": 56,
+      "sourceFrameHeight": 48,
+      "trim": [
+        0,
+        2
+      ],
+      "columns": 3,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        },
+        {
+          "shadow": [
+            28,
+            26
+          ],
+          "center": [
+            28,
+            26
+          ],
+          "head": null,
+          "left": null,
+          "right": null
+        }
+      ]
+    },
+    "Hurt": {
+      "frameWidth": 38,
+      "frameHeight": 35,
+      "sourceFrameWidth": 40,
+      "sourceFrameHeight": 40,
+      "trim": [
+        1,
+        0
+      ],
+      "columns": 2,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            19,
+            22
+          ],
+          "center": null,
+          "head": [
+            8,
+            16
+          ],
+          "left": [
+            20,
+            14
+          ],
+          "right": [
+            27,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            21
+          ],
+          "center": null,
+          "head": [
+            8,
+            15
+          ],
+          "left": [
+            20,
+            13
+          ],
+          "right": [
+            27,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            22
+          ],
+          "center": null,
+          "head": [
+            25,
+            11
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            21
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            24
+          ],
+          "center": null,
+          "head": [
+            17,
+            10
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            20,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            24
+          ],
+          "center": null,
+          "head": [
+            16,
+            10
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            19,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            26
+          ],
+          "center": null,
+          "head": [
+            8,
+            14
+          ],
+          "left": [
+            16,
+            19
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            27
+          ],
+          "center": null,
+          "head": [
+            7,
+            15
+          ],
+          "left": [
+            15,
+            20
+          ],
+          "right": [
+            25,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            26
+          ],
+          "center": null,
+          "head": [
+            29,
+            18
+          ],
+          "left": [
+            18,
+            20
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            19,
+            27
+          ],
+          "center": null,
+          "head": [
+            29,
+            19
+          ],
+          "left": [
+            18,
+            21
+          ],
+          "right": [
+            9,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            26
+          ],
+          "center": null,
+          "head": [
+            29,
+            14
+          ],
+          "left": [
+            21,
+            19
+          ],
+          "right": [
+            11,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            22,
+            27
+          ],
+          "center": null,
+          "head": [
+            30,
+            15
+          ],
+          "left": [
+            22,
+            20
+          ],
+          "right": [
+            12,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            24
+          ],
+          "center": null,
+          "head": [
+            20,
+            10
+          ],
+          "left": [
+            21,
+            15
+          ],
+          "right": [
+            17,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            22,
+            24
+          ],
+          "center": null,
+          "head": [
+            21,
+            10
+          ],
+          "left": [
+            22,
+            15
+          ],
+          "right": [
+            18,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            21,
+            22
+          ],
+          "center": null,
+          "head": [
+            12,
+            11
+          ],
+          "left": [
+            21,
+            14
+          ],
+          "right": [
+            28,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            22,
+            21
+          ],
+          "center": null,
+          "head": [
+            13,
+            10
+          ],
+          "left": [
+            22,
+            13
+          ],
+          "right": [
+            29,
+            14
+          ]
+        }
+      ]
+    },
+    "Hop": {
+      "frameWidth": 34,
+      "frameHeight": 29,
+      "sourceFrameWidth": 40,
+      "sourceFrameHeight": 40,
+      "trim": [
+        3,
+        3
+      ],
+      "columns": 7,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            6,
+            19
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            25,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            13
+          ],
+          "left": [
+            17,
+            10
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            21
+          ],
+          "center": null,
+          "head": [
+            6,
+            13
+          ],
+          "left": [
+            16,
+            10
+          ],
+          "right": [
+            23,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            13
+          ],
+          "left": [
+            17,
+            10
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            21
+          ],
+          "center": null,
+          "head": [
+            6,
+            13
+          ],
+          "left": [
+            16,
+            10
+          ],
+          "right": [
+            23,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            13
+          ],
+          "left": [
+            17,
+            10
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            15
+          ],
+          "left": [
+            16,
+            16
+          ],
+          "right": [
+            24,
+            21
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            9,
+            19
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            21,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            13,
+            13
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            21,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            13,
+            13
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            21,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            13,
+            13
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            25,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            14,
+            20
+          ],
+          "left": [
+            17,
+            17
+          ],
+          "right": [
+            20,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            15,
+            20
+          ],
+          "left": [
+            13,
+            15
+          ],
+          "right": [
+            16,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            15,
+            19
+          ],
+          "left": [
+            13,
+            14
+          ],
+          "right": [
+            16,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            15,
+            20
+          ],
+          "left": [
+            13,
+            15
+          ],
+          "right": [
+            16,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            15,
+            19
+          ],
+          "left": [
+            13,
+            14
+          ],
+          "right": [
+            16,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            15,
+            20
+          ],
+          "left": [
+            13,
+            15
+          ],
+          "right": [
+            16,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            18,
+            22
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            21,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            19,
+            19
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            14,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            20,
+            19
+          ],
+          "left": [
+            14,
+            16
+          ],
+          "right": [
+            13,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            13,
+            15
+          ],
+          "right": [
+            12,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            20,
+            19
+          ],
+          "left": [
+            14,
+            16
+          ],
+          "right": [
+            13,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            13,
+            15
+          ],
+          "right": [
+            12,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            20,
+            19
+          ],
+          "left": [
+            14,
+            16
+          ],
+          "right": [
+            13,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            26,
+            20
+          ],
+          "left": [
+            18,
+            17
+          ],
+          "right": [
+            16,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            26,
+            15
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            15
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            21
+          ],
+          "center": null,
+          "head": [
+            24,
+            15
+          ],
+          "left": [
+            14,
+            15
+          ],
+          "right": [
+            7,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            15
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            21
+          ],
+          "center": null,
+          "head": [
+            24,
+            15
+          ],
+          "left": [
+            14,
+            15
+          ],
+          "right": [
+            7,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            15
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            26,
+            16
+          ],
+          "left": [
+            16,
+            18
+          ],
+          "right": [
+            8,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            24,
+            11
+          ],
+          "left": [
+            18,
+            14
+          ],
+          "right": [
+            9,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            11
+          ],
+          "left": [
+            17,
+            14
+          ],
+          "right": [
+            11,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            12,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            11
+          ],
+          "left": [
+            17,
+            14
+          ],
+          "right": [
+            11,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            12,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            25,
+            11
+          ],
+          "left": [
+            17,
+            14
+          ],
+          "right": [
+            11,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            24,
+            11
+          ],
+          "left": [
+            17,
+            14
+          ],
+          "right": [
+            9,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            18,
+            11
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            21,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            17,
+            10
+          ],
+          "left": [
+            19,
+            14
+          ],
+          "right": [
+            17,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            19,
+            13
+          ],
+          "right": [
+            17,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            17,
+            10
+          ],
+          "left": [
+            19,
+            14
+          ],
+          "right": [
+            17,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            19,
+            13
+          ],
+          "right": [
+            17,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            17,
+            10
+          ],
+          "left": [
+            19,
+            14
+          ],
+          "right": [
+            17,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            16,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            10,
+            11
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            20,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            10,
+            7
+          ],
+          "left": [
+            17,
+            11
+          ],
+          "right": [
+            19,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            6
+          ],
+          "left": [
+            16,
+            10
+          ],
+          "right": [
+            18,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            10,
+            7
+          ],
+          "left": [
+            17,
+            11
+          ],
+          "right": [
+            19,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            6
+          ],
+          "left": [
+            16,
+            10
+          ],
+          "right": [
+            18,
+            19
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            10,
+            7
+          ],
+          "left": [
+            17,
+            11
+          ],
+          "right": [
+            19,
+            20
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            21
+          ],
+          "center": null,
+          "head": [
+            14,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            18,
+            20
+          ]
+        }
+      ]
+    },
+    "Charge": {
+      "frameWidth": 34,
+      "frameHeight": 28,
+      "sourceFrameWidth": 40,
+      "sourceFrameHeight": 32,
+      "trim": [
+        3,
+        0
+      ],
+      "columns": 10,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            18
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            25,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            18
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            25,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            18
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            25,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            18
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            25,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            7,
+            18
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            26,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            18
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            25,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            17
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            22,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            21,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            17
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            22,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            21,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            17
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            22,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            21,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            17
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            22,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            21,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            17
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            22,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            21,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            14,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            14,
+            19
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            14,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            14,
+            19
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            14,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            14,
+            19
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            14,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            14,
+            19
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            14,
+            18
+          ],
+          "left": [
+            17,
+            15
+          ],
+          "right": [
+            20,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            14,
+            19
+          ],
+          "left": [
+            17,
+            16
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            19,
+            18
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            14,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            27,
+            14
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            14
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            27,
+            14
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            14
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            27,
+            14
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            14
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            27,
+            14
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            14
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            20
+          ],
+          "center": null,
+          "head": [
+            27,
+            14
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            9,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            26,
+            14
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            8,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            9
+          ],
+          "left": [
+            19,
+            12
+          ],
+          "right": [
+            10,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            9
+          ],
+          "left": [
+            19,
+            12
+          ],
+          "right": [
+            10,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            9
+          ],
+          "left": [
+            19,
+            12
+          ],
+          "right": [
+            10,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            9
+          ],
+          "left": [
+            19,
+            12
+          ],
+          "right": [
+            10,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            18,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            9
+          ],
+          "left": [
+            19,
+            12
+          ],
+          "right": [
+            10,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            24,
+            10
+          ],
+          "left": [
+            18,
+            13
+          ],
+          "right": [
+            9,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            9
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            21,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            10
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            21,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            9
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            21,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            10
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            21,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            9
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            21,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            10
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            21,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            9
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            21,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            10
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            21,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            9
+          ],
+          "left": [
+            16,
+            12
+          ],
+          "right": [
+            21,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            10
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            21,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            17,
+            20
+          ],
+          "center": null,
+          "head": [
+            10,
+            10
+          ],
+          "left": [
+            16,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        }
+      ]
+    },
+    "Idle": {
+      "frameWidth": 32,
+      "frameHeight": 28,
+      "sourceFrameWidth": 32,
+      "sourceFrameHeight": 32,
+      "trim": [
+        0,
+        0
+      ],
+      "columns": 2,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            5,
+            18
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            24,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            6,
+            17
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            8,
+            18
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            20,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            8,
+            16
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            22,
+            12
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            13,
+            19
+          ],
+          "left": [
+            16,
+            16
+          ],
+          "right": [
+            19,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            13,
+            19
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            19,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            18
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            13,
+            9
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            18,
+            18
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            25,
+            14
+          ],
+          "left": [
+            14,
+            14
+          ],
+          "right": [
+            7,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            15,
+            15
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            23,
+            10
+          ],
+          "left": [
+            17,
+            13
+          ],
+          "right": [
+            8,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            8,
+            16
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            17,
+            10
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            20,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            10
+          ],
+          "left": [
+            15,
+            14
+          ],
+          "right": [
+            19,
+            18
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            20
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            20
+          ]
+        }
+      ]
+    },
+    "Rotate": {
+      "frameWidth": 32,
+      "frameHeight": 27,
+      "sourceFrameWidth": 32,
+      "sourceFrameHeight": 32,
+      "trim": [
+        0,
+        1
+      ],
+      "columns": 9,
+      "rows": 8,
+      "directions": [
+        "Down",
+        "DownRight",
+        "Right",
+        "UpRight",
+        "Up",
+        "UpLeft",
+        "Left",
+        "DownLeft"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            17,
+            9
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            20,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            23,
+            9
+          ],
+          "left": [
+            17,
+            12
+          ],
+          "right": [
+            8,
+            15
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            25,
+            13
+          ],
+          "left": [
+            14,
+            13
+          ],
+          "right": [
+            7,
+            13
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            18,
+            17
+          ],
+          "left": [
+            15,
+            12
+          ],
+          "right": [
+            13,
+            8
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            13,
+            18
+          ],
+          "left": [
+            16,
+            15
+          ],
+          "right": [
+            19,
+            10
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            8,
+            17
+          ],
+          "left": [
+            14,
+            12
+          ],
+          "right": [
+            20,
+            11
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            5,
+            17
+          ],
+          "left": [
+            15,
+            11
+          ],
+          "right": [
+            24,
+            17
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            9,
+            9
+          ],
+          "left": [
+            15,
+            13
+          ],
+          "right": [
+            19,
+            17
+          ]
+        }
+      ]
+    },
+    "Sleep": {
+      "frameWidth": 31,
+      "frameHeight": 27,
+      "sourceFrameWidth": 32,
+      "sourceFrameHeight": 32,
+      "trim": [
+        0,
+        1
+      ],
+      "columns": 2,
+      "rows": 1,
+      "directions": [
+        "Down"
+      ],
+      "frames": [
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            6,
+            14
+          ],
+          "left": [
+            16,
+            13
+          ],
+          "right": [
+            23,
+            14
+          ]
+        },
+        {
+          "shadow": [
+            16,
+            19
+          ],
+          "center": null,
+          "head": [
+            6,
+            14
+          ],
+          "left": [
+            17,
+            14
+          ],
+          "right": [
+            23,
+            14
+          ]
+        }
+      ]
+    }
+  }
+}

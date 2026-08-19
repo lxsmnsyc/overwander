@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createSignal, onMount } from 'solid-js';
+import { For, type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
 import { useSubmission } from '@solidjs/router';
 import { TabGroup } from 'terracotta';
 import {
@@ -280,6 +280,39 @@ function useToken(): () => string {
   return token;
 }
 
+/**
+ * Empties the pickers once the sheet is on disk.
+ *
+ * A form still holding the archive it just processed invites pressing
+ * the button twice, and the second press writes the same files again
+ * from the same bytes. What is **not** cleared is the answer: what was
+ * written stays on the screen, since that is the thing worth reading
+ *
+ * The files are cleared through the DOM rather than through a signal
+ * because a file picker's value is the browser's — a page cannot put a
+ * file into one, and clearing it is the one change it is allowed
+ */
+function clearedOnSuccess(
+  form: () => HTMLFormElement | undefined,
+  done: () => unknown,
+  reset: () => void,
+): void {
+  let seen: unknown;
+
+  createEffect(() => {
+    const result = done();
+
+    if (result == null || result === seen) {
+      return;
+    }
+    seen = result;
+    for (const picker of form()?.querySelectorAll<HTMLInputElement>('input[type=file]') ?? []) {
+      picker.value = '';
+    }
+    reset();
+  });
+}
+
 /** What went wrong, whether it was thrown here or on the server. */
 function refusalOf(error: unknown): string {
   if (error instanceof Error) {
@@ -312,11 +345,31 @@ function PmdForm(): JSX.Element {
   const [naming, setNaming] = createSignal<Naming>(START);
   const [anims, setAnims] = createSignal(DEFAULT_PMD_ANIMS.join(' '));
   const packing = useSubmission(packPmd);
+  const [form, setForm] = createSignal<HTMLFormElement>();
 
   const ready = (): boolean => picked() && naming().species != null && !packing.pending;
 
+  clearedOnSuccess(
+    form,
+    () => packing.result,
+    () => {
+      setPicked(false);
+      setNaming(START);
+      // The list of animations is a setting rather than an answer, so it
+      // goes back to the one it opened with instead of going blank
+      setAnims(DEFAULT_PMD_ANIMS.join(' '));
+    },
+  );
+
   return (
-    <form action={packPmd} method="post" enctype="multipart/form-data">
+    <form
+      ref={(element) => {
+        setForm(element);
+      }}
+      action={packPmd}
+      method="post"
+      enctype="multipart/form-data"
+    >
       <input type="hidden" name="token" value={token()} />
       <FormSection
         title="PMD archives"
@@ -388,11 +441,28 @@ function ExtrasForm(): JSX.Element {
   const [count, setCount] = createSignal(0);
   const [naming, setNaming] = createSignal<Naming>(START);
   const packing = useSubmission(packExtras);
+  const [form, setForm] = createSignal<HTMLFormElement>();
 
   const ready = (): boolean => count() > 0 && naming().species != null && !packing.pending;
 
+  clearedOnSuccess(
+    form,
+    () => packing.result,
+    () => {
+      setCount(0);
+      setNaming(START);
+    },
+  );
+
   return (
-    <form action={packExtras} method="post" enctype="multipart/form-data">
+    <form
+      ref={(element) => {
+        setForm(element);
+      }}
+      action={packExtras}
+      method="post"
+      enctype="multipart/form-data"
+    >
       <input type="hidden" name="token" value={token()} />
       <FormSection
         title="Loose images"

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import { RESIDUAL_TICK } from '../../src/battle/status/__create';
+import turns from '../../src/battle/turn';
 import type Unit from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
@@ -141,7 +142,7 @@ describe('Sleeping', () => {
     unit.addStatus(Statuses.Sleeping, NONE_CAUSE);
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
 
-    battle.tick(2000);
+    battle.tick(turns(2));
     expect(unit.status[Statuses.Sleeping]).toBeUndefined();
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
   });
@@ -174,7 +175,7 @@ describe('Flinched', () => {
     unit.addStatus(Statuses.Flinched, NONE_CAUSE);
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
 
-    battle.tick(500);
+    battle.tick(turns(1));
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
   });
 });
@@ -194,7 +195,7 @@ describe('Paralyzed', () => {
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
   });
 
-  it('locks out new attempts for a second after a proc', () => {
+  it('locks out new attempts for a turn after a proc', () => {
     const { battle, teamA, teamB } = createBattle();
     const unit = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
@@ -208,7 +209,7 @@ describe('Paralyzed', () => {
     pinRandom(battle, 0.5);
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(false);
 
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(unit.checkCanCast(Moves.Tackle, unitTarget(enemy))).toBe(true);
   });
 });
@@ -222,10 +223,10 @@ describe('Trapped', () => {
     victim.addStatus(Statuses.Trapped, moveCause(attacker, Moves.FireSpin));
     expect(victim.checkEscape()).toBe(false);
 
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(victim.health).toBe(140); // 1/8
 
-    battle.tick(3000);
+    battle.tick(turns(3));
     expect(victim.status[Statuses.Trapped]).toBeUndefined();
     expect(victim.checkEscape()).toBe(true);
   });
@@ -353,8 +354,8 @@ describe('timed status progression', () => {
 
     unit.addStatus(Statuses.Sleeping, NONE_CAUSE);
 
-    // Jump straight past the 2000ms duration
-    unit.updateStatusTimer(Statuses.Sleeping, { progress: 2000 });
+    // Jump straight past the whole sleep
+    unit.updateStatusTimer(Statuses.Sleeping, { progress: turns(2) });
 
     expect(unit.status[Statuses.Sleeping]).toBeUndefined();
   });

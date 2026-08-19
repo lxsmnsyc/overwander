@@ -2,20 +2,16 @@ import { EventPriority } from '../../core/event-emitter';
 import type { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type ProgressData } from '../events';
+import { TURN } from '../turn';
 import type Unit from '../unit';
 
 /**
- * How often a status that chips away does it.
- *
- * There are no turns to hang residual damage on, so the ones that eat
- * health over time — poison, bad poison, a burn, a seed — do it on a
- * clock. Two seconds is about the length of an ordinary cast, which is
- * what a turn was worth, so a fraction a turn in the mainline is a
- * fraction a move here. It is shared rather than repeated because four
- * statuses ticking at four subtly different rates is four balance
- * decisions nobody made
+ * How often a status that chips away does it: once a turn, since what
+ * the mainline takes a fraction of a turn takes a fraction of one
+ * here. Shared rather than repeated, because four statuses ticking at
+ * four subtly different rates is four balance decisions nobody made
  */
-export const RESIDUAL_TICK = 2000;
+export const RESIDUAL_TICK = TURN;
 
 /**
  * Wires a status to a countdown timer, structured like the casting

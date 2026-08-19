@@ -3,6 +3,7 @@ import { Weathers } from '../../data/ids/status';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import turns from '../turn';
 import type Team from '../team';
 import { isPrimalWeather } from '../utils';
 
@@ -21,7 +22,7 @@ import { isPrimalWeather } from '../utils';
  * How long a called-up sky stays out: a screen's ten seconds, since
  * the mainline gives both five turns. A weather rock lengthens it
  */
-export const WEATHER_DURATION = 10_000;
+export const WEATHER_DURATION = turns(5);
 
 export default function setupWeatherMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {

@@ -9,6 +9,7 @@ import {
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
+import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
@@ -553,7 +554,7 @@ describe('Sand Veil', () => {
     holder.addAbility(Abilities.SandVeil);
 
     battle.setWeather(Weathers.Sandstorm);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(holder.health).toBe(160);
     expect(plain.health).toBe(150);
@@ -1524,12 +1525,12 @@ describe('Early Bird', () => {
     bird.addStatus(Statuses.Sleeping, NONE_CAUSE);
     plain.addStatus(Statuses.Sleeping, NONE_CAUSE);
 
-    // Half of the 2000ms sleep: the bird is up, the other is not
-    battle.tick(1100);
+    // Half of the sleep: the bird is up, the other is not
+    battle.tick(turns(1) + 100);
     expect(bird.status[Statuses.Sleeping]).toBeUndefined();
     expect(plain.status[Statuses.Sleeping]).toBeDefined();
 
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(plain.status[Statuses.Sleeping]).toBeUndefined();
   });
 });
@@ -1577,7 +1578,7 @@ describe('Ice Body', () => {
     holder.addAbility(Abilities.IceBody);
 
     battle.setWeather(Weathers.Hail);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(holder.health).toBe(160);
     expect(plain.health).toBe(150);

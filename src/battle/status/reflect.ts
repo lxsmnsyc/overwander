@@ -3,6 +3,7 @@ import { MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause } from '../events';
+import turns from '../turn';
 import type Team from '../team';
 
 interface ScreenData {
@@ -14,7 +15,7 @@ interface ScreenData {
  * How long a screen holds without help. A Light Clay lengthens it
  * through CheckTeamStatusDuration
  */
-export const SCREEN_DURATION = 10000;
+export const SCREEN_DURATION = turns(5);
 const DAMAGE_REDUCTION = 2732 / 4096;
 
 /**

@@ -7,10 +7,12 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleModes } from '../core';
 import { BattleEvents, EffectType } from '../events';
+import turns from '../turn';
 import type Unit from '../unit';
 
-// Real-time analog of the per-turn residual: 1/16 max HP every second
-const CHIP_INTERVAL = 1000;
+// The per-turn residual on this engine's clock: a sixteenth of the
+// pool every turn, the same rate a status chips at
+const CHIP_INTERVAL = turns(1);
 const CHIP_FRACTION = 1 / 16;
 
 /**

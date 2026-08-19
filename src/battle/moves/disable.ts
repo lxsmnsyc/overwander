@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
+import turns from '../turn';
 import type Unit from '../unit';
 
 interface DisableData {
@@ -9,9 +10,9 @@ interface DisableData {
   progress: number;
 }
 
-// Real-time equivalent of the 4-turn lock. A timer (not a count of
-// other moves used) so units with a single move cannot be perma-locked
-const DURATION = 5000;
+// A timer rather than a count of other moves used, so a unit with a
+// single move cannot be locked out of the fight for good
+const DURATION = turns(4);
 
 // https://bulbapedia.bulbagarden.net/wiki/Disable_(move)
 export default function setupDisable(battle: Battle): void {

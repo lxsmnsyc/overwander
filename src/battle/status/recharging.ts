@@ -2,10 +2,12 @@ import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
+import turns from '../turn';
 import createTimedStatus from './__create';
 
 // Real-time equivalent of the single recharge turn
-const DURATION = 1000;
+// Hyper Beam costs its user the turn after it
+const DURATION = turns(1);
 
 const setupTimer = createTimedStatus(Statuses.Recharging, DURATION);
 

@@ -4,7 +4,11 @@ import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
 import type { FieldVisual } from '../../canvas/battle/moves/__painted';
 import attackMarkVisual from '../../canvas/battle/attack';
-import abilityCueFor, { itemCueFor, statusCueFor, statusTickFor } from '../../canvas/battle/cues';
+import abilityCueFor, {
+  itemCueFor,
+  statusCueFor,
+  statusTriggerFor,
+} from '../../canvas/battle/cues';
 import paintWeather from '../../canvas/battle/weather';
 import {
   delayShapeFor,
@@ -35,6 +39,7 @@ import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
 import { MoveFlags, type Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
+import type { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 
 /**
@@ -1208,7 +1213,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           source: bodyOf(from),
           targets: cast.targets
             .map((target) => at.get(target))
-            .filter((slot) => slot != null)
+            // Spelled out rather than left to be inferred: the
+            // narrowing a bare `!= null` gets is not something to
+            // hang a build on
+            .filter((slot): slot is Slot => slot != null)
             .map(bodyOf),
           scale: scaleOf(from),
         });
@@ -1351,15 +1359,37 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
     });
 
+    /**
+     * When each status last drew its own cue, on the battle's clock.
+     *
+     * A status that refuses a cast is asked every time the pokemon
+     * tries — which for a sleeping unit under an AI is many times a
+     * second — so the refusal is held back to one every `CUE_GAP`,
+     * like an ability's. The residuals bite far slower than that and
+     * are never touched by it
+     */
+    const bitten = new WeakMap<Unit, Map<Statuses, number>>();
+
     const biting = props.battle.on(
       BattleEvents.UnitTriggerStatus,
       EventPriority.Post,
       (event) => {
-        const cue = statusTickFor(event.status);
+        const cue = statusTriggerFor(event.status);
 
-        if (cue != null) {
-          paint(cue, event.source, []);
+        if (cue == null) {
+          return;
         }
+        let held = bitten.get(event.source);
+
+        if (held == null) {
+          held = new Map();
+          bitten.set(event.source, held);
+        }
+        if (clock - (held.get(event.status) ?? -CUE_GAP) < CUE_GAP) {
+          return;
+        }
+        held.set(event.status, clock);
+        paint(cue, event.source, []);
       },
     );
 

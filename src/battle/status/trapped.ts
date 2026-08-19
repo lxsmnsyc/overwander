@@ -4,6 +4,7 @@ import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
+import turns from '../turn';
 import type Unit from '../unit';
 
 interface TrappedData {
@@ -12,9 +13,9 @@ interface TrappedData {
   cause: EffectCause;
 }
 
-// Real-time equivalent of the 4-5 trapping turns
-export const TRAPPED_DURATION = 4000;
-export const TRAPPED_TICK = 1000;
+export const TRAPPED_DURATION = turns(4);
+// Once a turn, like every other residual
+export const TRAPPED_TICK = turns(1);
 
 export default function setupTrappedStatus(battle: Battle): void {
   const instances = new Map<Unit, TrappedData>();

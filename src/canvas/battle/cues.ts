@@ -10,6 +10,7 @@ import {
   burst,
   chevrons,
   decay,
+  fade,
   heart,
   motes,
   noise,
@@ -220,6 +221,73 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
     color: '#9a9a6a',
     span: 620,
   },
+  // Coils drawn round the body, tightening as they arrive
+  [Statuses.Trapped]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let coil = 0; coil < 3; coil += 1) {
+        const held = (share * 1.2 + coil * 0.3) % 1;
+
+        ring(context, [stage.source[0], stage.source[1] - (held - 0.5) * size], size * (1.3 - held * 0.5), {
+          ...paint,
+          alpha: swell(held) * 0.9,
+          width: 2.4 * stage.scale,
+        });
+      }
+    },
+    color: '#b8a038',
+    span: 620,
+  },
+  // Nothing left in it: everything falls rather than rises
+  [Statuses.Recharging]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let drop = 0; drop < 4; drop += 1) {
+        const held = (share * 1.3 + noise(53, drop)) % 1;
+        const drift = (noise(53, drop + 7) - 0.5) * size * 1.8;
+
+        orb(context, [stage.source[0] + drift, stage.source[1] + held * size], 2.2 * stage.scale, {
+          ...paint,
+          alpha: decay(held) * 0.9,
+        });
+      }
+    },
+    color: '#8f9ba8',
+    span: 520,
+  },
+  // Asleep on its feet: one slow ring settling over it
+  [Statuses.Dormant]: {
+    paint: (context, stage, share, paint) => {
+      ring(context, stage.source, REACH * stage.scale * (1.8 - share * 0.7), {
+        ...paint,
+        alpha: swell(share) * 0.8,
+        width: 3 * stage.scale,
+      });
+    },
+    color: '#6a7fa8',
+    span: 900,
+  },
+  // Taking it: rings drawn inward, since what a Bide does is keep
+  // what it was hit with
+  [Statuses.Biding]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let pull = 0; pull < 3; pull += 1) {
+        const held = (share * 1.4 + pull * 0.33) % 1;
+
+        ring(context, stage.source, size * 2 * (1 - held), {
+          ...paint,
+          alpha: swell(held) * 0.9,
+          width: 2.4 * stage.scale,
+        });
+      }
+    },
+    color: '#c86a3c',
+    span: 720,
+  },
   [Statuses.FocusEnergy]: {
     paint: (context, stage, share, paint) => {
       chevrons(context, stage.source, REACH * stage.scale, 3, share, {
@@ -237,6 +305,236 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
 const TICK_ALPHA = 0.7;
 const TICK_SCALE = 0.75;
 
+/**
+ * A pokemon that tried and could not: the bar over the head, drawn
+ * over whatever the status itself is doing.
+ *
+ * Landing and biting are different events and were drawing the same
+ * picture at two sizes, so a sleep that blocked a cast looked like a
+ * sleep landing again. This is what all the blocking statuses share —
+ * the refusal — and each one keeps its own mark underneath
+ */
+function stalled(
+  under?: (
+    context: CanvasRenderingContext2D,
+    stage: Stage,
+    share: number,
+    paint: Painted,
+  ) => void,
+) {
+  return (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted): void => {
+    under?.(context, stage, share, paint);
+
+    const at = over(stage);
+    const size = REACH * stage.scale * 0.7;
+    // Snaps to full size and holds, rather than swelling: a refusal is
+    // instant, and a mark that grows reads as something arriving
+    const alpha = share < 0.15 ? share / 0.15 : decay((share - 0.15) / 0.85);
+
+    ring(context, at, size, { ...paint, alpha, width: 3 * stage.scale });
+    context.strokeStyle = fade(paint.color, alpha);
+    context.lineWidth = 3 * stage.scale;
+    context.beginPath();
+    context.moveTo(at[0] - size * 0.7, at[1] - size * 0.7);
+    context.lineTo(at[0] + size * 0.7, at[1] + size * 0.7);
+    context.stroke();
+  };
+}
+
+/**
+ * Health coming off on the status's own clock: everything falls, and
+ * the body it fell from flashes. The opposite of the landing cues,
+ * which rise
+ */
+function bitten(count: number, seed: number) {
+  return (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted): void => {
+    const size = REACH * stage.scale;
+
+    ring(context, stage.source, size * (0.8 + share * 0.6), {
+      ...paint,
+      alpha: decay(share) * 0.7,
+      width: 2 * stage.scale,
+    });
+    for (let drip = 0; drip < count; drip += 1) {
+      const held = (share * 1.4 + noise(seed, drip)) % 1;
+      const drift = (noise(seed, drip + 11) - 0.5) * size * 1.8;
+
+      orb(
+        context,
+        [stage.source[0] + drift, stage.source[1] - size * 0.6 + held * size * 1.8],
+        2.6 * stage.scale,
+        { ...paint, alpha: decay(held) },
+      );
+    }
+  };
+}
+
+/**
+ * What a status looks like the moment it **does** something: the cast
+ * it refused, the health it took, the hit it kept.
+ *
+ * Anything with no entry falls back to a quieter copy of its landing
+ * cue, which is what everything used to do
+ */
+const STATUS_TRIGGERS: Partial<Record<Statuses, Cue>> = {
+  // A snore going up with it, so a blocked cast is not mistaken for
+  // falling asleep a second time
+  [Statuses.Sleeping]: {
+    paint: stalled((context, stage, share, paint) => {
+      const at = over(stage, LIFT * 1.7);
+      const size = REACH * stage.scale * (0.5 + share * 0.4);
+
+      // A Z, drawn as its three strokes
+      context.strokeStyle = fade(paint.color, swell(share));
+      context.lineWidth = 2.4 * stage.scale;
+      context.beginPath();
+      context.moveTo(at[0] - size, at[1] - size);
+      context.lineTo(at[0] + size, at[1] - size);
+      context.lineTo(at[0] - size, at[1] + size);
+      context.lineTo(at[0] + size, at[1] + size);
+      context.stroke();
+    }),
+    color: '#8fa2d8',
+    span: 720,
+  },
+
+  // The whole body crackling rather than two arcs across it
+  [Statuses.Paralyzed]: {
+    paint: stalled((context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let arc = 0; arc < 4; arc += 1) {
+        const angle = (arc / 4) * Math.PI * 2 + share;
+
+        bolt(
+          context,
+          stage.source,
+          [
+            stage.source[0] + Math.cos(angle) * size * 1.6,
+            stage.source[1] + Math.sin(angle) * size * 1.2,
+          ],
+          arc + 3,
+          { ...paint, alpha: decay(share) * 1.3, width: 2.2 * stage.scale },
+        );
+      }
+    }),
+    color: '#fac000',
+    span: 520,
+  },
+
+  // Frozen solid: the shards stop moving and the block round it holds
+  [Statuses.Frozen]: {
+    paint: stalled((context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let face = 0; face < 2; face += 1) {
+        ring(context, stage.source, size * (1.1 + face * 0.35), {
+          ...paint,
+          alpha: (share < 0.7 ? 1 : decay((share - 0.7) / 0.3)) * (0.9 - face * 0.3),
+          width: 2.6 * stage.scale,
+        });
+      }
+    }),
+    color: '#3dcef3',
+    span: 560,
+  },
+
+  [Statuses.Flinched]: { paint: stalled(), color: '#e6ecf5', span: 420 },
+  [Statuses.Recharging]: { paint: stalled(), color: '#8f9ba8', span: 480 },
+  [Statuses.Dormant]: { paint: stalled(), color: '#6a7fa8', span: 620 },
+
+  // It went for somebody it likes instead
+  [Statuses.Infatuated]: {
+    paint: stalled((context, stage, share, paint) => {
+      heart(context, over(stage, LIFT * 1.6), REACH * stage.scale * 0.45 * swell(share), {
+        ...paint,
+        alpha: swell(share),
+      });
+    }),
+    color: '#ef70ef',
+    span: 640,
+  },
+
+  // It hit itself: the picture belongs on the body, not over the head
+  [Statuses.Confused]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      burst(context, stage.source, size * (0.6 + share * 1.2), 7, 17, {
+        ...paint,
+        alpha: decay(share),
+        width: 2.6 * stage.scale,
+      });
+      for (let mark = 0; mark < 3; mark += 1) {
+        const angle = share * Math.PI * 2 + (mark / 3) * Math.PI * 2;
+
+        star(
+          context,
+          [
+            stage.source[0] + Math.cos(angle) * size * 1.4,
+            stage.source[1] - LIFT * stage.scale + Math.sin(angle) * size * 0.5,
+          ],
+          size * 0.34,
+          angle,
+          { ...paint, alpha: swell(share) },
+        );
+      }
+    },
+    color: '#ef70ef',
+    span: 560,
+  },
+
+  // The squeeze, rather than the coils arriving
+  [Statuses.Trapped]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let coil = 0; coil < 3; coil += 1) {
+        const off = (coil - 1) * size * 0.5;
+
+        ring(context, [stage.source[0], stage.source[1] + off], size * (1.4 - swell(share) * 0.7), {
+          ...paint,
+          alpha: 0.9,
+          width: 2.6 * stage.scale,
+        });
+      }
+    },
+    color: '#b8a038',
+    span: 480,
+  },
+
+  // What it kept, drawn going in
+  [Statuses.Biding]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let mote = 0; mote < 6; mote += 1) {
+        const held = (share * 1.5 + noise(59, mote)) % 1;
+        const angle = noise(59, mote + 13) * Math.PI * 2;
+        const reach = size * 2.2 * (1 - held);
+
+        orb(
+          context,
+          [
+            stage.source[0] + Math.cos(angle) * reach,
+            stage.source[1] + Math.sin(angle) * reach * 0.7,
+          ],
+          2.6 * stage.scale,
+          { ...paint, alpha: swell(held) },
+        );
+      }
+    },
+    color: '#c86a3c',
+    span: 620,
+  },
+
+  // The residuals: health leaving on the status's own clock
+  [Statuses.Poisoned]: { paint: bitten(6, 61), color: '#9141cb', span: 560 },
+  [Statuses.BadlyPoisoned]: { paint: bitten(9, 67), color: '#6e2f9c', span: 620 },
+  [Statuses.Burned]: { paint: bitten(6, 71), color: '#e62829', span: 560 },
+  [Statuses.Seeding]: { paint: bitten(5, 73), color: '#3fa129', span: 560 },
+};
+
 function played(cue: Cue, scale = 1, alpha = 1): PaintedVisual {
   const paint: Painted = { color: cue.color, alpha };
   const painter: Painter = (context, stage, share) => {
@@ -253,8 +551,16 @@ export function statusCueFor(status: Statuses): PaintedVisual | null {
   return cue == null ? null : played(cue);
 }
 
-/** Each moment it bites afterwards: the same picture, quieter. */
-export function statusTickFor(status: Statuses): PaintedVisual | null {
+/**
+ * The moment a status does something: its own picture where it has
+ * one, and a quieter copy of the landing where it has not
+ */
+export function statusTriggerFor(status: Statuses): PaintedVisual | null {
+  const trigger = STATUS_TRIGGERS[status];
+
+  if (trigger != null) {
+    return played(trigger);
+  }
   const cue = STATUS_CUES[status];
 
   return cue == null ? null : played(cue, TICK_SCALE, TICK_ALPHA);

@@ -12,6 +12,7 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import { getMoveData } from '../../../src/data/moves';
 import { getWeightPower } from '../../../src/battle/moves/weight';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
+import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -489,7 +490,7 @@ describe('Hyper Beam', () => {
     expect(attacker.status[Statuses.Recharging]).toBeDefined();
     expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
 
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(attacker.status[Statuses.Recharging]).toBeUndefined();
     expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(true);
@@ -746,7 +747,7 @@ describe('Disable', () => {
 
     expect(target.moves[Moves.Tackle]?.disabled).toBe(true);
 
-    battle.tick(5000);
+    battle.tick(turns(4));
 
     expect(target.moves[Moves.Tackle]?.disabled).toBe(false);
   });

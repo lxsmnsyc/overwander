@@ -4,11 +4,12 @@ import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import turns from '../turn';
 import type Unit from '../unit';
 
 // After a successful full-paralysis roll the unit stays numb: no new
 // attempt (and no new roll) for this long
-const LOCK_DURATION = 1000;
+const LOCK_DURATION = turns(1);
 
 export default function setupParalyzedStatus(battle: Battle): void {
   const locked = new Map<Unit, number>();

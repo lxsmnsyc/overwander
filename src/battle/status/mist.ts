@@ -2,6 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause } from '../events';
+import turns from '../turn';
 import type Team from '../team';
 
 interface MistData {
@@ -9,8 +10,7 @@ interface MistData {
   cause: EffectCause;
 }
 
-// Real-time analog of the five-turn veil
-const MIST_DURATION = 10000;
+const MIST_DURATION = turns(5);
 
 /**
  * Mist: while the veil holds, other units cannot lower the stages of

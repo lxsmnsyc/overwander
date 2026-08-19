@@ -33,6 +33,7 @@ import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
 import { SACRED_ASH_DELAY } from '../../src/battle/items/sacred-ash';
 import { DRINK_THRESHOLD } from '../../src/battle/items/drinks';
+import turns from '../../src/battle/turn';
 import { DRINKS } from '../../src/data/items/drinks';
 import { TREAT_DELAY } from '../../src/battle/items/treats';
 import { TREATS } from '../../src/data/items/treats';
@@ -390,7 +391,7 @@ describe('gear that changes a rule', () => {
     expect(attacker.checkMoveImmunity(Moves.StunSpore, unitTarget(bare), Types.Grass)).toBe(false);
 
     battle.setWeather(Weathers.Sandstorm);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(holder.health).toBe(holder.checkStat(Stats.HP, 0));
     expect(bare.health).toBeLessThan(bare.checkStat(Stats.HP, 0));

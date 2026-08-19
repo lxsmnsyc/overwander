@@ -123,7 +123,26 @@ Statuses that chip away do so on a clock, since there are no turns. Every
 - **Poison** takes an eighth of the pokemon's maximum health.
 - **Bad poison** takes a sixteenth, and the fraction grows with each bite.
 
-Two seconds is roughly one move, which is what a turn used to be worth.
+Two seconds is roughly one move, which is what a turn used to be worth. Sand and
+hail wear a pokemon down on the same clock, taking a sixteenth every two seconds.
+
+A status that runs out on its own runs out on that clock too:
+
+| Status                      | How long it lasts                         |
+| --------------------------- | ----------------------------------------- |
+| Flinching                   | 2 seconds                                 |
+| Recharging after a beam     | 2 seconds                                 |
+| Sleep                       | 4 seconds                                 |
+| Confusion                   | 4 to 10 seconds                           |
+| Freeze                      | 10 seconds, or until a Fire move thaws it |
+| Being trapped               | 8 seconds, biting every 2                 |
+| Reflect, Light Screen, Mist | 10 seconds                                |
+| Weather                     | 10 seconds                                |
+| A disabled move             | 8 seconds                                 |
+
+Poison, bad poison, burn and paralysis have no clock at all: they last until
+something cures them. A full-paralysis stumble costs the pokemon 2 seconds
+before it may try again.
 
 A held berry cures a status the moment it lands, before the first move is cast.
 

@@ -2,9 +2,11 @@ import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
+import turns from '../turn';
 import createTimedStatus from './__create';
 
-const DURATION = 2000;
+// One to three turns in the mainline, taken at its middle
+const DURATION = turns(2);
 
 const setupTimer = createTimedStatus(Statuses.Sleeping, DURATION);
 

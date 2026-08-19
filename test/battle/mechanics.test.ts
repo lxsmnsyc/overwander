@@ -6,6 +6,7 @@ import type Battle from '../../src/battle/core';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { MOVE_DELAY, resolveMoveTargets } from '../../src/battle/mechanics/move';
+import turns from '../../src/battle/turn';
 import { Slots, packSlots } from '../../src/data/constants/slots';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
@@ -767,7 +768,7 @@ describe('what a unit may carry', () => {
 });
 
 describe('weather chip damage', () => {
-  it('sandstorm chips a sixteenth of max health per interval', () => {
+  it('sandstorm chips a sixteenth of max health a turn', () => {
     const { battle, teamA, teamB } = createBattle();
     const unit = createUnit(battle, teamA);
     const rocky = createUnit(battle, teamB);
@@ -775,14 +776,14 @@ describe('weather chip damage', () => {
 
     battle.setWeather(Weathers.Sandstorm);
 
-    battle.tick(500);
+    battle.tick(turns(0.5));
     expect(unit.health).toBe(160);
 
-    battle.tick(500);
+    battle.tick(turns(0.5));
     expect(unit.health).toBe(150);
     expect(rocky.health).toBe(160);
 
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(unit.health).toBe(140);
   });
 
@@ -793,7 +794,7 @@ describe('weather chip damage', () => {
     icy.types.add(Types.Ice);
 
     battle.setWeather(Weathers.Hail);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(unit.health).toBe(150);
     expect(icy.health).toBe(160);
@@ -804,11 +805,11 @@ describe('weather chip damage', () => {
     const unit = createUnit(battle, teamA);
 
     battle.setWeather(Weathers.Sandstorm);
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(unit.health).toBe(150);
 
     battle.setWeather(Weathers.None);
-    battle.tick(1000);
+    battle.tick(turns(1));
     expect(unit.health).toBe(150);
   });
 
@@ -818,7 +819,7 @@ describe('weather chip damage', () => {
     const sheltered = createUnit(battle, teamB);
 
     teamA.setWeather(Weathers.Hail);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     expect(exposed.health).toBe(150);
     expect(sheltered.health).toBe(160);

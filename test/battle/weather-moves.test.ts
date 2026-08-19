@@ -6,6 +6,7 @@ import type Unit from '../../src/battle/unit';
 import { WEATHER_ROCK_FACTOR } from '../../src/battle/items/gear';
 import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { WEATHER_DURATION } from '../../src/battle/moves/weather';
+import turns from '../../src/battle/turn';
 import { Stats } from '../../src/data/constants/stats';
 import { Items } from '../../src/data/ids/items';
 import { Types } from '../../src/data/constants/types';
@@ -86,7 +87,7 @@ describe('weather moves', () => {
     const maxHealth = soft.checkStat(Stats.HP, 0);
 
     castOnce(caster, Moves.Sandstorm);
-    battle.tick(1000);
+    battle.tick(turns(1));
 
     // The sandstorm goes round the Rock type and not round the other
     expect(soft.health).toBeLessThan(maxHealth);

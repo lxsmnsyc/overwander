@@ -4,7 +4,7 @@ import { fade, lighten, noise } from '../../src/canvas/battle/moves/__paint';
 import abilityCueFor, {
   itemCueFor,
   statusCueFor,
-  statusTickFor,
+  statusTriggerFor,
 } from '../../src/canvas/battle/cues';
 import {
   delayShapeFor,
@@ -40,8 +40,13 @@ const STAGE: Stage = { source: [100, 300], targets: [[300, 100]], scale: 1 };
  * strokes, fills and gradients rather than images, so what "it drew
  * something" means here is that one of those happened
  */
-function canvas(): { context: CanvasRenderingContext2D; marks: () => number } {
+function canvas(): {
+  context: CanvasRenderingContext2D;
+  marks: () => number;
+  trace: () => string;
+} {
   let marks = 0;
+  const drawn: string[] = [];
   const gradient = { addColorStop: () => {} };
   const context = {
     globalAlpha: 1,
@@ -55,12 +60,14 @@ function canvas(): { context: CanvasRenderingContext2D; marks: () => number } {
     rotate: () => {},
     beginPath: () => {},
     closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    bezierCurveTo: () => {},
-    quadraticCurveTo: () => {},
-    ellipse: () => {},
-    arc: () => {},
+    // Where the drawing went, so two pictures can be compared rather
+    // than only counted
+    moveTo: (...args: number[]) => drawn.push(`move ${args.join()}`),
+    lineTo: (...args: number[]) => drawn.push(`line ${args.join()}`),
+    bezierCurveTo: (...args: number[]) => drawn.push(`curve ${args.join()}`),
+    quadraticCurveTo: (...args: number[]) => drawn.push(`quad ${args.join()}`),
+    ellipse: (...args: number[]) => drawn.push(`ellipse ${args.join()}`),
+    arc: (...args: number[]) => drawn.push(`arc ${args.join()}`),
     createRadialGradient: () => gradient,
     createLinearGradient: () => gradient,
     stroke: () => {
@@ -74,8 +81,12 @@ function canvas(): { context: CanvasRenderingContext2D; marks: () => number } {
     },
   };
 
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-  return { context: context as unknown as CanvasRenderingContext2D, marks: () => marks };
+  return {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    context: context as unknown as CanvasRenderingContext2D,
+    marks: () => marks,
+    trace: () => drawn.join('|'),
+  };
 }
 
 /** One move that lands as each shape, so every shape is exercised. */
@@ -360,13 +371,17 @@ describe('the cues', () => {
       Statuses.Seeding,
       Statuses.Substituted,
       Statuses.FocusEnergy,
+      Statuses.Trapped,
+      Statuses.Recharging,
+      Statuses.Dormant,
+      Statuses.Biding,
     ];
 
     for (const status of carried) {
       const landing = statusCueFor(status);
 
       expect(landing, `${status} landing`).not.toBeNull();
-      expect(statusTickFor(status), `${status} biting`).not.toBeNull();
+      expect(statusTriggerFor(status), `${status} triggering`).not.toBeNull();
       for (const at of [0.05, 0.4, 0.85]) {
         const { context, marks } = canvas();
         const playing = statusCueFor(status);
@@ -375,6 +390,61 @@ describe('the cues', () => {
         playing?.draw(context, STAGE);
         expect(marks(), `${status} at ${at}`).toBeGreaterThan(0);
       }
+    }
+  });
+
+  it('draws a status doing something differently from it landing', () => {
+    // A sleep that blocked a cast and a sleep landing were one
+    // picture at two sizes, which reads as being put to sleep twice
+    const acting = [
+      Statuses.Sleeping,
+      Statuses.Paralyzed,
+      Statuses.Frozen,
+      Statuses.Flinched,
+      Statuses.Confused,
+      Statuses.Infatuated,
+      Statuses.Recharging,
+      Statuses.Dormant,
+      Statuses.Trapped,
+      Statuses.Biding,
+      Statuses.Poisoned,
+      Statuses.BadlyPoisoned,
+      Statuses.Burned,
+      Statuses.Seeding,
+    ];
+
+    for (const status of acting) {
+      const trigger = statusTriggerFor(status);
+
+      expect(trigger, `${status} triggering`).not.toBeNull();
+      for (const at of [0.05, 0.4, 0.85]) {
+        const { context, marks } = canvas();
+        const playing = statusTriggerFor(status);
+
+        playing?.advance((trigger?.duration ?? 0) * at);
+        playing?.draw(context, STAGE);
+        expect(marks(), `${status} triggering at ${at}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('draws the trigger as a different picture from the landing', () => {
+    // Not merely a different table entry: the two events put
+    // different marks on the canvas
+    for (const status of [Statuses.Sleeping, Statuses.Poisoned, Statuses.Confused]) {
+      const landing = canvas();
+      const trigger = canvas();
+      const first = statusCueFor(status);
+      const second = statusTriggerFor(status);
+
+      expect(first, `${status} landing`).not.toBeNull();
+      expect(second, `${status} triggering`).not.toBeNull();
+      first?.advance(first.duration * 0.4);
+      first?.draw(landing.context, STAGE);
+      second?.advance(second.duration * 0.4);
+      second?.draw(trigger.context, STAGE);
+
+      expect(trigger.trace(), `${status}`).not.toBe(landing.trace());
     }
   });
 

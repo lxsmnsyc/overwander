@@ -6,10 +6,13 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import { isWeatherSunny } from '../utils';
+import turns from '../turn';
 import createTimedStatus from './__create';
 
 // Real-time equivalent of the ~20%-per-turn thaw chance
-const DURATION = 3000;
+// No fixed length in the mainline: a fifth of a chance to thaw each
+// turn, which comes out at five turns
+const DURATION = turns(5);
 
 const setupTimer = createTimedStatus(Statuses.Frozen, DURATION);
 

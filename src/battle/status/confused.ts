@@ -4,6 +4,7 @@ import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
+import turns from '../turn';
 import type Unit from '../unit';
 
 interface ConfusedData {
@@ -11,8 +12,8 @@ interface ConfusedData {
   cause: EffectCause;
 }
 
-const MIN_DURATION = 2000;
-const MAX_DURATION = 5000;
+const MIN_DURATION = turns(2);
+const MAX_DURATION = turns(5);
 const CONFUSION_CHANCE = 1 / 3;
 
 export default function setupConfusedStatus(battle: Battle): void {

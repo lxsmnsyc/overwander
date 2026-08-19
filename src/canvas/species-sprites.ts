@@ -1,5 +1,7 @@
 import { Species } from '../data/ids/species';
 import SpeciesSpriteAnimation from './species-sprite-animation';
+import type { SpriteCoats } from './sprite-coats';
+import { COATS_PATH, asSpriteCoats, coatOf, drawn } from './sprite-coats';
 import asSpriteSheetJSON, { type SpriteSheetJSON } from './sprite-sheet';
 
 /**
@@ -78,6 +80,22 @@ const DESCRIPTIONS = new Map<Species, Promise<SpriteSheetJSON | null>>();
  */
 const SHEETS = new Map<string, Promise<SpeciesSpriteAnimation | null>>();
 
+/**
+ * Which coats were drawn, fetched once for the whole session.
+ *
+ * A failure resolves to nothing rather than throwing: the list is an
+ * optimisation, and a game that cannot read it should ask for the
+ * sheets the long way round rather than not draw
+ */
+let listed: Promise<SpriteCoats | null> | undefined;
+
+async function coats(): Promise<SpriteCoats | null> {
+  listed ??= fetch(COATS_PATH)
+    .then(async (response) => (response.ok ? asSpriteCoats(await response.json()) : null))
+    .catch(() => null);
+  return listed;
+}
+
 async function loadDescription(species: Species): Promise<SpriteSheetJSON | null> {
   try {
     const response = await fetch(spriteMetaPath(species));
@@ -112,6 +130,12 @@ async function loadSheet(
   shiny: boolean,
   female: boolean,
 ): Promise<SpeciesSpriteAnimation | null> {
+  // Asked before anything is fetched: a species whose list says it was
+  // never drawn this way is answered without a request, which is the
+  // whole point of keeping the list
+  if (!drawn(await coats(), species, coatOf(shiny, female))) {
+    return null;
+  }
   const data = await description(species);
 
   if (data == null) {
@@ -183,6 +207,11 @@ export interface SpriteRequest {
  */
 export async function hasFemaleSheet(species: Species, shiny = false): Promise<boolean> {
   return (await sheet(species, shiny, true)) != null;
+}
+
+/** The list, for anything that wants to read it rather than draw. */
+export async function drawnCoats(): Promise<SpriteCoats | null> {
+  return coats();
 }
 
 export default async function loadSpeciesSprite(

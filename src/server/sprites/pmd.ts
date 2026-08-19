@@ -2,6 +2,7 @@ import 'server-only';
 import { TextWriter, Uint8ArrayReader, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js';
 import type { AnimData } from './anim-data';
 import readAnimData from './anim-data';
+import writeCoats from './coats';
 import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
@@ -420,6 +421,10 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     }
     await put(coat, extra[at], null);
   }
+
+  // Last, so the list describes the sheets that are now there rather
+  // than the ones that were
+  written.push(await writeCoats());
 
   return {
     written,

@@ -405,6 +405,12 @@ export interface ChunkCanvasProps {
   yaw: number;
   onTurn: (yaw: number) => void;
   /**
+   * Where this chunk stands between the middle of the world and its
+   * edge, from -1 to 1. It decides how high the sun gets here: the
+   * day is the same length everywhere, and the light is not
+   */
+  latitude: number;
+  /**
    * Whether the board is on its way off the screen or on to it, and
    * which way the player went. Null while they are standing in the
    * chunk that is drawn, which is nearly always
@@ -938,7 +944,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     /** Where this hour's light throws a shadow, if it throws one */
     const cast = (): Cast | undefined => {
-      const thrown = getCast(worldTime());
+      // Turned with the board: the sun is fixed in the world, so a
+      // player spinning the ground spins every shadow on it
+      const thrown = getCast(worldTime(), yaw(), props.latitude);
 
       return thrown.length <= 0 ? undefined : thrown;
     };
@@ -1268,7 +1276,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // and under everything the player reads: a compass tinted by the
       // evening is a compass that is harder to read at night for
       // nothing
-      paintAmbient(context, screen.width, screen.height, worldTime());
+      paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
 
       /**
        * And the compass: four letters standing off the four edges of

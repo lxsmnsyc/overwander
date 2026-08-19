@@ -269,6 +269,13 @@ export const enum BattleEvents {
    * than decided by the battle
    */
   UnitSetSlots = 140,
+  /**
+   * Whether health may go back on the unit at all. The mirror of
+   * `CheckUnitCanDamage`, asked once before the heal is emitted: a
+   * raid boss whose pool is the fight's timer answers no, and so would
+   * a Heal Block or a wound that will not close
+   */
+  CheckUnitCanHeal = 141,
 }
 
 export const enum MoveTargetType {
@@ -534,6 +541,24 @@ export interface CheckUnitCanDamageEvent extends UnitEvent {
   /**
    * Whether the damage may land. Opens true; a listener answering
    * false is an immunity
+   */
+  success: boolean;
+}
+
+/**
+ * The speculative form of a heal: same shape, asked before anything
+ * lands. A listener that says no stops the heal outright, so nothing
+ * here should change the battle — the heal may yet be refused by
+ * somebody else
+ */
+export interface CheckUnitCanHealEvent extends UnitEvent {
+  target: Unit;
+  value: number;
+  flags: number;
+  cause: EffectCause;
+  /**
+   * Whether the health may go back on. Opens true; a listener
+   * answering false is a wound that will not close
    */
   success: boolean;
 }
@@ -846,6 +871,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitEscape]: [CheckUnitEscapeEvent, EventPriority];
   [BattleEvents.CheckUnitStatusImmunity]: [CheckUnitStatusImmunityEvent, EventPriority];
   [BattleEvents.CheckUnitCanDamage]: [CheckUnitCanDamageEvent, EventPriority];
+  [BattleEvents.CheckUnitCanHeal]: [CheckUnitCanHealEvent, EventPriority];
   [BattleEvents.CheckUnitRecoil]: [CheckUnitRecoilEvent, EventPriority];
 
   [BattleEvents.ResolveUnitStat]: [CheckUnitStatEvent, EventPriority];

@@ -6,7 +6,12 @@ import type { FieldVisual } from '../../canvas/battle/moves/__painted';
 import attackMarkVisual from '../../canvas/battle/attack';
 import abilityCueFor, { itemCueFor, statusCueFor, statusTickFor } from '../../canvas/battle/cues';
 import paintWeather from '../../canvas/battle/weather';
-import { moveDelayVisual, moveEffectVisual, moveMissVisual } from '../../canvas/battle/moves';
+import {
+  delayShapeFor,
+  moveDelayVisual,
+  moveEffectVisual,
+  moveMissVisual,
+} from '../../canvas/battle/moves';
 import projectField, {
   type FieldPoint,
   type FieldView,
@@ -24,6 +29,7 @@ import {
 import type Abilities from '../../data/ids/abilities';
 import type Unit from '../../battle/unit';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AI_REST_PERIOD } from '../../battle/ai/idle';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
 import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
@@ -564,7 +570,19 @@ export interface Performance {
  */
 export interface Striking {
   move: Moves;
+  /**
+   * How long the gesture is given: the flight the engine is holding
+   * the move for, plus the rest the caster takes afterwards.
+   *
+   * It is not what the clip is *fitted* to — a throw plays at the
+   * speed it was drawn at — it is how long the field goes on showing
+   * it before the pokemon falls back to standing about. Fitting the
+   * clip to the flight instead squeezed a second of drawn gesture into
+   * a quarter of one, which is a blink rather than a throw
+   */
   window: number;
+  /** How much of that window has passed. */
+  elapsed?: number;
   /**
    * What it was thrown at, so the thrower goes on facing it while the
    * move is in the air rather than turning away the moment it fires
@@ -597,13 +615,12 @@ export function animationFor(
   if (striking != null) {
     const animation = pickCast(getMoveData(striking.move).cast, (name) => sprite.has(name));
 
-    // A clip drawn as something repeated keeps its own speed and
-    // repeats for the window instead: stretched, it plays once in slow
-    // motion — see `isLoopingCast`
-    if (isLoopingCast(animation)) {
-      return { animation, duration: null, loop: true };
-    }
-    return { animation, duration: striking.window, loop: false };
+    // At the speed it was drawn at, either way. A clip drawn as
+    // something repeated goes round for as long as the gesture lasts;
+    // one drawn as a single movement plays once and holds. Neither is
+    // fitted to the flight: the engine's delay says when the hit
+    // lands, not how fast a pokemon moves
+    return { animation, duration: null, loop: isLoopingCast(animation) };
   }
 
   /**
@@ -749,6 +766,7 @@ function drawSlot(
   context: CanvasRenderingContext2D,
   slot: Slot,
   striking: Map<Unit, Striking>,
+  hidden = false,
 ): void {
   const { unit } = slot;
   const maxHealth = unit.checkStat(Stats.HP, 0);
@@ -758,41 +776,47 @@ function drawSlot(
 
   const sprite = slot.sprite;
 
-  if (sprite?.ready === true) {
-    const wanted = animationFor(unit, sprite, striking.get(unit));
-    const playable = sprite.has(wanted.animation) ? wanted.animation : 'Idle';
+  // Nothing at all while it is gone: a pokemon underground or above
+  // the field is one the gap has already drawn the hole for, and a
+  // body standing in that hole makes a nonsense of both. Its bar and
+  // its cast stay, which is what a watcher has to go on
+  if (!hidden) {
+    if (sprite?.ready === true) {
+      const wanted = animationFor(unit, sprite, striking.get(unit));
+      const playable = sprite.has(wanted.animation) ? wanted.animation : 'Idle';
 
-    sprite.play(playable, {
-      direction: slot.facing,
-      loop: wanted.loop,
-      // Stretching only means anything for the clip that was asked
-      // for: a fallback to Idle is a loop at its own speed
-      duration: playable === wanted.animation ? (wanted.duration ?? undefined) : undefined,
-      // A one-shot that has run out while the unit is still working a
-      // move has reached the end of *a* window, not the end of the
-      // work: the next step of a multi-step move is another pass of
-      // the same clip, so it is started again rather than held
-      restart: sprite.finished && wanted.duration != null,
-    });
-    // Its body over the middle of the slot, which is the point
-    // everything else on the field is measured from: the bars, the
-    // name, and whatever a move draws on it.
-    //
-    // Placed by its **shadow**, which on a ground plane is the only
-    // honest answer: the slot is a spot on the floor, and what sits on
-    // a spot on the floor is the pokemon's feet. Centring the body
-    // there instead buries half of a tall pokemon under the ground and
-    // leaves a short one hovering
-    const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
-    const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
+      sprite.play(playable, {
+        direction: slot.facing,
+        loop: wanted.loop,
+        // Stretching only means anything for the clip that was asked
+        // for: a fallback to Idle is a loop at its own speed
+        duration: playable === wanted.animation ? (wanted.duration ?? undefined) : undefined,
+        // A one-shot that has run out while the unit is still working a
+        // move has reached the end of *a* window, not the end of the
+        // work: the next step of a multi-step move is another pass of
+        // the same clip, so it is started again rather than held
+        restart: sprite.finished && wanted.duration != null,
+      });
+      // Its body over the middle of the slot, which is the point
+      // everything else on the field is measured from: the bars, the
+      // name, and whatever a move draws on it.
+      //
+      // Placed by its **shadow**, which on a ground plane is the only
+      // honest answer: the slot is a spot on the floor, and what sits on
+      // a spot on the floor is the pokemon's feet. Centring the body
+      // there instead buries half of a tall pokemon under the ground and
+      // leaves a short one hovering
+      const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
+      const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
 
-    sprite.drawShadow(context, x, y, placement);
-    sprite.draw(context, x, y, placement);
-  } else {
-    context.beginPath();
-    context.arc(slot.x + slot.offset[0], slot.y + slot.offset[1], slot.radius, 0, Math.PI * 2);
-    context.fillStyle = unit.alive ? slot.color : COLORS.down;
-    context.fill();
+      sprite.drawShadow(context, x, y, placement);
+      sprite.draw(context, x, y, placement);
+    } else {
+      context.beginPath();
+      context.arc(slot.x + slot.offset[0], slot.y + slot.offset[1], slot.radius, 0, Math.PI * 2);
+      context.fillStyle = unit.alive ? slot.color : COLORS.down;
+      context.fill();
+    }
   }
 
   // A bar no wider than the pokemon has room for. A crowded field —
@@ -920,6 +944,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * is the tick that draws it
    */
   const striking = new Map<Unit, Striking>();
+
+  /**
+   * Who is not on the field to be seen: a pokemon underground or out
+   * of sight above it.
+   *
+   * A move that goes somewhere the field cannot show says so with its
+   * gap — the hole it went through, drawn where it stood — and leaving
+   * the body standing in the hole made a nonsense of both that picture
+   * and of the move being untouchable. It comes back when the striking
+   * step fires, which is the moment it arrives
+   */
+  const gone = new Set<Unit>();
 
   /**
    * What the last frame drew, for the pointer to hit-test against. Not
@@ -1142,7 +1178,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       placed = slots;
 
       for (const slot of slots) {
-        drawSlot(context, slot, striking);
+        drawSlot(context, slot, striking, gone.has(slot.unit));
       }
 
       // The sky, over the pokemon and under whatever is going off:
@@ -1210,9 +1246,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // the move that is happening rather than to the one registered
       const window = event.source.checkMoveDelay(event.move, event.target);
 
-      // What the thrower is doing until it lands: the move's own clip,
-      // which is the gesture the move *is*
-      striking.set(event.source, { move: event.move, window, at: event.target });
+      // What the thrower is doing: the move's own clip, played at its
+      // own speed for the flight and the rest that follows it. The
+      // rest is the AI's, and it is what gives a gesture room — a
+      // 250ms flight is not long enough to see a throw in
+      striking.set(event.source, {
+        move: event.move,
+        window: window + AI_REST_PERIOD,
+        elapsed: 0,
+        at: event.target,
+      });
 
       // A contact move has nothing in the air to draw, because the
       // thing crossing the gap is the pokemon itself
@@ -1234,6 +1277,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       // What fills the gap, for exactly as long as the engine holds
       // it. A contact move fills it with the pokemon and draws nothing
+      const shape = delayShapeFor(event.move, event.steps);
+
+      // A step that takes the caster off the field takes its sprite
+      // with it, and any other step puts it back: the strike of a Dig
+      // is the pokemon coming up through the floor
+      if (shape === 'Vanish') {
+        gone.add(event.source);
+      } else {
+        gone.delete(event.source);
+      }
+
       const gap = moveDelayVisual(event.move, event.steps, window);
 
       if (gap != null) {
@@ -1407,13 +1461,21 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       },
     );
 
-    // Thrown and landed: the gesture is over, whatever else the unit
-    // goes on to do
+    // Landed. The gesture is **not** over: the hit lands when the
+    // engine says, and the throw goes on being drawn for the rest of
+    // its window — which is what stops a quarter-second flight cutting
+    // a second of animation off at the knees
     const landing = props.battle.on(
       BattleEvents.UnitTriggerMoveEnd,
       EventPriority.Post,
       (event) => {
-        striking.delete(event.source);
+        const thrown = striking.get(event.source);
+
+        if (thrown != null && event.source.casting == null) {
+          // Nothing else to show it: the unit is between moves, so the
+          // window is left to run down on the tick
+          thrown.at = undefined;
+        }
       },
     );
 
@@ -1430,14 +1492,35 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // whatever it was doing
     const stopping = props.battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
       striking.delete(event.source);
+      // Whatever took it off the field was interrupted, so it is back
+      gone.delete(event.source);
     });
 
     const fainting = props.battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
       striking.delete(event.source);
+      gone.delete(event.source);
     });
 
     const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       clock += event.duration;
+      // A gesture runs out on its own clock rather than when the hit
+      // lands, so a pokemon is seen finishing what it threw
+      for (const [unit, thrown] of striking) {
+        thrown.elapsed = (thrown.elapsed ?? 0) + event.duration;
+        if (thrown.elapsed >= thrown.window) {
+          striking.delete(unit);
+        }
+      }
+      // Back on the field once there is nothing left to be away for.
+      // The striking step normally brings it up, but a move that
+      // vanishes on its **last** step — a Teleport — has no such step,
+      // and a caster with no cast and nothing in the air is a caster
+      // standing there
+      for (const unit of gone) {
+        if (unit.casting == null && unit.channeling == null && !striking.has(unit)) {
+          gone.delete(unit);
+        }
+      }
       for (let index = lunging.length - 1; index >= 0; index--) {
         lunging[index].elapsed += event.duration;
         if (lunging[index].elapsed >= lunging[index].window) {

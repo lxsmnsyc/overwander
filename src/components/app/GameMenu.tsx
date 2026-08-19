@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { serverNow, syncServerClock } from '../../auth/clock';
@@ -179,10 +179,14 @@ export default function GameMenu(): JSX.Element {
 
         {/* Where they are standing. It is the one reading that can be
             missing — a chunk still being read has no name yet */}
+        {/* Read straight rather than through a `Show`. Its callback
+            form hands the child an accessor and then untracks the call,
+            so a child that *is* the call — `{(place) => place()}` —
+            captures the first place the player stood in and holds it:
+            the words only changed when they went from nothing to
+            something, which is once a session */}
         <span class="min-w-0 truncate text-sm font-bold text-ink">
-          <Show when={game.place()} fallback="Somewhere">
-            {(place) => place()}
-          </Show>
+          {game.place() ?? 'Somewhere'}
         </span>
 
         <Divider />

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
 import { BattleModes } from '../../src/battle/core';
-import setupIdleAI from '../../src/battle/ai/idle';
+import setupIdleAI, { AI_REST_PERIOD } from '../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
@@ -384,6 +384,41 @@ describe('idle AI', () => {
 
     expect(unit.casting).toBeDefined();
     expect(unit.casting?.move).toBe(Moves.Tackle);
+  });
+
+  it('rests before it acts again', () => {
+    const { battle, teamA, teamB } = createIdleBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    enemy.setHealth(100_000);
+    unit.addMove(Moves.Tackle);
+
+    let clock = 0;
+    let finished: number | null = null;
+    const gaps: number[] = [];
+
+    battle.on(BattleEvents.UnitFinishCast, EventPriority.Post, () => {
+      finished = clock;
+    });
+    battle.on(BattleEvents.UnitCast, EventPriority.Post, () => {
+      if (finished != null) {
+        gaps.push(clock - finished);
+      }
+    });
+
+    unit.enter();
+    // Small steps, so the gap is measured rather than jumped over
+    for (let step = 0; step < 600; step += 1) {
+      clock += 50;
+      battle.tick(50);
+    }
+
+    expect(gaps.length, 'it cast again at all').toBeGreaterThan(0);
+    // Every gap covers the rest. The move's own delay sits inside it
+    // too, so this is a floor rather than the exact wait
+    expect(Math.min(...gaps)).toBeGreaterThanOrEqual(AI_REST_PERIOD);
   });
 
   it('keeps acting after a move resolves', () => {

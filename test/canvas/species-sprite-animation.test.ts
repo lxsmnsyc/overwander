@@ -99,6 +99,33 @@ function loaded(data: SpriteSheetJSON = SAMPLE): SpeciesSpriteAnimation {
   return sprite;
 }
 
+/**
+ * A clip of this sheet that moves its own anchors, and how far into it
+ * to wind to reach the frame that proves it. Found rather than named,
+ * since which pokemon ships first is not this test's business
+ */
+function travelling(data: SpriteSheetJSON): { anim: string; row: number; at: number } {
+  for (const anim of data.anims.anims) {
+    const target = data.sprites[anim.target];
+
+    for (let row = 0; row < target.rows; row++) {
+      const rest = target.frames[row * target.columns]?.shadow;
+      let elapsed = 0;
+
+      for (let column = 1; column < target.columns; column++) {
+        elapsed += Math.max(1, anim.durations[column - 1] ?? 1) * SPRITE_TICK;
+
+        const shadow = target.frames[row * target.columns + column]?.shadow;
+
+        if (rest != null && shadow != null && (rest[0] !== shadow[0] || rest[1] !== shadow[1])) {
+          return { anim: anim.name, row, at: elapsed + 1 };
+        }
+      }
+    }
+  }
+  throw new Error('no clip on this sheet moves its anchors');
+}
+
 describe('sprite metadata', () => {
   it('reads the shipped descriptions', () => {
     expect(DESCRIBED.length).toBeGreaterThan(0);
@@ -579,6 +606,61 @@ describe('drawing a pokemon somewhere', () => {
     // in opposite directions
     expect(flipped?.[0]).toBeCloseTo(40 - ((head?.[0] ?? 0) - (center?.[0] ?? 0)) * scale);
     expect(flipped?.[1]).toBeCloseTo(60 + ((head?.[1] ?? 0) - (center?.[1] ?? 0)) * scale);
+  });
+
+  it('keeps the motion the sheet was drawn with', () => {
+    const moving = travelling(SAMPLE);
+
+    expect(moving, 'a clip whose anchors travel').toBeDefined();
+
+    const sprite = loaded();
+    const { context, drawn } = recorder();
+
+    // The anchors travel with the body, so registering each frame on
+    // its own mark would put the drawing back where the last one was
+    // and the pokemon would hold still. Registering the clip once — on
+    // the pose it rests in — leaves the movement on screen
+    sprite.play(moving.anim, { direction: SPRITE_DIRECTIONS[moving.row], restart: true });
+    sprite.draw(context, 100, 200, { scale: 2, anchor: 'shadow' });
+
+    const first = sprite.anchor('shadow');
+
+    sprite.update(moving.at);
+    sprite.draw(context, 100, 200, { scale: 2, anchor: 'shadow' });
+
+    const later = sprite.anchor('shadow');
+
+    expect(sprite.frame, 'the playhead moved on').toBeGreaterThan(0);
+    expect(later, 'and the frame it landed on is marked somewhere else').not.toEqual(first);
+    // A different frame of the sheet...
+    expect(drawn[1][0]).not.toBe(drawn[0][0]);
+    // ...drawn in the same place, which is what makes the difference
+    // between the two frames visible
+    expect([drawn[1][4], drawn[1][5]]).toEqual([drawn[0][4], drawn[0][5]]);
+  });
+
+  it('leaves the ground where it was while the pokemon moves over it', () => {
+    const moving = travelling(SAMPLE);
+    const sprite = loaded();
+    const { context, ellipses } = recorder();
+
+    const placement = { scale: 2, anchor: 'shadow' } as const;
+
+    sprite.play(moving.anim, { direction: SPRITE_DIRECTIONS[moving.row], restart: true });
+    sprite.drawShadow(context, 100, 200, placement);
+
+    const body = sprite.locate('center', 100, 200, placement);
+
+    sprite.update(moving.at);
+    sprite.drawShadow(context, 100, 200, placement);
+
+    // Whatever the body is doing, the patch it stands on is the spot
+    // the caller named: ground that rose with a pokemon mid-leap would
+    // read as a shadow stuck to its feet
+    expect([ellipses[1][0], ellipses[1][1]]).toEqual([100, 200]);
+    // The body has moved over it, so a move aimed at the body follows
+    // the body rather than the ground
+    expect(sprite.locate('center', 100, 200, placement)).not.toEqual(body);
   });
 
   it('draws the shadow where the pokemon stands, at the size the sheet says', () => {

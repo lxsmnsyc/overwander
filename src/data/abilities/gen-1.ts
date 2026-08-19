@@ -603,7 +603,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      "A raid pool of 5,000 plus ten times the species' own, every other stat doubled, and no status that would take its turn away.",
+      "A raid pool of 5,000 plus ten times the species' own, every other stat doubled, no status that would take its turn away, and nothing puts health back.",
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',

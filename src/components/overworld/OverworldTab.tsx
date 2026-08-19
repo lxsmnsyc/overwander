@@ -13,6 +13,7 @@ import {
   untrack,
 } from 'solid-js';
 import { type BoardCell, borderExit, chunkCellOf } from '../../canvas/board';
+import { latitudeOf } from '../../canvas/daylight';
 import { getBuddyEffects } from '../../auth/buddy';
 import { useAuth } from '../../auth/context';
 import { getLocalOffset } from '../../auth/local-time';
@@ -1408,6 +1409,10 @@ function OverworldBoard(props: {
                 // and a camera living down there would face front
                 // again every time
                 yaw={yaw()}
+                // How far north or south the chunk is, which is the
+                // one thing about the light that is the world's rather
+                // than the clock's
+                latitude={latitudeOf(loaded().y)}
                 onTurn={(turned) => {
                   setYaw(turned);
                 }}

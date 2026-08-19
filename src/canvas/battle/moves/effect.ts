@@ -9,9 +9,12 @@ import {
   beam,
   between,
   bolt,
+  bone,
+  bubble,
   burst,
   chevrons,
   decay,
+  fade,
   jaw,
   lash,
   motes,
@@ -22,6 +25,8 @@ import {
   shards,
   slash,
   spiral,
+  spread,
+  star,
   swell,
 } from './__paint';
 
@@ -63,6 +68,7 @@ export type EffectShape =
   | 'Strike'
   | 'Flame'
   | 'Splash'
+  | 'Bubbles'
   | 'Frost'
   | 'Leafy'
   | 'Haze'
@@ -72,10 +78,12 @@ export type EffectShape =
   | 'Quake'
   | 'Drain'
   | 'Volley'
+  | 'Boomerang'
+  | 'Dazzle'
   | 'Jaws'
   | 'Claw'
   | 'Coil'
-  | 'Sound'
+  | 'Wave'
   | 'Spike'
   | 'Drill'
   | 'Swirl'
@@ -84,6 +92,10 @@ export type EffectShape =
   | 'Warp'
   | 'Lash'
   | 'Boost'
+  | 'Chasm'
+  | 'Leaves'
+  | 'Stars'
+  | 'Blow'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -96,6 +108,7 @@ const SPANS: Record<EffectShape, number> = {
   Strike: 420,
   Flame: 620,
   Splash: 520,
+  Bubbles: 640,
   Frost: 620,
   Leafy: 480,
   Haze: 700,
@@ -105,10 +118,12 @@ const SPANS: Record<EffectShape, number> = {
   Quake: 780,
   Drain: 700,
   Volley: 900,
+  Boomerang: 760,
+  Dazzle: 440,
   Jaws: 420,
   Claw: 380,
   Coil: 620,
-  Sound: 560,
+  Wave: 560,
   Spike: 380,
   Drill: 560,
   Swirl: 620,
@@ -117,6 +132,10 @@ const SPANS: Record<EffectShape, number> = {
   Warp: 620,
   Lash: 420,
   Boost: 560,
+  Chasm: 720,
+  Leaves: 560,
+  Stars: 620,
+  Blow: 620,
   Whiff: 320,
 };
 
@@ -530,6 +549,93 @@ const PAINTERS: Record<
     }
   },
 
+  // A barrage: bubbles crowd whatever they hit and pop one after
+  // another. The run of pops is the picture — all of them going at
+  // once would read as a single splash
+  Bubbles(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const count = many(9, weight);
+
+    for (let one = 0; one < count; one += 1) {
+      const held = Math.min(1, share * 1.6 - (one / count) * 0.6);
+
+      if (held <= 0) {
+        continue;
+      }
+      const angle = noise(seed, one) * Math.PI * 2;
+      const reach = size * (0.3 + noise(seed, one + 20) * 0.8);
+      const radius = size * 0.2 * (0.6 + noise(seed, one + 40) * 0.8);
+      // Flattened sideways and lifted as it goes, since a bubble rises
+      const spot: Point = [
+        at[0] + Math.cos(angle) * reach,
+        at[1] + Math.sin(angle) * reach * 0.7 - size * held * 0.35,
+      ];
+
+      if (held < 0.7) {
+        bubble(context, spot, radius * (0.55 + held * 0.6), {
+          ...paint,
+          alpha: 0.9,
+          width: 1.8 * stage.scale,
+        });
+        continue;
+      }
+      // Popped: what is left where it was, for the rest of its turn
+      ring(context, spot, radius * (1 + (held - 0.7) * 4), {
+        ...paint,
+        alpha: decay((held - 0.7) / 0.3) * 0.85,
+        width: 1.6 * stage.scale,
+      });
+    }
+  },
+
+  // Thrown, hits, and comes back hitting again. Both strikes land on
+  // the same pokemon — the return pass is the second one — so the
+  // picture is one bone tumbling out and back, not a whip
+  Boomerang(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    // Out for the first half, back for the second
+    const held = share < 0.5 ? share * 2 : (1 - share) * 2;
+    const spot = between(stage.source, at, held);
+
+    bone(context, spot, size * 1.1, share * Math.PI * 6, {
+      ...paint,
+      alpha: 1,
+      width: 3 * stage.scale,
+    });
+    // One strike as it arrives and one as it passes back through
+    for (const beat of [0.5, 0.85]) {
+      const since = (share - beat) / 0.15;
+
+      if (since <= 0 || since >= 1) {
+        continue;
+      }
+      burst(context, at, size * (0.5 + since), 5, beat * 100, {
+        ...paint,
+        alpha: decay(since),
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // A light in the eyes: it whites out and is gone. Nothing travels
+  // and nothing lands, which is what separates this from a shockwave
+  Dazzle(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    // Up almost at once and down slowly, the way a bright light is
+    // seen: half the phase is the eye recovering
+    const glare = share < 0.15 ? share / 0.15 : decay((share - 0.15) / 0.85);
+
+    orb(context, at, size * (0.6 + glare * 1.9), { ...paint, alpha: glare });
+    burst(context, at, size * (1 + glare * 2.4), 10, seed, {
+      ...paint,
+      alpha: glare * 0.9,
+      width: 2 * stage.scale,
+    });
+  },
+
   // A mouth closing on it. The two halves start apart and meet, which
   // is the whole of what a bite is
   Jaws(context, stage, share, { paint, weight }) {
@@ -598,7 +704,7 @@ const PAINTERS: Record<
   },
 
   // A sound: rings leaving the caster and washing over what heard it
-  Sound(context, stage, share, { paint, weight }) {
+  Wave(context, stage, share, { paint, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
 
@@ -775,6 +881,113 @@ const PAINTERS: Record<
     });
   },
 
+  // The ground splitting open underneath it. What a one-hit knockout
+  // by burial looks like is a hole, not a hit
+  Chasm(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const open = Math.min(1, share * 1.8);
+
+    // A crack drawn as two lips parting: the dark between them is the
+    // whole of the picture, so it widens rather than moving
+    context.beginPath();
+    for (const lip of [-1, 1]) {
+      context.moveTo(at[0] - size * 2, at[1]);
+      for (let step = 1; step <= 6; step += 1) {
+        const along = step / 6;
+
+        context.lineTo(
+          at[0] - size * 2 + along * size * 4,
+          at[1] + lip * open * size * 0.6 * Math.sin(Math.PI * along) + spread(seed, step) * 2,
+        );
+      }
+    }
+    context.strokeStyle = fade(paint.color, 0.9);
+    context.lineWidth = 2.5 * stage.scale;
+    context.stroke();
+    shards(context, at, size * 1.6, many(5, weight), seed, share, {
+      ...paint,
+      alpha: decay(share),
+      width: 2.6 * stage.scale,
+    });
+  },
+
+  // Leaves crossing it, edge on. They arrive in a line rather than
+  // landing in one place, which is what tells a volley of them from a
+  // pair of claw marks
+  Leaves(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const flying = many(4, weight);
+
+    for (let leaf = 0; leaf < flying; leaf += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.7 - (leaf / flying) * 0.7));
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const drift = (noise(seed, leaf) - 0.5) * size * 1.6;
+
+      slash(
+        context,
+        [at[0] - size * 1.6 + held * size * 3.2, at[1] + drift],
+        size * 0.45,
+        held * 6 + leaf,
+        { ...paint, alpha: 1, width: 2.6 * stage.scale },
+      );
+    }
+  },
+
+  // A stream of stars, which is the one move that says it never
+  // misses by looking like it is being aimed for you
+  Stars(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    for (let mark = 0; mark < many(5, weight); mark += 1) {
+      const held = (share * 1.4 + mark * 0.17) % 1;
+      const along = between(stage.source, at, held);
+      const drift = (noise(seed, mark) - 0.5) * size * 0.8;
+
+      star(context, [along[0] + drift, along[1] + drift * 0.4], size * 0.3, held * 5, {
+        ...paint,
+        alpha: swell(held) + 0.25,
+      });
+    }
+    if (share > 0.6) {
+      burst(context, at, size * (share - 0.6) * 2.5, 6, seed, {
+        ...paint,
+        alpha: decay(share) * 2,
+        width: 2 * stage.scale,
+      });
+    }
+  },
+
+  // Blown off the field: everything goes one way, away from whoever
+  // let it go
+  Blow(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const dx = at[0] - stage.source[0];
+    const dy = at[1] - stage.source[1];
+    const length = Math.max(1, Math.hypot(dx, dy));
+
+    for (let streak = 0; streak < many(5, weight); streak += 1) {
+      const held = (share * 1.5 + noise(seed, streak)) % 1;
+      const off = (noise(seed, streak + 20) - 0.5) * size * 2;
+      const from: Point = [
+        at[0] + (dx / length) * held * size * 3 - (dy / length) * off,
+        at[1] + (dy / length) * held * size * 3 + (dx / length) * off,
+      ];
+
+      slash(context, from, size * 0.7, Math.atan2(dy, dx), {
+        ...paint,
+        alpha: swell(held) * 0.9,
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
   // It went past. Drawn small and grey on purpose: a miss is news,
   // and a miss that looks like a hit is worse than nothing
   Whiff(context, stage, share, { paint }) {
@@ -828,9 +1041,14 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Psybeam]: 'Beam',
   [Moves.IceBeam]: 'Beam',
   [Moves.AuroraBeam]: 'Beam',
-  [Moves.BubbleBeam]: 'Beam',
   [Moves.Flamethrower]: 'Beam',
   [Moves.HydroPump]: 'Beam',
+
+  // Not beams. A bubble move is a spray of them in the mainline, and
+  // this was drawing a solid jet after a thrown orb — two pictures,
+  // neither of them the move
+  [Moves.Bubble]: 'Bubbles',
+  [Moves.BubbleBeam]: 'Bubbles',
 
   // Teeth
   [Moves.Bite]: 'Jaws',
@@ -846,7 +1064,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FurySwipes]: 'Claw',
   [Moves.Slash]: 'Claw',
   [Moves.Cut]: 'Claw',
-  [Moves.RazorLeaf]: 'Claw',
   [Moves.RazorWind]: 'Claw',
   [Moves.WingAttack]: 'Claw',
 
@@ -858,12 +1075,12 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.LeechSeed]: 'Coil',
 
   // Heard rather than felt
-  [Moves.Growl]: 'Sound',
-  [Moves.Roar]: 'Sound',
-  [Moves.Screech]: 'Sound',
-  [Moves.Sing]: 'Sound',
-  [Moves.Supersonic]: 'Sound',
-  [Moves.SonicBoom]: 'Sound',
+  [Moves.Growl]: 'Wave',
+  [Moves.Roar]: 'Wave',
+  [Moves.Screech]: 'Wave',
+  [Moves.Sing]: 'Wave',
+  [Moves.Supersonic]: 'Wave',
+  [Moves.SonicBoom]: 'Wave',
 
   // A point driven in
   [Moves.Peck]: 'Spike',
@@ -877,11 +1094,20 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   // The same point, turning
   [Moves.HornDrill]: 'Drill',
   [Moves.DrillPeck]: 'Drill',
-  [Moves.Fissure]: 'Drill',
+
+  // What the mainline draws for these, rather than what their type
+  // and category would have picked
+  [Moves.Fissure]: 'Chasm',
+  [Moves.RazorLeaf]: 'Leaves',
+  [Moves.Swift]: 'Stars',
+  [Moves.SandAttack]: 'Haze',
+  [Moves.ThunderWave]: 'Wave',
+  [Moves.Whirlwind]: 'Blow',
+  [Moves.Haze]: 'Haze',
+  [Moves.Mist]: 'Haze',
 
   // Wind
   [Moves.Gust]: 'Swirl',
-  [Moves.Whirlwind]: 'Swirl',
   [Moves.Sandstorm]: 'Swirl',
 
   // Something turning in front of its eyes
@@ -896,7 +1122,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Rock and earth arriving from above
   [Moves.RockSlide]: 'Rocks',
   [Moves.RockThrow]: 'Rocks',
-  [Moves.EggBomb]: 'Rocks',
   [Moves.Barrage]: 'Volley',
   [Moves.SeismicToss]: 'Rocks',
 
@@ -911,7 +1136,17 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.VineWhip]: 'Lash',
   [Moves.Slam]: 'Lash',
   [Moves.Lick]: 'Lash',
-  [Moves.Bonemerang]: 'Lash',
+
+  // Thrown and coming back. Nothing else in the game does this, and
+  // as a lash it read as a whip rather than as a bone in the air
+  [Moves.Bonemerang]: 'Boomerang',
+
+  // Something lobbed that goes off where it lands, rather than debris
+  // falling out of the sky onto it
+  [Moves.EggBomb]: 'Blast',
+
+  // Light, seen rather than felt: no wave crossing anything
+  [Moves.Flash]: 'Dazzle',
 
   // Something about the pokemon itself went up
   [Moves.SwordsDance]: 'Boost',
@@ -953,7 +1188,13 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
 const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // The colour of the health bar, which is what it is refilling
   Mend: '#4cc46a',
+  // Gold, the way the mainline has always drawn them — a Normal-type
+  // grey would be a picture of nothing
+  Stars: '#f0d264',
   Ward: '#9ad8ff',
+  // The light itself. A Normal-type grey would be a picture of a
+  // shadow rather than of a flash
+  Dazzle: '#fff2b4',
   Whiff: '#c8ccd4',
 };
 

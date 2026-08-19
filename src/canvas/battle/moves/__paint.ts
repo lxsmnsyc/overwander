@@ -141,6 +141,71 @@ export function orb(
   context.fill();
 }
 
+/**
+ * A bubble: a thin shell with a highlight off its upper left, which is
+ * the only thing that separates one from a plain ring at this size
+ */
+export function bubble(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  radius: number,
+  painted: Painted,
+): void {
+  const alpha = painted.alpha ?? 1;
+
+  context.beginPath();
+  context.ellipse(x, y, radius, radius, 0, 0, Math.PI * 2);
+  context.fillStyle = fade(painted.color, alpha * 0.22);
+  context.fill();
+  context.strokeStyle = fade(painted.color, alpha);
+  context.lineWidth = painted.width ?? 1.6;
+  context.stroke();
+  context.beginPath();
+  context.ellipse(
+    x - radius * 0.34,
+    y - radius * 0.34,
+    Math.max(0.4, radius * 0.22),
+    Math.max(0.4, radius * 0.22),
+    0,
+    0,
+    Math.PI * 2,
+  );
+  context.fillStyle = fade(lighten(painted.color, 0.85), alpha);
+  context.fill();
+}
+
+/**
+ * A bone: a shaft with a knob on each end, drawn at an angle so it can
+ * be tumbled through a phase
+ */
+export function bone(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  length: number,
+  angle: number,
+  painted: Painted,
+): void {
+  const reach = length / 2;
+  const knob = Math.max(1, length * 0.16);
+  const ends: Point[] = [
+    [x + Math.cos(angle) * reach, y + Math.sin(angle) * reach],
+    [x - Math.cos(angle) * reach, y - Math.sin(angle) * reach],
+  ];
+
+  context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
+  context.lineWidth = painted.width ?? 3;
+  context.beginPath();
+  context.moveTo(ends[0][0], ends[0][1]);
+  context.lineTo(ends[1][0], ends[1][1]);
+  context.stroke();
+  context.fillStyle = fade(lighten(painted.color, 0.5), painted.alpha ?? 1);
+  for (const [endX, endY] of ends) {
+    context.beginPath();
+    context.ellipse(endX, endY, knob, knob, 0, 0, Math.PI * 2);
+    context.fill();
+  }
+}
+
 /** Spokes thrown out of a point: an impact, a flash, a hit landing. */
 export function burst(
   context: CanvasRenderingContext2D,

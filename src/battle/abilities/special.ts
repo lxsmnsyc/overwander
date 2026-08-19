@@ -174,6 +174,21 @@ const setupAbilities = [
           event.target.triggerAbility(Abilities.Boss);
         }
       }),
+      // Nothing puts health back on a boss. A raid is a race against a
+      // pool that only goes down, and a boss that drains, rests or
+      // eats a berry is a fight the party cannot finish — the pool is
+      // the timer, so healing it is healing the clock.
+      //
+      // Answered rather than disabled: whatever sent the heal asked
+      // first, so a drain that heals nothing still took what it took
+      battle.on(BattleEvents.CheckUnitCanHeal, EventPriority.Post, (event) => {
+        if (event.success && event.value > 0 && event.target.hasAbility(Abilities.Boss)) {
+          event.success = false;
+
+          // For visual cues
+          event.target.triggerAbility(Abilities.Boss);
+        }
+      }),
       // Recoil never comes back to a boss (Rock Head style)
       battle.on(BattleEvents.CheckUnitRecoil, EventPriority.Post, (event) => {
         if (event.recoil && event.parent.source.hasAbility(Abilities.Boss)) {

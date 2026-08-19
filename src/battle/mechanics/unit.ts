@@ -87,6 +87,15 @@ function setupUnitDamageMechanics(battle: Battle): void {
     }
   });
 
+  // The one place a blanket refusal is consulted, the way damage has
+  // one: asked before every regular listener, so health that cannot go
+  // back is stopped before anything acts on it
+  battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+    if (!event.target.checkCanHeal(event.cause, event.source, event.value, event.flags)) {
+      event.disabled = true;
+    }
+  });
+
   battle.on(BattleEvents.UnitHeal, EventPriority.Exact, (event) => {
     if (event.target.alive) {
       // setHealth clamps to the max HP

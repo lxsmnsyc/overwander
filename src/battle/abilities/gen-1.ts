@@ -199,7 +199,15 @@ const setupAbilities = [
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.RainDish) {
             const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
-            event.source.setHealth(event.source.health + maxHP);
+
+            // Through the heal, so anything that refuses one refuses
+            // this one
+            event.source.heal(
+              { type: EffectType.Ability, ability: Abilities.RainDish, unit: event.source },
+              event.source,
+              maxHP,
+              0,
+            );
           }
         }),
       ]),
@@ -1154,7 +1162,12 @@ const setupAbilities = [
           const maxHP = unit.checkStat(Stats.HP, 0);
 
           if (isWeatherRainy(unit)) {
-            unit.setHealth(unit.health + maxHP / 8);
+            unit.heal(
+              { type: EffectType.Ability, ability: Abilities.DrySkin, unit },
+              unit,
+              maxHP / 8,
+              0,
+            );
             unit.triggerAbility(Abilities.DrySkin);
           } else if (isWeatherSunny(unit)) {
             unit.damage(
@@ -1961,7 +1974,13 @@ const setupAbilities = [
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.IceBody) {
             const maxHP = event.source.checkStat(Stats.HP, 0) / 16;
-            event.source.setHealth(event.source.health + maxHP);
+
+            event.source.heal(
+              { type: EffectType.Ability, ability: Abilities.IceBody, unit: event.source },
+              event.source,
+              maxHP,
+              0,
+            );
           }
         }),
         chipImmunity(battle, Abilities.IceBody, Weathers.Hail),

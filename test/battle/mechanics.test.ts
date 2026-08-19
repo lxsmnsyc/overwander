@@ -940,6 +940,36 @@ describe('natures', () => {
   });
 });
 
+describe('whether health may go back', () => {
+  it('asks once, and a refusal stops the heal', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+    const cause = { type: EffectType.None } as const;
+    let asked = 0;
+
+    unit.setHealth(100);
+    battle.on(BattleEvents.CheckUnitCanHeal, EventPriority.Post, (event) => {
+      asked += 1;
+      event.success = false;
+    });
+
+    unit.heal(cause, unit, 50, 0);
+    // The question is asked before the heal is emitted, so a refusal
+    // is a verdict rather than a race to disable the event
+    expect(asked).toBe(1);
+    expect(unit.health).toBe(100);
+  });
+
+  it('lets it through when nothing refuses', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.setHealth(100);
+    unit.heal({ type: EffectType.None } as const, unit, 50, 0);
+    expect(unit.health).toBe(150);
+  });
+});
+
 describe('who a spread move reaches', () => {
   /**
    * Every pokemon a move was aimed at, in the order the engine picked

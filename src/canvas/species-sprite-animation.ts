@@ -177,6 +177,52 @@ function middleOf(points: Point[]): Point | null {
   ];
 }
 
+/**
+ * One frame's marked points, in frame pixels from its top left. Every
+ * kind falls back to something, so a caller always has a point to place
+ * by: a missing shadow becomes the bottom middle of the box, where feet
+ * are.
+ *
+ * The body centre is averaged from the head and both hands, because
+ * **no sheet marks it** — they sit around the body rather than on it, so
+ * their middle is the body however they are arranged, and the paired
+ * hands cancel out horizontally
+ */
+function pointsOf(
+  anchors: SpriteFrameData,
+  frameWidth: number,
+  frameHeight: number,
+): Record<SpriteAnchor, Point> {
+  const shadow: Point = anchors.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
+  const marked = [anchors.head, anchors.left, anchors.right].filter(
+    (point): point is Point => point != null,
+  );
+  const center = anchors.center ??
+    middleOf(marked) ?? [(frameWidth - 1) / 2, (frameHeight - 1) / 2];
+
+  return {
+    shadow,
+    center,
+    head: anchors.head ?? center,
+    left: anchors.left ?? center,
+    right: anchors.right ?? center,
+  };
+}
+
+/**
+ * A point of a frame, in canvas pixels, once the frame has been placed.
+ * Half a pixel over, because a marker is a pixel and half of one shows
+ * at four times the size
+ */
+function spotOf(point: Point, placed: Placement): Point {
+  const across = (point[0] + 0.5) * placed.scale;
+
+  return [
+    placed.flip ? placed.originX + placed.width - across : placed.originX + across,
+    placed.originY + (point[1] + 0.5) * placed.scale,
+  ];
+}
+
 export default class SpeciesSpriteAnimation {
   /**
    * Where the sheet is, so a caller can tell two sprites apart and a
@@ -548,12 +594,19 @@ export default class SpeciesSpriteAnimation {
    * The anchors of the frame showing, as the description gives them
    */
   private get anchors(): SpriteFrameData | null {
+    return this.anchorsAt(this.frame);
+  }
+
+  /**
+   * The anchors of one frame of the row being drawn
+   */
+  private anchorsAt(column: number): SpriteFrameData | null {
     const clip = this.clip;
 
     if (clip == null) {
       return null;
     }
-    return clip.target.frames[this.row * clip.target.columns + this.frame] ?? null;
+    return clip.target.frames[this.row * clip.target.columns + column] ?? null;
   }
 
   /**
@@ -574,23 +627,26 @@ export default class SpeciesSpriteAnimation {
     if (clip == null || anchors == null) {
       return null;
     }
+    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
+  }
 
-    const { frameWidth, frameHeight } = clip.target;
-    const shadow: Point = anchors.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
-    const marked = [anchors.head, anchors.left, anchors.right].filter(
-      (point): point is Point => point != null,
-    );
-    const center = anchors.center ??
-      middleOf(marked) ?? [(frameWidth - 1) / 2, (frameHeight - 1) / 2];
-    const points: Record<SpriteAnchor, Point> = {
-      shadow,
-      center,
-      head: anchors.head ?? center,
-      left: anchors.left ?? center,
-      right: anchors.right ?? center,
-    };
+  /**
+   * The same point on the **first** frame of the row.
+   *
+   * Placement registers on this rather than on the frame showing,
+   * because the anchors travel with the body: pinning each frame's own
+   * mark to one spot subtracts exactly the motion the artist drew. A
+   * Charge bobs a pixel and its shadow mark bobs with it, so anchoring
+   * frame by frame leaves the pokemon standing perfectly still
+   */
+  private resting(kind: SpriteAnchor): Point | null {
+    const clip = this.clip;
+    const anchors = this.anchorsAt(0);
 
-    return points[kind];
+    if (clip == null || anchors == null) {
+      return null;
+    }
+    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
   }
 
   /**
@@ -627,7 +683,7 @@ export default class SpeciesSpriteAnimation {
     const { frameWidth, frameHeight } = clip.target;
     const scale = options.scale ?? 1;
     const flip = options.flip === true;
-    const anchor = this.anchor(options.anchor ?? 'center') ?? [
+    const anchor = this.resting(options.anchor ?? 'center') ?? [
       (frameWidth - 1) / 2,
       (frameHeight - 1) / 2,
     ];
@@ -693,13 +749,7 @@ export default class SpeciesSpriteAnimation {
     if (placed == null || point == null) {
       return null;
     }
-
-    const across = (point[0] + 0.5) * placed.scale;
-
-    return [
-      placed.flip ? placed.originX + placed.width - across : placed.originX + across,
-      placed.originY + (point[1] + 0.5) * placed.scale,
-    ];
+    return spotOf(point, placed);
   }
 
   /**
@@ -716,7 +766,11 @@ export default class SpeciesSpriteAnimation {
     y: number,
     options: ShadowOptions = {},
   ): void {
-    const spot = this.locate('shadow', x, y, options);
+    const placed = this.place(x, y, options);
+    // The resting mark, not the frame's: the ground does not rise with
+    // a pokemon that has just left it
+    const point = this.resting('shadow');
+    const spot = placed == null || point == null ? null : spotOf(point, placed);
 
     if (spot == null) {
       return;

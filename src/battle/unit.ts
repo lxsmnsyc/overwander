@@ -17,6 +17,7 @@ import type {
   CheckUnitCanChannelEvent,
   CheckUnitCanConsumeItemEvent,
   CheckUnitCanDamageEvent,
+  CheckUnitCanHealEvent,
   CheckUnitCanUpdateStageEvent,
   CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
@@ -1182,6 +1183,27 @@ export default class Unit {
     };
 
     this.battle.emit(BattleEvents.CheckUnitCanDamage, event);
+    return event.success;
+  }
+
+  /**
+   * Whether health may go back on this unit at all. The mirror of
+   * `checkCanDamage`, and asked the same way: once, before the heal is
+   * emitted, so a refusal is a verdict rather than a race
+   */
+  checkCanHeal(cause: EffectCause, source: Unit, value: number, flags: number): boolean {
+    const event: CheckUnitCanHealEvent = {
+      id: 'CheckUnitCanHeal',
+      disabled: false,
+      source,
+      target: this,
+      value,
+      flags,
+      cause,
+      success: true,
+    };
+
+    this.battle.emit(BattleEvents.CheckUnitCanHeal, event);
     return event.success;
   }
 

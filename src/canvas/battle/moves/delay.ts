@@ -6,6 +6,8 @@ import type { Point, Stage } from '../stage';
 import {
   type Painted,
   between,
+  bone,
+  bubble,
   decay,
   motes,
   noise,
@@ -41,7 +43,17 @@ import {
 const REACH = 22;
 
 /** Every way a move can spend the gap. */
-export type DelayShape = 'Thrown' | 'Charge' | 'Vanish' | 'Surface' | 'Dive' | 'Reach' | 'Rise';
+export type DelayShape =
+  | 'Thrown'
+  | 'Bubbles'
+  | 'Spun'
+  | 'Lobbed'
+  | 'Charge'
+  | 'Vanish'
+  | 'Surface'
+  | 'Dive'
+  | 'Reach'
+  | 'Rise';
 
 function landing(stage: Stage): Point {
   return stage.targets[0] ?? stage.source;
@@ -78,6 +90,66 @@ const PAINTERS: Record<
       ...paint,
       alpha: 0.7,
       width: 1.6 * stage.scale,
+    });
+  },
+
+  // A spray rather than a single thing thrown: the bubbles leave in a
+  // stream and keep arriving, and staggering them by index is what
+  // holds a line of them in the air at every instant
+  Bubbles(context, stage, share, paint, seed) {
+    const size = REACH * stage.scale;
+
+    for (let one = 0; one < 7; one += 1) {
+      const held = share * 1.35 - one * 0.05;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      const at = between(stage.source, landing(stage), held);
+      // Bubbles do not fly straight, and the wobble is most of what
+      // separates a stream of them from a burst of pellets
+      const sway = Math.sin(held * Math.PI * 3 + one) * size * 0.3;
+
+      bubble(context, [at[0], at[1] + sway], size * (0.16 + noise(seed, one) * 0.18), {
+        ...paint,
+        alpha: 0.55 + swell(held) * 0.45,
+        width: 1.6 * stage.scale,
+      });
+    }
+  },
+
+  // Something thrown end over end. The tumble is the point: a bone
+  // drawn as an orb crossing is every other projectile in the game
+  Spun(context, stage, share, paint) {
+    const at = between(stage.source, landing(stage), share);
+    const size = REACH * stage.scale;
+
+    bone(context, at, size * 1.1, share * Math.PI * 8, {
+      ...paint,
+      alpha: 1,
+      width: 3 * stage.scale,
+    });
+  },
+
+  // Lobbed rather than shot: it rises on the way out and drops onto
+  // whatever it was aimed at
+  Lobbed(context, stage, share, paint, seed) {
+    const at = between(stage.source, landing(stage), share);
+    const size = REACH * stage.scale;
+    const arc = Math.sin(Math.PI * share) * size * 2.6;
+
+    orb(context, [at[0], at[1] - arc], size * 0.38, paint);
+    // Turning over as it goes, so the arc reads as a throw rather
+    // than as something floating across
+    ring(context, [at[0], at[1] - arc], size * 0.38, {
+      ...paint,
+      alpha: 0.7,
+      width: 1.8 * stage.scale,
+    });
+    motes(context, [at[0], at[1] - arc], size * 0.7, 3, seed, share, {
+      ...paint,
+      alpha: 0.5,
+      width: 1.4 * stage.scale,
     });
   },
 
@@ -214,6 +286,15 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.Dig]: ['Vanish', 'Surface'],
   // Up out of reach, then down onto it
   [Moves.Fly]: ['Vanish', 'Dive'],
+  // Blown across rather than shot: one orb crossing said the same
+  // thing as every other projectile in the game
+  [Moves.Bubble]: [undefined, 'Bubbles'],
+  [Moves.BubbleBeam]: [undefined, 'Bubbles'],
+  // Tumbling out rather than shot straight
+  [Moves.Bonemerang]: [undefined, 'Spun'],
+  [Moves.BoneClub]: [undefined, 'Spun'],
+  // Thrown in an arc and coming down on it
+  [Moves.EggBomb]: [undefined, 'Lobbed'],
   [Moves.Teleport]: ['Vanish', 'Vanish'],
   [Moves.SolarBeam]: ['Charge', 'Charge'],
   [Moves.SkyAttack]: ['Charge', 'Dive'],

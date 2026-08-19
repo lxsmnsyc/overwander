@@ -13,6 +13,8 @@
  * lamp being switched rather than as the sun going down.
  */
 
+import { WORLD_MAX } from '../overworld/world';
+
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
 
@@ -29,9 +31,11 @@ function hourOf(localTime: number): number {
  * from*, as an angle on the screen — east at dawn, overhead-ish at
  * noon, west at dusk — which is what decides where a shadow falls.
  *
- * It is one fixed path, the same everywhere: this world has no
- * latitude and no seasons, so a sun that rose at six and set at
- * eighteen would be as true here as any other
+ * The **day** is the same everywhere — sunrise at six, sunset at
+ * eighteen, because the spawn pools turn over on those hours and a
+ * light that disagreed with them would be two games at once. What
+ * changes with the chunk is how **high** the sun gets: overhead at the
+ * middle of the world, and never far up at its edges
  */
 export interface Sun {
   elevation: number;
@@ -41,7 +45,27 @@ export interface Sun {
 const SUNRISE = 6;
 const SUNSET = 18;
 
-export function getSun(localTime: number): Sun {
+/**
+ * How far the sun leans over at the edge of the world, in radians.
+ *
+ * Not a quarter turn: a pole where the sun never rises is a black
+ * screen and a place nobody can play in, so the world's edge is a
+ * hard northern winter rather than the arctic circle
+ */
+const MAX_TILT = (55 * Math.PI) / 180;
+
+/**
+ * Where a chunk stands between the middle of the world and its edge,
+ * from -1 to 1.
+ *
+ * Which end is north does not matter: the sun's height falls off with
+ * the **distance** from the middle, and the two halves are the same
+ */
+export function latitudeOf(chunkY: number): number {
+  return Math.max(-1, Math.min(1, chunkY / WORLD_MAX));
+}
+
+export function getSun(localTime: number, latitude = 0): Sun {
   const hour = hourOf(localTime);
   /**
    * How far through the daylight it is, from 0 at sunrise to 1 at
@@ -50,12 +74,21 @@ export function getSun(localTime: number): Sun {
    */
   const through = (hour - SUNRISE) / (SUNSET - SUNRISE);
 
+  /**
+   * How high it gets at all, here. One at the middle of the world and
+   * about half that at the edge, so the far chunks keep the sun near
+   * the horizon all day: long shadows, more colour, and a shallower
+   * night, since a sun that never got far up never gets far down
+   * either
+   */
+  const peak = Math.cos(latitude * MAX_TILT);
+
   return {
     // A half turn of a sine over the day: nothing at either horizon,
     // highest at noon, and negative through the night by the same
     // curve, so the small hours are the darkest rather than midnight
     // being a step
-    elevation: Math.sin(through * Math.PI),
+    elevation: Math.sin(through * Math.PI) * peak,
     // Swinging from one side to the other as the day goes. The angle
     // is in screen space — the board turns under the camera, and a sun
     // that turned with it would be a sun the player carries
@@ -95,8 +128,8 @@ const DUSK_DEPTH = 0.34;
 /** How strong the horizon's colour is at its strongest */
 const GLOW_STRENGTH = 0.12;
 
-export function getAmbient(localTime: number): Ambient {
-  const { elevation } = getSun(localTime);
+export function getAmbient(localTime: number, latitude = 0): Ambient {
+  const { elevation } = getSun(localTime, latitude);
   /**
    * How much of the night is in this hour: none while the sun is up,
    * all of it once it is well down. The curve is the sun's own, so
@@ -148,8 +181,26 @@ const MAX_LENGTH = 3.2;
 /** How dark a shadow is with the sun straight overhead */
 const NOON_ALPHA = 0.34;
 
-export function getCast(localTime: number): Cast {
-  const { elevation, azimuth } = getSun(localTime);
+/**
+ * How much of a shadow's length survives the way the ground is drawn.
+ * The board is laid back under the camera, so a step north covers less
+ * of the picture than a step east
+ */
+const FLATTEN = 0.45;
+
+/**
+ * Where this hour's light throws a shadow, in the picture's own
+ * directions.
+ *
+ * The sun stands in the **world**, and the board turns under it: a
+ * player who spins the ground around does not spin the morning with
+ * it. So the direction is worked out as a compass bearing and then
+ * turned by the same yaw the ground is drawn at — without that, every
+ * shadow pointed the same way on screen however the board was facing,
+ * which reads as a light bolted to the camera
+ */
+export function getCast(localTime: number, yaw = 0, latitude = 0): Cast {
+  const { elevation, azimuth } = getSun(localTime, latitude);
   const up = Math.max(0, elevation);
   /**
    * Long as the sun drops. It is `1 / tan(height)` in the world and a
@@ -164,13 +215,18 @@ export function getCast(localTime: number): Cast {
   // ambient patch and nothing else
   const risen = up > 0.02;
 
+  // Away from the sun: it rises in the east, which is the right of a
+  // board drawn with north at the top, so a morning shadow lies to the
+  // left and an evening one to the right
+  const east = Math.sin(azimuth);
+  const north = Math.cos(azimuth);
+  const cos = Math.cos(yaw);
+  const sin = Math.sin(yaw);
+
   return {
-    // Away from the sun: it rises in the east, which is the right of
-    // a board drawn with north at the top, so a morning shadow lies to
-    // the left and an evening one to the right. The vertical part is
-    // the smaller because the ground is laid back under the camera
-    dx: Math.sin(azimuth),
-    dy: 0.45 * Math.cos(azimuth),
+    // Turned with the ground, then laid back with it
+    dx: east * cos - north * sin,
+    dy: (east * sin + north * cos) * FLATTEN,
     length: risen ? length : 0,
     // Fading with the sun rather than switching off at the horizon:
     // the last of the light throws the faintest shadow, which is what
@@ -190,8 +246,9 @@ export function paintAmbient(
   width: number,
   height: number,
   localTime: number,
+  latitude = 0,
 ): void {
-  const ambient = getAmbient(localTime);
+  const ambient = getAmbient(localTime, latitude);
 
   if (ambient.depth <= 0 && ambient.warmth <= 0) {
     return;

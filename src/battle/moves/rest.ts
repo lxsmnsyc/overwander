@@ -47,7 +47,14 @@ export default function setupRest(battle: Battle): void {
       move: Moves.Rest,
       unit: event.source,
     });
-    // Heal unit
-    event.source.setHealth(event.source.checkStat(Stats.HP, 0));
+    // Through the heal rather than straight onto the health, so a
+    // pokemon that may not be healed at all is not healed by sleeping:
+    // `setHealth` answers to nobody, and `UnitHeal` clamps to the max
+    event.source.heal(
+      { type: EffectType.Move, move: Moves.Rest, unit: event.source },
+      event.source,
+      event.source.checkStat(Stats.HP, 0),
+      0,
+    );
   });
 }

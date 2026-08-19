@@ -97,10 +97,17 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Quake', Moves.Earthquake],
   ['Drain', Moves.Absorb],
   ['Volley', Moves.PinMissile],
+  ['Bubbles', Moves.BubbleBeam],
+  ['Boomerang', Moves.Bonemerang],
+  ['Dazzle', Moves.Flash],
   ['Jaws', Moves.Bite],
   ['Claw', Moves.Scratch],
   ['Coil', Moves.Wrap],
-  ['Sound', Moves.Growl],
+  ['Wave', Moves.Growl],
+  ['Chasm', Moves.Fissure],
+  ['Leaves', Moves.RazorLeaf],
+  ['Stars', Moves.Swift],
+  ['Blow', Moves.Whirlwind],
   ['Spike', Moves.Peck],
   ['Drill', Moves.HornDrill],
   ['Swirl', Moves.Gust],
@@ -136,6 +143,9 @@ describe('a painted move', () => {
   it('draws something at every instant of every way it can spend the gap', () => {
     const gaps: [shape: string, move: Moves, steps: number][] = [
       ['Thrown', Moves.Ember, 0],
+      ['Bubbles', Moves.BubbleBeam, 0],
+      ['Spun', Moves.Bonemerang, 0],
+      ['Lobbed', Moves.EggBomb, 0],
       ['Charge', Moves.Thunderbolt, 0],
       ['Vanish', Moves.Dig, 1],
       ['Surface', Moves.Dig, 0],
@@ -206,8 +216,19 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Recover)).toBe('Mend');
     // Named, because the shape can say the move rather than only its
     // element: a growl is heard
-    expect(effectShapeFor(Moves.Growl)).toBe('Sound');
+    expect(effectShapeFor(Moves.Growl)).toBe('Wave');
     expect(effectShapeFor(Moves.Bite)).toBe('Jaws');
+    // A bubble move sprays rather than shooting one jet, in the gap
+    // and where it lands alike
+    expect(effectShapeFor(Moves.BubbleBeam)).toBe('Bubbles');
+    expect(delayShapeFor(Moves.BubbleBeam, 0)).toBe('Bubbles');
+    // Thrown and coming back, not a whip reaching out
+    expect(effectShapeFor(Moves.Bonemerang)).toBe('Boomerang');
+    // Lobbed, and going off where it lands rather than raining down
+    expect(effectShapeFor(Moves.EggBomb)).toBe('Blast');
+    expect(delayShapeFor(Moves.EggBomb, 0)).toBe('Lobbed');
+    // Light, which nothing crosses the field to deliver
+    expect(effectShapeFor(Moves.Flash)).toBe('Dazzle');
     expect(effectShapeFor(Moves.Wrap)).toBe('Coil');
     // A fury of swipes is claws, drawn several times over — the
     // barrage shape is for the moves whose repeat is the whole point
@@ -215,6 +236,12 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.PinMissile)).toBe('Volley');
     expect(effectShapeFor(Moves.Glare)).toBe('Mark');
     expect(effectShapeFor(Moves.Harden)).toBe('Ward');
+    // Drawn the way the mainline draws them, rather than the way their
+    // type and category would have picked
+    expect(effectShapeFor(Moves.Fissure)).toBe('Chasm');
+    expect(effectShapeFor(Moves.SandAttack)).toBe('Haze');
+    expect(effectShapeFor(Moves.ThunderWave)).toBe('Wave');
+    expect(effectShapeFor(Moves.Haze)).toBe('Haze');
   });
 
   it('draws the same instant the same way however it got there', () => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getAmbient, getCast, getSun } from '../../src/canvas/daylight';
+import { getAmbient, getCast, getSun, latitudeOf } from '../../src/canvas/daylight';
+import { WORLD_MAX } from '../../src/overworld/world';
 
 /**
  * The light over the overworld, which is a curve rather than four
@@ -63,5 +64,74 @@ describe('daylight', () => {
     const DAY = 24 * HOUR;
 
     expect(getSun(at(9)).elevation).toBeCloseTo(getSun(at(9) + DAY * 400).elevation, 6);
+  });
+
+  it('turns the shadows with the ground', () => {
+    const noon = at(9);
+    const still = getCast(noon);
+    const quarter = getCast(noon, Math.PI / 2);
+
+    // A quarter turn of the board swings the shadow a quarter of the
+    // way round with it: what was cast east now lies north, flattened
+    // by the same amount the ground is
+    expect(quarter.dx).toBeCloseTo(-still.dy / 0.45, 6);
+    expect(quarter.dy).toBeCloseTo(still.dx * 0.45, 6);
+
+    // Half a turn puts it the other way about entirely
+    const half = getCast(noon, Math.PI);
+
+    expect(half.dx).toBeCloseTo(-still.dx, 6);
+    expect(half.dy).toBeCloseTo(-still.dy, 6);
+
+    // What the sun is doing has not changed: only where the ground is
+    // facing
+    expect(quarter.length).toBeCloseTo(still.length, 6);
+    expect(quarter.alpha).toBeCloseTo(still.alpha, 6);
+  });
+
+  it('keeps the day the same length wherever the chunk is', () => {
+    // The spawn pools turn over on the hour, so the sun has to rise
+    // and set with them however far north the chunk sits
+    for (const latitude of [0, 0.5, 1, -1]) {
+      expect(getSun(at(6), latitude).elevation).toBeCloseTo(0, 6);
+      expect(getSun(at(18), latitude).elevation).toBeCloseTo(0, 6);
+      expect(getSun(at(12), latitude).elevation).toBeGreaterThan(0);
+      expect(getSun(at(0), latitude).elevation).toBeLessThan(0);
+    }
+  });
+
+  it('lowers the sun toward the edges of the world', () => {
+    const middle = getSun(at(12)).elevation;
+    const halfway = getSun(at(12), 0.5).elevation;
+    const edge = getSun(at(12), 1).elevation;
+
+    expect(middle).toBeCloseTo(1, 6);
+    expect(halfway).toBeLessThan(middle);
+    expect(edge).toBeLessThan(halfway);
+    // A hard winter rather than the arctic: the sun still gets up
+    expect(edge).toBeGreaterThan(0.4);
+    // Which end is north does not matter — the two halves are alike
+    expect(getSun(at(12), -1).elevation).toBeCloseTo(edge, 6);
+  });
+
+  it('throws longer, fainter shadows and a deeper wash out there', () => {
+    const middle = getCast(at(12));
+    const edge = getCast(at(12), 0, 1);
+
+    expect(edge.length).toBeGreaterThan(middle.length);
+    expect(edge.alpha).toBeLessThanOrEqual(middle.alpha);
+
+    // Mid-morning at the edge is still a low sun, so it keeps the
+    // colour and the depth of one — at the middle of the world that
+    // hour is already plain daylight
+    expect(getAmbient(at(8), 1).depth).toBeGreaterThan(getAmbient(at(8)).depth);
+    expect(getAmbient(at(8), 1).warmth).toBeGreaterThan(getAmbient(at(8)).warmth);
+  });
+
+  it('maps a chunk row onto that scale, and stops at the edges', () => {
+    expect(latitudeOf(0)).toBe(0);
+    expect(latitudeOf(WORLD_MAX)).toBeCloseTo(1, 6);
+    expect(latitudeOf(WORLD_MAX * 10)).toBe(1);
+    expect(latitudeOf(-WORLD_MAX * 10)).toBe(-1);
   });
 });

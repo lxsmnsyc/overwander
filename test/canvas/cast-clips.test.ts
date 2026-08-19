@@ -159,7 +159,7 @@ describe('what the field shows while a move is cast', () => {
     expect(gathering.duration).toBe(null);
   });
 
-  it('throws the move own clip over the window it is in the air', () => {
+  it('throws the move own clip at the speed it was drawn at', () => {
     const { battle, teamA, teamB } = createBattle();
     const caster = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
@@ -175,8 +175,10 @@ describe('what the field shows while a move is cast', () => {
 
     expect(throwing.animation).not.toBe('Charge');
     expect(throwing.loop).toBe(false);
-    // Fitted to the flight, so the gesture ends as the hit lands
-    expect(throwing.duration).toBe(250);
+    // Not fitted to the flight. The engine's delay says when the hit
+    // lands, not how fast a pokemon moves — squeezed into a quarter of
+    // a second, a second of drawn gesture is a blink
+    expect(throwing.duration).toBe(null);
   });
 
   it('repeats a thrown clip that was drawn as a loop', () => {

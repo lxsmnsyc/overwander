@@ -1926,6 +1926,43 @@ describe('Boss', () => {
     expect(boss.stages[Stages.Attack]).toBe(1);
   });
 
+  it('cannot be healed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamB);
+    const cause = { type: EffectType.Move, move: Moves.Recover, unit: boss } as const;
+
+    boss.addAbility(Abilities.Boss);
+    boss.setHealth(boss.checkStat(Stats.HP, 0) - 1000);
+    ally.setHealth(ally.checkStat(Stats.HP, 0) - 100);
+
+    const hurt = boss.health;
+
+    boss.heal(cause, boss, 500, 0);
+    // The pool is the timer a raid is run against, so nothing puts it
+    // back — but everybody else heals as they always did
+    expect(boss.health).toBe(hurt);
+
+    ally.heal(cause, ally, 50, 0);
+    expect(ally.health).toBeGreaterThan(ally.checkStat(Stats.HP, 0) - 100);
+  });
+
+  it('gets nothing back from Rest either', () => {
+    const { battle, teamA } = createBattle();
+    const boss = createUnit(battle, teamA);
+
+    boss.addAbility(Abilities.Boss);
+    boss.setHealth(boss.checkStat(Stats.HP, 0) - 1000);
+
+    const hurt = boss.health;
+
+    boss.triggerMoveEffect(Moves.Rest, { type: MoveTargetType.Unit, unit: boss }, 0);
+    // Rest used to put the health on directly, which asked nobody
+    expect(boss.health).toBe(hurt);
+    // It still sleeps: what the ability refuses is the healing
+    expect(boss.getStatus(Statuses.Sleeping)).not.toBeUndefined();
+  });
+
   it('is immune to health-scaling damage', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);

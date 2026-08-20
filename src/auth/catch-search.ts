@@ -15,7 +15,7 @@ import { isEgg } from './egg';
 import { isFainted } from './health';
 import BATTLE_TIMEOUT, { isLockLive } from './battle-lock';
 import { serverNow } from './clock';
-import parseQuery from '../core/query';
+import parseQuery, { holds, holdsAny, named, only, within } from '../core/query';
 
 /**
  * What a search box over a box of pokemon can be asked.
@@ -32,37 +32,6 @@ import parseQuery from '../core/query';
  * box already refuses to draw what is in one; a search that told you
  * would be the same leak by another door.
  */
-
-/** Whether a name holds what was asked for, either way round on case */
-function has(name: string, value: string): boolean {
-  return name.toLowerCase().includes(value.trim().toLowerCase());
-}
-
-/** Whether any of a list of names holds it */
-function any(names: string[], value: string): boolean {
-  return names.some((name) => has(name, value));
-}
-
-/**
- * A number or a range of them: `level:30`, `level:30-60`. An open end
- * is allowed — `level:30-` is thirty and up — since half a range is
- * what somebody usually means
- */
-function within(value: string, actual: number): boolean {
-  const ends = value.split('-');
-
-  if (ends.length < 2) {
-    return Number(ends[0]) === actual;
-  }
-
-  // An empty end is the open one: `30-` is thirty and up, `-30` is
-  // thirty and under. A number that will not parse leaves NaN, and
-  // every comparison against NaN is false, which refuses the term
-  const floor = ends[0].trim() === '' ? Number.NEGATIVE_INFINITY : Number(ends[0]);
-  const ceiling = ends[1].trim() === '' ? Number.POSITIVE_INFINITY : Number(ends[1]);
-
-  return actual >= floor && actual <= ceiling;
-}
 
 /** What one field asks of one pokemon */
 type CatchField = (caught: CaughtPokemon, value: string) => boolean;
@@ -180,36 +149,36 @@ function marked(caught: CaughtPokemon, word: string, wanted: boolean): boolean {
 const FIELDS = new Map<string, CatchField>(
   Object.entries({
     family: hidden((caught, value) =>
-      has(getFamilyName(getSpeciesData(caught.species).family), value),
+      holds(getFamilyName(getSpeciesData(caught.species).family), value),
     ),
     type: hidden((caught, value) =>
-      any(
+      holdsAny(
         getSpeciesData(caught.species).types.map((kind) => TYPE_NAMES[kind]),
         value,
       ),
     ),
     move: hidden((caught, value) =>
-      any(
+      holdsAny(
         caught.moves.map((move) => getMoveData(move).name),
         value,
       ),
     ),
     ability: hidden((caught, value) =>
-      any(
+      holdsAny(
         caught.abilities.map((ability) => getAbilityData(ability).name),
         value,
       ),
     ),
     item: hidden((caught, value) =>
-      any(
+      holdsAny(
         caught.items.map((item) => getItemData(item).name),
         value,
       ),
     ),
-    nature: hidden((caught, value) => has(NATURE_NAMES[caught.nature], value)),
-    gender: hidden((caught, value) => has(GENDER_NAMES[caught.gender], value)),
-    ball: (caught, value) => has(getItemData(BALL_ITEMS[caught.ball]).name, value),
-    met: (caught, value) => has(ENCOUNTER_TYPE_NAMES[caught.type], value),
+    nature: hidden((caught, value) => holds(NATURE_NAMES[caught.nature], value)),
+    gender: hidden((caught, value) => holds(GENDER_NAMES[caught.gender], value)),
+    ball: (caught, value) => holds(getItemData(BALL_ITEMS[caught.ball]).name, value),
+    met: (caught, value) => holds(ENCOUNTER_TYPE_NAMES[caught.type], value),
     // Every yes-or-no fact, asked by name: `is:shiny`, `not:fainted`
     is: (caught, value) => marked(caught, value, true),
     not: (caught, value) => marked(caught, value, false),
@@ -258,30 +227,6 @@ export type CatchConstraint =
  */
 const IN_LIMIT = 30;
 
-/**
- * Which registered thing a name means, when it means exactly one.
- *
- * The runtime matches on part of a name, so "emb" is Ember today and
- * two moves the day a second one is registered. A query has to name
- * an id, so an ambiguous word pushes nothing
- */
-function only<T>(found: T[]): T | null {
-  return found.length === 1 ? found[0] : null;
-}
-
-/**
- * The one id in a table of names whose name holds the word, or null
- * where the word names none of them or several. A const enum cannot
- * be listed, so the name table it is written beside stands in for one
- */
-function named(table: Record<number, string>, wanted: string): number | null {
-  return only(
-    Object.entries(table)
-      .filter(([, name]) => has(name, wanted))
-      .map(([id]) => Number(id)),
-  );
-}
-
 /** What each ball is called, which is what its item is called */
 function ballNames(): Record<number, string> {
   const names: Record<number, string> = {};
@@ -292,8 +237,8 @@ function ballNames(): Record<number, string> {
   return names;
 }
 
-function speciesWhere(holds: (species: Species) => boolean): Species[] {
-  return getRegisteredSpecies().filter(holds);
+function speciesWhere(keep: (species: Species) => boolean): Species[] {
+  return getRegisteredSpecies().filter(keep);
 }
 
 /** Every registered item, which the registry keeps by type */
@@ -359,27 +304,27 @@ function constrain(field: string, value: string): CatchConstraint | null {
     }
     case 'family': {
       const oneOf = speciesWhere((species) =>
-        has(getFamilyName(getSpeciesData(species).family), wanted),
+        holds(getFamilyName(getSpeciesData(species).family), wanted),
       );
 
       return oneOf.length > 0 && oneOf.length <= IN_LIMIT ? { field: 'species', oneOf } : null;
     }
     case 'move': {
       const move = only(
-        getRegisteredMoves().filter((entry) => has(getMoveData(entry).name, wanted)),
+        getRegisteredMoves().filter((entry) => holds(getMoveData(entry).name, wanted)),
       );
 
       return move == null ? null : { field: 'moves', has: move };
     }
     case 'ability': {
       const ability = only(
-        getRegisteredAbilities().filter((entry) => has(getAbilityData(entry).name, wanted)),
+        getRegisteredAbilities().filter((entry) => holds(getAbilityData(entry).name, wanted)),
       );
 
       return ability == null ? null : { field: 'abilities', has: ability };
     }
     case 'item': {
-      const item = only(everyItem().filter((entry) => has(getItemData(entry).name, wanted)));
+      const item = only(everyItem().filter((entry) => holds(getItemData(entry).name, wanted)));
 
       return item == null ? null : { field: 'items', has: item };
     }
@@ -450,7 +395,7 @@ function byName(caught: CaughtPokemon, value: string): boolean {
   if (isEgg(caught)) {
     return 'egg'.includes(wanted);
   }
-  return has(getCatchName(caught), wanted) || has(getSpeciesData(caught.species).name, wanted);
+  return holds(getCatchName(caught), wanted) || holds(getSpeciesData(caught.species).name, wanted);
 }
 
 /**

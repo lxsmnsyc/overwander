@@ -95,6 +95,11 @@ Exactly one term goes down, the narrowest of them. Every field asked beside
 `owner` needs a composite index, so one keeps that list one entry per field
 rather than one per combination anybody types.
 
+The **bag** takes the same grammar and has no query half at all: it is one
+document holding one map, so it is read whole however much is in it and every
+term is answered over what came back — see
+[`src/data/items/search.ts`](../../src/data/items/search.ts).
+
 ## Training and friendship
 
 Effort is not earned from what a pokemon happened to fight. Every level pays

@@ -4,7 +4,7 @@ import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items'
 import { describeItem, detailItem } from '../details';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
-import matches from '../../core/search';
+import matchesItem from '../../data/items/search';
 import { Button, Filter, type FilterOption, HoverCard, Meta, Note, Row, Search } from '../styled';
 
 /**
@@ -185,7 +185,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
 
   const narrowed = (): ItemCell[] =>
     props.entries.filter(
-      (cell) => isInCategory(cell.item, shelf()) && matches(describeItem(cell.item), query()),
+      (cell) =>
+        isInCategory(cell.item, shelf()) &&
+        matchesItem(cell.item, query(), { amount: cell.amount ?? cell.carried }),
     );
 
   const pages = (): number => Math.max(1, Math.ceil(narrowed().length / GRID_SIZE));
@@ -240,7 +242,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       <Show when={props.bare !== true}>
         <Row class="flex-nowrap items-start justify-between gap-2">
           <Search
-            placeholder="Search the bag"
+            placeholder="Name, or type:berry is:usable"
             value={query()}
             onChange={(typed) => {
               setQuery(typed);

@@ -20,17 +20,7 @@ import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
 import matchesCatch, { type CatchConstraint, planCatchSearch } from '../../auth/catch-search';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  HoverCard,
-  Meta,
-  Note,
-  Row,
-  SEARCH_FROM,
-  Search,
-} from '../styled';
+import { Button, Dialog, DialogActions, HoverCard, Meta, Note, Row, Search } from '../styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -460,20 +450,23 @@ function PickerBox(
     // by their content, and a box of squares asked how wide it would
     // like to be answers with the width of thirty sprites
     <div class="flex w-full flex-col gap-3">
-      <Show when={offered().length > SEARCH_FROM}>
-        <Row>
-          <Search
-            // The syntax is in the placeholder rather than in a
-            // legend nobody reads: one example is enough to say that
-            // more than a name can go in here
-            placeholder="Name, or type:fire is:shiny"
-            value={query()}
-            onChange={(typed) => {
-              props.onSearch(typed);
-            }}
-          />
-        </Row>
-      </Show>
+      {/* Always drawn, however short the box is. It hid itself under a
+          handful of pokemon, which meant a search that narrowed the
+          box far enough took its own box away — and a search that
+          narrows the store's half is answered by fewer records, so
+          that was most of them */}
+      <Row>
+        <Search
+          // The syntax is in the placeholder rather than in a legend
+          // nobody reads: one example is enough to say that more than
+          // a name can go in here
+          placeholder="Name, or type:fire is:shiny"
+          value={query()}
+          onChange={(typed) => {
+            props.onSearch(typed);
+          }}
+        />
+      </Row>
 
       <Show
         when={options().length}

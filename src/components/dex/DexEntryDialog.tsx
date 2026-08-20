@@ -18,6 +18,7 @@ import { STAT_ORDER, Stats } from '../../data/constants/stats';
 import type { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '../../data/species';
 import { STAT_LABELS, describeAbility, detailAbility } from '../catches/CatchDialog';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
@@ -288,7 +289,7 @@ function DexEntryBody(
           // Turning on the spot, the way a dex shows off what it has
           // on file — a pokemon walking on a page it cannot walk off
           // is a pokemon going nowhere
-          animation="Rotate"
+          animation={SpriteAnim.Rotate}
           duration={ROTATION}
           direction="DownLeft"
           scale={3}

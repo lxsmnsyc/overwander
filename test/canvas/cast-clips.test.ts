@@ -15,6 +15,7 @@ import { animationFor } from '../../src/components/battle/BattleCanvas';
 import { AI_REST_PERIOD } from '../../src/battle/ai/idle';
 import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { createBattle, createUnit } from '../battle/harness';
+import { SpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
 
 /**
  * Whether a pokemon has something to play while it casts.
@@ -62,7 +63,7 @@ const SHIPPED = readdirSync(META)
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<number, string[] | undefined> = { 100001: ['Shoot'] };
+const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = { 100001: [SpriteAnim.Shoot] };
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
@@ -72,23 +73,25 @@ describe('cast clips', () => {
 
       // A sheet short of a common clip is one whose moves fall through
       // the whole preference list and land on Idle
-      expect(missing, `${species} is missing`).toEqual(KNOWN_GAPS[species] ?? []);
+      expect(missing.map(spriteAnimName), `${species} is missing`).toEqual(
+        (KNOWN_GAPS[species] ?? []).map(spriteAnimName),
+      );
     }
   });
 
   it('stands in an Attack for a sheet that has no Shoot', () => {
     const short = loaded(100001);
 
-    expect(short.has('Shoot'), 'the gap is still there').toBe(false);
+    expect(short.has(SpriteAnim.Shoot), 'the gap is still there').toBe(false);
     // A list that ends on Shoot used to fall through to Idle here
-    expect(pickCast(['Emit', 'Shoot'], (name) => short.has(name))).toBe('Attack');
-    expect(pickCast(['Shoot'], (name) => short.has(name))).toBe('Attack');
+    expect(pickCast([SpriteAnim.Emit, SpriteAnim.Shoot], (name) => short.has(name))).toBe(SpriteAnim.Attack);
+    expect(pickCast([SpriteAnim.Shoot], (name) => short.has(name))).toBe(SpriteAnim.Attack);
   });
 
   it('leaves a sheet that has its own Shoot alone', () => {
     const gengar = loaded(94);
 
-    expect(pickCast(['Shoot'], (name) => gengar.has(name))).toBe('Shoot');
+    expect(pickCast([SpriteAnim.Shoot], (name) => gengar.has(name))).toBe(SpriteAnim.Shoot);
   });
 
   it('gives Gengar something to do for every cast list a move could offer', () => {
@@ -97,7 +100,7 @@ describe('cast clips', () => {
     for (const wanted of COMMON_CAST) {
       expect(
         pickCast([wanted], (name) => gengar.has(name)),
-        wanted,
+        spriteAnimName(wanted),
       ).toBe(wanted);
     }
   });
@@ -105,17 +108,17 @@ describe('cast clips', () => {
   it('switches Gengar off its Idle when a cast is played', () => {
     const gengar = loaded(94);
 
-    gengar.play('Idle', { loop: true });
-    expect(gengar.playing).toBe('Idle');
+    gengar.play(SpriteAnim.Idle, { loop: true });
+    expect(gengar.playing).toBe(SpriteAnim.Idle);
 
-    gengar.play('Attack', { loop: false, duration: 600 });
-    expect(gengar.playing).toBe('Attack');
+    gengar.play(SpriteAnim.Attack, { loop: false, duration: 600 });
+    expect(gengar.playing).toBe(SpriteAnim.Attack);
   });
 
   it('advances Gengar through the clip it was given', () => {
     const gengar = loaded(94);
 
-    gengar.play('Attack', { loop: false, duration: 600 });
+    gengar.play(SpriteAnim.Attack, { loop: false, duration: 600 });
 
     const first = gengar.frame;
 
@@ -153,7 +156,7 @@ describe('what the field shows while a move is cast', () => {
     // spending it on the wind-up leaves nothing for the move going off
     const gathering = animationFor(caster, sprite);
 
-    expect(gathering.animation).toBe('Charge');
+    expect(gathering.animation).toBe(SpriteAnim.Charge);
     expect(isLoopingCast(gathering.animation)).toBe(true);
     expect(gathering.loop).toBe(true);
     // A loop fills a window of any length by repeating rather than by
@@ -163,18 +166,19 @@ describe('what the field shows while a move is cast', () => {
 
   it('knows how long a gesture takes, so it is not cut off', () => {
     const gengar = loaded(94);
-    const strike = gengar.data.anims.anims.find((anim) => anim.name === 'Strike');
+    const strike = gengar.data.anims.anims.find((anim) => anim.name === SpriteAnim.Strike);
     const ticks = strike?.durations.reduce((sum, held) => sum + held, 0) ?? 0;
 
     // A clip runs for as long as its frames say, at the 24 a second
     // every sheet is drawn at
-    expect(gengar.lengthOf('Strike')).toBeCloseTo((ticks * 1000) / 24, 3);
-    expect(gengar.lengthOf('Nothing')).toBe(0);
+    expect(gengar.lengthOf(SpriteAnim.Strike)).toBeCloseTo((ticks * 1000) / 24, 3);
+    // A clip this sheet has not got runs for no time at all
+    expect(gengar.lengthOf(SpriteAnim.Punch)).toBe(0);
     // And it outlasts the window the engine holds a plain move open
     // for, which is why the field waits for the drawing rather than
     // for the timer: a gesture dropped at the timer loses its last
     // frame
-    expect(gengar.lengthOf('Strike')).toBeGreaterThan(MOVE_DELAY + AI_REST_PERIOD);
+    expect(gengar.lengthOf(SpriteAnim.Strike)).toBeGreaterThan(MOVE_DELAY + AI_REST_PERIOD);
   });
 
   it('throws the move own clip at the speed it was drawn at', () => {
@@ -191,7 +195,7 @@ describe('what the field shows while a move is cast', () => {
     // multi-step move is still throwing this one
     const throwing = animationFor(caster, sprite, striking);
 
-    expect(throwing.animation).not.toBe('Charge');
+    expect(throwing.animation).not.toBe(SpriteAnim.Charge);
     expect(throwing.loop).toBe(false);
     // Not fitted to the flight. The engine's delay says when the hit
     // lands, not how fast a pokemon moves — squeezed into a quarter of
@@ -213,7 +217,7 @@ describe('what the field shows while a move is cast', () => {
     // and a Charge repeats rather than being stretched, throw or not
     const throwing = animationFor(caster, sprite, { move: Moves.Confusion, window: 250 });
 
-    expect(throwing.animation).toBe('Charge');
+    expect(throwing.animation).toBe(SpriteAnim.Charge);
     expect(throwing.loop).toBe(true);
     expect(throwing.duration).toBe(null);
   });
@@ -240,7 +244,7 @@ describe('what the field shows while a move is cast', () => {
         continue;
       }
       checked += 1;
-      if (pickCast(cast, (name) => sprite.has(name)) === 'Idle') {
+      if (pickCast(cast, (name) => sprite.has(name)) === SpriteAnim.Idle) {
         idle.push(id);
       }
     }

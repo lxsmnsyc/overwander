@@ -1,4 +1,6 @@
 import { xml2json } from 'xml-js';
+import type { SpriteAnim } from '../../data/ids/sprite-anims';
+import { spriteAnimName, spriteAnimOf } from '../../data/ids/sprite-anims';
 
 /**
  * `AnimData.xml`, as the game wants it.
@@ -36,13 +38,13 @@ function flatten(source: Parsed): Parsed {
 
 /** One animation, with whatever it copied already resolved. */
 export interface Anim {
-  name: string;
+  name: SpriteAnim;
   index: number;
   frameWidth: number;
   frameHeight: number;
   durations: number[];
   /** The image it is drawn from, which is itself unless it is a copy. */
-  target: string;
+  target: SpriteAnim;
 }
 
 export interface AnimData {
@@ -92,6 +94,13 @@ export default function readAnimData(source: string, keep: RegExp): AnimData {
   const found = new Map<string, Anim>();
 
   for (const entry of ordered) {
+    // An animation this game has no number for is one no sheet can
+    // describe, so it is left in the archive rather than half-written
+    const named = spriteAnimOf(entry.Name);
+
+    if (named == null) {
+      continue;
+    }
     if (entry.CopyOf != null) {
       const copied = found.get(entry.CopyOf);
 
@@ -100,24 +109,24 @@ export default function readAnimData(source: string, keep: RegExp): AnimData {
       }
       found.set(entry.Name, {
         ...copied,
-        name: entry.Name,
+        name: named,
         index: entry.Index ?? copied.index,
-        target: entry.CopyOf,
+        target: copied.target,
       });
       continue;
     }
     found.set(entry.Name, {
-      name: entry.Name,
+      name: named,
       index: entry.Index ?? 0,
       frameWidth: entry.FrameWidth ?? 0,
       frameHeight: entry.FrameHeight ?? 0,
       durations: asArray(entry.Durations?.Duration),
-      target: entry.Name,
+      target: named,
     });
   }
 
   return {
     shadowSize: root.ShadowSize ?? 0,
-    anims: [...found.values()].filter((anim) => keep.test(anim.target)),
+    anims: [...found.values()].filter((anim) => keep.test(spriteAnimName(anim.target))),
   };
 }

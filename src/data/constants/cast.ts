@@ -1,3 +1,5 @@
+import { SpriteAnim } from '../ids/sprite-anims';
+
 /**
  * What a pokemon looks like it is doing while it uses a move.
  *
@@ -23,17 +25,17 @@
  * can never run out of fallbacks
  */
 export const COMMON_CAST = [
-  'Idle',
-  'Sleep',
-  'Hurt',
-  'Attack',
-  'Charge',
-  'Shoot',
-  'Double',
-  'Hop',
-  'Rotate',
-  'Walk',
-  'Swing',
+  SpriteAnim.Idle,
+  SpriteAnim.Sleep,
+  SpriteAnim.Hurt,
+  SpriteAnim.Attack,
+  SpriteAnim.Charge,
+  SpriteAnim.Shoot,
+  SpriteAnim.Double,
+  SpriteAnim.Hop,
+  SpriteAnim.Rotate,
+  SpriteAnim.Walk,
+  SpriteAnim.Swing,
 ] as const;
 
 /**
@@ -41,31 +43,30 @@ export const COMMON_CAST = [
  * a sheet without it falls through to the next name in the list
  */
 export const UNCOMMON_CAST = [
-  'Slice',
-  'SpAttack',
-  'Shock',
-  'QuickStrike',
-  'Strike',
-  'Jab',
-  'Punch',
-  'Kick',
-  'MultiStrike',
-  'Slam',
-  'Withdraw',
-  'Twirl',
-  'RearUp',
-  'Shake',
-  'Lick',
-  'Dance',
-  'Uppercut',
-  'Gas',
-  'Stomp',
-  'Emit',
-  'Swell',
-  'Ricochet',
-  'MultiScratch',
-  'Bite',
-  'Slice',
+  SpriteAnim.Slice,
+  SpriteAnim.SpAttack,
+  SpriteAnim.Shock,
+  SpriteAnim.QuickStrike,
+  SpriteAnim.Strike,
+  SpriteAnim.Jab,
+  SpriteAnim.Punch,
+  SpriteAnim.Kick,
+  SpriteAnim.MultiStrike,
+  SpriteAnim.Slam,
+  SpriteAnim.Withdraw,
+  SpriteAnim.Twirl,
+  SpriteAnim.RearUp,
+  SpriteAnim.Shake,
+  SpriteAnim.Lick,
+  SpriteAnim.Dance,
+  SpriteAnim.Uppercut,
+  SpriteAnim.Gas,
+  SpriteAnim.Stomp,
+  SpriteAnim.Emit,
+  SpriteAnim.Swell,
+  SpriteAnim.Ricochet,
+  SpriteAnim.MultiScratch,
+  SpriteAnim.Bite,
 ] as const;
 
 export type CommonCast = (typeof COMMON_CAST)[number];
@@ -78,7 +79,7 @@ export type CastAnimation = CommonCast | UncommonCast;
 
 export const CAST_ANIMATIONS: CastAnimation[] = [...COMMON_CAST, ...UNCOMMON_CAST];
 
-const COMMON = new Set<string>(COMMON_CAST);
+const COMMON = new Set<SpriteAnim>(COMMON_CAST);
 
 /**
  * The clips drawn as something a pokemon **keeps doing** rather than
@@ -90,22 +91,22 @@ const COMMON = new Set<string>(COMMON_CAST);
  * swing is, so that it lands exactly when the move does — a loop comes
  * out as one movement in slow motion, which reads as the game hanging
  */
-const LOOPING = new Set<string>([
-  'Charge',
-  'Sleep',
-  'Hurt',
-  'Walk',
-  'Idle',
-  'Shake',
-  'Dance',
-  'Rotate',
+const LOOPING = new Set<SpriteAnim>([
+  SpriteAnim.Charge,
+  SpriteAnim.Sleep,
+  SpriteAnim.Hurt,
+  SpriteAnim.Walk,
+  SpriteAnim.Idle,
+  SpriteAnim.Shake,
+  SpriteAnim.Dance,
+  SpriteAnim.Rotate,
 ]);
 
 /**
  * Whether the clip is one that repeats rather than one that is fitted
  * to however long the thing playing it has to fill
  */
-export function isLoopingCast(animation: string): boolean {
+export function isLoopingCast(animation: SpriteAnim): boolean {
   return LOOPING.has(animation);
 }
 
@@ -113,7 +114,7 @@ export function isLoopingCast(animation: string): boolean {
  * Whether the clip is one every sheet carries, which is what makes it
  * a valid last resort
  */
-export function isCommonCast(animation: string): boolean {
+export function isCommonCast(animation: SpriteAnim): boolean {
   return COMMON.has(animation);
 }
 
@@ -122,7 +123,7 @@ export function isCommonCast(animation: string): boolean {
  * ends on when a caller hands over a list of things this sprite has
  * never heard of
  */
-export const DEFAULT_CAST: CommonCast = 'Attack';
+export const DEFAULT_CAST: CommonCast = SpriteAnim.Attack;
 
 /**
  * What stands in for a clip the sheet has not got.
@@ -140,7 +141,7 @@ export const DEFAULT_CAST: CommonCast = 'Attack';
  * Attack in its place is the wrong distance and the right idea
  */
 const CAST_INSTEAD: Partial<Record<CastAnimation, CastAnimation>> = {
-  Shoot: 'Attack',
+  [SpriteAnim.Shoot]: SpriteAnim.Attack,
 };
 
 /**
@@ -155,7 +156,10 @@ const CAST_INSTEAD: Partial<Record<CastAnimation, CastAnimation>> = {
  * for it **before** the walk moves on, so a hole in a sheet costs the
  * move its first choice rather than costing it the whole list
  */
-export function pickCast(cast: readonly CastAnimation[], has: (name: string) => boolean): string {
+export function pickCast(
+  cast: readonly CastAnimation[],
+  has: (anim: SpriteAnim) => boolean,
+): SpriteAnim {
   for (const animation of cast) {
     if (has(animation)) {
       return animation;
@@ -167,5 +171,5 @@ export function pickCast(cast: readonly CastAnimation[], has: (name: string) => 
       return instead;
     }
   }
-  return has(DEFAULT_CAST) ? DEFAULT_CAST : 'Idle';
+  return has(DEFAULT_CAST) ? DEFAULT_CAST : SpriteAnim.Idle;
 }

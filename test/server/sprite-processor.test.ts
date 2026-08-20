@@ -9,6 +9,7 @@ import { animFilter } from '../../src/server/sprites/pmd';
 import dedupe, { drawPictures } from '../../src/server/sprites/dedupe';
 import { extraDestination, pokemonDestination } from '../../src/server/sprites/files';
 import { storedAs } from '../../src/components/admin/SpriteProcessor';
+import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
 /**
  * The sprite processor's arithmetic.
@@ -213,25 +214,30 @@ describe('AnimData.xml', () => {
 
   it('reads the sizes and the frame times', () => {
     const data = readAnimData(SOURCE, animFilter(['Walk']));
-    const walk = data.anims.find((anim) => anim.name === 'Walk');
+    const walk = data.anims.find((anim) => anim.name === SpriteAnim.Walk);
 
     expect(data.shadowSize).toBe(2);
     expect(walk).toMatchObject({
-      name: 'Walk',
+      name: SpriteAnim.Walk,
       frameWidth: 24,
       frameHeight: 32,
       durations: [4, 6],
-      target: 'Walk',
+      target: SpriteAnim.Walk,
     });
   });
 
   it('resolves a copy against the animation it copies', () => {
     const data = readAnimData(SOURCE, animFilter(['Walk', 'Sleep']));
-    const strike = data.anims.find((anim) => anim.name === 'Strike');
+    const strike = data.anims.find((anim) => anim.name === SpriteAnim.Strike);
 
     // Kept because what it is *drawn from* is kept: a copy has no
     // image of its own
-    expect(strike).toMatchObject({ frameWidth: 24, frameHeight: 32, index: 5, target: 'Walk' });
+    expect(strike).toMatchObject({
+      frameWidth: 24,
+      frameHeight: 32,
+      index: 5,
+      target: SpriteAnim.Walk,
+    });
   });
 
   it('drops what the filter does not name', () => {
@@ -239,10 +245,10 @@ describe('AnimData.xml', () => {
 
     // Filtered by the image an animation is *drawn from*, so a copy
     // rides in on whatever it copied and nothing else does
-    expect(data.anims.map((anim) => anim.name)).toEqual(['Sleep']);
+    expect(data.anims.map((anim) => anim.name)).toEqual([SpriteAnim.Sleep]);
     expect(readAnimData(SOURCE, animFilter(['Walk'])).anims.map((anim) => anim.name)).toEqual([
-      'Walk',
-      'Strike',
+      SpriteAnim.Walk,
+      SpriteAnim.Strike,
     ]);
   });
 

@@ -20,6 +20,7 @@ import {
 } from '../../canvas/sparkle';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
 import type { Species } from '../../data/ids/species';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * A pokemon animating in the document rather than on a canvas.
@@ -250,7 +251,7 @@ export interface AnimatedSpriteProps {
    * What it should be doing. A sheet without it falls back to standing
    * still, which every sheet has
    */
-  animation?: string;
+  animation?: SpriteAnim;
   direction?: SpriteDirection;
   /**
    * How fast the clip runs against the wall clock, where one is the
@@ -340,9 +341,9 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       return;
     }
 
-    const wanted = props.animation ?? 'Idle';
+    const wanted = props.animation ?? SpriteAnim.Idle;
 
-    drawn.play(drawn.has(wanted) ? wanted : 'Idle', {
+    drawn.play(drawn.has(wanted) ? wanted : SpriteAnim.Idle, {
       direction: props.direction ?? 'Down',
       loop: true,
       // Only where a caller asked for a pace: everything else plays at

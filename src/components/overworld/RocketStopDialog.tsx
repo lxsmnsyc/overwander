@@ -10,6 +10,7 @@ import TeamPickerDialog from '../battle/TeamPickerDialog';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Dialog, DialogActions, Meta, Status } from '../styled';
 import { useGame } from '../app/game-context';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 export interface RocketStopDialogProps {
   user: User;
@@ -98,7 +99,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                       <span class="flex aspect-square w-full max-w-24 items-end justify-center">
                         <AnimatedSprite
                           species={entry.species}
-                          animation="Idle"
+                          animation={SpriteAnim.Idle}
                           direction="Down"
                           fill
                           shadow

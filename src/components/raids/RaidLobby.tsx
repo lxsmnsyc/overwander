@@ -43,6 +43,7 @@ import {
   Status,
 } from '../styled';
 import { useGame } from '../app/game-context';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 export interface RaidLobbyProps {
   user: User;
@@ -185,7 +186,7 @@ function LobbyRows(
               <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
                 <AnimatedSprite
                   species={record().species}
-                  animation="Sleep"
+                  animation={SpriteAnim.Sleep}
                   direction="DownLeft"
                   scale={4}
                   shadow

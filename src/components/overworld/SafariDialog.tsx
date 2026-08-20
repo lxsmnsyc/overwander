@@ -22,6 +22,7 @@ import InventoryPicker, { describeItem } from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Status } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * Whether the item is something the encounter would eat
@@ -352,7 +353,7 @@ function SafariBody(
                     // front of the player is the one encounter worth
                     // spending the whole bag on
                     sparkle={isShiny(active().encounter)}
-                    animation="Idle"
+                    animation={SpriteAnim.Idle}
                     direction="Down"
                     scale={4}
                     label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}

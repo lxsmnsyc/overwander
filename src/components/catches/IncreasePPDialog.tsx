@@ -21,6 +21,7 @@ import { describeItem } from '../items/InventoryPicker';
 import MovePicker from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * Spending a PP Up or a PP Max on one move.
@@ -193,7 +194,7 @@ function BottleBody(
             <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
               shiny={!isEgg(record()) && isShiny(record())}
-              animation="Idle"
+              animation={SpriteAnim.Idle}
               direction="Down"
               scale={4}
               shadow

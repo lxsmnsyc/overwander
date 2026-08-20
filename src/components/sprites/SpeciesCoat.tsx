@@ -3,6 +3,7 @@ import type { SpriteDirection } from '../../canvas/sprite-sheet';
 import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from './AnimatedSprite';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * A pokemon drawn to what the reader has earned of it.
@@ -60,7 +61,7 @@ export interface SpeciesCoatProps {
    * What it should be doing. Something nobody has met is asleep
    * whatever this says: there is nothing to show off
    */
-  animation?: string;
+  animation?: SpriteAnim;
   /**
    * How long one pass of that animation should take, in milliseconds.
    * A dex turning a pokemon on the spot sets it; everything else
@@ -83,7 +84,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       species={props.met ? props.species : Species.Missingno}
       shiny={props.met && props.shiny === true}
       female={props.female === true}
-      animation={props.met ? (props.animation ?? 'Idle') : 'Sleep'}
+      animation={props.met ? (props.animation ?? SpriteAnim.Idle) : SpriteAnim.Sleep}
       // The pace belongs to the animation that was asked for. A
       // species nobody has met is asleep instead, and sleeping at
       // somebody else's tempo is not what was meant

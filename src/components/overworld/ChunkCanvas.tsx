@@ -35,6 +35,7 @@ import { serverNow } from '../../auth/clock';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import { BIOME_COLORS } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
 import type { Species } from '../../data/ids/species';
@@ -1166,7 +1167,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // Facing the way it is standing in the world, seen from
             // wherever the camera has been walked to: turn a quarter
             // and something that was facing you is facing across you
-            sprite.play('Idle', {
+            sprite.play(SpriteAnim.Idle, {
               direction: SPRITE_DIRECTIONS[facingFrom(facingOf(index, standing.species), yaw())],
               loop: true,
             });

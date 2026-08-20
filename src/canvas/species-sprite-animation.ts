@@ -10,6 +10,7 @@ import asSpriteSheetJSON, {
   type SpriteTargetData,
 } from './sprite-sheet';
 import type { Cast } from './daylight';
+import type { SpriteAnim } from '../data/ids/sprite-anims';
 
 /**
  * A pokemon on a canvas, moving.
@@ -250,7 +251,7 @@ export default class SpeciesSpriteAnimation {
 
   readonly data: SpriteSheetJSON;
 
-  private readonly clips = new Map<string, Clip>();
+  private readonly clips = new Map<SpriteAnim, Clip>();
 
   private image: HTMLImageElement | null = null;
 
@@ -282,14 +283,12 @@ export default class SpeciesSpriteAnimation {
     this.data = data;
 
     const images = new Map(data.sheet.images.map((image) => [image.name, image]));
-    // Looked up rather than indexed: a record hands back an entry
-    // whether or not there is one, and a description that came over the
-    // wire is exactly the kind that names a grid it does not carry
-    const targets = new Map(Object.entries(data.sprites));
 
     for (const anim of data.anims.anims) {
       const image = images.get(anim.target);
-      const target = targets.get(anim.target);
+      // A description that came over the wire is exactly the kind that
+      // names a grid it does not carry
+      const target = data.sprites[anim.target];
 
       // An animation whose grid is missing is one this sheet does not
       // actually have; it is left out rather than drawn as a slice of
@@ -387,11 +386,11 @@ export default class SpeciesSpriteAnimation {
   /**
    * What this sheet can play
    */
-  get animations(): string[] {
+  get animations(): SpriteAnim[] {
     return [...this.clips.keys()];
   }
 
-  has(name: string): boolean {
+  has(name: SpriteAnim): boolean {
     return this.clips.has(name);
   }
 
@@ -402,11 +401,11 @@ export default class SpeciesSpriteAnimation {
    * How long one clip runs at the speed it was drawn at, in
    * milliseconds, or nothing for a clip this sheet does not carry
    */
-  lengthOf(name: string): number {
+  lengthOf(name: SpriteAnim): number {
     return this.clips.get(name)?.duration ?? 0;
   }
 
-  get playing(): string | null {
+  get playing(): SpriteAnim | null {
     return this.clip?.anim.name ?? null;
   }
 
@@ -483,34 +482,23 @@ export default class SpeciesSpriteAnimation {
     if (clip == null) {
       return null;
     }
-    const { frameWidth, frameHeight, cells, pictures } = clip.target;
+    const { pictures } = clip.target;
     const marks = this.anchorsAt(this.frame);
     const cell = marks?.cell ?? null;
-    const held = pictures == null || cell == null ? null : pictures[cell];
+    const held = cell == null ? null : pictures[cell];
 
-    // A sheet cropped to the lit pixels names a rectangle for every
-    // picture and hangs the frame's own somewhere in its box
-    if (held != null) {
-      return {
-        x: clip.image.x + held.x,
-        y: clip.image.y + held.y,
-        width: held.width,
-        height: held.height,
-        at: marks?.at ?? [0, 0],
-        mirrored: marks?.flip === true,
-      };
+    // A frame is a picture hung somewhere in its box. Without one there
+    // is nothing to draw: a description that names no picture describes
+    // no drawing
+    if (held == null) {
+      return null;
     }
-    // An old sheet says nothing about pictures, and its frames **are**
-    // its pictures: the frame's own square in the grid
-    const column = cells == null || cell == null ? this.frame : cell % cells.columns;
-    const row = cells == null || cell == null ? this.row : Math.floor(cell / cells.columns);
-
     return {
-      x: clip.image.x + column * frameWidth,
-      y: clip.image.y + row * frameHeight,
-      width: frameWidth,
-      height: frameHeight,
-      at: [0, 0],
+      x: clip.image.x + held.x,
+      y: clip.image.y + held.y,
+      width: held.width,
+      height: held.height,
+      at: marks?.at ?? [0, 0],
       mirrored: marks?.flip === true,
     };
   }
@@ -560,7 +548,7 @@ export default class SpeciesSpriteAnimation {
    * playing. Answers whether this sheet has it at all, so a caller can
    * fall back — not every pokemon has a Dance
    */
-  play(name: string, options: PlayOptions = {}): boolean {
+  play(name: SpriteAnim, options: PlayOptions = {}): boolean {
     const clip = this.clips.get(name);
 
     if (clip == null) {

@@ -18,6 +18,7 @@ import { describeItem } from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * Putting one thing on the block — a pokemon, or a single item out of
@@ -197,7 +198,7 @@ function ListingBody(
             <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
               shiny={!isEgg(record()) && isShiny(record())}
-              animation="Idle"
+              animation={SpriteAnim.Idle}
               direction="Down"
               scale={4}
               shadow

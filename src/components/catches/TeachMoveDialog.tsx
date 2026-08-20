@@ -21,6 +21,7 @@ import { getSpeciesData } from '../../data/species';
 import MovePicker, { MoveLine } from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, List, Meta, Note, Status } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * Teaching one move to one pokemon.
@@ -172,7 +173,7 @@ function TeachBody(
           <AnimatedSprite
             species={isEgg(record()) ? Species.Egg : record().species}
             shiny={!isEgg(record()) && isShiny(record())}
-            animation="Idle"
+            animation={SpriteAnim.Idle}
             direction="Down"
             scale={4}
             shadow

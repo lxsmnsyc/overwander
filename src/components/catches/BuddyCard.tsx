@@ -10,6 +10,7 @@ import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import CatchPicker from './CatchPicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * Who is walking with the player.
@@ -161,7 +162,7 @@ function BuddyBody(
                   species={isEgg(pair()[1]) ? Species.Egg : pair()[1].species}
                   shiny={!isEgg(pair()[1]) && isShiny(pair()[1])}
                   female={!isEgg(pair()[1]) && pair()[1].gender === Genders.Female}
-                  animation="Walk"
+                  animation={SpriteAnim.Walk}
                   direction="DownLeft"
                   scale={2}
                   shadow

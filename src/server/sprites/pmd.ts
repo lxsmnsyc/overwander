@@ -2,6 +2,8 @@ import 'server-only';
 import { TextWriter, Uint8ArrayReader, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js';
 import type { AnimData } from './anim-data';
 import readAnimData from './anim-data';
+import type { SpriteAnim } from '../../data/ids/sprite-anims';
+import { spriteAnimName, spriteAnimOf } from '../../data/ids/sprite-anims';
 import writeCoats from './coats';
 import type { Deduped, Rect, SourceGrid } from './dedupe';
 import dedupe, { drawPictures } from './dedupe';
@@ -61,7 +63,7 @@ interface SpriteImages {
 }
 
 interface Entry {
-  name: string;
+  name: SpriteAnim;
   images: SpriteImages;
   /** The grid as authored, straight out of `AnimData.xml`. */
   sourceFrameWidth: number;
@@ -80,6 +82,18 @@ interface Entry {
   spots?: ({ x: number; y: number } | undefined)[];
 }
 
+/** One frame as the description writes it: anchors, then placement. */
+type FrameData = [
+  shadow: Point | null,
+  center: Point | null,
+  head: Point | null,
+  left: Point | null,
+  right: Point | null,
+  cell: number,
+  flip: 0 | 1,
+  at: Point,
+];
+
 /** What the description says about one animation's frames. */
 interface SpriteTarget {
   /** The distinct pictures, placed in this clip's region. */
@@ -93,11 +107,11 @@ interface SpriteTarget {
   rows: number;
   directions: SpriteDirection[];
   /** Row-major: the frame for a direction and index is `row * columns + frame`. */
-  frames: FrameMarkers[];
+  frames: FrameData[];
 }
 
 interface SheetImage {
-  name: string;
+  name: SpriteAnim;
   x: number;
   y: number;
   width: number;
@@ -108,7 +122,7 @@ interface SheetData {
   compact: boolean;
   sheet: { width: number; height: number; images: SheetImage[] };
   anims: AnimData;
-  sprites: Record<string, SpriteTarget>;
+  sprites: Partial<Record<SpriteAnim, SpriteTarget>>;
 }
 
 export interface PmdResult {
@@ -127,12 +141,24 @@ const KINDS: { prefix: string; key: keyof SpriteImages }[] = [
   { prefix: 'Shadow', key: 'shadow' },
 ];
 
-/** Matches an animation name from its start, the way the tool did. */
+/**
+ * Matches an animation name from its start, the way the tool did.
+ *
+ * A name this game has no number for is refused here rather than
+ * dropped later: a sheet is described in numbers, so an animation
+ * outside [`SpriteAnim`](../../data/ids/sprite-anims.ts) cannot be
+ * written at all
+ */
 export function animFilter(names: string[]): RegExp {
   const wanted = names.map((name) => name.trim()).filter((name) => name.length > 0);
 
   if (wanted.length === 0) {
     throw new Error('No animations named');
+  }
+  const unknown = wanted.filter((name) => spriteAnimOf(name) == null);
+
+  if (unknown.length > 0) {
+    throw new Error(`This game has no number for ${unknown.join(', ')}`);
   }
   return new RegExp(`^(${wanted.join('|')})`, 'i');
 }
@@ -144,9 +170,9 @@ export function animFilter(names: string[]): RegExp {
 async function readArchive(
   bytes: Uint8Array,
   keep: RegExp,
-): Promise<{ animData: string; images: Map<string, SpriteImages> }> {
+): Promise<{ animData: string; images: Map<SpriteAnim, SpriteImages> }> {
   const reader = new ZipReader(new Uint8ArrayReader(bytes));
-  const images = new Map<string, SpriteImages>();
+  const images = new Map<SpriteAnim, SpriteImages>();
   let animData: string | undefined;
 
   try {
@@ -167,11 +193,11 @@ async function readArchive(
       if (cut < 0 || !keep.test(name)) {
         continue;
       }
-      const prefix = name.slice(0, cut);
+      const prefix = spriteAnimOf(name.slice(0, cut));
       const suffix = name.slice(cut + 1);
       const kind = KINDS.find((known) => suffix.startsWith(known.prefix));
 
-      if (kind == null) {
+      if (kind == null || prefix == null) {
         continue;
       }
       const held = images.get(prefix) ?? {};
@@ -196,12 +222,12 @@ async function readArchive(
  * frame, which is what the sizes fall back to
  */
 function entriesFor(
-  images: Map<string, SpriteImages>,
-  others: Map<string, SpriteImages>[],
+  images: Map<SpriteAnim, SpriteImages>,
+  others: Map<SpriteAnim, SpriteImages>[],
   data: AnimData,
   compact: boolean,
 ): Entry[] {
-  const sizes = new Map<string, { width: number; height: number }>();
+  const sizes = new Map<SpriteAnim, { width: number; height: number }>();
 
   for (const anim of data.anims) {
     if (!sizes.has(anim.target)) {
@@ -320,14 +346,23 @@ function targetFor(entry: Entry): SpriteTarget {
     columns: entry.columns,
     rows: entry.rows,
     directions: [...SPRITE_DIRECTIONS].slice(0, entry.rows),
-    // Every frame says which picture it is drawn from, whether it is
-    // that picture reflected, and where it sits in the clip's box
-    frames: frames.map((markers, at) => ({
-      ...markers,
-      cell: kept?.frames[at]?.cell ?? at,
-      flip: kept?.frames[at]?.flip ?? false,
-      at: kept?.frames[at]?.at ?? [0, 0],
-    })),
+    // Written as an array rather than as named fields: the names are
+    // worth nothing in a file that repeats them a hundred thousand
+    // times. The order is the one `sprite-sheet.ts` reads
+    frames: frames.map((markers, at): FrameData => {
+      const held = kept?.frames[at];
+
+      return [
+        markers.shadow,
+        markers.center,
+        markers.head,
+        markers.left,
+        markers.right,
+        held?.cell ?? at,
+        held?.flip === true ? 1 : 0,
+        held?.at ?? [0, 0],
+      ];
+    }),
   };
 }
 
@@ -345,7 +380,7 @@ function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
 }
 
 /** One coat's archive, read for its pictures alone. */
-async function coatImages(bytes: Uint8Array, keep: RegExp): Promise<Map<string, SpriteImages>> {
+async function coatImages(bytes: Uint8Array, keep: RegExp): Promise<Map<SpriteAnim, SpriteImages>> {
   return (await readArchive(bytes, keep)).images;
 }
 
@@ -402,7 +437,7 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
   }
   const layout = pack(entries);
   const placed: SheetImage[] = [];
-  const sprites: Record<string, SpriteTarget> = {};
+  const sprites: Partial<Record<SpriteAnim, SpriteTarget>> = {};
   const sheet = blank(layout.width, layout.height);
 
   for (const { box, x, y } of layout.placed) {
@@ -446,7 +481,9 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
 
   // The plain coat carries the description, and the rest are the same
   // sheet drawn again from their own pictures
-  await put(sheet, { female: false, shiny: false }, JSON.stringify(output, null, 2));
+  // Written without spacing: the description is read by the game and
+  // by nothing else, and indenting it is three times the bytes
+  await put(sheet, { female: false, shiny: false }, JSON.stringify(output));
   for (let at = 0; at < extra.length; at += 1) {
     const coat = blank(layout.width, layout.height);
 
@@ -468,7 +505,7 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     written,
     width: layout.width,
     height: layout.height,
-    anims: data.anims.map((anim) => anim.name),
+    anims: data.anims.map((anim) => spriteAnimName(anim.name)),
     coats: drawn,
   };
 }

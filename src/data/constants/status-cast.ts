@@ -1,4 +1,5 @@
 import type { CastAnimation } from './cast';
+import { SpriteAnim } from '../ids/sprite-anims';
 import { Statuses } from '../ids/status';
 
 /**
@@ -36,23 +37,23 @@ import { Statuses } from '../ids/status';
  */
 export const STATUS_CAST: [status: Statuses, cast: readonly CastAnimation[]][] = [
   // Knocked out of its own turn: it took something and it is showing
-  [Statuses.Flinched, ['Hurt']],
+  [Statuses.Flinched, [SpriteAnim.Hurt]],
   // A boss that has not woken up yet is asleep, as far as the picture
   // is concerned. Nothing else says what dormant means
-  [Statuses.Dormant, ['Sleep']],
-  [Statuses.Sleeping, ['Sleep']],
+  [Statuses.Dormant, [SpriteAnim.Sleep]],
+  [Statuses.Sleeping, [SpriteAnim.Sleep]],
   // Shivering where it stands: a Shake reads as cold on the sheets
   // that have one, and a Hurt reads as unable to move on the ones
   // that do not
-  [Statuses.Frozen, ['Shake', 'Hurt']],
+  [Statuses.Frozen, [SpriteAnim.Shake, SpriteAnim.Hurt]],
   // Spent, after a move that costs the turn behind it
-  [Statuses.Recharging, ['Sleep']],
-  [Statuses.Paralyzed, ['Shock', 'Shake', 'Hurt']],
-  [Statuses.Confused, ['Twirl', 'Shake', 'Hurt']],
+  [Statuses.Recharging, [SpriteAnim.Sleep]],
+  [Statuses.Paralyzed, [SpriteAnim.Shock, SpriteAnim.Shake, SpriteAnim.Hurt]],
+  [Statuses.Confused, [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Hurt]],
   // Winding up rather than suffering: both of these are a pokemon
   // holding something in, and Charge is what a sheet draws that with
-  [Statuses.Biding, ['Charge']],
-  [Statuses.Raging, ['Swell', 'RearUp', 'Charge']],
+  [Statuses.Biding, [SpriteAnim.Charge]],
+  [Statuses.Raging, [SpriteAnim.Swell, SpriteAnim.RearUp, SpriteAnim.Charge]],
 ];
 
 /**
@@ -63,8 +64,8 @@ export const STATUS_CAST: [status: Statuses, cast: readonly CastAnimation[]][] =
  */
 export default function pickStatusCast(
   carries: (status: Statuses) => boolean,
-  has: (name: string) => boolean,
-): string | null {
+  has: (anim: SpriteAnim) => boolean,
+): SpriteAnim | null {
   for (const [status, cast] of STATUS_CAST) {
     if (!carries(status)) {
       continue;

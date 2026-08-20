@@ -1,3 +1,6 @@
+import type { SpriteAnim } from '../data/ids/sprite-anims';
+import { asSpriteAnim } from '../data/ids/sprite-anims';
+
 /**
  * What a pokemon's sprite metadata says, and how to read it safely.
  *
@@ -111,11 +114,8 @@ export interface SheetRect {
 
 /** Placement of one animation image inside the packed sheet. */
 export interface SheetImageData {
-  /**
-   * Animation image name, e.g. `"Attack"`. Matches a key of
-   * `SpriteSheetJSON['sprites']`
-   */
-  name: string;
+  /** Which animation's pictures are here. Matches a key of `sprites` */
+  name: SpriteAnim;
   x: number;
   y: number;
   width: number;
@@ -129,8 +129,8 @@ export interface SheetData {
 }
 
 export interface AnimData {
-  /** Animation name, e.g. `"Strike"`. */
-  name: string;
+  /** Which animation this is. */
+  name: SpriteAnim;
   frameWidth: number;
   frameHeight: number;
   /** Animation id from `AnimData.xml`. */
@@ -144,7 +144,7 @@ export interface AnimData {
    * Animation image the frames come from. Equals `name` unless the
    * anim is a `CopyOf` — a Strike is drawn from the Attack grid
    */
-  target: string;
+  target: SpriteAnim;
 }
 
 export interface SanitizedAnimData {
@@ -218,23 +218,12 @@ export interface SpriteTargetData {
    */
   frames: SpriteFrameData[];
   /**
-   * How the distinct pictures are laid out in the sheet, for a clip
-   * whose repeats were packed once.
-   *
-   * Nothing here means the old arrangement, where the region is the
-   * grid itself: `rows` orientations down and `columns` frames across,
-   * every frame drawn even where it repeats one beside it
-   */
-  cells: { columns: number; rows: number } | null;
-  /**
-   * Each distinct picture's rectangle inside the clip's region, for a
-   * sheet packed to the pixels that are lit.
+   * Each distinct picture's rectangle inside the clip's region.
    *
    * They are all different sizes, so there is no grid to index into:
-   * a frame names one of these and says where in its box it hangs.
-   * Nothing here means the pictures are the `cells` grid
+   * a frame names one of these and says where in its box it hangs
    */
-  pictures: SheetRect[] | null;
+  pictures: SheetRect[];
 }
 
 export interface SpriteSheetJSON {
@@ -245,11 +234,8 @@ export interface SpriteSheetJSON {
    * Faithful to `AnimData.xml` — frame sizes here are always untrimmed
    */
   anims: SanitizedAnimData;
-  /**
-   * Keyed by animation image name — reach an entry through
-   * `anims.anims[].target`
-   */
-  sprites: Record<string, SpriteTargetData>;
+  /** Reach an entry through `anims.anims[].target` */
+  sprites: Partial<Record<SpriteAnim, SpriteTargetData>>;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -284,21 +270,9 @@ function asPoint(value: unknown): Point | null {
   return pair.length >= 2 ? [asNumber(pair[0]), asNumber(pair[1])] : null;
 }
 
-/** The grid of distinct pictures, or nothing where a clip has none. */
-function asCells(value: unknown): { columns: number; rows: number } | null {
-  if (typeof value !== 'object' || value == null) {
-    return null;
-  }
-  const held = asRecord(value);
-  const columns = asNumber(held.columns);
-  const rows = asNumber(held.rows);
-
-  return columns > 0 && rows > 0 ? { columns, rows } : null;
-}
-
-/** The cropped pictures of a clip, or nothing where it has a grid. */
-function asPictures(value: unknown): SheetRect[] | null {
-  const held = asArray(value).map((entry) => {
+/** The cropped pictures of a clip. */
+function asPictures(value: unknown): SheetRect[] {
+  return asArray(value).map((entry) => {
     const rect = asRecord(entry);
 
     return {
@@ -308,8 +282,36 @@ function asPictures(value: unknown): SheetRect[] | null {
       height: asNumber(rect.height),
     };
   });
+}
 
-  return held.length > 0 ? held : null;
+/**
+ * Where each part of a frame sits in the array a description writes it
+ * as. The names are worth nothing in a file that repeats them a
+ * hundred thousand times, so the order **is** the contract
+ */
+const FRAME_SHADOW = 0;
+const FRAME_CENTER = 1;
+const FRAME_HEAD = 2;
+const FRAME_LEFT = 3;
+const FRAME_RIGHT = 4;
+const FRAME_CELL = 5;
+const FRAME_FLIP = 6;
+const FRAME_AT = 7;
+
+function asFrame(value: unknown): SpriteFrameData {
+  const held = asArray(value);
+  const cell = held[FRAME_CELL];
+
+  return {
+    shadow: asPoint(held[FRAME_SHADOW]),
+    center: asPoint(held[FRAME_CENTER]),
+    head: asPoint(held[FRAME_HEAD]),
+    left: asPoint(held[FRAME_LEFT]),
+    right: asPoint(held[FRAME_RIGHT]),
+    cell: typeof cell === 'number' ? cell : null,
+    flip: held[FRAME_FLIP] === 1,
+    at: asPoint(held[FRAME_AT]),
+  };
 }
 
 function asDirections(value: unknown): SpriteDirection[] {
@@ -335,8 +337,15 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
   const anims = asRecord(root.anims);
   const sprites: Record<string, SpriteTargetData> = {};
 
-  for (const [name, entry] of Object.entries(asRecord(root.sprites))) {
+  for (const [key, entry] of Object.entries(asRecord(root.sprites))) {
+    const name = asSpriteAnim(Number.parseInt(key, 10));
     const target = asRecord(entry);
+
+    // An animation this game has no number for is one it could not ask
+    // to play, so there is nothing to keep
+    if (name == null) {
+      continue;
+    }
     const frameWidth = asNumber(target.frameWidth);
     const frameHeight = asNumber(target.frameHeight);
 
@@ -353,22 +362,7 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
       columns: asNumber(target.columns),
       rows: asNumber(target.rows),
       directions: asDirections(target.directions),
-      frames: asArray(target.frames).map((frame) => {
-        const anchors = asRecord(frame);
-        const cell = anchors.cell;
-
-        return {
-          shadow: asPoint(anchors.shadow),
-          center: asPoint(anchors.center),
-          head: asPoint(anchors.head),
-          left: asPoint(anchors.left),
-          right: asPoint(anchors.right),
-          cell: typeof cell === 'number' ? cell : null,
-          flip: anchors.flip === true,
-          at: asPoint(anchors.at),
-        };
-      }),
-      cells: asCells(target.cells),
+      frames: asArray(target.frames).map(asFrame),
       pictures: asPictures(target.pictures),
     };
   }
@@ -378,36 +372,39 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
     sheet: {
       width: asNumber(sheet.width),
       height: asNumber(sheet.height),
-      images: asArray(sheet.images).map((entry) => {
-        const image = asRecord(entry);
+      images: asArray(sheet.images)
+        .map((entry) => {
+          const image = asRecord(entry);
 
-        return {
-          name: asString(image.name),
-          x: asNumber(image.x),
-          y: asNumber(image.y),
-          width: asNumber(image.width),
-          height: asNumber(image.height),
-        };
-      }),
+          return {
+            name: asSpriteAnim(asNumber(image.name)),
+            x: asNumber(image.x),
+            y: asNumber(image.y),
+            width: asNumber(image.width),
+            height: asNumber(image.height),
+          };
+        })
+        .filter((image): image is SheetImageData => image.name != null),
     },
     anims: {
       shadowSize: asNumber(anims.shadowSize),
-      anims: asArray(anims.anims).map((entry) => {
-        const anim = asRecord(entry);
-        const name = asString(anim.name);
-        const target = asString(anim.target);
+      anims: asArray(anims.anims)
+        .map((entry) => {
+          const anim = asRecord(entry);
+          const name = asSpriteAnim(asNumber(anim.name));
 
-        return {
-          name,
-          frameWidth: asNumber(anim.frameWidth),
-          frameHeight: asNumber(anim.frameHeight),
-          index: asNumber(anim.index),
-          durations: asArray(anim.durations).map(asNumber),
-          // An anim with no target of its own plays from the grid
-          // named after it
-          target: target === '' ? name : target,
-        };
-      }),
+          return {
+            name,
+            frameWidth: asNumber(anim.frameWidth),
+            frameHeight: asNumber(anim.frameHeight),
+            index: asNumber(anim.index),
+            durations: asArray(anim.durations).map(asNumber),
+            // An anim with no target of its own plays from the grid
+            // named after it
+            target: asSpriteAnim(asNumber(anim.target)) ?? name,
+          };
+        })
+        .filter((anim): anim is AnimData => anim.name != null && anim.target != null),
     },
     sprites,
   };

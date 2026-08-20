@@ -58,6 +58,7 @@ import { getCandyCost, getCandyCount, getCatchCandy, useCandy } from '../../auth
 import { learnLevelUpMove } from '../../auth/moves';
 import { useAuth } from '../../auth/context';
 import { type EvolutionOption, evolveCatch, listEvolutionOptions } from '../../auth/evolution';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { assignableEffort, unusedEffort } from '../../auth/effort';
 import {
   type TrainingResult,
@@ -1611,7 +1612,7 @@ function CatchSheetBody(
                     species={isEgg(loaded()) ? Species.Egg : loaded().species}
                     shiny={!isEgg(loaded()) && isShiny(loaded())}
                     female={!isEgg(loaded()) && loaded().gender === Genders.Female}
-                    animation="Walk"
+                    animation={SpriteAnim.Walk}
                     direction="DownLeft"
                     scale={4}
                     shadow

@@ -6,8 +6,10 @@ import asSpriteSheetJSON, {
   type Point,
   SPRITE_DIRECTIONS,
   type SpriteSheetJSON,
+  type SpriteTargetData,
 } from '../../src/canvas/sprite-sheet';
 import { Species } from '../../src/data/ids/species';
+import { SpriteAnim, asSpriteAnim } from '../../src/data/ids/sprite-anims';
 
 /**
  * The real thing: whatever is under `public/sprites` is what the
@@ -50,6 +52,18 @@ const DESCRIBED: { species: number; data: SpriteSheetJSON }[] = META_FILES.map((
   }));
 
 const SAMPLE = DESCRIBED[0].data;
+
+/**
+ * Every clip of a description, as the pair the tests want: which
+ * animation it is, and what the sheet says about it
+ */
+function clipsOf(data: SpriteSheetJSON): [SpriteAnim, SpriteTargetData][] {
+  return Object.entries(data.sprites).flatMap(([name, target]) => {
+    const anim = asSpriteAnim(Number(name));
+
+    return anim == null ? [] : [[anim, target] as [SpriteAnim, SpriteTargetData]];
+  });
+}
 
 /**
  * Somewhere to draw, and a record of what was asked for. The class
@@ -104,9 +118,13 @@ function loaded(data: SpriteSheetJSON = SAMPLE): SpeciesSpriteAnimation {
  * to wind to reach the frame that proves it. Found rather than named,
  * since which pokemon ships first is not this test's business
  */
-function travelling(data: SpriteSheetJSON): { anim: string; row: number; at: number } {
+function travelling(data: SpriteSheetJSON): { anim: SpriteAnim; row: number; at: number } {
   for (const anim of data.anims.anims) {
     const target = data.sprites[anim.target];
+
+    if (target == null) {
+      continue;
+    }
 
     for (let row = 0; row < target.rows; row++) {
       const rest = target.frames[row * target.columns]?.shadow;
@@ -150,6 +168,10 @@ describe('sprite metadata', () => {
         const target = data.sprites[anim.target];
 
         expect(target, `${species} ${anim.name} has anchors`).toBeDefined();
+
+        if (target == null) {
+          continue;
+        }
         // One entry per frame of every orientation, and the durations
         // say how many frames that is
         expect(target.frames.length, `${species} ${anim.target} frames`).toBe(
@@ -163,45 +185,29 @@ describe('sprite metadata', () => {
         // so they are all different sizes and all inside the region
         const pictures = target.pictures;
 
-        if (pictures == null) {
-          const cells = target.cells ?? { columns: target.columns, rows: target.rows };
+        expect(pictures.length, `${species} ${anim.target} pictures`).toBeGreaterThan(0);
 
-          expect(packed?.width, `${species} ${anim.target} grid width`).toBe(
-            cells.columns * target.frameWidth,
-          );
-          expect(packed?.height, `${species} ${anim.target} grid height`).toBe(
-            cells.rows * target.frameHeight,
-          );
-        } else {
-          for (const picture of pictures) {
-            expect(picture.x + picture.width, `${species} ${anim.target} picture right`).toBeLessThanOrEqual(
-              packed?.width ?? 0,
-            );
-            expect(picture.y + picture.height, `${species} ${anim.target} picture bottom`).toBeLessThanOrEqual(
-              packed?.height ?? 0,
-            );
-          }
+        for (const picture of pictures) {
+          const corner = `${species} ${anim.target} picture`;
+
+          expect(picture.x + picture.width, corner).toBeLessThanOrEqual(packed?.width ?? 0);
+          expect(picture.y + picture.height, corner).toBeLessThanOrEqual(packed?.height ?? 0);
         }
+
         // And every frame is drawn from one of them, hung somewhere
         // inside its box
-        const held =
-          pictures?.length ??
-          (target.cells == null
-            ? target.columns * target.rows
-            : target.cells.columns * target.cells.rows);
-
         for (const frame of target.frames) {
-          if (frame.cell != null) {
-            expect(frame.cell, `${species} ${anim.target} cell`).toBeLessThan(held);
+          const cell = frame.cell == null ? null : pictures[frame.cell];
+
+          expect(cell, `${species} ${anim.target} cell`).toBeDefined();
+
+          if (cell == null || frame.at == null) {
+            continue;
           }
-          if (frame.at != null && frame.cell != null && pictures != null) {
-            expect(frame.at[0] + pictures[frame.cell].width, `${species} ${anim.target} hangs`).toBeLessThanOrEqual(
-              target.frameWidth,
-            );
-            expect(frame.at[1] + pictures[frame.cell].height, `${species} ${anim.target} hangs`).toBeLessThanOrEqual(
-              target.frameHeight,
-            );
-          }
+          const hangs = `${species} ${anim.target} hangs`;
+
+          expect(frame.at[0] + cell.width, hangs).toBeLessThanOrEqual(target.frameWidth);
+          expect(frame.at[1] + cell.height, hangs).toBeLessThanOrEqual(target.frameHeight);
         }
         // `anims` stays faithful to the file it came from, so its sizes
         // are the untrimmed ones however the sheet was packed
@@ -217,7 +223,7 @@ describe('sprite metadata', () => {
 
   it('trims frames into the cell they were drawn in', () => {
     for (const { species, data } of DESCRIBED) {
-      for (const [name, target] of Object.entries(data.sprites)) {
+      for (const [name, target] of clipsOf(data)) {
         expect(target.frameWidth, `${species} ${name} width`).toBeLessThanOrEqual(
           target.sourceFrameWidth,
         );
@@ -244,7 +250,7 @@ describe('sprite metadata', () => {
     const escaped: string[] = [];
 
     for (const { species, data } of DESCRIBED) {
-      for (const [name, target] of Object.entries(data.sprites)) {
+      for (const [name, target] of clipsOf(data)) {
         for (const frame of target.frames) {
           // The shadow is the one anchor everything else falls back
           // to, since it is what a pokemon stands on
@@ -287,23 +293,24 @@ describe('sprite metadata', () => {
 
   it('fills in what a broken description leaves out rather than throwing', () => {
     const empty = asSpriteSheetJSON({
-      anims: { anims: [{ name: 'Idle' }] },
-      sprites: { Idle: { frameWidth: 24, frameHeight: 32 } },
+      anims: { anims: [{ name: SpriteAnim.Idle }] },
+      sprites: { [SpriteAnim.Idle]: { frameWidth: 24, frameHeight: 32 } },
     });
+    const idle = empty.sprites[SpriteAnim.Idle];
 
     expect(empty.sheet.images).toEqual([]);
     expect(empty.anims.anims[0].durations).toEqual([]);
     // An animation with no target of its own plays from the grid named
     // after it
-    expect(empty.anims.anims[0].target).toBe('Idle');
-    expect(empty.sprites.Idle.frames).toEqual([]);
+    expect(empty.anims.anims[0].target).toBe(SpriteAnim.Idle);
+    expect(idle?.frames).toEqual([]);
     expect(asSpriteSheetJSON(null).anims.anims).toEqual([]);
     // A description that says nothing about trimming describes an
     // untrimmed sheet, so its frames are their own source cells
     expect(empty.compact).toBe(false);
-    expect(empty.sprites.Idle.trim).toEqual([0, 0]);
-    expect(empty.sprites.Idle.sourceFrameWidth).toBe(24);
-    expect(empty.sprites.Idle.sourceFrameHeight).toBe(32);
+    expect(idle?.trim).toEqual([0, 0]);
+    expect(idle?.sourceFrameWidth).toBe(24);
+    expect(idle?.sourceFrameHeight).toBe(32);
   });
 });
 
@@ -311,16 +318,17 @@ describe('species sprite animation', () => {
   it('offers every animation the sheet actually holds', () => {
     const sprite = loaded();
 
-    expect(sprite.has('Idle')).toBe(true);
-    expect(sprite.has('Walk')).toBe(true);
-    // Nothing has a Nap; asking is how a caller finds out
-    expect(sprite.has('Nap')).toBe(false);
-    expect(sprite.play('Nap')).toBe(false);
+    expect(sprite.has(SpriteAnim.Idle)).toBe(true);
+    expect(sprite.has(SpriteAnim.Walk)).toBe(true);
+    // Bulbasaur was never drawn twirling; asking is how a caller
+    // finds out
+    expect(sprite.has(SpriteAnim.Twirl)).toBe(false);
+    expect(sprite.play(SpriteAnim.Twirl)).toBe(false);
   });
 
   it('stretches a clip over a window somebody else decided', () => {
     const sprite = loaded();
-    const idle = SAMPLE.anims.anims.find((anim) => anim.name === 'Idle');
+    const idle = SAMPLE.anims.anims.find((anim) => anim.name === SpriteAnim.Idle);
     const drawn = (idle?.durations ?? []).reduce(
       (total, held) => total + Math.max(1, held) * SPRITE_TICK,
       0,
@@ -333,7 +341,7 @@ describe('species sprite animation', () => {
     // one pass fills the window exactly, whatever the two lengths are
     const window = drawn * 4;
 
-    expect(sprite.play('Idle', { loop: false, duration: window })).toBe(true);
+    expect(sprite.play(SpriteAnim.Idle, { loop: false, duration: window })).toBe(true);
 
     sprite.update(window - 1);
     expect(sprite.finished).toBe(false);
@@ -348,7 +356,7 @@ describe('species sprite animation', () => {
     // makes a high-priority move visibly a quicker wind-up
     const quick = loaded();
 
-    quick.play('Idle', { loop: false, duration: drawn / 2 });
+    quick.play(SpriteAnim.Idle, { loop: false, duration: drawn / 2 });
     quick.update(drawn / 2);
     expect(quick.finished).toBe(true);
 
@@ -357,16 +365,16 @@ describe('species sprite animation', () => {
     // clip sixty times a second
     const held = loaded();
 
-    held.play('Idle', { loop: false, duration: window });
+    held.play(SpriteAnim.Idle, { loop: false, duration: window });
     held.update(window / 2);
-    held.play('Idle', { loop: false, duration: window });
+    held.play(SpriteAnim.Idle, { loop: false, duration: window });
     held.update(window / 2);
     expect(held.finished).toBe(true);
 
     // ...and asked for again once it has run out, `restart` gives it
     // a fresh pass over a fresh window. That is what the next step of
     // a multi-step move is
-    held.play('Idle', { loop: false, duration: window, restart: true });
+    held.play(SpriteAnim.Idle, { loop: false, duration: window, restart: true });
     expect(held.finished).toBe(false);
     held.update(window - 1);
     expect(held.finished).toBe(false);
@@ -376,17 +384,17 @@ describe('species sprite animation', () => {
     // Left out, a clip plays at the speed it was drawn at
     const plain = loaded();
 
-    plain.play('Idle', { loop: false });
+    plain.play(SpriteAnim.Idle, { loop: false });
     plain.update(drawn);
     expect(plain.finished).toBe(true);
   });
 
   it('holds each frame for the duration the sheet gives it', () => {
     const sprite = loaded();
-    const idle = SAMPLE.anims.anims.find((anim) => anim.name === 'Idle');
+    const idle = SAMPLE.anims.anims.find((anim) => anim.name === SpriteAnim.Idle);
 
     expect(idle).toBeDefined();
-    expect(sprite.play('Idle')).toBe(true);
+    expect(sprite.play(SpriteAnim.Idle)).toBe(true);
     expect(sprite.frame).toBe(0);
 
     // One tick short of the first frame's end is still the first frame
@@ -400,7 +408,7 @@ describe('species sprite animation', () => {
   it('loops back round, so an idle pokemon idles for ever', () => {
     const sprite = loaded();
 
-    sprite.play('Idle', { loop: true });
+    sprite.play(SpriteAnim.Idle, { loop: true });
     sprite.update(60_000);
 
     expect(sprite.finished).toBe(false);
@@ -411,7 +419,7 @@ describe('species sprite animation', () => {
   it('holds the last frame of a one-shot and stops there', () => {
     const sprite = loaded();
 
-    sprite.play('Hurt', { loop: false });
+    sprite.play(SpriteAnim.Hurt, { loop: false });
     sprite.update(60_000);
 
     expect(sprite.finished).toBe(true);
@@ -423,24 +431,24 @@ describe('species sprite animation', () => {
   it('carries on when asked again for what is already playing', () => {
     const sprite = loaded();
 
-    sprite.play('Walk');
+    sprite.play(SpriteAnim.Walk);
     sprite.update(SPRITE_TICK * 4);
 
     const at = sprite.frame;
 
     // A canvas that plays Walk on every tick of a walk must not redraw
     // the first frame every tick
-    sprite.play('Walk');
+    sprite.play(SpriteAnim.Walk);
     expect(sprite.frame).toBe(at);
 
-    sprite.play('Walk', { restart: true });
+    sprite.play(SpriteAnim.Walk, { restart: true });
     expect(sprite.frame).toBe(0);
   });
 
   it('pauses where it stands and carries on from there', () => {
     const sprite = loaded();
 
-    sprite.play('Walk');
+    sprite.play(SpriteAnim.Walk);
     sprite.update(SPRITE_TICK * 2);
     sprite.pause();
 
@@ -462,7 +470,7 @@ describe('species sprite animation', () => {
   it('remembers which way it is facing', () => {
     const sprite = loaded();
 
-    sprite.play('Walk', { direction: 'UpLeft' });
+    sprite.play(SpriteAnim.Walk, { direction: 'UpLeft' });
     expect(sprite.direction).toBe('UpLeft');
 
     sprite.setDirection('Right');
@@ -475,9 +483,9 @@ describe('species sprite animation', () => {
     expect(sprite.frameSize).toEqual({ width: 0, height: 0 });
     expect(sprite.sourceFrameSize).toEqual({ width: 0, height: 0 });
 
-    sprite.play('Idle');
+    sprite.play(SpriteAnim.Idle);
 
-    const idle = SAMPLE.sprites.Idle;
+    const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
 
     // What is painted is the trimmed frame; the cell it was drawn in is
     // asked for separately, and the two only agree on a sheet that was
@@ -512,9 +520,9 @@ describe('where the parts of a pokemon are', () => {
     // Nothing is playing yet, so there is no frame to have anchors
     expect(sprite.anchor('shadow')).toBeNull();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
-    const idle = SAMPLE.sprites.Idle;
+    const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
     const down = idle.frames[idle.directions.indexOf('Down') * idle.columns];
 
     expect(sprite.anchor('shadow')).toEqual(down.shadow);
@@ -533,12 +541,12 @@ describe('where the parts of a pokemon are', () => {
   it('falls back to somewhere every frame has', () => {
     const sprite = loaded();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const shadow = sprite.anchor('shadow');
     const head = sprite.anchor('head');
     const center = sprite.anchor('center');
-    const idle = SAMPLE.sprites.Idle;
+    const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
     const frame = idle.frames[idle.directions.indexOf('Down') * idle.columns];
 
     expect(shadow).not.toBeNull();
@@ -572,9 +580,11 @@ describe('where the parts of a pokemon are', () => {
     // A sleeping pokemon faces nowhere in particular: its grid has one
     // row, and asking it to face away reads that row rather than off
     // the end of the sheet
-    expect(sprite.play('Sleep', { direction: 'Up' })).toBe(true);
-    expect(SAMPLE.sprites.Sleep.rows).toBe(1);
-    expect(sprite.anchor('shadow')).toEqual(SAMPLE.sprites.Sleep.frames[0].shadow);
+    expect(sprite.play(SpriteAnim.Sleep, { direction: 'Up' })).toBe(true);
+    expect(SAMPLE.sprites[SpriteAnim.Sleep]?.rows).toBe(1);
+    expect(sprite.anchor('shadow')).toEqual(
+      SAMPLE.sprites[SpriteAnim.Sleep]?.frames[0].shadow,
+    );
   });
 });
 
@@ -583,7 +593,7 @@ describe('drawing a pokemon somewhere', () => {
     const sprite = loaded();
     const { context, drawn } = recorder();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const scale = 3;
     const shadow = sprite.anchor('shadow');
@@ -610,7 +620,7 @@ describe('drawing a pokemon somewhere', () => {
   it('answers where anything else on the pokemon landed', () => {
     const sprite = loaded();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const scale = 2;
     const placement = { scale, anchor: 'center' } as const;
@@ -630,7 +640,7 @@ describe('drawing a pokemon somewhere', () => {
   it('mirrors the anchors along with the picture', () => {
     const sprite = loaded();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const scale = 2;
     const head = sprite.anchor('head');
@@ -714,7 +724,7 @@ describe('drawing a pokemon somewhere', () => {
     const sprite = loaded();
     const { context, ellipses } = recorder();
 
-    sprite.play('Idle', { direction: 'Down' });
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
     sprite.drawShadow(context, 100, 200, { scale: 2, anchor: 'shadow' });
 
     const [x, y, across, down] = ellipses[0];
@@ -741,7 +751,7 @@ describe('drawing a pokemon somewhere', () => {
     const { context, drawn } = recorder();
     const waiting = new SpeciesSpriteAnimation('image.png', SAMPLE);
 
-    waiting.play('Idle');
+    waiting.play(SpriteAnim.Idle);
     waiting.draw(context, 0, 0);
 
     const ready = loaded();
@@ -816,7 +826,7 @@ describe('where the sheets are', () => {
     // Every grid that turns names its rows in the same order, which is
     // the order everything that works out a facing counts in
     for (const { species, data } of DESCRIBED) {
-      for (const [name, target] of Object.entries(data.sprites)) {
+      for (const [name, target] of clipsOf(data)) {
         expect(target.directions, `${species} ${name}`).toEqual(
           SPRITE_DIRECTIONS.slice(0, target.rows),
         );
@@ -874,12 +884,7 @@ describe('drawing from a deduped sheet', () => {
   it('reads each frame from the picture it was packed as', () => {
     for (const { species, data } of DESCRIBED.slice(0, 6)) {
       const sprite = loaded(data);
-      const name = Object.keys(data.sprites)[0];
-      const target = data.sprites[name];
-
-      if (target.cells == null) {
-        continue;
-      }
+      const [name, target] = clipsOf(data)[0];
       const box = data.sheet.images.find((image) => image.name === name);
 
       expect(box, `${species} ${name} is packed`).toBeDefined();
@@ -891,15 +896,12 @@ describe('drawing from a deduped sheet', () => {
       expect(rects, `${species} ${name} drew once`).toHaveLength(1);
 
       const [left, top, width, height] = rects[0];
-      const frame = target.frames[0];
-      const cell = frame.cell ?? 0;
+      const picture = target.pictures[target.frames[0].cell ?? 0];
 
-      expect(width).toBe(target.frameWidth);
-      expect(height).toBe(target.frameHeight);
-      expect(left).toBe((box?.x ?? 0) + (cell % target.cells.columns) * target.frameWidth);
-      expect(top).toBe(
-        (box?.y ?? 0) + Math.floor(cell / target.cells.columns) * target.frameHeight,
-      );
+      expect(width).toBe(picture.width);
+      expect(height).toBe(picture.height);
+      expect(left).toBe((box?.x ?? 0) + picture.x);
+      expect(top).toBe((box?.y ?? 0) + picture.y);
       // And it stays inside the box the layout gave the clip
       expect(left).toBeLessThan((box?.x ?? 0) + (box?.width ?? 0));
       expect(top).toBeLessThan((box?.y ?? 0) + (box?.height ?? 0));
@@ -908,10 +910,10 @@ describe('drawing from a deduped sheet', () => {
 
   it('hands a background the same picture it draws itself', () => {
     for (const { species, data } of DESCRIBED) {
-      for (const [name, target] of Object.entries(data.sprites)) {
+      for (const [name, target] of clipsOf(data)) {
         const at = target.frames.findIndex((frame) => frame.flip);
 
-        if (at < 0 || target.cells == null) {
+        if (at < 0) {
           continue;
         }
         const sprite = loaded(data);
@@ -921,16 +923,15 @@ describe('drawing from a deduped sheet', () => {
         sprite.play(name, { loop: true, direction });
 
         const frame = sprite.frameBox;
-        const cell = target.frames[Math.floor(at / target.columns) * target.columns]?.cell ?? 0;
+        const showing = target.frames[Math.floor(at / target.columns) * target.columns];
+        const picture = target.pictures[showing.cell ?? 0];
 
         // The same rectangle `draw` reads, and the same answer about
         // whether it is stored the other way round: a background has
         // to turn it over itself
-        expect(frame?.x).toBe((box?.x ?? 0) + (cell % target.cells.columns) * target.frameWidth);
-        expect(frame?.y).toBe(
-          (box?.y ?? 0) + Math.floor(cell / target.cells.columns) * target.frameHeight,
-        );
-        expect(frame?.width).toBe(target.frameWidth);
+        expect(frame?.x).toBe((box?.x ?? 0) + picture.x);
+        expect(frame?.y).toBe((box?.y ?? 0) + picture.y);
+        expect(frame?.width).toBe(picture.width);
         expect(frame?.mirrored, `${species} ${name} ${direction}`).toBe(
           target.frames[Math.floor(at / target.columns) * target.columns].flip,
         );
@@ -941,10 +942,10 @@ describe('drawing from a deduped sheet', () => {
 
   it('mirrors a frame that was kept the other way round', () => {
     for (const { species, data } of DESCRIBED) {
-      for (const [name, target] of Object.entries(data.sprites)) {
+      for (const [name, target] of clipsOf(data)) {
         const at = target.frames.findIndex((frame) => frame.flip);
 
-        if (at < 0 || target.cells == null) {
+        if (at < 0) {
           continue;
         }
         const sprite = loaded(data);

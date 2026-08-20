@@ -2,6 +2,7 @@ import { type JSX, Show } from 'solid-js';
 import { Species } from '../../data/ids/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * An egg that has been found, put to the player before it is theirs.
@@ -101,7 +102,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
               <div class="flex items-end justify-center">
                 <AnimatedSprite
                   species={Species.Egg}
-                  animation="Idle"
+                  animation={SpriteAnim.Idle}
                   direction="Down"
                   scale={4}
                   shadow

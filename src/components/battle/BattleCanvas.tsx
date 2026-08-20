@@ -35,6 +35,7 @@ import type Unit from '../../battle/unit';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { AI_REST_PERIOD } from '../../battle/ai/idle';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
 import { MoveFlags, type Moves } from '../../data/ids/moves';
@@ -559,7 +560,7 @@ function project(standings: Standing[], view: FieldView, striking: Map<Unit, Str
  * of it would rot
  */
 export interface Performance {
-  animation: string;
+  animation: SpriteAnim;
   /**
    * How long one pass should take, or null to play at the speed the
    * sheet was drawn at
@@ -604,7 +605,7 @@ export function animationFor(
     // A knocked-out pokemon holds the last frame of being hurt rather
     // than looping it, which is the difference between lying there
     // and writhing for ever
-    return { animation: 'Hurt', duration: null, loop: false };
+    return { animation: SpriteAnim.Hurt, duration: null, loop: false };
   }
 
   /**
@@ -642,7 +643,7 @@ export function animationFor(
   const working = unit.casting ?? unit.channeling;
 
   if (working != null) {
-    return { animation: 'Charge', duration: null, loop: true };
+    return { animation: SpriteAnim.Charge, duration: null, loop: true };
   }
 
   // Standing about is where what is being done **to** it shows: asleep,
@@ -657,7 +658,7 @@ export function animationFor(
   if (suffering != null) {
     return { animation: suffering, duration: null, loop: true };
   }
-  return { animation: 'Idle', duration: null, loop: true };
+  return { animation: SpriteAnim.Idle, duration: null, loop: true };
 }
 
 function healthColor(share: number): string {
@@ -788,7 +789,7 @@ function drawSlot(
   if (!hidden) {
     if (sprite?.ready === true) {
       const wanted = animationFor(unit, sprite, striking.get(unit));
-      const playable = sprite.has(wanted.animation) ? wanted.animation : 'Idle';
+      const playable = sprite.has(wanted.animation) ? wanted.animation : SpriteAnim.Idle;
 
       sprite.play(playable, {
         direction: slot.facing,

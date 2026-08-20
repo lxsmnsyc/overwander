@@ -1,4 +1,5 @@
 import type { CastAnimation } from '../constants/cast';
+import { SpriteAnim } from '../ids/sprite-anims';
 import { Types } from '../constants/types';
 import { MoveCategories, Moves } from '../ids/moves';
 import { Weathers } from '../ids/status';
@@ -43,7 +44,7 @@ const WEATHER_MOVES: {
     type: Types.Water,
     weather: Weathers.Rain,
     pp: 5,
-    cast: ['Dance', 'Twirl', 'Swing'],
+    cast: [SpriteAnim.Dance, SpriteAnim.Twirl, SpriteAnim.Swing],
   },
   {
     move: Moves.SunnyDay,
@@ -52,7 +53,7 @@ const WEATHER_MOVES: {
     type: Types.Fire,
     weather: Weathers.Sunny,
     pp: 5,
-    cast: ['RearUp', 'Swell', 'Charge'],
+    cast: [SpriteAnim.RearUp, SpriteAnim.Swell, SpriteAnim.Charge],
   },
   {
     move: Moves.Sandstorm,
@@ -61,7 +62,7 @@ const WEATHER_MOVES: {
     type: Types.Rock,
     weather: Weathers.Sandstorm,
     pp: 10,
-    cast: ['Shake', 'Twirl', 'Charge'],
+    cast: [SpriteAnim.Shake, SpriteAnim.Twirl, SpriteAnim.Charge],
   },
   {
     move: Moves.Hail,
@@ -70,7 +71,7 @@ const WEATHER_MOVES: {
     type: Types.Ice,
     weather: Weathers.Hail,
     pp: 10,
-    cast: ['Emit', 'Shoot', 'Attack'],
+    cast: [SpriteAnim.Emit, SpriteAnim.Shoot, SpriteAnim.Attack],
   },
 ];
 

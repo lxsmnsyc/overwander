@@ -7,6 +7,7 @@ import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * What the one button says. A lair offers exactly one thing at a time
@@ -222,7 +223,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
               <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
                 <AnimatedSprite
                   species={standing().species}
-                  animation="Sleep"
+                  animation={SpriteAnim.Sleep}
                   direction="DownLeft"
                   scale={4}
                   shadow

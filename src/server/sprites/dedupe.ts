@@ -15,6 +15,12 @@ import { createHash } from 'node:crypto';
  * grid which picture it is, whether it is that picture reflected, and
  * where it sits inside the clip's box.
  *
+ * One of these runs for a **whole sheet** rather than for a clip: a
+ * pokemon standing still is drawn the same in its Idle, its Charge and
+ * the first frame of its Attack, and cropping is what makes those
+ * comparable — they were different sizes while each carried its clip's
+ * padding.
+ *
  * The comparison is across **every coat at once**. A shiny is the same
  * pokemon in other colours, and two frames that match on the ordinary
  * drawing may differ on the shiny; all four coats share one description,
@@ -98,11 +104,27 @@ export interface FrameCell {
   at: [number, number];
 }
 
-export interface Deduped {
-  /** The distinct pictures, as rectangles of the source. */
-  pictures: Rect[];
-  /** One a frame, row-major over the grid. */
-  frames: FrameCell[];
+/** A kept picture: where it is, and which drawing it is read from. */
+export interface Picture extends Rect {
+  /** Which of the caller's sources holds it. */
+  source: number;
+}
+
+export interface Deduper {
+  /** Every distinct picture found so far, across every clip added. */
+  readonly pictures: Picture[];
+  /**
+   * One clip's frames, in the grid's reading order.
+   *
+   * `source` says which drawing the clip is read from, and `coats` is
+   * which coats that drawing has — two clips only ever share a picture
+   * when they were compared across the same coats
+   */
+  add(
+    coats: { raster: Pixels; grid: SourceGrid }[],
+    source: number,
+    coatKey: string,
+  ): FrameCell[];
 }
 
 /**
@@ -170,74 +192,79 @@ function digestsOf(raster: Pixels, box: Rect): [plain: string, mirrored: string]
 }
 
 /**
- * Works out which frames of one clip are the same picture.
+ * Something to add a sheet's clips to, one at a time.
  *
- * `coats` are the drawings to compare — one is enough, four is the
- * honest answer for a pokemon that has four. `trim` crops each frame
- * to what is drawn in it; off, every frame is the whole box, which is
- * what an uncompacted sheet asks for
+ * `trim` crops each frame to what is drawn in it; off, every frame is
+ * the whole box, which is what an uncompacted sheet asks for
  */
-export default function dedupe(
-  coats: { raster: Pixels; grid: SourceGrid }[],
-  trim = true,
-): Deduped {
-  const { frameWidth, frameHeight, columns, rows } = coats[0].grid;
+export default function deduper(trim = true): Deduper {
   /** Every coat's digest of one picture, joined: the picture's identity. */
   const identity = new Map<string, number>();
   /** The same, mirrored, for spotting a picture drawn the other way round. */
   const reflected = new Map<string, number>();
-  const pictures: Rect[] = [];
-  const frames: FrameCell[] = [];
+  const pictures: Picture[] = [];
 
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      const [fromX, fromY] = spotOf(coats[0].grid, column, row);
-      // An empty frame still has to be a picture somewhere, so it is
-      // the smallest one there is rather than a case of its own
-      const content = (trim ? contentOf(coats, column, row) : null) ?? {
-        x: 0,
-        y: 0,
-        width: trim ? 1 : frameWidth,
-        height: trim ? 1 : frameHeight,
-      };
-      const plain: string[] = [`${content.width}x${content.height}`];
-      const mirrored: string[] = [`${content.width}x${content.height}`];
+  return {
+    pictures,
+    add(coats, source, coatKey): FrameCell[] {
+      const { frameWidth, frameHeight, columns, rows } = coats[0].grid;
+      const frames: FrameCell[] = [];
 
-      for (const coat of coats) {
-        const [left, top] = spotOf(coat.grid, column, row);
-        const [one, two] = digestsOf(coat.raster, {
-          ...content,
-          x: left + content.x,
-          y: top + content.y,
-        });
+      for (let row = 0; row < rows; row += 1) {
+        for (let column = 0; column < columns; column += 1) {
+          const [fromX, fromY] = spotOf(coats[0].grid, column, row);
+          // An empty frame still has to be a picture somewhere, so it
+          // is the smallest one there is rather than a case of its own
+          const content = (trim ? contentOf(coats, column, row) : null) ?? {
+            x: 0,
+            y: 0,
+            width: trim ? 1 : frameWidth,
+            height: trim ? 1 : frameHeight,
+          };
+          // Sized and coated: a picture compared across two coats says
+          // nothing about the same picture compared across four
+          const stamp = `${coatKey}:${content.width}x${content.height}`;
+          const plain: string[] = [stamp];
+          const mirrored: string[] = [stamp];
 
-        plain.push(one);
-        mirrored.push(two);
+          for (const coat of coats) {
+            const [left, top] = spotOf(coat.grid, column, row);
+            const [one, two] = digestsOf(coat.raster, {
+              ...content,
+              x: left + content.x,
+              y: top + content.y,
+            });
+
+            plain.push(one);
+            mirrored.push(two);
+          }
+          const at: [number, number] = [content.x, content.y];
+          const key = plain.join('|');
+          const kept = identity.get(key);
+
+          if (kept != null) {
+            frames.push({ cell: kept, flip: false, at });
+            continue;
+          }
+          // A picture nobody has drawn yet, but somebody has drawn
+          // backwards
+          const facing = reflected.get(key);
+
+          if (facing != null) {
+            frames.push({ cell: facing, flip: true, at });
+            continue;
+          }
+          const held = pictures.length;
+
+          pictures.push({ ...content, x: fromX + content.x, y: fromY + content.y, source });
+          identity.set(key, held);
+          reflected.set(mirrored.join('|'), held);
+          frames.push({ cell: held, flip: false, at });
+        }
       }
-      const at: [number, number] = [content.x, content.y];
-      const key = plain.join('|');
-      const kept = identity.get(key);
-
-      if (kept != null) {
-        frames.push({ cell: kept, flip: false, at });
-        continue;
-      }
-      // A picture nobody has drawn yet, but somebody has drawn backwards
-      const facing = reflected.get(key);
-
-      if (facing != null) {
-        frames.push({ cell: facing, flip: true, at });
-        continue;
-      }
-      const held = pictures.length;
-
-      pictures.push({ ...content, x: fromX + content.x, y: fromY + content.y });
-      identity.set(key, held);
-      reflected.set(mirrored.join('|'), held);
-      frames.push({ cell: held, flip: false, at });
-    }
-  }
-  return { pictures, frames };
+      return frames;
+    },
+  };
 }
 
 /** One rectangle of pixels into another picture. */
@@ -261,25 +288,27 @@ function copy(target: Pixels, source: Pixels, from: Rect, to: { x: number; y: nu
 }
 
 /**
- * Copies the kept pictures of one clip where the packer put them.
+ * Copies the kept pictures onto the sheet, where the packer put them.
  *
- * `placed` is one corner per picture, in the clip's region, and `to` is
- * where that region landed on the sheet
+ * `from` hands back the drawing a picture is read out of, since a
+ * pokemon's clips arrive as one image each. Nothing for a picture this
+ * coat was not drawn for, which leaves that picture's corner of the
+ * sheet clear
  */
 export function drawPictures(
   target: Pixels,
-  source: Pixels,
-  pictures: Rect[],
+  pictures: Picture[],
   placed: ({ x: number; y: number } | undefined)[],
-  to: { x: number; y: number },
+  from: (source: number) => Pixels | null,
 ): void {
   for (let at = 0; at < pictures.length; at += 1) {
     const spot = placed[at];
+    const source = from(pictures[at].source);
 
-    if (spot == null) {
+    if (spot == null || source == null) {
       continue;
     }
-    copy(target, source, pictures[at], { x: to.x + spot.x, y: to.y + spot.y });
+    copy(target, source, pictures[at], spot);
   }
 }
 

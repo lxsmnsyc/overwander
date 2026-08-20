@@ -5,8 +5,8 @@ import readAnimData from './anim-data';
 import type { SpriteAnim } from '../../data/ids/sprite-anims';
 import { spriteAnimName, spriteAnimOf } from '../../data/ids/sprite-anims';
 import writeCoats from './coats';
-import type { Deduped, Rect, SourceGrid } from './dedupe';
-import dedupe, { drawPictures } from './dedupe';
+import type { FrameCell, SourceGrid } from './dedupe';
+import deduper, { drawPictures } from './dedupe';
 import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
@@ -74,12 +74,8 @@ interface Entry {
   trim: Point;
   columns: number;
   rows: number;
-  w: number;
-  h: number;
-  /** Which frames are the same picture, once every coat has been read. */
-  kept?: Deduped;
-  /** Where each kept picture landed inside this clip's own region. */
-  spots?: ({ x: number; y: number } | undefined)[];
+  /** Which picture each frame is, once every coat has been read. */
+  frames?: FrameCell[];
 }
 
 /** One frame as the description writes it: anchors, then placement. */
@@ -96,8 +92,6 @@ type FrameData = [
 
 /** What the description says about one animation's frames. */
 interface SpriteTarget {
-  /** The distinct pictures, placed in this clip's region. */
-  pictures: Rect[];
   frameWidth: number;
   frameHeight: number;
   sourceFrameWidth: number;
@@ -110,17 +104,12 @@ interface SpriteTarget {
   frames: FrameData[];
 }
 
-interface SheetImage {
-  name: SpriteAnim;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+/** Where one picture landed on the sheet, as `[x, y, width, height]`. */
+type PictureData = [x: number, y: number, width: number, height: number];
 
 interface SheetData {
   compact: boolean;
-  sheet: { width: number; height: number; images: SheetImage[] };
+  sheet: { width: number; height: number; pictures: PictureData[] };
   anims: AnimData;
   sprites: Partial<Record<SpriteAnim, SpriteTarget>>;
 }
@@ -256,8 +245,6 @@ function entriesFor(
             .map((raster) => computeTrim(raster, size.width, size.height, columns, rows)),
         )
       : { x: 0, y: 0, width: size.width, height: size.height };
-    const trimmed = trim.width !== size.width || trim.height !== size.height;
-
     entries.push({
       name,
       images: held,
@@ -268,11 +255,6 @@ function entriesFor(
       trim: [trim.x, trim.y],
       columns,
       rows,
-      // Only a trimmed grid resizes the box. Left alone the image keeps
-      // its own size, so a frame size that does not tile it exactly can
-      // never crop it
-      w: trimmed ? columns * trim.width : drawing.width,
-      h: trimmed ? rows * trim.height : drawing.height,
     });
   }
   return entries;
@@ -329,15 +311,7 @@ function targetFor(entry: Entry): SpriteTarget {
     }
   }
 
-  const kept = entry.kept;
-
   return {
-    pictures: (kept?.pictures ?? []).map((picture, at) => ({
-      x: entry.spots?.[at]?.x ?? 0,
-      y: entry.spots?.[at]?.y ?? 0,
-      width: picture.width,
-      height: picture.height,
-    })),
     frameWidth: entry.frameWidth,
     frameHeight: entry.frameHeight,
     sourceFrameWidth: entry.sourceFrameWidth,
@@ -350,7 +324,7 @@ function targetFor(entry: Entry): SpriteTarget {
     // worth nothing in a file that repeats them a hundred thousand
     // times. The order is the one `sprite-sheet.ts` reads
     frames: frames.map((markers, at): FrameData => {
-      const held = kept?.frames[at];
+      const held = entry.frames?.[at];
 
       return [
         markers.shadow,
@@ -364,19 +338,6 @@ function targetFor(entry: Entry): SpriteTarget {
       ];
     }),
   };
-}
-
-/** Draws one animation into the sheet: one copy of each picture. */
-function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
-  const drawing = entry.images.animation;
-
-  if (drawing == null || entry.kept == null || entry.spots == null) {
-    return;
-  }
-  // One copy of each picture, wherever it came from in the archive.
-  // There is no shortcut for an untrimmed grid any more: the frames
-  // are not laid out the way they arrived, so every one is placed
-  drawPictures(sheet, drawing, entry.kept.pictures, entry.spots, at);
 }
 
 /** One coat's archive, read for its pictures alone. */
@@ -406,51 +367,67 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
   if (entries.length === 0) {
     throw new Error('The archive holds none of the animations asked for');
   }
-  // Which frames are the same picture, decided across every coat at
-  // once: they share one description, so a pair is only a pair when it
-  // is a pair in all of them. The box a clip needs is what is left
-  for (const entry of entries) {
-    const drawings = [
-      entry.images.animation,
-      ...others.map((coat) => coat.get(entry.name)?.animation),
-    ];
+  /** Every drawing of one animation: the plain coat's, then the rest. */
+  const drawingsOf = (entry: Entry): (Raster | null)[] => [
+    entry.images.animation ?? null,
+    ...others.map((coat) => coat.get(entry.name)?.animation ?? null),
+  ];
 
-    entry.kept = dedupe(
-      drawings
-        .filter((raster): raster is Raster => raster != null)
-        .map((raster) => ({ raster, grid: gridOf(entry) })),
-      options.compact,
-    );
-    // The pictures are all different sizes now, so where they go inside
-    // the clip is the same question the sheet asks of the clips
-    const inside = pack(
-      entry.kept.pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })),
-    );
-    const spots: ({ x: number; y: number } | undefined)[] = [];
+  // Which frames are the same picture, decided across every coat and
+  // every clip at once. Across coats because they share one description,
+  // so a pair is only a pair when it is a pair in all of them; across
+  // clips because a pokemon standing still is drawn the same in its
+  // Idle, its Charge and the first frame of its Attack
+  const shared = deduper(options.compact);
 
-    for (const { box, x, y } of inside.placed) {
-      spots[box.at] = { x, y };
-    }
-    entry.spots = spots;
-    entry.w = inside.width;
-    entry.h = inside.height;
+  for (let at = 0; at < entries.length; at += 1) {
+    const entry = entries[at];
+    const coated = drawingsOf(entry).flatMap((raster, coat) =>
+      raster == null ? [] : [{ raster, coat }],
+    );
+
+    entry.frames = shared.add(
+      coated.map((held) => ({ raster: held.raster, grid: gridOf(entry) })),
+      at,
+      coated.map((held) => held.coat).join(','),
+    );
   }
-  const layout = pack(entries);
-  const placed: SheetImage[] = [];
-  const sprites: Partial<Record<SpriteAnim, SpriteTarget>> = {};
-  const sheet = blank(layout.width, layout.height);
+  const layout = pack(
+    shared.pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })),
+  );
+  const spots: ({ x: number; y: number } | undefined)[] = [];
 
   for (const { box, x, y } of layout.placed) {
-    draw(sheet, box, { x, y });
-    placed.push({ name: box.name, x, y, width: box.w, height: box.h });
-    sprites[box.name] = targetFor(box);
+    spots[box.at] = { x, y };
   }
+  const sprites: Partial<Record<SpriteAnim, SpriteTarget>> = {};
+
+  for (const entry of entries) {
+    sprites[entry.name] = targetFor(entry);
+  }
+
+  /** One coat drawn onto the layout every coat shares. */
+  const paint = (coat: number): Raster => {
+    const raster = blank(layout.width, layout.height);
+
+    drawPictures(raster, shared.pictures, spots, (source) => drawingsOf(entries[source])[coat]);
+    return raster;
+  };
 
   const output: SheetData = {
     // `anims` mirrors the archive, so its frame sizes stay untrimmed:
     // `sprites` is the one that follows compaction
     compact: options.compact,
-    sheet: { width: layout.width, height: layout.height, images: placed },
+    sheet: {
+      width: layout.width,
+      height: layout.height,
+      pictures: shared.pictures.map((picture, at): PictureData => [
+        spots[at]?.x ?? 0,
+        spots[at]?.y ?? 0,
+        picture.width,
+        picture.height,
+      ]),
+    },
     anims: data,
     sprites,
   };
@@ -480,21 +457,12 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
   };
 
   // The plain coat carries the description, and the rest are the same
-  // sheet drawn again from their own pictures
-  // Written without spacing: the description is read by the game and
-  // by nothing else, and indenting it is three times the bytes
-  await put(sheet, { female: false, shiny: false }, JSON.stringify(output));
+  // sheet drawn again from their own pictures. Written without spacing:
+  // the description is read by the game and by nothing else, and
+  // indenting it is three times the bytes
+  await put(paint(0), { female: false, shiny: false }, JSON.stringify(output));
   for (let at = 0; at < extra.length; at += 1) {
-    const coat = blank(layout.width, layout.height);
-
-    for (const { box, x, y } of layout.placed) {
-      const held = others[at].get(box.name);
-
-      if (held?.animation != null) {
-        draw(coat, { ...box, images: held }, { x, y });
-      }
-    }
-    await put(coat, extra[at], null);
+    await put(paint(at + 1), extra[at], null);
   }
 
   // Last, so the list describes the sheets that are now there rather

@@ -150,21 +150,26 @@ describe('sprite metadata', () => {
 
     for (const { species, data } of DESCRIBED) {
       expect(data.sheet.width, `${species} sheet width`).toBeGreaterThan(0);
-      expect(data.sheet.images.length, `${species} sub-images`).toBeGreaterThan(0);
+      expect(data.sheet.pictures.length, `${species} pictures`).toBeGreaterThan(0);
       expect(data.anims.anims.length, `${species} animations`).toBeGreaterThan(0);
       expect(Object.keys(data.sprites).length, `${species} anchor grids`).toBeGreaterThan(0);
     }
   });
 
-  it('gives every animation a grid on the sheet and anchors to go with it', () => {
+  it('gives every animation anchors and pictures to go with them', () => {
     for (const { species, data } of DESCRIBED) {
-      const images = new Map(data.sheet.images.map((image) => [image.name, image]));
+      // The pictures belong to the sheet rather than to a clip: two
+      // animations that hold the same drawing point at one copy of it
+      const pictures = data.sheet.pictures;
+
+      for (const picture of pictures) {
+        const corner = `${species} picture`;
+
+        expect(picture.x + picture.width, corner).toBeLessThanOrEqual(data.sheet.width);
+        expect(picture.y + picture.height, corner).toBeLessThanOrEqual(data.sheet.height);
+      }
 
       for (const anim of data.anims.anims) {
-        const packed = images.get(anim.target);
-
-        expect(packed, `${species} ${anim.name} is packed`).toBeDefined();
-
         const target = data.sprites[anim.target];
 
         expect(target, `${species} ${anim.name} has anchors`).toBeDefined();
@@ -179,23 +184,9 @@ describe('sprite metadata', () => {
         );
         expect(target.directions.length, `${species} ${anim.target} rows`).toBe(target.rows);
         expect(anim.durations.length, `${species} ${anim.name} durations`).toBe(target.columns);
-        // What is packed is the **pictures**, which is fewer than the
-        // frames: half of a grid is a pose held or a row mirrored, and
-        // those are kept once. Each is cropped to what is drawn in it,
-        // so they are all different sizes and all inside the region
-        const pictures = target.pictures;
 
-        expect(pictures.length, `${species} ${anim.target} pictures`).toBeGreaterThan(0);
-
-        for (const picture of pictures) {
-          const corner = `${species} ${anim.target} picture`;
-
-          expect(picture.x + picture.width, corner).toBeLessThanOrEqual(packed?.width ?? 0);
-          expect(picture.y + picture.height, corner).toBeLessThanOrEqual(packed?.height ?? 0);
-        }
-
-        // And every frame is drawn from one of them, hung somewhere
-        // inside its box
+        // Every frame is drawn from one of the sheet's pictures, hung
+        // somewhere inside its box
         for (const frame of target.frames) {
           const cell = frame.cell == null ? null : pictures[frame.cell];
 
@@ -298,7 +289,7 @@ describe('sprite metadata', () => {
     });
     const idle = empty.sprites[SpriteAnim.Idle];
 
-    expect(empty.sheet.images).toEqual([]);
+    expect(empty.sheet.pictures).toEqual([]);
     expect(empty.anims.anims[0].durations).toEqual([]);
     // An animation with no target of its own plays from the grid named
     // after it
@@ -885,9 +876,7 @@ describe('drawing from a deduped sheet', () => {
     for (const { species, data } of DESCRIBED.slice(0, 6)) {
       const sprite = loaded(data);
       const [name, target] = clipsOf(data)[0];
-      const box = data.sheet.images.find((image) => image.name === name);
 
-      expect(box, `${species} ${name} is packed`).toBeDefined();
       sprite.play(name, { loop: true });
 
       const { context, rects } = taking();
@@ -896,15 +885,15 @@ describe('drawing from a deduped sheet', () => {
       expect(rects, `${species} ${name} drew once`).toHaveLength(1);
 
       const [left, top, width, height] = rects[0];
-      const picture = target.pictures[target.frames[0].cell ?? 0];
+      const picture = data.sheet.pictures[target.frames[0].cell ?? 0];
 
       expect(width).toBe(picture.width);
       expect(height).toBe(picture.height);
-      expect(left).toBe((box?.x ?? 0) + picture.x);
-      expect(top).toBe((box?.y ?? 0) + picture.y);
-      // And it stays inside the box the layout gave the clip
-      expect(left).toBeLessThan((box?.x ?? 0) + (box?.width ?? 0));
-      expect(top).toBeLessThan((box?.y ?? 0) + (box?.height ?? 0));
+      expect(left).toBe(picture.x);
+      expect(top).toBe(picture.y);
+      // And it stays on the sheet
+      expect(left + width).toBeLessThanOrEqual(data.sheet.width);
+      expect(top + height).toBeLessThanOrEqual(data.sheet.height);
     }
   });
 
@@ -917,20 +906,19 @@ describe('drawing from a deduped sheet', () => {
           continue;
         }
         const sprite = loaded(data);
-        const box = data.sheet.images.find((image) => image.name === name);
         const direction = target.directions[Math.floor(at / target.columns)];
 
         sprite.play(name, { loop: true, direction });
 
         const frame = sprite.frameBox;
         const showing = target.frames[Math.floor(at / target.columns) * target.columns];
-        const picture = target.pictures[showing.cell ?? 0];
+        const picture = data.sheet.pictures[showing.cell ?? 0];
 
         // The same rectangle `draw` reads, and the same answer about
         // whether it is stored the other way round: a background has
         // to turn it over itself
-        expect(frame?.x).toBe((box?.x ?? 0) + picture.x);
-        expect(frame?.y).toBe((box?.y ?? 0) + picture.y);
+        expect(frame?.x).toBe(picture.x);
+        expect(frame?.y).toBe(picture.y);
         expect(frame?.width).toBe(picture.width);
         expect(frame?.mirrored, `${species} ${name} ${direction}`).toBe(
           target.frames[Math.floor(at / target.columns) * target.columns].flip,

@@ -2,7 +2,6 @@ import asSpriteSheetJSON, {
   type AnimData,
   type Point,
   SPRITE_TICK,
-  type SheetImageData,
   type SpriteAnchor,
   type SpriteDirection,
   type SpriteFrameData,
@@ -131,7 +130,6 @@ export interface ShadowOptions extends DrawOptions {
  */
 interface Clip {
   anim: AnimData;
-  image: SheetImageData;
   target: SpriteTargetData;
   frames: number;
   rows: number;
@@ -282,18 +280,15 @@ export default class SpeciesSpriteAnimation {
     this.source = source;
     this.data = data;
 
-    const images = new Map(data.sheet.images.map((image) => [image.name, image]));
-
     for (const anim of data.anims.anims) {
-      const image = images.get(anim.target);
       // A description that came over the wire is exactly the kind that
-      // names a grid it does not carry
+      // names a clip it does not carry
       const target = data.sprites[anim.target];
 
-      // An animation whose grid is missing is one this sheet does not
-      // actually have; it is left out rather than drawn as a slice of
-      // whatever happens to sit at those coordinates
-      if (image == null || target == null || target.frameWidth <= 0 || target.frameHeight <= 0) {
+      // An animation whose anchors are missing is one this sheet does
+      // not actually have; it is left out rather than drawn as a slice
+      // of whatever happens to sit at those coordinates
+      if (target == null || target.frameWidth <= 0 || target.frameHeight <= 0) {
         continue;
       }
 
@@ -307,7 +302,6 @@ export default class SpeciesSpriteAnimation {
 
       this.clips.set(anim.name, {
         anim,
-        image,
         target,
         frames: Math.min(anim.durations.length, Math.max(1, target.columns)),
         rows: Math.max(1, target.rows),
@@ -482,10 +476,9 @@ export default class SpeciesSpriteAnimation {
     if (clip == null) {
       return null;
     }
-    const { pictures } = clip.target;
     const marks = this.anchorsAt(this.frame);
     const cell = marks?.cell ?? null;
-    const held = cell == null ? null : pictures[cell];
+    const held = cell == null ? null : this.data.sheet.pictures[cell];
 
     // A frame is a picture hung somewhere in its box. Without one there
     // is nothing to draw: a description that names no picture describes
@@ -494,8 +487,8 @@ export default class SpeciesSpriteAnimation {
       return null;
     }
     return {
-      x: clip.image.x + held.x,
-      y: clip.image.y + held.y,
+      x: held.x,
+      y: held.y,
       width: held.width,
       height: held.height,
       at: marks?.at ?? [0, 0],
@@ -783,8 +776,8 @@ export default class SpeciesSpriteAnimation {
     const pictureHeight = picture?.height ?? frameHeight;
 
     return {
-      left: picture?.x ?? clip.image.x,
-      top: picture?.y ?? clip.image.y,
+      left: picture?.x ?? 0,
+      top: picture?.y ?? 0,
       frameWidth: pictureWidth,
       frameHeight: pictureHeight,
       // Turned round with the frame: mirrored, a picture sits as far

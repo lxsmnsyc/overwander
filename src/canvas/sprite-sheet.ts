@@ -13,10 +13,11 @@ import { asSpriteAnim } from '../data/ids/sprite-anims';
  * is one copy of it now and the coat folders hold nothing but pictures.
  *
  * The description is the sprite collection's own, sanitised: the sheet
- * is packed, so `sheet.images` says where each animation's grid landed
- * on it, `anims.anims` says how long each frame is held and which grid
- * it plays from, and `sprites` carries the part no other layout has —
- * **anchor points**, per frame, for where the parts of the pokemon are.
+ * is packed, so `sheet.pictures` says where every distinct drawing
+ * landed on it, `anims.anims` says how long each frame is held and
+ * which clip it plays from, and `sprites` carries the part no other
+ * layout has — **anchor points**, per frame, for where the parts of the
+ * pokemon are.
  *
  * The two halves disagree about how big a frame is, on purpose.
  * `anims.anims` is faithful to the `AnimData.xml` it came from and
@@ -112,20 +113,14 @@ export interface SheetRect {
   height: number;
 }
 
-/** Placement of one animation image inside the packed sheet. */
-export interface SheetImageData {
-  /** Which animation's pictures are here. Matches a key of `sprites` */
-  name: SpriteAnim;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
 export interface SheetData {
   width: number;
   height: number;
-  images: SheetImageData[];
+  /**
+   * Every distinct picture on the sheet, for the whole pokemon rather
+   * than for one clip. A frame names one of these by its position here
+   */
+  pictures: SheetRect[];
 }
 
 export interface AnimData {
@@ -217,13 +212,6 @@ export interface SpriteTargetData {
    * orientation and frame index sits at `direction * columns + frame`
    */
   frames: SpriteFrameData[];
-  /**
-   * Each distinct picture's rectangle inside the clip's region.
-   *
-   * They are all different sizes, so there is no grid to index into:
-   * a frame names one of these and says where in its box it hangs
-   */
-  pictures: SheetRect[];
 }
 
 export interface SpriteSheetJSON {
@@ -270,16 +258,16 @@ function asPoint(value: unknown): Point | null {
   return pair.length >= 2 ? [asNumber(pair[0]), asNumber(pair[1])] : null;
 }
 
-/** The cropped pictures of a clip. */
+/** The pictures of a sheet, each written as `[x, y, width, height]`. */
 function asPictures(value: unknown): SheetRect[] {
   return asArray(value).map((entry) => {
-    const rect = asRecord(entry);
+    const rect = asArray(entry);
 
     return {
-      x: asNumber(rect.x),
-      y: asNumber(rect.y),
-      width: asNumber(rect.width),
-      height: asNumber(rect.height),
+      x: asNumber(rect[0]),
+      y: asNumber(rect[1]),
+      width: asNumber(rect[2]),
+      height: asNumber(rect[3]),
     };
   });
 }
@@ -363,7 +351,6 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
       rows: asNumber(target.rows),
       directions: asDirections(target.directions),
       frames: asArray(target.frames).map(asFrame),
-      pictures: asPictures(target.pictures),
     };
   }
 
@@ -372,19 +359,7 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
     sheet: {
       width: asNumber(sheet.width),
       height: asNumber(sheet.height),
-      images: asArray(sheet.images)
-        .map((entry) => {
-          const image = asRecord(entry);
-
-          return {
-            name: asSpriteAnim(asNumber(image.name)),
-            x: asNumber(image.x),
-            y: asNumber(image.y),
-            width: asNumber(image.width),
-            height: asNumber(image.height),
-          };
-        })
-        .filter((image): image is SheetImageData => image.name != null),
+      pictures: asPictures(sheet.pictures),
     },
     anims: {
       shadowSize: asNumber(anims.shadowSize),

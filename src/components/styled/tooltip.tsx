@@ -1,6 +1,7 @@
 import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
+import closeWhenGone from './gone';
 import { SHEER, holdFade } from './transition';
 
 /**
@@ -135,6 +136,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   const hide = (): void => {
     setWanted(false);
   };
+
+  // The label goes with what it labels, the same as a hover card does
+  closeWhenGone(() => host, wanted, hide);
 
   return (
     <span

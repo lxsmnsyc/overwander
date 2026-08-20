@@ -27,13 +27,13 @@ rolls first for a rarity band:
 
 ### The item pool
 
-| Band         | Contents                                                                                                                                                                                      |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper, Black Sludge; the everyday medicine; Energy and Heal Powder |
-| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings                     |
-| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates; the Helix and Dome Fossils         |
-| **Prized**   | Bottle Caps, the Purifying Gem, Max Revives, the Portal Key, the Old Amber, the ruins                                                                                                         |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                 |
+| Band         | Contents                                                                                                                                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                             |
+| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the Everstone; the four weather rocks, Light Clay and a Big Root |
+| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates; Leftovers and a Shed Shell                                                       |
+| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, all three fossils, the ruins                                                                                                |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                               |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
@@ -62,8 +62,8 @@ one or takes one, so a scale is worth exactly one forgotten move, restored by th
 The **fossils** are the only items worth a pokemon. Each names one species — a
 Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and
 none of those three appears anywhere in the world, so reviving one at the
-[Fossil Scientist](npcs.md) is the only way to meet them. The two sea fossils sit
-with the stones in **rare**; the amber sits a band above them, in **prized**.
+[Fossil Scientist](npcs.md) is the only way to meet them. All three sit in the
+**prized** band, with the amber the thinnest slot of the three.
 
 ### Item caches
 
@@ -123,10 +123,31 @@ every **512 steps** walked, drawn from the ordinary item pool with the **top two
 bands excluded**: a ball, a potion, occasionally a stone, but never a Master Ball
 scuffed off a path and never a Bottle Cap.
 
+## Battle gear
+
+A pokemon can carry a piece of gear into a fight instead of a berry. Gear is
+never used up: it works for as long as it is held.
+
+| Gear                       | What it does                                                                      |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| **Leftovers**              | Gives back a sixteenth of its holder's health every time it acts                  |
+| **Big Root**               | 1.3× on everything its holder drains                                              |
+| **Light Clay**             | Screens its holder puts up last 1.6× as long                                      |
+| **The four weather rocks** | Weather its holder calls lasts 1.6× as long                                       |
+| **The seventeen plates**   | Moves of the plate's type hit 1.2× harder                                         |
+| **Shed Shell**             | Its holder can always flee, whatever is holding it                                |
+| **Sticky Barb**            | Costs its holder an eighth of its health a move, and sticks to whoever touches it |
+
+The **species relics** are the same idea for one pokemon each: a Thick Club for a
+Cubone, a Light Ball for a Pikachu, a Lucky Punch for a Chansey, a Stick for a
+Farfetch'd, and Metal and Quick Powder for a Ditto. They are worth nothing to
+anybody else.
+
 ## Berries
 
-Berries are the one class of item worth carrying into a fight, since a pokemon
-holds one item and medicine cannot be used mid-battle. Each triggers on its own.
+A berry is what a pokemon carries into a fight when it is not carrying gear. No
+medicine can be used mid-battle, so what a pokemon holds when the fight starts is
+all the help it gets. Each berry triggers on its own.
 
 | Kind                      | Trigger                           | Effect                                                                 |
 | ------------------------- | --------------------------------- | ---------------------------------------------------------------------- |
@@ -164,8 +185,9 @@ that its levels did not pay for. See [Raising a pokemon](raising.md#training).
 | Selling an auction lot      | The winning bid             |
 | Selling to a vendor         | The item's price, per piece |
 
-Everyone in a raid is paid the same amount, and a **Luck Incense** on the buddy
-doubles a player's share.
+Everyone in a raid is paid the same amount. Two items on the **buddy** raise a
+player's own share: a **Luck Incense** doubles it, and an **Amulet Coin** trebles
+it.
 
 ### Where it goes
 

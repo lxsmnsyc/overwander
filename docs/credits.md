@@ -67,34 +67,45 @@ Versions are in [package.json](../package.json); the exact tree is in
 
 ## Art
 
-Everything drawn on a canvas lives under `public/sprites`, as sheets of pixel
-art with a description saying where the frames are.
+Everything drawn on a canvas lives under `public/sprites`, as sheets of pixel art
+with a description saying where the pictures are.
 
-| Path                                | What it holds                                                                       |
-| ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `public/sprites/pokemon/regular`    | One `{species}.png` per pokemon, an animated sheet: idle, walk, attack, hurt, sleep |
-| `public/sprites/pokemon/shiny`      | The same pokemon again in their shiny colours                                       |
-| `public/sprites/pokemon/meta`       | One `{species}.json` per pokemon: the animation both coats share, and the anchors   |
-| `public/sprites/ui/items`           | Item icons, one sheet per kind — balls, berries, medicine, machines, plates         |
-| `public/sprites/ui/move-categories` | The three marks a move's category is shown by                                       |
+| Path                                      | What it holds                                                        |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| `public/sprites/pokemon/{region}/regular` | One `{species}.png` per pokemon: every picture it is drawn in        |
+| `public/sprites/pokemon/{region}/shiny`   | The same pokemon again in their shiny colours                        |
+| `public/sprites/pokemon/{region}/meta`    | One `{species}.json` per pokemon: the clips, the frames, the anchors |
+| `public/sprites/coats.json`               | Which coats each pokemon has, and the stamp of what is on disk       |
+| `public/sprites/ui/items`                 | Item icons, one sheet per kind — balls, berries, medicine, plates    |
+| `public/sprites/ui/move-categories`       | The three marks a move's category is shown by                        |
 
-The pokemon sheets use the **PMD sprite format**, the layout Pokémon Mystery
-Dungeon fan sprite projects use: eight facing rows per animation, plus an `anims`
-block naming the frame sizes and durations. A description under `meta` carries
-that block along with the collection's **anchor points** — per frame, where the
-pokemon's shadow, body, head and hands are. There is one file per pokemon rather
-than one per coat, because a shiny is the same animation in different colours.
-`src/canvas/sprite-sheet.ts` is the whole of that contract and
-`src/canvas/species-sprite-animation.ts` plays it, so a sheet from any project
-writing the format plays without conversion.
+Sheets are filed by region — `kanto` for the first 151, `unknown` for Missingno,
+the egg and the substitute — and which region a pokemon belongs to comes from its
+dex number rather than from a list beside the files.
 
-One pass runs over the sheets before they ship, and
-[sprite-pipeline.json](../sprite-pipeline.json) records what it did to which
-version of which sheet. `pnpm compact-sprites` rewrites the PNG containers as
-indexed colour without touching a pixel: it changes bytes, not pictures. It
-leaves no trace in the file it rewrote, which is what the record is for: a sheet
-whose digest no longer matches its entry has been re-exported since, and the
-tests say so.
+**A sheet is a bag of pictures rather than a grid.** Each distinct drawing is
+stored once, cropped to the pixels that are lit, wherever the packer put it; a
+frame says which picture it draws, whether it is mirrored, and where that picture
+hangs inside the clip's box. Two animations that share a drawing point at one copy
+of it, and the four coats are compared together so a picture is only shared when
+it matches in all of them. `src/canvas/sprite-sheet.ts` is the whole of that
+contract and `src/canvas/species-sprite-animation.ts` plays it.
+
+The art began as **PMD sprites** — the layout Pokémon Mystery Dungeon fan
+projects use, eight facing rows per animation with an `anims` block and per-frame
+anchors — and the anchors survive the repacking: every frame still says where the
+pokemon's shadow, centre, head and hands are.
+
+Two passes run over the sheets. `pnpm compact-sprites` rewrites the PNG containers
+as indexed colour without touching a pixel, and
+[`scripts/repack-sprites.ts`](../scripts/repack-sprites.ts) crops and de-duplicates
+the pictures — together they took the 154 sheets that ship from 15.0MB to 2.1MB on
+disk, and from 1,752MB to 49MB decoded in a browser.
+[sprite-pipeline.json](../sprite-pipeline.json) records what was done to which
+version of which sheet, so a sheet whose digest no longer matches its entry has
+been re-exported since, and the tests say so. `pnpm sprite-coats` restamps
+`coats.json` afterwards, without which a browser draws yesterday's sheet against
+today's description.
 
 ### Where the sheets come from
 
@@ -106,14 +117,15 @@ tests say so.
 | `ui/move-categories`               | Not recorded yet                                                    | Unknown                                                                                        |
 
 **SpriteCollab** is the Pokémon Mystery Dungeon sprite collection this game's
-pokemon are animated from. The eight facing rows, the frame duration table, and
-the marked shadow, head and hands on every frame are all theirs. Its terms are
-`CC BY-NC`: it may be redistributed and built upon with appropriate credit, and
-**not commercially**. Every sprite in it carries its own credit row in
-`sprite/{dex}/credits.txt`, with the names in the collection's
-`credit_names.txt`. The four pokemon shipped so far — Bulbasaur, Articuno,
-Zapdos and Moltres — are credited there to **CHUNSOFT**, whose games the sprites
-are drawn from.
+pokemon are animated from. The drawings themselves, the frame durations and the
+marked shadow, head and hands are all theirs, and they survive the repacking
+unchanged. Its terms are `CC BY-NC`: it may be redistributed and built upon with
+appropriate credit, and **not commercially**.
+
+Every sprite in it carries its own credit row in `sprite/{dex}/credits.txt`, with
+the names in the collection's `credit_names.txt`. The 164 sheets that ship —
+Kanto's 161 plus the three under `unknown` — are credited there, most of them to
+**CHUNSOFT**, whose games the sprites are drawn from.
 
 **pokesprite** is where the item icons come from: 32×32 inventory sprites, named
 the way that project names them, which is why an `Exp. Share` is `exp-share.png`

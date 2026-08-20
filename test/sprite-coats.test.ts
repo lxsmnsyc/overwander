@@ -15,6 +15,15 @@ import { asSpriteCoats, coatOf, drawn, stamped } from '../src/canvas/sprite-coat
 const ROOT = 'public/sprites/pokemon';
 const LIST = `${ROOT}/coats.json`;
 
+/**
+ * What a directory holds, or nothing where there is no such directory.
+ * A region drawn in one coat only — the three that are not pokemon
+ * have no shiny — has no folder for the other
+ */
+function filesIn(path: string): string[] {
+  return existsSync(path) ? readdirSync(path) : [];
+}
+
 /** What is actually on disk, worked out the same way the game asks. */
 function onDisk(): Map<string, Set<Coat>> {
   const found = new Map<string, Set<Coat>>();
@@ -28,7 +37,7 @@ function onDisk(): Map<string, Set<Coat>> {
       ['regular', 'regular', 'female'],
       ['shiny', 'shiny', 'shinyFemale'],
     ] as const) {
-      for (const file of readdirSync(`${ROOT}/${region}/${directory}`)) {
+      for (const file of filesIn(`${ROOT}/${region}/${directory}`)) {
         const named = /^(\d+)(_f)?\.png$/.exec(file);
 
         if (named == null) {

@@ -15,12 +15,12 @@ contents refresh on several independent timers.
 ### Biomes
 
 Three qualities decide the climate of a place — how wet it is, how high it is and
-how warm it is — and together they select one of the **24 biomes**, which range
+how warm it is — and together they select one of the **25 biomes**, which range
 from deep ocean and coral reef through savanna, desert and temperate forest to
-glacier and polar ocean. Climate changes gradually, so a biome typically runs
+volcano, glacier and polar ocean. Climate changes gradually, so a biome typically runs
 about two dozen chunks across before giving way to another.
 
-A twenty-fifth place, **Beyond**, exists but is nowhere on the map. Mythical
+A twenty-sixth place, **Beyond**, exists but is nowhere on the map. Mythical
 pokemon are recorded as coming from there, and nothing else does.
 
 ### Size and edges
@@ -130,19 +130,25 @@ local midnight.
 There are far fewer families than days in the year, so most days feature nobody
 at all. A featured day is an event.
 
-On its day, the featured family receives four bonuses:
+On its day, the featured family receives six bonuses:
 
-| Bonus                | Size | Effect                                |
-| -------------------- | ---- | ------------------------------------- |
-| Shiny odds           | ×8   | The chance of meeting a shiny one     |
-| How often it appears | ×4   | Its share of the pokemon that turn up |
-| Candy from a catch   | ×4   | What catching one pays, whatever it is |
-| Catch chance         | ×2   | How readily a thrown ball sticks      |
+| Bonus                | Size | Effect                                         |
+| -------------------- | ---- | ---------------------------------------------- |
+| Shiny odds           | ×8   | The chance of meeting a shiny one              |
+| How often it appears | ×4   | Its share of the pokemon that turn up          |
+| Candy from a catch   | ×4   | What catching one pays, whatever it is         |
+| Catch chance         | ×2   | How readily a thrown ball sticks               |
+| Hidden ability       | ×2   | How often one turns up with its hidden ability |
+| Egg steps            | ×1.2 | Every pace walked with one of their eggs       |
 
 Appearing more often does not move a species between rarity bands. A featured
 rare pokemon is still rare to encounter; it simply wins its band far more often
-than usual. The catch bonus is the smallest of the four because balls and berries
+than usual. The catch bonus is deliberately small, since balls and berries
 already stack up.
+
+The egg bonus is credit for the walking done on the day rather than a discount on
+the walk, so an egg carried past midnight keeps what it banked and goes back to
+ordinary paces.
 
 A raid cleared on the featured family's own day hands over a pokemon whose
 individual stats are all at least 6, so nothing won that day is hopeless.

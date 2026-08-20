@@ -25,9 +25,10 @@ All of them derive from the one snapshot the player is standing in
 `timestamp` is floored to the spawn window, and `landmarkTimestamp`,
 `phenomenonTimestamp`, `raidTimestamp`, `npcTimestamp` and `nestTimestamp` floor
 that again to their own. A Team Rocket stop derives against `npcTimestamp`, like
-everything else at a wandering cell. Every claim marker and lobby id is stamped with the window
-its landmark actually runs on, so a stash cannot be re-dug three times while the
-hole is still empty.
+everything else at a wandering cell.
+
+Every claim marker and lobby id is stamped with the window its landmark actually
+runs on, so a stash cannot be re-dug three times while the hole is still empty.
 
 ## `snapshots/{chunkSeed}:{zone}`
 
@@ -68,21 +69,19 @@ screen. Its **name** is derived too — `{chunkSeed}:{zone}@{timestamp}#{index}`
 from `spawnId` — which is what an encounter document is keyed by, so nothing has
 to keep a document alive just to give a spawn a name.
 
-What that replaced: one document per spawn, published in a batch of eight, found
-again by a three-field query on a **composite index** `(chunk, offset,
-timestamp)`, and swept up by a second query and a delete batch every time a window
-turned over. Publishing is now one write inside the same transaction that fixes
-the window, reading is one read, and a window that rolls over overwrites its own
-spawns — there is nothing stale left to clear. The index is gone with it.
+Publishing is therefore one write, inside the same transaction that fixes the
+window, and reading is one read. A window that rolls over overwrites its own
+spawns, so there is nothing stale to sweep up and no index to keep.
 
 A window publishes `SPAWN_COUNT` (8) spawns plus `LURE_SPAWN_BONUS` (3) more. The
 extras are rolled for every chunk so that all its visitors share one set of rolls,
 and a **lure** buddy — Arena Trap, Illuminate or No Guard — decides who can see
 them rather than whether they exist. A player without one neither sees the last
 three on the map nor may meet them: `meetSpawn` compares the index off the spawn
-id against `checkSpawnCount(SPAWN_COUNT)` and refuses anything past it. A **Pure
-Incense** answers the same question the other way, taking `PURE_INCENSE_QUIET`
-(3) off what its holder can see.
+id against `checkSpawnCount(SPAWN_COUNT)` and refuses anything past it.
+
+Two held items answer the same question the other way: a **Pure Incense** and a
+**Cleanse Tag** each take 3 off what their holder can see, floored at nothing.
 
 `meetSpawn` also checks the whole name against the live window before it reads the
 roll, so a spawn from a window that has turned over — or from a chunk away — is
@@ -443,7 +442,7 @@ answered for is not looked at again, so a chunk is only rolled for its landmarks
 where its biome is still wanted. It stops at `PORTAL_RANGE` (96 chunks) or once
 every biome the world grows has been found, whichever comes first. Measured, that
 is about 13ms cold from a standing start, and a fraction of that against a warm
-biome cache. Roughly all 24 biomes are reachable from a typical portal.
+biome cache. Roughly all 25 biomes are reachable from a typical portal.
 
 `usePortal` ([`src/server/portals.ts`](../../src/server/portals.ts)) checks that
 the cell really is a portal in a live window, derives the far end, and takes the

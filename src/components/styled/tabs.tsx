@@ -1,5 +1,5 @@
 import { type JSX, type ParentProps, Suspense } from 'solid-js';
-import { Tab, TabList, TabPanel } from 'terracotta';
+import { TabGroup as HeadlessTabGroup, Tab, TabList, TabPanel } from 'terracotta';
 import { Note } from './feedback';
 
 /**
@@ -11,6 +11,31 @@ import { Note } from './feedback';
  * `aria-selected` rather than passed in, so the thing the screen reader
  * is told and the thing the eye is shown cannot drift apart.
  */
+
+/**
+ * A group of tabs and their panels. It is here rather than imported
+ * from terracotta so a bar that can be turned off — which for a screen
+ * divided into tabs is a blank screen — is refused in one place
+ */
+export interface TabGroupProps extends ParentProps {
+  /** Which tab is open to begin with */
+  defaultValue: number;
+  horizontal?: boolean;
+  class?: string;
+}
+
+export function TabGroup(props: TabGroupProps): JSX.Element {
+  return (
+    <HeadlessTabGroup
+      horizontal={props.horizontal === true}
+      defaultValue={props.defaultValue}
+      toggleable={false}
+      class={props.class}
+    >
+      {props.children}
+    </HeadlessTabGroup>
+  );
+}
 
 /**
  * A tab is a tab in a menu screen: the one you are on is filled in and

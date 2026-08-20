@@ -22,6 +22,11 @@ const PROJECT = 'demo-poketerra';
 export const FIRESTORE = `http://127.0.0.1:8080/v1/projects/${PROJECT}/databases/(default)/documents`;
 
 const AUTH = `http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/${PROJECT}`;
+/**
+ * The same emulator without the project in the path: signing up is an
+ * ordinary client call rather than an administrative one
+ */
+const IDENTITY = 'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1';
 
 export const OWNER = { Authorization: 'Bearer owner', 'Content-Type': 'application/json' };
 
@@ -159,4 +164,32 @@ export async function uidOf(player: Player): Promise<string> {
     }
   }
   throw new Error(`no account for ${player.email}`);
+}
+
+/**
+ * Open an account nobody signs into.
+ *
+ * Half of what a player does is done at somebody else, and some of it
+ * needs that somebody to be a real account rather than a profile
+ * document: a friend is looked up by the address they signed up with,
+ * and an address lives in Firebase Auth. Resolves the uid the emulator
+ * gave it
+ */
+export async function stageAccount(email: string): Promise<string> {
+  // The key is not checked by the emulator, and there is no real
+  // project behind this to check it against
+  const response = await fetch(`${IDENTITY}/accounts:signUp?key=demo`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: 'walking-in-the-tall-grass', returnSecureToken: true }),
+  });
+
+  expect(response.ok, 'the auth emulator should open an account').toBe(true);
+
+  const opened: unknown = await response.json();
+
+  if (!isRecord(opened) || typeof opened.localId !== 'string') {
+    throw new Error(`no account made for ${email}`);
+  }
+  return opened.localId;
 }

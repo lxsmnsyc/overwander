@@ -14,6 +14,7 @@ engine both sides replay from a seed.
 The dex is Gen 1 — 151 species with their moves, abilities and items. Where Gen
 1 and the modern games disagree, the mechanics follow the modern games.
 
+- [Releases](docs/update.md): what each major release brought, newest first.
 - [Player's guide](docs/mechanics.md) — how the world, catching, fighting and
   raising work, written for players rather than for programmers.
 - [The battle engine](docs/engine.md) — how the real-time engine, the AI and the
@@ -187,20 +188,22 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 
 ## Commands
 
-| Command                | What it does                                        |
-| ---------------------- | --------------------------------------------------- |
-| `pnpm dev`             | Development server with HMR                         |
-| `pnpm build`           | Production build (client, server and Nitro output)  |
-| `pnpm start`           | Serve the built output from `.output/`              |
-| `pnpm preview`         | Preview the build locally                           |
-| `pnpm emulators`       | Local Firebase (auth, Firestore, UI on port 4000)   |
-| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
-| `pnpm test`            | The whole test suite, once                          |
-| `pnpm test:rules`      | The Firestore rules, against a throwaway emulator   |
-| `npx tsc --noEmit`     | Type-check                                          |
-| `npx oxlint src test`  | Lint                                                |
-| `npx oxfmt src test`   | Format                                              |
-| `pnpm cs:add`          | Add a changeset                                     |
+| Command                | What it does                                       |
+| ---------------------- | -------------------------------------------------- |
+| `pnpm dev`             | Development server with HMR                        |
+| `pnpm build`           | Production build (client, server and Nitro output) |
+| `pnpm start`           | Serve the built output from `.output/`             |
+| `pnpm preview`         | Preview the build locally                          |
+| `pnpm emulators`       | Local Firebase (auth, Firestore, UI on port 4000)  |
+| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel   |
+| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet |
+| `pnpm test`            | The whole test suite, once                         |
+| `pnpm test:rules`      | The Firestore rules, against a throwaway emulator  |
+| `pnpm test:e2e`        | The Playwright suites under `e2e/`                 |
+| `npx tsc --noEmit`     | Type-check                                         |
+| `npx oxlint src test`  | Lint                                               |
+| `npx oxfmt src test`   | Format                                             |
+| `pnpm cs:add`          | Add a changeset                                    |
 
 ## Where things live
 
@@ -214,7 +217,7 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
 | `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
-| `public/sprites/`      | PMD-style sprite sheets, `{species}.png` per coat and one description per pokemon                                         |
+| `public/sprites/`      | Sprite sheets by region: a packed `{species}.png` per coat and one description per pokemon                                |
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
 | `test/`                | Vitest suites, mirroring the source tree                                                                                  |
 | `docs/`                | The mechanics and Firestore documentation                                                                                 |

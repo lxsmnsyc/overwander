@@ -1,5 +1,4 @@
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
-import { TabGroup } from 'terracotta';
 import { getCandyCount } from '../../auth/candy';
 import { EGG_HATCH_STEPS } from '../../auth/egg';
 import { type SpeciesDexEntry, getSpeciesDexEntry } from '../../auth/pokedex';
@@ -40,6 +39,7 @@ import {
   StepButton,
   TabBar,
   TabButton,
+  TabGroup,
   TabPane,
   TooltipHost,
 } from '../styled';
@@ -503,12 +503,7 @@ function DexEntryBody(
               </DialogSection>
 
               <DialogSection title="Moves">
-                <TabGroup
-                  horizontal
-                  defaultValue={MoveTab.Level}
-                  toggleable={false}
-                  class="flex flex-col gap-3"
-                >
+                <TabGroup horizontal defaultValue={MoveTab.Level} class="flex flex-col gap-3">
                   <TabBar>
                     <TabButton value={MoveTab.Level}>Level</TabButton>
                     <TabButton value={MoveTab.Machines}>Machines</TabButton>

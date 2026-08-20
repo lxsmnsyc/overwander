@@ -31,6 +31,7 @@ the three rule blocks that had to `get()` the parent to find an owner.
 | `shiny`                | `boolean`               | Sparkled for whoever caught it                             |
 | `shadow`               | `boolean`               | Out of a shadow raid; cleared by purifying                 |
 | `egg`                  | `boolean`               | Still in the shell                                         |
+| `traded`               | `boolean`               | Whether it has ever changed hands; opens a trade evolution |
 | `favorite`             | `boolean`               | See [What the player sets](#what-the-player-sets)          |
 | `guarded`              | `boolean`               | See [What the player sets](#what-the-player-sets)          |
 | `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free          |
@@ -275,11 +276,21 @@ against the stored documents inside that transaction, never trusted from the
 caller.
 
 Which evolutions are offered comes from
-[`src/data/species/evolution.ts`](../../src/data/species/evolution.ts). Only the
-`Level`, `UsedItem` and `HeldItem` methods can be verified against what is stored
-today, so an evolution carrying any other flag — trade, friendship, weather — is
-never offered rather than waved through. A held item is required but not consumed;
-only a used item is spent.
+[`src/data/species/evolution.ts`](../../src/data/species/evolution.ts). Four
+methods can be verified against what is stored — `Level`, `UsedItem`, `HeldItem`
+and `Trade` — so an evolution carrying any other flag, such as friendship or
+weather, is never offered rather than waved through. A held item is required but
+not consumed; only a used item is spent.
+
+`Trade` reads the record's own `traded` field rather than watching a handover
+happen. The mainline evolves a pokemon *during* the trade, which is a moment this
+game has nowhere to put, so changing hands opens the evolution and the record
+carries the fact for good. Winning a lot at auction is the one handover there is
+so far.
+
+An **Everstone** refuses every evolution while it is held, and it answers here
+rather than at the moment of evolving, so the catch sheet stops offering what the
+stone would refuse.
 
 Catch records are readable by any signed-in player, since other players inspect a
 pokemon before a trade, and writable only by the owner the document itself names.
@@ -337,31 +348,26 @@ Three things put a pokemon right, and they all run through one call —
 `useHealingItem` ([`src/server/healing.ts`](../../src/server/healing.ts)) — with
 `healedByItem` deciding what any given item is worth to any given pokemon:
 
-- **A berry.** What each one restores or cures is the berry's own table in
-  [`src/data/items/berries.ts`](../../src/data/items/berries.ts), shared with the
-  battle, so an Oran Berry is worth ten points on either side of a fight. The
-  battle's threshold is a battle rule only: out of one, the player decides when it
-  is worth it.
+- **A berry**, from the table in
+  [`src/data/items/berries.ts`](../../src/data/items/berries.ts) that the battle
+  shares, so an Oran Berry is worth ten points on either side of a fight. The
+  battle's use-at-a-threshold rule is a battle rule only; out of one the player
+  decides when it is worth it.
 - **Medicine**, in
-  [`src/data/items/medicine.ts`](../../src/data/items/medicine.ts). A **potion**
-  gives health back (20 / 60 / 120 / the whole pool), a **cure** takes a status off
-  (one each for poison, burns, ice, sleep and paralysis; a Full Heal takes the
-  lot), a **Full Restore** does both, and a **revive** brings a fainted pokemon
-  round on half a pool — a Max Revive on a whole one. Unlike a berry, none of it is
-  holdable: a potion cannot be drunk mid-raid, which is what keeps a berry worth
-  carrying into one. Medicine is the one thing gold is always worth spending on, so
-  all of it is `Marketable`, and the everyday half of it is in the overworld item
-  pool as well.
-- **Herbal medicine**, the same file's last four entries. Each undercuts the bottle
-  it competes with and does more of the job — Energy Powder 50 points, Energy Root
-  200, Heal Powder every status, Revival Herb a whole pool off the floor — and is
-  paid for in `friendship` instead. `bitter` on the entry is how many mouthfuls it
-  counts as, and `useHealingItem` docks `gainFriendship(current, 'herb', mouthfuls)`
-  in the **same write** as the healing, so the cure and its cost can never come
-  apart. The `factor` is not passed: a Luxury Ball multiplies gains and never
-  losses.
-- **A level**, through `useCandy` — the slow way. Growing is also mending: a level
-  comes with full health and a clean slate.
+  [`src/data/items/medicine.ts`](../../src/data/items/medicine.ts): a potion
+  (20 / 60 / 120 / the whole pool), a cure for one status or a Full Heal for all
+  of them, a Full Restore for both, and a revive that lifts a fainted pokemon on
+  half a pool — a Max Revive on a whole one. None of it is holdable, which is what
+  keeps a berry worth carrying into a raid, and all of it is `Marketable`.
+- **Herbal medicine**, the same file's last four entries: cheaper than the bottle
+  each competes with and better at the job — Energy Powder 50 points, Energy Root
+  200, Heal Powder every status, Revival Herb a whole pool off the floor — and
+  paid for in `friendship`. `bitter` is how many mouthfuls it counts as, and
+  `useHealingItem` docks `gainFriendship(current, 'herb', mouthfuls)` in the
+  **same write** as the healing, so the cure and its cost cannot come apart. No
+  `factor` is passed: a Luxury Ball multiplies gains and never losses.
+- **A level**, through `useCandy`. Growing is mending too: a level comes with full
+  health and a clean slate.
 
 Two rules cut across all of it. **A revive is the only thing that reaches a
 fainted pokemon**, and the only thing that does nothing to one still standing — a
@@ -435,7 +441,7 @@ received it — a local ISO 8601 string in _their_ own zone, the way a catch dat
 | `Caught`      | `recordCatch`      | They threw the ball                            |
 | `Egg`         | `writeEgg`         | It came to them as an egg, nest or breeder     |
 | `Auction`     | `claimAuction`     | They won it on the block                       |
-| `Trade`       | nothing yet        | Reserved for trading                           |
+| `Trade`       | nothing yet        | Reserved for a swap between two players        |
 | `Gift`        | `claimMysteryGift` | They took it out of a mystery gift             |
 | `Revived`     | `reviveFossil`     | They carried a fossil to somebody with a bench |
 
@@ -444,8 +450,10 @@ It is a different question from the record's own `type`
 first met and never changes. A Mewtwo can be a legendary raid prize _and_
 something its second owner bought, and the two fields say so separately.
 
-`Trade` exists before trading does on purpose: a member added later would leave
-old records needing to be told apart from new ones by their shape.
+`Trade` exists before player-to-player trading does, so a member added later
+cannot leave old records to be told apart from new ones by their shape. A lot won
+at auction is recorded as `Auction`, and it is what sets the record's `traded`
+field today.
 
 An entry also carries `paid`: what that owner spent in gold, where the handover
 cost gold at all. Only `claimAuction` writes it, with the winning bid. It belongs
@@ -663,11 +671,18 @@ every report, credited or not, so a refused one banks no time for the next. That
 why `steppedAt` lives on the catch document (server-written) rather than on the
 profile's `buddy` (client-written).
 
-`hatchSteps` is settled when the egg is written, and two things move it: a shadow
-egg doubles it, and a **Flame Body** buddy standing beside the player at the
-pick-up halves it. Both are frozen onto the record rather than asked again during
-the walk — once an egg is being carried it _is_ the buddy, so there is nothing
-beside the player left to ask.
+`hatchSteps` is settled when the egg is written. It starts from the **species'
+own** hatch cycles — `getEggHatchSteps`, at `STEPS_PER_EGG_CYCLE` (128) a cycle,
+so a Magikarp's 5 cycles are 640 steps and a Mewtwo's 120 are 15,360 — and two
+things move it from there: a shadow egg doubles it, and a **Flame Body** buddy
+standing beside the player at the pick-up halves it. Both are frozen onto the
+record rather than asked again during the walk, since once an egg is being carried
+it _is_ the buddy and there is nothing beside the player left to ask.
+
+What a report is **worth** is asked fresh each time instead: `creditedEggSteps`
+pays 1.2 paces for every one walked while the egg's own family is the day's
+featured one. The perk belongs to the day rather than to the egg, so it cannot be
+frozen onto the record.
 
 A report also credits whatever a **Pickup** buddy found along the way: the same
 call rolls it from the item pool and writes the stack in the same transaction, so a
@@ -675,8 +690,8 @@ find cannot be reported twice or lost between the walk and the bag.
 
 `hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
 family's candy, exactly as meeting the pokemon any other way would have. The shared
-rules both sides read — `EGG_HATCH_STEPS`, `canHatch`, `creditableSteps` — are in
-[`src/auth/egg.ts`](../../src/auth/egg.ts).
+rules both sides read — `getEggHatchSteps`, `canHatch`, `creditableSteps` and
+`creditedEggSteps` — are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
 
 ## Catches are locked while they fight
 

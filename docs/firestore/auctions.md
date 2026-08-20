@@ -10,13 +10,12 @@ reads the board through [`src/auth/auctions.ts`](../../src/auth/auctions.ts).
 Two decisions carry the whole feature, and neither needs anything swept up
 afterwards:
 
-- **A lot is taken when it is listed.** The item leaves the bag and the pokemon
-  leaves the seller's records the moment the auction opens, so a seller cannot
-  list what they have since spent and nothing has to be re-checked a day later.
-  It cannot be pulled off the block either — a seller who changes their mind
-  waits the day out, and may not bid on their own lot — so a listing is something
-  a bidder can trust for as long as it runs. Only a lot that ends the day with
-  **no bid at all** goes back, and the seller has to come and take it.
+- **A lot is taken when it is listed.** The item leaves the bag, or the pokemon
+  the seller's records, the moment the auction opens, so nothing has to be
+  re-checked a day later and a seller cannot list what they have since spent. It
+  cannot be pulled off the block either, which is what makes a listing something a
+  bidder can trust. Only a lot that ends the day with **no bid at all** goes back,
+  and the seller has to come and take it.
 - **A bid is paid when it is made.** The gold is taken as the bid lands and
   handed straight back to whoever it outbid, so the last bidder standing has
   already paid. Nothing can be won by a player who spent the money meanwhile.

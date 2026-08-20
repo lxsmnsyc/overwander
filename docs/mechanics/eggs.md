@@ -59,23 +59,38 @@ The hatchling's level, nature, ability and gender are its own.
 
 A **shadow parent may pass the shadow on**, but only half the time, so breeding
 two shadows is no more certain than breeding one. An egg that inherits it hatches
-with the Shadow ability permanently, costs double candy to raise, and takes
-**twice as long** to hatch.
+with the Shadow ability permanently, costs double candy to raise, and takes twice
+the walk to hatch.
 
 ## Hatching
 
 Only the **buddy** walks, so an egg must be the buddy for its steps to count.
 
-| Rule                          | Value                             |
-| ----------------------------- | --------------------------------- |
-| Steps to hatch                | 2,560, or 5,120 for a shadow egg  |
-| What a portal crossing counts | Nothing; a crossing is not a walk |
+**How far depends on the species.** An egg is counted in hatch cycles, and one
+cycle is **128 steps**. Most of the dex takes 20 cycles — 2,560 steps — but a
+Magikarp is out after 5 (640 steps) and a Mewtwo takes 120 (15,360).
+
+| Egg                  | Cycles | Steps         |
+| -------------------- | ------ | ------------- |
+| Magikarp             | 5      | 640           |
+| Pikachu, Clefairy    | 10     | 1,280         |
+| The early-route ones | 15     | 1,920         |
+| Most species         | 20     | 2,560         |
+| Chansey, Snorlax     | 40     | 5,120         |
+| A legendary          | 80–120 | 10,240–15,360 |
+
+A **shadow egg doubles** whatever its species asks for, and a portal crossing
+counts nothing at all: a crossing is not a walk.
 
 **Flame Body halves the walk**, but only if that pokemon was the buddy **when the
 egg was picked up**. This makes it a real choice: walk to the nest with the
 Ponyta, then swap to the egg once it is in hand. Picking up a Ponyta afterwards
 does nothing for an egg already being carried, because once the egg is the buddy
 there is nothing beside the player keeping it warm.
+
+On the **species day** of whatever is inside it, an egg counts every pace as 1.2.
+That is credit for the walking done on the day, so an egg carried past midnight
+keeps what it banked.
 
 Steps are credited against real elapsed time, so nothing is gained by reporting
 them in a rush, and an egg's progress always matches the ground actually walked.

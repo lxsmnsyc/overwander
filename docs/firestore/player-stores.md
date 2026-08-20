@@ -5,15 +5,23 @@
 Set by [`src/auth/profile.ts`](../../src/auth/profile.ts), and created on first
 sign-in from whatever the auth provider knows.
 
-| Field      | Type             | Notes                                   |
-| ---------- | ---------------- | --------------------------------------- |
-| `nickname` | `string`         | Display name; falls back to `"Trainer"` |
-| `avatar`   | `string \| null` | Avatar URL, `null` when unset           |
-| `gold`     | `number`         | Currency balance; starts at zero        |
+| Field       | Type             | Notes                                      |
+| ----------- | ---------------- | ------------------------------------------ |
+| `nickname`  | `string`         | Display name; falls back to `"Trainer"`    |
+| `avatar`    | `string \| null` | Avatar URL, `null` when unset              |
+| `gold`      | `number`         | Currency balance; starts at zero           |
+| `role`      | `string`         | Staff standing; empty for a player         |
+| `banned`    | `boolean`        | Whether the account is shut out            |
+| `banReason` | `string`         | What the player is told on the way in      |
+| `buddy`     | `string`         | The `caught/{catchId}` walking beside them |
 
 Anyone may read it, since other players see nicknames and avatars. The owner
-writes their own `nickname` and `avatar`, and `saveProfile` takes only those two
-and merges.
+writes their own `nickname`, `avatar` and `buddy`, and `saveProfile` takes only
+the first two and merges.
+
+`role`, `banned` and `banReason` are the server's alone — see
+[Roles](security.md) — and a create that names a role, or arrives already banned,
+is refused outright.
 
 The balance is not theirs to write. `grantGold` and `spendGold` live in
 [`src/server/profile.ts`](../../src/server/profile.ts), and each reads and writes
@@ -65,22 +73,17 @@ mints Master Balls and the other mints levels.
 
 ### Why one document
 
-It used to be a collection each — `inventories/{uid}:{item}` and
-`candies/{uid}:{family}` — one small row per thing. Every picker in the game
-opens by reading the whole bag, so a row per thing billed **a read per kind
-carried**, a number that grows with a player's collection forever.
+Every picker in the game opens by reading the whole bag. A row per kind carried
+would bill a read per kind, growing with a player's collection forever; one
+document is one read however much they own, arrives complete, and can be watched
+live for the cost of a single listener.
 
-One document is one read however much they own. The items and the candies arrive
-together instead of as two queries, and the bag can be watched live for what a
-row per thing would have cost a listener per row.
+The price is that a player's writes queue behind each other. That is
+self-contention — nobody else writes your bag — and it is why anything handing
+over several kinds does it in **one** write: `grantStacks` for a dug-up stash and
+the Pickup finds, and one transaction for a whole vendor basket.
 
-The cost is that a player's whole bag is one document, so their writes queue
-behind each other. That is self-contention — nobody else writes your bag — and it
-is why anything handing over several kinds does it in **one** write: `grantStacks`
-for a dug-up stash and the Pickup finds, and one transaction for a whole vendor
-basket.
-
-Both maps are **exempted from indexing**. A key per item id would be an index
+Both maps are **exempted from indexing**: a key per item id would be an index
 entry per item id, and nothing asks the store which players hold a Master Ball.
 
 ### How a stack is read and written
@@ -143,11 +146,11 @@ Set by [`src/auth/buddy.ts`](../../src/auth/buddy.ts) through the profile's
 `buddy` field: the `caught/{catchId}` walking at the player's side, or an empty
 string when they walk alone.
 
-It used to be `buddies/{uid}`, one document holding one string. It is a field now
-because it is read on nearly **every** overworld action: every encounter
-derivation asks what the buddy changes, every catch asks what it is carrying,
-every step report asks what is being walked. A document of its own was a second
-read for one string, on the hottest path in the game.
+It is a field rather than a document of its own because it is read on nearly
+**every** overworld action: every encounter derivation asks what the buddy
+changes, every catch asks what it is carrying, every step report asks what is
+being walked. A document would be a second read for one string, on the hottest
+path in the game.
 
 `setBuddy` reads the catch first and refuses to write when the player does not
 own it. Ownership can still lapse afterwards — a trade leaves the field pointing

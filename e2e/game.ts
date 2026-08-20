@@ -280,7 +280,11 @@ export async function pressBoxSquare(
   // The dialog it sits in grows into place; hovering before that is
   // over puts the pointer where the square is about to stop being
   await settled(page);
-  await box.getByRole('button').nth(index).hover();
+  // A square that acts is a button; one whose card holds the only
+  // button is a picture, since a keyboard offered thirty stops that
+  // lead nowhere would have to walk past all of them. A box is one or
+  // the other throughout, so either way this is the squares
+  await box.getByRole('button').or(box.getByRole('img')).nth(index).hover();
 
   // Not one of `openDialogs`: a hover card is our own element rather
   // than a terracotta dialog, and carries no `tc-dialog`

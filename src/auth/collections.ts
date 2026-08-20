@@ -113,3 +113,38 @@ export const BATTLE_AFTERMATH_COLLECTION = 'battleAftermaths';
 export function bidEntryId(uid: string, auction: string): string {
   return `${uid}:${auction}`;
 }
+
+/**
+ * One document per player and friend, id "{owner}:{friend}". A
+ * friendship is written twice, once from each side, so "who are mine"
+ * is a query rather than a scan of everybody's
+ */
+export const FRIEND_COLLECTION = 'friends';
+/**
+ * One document per asker and asked, id "{from}:{to}". The id is what
+ * makes a second press harmless: asking twice rewrites the one
+ * request that was already standing
+ */
+export const FRIEND_REQUEST_COLLECTION = 'friendRequests';
+
+/**
+ * One document per blocker and blocked, id "{blocker}:{blocked}". A
+ * block is one-sided and known only to the player who set it: the
+ * other side is told nothing, which is the point of one
+ */
+export const BLOCK_COLLECTION = 'blocks';
+
+/** One side of a friendship, as it is stored */
+export function friendEntryId(owner: string, friend: string): string {
+  return `${owner}:${friend}`;
+}
+
+/** The request one player has standing with another, by direction */
+export function friendRequestId(from: string, to: string): string {
+  return `${from}:${to}`;
+}
+
+/** One player's block on another */
+export function blockEntryId(blocker: string, blocked: string): string {
+  return `${blocker}:${blocked}`;
+}

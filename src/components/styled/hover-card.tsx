@@ -12,6 +12,7 @@ import {
 } from 'solid-js';
 import { isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
+import closeWhenGone from './gone';
 import { TooltipLayer } from './tooltip';
 import { SHEER, holdFade } from './transition';
 
@@ -518,6 +519,17 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
       window.removeEventListener('resize', put);
     });
   });
+
+  // The card goes with what it is about: a trigger taken out of the
+  // page sends no mouse-leave
+  closeWhenGone(
+    () => trigger,
+    open,
+    () => {
+      cancel();
+      setOpen(false);
+    },
+  );
 
   /**
    * What the bottom bar comes to. A caller that needs to put the card

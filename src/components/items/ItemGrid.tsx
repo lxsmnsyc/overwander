@@ -120,9 +120,14 @@ export interface ItemCell {
   /**
    * More about this square, under what the item itself says. It is for
    * a tray whose squares are not simply things — a lot on the auction
-   * board is an item *and* whose it is and what it stands at
+   * board is an item *and* whose it is and what it stands at.
+   *
+   * A function rather than the markup itself: the tray narrows its
+   * squares inside an effect, so markup handed over ready-made is
+   * built while that effect is tracking and subscribes the effect to
+   * everything the card reads
    */
-  card?: JSX.Element;
+  card?: () => JSX.Element;
   /**
    * What a reader is told about this square, instead of the sentence the
    * tray writes from the item and the count. A board of lots needs whose
@@ -135,7 +140,7 @@ export interface ItemCell {
    * tray would draw. A caller that has its own buttons — bid, collect,
    * take it back — writes them here
    */
-  footer?: JSX.Element;
+  footer?: () => JSX.Element;
 }
 
 export interface ItemGridProps {
@@ -283,7 +288,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               // a greyed picture with a dead button under it has
               // already said it
               footer={
-                cell.footer ?? (
+                cell.footer?.() ?? (
                   <Show when={cell.action ?? props.verb}>
                     {(verb) => (
                       <Button
@@ -358,7 +363,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               }
             >
               <ItemCard item={cell.item} carried={cell.carried ?? cell.amount} />
-              {cell.card}
+              {cell.card?.()}
             </HoverCard>
           )}
         </For>

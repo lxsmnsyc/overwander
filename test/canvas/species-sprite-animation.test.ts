@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import SpeciesSpriteAnimation, { SPRITE_TICK } from '../../src/canvas/species-sprite-animation';
 import { spriteImagePath, spriteMetaPath } from '../../src/canvas/species-sprites';
@@ -24,6 +24,15 @@ import { SpriteAnim, asSpriteAnim } from '../../src/data/ids/sprite-anims';
  * own
  */
 const ROOT = 'public/sprites/pokemon';
+
+/**
+ * What a directory holds, or nothing where there is no such
+ * directory. A region drawn in one coat only — the three that are not
+ * pokemon have no shiny — has no folder for the other
+ */
+function filesIn(path: string): string[] {
+  return existsSync(path) ? readdirSync(path) : [];
+}
 
 function speciesOf(file: string): number {
   return Number(file.slice(0, -'.json'.length));
@@ -777,7 +786,7 @@ describe('where the sheets are', () => {
       ['shiny', true],
     ] as const) {
       const files = REGIONS.flatMap((region) =>
-        readdirSync(`${ROOT}/${region}/${coat}`)
+        filesIn(`${ROOT}/${region}/${coat}`)
           .filter((name) => name.endsWith('.png'))
           .map((name) => ({ region, name })),
       );
@@ -805,7 +814,7 @@ describe('where the sheets are', () => {
 
     for (const coat of ['regular', 'shiny']) {
       for (const region of REGIONS) {
-        for (const file of readdirSync(`${ROOT}/${region}/${coat}`)) {
+        for (const file of filesIn(`${ROOT}/${region}/${coat}`)) {
           const name = file.slice(0, -'.png'.length);
           const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
 

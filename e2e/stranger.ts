@@ -4,7 +4,7 @@
 import { AUCTION_DURATION, AUCTION_ESCROW, AuctionLot } from '../src/auth/auction-record';
 import { getLocalOffset } from '../src/auth/local-time';
 import { Items } from '../src/data/ids/items';
-import { writeDocument } from './emulator';
+import { stageAccount, writeDocument } from './emulator';
 
 /**
  * Somebody who is not the player.
@@ -29,6 +29,8 @@ import { writeDocument } from './emulator';
 export interface Stranger {
   uid: string;
   nickname: string;
+  /** What they signed up with, which is how a friend finds them */
+  email: string;
 }
 
 /**
@@ -39,8 +41,12 @@ export interface Stranger {
  */
 export async function stageSeller(called: string): Promise<Stranger> {
   const stamp = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
-  const uid = `e2e-seller-${stamp}`;
   const opened = Date.now();
+  // A real account rather than a profile alone: a friend is looked up
+  // by the address they signed up with, and an address lives in
+  // Firebase Auth
+  const email = `seller-${stamp}@example.com`;
+  const uid = await stageAccount(email);
   // Stamped, because the emulator is reused between runs: a lot stands
   // for a day, so yesterday's Wisteria is still on the board this
   // morning and a spec asking for "the seller called Wisteria" finds
@@ -70,7 +76,7 @@ export async function stageSeller(called: string): Promise<Stranger> {
     settled: { booleanValue: false },
   });
 
-  return { uid, nickname };
+  return { uid, nickname, email };
 }
 
 /**

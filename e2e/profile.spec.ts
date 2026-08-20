@@ -22,12 +22,31 @@ test.describe('the profile', () => {
     const profile = await openPanel(page, 'Profile');
 
     await expect(profile.getByText(/\d+ gold/)).toBeVisible();
-    await expect(profile.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    // The way out is behind the account menu now, along with the way
+    // to somebody else's profile
+    await profile.getByRole('button', { name: 'Actions' }).click();
+    await expect(page.getByRole('menuitem', { name: 'Sign out' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Add friend' })).toBeVisible();
+    // Shut with the button that opened it: Escape from inside a menu
+    // in a dialog closes the dialog under it as well
+    await profile.getByRole('button', { name: 'Actions' }).click();
 
     // What is left under the tabs: the catches and the bag are behind
     // the menu now, since neither is a fact about who somebody is
-    for (const tab of ['Battles', 'Bids']) {
+    for (const tab of ['Battles', 'Friends', 'Friend Requests', 'Bids']) {
       await expect(profile.getByRole('tab', { name: tab })).toBeVisible();
+    }
+  });
+
+  // A panel carrying another tab's name is what a mispaired set of ids
+  // looks like from outside, and the pairing is terracotta's to get
+  // right — so this is the assertion that says it still does
+  test('names each panel after the tab that opens it', async ({ page }) => {
+    const profile = await openPanel(page, 'Profile');
+
+    for (const tab of ['Battles', 'Friends', 'Bids']) {
+      await profile.getByRole('tab', { name: tab, exact: true }).click();
+      await expect(profile.getByRole('tabpanel', { name: tab, exact: true })).toBeVisible();
     }
   });
 
@@ -62,7 +81,8 @@ test.describe('the profile', () => {
   test('signs out back to the way in', async ({ page }) => {
     const profile = await openPanel(page, 'Profile');
 
-    await profile.getByRole('button', { name: 'Sign out' }).click();
+    await profile.getByRole('button', { name: 'Actions' }).click();
+    await page.getByRole('menuitem', { name: 'Sign out' }).click();
 
     // The world is gone and the form is back. Signing out from inside
     // the profile means the dialog is unmounted along with the page

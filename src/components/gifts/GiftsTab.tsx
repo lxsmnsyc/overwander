@@ -1,4 +1,12 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createMemo,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import {
   type CatchGift,
   type EncounterGift,
@@ -6,7 +14,7 @@ import {
   type ItemGift,
   type MysteryGift,
 } from '../../auth/gift-record';
-import { GameDialog,useGame } from '../app/game-context';
+import { GameDialog, useGame } from '../app/game-context';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
 import type { CaughtPokemon } from '../../auth/caught';
 import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
@@ -19,7 +27,8 @@ import { EncounterType } from '../../overworld/encounter';
 import { getMaxHealth } from '../../auth/health';
 import { getSpeciesData } from '../../data/species';
 import CatchCard from '../catches/CatchCard';
-import CatchBox, { type BoxEntry } from '../catches/CatchBox';
+import type { BoxEntry } from '../catches/CatchBox';
+import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
 import ItemGrid from '../items/ItemGrid';
 import { describeItem } from '../details';
 import { Button, DialogSection, HoverCard, Meta, Note, type ToastTone, useToast } from '../styled';
@@ -161,14 +170,18 @@ function GiftShelf(props: {
 
   const gifts = (): MysteryGift[] => props.owed() ?? [];
   const pokemon = (): (CatchGift | EncounterGift)[] =>
-    gifts().filter(
-      (gift): gift is CatchGift | EncounterGift => gift.kind !== GiftKind.Item,
-    );
+    gifts().filter((gift): gift is CatchGift | EncounterGift => gift.kind !== GiftKind.Item);
   const things = (): ItemGift[] =>
     gifts().filter((gift): gift is ItemGift => gift.kind === GiftKind.Item);
 
   const found = (id: string): CatchGift | EncounterGift | undefined =>
     pokemon().find((gift) => gift.id === id);
+
+  // Read as the records they would become, so the grid's search speaks
+  // the same syntax as every other box of squares
+  const squares = createMemo<CatchGridEntry[]>(() =>
+    pokemon().map((gift) => ({ square: asSquare(gift), caught: asPreview(gift) })),
+  );
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -212,8 +225,8 @@ function GiftShelf(props: {
 
       <Show when={pokemon().length > 0}>
         <DialogSection title="Pokemon">
-          <CatchBox
-            entries={pokemon().map(asSquare)}
+          <CatchGrid
+            entries={squares()}
             // The square is a picture; the card over it holds the one
             // button, so a stray press cannot take a gift
             cardOnly
@@ -265,8 +278,8 @@ function GiftShelf(props: {
               item: gift.item,
               amount: gift.amount,
               said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
-              card: <Meta>{gift.reason}</Meta>,
-              footer:
+              card: () => <Meta>{gift.reason}</Meta>,
+              footer: () =>
                 props.viewOnly === true ? (
                   <></>
                 ) : (

@@ -12,12 +12,12 @@ has as many claims as there are players.
 
 `gifts/{giftId}` ([`src/auth/gift-record.ts`](../../src/auth/gift-record.ts))
 
-| Field       | Type            | What it is                                                     |
-| ----------- | --------------- | -------------------------------------------------------------- |
-| `player`    | `string ǀ null` | Whose it is; null for one anybody may take                     |
-| `gift`      | map             | What the player sees: `MysteryGift`, below                     |
-| `offeredAt` | `number`        | When it was shelved                                            |
-| `encounter` | map ǀ null      | The rolled meeting, for a catch gift and nothing else          |
+| Field       | Type            | What it is                                            |
+| ----------- | --------------- | ----------------------------------------------------- |
+| `player`    | `string ǀ null` | Whose it is; null for one anybody may take            |
+| `gift`      | map             | What the player sees: `MysteryGift`, below            |
+| `offeredAt` | `number`        | When it was shelved                                   |
+| `encounter` | map ǀ null      | The rolled meeting, for a catch gift and nothing else |
 
 A personal gift's document id is `{gift}:{uid}`, which is what stops a second
 one being opened for the same player; an open gift's id is its own. Either way
@@ -26,11 +26,11 @@ the id is what the gift calls itself, and what a claim names.
 `gift` is one of three shapes, each carrying an `id`, a `reason` sentence shown
 on its card, and an `expiresAt` after which it is neither listed nor claimable:
 
-| Kind        | Id  | Extra fields                                                                                     |
-| ----------- | --- | ------------------------------------------------------------------------------------------------ |
-| `Catch`     | 0   | the pokemon fields below, plus `ball` and `owner`                                                  |
-| `Item`      | 1   | `item`, `amount`                                                                                   |
-| `Encounter` | 2   | the pokemon fields below                                                                           |
+| Kind        | Id | Extra fields                                      |
+| ----------- | --- | ------------------------------------------------- |
+| `Catch`     | 0  | the pokemon fields below, plus `ball` and `owner` |
+| `Item`      | 1  | `item`, `amount`                                  |
+| `Encounter` | 2  | the pokemon fields below                          |
 
 The pokemon fields are `species`, `level`, `shiny`, `shadow`, `individualValue`,
 `traitValue`, `gender`, `nature`, `ivs`, `abilities`, `moves`, `items`, the
@@ -59,11 +59,11 @@ the record ends up saying is whichever ball they threw.
 
 `giftClaims/{giftId}:{uid}`
 
-| Field       | Type            | What it is                                    |
-| ----------- | --------------- | --------------------------------------------- |
-| `gift`      | `string`        | Which offer was taken                         |
-| `player`    | `string`        | Who took it                                   |
-| `claimedAt` | `number`        | When                                          |
+| Field       | Type            | What it is                                     |
+| ----------- | --------------- | ---------------------------------------------- |
+| `gift`      | `string`        | Which offer was taken                          |
+| `player`    | `string`        | Who took it                                    |
+| `claimedAt` | `number`        | When                                           |
 | `catchId`   | `string ǀ null` | The record a pokemon landed in; null for items |
 
 ## The gift encounter

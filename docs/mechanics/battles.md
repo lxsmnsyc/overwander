@@ -13,19 +13,19 @@ Battles occur in four situations: legendary, shadow and mythical **raids**, and
 
 ## How a move resolves
 
-| Stage           | What happens                   | How long                            |
-| --------------- | ------------------------------ | ----------------------------------- |
-| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds                   |
-| **Travel**      | The move is on its way         | 0.4s, or the flight time it names   |
-| **Landing**     | It hits, and the effect lands  | Instant                             |
-| **Carrying on** | Multi-step moves continue      | Another wind-up per step            |
-| **Cooldown**    | That move cannot be used again | Set by the move's PP                |
+| Stage           | What happens                   | How long                                      |
+| --------------- | ------------------------------ | --------------------------------------------- |
+| **Wind-up**     | The pokemon gathers itself     | About 1.7 seconds                             |
+| **Travel**      | The move is on its way         | A quarter second, or the flight time it names |
+| **Landing**     | It hits, and the effect lands  | Instant                                       |
+| **Carrying on** | Multi-step moves continue      | Another wind-up per step                      |
+| **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
 
-**A move is in the air for a moment.** Most take about four tenths of a second
-between going off and landing — the time the swing takes — while anything thrown
-names its own flight time, usually twice that, and is drawn crossing the field.
-It is a real gap: a pokemon that faints, or is switched out, or interrupts the
-attacker during it is doing so before the hit arrives.
+**A move is in the air for a moment.** Most take a quarter of a second between
+going off and landing — the time a swing takes — while anything thrown names its
+own flight time, twice that, and is drawn crossing the field. It is a real gap: a
+pokemon that faints, is switched out, or interrupts the attacker during it does
+so before the hit arrives.
 
 **Priority shortens the wind-up.** Each point of a move's priority takes time off
 it, so Quick Attack visibly comes out faster than a slower move that started

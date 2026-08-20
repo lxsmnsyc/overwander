@@ -1001,7 +1001,7 @@ function NpcCounter(
                         selected: buying() === item,
                         note: `${getFossilPrice(item)} gold`,
                         said: `Choose ${describeItem(item)} — ${getFossilPrice(item)} gold`,
-                        card: <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
+                        card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
                       }))}
                       onPress={(item) => {
                         setStatus(null);

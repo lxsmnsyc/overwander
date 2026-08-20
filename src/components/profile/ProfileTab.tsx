@@ -1,21 +1,32 @@
 import { type JSX, Show, createSignal, from } from 'solid-js';
-import { TabGroup } from 'terracotta';
 import { signOut } from '../../auth/actions';
 import { type Profile, saveProfile, watchProfile } from '../../auth/profile';
+import AddFriendDialog from '../friends/AddFriendDialog';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
 import BidsList from '../auctions/BidsList';
+import FriendsTab from '../friends/FriendsTab';
+import RequestsTab from '../friends/RequestsTab';
+import createFriendTie from '../friends/tie';
+import {
+  type FriendRequests,
+  FriendTie,
+  friendActionLabel,
+  watchFriendRequests,
+} from '../../auth/friends';
 import PlayerPlace from './PlayerPlace';
 import {
   Badge,
   Button,
   Card,
+  Menu,
   Note,
   Panel,
   Row,
   Status,
   TabBar,
   TabButton,
+  TabGroup,
   TabPane,
   TextField,
 } from '../styled';
@@ -36,7 +47,9 @@ import {
  */
 const enum InnerTab {
   Battles = 0,
-  Bids = 1,
+  Friends = 1,
+  Requests = 2,
+  Bids = 3,
 }
 
 export interface ProfileTabProps {
@@ -75,6 +88,29 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
    */
   const [typed, setTyped] = createSignal<string | null>(null);
   const [saving, setSaving] = createSignal(false);
+  const [adding, setAdding] = createSignal(false);
+  /**
+   * Where the reader stands with the trainer they are looking at. On
+   * the reader's own profile it stands at None and is never asked:
+   * nobody befriends themselves
+   */
+  const friend = createFriendTie(() => (props.viewOnly === true ? props.player : null));
+  /**
+   * What is waiting on an answer. It is followed here rather than in
+   * the tab that lists it because the count is wanted on the tab
+   * itself, and the same query twice is two subscriptions
+   */
+  const waiting = from<FriendRequests>((set) =>
+    props.viewOnly === true
+      ? () => {
+          // Nothing to follow: a visited profile is not the reader's,
+          // and somebody else's requests are not theirs to see
+        }
+      : watchFriendRequests(props.player, (requests) => {
+          set(requests);
+        }),
+  );
+  const asking = (): FriendRequests => waiting() ?? { incoming: [], outgoing: [] };
 
   const rename = (record: Profile): void => {
     const wanted = (typed() ?? record.nickname).trim();
@@ -174,13 +210,51 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 {loaded().gold} gold
               </Badge>
             </div>
-            {/* The way out. It lived on a sign-in page of its own,
-                which is a page for the one moment a player is not
-                signed in — so it lives with the rest of what is
-                theirs instead. Nobody signs out of somebody else's
-                profile */}
-            <Show when={props.viewOnly !== true}>
-              <Button onClick={leave}>Sign out</Button>
+            {/* Everything the profile can do, behind one button: the
+                way out is a press a player makes once a session, and
+                a card is not the place for a row of them.
+
+                Visited, the menu holds the one thing a reader can do
+                to somebody else — ask them, answer them, or undo it */}
+            <Show
+              when={props.viewOnly !== true}
+              fallback={
+                <Menu
+                  label="Actions"
+                  actions={[
+                    {
+                      label: friendActionLabel(friend.tie()),
+                      disabled: friend.busy(),
+                      onSelect: friend.act,
+                    },
+                    // Blocking is offered until it is done, and then
+                    // the menu is the one press that undoes it: a
+                    // blocked trainer has nothing else to be asked
+                    ...(friend.tie() === FriendTie.Blocked
+                      ? []
+                      : [
+                          {
+                            label: 'Block',
+                            disabled: friend.busy(),
+                            onSelect: friend.block,
+                          },
+                        ]),
+                  ]}
+                />
+              }
+            >
+              <Menu
+                label="Actions"
+                actions={[
+                  {
+                    label: 'Add friend',
+                    onSelect: () => {
+                      setAdding(true);
+                    },
+                  },
+                  { label: 'Sign out', onSelect: leave },
+                ]}
+              />
             </Show>
           </Card>
         )}
@@ -207,19 +281,38 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </Card>
         }
       >
-        <TabGroup
-          horizontal
-          defaultValue={InnerTab.Battles}
-          toggleable={false}
-          class="flex flex-col gap-3"
-        >
+        <TabGroup horizontal defaultValue={InnerTab.Battles} class="flex flex-col gap-3">
           <TabBar>
             <TabButton value={InnerTab.Battles}>Battles</TabButton>
+            <TabButton value={InnerTab.Friends}>Friends</TabButton>
+            <TabButton value={InnerTab.Requests}>
+              Friend Requests
+              {/* The count of what is waiting, on the tab itself:
+                  a request nobody is told about is one nobody
+                  answers */}
+              <Show when={asking().incoming.length > 0}>
+                <Badge tone="ember" class="ml-1.5">
+                  {asking().incoming.length}
+                </Badge>
+              </Show>
+            </TabButton>
             <TabButton value={InnerTab.Bids}>Bids</TabButton>
           </TabBar>
           <TabPane value={InnerTab.Battles}>
             <Card title="Battles">
               <BattleHistory player={props.player} />
+            </Card>
+          </TabPane>
+          <TabPane value={InnerTab.Friends}>
+            <Card title="Friends">
+              <FriendsTab player={props.player} />
+            </Card>
+          </TabPane>
+          {/* Both directions: what has been asked of the player, and
+              what they have asked and can still take back */}
+          <TabPane value={InnerTab.Requests}>
+            <Card title="Friend Requests">
+              <RequestsTab waiting={asking()} />
             </Card>
           </TabPane>
           {/* What the player has bid on, which lots they are still
@@ -231,8 +324,17 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </TabPane>
         </TabGroup>
       </Show>
+      {/* Somebody to ask, out of everybody playing. It is opened from
+          the menu on the player's own profile alone */}
+      <AddFriendDialog
+        isOpen={adding()}
+        onClose={() => {
+          setAdding(false);
+        }}
+      />
       <Status message={said()} />
       <Status message={error()} tone="alert" />
+      <Status message={friend.error()} tone="alert" />
     </Panel>
   );
 }

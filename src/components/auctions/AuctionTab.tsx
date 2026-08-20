@@ -38,7 +38,7 @@ import {
 import { isEgg } from '../../auth/egg';
 import { type Profile, getProfile, watchProfile } from '../../auth/profile';
 import AuctionDialog, { type AuctionSubject } from './AuctionDialog';
-import CatchBox, { BOX_SIZE, type BoxEntry } from '../catches/CatchBox';
+import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
 import CatchCard from '../catches/CatchCard';
 import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
 import { asBoxEntry, describeCatch } from '../catches/catch-summary';
@@ -677,8 +677,8 @@ function AuctionBoard(
               said: `${describeItem(auction.item)} — ${describeStanding(
                 auction,
               )}, by ${describeSeller(auction)}`,
-              card: lotDetails(auction),
-              footer: lotActions(id, auction),
+              card: () => lotDetails(auction),
+              footer: () => lotActions(id, auction),
             },
           ]
         : [],
@@ -691,8 +691,8 @@ function AuctionBoard(
   const catchLots = (): [string, AuctionRecord][] =>
     board().filter(([, auction]) => auction.lot === AuctionLot.Catch);
 
-  const boxed = (): BoxEntry[] =>
-    catchLots().flatMap(([, auction]): BoxEntry[] => {
+  const boxed = (): CatchGridEntry[] =>
+    catchLots().flatMap(([, auction]): CatchGridEntry[] => {
       const caught = lots()?.get(auction.caught);
 
       if (caught == null) {
@@ -703,20 +703,10 @@ function AuctionBoard(
 
       // Whose it is, in what the square is announced as. Two sellers
       // with the same pokemon up are otherwise two identical squares
-      return [{ ...square, label: `${square.label} — by ${describeSeller(auction)}` }];
+      return [
+        { square: { ...square, label: `${square.label} — by ${describeSeller(auction)}` }, caught },
+      ];
     });
-
-  const [box, setBox] = createSignal(0);
-
-  const boxes = (): number => Math.max(1, Math.ceil(boxed().length / BOX_SIZE));
-
-  // Lots close while the board is being read, so the last box can empty
-  // under somebody standing on it
-  createEffect(() => {
-    setBox((at) => Math.min(at, boxes() - 1));
-  });
-
-  const shownCatches = (): BoxEntry[] => boxed().slice(box() * BOX_SIZE, (box() + 1) * BOX_SIZE);
 
   /**
    * Which lot a square belongs to. The squares are named by the catch id
@@ -749,11 +739,14 @@ function AuctionBoard(
         <ItemGrid bare cardOnly entries={itemLots()} />
       </Show>
 
-      <Show when={shownCatches().length}>
+      <Show when={boxed().length}>
         <h4>Pokemon</h4>
-        <CatchBox
+        {/* Narrowed by the board's own search too, so the grid draws
+            none of its own */}
+        <CatchGrid
+          bare
           cardOnly
-          entries={shownCatches()}
+          entries={boxed()}
           cell={(entry) => (
             <Show when={lotOf(entry().id)}>
               {(lot) => (
@@ -786,29 +779,6 @@ function AuctionBoard(
             </Show>
           )}
         />
-        <Show when={boxes() > 1}>
-          <Row class="justify-center">
-            <Button
-              disabled={box() === 0}
-              onClick={() => {
-                setBox((at) => Math.max(0, at - 1));
-              }}
-            >
-              ‹
-            </Button>
-            <Meta>
-              Box {box() + 1} of {boxes()}
-            </Meta>
-            <Button
-              disabled={box() >= boxes() - 1}
-              onClick={() => {
-                setBox((at) => Math.min(boxes() - 1, at + 1));
-              }}
-            >
-              ›
-            </Button>
-          </Row>
-        </Show>
       </Show>
     </Show>
   );

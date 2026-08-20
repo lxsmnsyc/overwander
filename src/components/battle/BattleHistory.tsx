@@ -18,12 +18,14 @@ import {
   Button,
   Filter,
   type FilterOption,
+  LIST_PAGE,
   List,
   ListRow,
   Meta,
   Note,
   Row,
   RowButton,
+  createPager,
 } from '../styled';
 import { describeMoment } from '../../core/dates';
 import { GameDialog, useGame } from '../app/game-context';
@@ -125,6 +127,10 @@ function BattleList(
       ([, record]) => only() === EVERY_KIND || getBattleKind(record) === only(),
     );
 
+  // Paged under the filter, so narrowing the kind snaps back to a page
+  // that exists
+  const paged = createPager(shown, LIST_PAGE);
+
   return (
     <Show when={battles()} fallback={<Note>Loading battles…</Note>}>
       <Show when={battles()?.length} fallback={<Note>No battles fought yet.</Note>}>
@@ -144,7 +150,7 @@ function BattleList(
 
         <Show when={shown().length} fallback={<Note>None of those yet.</Note>}>
           <List>
-            <For each={shown()}>
+            <For each={paged.shown()}>
               {([id, record]) => (
                 <ListRow>
                   <RowButton
@@ -178,6 +184,7 @@ function BattleList(
               )}
             </For>
           </List>
+          {paged.controls()}
         </Show>
       </Show>
     </Show>

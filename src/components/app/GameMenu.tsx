@@ -57,7 +57,6 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Profile', dialog: GameDialog.Profile },
   { label: 'Raids', dialog: GameDialog.Raids },
   { label: 'Auctions', dialog: GameDialog.Auctions },
-  { label: 'Friends' },
   { label: 'Gifts', dialog: GameDialog.Gifts },
   { label: 'Settings' },
 ];

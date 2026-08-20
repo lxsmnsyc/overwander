@@ -21,7 +21,18 @@ import {
 } from '../../auth/auctions';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { AuctionLotLabel, BidControls } from './AuctionTab';
-import { Badge, type BadgeTone, Button, List, ListRow, Meta, Note, Status } from '../styled';
+import {
+  Badge,
+  type BadgeTone,
+  Button,
+  LIST_PAGE,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Status,
+  createPager,
+} from '../styled';
 
 /**
  * Where the player stands, said the way they would say it
@@ -90,6 +101,8 @@ function BidRows(
 
   const gold = (): number => profile()?.gold ?? 0;
 
+  const paged = createPager(() => props.history() ?? [], LIST_PAGE);
+
   const bid = (id: string, amount: number): void => {
     setStatus(null);
     placeBid(id, amount)
@@ -122,7 +135,7 @@ function BidRows(
     <>
       <Show when={props.history()?.length} fallback={<Note>You have not bid on anything.</Note>}>
         <List>
-          <For each={props.history()}>
+          <For each={paged.shown()}>
             {(entry) => {
               const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
 
@@ -165,6 +178,7 @@ function BidRows(
             }}
           </For>
         </List>
+        {paged.controls()}
       </Show>
 
       <Status message={status()} />

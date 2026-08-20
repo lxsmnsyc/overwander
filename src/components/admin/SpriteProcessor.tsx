@@ -1,6 +1,5 @@
 import { For, type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
 import { useSubmission } from '@solidjs/router';
-import { TabGroup } from 'terracotta';
 import {
   Button,
   Combobox,
@@ -13,6 +12,7 @@ import {
   Switch,
   TabBar,
   TabButton,
+  TabGroup,
   TabPane,
   TextArea,
 } from '../styled';
@@ -520,7 +520,7 @@ export default function SpriteProcessor(): JSX.Element {
         />
       }
     >
-      <TabGroup horizontal defaultValue={Mode.Pmd} toggleable={false} class="flex flex-col gap-3">
+      <TabGroup horizontal defaultValue={Mode.Pmd} class="flex flex-col gap-3">
         <TabBar>
           <TabButton value={Mode.Pmd}>PMD</TabButton>
           <TabButton value={Mode.Extras}>Loose images</TabButton>

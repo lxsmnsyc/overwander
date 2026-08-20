@@ -94,11 +94,21 @@ it. What follows is what a signed-in client may still do.
 | `encounters/{spawnId}:{uid}`                                                           | The named player, by id                                    | None                                      |
 | `bids/{uid}:{auctionId}`                                                               | The named player: `get` by id, `list` filtered on `player` | None                                      |
 | `gifts`, `giftClaims`                                                                  | None                                                       | None                                      |
+| `friends/{owner}:{friend}`                                                             | The owner: `get` by id, `list` filtered on `owner`         | None                                      |
+| `friendRequests/{from}:{to}`                                                           | Either end: `list` filtered on `to` or on `from`           | None                                      |
+| `blocks/{blocker}:{blocked}`                                                           | The blocker, the same way                                  | None                                      |
 
 `gifts` and `giftClaims` are the collections no client touches at all. A mystery
 gift is offered, listed and claimed through the server, so neither the offer nor
 the claim is read or written from a browser — and a client that could write its
 own claim could take an open gift as many times as it liked.
+
+The three friend collections are read by the player they are about and written by
+nobody. The filter is the check, the way it is for `bids`, and it is what lets the
+lists follow the store live. Writing is the server's: a client that could write a
+friendship could put itself on somebody else's list, and one that could delete a
+block could lift somebody else's. A block is readable by the blocker alone —
+nothing tells the blocked player. See [`friends.md`](./friends.md).
 
 `positions/{uid}` is readable by its owner and nobody else, which is the right
 rule for a document a client could otherwise sweep the whole collection of — and
@@ -111,12 +121,12 @@ Four roles, and they are a ladder rather than a set of flags
 ([`src/auth/staff.ts`](../../src/auth/staff.ts)). Every rung may do what the rung
 below it may:
 
-| Role        | May                                                                     |
-| ----------- | ----------------------------------------------------------------------- |
-| _(player)_  | Play                                                                    |
-| `moderator` | Open the dashboard, read the accounts and the world, ban players        |
-| `admin`     | Also run the game: mystery gifts, raids, auctions. Makes moderators     |
-| `owner`     | Also makes admins                                                       |
+| Role        | May                                                                 |
+| ----------- | ------------------------------------------------------------------- |
+| _(player)_  | Play                                                                |
+| `moderator` | Open the dashboard, read the accounts and the world, ban players    |
+| `admin`     | Also run the game: mystery gifts, raids, auctions. Makes moderators |
+| `owner`     | Also makes admins                                                   |
 
 What separates them is who they may act **on**: strictly below themselves.
 An admin cannot ban or demote another admin, a moderator cannot touch a
@@ -196,17 +206,20 @@ id, and nothing asks the store which players hold a Master Ball.
 indexes; the rest of the queries below run on Firestore's automatic single-field
 indexes.
 
-| Collection    | Fields                         | Declared | Reason                                      |
-| ------------- | ------------------------------ | -------- | ------------------------------------------- |
-| `caught`      | `owner` ASC                    | No       | `listCaught`; automatic single-field index  |
-| `caught`      | `owner` ASC, `species` ASC     | Yes      | `hasCaughtSpecies`, the Repeat Ball's check |
-| `caught`      | `owner` ASC, `shiny` ASC       | Yes      | `listCaughtMarked`, one per mark asked for  |
-| `caught`      | `owner` ASC, `auctionable` ASC | Yes      | The auction sell picker, the same way       |
-| `teams`       | `player` ASC                   | No       | `listTeams`; automatic single-field index   |
-| `teams`       | `player` ASC, `catches` ARRAY  | Yes      | `isAnyCatchQueued` filters on both          |
-| `raids`       | `timestamp` ASC, `offset` ASC  | Yes      | `listLiveRaids` filters on both             |
-| `battles`     | `players` ARRAY                | No       | `listBattleHistory`; automatic array index  |
-| `raidRewards` | `player` ASC                   | No       | `listClaimedRaids`; automatic single-field  |
-| `auctions`    | `settled` ASC                  | No       | `watchOpenAuctions`; automatic              |
-| `auctions`    | `seller` ASC                   | No       | `listAuctionsBy`; automatic                 |
-| `bids`        | `player` ASC                   | No       | `listBidHistory`; automatic                 |
+| Collection       | Fields                         | Declared | Reason                                      |
+| ---------------- | ------------------------------ | -------- | ------------------------------------------- |
+| `caught`         | `owner` ASC                    | No       | `listCaught`; automatic single-field index  |
+| `caught`         | `owner` ASC, `species` ASC     | Yes      | `hasCaughtSpecies`, the Repeat Ball's check |
+| `caught`         | `owner` ASC, `shiny` ASC       | Yes      | `listCaughtMarked`, one per mark asked for  |
+| `caught`         | `owner` ASC, `auctionable` ASC | Yes      | The auction sell picker, the same way       |
+| `teams`          | `player` ASC                   | No       | `listTeams`; automatic single-field index   |
+| `teams`          | `player` ASC, `catches` ARRAY  | Yes      | `isAnyCatchQueued` filters on both          |
+| `raids`          | `timestamp` ASC, `offset` ASC  | Yes      | `listLiveRaids` filters on both             |
+| `battles`        | `players` ARRAY                | No       | `listBattleHistory`; automatic array index  |
+| `raidRewards`    | `player` ASC                   | No       | `listClaimedRaids`; automatic single-field  |
+| `auctions`       | `settled` ASC                  | No       | `watchOpenAuctions`; automatic              |
+| `auctions`       | `seller` ASC                   | No       | `listAuctionsBy`; automatic                 |
+| `bids`           | `player` ASC                   | No       | `listBidHistory`; automatic                 |
+| `friends`        | `owner` ASC                    | No       | `watchFriends`; automatic single-field      |
+| `friendRequests` | `to` ASC / `from` ASC          | No       | `watchFriendRequests`, one query each way   |
+| `blocks`         | `blocker` ASC                  | No       | `watchBlocked`; automatic single-field      |

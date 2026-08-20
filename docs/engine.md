@@ -70,17 +70,20 @@ check deliberately never asks the AI what it *would* do, since consuming a rando
 would pull every replay off its seed.
 
 A set that stands in for a check is only worth keeping while it cannot go stale,
-so two rules hold it up. **Bookkeeping opens before the thing it tracks and
-closes before anything that could veto the close**: a move with no delay ends
-inside the very event that started it, so a listener that marked the trigger
-pending afterwards would run after the end had come and gone, leaving its unit
-pending for the rest of the fight. Both halves run at `Pre`. And **pending
-triggers are counted rather than flagged**, because one move can put several in
-the air at once — Mirror Move casts its copy from inside the trigger it is
-finishing — and a flag cleared by the first to land would free the unit while the
-rest were still coming. The tick loop walks a copy of the set and re-asks the
-check before letting anything act, so a stale entry costs a wasted comparison
-rather than a move.
+so two rules hold it up.
+
+**Bookkeeping opens before the thing it tracks and closes before anything that
+could veto the close**, both halves at `Pre`. A move with no delay ends inside the
+event that started it, so a listener marking the trigger pending afterwards would
+run once the end had gone by and leave its unit pending for the rest of the fight.
+
+**Pending triggers are counted rather than flagged**, because one move can put
+several in the air at once — Mirror Move casts its copy from inside the trigger it
+is finishing — and a flag cleared by the first to land would free the unit while
+the rest were still coming.
+
+The tick loop walks a copy of the set and re-asks the check before letting
+anything act, so a stale entry costs a wasted comparison rather than a move.
 
 ### A move the AI picks is a move that works
 

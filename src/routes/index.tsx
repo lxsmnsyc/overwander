@@ -62,7 +62,8 @@ const TITLES: Record<Panelled, string> = {
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
-  [GameDialog.Profile]: 'Your details, your buddy, your battles and what you have bid on.',
+  [GameDialog.Profile]:
+    'Your details, your buddy, your friends, your battles and what you have bid on.',
   [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
   [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
   [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',

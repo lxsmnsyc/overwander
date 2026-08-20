@@ -19,13 +19,13 @@ anything else in it: catching Caterpies levels a Butterfree.
 What a catch pays depends on how hard it was to meet, since a candy is a level
 and a level of a legendary is worth more work than a level of a Rattata:
 
-| What was caught                       | Candy |
-| ------------------------------------- | ----- |
-| A first stage that can still evolve   | 1     |
-| A middle evolution                    | 2     |
-| A final evolution, or a one-off line  | 3     |
-| A baby or an unown                    | 4     |
-| A legendary or mythical               | 5     |
+| What was caught                      | Candy |
+| ------------------------------------ | ----- |
+| A first stage that can still evolve  | 1     |
+| A middle evolution                   | 2     |
+| A final evolution, or a one-off line | 3     |
+| A baby or an unown                   | 4     |
+| A legendary or mythical              | 5     |
 
 Two held items pay extra candy, each about half the time. An **Exp. Share** pays
 the buddy's family, so everything caught feeds the one pokemon being raised. A
@@ -54,12 +54,21 @@ introduced yet.
 Only evolutions the game can verify are offered. The rest are never offered
 rather than being waved through.
 
-| Method                            | Supported | Notes                               |
-| --------------------------------- | --------- | ----------------------------------- |
-| **By level**                      | Yes       | Checked against the pokemon's level |
-| **Using an item**                 | Yes       | The stone is consumed               |
-| **Holding an item**               | Yes       | The item is required, not consumed  |
-| Trade, friendship, weather, party | No        | Not offered                         |
+| Method                     | Supported | Notes                                     |
+| -------------------------- | --------- | ----------------------------------------- |
+| **By level**               | Yes       | Checked against the pokemon's level       |
+| **Using an item**          | Yes       | The stone is consumed                     |
+| **Holding an item**        | Yes       | The item is required, not consumed        |
+| **By trade**               | Yes       | Any pokemon that has changed hands        |
+| Friendship, weather, party | No        | Nothing stores the answer, so not offered |
+
+A **trade evolution** opens the moment a pokemon changes hands — today that means
+winning it at auction — and stays open for good. The mainline evolves one during
+the trade itself, which is a moment this game has nowhere to put, so a Machoke
+that has changed hands is a Machamp waiting to be asked.
+
+An **Everstone** refuses every evolution while the pokemon holds it. It is not
+held back from anything else: it still levels, learns and fights.
 
 Evolving preserves the individual's proportions, so a pokemon that was large for
 its species stays large for its new one.
@@ -215,11 +224,14 @@ party of fainted pokemon cannot start a battle at all.
 
 ## Held items
 
-A pokemon holds **one** item at a time, and only items meant to be held.
+A pokemon holds **one** item at a time, and only items meant to be held. A
+**Utility Belt** — a prized find, spent on use — gives one pokemon a second slot
+permanently.
 
-That single slot is what makes the overworld items a genuine choice: a Shiny
-Charm, an Exp. Share, a Lucky Egg, a Luck Incense and a Pure Incense all want the
-same slot on the same buddy — and a berry wants it during a raid.
+That single slot is what makes the held items a genuine choice: a Shiny Charm, an
+Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin all
+want the same slot on the same buddy — and a berry or a piece of battle gear
+wants it during a raid.
 
 ## See also
 

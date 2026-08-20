@@ -126,6 +126,7 @@ from the buddy's ability, others from what it is holding.
 | **Lucky Egg**                                | Held item | Half of catches pay extra candy to the *caught* family    |
 | **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays            |
 | **Pure Incense**                             | Held item | Three fewer pokemon appear, for crossing a chunk in peace |
+| **Amulet Coin**                              | Held item | Trebles the gold a raid or a beaten grunt pays            |
 
 Cute Charm does nothing when either pokemon is genderless.
 

@@ -23,8 +23,10 @@ for players; the developer documentation lives in
 | [Battles](mechanics/battles.md)            | Real-time combat, damage, statuses, raids, Team Rocket       |
 | [Raising a pokemon](mechanics/raising.md)  | Candy, evolution, training, friendship, moves, healing       |
 | [Eggs](mechanics/eggs.md)                  | Nests, breeding, inheritance, hatching                       |
-| [People you meet](mechanics/npcs.md)       | The vendor and the six travelling specialists                |
-| [Items and gold](mechanics/items.md)       | The item pool, berries, the economy, the auction house       |
+| [People you meet](mechanics/npcs.md)       | The vendor, the specialists, and Team Rocket grunts          |
+| [Items and gold](mechanics/items.md)       | The item pool, berries, gear, the economy, the auction house |
+| [Gifts](mechanics/gifts.md)                | Starters, and what else the game sets aside for a player     |
+| [Friends](mechanics/friends.md)            | Friend requests, finding somebody, and blocking              |
 
 ## Overview
 
@@ -58,6 +60,7 @@ same result, which is why a replay costs nothing and pays nothing.
 
 ## See also
 
+- [Releases](update.md): what each major release brought
 - [The battle engine](engine.md) — how the real-time engine is built
 - [Firestore](firestore.md) — what the game stores and who may write it
 - [Credits](credits.md) — the people, libraries and art behind the game

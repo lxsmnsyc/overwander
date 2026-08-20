@@ -16,11 +16,11 @@ import { useAuth } from '../../auth/context';
 import { ItemFlags, type Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
 import InventoryPicker from '../items/InventoryPicker';
-import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
+import CatchGrid, { type CatchGridEntry } from './CatchGrid';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
 import matchesCatch, { type CatchConstraint, planCatchSearch } from '../../auth/catch-search';
-import { Button, Dialog, DialogActions, HoverCard, Meta, Note, Row, Search } from '../styled';
+import { Button, Dialog, DialogActions, HoverCard, Meta, Note, Row } from '../styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -368,36 +368,30 @@ function PickerBox(
     pickMany();
   };
 
-  const [box, setBox] = createSignal(0);
-
-  const boxes = (): number => Math.max(1, Math.ceil(options().length / BOX_SIZE));
-
-  // A search that empties the last box would leave the player looking
-  // at nothing; whatever they type, they end up somewhere with pokemon
-  createEffect(() => {
-    setBox((at) => Math.min(at, boxes() - 1));
-  });
-
   /**
-   * The squares of the box being looked at, each carrying whether the
-   * caller has taken it or refuses it. A refusal is drawn rather than
+   * Every square the caller will accept, each carrying whether the
+   * player has taken it or refuses it. A refusal is drawn rather than
    * hidden: a player hunting for a pokemon that is not in their party
    * wants to be told it is fighting somewhere else, not left to
    * wonder where it went
    */
-  const page = (): BoxEntry[] =>
-    options()
-      .slice(box() * BOX_SIZE, (box() + 1) * BOX_SIZE)
-      .map((option) => {
-        const refused = props.reason?.(option) ?? null;
-        const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
-        const square = asBoxEntry([option.id, option.caught]);
+  const entries = (): CatchGridEntry[] =>
+    offered().map((option) => {
+      const refused = props.reason?.(option) ?? null;
+      const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
+      const square = asBoxEntry([option.id, option.caught]);
 
-        if (refused != null) {
-          return { ...square, mark: 'refused' as const, label: `${square.label} — ${refused}` };
-        }
-        return taken ? { ...square, mark: 'picked' as const } : square;
-      });
+      if (refused != null) {
+        return {
+          square: { ...square, mark: 'refused' as const, label: `${square.label} — ${refused}` },
+          caught: option.caught,
+        };
+      }
+      return {
+        square: taken ? { ...square, mark: 'picked' as const } : square,
+        caught: option.caught,
+      };
+    });
 
   /**
    * What the button on a card says it will do. A box being browsed
@@ -450,107 +444,64 @@ function PickerBox(
     // by their content, and a box of squares asked how wide it would
     // like to be answers with the width of thirty sprites
     <div class="flex w-full flex-col gap-3">
-      {/* Always drawn, however short the box is. It hid itself under a
-          handful of pokemon, which meant a search that narrowed the
-          box far enough took its own box away — and a search that
-          narrows the store's half is answered by fewer records, so
-          that was most of them */}
-      <Row>
-        <Search
-          // The syntax is in the placeholder rather than in a legend
-          // nobody reads: one example is enough to say that more than
-          // a name can go in here
-          placeholder="Name, or type:fire is:shiny"
-          value={query()}
-          onChange={(typed) => {
-            props.onSearch(typed);
-          }}
-        />
-      </Row>
+      {/* The same box the player keeps their collection in. Picking a
+          party out of a hundred pokemon is looking rather than
+          reading, and a list of a hundred lines was reading.
 
-      <Show
-        when={options().length}
-        fallback={
-          <Note>
-            {query().length === 0
-              ? (props.empty ?? 'You have nothing for this.')
-              : `None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
-          </Note>
-        }
-      >
-        {/* The same box the player keeps their collection in. Picking
-              a party out of a hundred pokemon is looking rather than
-              reading, and a list of a hundred lines was reading.
+          The search is controlled from above because it does more
+          than narrow the grid: the query also decides which records
+          the store is asked for.
 
-              Every square carries a card: what is in it, and the button
-              that takes it. The bar is titled "Info" because the card
-              under it already names the pokemon on its first line */}
-        <CatchBox
-          entries={page()}
-          onOpen={pressById}
-          cardOnly={props.pressable !== true}
-          cell={(entry) => (
-            <Show when={options().find((option) => option.id === entry().id)}>
-              {(option) => (
-                <HoverCard
-                  class="block size-full"
-                  trigger={<span class="block size-full" />}
-                  title="Info"
-                  footer={
-                    <>
-                      <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
-                      <Button
-                        tone="primary"
-                        disabled={props.disabled === true || props.reason?.(option()) != null}
-                        onClick={() => {
-                          pressById(option().id);
-                        }}
-                      >
-                        {verb(option())}
-                      </Button>
-                    </>
-                  }
-                >
-                  <CatchCard
-                    caught={option().caught}
-                    owned={mine()}
-                    onGive={() => {
-                      setGiving(option().id);
-                    }}
-                    onTake={(item) => {
-                      take(option().id, item);
-                    }}
-                  />
-                </HoverCard>
-              )}
-            </Show>
-          )}
-        />
-
-        <Show when={boxes() > 1}>
-          <Row class="justify-center">
-            <Button
-              disabled={box() === 0}
-              onClick={() => {
-                setBox((at) => Math.max(0, at - 1));
-              }}
-            >
-              ‹
-            </Button>
-            <Meta>
-              Box {box() + 1} of {boxes()}
-            </Meta>
-            <Button
-              disabled={box() >= boxes() - 1}
-              onClick={() => {
-                setBox((at) => Math.min(boxes() - 1, at + 1));
-              }}
-            >
-              ›
-            </Button>
-          </Row>
-        </Show>
-      </Show>
+          Every square carries a card: what is in it, and the button
+          that takes it. The bar is titled "Info" because the card
+          under it already names the pokemon on its first line */}
+      <CatchGrid
+        entries={entries()}
+        search={query()}
+        onSearch={(typed) => {
+          props.onSearch(typed);
+        }}
+        onOpen={pressById}
+        cardOnly={props.pressable !== true}
+        empty={props.empty ?? 'You have nothing for this.'}
+        noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
+        cell={(entry) => (
+          <Show when={options().find((option) => option.id === entry().id)}>
+            {(option) => (
+              <HoverCard
+                class="block size-full"
+                trigger={<span class="block size-full" />}
+                title="Info"
+                footer={
+                  <>
+                    <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
+                    <Button
+                      tone="primary"
+                      disabled={props.disabled === true || props.reason?.(option()) != null}
+                      onClick={() => {
+                        pressById(option().id);
+                      }}
+                    >
+                      {verb(option())}
+                    </Button>
+                  </>
+                }
+              >
+                <CatchCard
+                  caught={option().caught}
+                  owned={mine()}
+                  onGive={() => {
+                    setGiving(option().id);
+                  }}
+                  onTake={(item) => {
+                    take(option().id, item);
+                  }}
+                />
+              </HoverCard>
+            )}
+          </Show>
+        )}
+      />
 
       {/* A single pick that asks twice does it here rather than in the
           square: there is no room under a sprite for a question */}

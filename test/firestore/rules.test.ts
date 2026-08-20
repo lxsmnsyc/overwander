@@ -26,10 +26,13 @@ import {
   BATTLE_COLLECTION,
   BERRY_CLAIM_COLLECTION,
   BID_COLLECTION,
+  BLOCK_COLLECTION,
   CACHE_CLAIM_COLLECTION,
   CAUGHT_COLLECTION,
   ENCOUNTER_COLLECTION,
   FLED_COLLECTION,
+  FRIEND_COLLECTION,
+  FRIEND_REQUEST_COLLECTION,
   GIFT_CLAIM_COLLECTION,
   GIFT_COLLECTION,
   NEST_CLAIM_COLLECTION,
@@ -45,6 +48,9 @@ import {
   TEAM_COLLECTION,
   TEAM_SNAPSHOT_COLLECTION,
   bidEntryId,
+  blockEntryId,
+  friendEntryId,
+  friendRequestId,
 } from '../../src/auth/collections';
 
 /**
@@ -413,9 +419,7 @@ describe('gifts', () => {
 
     await assertFails(getDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, claim)));
     await assertFails(getDocs(collection(as(ALICE), GIFT_CLAIM_COLLECTION)));
-    await assertFails(
-      deleteDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, claim)),
-    );
+    await assertFails(deleteDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, claim)));
     await assertFails(
       setDoc(doc(as(ALICE), GIFT_CLAIM_COLLECTION, `open-gift:${ALICE}`), {
         gift: 'open-gift',
@@ -483,5 +487,88 @@ describe('bids', () => {
     await assertFails(setDoc(doc(as(ALICE), BID_COLLECTION, MINE), { player: ALICE, amount: 1 }));
     await assertFails(updateDoc(doc(as(ALICE), BID_COLLECTION, MINE), { amount: 1 }));
     await assertFails(deleteDoc(doc(as(ALICE), BID_COLLECTION, MINE)));
+  });
+});
+
+describe('friends', () => {
+  // Read by the player they are about and written by nobody: the
+  // lists follow the store live, and a client that could write one
+  // could put itself on somebody else's
+  const OURS = friendEntryId(ALICE, BOB);
+  const THEIRS = friendEntryId(BOB, ALICE);
+  const ASKED = friendRequestId(ALICE, BOB);
+
+  beforeEach(async () => {
+    await seed(`${FRIEND_COLLECTION}/${OURS}`, { owner: ALICE, friend: BOB, since: 0 });
+    await seed(`${FRIEND_COLLECTION}/${THEIRS}`, { owner: BOB, friend: ALICE, since: 0 });
+    await seed(`${FRIEND_REQUEST_COLLECTION}/${ASKED}`, { from: ALICE, to: BOB, sentAt: 0 });
+    await seed(`${BLOCK_COLLECTION}/${blockEntryId(ALICE, 'carol')}`, {
+      blocker: ALICE,
+      blocked: 'carol',
+      since: 0,
+    });
+  });
+
+  it('hands a player their own list and nobody another', async () => {
+    await assertSucceeds(
+      getDocs(query(collection(as(ALICE), FRIEND_COLLECTION), where('owner', '==', ALICE))),
+    );
+    await assertSucceeds(getDoc(doc(as(ALICE), FRIEND_COLLECTION, OURS)));
+    // The filter is the check: a query that did not narrow to the
+    // asking player would return a row the rule fails for, and
+    // Firestore refuses the query whole
+    await assertFails(getDocs(collection(as(ALICE), FRIEND_COLLECTION)));
+    await assertFails(
+      getDocs(query(collection(as(ALICE), FRIEND_COLLECTION), where('owner', '==', BOB))),
+    );
+    await assertFails(getDoc(doc(as(ALICE), FRIEND_COLLECTION, THEIRS)));
+  });
+
+  it('hands over a request from either end of it', async () => {
+    await assertSucceeds(
+      getDocs(query(collection(as(BOB), FRIEND_REQUEST_COLLECTION), where('to', '==', BOB))),
+    );
+    await assertSucceeds(
+      getDocs(query(collection(as(ALICE), FRIEND_REQUEST_COLLECTION), where('from', '==', ALICE))),
+    );
+    await assertFails(getDocs(collection(as(ALICE), FRIEND_REQUEST_COLLECTION)));
+    await assertFails(
+      getDocs(query(collection(as('carol'), FRIEND_REQUEST_COLLECTION), where('to', '==', BOB))),
+    );
+  });
+
+  // A block is known to the player who set it and to nobody else:
+  // being blocked is not something anybody is told
+  it('keeps a block to the player who set it', async () => {
+    await assertSucceeds(
+      getDocs(query(collection(as(ALICE), BLOCK_COLLECTION), where('blocker', '==', ALICE))),
+    );
+    await assertFails(
+      getDocs(query(collection(as('carol'), BLOCK_COLLECTION), where('blocked', '==', 'carol'))),
+    );
+    await assertFails(getDoc(doc(as('carol'), BLOCK_COLLECTION, blockEntryId(ALICE, 'carol'))));
+  });
+
+  it('takes no write from either side of one', async () => {
+    await assertFails(
+      setDoc(doc(as(ALICE), FRIEND_COLLECTION, friendEntryId(ALICE, 'carol')), {
+        owner: ALICE,
+        friend: 'carol',
+        since: 0,
+      }),
+    );
+    await assertFails(deleteDoc(doc(as(ALICE), FRIEND_COLLECTION, OURS)));
+    // Nor the request that would become one: an unanswered request a
+    // player could write is a friendship they could grant themselves
+    await assertFails(
+      setDoc(doc(as(BOB), FRIEND_REQUEST_COLLECTION, friendRequestId(BOB, ALICE)), {
+        from: BOB,
+        to: ALICE,
+        sentAt: 0,
+      }),
+    );
+    await assertFails(deleteDoc(doc(as(BOB), FRIEND_REQUEST_COLLECTION, ASKED)));
+    // And not a block, which a blocked player could otherwise lift
+    await assertFails(deleteDoc(doc(as(ALICE), BLOCK_COLLECTION, blockEntryId(ALICE, 'carol'))));
   });
 });

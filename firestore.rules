@@ -212,5 +212,35 @@ service cloud.firestore {
       allow read: if false;
       allow write: if false;
     }
+    // Who knows whom, who has asked, and who has been shut out.
+    //
+    // A player reads their own rows and nobody else's, so the lists
+    // follow the store live — the field the query filters on is the
+    // check, the way it is for `bids`. Writing is the server's: a
+    // client that could write a friendship could put itself on
+    // somebody else's list, and one that could delete a block could
+    // lift somebody else's
+    match /friends/{entryId} {
+      allow list: if signedIn() && resource.data.owner == request.auth.uid;
+      allow get: if signedIn() && entryId.split(':')[0] == request.auth.uid;
+      allow write: if false;
+    }
+    // Both directions, which is two queries rather than one: a query
+    // may not ask for either of two fields matching, so each is
+    // filtered and checked on its own
+    match /friendRequests/{requestId} {
+      allow list: if signedIn()
+        && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      allow get: if signedIn() && request.auth.uid in requestId.split(':');
+      allow write: if false;
+    }
+    // A block is known to the player who set it and to nobody else:
+    // being blocked is not something anybody is told, which is the
+    // whole point of one
+    match /blocks/{entryId} {
+      allow list: if signedIn() && resource.data.blocker == request.auth.uid;
+      allow get: if signedIn() && entryId.split(':')[0] == request.auth.uid;
+      allow write: if false;
+    }
   }
 }

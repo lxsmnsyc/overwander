@@ -233,7 +233,7 @@ function PickerList(
       selected: props.multiple === true ? amountOf(entry.item) > 0 : props.value === entry.item,
       blocked: props.blocked?.(entry) ?? null,
       note: props.note?.(entry) ?? null,
-      card: props.card?.(entry),
+      card: () => props.card?.(entry),
       carried: props.carried?.(entry) ?? entry.amount,
       action: props.action?.(entry) ?? props.verb ?? null,
     }));

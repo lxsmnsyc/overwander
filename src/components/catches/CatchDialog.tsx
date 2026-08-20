@@ -130,7 +130,6 @@ import SpeciesCoat from '../sprites/SpeciesCoat';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeachMoveDialog from './TeachMoveDialog';
 import TypeBadge from '../sprites/TypeBadge';
-import { TabGroup, TabPanel } from 'terracotta';
 import {
   Badge,
   Button,
@@ -151,6 +150,8 @@ import {
   StepButton,
   TabBar,
   TabButton,
+  TabGroup,
+  TabPane,
   type ToastTone,
   TooltipHost,
   useToast,
@@ -1842,19 +1843,14 @@ function CatchSheetBody(
                       three lists, because a player compares one stat
                       across them rather than reading all eighteen */}
                   <DialogSection title="Stats">
-                    <TabGroup
-                      horizontal
-                      defaultValue={StatView.Total}
-                      toggleable={false}
-                      class="flex flex-col gap-2"
-                    >
+                    <TabGroup horizontal defaultValue={StatView.Total} class="flex flex-col gap-2">
                       <TabBar>
                         <TabButton value={StatView.Total}>Total</TabButton>
                         <TabButton value={StatView.IV}>IV</TabButton>
                         <TabButton value={StatView.EV}>EV</TabButton>
                       </TabBar>
 
-                      <TabPanel value={StatView.Total}>
+                      <TabPane value={StatView.Total}>
                         <List>
                           <ListRow>
                             {/* Nothing can move health — no nature
@@ -1941,9 +1937,9 @@ function CatchSheetBody(
                               .join(' · ')}
                           </Meta>
                         </Show>
-                      </TabPanel>
+                      </TabPane>
 
-                      <TabPanel value={StatView.IV}>
+                      <TabPane value={StatView.IV}>
                         <List>
                           <For each={STAT_ORDER}>
                             {(stat) => (
@@ -1969,9 +1965,9 @@ function CatchSheetBody(
                             )}
                           </For>
                         </List>
-                      </TabPanel>
+                      </TabPane>
 
-                      <TabPanel value={StatView.EV}>
+                      <TabPane value={StatView.EV}>
                         <List>
                           <For each={STAT_ORDER}>
                             {(stat) => (
@@ -2023,7 +2019,7 @@ function CatchSheetBody(
                             these", which is a question asked after
                             reading them rather than before */}
                         <Meta class="block text-right">Remaining: {unusedEffort(loaded())}</Meta>
-                      </TabPanel>
+                      </TabPane>
                     </TabGroup>
                   </DialogSection>
 

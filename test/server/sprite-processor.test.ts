@@ -6,7 +6,7 @@ import { blank, blit } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
 import { animFilter } from '../../src/server/sprites/pmd';
-import dedupe, { drawCells } from '../../src/server/sprites/dedupe';
+import dedupe, { drawPictures } from '../../src/server/sprites/dedupe';
 import { extraDestination, pokemonDestination } from '../../src/server/sprites/files';
 import { storedAs } from '../../src/components/admin/SpriteProcessor';
 
@@ -375,13 +375,24 @@ describe('drawing an animation into the sheet', () => {
       columns: 1,
       rows: 2,
     };
-    const kept = dedupe([{ raster: source, grid }]);
+    // Uncropped, so each frame is the whole of its box: the shortcut
+    // this guards against is about where a box lands, not what is lit
+    const kept = dedupe([{ raster: source, grid }], false);
 
-    drawCells(sheet, source, grid, { x: 0, y: 0 }, kept);
+    drawPictures(
+      sheet,
+      source,
+      kept.pictures,
+      [
+        { x: 0, y: 0 },
+        { x: 0, y: 2 },
+      ],
+      { x: 0, y: 0 },
+    );
 
     const at = (y: number): number => sheet.data[y * 4 * 4];
 
-    expect(kept.cells, 'two different frames, both kept').toHaveLength(2);
+    expect(kept.pictures, 'two different frames, both kept').toHaveLength(2);
     expect([at(0), at(1)], 'the first frame').toEqual([40, 40]);
     expect([at(2), at(3)], 'the second frame, not the first frame padding').toEqual([90, 90]);
   });

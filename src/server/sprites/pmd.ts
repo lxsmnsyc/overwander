@@ -3,8 +3,8 @@ import { TextWriter, Uint8ArrayReader, Uint8ArrayWriter, ZipReader } from '@zip.
 import type { AnimData } from './anim-data';
 import readAnimData from './anim-data';
 import writeCoats from './coats';
-import type { Deduped, SourceGrid } from './dedupe';
-import dedupe, { drawCells } from './dedupe';
+import type { Deduped, Rect, SourceGrid } from './dedupe';
+import dedupe, { drawPictures } from './dedupe';
 import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
@@ -76,11 +76,14 @@ interface Entry {
   h: number;
   /** Which frames are the same picture, once every coat has been read. */
   kept?: Deduped;
+  /** Where each kept picture landed inside this clip's own region. */
+  spots?: ({ x: number; y: number } | undefined)[];
 }
 
 /** What the description says about one animation's frames. */
 interface SpriteTarget {
-  cells: { columns: number; rows: number };
+  /** The distinct pictures, placed in this clip's region. */
+  pictures: Rect[];
   frameWidth: number;
   frameHeight: number;
   sourceFrameWidth: number;
@@ -303,7 +306,12 @@ function targetFor(entry: Entry): SpriteTarget {
   const kept = entry.kept;
 
   return {
-    cells: { columns: kept?.columns ?? entry.columns, rows: kept?.rows ?? entry.rows },
+    pictures: (kept?.pictures ?? []).map((picture, at) => ({
+      x: entry.spots?.[at]?.x ?? 0,
+      y: entry.spots?.[at]?.y ?? 0,
+      width: picture.width,
+      height: picture.height,
+    })),
     frameWidth: entry.frameWidth,
     frameHeight: entry.frameHeight,
     sourceFrameWidth: entry.sourceFrameWidth,
@@ -312,12 +320,13 @@ function targetFor(entry: Entry): SpriteTarget {
     columns: entry.columns,
     rows: entry.rows,
     directions: [...SPRITE_DIRECTIONS].slice(0, entry.rows),
-    // Every frame says which picture it is drawn from, and whether it
-    // is that picture reflected
+    // Every frame says which picture it is drawn from, whether it is
+    // that picture reflected, and where it sits in the clip's box
     frames: frames.map((markers, at) => ({
       ...markers,
       cell: kept?.frames[at]?.cell ?? at,
       flip: kept?.frames[at]?.flip ?? false,
+      at: kept?.frames[at]?.at ?? [0, 0],
     })),
   };
 }
@@ -326,13 +335,13 @@ function targetFor(entry: Entry): SpriteTarget {
 function draw(sheet: Raster, entry: Entry, at: { x: number; y: number }): void {
   const drawing = entry.images.animation;
 
-  if (drawing == null || entry.kept == null) {
+  if (drawing == null || entry.kept == null || entry.spots == null) {
     return;
   }
   // One copy of each picture, wherever it came from in the archive.
   // There is no shortcut for an untrimmed grid any more: the frames
   // are not laid out the way they arrived, so every one is placed
-  drawCells(sheet, drawing, gridOf(entry), at, entry.kept);
+  drawPictures(sheet, drawing, entry.kept.pictures, entry.spots, at);
 }
 
 /** One coat's archive, read for its pictures alone. */
@@ -375,9 +384,21 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
       drawings
         .filter((raster): raster is Raster => raster != null)
         .map((raster) => ({ raster, grid: gridOf(entry) })),
+      options.compact,
     );
-    entry.w = entry.kept.columns * entry.frameWidth;
-    entry.h = entry.kept.rows * entry.frameHeight;
+    // The pictures are all different sizes now, so where they go inside
+    // the clip is the same question the sheet asks of the clips
+    const inside = pack(
+      entry.kept.pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })),
+    );
+    const spots: ({ x: number; y: number } | undefined)[] = [];
+
+    for (const { box, x, y } of inside.placed) {
+      spots[box.at] = { x, y };
+    }
+    entry.spots = spots;
+    entry.w = inside.width;
+    entry.h = inside.height;
   }
   const layout = pack(entries);
   const placed: SheetImage[] = [];

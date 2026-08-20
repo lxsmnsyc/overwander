@@ -101,6 +101,14 @@ export const SPRITE_DIRECTIONS: SpriteDirection[] = [
 /** A position, as `[x, y]`. */
 export type Point = [x: number, y: number];
 
+/** A rectangle of the sheet, measured from wherever it is placed. */
+export interface SheetRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 /** Placement of one animation image inside the packed sheet. */
 export interface SheetImageData {
   /**
@@ -174,6 +182,16 @@ export interface SpriteFrameData {
   cell: number | null;
   /** Whether that picture is drawn mirrored to make this frame. */
   flip: boolean;
+  /**
+   * Where that picture's corner sits inside the frame's box, as
+   * `[x, y]`.
+   *
+   * Pictures are cropped to what is drawn in them and a clip's box is
+   * as wide as its widest reach, so a frame is a small picture hung
+   * somewhere in a large box. Nothing here means the picture fills the
+   * box, which is what an untrimmed sheet has
+   */
+  at: Point | null;
 }
 
 export interface SpriteTargetData {
@@ -208,6 +226,15 @@ export interface SpriteTargetData {
    * every frame drawn even where it repeats one beside it
    */
   cells: { columns: number; rows: number } | null;
+  /**
+   * Each distinct picture's rectangle inside the clip's region, for a
+   * sheet packed to the pixels that are lit.
+   *
+   * They are all different sizes, so there is no grid to index into:
+   * a frame names one of these and says where in its box it hangs.
+   * Nothing here means the pictures are the `cells` grid
+   */
+  pictures: SheetRect[] | null;
 }
 
 export interface SpriteSheetJSON {
@@ -269,6 +296,22 @@ function asCells(value: unknown): { columns: number; rows: number } | null {
   return columns > 0 && rows > 0 ? { columns, rows } : null;
 }
 
+/** The cropped pictures of a clip, or nothing where it has a grid. */
+function asPictures(value: unknown): SheetRect[] | null {
+  const held = asArray(value).map((entry) => {
+    const rect = asRecord(entry);
+
+    return {
+      x: asNumber(rect.x),
+      y: asNumber(rect.y),
+      width: asNumber(rect.width),
+      height: asNumber(rect.height),
+    };
+  });
+
+  return held.length > 0 ? held : null;
+}
+
 function asDirections(value: unknown): SpriteDirection[] {
   const known = new Set<string>(SPRITE_DIRECTIONS);
 
@@ -322,9 +365,11 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
           right: asPoint(anchors.right),
           cell: typeof cell === 'number' ? cell : null,
           flip: anchors.flip === true,
+          at: asPoint(anchors.at),
         };
       }),
       cells: asCells(target.cells),
+      pictures: asPictures(target.pictures),
     };
   }
 

@@ -51,9 +51,11 @@ const SHADOW = 'rgba(0, 0, 0, 0.28)';
 /**
  * Everything that has to be read off the playhead to draw one frame.
  *
- * The picture is measured against the **cell**, not the frame: two
- * animations off one sheet trim differently, and a box that changed size
- * as a pokemon breathed would jitter
+ * The picture is measured against the **clip's box** rather than the
+ * cell it was drawn in. The cell is authored generously — a Hop is
+ * given room for a jump twice the height anything reaches — and the
+ * empty half of it would be padding round every card. The box is one
+ * size for the whole clip, so nothing jitters as the pokemon breathes
  */
 interface Drawn {
   source: string;
@@ -67,8 +69,9 @@ interface Drawn {
    * over — which a background has to do for itself
    */
   frame: { x: number; y: number; width: number; height: number; mirrored: boolean };
+  /** Where the picture hangs inside the box, as `[x, y]` */
   trim: Point;
-  /** Where the pokemon touches the ground, in cell pixels */
+  /** Where the pokemon touches the ground, in box pixels */
   feet: Point | null;
   shadow: { x: number; y: number };
 }
@@ -76,9 +79,9 @@ interface Drawn {
 const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part / whole) * 100}%`;
 
 /**
- * The frame as a background: a window the size of the trimmed picture,
- * sitting where the trimming left it, with the sheet scrolled to the
- * frame behind it.
+ * The frame as a background: a window the size of the picture, sitting
+ * where the clip hangs it, with the sheet scrolled to the picture
+ * behind it.
  *
  * Every number is a share of the cell so the picture follows a square
  * that is eighty pixels across on a desktop and forty on a phone. The
@@ -111,16 +114,15 @@ function pictureOf(drawn: Drawn): JSX.CSSProperties {
 
 /**
  * The patch of ground it stands on, drawn as a flattened circle under
- * the marked point. Anchors are in the trimmed frame's coordinates, so
- * the trim puts them back in the cell
+ * the marked point. Anchors are already in the box's coordinates
  */
 function groundOf(drawn: Drawn): JSX.CSSProperties | null {
   if (drawn.feet == null) {
     return null;
   }
 
-  const x = drawn.feet[0] + 0.5 + drawn.trim[0];
-  const y = drawn.feet[1] + 0.5 + drawn.trim[1];
+  const x = drawn.feet[0] + 0.5;
+  const y = drawn.feet[1] + 0.5;
 
   return {
     position: 'absolute',
@@ -153,8 +155,8 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
   const across = drawn.frame.width / drawn.cell.width;
   const up = drawn.frame.height / drawn.cell.height;
   // The stars are thrown up from the point the pokemon stands on, which
-  // on a trimmed sheet is not the bottom of the cell
-  const floor = drawn.feet == null ? 1 : (drawn.feet[1] + 0.5 + drawn.trim[1]) / drawn.cell.height;
+  // is not the bottom of the box on a clip that leaves the ground
+  const floor = drawn.feet == null ? 1 : (drawn.feet[1] + 0.5) / drawn.cell.height;
   const size = across * SPARKLE_STAR_SIZE * 2;
 
   return Array.from({ length: SPARKLE_STARS }, (_, star) => {
@@ -387,7 +389,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       return null;
     }
 
-    const cell = playing.sourceFrameSize;
+    const cell = playing.frameSize;
 
     if (cell.width <= 0 || cell.height <= 0) {
       return null;
@@ -397,16 +399,16 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       sheet: playing.data.sheet,
       cell,
       frame,
-      trim: playing.frameTrim,
+      trim: playing.frameInset,
       feet: playing.anchor('shadow'),
       shadow: playing.shadowRadius(),
     };
   });
 
   /**
-   * The box the pokemon is drawn in: the cell, sized however the caller
-   * asked. It is held before the sheet arrives so a row of squares does
-   * not jump about as they load
+   * The box the pokemon is drawn in, sized however the caller asked. It
+   * is held before the sheet arrives so a row of squares does not jump
+   * about as they load
    */
   const box = (): JSX.CSSProperties => {
     const cell = drawn()?.cell ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };

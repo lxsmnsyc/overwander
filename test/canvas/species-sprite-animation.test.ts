@@ -157,22 +157,49 @@ describe('sprite metadata', () => {
         );
         expect(target.directions.length, `${species} ${anim.target} rows`).toBe(target.rows);
         expect(anim.durations.length, `${species} ${anim.name} durations`).toBe(target.columns);
-        // What is packed is the **pictures**, which on a deduped sheet
-        // is fewer than the frames: half of a grid is a pose held or a
-        // row mirrored, and those are kept once
-        const cells = target.cells ?? { columns: target.columns, rows: target.rows };
+        // What is packed is the **pictures**, which is fewer than the
+        // frames: half of a grid is a pose held or a row mirrored, and
+        // those are kept once. Each is cropped to what is drawn in it,
+        // so they are all different sizes and all inside the region
+        const pictures = target.pictures;
 
-        expect(packed?.width, `${species} ${anim.target} grid width`).toBe(
-          cells.columns * target.frameWidth,
-        );
-        expect(packed?.height, `${species} ${anim.target} grid height`).toBe(
-          cells.rows * target.frameHeight,
-        );
-        // And every frame is drawn from one of them
+        if (pictures == null) {
+          const cells = target.cells ?? { columns: target.columns, rows: target.rows };
+
+          expect(packed?.width, `${species} ${anim.target} grid width`).toBe(
+            cells.columns * target.frameWidth,
+          );
+          expect(packed?.height, `${species} ${anim.target} grid height`).toBe(
+            cells.rows * target.frameHeight,
+          );
+        } else {
+          for (const picture of pictures) {
+            expect(picture.x + picture.width, `${species} ${anim.target} picture right`).toBeLessThanOrEqual(
+              packed?.width ?? 0,
+            );
+            expect(picture.y + picture.height, `${species} ${anim.target} picture bottom`).toBeLessThanOrEqual(
+              packed?.height ?? 0,
+            );
+          }
+        }
+        // And every frame is drawn from one of them, hung somewhere
+        // inside its box
+        const held =
+          pictures?.length ??
+          (target.cells == null
+            ? target.columns * target.rows
+            : target.cells.columns * target.cells.rows);
+
         for (const frame of target.frames) {
           if (frame.cell != null) {
-            expect(frame.cell, `${species} ${anim.target} cell`).toBeLessThan(
-              cells.columns * cells.rows,
+            expect(frame.cell, `${species} ${anim.target} cell`).toBeLessThan(held);
+          }
+          if (frame.at != null && frame.cell != null && pictures != null) {
+            expect(frame.at[0] + pictures[frame.cell].width, `${species} ${anim.target} hangs`).toBeLessThanOrEqual(
+              target.frameWidth,
+            );
+            expect(frame.at[1] + pictures[frame.cell].height, `${species} ${anim.target} hangs`).toBeLessThanOrEqual(
+              target.frameHeight,
             );
           }
         }
@@ -560,25 +587,24 @@ describe('drawing a pokemon somewhere', () => {
 
     const scale = 3;
     const shadow = sprite.anchor('shadow');
-    // The size it is stored at, not the cell it was drawn in: a
-    // compact sheet holds the frames cropped, and the source rectangle
-    // has to be the crop
-    const { width, height } = sprite.frameSize;
+    // The picture it is stored as, not the cell it was drawn in: the
+    // sheet holds each frame cropped to what is lit, and the source
+    // rectangle has to be that crop
+    const picture = sprite.frameBox;
+    const inset = sprite.frameInset;
 
     sprite.draw(context, 100, 200, { scale, anchor: 'shadow' });
 
     const [sx, sy, sw, sh, dx, dy, dw, dh] = drawn[0];
-    const image = SAMPLE.sheet.images.find((entry) => entry.name === 'Idle');
 
-    // The frame it took: the first column of the first row of the Idle
-    // grid, wherever the packer put that grid
-    expect([sx, sy]).toEqual([image?.x, image?.y]);
-    expect([sw, sh]).toEqual([width, height]);
-    expect([dw, dh]).toEqual([width * scale, height * scale]);
+    // The picture it took, wherever the packer put it
+    expect([sx, sy]).toEqual([picture?.x, picture?.y]);
+    expect([sw, sh]).toEqual([picture?.width, picture?.height]);
+    expect([dw, dh]).toEqual([(picture?.width ?? 0) * scale, (picture?.height ?? 0) * scale]);
     // And where it put it: the middle of the marked pixel lands on the
-    // point, so the rest of the frame hangs off wherever that leaves it
-    expect(dx).toBeCloseTo(100 - ((shadow?.[0] ?? 0) + 0.5) * scale);
-    expect(dy).toBeCloseTo(200 - ((shadow?.[1] ?? 0) + 0.5) * scale);
+    // point, and the picture hangs where its box hangs it
+    expect(dx).toBeCloseTo(100 - ((shadow?.[0] ?? 0) + 0.5) * scale + inset[0] * scale);
+    expect(dy).toBeCloseTo(200 - ((shadow?.[1] ?? 0) + 0.5) * scale + inset[1] * scale);
   });
 
   it('answers where anything else on the pokemon landed', () => {
@@ -631,12 +657,19 @@ describe('drawing a pokemon somewhere', () => {
     // and the pokemon would hold still. Registering the clip once — on
     // the pose it rests in — leaves the movement on screen
     sprite.play(moving.anim, { direction: SPRITE_DIRECTIONS[moving.row], restart: true });
-    sprite.draw(context, 100, 200, { scale: 2, anchor: 'shadow' });
+
+    const scale = 2;
+    const held = sprite.frameInset;
+
+    sprite.draw(context, 100, 200, { scale, anchor: 'shadow' });
 
     const first = sprite.anchor('shadow');
 
     sprite.update(moving.at);
-    sprite.draw(context, 100, 200, { scale: 2, anchor: 'shadow' });
+
+    const moved = sprite.frameInset;
+
+    sprite.draw(context, 100, 200, { scale, anchor: 'shadow' });
 
     const later = sprite.anchor('shadow');
 
@@ -644,9 +677,13 @@ describe('drawing a pokemon somewhere', () => {
     expect(later, 'and the frame it landed on is marked somewhere else').not.toEqual(first);
     // A different frame of the sheet...
     expect(drawn[1][0]).not.toBe(drawn[0][0]);
-    // ...drawn in the same place, which is what makes the difference
-    // between the two frames visible
-    expect([drawn[1][4], drawn[1][5]]).toEqual([drawn[0][4], drawn[0][5]]);
+    // ...whose box is in the same place, which is what makes the
+    // difference between the two frames visible. The pictures
+    // themselves hang wherever their own crop leaves them
+    expect([
+      drawn[1][4] - moved[0] * scale,
+      drawn[1][5] - moved[1] * scale,
+    ]).toEqual([drawn[0][4] - held[0] * scale, drawn[0][5] - held[1] * scale]);
   });
 
   it('leaves the ground where it was while the pokemon moves over it', () => {

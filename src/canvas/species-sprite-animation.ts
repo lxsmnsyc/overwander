@@ -149,12 +149,18 @@ interface Clip {
  * it, and anybody asking where a pokemon's head is
  */
 interface Placement {
-  /** The frame's rectangle on the sheet */
+  /** The picture's rectangle on the sheet */
   left: number;
   top: number;
   frameWidth: number;
   frameHeight: number;
-  /** Where the frame's top left corner lands, before any mirroring */
+  /**
+   * Where the picture hangs inside the frame's box, in sheet pixels
+   * and already turned round for a mirrored draw
+   */
+  insetX: number;
+  insetY: number;
+  /** Where the frame's box lands, before any mirroring */
   originX: number;
   originY: number;
   width: number;
@@ -464,23 +470,48 @@ export default class SpeciesSpriteAnimation {
    * grid — and a frame the packer kept the other way round is that
    * picture mirrored
    */
-  private get picture(): { x: number; y: number; mirrored: boolean } | null {
+  private get picture(): {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    at: Point;
+    mirrored: boolean;
+  } | null {
     const clip = this.clip;
 
     if (clip == null) {
       return null;
     }
-    const { frameWidth, frameHeight, cells } = clip.target;
-    const at = this.anchorsAt(this.frame);
+    const { frameWidth, frameHeight, cells, pictures } = clip.target;
+    const marks = this.anchorsAt(this.frame);
+    const cell = marks?.cell ?? null;
+    const held = pictures == null || cell == null ? null : pictures[cell];
+
+    // A sheet cropped to the lit pixels names a rectangle for every
+    // picture and hangs the frame's own somewhere in its box
+    if (held != null) {
+      return {
+        x: clip.image.x + held.x,
+        y: clip.image.y + held.y,
+        width: held.width,
+        height: held.height,
+        at: marks?.at ?? [0, 0],
+        mirrored: marks?.flip === true,
+      };
+    }
     // An old sheet says nothing about pictures, and its frames **are**
     // its pictures: the frame's own square in the grid
-    const column = cells == null || at?.cell == null ? this.frame : at.cell % cells.columns;
-    const row = cells == null || at?.cell == null ? this.row : Math.floor(at.cell / cells.columns);
+    const column = cells == null || cell == null ? this.frame : cell % cells.columns;
+    const row = cells == null || cell == null ? this.row : Math.floor(cell / cells.columns);
 
     return {
       x: clip.image.x + column * frameWidth,
       y: clip.image.y + row * frameHeight,
-      mirrored: at?.flip === true,
+      width: frameWidth,
+      height: frameHeight,
+      at: [0, 0],
+      mirrored: marks?.flip === true,
     };
   }
 
@@ -510,10 +541,18 @@ export default class SpeciesSpriteAnimation {
     return {
       x: picture.x,
       y: picture.y,
-      width: clip.target.frameWidth,
-      height: clip.target.frameHeight,
+      width: picture.width,
+      height: picture.height,
       mirrored: picture.mirrored,
     };
+  }
+
+  /**
+   * Where the frame showing hangs inside its box. A caller placing the
+   * picture itself needs it; anything drawing through `draw` does not
+   */
+  get frameInset(): Point {
+    return this.picture?.at ?? [0, 0];
   }
 
   /**
@@ -751,11 +790,19 @@ export default class SpeciesSpriteAnimation {
     // as it was from the left
     const acrossFrame = flip ? frameWidth - 1 - anchor[0] : anchor[0];
 
+    const inset = picture?.at ?? [0, 0];
+    const pictureWidth = picture?.width ?? frameWidth;
+    const pictureHeight = picture?.height ?? frameHeight;
+
     return {
       left: picture?.x ?? clip.image.x,
       top: picture?.y ?? clip.image.y,
-      frameWidth,
-      frameHeight,
+      frameWidth: pictureWidth,
+      frameHeight: pictureHeight,
+      // Turned round with the frame: mirrored, a picture sits as far
+      // from the right edge of the box as it sat from the left
+      insetX: flip ? frameWidth - inset[0] - pictureWidth : inset[0],
+      insetY: inset[1],
       // The middle of the marked pixel rather than its corner: a
       // marker is a pixel, and half of one matters once a sprite is
       // drawn at four times its size
@@ -891,8 +938,13 @@ export default class SpeciesSpriteAnimation {
       context.globalAlpha = options.alpha;
     }
 
+    const left = placed.originX + placed.insetX * placed.scale;
+    const top = placed.originY + placed.insetY * placed.scale;
+    const width = placed.frameWidth * placed.scale;
+    const height = placed.frameHeight * placed.scale;
+
     if (placed.mirror) {
-      context.translate(placed.originX + placed.width, placed.originY);
+      context.translate(left + width, top);
       context.scale(-1, 1);
       context.drawImage(
         image,
@@ -902,8 +954,8 @@ export default class SpeciesSpriteAnimation {
         placed.frameHeight,
         0,
         0,
-        placed.width,
-        placed.height,
+        width,
+        height,
       );
     } else {
       context.drawImage(
@@ -912,10 +964,10 @@ export default class SpeciesSpriteAnimation {
         placed.top,
         placed.frameWidth,
         placed.frameHeight,
-        placed.originX,
-        placed.originY,
-        placed.width,
-        placed.height,
+        left,
+        top,
+        width,
+        height,
       );
     }
     context.restore();

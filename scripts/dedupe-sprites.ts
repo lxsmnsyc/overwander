@@ -1,20 +1,21 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import dedupe, { blankPixels, drawCells, packedGrid } from '../src/server/sprites/dedupe.ts';
+import type { Deduped, Pixels, Rect } from '../src/server/sprites/dedupe.ts';
+import dedupe, { blankPixels, drawPictures, packedGrid } from '../src/server/sprites/dedupe.ts';
 import pack from '../src/server/sprites/packing.ts';
 import decode, { encodeSmallest } from '../src/server/sprites/png.ts';
 
 /**
- * Packs every sheet that already ships once instead of twice.
+ * Packs every sheet that already ships to the pixels that are lit.
  *
- * A sheet holds each frame of each direction, and about half of those
- * are a picture the sheet already has — a pose held for ten frames, or
- * a row that is another row mirrored. This finds them by comparing
- * pixels across every coat of the pokemon, keeps one of each, and
- * writes the sheets and the description again with the frames pointing
- * at what they are drawn from.
+ * A clip's box has to hold its widest lunge, so every quieter frame of
+ * it rattles around inside a box drawn for one reach — about four
+ * fifths of a sheet is empty by area. This crops each picture to what
+ * is drawn in it, keeps one copy of each distinct one, and writes the
+ * sheets and the description again with every frame saying which
+ * picture it is and where in the box that picture sits.
  *
  * It replaces the files in place, which is safe to run twice: a sheet
- * already packed this way has nothing left to find, and comes out the
+ * already packed this way has nothing left to crop, and comes out the
  * same size it went in.
  */
 
@@ -24,13 +25,19 @@ const COATS = [
   { path: (stem: string) => `${ROOT}/shiny/${stem}.png`, name: 'shiny' },
 ];
 
+interface Frame extends Record<string, unknown> {
+  cell?: number;
+  flip?: boolean;
+}
+
 interface Sprite {
   frameWidth: number;
   frameHeight: number;
   columns: number;
   rows: number;
-  frames: Record<string, unknown>[];
+  frames: Frame[];
   cells?: { columns: number; rows: number };
+  pictures?: Rect[];
 }
 
 interface Box {
@@ -46,6 +53,18 @@ interface Sheet {
   // The description is read off disk, so a clip named in the layout
   // and missing from here is a file somebody edited by hand
   sprites: Record<string, Sprite | undefined>;
+}
+
+/** One clip, once its pictures have been cropped and laid out again. */
+interface Packed {
+  /** Where each kept picture is read from on the sheet as it stands. */
+  pictures: Rect[];
+  /** Where each of them goes inside the clip's new region. */
+  spots: ({ x: number; y: number } | undefined)[];
+  /** One a frame of the clip, in the description's own order. */
+  frames: { cell: number; flip: boolean; at: [number, number] }[];
+  width: number;
+  height: number;
 }
 
 function say(message: string): void {
@@ -68,9 +87,72 @@ function coatsOf(species: string): { name: string; path: string }[] {
   return found;
 }
 
+/**
+ * The clip's frames as they point at pictures today.
+ *
+ * A sheet packed before the repeats were found has no pictures of its
+ * own: every frame is its own square in the grid, in reading order
+ */
+function pointersOf(sprite: Sprite): { cell: number; flip: boolean }[] {
+  return sprite.frames.map((frame, at) => ({
+    cell: typeof frame.cell === 'number' ? frame.cell : at,
+    flip: frame.flip === true,
+  }));
+}
+
+/**
+ * Crops one clip's pictures and lays them out again.
+ *
+ * The sheet on disk is the source: its pictures are read as a grid,
+ * cropped to what is drawn in them, and matched against each other
+ * once more — cropping turns two poses that differ only in where they
+ * sit into one picture the frames hang in different places
+ */
+function repack(sprite: Sprite, box: Box, drawings: Pixels[]): Packed {
+  const columns = sprite.cells?.columns ?? sprite.columns;
+  const rows = sprite.cells?.rows ?? sprite.rows;
+  const grid = packedGrid(box.x, box.y, sprite.frameWidth, sprite.frameHeight, columns, rows);
+  const found: Deduped = dedupe(drawings.map((raster) => ({ raster, grid })));
+  const pointers = pointersOf(sprite);
+  const frames = pointers.map((pointer) => {
+    const held = found.frames[pointer.cell];
+    const picture = found.pictures[held.cell];
+    // A frame drawn from the other side of its picture sits as far from
+    // the right edge of the box as the picture sat from the left
+    const x = pointer.flip ? sprite.frameWidth - held.at[0] - picture.width : held.at[0];
+
+    return {
+      cell: held.cell,
+      flip: held.flip !== pointer.flip,
+      at: [x, held.at[1]] as [number, number],
+    };
+  });
+
+  // A grid holds a square for every slot, and the last row of one is
+  // usually part empty: those pictures are nothing any frame asks for
+  const wanted = [...new Set(frames.map((frame) => frame.cell))].sort((one, two) => one - two);
+  const moved = new Map(wanted.map((cell, at) => [cell, at]));
+  const pictures = wanted.map((cell) => found.pictures[cell]);
+  const inside = pack(pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })));
+  const spots: ({ x: number; y: number } | undefined)[] = [];
+
+  for (const { box: placed, x, y } of inside.placed) {
+    spots[placed.at] = { x, y };
+  }
+  return {
+    pictures,
+    spots,
+    frames: frames.map((frame) => ({ ...frame, cell: moved.get(frame.cell) ?? 0 })),
+    width: inside.width,
+    height: inside.height,
+  };
+}
+
 let sheets = 0;
 let before = 0;
 let after = 0;
+let wasArea = 0;
+let isArea = 0;
 
 for (const file of readdirSync(`${ROOT}/meta`).sort()) {
   // Both coats and both forms share one description, so a `_f` file
@@ -104,7 +186,7 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
   }
 
   // What each clip keeps, worked out once and used for every coat
-  const kept = new Map<string, ReturnType<typeof dedupe>>();
+  const kept = new Map<string, Packed>();
   const boxes: { name: string; w: number; h: number }[] = [];
 
   for (const [name, sprite] of Object.entries(meta.sprites)) {
@@ -113,22 +195,16 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
     if (box == null || sprite == null) {
       continue;
     }
-    const grid = packedGrid(
-      box.x,
-      box.y,
-      sprite.frameWidth,
-      sprite.frameHeight,
-      sprite.columns,
-      sprite.rows,
+    const found = repack(
+      sprite,
+      box,
+      drawings.map((drawing) => drawing.raster),
     );
-    const found = dedupe(drawings.map((drawing) => ({ raster: drawing.raster, grid })));
 
     kept.set(name, found);
-    boxes.push({
-      name,
-      w: found.columns * sprite.frameWidth,
-      h: found.rows * sprite.frameHeight,
-    });
+    boxes.push({ name, w: found.width, h: found.height });
+    wasArea += box.width * box.height;
+    isArea += found.width * found.height;
   }
 
   const layout = pack(boxes);
@@ -138,27 +214,12 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
     const sheet = blankPixels(layout.width, layout.height);
 
     for (const { box, x, y } of layout.placed) {
-      const sprite = meta.sprites[box.name];
       const found = kept.get(box.name);
-      const was = placed.get(box.name);
 
-      if (sprite == null || found == null || was == null) {
+      if (found == null) {
         continue;
       }
-      drawCells(
-        sheet,
-        drawing.raster,
-        packedGrid(
-          was.x,
-          was.y,
-          sprite.frameWidth,
-          sprite.frameHeight,
-          sprite.columns,
-          sprite.rows,
-        ),
-        { x, y },
-        found,
-      );
+      drawPictures(sheet, drawing.raster, found.pictures, found.spots, { x, y });
       if (drawing === drawings[0]) {
         images.push({ name: box.name, x, y, width: box.w, height: box.h });
       }
@@ -180,26 +241,32 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
     if (found == null || sprite == null) {
       continue;
     }
-    sprite.cells = { columns: found.columns, rows: found.rows };
+    sprite.pictures = found.pictures.map((picture, at) => ({
+      x: found.spots[at]?.x ?? 0,
+      y: found.spots[at]?.y ?? 0,
+      width: picture.width,
+      height: picture.height,
+    }));
+    // The grid of squares is what the pictures replace
+    sprite.cells = undefined;
     sprite.frames = sprite.frames.map((frame, at) => ({
       ...frame,
       cell: found.frames[at]?.cell ?? 0,
       flip: found.frames[at]?.flip ?? false,
+      at: found.frames[at]?.at ?? [0, 0],
     }));
   }
   meta.sheet = { width: layout.width, height: layout.height, images };
   writeFileSync(`${ROOT}/meta/${file}`, `${JSON.stringify(meta, null, 2)}\n`);
 
-  const cells = [...kept.values()].reduce((sum, found) => sum + found.cells.length, 0);
-  const frames = [...kept.values()].reduce((sum, found) => sum + found.frames.length, 0);
-
   sheets += 1;
   say(
-    `${species}: ${frames} frames → ${cells} pictures (${Math.round((1 - cells / frames) * 100)}% saved), ` +
+    `${species}: ${[...kept.values()].reduce((sum, found) => sum + found.pictures.length, 0)} pictures, ` +
       `${layout.width}×${layout.height}, ${drawings.length} coats`,
   );
 }
 
 say(
-  `\n${sheets} sheets, ${(before / 1048576).toFixed(1)}MB → ${(after / 1048576).toFixed(1)}MB on disk`,
+  `\n${sheets} sheets, ${(before / 1048576).toFixed(1)}MB → ${(after / 1048576).toFixed(1)}MB on disk, ` +
+    `${(wasArea / 1e6).toFixed(0)}M → ${(isArea / 1e6).toFixed(0)}M pixels`,
 );

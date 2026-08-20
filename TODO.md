@@ -10,8 +10,9 @@
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] Battle summary
-- [ ] effect sprites
 - [ ] catch tags
+- [ ] group by generation
+- [ ] tileset
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
 

@@ -1,8 +1,10 @@
 import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
 import {
+  AutocompleteStateChild,
   ComboboxInput,
   ComboboxOption,
   ComboboxOptions,
+  DisclosureStateChild,
   Combobox as HeadlessCombobox,
   Transition,
 } from 'terracotta';
@@ -19,6 +21,12 @@ import dismissOutside from './dismiss';
  * The rule for reaching for this over `Select` is the length of the
  * list, not the kind of value: past a screenful, reading is slower than
  * typing three letters.
+ *
+ * Terracotta owns the narrowing and the opening. Every option is
+ * rendered and each one is told whether it `matches()` the query, so
+ * the filtering, the wait after the last keystroke and the list
+ * dropping as soon as something is typed all come from it — `matchBy`
+ * is the only part of that written here.
  *
  * Asked for `multiple`, it takes any number of them. What is picked
  * stands over the box as a row of badges rather than as text in it —
@@ -67,11 +75,18 @@ export interface MultipleComboboxProps<V> extends ComboboxBaseProps<V> {
 
 export type ComboboxProps<V> = MultipleComboboxProps<V> | SingleComboboxProps<V>;
 
+/**
+ * A row of the list. Every option is drawn and terracotta marks each
+ * one — picked, under the keyboard, still matching the query — so the
+ * whole of the narrowing is the last line: an option the query left
+ * behind takes up no room rather than being drawn empty
+ */
 const OPTION =
   'cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
   ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-on-accent' +
   ' aria-selected:hover:bg-tide-dark aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
-  ' [&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark';
+  ' [&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark' +
+  ' [&:not([tc-matches])]:hidden';
 
 /**
  * The cross on a badge: a round button of a fixed size with the mark
@@ -88,25 +103,11 @@ const DROP =
   ' focus-visible:outline-offset-1 focus-visible:outline-tide disabled:cursor-not-allowed';
 
 export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
-  const [open, setOpen] = createSignal(false);
-  /** What has been typed, which narrows the list without choosing from it */
-  const [typed, setTyped] = createSignal('');
   /** The whole control, for working out what is a press away from it */
   const [root, setRoot] = createSignal<HTMLElement>();
 
-  dismissOutside(root, open, () => {
-    setOpen(false);
-    // Back to the name of what is chosen, the same as a list shut any
-    // other way: a box left holding half a search says the wrong value
-    setTyped('');
-  });
-
   const named = (value: V | null): string =>
     props.options.find((option) => option.value === value)?.label ?? '';
-
-  /** Whether the box will hold nothing more */
-  const full = (): boolean =>
-    props.multiple === true && props.limit != null && props.value.length >= props.limit;
 
   /** Everything picked, whichever mode this is in */
   const picked = (): V[] => {
@@ -119,66 +120,115 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
   /** What is in the box, for the membership the list asks per option */
   const chosen = createMemo(() => new Set(picked()));
 
-  /**
-   * What is left after the typing. An empty box is the whole list
-   * rather than nothing, since the box opens empty
-   */
-  const showing = (): ComboboxOptionData<V>[] => {
-    const query = typed().trim().toLowerCase();
+  /** Whether the box will hold nothing more */
+  const full = (): boolean =>
+    props.multiple === true && props.limit != null && props.value.length >= props.limit;
 
-    return query === ''
-      ? props.options
-      : props.options.filter((option) => option.label.toLowerCase().includes(query));
-  };
+  const matchBy = (value: V, query: string): boolean =>
+    named(value).toLowerCase().includes(query.trim().toLowerCase());
 
-  const shut = (state: boolean): void => {
-    setOpen(state);
-    if (!state) {
-      setTyped('');
-    }
-  };
+  const box = (parts: { id: string; describedBy: string | undefined }): JSX.Element => (
+    <ComboboxInput
+      id={parts.id}
+      // Taking several, the box stays a search box: the names are in
+      // the badges over it, and one of them repeated inside would be
+      // the value said twice
+      value={props.multiple === true ? undefined : named(props.value)}
+      placeholder={props.placeholder ?? 'Search…'}
+      disabled={props.disabled}
+      aria-describedby={parts.describedBy}
+      aria-invalid={props.error == null ? undefined : true}
+      aria-required={props.required}
+      class={`w-full ${props.error == null ? '' : 'border-ember'}`}
+    />
+  );
 
-  /**
-   * What the box reads while nobody is typing in it. Taking several,
-   * it stays a search box — the names are in the badges over it, and
-   * one of them repeated inside would be the value said twice
-   */
-  const inside = (): string => {
-    if (open() || props.multiple === true) {
-      return typed();
-    }
-    return named(props.value);
-  };
-
-  /** The list itself, which is the same either way it is being used */
+  /** The list, which is the same either way the box is being used */
   const list = (): JSX.Element => (
-    <Transition show={open()} {...SHEER} class="absolute top-full left-0 z-20 mt-1.5 w-full">
-      <ComboboxOptions
-        unmount={false}
-        onTransitionEnd={holdFade}
-        inert={!open()}
-        class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-          border-2 border-tide bg-paper p-1 shadow-pop"
-      >
-        <For each={showing()}>
-          {(option) => (
-            <ComboboxOption
-              class={OPTION}
-              value={option.value}
-              // A full box still lets go of what is in it: what is
-              // already picked stays pressable, since pressing it is
-              // how it comes off
-              disabled={option.disabled === true || (full() && !chosen().has(option.value))}
+    <DisclosureStateChild>
+      {(disclosure) => {
+        // Terracotta shuts it on Escape and on the focus leaving; this
+        // is the press on ground that takes no focus, which moves none
+        dismissOutside(root, disclosure.isOpen, disclosure.close);
+
+        return (
+          <Transition
+            show={disclosure.isOpen()}
+            {...SHEER}
+            class="absolute top-full left-0 z-20 mt-1.5 w-full"
+          >
+            <ComboboxOptions
+              unmount={false}
+              onTransitionEnd={holdFade}
+              inert={!disclosure.isOpen()}
+              class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
+                border-2 border-tide bg-paper p-1 shadow-pop"
             >
-              {option.label}
-            </ComboboxOption>
+              <For each={props.options}>
+                {(option) => (
+                  <ComboboxOption
+                    class={OPTION}
+                    value={option.value}
+                    // A full box still lets go of what is in it: what
+                    // is already picked stays pressable, since
+                    // pressing it is how it comes off
+                    disabled={option.disabled === true || (full() && !chosen().has(option.value))}
+                  >
+                    {option.label}
+                  </ComboboxOption>
+                )}
+              </For>
+              {/* Nothing left after the query, which the options
+                  cannot say between them: each one only knows about
+                  itself */}
+              <AutocompleteStateChild>
+                {(state) => (
+                  <Show when={props.options.every((option) => !state.matches(option.value))}>
+                    <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
+                  </Show>
+                )}
+              </AutocompleteStateChild>
+            </ComboboxOptions>
+          </Transition>
+        );
+      }}
+    </DisclosureStateChild>
+  );
+
+  const badges = (many: MultipleComboboxProps<V>): JSX.Element => (
+    <Show when={many.value.length > 0}>
+      <div class="flex flex-wrap gap-1">
+        <For each={many.value}>
+          {(value) => (
+            <Badge tone="tide" class="py-0.5 pr-1 pl-2 text-xs">
+              {named(value)}
+              <button
+                type="button"
+                class={DROP}
+                disabled={props.disabled}
+                aria-label={`Remove ${named(value)}`}
+                onClick={() => {
+                  many.onChange(many.value.filter((kept) => kept !== value));
+                }}
+              >
+                {/* Drawn rather than a character: a glyph sits on its
+                    own baseline, and no amount of leading puts it in
+                    the middle of a circle */}
+                <svg viewBox="0 0 10 10" class="size-2.5" aria-hidden="true">
+                  <path
+                    d="M2.5 2.5l5 5M7.5 2.5l-5 5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </Badge>
           )}
         </For>
-        <Show when={showing().length === 0}>
-          <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
-        </Show>
-      </ComboboxOptions>
-    </Transition>
+      </div>
+    </Show>
   );
 
   return (
@@ -189,122 +239,60 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
       required={props.required}
       class={props.class}
     >
-      {(parts) => {
-        const box = (): JSX.Element => (
-          <ComboboxInput
-            id={parts.id}
-            value={inside()}
-            placeholder={props.placeholder ?? 'Search…'}
-            disabled={props.disabled}
-            aria-describedby={parts.describedBy}
-            aria-invalid={props.error == null ? undefined : true}
-            aria-required={props.required}
-            class={`w-full ${props.error == null ? '' : 'border-ember'}`}
-            onInput={(event: InputEvent) => {
-              const typing = event.currentTarget;
-
-              setOpen(true);
-              if (typing instanceof HTMLInputElement) {
-                setTyped(typing.value);
-              }
-            }}
-          />
-        );
-
-        return (
-          <Show
-            when={props.multiple === true ? props : null}
-            keyed
-            fallback={
-              <HeadlessCombobox
-                ref={(element: HTMLElement) => {
-                  setRoot(element);
-                }}
-                isOpen={open()}
-                onDisclosureChange={shut}
-                disabled={props.disabled}
-                value={props.multiple === true ? null : props.value}
-                matchBy={(value: V | null, query: string) =>
-                  named(value).toLowerCase().includes(query.toLowerCase())
+      {(parts) => (
+        <Show
+          when={props.multiple === true ? props : null}
+          keyed
+          fallback={
+            <HeadlessCombobox
+              ref={(element: HTMLElement) => {
+                setRoot(element);
+              }}
+              defaultOpen={false}
+              disabled={props.disabled}
+              value={props.multiple === true ? null : props.value}
+              matchBy={(value: V | null, query: string) => value != null && matchBy(value, query)}
+              onSelectChange={(value?: V | null) => {
+                if (value != null && props.multiple !== true) {
+                  props.onChange(value);
                 }
-                onSelectChange={(value?: V | null) => {
-                  if (value != null && props.multiple !== true) {
-                    props.onChange(value);
-                  }
-                }}
-                class="relative"
-              >
-                {box()}
-                {list()}
-              </HeadlessCombobox>
-            }
-          >
-            {(many) => (
-              <HeadlessCombobox
-                ref={(element: HTMLElement) => {
-                  setRoot(element);
-                }}
-                multiple
-                // Picking what is already picked takes it off again, so
-                // the list says the same thing as the badges over it
-                toggleable
-                isOpen={open()}
-                onDisclosureChange={shut}
-                disabled={props.disabled}
-                value={many.value}
-                matchBy={(value: V, query: string) =>
-                  named(value).toLowerCase().includes(query.toLowerCase())
+              }}
+              class="relative"
+            >
+              {box(parts)}
+              {list()}
+            </HeadlessCombobox>
+          }
+        >
+          {(many) => (
+            <HeadlessCombobox
+              ref={(element: HTMLElement) => {
+                setRoot(element);
+              }}
+              multiple
+              // Picking what is already picked takes it off again, so
+              // the list says the same thing as the badges over it
+              toggleable
+              defaultOpen={false}
+              disabled={props.disabled}
+              value={many.value}
+              matchBy={matchBy}
+              onSelectChange={(values: V[]) => {
+                // Terracotta has already added it by the time this is
+                // heard, so a pick past the limit is refused here
+                if (many.limit == null || values.length <= many.limit) {
+                  many.onChange(values);
                 }
-                onSelectChange={(values: V[]) => {
-                  // Terracotta has already added it by the time this
-                  // is heard, so a pick past the limit is refused here
-                  if (many.limit == null || values.length <= many.limit) {
-                    many.onChange(values);
-                  }
-                }}
-                class="relative flex flex-col gap-1.5"
-              >
-                <Show when={picked().length > 0}>
-                  <div class="flex flex-wrap gap-1">
-                    <For each={picked()}>
-                      {(value) => (
-                        <Badge tone="tide" class="py-0.5 pr-1 pl-2 text-xs">
-                          {named(value)}
-                          <button
-                            type="button"
-                            class={DROP}
-                            disabled={props.disabled}
-                            aria-label={`Remove ${named(value)}`}
-                            onClick={() => {
-                              many.onChange(many.value.filter((kept) => kept !== value));
-                            }}
-                          >
-                            {/* Drawn rather than a character: a glyph
-                                sits on its own baseline, and no amount
-                                of leading puts it in the middle of a
-                                circle */}
-                            <svg viewBox="0 0 10 10" class="size-2.5" aria-hidden="true">
-                              <path
-                                d="M2.5 2.5l5 5M7.5 2.5l-5 5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                              />
-                            </svg>
-                          </button>
-                        </Badge>
-                      )}
-                    </For>
-                  </div>
-                </Show>
-                {box()}
-                {list()}
-              </HeadlessCombobox>
-            )}
-          </Show>
-        );
-      }}
+              }}
+              class="relative flex flex-col gap-1.5"
+            >
+              {badges(many)}
+              {box(parts)}
+              {list()}
+            </HeadlessCombobox>
+          )}
+        </Show>
+      )}
     </FieldFrame>
   );
 }

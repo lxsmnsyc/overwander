@@ -69,10 +69,12 @@ test.describe('the catch sheet', () => {
     await expect(sheet.getByText(/Remaining: \d+/)).toBeVisible();
   });
 
-  test('offers the bag as one button that says how full the pokemon is', async ({ page }) => {
+  test('draws the room a pokemon has to carry things as squares', async ({ page }) => {
     const sheet = await openCatch(page);
 
-    await expect(sheet.getByRole('button', { name: /^Give item \d+\/\d+$/ })).toBeVisible();
+    // The tray says how full it is by how many squares are filled, so
+    // the empty one is both the count and the way to fill it
+    await expect(sheet.getByRole('button', { name: 'Give it an item' }).first()).toBeVisible();
   });
 
   test('marks a favorite without tearing the page down', async ({ page }) => {

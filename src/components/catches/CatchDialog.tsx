@@ -93,6 +93,8 @@ import {
   isMachineItem,
 } from '../../data/ids/items';
 import { EvolutionMethod, Genders, Species } from '../../data/ids/species';
+import ItemCard from '../items/ItemCard';
+import MoveHoverCard from '../moves/MoveHoverCard';
 import { getItemData } from '../../data/items';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { isHerbal } from '../../data/items/medicine';
@@ -122,12 +124,11 @@ import { describeAbility, detailAbility } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import IncreasePPDialog from './IncreasePPDialog';
 import InventoryPicker from '../items/InventoryPicker';
-import { describeItem, detailItem } from '../items/ItemGrid';
+import { describeItem } from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import SpeciesCoat from '../sprites/SpeciesCoat';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeachMoveDialog from './TeachMoveDialog';
-import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { TabGroup, TabPanel } from 'terracotta';
 import {
@@ -138,6 +139,7 @@ import {
   DialogSection,
   Divider,
   Field,
+  HoverCard,
   List,
   ListRow,
   Menu,
@@ -310,6 +312,28 @@ function isMeasurableEvolution(evolution: EvolutionData): boolean {
   const { method } = evolution;
 
   return method !== 0 && (method & ~SUPPORTED_METHODS) === 0;
+}
+
+/**
+ * How big a held-item picture is drawn in the tray. Small enough that
+ * four of them fit across a third of the sheet
+ */
+const ITEM_SPRITE = 28;
+
+/**
+ * The squares the tray draws: what it is holding, plus the room it
+ * still has. The room belongs to the pokemon — a Utility Belt widens
+ * it — and is only drawn for somebody who can fill it
+ */
+function itemSlots(caught: CaughtPokemon, mine: boolean): null[] {
+  return Array.from(
+    {
+      length: mine
+        ? Math.max(caught.items.length, getCatchSlots(caught, Slots.Item))
+        : caught.items.length,
+    },
+    () => null,
+  );
 }
 
 /**
@@ -2003,148 +2027,170 @@ function CatchSheetBody(
                     </TabGroup>
                   </DialogSection>
 
-                  <DialogSection title="Moves">
-                    <Show when={loaded().moves.length} fallback={<Note>It knows nothing.</Note>}>
-                      <List>
-                        <For each={loaded().moves}>
-                          {(move) => (
-                            <ListRow class="flex-col items-stretch gap-1">
-                              <span class="flex items-center justify-between gap-2">
-                                <span class="flex items-center gap-2">
-                                  <TypeBadge type={getMoveData(move).type} />
-                                  {/* Which of the three kinds it is, as
-                                      the badge every game since Diamond
-                                      has used. It carries its own name
-                                      for anyone who cannot see it, so
-                                      nothing rests on the picture alone */}
-                                  <MoveCategorySprite category={getMoveData(move).category} />
-                                  <span class="font-medium">{getMoveData(move).name}</span>
-                                </span>
-                                <Meta>
-                                  {getMoveData(move).power == null
-                                    ? ''
-                                    : `${getMoveData(move).power} power · `}
-                                  {getMoveData(move).pp} PP
-                                </Meta>
-                              </span>
-                              {/* Written out rather than left to a card
-                                  over the row: the sheet is the page a
-                                  player reads a pokemon on, and a move
-                                  set is four lines */}
-                              <Meta class="text-left">{getMoveData(move).description}</Meta>
-                            </ListRow>
-                          )}
-                        </For>
-                      </List>
-                    </Show>
-                  </DialogSection>
+                  {/* What it brings to a fight, in one row: what it
+                      knows, what it is, and what it carries. They were
+                      three sections down a long sheet, which put the
+                      three answers to "can it win this" three scrolls
+                      apart */}
+                  <DialogSection>
+                    <div class="grid gap-3 sm:grid-cols-3">
+                      <div class="flex flex-col gap-1">
+                        <h4>Moves</h4>
+                        {/* The name, with the entry over it. The
+                            description was written out under each row
+                            once, which is four paragraphs in a column
+                            a third this wide */}
+                        <Show
+                          when={loaded().moves.length}
+                          fallback={<Note>It knows nothing.</Note>}
+                        >
+                          <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                            <For each={loaded().moves}>
+                              {(move) => (
+                                <li>
+                                  <MoveHoverCard class="block" move={move}>
+                                    {/* The name and nothing else: what
+                                        kind it is and what it does are
+                                        on the card over it, and three
+                                        marks in a column this narrow
+                                        left no room for the word */}
+                                    <span
+                                      class="block truncate rounded-lg border-2 border-line
+                                        bg-paper px-2 py-1 text-sm font-medium"
+                                    >
+                                      {getMoveData(move).name}
+                                    </span>
+                                  </MoveHoverCard>
+                                </li>
+                              )}
+                            </For>
+                          </ul>
+                        </Show>
+                      </div>
 
-                  <DialogSection title="Abilities">
-                    <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
-                      {/* Names in a row rather than a column of rows:
-                          a pokemon has one or two, and what each does
-                          is on the card that comes up over it */}
-                      <Row class="justify-center">
-                        <For each={loaded().abilities}>
-                          {(ability) => (
-                            <TooltipHost {...detailAbility(ability)}>
-                              <Badge>{describeAbility(ability)}</Badge>
-                            </TooltipHost>
-                          )}
-                        </For>
-                      </Row>
-                    </Show>
-                  </DialogSection>
+                      <div class="flex flex-col gap-1">
+                        <h4>Abilities</h4>
+                        <Show when={loaded().abilities.length} fallback={<Note>None.</Note>}>
+                          <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                            <For each={loaded().abilities}>
+                              {(ability) => (
+                                <li>
+                                  <TooltipHost class="block" {...detailAbility(ability)}>
+                                    <Badge class="w-full justify-center" wrap>
+                                      {describeAbility(ability)}
+                                    </Badge>
+                                  </TooltipHost>
+                                </li>
+                              )}
+                            </For>
+                          </ul>
+                        </Show>
+                      </div>
 
-                  {/* On somebody else's sheet the section is only
-                      worth a heading when it has something under it:
-                      there is no giving and no taking back, so an
-                      empty "Held items" is a title with nothing to
-                      say. On the reader's own it stays, since the
-                      button that fills it lives there */}
-                  <Show when={owned() != null || loaded().items.length > 0}>
-                    <DialogSection title="Held items">
-                      <Show when={loaded().items.length}>
-                        <List>
-                          <For each={loaded().items}>
-                            {(item) => (
-                              <ListRow>
-                                {/* The picture, then the name, with
-                                    what it does on the card that comes
-                                    up over the pair. Silent to a screen
-                                    reader, which is being read the name
-                                    beside it */}
-                                <TooltipHost
-                                  class="flex grow items-center gap-2"
-                                  {...detailItem(item)}
+                      <div class="flex flex-col gap-1">
+                        <h4>Held items</h4>
+                        {/* Squares four across, the way the bag draws
+                            them: a pokemon carries one by default and
+                            a Utility Belt widens the record's own
+                            room, so the tray is as wide as the pokemon
+                            is rather than as wide as the game allows.
+                            Room is only drawn for somebody who can
+                            fill it — an empty square on a stranger's
+                            pokemon is a button nobody may press */}
+                        <ul class="m-0 grid list-none grid-cols-4 gap-1 p-0">
+                          <Index each={itemSlots(loaded(), owned() != null)}>
+                            {(_, at) => (
+                              <li class="contents">
+                                <Show
+                                  when={at < loaded().items.length}
+                                  fallback={
+                                    <button
+                                      type="button"
+                                      disabled={frozen() || holdables().length === 0}
+                                      aria-label="Give it an item"
+                                      class="flex aspect-square cursor-pointer items-center
+                                        justify-center rounded-lg border-2 border-dashed
+                                        border-line bg-paper/40 p-0 text-muted shadow-none
+                                        hover:border-tide hover:text-tide-dark
+                                        active:translate-y-0 disabled:cursor-not-allowed"
+                                      onClick={() => {
+                                        setPanel('give');
+                                      }}
+                                    >
+                                      +
+                                    </button>
+                                  }
                                 >
-                                  <ItemSprite item={item} size={28} label="" />
-                                  <span class="grow text-left">{describeItem(item)}</span>
-                                </TooltipHost>
-                                <Show when={owned() != null}>
-                                  <Button
-                                    disabled={frozen()}
-                                    onClick={() => {
-                                      moveItem(item, false);
-                                    }}
+                                  <HoverCard
+                                    class="block"
+                                    title="Info"
+                                    footer={(close) => (
+                                      <Show
+                                        when={owned() != null}
+                                        fallback={<Button onClick={close}>Close</Button>}
+                                      >
+                                        <Button
+                                          tone="primary"
+                                          disabled={frozen()}
+                                          onClick={() => {
+                                            close();
+                                            moveItem(loaded().items[at], false);
+                                          }}
+                                        >
+                                          Take back
+                                        </Button>
+                                      </Show>
+                                    )}
+                                    trigger={
+                                      <span
+                                        class="flex aspect-square w-full items-center
+                                          justify-center rounded-lg border-2 border-line bg-paper"
+                                      >
+                                        <ItemSprite
+                                          item={loaded().items[at]}
+                                          size={ITEM_SPRITE}
+                                          label=""
+                                        />
+                                      </span>
+                                    }
                                   >
-                                    Take back
-                                  </Button>
+                                    <ItemCard item={loaded().items[at]} />
+                                  </HoverCard>
                                 </Show>
-                              </ListRow>
+                              </li>
                             )}
-                          </For>
-                        </List>
-                      </Show>
-                      {/* How many a catch holds is the record's own
-                        room, which a Utility Belt widens. The button
-                        carries the count so the section says how full
-                        it is without a sentence saying so, and it is
-                        dead rather than absent when there is nothing
-                        to give */}
-                      <Show when={owned() != null}>
-                        <Row class="justify-center">
-                          <Button
-                            disabled={
-                              frozen() ||
-                              holdables().length === 0 ||
-                              loaded().items.length >= getCatchSlots(loaded(), Slots.Item)
-                            }
-                            onClick={() => {
-                              setPanel((open) => (open === 'give' ? null : 'give'));
-                            }}
-                          >
-                            Give item {loaded().items.length}/{getCatchSlots(loaded(), Slots.Item)}
-                          </Button>
-                        </Row>
-                        {/* The bag opens as its own window rather than
-                            unfolding inside the sheet: the sheet is
-                            already a long column, and a tray of thirty
-                            squares pushed everything under it off the
-                            screen */}
-                        <InventoryPicker
-                          open={panel() === 'give'}
-                          onClose={() => {
-                            setPanel(null);
-                          }}
-                          title="Give an item"
-                          description="Choose what it should carry."
-                          entries={props.bag()}
-                          disabled={frozen()}
-                          value={null}
-                          verb="Give"
-                          filter={(entry) => isHoldable(entry.item)}
-                          onPick={(item) => {
-                            setPanel(null);
+                          </Index>
+                        </ul>
+                      </div>
+                    </div>
 
-                            if (item != null) {
-                              moveItem(item, true);
-                            }
-                          }}
-                        />
-                      </Show>
-                    </DialogSection>
-                  </Show>
+                    {/* The bag opens as its own window rather than
+                        unfolding inside the sheet: a tray of thirty
+                        squares pushed everything under it off the
+                        screen */}
+                    <Show when={owned() != null}>
+                      <InventoryPicker
+                        open={panel() === 'give'}
+                        onClose={() => {
+                          setPanel(null);
+                        }}
+                        title="Give an item"
+                        description="Choose what it should carry."
+                        entries={props.bag()}
+                        disabled={frozen()}
+                        value={null}
+                        verb="Give"
+                        filter={(entry) => isHoldable(entry.item)}
+                        onPick={(item) => {
+                          setPanel(null);
+
+                          if (item != null) {
+                            moveItem(item, true);
+                          }
+                        }}
+                      />
+                    </Show>
+                  </DialogSection>
                 </Show>
 
                 {/* Whose hands it has passed through, oldest first, and

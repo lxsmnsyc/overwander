@@ -67,6 +67,34 @@ keeps its name through evolution, which is the point of having given it one.
 Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
 single-field index on `owner` — Firestore provides that automatically.
 
+### Searching a box
+
+The search box over a collection takes `field:value` pairs — `type:fire
+is:shiny level:30-60`, quoting anything with a space — and runs in **two
+passes**. Every yes-or-no fact is asked through one field: `is:shiny`,
+`is:favorite`, `not:fainted`, rather than a field each with a 1 or a 0 after it. `planCatchSearch` works out the one term the store can answer and
+`searchCaught` asks it beside the owner; everything else is answered by
+`matchesCatch` over what came back.
+
+A term is pushed only when the query is **implied** by the predicate. A word
+that names one move, ability, nature, ball or way of being met becomes a filter;
+a word that names three stays behind, because a query has to name an id and the
+runtime matches part of a name. `family:` becomes `species in [...]`. `is:perfect`
+is an equality, since every value at its ceiling is one stored number.
+`is:fainted` and `is:fighting` become ranges over `health` and `lockedAt` — the
+same line `isLockLive` draws. `caught:2026-08` is a prefix range over the stamp.
+
+Three things are read rather than queried, by choice as much as by limitation: a
+plain name (no document store answers "holds these letters somewhere"), `type:`
+(it would be `species in [...]`, which fits for Fire and not for Water — quick
+for half the game and slow for the other half is worse than being the same
+either way), and `status:`, which is packed into one number the way the marks
+once were.
+
+Exactly one term goes down, the narrowest of them. Every field asked beside
+`owner` needs a composite index, so one keeps that list one entry per field
+rather than one per combination anybody types.
+
 ## Training and friendship
 
 Effort is not earned from what a pokemon happened to fight. Every level pays

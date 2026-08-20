@@ -4,12 +4,13 @@ import {
   Show,
   Suspense,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
   untrack,
 } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
-import { type CaughtPokemon, giveItem, listCaught, takeItem } from '../../auth/caught';
+import { type CaughtPokemon, giveItem, searchCaught, takeItem } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
 import { useAuth } from '../../auth/context';
 import { ItemFlags, type Items } from '../../data/ids/items';
@@ -18,7 +19,7 @@ import InventoryPicker from '../items/InventoryPicker';
 import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
-import matches from '../../core/search';
+import matchesCatch, { type CatchConstraint, planCatchSearch } from '../../auth/catch-search';
 import {
   Button,
   Dialog,
@@ -195,6 +196,13 @@ function PickerBox(
   props: CatchPickerProps & {
     owned: Resource<CatchOption[]>;
     showing: boolean;
+    /**
+     * What is being searched for. It belongs to whoever owns the
+     * read: the store answers part of a search, so the query decides
+     * which records are fetched as well as which of them are shown
+     */
+    search: string;
+    onSearch: (value: string) => void;
     onHandled: () => void;
     onDone: () => void;
   },
@@ -235,7 +243,7 @@ function PickerBox(
       .filter((option) => props.filter?.(option) ?? true)
       .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
 
-  const [query, setQuery] = createSignal('');
+  const query = (): string => props.search;
   /**
    * Whether these are the reader's own pokemon. Somebody else's box is
    * read and nothing else: there is nothing of theirs to hand an item
@@ -274,7 +282,7 @@ function PickerBox(
    * the sixth party member cannot quietly drop the other five
    */
   const options = (): CatchOption[] =>
-    offered().filter((option) => matches(describeCatch(option.caught), query()));
+    offered().filter((option) => matchesCatch(option.caught, query()));
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
@@ -455,10 +463,13 @@ function PickerBox(
       <Show when={offered().length > SEARCH_FROM}>
         <Row>
           <Search
-            placeholder={props.viewOnly === true ? 'Search their pokemon' : 'Search your pokemon'}
+            // The syntax is in the placeholder rather than in a
+            // legend nobody reads: one example is enough to say that
+            // more than a name can go in here
+            placeholder="Name, or type:fire is:shiny"
             value={query()}
             onChange={(typed) => {
-              setQuery(typed);
+              props.onSearch(typed);
             }}
           />
         </Row>
@@ -634,13 +645,29 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
+  const [query, setQuery] = createSignal('');
+  /**
+   * The half of the search the store can answer, which is what decides
+   * whether the box has to be read again.
+   *
+   * Compared by what it says rather than by identity: a keystroke that
+   * changes only the part the runtime filters — a name, a second type
+   * — leaves this the same and reads nothing
+   */
+  const narrowing = createMemo<CatchConstraint[]>(() => planCatchSearch(query()), [], {
+    equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
+      JSON.stringify(before) === JSON.stringify(after),
+  });
+
   const [owned] = createResource(
     () =>
-      showing() && props.options == null ? ([owner(), props.revision, handled()] as const) : null,
-    async ([player]): Promise<CatchOption[]> => {
+      showing() && props.options == null
+        ? ([owner(), props.revision, handled(), narrowing()] as const)
+        : null,
+    async ([player, , , narrowed]): Promise<CatchOption[]> => {
       // The clock is the server's, so a lock that has timed out reads
       // as free rather than as whatever this device believes
-      const [records, now] = await Promise.all([listCaught(player), syncServerClock()]);
+      const [records, now] = await Promise.all([searchCaught(player, narrowed), syncServerClock()]);
 
       return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
     },
@@ -680,6 +707,10 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         {...props}
         owned={owned}
         showing={showing()}
+        search={query()}
+        onSearch={(typed) => {
+          setQuery(typed);
+        }}
         onHandled={() => {
           setHandled((count) => count + 1);
         }}

@@ -29,11 +29,7 @@ export const GENDER_MARKS: Record<Genders, string> = {
   [Genders.Female]: '♀',
 };
 
-export const GENDER_LABELS: Record<Genders, string> = {
-  [Genders.Genderless]: 'Genderless',
-  [Genders.Male]: 'Male',
-  [Genders.Female]: 'Female',
-};
+export { GENDER_NAMES as GENDER_LABELS } from '../../data/ids/species';
 
 /**
  * A one-line summary of a catch: the species name plus the details

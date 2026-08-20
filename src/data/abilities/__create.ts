@@ -20,6 +20,15 @@ export function registerAbility(ability: Abilities, data: AbilityData): void {
   ABILITY_DATA.set(ability, data);
 }
 
+/**
+ * Every ability the game has registered. It is what turns a name
+ * somebody typed back into an id — a search cannot ask the store for
+ * "Blaze" without one
+ */
+export function getRegisteredAbilities(): Abilities[] {
+  return [...ABILITY_DATA.keys()];
+}
+
 export function getAbilityData(ability: Abilities): AbilityData {
   const result = ABILITY_DATA.get(ability);
   if (result) {

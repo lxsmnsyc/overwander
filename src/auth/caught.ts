@@ -5,6 +5,7 @@
 import {
   type DocumentReference,
   type FirestoreDataConverter,
+  type QueryFieldFilterConstraint,
   collection,
   doc,
   documentId,
@@ -26,6 +27,7 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/firebase';
+import type { CatchConstraint } from './catch-search';
 import { type CaughtPokemon, asCaughtPokemon } from './caught-record';
 import { CAUGHT_COLLECTION } from './collections';
 import { getFirebaseFirestore } from './firebase';
@@ -79,6 +81,64 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
   const snapshot = await getDocs(query(caught, where('owner', '==', owner)));
 
   return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/**
+ * The player's pokemon that answer one narrowed search.
+ *
+ * A search is asked in two passes — see
+ * [`catch-search.ts`](./catch-search.ts) — and this is the first: the
+ * one term the store can answer, beside the owner. The caller still
+ * runs the whole predicate over what comes back, because most of the
+ * grammar (a name, a second type, an ability) is not a query anybody
+ * can write.
+ *
+ * Every field pushed here needs a composite index with `owner` — see
+ * [`firestore.indexes.json`](../../firestore.indexes.json) — which is
+ * why the planner pushes one and not a combination
+ */
+export async function searchCaught(
+  owner: string,
+  narrowing: CatchConstraint[],
+): Promise<[string, CaughtPokemon][]> {
+  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
+    caughtConverter,
+  );
+  const snapshot = await getDocs(
+    query(caught, where('owner', '==', owner), ...narrowing.flatMap(asConstraint)),
+  );
+
+  return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+}
+
+/** One planned constraint, in the words the web SDK takes */
+function asConstraint(narrowed: CatchConstraint): QueryFieldFilterConstraint[] {
+  if ('oneOf' in narrowed) {
+    return [where(narrowed.field, 'in', narrowed.oneOf)];
+  }
+  if ('has' in narrowed) {
+    return [where(narrowed.field, 'array-contains', narrowed.has)];
+  }
+  if ('is' in narrowed) {
+    return [where(narrowed.field, '==', narrowed.is)];
+  }
+  if ('equals' in narrowed) {
+    return [where(narrowed.field, '==', narrowed.equals)];
+  }
+  // Everything from here to the next thing that sorts after it. The
+  // stamps are ISO strings, so "the month of August" is a range
+  if ('prefix' in narrowed) {
+    return [
+      where(narrowed.field, '>=', narrowed.prefix),
+      where(narrowed.field, '<', `${narrowed.prefix}\uffff`),
+    ];
+  }
+  // An open end is left off rather than compared against infinity,
+  // which Firestore has no number for
+  return [
+    ...(Number.isFinite(narrowed.low) ? [where(narrowed.field, '>=', narrowed.low)] : []),
+    ...(Number.isFinite(narrowed.high) ? [where(narrowed.field, '<=', narrowed.high)] : []),
+  ];
 }
 
 /**

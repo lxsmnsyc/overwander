@@ -5,6 +5,16 @@ export const enum Genders {
 }
 
 /**
+ * What each is called in words, for anything that reads or is read: a
+ * label under a sprite, a search asking for one
+ */
+export const GENDER_NAMES: Record<Genders, string> = {
+  [Genders.Genderless]: 'Genderless',
+  [Genders.Male]: 'Male',
+  [Genders.Female]: 'Female',
+};
+
+/**
  * How a species evolves, as combinable bit flags (e.g. a trade while
  * holding an item is Trade | HeldItem)
  */

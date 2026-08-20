@@ -367,6 +367,9 @@ export async function claimAuction(
           },
         ],
         friendship: BASE_FRIENDSHIP,
+        // A sale is a change of hands, so it opens a trade evolution
+        // the same as a swap between two players would
+        traded: true,
       });
     }
 

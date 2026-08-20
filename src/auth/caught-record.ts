@@ -98,9 +98,9 @@ export interface CaughtPokemon {
   /**
    * Whether it has changed hands. A field rather than a read of
    * `history` so the store can be queried, and what opens a trade
-   * evolution — see `meetsEvolutionCriteria`. Always false for now:
-   * trading does not exist, but the field ships so old records do not
-   * have to be told apart from new ones later
+   * evolution — see `meetsEvolutionCriteria`. Set where a pokemon
+   * passes between players: winning it at auction is the one such
+   * handover so far
    */
   traded: boolean;
   /**

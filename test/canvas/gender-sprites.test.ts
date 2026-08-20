@@ -16,7 +16,7 @@ import { Species } from '../../src/data/ids/species';
  * is a detail, so a shiny female with no female drawing keeps its
  * shininess rather than its flower.
  */
-const REAL = JSON.parse(readFileSync('public/sprites/pokemon/meta/3.json', 'utf8')) as unknown;
+const REAL = JSON.parse(readFileSync('public/sprites/pokemon/kanto/meta/3.json', 'utf8')) as unknown;
 
 /**
  * A world where only these drawings exist. Everything else 404s the

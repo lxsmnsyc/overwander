@@ -260,11 +260,11 @@ describe('AnimData.xml', () => {
 describe('where a sheet is written', () => {
   it('files a pokemon under its coat, with one description for both', () => {
     expect(pokemonDestination({ species: 94, female: false, shiny: false })).toEqual({
-      image: 'sprites/pokemon/regular/94.png',
-      meta: 'sprites/pokemon/meta/94.json',
+      image: 'sprites/pokemon/kanto/regular/94.png',
+      meta: 'sprites/pokemon/kanto/meta/94.json',
     });
     expect(pokemonDestination({ species: 94, female: false, shiny: true }).image).toBe(
-      'sprites/pokemon/shiny/94.png',
+      'sprites/pokemon/kanto/shiny/94.png',
     );
   });
 
@@ -273,8 +273,8 @@ describe('where a sheet is written', () => {
     // drawing alone
     const written = pokemonDestination({ species: 3, female: true, shiny: true });
 
-    expect(written.image).toBe('sprites/pokemon/shiny/3_f.png');
-    expect(written.meta).toBe('sprites/pokemon/meta/3.json');
+    expect(written.image).toBe('sprites/pokemon/kanto/shiny/3_f.png');
+    expect(written.meta).toBe('sprites/pokemon/kanto/meta/3.json');
   });
 
   it('keeps anything else out of the pokemon tree', () => {
@@ -293,10 +293,10 @@ describe('where a sheet is written', () => {
     ].map((coat) => pokemonDestination({ species: 3, ...coat }));
 
     expect(four.map((written) => written.image)).toEqual([
-      'sprites/pokemon/regular/3.png',
-      'sprites/pokemon/shiny/3.png',
-      'sprites/pokemon/regular/3_f.png',
-      'sprites/pokemon/shiny/3_f.png',
+      'sprites/pokemon/kanto/regular/3.png',
+      'sprites/pokemon/kanto/shiny/3.png',
+      'sprites/pokemon/kanto/regular/3_f.png',
+      'sprites/pokemon/kanto/shiny/3_f.png',
     ]);
     // One description for the lot of them, which is why they have to
     // be packed to one layout
@@ -307,13 +307,13 @@ describe('where a sheet is written', () => {
     // The only thing the caller decides about a path, and it is cut to
     // a whole number before it is written into one
     expect(pokemonDestination({ species: 7.9, female: false, shiny: false }).image).toBe(
-      'sprites/pokemon/regular/7.png',
+      'sprites/pokemon/kanto/regular/7.png',
     );
   });
 });
 
 describe('what the page says a drawing cost', () => {
-  const sheet = { path: 'sprites/pokemon/regular/1.png', as: 'indexed 4-bit, none' };
+  const sheet = { path: 'sprites/pokemon/kanto/regular/1.png', as: 'indexed 4-bit, none' };
 
   it('says what the container saved', () => {
     expect(storedAs({ ...sheet, bytes: 2048, plain: 8192, before: null })).toBe(

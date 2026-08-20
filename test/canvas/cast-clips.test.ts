@@ -33,10 +33,26 @@ import { SpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
  * once and cleared; a regression in any of them looks identical from
  * the outside, which is why they are pinned down separately.
  */
-const META = 'public/sprites/pokemon/meta';
+const ROOT = 'public/sprites/pokemon';
+
+/** Every description that ships, whichever region it is filed under. */
+function described(): { species: number; path: string }[] {
+  return readdirSync(ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .flatMap((region) =>
+      readdirSync(`${ROOT}/${region.name}/meta`)
+        .filter((name) => name.endsWith('.json'))
+        .map((name) => ({
+          species: Number.parseInt(name, 10),
+          path: `${ROOT}/${region.name}/meta/${name}`,
+        })),
+    );
+}
+
+const PATHS = new Map(described().map((entry) => [entry.species, entry.path]));
 
 function loaded(species: number): SpeciesSpriteAnimation {
-  const data = asSpriteSheetJSON(JSON.parse(readFileSync(`${META}/${species}.json`, 'utf8')));
+  const data = asSpriteSheetJSON(JSON.parse(readFileSync(PATHS.get(species) ?? '', 'utf8')));
   const sprite = new SpeciesSpriteAnimation(`${species}.png`, data);
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
@@ -44,13 +60,8 @@ function loaded(species: number): SpeciesSpriteAnimation {
   return sprite;
 }
 
-const SHIPPED = readdirSync(META)
-  .filter((name) => name.endsWith('.json'))
-  .map((name) => ({
-    species: Number.parseInt(name, 10),
-    raw: readFileSync(`${META}/${name}`, 'utf8'),
-  }))
-  .filter((entry) => entry.raw.trim().length > 0)
+const SHIPPED = described()
+  .filter((entry) => readFileSync(entry.path, 'utf8').trim().length > 0)
   .map((entry) => entry.species)
   .sort((one, two) => one - two);
 

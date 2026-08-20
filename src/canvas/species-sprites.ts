@@ -1,4 +1,5 @@
 import { Species } from '../data/ids/species';
+import { REGION_NAMES, getSpeciesRegion } from '../data/species/regions';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { SpriteCoats } from './sprite-coats';
 import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
@@ -41,6 +42,17 @@ import asSpriteSheetJSON, { type SpriteSheetJSON } from './sprite-sheet';
 export const SPRITE_ROOT = '/sprites/pokemon';
 
 /**
+ * Where one pokemon's sheets are filed.
+ *
+ * By region, so a folder holds a dex's worth of files rather than
+ * every pokemon ever drawn. Which region is worked out from the dex
+ * number — see `getSpeciesRegion` — so nothing has to be listed twice
+ */
+function regionRoot(species: Species): string {
+  return `${SPRITE_ROOT}/${REGION_NAMES[getSpeciesRegion(species)]}`;
+}
+
+/**
  * What is drawn when a pokemon has no sheet of its own. Only a
  * handful are drawn so far, and the rest of the dex has to look like
  * *something* — Missingno is what the game has always shown when it
@@ -58,14 +70,14 @@ export const FALLBACK_SPECIES = Species.Missingno;
  * `loadSpeciesSprite`
  */
 export function spriteImagePath(species: Species, shiny = false, female = false): string {
-  return `${SPRITE_ROOT}/${shiny ? 'shiny' : 'regular'}/${species}${female ? '_f' : ''}.png`;
+  return `${regionRoot(species)}/${shiny ? 'shiny' : 'regular'}/${species}${female ? '_f' : ''}.png`;
 }
 
 /**
  * The animation both coats of one pokemon share
  */
 export function spriteMetaPath(species: Species): string {
-  return `${SPRITE_ROOT}/meta/${species}.json`;
+  return `${regionRoot(species)}/meta/${species}.json`;
 }
 
 /**

@@ -19,20 +19,26 @@ const LIST = `${ROOT}/coats.json`;
 function onDisk(): Map<string, Set<Coat>> {
   const found = new Map<string, Set<Coat>>();
 
-  for (const [directory, plain, female] of [
-    ['regular', 'regular', 'female'],
-    ['shiny', 'shiny', 'shinyFemale'],
-  ] as const) {
-    for (const file of readdirSync(`${ROOT}/${directory}`)) {
-      const named = /^(\d+)(_f)?\.png$/.exec(file);
+  const regions = readdirSync(ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
 
-      if (named == null) {
-        continue;
+  for (const region of regions) {
+    for (const [directory, plain, female] of [
+      ['regular', 'regular', 'female'],
+      ['shiny', 'shiny', 'shinyFemale'],
+    ] as const) {
+      for (const file of readdirSync(`${ROOT}/${region}/${directory}`)) {
+        const named = /^(\d+)(_f)?\.png$/.exec(file);
+
+        if (named == null) {
+          continue;
+        }
+        const held = found.get(named[1]) ?? new Set<Coat>();
+
+        held.add(file.endsWith('_f.png') ? female : plain);
+        found.set(named[1], held);
       }
-      const held = found.get(named[1]) ?? new Set<Coat>();
-
-      held.add(file.endsWith('_f.png') ? female : plain);
-      found.set(named[1], held);
     }
   }
   return found;
@@ -89,12 +95,12 @@ describe('the coat list', () => {
     const marks = Object.values(listed.stamps);
 
     expect(new Set(marks).size, 'stamps collide').toBe(marks.length);
-    expect(stamped('/sprites/pokemon/meta/1.json', listed, 1)).toBe(
-      `/sprites/pokemon/meta/1.json?v=${listed.stamps['1']}`,
+    expect(stamped('/sprites/pokemon/kanto/meta/1.json', listed, 1)).toBe(
+      `/sprites/pokemon/kanto/meta/1.json?v=${listed.stamps['1']}`,
     );
     // A sheet nobody has recorded is asked for by its plain address
-    expect(stamped('/sprites/pokemon/meta/9999.json', listed, 9999)).toBe(
-      '/sprites/pokemon/meta/9999.json',
+    expect(stamped('/sprites/pokemon/kanto/meta/9999.json', listed, 9999)).toBe(
+      '/sprites/pokemon/kanto/meta/9999.json',
     );
   });
 

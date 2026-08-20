@@ -22,10 +22,15 @@ import decode, { encodeSmallest } from '../src/server/sprites/png.ts';
  */
 
 const ROOT = 'public/sprites/pokemon';
-const COATS = [
-  { path: (stem: string) => `${ROOT}/regular/${stem}.png`, name: 'regular' },
-  { path: (stem: string) => `${ROOT}/shiny/${stem}.png`, name: 'shiny' },
-];
+const SIDES = ['regular', 'shiny'];
+
+/** Every region with sheets under it, whatever it is called. */
+function regionsOf(): string[] {
+  return readdirSync(ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+}
 
 /** A frame, as the description writes it. */
 type Frame = [
@@ -69,12 +74,12 @@ function say(message: string): void {
 }
 
 /** Every drawing of one pokemon: the plain coat, and whichever exist beside it. */
-function coatsOf(species: string): string[] {
+function coatsOf(region: string, species: string): string[] {
   const found: string[] = [];
 
   for (const suffix of ['', '_f']) {
-    for (const coat of COATS) {
-      const path = coat.path(`${species}${suffix}`);
+    for (const side of SIDES) {
+      const path = `${ROOT}/${region}/${side}/${species}${suffix}.png`;
 
       if (existsSync(path)) {
         found.push(path);
@@ -85,28 +90,36 @@ function coatsOf(species: string): string[] {
 }
 
 /**
- * Every picture of a description, wherever it sits on the sheet.
+ * Every picture of a description, wherever it sits on the sheet, and
+ * how a clip's frames reach them.
  *
- * A sheet packed per clip keeps them inside the clip's region; one
- * packed this way has already put them all in one list
+ * A sheet packed per clip keeps its pictures inside the clip's region
+ * and numbers them from zero for each; one packed this way has already
+ * put them all in one list that every clip numbers into
  */
-function picturesOf(meta: Meta): { x: number; y: number; width: number; height: number }[][] {
+function picturesOf(meta: Meta): {
+  pictures: { x: number; y: number; width: number; height: number }[];
+  cellOf: (clip: number, cell: number) => number;
+} {
   if (meta.sheet.pictures != null) {
-    const shared = meta.sheet.pictures.map(([x, y, width, height]) => ({ x, y, width, height }));
-
-    return Object.keys(meta.sprites).map(() => shared);
+    return {
+      pictures: meta.sheet.pictures.map(([x, y, width, height]) => ({ x, y, width, height })),
+      cellOf: (_clip, cell) => cell,
+    };
   }
-  const regions = new Map((meta.sheet.images ?? []).map((image) => [image.name, image]));
+  const boxes = new Map((meta.sheet.images ?? []).map((image) => [image.name, image]));
+  const pictures: { x: number; y: number; width: number; height: number }[] = [];
+  const starts: number[] = [];
 
-  return Object.entries(meta.sprites).map(([name, sprite]) => {
-    const region = regions.get(Number(name));
+  for (const [name, sprite] of Object.entries(meta.sprites)) {
+    const box = boxes.get(Number(name));
 
-    return (sprite.pictures ?? []).map((picture) => ({
-      ...picture,
-      x: picture.x + (region?.x ?? 0),
-      y: picture.y + (region?.y ?? 0),
-    }));
-  });
+    starts.push(pictures.length);
+    for (const picture of sprite.pictures ?? []) {
+      pictures.push({ ...picture, x: picture.x + (box?.x ?? 0), y: picture.y + (box?.y ?? 0) });
+    }
+  }
+  return { pictures, cellOf: (clip, cell) => (starts[clip] ?? 0) + cell };
 }
 
 let sheets = 0;
@@ -115,19 +128,25 @@ let after = 0;
 let was = 0;
 let is = 0;
 
-for (const file of readdirSync(`${ROOT}/meta`).sort()) {
+const DESCRIBED = regionsOf().flatMap((held) =>
+  readdirSync(`${ROOT}/${held}/meta`)
+    .sort()
+    .map((name) => ({ region: held, file: name })),
+);
+
+for (const { region, file } of DESCRIBED) {
   if (!file.endsWith('.json')) {
     continue;
   }
   const species = file.replace('.json', '');
-  const raw = readFileSync(`${ROOT}/meta/${file}`, 'utf8');
+  const raw = readFileSync(`${ROOT}/${region}/meta/${file}`, 'utf8');
 
   if (raw.trim().length === 0) {
     continue;
   }
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   const meta = JSON.parse(raw) as Meta;
-  const paths = coatsOf(species);
+  const paths = coatsOf(region, species);
 
   if (paths.length === 0) {
     say(`${species}: described but not drawn, left alone`);
@@ -144,25 +163,20 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
   const shared = deduper(false);
   const clips = Object.entries(meta.sprites);
   const held = picturesOf(meta);
-  const moved: { cell: number; flip: boolean }[][] = [];
-
-  for (let at = 0; at < clips.length; at += 1) {
-    moved.push(
-      held[at].map((picture) => {
-        const [kept] = shared.add(
-          drawings.map((drawing) => ({
-            raster: drawing.raster,
-            grid: packedGrid(picture.x, picture.y, picture.width, picture.height, 1, 1),
-          })),
-          0,
-          'sheet',
-        );
-
-        return kept;
-      }),
+  const moved = held.pictures.map((picture) => {
+    const [kept] = shared.add(
+      drawings.map((drawing) => ({
+        raster: drawing.raster,
+        grid: packedGrid(picture.x, picture.y, picture.width, picture.height, 1, 1),
+      })),
+      0,
+      'sheet',
     );
-    was += held[at].length;
-  }
+
+    return kept;
+  });
+
+  was += held.pictures.length;
   is += shared.pictures.length;
 
   const layout = pack(
@@ -195,7 +209,7 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
 
     sprite.pictures = undefined;
     for (const frame of sprite.frames) {
-      const kept = moved[at][frame[FRAME_CELL]];
+      const kept = moved[held.cellOf(at, frame[FRAME_CELL])];
 
       // A picture kept the other way round turns this frame over as
       // well; where it hangs does not move, since a mirror is the same
@@ -214,10 +228,10 @@ for (const file of readdirSync(`${ROOT}/meta`).sort()) {
       picture.height,
     ]),
   };
-  writeFileSync(`${ROOT}/meta/${file}`, JSON.stringify(meta));
+  writeFileSync(`${ROOT}/${region}/meta/${file}`, JSON.stringify(meta));
 
   sheets += 1;
-  say(`${species}: ${layout.width}×${layout.height}, ${shared.pictures.length} pictures`);
+  say(`${region}/${species}: ${layout.width}×${layout.height}, ${shared.pictures.length} pictures`);
 }
 
 say(

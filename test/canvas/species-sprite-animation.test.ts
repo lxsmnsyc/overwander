@@ -23,15 +23,22 @@ import { SpriteAnim, asSpriteAnim } from '../../src/data/ids/sprite-anims';
  * thousand because they are not pokemon and have no dex number of their
  * own
  */
-const META_ROOT = 'public/sprites/pokemon/meta';
+const ROOT = 'public/sprites/pokemon';
 
 function speciesOf(file: string): number {
   return Number(file.slice(0, -'.json'.length));
 }
 
-const META_FILES = readdirSync(META_ROOT)
-  .filter((name) => name.endsWith('.json'))
-  .sort((a, b) => speciesOf(a) - speciesOf(b));
+/** Every region with sheets under it: `kanto`, and whatever follows. */
+const REGIONS = readdirSync(ROOT, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+
+const META_FILES = REGIONS.flatMap((region) =>
+  readdirSync(`${ROOT}/${region}/meta`)
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => ({ region, name })),
+).sort((one, two) => speciesOf(one.name) - speciesOf(two.name));
 
 /**
  * The descriptions that ship, in species order.
@@ -41,9 +48,9 @@ const META_FILES = readdirSync(META_ROOT)
  * is a pokemon the game draws as Missingno, which is exactly what the
  * loader does with it
  */
-const DESCRIBED: { species: number; data: SpriteSheetJSON }[] = META_FILES.map((name) => ({
-  species: speciesOf(name),
-  raw: readFileSync(`${META_ROOT}/${name}`, 'utf8'),
+const DESCRIBED: { species: number; data: SpriteSheetJSON }[] = META_FILES.map((file) => ({
+  species: speciesOf(file.name),
+  raw: readFileSync(`${ROOT}/${file.region}/meta/${file.name}`, 'utf8'),
 }))
   .filter((entry) => entry.raw.trim().length > 0)
   .map((entry) => ({
@@ -769,8 +776,10 @@ describe('where the sheets are', () => {
       ['regular', false],
       ['shiny', true],
     ] as const) {
-      const files = readdirSync(`public/sprites/pokemon/${coat}`).filter((name) =>
-        name.endsWith('.png'),
+      const files = REGIONS.flatMap((region) =>
+        readdirSync(`${ROOT}/${region}/${coat}`)
+          .filter((name) => name.endsWith('.png'))
+          .map((name) => ({ region, name })),
       );
 
       expect(files.length, `${coat} drawings should ship`).toBeGreaterThan(0);
@@ -778,28 +787,35 @@ describe('where the sheets are', () => {
       for (const file of files) {
         // A drawing suffixed `_f` is the female form of the same
         // species, not a species of its own
-        const name = file.slice(0, -'.png'.length);
+        const name = file.name.slice(0, -'.png'.length);
         const female = name.endsWith('_f');
         const species = Number(female ? name.slice(0, -'_f'.length) : name);
 
-        expect(spriteImagePath(species, shiny, female)).toBe(`/sprites/pokemon/${coat}/${file}`);
+        // Filed under its region, which the path builder works out
+        // from the dex number rather than being told
+        expect(spriteImagePath(species, shiny, female)).toBe(
+          `/sprites/pokemon/${file.region}/${coat}/${file.name}`,
+        );
       }
     }
   });
 
   it('describes every drawing that ships exactly once', () => {
-    const described = new Set(META_FILES.map(speciesOf));
+    const described = new Set(META_FILES.map((file) => speciesOf(file.name)));
 
     for (const coat of ['regular', 'shiny']) {
-      for (const file of readdirSync(`public/sprites/pokemon/${coat}`)) {
-        const name = file.slice(0, -'.png'.length);
-        const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
+      for (const region of REGIONS) {
+        for (const file of readdirSync(`${ROOT}/${region}/${coat}`)) {
+          const name = file.slice(0, -'.png'.length);
+          const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
 
-        // Every drawing of a species is a drawing of the one
-        // animation — two coats, and a female form where there is one
-        // — so the description is none of theirs: it is the species'
-        expect(described.has(species), `${coat}/${file} has a description`).toBe(true);
-        expect(spriteMetaPath(species)).toBe(`/sprites/pokemon/meta/${species}.json`);
+          // Every drawing of a species is a drawing of the one
+          // animation — two coats, and a female form where there is
+          // one — so the description is none of theirs: it is the
+          // species'
+          expect(described.has(species), `${region}/${coat}/${file} has a description`).toBe(true);
+          expect(spriteMetaPath(species)).toBe(`/sprites/pokemon/${region}/meta/${species}.json`);
+        }
       }
     }
   });
@@ -810,7 +826,7 @@ describe('where the sheets are', () => {
       spriteImagePath(Species.Bulbasaur, false, true),
     );
     // ...and both of them share the one description
-    expect(spriteMetaPath(Species.Bulbasaur)).toBe('/sprites/pokemon/meta/1.json');
+    expect(spriteMetaPath(Species.Bulbasaur)).toBe('/sprites/pokemon/kanto/meta/1.json');
   });
 
   it('lays the sheets out in the order the rows are drawn', () => {

@@ -1,6 +1,7 @@
 import 'server-only';
 import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { REGION_NAMES, getSpeciesRegion } from '../../data/species/regions';
 
 /**
  * Where a processed sheet is put.
@@ -40,12 +41,16 @@ function stem(name: SheetName): string {
 
 /**
  * A pokemon: the drawing under its coat, the description shared by
- * both coats. This is the layout `species-sprites.ts` reads
+ * both coats, both filed under the species' region. This is the layout
+ * `species-sprites.ts` reads
  */
 export function pokemonDestination(name: SheetName): Destination {
+  const species = Math.trunc(name.species);
+  const root = `sprites/pokemon/${REGION_NAMES[getSpeciesRegion(species)]}`;
+
   return {
-    image: `sprites/pokemon/${name.shiny ? 'shiny' : 'regular'}/${stem(name)}.png`,
-    meta: `sprites/pokemon/meta/${Math.trunc(name.species)}.json`,
+    image: `${root}/${name.shiny ? 'shiny' : 'regular'}/${stem(name)}.png`,
+    meta: `${root}/meta/${species}.json`,
   };
 }
 

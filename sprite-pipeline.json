@@ -1,3904 +1,3904 @@
 {
   "version": 1,
   "sheets": {
-    "public/sprites/pokemon/regular/1.png": {
+    "public/sprites/pokemon/kanto/regular/1.png": {
       "digest": "14481dd4aea85ff9",
       "bytes": 4630,
       "width": 169,
       "height": 139,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4630,
         "bytes": 4630
       }
     },
-    "public/sprites/pokemon/regular/10.png": {
+    "public/sprites/pokemon/kanto/regular/10.png": {
       "digest": "46da3bef82717654",
       "bytes": 3477,
       "width": 145,
       "height": 114,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3477,
         "bytes": 3477
       }
     },
-    "public/sprites/pokemon/regular/100.png": {
+    "public/sprites/pokemon/kanto/regular/100.png": {
       "digest": "7d56bb311464b2d8",
       "bytes": 2306,
       "width": 127,
       "height": 111,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2306,
         "bytes": 2306
       }
     },
-    "public/sprites/pokemon/regular/100000.png": {
-      "digest": "72fbf893fe1ea154",
-      "bytes": 1185,
-      "width": 129,
-      "height": 114,
-      "compact": {
-        "at": "2026-08-20T04:24:51Z",
-        "as": "already compact",
-        "was": 1185,
-        "bytes": 1185
-      }
-    },
-    "public/sprites/pokemon/regular/100001.png": {
-      "digest": "e28997da0d28c844",
-      "bytes": 1527,
-      "width": 110,
-      "height": 88,
-      "compact": {
-        "at": "2026-08-20T04:24:51Z",
-        "as": "already compact",
-        "was": 1527,
-        "bytes": 1527
-      }
-    },
-    "public/sprites/pokemon/regular/100002.png": {
-      "digest": "c7754178e9783b1d",
-      "bytes": 2165,
-      "width": 116,
-      "height": 96,
-      "compact": {
-        "at": "2026-08-20T04:24:51Z",
-        "as": "already compact",
-        "was": 2165,
-        "bytes": 2165
-      }
-    },
-    "public/sprites/pokemon/regular/101.png": {
+    "public/sprites/pokemon/kanto/regular/101.png": {
       "digest": "28d128e13929e5d1",
       "bytes": 2489,
       "width": 149,
       "height": 120,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2489,
         "bytes": 2489
       }
     },
-    "public/sprites/pokemon/regular/102.png": {
+    "public/sprites/pokemon/kanto/regular/102.png": {
       "digest": "c4ba5e093c4c42b5",
       "bytes": 6295,
       "width": 185,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6295,
         "bytes": 6295
       }
     },
-    "public/sprites/pokemon/regular/103.png": {
+    "public/sprites/pokemon/kanto/regular/103.png": {
       "digest": "602f8391ef5e6081",
       "bytes": 9065,
       "width": 225,
       "height": 179,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9065,
         "bytes": 9065
       }
     },
-    "public/sprites/pokemon/regular/104.png": {
+    "public/sprites/pokemon/kanto/regular/104.png": {
       "digest": "2b84b7c7c0037605",
       "bytes": 8313,
       "width": 206,
       "height": 190,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8313,
         "bytes": 8313
       }
     },
-    "public/sprites/pokemon/regular/105.png": {
+    "public/sprites/pokemon/kanto/regular/105.png": {
       "digest": "473064ec0bdb06fe",
       "bytes": 10153,
       "width": 249,
       "height": 218,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10153,
         "bytes": 10153
       }
     },
-    "public/sprites/pokemon/regular/106.png": {
+    "public/sprites/pokemon/kanto/regular/106.png": {
       "digest": "8006c227a3cd00c3",
       "bytes": 11204,
       "width": 263,
       "height": 242,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11204,
         "bytes": 11204
       }
     },
-    "public/sprites/pokemon/regular/107.png": {
+    "public/sprites/pokemon/kanto/regular/107.png": {
       "digest": "114baa790571d843",
       "bytes": 10769,
       "width": 236,
       "height": 224,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10769,
         "bytes": 10769
       }
     },
-    "public/sprites/pokemon/regular/108.png": {
+    "public/sprites/pokemon/kanto/regular/108.png": {
       "digest": "6848ed85b6c72ca8",
       "bytes": 8345,
       "width": 239,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8345,
         "bytes": 8345
       }
     },
-    "public/sprites/pokemon/regular/109.png": {
+    "public/sprites/pokemon/kanto/regular/109.png": {
       "digest": "ce8471d407a78f0e",
       "bytes": 15483,
       "width": 380,
       "height": 360,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 15483,
         "bytes": 15483
       }
     },
-    "public/sprites/pokemon/regular/11.png": {
+    "public/sprites/pokemon/kanto/regular/11.png": {
       "digest": "9ee722d68fb2942c",
       "bytes": 4249,
       "width": 165,
       "height": 141,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4249,
         "bytes": 4249
       }
     },
-    "public/sprites/pokemon/regular/110.png": {
+    "public/sprites/pokemon/kanto/regular/110.png": {
       "digest": "caaba05744741955",
       "bytes": 22119,
       "width": 472,
       "height": 415,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 22119,
         "bytes": 22119
       }
     },
-    "public/sprites/pokemon/regular/111.png": {
+    "public/sprites/pokemon/kanto/regular/111.png": {
       "digest": "da4038588cc9bd10",
       "bytes": 5088,
       "width": 171,
       "height": 167,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5088,
         "bytes": 5088
       }
     },
-    "public/sprites/pokemon/regular/112.png": {
+    "public/sprites/pokemon/kanto/regular/112.png": {
       "digest": "1846c86bee50edb7",
       "bytes": 7428,
       "width": 208,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7428,
         "bytes": 7428
       }
     },
-    "public/sprites/pokemon/regular/113.png": {
+    "public/sprites/pokemon/kanto/regular/113.png": {
       "digest": "59e0c9457d416cb5",
       "bytes": 5362,
       "width": 190,
       "height": 157,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5362,
         "bytes": 5362
       }
     },
-    "public/sprites/pokemon/regular/114.png": {
+    "public/sprites/pokemon/kanto/regular/114.png": {
       "digest": "12229057e403f56e",
       "bytes": 5066,
       "width": 170,
       "height": 158,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5066,
         "bytes": 5066
       }
     },
-    "public/sprites/pokemon/regular/115.png": {
+    "public/sprites/pokemon/kanto/regular/115.png": {
       "digest": "4c64d2208afecc1f",
       "bytes": 9853,
       "width": 231,
       "height": 209,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9853,
         "bytes": 9853
       }
     },
-    "public/sprites/pokemon/regular/116.png": {
+    "public/sprites/pokemon/kanto/regular/116.png": {
       "digest": "141c7986ac22555d",
       "bytes": 3297,
       "width": 152,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3297,
         "bytes": 3297
       }
     },
-    "public/sprites/pokemon/regular/117.png": {
+    "public/sprites/pokemon/kanto/regular/117.png": {
       "digest": "1d85ce42790343a4",
       "bytes": 6229,
       "width": 185,
       "height": 164,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6229,
         "bytes": 6229
       }
     },
-    "public/sprites/pokemon/regular/118.png": {
+    "public/sprites/pokemon/kanto/regular/118.png": {
       "digest": "fc4b491743205362",
       "bytes": 5251,
       "width": 166,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5251,
         "bytes": 5251
       }
     },
-    "public/sprites/pokemon/regular/119.png": {
+    "public/sprites/pokemon/kanto/regular/119.png": {
       "digest": "89a196793a123d6c",
       "bytes": 7923,
       "width": 210,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7923,
         "bytes": 7923
       }
     },
-    "public/sprites/pokemon/regular/12.png": {
+    "public/sprites/pokemon/kanto/regular/12.png": {
       "digest": "312ecc392f636acc",
       "bytes": 5217,
       "width": 158,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5217,
         "bytes": 5217
       }
     },
-    "public/sprites/pokemon/regular/120.png": {
+    "public/sprites/pokemon/kanto/regular/120.png": {
       "digest": "e64f904c764b58ea",
       "bytes": 4096,
       "width": 138,
       "height": 136,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4096,
         "bytes": 4096
       }
     },
-    "public/sprites/pokemon/regular/121.png": {
+    "public/sprites/pokemon/kanto/regular/121.png": {
       "digest": "8a2d27c00d9ce146",
       "bytes": 4491,
       "width": 151,
       "height": 139,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4491,
         "bytes": 4491
       }
     },
-    "public/sprites/pokemon/regular/122.png": {
+    "public/sprites/pokemon/kanto/regular/122.png": {
       "digest": "43f173f9c3829aef",
       "bytes": 8605,
       "width": 214,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8605,
         "bytes": 8605
       }
     },
-    "public/sprites/pokemon/regular/123.png": {
+    "public/sprites/pokemon/kanto/regular/123.png": {
       "digest": "c0d7e272e536edc6",
       "bytes": 8382,
       "width": 237,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8382,
         "bytes": 8382
       }
     },
-    "public/sprites/pokemon/regular/124.png": {
+    "public/sprites/pokemon/kanto/regular/124.png": {
       "digest": "1b5314d0711e02c6",
       "bytes": 8532,
       "width": 212,
       "height": 186,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8532,
         "bytes": 8532
       }
     },
-    "public/sprites/pokemon/regular/125.png": {
+    "public/sprites/pokemon/kanto/regular/125.png": {
       "digest": "7592905ce78d0e91",
       "bytes": 11904,
       "width": 255,
       "height": 243,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11904,
         "bytes": 11904
       }
     },
-    "public/sprites/pokemon/regular/126.png": {
+    "public/sprites/pokemon/kanto/regular/126.png": {
       "digest": "e9b77c047cb16735",
       "bytes": 7566,
       "width": 193,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7566,
         "bytes": 7566
       }
     },
-    "public/sprites/pokemon/regular/127.png": {
+    "public/sprites/pokemon/kanto/regular/127.png": {
       "digest": "c05ee9809b641cf0",
       "bytes": 5428,
       "width": 184,
       "height": 159,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5428,
         "bytes": 5428
       }
     },
-    "public/sprites/pokemon/regular/128.png": {
+    "public/sprites/pokemon/kanto/regular/128.png": {
       "digest": "56b3b33c8b9b9693",
       "bytes": 8291,
       "width": 217,
       "height": 178,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8291,
         "bytes": 8291
       }
     },
-    "public/sprites/pokemon/regular/129.png": {
+    "public/sprites/pokemon/kanto/regular/129.png": {
       "digest": "ef8de97ca7022ecd",
       "bytes": 4404,
       "width": 158,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4404,
         "bytes": 4404
       }
     },
-    "public/sprites/pokemon/regular/129_f.png": {
+    "public/sprites/pokemon/kanto/regular/129_f.png": {
       "digest": "aee9b8dbed040283",
       "bytes": 4469,
       "width": 158,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4469,
         "bytes": 4469
       }
     },
-    "public/sprites/pokemon/regular/12_f.png": {
+    "public/sprites/pokemon/kanto/regular/12_f.png": {
       "digest": "94aea3a278212dcd",
       "bytes": 5200,
       "width": 158,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5200,
         "bytes": 5200
       }
     },
-    "public/sprites/pokemon/regular/13.png": {
+    "public/sprites/pokemon/kanto/regular/13.png": {
       "digest": "0f1d795512542fc1",
       "bytes": 3734,
       "width": 144,
       "height": 143,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3734,
         "bytes": 3734
       }
     },
-    "public/sprites/pokemon/regular/130.png": {
+    "public/sprites/pokemon/kanto/regular/130.png": {
       "digest": "44619f3a89a79694",
       "bytes": 20833,
       "width": 354,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 20833,
         "bytes": 20833
       }
     },
-    "public/sprites/pokemon/regular/130_f.png": {
+    "public/sprites/pokemon/kanto/regular/130_f.png": {
       "digest": "7437c87eda6b5e0d",
       "bytes": 21120,
       "width": 354,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 21120,
         "bytes": 21120
       }
     },
-    "public/sprites/pokemon/regular/131.png": {
+    "public/sprites/pokemon/kanto/regular/131.png": {
       "digest": "aa484e180745a453",
       "bytes": 10832,
       "width": 296,
       "height": 218,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10832,
         "bytes": 10832
       }
     },
-    "public/sprites/pokemon/regular/132.png": {
+    "public/sprites/pokemon/kanto/regular/132.png": {
       "digest": "2877310d4a9e60dd",
       "bytes": 2601,
       "width": 124,
       "height": 123,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2601,
         "bytes": 2601
       }
     },
-    "public/sprites/pokemon/regular/133.png": {
+    "public/sprites/pokemon/kanto/regular/133.png": {
       "digest": "0b7a6adfa469c9b9",
       "bytes": 4576,
       "width": 158,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4576,
         "bytes": 4576
       }
     },
-    "public/sprites/pokemon/regular/133_f.png": {
+    "public/sprites/pokemon/kanto/regular/133_f.png": {
       "digest": "410e0805109abb22",
       "bytes": 4576,
       "width": 158,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4576,
         "bytes": 4576
       }
     },
-    "public/sprites/pokemon/regular/134.png": {
+    "public/sprites/pokemon/kanto/regular/134.png": {
       "digest": "33eb13369970ffc7",
       "bytes": 7089,
       "width": 201,
       "height": 193,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7089,
         "bytes": 7089
       }
     },
-    "public/sprites/pokemon/regular/135.png": {
+    "public/sprites/pokemon/kanto/regular/135.png": {
       "digest": "7299129d9bf47e61",
       "bytes": 9514,
       "width": 260,
       "height": 247,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9514,
         "bytes": 9514
       }
     },
-    "public/sprites/pokemon/regular/136.png": {
+    "public/sprites/pokemon/kanto/regular/136.png": {
       "digest": "629e9ecfea5b9937",
       "bytes": 5220,
       "width": 167,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5220,
         "bytes": 5220
       }
     },
-    "public/sprites/pokemon/regular/137.png": {
+    "public/sprites/pokemon/kanto/regular/137.png": {
       "digest": "4d0a7865a95665d7",
       "bytes": 4600,
       "width": 147,
       "height": 144,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4600,
         "bytes": 4600
       }
     },
-    "public/sprites/pokemon/regular/138.png": {
+    "public/sprites/pokemon/kanto/regular/138.png": {
       "digest": "430a6897f7ef277c",
       "bytes": 3650,
       "width": 153,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3650,
         "bytes": 3650
       }
     },
-    "public/sprites/pokemon/regular/139.png": {
+    "public/sprites/pokemon/kanto/regular/139.png": {
       "digest": "52fc214a739d5ade",
       "bytes": 5251,
       "width": 181,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5251,
         "bytes": 5251
       }
     },
-    "public/sprites/pokemon/regular/14.png": {
+    "public/sprites/pokemon/kanto/regular/14.png": {
       "digest": "22cb21550177cf0c",
       "bytes": 3949,
       "width": 148,
       "height": 138,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3949,
         "bytes": 3949
       }
     },
-    "public/sprites/pokemon/regular/140.png": {
+    "public/sprites/pokemon/kanto/regular/140.png": {
       "digest": "dff96a073fac6640",
       "bytes": 3308,
       "width": 125,
       "height": 120,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3308,
         "bytes": 3308
       }
     },
-    "public/sprites/pokemon/regular/141.png": {
+    "public/sprites/pokemon/kanto/regular/141.png": {
       "digest": "bcfc1cb6a2b3194c",
       "bytes": 8848,
       "width": 222,
       "height": 216,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8848,
         "bytes": 8848
       }
     },
-    "public/sprites/pokemon/regular/142.png": {
+    "public/sprites/pokemon/kanto/regular/142.png": {
       "digest": "e8508b61a3a4a44a",
       "bytes": 6508,
       "width": 210,
       "height": 175,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6508,
         "bytes": 6508
       }
     },
-    "public/sprites/pokemon/regular/143.png": {
+    "public/sprites/pokemon/kanto/regular/143.png": {
       "digest": "33af4cd6fd8e63e7",
       "bytes": 6131,
       "width": 201,
       "height": 178,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6131,
         "bytes": 6131
       }
     },
-    "public/sprites/pokemon/regular/144.png": {
+    "public/sprites/pokemon/kanto/regular/144.png": {
       "digest": "faec783406395280",
       "bytes": 10092,
       "width": 298,
       "height": 281,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10092,
         "bytes": 10092
       }
     },
-    "public/sprites/pokemon/regular/145.png": {
+    "public/sprites/pokemon/kanto/regular/145.png": {
       "digest": "9717ae16bcfc9686",
       "bytes": 21483,
       "width": 398,
       "height": 365,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 21483,
         "bytes": 21483
       }
     },
-    "public/sprites/pokemon/regular/146.png": {
+    "public/sprites/pokemon/kanto/regular/146.png": {
       "digest": "5776118fa6e3f8ef",
       "bytes": 13702,
       "width": 396,
       "height": 289,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 13702,
         "bytes": 13702
       }
     },
-    "public/sprites/pokemon/regular/147.png": {
+    "public/sprites/pokemon/kanto/regular/147.png": {
       "digest": "c747397d06fb4fdc",
       "bytes": 5056,
       "width": 180,
       "height": 168,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5056,
         "bytes": 5056
       }
     },
-    "public/sprites/pokemon/regular/148.png": {
+    "public/sprites/pokemon/kanto/regular/148.png": {
       "digest": "38b4ef71a1fbb3d0",
       "bytes": 8862,
       "width": 256,
       "height": 229,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8862,
         "bytes": 8862
       }
     },
-    "public/sprites/pokemon/regular/149.png": {
+    "public/sprites/pokemon/kanto/regular/149.png": {
       "digest": "5b11abb7c77d8580",
       "bytes": 7285,
       "width": 197,
       "height": 195,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7285,
         "bytes": 7285
       }
     },
-    "public/sprites/pokemon/regular/15.png": {
+    "public/sprites/pokemon/kanto/regular/15.png": {
       "digest": "c25b319a6eee074d",
       "bytes": 6429,
       "width": 192,
       "height": 164,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6429,
         "bytes": 6429
       }
     },
-    "public/sprites/pokemon/regular/150.png": {
+    "public/sprites/pokemon/kanto/regular/150.png": {
       "digest": "a2c9e4722a9ecc7f",
       "bytes": 8792,
       "width": 232,
       "height": 215,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8792,
         "bytes": 8792
       }
     },
-    "public/sprites/pokemon/regular/151.png": {
+    "public/sprites/pokemon/kanto/regular/151.png": {
       "digest": "d905ba2fcfd52679",
       "bytes": 5965,
       "width": 202,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5965,
         "bytes": 5965
       }
     },
-    "public/sprites/pokemon/regular/16.png": {
+    "public/sprites/pokemon/kanto/regular/16.png": {
       "digest": "abcebb17659834ae",
       "bytes": 3380,
       "width": 135,
       "height": 105,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3380,
         "bytes": 3380
       }
     },
-    "public/sprites/pokemon/regular/17.png": {
+    "public/sprites/pokemon/kanto/regular/17.png": {
       "digest": "50957e363d78fc25",
       "bytes": 5434,
       "width": 168,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5434,
         "bytes": 5434
       }
     },
-    "public/sprites/pokemon/regular/18.png": {
+    "public/sprites/pokemon/kanto/regular/18.png": {
       "digest": "7a0392f22075a75d",
       "bytes": 6361,
       "width": 195,
       "height": 183,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6361,
         "bytes": 6361
       }
     },
-    "public/sprites/pokemon/regular/19.png": {
+    "public/sprites/pokemon/kanto/regular/19.png": {
       "digest": "07599b657cfaa330",
       "bytes": 2902,
       "width": 121,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2902,
         "bytes": 2902
       }
     },
-    "public/sprites/pokemon/regular/2.png": {
+    "public/sprites/pokemon/kanto/regular/2.png": {
       "digest": "6a677966f9b718b2",
       "bytes": 5636,
       "width": 156,
       "height": 144,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5636,
         "bytes": 5636
       }
     },
-    "public/sprites/pokemon/regular/20.png": {
+    "public/sprites/pokemon/kanto/regular/20.png": {
       "digest": "801fd9441bcd0846",
       "bytes": 3943,
       "width": 147,
       "height": 113,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3943,
         "bytes": 3943
       }
     },
-    "public/sprites/pokemon/regular/21.png": {
+    "public/sprites/pokemon/kanto/regular/21.png": {
       "digest": "b8e93641fe810ce5",
       "bytes": 4195,
       "width": 161,
       "height": 132,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4195,
         "bytes": 4195
       }
     },
-    "public/sprites/pokemon/regular/22.png": {
+    "public/sprites/pokemon/kanto/regular/22.png": {
       "digest": "e869bacf71bda14a",
       "bytes": 6402,
       "width": 181,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6402,
         "bytes": 6402
       }
     },
-    "public/sprites/pokemon/regular/23.png": {
+    "public/sprites/pokemon/kanto/regular/23.png": {
       "digest": "5e060455a42c252b",
       "bytes": 8180,
       "width": 230,
       "height": 208,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8180,
         "bytes": 8180
       }
     },
-    "public/sprites/pokemon/regular/24.png": {
+    "public/sprites/pokemon/kanto/regular/24.png": {
       "digest": "90d16f329fd9d544",
       "bytes": 9553,
       "width": 253,
       "height": 233,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9553,
         "bytes": 9553
       }
     },
-    "public/sprites/pokemon/regular/25.png": {
+    "public/sprites/pokemon/kanto/regular/25.png": {
       "digest": "5fe05b78ee7ddaf9",
       "bytes": 14405,
       "width": 433,
       "height": 420,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14405,
         "bytes": 14405
       }
     },
-    "public/sprites/pokemon/regular/25_f.png": {
+    "public/sprites/pokemon/kanto/regular/25_f.png": {
       "digest": "866c0153649d56ed",
       "bytes": 14230,
       "width": 433,
       "height": 420,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14230,
         "bytes": 14230
       }
     },
-    "public/sprites/pokemon/regular/26.png": {
+    "public/sprites/pokemon/kanto/regular/26.png": {
       "digest": "0f5a40eafd120df3",
       "bytes": 12081,
       "width": 278,
       "height": 227,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 12081,
         "bytes": 12081
       }
     },
-    "public/sprites/pokemon/regular/27.png": {
+    "public/sprites/pokemon/kanto/regular/27.png": {
       "digest": "359c802c6745755c",
       "bytes": 4476,
       "width": 157,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4476,
         "bytes": 4476
       }
     },
-    "public/sprites/pokemon/regular/28.png": {
+    "public/sprites/pokemon/kanto/regular/28.png": {
       "digest": "532a5e6befe3951c",
       "bytes": 8190,
       "width": 192,
       "height": 169,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8190,
         "bytes": 8190
       }
     },
-    "public/sprites/pokemon/regular/29.png": {
+    "public/sprites/pokemon/kanto/regular/29.png": {
       "digest": "f57d3902676d2d17",
       "bytes": 5018,
       "width": 154,
       "height": 143,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5018,
         "bytes": 5018
       }
     },
-    "public/sprites/pokemon/regular/3.png": {
+    "public/sprites/pokemon/kanto/regular/3.png": {
       "digest": "ea18b15ad63bb149",
       "bytes": 8286,
       "width": 200,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8286,
         "bytes": 8286
       }
     },
-    "public/sprites/pokemon/regular/30.png": {
+    "public/sprites/pokemon/kanto/regular/30.png": {
       "digest": "66732aeeebea2578",
       "bytes": 5235,
       "width": 160,
       "height": 149,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5235,
         "bytes": 5235
       }
     },
-    "public/sprites/pokemon/regular/31.png": {
+    "public/sprites/pokemon/kanto/regular/31.png": {
       "digest": "5c3217c0ab95e89a",
       "bytes": 7440,
       "width": 197,
       "height": 185,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7440,
         "bytes": 7440
       }
     },
-    "public/sprites/pokemon/regular/32.png": {
+    "public/sprites/pokemon/kanto/regular/32.png": {
       "digest": "f83e4825f4a4a5a4",
       "bytes": 5089,
       "width": 172,
       "height": 154,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5089,
         "bytes": 5089
       }
     },
-    "public/sprites/pokemon/regular/33.png": {
+    "public/sprites/pokemon/kanto/regular/33.png": {
       "digest": "102fc8b26b751e99",
       "bytes": 7345,
       "width": 200,
       "height": 196,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7345,
         "bytes": 7345
       }
     },
-    "public/sprites/pokemon/regular/34.png": {
+    "public/sprites/pokemon/kanto/regular/34.png": {
       "digest": "14588075361c9a3f",
       "bytes": 8741,
       "width": 211,
       "height": 207,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8741,
         "bytes": 8741
       }
     },
-    "public/sprites/pokemon/regular/35.png": {
+    "public/sprites/pokemon/kanto/regular/35.png": {
       "digest": "e91757d5953484e3",
       "bytes": 5716,
       "width": 177,
       "height": 148,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5716,
         "bytes": 5716
       }
     },
-    "public/sprites/pokemon/regular/36.png": {
+    "public/sprites/pokemon/kanto/regular/36.png": {
       "digest": "77e91cfe124b0b36",
       "bytes": 5758,
       "width": 169,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5758,
         "bytes": 5758
       }
     },
-    "public/sprites/pokemon/regular/37.png": {
+    "public/sprites/pokemon/kanto/regular/37.png": {
       "digest": "e4bc3ce86e573bea",
       "bytes": 4787,
       "width": 161,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4787,
         "bytes": 4787
       }
     },
-    "public/sprites/pokemon/regular/38.png": {
+    "public/sprites/pokemon/kanto/regular/38.png": {
       "digest": "db9766cd4cec7ecf",
       "bytes": 7279,
       "width": 183,
       "height": 180,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7279,
         "bytes": 7279
       }
     },
-    "public/sprites/pokemon/regular/39.png": {
+    "public/sprites/pokemon/kanto/regular/39.png": {
       "digest": "9c76024833ba973b",
       "bytes": 3578,
       "width": 130,
       "height": 128,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3578,
         "bytes": 3578
       }
     },
-    "public/sprites/pokemon/regular/3_f.png": {
+    "public/sprites/pokemon/kanto/regular/3_f.png": {
       "digest": "f558516b25588bbf",
       "bytes": 8357,
       "width": 200,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8357,
         "bytes": 8357
       }
     },
-    "public/sprites/pokemon/regular/4.png": {
+    "public/sprites/pokemon/kanto/regular/4.png": {
       "digest": "c7f99f854923a280",
       "bytes": 5401,
       "width": 176,
       "height": 167,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5401,
         "bytes": 5401
       }
     },
-    "public/sprites/pokemon/regular/40.png": {
+    "public/sprites/pokemon/kanto/regular/40.png": {
       "digest": "5a16576dba8dea97",
       "bytes": 4919,
       "width": 166,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4919,
         "bytes": 4919
       }
     },
-    "public/sprites/pokemon/regular/41.png": {
+    "public/sprites/pokemon/kanto/regular/41.png": {
       "digest": "45c013682300db5e",
       "bytes": 2646,
       "width": 122,
       "height": 116,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2646,
         "bytes": 2646
       }
     },
-    "public/sprites/pokemon/regular/42.png": {
+    "public/sprites/pokemon/kanto/regular/42.png": {
       "digest": "69b486b91b3d261a",
       "bytes": 2984,
       "width": 130,
       "height": 104,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2984,
         "bytes": 2984
       }
     },
-    "public/sprites/pokemon/regular/43.png": {
+    "public/sprites/pokemon/kanto/regular/43.png": {
       "digest": "3d906141bf1f312c",
       "bytes": 3131,
       "width": 132,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3131,
         "bytes": 3131
       }
     },
-    "public/sprites/pokemon/regular/44.png": {
+    "public/sprites/pokemon/kanto/regular/44.png": {
       "digest": "3a8dfaf99b6ee122",
       "bytes": 5792,
       "width": 172,
       "height": 153,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5792,
         "bytes": 5792
       }
     },
-    "public/sprites/pokemon/regular/44_f.png": {
+    "public/sprites/pokemon/kanto/regular/44_f.png": {
       "digest": "44af2969fdc665db",
       "bytes": 5863,
       "width": 172,
       "height": 153,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5863,
         "bytes": 5863
       }
     },
-    "public/sprites/pokemon/regular/45.png": {
+    "public/sprites/pokemon/kanto/regular/45.png": {
       "digest": "a67f53c3a4651c08",
       "bytes": 4320,
       "width": 152,
       "height": 146,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4320,
         "bytes": 4320
       }
     },
-    "public/sprites/pokemon/regular/45_f.png": {
+    "public/sprites/pokemon/kanto/regular/45_f.png": {
       "digest": "a66dbf4cdc7383cd",
       "bytes": 4495,
       "width": 152,
       "height": 146,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4495,
         "bytes": 4495
       }
     },
-    "public/sprites/pokemon/regular/46.png": {
+    "public/sprites/pokemon/kanto/regular/46.png": {
       "digest": "df08466155763a1c",
       "bytes": 5219,
       "width": 174,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5219,
         "bytes": 5219
       }
     },
-    "public/sprites/pokemon/regular/47.png": {
+    "public/sprites/pokemon/kanto/regular/47.png": {
       "digest": "b9dfe789a9b08ab1",
       "bytes": 6383,
       "width": 186,
       "height": 179,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6383,
         "bytes": 6383
       }
     },
-    "public/sprites/pokemon/regular/48.png": {
+    "public/sprites/pokemon/kanto/regular/48.png": {
       "digest": "7e1f6619e4d1d615",
       "bytes": 3184,
       "width": 132,
       "height": 116,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3184,
         "bytes": 3184
       }
     },
-    "public/sprites/pokemon/regular/49.png": {
+    "public/sprites/pokemon/kanto/regular/49.png": {
       "digest": "d39c2c2cc70f4fe9",
       "bytes": 3949,
       "width": 140,
       "height": 133,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3949,
         "bytes": 3949
       }
     },
-    "public/sprites/pokemon/regular/5.png": {
+    "public/sprites/pokemon/kanto/regular/5.png": {
       "digest": "5305b7b6b4dd86a5",
       "bytes": 6342,
       "width": 193,
       "height": 187,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6342,
         "bytes": 6342
       }
     },
-    "public/sprites/pokemon/regular/50.png": {
+    "public/sprites/pokemon/kanto/regular/50.png": {
       "digest": "2992f7d15134e561",
       "bytes": 8552,
       "width": 274,
       "height": 239,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8552,
         "bytes": 8552
       }
     },
-    "public/sprites/pokemon/regular/51.png": {
+    "public/sprites/pokemon/kanto/regular/51.png": {
       "digest": "d6f4093a38a12463",
       "bytes": 15198,
       "width": 357,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 15198,
         "bytes": 15198
       }
     },
-    "public/sprites/pokemon/regular/52.png": {
+    "public/sprites/pokemon/kanto/regular/52.png": {
       "digest": "d6e7cb4affc1c05b",
       "bytes": 5957,
       "width": 172,
       "height": 162,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5957,
         "bytes": 5957
       }
     },
-    "public/sprites/pokemon/regular/53.png": {
+    "public/sprites/pokemon/kanto/regular/53.png": {
       "digest": "831597b51801541d",
       "bytes": 8914,
       "width": 239,
       "height": 211,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8914,
         "bytes": 8914
       }
     },
-    "public/sprites/pokemon/regular/54.png": {
+    "public/sprites/pokemon/kanto/regular/54.png": {
       "digest": "84de809912e5670d",
       "bytes": 6832,
       "width": 186,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6832,
         "bytes": 6832
       }
     },
-    "public/sprites/pokemon/regular/55.png": {
+    "public/sprites/pokemon/kanto/regular/55.png": {
       "digest": "57eca226762ce7eb",
       "bytes": 8956,
       "width": 238,
       "height": 201,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8956,
         "bytes": 8956
       }
     },
-    "public/sprites/pokemon/regular/56.png": {
+    "public/sprites/pokemon/kanto/regular/56.png": {
       "digest": "a9d31fc7e6cefa91",
       "bytes": 7525,
       "width": 203,
       "height": 187,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7525,
         "bytes": 7525
       }
     },
-    "public/sprites/pokemon/regular/57.png": {
+    "public/sprites/pokemon/kanto/regular/57.png": {
       "digest": "7130a4f872a549fb",
       "bytes": 8599,
       "width": 221,
       "height": 185,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8599,
         "bytes": 8599
       }
     },
-    "public/sprites/pokemon/regular/58.png": {
+    "public/sprites/pokemon/kanto/regular/58.png": {
       "digest": "045acb5116a8eed2",
       "bytes": 5535,
       "width": 178,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5535,
         "bytes": 5535
       }
     },
-    "public/sprites/pokemon/regular/59.png": {
+    "public/sprites/pokemon/kanto/regular/59.png": {
       "digest": "6f35a92dbf7b6455",
       "bytes": 7687,
       "width": 210,
       "height": 180,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7687,
         "bytes": 7687
       }
     },
-    "public/sprites/pokemon/regular/6.png": {
+    "public/sprites/pokemon/kanto/regular/6.png": {
       "digest": "65b73a3efb1ce1af",
       "bytes": 9630,
       "width": 231,
       "height": 211,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9630,
         "bytes": 9630
       }
     },
-    "public/sprites/pokemon/regular/60.png": {
+    "public/sprites/pokemon/kanto/regular/60.png": {
       "digest": "7fc67a228948507b",
       "bytes": 3283,
       "width": 142,
       "height": 131,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3283,
         "bytes": 3283
       }
     },
-    "public/sprites/pokemon/regular/61.png": {
+    "public/sprites/pokemon/kanto/regular/61.png": {
       "digest": "12c49227a72fc155",
       "bytes": 7038,
       "width": 219,
       "height": 195,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7038,
         "bytes": 7038
       }
     },
-    "public/sprites/pokemon/regular/62.png": {
+    "public/sprites/pokemon/kanto/regular/62.png": {
       "digest": "80a1cbe86ff2d088",
       "bytes": 8346,
       "width": 214,
       "height": 213,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8346,
         "bytes": 8346
       }
     },
-    "public/sprites/pokemon/regular/63.png": {
+    "public/sprites/pokemon/kanto/regular/63.png": {
       "digest": "6962bab8b93a0b17",
       "bytes": 5020,
       "width": 167,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5020,
         "bytes": 5020
       }
     },
-    "public/sprites/pokemon/regular/64.png": {
+    "public/sprites/pokemon/kanto/regular/64.png": {
       "digest": "73e59d889e63adaf",
       "bytes": 6576,
       "width": 213,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6576,
         "bytes": 6576
       }
     },
-    "public/sprites/pokemon/regular/65.png": {
+    "public/sprites/pokemon/kanto/regular/65.png": {
       "digest": "9a3a1b666408c5a6",
       "bytes": 4433,
       "width": 175,
       "height": 136,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4433,
         "bytes": 4433
       }
     },
-    "public/sprites/pokemon/regular/66.png": {
+    "public/sprites/pokemon/kanto/regular/66.png": {
       "digest": "f78ffc4fbc2be278",
       "bytes": 5845,
       "width": 183,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5845,
         "bytes": 5845
       }
     },
-    "public/sprites/pokemon/regular/67.png": {
+    "public/sprites/pokemon/kanto/regular/67.png": {
       "digest": "6623d3a30df9c2da",
       "bytes": 9058,
       "width": 206,
       "height": 203,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9058,
         "bytes": 9058
       }
     },
-    "public/sprites/pokemon/regular/68.png": {
+    "public/sprites/pokemon/kanto/regular/68.png": {
       "digest": "77b9b6c015011a34",
       "bytes": 11185,
       "width": 261,
       "height": 228,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11185,
         "bytes": 11185
       }
     },
-    "public/sprites/pokemon/regular/69.png": {
+    "public/sprites/pokemon/kanto/regular/69.png": {
       "digest": "6c9d31f7dbda9bd4",
       "bytes": 4251,
       "width": 165,
       "height": 138,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4251,
         "bytes": 4251
       }
     },
-    "public/sprites/pokemon/regular/7.png": {
+    "public/sprites/pokemon/kanto/regular/7.png": {
       "digest": "01b6303f72e81abc",
       "bytes": 3901,
       "width": 144,
       "height": 129,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3901,
         "bytes": 3901
       }
     },
-    "public/sprites/pokemon/regular/70.png": {
+    "public/sprites/pokemon/kanto/regular/70.png": {
       "digest": "26092f6b46390c2c",
       "bytes": 5564,
       "width": 181,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5564,
         "bytes": 5564
       }
     },
-    "public/sprites/pokemon/regular/71.png": {
+    "public/sprites/pokemon/kanto/regular/71.png": {
       "digest": "c0e48eaea7bdc418",
       "bytes": 7927,
       "width": 218,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7927,
         "bytes": 7927
       }
     },
-    "public/sprites/pokemon/regular/72.png": {
+    "public/sprites/pokemon/kanto/regular/72.png": {
       "digest": "4b090b11f6e90394",
       "bytes": 6007,
       "width": 177,
       "height": 169,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6007,
         "bytes": 6007
       }
     },
-    "public/sprites/pokemon/regular/73.png": {
+    "public/sprites/pokemon/kanto/regular/73.png": {
       "digest": "cd6dc971a8d44b81",
       "bytes": 6839,
       "width": 183,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6839,
         "bytes": 6839
       }
     },
-    "public/sprites/pokemon/regular/74.png": {
+    "public/sprites/pokemon/kanto/regular/74.png": {
       "digest": "26a5bcd9f6cd0502",
       "bytes": 5253,
       "width": 201,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5253,
         "bytes": 5253
       }
     },
-    "public/sprites/pokemon/regular/75.png": {
+    "public/sprites/pokemon/kanto/regular/75.png": {
       "digest": "8f5234597885799b",
       "bytes": 7602,
       "width": 199,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7602,
         "bytes": 7602
       }
     },
-    "public/sprites/pokemon/regular/76.png": {
+    "public/sprites/pokemon/kanto/regular/76.png": {
       "digest": "151da218d4d82f14",
       "bytes": 6430,
       "width": 192,
       "height": 150,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6430,
         "bytes": 6430
       }
     },
-    "public/sprites/pokemon/regular/77.png": {
+    "public/sprites/pokemon/kanto/regular/77.png": {
       "digest": "b48efa66e9d8a483",
       "bytes": 4404,
       "width": 145,
       "height": 128,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4404,
         "bytes": 4404
       }
     },
-    "public/sprites/pokemon/regular/78.png": {
+    "public/sprites/pokemon/kanto/regular/78.png": {
       "digest": "5c36d4a0deee1953",
       "bytes": 8401,
       "width": 215,
       "height": 198,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8401,
         "bytes": 8401
       }
     },
-    "public/sprites/pokemon/regular/79.png": {
+    "public/sprites/pokemon/kanto/regular/79.png": {
       "digest": "4d1e405324c9c8a1",
       "bytes": 3230,
       "width": 151,
       "height": 121,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3230,
         "bytes": 3230
       }
     },
-    "public/sprites/pokemon/regular/8.png": {
+    "public/sprites/pokemon/kanto/regular/8.png": {
       "digest": "31aabb7805c80523",
       "bytes": 5628,
       "width": 169,
       "height": 149,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5628,
         "bytes": 5628
       }
     },
-    "public/sprites/pokemon/regular/80.png": {
+    "public/sprites/pokemon/kanto/regular/80.png": {
       "digest": "ea54a7d143c7b3b3",
       "bytes": 6270,
       "width": 186,
       "height": 154,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6270,
         "bytes": 6270
       }
     },
-    "public/sprites/pokemon/regular/81.png": {
+    "public/sprites/pokemon/kanto/regular/81.png": {
       "digest": "d238fa7517555ec7",
       "bytes": 3701,
       "width": 146,
       "height": 133,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3701,
         "bytes": 3701
       }
     },
-    "public/sprites/pokemon/regular/82.png": {
+    "public/sprites/pokemon/kanto/regular/82.png": {
       "digest": "cf8f87c54829275d",
       "bytes": 4348,
       "width": 161,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4348,
         "bytes": 4348
       }
     },
-    "public/sprites/pokemon/regular/83.png": {
+    "public/sprites/pokemon/kanto/regular/83.png": {
       "digest": "f38743e6a046d79c",
       "bytes": 7315,
       "width": 195,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7315,
         "bytes": 7315
       }
     },
-    "public/sprites/pokemon/regular/84.png": {
+    "public/sprites/pokemon/kanto/regular/84.png": {
       "digest": "91f2d4d3294df163",
       "bytes": 4497,
       "width": 178,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4497,
         "bytes": 4497
       }
     },
-    "public/sprites/pokemon/regular/84_f.png": {
+    "public/sprites/pokemon/kanto/regular/84_f.png": {
       "digest": "87dbaed3baa0bfe0",
       "bytes": 4578,
       "width": 178,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4578,
         "bytes": 4578
       }
     },
-    "public/sprites/pokemon/regular/85.png": {
+    "public/sprites/pokemon/kanto/regular/85.png": {
       "digest": "fbe8cfb86777e3a6",
       "bytes": 7101,
       "width": 201,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7101,
         "bytes": 7101
       }
     },
-    "public/sprites/pokemon/regular/85_f.png": {
+    "public/sprites/pokemon/kanto/regular/85_f.png": {
       "digest": "1e7f1b27bec71355",
       "bytes": 7193,
       "width": 201,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7193,
         "bytes": 7193
       }
     },
-    "public/sprites/pokemon/regular/86.png": {
+    "public/sprites/pokemon/kanto/regular/86.png": {
       "digest": "c170180e6e1c64a5",
       "bytes": 4794,
       "width": 171,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4794,
         "bytes": 4794
       }
     },
-    "public/sprites/pokemon/regular/87.png": {
+    "public/sprites/pokemon/kanto/regular/87.png": {
       "digest": "e0ab48d700fcfd85",
       "bytes": 4624,
       "width": 184,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4624,
         "bytes": 4624
       }
     },
-    "public/sprites/pokemon/regular/88.png": {
+    "public/sprites/pokemon/kanto/regular/88.png": {
       "digest": "f4f55ef5e6101374",
       "bytes": 5078,
       "width": 190,
       "height": 147,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5078,
         "bytes": 5078
       }
     },
-    "public/sprites/pokemon/regular/89.png": {
+    "public/sprites/pokemon/kanto/regular/89.png": {
       "digest": "eff54b6a25b3a9a3",
       "bytes": 6532,
       "width": 236,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6532,
         "bytes": 6532
       }
     },
-    "public/sprites/pokemon/regular/9.png": {
+    "public/sprites/pokemon/kanto/regular/9.png": {
       "digest": "4b934e356ccc05f4",
       "bytes": 6966,
       "width": 199,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6966,
         "bytes": 6966
       }
     },
-    "public/sprites/pokemon/regular/90.png": {
+    "public/sprites/pokemon/kanto/regular/90.png": {
       "digest": "5bf15dddf510b06b",
       "bytes": 3645,
       "width": 142,
       "height": 134,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3645,
         "bytes": 3645
       }
     },
-    "public/sprites/pokemon/regular/91.png": {
+    "public/sprites/pokemon/kanto/regular/91.png": {
       "digest": "13a32fca354bb250",
       "bytes": 6039,
       "width": 185,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6039,
         "bytes": 6039
       }
     },
-    "public/sprites/pokemon/regular/92.png": {
+    "public/sprites/pokemon/kanto/regular/92.png": {
       "digest": "c15459956bf7b09f",
       "bytes": 5173,
       "width": 173,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5173,
         "bytes": 5173
       }
     },
-    "public/sprites/pokemon/regular/93.png": {
+    "public/sprites/pokemon/kanto/regular/93.png": {
       "digest": "6d57b03872c888cb",
       "bytes": 10962,
       "width": 306,
       "height": 280,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10962,
         "bytes": 10962
       }
     },
-    "public/sprites/pokemon/regular/94.png": {
+    "public/sprites/pokemon/kanto/regular/94.png": {
       "digest": "ed22d172390ba596",
       "bytes": 6900,
       "width": 198,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6900,
         "bytes": 6900
       }
     },
-    "public/sprites/pokemon/regular/95.png": {
+    "public/sprites/pokemon/kanto/regular/95.png": {
       "digest": "bda752a195e45d84",
       "bytes": 9576,
       "width": 350,
       "height": 221,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9576,
         "bytes": 9576
       }
     },
-    "public/sprites/pokemon/regular/96.png": {
+    "public/sprites/pokemon/kanto/regular/96.png": {
       "digest": "887f095cb61cf4c4",
       "bytes": 5340,
       "width": 190,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5340,
         "bytes": 5340
       }
     },
-    "public/sprites/pokemon/regular/97.png": {
+    "public/sprites/pokemon/kanto/regular/97.png": {
       "digest": "808a332b5dab4f88",
       "bytes": 14925,
       "width": 295,
       "height": 283,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14925,
         "bytes": 14925
       }
     },
-    "public/sprites/pokemon/regular/98.png": {
+    "public/sprites/pokemon/kanto/regular/98.png": {
       "digest": "9dc61c29f7314e50",
       "bytes": 5298,
       "width": 170,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5298,
         "bytes": 5298
       }
     },
-    "public/sprites/pokemon/regular/99.png": {
+    "public/sprites/pokemon/kanto/regular/99.png": {
       "digest": "7dc51a980f0179c2",
       "bytes": 10243,
       "width": 236,
       "height": 221,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10243,
         "bytes": 10243
       }
     },
-    "public/sprites/pokemon/shiny/1.png": {
+    "public/sprites/pokemon/kanto/shiny/1.png": {
       "digest": "1be512ebc59e631b",
       "bytes": 4872,
       "width": 169,
       "height": 139,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4872,
         "bytes": 4872
       }
     },
-    "public/sprites/pokemon/shiny/10.png": {
+    "public/sprites/pokemon/kanto/shiny/10.png": {
       "digest": "bbd3c76c6dfcd785",
       "bytes": 3477,
       "width": 145,
       "height": 114,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3477,
         "bytes": 3477
       }
     },
-    "public/sprites/pokemon/shiny/100.png": {
+    "public/sprites/pokemon/kanto/shiny/100.png": {
       "digest": "e89c0ac16bedf5f3",
       "bytes": 2306,
       "width": 127,
       "height": 111,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2306,
         "bytes": 2306
       }
     },
-    "public/sprites/pokemon/shiny/101.png": {
+    "public/sprites/pokemon/kanto/shiny/101.png": {
       "digest": "a6978cda61ef9e13",
       "bytes": 2489,
       "width": 149,
       "height": 120,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2489,
         "bytes": 2489
       }
     },
-    "public/sprites/pokemon/shiny/102.png": {
+    "public/sprites/pokemon/kanto/shiny/102.png": {
       "digest": "e0ac6a49606a8e03",
       "bytes": 6295,
       "width": 185,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6295,
         "bytes": 6295
       }
     },
-    "public/sprites/pokemon/shiny/103.png": {
+    "public/sprites/pokemon/kanto/shiny/103.png": {
       "digest": "09186c79318d957a",
       "bytes": 9065,
       "width": 225,
       "height": 179,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9065,
         "bytes": 9065
       }
     },
-    "public/sprites/pokemon/shiny/104.png": {
+    "public/sprites/pokemon/kanto/shiny/104.png": {
       "digest": "9496fec4b1fabd90",
       "bytes": 8299,
       "width": 206,
       "height": 190,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8299,
         "bytes": 8299
       }
     },
-    "public/sprites/pokemon/shiny/105.png": {
+    "public/sprites/pokemon/kanto/shiny/105.png": {
       "digest": "70141fca68e8ee7f",
       "bytes": 10386,
       "width": 249,
       "height": 218,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10386,
         "bytes": 10386
       }
     },
-    "public/sprites/pokemon/shiny/106.png": {
+    "public/sprites/pokemon/kanto/shiny/106.png": {
       "digest": "c34e2aa7a723c90a",
       "bytes": 11204,
       "width": 263,
       "height": 242,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11204,
         "bytes": 11204
       }
     },
-    "public/sprites/pokemon/shiny/107.png": {
+    "public/sprites/pokemon/kanto/shiny/107.png": {
       "digest": "2bb2ce57c187ec46",
       "bytes": 10769,
       "width": 236,
       "height": 224,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10769,
         "bytes": 10769
       }
     },
-    "public/sprites/pokemon/shiny/108.png": {
+    "public/sprites/pokemon/kanto/shiny/108.png": {
       "digest": "5dc997225161276b",
       "bytes": 8826,
       "width": 239,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8826,
         "bytes": 8826
       }
     },
-    "public/sprites/pokemon/shiny/109.png": {
+    "public/sprites/pokemon/kanto/shiny/109.png": {
       "digest": "0f697d2bc7c64ca8",
       "bytes": 15552,
       "width": 380,
       "height": 360,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 15552,
         "bytes": 15552
       }
     },
-    "public/sprites/pokemon/shiny/11.png": {
+    "public/sprites/pokemon/kanto/shiny/11.png": {
       "digest": "88b8138ed536aa83",
       "bytes": 4249,
       "width": 165,
       "height": 141,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4249,
         "bytes": 4249
       }
     },
-    "public/sprites/pokemon/shiny/110.png": {
+    "public/sprites/pokemon/kanto/shiny/110.png": {
       "digest": "a85bb92b7698191c",
       "bytes": 22208,
       "width": 472,
       "height": 415,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 22208,
         "bytes": 22208
       }
     },
-    "public/sprites/pokemon/shiny/111.png": {
+    "public/sprites/pokemon/kanto/shiny/111.png": {
       "digest": "829c58b5df6eb95e",
       "bytes": 5096,
       "width": 171,
       "height": 167,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5096,
         "bytes": 5096
       }
     },
-    "public/sprites/pokemon/shiny/112.png": {
+    "public/sprites/pokemon/kanto/shiny/112.png": {
       "digest": "d958abc89859de1e",
       "bytes": 7428,
       "width": 208,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7428,
         "bytes": 7428
       }
     },
-    "public/sprites/pokemon/shiny/113.png": {
+    "public/sprites/pokemon/kanto/shiny/113.png": {
       "digest": "9bc4f0bcdb1f0b89",
       "bytes": 5362,
       "width": 190,
       "height": 157,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5362,
         "bytes": 5362
       }
     },
-    "public/sprites/pokemon/shiny/114.png": {
+    "public/sprites/pokemon/kanto/shiny/114.png": {
       "digest": "e617f9cfb9347c4c",
       "bytes": 5066,
       "width": 170,
       "height": 158,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5066,
         "bytes": 5066
       }
     },
-    "public/sprites/pokemon/shiny/115.png": {
+    "public/sprites/pokemon/kanto/shiny/115.png": {
       "digest": "42f9ec9ba51c32ae",
       "bytes": 9844,
       "width": 231,
       "height": 209,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9844,
         "bytes": 9844
       }
     },
-    "public/sprites/pokemon/shiny/116.png": {
+    "public/sprites/pokemon/kanto/shiny/116.png": {
       "digest": "f9f700a419aa3b93",
       "bytes": 3297,
       "width": 152,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3297,
         "bytes": 3297
       }
     },
-    "public/sprites/pokemon/shiny/117.png": {
+    "public/sprites/pokemon/kanto/shiny/117.png": {
       "digest": "68c6ccb7aa6139dc",
       "bytes": 6229,
       "width": 185,
       "height": 164,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6229,
         "bytes": 6229
       }
     },
-    "public/sprites/pokemon/shiny/118.png": {
+    "public/sprites/pokemon/kanto/shiny/118.png": {
       "digest": "8d09624483875e73",
       "bytes": 5251,
       "width": 166,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5251,
         "bytes": 5251
       }
     },
-    "public/sprites/pokemon/shiny/119.png": {
+    "public/sprites/pokemon/kanto/shiny/119.png": {
       "digest": "4544779f55729092",
       "bytes": 7923,
       "width": 210,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7923,
         "bytes": 7923
       }
     },
-    "public/sprites/pokemon/shiny/12.png": {
+    "public/sprites/pokemon/kanto/shiny/12.png": {
       "digest": "068d7fb65a3be503",
       "bytes": 5262,
       "width": 158,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5262,
         "bytes": 5262
       }
     },
-    "public/sprites/pokemon/shiny/120.png": {
+    "public/sprites/pokemon/kanto/shiny/120.png": {
       "digest": "161ce2608872944d",
       "bytes": 4096,
       "width": 138,
       "height": 136,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4096,
         "bytes": 4096
       }
     },
-    "public/sprites/pokemon/shiny/121.png": {
+    "public/sprites/pokemon/kanto/shiny/121.png": {
       "digest": "f9073e5b834ce907",
       "bytes": 4491,
       "width": 151,
       "height": 139,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4491,
         "bytes": 4491
       }
     },
-    "public/sprites/pokemon/shiny/122.png": {
+    "public/sprites/pokemon/kanto/shiny/122.png": {
       "digest": "801b50f289e9e1af",
       "bytes": 8731,
       "width": 214,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8731,
         "bytes": 8731
       }
     },
-    "public/sprites/pokemon/shiny/123.png": {
+    "public/sprites/pokemon/kanto/shiny/123.png": {
       "digest": "77f7275207da0257",
       "bytes": 8382,
       "width": 237,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8382,
         "bytes": 8382
       }
     },
-    "public/sprites/pokemon/shiny/124.png": {
+    "public/sprites/pokemon/kanto/shiny/124.png": {
       "digest": "110c776bb93b36b1",
       "bytes": 8532,
       "width": 212,
       "height": 186,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8532,
         "bytes": 8532
       }
     },
-    "public/sprites/pokemon/shiny/125.png": {
+    "public/sprites/pokemon/kanto/shiny/125.png": {
       "digest": "0fd48fdd532b74f2",
       "bytes": 11904,
       "width": 255,
       "height": 243,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11904,
         "bytes": 11904
       }
     },
-    "public/sprites/pokemon/shiny/126.png": {
+    "public/sprites/pokemon/kanto/shiny/126.png": {
       "digest": "69e49cfa3c1ba4de",
       "bytes": 7566,
       "width": 193,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7566,
         "bytes": 7566
       }
     },
-    "public/sprites/pokemon/shiny/127.png": {
+    "public/sprites/pokemon/kanto/shiny/127.png": {
       "digest": "89e3c69c7f6d4b34",
       "bytes": 5431,
       "width": 184,
       "height": 159,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5431,
         "bytes": 5431
       }
     },
-    "public/sprites/pokemon/shiny/128.png": {
+    "public/sprites/pokemon/kanto/shiny/128.png": {
       "digest": "d278018007463265",
       "bytes": 8410,
       "width": 217,
       "height": 178,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8410,
         "bytes": 8410
       }
     },
-    "public/sprites/pokemon/shiny/129.png": {
+    "public/sprites/pokemon/kanto/shiny/129.png": {
       "digest": "6a57fbbd78de5f17",
       "bytes": 4404,
       "width": 158,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4404,
         "bytes": 4404
       }
     },
-    "public/sprites/pokemon/shiny/129_f.png": {
+    "public/sprites/pokemon/kanto/shiny/129_f.png": {
       "digest": "433533ee744f2d02",
       "bytes": 4469,
       "width": 158,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4469,
         "bytes": 4469
       }
     },
-    "public/sprites/pokemon/shiny/12_f.png": {
+    "public/sprites/pokemon/kanto/shiny/12_f.png": {
       "digest": "baa2547c4ecb7864",
       "bytes": 5246,
       "width": 158,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5246,
         "bytes": 5246
       }
     },
-    "public/sprites/pokemon/shiny/13.png": {
+    "public/sprites/pokemon/kanto/shiny/13.png": {
       "digest": "b6034632077b208c",
       "bytes": 3726,
       "width": 144,
       "height": 143,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3726,
         "bytes": 3726
       }
     },
-    "public/sprites/pokemon/shiny/130.png": {
+    "public/sprites/pokemon/kanto/shiny/130.png": {
       "digest": "2644b73f10c82dc8",
       "bytes": 20776,
       "width": 354,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 20776,
         "bytes": 20776
       }
     },
-    "public/sprites/pokemon/shiny/130_f.png": {
+    "public/sprites/pokemon/kanto/shiny/130_f.png": {
       "digest": "014d839013fb116d",
       "bytes": 21130,
       "width": 354,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 21130,
         "bytes": 21130
       }
     },
-    "public/sprites/pokemon/shiny/131.png": {
+    "public/sprites/pokemon/kanto/shiny/131.png": {
       "digest": "39a32c94e0a97bfc",
       "bytes": 10832,
       "width": 296,
       "height": 218,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10832,
         "bytes": 10832
       }
     },
-    "public/sprites/pokemon/shiny/132.png": {
+    "public/sprites/pokemon/kanto/shiny/132.png": {
       "digest": "37be879e056c550b",
       "bytes": 2601,
       "width": 124,
       "height": 123,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2601,
         "bytes": 2601
       }
     },
-    "public/sprites/pokemon/shiny/133.png": {
+    "public/sprites/pokemon/kanto/shiny/133.png": {
       "digest": "b07493e79f9afde0",
       "bytes": 4648,
       "width": 158,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4648,
         "bytes": 4648
       }
     },
-    "public/sprites/pokemon/shiny/133_f.png": {
+    "public/sprites/pokemon/kanto/shiny/133_f.png": {
       "digest": "9a29c495839c9e56",
       "bytes": 4637,
       "width": 158,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4637,
         "bytes": 4637
       }
     },
-    "public/sprites/pokemon/shiny/134.png": {
+    "public/sprites/pokemon/kanto/shiny/134.png": {
       "digest": "8514228c6f4fb13f",
       "bytes": 7677,
       "width": 201,
       "height": 193,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7677,
         "bytes": 7677
       }
     },
-    "public/sprites/pokemon/shiny/135.png": {
+    "public/sprites/pokemon/kanto/shiny/135.png": {
       "digest": "19de40f50d7e5129",
       "bytes": 9514,
       "width": 260,
       "height": 247,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9514,
         "bytes": 9514
       }
     },
-    "public/sprites/pokemon/shiny/136.png": {
+    "public/sprites/pokemon/kanto/shiny/136.png": {
       "digest": "229cf1aa664090e4",
       "bytes": 5243,
       "width": 167,
       "height": 156,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5243,
         "bytes": 5243
       }
     },
-    "public/sprites/pokemon/shiny/137.png": {
+    "public/sprites/pokemon/kanto/shiny/137.png": {
       "digest": "2fa03d8bf98d7221",
       "bytes": 4600,
       "width": 147,
       "height": 144,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4600,
         "bytes": 4600
       }
     },
-    "public/sprites/pokemon/shiny/138.png": {
+    "public/sprites/pokemon/kanto/shiny/138.png": {
       "digest": "adf0ea0f239a85be",
       "bytes": 3650,
       "width": 153,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3650,
         "bytes": 3650
       }
     },
-    "public/sprites/pokemon/shiny/139.png": {
+    "public/sprites/pokemon/kanto/shiny/139.png": {
       "digest": "23844fb5cf2f6c0e",
       "bytes": 5251,
       "width": 181,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5251,
         "bytes": 5251
       }
     },
-    "public/sprites/pokemon/shiny/14.png": {
+    "public/sprites/pokemon/kanto/shiny/14.png": {
       "digest": "d7dc1229f8398bc1",
       "bytes": 3949,
       "width": 148,
       "height": 138,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3949,
         "bytes": 3949
       }
     },
-    "public/sprites/pokemon/shiny/140.png": {
+    "public/sprites/pokemon/kanto/shiny/140.png": {
       "digest": "9d17dad9947dc2d4",
       "bytes": 3308,
       "width": 125,
       "height": 120,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3308,
         "bytes": 3308
       }
     },
-    "public/sprites/pokemon/shiny/141.png": {
+    "public/sprites/pokemon/kanto/shiny/141.png": {
       "digest": "a5c3559cc9887189",
       "bytes": 8848,
       "width": 222,
       "height": 216,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8848,
         "bytes": 8848
       }
     },
-    "public/sprites/pokemon/shiny/142.png": {
+    "public/sprites/pokemon/kanto/shiny/142.png": {
       "digest": "8f4c94ab4751d2ec",
       "bytes": 6527,
       "width": 210,
       "height": 175,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6527,
         "bytes": 6527
       }
     },
-    "public/sprites/pokemon/shiny/143.png": {
+    "public/sprites/pokemon/kanto/shiny/143.png": {
       "digest": "182d6dcfea46eac0",
       "bytes": 6126,
       "width": 201,
       "height": 178,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6126,
         "bytes": 6126
       }
     },
-    "public/sprites/pokemon/shiny/144.png": {
+    "public/sprites/pokemon/kanto/shiny/144.png": {
       "digest": "bc9d852378b4770c",
       "bytes": 10144,
       "width": 298,
       "height": 281,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10144,
         "bytes": 10144
       }
     },
-    "public/sprites/pokemon/shiny/145.png": {
+    "public/sprites/pokemon/kanto/shiny/145.png": {
       "digest": "8712cd6e8b789d9a",
       "bytes": 21520,
       "width": 398,
       "height": 365,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 21520,
         "bytes": 21520
       }
     },
-    "public/sprites/pokemon/shiny/146.png": {
+    "public/sprites/pokemon/kanto/shiny/146.png": {
       "digest": "f8754922d873a667",
       "bytes": 13702,
       "width": 396,
       "height": 289,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 13702,
         "bytes": 13702
       }
     },
-    "public/sprites/pokemon/shiny/147.png": {
+    "public/sprites/pokemon/kanto/shiny/147.png": {
       "digest": "392526f97e712e41",
       "bytes": 5056,
       "width": 180,
       "height": 168,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5056,
         "bytes": 5056
       }
     },
-    "public/sprites/pokemon/shiny/148.png": {
+    "public/sprites/pokemon/kanto/shiny/148.png": {
       "digest": "f5a7c13d99bd83e1",
       "bytes": 9224,
       "width": 256,
       "height": 229,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9224,
         "bytes": 9224
       }
     },
-    "public/sprites/pokemon/shiny/149.png": {
+    "public/sprites/pokemon/kanto/shiny/149.png": {
       "digest": "bc9b52e5fbefc9ce",
       "bytes": 7460,
       "width": 197,
       "height": 195,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7460,
         "bytes": 7460
       }
     },
-    "public/sprites/pokemon/shiny/15.png": {
+    "public/sprites/pokemon/kanto/shiny/15.png": {
       "digest": "82736d79e26376fa",
       "bytes": 6429,
       "width": 192,
       "height": 164,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6429,
         "bytes": 6429
       }
     },
-    "public/sprites/pokemon/shiny/150.png": {
+    "public/sprites/pokemon/kanto/shiny/150.png": {
       "digest": "acdb59d81fa612da",
       "bytes": 8792,
       "width": 232,
       "height": 215,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8792,
         "bytes": 8792
       }
     },
-    "public/sprites/pokemon/shiny/151.png": {
+    "public/sprites/pokemon/kanto/shiny/151.png": {
       "digest": "cf738d1e727a5e0a",
       "bytes": 5980,
       "width": 202,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5980,
         "bytes": 5980
       }
     },
-    "public/sprites/pokemon/shiny/16.png": {
+    "public/sprites/pokemon/kanto/shiny/16.png": {
       "digest": "6fa045fdc759abad",
       "bytes": 3380,
       "width": 135,
       "height": 105,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3380,
         "bytes": 3380
       }
     },
-    "public/sprites/pokemon/shiny/17.png": {
+    "public/sprites/pokemon/kanto/shiny/17.png": {
       "digest": "d79b159892dd6f23",
       "bytes": 5444,
       "width": 168,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5444,
         "bytes": 5444
       }
     },
-    "public/sprites/pokemon/shiny/18.png": {
+    "public/sprites/pokemon/kanto/shiny/18.png": {
       "digest": "b260e8b708b7369d",
       "bytes": 6361,
       "width": 195,
       "height": 183,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6361,
         "bytes": 6361
       }
     },
-    "public/sprites/pokemon/shiny/19.png": {
+    "public/sprites/pokemon/kanto/shiny/19.png": {
       "digest": "5dc92258cf1f3d63",
       "bytes": 2940,
       "width": 121,
       "height": 117,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2940,
         "bytes": 2940
       }
     },
-    "public/sprites/pokemon/shiny/2.png": {
+    "public/sprites/pokemon/kanto/shiny/2.png": {
       "digest": "cd912cd1dd280e53",
       "bytes": 5636,
       "width": 156,
       "height": 144,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5636,
         "bytes": 5636
       }
     },
-    "public/sprites/pokemon/shiny/20.png": {
+    "public/sprites/pokemon/kanto/shiny/20.png": {
       "digest": "d86c1b9b787cf449",
       "bytes": 3943,
       "width": 147,
       "height": 113,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3943,
         "bytes": 3943
       }
     },
-    "public/sprites/pokemon/shiny/21.png": {
+    "public/sprites/pokemon/kanto/shiny/21.png": {
       "digest": "85f068175a53a585",
       "bytes": 4190,
       "width": 161,
       "height": 132,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4190,
         "bytes": 4190
       }
     },
-    "public/sprites/pokemon/shiny/22.png": {
+    "public/sprites/pokemon/kanto/shiny/22.png": {
       "digest": "e8c1fac99dd88c35",
       "bytes": 6402,
       "width": 181,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6402,
         "bytes": 6402
       }
     },
-    "public/sprites/pokemon/shiny/23.png": {
+    "public/sprites/pokemon/kanto/shiny/23.png": {
       "digest": "d246d1acfb390157",
       "bytes": 8180,
       "width": 230,
       "height": 208,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8180,
         "bytes": 8180
       }
     },
-    "public/sprites/pokemon/shiny/24.png": {
+    "public/sprites/pokemon/kanto/shiny/24.png": {
       "digest": "7e80918a4c7f1659",
       "bytes": 9574,
       "width": 253,
       "height": 233,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9574,
         "bytes": 9574
       }
     },
-    "public/sprites/pokemon/shiny/25.png": {
+    "public/sprites/pokemon/kanto/shiny/25.png": {
       "digest": "d7e3ee1aaebefeac",
       "bytes": 14405,
       "width": 433,
       "height": 420,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14405,
         "bytes": 14405
       }
     },
-    "public/sprites/pokemon/shiny/25_f.png": {
+    "public/sprites/pokemon/kanto/shiny/25_f.png": {
       "digest": "82b27ff06723d7d6",
       "bytes": 14230,
       "width": 433,
       "height": 420,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14230,
         "bytes": 14230
       }
     },
-    "public/sprites/pokemon/shiny/26.png": {
+    "public/sprites/pokemon/kanto/shiny/26.png": {
       "digest": "8530cd148f018cc7",
       "bytes": 12155,
       "width": 278,
       "height": 227,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 12155,
         "bytes": 12155
       }
     },
-    "public/sprites/pokemon/shiny/27.png": {
+    "public/sprites/pokemon/kanto/shiny/27.png": {
       "digest": "3f772f322ad55bb0",
       "bytes": 4476,
       "width": 157,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4476,
         "bytes": 4476
       }
     },
-    "public/sprites/pokemon/shiny/28.png": {
+    "public/sprites/pokemon/kanto/shiny/28.png": {
       "digest": "5d88d50cc661664d",
       "bytes": 8179,
       "width": 192,
       "height": 169,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8179,
         "bytes": 8179
       }
     },
-    "public/sprites/pokemon/shiny/29.png": {
+    "public/sprites/pokemon/kanto/shiny/29.png": {
       "digest": "ac3853ff122da046",
       "bytes": 5027,
       "width": 154,
       "height": 143,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5027,
         "bytes": 5027
       }
     },
-    "public/sprites/pokemon/shiny/3.png": {
+    "public/sprites/pokemon/kanto/shiny/3.png": {
       "digest": "e27d0687309f11a4",
       "bytes": 8286,
       "width": 200,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8286,
         "bytes": 8286
       }
     },
-    "public/sprites/pokemon/shiny/30.png": {
+    "public/sprites/pokemon/kanto/shiny/30.png": {
       "digest": "93b5dc0049a121e3",
       "bytes": 5308,
       "width": 160,
       "height": 149,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5308,
         "bytes": 5308
       }
     },
-    "public/sprites/pokemon/shiny/31.png": {
+    "public/sprites/pokemon/kanto/shiny/31.png": {
       "digest": "326fa28fce28789b",
       "bytes": 7454,
       "width": 197,
       "height": 185,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7454,
         "bytes": 7454
       }
     },
-    "public/sprites/pokemon/shiny/32.png": {
+    "public/sprites/pokemon/kanto/shiny/32.png": {
       "digest": "f1c2efd420f326bd",
       "bytes": 5104,
       "width": 172,
       "height": 154,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5104,
         "bytes": 5104
       }
     },
-    "public/sprites/pokemon/shiny/33.png": {
+    "public/sprites/pokemon/kanto/shiny/33.png": {
       "digest": "5fce5df243508f5f",
       "bytes": 7370,
       "width": 200,
       "height": 196,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7370,
         "bytes": 7370
       }
     },
-    "public/sprites/pokemon/shiny/34.png": {
+    "public/sprites/pokemon/kanto/shiny/34.png": {
       "digest": "3f4f4a9ad1bd514c",
       "bytes": 8767,
       "width": 211,
       "height": 207,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8767,
         "bytes": 8767
       }
     },
-    "public/sprites/pokemon/shiny/35.png": {
+    "public/sprites/pokemon/kanto/shiny/35.png": {
       "digest": "e321ceaf6ede7cd4",
       "bytes": 5755,
       "width": 177,
       "height": 148,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5755,
         "bytes": 5755
       }
     },
-    "public/sprites/pokemon/shiny/36.png": {
+    "public/sprites/pokemon/kanto/shiny/36.png": {
       "digest": "2ee5b9b9022a5196",
       "bytes": 5757,
       "width": 169,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5757,
         "bytes": 5757
       }
     },
-    "public/sprites/pokemon/shiny/37.png": {
+    "public/sprites/pokemon/kanto/shiny/37.png": {
       "digest": "49dc5b8de7e5dfe3",
       "bytes": 4787,
       "width": 161,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4787,
         "bytes": 4787
       }
     },
-    "public/sprites/pokemon/shiny/38.png": {
+    "public/sprites/pokemon/kanto/shiny/38.png": {
       "digest": "881055f13b95332e",
       "bytes": 7259,
       "width": 183,
       "height": 180,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7259,
         "bytes": 7259
       }
     },
-    "public/sprites/pokemon/shiny/39.png": {
+    "public/sprites/pokemon/kanto/shiny/39.png": {
       "digest": "468c07e2c2be6d72",
       "bytes": 3609,
       "width": 130,
       "height": 128,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3609,
         "bytes": 3609
       }
     },
-    "public/sprites/pokemon/shiny/3_f.png": {
+    "public/sprites/pokemon/kanto/shiny/3_f.png": {
       "digest": "4a78941ebc0e8f6a",
       "bytes": 8357,
       "width": 200,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8357,
         "bytes": 8357
       }
     },
-    "public/sprites/pokemon/shiny/4.png": {
+    "public/sprites/pokemon/kanto/shiny/4.png": {
       "digest": "54c64403879e0bf2",
       "bytes": 5586,
       "width": 176,
       "height": 167,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5586,
         "bytes": 5586
       }
     },
-    "public/sprites/pokemon/shiny/40.png": {
+    "public/sprites/pokemon/kanto/shiny/40.png": {
       "digest": "bb003bf913099f4a",
       "bytes": 4923,
       "width": 166,
       "height": 135,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4923,
         "bytes": 4923
       }
     },
-    "public/sprites/pokemon/shiny/41.png": {
+    "public/sprites/pokemon/kanto/shiny/41.png": {
       "digest": "1b159c990f1f46fe",
       "bytes": 2646,
       "width": 122,
       "height": 116,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2646,
         "bytes": 2646
       }
     },
-    "public/sprites/pokemon/shiny/42.png": {
+    "public/sprites/pokemon/kanto/shiny/42.png": {
       "digest": "dd40b03c45087033",
       "bytes": 2984,
       "width": 130,
       "height": 104,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 2984,
         "bytes": 2984
       }
     },
-    "public/sprites/pokemon/shiny/43.png": {
+    "public/sprites/pokemon/kanto/shiny/43.png": {
       "digest": "4cd7c0c13924ae2d",
       "bytes": 3131,
       "width": 132,
       "height": 125,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3131,
         "bytes": 3131
       }
     },
-    "public/sprites/pokemon/shiny/44.png": {
+    "public/sprites/pokemon/kanto/shiny/44.png": {
       "digest": "b8f4390b6c3599f2",
       "bytes": 5792,
       "width": 172,
       "height": 153,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5792,
         "bytes": 5792
       }
     },
-    "public/sprites/pokemon/shiny/44_f.png": {
+    "public/sprites/pokemon/kanto/shiny/44_f.png": {
       "digest": "e2875d11d75d17e8",
       "bytes": 5863,
       "width": 172,
       "height": 153,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5863,
         "bytes": 5863
       }
     },
-    "public/sprites/pokemon/shiny/45.png": {
+    "public/sprites/pokemon/kanto/shiny/45.png": {
       "digest": "f5089908ba5819fb",
       "bytes": 4320,
       "width": 152,
       "height": 146,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4320,
         "bytes": 4320
       }
     },
-    "public/sprites/pokemon/shiny/45_f.png": {
+    "public/sprites/pokemon/kanto/shiny/45_f.png": {
       "digest": "16df3cc6ad428ded",
       "bytes": 4495,
       "width": 152,
       "height": 146,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4495,
         "bytes": 4495
       }
     },
-    "public/sprites/pokemon/shiny/46.png": {
+    "public/sprites/pokemon/kanto/shiny/46.png": {
       "digest": "ac8bccbb179c8f67",
       "bytes": 5219,
       "width": 174,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5219,
         "bytes": 5219
       }
     },
-    "public/sprites/pokemon/shiny/47.png": {
+    "public/sprites/pokemon/kanto/shiny/47.png": {
       "digest": "c33efbe75ac50a91",
       "bytes": 6608,
       "width": 186,
       "height": 179,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6608,
         "bytes": 6608
       }
     },
-    "public/sprites/pokemon/shiny/48.png": {
+    "public/sprites/pokemon/kanto/shiny/48.png": {
       "digest": "9f20b8e3a042fabe",
       "bytes": 3184,
       "width": 132,
       "height": 116,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3184,
         "bytes": 3184
       }
     },
-    "public/sprites/pokemon/shiny/49.png": {
+    "public/sprites/pokemon/kanto/shiny/49.png": {
       "digest": "ce31964aac3e3a31",
       "bytes": 3949,
       "width": 140,
       "height": 133,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3949,
         "bytes": 3949
       }
     },
-    "public/sprites/pokemon/shiny/5.png": {
+    "public/sprites/pokemon/kanto/shiny/5.png": {
       "digest": "3bec09e286a4dc02",
       "bytes": 6325,
       "width": 193,
       "height": 187,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6325,
         "bytes": 6325
       }
     },
-    "public/sprites/pokemon/shiny/50.png": {
+    "public/sprites/pokemon/kanto/shiny/50.png": {
       "digest": "b8b5c51d43cc1cec",
       "bytes": 8736,
       "width": 274,
       "height": 239,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8736,
         "bytes": 8736
       }
     },
-    "public/sprites/pokemon/shiny/51.png": {
+    "public/sprites/pokemon/kanto/shiny/51.png": {
       "digest": "7026cbcbe868d2cb",
       "bytes": 15485,
       "width": 357,
       "height": 323,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 15485,
         "bytes": 15485
       }
     },
-    "public/sprites/pokemon/shiny/52.png": {
+    "public/sprites/pokemon/kanto/shiny/52.png": {
       "digest": "bd1ff6ab7da1be4f",
       "bytes": 5957,
       "width": 172,
       "height": 162,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5957,
         "bytes": 5957
       }
     },
-    "public/sprites/pokemon/shiny/53.png": {
+    "public/sprites/pokemon/kanto/shiny/53.png": {
       "digest": "7d0baab809788b7c",
       "bytes": 8914,
       "width": 239,
       "height": 211,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8914,
         "bytes": 8914
       }
     },
-    "public/sprites/pokemon/shiny/54.png": {
+    "public/sprites/pokemon/kanto/shiny/54.png": {
       "digest": "b141cda13592b367",
       "bytes": 6832,
       "width": 186,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6832,
         "bytes": 6832
       }
     },
-    "public/sprites/pokemon/shiny/55.png": {
+    "public/sprites/pokemon/kanto/shiny/55.png": {
       "digest": "c12fd286c83e0bd6",
       "bytes": 8956,
       "width": 238,
       "height": 201,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8956,
         "bytes": 8956
       }
     },
-    "public/sprites/pokemon/shiny/56.png": {
+    "public/sprites/pokemon/kanto/shiny/56.png": {
       "digest": "1eee581287075e7b",
       "bytes": 7599,
       "width": 203,
       "height": 187,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7599,
         "bytes": 7599
       }
     },
-    "public/sprites/pokemon/shiny/57.png": {
+    "public/sprites/pokemon/kanto/shiny/57.png": {
       "digest": "bf1aa8a1f72832e8",
       "bytes": 8636,
       "width": 221,
       "height": 185,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8636,
         "bytes": 8636
       }
     },
-    "public/sprites/pokemon/shiny/58.png": {
+    "public/sprites/pokemon/kanto/shiny/58.png": {
       "digest": "b054f06bc0b7392d",
       "bytes": 5556,
       "width": 178,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5556,
         "bytes": 5556
       }
     },
-    "public/sprites/pokemon/shiny/59.png": {
+    "public/sprites/pokemon/kanto/shiny/59.png": {
       "digest": "697131037d88cc1c",
       "bytes": 7712,
       "width": 210,
       "height": 180,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7712,
         "bytes": 7712
       }
     },
-    "public/sprites/pokemon/shiny/6.png": {
+    "public/sprites/pokemon/kanto/shiny/6.png": {
       "digest": "980b2fd8708c35ea",
       "bytes": 9917,
       "width": 231,
       "height": 211,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9917,
         "bytes": 9917
       }
     },
-    "public/sprites/pokemon/shiny/60.png": {
+    "public/sprites/pokemon/kanto/shiny/60.png": {
       "digest": "3755b829e49a2bb2",
       "bytes": 3283,
       "width": 142,
       "height": 131,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3283,
         "bytes": 3283
       }
     },
-    "public/sprites/pokemon/shiny/61.png": {
+    "public/sprites/pokemon/kanto/shiny/61.png": {
       "digest": "66e5a99d4d34fdf9",
       "bytes": 7038,
       "width": 219,
       "height": 195,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7038,
         "bytes": 7038
       }
     },
-    "public/sprites/pokemon/shiny/62.png": {
+    "public/sprites/pokemon/kanto/shiny/62.png": {
       "digest": "dc4374ab2d5f680c",
       "bytes": 8346,
       "width": 214,
       "height": 213,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8346,
         "bytes": 8346
       }
     },
-    "public/sprites/pokemon/shiny/63.png": {
+    "public/sprites/pokemon/kanto/shiny/63.png": {
       "digest": "6bc58a23f43189ee",
       "bytes": 5020,
       "width": 167,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5020,
         "bytes": 5020
       }
     },
-    "public/sprites/pokemon/shiny/64.png": {
+    "public/sprites/pokemon/kanto/shiny/64.png": {
       "digest": "45e0769d8c699400",
       "bytes": 6576,
       "width": 213,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6576,
         "bytes": 6576
       }
     },
-    "public/sprites/pokemon/shiny/65.png": {
+    "public/sprites/pokemon/kanto/shiny/65.png": {
       "digest": "6f41a461bf06883f",
       "bytes": 4433,
       "width": 175,
       "height": 136,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4433,
         "bytes": 4433
       }
     },
-    "public/sprites/pokemon/shiny/66.png": {
+    "public/sprites/pokemon/kanto/shiny/66.png": {
       "digest": "635d93ab8938407f",
       "bytes": 5845,
       "width": 183,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5845,
         "bytes": 5845
       }
     },
-    "public/sprites/pokemon/shiny/67.png": {
+    "public/sprites/pokemon/kanto/shiny/67.png": {
       "digest": "8eaa8d83f70cc18c",
       "bytes": 9084,
       "width": 206,
       "height": 203,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9084,
         "bytes": 9084
       }
     },
-    "public/sprites/pokemon/shiny/68.png": {
+    "public/sprites/pokemon/kanto/shiny/68.png": {
       "digest": "413998074dcfbea5",
       "bytes": 11185,
       "width": 261,
       "height": 228,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 11185,
         "bytes": 11185
       }
     },
-    "public/sprites/pokemon/shiny/69.png": {
+    "public/sprites/pokemon/kanto/shiny/69.png": {
       "digest": "e0548499729e32a5",
       "bytes": 4251,
       "width": 165,
       "height": 138,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4251,
         "bytes": 4251
       }
     },
-    "public/sprites/pokemon/shiny/7.png": {
+    "public/sprites/pokemon/kanto/shiny/7.png": {
       "digest": "4f3ff335fde7c9da",
       "bytes": 3915,
       "width": 144,
       "height": 129,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3915,
         "bytes": 3915
       }
     },
-    "public/sprites/pokemon/shiny/70.png": {
+    "public/sprites/pokemon/kanto/shiny/70.png": {
       "digest": "ce68c8d4e8351aaf",
       "bytes": 5609,
       "width": 181,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5609,
         "bytes": 5609
       }
     },
-    "public/sprites/pokemon/shiny/71.png": {
+    "public/sprites/pokemon/kanto/shiny/71.png": {
       "digest": "2a41bc8bba035c4f",
       "bytes": 8093,
       "width": 218,
       "height": 191,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8093,
         "bytes": 8093
       }
     },
-    "public/sprites/pokemon/shiny/72.png": {
+    "public/sprites/pokemon/kanto/shiny/72.png": {
       "digest": "23c10a0efc7e761e",
       "bytes": 6007,
       "width": 177,
       "height": 169,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6007,
         "bytes": 6007
       }
     },
-    "public/sprites/pokemon/shiny/73.png": {
+    "public/sprites/pokemon/kanto/shiny/73.png": {
       "digest": "0307f547bc4c4ca2",
       "bytes": 6839,
       "width": 183,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6839,
         "bytes": 6839
       }
     },
-    "public/sprites/pokemon/shiny/74.png": {
+    "public/sprites/pokemon/kanto/shiny/74.png": {
       "digest": "daf1e4ee2a35a402",
       "bytes": 5253,
       "width": 201,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5253,
         "bytes": 5253
       }
     },
-    "public/sprites/pokemon/shiny/75.png": {
+    "public/sprites/pokemon/kanto/shiny/75.png": {
       "digest": "54dc00989c0447b5",
       "bytes": 7602,
       "width": 199,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7602,
         "bytes": 7602
       }
     },
-    "public/sprites/pokemon/shiny/76.png": {
+    "public/sprites/pokemon/kanto/shiny/76.png": {
       "digest": "d9b2e65005527114",
       "bytes": 6452,
       "width": 192,
       "height": 150,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6452,
         "bytes": 6452
       }
     },
-    "public/sprites/pokemon/shiny/77.png": {
+    "public/sprites/pokemon/kanto/shiny/77.png": {
       "digest": "6be056162dd9e5da",
       "bytes": 4380,
       "width": 145,
       "height": 128,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4380,
         "bytes": 4380
       }
     },
-    "public/sprites/pokemon/shiny/78.png": {
+    "public/sprites/pokemon/kanto/shiny/78.png": {
       "digest": "30954672ebe5aba6",
       "bytes": 8350,
       "width": 215,
       "height": 198,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 8350,
         "bytes": 8350
       }
     },
-    "public/sprites/pokemon/shiny/79.png": {
+    "public/sprites/pokemon/kanto/shiny/79.png": {
       "digest": "dd1bf86d61f72ba5",
       "bytes": 3266,
       "width": 151,
       "height": 121,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3266,
         "bytes": 3266
       }
     },
-    "public/sprites/pokemon/shiny/8.png": {
+    "public/sprites/pokemon/kanto/shiny/8.png": {
       "digest": "0969a0698ab8ba8c",
       "bytes": 5885,
       "width": 169,
       "height": 149,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5885,
         "bytes": 5885
       }
     },
-    "public/sprites/pokemon/shiny/80.png": {
+    "public/sprites/pokemon/kanto/shiny/80.png": {
       "digest": "9a043beb5dfd5a4d",
       "bytes": 6346,
       "width": 186,
       "height": 154,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6346,
         "bytes": 6346
       }
     },
-    "public/sprites/pokemon/shiny/81.png": {
+    "public/sprites/pokemon/kanto/shiny/81.png": {
       "digest": "7d4322bc5e71e022",
       "bytes": 3917,
       "width": 146,
       "height": 133,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3917,
         "bytes": 3917
       }
     },
-    "public/sprites/pokemon/shiny/82.png": {
+    "public/sprites/pokemon/kanto/shiny/82.png": {
       "digest": "45ab6318fe5dc8d4",
       "bytes": 4530,
       "width": 161,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4530,
         "bytes": 4530
       }
     },
-    "public/sprites/pokemon/shiny/83.png": {
+    "public/sprites/pokemon/kanto/shiny/83.png": {
       "digest": "9b4f5ea2a46498e5",
       "bytes": 7470,
       "width": 195,
       "height": 182,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7470,
         "bytes": 7470
       }
     },
-    "public/sprites/pokemon/shiny/84.png": {
+    "public/sprites/pokemon/kanto/shiny/84.png": {
       "digest": "c0d60c1a4fab57c5",
       "bytes": 4497,
       "width": 178,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4497,
         "bytes": 4497
       }
     },
-    "public/sprites/pokemon/shiny/84_f.png": {
+    "public/sprites/pokemon/kanto/shiny/84_f.png": {
       "digest": "4a63f1a7f61a4c35",
       "bytes": 4578,
       "width": 178,
       "height": 145,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4578,
         "bytes": 4578
       }
     },
-    "public/sprites/pokemon/shiny/85.png": {
+    "public/sprites/pokemon/kanto/shiny/85.png": {
       "digest": "3fa584ad7032d9e5",
       "bytes": 7270,
       "width": 201,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7270,
         "bytes": 7270
       }
     },
-    "public/sprites/pokemon/shiny/85_f.png": {
+    "public/sprites/pokemon/kanto/shiny/85_f.png": {
       "digest": "417682e653f2b3e1",
       "bytes": 7350,
       "width": 201,
       "height": 192,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7350,
         "bytes": 7350
       }
     },
-    "public/sprites/pokemon/shiny/86.png": {
+    "public/sprites/pokemon/kanto/shiny/86.png": {
       "digest": "2b9ae3adaeaf1fa2",
       "bytes": 4794,
       "width": 171,
       "height": 155,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4794,
         "bytes": 4794
       }
     },
-    "public/sprites/pokemon/shiny/87.png": {
+    "public/sprites/pokemon/kanto/shiny/87.png": {
       "digest": "16357e2299f3ea3d",
       "bytes": 4624,
       "width": 184,
       "height": 151,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 4624,
         "bytes": 4624
       }
     },
-    "public/sprites/pokemon/shiny/88.png": {
+    "public/sprites/pokemon/kanto/shiny/88.png": {
       "digest": "28c7d26bec11b82f",
       "bytes": 5158,
       "width": 190,
       "height": 147,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5158,
         "bytes": 5158
       }
     },
-    "public/sprites/pokemon/shiny/89.png": {
+    "public/sprites/pokemon/kanto/shiny/89.png": {
       "digest": "8bf91f0e968606e0",
       "bytes": 6645,
       "width": 236,
       "height": 181,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6645,
         "bytes": 6645
       }
     },
-    "public/sprites/pokemon/shiny/9.png": {
+    "public/sprites/pokemon/kanto/shiny/9.png": {
       "digest": "3b8b1d289adfb03e",
       "bytes": 7010,
       "width": 199,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 7010,
         "bytes": 7010
       }
     },
-    "public/sprites/pokemon/shiny/90.png": {
+    "public/sprites/pokemon/kanto/shiny/90.png": {
       "digest": "d088a72bd098a4cf",
       "bytes": 3645,
       "width": 142,
       "height": 134,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 3645,
         "bytes": 3645
       }
     },
-    "public/sprites/pokemon/shiny/91.png": {
+    "public/sprites/pokemon/kanto/shiny/91.png": {
       "digest": "134633195a8177a0",
       "bytes": 6039,
       "width": 185,
       "height": 166,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6039,
         "bytes": 6039
       }
     },
-    "public/sprites/pokemon/shiny/92.png": {
+    "public/sprites/pokemon/kanto/shiny/92.png": {
       "digest": "f65c73e6b32a052b",
       "bytes": 5173,
       "width": 173,
       "height": 173,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5173,
         "bytes": 5173
       }
     },
-    "public/sprites/pokemon/shiny/93.png": {
+    "public/sprites/pokemon/kanto/shiny/93.png": {
       "digest": "2093668bc25582ea",
       "bytes": 10962,
       "width": 306,
       "height": 280,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10962,
         "bytes": 10962
       }
     },
-    "public/sprites/pokemon/shiny/94.png": {
+    "public/sprites/pokemon/kanto/shiny/94.png": {
       "digest": "09f124e0e70bf7ad",
       "bytes": 6900,
       "width": 198,
       "height": 188,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 6900,
         "bytes": 6900
       }
     },
-    "public/sprites/pokemon/shiny/95.png": {
+    "public/sprites/pokemon/kanto/shiny/95.png": {
       "digest": "bda752a195e45d84",
       "bytes": 9576,
       "width": 350,
       "height": 221,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 9576,
         "bytes": 9576
       }
     },
-    "public/sprites/pokemon/shiny/96.png": {
+    "public/sprites/pokemon/kanto/shiny/96.png": {
       "digest": "58ff152dba06e0d8",
       "bytes": 5340,
       "width": 190,
       "height": 152,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5340,
         "bytes": 5340
       }
     },
-    "public/sprites/pokemon/shiny/97.png": {
+    "public/sprites/pokemon/kanto/shiny/97.png": {
       "digest": "478abe349df34d41",
       "bytes": 14925,
       "width": 295,
       "height": 283,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 14925,
         "bytes": 14925
       }
     },
-    "public/sprites/pokemon/shiny/98.png": {
+    "public/sprites/pokemon/kanto/shiny/98.png": {
       "digest": "766e79f223e7b096",
       "bytes": 5298,
       "width": 170,
       "height": 163,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 5298,
         "bytes": 5298
       }
     },
-    "public/sprites/pokemon/shiny/99.png": {
+    "public/sprites/pokemon/kanto/shiny/99.png": {
       "digest": "1e3f455903f976b9",
       "bytes": 10243,
       "width": 236,
       "height": 221,
       "compact": {
-        "at": "2026-08-20T04:24:51Z",
+        "at": "2026-08-20T04:42:33Z",
         "as": "already compact",
         "was": 10243,
         "bytes": 10243
+      }
+    },
+    "public/sprites/pokemon/unknown/regular/100000.png": {
+      "digest": "72fbf893fe1ea154",
+      "bytes": 1185,
+      "width": 129,
+      "height": 114,
+      "compact": {
+        "at": "2026-08-20T04:42:33Z",
+        "as": "already compact",
+        "was": 1185,
+        "bytes": 1185
+      }
+    },
+    "public/sprites/pokemon/unknown/regular/100001.png": {
+      "digest": "e28997da0d28c844",
+      "bytes": 1527,
+      "width": 110,
+      "height": 88,
+      "compact": {
+        "at": "2026-08-20T04:42:33Z",
+        "as": "already compact",
+        "was": 1527,
+        "bytes": 1527
+      }
+    },
+    "public/sprites/pokemon/unknown/regular/100002.png": {
+      "digest": "c7754178e9783b1d",
+      "bytes": 2165,
+      "width": 116,
+      "height": 96,
+      "compact": {
+        "at": "2026-08-20T04:42:33Z",
+        "as": "already compact",
+        "was": 2165,
+        "bytes": 2165
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {

@@ -10,7 +10,7 @@ description: >
 
 **A sheet is a bag of pictures, not a grid.** Every distinct picture sits wherever the packer put it, at whatever size its own content needs. Nothing is laid out in rows and columns, and **a clip does not own a region** — the pictures belong to the pokemon, and two animations holding the same drawing point at one copy of it.
 
-`meta/{species}.json` says it in three parts:
+`{region}/meta/{species}.json` says it in three parts:
 
 - `sheet.pictures` — every picture's rectangle, as `[x, y, width, height]`, for the whole sheet.
 - a frame's `cell` and `flip` — which of those it draws, and whether it draws it mirrored.
@@ -27,6 +27,7 @@ description: >
 - **Read a frame through the description, never by arithmetic on the grid.** `frame * frameWidth` is wrong: two frames of a clip are different sizes and sit in different places, and the picture may be somewhere another clip put it.
 - **Pictures are compared across every coat at once, and across every clip.** Four coats share one description, so two frames are the same picture only when they match on all of them; two clips share a picture only when they were compared across the same coats — see [`dedupe.ts`](../../../src/server/sprites/dedupe.ts).
 - **A mirrored frame keeps its own place.** `flip` says the picture's pixels are reversed; `at` is still measured from the left of the box, and only a caller-requested flip turns it round.
+- **Sheets are filed by region.** `public/sprites/pokemon/{region}/{regular,shiny,meta}` — `kanto` for the first hundred and fifty-one, `unknown` for Missingno, the egg and the substitute. Which region a pokemon is in comes from its dex number ([`getSpeciesRegion`](../../../src/data/species/regions.ts)), never from a list beside the files; `coats.json` stays at the root and says nothing about regions.
 - **There is one format.** A description written before this shape does not load — its clips are keyed by name, which reads as no clips at all. Reprocess the archive rather than patching the file.
 
 ## Why

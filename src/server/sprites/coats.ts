@@ -14,6 +14,10 @@ import type { Coat, SpriteCoats } from '../../canvas/sprite-coats';
  * Unmarked by `server-only`, like the PNG codec beside it, so the
  * script that rebuilds the list outside the app can run it: what keeps
  * it off a browser is the `node:fs` it opens with.
+ *
+ * One list covers every region. Which region a pokemon is filed under
+ * is a fact about its dex number rather than about the files, so the
+ * game works it out for itself and the list stays a list of coats.
  */
 
 /** Where the sheets are, under `public/`. */
@@ -30,27 +34,42 @@ const ORDER: Coat[] = ['regular', 'shiny', 'female', 'shinyFemale'];
 
 const SHEET = /^(\d+)(_f)?\.png$/;
 
-async function listing(directory: string): Promise<string[]> {
-  return readdir(join(process.cwd(), 'public', ROOT, directory)).catch(() => []);
+async function listing(...parts: string[]): Promise<string[]> {
+  return readdir(join(process.cwd(), 'public', ROOT, ...parts)).catch(() => []);
+}
+
+/**
+ * The regions with sheets under them, whatever they are called. Read
+ * off the directories rather than off a list, for the same reason the
+ * coats are
+ */
+async function regions(): Promise<string[]> {
+  const held = await readdir(join(process.cwd(), 'public', ROOT), {
+    withFileTypes: true,
+  }).catch(() => []);
+
+  return held.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 }
 
 /** What is on disk right now. */
 export async function readCoats(): Promise<SpriteCoats> {
-  const found = new Map<number, Set<Coat>>();
+  const found = new Map<number, { region: string; coats: Set<Coat> }>();
 
-  for (const side of SIDES) {
-    for (const file of await listing(side.directory)) {
-      const named = SHEET.exec(file);
+  for (const region of await regions()) {
+    for (const side of SIDES) {
+      for (const file of await listing(region, side.directory)) {
+        const named = SHEET.exec(file);
 
-      if (named == null) {
-        continue;
+        if (named == null) {
+          continue;
+        }
+        const species = Number.parseInt(named[1], 10);
+        const held = found.get(species) ?? { region, coats: new Set<Coat>() };
+
+        // The name ends in `_f` only for the female drawing
+        held.coats.add(file.endsWith('_f.png') ? side.female : side.plain);
+        found.set(species, held);
       }
-      const species = Number.parseInt(named[1], 10);
-      const held = found.get(species) ?? new Set<Coat>();
-
-      // The name ends in `_f` only for the female drawing
-      held.add(file.endsWith('_f.png') ? side.female : side.plain);
-      found.set(species, held);
     }
   }
 
@@ -60,10 +79,15 @@ export async function readCoats(): Promise<SpriteCoats> {
   // By number rather than by string, so 9 comes before 10 and the file
   // reads like the dex
   for (const species of [...found.keys()].sort((one, two) => one - two)) {
-    const kept = ORDER.filter((coat) => found.get(species)?.has(coat) === true);
+    const held = found.get(species);
+
+    if (held == null) {
+      continue;
+    }
+    const kept = ORDER.filter((coat) => held.coats.has(coat));
 
     coats[String(species)] = kept;
-    stamps[String(species)] = await stampOf(species, kept);
+    stamps[String(species)] = await stampOf(held.region, species, kept);
   }
   return { version: 1, coats, stamps };
 }
@@ -76,11 +100,11 @@ export async function readCoats(): Promise<SpriteCoats> {
 const STAMP_LENGTH = 8;
 
 /** Where each coat's drawing lives, relative to `public/`. */
-function pathOf(species: number, coat: Coat): string {
+function pathOf(region: string, species: number, coat: Coat): string {
   const side = coat === 'shiny' || coat === 'shinyFemale' ? 'shiny' : 'regular';
   const female = coat === 'female' || coat === 'shinyFemale' ? '_f' : '';
 
-  return `${ROOT}/${side}/${species}${female}.png`;
+  return `${ROOT}/${region}/${side}/${species}${female}.png`;
 }
 
 /**
@@ -89,9 +113,12 @@ function pathOf(species: number, coat: Coat): string {
  * the whole point — a new drawing read against an old description draws
  * from wherever those coordinates now land
  */
-async function stampOf(species: number, coats: Coat[]): Promise<string> {
+async function stampOf(region: string, species: number, coats: Coat[]): Promise<string> {
   const hash = createHash('sha256');
-  const files = [`${ROOT}/meta/${species}.json`, ...coats.map((coat) => pathOf(species, coat))];
+  const files = [
+    `${ROOT}/${region}/meta/${species}.json`,
+    ...coats.map((coat) => pathOf(region, species, coat)),
+  ];
 
   for (const file of files) {
     const held = await readFile(join(process.cwd(), 'public', file)).catch(() => null);

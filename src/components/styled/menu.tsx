@@ -6,9 +6,8 @@ import {
   PopoverButton,
   PopoverPanel,
   Transition,
-  TransitionChild,
 } from 'terracotta';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 
 /**
  * A short list of things that can be done to whatever is on screen,
@@ -74,18 +73,11 @@ export default function Menu(props: MenuProps): JSX.Element {
           header, so a panel laid out rightwards from there runs off
           the side of the screen — and a menu you have to scroll the
           page sideways to read is a menu with nothing in it */}
-      <Transition show={open()} class="absolute top-full right-0 z-30 mt-1.5 w-max">
-        <PopoverPanel
-          as={TransitionChild}
-          {...SHEER}
-          // Kept mounted, since the fade needs something to fade, and
-          // out of reach while it is going: a menu that has been
-          // dismissed is not one to pick from
-          unmount={false}
-          onTransitionEnd={holdFade}
-          inert={!open()}
-          class="min-w-44 rounded-xl border-2 border-tide bg-paper p-1 shadow-pop"
-        >
+      {/* The fade is the wrapper's and the panel inside it is plain,
+          which keeps the transform off the panel the list is measured
+          from */}
+      <Transition show={open()} {...SHEER} class="absolute top-full right-0 z-30 mt-1.5 w-max">
+        <PopoverPanel class="min-w-44 rounded-xl border-2 border-tide bg-paper p-1 shadow-pop">
           <HeadlessMenu class="flex list-none flex-col gap-0.5">
             <For each={props.actions}>
               {(action) => (

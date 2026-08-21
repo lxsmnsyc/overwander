@@ -4,6 +4,7 @@ import {
   type Resource,
   Show,
   Suspense,
+  createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
@@ -72,9 +73,8 @@ export { MoveLine };
  * The two dialogs, which is where the record is read.
  *
  * Which of them opens depends on how much room the pokemon has, so
- * the record is read before either exists — and a record read in the
- * body that declared it throws past every `Suspense` written there,
- * onto the boundary around the whole page
+ * the record is read before either dialog exists, above the panel
+ * boundary that would otherwise hold it
  */
 function TeachBody(
   props: TeachMoveDialogProps & { caught: Resource<CaughtPokemon | null> },
@@ -85,7 +85,15 @@ function TeachBody(
 
   const open = (): boolean => props.catchId != null && props.move != null;
 
-  const known = (): Moves[] => props.caught()?.moves ?? [];
+  /**
+   * The record, read in a memo so that it suspends. `isOpen` is read
+   * from the dialog's own body, where a read registers with no
+   * boundary at all: without this the roomy dialog opens first and
+   * swaps itself for the other the moment the moves arrive
+   */
+  const record = createMemo(() => props.caught());
+
+  const known = (): Moves[] => record()?.moves ?? [];
 
   /**
    * Whether the list is full. It is what decides which of the two
@@ -94,9 +102,9 @@ function TeachBody(
    * a fifth move instead of being asked to forget one
    */
   const full = (): boolean => {
-    const record = props.caught();
+    const loaded = record();
 
-    return record != null && known().length >= getCatchSlots(record, Slots.Move);
+    return loaded != null && known().length >= getCatchSlots(loaded, Slots.Move);
   };
 
   const taught = (): string => (props.move == null ? 'that move' : getMoveData(props.move).name);
@@ -107,12 +115,12 @@ function TeachBody(
   const spent = (): string => props.cost ?? 'The machine';
 
   const named = (): string => {
-    const record = props.caught();
+    const loaded = record();
 
-    if (record == null) {
+    if (loaded == null) {
       return 'This pokemon';
     }
-    return isEgg(record) ? 'Egg' : getSpeciesData(record.species).name;
+    return isEgg(loaded) ? 'Egg' : getSpeciesData(loaded.species).name;
   };
 
   const close = (): void => {
@@ -157,12 +165,12 @@ function TeachBody(
    * What is being taught, drawn the size a dialog can hold
    */
   const portrait = (): JSX.Element => (
-    <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
-      {(record) => (
+    <Show when={record()} fallback={<Note>Reading the record…</Note>}>
+      {(loaded) => (
         <div class="flex justify-center">
           <AnimatedSprite
-            species={isEgg(record()) ? Species.Egg : record().species}
-            shiny={!isEgg(record()) && isShiny(record())}
+            species={isEgg(loaded()) ? Species.Egg : loaded().species}
+            shiny={!isEgg(loaded()) && isShiny(loaded())}
             animation={SpriteAnim.Idle}
             direction="Down"
             scale={4}
@@ -210,7 +218,7 @@ function TeachBody(
           <Button disabled={busy()} onClick={close}>
             Cancel
           </Button>
-          <Button tone="primary" disabled={busy() || props.caught() == null} onClick={teach}>
+          <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
             {busy() ? 'Teaching…' : `Forget ${getMoveData(known()[forgetting()] ?? 0).name}`}
           </Button>
         </DialogActions>
@@ -253,7 +261,7 @@ function TeachBody(
           <Button disabled={busy()} onClick={close}>
             Cancel
           </Button>
-          <Button tone="primary" disabled={busy() || props.caught() == null} onClick={teach}>
+          <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
             {busy() ? 'Teaching…' : 'Teach it'}
           </Button>
         </DialogActions>
@@ -265,9 +273,10 @@ function TeachBody(
 /**
  * Teaching a move, and choosing what it costs.
  *
- * The record is read one component down, under this boundary: which
- * of the two panels opens is decided by how much room the pokemon
- * has, so nothing is drawn until the record has arrived
+ * A boundary of its own, which no other dialog needs: which of the
+ * two panels opens is the record's answer, and that is decided above
+ * the panel each of them carries. Nothing is drawn until the record
+ * has arrived
  */
 export default function TeachMoveDialog(props: TeachMoveDialogProps): JSX.Element {
   const [caught] = createResource(() => props.catchId, getCaught);

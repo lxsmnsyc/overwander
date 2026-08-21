@@ -20,32 +20,10 @@
  * contains, since opacity on an ancestor does not reach through a
  * portal to what was drawn somewhere else.
  *
- * The transition itself rides the `enterTo` and `leaveTo` classes
- * rather than the `enter` and `leave` ones. Terracotta adds those to
- * an element that is already in the page, so a fade written the usual
- * way animates the jump *to* transparent and then turns round — half a
- * second of nothing, and the card is up before the fade begins. Given
- * only at the far end, each side is a single move from where the
- * element already is.
- *
  * Somebody who has asked for less motion gets a fade too short to
- * read rather than none at all: terracotta unmounts on `transitionend`
- * and a transition that never runs never ends, which would leave every
- * dialog on the screen for good.
+ * read rather than none at all, so that what is on screen still
+ * arrives and leaves the way the rest of the game does.
  */
-/**
- * Put on whatever the transition wraps, always.
- *
- * Terracotta ends the fade at the first `transitionend` it hears, and
- * those bubble: a button inside a dialog finishing its own hover was
- * enough to take the whole dialog down a frame after it started to
- * leave. The fade's own event is fired at the element the transition
- * is on, so nothing of it is lost by keeping the children's to
- * themselves
- */
-export function holdFade(event: TransitionEvent): void {
-  event.stopPropagation();
-}
 
 /**
  * The same arrival with the scale taken out: opacity alone.
@@ -58,27 +36,34 @@ export function holdFade(event: TransitionEvent): void {
  * viewport down the page
  */
 export const SHEER = {
+  enter: 'transition-opacity duration-250 ease-out motion-reduce:duration-75',
   enterFrom: 'opacity-0',
-  enterTo: 'transition-opacity duration-250 ease-out motion-reduce:duration-75 opacity-100',
-  /** Held after the fade in, since `enterTo` is taken off at the end */
+  enterTo: 'opacity-100',
+  /** The resting state, once the fade in is over */
   entered: 'opacity-100',
+  leave: 'transition-opacity duration-250 ease-in motion-reduce:duration-75',
   leaveFrom: 'opacity-100',
-  leaveTo: 'transition-opacity duration-250 ease-in motion-reduce:duration-75 opacity-0',
+  leaveTo: 'opacity-0',
 } as const;
 
 /**
  * The arrival for a dialog's panel: it fades and grows from half its
- * size. Everything else takes `SHEER`
+ * size. Everything else takes `SHEER`.
+ *
+ * The property is `scale` rather than `transform`, because that is
+ * what Tailwind's `scale-*` sets; a transition naming `transform`
+ * animates nothing and the panel appears at full size. Both are named
+ * in one `transition-[…]`, since two utilities each naming one are
+ * settled by the order Tailwind emits them in
  */
 const FADE = {
+  enter: 'transition-[opacity,scale] duration-250 ease-out motion-reduce:duration-75',
   enterFrom: 'opacity-0 scale-50',
-  enterTo:
-    'transition-opacity transition-transform transform duration-250 ease-out motion-reduce:duration-75 opacity-100 scale-100',
-  /** Held after the fade in, since `enterTo` is taken off at the end */
+  enterTo: 'opacity-100 scale-100',
   entered: 'opacity-100 scale-100',
+  leave: 'transition-[opacity,scale] duration-250 ease-in motion-reduce:duration-75',
   leaveFrom: 'opacity-100 scale-100',
-  leaveTo:
-    'transition-opacity transition-transform transform duration-250 ease-in motion-reduce:duration-75 opacity-0 scale-50',
+  leaveTo: 'opacity-0 scale-50',
 } as const;
 
 export default FADE;

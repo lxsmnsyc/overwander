@@ -3,7 +3,6 @@ import {
   type JSX,
   type Resource,
   Show,
-  Suspense,
   createMemo,
   createResource,
   createSignal,
@@ -173,9 +172,10 @@ export interface NpcDialogProps {
  * What the person has to offer, which is where the box, the purse and
  * the bag are all read.
  *
- * Any of them read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the whole
- * page, taking the world down while somebody was being served
+ * Any of them read in the body that declared it would land on the
+ * boundary around the whole page, taking the world down while
+ * somebody was being served. Read a component below and it is the
+ * dialog's own panel that waits
  */
 function NpcCounter(
   props: NpcDialogProps & {
@@ -249,13 +249,11 @@ function NpcCounter(
    * The player's pokemon as every picker in this dialog reads them.
    *
    * `latest`, not the resource. Every one of these people writes and
-   * then re-reads the list, and a read that suspends throws to the
-   * nearest Suspense boundary — which, from inside a dialog, is the
-   * root of the whole app. Handing a party to Nurse Joy took the
-   * entire page down for the length of the round trip and brought it
-   * back with the dialog shut
+   * then re-reads the list, and a read that suspends takes the panel
+   * out for the length of the round trip: handing a party to Nurse Joy
+   * would blank the counter mid-sentence
    */
-  const offers = (): CatchOption[] => props.catches() ?? [];
+  const offers = (): CatchOption[] => props.catches.latest ?? [];
 
   const pair = (): [CatchOption, CatchOption] | null => {
     const picked = chosen();
@@ -307,7 +305,7 @@ function NpcCounter(
    * price, and it is read off the same bag the vendor's picker reads
    */
   const scales = (): number =>
-    (props.bag() ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+    (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
   /**
    * Which pokemon has been picked out for the reminder
@@ -350,7 +348,7 @@ function NpcCounter(
    * What is in the bag that the scientist can open
    */
   const fossils = (): InventoryEntry[] =>
-    (props.bag() ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
+    (props.bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
 
   const close = (): void => {
     setStatus(null);
@@ -478,7 +476,7 @@ function NpcCounter(
    * is actually deciding with
    */
   const carrying = (item: Items): number =>
-    (props.bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+    (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
   /**
    * Trade one of something, either way across the counter.
@@ -671,7 +669,7 @@ function NpcCounter(
       return (
         <Button
           tone="primary"
-          disabled={busy() || item == null || getFossilPrice(item) > (props.gold() ?? 0)}
+          disabled={busy() || item == null || getFossilPrice(item) > (props.gold.latest ?? 0)}
           onClick={buyRock}
         >
           {item == null ? 'Buy' : `Buy (${getFossilPrice(item)} gold)`}
@@ -977,7 +975,7 @@ function NpcCounter(
               <Show when={standing()[1] === Npc.FossilManiac}>
                 <DialogSection class={CENTRED}>
                   <Row class="justify-center">
-                    <Badge tone="gold">{props.gold() ?? 0} gold</Badge>
+                    <Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>
                   </Row>
 
                   {/* Two rocks, and nothing about what is in them.
@@ -1055,7 +1053,7 @@ function NpcCounter(
               <Show when={standing()[1] === Npc.Vendor}>
                 <DialogSection title="Trading" class={CENTRED}>
                   <Row class="justify-center">
-                    <Badge tone="gold">{props.gold() ?? 0} gold</Badge>
+                    <Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>
                   </Row>
 
                   {/* His crate and the player's bag are windows of
@@ -1108,14 +1106,14 @@ function NpcCounter(
         // What is in the purse, under the crate it is spent on: it is
         // the number every press on this window changes, and it was
         // one screen behind on the counter
-        below={<Badge tone="gold">{props.gold() ?? 0} gold</Badge>}
+        below={<Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>}
         description={
           counter() === 'sell'
             ? 'One at a time, off the card over whatever he can have.'
             : 'One at a time, off the card over whatever you want.'
         }
         verb={counter() === 'sell' ? 'Sell' : 'Buy'}
-        entries={counter() === 'sell' ? props.bag() : crate()}
+        entries={counter() === 'sell' ? props.bag.latest : crate()}
         disabled={busy()}
         value={null}
         carried={(entry) => carrying(entry.item)}
@@ -1132,7 +1130,7 @@ function NpcCounter(
         // rather than left out: what he stocks is the same crate
         // whatever a player is carrying
         blocked={(entry) =>
-          counter() !== 'sell' && priceOf(entry.item, true) > (props.gold() ?? 0)
+          counter() !== 'sell' && priceOf(entry.item, true) > (props.gold.latest ?? 0)
             ? 'More than you hold'
             : null
         }
@@ -1208,19 +1206,17 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   );
 
   return (
-    <Suspense>
-      <NpcCounter
-        {...props}
-        catches={catches}
-        gold={gold}
-        bag={bag}
-        onServed={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-        onTraded={() => {
-          setTraded((count) => count + 1);
-        }}
-      />
-    </Suspense>
+    <NpcCounter
+      {...props}
+      catches={catches}
+      gold={gold}
+      bag={bag}
+      onServed={() => {
+        Promise.resolve(refetch()).catch(() => undefined);
+      }}
+      onTraded={() => {
+        setTraded((count) => count + 1);
+      }}
+    />
   );
 }

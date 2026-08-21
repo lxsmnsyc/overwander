@@ -8,7 +8,7 @@ import {
   Combobox as HeadlessCombobox,
   Transition,
 } from 'terracotta';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 import { Badge } from './feedback';
 import { FieldFrame } from './form';
 import dismissOutside from './dismiss';
@@ -152,8 +152,6 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
           >
             <ComboboxOptions
               unmount={false}
-              onTransitionEnd={holdFade}
-              inert={!disclosure.isOpen()}
               class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
                 border-2 border-tide bg-paper p-1 shadow-pop"
             >

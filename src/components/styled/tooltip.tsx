@@ -2,7 +2,7 @@ import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 
 /**
  * What a thing is, said where the pointer already is.
@@ -58,7 +58,6 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       role="tooltip"
       // The card's own transitions stay with it; the fade above ends on
       // the first one it hears
-      onTransitionEnd={holdFade}
       style={{ 'max-width': `${WIDTH}px` }}
       class={`flex flex-col gap-1.5 rounded-panel border-2 border-line bg-line-soft p-1.5
         shadow-window ${props.class ?? ''}`}

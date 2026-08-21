@@ -121,6 +121,33 @@ export async function clearIdleRaids(): Promise<void> {
 }
 
 /** One row into any table, service-role, plain columns */
+/**
+ * The columns Postgres works out for itself: the unpacked individual
+ * values, the statuses and what is left of a hatch. A copy is a
+ * `select *`, and an insert that names a generated column is refused
+ * outright, so they are dropped on the way back in
+ */
+const DERIVED = new Set([
+  'iv_hp',
+  'iv_atk',
+  'iv_def',
+  'iv_spa',
+  'iv_spd',
+  'iv_spe',
+  'iv_total',
+  'status_poisoned',
+  'status_badly_poisoned',
+  'status_sleeping',
+  'status_paralyzed',
+  'status_burned',
+  'status_frozen',
+  'hatch_left',
+]);
+
+export function copyable(row: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(row).filter(([column]) => !DERIVED.has(column)));
+}
+
 export async function insertRow(table: string, row: Record<string, unknown>): Promise<void> {
   const { error } = await admin.from(table).insert(row);
 

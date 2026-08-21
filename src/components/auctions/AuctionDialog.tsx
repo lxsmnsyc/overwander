@@ -1,4 +1,4 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, createResource, createSignal } from 'solid-js';
 import {
   AuctionLot,
   MAX_INCREMENT,
@@ -82,9 +82,9 @@ const CENTRED = 'text-center';
 /**
  * The listing itself, which is where the record is read.
  *
- * A record read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the page,
- * so the reading half stands on its own
+ * A record read in the body that declared it lands on the boundary
+ * around the page rather than on the dialog panel's own, so the
+ * reading half stands on its own
  */
 function ListingBody(
   props: AuctionDialogProps & { caught: Resource<CaughtPokemon | null>; onDone: () => void },
@@ -324,9 +324,5 @@ export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
     getCaught,
   );
 
-  return (
-    <Suspense>
-      <ListingBody {...props} caught={caught} onDone={props.onClose} />
-    </Suspense>
-  );
+  return <ListingBody {...props} caught={caught} onDone={props.onClose} />;
 }

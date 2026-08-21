@@ -14,7 +14,7 @@ import { isServer } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
 import { TooltipLayer } from './tooltip';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 
 /**
  * A card that opens on hover: what a row is about, without opening it.
@@ -637,10 +637,8 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 }}
                 role="dialog"
                 aria-labelledby={titleId}
-                onTransitionEnd={holdFade}
                 // Nothing to press or read while it fades: a card on its
                 // way out would otherwise swallow the click that follows
-                inert={!open()}
                 aria-hidden={open() ? undefined : 'true'}
                 class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
                   open() ? '' : 'pointer-events-none'

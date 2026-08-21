@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 import dismissOutside from './dismiss';
 
 /**
@@ -107,8 +107,6 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
           <Transition show={open()} {...SHEER} class="absolute top-full left-0 z-20 mt-1.5 w-full">
             <ListboxOptions
               unmount={false}
-              onTransitionEnd={holdFade}
-              inert={!open()}
               class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
                 border-2 border-tide bg-paper p-1 shadow-pop"
             >

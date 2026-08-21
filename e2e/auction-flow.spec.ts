@@ -1,7 +1,7 @@
 import { type Browser, type Locator, type Page, expect, test } from '@playwright/test';
 import { PERFECT_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
-import { findRows, insertRow, patchRow, setBagItem, setGold, uidOf } from './admin';
+import { copyable, findRows, insertRow, patchRow, setBagItem, setGold, uidOf } from './admin';
 import {
   type Player,
   claimStarter,
@@ -266,7 +266,7 @@ test.describe('the auction house', () => {
 
     expect(starter, 'the starter should be there').toBeTruthy();
     await insertRow('caught', {
-      ...starter,
+      ...copyable(starter),
       id: `flawless-${seller.uid}`,
       ivs: PERFECT_IVS,
       auctionable: true,

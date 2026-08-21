@@ -4,7 +4,6 @@ import {
   type JSX,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -535,10 +534,9 @@ export interface CatchDialogProps {
 /**
  * The sheet itself, which is where every one of these is read.
  *
- * A read in the body that declared it throws past every `Suspense`
- * written there and lands on the boundary around the whole page, so
- * all ten of them are read here, one component below where they are
- * asked for
+ * A read in the body that declared it lands on the boundary around
+ * the page rather than on the dialog panel's own, so all ten of them
+ * are read here, one component below where they are asked for
  */
 function CatchSheetBody(
   props: CatchDialogProps & {
@@ -579,7 +577,7 @@ function CatchSheetBody(
     // while the next one arrives is what makes a favorite land without
     // the screen blinking. It is only kept while it is about the
     // pokemon being looked at
-    const held = props.detail();
+    const held = props.detail.latest;
     const loaded = held?.id === props.catchId ? held.caught : null;
 
     if (loaded == null) {
@@ -815,7 +813,7 @@ function CatchSheetBody(
    * bag asks this rather than opening onto an empty list
    */
   const holdables = (): InventoryEntry[] =>
-    (props.bag() ?? []).filter((entry) => isHoldable(entry.item));
+    (props.bag.latest ?? []).filter((entry) => isHoldable(entry.item));
 
   /**
    * Whether the item would do this pokemon some good — a berry, a
@@ -1331,7 +1329,7 @@ function CatchSheetBody(
    * knows whether there would be a list in it
    */
   const hasUsableItem = (): boolean =>
-    (props.bag() ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
+    (props.bag.latest ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
 
   /**
    * Spend it, whatever it is. Each kind already has its own call and
@@ -1472,8 +1470,8 @@ function CatchSheetBody(
       },
     },
     {
-      label: props.buddy() === props.catchId ? 'Walking with you' : 'Set buddy',
-      disabled: props.buddy() === props.catchId,
+      label: props.buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
+      disabled: props.buddy.latest === props.catchId,
       onSelect: takeAlong,
     },
   ];
@@ -1563,7 +1561,7 @@ function CatchSheetBody(
             screen for the length of one round trip */}
         <Show
           when={view()}
-          fallback={<Note>{props.detail() == null ? 'Loading catch…' : 'No such catch.'}</Note>}
+          fallback={<Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>}
         >
           {(loaded) => (
             <>
@@ -1585,7 +1583,7 @@ function CatchSheetBody(
                   <DialogSection title="Use item">
                     <InventoryPicker
                       inline
-                      entries={props.bag()}
+                      entries={props.bag.latest}
                       disabled={frozen()}
                       // Only the prized and special bands ask twice.
                       // Everything a player heals with — a Potion, a
@@ -1705,7 +1703,7 @@ function CatchSheetBody(
                     <Button
                       tone="primary"
                       disabled={
-                        (props.candies() ?? 0) < getCandyCost(loaded()) ||
+                        (props.candies.latest ?? 0) < getCandyCost(loaded()) ||
                         loaded().level >= MAX_LEVEL ||
                         frozen()
                       }
@@ -1722,7 +1720,7 @@ function CatchSheetBody(
                     <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
                   </Show>
                   <Badge tone="gold">
-                    {props.candies() ?? 0} {(props.candies() ?? 0) === 1 ? 'candy' : 'candies'}
+                    {props.candies.latest ?? 0} {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
                   </Badge>
                 </Row>
 
@@ -1742,7 +1740,7 @@ function CatchSheetBody(
                     </div>
                     <Note>
                       {loaded().steps} / {loaded().hatchSteps} steps
-                      {props.buddy() === props.catchId
+                      {props.buddy.latest === props.catchId
                         ? '.'
                         : ' — it only moves while it is the one being carried.'}
                     </Note>
@@ -1768,7 +1766,7 @@ function CatchSheetBody(
                       not evolve": most of a full-grown box would carry
                       a ruled-off paragraph saying nothing was going to
                       happen */}
-                  <Show when={props.evolutions()?.length}>
+                  <Show when={props.evolutions.latest?.length}>
                     <DialogSection title="Evolution">
                       {/* `items-center`: a row is as wide as what it
                           says, and stands in the middle of the sheet.
@@ -1784,7 +1782,7 @@ function CatchSheetBody(
                             what actually changed is a flag on one of
                             them. What a line evolves into does not
                             move; only whether it can yet */}
-                        <Index each={props.evolutions()}>
+                        <Index each={props.evolutions.latest}>
                           {(option) => (
                             <ListRow
                               class="items-center gap-3"
@@ -2172,7 +2170,7 @@ function CatchSheetBody(
                         }}
                         title="Give an item"
                         description="Choose what it should carry."
-                        entries={props.bag()}
+                        entries={props.bag.latest}
                         disabled={frozen()}
                         value={null}
                         verb="Give"
@@ -2467,7 +2465,7 @@ function CatchSheet(
   };
 
   const view = (): CaughtPokemon | null => {
-    const held = props.detail();
+    const held = props.detail.latest;
     const loaded = held?.id === props.catchId ? held.caught : null;
 
     if (loaded == null) {
@@ -2538,21 +2536,19 @@ function CatchSheet(
   );
 
   return (
-    <Suspense>
-      <CatchSheetBody
-        {...props}
-        owners={owners}
-        evolutions={evolutions}
-        fighting={fighting}
-        candies={candies}
-        onCandiesChanged={() => {
-          Promise.resolve(refetchCandies()).catch(() => undefined);
-        }}
-        onEvolutionsChanged={() => {
-          Promise.resolve(refetchEvolutions()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
+    <CatchSheetBody
+      {...props}
+      owners={owners}
+      evolutions={evolutions}
+      fighting={fighting}
+      candies={candies}
+      onCandiesChanged={() => {
+        Promise.resolve(refetchCandies()).catch(() => undefined);
+      }}
+      onEvolutionsChanged={() => {
+        Promise.resolve(refetchEvolutions()).catch(() => undefined);
+      }}
+    />
   );
 }
 
@@ -2648,25 +2644,23 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
 
   return (
-    <Suspense>
-      <CatchSheet
-        {...props}
-        detail={detail}
-        siblings={siblings}
-        dex={dex}
-        onlyOne={onlyOne}
-        bag={bag}
-        buddy={buddy}
-        onRecordChanged={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-        onBagChanged={() => {
-          Promise.resolve(refetchBag()).catch(() => undefined);
-        }}
-        onBuddyChanged={() => {
-          Promise.resolve(refetchBuddy()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
+    <CatchSheet
+      {...props}
+      detail={detail}
+      siblings={siblings}
+      dex={dex}
+      onlyOne={onlyOne}
+      bag={bag}
+      buddy={buddy}
+      onRecordChanged={() => {
+        Promise.resolve(refetch()).catch(() => undefined);
+      }}
+      onBagChanged={() => {
+        Promise.resolve(refetchBag()).catch(() => undefined);
+      }}
+      onBuddyChanged={() => {
+        Promise.resolve(refetchBuddy()).catch(() => undefined);
+      }}
+    />
   );
 }

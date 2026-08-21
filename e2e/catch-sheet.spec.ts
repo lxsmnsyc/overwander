@@ -111,9 +111,8 @@ test.describe('the catch sheet', () => {
     await sheet.getByRole('button', { name: /Actions/ }).click();
     await expect(page.getByRole('menuitem', { name: 'Unfavorite' })).toBeVisible();
 
-    // The menu is left open on purpose. Escape now closes the sheet
-    // itself — a dialog answers it wherever the keyboard is — and an
-    // unmounted sheet is exactly what this test counts
+    // The menu is left open on purpose: what this test counts is
+    // whether anything under it was torn down and rebuilt
     const torn = await page.evaluate(() => window.torn?.count ?? -1);
 
     expect(torn, 'nothing should have been unmounted while the favorite was written').toBe(0);

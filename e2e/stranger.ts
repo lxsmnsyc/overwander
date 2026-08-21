@@ -4,7 +4,7 @@
 import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
 import { getLocalOffset } from '../src/auth/local-time';
 import { Items } from '../src/data/ids/items';
-import { admin, findRows, insertRow, stageAccount } from './admin';
+import { admin, copyable, findRows, insertRow, stageAccount } from './admin';
 
 /**
  * Somebody who is not the player.
@@ -104,7 +104,7 @@ export async function stageCatchLot(seller: Stranger, sourceCatch: string): Prom
   }
 
   await insertRow('caught', {
-    ...source,
+    ...copyable(source),
     id: caught,
     // Held by nobody while it is on the block, which is what the
     // server does to a listing

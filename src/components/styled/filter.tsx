@@ -7,7 +7,7 @@ import {
   ListboxOptions,
   Transition,
 } from 'terracotta';
-import { SHEER, holdFade } from './transition';
+import { SHEER } from './transition';
 import dismissOutside from './dismiss';
 
 /**
@@ -127,10 +127,8 @@ export default function Filter<V>(props: {
         <ListboxOptions
           // Kept mounted, since the fade needs something to fade
           unmount={false}
-          onTransitionEnd={holdFade}
           // A list that has been dismissed is not one to pick from,
           // however long it takes to go
-          inert={!open()}
           aria-hidden={open() ? undefined : 'true'}
           class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
             border-2 border-tide bg-paper p-1 shadow-pop"

@@ -1,11 +1,10 @@
 import {
   type JSX,
   type ParentProps,
+  Suspense,
   children,
   createEffect,
   createSignal,
-  onCleanup,
-  onMount,
 } from 'solid-js';
 import { Portal, isServer } from 'solid-js/web';
 import {
@@ -17,7 +16,7 @@ import {
   Transition,
   TransitionChild,
 } from 'terracotta';
-import FADE, { SHEER, holdFade } from './transition';
+import FADE, { SHEER } from './transition';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -212,22 +211,6 @@ export interface DialogProps extends ParentProps {
  */
 export function Dialog(props: DialogProps): JSX.Element {
   /**
-   * The panel's contents — **our** element, not terracotta's.
-   *
-   * The obvious thing is a `ref` on `DialogPanel`, and it is the thing
-   * that broke this: terracotta does not forward one, so the variable
-   * stayed null, the test below could never pass, and the handler
-   * never fired once. Escape only ever worked when terracotta answered
-   * it itself, which it does only while the focus is still inside the
-   * panel — and the focus is exactly what does not stay there when the
-   * page behind redraws.
-   *
-   * A ref on a plain `div` is a ref the compiler writes itself, and
-   * the dialog it belongs to is whatever `[tc-dialog]` it sits inside
-   */
-  let inside: HTMLDivElement | undefined;
-
-  /**
    * Whether the dialog is showing, which is the caller's answer until
    * something asks to close: then it goes false here first, the fade
    * runs, and `onClose` is what the end of the fade reports
@@ -263,53 +246,98 @@ export function Dialog(props: DialogProps): JSX.Element {
     }
   };
 
-  onMount(() => {
-    const onKey = (event: KeyboardEvent): void => {
-      const dialogs = [...document.querySelectorAll('[tc-dialog][data-open]')];
-
-      if (
-        !showing() ||
-        event.key !== 'Escape' ||
-        event.defaultPrevented ||
-        inside == null ||
-        dialogs.at(-1)?.contains(inside) !== true
-      ) {
-        return;
-      }
-      event.preventDefault();
-      close();
-    };
-
-    document.addEventListener('keydown', onKey);
-    onCleanup(() => {
-      document.removeEventListener('keydown', onKey);
-    });
-  });
-
   /**
-   * Each slot resolved **once**.
-   *
-   * A prop holding JSX is a getter, and every read of it builds what
-   * it describes again: `props.bar == null ? null : <div>{props.bar}</div>`
-   * reads it twice, which is two live components where the markup says
-   * one. The second is what lands in the page and the first is left
-   * running beside it — two sprite canvases on their own frame clocks,
-   * two menus with their own idea of whether they are open, and a
-   * button in the page whose component is the copy that was thrown
-   * away. `children` keeps one of each
+   * The panel itself, held in a component of its own so that the
+   * slots and the children resolve under the boundary below rather
+   * than above it. A heading or an action bar that reads something
+   * still loading would otherwise suspend the screen the dialog was
+   * opened from
    */
-  const lead = children(() => props.lead);
-  const aside = children(() => props.aside);
-  const bar = children(() => props.bar);
+  const Frame = (): JSX.Element => {
+    /**
+     * Each slot resolved **once**.
+     *
+     * A prop holding JSX is a getter, and every read of it builds what
+     * it describes again: `props.bar == null ? null : <div>{props.bar}</div>`
+     * reads it twice, which is two live components where the markup says
+     * one. The second is what lands in the page and the first is left
+     * running beside it — two sprite canvases on their own frame clocks,
+     * two menus with their own idea of whether they are open, and a
+     * button in the page whose component is the copy that was thrown
+     * away. `children` keeps one of each
+     */
+    const lead = children(() => props.lead);
+    const aside = children(() => props.aside);
+    const bar = children(() => props.bar);
+
+    return (
+      <div class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}>
+        {/* Both stuck rows travel together: a second `sticky` under
+          the first would have to be told how tall the first is,
+          and the heading is a line taller when it carries its
+          sentence than when it does not */}
+        <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
+          <header
+            class={
+              props.quiet === true
+                ? 'sr-only'
+                : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
+                text-on-accent sm:pt-5 sm:pb-4 ${PAD_IN}`
+            }
+          >
+            {/* A heading rather than bold text: it is what a screen
+              reader announces the dialog by. It sits in the middle
+              of the panel, and anything standing beside it is
+              pinned to an edge rather than allowed to push it off
+              centre */}
+            <div class="relative flex min-h-8 items-center justify-center">
+              {/* Back to ink: the bar is blue and its text is white,
+                which a button standing on it would otherwise
+                inherit — a white label on a white button */}
+              {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
+              <HeadlessDialogTitle
+                tabindex={0}
+                class="text-center text-lg font-extrabold tracking-tight"
+              >
+                {props.title}
+              </HeadlessDialogTitle>
+              {aside() == null ? null : <div class="absolute right-0 text-ink">{aside()}</div>}
+            </div>
+            <HeadlessDialogDescription
+              class={props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'}
+            >
+              {props.description}
+            </HeadlessDialogDescription>
+          </header>
+          {/* What can be done to whatever the dialog is showing,
+            under the heading and stuck with it. It carries no
+            fill of its own: it is a row of buttons standing on
+            the page rather than a second header competing with
+            the first */}
+          {bar() == null ? null : (
+            <div
+              // To the right, where the rest of the game keeps what
+              // it can do to a thing: the menu at the foot of a
+              // dialog ends there too
+              class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
+              ${PAD_IN}`}
+            >
+              {bar()}
+            </div>
+          )}
+        </div>
+        {props.children}
+      </div>
+    );
+  };
 
   return (
     <Portal mount={portalHost()}>
       {/* This says *when* the dialog is there and nothing about how it
-          looks getting there: the overlay and the panel carry the fade
-          themselves. An animated wrapper would multiply its opacity
-          into theirs and unmount them the moment its own transition
-          ended. Terracotta's `unmount` is turned off below, so the
-          mounting is entirely this one's */}
+          looks getting there: the two `TransitionChild` wrappers below
+          carry the fades. An animated wrapper here would multiply its
+          opacity into theirs and unmount them the moment its own
+          transition ended */}
       <Transition appear unmount show={showing()} afterLeave={reportClose}>
         <HeadlessDialog
           isOpen
@@ -319,15 +347,6 @@ export function Dialog(props: DialogProps): JSX.Element {
           // as the fade lasts. This is what tells the two apart, and
           // what the Escape handler counts dialogs by
           data-open={showing() ? '' : undefined}
-          // While it fades it is a picture of a dialog rather than one:
-          // nothing in it can be pressed, tabbed to or read out, or two
-          // dialogs in a row overlap for the length of the fade with a
-          // button apiece offering the same thing. `inert` is the whole
-          // of it — the browser takes the focus out of a subtree that
-          // has just become inert and leaves it out of the
-          // accessibility tree, which `aria-hidden` would have been
-          // refused for doing while the focus was still in there
-          inert={!showing()}
           // And out of the way of the pointer: a dialog fading out
           // still covers the screen, and the page underneath has to
           // answer a hover the moment the dialog stops being one
@@ -336,86 +355,28 @@ export function Dialog(props: DialogProps): JSX.Element {
           {/* Dark in both themes, and dark enough to read as a page put
             away rather than a page tinted: the panel is white by day
             and needs the ground behind it to fall back */}
-          <DialogOverlay
-            as={TransitionChild}
-            {...SHEER}
-            class="fixed inset-0 bg-shade/70 backdrop-blur-[1px]"
-          />
+          <TransitionChild {...SHEER} class="fixed inset-0">
+            <DialogOverlay class="size-full bg-shade/70 backdrop-blur-[1px]" />
+          </TransitionChild>
           {/* This element is to trick the browser into centering the modal contents. */}
           <span class="inline-block h-screen align-middle" aria-hidden="true">
             &#8203;
           </span>
-          <DialogPanel
-            as={TransitionChild}
-            {...FADE}
-            class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}
-          >
-            <div
-              ref={inside}
-              // Whatever is in the dialog keeps its own transitions to
-              // itself: `transitionend` bubbles, and the panel above is
-              // listening for the end of its own fade
-              onTransitionEnd={holdFade}
-              class={`flex flex-col gap-3 ${INSET} ${props.class ?? ''}`}
-            >
-              {/* Both stuck rows travel together: a second `sticky` under
-                the first would have to be told how tall the first is,
-                and the heading is a line taller when it carries its
-                sentence than when it does not */}
-              <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
-                <header
-                  class={
-                    props.quiet === true
-                      ? 'sr-only'
-                      : `flex flex-col gap-1 border-b-2 border-tide-dark bg-tide pt-4 pb-3
-                      text-on-accent sm:pt-5 sm:pb-4 ${PAD_IN}`
-                  }
-                >
-                  {/* A heading rather than bold text: it is what a screen
-                    reader announces the dialog by. It sits in the middle
-                    of the panel, and anything standing beside it is
-                    pinned to an edge rather than allowed to push it off
-                    centre */}
-                  <div class="relative flex min-h-8 items-center justify-center">
-                    {/* Back to ink: the bar is blue and its text is white,
-                      which a button standing on it would otherwise
-                      inherit — a white label on a white button */}
-                    {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
-                    <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
-                      {props.title}
-                    </HeadlessDialogTitle>
-                    {aside() == null ? null : (
-                      <div class="absolute right-0 text-ink">{aside()}</div>
-                    )}
-                  </div>
-                  <HeadlessDialogDescription
-                    class={
-                      props.terse === true ? 'sr-only' : 'text-center text-sm text-on-accent/85'
-                    }
-                  >
-                    {props.description}
-                  </HeadlessDialogDescription>
-                </header>
-                {/* What can be done to whatever the dialog is showing,
-                  under the heading and stuck with it. It carries no
-                  fill of its own: it is a row of buttons standing on
-                  the page rather than a second header competing with
-                  the first */}
-                {bar() == null ? null : (
-                  <div
-                    // To the right, where the rest of the game keeps what
-                    // it can do to a thing: the menu at the foot of a
-                    // dialog ends there too
-                    class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
-                    ${PAD_IN}`}
-                  >
-                    {bar()}
-                  </div>
-                )}
-              </div>
-              {props.children}
-            </div>
-          </DialogPanel>
+          {/* The wrapper is the panel: it is what is placed and what
+              grows, and `DialogPanel` inside it is boxless, so the
+              scale has nothing of its own to fight over.
+
+              The boundary is here rather than around the dialog so a
+              panel waiting on a read holds the overlay and the frame
+              it was opened in. No fallback: the panel arrives when it
+              has something to show */}
+          <Suspense>
+            <TransitionChild {...FADE} class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+              <DialogPanel class="contents">
+                <Frame />
+              </DialogPanel>
+            </TransitionChild>
+          </Suspense>
         </HeadlessDialog>
       </Transition>
     </Portal>

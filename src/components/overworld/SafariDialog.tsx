@@ -3,7 +3,6 @@ import {
   type JSX,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -94,9 +93,9 @@ export interface SafariDialogProps {
 /**
  * The encounter itself, which is where the bag is read.
  *
- * A bag read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
- * page, taking the world down mid-throw
+ * A bag read in the body that declared it lands on the boundary
+ * around the whole page rather than on the dialog panel's own, which
+ * would take the world down mid-throw
  */
 function SafariBody(
   props: SafariDialogProps & { bag: Resource<InventoryEntry[]>; onSpent: () => void },
@@ -149,7 +148,7 @@ function SafariBody(
   // counts down and what says there is nothing left to throw
   createEffect(() => {
     const active = props.session;
-    const carried = props.bag();
+    const carried = props.bag.latest;
 
     if (active != null && carried != null) {
       active.ballsLeft = carried
@@ -160,7 +159,7 @@ function SafariBody(
   });
 
   const balls = (): [Balls, number][] =>
-    (props.bag() ?? [])
+    (props.bag.latest ?? [])
       .map((entry): [Balls | null, number] => [getBall(entry.item), entry.amount])
       .filter((pair): pair is [Balls, number] => pair[0] != null);
 
@@ -169,7 +168,7 @@ function SafariBody(
    * has run out of, which is the number worth showing on the button
    */
   const stockOf = (item: Items): number =>
-    (props.bag() ?? []).find((entry) => entry.item === item)?.amount ?? 0;
+    (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
   // A session opens on the Poke Ball, which is not necessarily what
   // the player has. The first ball in the bag stands in, so the throw
@@ -373,7 +372,7 @@ function SafariBody(
                 filter={(entry) =>
                   getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
                 }
-                entries={props.bag()}
+                entries={props.bag.latest}
                 onPick={(item) => {
                   if (item != null) {
                     take(item);
@@ -475,14 +474,12 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   );
 
   return (
-    <Suspense>
-      <SafariBody
-        {...props}
-        bag={bag}
-        onSpent={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
+    <SafariBody
+      {...props}
+      bag={bag}
+      onSpent={() => {
+        Promise.resolve(refetch()).catch(() => undefined);
+      }}
+    />
   );
 }

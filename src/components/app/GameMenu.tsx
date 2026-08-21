@@ -8,7 +8,7 @@ import { getTimeOfDay } from '../../data/ids/biome';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import { Divider, IconSlot } from '../styled';
-import { SHEER, holdFade } from '../styled/transition';
+import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
 
 /**
@@ -209,8 +209,6 @@ export default function GameMenu(): JSX.Element {
             // Kept mounted, since the fade needs something to fade,
             // and out of reach while it is going
             unmount={false}
-            onTransitionEnd={holdFade}
-            inert={!open()}
             class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
           >
             {/* Day or night, over the keypad: it changes how the game

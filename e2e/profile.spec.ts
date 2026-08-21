@@ -27,8 +27,8 @@ test.describe('the profile', () => {
     await profile.getByRole('button', { name: 'Actions' }).click();
     await expect(page.getByRole('menuitem', { name: 'Sign out' })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Add friend' })).toBeVisible();
-    // Shut with the button that opened it: Escape from inside a menu
-    // in a dialog closes the dialog under it as well
+    // Shut with the button that opened it, which is the press a
+    // player makes; Escape would do as well, and stops at the menu
     await profile.getByRole('button', { name: 'Actions' }).click();
 
     // What is left under the tabs: the catches and the bag are behind

@@ -59,7 +59,7 @@ function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
 
   return [
     { value: EVERY_KIND, label: 'All' },
-    ...[BattleKind.Raid, BattleKind.Rocket, BattleKind.Player]
+    ...[BattleKind.Raid, BattleKind.Npc, BattleKind.Player]
       .filter((kind) => fought.has(kind))
       .map((kind) => ({ value: kind, label: BATTLE_KIND_NAMES[kind] })),
   ];

@@ -1087,7 +1087,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.PayDay, {
     name: 'Pay Day',
-    description: 'Plain damage — no coins are scattered here.',
+    description: "Scatters coins worth five times the user's level, paid out after the fight.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,

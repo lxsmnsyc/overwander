@@ -20,29 +20,34 @@ afterwards:
   handed straight back to whoever it outbid, so the last bidder standing has
   already paid. Nothing can be won by a player who spent the money meanwhile.
 
-## `auctions/{auctionId}`
+## `auctions`
 
-| Field         | Type            | Notes                                                            |
-| ------------- | --------------- | ---------------------------------------------------------------- |
-| `seller`      | `string`        | Who listed it; may not bid, and is paid when the winner collects |
-| `lot`         | `AuctionLot`    | `Item` or `Catch`                                                |
-| `item`        | `Items \| null` | The item on the block, `null` for a catch lot                    |
-| `caught`      | `string`        | The `caught/{catchId}` on the block, empty for an item lot       |
-| `startingBid` | `number`        | What the first bid has to be                                     |
-| `increment`   | `number`        | What every bid after it has to add                               |
-| `bid`         | `number`        | The standing bid, zero while nobody has bid                      |
-| `bidder`      | `string`        | Who placed it, empty while nobody has                            |
-| `createdAt`   | `number`        | When it opened, on the server clock                              |
-| `endsAt`      | `number`        | `createdAt + AUCTION_DURATION` — a day later                     |
-| `offset`      | `number`        | Minutes east of UTC the seller listed it in                      |
-| `settled`     | `boolean`       | Whether the lot has been handed over                             |
+| Column         | Type       | Notes                                                            |
+| -------------- | ---------- | ---------------------------------------------------------------- |
+| `id`           | `text`     | The lot                                                          |
+| `seller`       | `uuid`     | Who listed it; may not bid, and is paid when the winner collects |
+| `lot`          | `smallint` | Item (0) or Catch (1)                                            |
+| `item`         | `integer`  | The item on the block, null for a catch lot                      |
+| `caught_id`    | `text`     | The catch on the block, null for an item lot                     |
+| `starting_bid` | `bigint`   | What the first bid has to be                                     |
+| `increment`    | `bigint`   | What every bid after it has to add                               |
+| `bid`          | `bigint`   | The standing bid, zero while nobody has bid                      |
+| `bidder`       | `uuid`     | Who placed it, null while nobody has                             |
+| `created_at`   | `bigint`   | When it opened, on the server clock                              |
+| `ends_at`      | `bigint`   | A day after it opened                                            |
+| `utc_offset`   | `smallint` | Minutes east of UTC the seller listed it in                      |
+| `settled`      | `boolean`  | Whether the lot has been handed over                             |
+
+Two checks hold the shape of a lot: exactly one of `item` and `caught_id` is
+filled, matching what `lot` says, and a bidder is never the seller.
 
 Every signed-in player can read it, since a board nobody can see is not a board,
-and only the server writes it. `watchOpenAuctions` follows
-`where('settled', '==', false)`, which covers both the lots still taking bids and
-the ones whose winner has not come back for them. Which of the two a listing is
-depends on the clock rather than the document, so the caller splits them with
-`isLive`.
+and only the server writes it. `watchOpenAuctions` follows the unsettled lots, on
+the partial `auctions_live` index, which covers both the ones still taking bids
+and the ones whose winner has not come back for them. Which of the two a listing
+is depends on the clock rather than the row, so the caller splits them with
+`isLive`. The table is published to realtime with `replica identity full`, so the
+board sees the old row on a delete or a filtered update and can merge it away.
 
 **Nothing is polled.** The closing time is a number written into the listing, and
 whether it has passed is the reader's own clock against it: no timer, no re-read,
@@ -57,18 +62,17 @@ MAX_STARTING_BID]` and `increment` within `[MIN_INCREMENT, MAX_INCREMENT]`. A
 caller cannot be trusted with them, and refusing an auction over a stray decimal
 helps nobody.
 
-## `auctionSellers/{uid}`
+## `auction_sellers`
 
-| Field     | Type     | Notes                                     |
+| Column    | Type     | Notes                                     |
 | --------- | -------- | ----------------------------------------- |
-| `player`  | `string` | Owning uid, matching the document id      |
-| `auction` | `string` | The `auctions/{auctionId}` they listed    |
-| `endsAt`  | `number` | When it closes; another cannot open until |
+| `player`  | `uuid`   | The seller, and the primary key           |
+| `auction` | `text`   | The lot they listed                       |
+| `ends_at` | `bigint` | When it closes; another cannot open until |
 
-One document per seller, read inside the same transaction that opens an auction.
-It is what keeps a player to **one auction at a time**, and since an auction runs
-a full day, that is one auction a day. A single field read answers both halves of
-the rule, so no query and no calendar arithmetic is involved: a seller whose lot
+One row per seller, read inside the same transaction that opens an auction. It is
+what keeps a player to **one auction at a time**, and since an auction runs a full
+day, that is one auction a day. A single row answers both halves of the rule, so no query and no calendar arithmetic is involved: a seller whose lot
 is still on the block is refused, whatever zone they report.
 
 Private to the owning uid, and read-only to them. The sell form asks it before
@@ -77,13 +81,13 @@ offering to list anything.
 ## What the board shows
 
 A lot on the block is named, priced, timed and **attributed**: who listed it,
-read from `profiles/{uid}`. The reader appears as "you" rather than their own
+read from `profiles`. The reader appears as "you" rather than their own
 nickname, and a seller whose profile has gone is still "a trainer".
 
 A **catch** lot carries a second line with the three things a bidder is buying
 and cannot change afterwards: how good its individual values are, its nature and
 its abilities. They are read straight off the escrowed record, which is exactly
-why escrow keeps the document readable instead of copying a name into the
+why escrow keeps the row readable instead of copying a name into the
 listing. Health and status are not shown, since both are cosmetic the moment the
 pokemon changes hands.
 
@@ -112,11 +116,11 @@ its owner, and a board is not the place to give it away, which is also why
 
 1. The auction is read and checked with `canBid`.
 2. The bidder's balance is read, and the outbid bidder's alongside it. They are
-   never the same document — nobody outbids themselves — so the two move
+   never the same row, since nobody outbids themselves, so the two move
    independently.
 3. The outbid bid is refunded, the new one is taken, `bid` and `bidder` are
-   written, and the bidder's own `bids/{uid}:{auctionId}` document is rewritten
-   with what they just named.
+   written, and the bidder's own `bids` row is rewritten with what they just
+   named.
 
 A bid the balance cannot cover changes nothing and resolves null.
 
@@ -127,7 +131,7 @@ A bid the balance cannot cover changes nothing and resolves null.
   so bidding again could only cost them gold, and it would let a lot be walked up
   to a price nobody else ever offered. Once outbid they may bid again, against a
   floor that has moved.
-- **Anything under `nextBid`** — the asking price while the lot is untouched, and
+- **Anything under `nextBid`**: the asking price while the lot is untouched, and
   the standing bid plus the seller's increment after that.
 
 There is **no ceiling**. The increment is the floor on a raise rather than its
@@ -136,30 +140,31 @@ and a lot worth having can be put out of reach in one bid rather than a hundred.
 The board's input opens at `nextBid` and accepts anything above it; the balance is
 the real limit, and it is checked where the gold moves.
 
-## `bids/{uid}:{auctionId}`
+## `bids`
 
-| Field     | Type     | Notes                                         |
-| --------- | -------- | --------------------------------------------- |
-| `player`  | `string` | The bidder, matching the first half of the id |
-| `auction` | `string` | The `auctions/{auctionId}` bid on             |
-| `amount`  | `number` | The last amount they named for it             |
-| `bidAt`   | `number` | When they last bid, on the server's clock     |
+| Column    | Type     | Notes                                     |
+| --------- | -------- | ----------------------------------------- |
+| `player`  | `uuid`   | The bidder                                |
+| `auction` | `text`   | The lot bid on                            |
+| `amount`  | `bigint` | The last amount they named for it         |
+| `bid_at`  | `bigint` | When they last bid, on the server's clock |
+
+The pair is the primary key, so bidding again rewrites rather than appending.
 
 The auction keeps only the bid that is standing. That is all a lot needs in order
 to settle — who to hand it to, and what to pay the seller — and a lot that kept
 everybody who ever bid on it would grow a list nothing settling it ever reads.
 
 A player's history is a different question asked by a different reader, so it
-lives on their side: one document per lot they have bid on, rewritten with the
-last amount they named. Being outbid does not touch it, which is the point — it is
-how a player finds the lot they were outbid on an hour ago.
+lives on their side: one row per lot they have bid on, rewritten with the last
+amount they named. Being outbid does not touch it, which is the point: it is how
+a player finds the lot they were outbid on an hour ago.
 
 Written only by the server, in the same transaction as the bid it records, and
 private to the owning uid.
 
-`listBidHistory` reads these newest first and looks up the lots they name, in
-batches, since `documentId() in [...]` is capped. `getBidState` then says where
-the player stands, read off the lot itself:
+`listBidHistory` reads these newest first and joins the lots they name.
+`getBidState` then says where the player stands, read off the lot itself:
 
 | State       | When                                             |
 | ----------- | ------------------------------------------------ |
@@ -177,8 +182,9 @@ gets a Collect button for the same reason.
 ## Collecting
 
 Nothing happens at the instant bidding closes, because there is no job to run one,
-so the winner comes back for the lot. `claimAuction` checks `canClaim` — bidding
-closed, unsettled, and the caller is the last bidder — then in one transaction:
+so the winner comes back for the lot. `claimAuction` checks `canClaim`, which is
+bidding closed, unsettled, and the caller as the last bidder, then in one
+transaction:
 
 - an **item** lot lands in the winner's stack;
 - a **catch** lot comes out of escrow: `owner` becomes the winner's uid, an
@@ -194,10 +200,10 @@ closed, unsettled, and the caller is the last bidder — then in one transaction
 ## Taking a lot back
 
 An auction that closes with **no bidder** has no winner to hand anything to, so
-the lot goes back where it came from. `reclaimAuction` checks `canReclaim` —
-bidding closed, unsettled, nobody bid, and the caller is the seller — and in one
-transaction returns the item to the seller's stack or the pokemon to their
-records, then sets `settled`.
+the lot goes back where it came from. `reclaimAuction` checks `canReclaim`, which is
+bidding closed, unsettled, nobody having bid, and the caller as the seller, then
+in one transaction returns the item to the seller's stack or the pokemon to their
+records and sets `settled`.
 
 Nothing is paid, because nothing was sold, and the catch's ownership `history`
 and `friendship` are both left alone: it did not change hands, it sat on a shelf
@@ -213,11 +219,11 @@ unlikely, and a board whose lots can vanish is not one anybody would bid on.
 
 ## Escrow
 
-A pokemon on the block keeps its document. Its `owner` is set to `AUCTION_ESCROW`
-— the empty string — which is nobody. Every write that touches a catch asks
-whether the caller is its `owner`, and a uid is never empty, so an escrowed
-pokemon is refused to the seller, the bidders and everyone else by the checks that
-were already there. It stays **readable**, which is what lets a bidder see what
+A pokemon on the block keeps its row. Its `owner` is set to **null**, which is
+nobody, and no policy matches a null owner. Every write that touches a catch asks
+whether the caller is its `owner`, and a uid is never null, so an escrowed pokemon
+is refused to the seller, the bidders and everyone else by the checks that were
+already there. It stays **readable**, which is what lets a bidder see what
 they are bidding on.
 
 Escrow always ends: the winner collects it, or, if nobody bid, the seller takes it

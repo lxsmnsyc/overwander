@@ -22,7 +22,12 @@ import { MAX_IV, PERFECT_IVS, STAT_ORDER, Stats, StatsKind, getIV } from '../dat
 import Abilities from '../data/ids/abilities';
 import type { Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
-import { NON_VOLATILE_STATUSES, packStatuses, unpackStatuses } from '../data/ids/status';
+import {
+  NON_VOLATILE_STATUSES,
+  packStatuses,
+  settleStatuses,
+  unpackStatuses,
+} from '../data/ids/status';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -358,6 +363,7 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
         items: [...unit.consumed],
         health: Math.max(0, Math.floor(unit.health)),
         statuses: carriedStatuses(unit),
+        coins: Math.max(0, Math.floor(unit.coins)),
       });
     }
   }
@@ -373,7 +379,9 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
  * effects) ends with the battle
  */
 function carriedStatuses(unit: Unit): number {
-  return packStatuses(NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null));
+  return settleStatuses(
+    packStatuses(NON_VOLATILE_STATUSES.filter((status) => unit.getStatus(status) != null)),
+  );
 }
 
 /**

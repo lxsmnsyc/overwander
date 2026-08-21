@@ -10,7 +10,14 @@ import {
   untrack,
 } from 'solid-js';
 import { isLockLive } from '../../auth/battle-lock';
-import { type CaughtPokemon, giveItem, searchCaught, takeItem } from '../../auth/caught';
+import {
+  type CaughtPokemon,
+  findDuplicates,
+  giveItem,
+  readCatchContext,
+  searchCaught,
+  takeItem,
+} from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
 import { useAuth } from '../../auth/context';
 import { ItemFlags, type Items } from '../../data/ids/items';
@@ -19,7 +26,12 @@ import InventoryPicker from '../items/InventoryPicker';
 import CatchGrid, { type CatchGridEntry } from './CatchGrid';
 import CatchCard from './CatchCard';
 import { asBoxEntry, describeCatch } from './catch-summary';
-import matchesCatch, { type CatchConstraint, planCatchSearch } from '../../auth/catch-search';
+import matchesCatch, {
+  type CatchConstraint,
+  type CatchContext,
+  orderCatches,
+  planCatchSearch,
+} from '../../auth/catch-search';
 import { Button, Dialog, DialogActions, HoverCard, Meta, Note, Row } from '../styled';
 
 /**
@@ -185,6 +197,12 @@ export type CatchPickerProps = CatchPickerCommonProps &
 function PickerBox(
   props: CatchPickerProps & {
     owned: Resource<CatchOption[]>;
+    /**
+     * The handful of facts a record does not carry — the buddy, the
+     * lots on the block, the drafted party — which `is:buddy` and its
+     * two neighbours are answered from
+     */
+    around: Resource<CatchContext>;
     showing: boolean;
     /**
      * What is being searched for. It belongs to whoever owns the
@@ -271,8 +289,34 @@ function PickerBox(
    * drafted stays drafted while it is out of sight, so typing to find
    * the sixth party member cannot quietly drop the other five
    */
+  /**
+   * What the whole box says about itself, which no single record
+   * knows: every species there is more than one of. Read off what was
+   * offered rather than the page being shown, so narrowing the search
+   * cannot change what counts as a duplicate
+   */
+  const duplicates = createMemo(() => findDuplicates(offered().map((option) => option.caught)));
+
+  /**
+   * A search hides rows rather than refusing them: a pokemon already
+   * drafted stays drafted while it is out of sight, so typing to find
+   * the sixth party member cannot quietly drop the other five.
+   *
+   * A `sort:` is applied last, over what is left, and overrides the
+   * newest-first order the box arrives in
+   */
   const options = (): CatchOption[] =>
-    offered().filter((option) => matchesCatch(option.caught, query()));
+    orderCatches(
+      offered().filter((option) =>
+        matchesCatch(option.caught, query(), {
+          ...props.around.latest,
+          id: option.id,
+          duplicates: duplicates(),
+        }),
+      ),
+      query(),
+      (option) => option.caught,
+    );
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
@@ -611,6 +655,16 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     },
   );
 
+  /**
+   * The facts about the box that live in other tables, read once
+   * beside the rows. A view-only box reads them too: they are about
+   * whose pokemon these are, not about who is looking
+   */
+  const [around] = createResource(
+    () => (showing() && props.options == null ? ([owner(), handled()] as const) : null),
+    async ([player]): Promise<CatchContext> => readCatchContext(player),
+  );
+
   const limit = (): number =>
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
 
@@ -644,6 +698,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <PickerBox
         {...props}
         owned={owned}
+        around={around}
         showing={showing()}
         search={query()}
         onSearch={(typed) => {

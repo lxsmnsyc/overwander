@@ -11,7 +11,7 @@ rather than on experience.
 
 This guide describes the rules of the game as a player meets them. It is written
 for players; the developer documentation lives in
-[Firestore](firestore.md) and [The battle engine](engine.md).
+[The database](database.md) and [The battle engine](engine.md).
 
 ## Contents
 
@@ -62,5 +62,5 @@ same result, which is why a replay costs nothing and pays nothing.
 
 - [Releases](update.md): what each major release brought
 - [The battle engine](engine.md) — how the real-time engine is built
-- [Firestore](firestore.md) — what the game stores and who may write it
+- [The database](database.md): what the game stores and who may write it
 - [Credits](credits.md) — the people, libraries and art behind the game

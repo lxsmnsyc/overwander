@@ -9,7 +9,7 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
-import type { CatchConstraint } from './catch-search';
+import type { CatchConstraint, CatchContext } from './catch-search';
 import { asRecord, asRecordArray } from './__normalize';
 import type { CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
@@ -80,24 +80,47 @@ export async function listCaught(owner: string): Promise<[string, CaughtPokemon]
 }
 
 /**
+ * The one column each joinable table is asked for. It is never read —
+ * the join is there to prove the row exists — so the cheapest column
+ * that is always there is the right one
+ */
+const JOIN_KEYS: Record<string, string> = {
+  caught_moves: 'caught_id',
+  caught_abilities: 'caught_id',
+  caught_items: 'caught_id',
+  caught_history: 'caught_id',
+  team_catches: 'caught_id',
+  auctions: 'id',
+  profiles: 'id',
+};
+
+/**
  * The player's pokemon that answer one narrowed search.
  *
  * A search is asked in two passes — see
  * [`catch-search.ts`](./catch-search.ts) — and this is the first: the
- * one term the store can answer, beside the owner. The caller still
- * runs the whole predicate over what comes back, because most of the
- * grammar (a name, a second type, an ability) is not a query anybody
- * can write.
+ * terms the store can answer, beside the owner. The caller still runs
+ * the whole predicate over what comes back, because a good part of the
+ * grammar (a plain name, a count of hands, one of several marks) is
+ * not a query anybody can write.
  *
- * Every field pushed here needs a composite index with `owner` — see
- * [`firestore.indexes.json`](../../firestore.indexes.json) — which is
- * why the planner pushes one and not a combination
+ * Anything joined rides on an **alias** of its own beside the embed
+ * the reader unpacks. Filtering the embed itself would narrow what
+ * comes back with it, and a pokemon that came back holding only the
+ * move that was searched for would be a wrong record rather than a
+ * narrowed list
  */
 export async function searchCaught(
   owner: string,
   narrowing: CatchConstraint[],
 ): Promise<[string, CaughtPokemon][]> {
-  let request = caughtRows(owner);
+  const joins = narrowing
+    .filter((narrowed) => narrowed.on !== 'row')
+    .map((narrowed) => `${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
+  let request = getSupabase()
+    .from(CAUGHT_TABLE)
+    .select([ROW_SELECTION, ...joins].join(', '))
+    .eq('owner', owner);
 
   for (const narrowed of narrowing) {
     request = applyConstraint(request, narrowed);
@@ -108,47 +131,112 @@ export async function searchCaught(
   return rowsToPairs(data);
 }
 
-/** The columns the pushable fields live in */
-const CONSTRAINT_COLUMNS: Record<string, string> = {
-  lockedAt: 'locked_at',
-};
-
 type Chain = ReturnType<typeof caughtRows>;
 
-/** One planned constraint, applied to the running query */
+/**
+ * One planned constraint, applied to the running query. A joined one
+ * names its alias before its column, which is how PostgREST is told
+ * which of the two embeds of a table to filter
+ */
 function applyConstraint(request: Chain, narrowed: CatchConstraint): Chain {
-  const column = CONSTRAINT_COLUMNS[narrowed.field] ?? narrowed.field;
+  if (narrowed.on === 'exists') {
+    let joined = request;
 
-  if ('oneOf' in narrowed) {
-    return request.in(column, narrowed.oneOf);
+    for (const [column, value] of Object.entries(narrowed.equals)) {
+      joined = joined.eq(`${narrowed.alias}.${column}`, value);
+    }
+    return joined;
   }
-  if ('is' in narrowed) {
-    return request.eq(column, narrowed.is);
-  }
-  if ('equals' in narrowed) {
-    return request.eq(column, narrowed.equals);
-  }
-  if ('low' in narrowed) {
-    let ranged = request;
 
-    if (Number.isFinite(narrowed.low)) {
-      ranged = ranged.gte(column, narrowed.low);
-    }
-    if (Number.isFinite(narrowed.high)) {
-      ranged = ranged.lte(column, narrowed.high);
-    }
-    return ranged;
+  const column = narrowed.on === 'child' ? `${narrowed.alias}.${narrowed.column}` : narrowed.column;
+  const listed = Array.isArray(narrowed.value) ? narrowed.value : [narrowed.value];
+
+  switch (narrowed.op) {
+    case 'in':
+      return request.in(column, listed);
+    case 'nin':
+      return request.not(column, 'in', `(${listed.join(',')})`);
+    case 'neq':
+      return request.neq(column, narrowed.value);
+    case 'gt':
+      return request.gt(column, narrowed.value);
+    case 'gte':
+      return request.gte(column, narrowed.value);
+    case 'lt':
+      return request.lt(column, narrowed.value);
+    case 'lte':
+      return request.lte(column, narrowed.value);
+    case 'ilike':
+      return request.ilike(column, String(narrowed.value));
+    case 'eq':
+    default:
+      return request.eq(column, narrowed.value);
   }
-  return request;
+}
+
+/**
+ * The three facts about a player's box that live in another table:
+ * which pokemon is their buddy, which are standing on the block, and
+ * which are drafted into a raid party.
+ *
+ * A search asks about all three (`is:buddy`, `is:listed`,
+ * `is:raiding`) and the record answers none of them, so the box reads
+ * them once beside its rows rather than a row at a time
+ */
+export async function readCatchContext(owner: string): Promise<CatchContext> {
+  const supabase = getSupabase();
+  const [profile, lots, drafted] = await Promise.all([
+    supabase.from('profiles').select('buddy_id').eq('id', owner).maybeSingle(),
+    supabase.from('auctions').select('caught_id').eq('seller', owner).eq('settled', false),
+    supabase.from('teams').select('team_catches(caught_id)').eq('player', owner),
+  ]);
+
+  const listed = new Set<string>();
+  const raiding = new Set<string>();
+
+  for (const row of asRecordArray(lots.data)) {
+    if (typeof row.caught_id === 'string') {
+      listed.add(row.caught_id);
+    }
+  }
+  for (const team of asRecordArray(drafted.data)) {
+    for (const entry of asRecordArray(team.team_catches)) {
+      if (typeof entry.caught_id === 'string') {
+        raiding.add(entry.caught_id);
+      }
+    }
+  }
+
+  const buddy = asRecord(profile.data).buddy_id;
+
+  return { buddy: typeof buddy === 'string' ? buddy : '', listed, raiding };
+}
+
+/**
+ * Every species the owner has more than one of, read off a box that
+ * has already been loaded. It is what `is:duplicate` asks, and it is
+ * a count over the whole box rather than a fact about any one row
+ */
+export function findDuplicates(box: readonly CaughtPokemon[]): Set<Species> {
+  const seen = new Set<Species>();
+  const twice = new Set<Species>();
+
+  for (const caught of box) {
+    if (seen.has(caught.species)) {
+      twice.add(caught.species);
+    }
+    seen.add(caught.species);
+  }
+  return twice;
 }
 
 /**
  * How many pokemon the player has, without reading any of them.
  *
  * It is asked where the answer decides whether something may be given
- * up — a release, a listing — because the last one may not be. A
- * count query is billed as a fraction of a read whatever the number
- * comes to, so this stays cheap for a player with three hundred
+ * up — a release, a listing — because the last one may not be. It
+ * counts in the store rather than reading the rows, so it stays cheap
+ * for a player with three hundred
  */
 export async function countCaught(owner: string): Promise<number> {
   const { count } = await getSupabase()
@@ -176,14 +264,9 @@ export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded' | 'a
  * The player's pokemon that answer yes to one of them — their shinies,
  * their shadows, the eggs they are carrying.
  *
- * This is why each of them is a field of its own: a bit cannot be
- * queried — Firestore compares a number whole — so a packed field
- * would mean reading every catch a player owns and filtering in the
- * browser. A field each reads only the matching documents.
- *
- * Each mark needs a **composite index** on `(owner, <mark>)` — see
- * [Catches](../../docs/firestore/catches.md) — since the query filters
- * on two fields at once
+ * This is why each of them is a column of its own rather than a bit
+ * of one: a packed field would mean reading every catch a player owns
+ * and filtering in the browser
  */
 export async function listCaughtMarked(
   owner: string,
@@ -199,9 +282,9 @@ export async function listCaughtMarked(
 }
 
 /**
- * The most ids `listOwned` will look up at once — Firestore caps a
- * `documentId() in [...]` query, and a party is smaller than this
- * anyway
+ * The most ids `listOwned` will look up at once. A party is smaller
+ * than this anyway, and the cap is what stops a caller handing over a
+ * list long enough to be a query of its own
  */
 export const OWNERSHIP_QUERY_LIMIT = 30;
 

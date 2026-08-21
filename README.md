@@ -15,26 +15,27 @@ The dex is Gen 1 — 151 species with their moves, abilities and items. Where Ge
 1 and the modern games disagree, the mechanics follow the modern games.
 
 - [Releases](docs/update.md): what each major release brought, newest first.
-- [Player's guide](docs/mechanics.md) — how the world, catching, fighting and
+- [Player's guide](docs/mechanics.md): how the world, catching, fighting and
   raising work, written for players rather than for programmers.
-- [The battle engine](docs/engine.md) — how the real-time engine, the AI and the
+- [The battle engine](docs/engine.md): how the real-time engine, the AI and the
   battle canvas actually run.
-- [Firestore](docs/firestore.md) — every store the game writes to, what it
+- [The database](docs/database.md): every table the game writes to, what it
   holds, and who may touch it.
-- [Credits](docs/credits.md) — who wrote it, what it is built from, and where
-  the art and rules come from.
+- [Credits](docs/credits.md): who wrote it, what it is built from, and where the
+  art and rules come from.
 
 ## How it is built
 
-| Piece          | What it does                                                               |
-| -------------- | -------------------------------------------------------------------------- |
-| SolidStart 2   | The app: file routes, server functions, SSR                                |
-| Solid 1.9      | Signals and resources; no virtual DOM                                      |
-| terracotta     | Headless, accessible dialogs, tabs, listboxes and buttons                  |
-| Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file             |
-| Firebase       | Auth and Firestore on the client; the Admin SDK for every privileged write |
-| Vitest         | The tests, which run the real engines rather than mocks                    |
-| oxlint / oxfmt | Linting and formatting                                                     |
+| Piece          | What it does                                                   |
+| -------------- | -------------------------------------------------------------- |
+| SolidStart 2   | The app: file routes, server functions, SSR                    |
+| Solid 1.9      | Signals and resources; no virtual DOM                          |
+| terracotta     | Headless, accessible dialogs, tabs, listboxes and buttons      |
+| Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file |
+| Supabase       | Postgres, auth, row-level security and the realtime stream     |
+| postgres.js    | The direct connection every privileged write travels over      |
+| Vitest         | The tests, which run the real engines rather than mocks        |
+| oxlint / oxfmt | Linting and formatting                                         |
 
 ## Getting started
 
@@ -43,167 +44,116 @@ The dex is Gen 1 — 151 species with their moves, abilities and items. Where Ge
 - **Node 22 or newer**, which the Vite 8 toolchain expects.
 - **pnpm**. This repository is pnpm-managed and its lockfile is
   `pnpm-lock.yaml`; npm and yarn will fight it.
-- **A Firebase project** with **Authentication** and **Cloud Firestore**
-  enabled. The login form offers email/password and Google, so enable whichever
-  you plan to use.
+- **The Supabase CLI** and **Docker**, for the local stack. A hosted project
+  works too, but nothing about development needs one.
 
 ### Install and run
 
 ```bash
 pnpm install
-cp .env.example .env   # then fill it in, see below
-pnpm dev               # http://localhost:3000
+cp .env.example .env    # then fill it in, see below
+pnpm db                 # starts the local stack and prints its keys
+pnpm dev                # http://localhost:3000
 ```
 
-### Configuring Firebase
+`pnpm db` is `supabase start`. It prints the API URL, the anon key and the
+service-role key; `pnpm db:stop` puts it away and `pnpm db:reset` rebuilds the
+database from the migrations. `pnpm seed` fills a fresh stack with a couple of
+accounts and enough rows to walk the game.
 
-`.env.example` documents every variable. There are two groups.
+### Configuring it
 
-The **web config** is public by design and lets the browser reach Auth and
-Firestore. Copy it from the Firebase console under _Project settings → Your apps
-→ Web app_:
+`.env.example` documents every variable and its local default. There are two
+groups.
 
-| Variable                    | Where it comes from                   |
-| --------------------------- | ------------------------------------- |
-| `VITE_FIREBASE_API_KEY`     | Firebase web app config               |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase web app config               |
-| `VITE_FIREBASE_PROJECT_ID`  | Firebase web app config               |
-| `VITE_FIREBASE_APP_ID`      | Firebase web app config               |
-| `VITE_WORLD_SEED`           | Any string; the world everyone shares |
+The **browser's pair** is public by design and lets the client reach auth, the
+tables it may read, and the realtime socket:
 
-The **service account** is server-only and secret. Everything that creates or
-moves value — recording a catch, paying gold, granting an item, raising a level,
-settling an auction — is written by the Admin SDK from `src/server/*` behind a
-verified caller. None of it reaches Firestore without credentials:
+| Variable                 | Where it comes from                             |
+| ------------------------ | ----------------------------------------------- |
+| `VITE_SUPABASE_URL`      | `supabase start`, or the project's API settings |
+| `VITE_SUPABASE_ANON_KEY` | The same                                        |
+| `VITE_WORLD_SEED`        | Any string; the world everyone shares           |
 
-```bash
-# Firebase console -> project settings -> service accounts -> generate new
-# private key, then paste the whole JSON on one line.
-FIREBASE_SERVICE_ACCOUNT={"type":"service_account",...}
-```
+The **server's** variables are secret. Everything that creates or moves value,
+recording a catch, paying gold, granting an item, raising a level, settling an
+auction, is written by `src/server/*` over a direct Postgres connection as the
+table owner, which row-level security does not bind:
 
-If you leave it empty, the app falls back to application default credentials,
-which a Google-hosted runtime already has. With neither, the game reads fine and
+| Variable                    | What it is for                                                   |
+| --------------------------- | ---------------------------------------------------------------- |
+| `SUPABASE_DB_URL`           | The owner connection every privileged write travels over         |
+| `SUPABASE_URL`              | Where tokens are verified and the auth admin API lives           |
+| `SUPABASE_JWT_SECRET`       | Checking an HS256 token's signature without a round trip         |
+| `SUPABASE_SERVICE_ROLE_KEY` | Auth admin calls alone: finding a player by email, the dashboard |
+
+Against a hosted project, point `SUPABASE_DB_URL` at the **transaction-mode
+pooler** (port 6543), and leave `SUPABASE_JWT_SECRET` empty so the server fetches
+the project's JWKS instead. Without `SUPABASE_DB_URL` the game reads fine and
 refuses every write.
 
 Changing `VITE_WORLD_SEED` changes the world. Chunk seeds, biomes, landmark
-placement, spawn rolls and lair contents all derive from it. Two deployments
-with different seeds are two different planets, and stored records naming a
-chunk will point at ground that no longer looks the same.
+placement, spawn rolls and lair contents all derive from it. Two deployments with
+different seeds are two different planets, and stored records naming a chunk will
+point at ground that no longer looks the same.
 
-### Running against the emulators
+### The schema
 
-You do not need a Firebase project to develop. `firebase.json` configures the
-**Auth and Firestore emulators**, and a `demo-` project id runs them fully
-offline — no account, no key to leak, and no cost to a mistake.
-
-```bash
-pnpm emulators   # in one terminal: auth on 9099, firestore on 8080, UI on 4000
-pnpm dev         # in another
-```
-
-`pnpm emulators` cleans up before it starts. The Firebase CLI runs Firestore as
-a separate Java process, and a run killed with Ctrl-C often leaves that process
-holding its ports with nothing driving it — which used to make the next start
-fail with `port taken`. The script clears that wreckage, but leaves a set that
-is still answering alone and says so.
-
-To point the app at the emulators, uncomment the emulator block at the bottom of
-`.env.example` in your `.env`. The web config above it can stay blank: an
-emulated run fills in its own, since a developer without a project has no key to
-copy and the emulators verify none of it. Anything you do set is still used,
-which is how you point the emulators at a real project's id to work against a
-copy of its data.
-
-Tell both halves of the game separately, because they are separate SDKs.
-`VITE_FIREBASE_EMULATOR=true` is the browser's half.
-`FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` are read by the
-Admin SDK, which routes the privileged writes. Both default to the same project
-id, since the emulators keep one store per project — so name it on both sides or
-neither.
-
-Naming only one side is the mistake worth knowing about, because nothing about
-it looks wrong. Setting `VITE_FIREBASE_PROJECT_ID=test` while leaving
-`FIREBASE_PROJECT_ID` at the default puts the browser in one store and the
-server in another. Both halves work, both write successfully, and the player
-watches a store the server never reaches — no catches, no bag, no gold, no
-profile, and no error anywhere. The server now refuses to start against a
-project the browser is not using, and the failure message names both ids.
-
-The emulators enforce `firestore.rules`, so a client write the rules reject
-fails locally exactly as it would in production. That is the point of developing
-against them instead of a project where the rules are not deployed yet.
-
-**The Firestore emulator needs JDK 21 or newer** (the auth emulator is Node and
-needs nothing). `firebase emulators:start` says so plainly when the JDK on
-`PATH` is older. Having a new enough one installed is not the same as it being
-found first:
+[`supabase/migrations/`](supabase/migrations) is the whole database, applied in
+filename order: the tables, the functions and triggers, the row-level security,
+and what is published to realtime. [Security](docs/database/security.md) explains
+what the policies say and why.
 
 ```bash
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
+supabase db push --project-ref <ref>   # apply them to a hosted project
 ```
 
-Two things help with emulator sign-in. The **Emulator UI** at
-<http://localhost:4000/auth> can add a user directly, which is the fastest route
-to a signed-in session. And **a provider sign-in opens a popup** served from the
-emulator's own port; some browsers block that popup from talking back to the
-page that opened it. The app falls back to a redirect when that happens, but
-email sign-in avoids the problem entirely.
+Most tables are read-only to clients on purpose: the server owns anything worth
+cheating for. The exceptions are a player's own profile and the shared snapshot
+window, which goes through a function rather than a table write.
 
-The email and password form is drawn on a **development build alone** — a
-deployed game offers Google and GitHub and nothing else. A development
-build also hands every account it creates the `admin` role, which is granted on
-the server: the rules refuse a browser that names its own.
-
-### Firestore rules and indexes
-
-[`firestore.rules`](firestore.rules) and
-[`firestore.indexes.json`](firestore.indexes.json) are what the code assumes and
-what [Security](docs/firestore/security.md) explains. Deploy them before exposing
-the game to anybody:
+The policies have their own tests, since nothing outside a real Postgres can say
+what a policy does:
 
 ```bash
-npx firebase deploy --only firestore:rules,firestore:indexes --project <id>
+pnpm db          # in one terminal
+pnpm test:rules  # in another
 ```
 
-Most collections are read-only to clients on purpose: the server owns anything
-worth cheating for.
+`test/rls/` signs two accounts in and checks what each may read and write. It is
+separate from `pnpm test` because it is the only suite that needs the stack
+running, and because it **clears the game rows between cases**: run it while the
+e2e suite is using the same stack and it will delete the accounts those browsers
+are signed in as.
 
-The rules have their own tests, since nothing outside the emulator can say what
-a rule does:
+### Signing in
 
-```bash
-pnpm test:rules
-```
-
-That starts a Firestore emulator, runs `test/firestore/`, and stops it again.
-It is separate from `pnpm test` because the rest of the suite needs nothing
-running. The run **clears the store between cases**, so it needs an emulator to
-itself. If one is already up on 8080, give the test run a spare port rather than
-letting it empty the one you are using:
-
-```bash
-FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
-```
+A deployed game offers **Google and GitHub**, both redirect-based, and nothing
+else. The **email and password form is drawn on a development build alone**,
+which is what the browser tests sign in with: the local stack skips address
+confirmation, so a sign-up answers with a live session. A development build also
+hands every account it creates the `admin` role, granted on the server.
 
 ## Commands
 
-| Command                | What it does                                       |
-| ---------------------- | -------------------------------------------------- |
-| `pnpm dev`             | Development server with HMR                        |
-| `pnpm build`           | Production build (client, server and Nitro output) |
-| `pnpm start`           | Serve the built output from `.output/`             |
-| `pnpm preview`         | Preview the build locally                          |
-| `pnpm emulators`       | Local Firebase (auth, Firestore, UI on port 4000)  |
-| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel   |
-| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet |
-| `pnpm test`            | The whole test suite, once                         |
-| `pnpm test:rules`      | The Firestore rules, against a throwaway emulator  |
-| `pnpm test:e2e`        | The Playwright suites under `e2e/`                 |
-| `npx tsc --noEmit`     | Type-check                                         |
-| `npx oxlint src test`  | Lint                                               |
-| `npx oxfmt src test`   | Format                                             |
-| `pnpm cs:add`          | Add a changeset                                    |
+| Command                | What it does                                        |
+| ---------------------- | --------------------------------------------------- |
+| `pnpm dev`             | Development server with HMR                         |
+| `pnpm build`           | Production build (client, server and Nitro output)  |
+| `pnpm start`           | Serve the built output from `.output/`              |
+| `pnpm preview`         | Preview the build locally                           |
+| `pnpm db`              | Start the local Supabase stack                      |
+| `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`    |
+| `pnpm seed`            | Fill a fresh stack with accounts and sample rows    |
+| `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
+| `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
+| `pnpm test`            | The whole test suite, once                          |
+| `pnpm test:rules`      | The row-level security suite, against a local stack |
+| `pnpm test:e2e`        | The Playwright suites under `e2e/`                  |
+| `npx tsc --noEmit`     | Type-check                                          |
+| `npx oxlint src test`  | Lint                                                |
+| `npx oxfmt src test`   | Format                                              |
+| `pnpm cs:add`          | Add a changeset                                     |
 
 ## Where things live
 
@@ -212,15 +162,16 @@ FIRESTORE_EMULATOR_PORT=8099 pnpm test:rules   # with a firestore.port to match
 | `src/data/`            | The dex: species, moves, abilities, items, biomes, spawn and item pools                                                   |
 | `src/overworld/`       | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids                                              |
 | `src/battle/`          | The battle engine: events, units, moves, statuses, abilities, items, AI                                                   |
-| `src/auth/`            | Client-side Firestore reads and the `'use server'` wrappers around the writes                                             |
-| `src/server/`          | Privileged writes, Admin SDK only, behind a verified caller                                                               |
+| `src/auth/`            | Client-side reads under row-level security, and the `'use server'` wrappers around the writes                             |
+| `src/server/`          | Privileged writes over the owner connection, behind a verified caller                                                     |
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
 | `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
 | `public/sprites/`      | Sprite sheets by region: a packed `{species}.png` per coat and one description per pokemon                                |
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
 | `test/`                | Vitest suites, mirroring the source tree                                                                                  |
-| `docs/`                | The mechanics and Firestore documentation                                                                                 |
+| `supabase/`            | The migrations, and the local stack's configuration                                                                       |
+| `docs/`                | The player's guide, the database pages and the engine notes                                                               |
 
 Two conventions are worth knowing before reading the source. Every module has a
 single `export default` where it has an obvious main export. And effects — an

@@ -29,8 +29,8 @@ describe('battle kinds', () => {
     );
   });
 
-  it('reads a grunt off there being no lobby and one player', () => {
-    expect(getBattleKind(asRecord({}))).toBe(BattleKind.Rocket);
+  it('reads an npc fight off there being no lobby and one player', () => {
+    expect(getBattleKind(asRecord({}))).toBe(BattleKind.Npc);
   });
 
   it('reads players fighting each other off there being two of them', () => {
@@ -38,7 +38,7 @@ describe('battle kinds', () => {
   });
 
   it('names every kind', () => {
-    for (const kind of [BattleKind.Raid, BattleKind.Rocket, BattleKind.Player]) {
+    for (const kind of [BattleKind.Raid, BattleKind.Npc, BattleKind.Player]) {
       expect(BATTLE_KIND_NAMES[kind].length).toBeGreaterThan(0);
     }
   });

@@ -28,20 +28,21 @@ game. Nothing here is sold, and nothing here is offered as an official product.
 
 What ships in the built app.
 
-| Package                                              | What it does for the game                                                                                                | Licence    |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| [solid-js](https://solidjs.com)                      | Signals, resources and rendering — the whole reactive layer                                                              | MIT        |
-| `@solidjs/start`                                     | The app framework: file routes, server functions, SSR                                                                    | MIT        |
-| `@solidjs/router`                                    | Routing under SolidStart                                                                                                 | MIT        |
-| `@solidjs/meta`                                      | Document head — the page title                                                                                           | MIT        |
-| [terracotta](https://github.com/lxsmnsyc/terracotta) | Headless, accessible dialogs, tabs, menus and buttons; every dialog in the game is one of these with our own paint on it | MIT        |
-| [Tailwind CSS](https://tailwindcss.com)              | Styling, configured in `src/app.css`                                                                                     | MIT        |
-| `firebase`                                           | Auth and the client's Firestore reads and subscriptions                                                                  | Apache-2.0 |
-| `firebase-admin`                                     | The privileged writes in `src/server/`                                                                                   | Apache-2.0 |
-| `date-fns`                                           | Formatting the dates a record carries                                                                                    | MIT        |
-| `nitro`                                              | The server SolidStart builds onto                                                                                        | MIT        |
-| `server-only`                                        | The marker that keeps server modules out of the client bundle                                                            | MIT        |
-| `vite`                                               | Dev server and bundler, at runtime through SolidStart                                                                    | MIT        |
+| Package                                              | What it does for the game                                                                                                | Licence   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------- |
+| [solid-js](https://solidjs.com)                      | Signals, resources and rendering — the whole reactive layer                                                              | MIT       |
+| `@solidjs/start`                                     | The app framework: file routes, server functions, SSR                                                                    | MIT       |
+| `@solidjs/router`                                    | Routing under SolidStart                                                                                                 | MIT       |
+| `@solidjs/meta`                                      | Document head — the page title                                                                                           | MIT       |
+| [terracotta](https://github.com/lxsmnsyc/terracotta) | Headless, accessible dialogs, tabs, menus and buttons; every dialog in the game is one of these with our own paint on it | MIT       |
+| [Tailwind CSS](https://tailwindcss.com)              | Styling, configured in `src/app.css`                                                                                     | MIT       |
+| `@supabase/supabase-js`                              | Auth, the client's reads under row-level security, and the realtime socket                                               | MIT       |
+| `postgres`                                           | The direct connection the privileged writes in `src/server/` travel over                                                 | Unlicense |
+| `jose`                                               | Verifying a caller's access token without a round trip                                                                   | MIT       |
+| `date-fns`                                           | Formatting the dates a record carries                                                                                    | MIT       |
+| `nitro`                                              | The server SolidStart builds onto                                                                                        | MIT       |
+| `server-only`                                        | The marker that keeps server modules out of the client bundle                                                            | MIT       |
+| `vite`                                               | Dev server and bundler, at runtime through SolidStart                                                                    | MIT       |
 
 ## Build and test
 
@@ -57,8 +58,7 @@ What the repository uses and the player never sees.
 | `oxlint-tsgolint`                        | The type-aware half of the lint rules                | MIT        |
 | [oxfmt](https://oxc.rs)                  | Formatting                                           | MIT        |
 | `@lxsmnsyc/oxlint-config`                | The lint configuration this project starts from      | MIT        |
-| `firebase-tools`                         | The local emulators the tests run against            | MIT        |
-| `@firebase/rules-unit-testing`           | The Firestore rules suite (`pnpm test:rules`)        | Apache-2.0 |
+| Supabase CLI                             | The local stack the tests run against                | Apache-2.0 |
 | `@tailwindcss/vite`                      | Tailwind's Vite plugin                               | MIT        |
 | `@changesets/cli`                        | Versioning                                           | MIT        |
 

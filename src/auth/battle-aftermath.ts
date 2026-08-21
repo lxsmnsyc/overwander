@@ -36,4 +36,9 @@ export default interface BattleAftermath {
    * volatile ended with the battle
    */
   statuses: number;
+  /**
+   * The coins its Pay Days scattered, picked up when the fight
+   * settles
+   */
+  coins: number;
 }

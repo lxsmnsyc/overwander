@@ -15,9 +15,10 @@ import type { BattleRecord } from './battles';
 const enum BattleKind {
   Raid = 0,
   /**
-   * A Team Rocket stop: one player against a grunt's three
+   * A scripted trainer's fight: a Team Rocket grunt today, any battle
+   * npc later. One player against a party belonging to nobody
    */
-  Rocket = 1,
+  Npc = 1,
   /**
    * Players against each other. Nothing fields one yet — the derivation
    * is here so the day something does, its battles sort themselves
@@ -27,7 +28,7 @@ const enum BattleKind {
 
 export const BATTLE_KIND_NAMES: Record<BattleKind, string> = {
   [BattleKind.Raid]: 'Raids',
-  [BattleKind.Rocket]: 'Team Rocket',
+  [BattleKind.Npc]: 'Trainers',
   [BattleKind.Player]: 'Players',
 };
 
@@ -35,7 +36,7 @@ export function getBattleKind(record: BattleRecord): BattleKind {
   if (record.raid.length > 0) {
     return BattleKind.Raid;
   }
-  return record.players.length > 1 ? BattleKind.Player : BattleKind.Rocket;
+  return record.players.length > 1 ? BattleKind.Player : BattleKind.Npc;
 }
 
 export default BattleKind;

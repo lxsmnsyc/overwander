@@ -3,11 +3,15 @@ import Abilities from '../src/data/ids/abilities';
 import { EncounterType } from '../src/overworld/encounter';
 import { Genders, Species } from '../src/data/ids/species';
 import Natures from '../src/data/ids/natures';
-import { PERFECT_IVS } from '../src/data/constants/stats';
+import { PERFECT_IVS, packIVs } from '../src/data/constants/stats';
 import { Balls, Items } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
-import { asCaughtPokemon } from '../src/auth/caught-record';
-import matchesCatch, { planCatchSearch } from '../src/auth/catch-search';
+import { Acquisition, asCaughtPokemon } from '../src/auth/caught-record';
+import Biome from '../src/data/ids/biome';
+import { BIOME_NAMES } from '../src/data/biome/names';
+import { getMaxHealth } from '../src/auth/health';
+import { getSpeciesData } from '../src/data/species';
+import matchesCatch, { orderCatches, planCatchSearch } from '../src/auth/catch-search';
 import parseQuery from '../src/core/query';
 import registerGameData from '../src/data';
 
@@ -22,23 +26,27 @@ function pokemon(fields: Record<string, unknown>): ReturnType<typeof asCaughtPok
 
 describe('search syntax', () => {
   it('reads a plain word as a plain word', () => {
-    expect(parseQuery('pikachu')).toEqual([{ field: '', value: 'pikachu' }]);
+    expect(parseQuery('pikachu')).toEqual([{ field: '', value: 'pikachu', negated: false }]);
   });
 
   it('reads a pair, and keeps the value as it was typed', () => {
-    expect(parseQuery('type:Fire')).toEqual([{ field: 'type', value: 'Fire' }]);
+    expect(parseQuery('type:Fire')).toEqual([{ field: 'type', value: 'Fire', negated: false }]);
   });
 
   it('keeps a quoted value in one piece', () => {
-    expect(parseQuery('move:"Solar Beam"')).toEqual([{ field: 'move', value: 'Solar Beam' }]);
-    expect(parseQuery('"little guy"')).toEqual([{ field: '', value: 'little guy' }]);
+    expect(parseQuery('move:"Solar Beam"')).toEqual([
+      { field: 'move', value: 'Solar Beam', negated: false },
+    ]);
+    expect(parseQuery('"little guy"')).toEqual([
+      { field: '', value: 'little guy', negated: false },
+    ]);
   });
 
   it('takes several terms at once', () => {
     expect(parseQuery('shiny:1  type:fire  sparky')).toEqual([
-      { field: 'shiny', value: '1' },
-      { field: 'type', value: 'fire' },
-      { field: '', value: 'sparky' },
+      { field: 'shiny', value: '1', negated: false },
+      { field: 'type', value: 'fire', negated: false },
+      { field: '', value: 'sparky', negated: false },
     ]);
   });
 
@@ -138,40 +146,78 @@ describe('planning the store half of a search', () => {
   });
 
   it('pushes a mark down as an equality', () => {
-    expect(planCatchSearch('is:shiny')).toEqual([{ field: 'shiny', is: true }]);
+    expect(planCatchSearch('is:shiny')).toEqual([
+      { on: 'row', column: 'shiny', op: 'eq', value: true },
+    ]);
     // The player's own mark is stored under the record's word for it
-    expect(planCatchSearch('not:locked')).toEqual([{ field: 'guarded', is: false }]);
+    expect(planCatchSearch('not:locked')).toEqual([
+      { on: 'row', column: 'guarded', op: 'eq', value: false },
+    ]);
     // A word no mark answers to asks nothing of the store
     expect(planCatchSearch('is:sparkly')).toEqual([]);
   });
 
-  it('turns a level into a range, and one number into a range of one', () => {
-    expect(planCatchSearch('level:30-60')).toEqual([{ field: 'level', low: 30, high: 60 }]);
-    expect(planCatchSearch('level:45')).toEqual([{ field: 'level', low: 45, high: 45 }]);
+  it('turns a level into a pair of bounds, and one number into an equality', () => {
+    expect(planCatchSearch('level:30-60')).toEqual([
+      { on: 'row', column: 'level', op: 'gte', value: 30 },
+      { on: 'row', column: 'level', op: 'lte', value: 60 },
+    ]);
+    expect(planCatchSearch('level:45')).toEqual([
+      { on: 'row', column: 'level', op: 'eq', value: 45 },
+    ]);
+    // An end nobody named is left off rather than pushed as an infinity
+    expect(planCatchSearch('level:50-')).toEqual([
+      { on: 'row', column: 'level', op: 'gte', value: 50 },
+    ]);
+    expect(planCatchSearch('level:>50')).toEqual([
+      { on: 'row', column: 'level', op: 'gt', value: 50 },
+    ]);
   });
 
-  it('leaves the child-table fields to the loaded box', () => {
-    // Moves, abilities and items live in tables of their own now, and
-    // the runtime predicate answers them over what the owner query
-    // already fetched
-    expect(planCatchSearch('move:ember')).toEqual([]);
-    expect(planCatchSearch('ability:blaze')).toEqual([]);
+  it('joins the child tables, each term on an alias of its own', () => {
+    expect(planCatchSearch('move:ember')).toEqual([
+      {
+        on: 'child',
+        alias: 'q0',
+        table: 'caught_moves',
+        column: 'move',
+        op: 'eq',
+        value: Moves.Ember,
+      },
+    ]);
+    // Two moves are two joins: one alias asked to be both moves at
+    // once is a row that cannot exist
+    const both = planCatchSearch('move:ember move:growl');
+
+    expect(both).toHaveLength(2);
+    expect(both[0]).toHaveProperty('alias', 'q0');
+    expect(both[1]).toHaveProperty('alias', 'q1');
   });
 
   it('expands a family into the species it holds', () => {
     const [planned] = planCatchSearch('family:charmander');
 
     expect(planned).toBeDefined();
-    expect(planned).toHaveProperty('field', 'species');
-    expect('oneOf' in planned ? planned.oneOf : []).toContain(Species.Charizard);
+    expect(planned).toHaveProperty('column', 'species');
+    expect(planned).toHaveProperty('op', 'in');
+    expect('value' in planned ? planned.value : []).toContain(Species.Charizard);
   });
 
   it('pushes every term the store can answer, in query order', () => {
     // One WHERE takes them all: the one-push rule was a composite
     // index economy the relational store does not need
     expect(planCatchSearch('is:shiny move:ember level:10-90')).toEqual([
-      { field: 'shiny', is: true },
-      { field: 'level', low: 10, high: 90 },
+      { on: 'row', column: 'shiny', op: 'eq', value: true },
+      {
+        on: 'child',
+        alias: 'q1',
+        table: 'caught_moves',
+        column: 'move',
+        op: 'eq',
+        value: Moves.Ember,
+      },
+      { on: 'row', column: 'level', op: 'gte', value: 10 },
+      { on: 'row', column: 'level', op: 'lte', value: 90 },
     ]);
   });
 
@@ -231,40 +277,431 @@ describe('the fields added for the query builder', () => {
 
   it('pushes each of them down as the store would ask it', () => {
     expect(planCatchSearch('nature:adamant')).toEqual([
-      { field: 'nature', equals: Natures.Adamant },
+      { on: 'row', column: 'nature', op: 'eq', value: Natures.Adamant },
     ]);
-    expect(planCatchSearch('gender:female')).toEqual([{ field: 'gender', equals: Genders.Female }]);
-    expect(planCatchSearch('ball:ultra')).toEqual([{ field: 'ball', equals: Balls.UltraBall }]);
+    expect(planCatchSearch('gender:female')).toEqual([
+      { on: 'row', column: 'gender', op: 'eq', value: Genders.Female },
+    ]);
+    expect(planCatchSearch('ball:ultra')).toEqual([
+      { on: 'row', column: 'ball', op: 'eq', value: Balls.UltraBall },
+    ]);
     expect(planCatchSearch('met:rocket')).toEqual([
-      { field: 'type', equals: EncounterType.Rocket },
+      { on: 'row', column: 'type', op: 'eq', value: EncounterType.Rocket },
     ]);
-    expect(planCatchSearch('is:perfect')).toEqual([{ field: 'ivs', equals: PERFECT_IVS }]);
-    expect(planCatchSearch('is:traded')).toEqual([{ field: 'traded', is: true }]);
-    expect(planCatchSearch('not:egg')).toEqual([{ field: 'egg', is: false }]);
-    expect(planCatchSearch('is:fainted')).toEqual([{ field: 'health', low: 0, high: 0 }]);
+    expect(planCatchSearch('is:perfect')).toEqual([
+      { on: 'row', column: 'ivs', op: 'eq', value: PERFECT_IVS },
+    ]);
+    expect(planCatchSearch('is:traded')).toEqual([
+      { on: 'row', column: 'traded', op: 'eq', value: true },
+    ]);
+    expect(planCatchSearch('not:egg')).toEqual([
+      { on: 'row', column: 'egg', op: 'eq', value: false },
+    ]);
+    expect(planCatchSearch('is:fainted')).toEqual([
+      { on: 'row', column: 'health', op: 'eq', value: 0 },
+    ]);
     expect(planCatchSearch('friendship:150-255')).toEqual([
-      { field: 'friendship', low: 150, high: 255 },
+      { on: 'row', column: 'friendship', op: 'gte', value: 150 },
+      { on: 'row', column: 'friendship', op: 'lte', value: 255 },
     ]);
-    // The stamp is reassembled client-side, so the box answers it
-    expect(planCatchSearch('caught:2026-08')).toEqual([]);
+  });
+
+  it('turns a written date into bounds on the stamp', () => {
+    // The stamp is a column now, so a month is the span between its
+    // first instant and the first instant of the month after it
+    expect(planCatchSearch('caught:2026-08')).toEqual([
+      { on: 'row', column: 'caught_at_local', op: 'gte', value: '2026-08-01T00:00:00' },
+      { on: 'row', column: 'caught_at_local', op: 'lt', value: '2026-09-01T00:00:00' },
+    ]);
   });
 
   it('turns fighting into the same line the lock is drawn at', () => {
     const [live] = planCatchSearch('is:fighting');
     const [free] = planCatchSearch('not:fighting');
 
-    expect(live).toHaveProperty('field', 'lockedAt');
-    expect(free).toHaveProperty('field', 'lockedAt');
+    expect(live).toHaveProperty('column', 'locked_at');
+    expect(free).toHaveProperty('column', 'locked_at');
     // One is everything since the cutoff, the other everything before
-    expect('high' in live ? live.high : 0).toBe(Number.POSITIVE_INFINITY);
-    expect('low' in free ? free.low : 0).toBe(Number.NEGATIVE_INFINITY);
+    expect(live).toHaveProperty('op', 'gt');
+    expect(free).toHaveProperty('op', 'lte');
   });
 
-  it('leaves the elemental type to the runtime, whatever its size', () => {
+  it('leaves the elemental type to the runtime', () => {
     // A search that pushed fire and read water would be quick for one
     // half of the game and slow for the other, which is worse than
     // being the same either way
     expect(planCatchSearch('type:fire')).toEqual([]);
     expect(matchesCatch(pokemon({ species: Species.Charmander }), 'type:fire')).toBe(true);
+  });
+});
+
+describe('the grammar a term is written in', () => {
+  it('refuses a term written with a ! in front of it', () => {
+    const shiny = pokemon({ shiny: true, level: 40 });
+
+    expect(matchesCatch(shiny, '!is:shiny')).toBe(false);
+    expect(matchesCatch(shiny, '!level:10-20')).toBe(true);
+    // A plain word refuses the same way
+    expect(matchesCatch(shiny, '!squirtle')).toBe(true);
+    expect(matchesCatch(shiny, '!charmander')).toBe(false);
+  });
+
+  it('leaves a dash alone, since values are full of them', () => {
+    const grown = pokemon({ level: 45, caughtAt: '2026-08-10T22:14:03.123+08:00' });
+
+    // The refusal mark moved off `-` so a range and a written date read
+    // as themselves rather than as a term somebody refused
+    expect(matchesCatch(grown, 'level:40-50')).toBe(true);
+    expect(matchesCatch(grown, 'caught:2026-08')).toBe(true);
+    expect(parseQuery('-50')).toEqual([{ field: '', value: '-50', negated: false }]);
+  });
+
+  it('accepts any alternative of a value split on a bar', () => {
+    expect(matchesCatch(pokemon({ species: Species.Charmander }), 'type:water|fire')).toBe(true);
+    expect(matchesCatch(pokemon({ species: Species.Charmander }), 'type:water|grass')).toBe(false);
+    expect(matchesCatch(pokemon({ level: 40 }), 'level:10|40')).toBe(true);
+    expect(matchesCatch(pokemon({ shiny: true }), 'is:shadow|shiny')).toBe(true);
+  });
+
+  it('reads a comparison as well as a range', () => {
+    const grown = pokemon({ level: 45 });
+
+    expect(matchesCatch(grown, 'level:>40')).toBe(true);
+    expect(matchesCatch(grown, 'level:>45')).toBe(false);
+    expect(matchesCatch(grown, 'level:>=45')).toBe(true);
+    expect(matchesCatch(grown, 'level:<50')).toBe(true);
+    expect(matchesCatch(grown, 'level:<=44')).toBe(false);
+  });
+
+  it('never hides a row for the two terms that only arrange the list', () => {
+    // A row cannot fail `sort:level`, and one that tried would empty
+    // the box the moment somebody typed it
+    expect(matchesCatch(pokemon({}), 'sort:level order:desc')).toBe(true);
+    expect(planCatchSearch('sort:level order:desc')).toEqual([]);
+  });
+
+  it('puts the answers in the order the search asked for', () => {
+    const box = [pokemon({ level: 10 }), pokemon({ level: 50 }), pokemon({ level: 30 })];
+
+    expect(orderCatches(box, 'sort:level', (one) => one).map((one) => one.level)).toEqual([
+      10, 30, 50,
+    ]);
+    expect(
+      orderCatches(box, 'sort:level order:desc', (one) => one).map((one) => one.level),
+    ).toEqual([50, 30, 10]);
+    // A word nothing reads leaves the box in the order it arrived
+    expect(orderCatches(box, 'sort:colour', (one) => one).map((one) => one.level)).toEqual([
+      10, 50, 30,
+    ]);
+  });
+
+  it('only pushes a refusal the store can state exactly', () => {
+    expect(planCatchSearch('!is:shiny')).toEqual([
+      { on: 'row', column: 'shiny', op: 'neq', value: true },
+    ]);
+    // A refused range is two of them either side, which is two
+    // queries: the second pass answers it instead
+    expect(planCatchSearch('!level:30-60')).toEqual([]);
+    expect(planCatchSearch('!move:ember')).toEqual([]);
+  });
+
+  it('leaves a value with alternatives to the runtime where it cannot be one filter', () => {
+    // Two natures are two columns' worth of "either", so the store is
+    // asked nothing and the box answers it
+    expect(planCatchSearch('level:10|40')).toEqual([]);
+    expect(planCatchSearch('is:shiny|shadow')).toEqual([]);
+    // Names that resolve to several ids are one `in` rather than none
+    expect(planCatchSearch('family:charmander|squirtle')).toHaveLength(1);
+  });
+});
+
+describe('what the box learned to be asked', () => {
+  it('reads where it came from', () => {
+    const met = pokemon({
+      origin: { timestamp: 0, x: 3, y: 4, biome: Biome.Volcano, place: 'Pallet Town' },
+      locale: 'en-PH',
+    });
+
+    expect(matchesCatch(met, 'biome:volcano')).toBe(true);
+    expect(matchesCatch(met, 'biome:tundra')).toBe(false);
+    expect(matchesCatch(met, 'place:pallet')).toBe(true);
+    expect(matchesCatch(met, 'locale:en-ph')).toBe(true);
+    expect(planCatchSearch('place:pallet')).toEqual([
+      { on: 'row', column: 'origin_place', op: 'ilike', value: '%pallet%' },
+    ]);
+  });
+
+  it('reads the values one stat at a time, and all six together', () => {
+    const rolled = pokemon({ ivs: packIVs({ 0: 31, 1: 0, 2: 20, 3: 31, 4: 10, 5: 31 }) });
+
+    expect(matchesCatch(rolled, 'iv:atk:0')).toBe(true);
+    expect(matchesCatch(rolled, 'iv:atk:31')).toBe(false);
+    expect(matchesCatch(rolled, 'iv:spe:>=28')).toBe(true);
+    expect(matchesCatch(rolled, 'iv:120-130')).toBe(true);
+    // A stat nobody has heard of refuses the term rather than asking
+    // about the whole spread
+    expect(matchesCatch(rolled, 'iv:luck:31')).toBe(false);
+    expect(planCatchSearch('iv:spe:31')).toEqual([
+      { on: 'row', column: 'iv_spe', op: 'eq', value: 31 },
+    ]);
+  });
+
+  it('reads what a fight left it carrying', () => {
+    const hurt = pokemon({ health: 12, statuses: 0b01_0001 });
+
+    expect(matchesCatch(hurt, 'hp:0-20')).toBe(true);
+    expect(matchesCatch(hurt, 'status:burn')).toBe(true);
+    expect(matchesCatch(hurt, 'status:poison')).toBe(true);
+    expect(matchesCatch(hurt, 'status:freeze')).toBe(false);
+    expect(planCatchSearch('status:burn')).toEqual([
+      { on: 'row', column: 'status_burned', op: 'eq', value: true },
+    ]);
+  });
+
+  it('counts the steps an egg still has to be carried', () => {
+    const egg = pokemon({ egg: true, steps: 900, hatchSteps: 1_000 });
+
+    expect(matchesCatch(egg, 'hatch:-200')).toBe(true);
+    expect(matchesCatch(egg, 'hatch:>500')).toBe(false);
+    expect(planCatchSearch('hatch:-200')).toEqual([
+      { on: 'row', column: 'hatch_left', op: 'lte', value: 200 },
+    ]);
+  });
+
+  it('reads whose hands it has been through', () => {
+    const handed = pokemon({
+      traded: true,
+      history: [
+        {
+          owner: '',
+          name: 'Red',
+          acquiredAt: '2026-01-01T00:00:00+00:00',
+          kind: Acquisition.Caught,
+        },
+        {
+          owner: 'trainer',
+          acquiredAt: '2026-08-01T00:00:00+00:00',
+          kind: Acquisition.Auction,
+          paid: 5_000,
+        },
+      ],
+    });
+
+    expect(matchesCatch(handed, 'from:red')).toBe(true);
+    expect(matchesCatch(handed, 'from:blue')).toBe(false);
+    expect(matchesCatch(handed, 'hands:2')).toBe(true);
+    expect(matchesCatch(handed, 'paid:1000-9000')).toBe(true);
+    expect(matchesCatch(handed, 'got:auction')).toBe(true);
+    expect(planCatchSearch('paid:1000-9000')).toEqual([
+      {
+        on: 'child',
+        alias: 'q0',
+        table: 'caught_history',
+        column: 'paid',
+        op: 'gte',
+        value: 1_000,
+      },
+      {
+        on: 'child',
+        alias: 'q0',
+        table: 'caught_history',
+        column: 'paid',
+        op: 'lte',
+        value: 9_000,
+      },
+    ]);
+  });
+
+  it('answers the marks that need more than the one record', () => {
+    const caught = pokemon({ species: Species.Charmander });
+    const context = {
+      id: 'catch-a',
+      buddy: 'catch-a',
+      listed: new Set(['catch-b']),
+      raiding: new Set(['catch-a']),
+      duplicates: new Set([Species.Charmander]),
+    };
+
+    expect(matchesCatch(caught, 'is:buddy', context)).toBe(true);
+    expect(matchesCatch(caught, 'is:raiding', context)).toBe(true);
+    expect(matchesCatch(caught, 'is:listed', context)).toBe(false);
+    expect(matchesCatch(caught, 'is:duplicate', context)).toBe(true);
+    // A list that read none of it answers no rather than yes: an
+    // unanswerable term hides the row, the way an unknown field does
+    expect(matchesCatch(caught, 'is:buddy')).toBe(false);
+  });
+
+  it('joins the row that would prove one of them', () => {
+    expect(planCatchSearch('is:listed')).toEqual([
+      { on: 'exists', alias: 'q0', table: 'auctions', equals: { settled: false } },
+    ]);
+    expect(planCatchSearch('is:raiding')).toEqual([
+      { on: 'exists', alias: 'q0', table: 'team_catches', equals: {} },
+    ]);
+    // The other way round is a row that must not exist, which an inner
+    // join cannot say
+    expect(planCatchSearch('not:listed')).toEqual([]);
+  });
+
+  it('reads the marks about the record itself', () => {
+    expect(matchesCatch(pokemon({ nickname: 'Sparky' }), 'is:named')).toBe(true);
+    expect(matchesCatch(pokemon({}), 'is:named')).toBe(false);
+    expect(matchesCatch(pokemon({ type: EncounterType.Hatched }), 'is:hatched')).toBe(true);
+    expect(matchesCatch(pokemon({ level: 100 }), 'is:maxed')).toBe(true);
+    expect(matchesCatch(pokemon({ species: Species.Charmander }), 'is:evolvable')).toBe(true);
+    expect(matchesCatch(pokemon({ species: Species.Charizard }), 'is:evolvable')).toBe(false);
+  });
+
+  it('reads a date as a span, a comparison or the last few days', () => {
+    const stamped = pokemon({ caughtAt: '2026-08-10T22:14:03.123+08:00' });
+
+    expect(matchesCatch(stamped, 'caught:2026')).toBe(true);
+    expect(matchesCatch(stamped, 'caught:2026-01..2026-08')).toBe(true);
+    expect(matchesCatch(stamped, 'caught:2026-01..2026-07')).toBe(false);
+    expect(matchesCatch(stamped, 'caught:>2026-07')).toBe(true);
+    expect(matchesCatch(stamped, 'caught:<2026-08')).toBe(false);
+  });
+});
+
+describe('the cheap filters over what the registries already know', () => {
+  it('reads health as a share of the maximum, not only as a number', () => {
+    const whole = pokemon({ species: Species.Charmander, level: 20 });
+    const hurt = pokemon({
+      species: Species.Charmander,
+      level: 20,
+      health: Math.floor(getMaxHealth(whole) / 4),
+    });
+
+    expect(matchesCatch(hurt, 'hp:<50%')).toBe(true);
+    expect(matchesCatch(hurt, 'hp:>50%')).toBe(false);
+    expect(matchesCatch(whole, 'hp:>90%')).toBe(true);
+    // The absolute number still answers, for anybody who wants one
+    expect(matchesCatch(whole, `hp:${getMaxHealth(whole)}`)).toBe(true);
+    // A share is derived from the species, so no query can be asked it
+    expect(planCatchSearch('hp:<50%')).toEqual([]);
+  });
+
+  it('works one stat out the way a sheet prints it', () => {
+    const fast = pokemon({
+      species: Species.Charmander,
+      level: 50,
+      ivs: PERFECT_IVS,
+      nature: Natures.Timid,
+    });
+    const slow = pokemon({
+      species: Species.Charmander,
+      level: 50,
+      ivs: 0,
+      nature: Natures.Brave,
+    });
+
+    expect(matchesCatch(fast, 'stat:spe:>80')).toBe(true);
+    expect(matchesCatch(slow, 'stat:spe:>80')).toBe(false);
+    // The stat has to be named: the six added together is not a
+    // question anybody is asking
+    expect(matchesCatch(fast, 'stat:120')).toBe(false);
+    expect(matchesCatch(fast, 'stat:luck:>1')).toBe(false);
+  });
+
+  it('answers how a type lands on it, over its own types', () => {
+    const charizard = pokemon({ species: Species.Charizard });
+
+    // Fire and Flying: Rock is doubly effective, Ground does nothing
+    expect(matchesCatch(charizard, 'weak:rock')).toBe(true);
+    expect(matchesCatch(charizard, 'immune:ground')).toBe(true);
+    expect(matchesCatch(charizard, 'resists:grass')).toBe(true);
+    expect(matchesCatch(charizard, 'weak:grass')).toBe(false);
+  });
+
+  it('reads the state a fight left it in', () => {
+    const whole = pokemon({ species: Species.Charmander, level: 20 });
+
+    expect(matchesCatch(pokemon({ health: 5 }), 'is:hurt')).toBe(true);
+    expect(matchesCatch(whole, 'is:hurt')).toBe(false);
+    expect(matchesCatch(pokemon({ statuses: 0b01_0000 }), 'is:sick')).toBe(true);
+    expect(matchesCatch(whole, 'not:sick')).toBe(true);
+    expect(planCatchSearch('is:sick')).toEqual([
+      { on: 'row', column: 'statuses', op: 'neq', value: 0 },
+    ]);
+  });
+
+  it('knows whether a wing is worth spending on it', () => {
+    expect(matchesCatch(pokemon({ level: 50 }), 'is:trainable')).toBe(true);
+    expect(matchesCatch(pokemon({ level: 0, effortBonus: 0 }), 'is:trainable')).toBe(false);
+  });
+
+  it('knows a same-type move and a hidden ability when it sees one', () => {
+    const blazing = pokemon({ species: Species.Charmander, moves: [Moves.Ember] });
+    const plain = pokemon({ species: Species.Charmander, moves: [Moves.Tackle] });
+
+    expect(matchesCatch(blazing, 'is:stab')).toBe(true);
+    expect(matchesCatch(plain, 'is:stab')).toBe(false);
+
+    const rare = getSpeciesData(Species.Charmander).hiddenAbility;
+
+    expect(rare).toBeDefined();
+    expect(matchesCatch(pokemon({ abilities: [rare!] }), 'is:hidden')).toBe(true);
+    expect(matchesCatch(pokemon({ abilities: [Abilities.Blaze] }), 'is:hidden')).toBe(false);
+  });
+
+  it('reads what the dex says about the species', () => {
+    const charmander = pokemon({ species: Species.Charmander });
+
+    expect(matchesCatch(charmander, 'dex:4')).toBe(true);
+    expect(matchesCatch(charmander, 'dex:1-9')).toBe(true);
+    expect(matchesCatch(charmander, 'dex:>100')).toBe(false);
+    expect(matchesCatch(charmander, 'egg-group:monster')).toBe(true);
+    expect(matchesCatch(charmander, 'egg-group:water')).toBe(false);
+    expect(matchesCatch(charmander, 'catch-rate:45')).toBe(true);
+    expect(matchesCatch(charmander, 'catch-rate:>100')).toBe(false);
+    expect(matchesCatch(pokemon({ species: Species.Mewtwo }), 'rarity:legendary')).toBe(true);
+    expect(matchesCatch(charmander, 'rarity:legendary')).toBe(false);
+    // A dex number is a species, so the store can be asked it
+    expect(planCatchSearch('dex:4')).toEqual([
+      { on: 'row', column: 'species', op: 'eq', value: Species.Charmander },
+    ]);
+  });
+
+  it('tells where the species lives from where this one was met', () => {
+    const met = pokemon({
+      species: Species.Charmander,
+      origin: { timestamp: 0, x: 0, y: 0, biome: Biome.Beyond },
+    });
+    const lives = getSpeciesData(Species.Charmander).biomes;
+
+    expect(lives.length).toBeGreaterThan(0);
+    expect(matchesCatch(met, `spawns:${BIOME_NAMES[lives[0]]}`)).toBe(true);
+    // It was met nowhere in particular, which is not where it lives
+    expect(matchesCatch(met, 'biome:beyond')).toBe(true);
+  });
+
+  it('reads what it could learn against what it knows', () => {
+    const charmander = pokemon({ species: Species.Charmander, moves: [Moves.Tackle] });
+
+    expect(matchesCatch(charmander, 'learns:ember')).toBe(true);
+    expect(matchesCatch(charmander, 'move:ember')).toBe(false);
+    expect(matchesCatch(charmander, 'move-type:normal')).toBe(true);
+    expect(matchesCatch(charmander, 'move-type:fire')).toBe(false);
+  });
+
+  it('measures the individual rather than the species', () => {
+    const listed = getSpeciesData(Species.Charmander).weight;
+    const small = pokemon({ species: Species.Charmander, traitValue: 1 });
+    const large = pokemon({ species: Species.Charmander, traitValue: 0x7fff_ffff });
+
+    // Both are Charmanders and neither weighs what the dex says
+    expect(matchesCatch(small, `weight:<${listed * 4}`)).toBe(true);
+    expect(matchesCatch(large, 'height:>0')).toBe(true);
+  });
+
+  it('tells an egg none of it', () => {
+    const egg = pokemon({ egg: true, species: Species.Charmander, moves: [Moves.Ember] });
+
+    expect(matchesCatch(egg, 'weak:water')).toBe(false);
+    expect(matchesCatch(egg, 'dex:4')).toBe(false);
+    expect(matchesCatch(egg, 'learns:ember')).toBe(false);
+    expect(matchesCatch(egg, 'stat:spe:>1')).toBe(false);
+    expect(matchesCatch(egg, 'is:stab')).toBe(false);
+    expect(matchesCatch(egg, 'not:stab')).toBe(false);
   });
 });

@@ -57,6 +57,34 @@ describe('hit moves', () => {
   });
 });
 
+describe('pay day', () => {
+  it('scatters five coins per level on a landed hit', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMoveEffect(Moves.PayDay, unitTarget(defender), 0);
+
+    expect(defender.health).toBeCloseTo(160 - plainDamage(40));
+    expect(attacker.coins).toBe(5 * 50);
+  });
+
+  it('piles up across uses and scatters nothing from other moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    attacker.triggerMoveEffect(Moves.PayDay, unitTarget(defender), 0);
+    attacker.triggerMoveEffect(Moves.PayDay, unitTarget(defender), 0);
+    attacker.triggerMoveEffect(Moves.Tackle, unitTarget(defender), 0);
+
+    expect(attacker.coins).toBe(2 * 5 * 50);
+    expect(defender.coins).toBe(0);
+  });
+});
+
 describe('stage moves', () => {
   it('self stage moves boost the user', () => {
     const { battle, teamA } = createBattle();

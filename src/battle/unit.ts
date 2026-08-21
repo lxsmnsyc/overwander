@@ -515,6 +515,13 @@ export default class Unit {
    */
   consumed = new Set<Items>();
 
+  /**
+   * The coins this unit's Pay Days scattered. Nothing in the battle
+   * spends them; the fight reports them afterwards and the settle
+   * pays them out
+   */
+  coins = 0;
+
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',

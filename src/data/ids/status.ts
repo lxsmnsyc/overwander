@@ -132,6 +132,17 @@ export function unpackStatuses(mask: number): Statuses[] {
 }
 
 /**
+ * The mask as it settles onto the record after a fight: bad poison
+ * eases into ordinary poison, the way the mainline writes it home
+ */
+export function settleStatuses(mask: number): number {
+  if ((mask & StatusFlags.BadlyPoisoned) !== 0) {
+    return (mask & ~StatusFlags.BadlyPoisoned) | StatusFlags.Poisoned;
+  }
+  return mask;
+}
+
+/**
  * Everything a pokemon can carry out of a battle, as one mask: what a
  * report is filtered through, and what a Full Heal takes off
  */

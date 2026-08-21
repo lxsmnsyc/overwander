@@ -86,7 +86,7 @@ export default function setupWeatherMechanics(battle: Battle): void {
   // always battle-wide, raid stays team-local unless a listener
   // (e.g. Boss) widened the scope
   battle.on(BattleEvents.UnitSetWeather, EventPriority.Exact, (event) => {
-    if (event.global || battle.mode === BattleModes.PvP) {
+    if (event.global || battle.mode === BattleModes.PvP || battle.mode === BattleModes.Npc) {
       battle.setWeather(event.weather, event.duration);
     } else {
       event.source.team.setWeather(event.weather, event.duration);

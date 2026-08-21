@@ -10,6 +10,7 @@ import {
 } from '../../auth/battles';
 import { useAuth } from '../../auth/context';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../auth/raids';
+import { BattleModes } from '../../battle/core';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../../overworld/raid';
 import { createRocketBattle } from '../../overworld/rocket';
 import BattleField from './BattleField';
@@ -337,7 +338,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // reported, and the aftermath is written before the outcome is
       // stamped — stamping it frees the party, and a freed pokemon
       // can have its berry pulled back
-      if (built != null && user != null) {
+      // A fight between players settles nothing; the server refuses
+      // one anyway, so this only spares the round trip
+      if (built != null && user != null && built.battle.mode !== BattleModes.PvP) {
         const aftermath = collectAftermath(built, user.uid);
 
         if (aftermath.length > 0) {

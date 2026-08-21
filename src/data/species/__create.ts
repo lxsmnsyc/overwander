@@ -266,6 +266,20 @@ export function getEggMoves(species: Species): Moves[] {
 }
 
 /**
+ * Every move the species can ever come by: what it levels into, what a
+ * machine teaches it and what it can only inherit.
+ *
+ * It is what "could this pokemon know that?" means, which is a
+ * different question from what it knows — see `getLevelUpMoves` for
+ * the half of it that depends on how far it has grown
+ */
+export function getLearnableMoves(species: Species): Moves[] {
+  const { level, teachable, egg } = getSpeciesData(species).learnSet;
+
+  return [...new Set([...Object.values(level).flat(), ...teachable, ...(egg ?? [])])];
+}
+
+/**
  * What the species learns on reaching exactly that level, in the order
  * the entry lists them. A level with nothing on it answers an empty
  * list.

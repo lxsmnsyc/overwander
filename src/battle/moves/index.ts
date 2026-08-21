@@ -16,6 +16,7 @@ import setupMetronome from './metronome';
 import setupMimic from './mimic';
 import setupMirrorMove from './mirror-move';
 import setupMultiHitMoves from './multi-hit';
+import setupPayDay from './pay-day';
 import setupPowderMoves from './powder';
 import setupRage from './rage';
 import setupRampageMoves from './rampage';
@@ -63,6 +64,7 @@ export default function setupMoves(battle: Battle): void {
   setupSolarBeam(battle);
   setupLeechSeed(battle);
   setupBodySlam(battle);
+  setupPayDay(battle);
   setupRage(battle);
   setupAbsorb(battle);
   setupMimic(battle);

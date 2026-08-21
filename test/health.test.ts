@@ -23,7 +23,7 @@ import { Stats, getHealthStat, packIVs } from '../src/data/constants/stats';
 import { Balls, Items } from '../src/data/ids/items';
 import { bitterness, isHerbal } from '../src/data/items/medicine';
 import { Species } from '../src/data/ids/species';
-import { Statuses, packStatuses, unpackStatuses } from '../src/data/ids/status';
+import { Statuses, packStatuses, settleStatuses, unpackStatuses } from '../src/data/ids/status';
 import { EncounterType } from '../src/overworld/encounter';
 import { getSpeciesData, registerSpecies } from '../src/data/species';
 
@@ -111,6 +111,22 @@ describe('what a battle leaves behind', () => {
       carriedStatuses(packStatuses([Statuses.Burned, Statuses.Confused, Statuses.Flinched])),
     ).toBe(packStatuses([Statuses.Burned]));
     expect(carriedStatuses(0)).toBe(0);
+  });
+
+  it('eases bad poison into ordinary poison on the way out', () => {
+    // The mainline writes toxic home as plain poison; a record never
+    // carries the escalating kind
+    expect(settleStatuses(packStatuses([Statuses.BadlyPoisoned]))).toBe(
+      packStatuses([Statuses.Poisoned]),
+    );
+    expect(settleStatuses(packStatuses([Statuses.BadlyPoisoned, Statuses.Sleeping]))).toBe(
+      packStatuses([Statuses.Poisoned, Statuses.Sleeping]),
+    );
+    // Everything else passes through untouched
+    const burned = packStatuses([Statuses.Burned]);
+
+    expect(settleStatuses(burned)).toBe(burned);
+    expect(settleStatuses(0)).toBe(0);
   });
 
   it('calls a pokemon on nothing fainted', () => {

@@ -721,16 +721,29 @@ describe('world', () => {
     // Every one of the player's own catches is reported, spent or
     // not: health is owed either way
     expect(reported).toEqual([
-      { caught: 'catch-a', items: [Items.CheriBerry], health: party[0].health, statuses: 0 },
+      {
+        caught: 'catch-a',
+        items: [Items.CheriBerry],
+        health: party[0].health,
+        statuses: 0,
+        coins: 0,
+      },
       {
         caught: 'catch-b',
         items: [],
         health: 12,
         statuses: packStatuses([Statuses.Poisoned, Statuses.Burned]),
+        coins: 0,
       },
     ]);
     expect(collectAftermath(built, 'other-uid')).toEqual([
-      { caught: 'catch-c', items: [Items.OranBerry], health: party[2].health, statuses: 0 },
+      {
+        caught: 'catch-c',
+        items: [Items.OranBerry],
+        health: party[2].health,
+        statuses: 0,
+        coins: 0,
+      },
     ]);
     // The boss stands for no record, so nothing it did is written
     expect(collectAftermath(built, '')).toEqual([]);

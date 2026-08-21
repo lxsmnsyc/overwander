@@ -1,6 +1,6 @@
-import { type Accessor, type JSX, Show, createSignal } from 'solid-js';
-import type { CaughtPokemon } from '../../auth/caught';
-import matchesCatch from '../../auth/catch-search';
+import { type Accessor, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
+import matchesCatch, { orderCatches } from '../../auth/catch-search';
 import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
 import { Note, Row, Search, createPager } from '../styled';
 
@@ -45,12 +45,19 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
   const [typed, setTyped] = createSignal('');
   const query = (): string => props.search ?? typed();
 
+  /** Every species the grid holds more than one of, for `is:duplicate` */
+  const duplicates = createMemo(() => findDuplicates(props.entries.map((entry) => entry.caught)));
+
   // The query is applied here even when the caller fetched against it,
   // because the store only answers half of a search
   const matched = (): BoxEntry[] =>
-    props.entries
-      .filter((entry) => matchesCatch(entry.caught, query()))
-      .map((entry) => entry.square);
+    orderCatches(
+      props.entries.filter((entry) =>
+        matchesCatch(entry.caught, query(), { id: entry.square.id, duplicates: duplicates() }),
+      ),
+      query(),
+      (entry) => entry.caught,
+    ).map((entry) => entry.square);
 
   const shelf = createPager(matched, BOX_SIZE, 'Box');
 

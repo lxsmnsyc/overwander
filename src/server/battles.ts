@@ -3,11 +3,12 @@ import type BattleAftermath from '../auth/battle-aftermath';
 import { type CatchSnapshot, asCatchSnapshot } from '../auth/catch-snapshot';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { carriedStatuses, getMaxHealth } from '../auth/health';
+import { settleStatuses } from '../data/ids/status';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { getSql, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { asNumberArray } from './read';
+import { asNumber, asNumberArray } from './read';
 
 /**
  * What a battle leaves behind, written with admin credentials. A
@@ -36,6 +37,13 @@ import { asNumberArray } from './read';
  */
 // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
 const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[];
+
+/**
+ * The most one catch's Pay Days may claim from a single battle:
+ * 5 coins x level 100, one landed use per two-second turn, over a
+ * ten-minute fight
+ */
+const PAY_DAY_REPORT_LIMIT = 5 * 100 * 300;
 
 /**
  * Everything the player actually fielded in this battle, catch id to
@@ -95,12 +103,38 @@ export default async function recordAftermath(
     return false;
   }
 
+  // Only a raid or an npc fight settles. A fight between players
+  // leaves every record as it stood — the coming gym-seat battles
+  // must cost nothing but the time — so a battle nobody's raid owns
+  // that fielded more than one player is refused whole
+  const battles = await getSql()`select raid_id from battles where id = ${battleId}`;
+  const others = await getSql()`
+    select count(distinct player)::int as players
+    from battle_teams where battle_id = ${battleId} and player is not null
+  `;
+
+  if (battles.at(0) == null) {
+    return false;
+  }
+  if (battles[0].raid_id == null && asNumber(others.at(0)?.players) > 1) {
+    return false;
+  }
+
   const fielded = await readFielded(battleId, uid);
   const reported = aftermath.filter((entry) => fielded.has(entry.caught));
 
   if (reported.length === 0) {
     return false;
   }
+
+  // The report is the client's word, so what a Pay Day can pay is
+  // bounded the way health is bounded by the pool: per catch, at the
+  // mainline's rate for a level-100 user landing one use a turn for
+  // the length of a long raid
+  const coins = reported.reduce(
+    (sum, entry) => sum + Math.min(Math.max(0, Math.floor(entry.coins)), PAY_DAY_REPORT_LIMIT),
+    0,
+  );
 
   return tx(async (transaction) => {
     // The marker is the whole race: one battle settles one player
@@ -113,6 +147,10 @@ export default async function recordAftermath(
 
     if (claimed.count === 0) {
       return false;
+    }
+
+    if (coins > 0) {
+      await transaction`update profiles set gold = gold + ${coins} where id = ${uid}`;
     }
 
     for (const target of reported) {
@@ -147,7 +185,7 @@ export default async function recordAftermath(
       // Only what a pokemon can actually carry out of a fight is
       // written, one of each: confusion and the rest ended with the
       // battle
-      const statuses = carriedStatuses(target.statuses);
+      const statuses = settleStatuses(carriedStatuses(target.statuses));
 
       await updateCaughtIn(transaction, target.caught, {
         health,

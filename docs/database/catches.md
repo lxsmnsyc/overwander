@@ -1,105 +1,183 @@
 # Catch records
 
 Written by `recordCatch` in
-[`src/server/caught.ts`](../../src/server/caught.ts). A catch is **one document**
-with a Firestore auto-id, so recording one is a single write.
+[`src/server/caught.ts`](../../src/server/caught.ts). A catch is one `caught` row
+under a 20-character id, plus four child tables that hang off it by foreign key:
+`caught_moves`, `caught_abilities`, `caught_items` and `caught_history`. All five
+are written in one transaction, and a reader unpacks them in one query with
+PostgREST embeds.
 
-Its abilities, held items and ownership history used to be three side stores
-keyed by that same id (`caughtAbilities`, `caughtItems`, `caughtOwners`). They are
-fields now, which turned showing a pokemon from four reads into one and removed
-the three rule blocks that had to `get()` the parent to find an owner.
+## `caught`
 
-## `caught/{catchId}`
+| Column                                | Type        | Notes                                                  |
+| ------------------------------------- | ----------- | ------------------------------------------------------ |
+| `id`                                  | `text`      | 20-character id, and the primary key                   |
+| `owner`                               | `uuid`      | Current owner; null while a lot sits in escrow         |
+| `type`                                | `smallint`  | `EncounterType`: how it was originally met             |
+| `species`                             | `integer`   |                                                        |
+| `nickname`                            | `text`      | What its owner calls it; empty until named             |
+| `level`                               | `smallint`  | 1 to 100, checked                                      |
+| `individual_value`                    | `integer`   | 32-bit roll the values were sliced from                |
+| `trait_value`                         | `integer`   | 32-bit roll driving level, gender, ability, nature     |
+| `ivs`                                 | `integer`   | The six 0-31 values, five bits each, in stat order     |
+| `gender`, `nature`                    | `smallint`  |                                                        |
+| `slots`                               | `smallint`  | Room for abilities, held items and moves               |
+| `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
+| `traded`                              | `boolean`   | Has changed hands; opens a trade evolution             |
+| `favorite`, `guarded`                 | `boolean`   | See [What the player sets](#what-the-player-sets)      |
+| `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
+| `locked_at`                           | `bigint`    | `started_at` of the battle holding it; 0 when free     |
+| `steps`                               | `integer`   | Steps walked in the shell; only eggs accrue any        |
+| `hatch_steps`                         | `integer`   | What hatching costs, frozen when the egg was found     |
+| `stepped_at`                          | `bigint`    | Server instant steps were last credited at             |
+| `walked`                              | `integer`   | Steps walked as buddy since hatching                   |
+| `health`                              | `integer`   | Health left; 0 is fainted. The maximum is derived      |
+| `statuses`                            | `smallint`  | Mask of the non-volatile statuses it carries           |
+| `lair`                                | `smallint`  | Where a raid prize was won, else null                  |
+| `ball`                                | `integer`   | Ball the catch was made with                           |
+| `caught_at_local`, `caught_at_offset` | `timestamp` | The catcher's wall clock and their zone ([Time][time]) |
+| `locale`                              | `text`      | The catcher's locale tag, e.g. `en-PH`                 |
+| `ev_hp` … `ev_spe`                    | `smallint`  | Training put into each stat; starts at zero            |
+| `effort_bonus`                        | `smallint`  | Effort granted by wings, over the level allowance      |
+| `friendship`                          | `smallint`  | 0 to 255, checked                                      |
+| `origin_timestamp`                    | `bigint`    | Snapshot window the spawn belonged to                  |
+| `origin_x`, `origin_y`                | `integer`   | Chunk coordinates                                      |
+| `origin_biome`                        | `smallint`  |                                                        |
+| `origin_place`                        | `text`      | The named place, where there was one                   |
 
-| Field                  | Type                    | Notes                                                      |
-| ---------------------- | ----------------------- | ---------------------------------------------------------- |
-| `owner`                | `string`                | Current owner's uid; changes on trade                      |
-| `type`                 | `EncounterType`         | How it was originally met                                  |
-| `species`              | `Species`               |                                                            |
-| `nickname`             | `string`                | What its owner calls it; empty until named                 |
-| `level`                | `number`                |                                                            |
-| `individualValue`      | `number`                | 32-bit roll the IVs slice from                             |
-| `traitValue`           | `number`                | 32-bit roll driving level, gender, ability, nature         |
-| `ivs`                  | `number`                | The six 0-31 values, five bits each, in stat order         |
-| `gender`               | `Genders`               |                                                            |
-| `nature`               | `Natures`               |                                                            |
-| `moves`                | `Moves[]`               |                                                            |
-| `abilities`            | `Abilities[]`           | The rolled ability, plus Shadow for a shadow catch         |
-| `slots`                | `number`                | Room for abilities, held items and moves — three bits each |
-| `items`                | `Items[]`               | Held items; starts empty, up to `HELD_ITEM_LIMIT`          |
-| `history`              | `OwnershipRecord[]`     | `{ owner, acquiredAt, kind, paid, ball }`, oldest first    |
-| `shiny`                | `boolean`               | Sparkled for whoever caught it                             |
-| `shadow`               | `boolean`               | Out of a shadow raid; cleared by purifying                 |
-| `egg`                  | `boolean`               | Still in the shell                                         |
-| `traded`               | `boolean`               | Whether it has ever changed hands; opens a trade evolution |
-| `favorite`             | `boolean`               | See [What the player sets](#what-the-player-sets)          |
-| `guarded`              | `boolean`               | See [What the player sets](#what-the-player-sets)          |
-| `lockedAt`             | `number`                | `startedAt` of the battle holding it; 0 when free          |
-| `steps`                | `number`                | Steps walked in the shell; only eggs accrue any            |
-| `walked`               | `number`                | Steps walked as buddy since hatching; buys friendship      |
-| `hatchSteps`           | `number`                | What hatching costs, frozen when the egg was found         |
-| `steppedAt`            | `number`                | Server instant steps were last credited at                 |
-| `health`               | `number`                | Health left; 0 is fainted. The maximum is derived          |
-| `statuses`             | `number`                | Mask of the non-volatile statuses it is carrying           |
-| `ball`                 | `Balls`                 | Ball the catch was made with                               |
-| `caughtAt`             | `string`                | Local ISO 8601 with offset ([Time][time])                  |
-| `locale`               | `string`                | The catcher's locale tag, e.g. `en-PH`                     |
-| `effortValues`         | `Record<Stats, number>` | Training put into each stat; starts at zero                |
-| `effortBonus`          | `number`                | Effort granted by wings, over the level allowance          |
-| `friendship`           | `number`                | 0-255; a missing field reads as `BASE_FRIENDSHIP`          |
-| `origin.timestamp`     | `number`                | Snapshot window the spawn belonged to                      |
-| `origin.x`, `origin.y` | `number`                | Chunk coordinates                                          |
-| `origin.biome`         | `Biome`                 |                                                            |
+Four child tables carry what a pokemon has several of, one row per slot:
+
+| Table              | Row                                                                     |
+| ------------------ | ----------------------------------------------------------------------- |
+| `caught_moves`     | `(slot, move, points)`; a move and its PP Ups travel together           |
+| `caught_abilities` | `(slot, ability)`; the rolled one, plus Shadow for a shadow             |
+| `caught_items`     | `(slot, item)`; held items, up to `HELD_ITEM_LIMIT`                     |
+| `caught_history`   | `(seq, owner, owner_name, acquired_at, kind, paid, ball)`, oldest first |
+
+Each cascades on delete, so releasing a pokemon takes its moves and its history
+with it in one statement.
+
+Columns are snake_case and the TypeScript record that reads them is camelCase;
+[`caught-rows.ts`](../../src/auth/caught-rows.ts) is where the two meet. A box is
+still one query however many pokemon are in it, because the children ride along
+as PostgREST embeds (`CAUGHT_EMBED`).
+
+The two 32-bit rolls, the packed `ivs`, the `slots` triple and the `statuses`
+mask stay packed integers. The engine consumes each whole, so unpacking them into
+columns would only build a shape the code immediately re-packs. Where a search
+needs to see inside one, the schema adds a generated column rather than changing
+how it is stored.
 
 `setNickname` is what writes it. The server cleans what it is handed rather than
-trusting it — `asNickname` trims the ends, counts a run of spaces as one, drops
-control characters and cuts the rest to `NICKNAME_LIMIT` — and a name that cleans
-to nothing clears the field. A **guarded** catch may still be named, since what
+trusting it: `asNickname` trims the ends, counts a run of spaces as one, drops
+control characters and cuts the rest to `NICKNAME_LIMIT`. A name that cleans to
+nothing empties the column. A **guarded** catch may still be named, since what
 guarding protects is everything that changes what a pokemon _is_; a **fighting**
 one may not, for the usual reason.
 
 An empty `nickname` is not a missing one: it means nobody has named this pokemon,
-and every reader calls it by its species instead — `getCatchName`. The species'
-name is **not** copied into the field on creation, because a stored copy goes
+and every reader calls it by its species instead (`getCatchName`). The species'
+name is **not** copied into the column on creation, because a stored copy goes
 stale the moment the pokemon evolves: an unnamed Bulbasaur should read as
 Venusaur afterwards, not as a Venusaur called Bulbasaur. A pokemon that was named
 keeps its name through evolution, which is the point of having given it one.
 
-Queried by `listCaught` with `where('owner', '==', uid)`, which needs a
-single-field index on `owner` — Firestore provides that automatically.
+Queried by `listCaught` with `owner = uid`, on the `caught_owner` index.
 
 ### Searching a box
 
-The search box over a collection takes `field:value` pairs — `type:fire
-is:shiny level:30-60`, quoting anything with a space — and runs in **two
+The search box over a box of pokemon takes `field:value` pairs (`type:fire
+is:shiny level:30-60`, quoting anything with a space) and runs in **two
 passes**. Every yes-or-no fact is asked through one field: `is:shiny`,
-`is:favorite`, `not:fainted`, rather than a field each with a 1 or a 0 after it. `planCatchSearch` works out the one term the store can answer and
-`searchCaught` asks it beside the owner; everything else is answered by
-`matchesCatch` over what came back.
+`is:favorite`, `not:fainted`, rather than a field each with a 1 or a 0 after it.
+`planCatchSearch` works out which terms the store can answer and `searchCaught`
+asks them beside the owner; everything else is answered by `matchesCatch` over
+what came back.
 
-A term is pushed only when the query is **implied** by the predicate. A word
-that names one move, ability, nature, ball or way of being met becomes a filter;
-a word that names three stays behind, because a query has to name an id and the
-runtime matches part of a name. `family:` becomes `species in [...]`. `is:perfect`
-is an equality, since every value at its ceiling is one stored number.
-`is:fainted` and `is:fighting` become ranges over `health` and `lockedAt` — the
-same line `isLockLive` draws. `caught:2026-08` is a prefix range over the stamp.
+Three things widen a term rather than narrowing it. A leading `!` refuses it
+(`!is:egg`), a `|` inside a value accepts any of its alternatives
+(`type:fire|water`), and a numeric value takes a comparison (`level:>50`) or a
+range (`level:30-60`, `caught:2026-01..2026-06`) as well as an exact number.
 
-Three things are read rather than queried, by choice as much as by limitation: a
-plain name (no document store answers "holds these letters somewhere"), `type:`
-(it would be `species in [...]`, which fits for Fire and not for Water — quick
-for half the game and slow for the other half is worse than being the same
-either way), and `status:`, which is packed into one number the way the marks
-once were.
+`sort:` and `order:` are the exception to all of it: they arrange the answers
+rather than narrowing them, so a matcher skips them and `orderCatches` applies
+them last, over whatever the predicate kept. A `sort:` word nothing has a
+reading for leaves the box in the order it arrived. There is no `limit:`: a box
+that already pages has nothing to do with one.
 
-Exactly one term goes down, the narrowest of them. Every field asked beside
-`owner` needs a composite index, so one keeps that list one entry per field
-rather than one per combination anybody types.
+#### What the store answers
 
-The **bag** takes the same grammar and has no query half at all: it is one
-document holding one map, so it is read whole however much is in it and every
-term is answered over what came back — see
-[`src/data/items/search.ts`](../../src/data/items/search.ts).
+A term is pushed only when the query is **implied** by the predicate, since a
+narrowing that drops a record the runtime would have kept is a wrong answer
+rather than a faster one. What that leaves is:
+
+| Kind               | Terms                                                                            | How                                                       |
+| ------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Columns of the row | `level`, `friendship`, `walked`, `steps`, `hatch`, `hp`, `bonus`, `iv`, `caught` | A comparison each, or a pair for a range                  |
+| Names of ids       | `species`, `family`, `nature`, `gender`, `ball`, `met`, `biome`, `lair`          | `eq` for one, `in` for several — with no cap on how many  |
+| Substrings         | `nickname`, `place`, `locale`                                                    | `ilike`, on the trigram indexes                           |
+| Child tables       | `move`, `ability`, `item`, `got`, `from`, `paid`, `pp`                           | An inner join, one alias per term                         |
+| Rows elsewhere     | `is:buddy`, `is:listed`, `is:raiding`                                            | An inner join on `profiles`, `auctions` or `team_catches` |
+| Marks              | every `is:`/`not:` word with a column behind it                                  | An equality on that column                                |
+
+Each joined term gets an **alias of its own** (`q0`, `q1`), for two reasons.
+Two terms over one table are two rows — `move:ember move:growl` is a pokemon
+that knows both, not one move that is somehow both — and the aliased join sits
+beside the embed the reader unpacks rather than filtering it, so a pokemon does
+not come back holding only the move that was searched for.
+
+Three shapes are not stored as they are asked, so
+[`20260821000100_search.sql`](../../supabase/migrations/20260821000100_search.sql)
+generates a column each: the six values out of the packed `ivs`, the six statuses
+out of the packed mask, `hatch_left` out of the difference between two columns,
+and trigram indexes for the substring matches.
+
+#### What the box answers
+
+A plain name is read rather than queried: it matches the nickname or the
+species, which is two columns and a fallback rather than one filter. So is
+`type:`, which is a fact about the species rather than about the row: it would
+be `species in [...]`, which fits for Fire and not for Water, and quick for half
+the game and slow for the other half is worse than being the same either way.
+So are `hands` and `moves`, which are counts nothing stores; `is:evolvable`,
+which the species registry knows and no column does; and `is:duplicate`, which
+is a fact about the whole box rather than about any row in it.
+
+Most of what a search can ask is answered here, because most of it is derived
+rather than stored:
+
+| Terms                                                                             | Derived from                                                                                |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `hp:<50%`                                                                         | The share of `getMaxHealth`, which follows the species, the level and the values            |
+| `stat:spe:>120`                                                                   | The stat as a sheet prints it: base, level, values, training and nature                     |
+| `weak:`, `resists:`, `immune:`                                                    | The type chart against the species' types, multiplied the way a hit is                      |
+| `is:hurt`, `is:trainable`, `is:stab`, `is:hidden`                                 | Missing health, unspent effort, a move of its own type, its species' rarer ability          |
+| `learns:`, `move-type:`                                                           | The learnset, and the types of the moves it knows                                           |
+| `dex:`, `category:`, `egg-group:`, `catch-rate:`, `rarity:`, `spawns:`, `active:` | The species registry. `dex:` is the one that pushes, since a dex range is a list of species |
+| `weight:`, `height:`                                                              | `deriveSize` off the trait value, so two of a species disagree                              |
+
+`spawns:` and `biome:` are a pair worth keeping apart: the first is where the
+species lives, the second is where this one was met.
+
+A refused term is pushed only where the store can state the opposite exactly: a
+plain equality inverts, a range would be two queries either side of it, and the
+opposite of a join is a row that must **not** exist, which an inner join cannot
+say. A value with alternatives is pushed where the alternatives collapse into
+one `in` and left behind where they do not, since "either of two columns" is not
+a filter.
+
+#### What a search cannot be told
+
+`is:buddy`, `is:listed`, `is:raiding` and `is:duplicate` are not in the record.
+The box reads them once beside its rows — `readCatchContext` for the first three,
+`findDuplicates` over what was loaded for the last — and passes them in as a
+`CatchContext`. A list that read none of them answers those marks **no**, which
+is the same answer an unknown field gets and for the same reason: a term that
+cannot be answered hides the row rather than being quietly dropped.
+
+The **bag** takes the same grammar and has no query half at all: it is one row
+per stack, read whole however much is in it, and every term is answered over what
+came back — see [`src/data/items/search.ts`](../../src/data/items/search.ts).
 
 ## Training and friendship
 
@@ -197,43 +275,28 @@ The reason is the same in each case: a set of named things compares, unions and
 masks as an integer — what a Full Heal takes off is one AND, not a filtered list —
 and the shape a reader wants is one call away.
 
-### The marks are fields, not bits
+### The marks are columns, not bits
 
-`shiny`, `shadow`, `egg`, `favorite` and `guarded` were one packed `flags` field
-once, for the reasons above. They are five boolean fields now because **Firestore
-cannot query a bit**.
-
-There is no `where('flags', '&', Shiny)`. A packed field can only be compared
-whole, so `where('flags', '==', 1)` matches only a shiny that is nothing else, and
-an `in` listing every combination containing the bit needs 2ⁿ values and doubles
-with each flag added. Asking for a player's shinies meant reading every catch they
-own and filtering in the browser.
-
-A field each is one `where` and one index: `listCaughtMarked(owner, 'shiny')`
-reads only the matching documents. Each mark needs a **composite index** on
-`(owner, <mark>)`, since the query filters on two fields at once.
-
-The cost is honest: five fields where there was one, a snapshot that copies five,
-and a new question that costs a field and an index rather than a bit. The trade
-was made deliberately for the query.
+`shiny`, `shadow`, `egg`, `favorite` and `guarded` are boolean columns rather than
+bits of one packed mark, because each is something a box search filters on:
+`listCaughtMarked(owner, 'shiny')` is a plain equality beside the owner, where a
+packed value could only be compared whole.
 
 #### `auctionable` is the sixth, and a different kind
 
 The other five are **stated** about a record. `auctionable` is **derived** from
-three fields the record already carries — `ivs`, `shiny` and `species` — and
-stored anyway. It answers "would somebody else pay for this": perfect values,
-**no** values, shiny, or a special-tier species. See
+three columns the row already carries (`ivs`, `shiny` and `species`) and stored
+anyway. It answers "would somebody else pay for this": perfect values, **no**
+values, shiny, or a special-tier species. See
 [`isAuctionableCatch`](../../src/auth/caught-record.ts), and
 [Auctions](auctions.md#what-may-go-on-the-block) for what asks.
 
-Storing a derived value is the thing this codebase otherwise refuses to do — the
+Storing a derived value is the thing this codebase otherwise refuses to do: the
 world's spawns, landmarks and passers-by are all re-derived rather than kept. It
-is kept here for the same reason that split `flags` in the first place. Each input
-_alone_ could be asked of the store: perfect and blank values are each one
-integer, shiny is a field, and the special-tier species are a five-value `in`. But
-the rule is **any of the four**, and a disjunction over a box is four queries whose
-results have to be merged and deduplicated in the browser. One field is one
-`where`.
+is kept here because the rule needs the registry rather than the row. Which
+species are special-tier is data the database does not have, so the question
+cannot be asked of it as a filter, and the sell picker would otherwise read every
+pokemon a player owns to find the few worth listing.
 
 Two rules keep it from rotting into a lie:
 
@@ -247,21 +310,11 @@ Two rules keep it from rotting into a lie:
   is already holding, and the sell picker re-checks every row the query returns.
   The field can cost a listing its place in a list; it can never authorize one.
 
-A record written before the field existed reads `false` through `asBoolean`, so it
-is missing from the query and caught by the picker's own check. Existing catches
-want a one-off backfill — the same call as the flags split and the bag migration.
+**There is no lock among them.** `locked_at` carries the whole answer: a stamp of
+zero is a free pokemon, and the stamp itself is what tells this battle's lock from
+a later one's.
 
-**There is no lock among them.** `lockedAt` was always the truth behind the old
-`Locked` bit — a stamp of zero is a free pokemon, and the stamp is what tells this
-battle's lock from a later one's — so `lockFields(startedAt)` and `freeFields()`
-write the stamp alone.
-
-Every one of them is read with `asBoolean`, which answers yes only to a stored
-`true`: a missing field, a number and a string are all no. A record written before
-the marks were fields therefore reads as none of them, which is what a record that
-never said otherwise should read as.
-
-`individualValue` stays exactly where it was, beside the packed `ivs`. It is the
+`individual_value` stays beside the packed `ivs`. It is the
 32-bit roll the values were originally sliced from. The two agree for a wild catch
 and disagree for a bred egg or a polished one, which is the whole reason both are
 kept.
@@ -270,9 +323,9 @@ kept.
 `useCandy` raises the level, `evolveCatch` in
 [`src/auth/evolution.ts`](../../src/auth/evolution.ts) swaps the species, and a
 bottle cap polishes the values (see [Bottle caps](#bottle-caps)). An evolution
-that uses an item decrements the player's `bags/{uid}` in the same transaction, so
+that uses an item takes the stack out of `bag_items` in the same transaction, so
 the stone and the new species land together or not at all. Criteria are re-checked
-against the stored documents inside that transaction, never trusted from the
+against the stored rows inside that transaction, never trusted from the
 caller.
 
 Which evolutions are offered comes from
@@ -292,8 +345,8 @@ An **Everstone** refuses every evolution while it is held, and it answers here
 rather than at the moment of evolving, so the catch sheet stops offering what the
 stone would refuse.
 
-Catch records are readable by any signed-in player, since other players inspect a
-pokemon before a trade, and writable only by the owner the document itself names.
+Catch rows are readable by any signed-in player, since other players inspect a
+pokemon before a trade, and writable by nobody but the server.
 
 Held items move through `giveItem` and `takeItem` in
 [`src/server/caught.ts`](../../src/server/caught.ts). Each reads the catch and the
@@ -310,7 +363,7 @@ A battle leaves a party where it left it. A pokemon walks out of a raid at
 whatever health it had when the boss fell, still burned if it was burned, and
 walks into the next fight that way — which is what makes a party something a
 player looks after rather than a row of levels. The report that writes it is
-[`battleAftermaths`](raids.md#battleaftermathsbattleiduid), and the rules both
+[`battle_aftermaths`](raids.md#battle_aftermaths), and the rules both
 sides read are in [`src/auth/health.ts`](../../src/auth/health.ts).
 
 **Maximum health is derived, never stored.** It comes from the same formula the
@@ -476,9 +529,9 @@ been the one thing that ever appended one. `reclaimAuction` appends nothing: an
 unsold lot came back to the same person.
 
 The catch dialog shows the chain under **Owners**, oldest first: who, how they
-came by it, and the day they did. Names come from `profiles/{uid}`, which every
-signed-in player can read — that is what a nickname is for — and the reader is
-"You" rather than their own nickname. A trainer whose profile has since gone still
+came by it, and the day they did. Names come from `profiles`, which every
+signed-in player can read, and the reader is "You" rather than their own
+nickname. A trainer whose profile has since gone still
 holds their place in the list as "A trainer": an owner is a fact about the
 pokemon, and a missing profile must not quietly shorten its history.
 
@@ -577,7 +630,7 @@ healing, once per NPC window — see [Wandering NPCs](overworld.md#wandering-npc
 ## Releasing
 
 `releaseCatch` ([`src/server/caught.ts`](../../src/server/caught.ts)) **deletes**
-the document rather than flagging it: a released pokemon is gone, and nothing in
+the row rather than flagging it: a released pokemon is gone, and nothing in
 the game reads a catch its owner no longer has. Three things move with it, in the
 same transaction, so nothing is left pointing at a record that has vanished:
 
@@ -599,11 +652,12 @@ The dialog asks twice before calling it, and there is no undo.
 ## Escrow
 
 A pokemon put up for auction is not deleted and not held anywhere else. It stays
-its own document with `owner` set to the empty string, which is nobody.
+its own row with `owner` set to **null**, which is nobody. The foreign key stays
+honest that way, where the old empty-string sentinel could not.
 
 Every write that touches a catch asks whether the caller is its `owner`, and a uid
-is never empty, so an escrowed pokemon is refused to the seller, the bidders and
-everyone else by the checks that were already there — while staying **readable**,
+is never null, so an escrowed pokemon is refused to the seller, the bidders and
+everyone else by the checks that were already there, while staying **readable**,
 which is what lets a bidder see what they are bidding on.
 
 Collecting the lot writes the winner's uid into `owner`, appends the sale to
@@ -626,9 +680,9 @@ nothing.
 What the record does not do is show it. The catch dialog hides everything read off
 the species — the name, gender, abilities, moves, size — until the flag comes off,
 and the list, the team picker and the buddy line all say only "Egg". This is
-presentation, not secrecy: catch documents are readable, so a determined player can
-read the species out of Firestore directly, and nothing is staked on them not doing
-so.
+presentation, not secrecy: catch rows are readable, so a determined player can
+read the species straight out of the table, and nothing is staked on them not
+doing so.
 
 An egg is refused everywhere a pokemon is expected. `giveItem`, `useCandy` and
 `evolveCatch` turn it down, `openAuction` will not put one on the block — a bidder
@@ -668,8 +722,8 @@ of eight through `walk` ([`src/auth/eggs.ts`](../../src/auth/eggs.ts)).
 more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims — 250 ms
 a pace, capped at 64 a report, and never past `hatchSteps`. The stamp moves on
 every report, credited or not, so a refused one banks no time for the next. That is
-why `steppedAt` lives on the catch document (server-written) rather than on the
-profile's `buddy` (client-written).
+why `stepped_at` lives on the catch row, which only the server writes, rather than
+beside the profile's `buddy_id`, which the player writes.
 
 `hatchSteps` is settled when the egg is written. It starts from the **species'
 own** hatch cycles — `getEggHatchSteps`, at `STEPS_PER_EGG_CYCLE` (128) a cycle,
@@ -707,7 +761,7 @@ fighting elsewhere — refuses while the lock holds. Trading will ask the same
 question: a locked pokemon is not up for trade.
 
 `isCatchLocked` ([`src/server/locks.ts`](../../src/server/locks.ts)) answers from
-the two fields alone, against the server's own clock; no document is fetched. Two
+the two columns alone, against the server's own clock; no row is fetched. Two
 things end a lock:
 
 - **The fight.** `finishBattle` stamps the outcome and then calls
@@ -723,8 +777,8 @@ cannot unlock a pokemon that has since been taken by a newer fight.
 
 Because freezing a team locks it, `startRaid` **claims the raid first** and freezes
 afterwards — a start that loses the race to another host holds nothing. A claim
-whose teams then field nothing leaves the raid pointing at a battle document that
-was never written, which reads as lost and restages.
+whose teams then field nothing leaves the raid pointing at a battle row that was
+never written, which reads as lost and restages.
 
 The client asks the same question through `isLockLive`
 ([`src/auth/battle-lock.ts`](../../src/auth/battle-lock.ts)) so the catch dialog

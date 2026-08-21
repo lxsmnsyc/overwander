@@ -1,11 +1,10 @@
 import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
-import type { ItemTypes, Items } from '../../data/ids/items';
-import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER, getItemData } from '../../data/items';
+import type { Items } from '../../data/ids/items';
 import { describeItem, detailItem } from '../details';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
-import matchesItem from '../../data/items/search';
-import { Button, Filter, type FilterOption, HoverCard, Meta, Note, Row, Search } from '../styled';
+import matchesItem, { orderItems } from '../../data/items/search';
+import { Button, HoverCard, Meta, Note, Row, Search } from '../styled';
 
 /**
  * The bag as a tray of pictures rather than a column of names.
@@ -16,10 +15,11 @@ import { Button, Filter, type FilterOption, HoverCard, Meta, Note, Row, Search }
  * says while the pointer is on it — the bag is looked at far more
  * often than it is read, and thirty lines of text is reading.
  *
- * The tray carries its own furniture — a search on the left, the
- * shelves on the right, the pages under it — so the bag is laid out
- * the same way wherever it is opened: the inventory tab, a vendor's
- * crate, the picker a catch sheet puts up.
+ * The tray carries its own furniture, a search over it and the pages
+ * under it, so the bag is laid out the same way wherever it is opened:
+ * the inventory tab, a vendor's crate, the picker a catch sheet puts
+ * up. Narrowing to one kind of thing is `type:berry` in the search
+ * rather than a control of its own.
  */
 
 export const GRID_COLUMNS = 6;
@@ -31,51 +31,6 @@ export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
  * items and a pokemon's held item are named the same way
  */
 export { describeItem, detailItem };
-
-/**
- * The bag unfiltered. A category filter always offers this first,
- * because a player who has narrowed the bag down needs the way back
- */
-export const EVERY_CATEGORY = 'all';
-
-/**
- * What the bag can be narrowed to: one kind of item, or all of them
- */
-export type ItemCategory = ItemTypes | typeof EVERY_CATEGORY;
-
-/**
- * Which shelf an item belongs on, or nothing for an item the registry
- * does not know — an unknown item is shown under `All` and nowhere
- * else, which is the honest place for it
- */
-function categoryOf(item: Items): ItemTypes | null {
-  try {
-    return getItemData(item).type;
-  } catch {
-    return null;
-  }
-}
-
-export function isInCategory(item: Items, category: ItemCategory): boolean {
-  return category === EVERY_CATEGORY || categoryOf(item) === category;
-}
-
-/**
- * The categories worth offering: the ones the player is actually
- * carrying something from. A filter listing eight empty shelves is a
- * filter that makes the bag harder to read rather than easier
- */
-export function listCategories(items: Items[]): FilterOption<ItemCategory>[] {
-  const carried = new Set(items.map(categoryOf));
-
-  return [
-    { value: EVERY_CATEGORY, label: 'All' },
-    ...ITEM_TYPE_ORDER.filter((type) => carried.has(type)).map((type) => ({
-      value: type,
-      label: ITEM_TYPE_NAMES[type],
-    })),
-  ];
-}
 
 /**
  * One square: what is in it, how many, and what the caller thinks of
@@ -164,8 +119,8 @@ export interface ItemGridProps {
   cardOnly?: boolean;
   /**
    * Whether the caller narrows the tray itself, so it draws no search
-   * and no shelves of its own. A screen with one search over two trays
-   * would otherwise have three of them
+   * of its own. A screen with one search over two trays would
+   * otherwise have three of them
    */
   bare?: boolean;
   onPress?: (item: Items) => void;
@@ -174,25 +129,15 @@ export interface ItemGridProps {
 export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const [page, setPage] = createSignal(0);
   const [query, setQuery] = createSignal('');
-  const [category, setCategory] = createSignal<ItemCategory>(EVERY_CATEGORY);
 
-  const categories = (): FilterOption<ItemCategory>[] =>
-    listCategories(props.entries.map((cell) => cell.item));
-
-  /**
-   * The shelf being looked at, if it is still a shelf this tray has.
-   * What the bag holds can change under it — a stack spent, an item
-   * given away — and a filter left pointing at an empty shelf would
-   * read as an empty bag
-   */
-  const shelf = (): ItemCategory =>
-    categories().some((option) => option.value === category()) ? category() : EVERY_CATEGORY;
-
+  // A `sort:` is applied last, over whatever the search left
   const narrowed = (): ItemCell[] =>
-    props.entries.filter(
-      (cell) =>
-        isInCategory(cell.item, shelf()) &&
+    orderItems(
+      props.entries.filter((cell) =>
         matchesItem(cell.item, query(), { amount: cell.amount ?? cell.carried }),
+      ),
+      query(),
+      (cell) => ({ item: cell.item, holding: { amount: cell.amount ?? cell.carried } }),
     );
 
   const pages = (): number => Math.max(1, Math.ceil(narrowed().length / GRID_SIZE));
@@ -239,27 +184,17 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
 
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
-      {/* What narrows the tray stands above it, and always in the same
-          corners: what is being looked for on the left, which shelf it
-          is on at the right. Both are drawn whatever the tray holds —
-          a bag that grew a search box once it passed eight things was
-          a screen that changed shape as the player filled it */}
+      {/* What narrows the tray stands above it, and is drawn whatever
+          the tray holds — a bag that grew a search box once it passed
+          eight things was a screen that changed shape as the player
+          filled it */}
       <Show when={props.bare !== true}>
-        <Row class="flex-nowrap items-start justify-between gap-2">
+        <Row class="flex-nowrap items-start gap-2">
           <Search
             placeholder="Name, or type:berry is:usable"
             value={query()}
             onChange={(typed) => {
               setQuery(typed);
-            }}
-          />
-          <Filter
-            class="ml-auto"
-            label="Category"
-            value={shelf()}
-            options={categories()}
-            onChange={(picked) => {
-              setCategory(picked);
             }}
           />
         </Row>

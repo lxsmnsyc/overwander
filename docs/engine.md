@@ -221,12 +221,11 @@ the URL, so a fight is a link and two people watch the same frames.
 
 It also carries no session. `/demo/*` is named in `AuthProvider` as sessionless:
 the provider is still mounted so `useAuth` works anywhere, but it opens no
-listener and never calls `initializeApp`, and Firebase itself is imported **on
-demand** inside `onMount` rather than at the top of the module. A demo battle
-that opened an auth listener would be a demo battle talking to a project. The
-side effect is that the SDK — by a long way the heaviest thing the browser
-downloads — sits in a chunk of its own, asked for only by the pages that have a
-player.
+listener and never builds a Supabase client, which is imported **on demand**
+inside `onMount` rather than at the top of the module. A demo battle that opened
+an auth listener would be a demo battle talking to a project. The side effect is
+that the SDK, by a long way the heaviest thing the browser downloads, sits in a
+chunk of its own, asked for only by the pages that have a player.
 
 It earned its keep immediately: nothing had ever called `unit.enter()` when a
 battle was built, so the AI's idle set started empty and **no unit in any raid

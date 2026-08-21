@@ -134,7 +134,7 @@ export function createRocketBattle(
   limits = PVP_BATTLE_LIMITS,
 ): RaidBattle {
   const battle: Battle = createBattle(battleId, {
-    mode: BattleModes.PvP,
+    mode: BattleModes.Npc,
     realtime: true,
     limits,
   });

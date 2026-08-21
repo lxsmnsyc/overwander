@@ -31,8 +31,8 @@ Two things ride on it:
   phenomena and raid rolls all move with it.
 
 A client can misreport its zone. Everything derived from the offset is therefore
-**scoped by** it — the window document, the spawn ids, the claim markers, the
-raid lobby ids — so inventing a zone yields that zone's world, not a second
+**scoped by** it: the snapshot row, the spawn ids, the claim markers and the raid
+lobby ids, so inventing a zone yields that zone's world rather than a second
 helping of your own.
 
 The ceiling on that is the roughly 27 offsets a day holds: a determined client
@@ -42,11 +42,12 @@ the profile.
 
 ## Stored dates
 
-Dates a player reads are stored the way they read them. `caughtAt` and each
-`history[].acquiredAt` are ISO 8601 strings **with the offset**
-(`2026-08-10T22:14:03.123+08:00`), written by `toLocalISO` from the server's
-instant and the catcher's zone. The local date is the first ten characters, and
-`Date.parse` gives the instant back.
+Dates a player reads are stored the way they read them, as a wall clock and the
+zone it was read in: `caught_at_local` beside `caught_at_offset`, and
+`acquired_at_local` beside `acquired_at_offset` on every history row. Keeping the
+two apart is what lets a search for a year or a month stay a plain range scan.
+[`caught-rows.ts`](../../src/auth/caught-rows.ts) re-attaches the offset on the
+way out, so a reader still sees `2026-08-10T22:14:03.123+08:00`.
 
 The **species day is the exception**: `getDayOfYear` counts in UTC, so the
 featured family turns over at the same moment for everybody rather than rolling

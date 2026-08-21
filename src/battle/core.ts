@@ -27,6 +27,13 @@ export const enum BattleModes {
    * stored; the rules it fights under are the ordinary ones
    */
   Demo = 2,
+  /**
+   * A scripted trainer's fight — a Team Rocket grunt today, any
+   * battle npc later. It runs under the PvP rules; what sets it
+   * apart is that it settles an aftermath, which a fight between
+   * players never will
+   */
+  Npc = 3,
 }
 
 export default class Battle extends EventEngine<BattleEventMap> {

@@ -1,16 +1,17 @@
 import { ITEM_TYPE_NAMES } from './names';
 import { getItemData } from './__create';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../ids/items';
-import parseQuery, { holds, within } from '../../core/query';
+import { alternatives, askedTerms, holds, parseControls, within } from '../../core/query';
 import { getMoveData } from '../moves';
 
 /**
  * What a search box over a bag can be asked.
  *
  * The grammar is the one a box of pokemon takes — a plain word, then
- * `field:value` pairs that narrow, `is:` for the yes-or-no facts —
- * because it is the same box to a player: they type what they
- * remember and the shelf answers.
+ * `field:value` pairs that narrow, `is:` for the yes-or-no facts, a
+ * `!` in front to refuse one and a `|` inside one to accept any of
+ * its alternatives — because it is the same box to a player: they
+ * type what they remember and the shelf answers.
  *
  * There is **no query half** here, and there is nothing to plan. A bag
  * is one document holding one map, so it is read whole however much
@@ -36,10 +37,12 @@ const MARKS = new Map<string, (item: Items) => boolean>(
   }),
 );
 
-function marked(item: Items, word: string, wanted: boolean): boolean {
-  const mark = MARKS.get(word.trim().toLowerCase());
+function marked(item: Items, value: string, wanted: boolean): boolean {
+  return alternatives(value).some((word) => {
+    const mark = MARKS.get(word.trim().toLowerCase());
 
-  return mark?.(item) === wanted;
+    return mark?.(item) === wanted;
+  });
 }
 
 /** What one field asks of one item */
@@ -80,13 +83,57 @@ export default function matchesItem(
   query: string,
   holding: ItemHolding = {},
 ): boolean {
-  return parseQuery(query).every((term) => {
-    if (term.field === '') {
-      return holds(getItemData(item).name, term.value);
-    }
+  return askedTerms(query).every((term) => {
+    const answered =
+      term.field === ''
+        ? holds(getItemData(item).name, term.value)
+        : FIELDS.get(term.field)?.(item, term.value, holding) === true;
 
-    const field = FIELDS.get(term.field);
+    return term.negated ? !answered : answered;
+  });
+}
 
-    return field?.(item, term.value, holding) === true;
+/**
+ * What each `sort:` word reads off an item. `amount` is what the shelf
+ * carries rather than what the item is, so a tray that counts nothing
+ * arranges by it as though everything were one
+ */
+const SORTS = new Map<string, (item: Items, holding: ItemHolding) => number | string>(
+  Object.entries<(item: Items, holding: ItemHolding) => number | string>({
+    name: (item) => getItemData(item).name.toLowerCase(),
+    buy: (item) => getItemData(item).buy,
+    sell: (item) => getItemData(item).sell,
+    type: (item) => getItemData(item).type,
+    amount: (_item, holding) => holding.amount ?? 0,
+  }),
+);
+
+/**
+ * The rows a search asked for, in the order it asked for them. The two
+ * arranging terms hide nothing, so this runs over whatever the
+ * predicate already kept
+ */
+export function orderItems<T>(
+  rows: T[],
+  query: string,
+  of: (row: T) => { item: Items; holding?: ItemHolding },
+): T[] {
+  const controls = parseControls(query);
+  const read = SORTS.get(controls.sort);
+
+  if (read == null) {
+    return rows;
+  }
+  return [...rows].sort((left, right) => {
+    const one = of(left);
+    const other = of(right);
+    const first = read(one.item, one.holding ?? {});
+    const second = read(other.item, other.holding ?? {});
+    const order =
+      typeof first === 'string' && typeof second === 'string'
+        ? first.localeCompare(second)
+        : Number(first) - Number(second);
+
+    return controls.descending ? -order : order;
   });
 }

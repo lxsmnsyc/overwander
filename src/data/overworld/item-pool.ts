@@ -399,21 +399,14 @@ function stockedBand(
 /**
  * Roll a stash: up to `MAX_KINDS` kinds of up to `MAX_STACK` pieces.
  *
- * The opening draw picks a band, and that band is a **ceiling** rather
- * than the answer: one kind of it is guaranteed, and every further
- * kind draws its own band clamped to it. Rarity and count stay
- * separate questions, so a good dig is not the same three slots twice.
+ * The opening draw picks a band and that band is a **ceiling**: one
+ * kind of it is guaranteed and every further kind draws its own band
+ * clamped to it, so rarity and count stay separate questions.
  *
- * A stash may never hold **two specials** — only the opening draw
- * reaches that band, and a special is always a single piece. Prized is
- * not held to that: two Bottle Caps in one hole is a very good dig.
- *
- * Two kinds landing on the same item merge into one stack, capped at
- * `MAX_STACK`. Bands summing to 1 shut the base tier out, which is how
- * a grotto refuses commons; empty bands are skipped.
- *
- * The draws land in order: ceiling, the special if it reached one, how
- * many kinds, then each kind's band, kind and count
+ * A stash never holds **two specials**, and never more than one piece
+ * of one. Prized is not held to that. Two kinds landing on the same
+ * item merge, capped at `MAX_STACK`; bands summing to 1 shut the base
+ * tier out, which is how a grotto refuses commons
  */
 export function pickItems(
   groups: ItemRarityGroups,

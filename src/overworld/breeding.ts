@@ -18,24 +18,16 @@ import { MOVE_LIMIT, deriveMoves } from './encounter';
 /**
  * Breeding: what two pokemon left with a breeder come to.
  *
- * All of it is decided here, from the two records and a roll stream,
- * so the same pair and the same stream always produce the same egg —
- * the server derives it once when it takes the fee, and nothing about
- * it can be asked for again.
+ * Decided here from the two records and a roll stream, so the same
+ * pair and stream always produce the same egg. The server derives it
+ * once as it takes the fee, and it cannot be asked for again.
  *
- * What an egg gets from its parents is what makes breeding worth
- * paying for: three of its six individual values are copied straight
- * off one parent or the other, the moves its line can only inherit
- * come from whichever parent actually knows them, and anything both
- * parents know that it would have grown into is handed to it now
- * instead. Most of the time it has its mother's ability, and it is
- * always laid into her ball. What it does not get is a level — that
- * is its own.
- *
- * Three held items reach the egg rather than the fight: an Everstone
- * passes its holder's nature, a Destiny Knot copies five values
- * instead of three, and a power item names one stat and copies it
- * outright.
+ * The egg copies three of its six individual values off a parent,
+ * inherits the moves its line can only learn that way, and is laid in
+ * its mother's ball with her ability most of the time. Three held
+ * items reach it rather than a fight: an Everstone passes its holder's
+ * nature, a Destiny Knot copies five values, and a power item names
+ * one stat and copies it outright
  */
 
 /**

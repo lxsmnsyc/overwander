@@ -162,9 +162,9 @@ export async function enterRocketStop(
 }
 
 /**
- * Whether a fight is still going. A battle that has an outcome, or
- * one whose document never landed, is over — and a stop whose last
- * fight is over may be fought again
+ * Whether a fight is still going. A battle that has an outcome, or one
+ * whose row never landed, is over, and a stop whose last fight is over
+ * may be fought again
  */
 async function isBattleUnfinished(battleId: string): Promise<boolean> {
   const battle = await readBattle(battleId);

@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -13,11 +13,11 @@ import type { Encounter, EncounterType } from '../overworld/encounter';
 import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './__normalize';
 
 /**
- * A player's view of a spawn at encounters/{spawnId}:{playerId}. The
- * derived traits — shininess, gender, ability, nature — differ per
- * player, so they are stored per player rather than on the spawn.
+ * A player's view of a spawn, keyed by the spawn and the player.
+ * Shininess, gender, ability and nature differ per player, so they are
+ * stored per player rather than on the spawn.
  *
- * This document is the authority on what a player met: the server
+ * This row is the authority on what a player met: the server
  * writes it when the meeting starts and reads it back when the catch
  * is recorded, so a client cannot describe a better pokemon than the
  * one it was actually shown
@@ -47,7 +47,7 @@ export interface EncounterRecord extends Encounter {
 }
 
 /**
- * Restore an encounter record from an untyped Firestore value. Both
+ * Restore an encounter record from an untyped row. Both
  * the client (through its converter) and the privileged server read
  * through here, so the two agree on what the stored shape means
  */

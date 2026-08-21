@@ -47,23 +47,16 @@ import type { StaffGift } from '../../auth/admin';
 import { offerGift } from '../../auth/admin';
 
 /**
- * Putting something on somebody's shelf — or on everybody's.
+ * Putting something on somebody's shelf, or on everybody's.
  *
- * Everything the game gives is a consequence of something a player
- * did; this is the one gift that is not, so it asks for the reason in
- * the same breath as the thing — the reason is the only line on the
- * card that says where a gift came from.
+ * It asks for the reason in the same breath as the thing, since the
+ * reason is the only line on the card saying where a gift came from.
  *
- * A pokemon is rolled on the server the moment the gift is written,
- * and that one rolled meeting is what every taker receives. What is
- * left blank here is left to the roll: a gift that named nothing but
- * a species and a level is the ordinary one, and the fields under it
- * are for the distribution that has to be exact.
- *
- * It goes over as a **record** or as a **meeting**. A record is
- * handed to them finished, in the ball the gift names. A meeting is
- * stood in front of them to throw at: it cannot run and it cannot
- * break out, and the ball it ends up in is whichever one they threw.
+ * A pokemon is rolled once, as the gift is written, and that one
+ * meeting is what every taker receives; anything left blank is left to
+ * the roll. It goes over as a **record**, handed over finished in the
+ * ball the gift names, or as a **meeting** to throw at, which cannot
+ * run or break out
  */
 
 /** What the pokemon a gift holds may come at */

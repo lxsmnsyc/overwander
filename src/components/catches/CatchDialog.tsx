@@ -446,8 +446,8 @@ function withArticle(name: string): string {
 }
 
 /**
- * A catch is one document — abilities, held items and ownership
- * history included — so the dialog opens on a single read.
+ * A catch and its children come back together, so the dialog opens on
+ * a single read.
  *
  * What came back is handed over with the id it was asked for. The
  * sheet reads the resource's last value rather than suspending on it,
@@ -2609,7 +2609,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * It is the dex rather than this record because of what it is for:
    * the evolutions below are drawn to what the **player** has met, so
    * a line they have never seen the end of is a silhouette here the
-   * same way it is in the dex. One document, one read
+   * same way it is in the dex
    */
   const [dex] = createResource(() => auth.user()?.uid ?? null, getPokedex);
 

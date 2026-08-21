@@ -11,8 +11,8 @@ import { getSql } from './db';
  * Where a player is, written with admin credentials.
  *
  * It is written here rather than by the browser for the ordinary
- * reason: a client that could write this document could write anybody
- * else's. What it is *not* is checked — the position is the player's
+ * reason: a client that could write this row could write anybody
+ * else's. What it is *not* is checked: the position is the player's
  * own report of themselves, clamped to somewhere that exists.
  *
  * That is deliberate, and it does not weaken anything. Nothing in the
@@ -23,9 +23,8 @@ import { getSql } from './db';
  */
 
 /**
- * Remember where the player is standing. The write is a whole
- * document rather than a merge — there is nothing else in it — and it
- * is stamped so a later look can tell a stale record from a fresh one
+ * Remember where the player is standing. Stamped as it is written, so
+ * a later look can tell a stale record from a fresh one
  */
 export default async function savePosition(
   uid: string,
@@ -49,9 +48,9 @@ export default async function savePosition(
 /**
  * Where anybody is standing, or null for a player who has never
  * walked. It is read here rather than from a browser because the
- * rules let a player read only their own — which is the right rule
- * for a document a client could otherwise sweep the whole collection
- * of, and the wrong answer for the profile a lobby opens
+ * policy lets a player read only their own, which is right for a table
+ * a client could otherwise sweep and wrong for the profile a lobby
+ * opens
  */
 export async function readPosition(uid: string): Promise<PositionRecord | null> {
   const rows = await getSql()`

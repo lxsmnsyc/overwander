@@ -106,8 +106,8 @@ export function watchAuction(
  * hands, and there is nothing left to do about them.
  *
  * Whether one is still open is a question about the clock rather than
- * the document, so the caller answers it with `isLive` against the
- * server's time
+ * the row, so the caller answers it with `isLive` against the server's
+ * time
  */
 export function watchOpenAuctions(
   onChange: (auctions: [string, AuctionRecord][]) => void,
@@ -155,7 +155,7 @@ export interface BidHistoryEntry {
  * on, whether they are still winning it or were outbid an hour later.
  *
  * The lot only ever keeps the bid that is standing, so the history is
- * read from the player's own bid documents and the lots are looked up
+ * read from the player's own bid rows and the lots are looked up
  * by the ids those name. Where they stand on each is `getBidState`,
  * and a lot they were outbid on while bidding is still open takes
  * another bid from here — being outbid is something a player finds out

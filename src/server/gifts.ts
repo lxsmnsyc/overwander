@@ -35,8 +35,8 @@ import { asRecord, asString } from './read';
  * pokemon it holds is rolled once, when the gift is written. That one
  * rolled meeting — the **gift encounter** — is what every taker
  * receives: the same individual, from the same fixed place, however
- * many people take it. Taking it writes a claim document, and that
- * write is what stops a second press being paid twice.
+ * many people take it. Taking it writes a claim row, and that write is
+ * what stops a second press being paid twice.
  */
 
 /**
@@ -62,7 +62,8 @@ export const STARTER_BALLS = 20;
 export const STARTER_SPECIES: Species[] = [Species.Bulbasaur, Species.Charmander, Species.Squirtle];
 
 /**
- * Which gifts these are, in the documents that hold them. They are
+ * Which gifts these are, and the ids of the rows that hold them. They
+ * are
  * named rather than keyed by the player: an open offer has no player
  * to key by, and a name is what makes a second offering of the same
  * thing impossible
@@ -74,7 +75,7 @@ function starterGiftId(species: Species): string {
 const STARTER_BALL_GIFT = 'starterBalls';
 
 /**
- * A personal gift's document, "{gift}:{uid}". The client names the
+ * A personal gift's id, "{gift}:{uid}". The client names the
  * gift and the server names the player, so nobody can ask for
  * somebody else's
  */
@@ -86,7 +87,7 @@ function giftId(gift: string, uid: string): string {
  * One gift, ready to be written down
  */
 interface Offer {
-  /** The document it goes in, which is also what the gift calls itself */
+  /** The id of the row it goes in, and what the gift calls itself */
   id: string;
   gift: MysteryGift;
   encounter: EncounterRecord | null;
@@ -95,7 +96,7 @@ interface Offer {
 /**
  * Put a giving on the shelf, all of it or none of it.
  *
- * The documents are read and written in one transaction, so two tabs
+ * The rows are read and written in one transaction, so two tabs
  * signing in together cannot both find nothing there and both offer
  * it. Resolves false when any part of the giving already exists,
  * which is the ordinary answer for anybody who has played before
@@ -196,9 +197,9 @@ function rollGift(observer: string, gift: CatchGift | EncounterGift, now: number
  *
  * They are open offers rather than a roll per player: what a first
  * partner is should be a choice, and the same three should be waiting
- * for everybody. The write is all-or-none and refused once the
- * documents exist, so the first player to ask is what creates them and
- * every later ask is a read
+ * for everybody. The write is all-or-none and refused once the rows
+ * exist, so the first player to ask is what creates them and every
+ * later ask is a read
  */
 async function ensureStarterGifts(now: number): Promise<void> {
   const offers: Offer[] = STARTER_SPECIES.map((species) => {

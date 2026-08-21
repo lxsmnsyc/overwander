@@ -25,8 +25,8 @@ export function asLocale(value: unknown): string {
 }
 
 /**
- * Whether the catch is still an egg, read straight off a stored
- * document. An egg is not a pokemon yet: it cannot be fed, fielded,
+ * Whether the catch is still an egg, read straight off the stored
+ * row. An egg is not a pokemon yet: it cannot be fed, fielded,
  * evolved or handed an item, and every one of those writes asks this
  * before it writes anything
  */
@@ -36,7 +36,7 @@ export function isEggRecord(caught: Record<string, unknown>): boolean {
 
 /**
  * Whether the player has marked it as one they are keeping, read
- * straight off a stored document. A favorite is refused by everything
+ * straight off the stored row. A favorite is refused by everything
  * that would part them with it: a release, an auction, and a trade
  * when there is one
  */
@@ -45,8 +45,8 @@ export function isFavoriteRecord(caught: Record<string, unknown>): boolean {
 }
 
 /**
- * Whether the player has put it away, read straight off a stored
- * document. A guarded pokemon is refused by everything that would
+ * Whether the player has put it away, read straight off the stored
+ * row. A guarded pokemon is refused by everything that would
  * rewrite its sheet: a level, its effort, its values, an evolution, a
  * heal, a purifying gem, a fight, and an item given to it or taken
  * back off it. What it is still free to do is the part that is only

@@ -57,9 +57,8 @@ export async function countBalls(uid: string): Promise<number> {
 
 /**
  * Everything that has run from this player and is still worth
- * remembering, as encounter keys. One document, one read: the map
- * asks for it once per window and checks every spawn it is about to
- * draw against it
+ * remembering, as encounter keys. The map asks once per window and
+ * checks every spawn it is about to draw against the set
  */
 export async function getRetiredKeys(uid: string): Promise<Set<string>> {
   const { data } = await getSupabase().from('fled_encounters').select('key').eq('player', uid);
@@ -126,9 +125,8 @@ async function retireEncounter(token: string, spawn: string): Promise<void> {
  * was written to, for a throw that caught something.
  *
  * The id is handed back rather than looked up afterwards because the
- * catch is the one thing the player wants to see next — the sheet for
- * what they have just caught — and searching their collection for the
- * newest row is a guess where this is the answer
+ * catch is the one thing the player wants to see next, and searching
+ * their box for the newest row is a guess where this is the answer
  */
 export interface ThrowOutcome {
   result: ThrowResult;

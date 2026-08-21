@@ -81,21 +81,13 @@ export interface SpeciesData {
   family: Families;
   /**
    * Whether this is the species' **default form** rather than a
-   * variant of it: an Alolan Vulpix, a Galarian Meowth, a Mega
-   * Charizard and a Rotom in a washing machine are all forms of a
-   * species whose base form is something else.
+   * variant: an Alolan Vulpix or a Mega Charizard is a form of a
+   * species whose base form is something else. Not about evolution,
+   * which `evolvesFrom` answers.
    *
-   * It is not about evolution. A Charizard is a base form and so is a
-   * Charmander; what makes one of them different is `evolvesFrom`,
-   * which answers that question already.
-   *
-   * The field is **optional and true when absent**, because every
-   * species registered today is a default form — Gen 1 has no variants
-   * — and a hundred and fifty-one lines saying so would be a hundred
-   * and fifty-one places for the exception to hide. A later
-   * generation's variant writes `baseForm: false`, and everything that
-   * counts a dex or fills a pool asks `isBaseForm` rather than reading
-   * the field
+   * Optional and true when absent, since every species registered
+   * today is a default form. A variant writes `baseForm: false`, and
+   * readers ask `isBaseForm` rather than the field
    */
   baseForm?: boolean;
   /**

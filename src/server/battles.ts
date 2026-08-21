@@ -11,29 +11,24 @@ import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { asNumber, asNumberArray } from './read';
 
 /**
- * What a battle leaves behind, written with admin credentials. A
- * report only ever touches the reporter's own party — so unlike an
- * outcome it cannot be used against anybody else — but it still
- * passes through here, because it writes to catch records and because
- * the marker that stops it happening twice has to be the server's.
+ * What a battle leaves behind, written over the owner connection. A
+ * report touches only the reporter's own party, but it still passes
+ * through here: it writes catch records, and the marker that stops it
+ * landing twice has to be the server's.
  *
- * Three things land together: the items the party spent, the health it
- * has left, and the statuses it is still carrying. They are one report
- * because they are one fight — a Sitrus Berry gone and the health it
- * restored describe the same moment.
+ * The items spent, the health left and the statuses carried out land
+ * together, because they describe one fight.
  *
- * What the server can check, it checks: the battle has to name the
- * player, the catches have to be ones the team snapshots actually
- * fielded, an item has to be one that catch walked in holding, health
- * is clamped to what the record can hold, and the statuses are kept
- * to the ones a pokemon could carry out of a fight. What it cannot check is the
- * number itself — no server replays a live battle — so health is
- * trusted the same way the outcome is: this is a cooperative game,
- * and the report is bounded rather than proven.
+ * What the server can check, it checks: the battle names the player,
+ * the catches were fielded by its snapshots, an item was one that
+ * catch walked in holding, health is clamped, and only carryable
+ * statuses survive. The number itself it cannot check, since no server
+ * replays a live battle, so health is trusted the way the outcome is:
+ * bounded rather than proven
  */
 
 /**
- * What a catch is holding, restored from the stored document
+ * What a catch is holding, restored from the stored row
  */
 // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
 const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[];

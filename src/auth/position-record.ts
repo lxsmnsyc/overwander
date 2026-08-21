@@ -17,7 +17,7 @@ import { asNumber, asRecord, asString } from './__normalize';
  * there is no path to check, and nothing in the game trusts a
  * position anyway. Reaching a landmark is checked against the
  * landmark, never against how far away the caller claimed to be — see
- * [Reaching, not treading](../../docs/firestore/overworld.md)
+ * [Reaching, not treading](../../docs/database/overworld.md)
  */
 export interface PositionRecord {
   player: string;
@@ -49,9 +49,9 @@ export function asCellCoordinate(value: unknown): number {
 }
 
 /**
- * Restore a position from an untyped Firestore value; the client and
+ * Restore a position from an untyped row; the client and
  * the privileged server read through the same normalizer, so a
- * hand-written document cannot put anybody outside the world
+ * hand-written row cannot put anybody outside the world
  */
 export function asPositionRecord(value: unknown): PositionRecord {
   const data = asRecord(value);

@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import AleaRNG from '../core/alea';
 import type Biome from '../data/ids/biome';
@@ -167,7 +167,7 @@ export function getRaidTitle(raid: RaidRecord): string {
 }
 
 /**
- * Restore a raid from an untyped Firestore value; the client and the
+ * Restore a raid from an untyped row; the client and the
  * privileged server read through the same normalizer
  */
 export function asRaidRecord(value: unknown): RaidRecord {

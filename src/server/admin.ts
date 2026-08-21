@@ -10,16 +10,14 @@ import { asNumber, asRecord, asString } from './read';
 /**
  * What the dashboard reads.
  *
- * Everything here is a **listing**: the whole of a collection, in
- * pages, with a search over it. None of it is anything the game
- * itself does, which is why it is not in the modules the game reads —
- * a player never asks who else has signed up.
+ * Everything here is a listing: a table in pages, with a search over
+ * it. None of it is anything the game itself does, which is why it is
+ * out of the modules the game reads.
  *
- * The filtering and the paging happen here rather than in Firestore.
- * A search over two fields at once is not a query a document store
- * answers, and the numbers are small enough that reading the
- * collection and cutting it up is honest: the scan is capped, and a
- * listing says when it hit the cap rather than quietly showing less.
+ * Accounts are searched in memory because the addresses live in the
+ * auth admin API rather than in a table the query could join. The scan
+ * is capped, and a listing says when it hit the cap rather than
+ * quietly showing less
  */
 
 /** How many rows a page holds */
@@ -91,7 +89,7 @@ export interface PlayerRow {
  * Every account, newest first, filtered by name or address.
  *
  * The two halves of a player live apart: the address is in Supabase
- * Auth and everything else is in the profile document, so both are
+ * Auth and everything else is in the profile row, so both are
  * read and joined by uid. An account with no profile yet is still a
  * player — it is somebody who signed in and closed the tab — so it is
  * listed with whatever the auth record knows

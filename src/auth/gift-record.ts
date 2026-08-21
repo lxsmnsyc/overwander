@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Abilities from '../data/ids/abilities';
 import type { Balls, Items } from '../data/ids/items';
@@ -21,8 +21,8 @@ import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './__norm
  * An offer is for **one player or for everybody**. A player's own is
  * written under their uid and is theirs alone; an open one names
  * nobody, stands on every shelf at once, and is taken once each. That
- * is why taking one is a document of its own rather than a stamp on
- * the offer: one gift has as many claims as there are players.
+ * is why taking one is a row of its own rather than a stamp on the
+ * offer: one gift has as many claims as there are players.
  */
 
 export const enum GiftKind {
@@ -40,9 +40,8 @@ export const enum GiftKind {
 
 interface GiftCommon {
   /**
-   * Which gift this is, which is the id of the document holding it.
-   * It is what a claim names, so the client never says whose gift it
-   * is asking for
+   * Which gift this is, and the id of the row holding it. A claim
+   * names it, so the client never says whose gift it is asking for
    */
   id: string;
   /**

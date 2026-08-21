@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Stats } from '../data/constants/stats';
 import { defaultSlots } from '../data/constants/slots';
@@ -117,7 +117,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
 }
 
 /**
- * Restore a snapshot from an untyped Firestore value
+ * Restore a snapshot from an untyped row
  */
 export function asCatchSnapshot(value: unknown): CatchSnapshot {
   const data = asRecord(value);

@@ -15,8 +15,8 @@ import { asNumber, asNumberArray } from './read';
 /**
  * Evolving, written with admin credentials. An evolution turns a
  * common pokemon into a rare one and spends a stone doing it, so the
- * criteria are checked here against the stored documents — level,
- * held item, carried item — and never taken from the caller.
+ * criteria (level, held item, carried item) are checked here against
+ * the stored rows and never taken from the caller.
  *
  * Resolves the new species, or null when the evolution is refused:
  * the catch is not the player's, the species is not one of its
@@ -72,7 +72,7 @@ export default async function evolveCatch(
       level: asNumber(caught.level),
       carried,
       // The catch carries what it holds, so the criteria read the
-      // same document the species change is written back to
+      // same row the species change is written back to
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       held: new Set(asNumberArray(caught.items) as Items[]),
       // Read off the stored record rather than taken from the caller:

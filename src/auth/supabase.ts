@@ -60,11 +60,9 @@ export default function getSupabase(): SupabaseClient {
 /**
  * The two watch helpers every live view rides on.
  *
- * Firestore's onSnapshot fired at once with current state and again
- * on every change; postgres_changes only streams the changes. Each
- * helper therefore does the initial read itself, re-reads whenever
- * the channel (re)subscribes so a dropped socket cannot leave a stale
- * screen, and hands every result through the same callback.
+ * `postgres_changes` streams changes and never current state, so each
+ * helper does the first read itself and re-reads on every resubscribe:
+ * a dropped socket must not leave a stale screen
  */
 
 /** What a subscription hands back, shaped like the old Unsubscribe */

@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
@@ -25,8 +25,8 @@ import { toZoneKey } from './local-time';
 
 /**
  * One pokemon of a grunt's party as stored. The spawn tuple is kept
- * rather than re-derived because Firestore holds no array of arrays,
- * and because a party frozen at the fight should stay what it was
+ * rather than re-derived so a party frozen at the fight stays what it
+ * was, whatever the window does afterwards
  */
 export interface RocketPokemon {
   species: Species;
@@ -85,7 +85,7 @@ function asRocketParty(value: unknown): RocketPokemon[] {
 }
 
 /**
- * Restore a stop from an untyped Firestore value; the client and the
+ * Restore a stop from an untyped row; the client and the
  * privileged server read through the same normalizer
  */
 export function asRocketRecord(value: unknown): RocketRecord {

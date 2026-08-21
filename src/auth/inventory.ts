@@ -5,10 +5,9 @@ import getSupabase from './supabase';
 
 /**
  * The bag as a list of stacks, which is how every picker in the game
- * wants it. What it is *stored* as is one map in one document — see
- * [`stacks.ts`](./stacks.ts) — so reading the whole bag is one read
- * however much is in it, and the candies come out of the same
- * document. Gold is not here: the balance lives on the profile
+ * wants it. Stored as a row per kind in `bag_items`, read whole and
+ * collapsed by [`stacks.ts`](./stacks.ts). Gold is not here: the
+ * balance lives on the profile
  */
 export interface InventoryEntry {
   /**
@@ -20,8 +19,8 @@ export interface InventoryEntry {
    */
   item: Items;
   /**
-   * How many are carried; a stack spent to its last is taken out of
-   * the map rather than kept at zero
+   * How many are carried; a stack spent to its last is deleted rather
+   * than kept at zero
    */
   amount: number;
 }
@@ -62,6 +61,6 @@ export async function getItemCount(uid: string, item: Items): Promise<number> {
  * The bag is read here and written only by the server: items are
  * value, so `grantItem` and `consumeItem` live in
  * [`src/server/inventory.ts`](../server/inventory.ts) behind a
- * verified caller, and the rules leave the document read-only to
+ * verified caller, and the policies leave the rows read-only to
  * clients
  */

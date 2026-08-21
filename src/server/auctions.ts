@@ -29,29 +29,17 @@ import { isCatchLocked } from './locks';
 import { asNumber } from './read';
 
 /**
- * Auctions, written with admin credentials.
+ * Auctions, written over the owner connection.
  *
- * An auction is the one place a pokemon or an item changes hands
- * between players, so every step of it is decided here: what a seller
- * is allowed to put up, whether a bid clears the standing one, whether
- * the bidder can pay it, and who is owed what when it closes.
+ * Two rules are what make a day-long auction safe to leave running
+ * with nothing sweeping it. A lot is **taken when it is listed**, so a
+ * seller cannot list what they have since spent. A bid is **paid when
+ * it is made** and refunded as it is outbid, so the last bidder
+ * standing has already paid.
  *
- * Two things make that safe to leave running for a day without
- * anything sweeping it. A lot is **taken when it is listed** — the item
- * leaves the bag and the pokemon leaves the seller's records at the
- * moment the auction opens — so nothing has to be held back or checked
- * again at the end, and a seller cannot list what they have since
- * spent. And a bid is **paid when it is made**, handed straight back
- * to whoever it outbid, so the last bidder standing is by definition
- * somebody whose gold is already in.
- *
- * What is taken still has somebody waiting for it either way: a lot
- * that sells is collected by its winner, and one nobody bid on is taken
- * back by the seller once the day is up. Both run through the same
- * `settled` marker, so a lot is handed over exactly once whichever way
- * it went.
- *
- * The rules both sides read live in
+ * Collecting and reclaiming share the `settled` marker, so a lot is
+ * handed over exactly once whichever end it leaves by. The rules both
+ * sides read live in
  * [`src/auth/auction-record.ts`](../auth/auction-record.ts)
  */
 
@@ -83,22 +71,17 @@ async function readAuctionIn(transaction: Tx, id: string): Promise<Record<string
  * Put an item or a pokemon up for auction.
  *
  * The lot is taken in the same transaction the auction is written in:
- * an item stack comes down by one, and a catch is moved into escrow —
- * still its own document, readable by everyone the way any catch is,
- * but owned by nobody. Neither comes back while the auction runs: a
- * seller who changes their mind cannot pull the lot off the block, and
- * cannot bid on it either, so a listing is something a bidder can
- * trust for the whole day. Only a lot the day ended with **nobody
- * having bid on** goes back, through `reclaimAuction`.
- *
- * A player runs one auction at a time, which is one a day: the seller
- * document says when theirs closes, and another cannot be opened until
- * it has.
+ * a stack comes down by one, and a catch moves into escrow, still its
+ * own row and readable by everyone but owned by nobody. Nothing comes
+ * back while the auction runs, so a listing is something a bidder can
+ * trust for the whole day; only a lot nobody bid on goes back, through
+ * `reclaimAuction`. One auction per seller at a time, which is one a
+ * day.
  *
  * Resolves the auction id, or null when the seller already has one
  * running, does not carry the item, does not own the pokemon, or the
- * pokemon is not one to sell — an egg, the buddy at their side, one
- * fighting, or one waiting in a raid lobby
+ * pokemon is not one to sell: an egg, the buddy, one fighting, or one
+ * waiting in a raid lobby
  */
 export async function openAuction(
   uid: string,
@@ -404,7 +387,7 @@ export async function claimAuction(
  * both left alone, because it did not change hands — it sat on a shelf
  * for a day and came back to the same person.
  *
- * `settled` is the same marker a collection writes, so a lot is handed
+ * `settled` is the same marker collecting writes, so a lot is handed
  * over once whichever end it goes out of, and a reclaim cannot race a
  * claim: only one of the two can be true of any auction.
  *

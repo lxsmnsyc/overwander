@@ -1,34 +1,11 @@
 import { isRecord } from './__normalize';
-import { BAG_COLLECTION } from './collections';
 
 /**
- * Everything a player is carrying, in one document.
+ * Everything a player is carrying, read as one shape.
  *
- * A bag and a candy pile are the same thing twice — how many of each
- * of something a player has — and both were a collection of one small
- * row per thing. That shape is what a document is for, so they are one
- * document now: `bags/{uid}`, holding a map per kind, keyed by the id
- * of the thing and valued by how many.
- *
- * ```
- * bags/{uid} = { items: { "114": 3, "10007": 1 }, candies: { "0": 12 } }
- * ```
- *
- * The point is the read. Every picker in the game — the catch sheet,
- * the vendor, the safari, the auction board — opens by reading the
- * whole bag, and a row per thing billed a read per **kind carried**,
- * a number that grows with the player's collection forever. One
- * document is one read, however much they own, and the bag and the
- * candies arrive together instead of as two queries.
- *
- * What it costs is that a player's whole bag is one document, so their
- * writes queue behind each other. That is self-contention — nobody
- * else writes your bag — and it is why anything handing over several
- * kinds at once does it in **one** write rather than one per kind.
- *
- * The maps are deliberately left out of the index: a key per item id
- * would be an index entry per item id, and nothing asks the store
- * which players hold a Master Ball
+ * Items live in `bag_items` and candies in `bag_candies`, a row per
+ * kind. A reader collapses its rows into a map keyed by the id of the
+ * thing, which is what every picker in the game wants
  */
 
 /**
@@ -42,16 +19,14 @@ export const ITEM_STACKS: StackSpec = { field: 'items' };
 export const CANDY_STACKS: StackSpec = { field: 'candies' };
 
 /**
- * The document a player's bag lives at, one per player
+ * The player a bag belongs to; a bag has no id of its own
  */
 export function bagId(uid: string): string {
   return uid;
 }
 
-export { BAG_COLLECTION };
-
 /**
- * One map as stored: how many of each thing, keyed by its id written
+ * One map as read: how many of each thing, keyed by its id written
  * out. Anything that is not a count is left out rather than read as
  * zero of something
  */

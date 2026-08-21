@@ -8,10 +8,9 @@ import namePlace from '../../overworld/place';
  * Where a trainer is standing.
  *
  * The position is the one thing about the overworld that is stored
- * rather than derived, and it is read through the server: the rules
- * let a player read their own document and nobody else's, while a
- * profile is opened on somebody else nearly every time it is opened
- * at all.
+ * rather than derived, and it is read through the server: the policy
+ * lets a player read their own row and nobody else's, while a profile
+ * is opened on somebody else nearly every time it is opened at all.
  *
  * What the place is *called* is derived here from the coordinates the
  * same way the overworld names it, so the two never drift apart.

@@ -15,24 +15,14 @@ import { ThemeToggle } from './theme';
  * The one piece of furniture the game has: a bar along the bottom of
  * the world, with everything else behind the button on it.
  *
- * It was a bar with four words on it, which worked while there were
- * four. There are ten now — the player's catches and their bag came
- * out of the profile, the dex and the gifts arrived beside them, and
- * there is room kept for the friends and the settings that are not
- * built yet — and a row of ten across the bottom of the world is a
- * strip of map taken away from every screen to say words that never
- * change.
- *
- * So it is one button, and the ten live in a panel that opens above
- * it. A grid rather than a list: ten things read as a keypad at a
- * glance and as a menu to be scanned when they are stacked, and a
- * keypad is what this is — the same thing is always in the same
- * corner, which is what makes it pressable without reading.
+ * Ten destinations live in a panel above that button, laid out as a
+ * grid rather than a list: the same thing stays in the same corner, so
+ * it is pressable without reading. A row of ten along the bottom would
+ * cost every screen a strip of map to say words that never change.
  *
  * Beside the button is what a player would otherwise have to open
- * something to find out: where they are standing, what hour the world
- * is in — which decides what walks about in it — and what is in the
- * purse.
+ * something to learn: where they are standing, the hour the world is
+ * in, and what is in the purse
  */
 
 /**

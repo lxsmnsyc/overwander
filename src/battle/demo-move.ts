@@ -19,24 +19,13 @@ import type Unit from './unit';
 /**
  * Two dummies and one move, for looking at it.
  *
- * A move is the hardest thing in the game to see on purpose: it has
- * to be known by something that is standing in a fight, chosen over
- * everything else that pokemon could do, and land on somebody. This
- * stages the shortest arrangement that satisfies all three — one
- * caster that knows exactly the move being looked at, one thing to
- * aim it at, and nothing else on the field.
+ * A **demo** battle: no outcome mechanics, so a knocked-out dummy ends
+ * nothing, and no AI, so nothing happens except what somebody presses.
+ * Everything else is the engine as it ships.
  *
- * It is a **demo** battle: no outcome mechanics, so a knocked-out
- * dummy does not end anything, and no AI, so nothing happens except
- * what somebody presses. Everything else is the engine as it ships —
- * the same casting, the same damage, the same animations.
- *
- * Which side the target stands on is read off the move itself: a move
- * that reaches an enemy needs one, and a move that mends an ally
- * needs the dummy standing beside the caster rather than across from
- * it. Getting that from the move's own flags is what stops the page
- * demonstrating a heal by throwing it at somebody who cannot receive
- * it.
+ * Which side the target stands on is read off the move's own flags, so
+ * a heal is not demonstrated by throwing it at somebody who cannot
+ * receive it
  */
 
 /**

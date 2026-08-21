@@ -27,7 +27,7 @@ import { grantItem, grantItems } from './inventory';
  * a player is actually standing in front of.
  *
  * Nothing here trusts a caller's description of the world. The window
- * comes from the shared snapshot document, the chunk from the world
+ * comes from the shared snapshot row, the chunk from the world
  * seed, and the reward from the deterministic roll those two produce
  * — a client that asks for a cell it is not near, or a window that
  * has passed, gets whatever the world really staged, which is
@@ -41,9 +41,9 @@ import { grantItem, grantItems } from './inventory';
  * window is a claim against a landmark that is no longer there.
  *
  * The instant is the server's; the zone is the caller's, and
- * everything derived from it — the window document, the rolls, the
- * claim markers — is scoped by it, so a client that invents a zone
- * gets that zone's world rather than a second helping of its own
+ * everything derived from it (the window, the rolls, the claim
+ * markers) is scoped by it, so a client that invents a zone gets that
+ * zone's world rather than a second helping of its own
  */
 export async function resolveSnapshot(
   x: number,
@@ -178,9 +178,8 @@ export async function claimItemCache(
 }
 
 /**
- * Put a whole stash in the bag. A bag is one document, so three kinds
- * dug out of one cache are **one** write rather than three queueing
- * behind each other — and a stash cannot half-land
+ * Put a whole stash in the bag, in one transaction, so a stash cannot
+ * half-land
  */
 async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
   await grantItems(
@@ -510,11 +509,9 @@ export async function meetSpawn(
     return null;
   }
 
-  // The roll itself comes off the window document, which is the one
-  // the whole zone is looking at. It is addressed by the document's
-  // id and **not** by `snapshot.key`: the two are a separator apart,
-  // and asking for the key found nothing at all — so every published
-  // spawn in the game answered as though its window had turned over
+  // The roll comes off the stored window, which is the one the whole
+  // zone is looking at, addressed by chunk seed and zone rather than
+  // by `snapshot.key`
   const stored = await getSql()`
     select species, individual_value as "individualValue", trait_value as "traitValue"
     from snapshot_spawns

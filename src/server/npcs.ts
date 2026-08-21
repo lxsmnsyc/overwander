@@ -179,8 +179,8 @@ async function dropCare(
  * window should not be spent on it
  */
 async function releaseVisit(id: string): Promise<void> {
-  // The id carries the player after the last ':', the way the old
-  // document id did; the row is the marker and that player
+  // The id carries the player after the last ':'; the row is the
+  // marker and that player
   const at = id.lastIndexOf(':');
 
   await getSql()`
@@ -564,13 +564,10 @@ export async function groomCatch(
  * levelling and has since lost, for one Heart Scale.
  *
  * The recallable list is derived again from the **stored** species,
- * level and move list, so a client asking for a move the pokemon never
- * learned is refused rather than charged.
- *
- * `replaces` names which of the known moves the recalled one goes over
- * and is ignored by a pokemon that still has room. The scale leaves
- * the bag in the same transaction the move list is written in, so it
- * is **only ever consumed when the move is actually taught**.
+ * level and move list, and the scale leaves the bag in the same
+ * transaction the list is written in, so it is only spent on a move
+ * actually taught. `replaces` names which known move goes and is
+ * ignored where there is room.
  *
  * Resolves the move list as it now stands, or null when he refuses:
  * the catch is not the player's, it is fighting, locked or still an
@@ -635,8 +632,8 @@ export interface TradeResult {
  * A shop is the one place in the game where two stores have to agree:
  * a player charged for a potion that was never handed over is worse
  * off than one who was refused, and a potion handed over for gold that
- * was never taken is a mint. Both documents are read and written
- * together, so neither can happen.
+ * was never taken is a mint. The purse and the stack are read and
+ * written together, so neither can happen.
  *
  * Resolves null when the player cannot cover their side of it
  */

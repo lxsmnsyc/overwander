@@ -4,10 +4,10 @@ import { type Tx, getSql } from './db';
 import { asNumber, asString } from './read';
 
 /**
- * Raid rows in and out of the legacy record shape. The one seam worth
- * noting: the old document carried `teams` as an array, and the table
- * design moved each team to a row of its own, so the reader stitches
- * the list back together in join order (host first)
+ * Raid rows in and out of the record shape. The one seam worth noting:
+ * the record carries `teams` as an array and each team is a row of its
+ * own, so the reader stitches the list back together in join order
+ * (host first)
  */
 
 /** The raid row plus its team list, in the record shape */

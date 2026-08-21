@@ -203,23 +203,18 @@ export async function peekRaid(
 }
 
 /**
- * Walk into a raid landmark. The lobby id is derived from the chunk,
- * the raid window, the cell and the kind, and the roll behind it comes
- * from the chunk's own seed against the server's clock — so what is
- * staged there is what the world staged, not what the caller says.
+ * Walk into a raid landmark. The lobby id and the roll behind it are
+ * derived from the chunk seed and the window, so what is staged is
+ * what the world staged rather than what the caller says.
  *
- * The first arrival of the window opens the lobby and hosts it, and
- * everyone after adopts what is already standing. The window gives the
- * boss one defeat, not one fight: a raid the party lost — or walked
- * out on — leaves the landmark open for the next arrival to restage
- * against the same roll. Only beating the boss shuts the cell.
- *
- * A player with no pokemon of their own stages nothing; they take
- * whatever lobby is standing, as a spectator.
+ * The window gives the boss one **defeat**, not one fight: a raid lost
+ * or walked out on restages against the same roll for the next
+ * arrival, and only beating the boss shuts the cell. A player who owns
+ * no pokemon stages nothing and watches whatever is standing.
  *
  * Resolves the lobby id and its record, or null when the cell stages
  * no raid this window, its raid has been cleared, or there is nothing
- * standing for a spectator to watch
+ * for a spectator to watch
  */
 export async function enterRaid(
   uid: string,
@@ -379,7 +374,7 @@ export async function hostMythicalRaid(
 /**
  * Walk out of a lobby: the player's teams come out with them, so a
  * raid they left does not start with their party in it. Only their
- * own teams are pulled — the team documents name their owner — and a
+ * own teams are pulled, since a team row names its owner, and a
  * started raid is already frozen into snapshots, so it is left alone.
  *
  * A lobby nobody is left in is taken down rather than left standing.
@@ -700,8 +695,8 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // the snapshots, which are frozen and complete; a team is a list of
   // catch ids that was only ever there so a party could gather and be
   // checked for a pokemon queued twice. Left behind they would be one
-  // stale document per raid ever staged, and `isAnyCatchQueued` would
-  // go on finding parties that are fighting rather than waiting
+  // stale row per raid ever staged, and `isAnyCatchQueued` would go on
+  // finding parties that are fighting rather than waiting
   await getSql()`delete from teams where id = any(${raid.teams})`;
 
   return battleId;

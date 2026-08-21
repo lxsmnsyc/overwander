@@ -24,26 +24,16 @@ import { Species } from '../../data/ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 
 /**
- * The sprite processor: the packer tool, moved into the game.
+ * The sprite processor: loose images or a PMD archive packed into a
+ * sheet, on the server, written straight into `public/`.
  *
- * It does what the standalone tool did — loose images into one sheet,
- * or a PMD archive into a pokemon's sheet — with two differences. The
- * work happens on the server, so nothing is decoded in a canvas and
- * read back out again; and the result is **written**, straight into
- * `public/`, rather than handed over as two downloads to be dropped
- * into place by hand.
+ * A **development tool** rather than a staff screen: a deployed build
+ * serves `public/` from a bundle, and a server that could write its
+ * own asset root is a hole. The server refuses either way and the page
+ * says so rather than offering a button that cannot work.
  *
- * That makes it a development tool rather than a staff screen. A
- * deployed build serves `public/` out of a bundle, so a write there
- * would change nothing and a server that could write into its own
- * asset root is a hole — the server refuses either way, and the page
- * says so instead of offering a button that cannot work.
- *
- * Both halves are ordinary **forms**. The files are the whole point of
- * the screen, and a file belongs in a multipart body rather than read
- * into a typed array and serialised through a function call — so what
- * the server functions take is the `FormData`, and everything beside
- * the files goes in as a named input.
+ * Both halves are ordinary forms, so the files ride in a multipart
+ * body: the server functions take `FormData`
  */
 
 /** Which of the two the page is on. */

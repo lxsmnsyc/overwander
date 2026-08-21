@@ -273,22 +273,13 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   /**
-   * Out of the fight and back into the world.
+   * Out of the fight and back into the world, in one batch.
    *
-   * All of it goes at once, in one batch. The lobby is let go of as
-   * well as the battle — the lobby watches its own record and opens
-   * the battle the moment that record names one, so a player still
-   * standing in a started lobby was put straight back into the fight
-   * they had just left — and so is whatever panel was open when the
-   * fight began.
-   *
-   * That last part is the difference between Leave working and Leave
-   * *looking* like it did nothing. The battle was started from inside
-   * the raids dialog, so leaving it used to put that dialog back on
-   * screen: the panel a player pressed Start in reappeared over the
-   * world, which reads as the button having done nothing at all.
-   * Leaving a battle means being in the overworld, so that is where it
-   * puts them
+   * The lobby goes with the battle, because a lobby watching its own
+   * record reopens the fight the moment that record names one. So does
+   * whatever panel was open when the fight began: leaving a battle
+   * means standing in the overworld, not back in the dialog Start was
+   * pressed in
    */
   const leave = (): void => {
     instance()?.battle.end();

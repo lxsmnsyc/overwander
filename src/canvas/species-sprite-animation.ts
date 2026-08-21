@@ -14,22 +14,15 @@ import type { SpriteAnim } from '../data/ids/sprite-anims';
 /**
  * A pokemon on a canvas, moving.
  *
- * The whole of reading a sheet — see [`sprite-sheet`](./sprite-sheet.ts)
- * for what one is. It knows nothing about pokemon, chunks or battles:
- * it is handed a sheet, told what to play, ticked with elapsed time and
- * asked to draw at a point, which is what lets the chunk canvas and the
- * battle canvas share it.
+ * It knows nothing about pokemon, chunks or battles: handed a sheet,
+ * told what to play, ticked with elapsed time and asked to draw at a
+ * point, which is what lets both canvases share it.
  *
- * Placement is by **anchor** rather than corner: a caller says which
- * part of the pokemon it is placing — the shadow for something standing
- * on a cell, the body centre for a projectile's aim — and the frame is
- * positioned so that part lands on the point given.
- *
- * Anchors are also what make a trimmed sheet no harder to draw. Frames
- * are cropped to the lit pixels and every size and anchor is in that
- * cropped frame's coordinates, so the arithmetic is the same either
- * way. Only the shadow's width and `sourceFrameSize` ask about the cell
- * the artist drew in
+ * Placement is by **anchor** rather than corner: the caller names the
+ * part it is placing (the shadow for something standing on a cell, the
+ * body centre for a projectile's aim) and the frame lands so that part
+ * sits on the point. Anchors are in the cropped frame's own
+ * coordinates, so a trimmed sheet draws the same way
  */
 
 /**

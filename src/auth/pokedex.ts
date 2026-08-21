@@ -12,14 +12,13 @@ import {
 } from './pokedex-record';
 
 /**
- * The dex as a screen wants it: one read of one document, and every
- * species the player has ever met comes back with it. What it is
- * *stored* as is four maps in that document — see
- * [`pokedex-record.ts`](./pokedex-record.ts).
+ * The dex as a screen wants it: every species the player has ever met,
+ * in one read, collapsed into the map shape
+ * [`pokedex-record.ts`](./pokedex-record.ts) describes.
  *
- * It is read here and written only by the server: a dex is a record of
- * what actually happened, so a client that could write one could claim
- * to have met a Mewtwo it never faced.
+ * Read here and written only by the server: a dex is a record of what
+ * actually happened, so a client that could write one could claim to
+ * have met a Mewtwo it never faced
  */
 
 /**

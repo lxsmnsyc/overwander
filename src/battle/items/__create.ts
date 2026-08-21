@@ -72,22 +72,16 @@ function createItemGate(
 
 /**
  * Wire up held items, one gate each: an item's listeners run while
- * somebody is carrying that item and at no other time.
+ * somebody is carrying that item and at no other time. The item half
+ * of [`createAbility`](../abilities/__create.ts), with `setup` called
+ * once per item rather than once per family.
  *
- * It is the item half of
- * [`createAbility`](../abilities/__create.ts), and `setup` is called
- * once per item rather than once per shelf — a Leftovers being carried
- * starts the Leftovers listeners and nothing else. A table-driven
- * family reads the item it was called for instead of looping over its
- * whole table.
+ * The gate keys on the item being **held**, not enabled: an item that
+ * fires is disabled before its effect runs (see `spendItem`), so a
+ * gate closing on the disable would tear the listeners down mid-effect.
  *
- * The gate keys on the item being **held**, not on it being enabled.
- * An item that fires is disabled before its effect runs — see
- * `spendItem` — so a gate that closed on the disable would tear down
- * the listeners halfway through the effect they were listening for.
- *
- * The item list is resolved lazily because a family may be read off
- * the item registry, which is filled after the battle is wired
+ * The item list resolves lazily, because a family may be read off the
+ * registry, which fills after the battle is wired
  */
 export function createHeldItems(
   items: () => Iterable<Items>,

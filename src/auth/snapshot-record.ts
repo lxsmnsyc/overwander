@@ -4,10 +4,10 @@ import { asNumber, asString, isRecord } from './__normalize';
 /**
  * What a chunk's shared window is, and how a stored one is read back.
  *
- * It lives apart from the store that resolves it because the
- * privileged server reads windows too — `meetSpawn` takes the roll a
- * player is meeting off this document — and neither side should have
- * to import the other to know the shape.
+ * It lives apart from the module that resolves it because the
+ * privileged server reads windows too: `meetSpawn` takes the roll a
+ * player is meeting off the stored rows, and neither side should have
+ * to import the other to know the shape
  */
 
 /**
@@ -48,44 +48,20 @@ export interface SnapshotRecord {
   /**
    * The window's spawns, in roll order.
    *
-   * They were a collection of their own once — one document per
-   * spawn, found by a three-field query on a composite index and
-   * swept up by a second query when the window turned over. They are
-   * a field because they have no life apart from this window: they
-   * are rolled with it, replaced with it, and never read without it.
-   * Publishing is one write, reading is one read, and a window that
-   * rolls over takes its old spawns with it rather than leaving them
-   * to be deleted
+   * Stored as `snapshot_spawns` rows that cascade with the window,
+   * because a spawn has no life apart from it: rolled with it,
+   * replaced with it, and never read without it
    */
   spawns: SpawnRoll[];
 }
 
 /**
  * What a spawn is called, for the encounter that is staged from it.
- * It is derived rather than stored — the chunk, the zone, the window
- * and which roll it was are all the id needs to say — so nothing has
- * to keep a document alive to give a spawn a name
+ * Derived rather than stored: the chunk, the zone, the window and
+ * which roll it was are all the id needs to say
  */
 export function spawnId(key: string, timestamp: number, index: number): string {
   return `${key}@${timestamp}#${index}`;
-}
-
-/**
- * The document a chunk's window lives at, one per chunk and zone.
- *
- * It is **not** `ChunkSnapshot.key`, which the derivations are seeded
- * from and which joins the two halves with nothing between them. The
- * separator here is load-bearing twice over: the security rules read
- * the seed back out of the id to check that a published window is
- * filed under the chunk it claims to be from, and the two sides of
- * the game have to agree on the spelling or one of them writes a
- * window the other cannot find. They did not agree once — the server
- * asked for a document a colon away from the one the browser had
- * written — and every wild pokemon in the game answered "it is gone,
- * the chunk has moved on"
- */
-export function windowId(seed: string, zone: string): string {
-  return `${seed}:${zone}`;
 }
 
 /**

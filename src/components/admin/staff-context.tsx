@@ -3,11 +3,10 @@ import { type Accessor, type JSX, type ParentProps, createContext, useContext } 
 /**
  * Who is reading the dashboard, and what they are.
  *
- * Every screen behind the gate needs both — the sidebar to know which
- * sections to offer, the player page to know which roles it may hand
- * out — and the gate has already read the profile to decide whether
- * to open at all. Passing it down means nothing reads the same
- * document twice, and no screen has to guess.
+ * Every screen behind the gate needs both, and the gate has already
+ * read the profile to decide whether to open at all. Passing it down
+ * means nothing reads the same row twice, and no screen has to
+ * guess.
  *
  * It decides what is **offered** and nothing else: every call behind
  * these screens is checked again on the server, where a browser's

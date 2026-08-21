@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import { getItemBand } from '../data/overworld/item-pool';
@@ -11,9 +11,8 @@ import { asNumber, asRecord, asString } from './__normalize';
  * sits apart from the client that watches it and the server that
  * settles it, since both need it.
  *
- * The whole of it is one document, and the lot is named rather than
- * copied: a catch lot names a `caught/{catchId}` every signed-in
- * player can read, so nothing is duplicated here
+ * The lot is named rather than copied: a catch lot names a `caught`
+ * row every signed-in player can read, so nothing is duplicated here
  */
 
 /**
@@ -185,8 +184,8 @@ export function asAuctionTerms(startingBid: unknown, increment: unknown): Auctio
 }
 
 /**
- * Restore an auction from an untyped Firestore value; the client and
- * the privileged server read through the same normalizer
+ * Restore an auction from an untyped row; the client and the
+ * privileged server read through the same normalizer
  */
 export function asAuctionRecord(value: unknown): AuctionRecord {
   const data = asRecord(value);
@@ -270,7 +269,7 @@ export function canClaim(auction: AuctionRecord, uid: string, now: number): bool
  * closed with **nobody having bid**. A running lot cannot be pulled,
  * which is what makes a listing something a bidder can trust.
  *
- * It shares `settled` with a collection, so a lot can never be both
+ * It shares `settled` with collecting, so a lot can never be both
  * reclaimed and collected
  */
 export function canReclaim(auction: AuctionRecord, uid: string, now: number): boolean {
@@ -278,12 +277,12 @@ export function canReclaim(auction: AuctionRecord, uid: string, now: number): bo
 }
 
 /**
- * One player's bid on one lot, at bids/{uid}:{auctionId}.
+ * One player's bid on one lot, a `bids` row keyed by the two.
  *
- * The auction keeps only the standing bid — that is all it needs to
- * settle — so a player's own history lives on their side: one document
- * per lot, rewritten with the last amount they named. This says they
- * took part; the auction says whether they are still winning
+ * The auction keeps only the standing bid, which is all it needs to
+ * settle, so a player's own history lives on their side: one row per
+ * lot, rewritten with the last amount they named. This says they took
+ * part; the auction says whether they are still winning
  */
 export interface PlayerBid {
   player: string;

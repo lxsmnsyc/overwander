@@ -89,8 +89,8 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
 }
 
 /**
- * A typed handle on one battle document, for callers that have to
- * read it inside a transaction of their own
+ * A typed handle on one battle row, for callers that have to read it
+ * inside a transaction of their own
  */
 
 /**

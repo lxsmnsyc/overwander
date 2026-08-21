@@ -216,20 +216,14 @@ export interface MovePointsResult {
 /**
  * Spend a PP Up or a PP Max on one of a pokemon's moves.
  *
- * The points are permanent and nothing takes them back: a stat can be
- * trained back down with a bitter berry, a move's points cannot. What
- * they buy in this game is a **shorter cooldown** rather than more
- * uses — see `getMovePP` — and a move at the limit is refused rather
- * than charged for nothing.
- *
- * A PP Max is worth the whole allowance at once, so it is accepted on
- * a move with anything less than the limit and takes it straight
- * there; what it grants is however much was missing.
+ * The points are permanent, and what they buy here is a **shorter
+ * cooldown** rather than more uses (see `getMovePP`). A PP Max takes a
+ * move straight to the limit and grants whatever was missing.
  *
  * Resolves what the move now carries, or null when it is refused: the
  * catch is not the player's, it is fighting, it is still an egg, it
- * does not know that move, none of the item is carried, or the move
- * has already had everything it will take
+ * does not know that move, none of the item is carried, or the move is
+ * already at the limit
  */
 export async function usePPItem(
   uid: string,

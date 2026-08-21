@@ -52,24 +52,17 @@ import {
 /**
  * What a search box over a box of pokemon can be asked.
  *
- * A plain word is matched against the name — the nickname if it has
- * one, the species otherwise — and everything else is a `field:value`
- * pair. Terms narrow: `type:fire is:shiny level:30-60` is all three at
- * once, and two of the same field are both, so `type:fire type:flying`
- * finds a Charizard rather than half the box.
+ * A plain word matches the name (the nickname if it has one, the
+ * species otherwise) and everything else is a `field:value` pair.
+ * Terms narrow, and two of the same field are both, so
+ * `type:fire type:flying` finds a Charizard rather than half the box.
+ * A leading `!` refuses a term, a `|` accepts any alternative, and a
+ * numeric value takes a comparison or a range. `sort:` and `order:`
+ * arrange the answers instead of narrowing them.
  *
- * Three things widen a term rather than narrowing it. A leading `!`
- * refuses it, a `|` inside a value accepts any of its alternatives,
- * and a numeric value takes a comparison or a range as well as an
- * exact number: `!is:egg type:fire|water level:>50`. Beside those,
- * `sort:` and `order:` arrange the answers rather than narrowing
- * them.
- *
- * **An egg gives nothing away.** It answers to the word "egg" and to
- * the marks its owner put on it, and every question about what is
- * inside — species, family, type, moves, values, coat — is answered
- * no. The box already refuses to draw what is in one; a search that
- * told you would be the same leak by another door.
+ * **An egg gives nothing away.** It answers to "egg" and to the marks
+ * its owner put on it; every question about what is inside answers no,
+ * since the box already refuses to draw it
  */
 
 /** The level nothing goes past, which is what `is:maxed` asks about */

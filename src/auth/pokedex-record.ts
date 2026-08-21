@@ -1,35 +1,17 @@
 import type { Species } from '../data/ids/species';
 import { isRecord } from './__normalize';
-import { POKEDEX_COLLECTION } from './collections';
 
 /**
- * What a player has met and what they have kept, in one document.
+ * What a player has met and what they have kept: a row per species in
+ * `pokedex_entries`, collapsed into the bag's map shape for reading.
  *
- * ```
- * pokedex/{uid} = {
- *   seen:        { "25": 14 },
- *   seenShiny:   { "25": 1 },
- *   caught:      { "25": 2 },
- *   caughtShiny: { "25": 1 },
- * }
- * ```
+ * The counts are historical. They say how many this player ever met or
+ * kept, not how many they hold, so releasing or trading one leaves the
+ * dex as it was, and a trigger refuses any update that takes a count
+ * down.
  *
- * It is the bag's shape — a map keyed by the id of the thing and
- * valued by how many — for the same reason the bag has it: a dex is
- * read whole. Anything that draws one wants every species at once, and
- * a row per species would bill a read per species a player has ever
- * met, which is a number that only grows.
- *
- * The counts are **historical**. They say how many times this player
- * met or kept one, not how many they hold: releasing a Pidgey, trading
- * it away or losing it to an auction leaves the dex exactly as it was.
- * Nothing in the game takes a number here down.
- *
- * The sparkling ones are counted in maps of their own rather than as a
- * flag, because "have I ever seen a shiny Gyarados" and "how many
- * Gyarados have I seen" are different questions and a player asks
- * both. A shiny is counted **only** in the shiny map — the two are
- * separate tallies, and the total is their sum
+ * A shiny is counted **only** in the shiny tally, so a species' total
+ * is the two added together
  */
 
 /**
@@ -58,10 +40,8 @@ export const DEX_CAUGHT: DexSpec = { field: 'caught', shinyField: 'caughtShiny' 
 
 export const DEX_SPECS: DexSpec[] = [DEX_SEEN, DEX_CAUGHT];
 
-export { POKEDEX_COLLECTION };
-
 /**
- * The document a player's dex lives at, one per player
+ * The player a dex belongs to; a dex has no id of its own
  */
 export function pokedexId(uid: string): string {
   return uid;

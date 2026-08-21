@@ -36,10 +36,6 @@ function isUsable(item: Items): boolean {
 }
 
 /**
- * What the player carries: item stacks and candies, each stored one
- * document per stack
- */
-/**
  * The bag itself, which is where the stacks are read.
  *
  * Either read in the body that declared it would throw past every

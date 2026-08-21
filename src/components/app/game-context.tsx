@@ -232,11 +232,9 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [place, setPlace] = createSignal<string | null>(null);
 
   // A profile on first sight, seeded from whatever the sign-in
-  // already knows. The game reads a profile everywhere — the balance
-  // sits over the auction board and the player's own name is on their
-  // catches — so a player the store has never heard of would leave
-  // every one of those readings waiting on a document that is never
-  // coming
+  // already knows. The game reads a profile everywhere, so a player
+  // the database has never heard of would leave every one of those
+  // readings waiting on a row that is never coming
   createEffect(() => {
     const user = auth.user();
 

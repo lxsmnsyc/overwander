@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the converter below restores
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the converter below restores const-enum fields
+// via assertions that tsc requires but tsgolint (resolving const enums
+// to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';

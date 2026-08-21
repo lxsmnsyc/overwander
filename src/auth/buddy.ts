@@ -6,13 +6,10 @@ import { getProfile, setBuddyField } from './profile';
 /**
  * The pokemon a player keeps at their side.
  *
- * It is a field of the profile — `profiles/{uid}.buddy` — rather than
- * a store of its own. Overworld item effects and abilities read the
- * buddy to decide what the player's presence changes, and walking
- * follows the same record, so it is asked for on nearly every action
- * a player takes: a document of its own was a second read for one
- * string. Firestore security rules restrict the field to the owning
- * uid, the way the nickname beside it is restricted
+ * It is `profiles.buddy_id` rather than a table of its own, because
+ * nearly every overworld action asks who the buddy is: a table would
+ * be a second read for one id. A column grant keeps the player to
+ * writing their own, and a trigger keeps it to a catch they own
  */
 
 /**

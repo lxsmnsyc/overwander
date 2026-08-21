@@ -21,22 +21,15 @@ import {
 /**
  * What a move looks like in the gap before it lands.
  *
- * **Every** move has one. The engine holds a move open between firing
- * and resolving — `MOVE_DELAY` for anything that does not name its own
- * — and the gap is mechanical: whatever happens in it happens first.
- * So the gap is worth drawing, and drawing *differently*, which is the
- * whole of this module.
+ * Every move has one: the engine holds a move open between firing and
+ * resolving, `MOVE_DELAY` unless it names its own, and the gap is
+ * mechanical.
  *
- * What the gap is **not** is a flight. A move that names a longer
- * delay is usually something shot across the field, but a burrow, a
- * charge held for the sun, a wind-up and a leap are all the same wait
- * to the engine and none of them is a projectile. Reading the delay as
- * "draw something crossing" put a shrunken picture of a Tackle in the
- * air between two pokemon that were about to touch.
- *
- * A contact move draws nothing here at all. The thing crossing the gap
- * is the pokemon, which the field already throws at whatever it is
- * hitting — see the lunge in `BattleCanvas`.
+ * A longer delay is **not** a flight. A burrow, a charge held for the
+ * sun and a leap are the same wait to the engine, so the picture is
+ * chosen per move rather than from the delay. A contact move draws
+ * nothing here: what crosses the gap is the pokemon itself, which
+ * `BattleCanvas` lunges
  */
 
 /** How big the gap's picture is, in canvas pixels before the scale. */

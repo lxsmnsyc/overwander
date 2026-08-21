@@ -57,7 +57,7 @@ export async function listEvolutionOptions(
 
 /**
  * Evolve the catch into the given species. The criteria are checked
- * again by the server against the stored documents, and an evolution
+ * again by the server against the stored rows, and an evolution
  * that uses an item spends it in the same transaction, so the stone
  * and the new species land together or not at all.
  *

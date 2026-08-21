@@ -11,23 +11,15 @@ import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } fr
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, canStageBoss, createRaidBossSnapshot } from './raid';
 
 /**
- * A raid built out of nothing, for looking at.
+ * A raid built out of nothing, for looking at: a boss, five parties,
+ * no session and no consequences.
  *
- * The battle engine and the sprite canvas are the two parts of the
- * game that need a **fight** to be exercised at all, and the only
- * fights the game stages are ones somebody walked to, filled a lobby
- * for and paid for. That makes the loop that most wants watching the
- * hardest one to reach, so this builds the same shapes out of a seed:
- * a boss, five parties, no store, no session, no consequences.
+ * Everything is **derived from the seed**, so a demo is a permalink
+ * and an animation bug is reproducible rather than something somebody
+ * once saw.
  *
- * Everything here is **derived from the seed**, so a demo is a
- * permalink — the same seed is the same fight, frame for frame, on
- * anybody's screen. It is the same property a real raid has for the
- * same reason, and it is what makes an animation bug reportable
- * rather than a thing somebody once saw.
- *
- * Nothing in here is reachable from the game: it writes no documents,
- * reads no profile, and stands behind its own route
+ * Nothing here is reachable from the game: it writes nothing, reads no
+ * profile, and stands behind its own route
  */
 
 /**

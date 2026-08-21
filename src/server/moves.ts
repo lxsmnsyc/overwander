@@ -14,25 +14,18 @@ import { isCatchLocked } from './locks';
 import { asNumber, asRecord } from './read';
 
 /**
- * Learning a move, written with admin credentials.
+ * Learning a move, written over the owner connection.
  *
- * Three things in the game change what a pokemon knows after it has
- * been met — **growing into one**, a technical machine, and the Move
- * Reminder putting back a level-up move it dropped. Everything else
- * about a move list is decided at the catch or inherited from a
- * parent.
+ * Three things change what a pokemon knows after it is met: growing
+ * into a move, a technical machine, and the Move Reminder. All three
+ * go through `learnMove`, which checks whose pokemon it is, whether it
+ * can be written at all, how much room the list has and that the price
+ * is in the bag. Each caller passes only which move is allowed and
+ * what it costs.
  *
- * All three go through `learnMove`, which is the part none of them may
- * be trusted with: whose pokemon it is, whether it is in a state that
- * can be written at all, how much room the list has, and that the
- * price is actually in the bag. What differs between them is only
- * **which move is allowed and what it is paid in**, so that is all any
- * of them passes in.
- *
- * The price leaves the bag and the move list is written in **one
- * transaction**, so nothing is ever spent on a move that was not
- * learned. A level-up move has no price at all — the candy already
- * paid for it — which is why the price may be null
+ * The price leaves the bag and the list is written in **one
+ * transaction**, so nothing is spent on a move that was not learned. A
+ * level-up move has no price, which is why it may be null
  */
 
 /**

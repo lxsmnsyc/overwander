@@ -15,23 +15,16 @@ import dismissOutside from './dismiss';
 
 /**
  * A choice out of a list nobody would scroll: a species, an account, an
- * item. The typing narrows it and the arrow keys pick from what is
- * left.
+ * item. Typing narrows it and the arrow keys pick from what is left.
+ * Reach for this over `Select` by the length of the list, not the kind
+ * of value.
  *
- * The rule for reaching for this over `Select` is the length of the
- * list, not the kind of value: past a screenful, reading is slower than
- * typing three letters.
+ * Terracotta owns the narrowing and the opening; `matchBy` is the only
+ * part written here.
  *
- * Terracotta owns the narrowing and the opening. Every option is
- * rendered and each one is told whether it `matches()` the query, so
- * the filtering, the wait after the last keystroke and the list
- * dropping as soon as something is typed all come from it — `matchBy`
- * is the only part of that written here.
- *
- * Asked for `multiple`, it takes any number of them. What is picked
- * stands over the box as a row of badges rather than as text in it —
- * a box holding four names has no room left to type in, and each
- * badge carries the one thing to do about it, which is take it off.
+ * Asked for `multiple`, what is picked stands over the box as badges
+ * rather than as text in it, since a box holding four names has no
+ * room left to type in
  */
 
 export interface ComboboxOptionData<V> {

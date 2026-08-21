@@ -13,10 +13,10 @@ import { getMoveData } from '../moves';
  * its alternatives — because it is the same box to a player: they
  * type what they remember and the shelf answers.
  *
- * There is **no query half** here, and there is nothing to plan. A bag
- * is one document holding one map, so it is read whole however much
- * is in it — see [`inventory.ts`](../../auth/inventory.ts) — and
- * everything below is answered over what that read returned.
+ * There is **no query half** here, and nothing to plan: a bag is read
+ * whole however much is in it (see
+ * [`inventory.ts`](../../auth/inventory.ts)), so everything below is
+ * answered over what that read returned.
  */
 
 /** How much of it is carried, where the caller knows */

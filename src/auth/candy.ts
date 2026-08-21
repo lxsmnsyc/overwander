@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the converter below restores
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the converter below restores const-enum fields
+// via assertions that tsc requires but tsgolint (resolving const enums
+// to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Families from '../data/ids/families';
 import { asNumber, asRecordArray } from './__normalize';
@@ -20,11 +20,9 @@ export {
 export { default as getCandyCost } from './candy-rules';
 
 /**
- * One family's candy stack, stored per family at
- * candies/{uid}:{family} the same way inventory stacks are. A candy
- * feeds any catch of its family, so the stack is keyed by family
- * rather than by species. Firestore security rules must restrict
- * writes to the owning uid
+ * One family's candy stack, a row in `bag_candies`. A candy feeds any
+ * catch of its family, so the stack is keyed by family rather than by
+ * species
  */
 export interface CandyStack {
   /**
@@ -42,9 +40,7 @@ export interface CandyStack {
 }
 
 /**
- * The player's whole bag, in one read. The candies live in it beside
- * the items — see [`stacks.ts`](./stacks.ts) — so a screen showing
- * both reads one document
+ * Every candy stack the player holds, in the shape `stacks.ts` reads
  */
 async function readBag(uid: string): Promise<unknown> {
   const { data } = await getSupabase()

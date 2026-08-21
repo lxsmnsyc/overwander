@@ -61,10 +61,9 @@ export function getSql(): postgres.Sql {
 /**
  * One transaction, real BEGIN to COMMIT.
  *
- * Postgres does not retry the way Firestore's optimistic transactions
- * did, so a body that reads a row it means to write locks it with
- * `for update` as it reads. That rule is what keeps two settlements
- * of the same fight from both paying
+ * Nothing retries a failed body, so a body that reads a row it means
+ * to write must lock it with `for update` as it reads. That rule is
+ * what keeps two settlements of the same fight from both paying
  */
 export async function tx<T>(body: (sql: Tx) => Promise<T>): Promise<T> {
   // Collected into a box because begin() types its result through

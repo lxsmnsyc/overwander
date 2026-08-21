@@ -310,18 +310,13 @@ async function setCatchMark(
 /**
  * Name one of the player's pokemon, or take its name back off.
  *
- * The name is cleaned by the server rather than trusted from the
- * caller, so nothing arrives on a record that the sheet cannot draw:
- * no control characters, no run of spaces standing in for a name,
- * nothing longer than the limit. A name that cleans to nothing clears
- * the field, and the pokemon goes back to being called whatever its
- * species is called.
+ * The name is cleaned here rather than trusted: no control characters,
+ * no run of spaces, nothing past the limit. One that cleans to nothing
+ * empties the column, and the pokemon goes back to its species name.
  *
- * A **guarded** pokemon may still be named. What guarding protects is
- * everything that changes what a pokemon *is*, and what somebody
- * calls it is not among them. A **fighting** one may not, for the
- * ordinary reason: its record is held while the battle runs on a
- * snapshot of it.
+ * A **guarded** pokemon may still be named, since guarding protects
+ * what a pokemon is rather than what it is called. A **fighting** one
+ * may not: its record is held while the battle runs on a snapshot.
  *
  * Resolves the name as it now stands, or null when the catch is not
  * the user's or is fighting

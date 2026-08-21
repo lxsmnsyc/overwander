@@ -532,32 +532,16 @@ function project(standings: Standing[], view: FieldView, striking: Map<Unit, Str
  * What a unit should look like it is doing, and how long it has to do
  * it in.
  *
- * A pokemon knocked out is down and one standing about is idle. One
- * **working a move** — winding it up, or part-way through a
- * multi-step one — does what that move looks like: the move's own
- * `cast` list, walked until the sprite in hand has one of them, so a
- * Fire Punch throws a punch on a sheet that has one and swings on one
- * that does not.
+ * A unit working a move plays the move's own `cast` list, walked until
+ * the sprite in hand has one of those clips, so a Fire Punch punches
+ * on a sheet that has a punch and swings on one that does not.
  *
- * What makes that read rather than flicker is the second half: the
- * clip is **stretched over the window** instead of looping inside it.
- * A cast is `(104 − 16 × priority)` frames, and a drawn clip is
- * whatever length it was drawn at, so looping would run a short clip
- * two and a half times and leave it part-way through when the move
- * fires. Stretched, the wind-up begins as the cast begins and finishes
- * exactly as the move goes off — and a slower move is visibly a slower
- * wind-up, which is priority made legible without a number on screen.
- *
- * **Channelling is the same thing again.** It is the rest of a
- * multi-step move, and it carries the same shape a cast does — the
- * move, and how long this step has to run — so it is drawn the same
- * way: one pass of the move's own clip per step. A Fury Swipes is
- * five swipes rather than one swipe and four seconds of standing
- * there, and the two halves of a move look like one move
- *
- * The sprite is asked directly rather than a table being kept of which
- * species owns which clip: the sheet is the truth, and a second copy
- * of it would rot
+ * The clip is **stretched over the window** rather than looped inside
+ * it: a cast runs `(104 - 16 x priority)` frames and a drawn clip is
+ * whatever length it was drawn at, so a loop would leave the gesture
+ * part-way through when the move fires. Stretched, the wind-up ends
+ * exactly as the move goes off, which makes priority visible without a
+ * number on screen. Channelling draws the same way, one pass per step
  */
 export interface Performance {
   animation: SpriteAnim;

@@ -52,9 +52,9 @@ export function asOffset(value: unknown): number {
 }
 
 /**
- * The offset as it appears in seeds and document ids: a sign and the
- * minutes, e.g. `+480`, `-330`, `+0`. Minutes rather than a zone name
- * because a name carries a slash, which a document id cannot
+ * The offset as it appears in seeds and ids: a sign and the minutes,
+ * e.g. `+480`, `-330`, `+0`. Minutes rather than a zone name because a
+ * name carries a slash, which an id cannot
  */
 export function toZoneKey(offset: number): string {
   const minutes = asOffset(offset);

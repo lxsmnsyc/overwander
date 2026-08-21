@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the reads below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import { getSpeciesData } from '../data/species';
@@ -54,9 +54,9 @@ export function getCatchSlots(caught: { slots: number }, kind: Slots): number {
  * stored even though they re-derive from the rolls, so a record is
  * readable and queryable on its own.
  *
- * Everything about one catch is in this one document — abilities, held
- * items and ownership history included — so it is read, written and
- * secured as a whole
+ * The record shape is flat: abilities, held items and ownership
+ * history are lists here and child tables in the database, joined back
+ * together on the way in and out
  */
 export interface CaughtPokemon {
   /**
@@ -413,7 +413,7 @@ export interface OwnershipRecord {
 }
 
 /**
- * Restore an ownership history from an untyped Firestore value.
+ * Restore an ownership history from an untyped row.
  * `origin` is what the first entry means for a record written before
  * the field existed — the caller knows whether it was caught or
  * hatched, and the history does not
@@ -483,7 +483,7 @@ export function getMovePoints(caught: { movePoints: Record<string, number> }, mo
 }
 
 /**
- * Restore a catch from an untyped Firestore value. The client's
+ * Restore a catch from an untyped row. The client's
  * converter and the privileged server both read through here, so the
  * two agree on what a stored catch means
  */

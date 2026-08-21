@@ -7,16 +7,14 @@ import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from './re
  * The bridge between the normalized tables and the record shape the
  * game logic reads.
  *
- * A catch is one row plus four child tables, but everything above
- * this file still thinks in the old document shape: `moves` an array,
- * `movePoints` a map, `history` a list, `caughtAt` an ISO string in
- * the owner's zone. Assembling that shape here, once, means the
- * validation and game logic ported from the Firestore days keep
- * reading the fields they always read, and `asCaughtPokemon` stays
- * the single normalizer on both sides of the wire.
+ * A catch is one row plus four child tables; everything above this
+ * file wants `moves` as an array, `movePoints` as a map, `history` as
+ * a list and `caughtAt` as an ISO string in the owner's zone.
+ * Assembling that shape here, once, keeps `asCaughtPokemon` the single
+ * normalizer on both sides of the wire
  */
 
-/** The escrow sentinel the record shape still uses for a NULL owner */
+/** What the record shape calls a null owner: a lot in escrow */
 const ESCROW = '';
 
 /**

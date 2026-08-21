@@ -4,9 +4,9 @@ import type { Items } from '../data/ids/items';
 import { grantStack, grantStacks, spendStack } from './stacks';
 
 /**
- * The bag, written with admin credentials. Items are value: a client
- * that could write these documents could mint Master Balls, so the
- * rules leave the collection read-only and every change lands here.
+ * The bag, written over the owner connection. Items are value: a
+ * client that could write these rows could mint Master Balls, so the
+ * policies leave them read-only and every change lands here.
  *
  * What a stack *is* — how it is keyed, read and written — belongs to
  * [`src/server/stacks.ts`](./stacks.ts), which the candy pile shares.
@@ -34,9 +34,8 @@ export async function consumeItem(uid: string, item: Items, count = 1): Promise<
 }
 
 /**
- * Add several kinds at once, in one write. A bag is one document, so
- * a caller handing over a stash does it in a single mutation rather
- * than one per kind
+ * Add several kinds at once, in one statement, so a stash cannot
+ * half-land
  */
 export async function grantItems(
   uid: string,

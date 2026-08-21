@@ -47,7 +47,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
 /**
  * Where anybody is standing, read through the server.
  *
- * A player may read their own position document and nobody else's, so
+ * A player may read their own position row and nobody else's, so
  * a profile opened from a lobby has to ask somebody who can. Signing
  * in is all it takes — where a trainer is standing is as public as
  * their nickname, and it is what the profile is for

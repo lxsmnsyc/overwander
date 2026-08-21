@@ -1050,13 +1050,11 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   /**
-   * The pokemon that could go on the block, asked of the **store**
+   * The pokemon that could go on the block, asked of the **database**
    * rather than read out of the whole box and sifted here.
    *
-   * That is what the record's `auctionable` field is for: a player with
-   * three hundred catches has perhaps three that qualify, and the
-   * question "which of mine are worth a listing" is otherwise three
-   * hundred document reads to answer.
+   * That is what the record's `auctionable` column is for: a player
+   * with three hundred catches has perhaps three that qualify.
    *
    * `filter` below still asks `isAuctionableCatch` of every row that
    * comes back. The field is an index, not an authority — a record

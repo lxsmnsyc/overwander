@@ -1,6 +1,6 @@
-// Firestore returns untyped documents; the converters below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
+// Rows arrive untyped; the converters below restore const-enum fields
+// via assertions that tsc requires but tsgolint (resolving const enums
+// to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
@@ -132,8 +132,8 @@ export async function getChunkSnapshot(
  * Every window ever stored for a chunk, whichever zone wrote it.
  *
  * A chunk holds one window per zone and each is overwritten as it
- * turns over, so this is a handful of documents: what the chunk is
- * showing right now, once per zone anybody has walked it from
+ * turns over, so this is a handful of rows: what the chunk is showing
+ * right now, once per zone anybody has walked it from
  */
 export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> {
   const { data } = await getSupabase()
@@ -179,9 +179,8 @@ export async function visitChunk(
   offset: number,
 ): Promise<[string, Spawn][]> {
   const record = await resolveSnapshotWindow(chunk, offset, count);
-  // A spawn is named after the **snapshot's** key rather than the
-  // document's: the two differ by the separator, and it is the
-  // snapshot's that the server re-derives the name from
+  // A spawn is named after the snapshot's key, which is what the
+  // server re-derives the name from
   const key = new ChunkSnapshot(chunk, record.timestamp, offset).key;
 
   return record.spawns.map((roll, index) => [

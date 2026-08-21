@@ -22,7 +22,7 @@ import getIdToken from './session';
  * arrives while the panel is open should appear in it, and a
  * friendship accepted in another tab should not be left showing as
  * waiting. The rules hand a player their own rows and nobody else's —
- * see [`friends.md`](../../docs/firestore/friends.md).
+ * see [`friends.md`](../../docs/database/friends.md).
  *
  * Everything that writes is the server's, and so is the lookup by
  * address: the addresses are in Supabase Auth, which a browser cannot

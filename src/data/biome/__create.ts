@@ -114,24 +114,15 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  * What a nest in this biome may be holding, as a single weighted list.
  *
  * A nest lays the **first stage** of whatever line it drew, so the
- * three ordinary bands are worth reducing once rather than at every
- * roll: every entry is walked back to its base species and the weights
- * of everything that walks back to the same egg are added together. A
- * biome where four evolutions of one line spawn is a biome where that
- * egg is four times as likely, which is what it already meant.
+ * three ordinary bands are reduced once rather than at every roll:
+ * every entry walks back to its base species and the weights that meet
+ * there are added. The distribution is unchanged; the caller is left
+ * with one draw over one list.
  *
- * The **special** band is left out entirely: a legendary has no nest,
- * and a mythical is called with a relic or not at all.
- *
- * The **prized** band is left out for a different reason. A baby is
- * the first stage of its line, so it is already in this list — every
- * ordinary entry of its line walks back to it — and adding the band
- * would count it a second time. What is left out by that is an unown,
- * which has no line to be walked back along: it is met rather than
- * hatched, which is the right answer for it.
- *
- * The distribution is exactly the merged bands' — only the shape is
- * simpler, and the caller is left with one draw over one list
+ * The **special** band is left out because a legendary has no nest,
+ * and the **prized** one because a baby is already the first stage of
+ * its line and would be counted twice. That leaves out the unown,
+ * which has no line to walk back along: it is met rather than hatched
  */
 export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
   const groups = getSpawnPool(biome, time);

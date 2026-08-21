@@ -14,24 +14,15 @@ import {
 } from '../../overworld/raid';
 
 /**
- * A raid to look at.
+ * A raid to look at: a boss, five parties, and nothing else, staged
+ * out of a seed. No session, no writes, no consequences.
  *
- * The battle engine and the sprite canvas need a **fight** before
- * they can be looked at at all, and every fight the game stages is
- * one somebody walked to, filled a lobby for and paid for. That makes
- * the loop that most wants watching the hardest one to reach, so this
- * page stages one out of a seed: a boss, five parties, and nothing
- * else. No session, no store, no consequences — it settles no raid,
- * records no outcome and hands nobody a prize.
+ * It runs the real engine on the real shapes, the same
+ * `createRaidBattle` and `TeamSnapshotRecord` a lobby uses, because a
+ * demo of something else would test nothing.
  *
- * It runs the **real** engine on the **real** shapes: the same
- * `createRaidBattle` a lobby uses, over the same `TeamSnapshotRecord`
- * a lobby publishes. What is being tested is worth nothing if it is
- * not the thing that ships.
- *
- * The seed is in the URL, so a fight is a link. Two people watching
- * the same seed watch the same fight frame for frame, which is what
- * turns "the sprite did something odd" into something reproducible
+ * The seed is in the URL, so a fight is a link and two people watch
+ * the same frames
  */
 
 /**

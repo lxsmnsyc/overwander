@@ -1,8 +1,8 @@
 import { Stats } from '../data/constants/stats';
 
 /**
- * Firestore returns untyped document data; these helpers normalize
- * fields defensively instead of asserting document shapes
+ * Rows arrive untyped from PostgREST; these helpers normalize a field
+ * defensively rather than asserting a row's shape
  */
 
 export function asNumber(value: unknown, fallback = 0): number {

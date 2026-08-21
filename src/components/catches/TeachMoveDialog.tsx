@@ -26,22 +26,12 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 /**
  * Teaching one move to one pokemon.
  *
- * A machine is the only thing that changes what a pokemon knows, and
- * what it costs depends entirely on how full the move list is: a
- * pokemon with room simply learns a fourth move, while one that
- * already knows four has to **forget** one to make space. Those are
- * different decisions, so they are different dialogs — the first asks
- * only whether, the second asks which.
+ * A list with room asks only whether; a full one asks which move goes.
+ * Those are different decisions, so they are different dialogs behind
+ * the same props, and the record decides which a player sees.
  *
- * Both are opened by the same props, since which one a player sees is
- * the record's answer rather than the caller's.
- *
- * What is being spent is the caller's, though. A machine is the
- * default because it is the common case, but the Move Reminder puts
- * back a forgotten move for a Heart Scale and asks exactly the same
- * question about exactly the same list — so it passes its own `teach`
- * and its own word for what it costs rather than having a second
- * dialog that looks like this one
+ * The caller passes its own `teach` and its own word for the price, so
+ * the Move Reminder shares this rather than owning a lookalike
  */
 export interface TeachMoveDialogProps {
   /**

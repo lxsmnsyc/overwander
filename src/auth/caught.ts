@@ -248,9 +248,9 @@ export async function countCaught(owner: string): Promise<number> {
 }
 
 /**
- * The yes-or-no fields a catch carries. Each is its own field on the
- * document rather than a bit of one, which is the whole reason they
- * can be asked of the store.
+ * The yes-or-no facts a catch carries. Each is its own column rather
+ * than a bit of a packed one, which is what lets a search filter on
+ * them.
  *
  * `auctionable` is the odd one: the other five are *stated* about a
  * record, and it is **derived** from three of its own fields — see
@@ -310,9 +310,9 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
 }
 
 /**
- * Whether the user owns any pokemon at all. Reads a single document
- * rather than the whole collection — a raid asks this of everyone who
- * walks in, and the answer is a yes or no
+ * Whether the user owns any pokemon at all. Reads one row rather than
+ * the box: a raid asks this of everyone who walks in, and the answer
+ * is a yes or no
  */
 export async function hasAnyCaught(owner: string): Promise<boolean> {
   const { count } = await getSupabase()
@@ -324,9 +324,8 @@ export async function hasAnyCaught(owner: string): Promise<boolean> {
 }
 
 /**
- * Whether the user already owns a pokemon of the species. Reads a
- * single document, since the answer is a yes or no — the Repeat
- * Ball's condition
+ * Whether the user already owns a pokemon of the species. Reads one
+ * row, since the answer is a yes or no: the Repeat Ball's condition
  */
 export async function hasCaughtSpecies(owner: string, species: Species): Promise<boolean> {
   const { count } = await getSupabase()

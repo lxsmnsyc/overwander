@@ -1,16 +1,6 @@
-import {
-  type FirestoreDataConverter,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import { asNumber, asString, asStringArray } from './__normalize';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { type CatchSnapshot, asCatchSnapshot } from './catch-snapshot';
-import { TEAM_COLLECTION, TEAM_SNAPSHOT_COLLECTION } from './collections';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase from './supabase';
 
 /**
  * The most catches a team can field
@@ -48,33 +38,6 @@ export interface TeamSnapshotRecord {
   catches: CatchSnapshot[];
 }
 
-const teamConverter: FirestoreDataConverter<TeamRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-
-    return {
-      player: asString(data.player),
-      raid: asString(data.raid),
-      catches: asStringArray(data.catches),
-    };
-  },
-};
-
-const snapshotConverter: FirestoreDataConverter<TeamSnapshotRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
-    const catches: unknown = data.catches;
-
-    return {
-      player: asString(data.player),
-      alliance: asNumber(data.alliance),
-      catches: Array.isArray(catches) ? catches.map(asCatchSnapshot) : [],
-    };
-  },
-};
-
 /**
  * Teams are written by the server: a party names catch ids, and the
  * ids of other players' pokemon are readable, so the ownership check
@@ -85,25 +48,54 @@ const snapshotConverter: FirestoreDataConverter<TeamSnapshotRecord> = {
  */
 
 export async function getTeam(id: string): Promise<TeamRecord | null> {
-  const ref = doc(getFirebaseFirestore(), TEAM_COLLECTION, id).withConverter(teamConverter);
+  const { data } = await getSupabase()
+    .from('teams')
+    .select('player, raid_id, team_catches(slot, caught_id)')
+    .eq('id', id)
+    .maybeSingle();
 
-  return (await getDoc(ref)).data() ?? null;
+  return data == null ? null : fromTeamRow(asRecord(data));
+}
+
+function fromTeamRow(row: Record<string, unknown>): TeamRecord {
+  const catches = asRecordArray(row.team_catches).sort(
+    (left, right) => Number(left.slot ?? 0) - Number(right.slot ?? 0),
+  );
+
+  return {
+    player: asString(row.player),
+    raid: asString(row.raid_id),
+    catches: catches.map((entry) => asString(entry.caught_id)),
+  };
 }
 
 /**
  * Every team the player has formed
  */
 export async function listTeams(player: string): Promise<[string, TeamRecord][]> {
-  const teams = collection(getFirebaseFirestore(), TEAM_COLLECTION).withConverter(teamConverter);
-  const result = await getDocs(query(teams, where('player', '==', player)));
+  const { data } = await getSupabase()
+    .from('teams')
+    .select('id, player, raid_id, team_catches(slot, caught_id)')
+    .eq('player', player);
 
-  return result.docs.map((entry) => [entry.id, entry.data()]);
+  return asRecordArray(data).map((row) => [String(row.id), fromTeamRow(row)]);
 }
 
 export async function getTeamSnapshot(id: string): Promise<TeamSnapshotRecord | null> {
-  const ref = doc(getFirebaseFirestore(), TEAM_SNAPSHOT_COLLECTION, id).withConverter(
-    snapshotConverter,
-  );
+  const { data } = await getSupabase()
+    .from('team_snapshots')
+    .select('player, alliance, catches')
+    .eq('id', id)
+    .maybeSingle();
 
-  return (await getDoc(ref)).data() ?? null;
+  if (data == null) {
+    return null;
+  }
+  return {
+    player: asString(data.player),
+    alliance: asNumber(data.alliance),
+    catches: (Array.isArray(data.catches) ? data.catches : []).map((value) =>
+      asCatchSnapshot(value),
+    ),
+  };
 }

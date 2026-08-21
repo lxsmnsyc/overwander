@@ -1,16 +1,15 @@
 import 'server-only';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { docData } from './read';
 
 /**
  * Using a bottle cap, written with admin credentials. Individual
@@ -48,11 +47,8 @@ export default async function useBottleCap(
     return null;
   }
 
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon fights as the snapshot froze it, and an egg is not a
     // pokemon yet: what is inside it was decided when it was found,
@@ -84,12 +80,12 @@ export default async function useBottleCap(
       return null;
     }
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
     // Only the per-stat values move. `individualValue` is the roll the
     // encounter was staged from and stays the record of it — the
     // stored stats are what every reader uses, which is what lets a
     // bred egg and a capped pokemon differ from their own roll
-    transaction.update(caughtRef, {
+    await updateCaughtIn(transaction, catchId, {
       ivs: polished,
       // A cap is the one thing that can make a pokemon perfect after
       // the fact, so the stored answer moves with the values

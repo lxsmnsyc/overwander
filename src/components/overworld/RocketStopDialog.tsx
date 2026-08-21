@@ -1,4 +1,4 @@
-import type { User } from 'firebase/auth';
+import type { PlayerIdentity } from '../../auth/user';
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
@@ -13,7 +13,7 @@ import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 export interface RocketStopDialogProps {
-  user: User;
+  user: PlayerIdentity;
   /**
    * The stop's id and what the grunt is fielding, or null when the
    * player is not standing in front of one

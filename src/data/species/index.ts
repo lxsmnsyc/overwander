@@ -34,12 +34,7 @@ export {
   meetsEvolutionCriteria,
 } from './evolution';
 export type { EvolutionContext } from './evolution';
-export {
-  REGIONS,
-  REGION_NAMES,
-  getSpeciesByRegion,
-  getSpeciesRegion,
-} from './regions';
+export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 
 export function registerSpecies(): void {
   registerGen1Species();

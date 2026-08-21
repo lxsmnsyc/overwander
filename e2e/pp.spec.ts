@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { Items } from '../src/data/ids/items';
-import { patchDocument, uidOf } from './emulator';
-import { SHEET, claimStarter, dialogNamed, expectOpen, openCatch, signIn } from './game';
+import { setBagItem, uidOf } from './admin';
+import { chooseAction, claimStarter, dialogNamed, expectOpen, openCatch, signIn } from './game';
 
 /**
  * A PP Up, spent.
@@ -24,17 +24,14 @@ test.describe('a PP Up', () => {
     const player = await signIn(page);
 
     await claimStarter(page);
-    await patchDocument('bags', await uidOf(player), {
-      items: { mapValue: { fields: { [String(Items.PPUp)]: { integerValue: '2' } } } },
-    });
+    await setBagItem(await uidOf(player), Items.PPUp, 2);
     await page.reload();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 
     const sheet = await openCatch(page);
 
     // The bag, filtered to what would do this pokemon any good
-    await sheet.getByRole('button', { name: /Actions/ }).click();
-    await page.getByRole('menuitem', { name: 'Use item' }).click();
+    await chooseAction(page, sheet, 'Use item');
     await sheet.getByRole('button', { name: /^Use PP Up,/ }).click();
 
     // Nothing has been spent yet: the item asks which move first
@@ -47,8 +44,7 @@ test.describe('a PP Up', () => {
     await asked.getByRole('button', { name: 'Cancel' }).click();
     await expect(asked).not.toBeAttached();
 
-    await sheet.getByRole('button', { name: /Actions/ }).click();
-    await page.getByRole('menuitem', { name: 'Use item' }).click();
+    await chooseAction(page, sheet, 'Use item');
     // Both bottles still in the bag: backing out of the question spent
     // nothing, and the square in the bag is what says how many are left
     await expect(sheet.getByRole('button', { name: /^Use PP Up, 2 carried/ })).toBeVisible();
@@ -62,8 +58,8 @@ test.describe('a PP Up', () => {
     await expect(asked.getByText(/\d+ → \d+ PP/).first()).toBeVisible();
     await asked.getByRole('button', { name: 'Use PP Up' }).click();
 
-    // What it came to, said back on the sheet behind
+    // What it came to, said as a toast over the sheet behind
     await expect(asked).not.toBeAttached();
-    await expect(dialogNamed(page, SHEET).getByText(/carries 1 of 3/)).toBeVisible();
+    await expect(page.getByText(/carries 1 of 3/)).toBeVisible();
   });
 });

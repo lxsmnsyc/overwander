@@ -52,7 +52,7 @@ random, so leaving the same pair with the breeder twice produces two different
 pokemon.
 
 Any move the line can **only** inherit, and that one of the parents actually
-knows, is passed down. That is what makes breeding a way to *teach* a move rather
+knows, is passed down. That is what makes breeding a way to _teach_ a move rather
 than to gamble for one. Inherited moves come first in the list.
 
 The hatchling's level, nature, ability and gender are its own.

@@ -60,8 +60,8 @@ pnpm dev               # http://localhost:3000
 `.env.example` documents every variable. There are two groups.
 
 The **web config** is public by design and lets the browser reach Auth and
-Firestore. Copy it from the Firebase console under *Project settings → Your apps
-→ Web app*:
+Firestore. Copy it from the Firebase console under _Project settings → Your apps
+→ Web app_:
 
 | Variable                    | Where it comes from                   |
 | --------------------------- | ------------------------------------- |

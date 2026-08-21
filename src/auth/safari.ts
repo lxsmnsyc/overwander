@@ -1,5 +1,4 @@
-import type { User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import type { PlayerIdentity } from '../auth/user';
 import AleaRNG from '../core/alea';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
@@ -9,16 +8,14 @@ import SafariSession, {
   encounterKey,
 } from '../overworld/safari';
 import { recordCatch } from '../server/caught';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import { consumeItem } from '../server/inventory';
 import { retireSpawn } from '../server/overworld';
-import { asStringArray } from './__normalize';
 import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
-import { FLED_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase from './supabase';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 
@@ -29,7 +26,7 @@ import getIdToken from './session';
  * cannot steer the seed by moving their own clock
  */
 export async function createSafariSession(
-  user: User,
+  user: PlayerIdentity,
   encounter: EncounterRecord,
 ): Promise<SafariSession<EncounterRecord>> {
   const now = await syncServerClock();
@@ -65,9 +62,9 @@ export async function countBalls(uid: string): Promise<number> {
  * draw against it
  */
 export async function getRetiredKeys(uid: string): Promise<Set<string>> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), FLED_COLLECTION, uid));
+  const { data } = await getSupabase().from('fled_encounters').select('key').eq('player', uid);
 
-  return new Set(asStringArray(snapshot.data()?.keys));
+  return new Set((data ?? []).map((row) => String(row.key)));
 }
 
 /**
@@ -145,14 +142,14 @@ export interface ThrowOutcome {
  * kind is carried
  */
 export async function throwBall(
-  user: User,
+  user: PlayerIdentity,
   session: SafariSession<EncounterRecord>,
 ): Promise<ThrowOutcome | null> {
   if (session.state !== SafariState.Active) {
     return null;
   }
 
-  const token = await getIdToken(user);
+  const token = await getIdToken();
 
   // Counted before the ball is spent, so "one left" means the ball
   // about to be thrown is the last one
@@ -185,7 +182,6 @@ export async function throwBall(
  * not carried, or the encounter is still chewing the last one
  */
 export async function feedEncounter(
-  user: User,
   session: SafariSession<EncounterRecord>,
   item: Items,
 ): Promise<boolean> {
@@ -194,7 +190,7 @@ export async function feedEncounter(
   if (!session.canFeed() || FEED_CATCH_BONUS[item] == null) {
     return false;
   }
-  if (!(await spendFeed(await getIdToken(user), item))) {
+  if (!(await spendFeed(await getIdToken(), item))) {
     return false;
   }
   return session.feed(item);

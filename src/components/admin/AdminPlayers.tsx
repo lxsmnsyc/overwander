@@ -1,5 +1,13 @@
 import { A } from '@solidjs/router';
-import { For, type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import type { Listing as ListingPage, PlayerRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
 import { ADMIN_ROLE } from '../../auth/staff';
@@ -66,10 +74,7 @@ function PlayerList(props: {
                 {/* Where they left off. An account that never walked
                     anywhere says so rather than showing a chunk it
                     was never in */}
-                <Show
-                  when={player.position}
-                  fallback={<Meta>has not walked anywhere</Meta>}
-                >
+                <Show when={player.position} fallback={<Meta>has not walked anywhere</Meta>}>
                   {(at) => (
                     <Meta>
                       {namePlace(at().chunkX, at().chunkY)} · cell {at().cellX}, {at().cellY}

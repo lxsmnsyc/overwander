@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: '**'
 ---
 
 All sprite sheets in this game animate at **24fps** - pokemon, effects and particles, overworld characters alike.

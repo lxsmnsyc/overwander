@@ -122,15 +122,15 @@ from the buddy's ability, others from what it is holding.
 | **Flame Body**                               | Ability   | An egg picked up beside it hatches in half the walk       |
 | **Pickup**                                   | Ability   | Finds an item every 512 steps walked                      |
 | **Shiny Charm**                              | Held item | Eight times the shiny odds                                |
-| **Exp. Share**                               | Held item | Half of catches also pay candy to the *buddy's* family    |
-| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the *caught* family    |
+| **Exp. Share**                               | Held item | Half of catches also pay candy to the _buddy's_ family    |
+| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the _caught_ family    |
 | **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays            |
 | **Pure Incense**                             | Held item | Three fewer pokemon appear, for crossing a chunk in peace |
 | **Amulet Coin**                              | Held item | Trebles the gold a raid or a beaten grunt pays            |
 
 Cute Charm does nothing when either pokemon is genderless.
 
-None of these change *which* species are standing in the chunk — everybody sees
+None of these change _which_ species are standing in the chunk — everybody sees
 the same ones — only how many a player can reach, and what the ones they meet
 turn out to be.
 

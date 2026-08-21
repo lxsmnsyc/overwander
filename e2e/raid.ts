@@ -4,7 +4,7 @@ import Biome from '../src/data/ids/biome';
 import { Species } from '../src/data/ids/species';
 import { RaidKind } from '../src/auth/raid-record';
 import { RAID_INTERVAL } from '../src/overworld/chunk-snapshot';
-import { uidOf, writeDocument } from './emulator';
+import { clearIdleRaids, insertRow, uidOf } from './admin';
 import { type Player, pressBoxSquare } from './game';
 
 /**
@@ -59,27 +59,20 @@ function raidFields(
   window: { timestamp: number; offset: number },
 ): Record<string, unknown> {
   return {
-    kind: { integerValue: String(RaidKind.Legendary) },
-    lair: { nullValue: null },
-    species: { integerValue: String(Species.Articuno) },
-    traitValue: { integerValue: '1234' },
-    host: { stringValue: host },
-    teams: { arrayValue: { values: [] } },
-    battle: { nullValue: null },
-    timestamp: { integerValue: String(window.timestamp) },
-    offset: { integerValue: String(window.offset) },
-    chunk: {
-      mapValue: {
-        fields: {
-          seed: { stringValue: CHUNK.seed },
-          x: { integerValue: String(CHUNK.x) },
-          y: { integerValue: String(CHUNK.y) },
-        },
-      },
-    },
-    biome: { integerValue: String(Biome.Tundra) },
-    cell: { integerValue: String(CELL) },
-    cleared: { booleanValue: false },
+    kind: RaidKind.Legendary,
+    lair: null,
+    species: Species.Articuno,
+    trait_value: 1234,
+    host,
+    battle_id: null,
+    window_at: window.timestamp,
+    utc_offset: window.offset,
+    chunk_seed: CHUNK.seed,
+    chunk_x: CHUNK.x,
+    chunk_y: CHUNK.y,
+    biome: Biome.Tundra,
+    cell: CELL,
+    cleared: false,
   };
 }
 
@@ -93,7 +86,10 @@ export async function stageRaid(player: Player): Promise<string> {
   const window = currentWindow();
   const id = `e2e-${host}-${window.timestamp}`;
 
-  await writeDocument('raids', id, raidFields(host, window));
+  // The listing is window-wide and the specs click its first row, so
+  // the board is swept of idle lobbies before this one goes up
+  await clearIdleRaids();
+  await insertRow('raids', { id, ...raidFields(host, window) });
   return id;
 }
 

@@ -1,6 +1,6 @@
 import type { Items } from '../data/ids/items';
 import healOnServerSide from '../server/healing';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import type { HealthState } from './health';
 import getIdToken from './session';
 

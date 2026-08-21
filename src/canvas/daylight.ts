@@ -20,7 +20,7 @@ const DAY = 24 * HOUR;
 
 /** The local hour, as a fraction: 13.5 is half past one */
 function hourOf(localTime: number): number {
-  return ((localTime % DAY) + DAY) % DAY / HOUR;
+  return (((localTime % DAY) + DAY) % DAY) / HOUR;
 }
 
 /**

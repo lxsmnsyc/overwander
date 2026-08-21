@@ -76,9 +76,7 @@ export default function attackMarkVisual(landed: Landed): PaintedVisual {
   // A blow that took a third of somebody is drawn about twice the size
   // of one that grazed them, and a refused one is barely there
   const size =
-    landed.struck && landed.effectiveness > 0
-      ? 0.7 + Math.min(1, landed.share * 3) * 0.9
-      : 0.5;
+    landed.struck && landed.effectiveness > 0 ? 0.7 + Math.min(1, landed.share * 3) * 0.9 : 0.5;
   const painter: Painter = (context, stage, share) => {
     const at = landing(stage);
     const reach = REACH * stage.scale * size;

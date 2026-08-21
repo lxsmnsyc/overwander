@@ -1,5 +1,5 @@
 import type { Items } from '../data/ids/items';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import usePurifyingGemOnServerSide from '../server/purify';
 import getIdToken from './session';
 

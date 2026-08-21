@@ -289,7 +289,7 @@ than hidden: a player looking for one of them wants the reason. What does not
 qualify for the block at all is left out of the list, since that would be most of
 a box and a hundred greyed rows say nothing.
 
-The egg rule is about what an auction *is*. A catch lot is readable precisely so a
+The egg rule is about what an auction _is_. A catch lot is readable precisely so a
 bidder can look at what they are bidding on; an egg shows nothing but the word
 "Egg" to everyone except the person selling it, who has known what is inside since
 the moment it was found.

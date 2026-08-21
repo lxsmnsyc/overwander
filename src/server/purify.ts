@@ -1,7 +1,6 @@
 import 'server-only';
 import { asBoolean } from '../auth/__normalize';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { purifiedFriendship } from '../data/constants/friendship';
@@ -13,10 +12,11 @@ import {
   purifyIVs,
 } from '../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { type UpdateFields, asNumber, docData } from './read';
+import { asNumber } from './read';
 
 /**
  * Purifying, written with admin credentials.
@@ -37,7 +37,7 @@ import { type UpdateFields, asNumber, docData } from './read';
  * one place, because the nurse applies it to a party the same way the
  * gem applies it to one pokemon
  */
-export function purifiedFields(caught: Record<string, unknown>): UpdateFields {
+export function purifiedFields(caught: Record<string, unknown>): Record<string, unknown> {
   const record = asCaughtPokemon(caught);
   const ivs = purifyIVs(record.ivs);
 
@@ -89,11 +89,8 @@ export default async function usePurifyingGem(
     return null;
   }
 
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     if (caught == null || !isPurifiableRecord(caught, uid)) {
       return null;
@@ -107,8 +104,8 @@ export default async function usePurifyingGem(
 
     const purified = purifiedFields(caught);
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
-    transaction.update(caughtRef, purified);
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    await updateCaughtIn(transaction, catchId, purified);
     return asNumber(purified.ivs);
   });
 }

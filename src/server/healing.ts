@@ -1,16 +1,15 @@
 import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { type HealthState, healedByItem } from '../auth/health';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { bitterness } from '../data/items/medicine';
-import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { type UpdateFields, docData } from './read';
 
 /**
  * Healing between battles, written with admin credentials.
@@ -47,11 +46,8 @@ export default async function useHealingItem(
   catchId: string,
   item: Items,
 ): Promise<HealthState | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon in a live battle is fighting on a frozen snapshot;
     // healing the record under it would leave the two disagreeing.
@@ -88,14 +84,14 @@ export default async function useHealingItem(
     // comfortable ball is a reason to think better of somebody, never
     // a reason to mind a mouthful of root less
     const mouthfuls = bitterness(item);
-    const fields: UpdateFields = { health: healed.health, statuses: healed.statuses };
+    const fields: Record<string, unknown> = { health: healed.health, statuses: healed.statuses };
 
     if (mouthfuls > 0) {
       fields.friendship = gainFriendship(record.friendship, 'herb', mouthfuls);
     }
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
-    transaction.update(caughtRef, fields);
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    await updateCaughtIn(transaction, catchId, fields);
     return healed;
   });
 }

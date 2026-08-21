@@ -1,6 +1,6 @@
 import type { Items } from '../data/ids/items';
 import useBottleCapOnServerSide from '../server/bottle-caps';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 

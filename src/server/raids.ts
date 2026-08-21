@@ -1,14 +1,6 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import {
-  BATTLE_COLLECTION,
-  CAUGHT_COLLECTION,
-  RAID_COLLECTION,
-  RAID_REWARD_COLLECTION,
-  TEAM_COLLECTION,
-  TEAM_SNAPSHOT_COLLECTION,
-} from '../auth/collections';
 import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { asOffset, toLocalTime } from '../auth/local-time';
@@ -49,10 +41,12 @@ import resolveBuddy from './buddy';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import Biome from '../data/ids/biome';
 import { getSpeciesLair } from '../data/overworld/lair';
-import { getAdminFirestore } from './firebase';
+import { getSql, jsonOf, newDocId, tx } from './db';
+import { readCaughtIn } from './caught-io';
+import { foughtBattle, readBattle, readRaid, readRaidIn, readTeam, writeRaid } from './raid-io';
 import { consumeItem } from './inventory';
-import { isAnyCatchLocked, isCatchLocked, lockFields, releaseBattleLocks } from './locks';
-import { asNumber, asString, asStringArray, docData } from './read';
+import { isAnyCatchLocked, isCatchLocked, releaseBattleLocks } from './locks';
+import { asNumber, asString } from './read';
 import { hasAnyCaught } from './caught';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
@@ -121,15 +115,8 @@ function isBattleLost(battle: Record<string, unknown> | null, now: number): bool
  * The same question, read inside the transaction that acts on the
  * answer
  */
-async function isRaidLost(
-  transaction: FirebaseFirestore.Transaction,
-  battleId: string,
-  now: number,
-): Promise<boolean> {
-  return isBattleLost(
-    docData(await transaction.get(getAdminFirestore().collection(BATTLE_COLLECTION).doc(battleId))),
-    now,
-  );
+async function isRaidLost(battleId: string, now: number): Promise<boolean> {
+  return isBattleLost(await readBattle(battleId), now);
 }
 
 /**
@@ -166,9 +153,8 @@ export async function peekRaid(
     return null;
   }
 
-  const db = getAdminFirestore();
   const lobby = raidId(chunk, snapshot.raidTimestamp, cell, kind, zone);
-  const stored = docData(await db.collection(RAID_COLLECTION).doc(lobby).get());
+  const stored = await readRaid(lobby);
   const existing = stored == null ? null : asRaidRecord(stored);
 
   // The boss has been met; the landmark is shut until the window turns
@@ -184,11 +170,7 @@ export async function peekRaid(
   // it, is one to stage rather than to join
   const open =
     existing == null ||
-    (existing.battle != null &&
-      isBattleLost(
-        docData(await db.collection(BATTLE_COLLECTION).doc(existing.battle).get()),
-        now,
-      ));
+    (existing.battle != null && isBattleLost(await readBattle(existing.battle), now));
 
   // Nothing is standing and they have nothing to stage it with, so
   // there is not even anything to watch
@@ -260,16 +242,13 @@ export async function enterRaid(
     return null;
   }
 
-  const db = getAdminFirestore();
   const id = raidId(chunk, snapshot.raidTimestamp, cell, kind, zone);
   const staging = await hasAnyCaught(uid);
 
-  // One landmark stages one raid at a time: the read and the create
-  // share a transaction, so two players walking in together cannot
-  // each open their own
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(RAID_COLLECTION).doc(id);
-    const stored = docData(await transaction.get(ref));
+  // One landmark stages one raid at a time: the row lock is what
+  // keeps two players walking in together from each opening their own
+  return tx(async (transaction) => {
+    const stored = await readRaidIn(transaction, id);
     const existing = stored == null ? null : asRaidRecord(stored);
 
     const fresh: RaidRecord = {
@@ -298,7 +277,7 @@ export async function enterRaid(
       }
       // A raid still gathering, or one being fought right now, is
       // what the arrival walks into
-      if (existing.battle == null || !(await isRaidLost(transaction, existing.battle, now))) {
+      if (existing.battle == null || !(await isRaidLost(existing.battle, now))) {
         return [id, existing];
       }
       // The boss survived, so the landmark is open again. A spectator
@@ -306,14 +285,14 @@ export async function enterRaid(
       if (!staging) {
         return [id, existing];
       }
-      transaction.set(ref, fresh);
+      await writeRaid(transaction, id, fresh);
       return [id, fresh];
     }
 
     if (!staging) {
       return null;
     }
-    transaction.set(ref, fresh);
+    await writeRaid(transaction, id, fresh);
     return [id, fresh];
   });
 }
@@ -351,10 +330,8 @@ export async function hostMythicalRaid(
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const db = getAdminFirestore();
   const id = mythicalRaidId(chunk, snapshot.raidTimestamp, item, uid, zone);
-  const ref = db.collection(RAID_COLLECTION).doc(id);
-  const stored = docData(await ref.get());
+  const stored = await readRaid(id);
 
   // The relic was already spent on this window's lobby: whatever became
   // of it — gathering, fought, lost — is what there is
@@ -395,7 +372,7 @@ export async function hostMythicalRaid(
     cleared: false,
   };
 
-  await ref.set(fresh);
+  await tx(async (transaction) => writeRaid(transaction, id, fresh));
   return [id, fresh];
 }
 
@@ -417,26 +394,21 @@ export async function hostMythicalRaid(
  * landmark shut for the rest of the window
  */
 export async function leaveRaid(uid: string, lobby: string): Promise<void> {
-  const db = getAdminFirestore();
-  const ref = db.collection(RAID_COLLECTION).doc(lobby);
-
-  await db.runTransaction(async (transaction) => {
-    const raid = docData(await transaction.get(ref));
+  await tx(async (transaction) => {
+    const raid = await readRaidIn(transaction, lobby);
 
     if (raid == null || raid.battle != null) {
       return;
     }
 
     const record = asRaidRecord(raid);
-    const ids = record.teams;
-    const teams =
-      ids.length === 0
-        ? []
-        : await transaction.getAll(...ids.map((id) => db.collection(TEAM_COLLECTION).doc(id)));
+    const rows = await transaction`
+      select id, player from teams where raid_id = ${lobby}
+    `;
     const mine = new Set(
-      teams.filter((entry) => docData(entry)?.player === uid).map((entry) => entry.id),
+      rows.filter((entry) => entry.player === uid).map((entry) => asString(entry.id)),
     );
-    const left = ids.filter((id) => !mine.has(id));
+    const left = rows.filter((entry) => !mine.has(asString(entry.id)));
 
     // The last party out shuts the door behind it, and so does a host
     // who never formed one.
@@ -448,13 +420,13 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
     // either way, and the door would be shut on a host still standing
     // in the room
     if (left.length === 0 && !record.cleared && (mine.size > 0 || record.host === uid)) {
-      transaction.delete(ref);
+      await transaction`delete from raids where id = ${lobby}`;
       return;
     }
     if (mine.size === 0) {
       return;
     }
-    transaction.update(ref, { teams: left });
+    await transaction`delete from teams where id = any(${[...mine]})`;
   });
 }
 
@@ -471,38 +443,21 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
  * the different question the battle lock asks
  */
 export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
-  const db = getAdminFirestore();
-  const teams = await db
-    .collection(TEAM_COLLECTION)
-    .where('player', '==', uid)
-    .where('catches', 'array-contains-any', catches)
-    .get();
+  // One query says it all: a team of this player's, holding any of
+  // these catches, whose raid is still gathering
+  const rows = await getSql()`
+    select 1
+    from teams t
+    join team_catches tc on tc.team_id = t.id
+    join raids r on r.id = t.raid_id
+    where t.player = ${uid}
+      and tc.caught_id = any(${catches})
+      and r.battle_id is null
+      and not r.cleared
+    limit 1
+  `;
 
-  // A team written before teams named their raid has nothing to check
-  // against, and its raid is long over either way
-  const joined = teams.docs
-    .map((entry) => ({ team: entry.id, lobby: asString(docData(entry)?.raid) }))
-    .filter((entry) => entry.lobby !== '');
-
-  if (joined.length === 0) {
-    return false;
-  }
-
-  const ids = [...new Set(joined.map((entry) => entry.lobby))];
-  const lobbies = await db.getAll(...ids.map((id) => db.collection(RAID_COLLECTION).doc(id)));
-  const waiting = new Set<string>();
-
-  for (const entry of lobbies) {
-    const raid = docData(entry);
-
-    if (raid != null && raid.battle == null && raid.cleared !== true) {
-      for (const team of asStringArray(raid.teams)) {
-        waiting.add(team);
-      }
-    }
-  }
-
-  return joined.some((entry) => waiting.has(entry.team));
+  return rows.length > 0;
 }
 
 /**
@@ -521,8 +476,7 @@ export async function joinRaid(
   lobby: string,
   catches: string[],
 ): Promise<string | null> {
-  const db = getAdminFirestore();
-  const raid = docData(await db.collection(RAID_COLLECTION).doc(lobby).get());
+  const raid = await readRaid(lobby);
 
   if (raid == null || raid.battle != null) {
     return null;
@@ -534,24 +488,36 @@ export async function joinRaid(
     return null;
   }
 
-  const owned = await db.getAll(...catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id)));
+  const owned = await tx(async (transaction) => {
+    const records: Record<string, unknown>[] = [];
 
-  if (!owned.every((entry) => docData(entry)?.owner === uid)) {
+    for (const id of catches) {
+      const record = await readCaughtIn(transaction, id, false);
+
+      if (record == null) {
+        return null;
+      }
+      records.push(record);
+    }
+    return records;
+  });
+
+  if (owned == null || !owned.every((entry) => entry.owner === uid)) {
     return null;
   }
   // A pokemon already fighting elsewhere cannot be brought along: one
   // catch, one live battle
-  if (isAnyCatchLocked(owned.map((entry) => docData(entry)))) {
+  if (isAnyCatchLocked(owned)) {
     return null;
   }
   // Nor one that is down. Nothing revives on its own, so it is a
   // berry or a level before that pokemon fights again
-  if (owned.some((entry) => isFainted(asCaughtPokemon(docData(entry))))) {
+  if (owned.some((entry) => isFainted(asCaughtPokemon(entry)))) {
     return null;
   }
   // Nor one its owner has put away. A guarded pokemon is not to be
   // disturbed, and a raid is the loudest thing that could happen to it
-  if (owned.some((entry) => isGuardedRecord(docData(entry) ?? {}))) {
+  if (owned.some((entry) => isGuardedRecord(entry))) {
     return null;
   }
   // Nor one already waiting in another lobby, or in this one: a party
@@ -561,15 +527,21 @@ export async function joinRaid(
     return null;
   }
 
-  const team = db.collection(TEAM_COLLECTION).doc();
+  const teamId = newDocId();
 
-  await team.set({ player: uid, raid: lobby, catches });
-  await db
-    .collection(RAID_COLLECTION)
-    .doc(lobby)
-    .update({ teams: [...asStringArray(raid.teams), team.id] });
+  await tx(async (transaction) => {
+    await transaction`
+      insert into teams (id, player, raid_id) values (${teamId}, ${uid}, ${lobby})
+    `;
 
-  return team.id;
+    const rows = catches.map((caught, slot) => ({ team_id: teamId, slot, caught_id: caught }));
+
+    await transaction`
+      insert into team_catches ${transaction(rows, 'team_id', 'slot', 'caught_id')}
+    `;
+  });
+
+  return teamId;
 }
 
 /**
@@ -595,17 +567,14 @@ export async function publishTeamSnapshot(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const ref = db.collection(TEAM_SNAPSHOT_COLLECTION).doc();
+  const snapshotId = newDocId();
 
-  return db.runTransaction(async (transaction) => {
-    const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
-    const stored = await transaction.getAll(...refs);
+  return tx(async (transaction) => {
     const fielded: CatchSnapshot[] = [];
-    const locking: FirebaseFirestore.DocumentReference[] = [];
+    const locking: string[] = [];
 
-    for (const [at, entry] of stored.entries()) {
-      const data = docData(entry);
+    for (const id of catches) {
+      const data = await readCaughtIn(transaction, id);
 
       // A pokemon already fighting is left behind rather than fielded
       // twice: a player may sit in two lobbies with the same party,
@@ -620,8 +589,8 @@ export async function publishTeamSnapshot(
         !isGuardedRecord(data) &&
         !isFainted(asCaughtPokemon(data))
       ) {
-        fielded.push(createCatchSnapshot(entry.id, asCaughtPokemon(data)));
-        locking.push(refs[at]);
+        fielded.push(createCatchSnapshot(id, asCaughtPokemon(data)));
+        locking.push(id);
       }
     }
 
@@ -629,11 +598,14 @@ export async function publishTeamSnapshot(
       return null;
     }
 
-    transaction.set(ref, { player, alliance, catches: fielded });
-    for (const caught of locking) {
-      transaction.update(caught, lockFields(startedAt));
-    }
-    return ref.id;
+    await transaction`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${snapshotId}, ${player}, ${alliance}, ${jsonOf(transaction, fielded)})
+    `;
+    await transaction`
+      update caught set locked_at = ${startedAt} where id = any(${locking})
+    `;
+    return snapshotId;
   });
 }
 
@@ -644,9 +616,7 @@ export async function publishTeamSnapshot(
  * back inside a transaction, so a second start finds it taken
  */
 export async function startRaid(uid: string, lobby: string, now: number): Promise<string | null> {
-  const db = getAdminFirestore();
-  const raidRef = db.collection(RAID_COLLECTION).doc(lobby);
-  const stored = docData(await raidRef.get());
+  const stored = await readRaid(lobby);
 
   if (stored == null) {
     return null;
@@ -663,43 +633,31 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // pokemon for a battle it is not going to run. A claim whose teams
   // then field nothing leaves the raid pointing at a battle that was
   // never written, which reads as lost and restages
-  const battle = db.collection(BATTLE_COLLECTION).doc();
-  const claimed = await db.runTransaction(async (transaction) => {
-    const current = docData(await transaction.get(raidRef));
+  const battleId = newDocId();
+  const claimed = await getSql()`
+    update raids set battle_id = ${battleId}
+    where id = ${lobby} and battle_id is null
+  `;
 
-    if (current == null || current.battle != null) {
-      return false;
-    }
-    transaction.update(raidRef, { battle: battle.id });
-    return true;
-  });
+  if (claimed.count === 0) {
+    const current = await readRaid(lobby);
 
-  if (!claimed) {
-    const current = docData(await raidRef.get())?.battle;
-
-    return typeof current === 'string' ? current : null;
+    return typeof current?.battle === 'string' ? current.battle : null;
   }
 
-  const teams = await db.getAll(...raid.teams.map((id) => db.collection(TEAM_COLLECTION).doc(id)));
   const fielded: [string, string][] = [];
 
-  for (const entry of teams) {
-    const team = docData(entry);
+  for (const id of raid.teams) {
+    const team = await readTeam(id);
 
     if (team == null) {
       continue;
     }
 
-    const player = asString(team.player);
-    const snapshot = await publishTeamSnapshot(
-      player,
-      asStringArray(team.catches),
-      PLAYER_ALLIANCE,
-      now,
-    );
+    const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
 
     if (snapshot != null) {
-      fielded.push([player, snapshot]);
+      fielded.push([team.player, snapshot]);
     }
   }
 
@@ -708,24 +666,34 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   }
 
   // The boss stands alone: one perfect-IV catch snapshot, no owner
-  const boss = db.collection(TEAM_SNAPSHOT_COLLECTION).doc();
+  const bossId = newDocId();
 
-  await boss.set({
-    player: '',
-    alliance: BOSS_ALLIANCE,
-    catches: [createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow)],
-  });
+  await tx(async (transaction) => {
+    await transaction`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${bossId}, null, ${BOSS_ALLIANCE}, ${jsonOf(transaction, [
+        createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow),
+      ])})
+    `;
+    await transaction`
+      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      values (${battleId}, ${lobby}, ${raid.species}, ${BattleOutcome.Unfinished}, ${now},
+              ${UNLIMITED_BATTLE_LIMITS})
+    `;
 
-  await battle.set({
-    teams: [boss.id, ...fielded.map(([, snapshot]) => snapshot)],
-    players: [...new Set(fielded.map(([player]) => player))],
-    raid: lobby,
-    species: raid.species,
-    outcome: BattleOutcome.Unfinished,
-    startedAt: now,
-    // A raid adds no ceiling of its own: a party brings whatever it
-    // has managed to give its pokemon
-    limits: UNLIMITED_BATTLE_LIMITS,
+    const rows = [
+      { battle_id: battleId, position: 0, snapshot_id: bossId, player: null as string | null },
+      ...fielded.map(([player, snapshot], at) => ({
+        battle_id: battleId,
+        position: at + 1,
+        snapshot_id: snapshot,
+        player: player as string | null,
+      })),
+    ];
+
+    await transaction`
+      insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
+    `;
   });
 
   // The lobby's teams have done their work. What the fight runs on is
@@ -734,9 +702,9 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // checked for a pokemon queued twice. Left behind they would be one
   // stale document per raid ever staged, and `isAnyCatchQueued` would
   // go on finding parties that are fighting rather than waiting
-  await Promise.all(raid.teams.map(async (id) => db.collection(TEAM_COLLECTION).doc(id).delete()));
+  await getSql()`delete from teams where id = any(${raid.teams})`;
 
-  return battle.id;
+  return battleId;
 }
 
 /**
@@ -753,20 +721,14 @@ export async function finishBattle(
   battleId: string,
   outcome: BattleOutcome,
 ): Promise<boolean> {
-  const db = getAdminFirestore();
-  const ref = db.collection(BATTLE_COLLECTION).doc(battleId);
-  const stamped = await db.runTransaction(async (transaction) => {
-    const battle = docData(await transaction.get(ref));
-
-    if (battle == null || !new Set(asStringArray(battle.players)).has(uid)) {
-      return false;
-    }
-    if (asOutcome(battle.outcome) !== BattleOutcome.Unfinished) {
-      return false;
-    }
-    transaction.update(ref, { outcome });
-    return true;
-  });
+  const stamped =
+    (await foughtBattle(battleId, uid)) &&
+    (
+      await getSql()`
+        update battles set outcome = ${outcome}
+        where id = ${battleId} and outcome = ${BattleOutcome.Unfinished}
+      `
+    ).count > 0;
 
   if (stamped) {
     await releaseBattleLocks(battleId);
@@ -780,24 +742,23 @@ export async function finishBattle(
  * a landmark by claiming a victory that never happened
  */
 export async function clearRaid(uid: string, lobby: string): Promise<boolean> {
-  const db = getAdminFirestore();
-  const raidRef = db.collection(RAID_COLLECTION).doc(lobby);
-  const battleId = docData(await raidRef.get())?.battle;
+  const raid = await readRaid(lobby);
+  const battleId = raid?.battle;
 
   if (typeof battleId !== 'string') {
     return false;
   }
 
-  const battle = docData(await db.collection(BATTLE_COLLECTION).doc(battleId).get());
+  const battle = await readBattle(battleId);
 
   if (
     battle == null ||
     asOutcome(battle.outcome) !== BattleOutcome.Won ||
-    !new Set(asStringArray(battle.players)).has(uid)
+    !(await foughtBattle(battleId, uid))
   ) {
     return false;
   }
-  await raidRef.update({ cleared: true });
+  await getSql()`update raids set cleared = true where id = ${lobby}`;
   return true;
 }
 
@@ -819,8 +780,7 @@ export interface RaidReward {
  * wherever the player is standing now
  */
 export async function claimRaidReward(uid: string, lobby: string): Promise<RaidReward | null> {
-  const db = getAdminFirestore();
-  const stored = docData(await db.collection(RAID_COLLECTION).doc(lobby).get());
+  const stored = await readRaid(lobby);
 
   if (stored == null) {
     return null;
@@ -832,14 +792,14 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     return null;
   }
 
-  const battle = docData(await db.collection(BATTLE_COLLECTION).doc(raid.battle).get());
+  const battle = await readBattle(raid.battle);
 
   // Only the players who actually fielded a team are owed anything,
   // and only from a raid that was won
   if (
     battle == null ||
     asOutcome(battle.outcome) !== BattleOutcome.Won ||
-    !new Set(asStringArray(battle.players)).has(uid)
+    !(await foughtBattle(raid.battle, uid))
   ) {
     return null;
   }
@@ -849,16 +809,13 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   // a buddy burning a Luck Incense doubles the purse
   const overworld = createOverworld(uid, await resolveBuddy(uid));
   const gold = overworld.checkGoldReward(lobby, RAID_GOLD[raid.kind]);
-  const ref = db.collection(RAID_REWARD_COLLECTION).doc(`${lobby}:${uid}`);
-  const claimed = await db.runTransaction(async (transaction) => {
-    if ((await transaction.get(ref)).exists) {
-      return false;
-    }
-    transaction.set(ref, { player: uid, raid: lobby, gold });
-    return true;
-  });
+  const claimed = await getSql()`
+    insert into raid_rewards (raid_id, player, gold)
+    values (${lobby}, ${uid}, ${gold})
+    on conflict do nothing
+  `;
 
-  if (!claimed) {
+  if (claimed.count === 0) {
     return null;
   }
   await grantGold(uid, gold);

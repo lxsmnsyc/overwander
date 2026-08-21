@@ -1,7 +1,5 @@
 import 'server-only';
-import { FieldValue } from 'firebase-admin/firestore';
 import { asNumberArray } from '../auth/__normalize';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -9,10 +7,11 @@ import type { Species } from '../data/ids/species';
 import { Slots, getSlots } from '../data/constants/slots';
 import { getMovesLearnedAt, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { asNumber, asRecord } from './read';
 
 /**
  * Learning a move, written with admin credentials.
@@ -69,11 +68,8 @@ export async function learnMove(
   replaces: number,
   allowed: MoveSource,
 ): Promise<Moves[] | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     // An egg has learned nothing yet, a pokemon in a live battle is
     // fighting on a frozen copy of this list, and a locked one is
@@ -127,12 +123,19 @@ export async function learnMove(
     const forgotten = full ? known[over] : null;
 
     if (price != null) {
-      writeStackIn(transaction, ITEM_STACKS, uid, price, carried - 1);
+      await writeStackIn(transaction, ITEM_STACKS, uid, price, carried - 1);
     }
-    transaction.update(caughtRef, {
-      moves,
-      ...(forgotten == null ? {} : { [`movePoints.${forgotten}`]: FieldValue.delete() }),
-    });
+
+    // What was spent on a move goes with the move: replacing the move
+    // rows drops the forgotten one's points with it
+    const points: Record<string, number> = {};
+
+    for (const [kept, spent] of Object.entries(asRecord(caught.movePoints))) {
+      if (kept !== String(forgotten ?? '')) {
+        points[kept] = asNumber(spent);
+      }
+    }
+    await updateCaughtIn(transaction, catchId, { moves, movePoints: points });
     return moves;
   });
 }

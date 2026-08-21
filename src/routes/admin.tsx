@@ -71,8 +71,7 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
             <Standing title="Not for this account">
               <Note>
                 The dashboard is staff only, and this account is{' '}
-                {loaded().banned ? 'banned' : 'a player'}.{' '}
-                <A href="/">Back to the overworld.</A>
+                {loaded().banned ? 'banned' : 'a player'}. <A href="/">Back to the overworld.</A>
               </Note>
             </Standing>
           }

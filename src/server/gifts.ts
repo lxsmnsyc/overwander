@@ -1,9 +1,4 @@
 import 'server-only';
-import {
-  ENCOUNTER_COLLECTION,
-  GIFT_CLAIM_COLLECTION,
-  GIFT_COLLECTION,
-} from '../auth/collections';
 import { Acquisition } from '../auth/caught-record';
 import type { EncounterRecord } from '../auth/encounter-record';
 import type { CatchGift, EncounterGift, GiftRecord, MysteryGift } from '../auth/gift-record';
@@ -23,8 +18,9 @@ import deriveEncounter, { EncounterType } from '../overworld/encounter';
 import { writeCaughtRecord } from './caught';
 import { grantItem } from './inventory';
 import { recordSeenSpecies } from './pokedex';
-import { getAdminFirestore } from './firebase';
-import { docData } from './read';
+import { getSql, jsonOf, tx } from './db';
+import { writeEncounter } from './encounter-io';
+import { asRecord, asString } from './read';
 
 /**
  * The gifts the game gives.
@@ -86,11 +82,6 @@ function giftId(gift: string, uid: string): string {
   return `${gift}:${uid}`;
 }
 
-/** The claim's document, one per offer and taker */
-function claimId(gift: string, uid: string): string {
-  return `${gift}:${uid}`;
-}
-
 /**
  * One gift, ready to be written down
  */
@@ -110,23 +101,22 @@ interface Offer {
  * which is the ordinary answer for anybody who has played before
  */
 async function offer(player: string | null, offers: Offer[], now: number): Promise<boolean> {
-  const db = getAdminFirestore();
-  const refs = offers.map(({ id }) => db.collection(GIFT_COLLECTION).doc(id));
+  return tx(async (transaction) => {
+    const stored = await transaction`
+      select 1 from gifts where id = any(${offers.map(({ id }) => id)})
+    `;
 
-  return db.runTransaction(async (transaction) => {
-    const stored = await transaction.getAll(...refs);
-
-    if (stored.some((document) => document.exists)) {
+    if (stored.length > 0) {
       return false;
     }
-    refs.forEach((ref, at) => {
-      transaction.set(ref, {
-        player,
-        gift: offers[at].gift,
-        offeredAt: now,
-        encounter: offers[at].encounter,
-      });
-    });
+    for (const entry of offers) {
+      await transaction`
+        insert into gifts (id, player, offered_at, gift, encounter)
+        values (${entry.id}, ${player}, ${now},
+                ${jsonOf(transaction, entry.gift)},
+                ${entry.encounter == null ? null : jsonOf(transaction, entry.encounter)})
+      `;
+    }
     return true;
   });
 }
@@ -163,11 +153,7 @@ function giftPlace(now: number): ChunkSnapshot {
  * one pokemon whose coat was decided by whoever wrote it — searching
  * for a roll that happened to agree would be a search for nothing
  */
-function rollGift(
-  observer: string,
-  gift: CatchGift | EncounterGift,
-  now: number,
-): EncounterRecord {
+function rollGift(observer: string, gift: CatchGift | EncounterGift, now: number): EncounterRecord {
   const rng = new AleaRNG(`${observer}:${gift.id}`);
   const rolled = deriveEncounter(
     giftPlace(now),
@@ -435,32 +421,34 @@ function expired(gift: MysteryGift, now: number): boolean {
 export async function listMysteryGifts(uid: string, now: number): Promise<MysteryGift[]> {
   await ensureStarterGifts(now);
 
-  const db = getAdminFirestore();
-  const gifts = db.collection(GIFT_COLLECTION);
-  // Two queries rather than one: an offer is theirs or it is nobody's,
-  // and "this uid or null" is a disjunction a document store answers
-  // by being asked twice
-  const [mine, open] = await Promise.all([
-    gifts.where('player', '==', uid).get(),
-    gifts.where('player', '==', null).get(),
-  ]);
-  const standing = [...mine.docs, ...open.docs]
-    .map((document) => ({ id: document.id, record: asGiftRecord(document.data()) }))
+  // Theirs or nobody's, in one ask: the disjunction the old store
+  // answered with two queries is one WHERE here, and the claims come
+  // off in the same statement
+  const rows = await getSql()`
+    select g.id, g.player, g.offered_at, g.gift, g.encounter
+    from gifts g
+    where (g.player = ${uid} or g.player is null)
+      and not exists (
+        select 1 from gift_claims c where c.gift_id = g.id and c.player = ${uid}
+      )
+  `;
+  const standing = rows
+    .map((entry) => {
+      const row = asRecord(entry);
+
+      return {
+        id: asString(row.id),
+        record: asGiftRecord({
+          player: row.player,
+          gift: row.gift,
+          offeredAt: row.offered_at,
+          encounter: row.encounter,
+        }),
+      };
+    })
     .filter(({ record }) => !expired(record.gift, now));
 
-  if (standing.length === 0) {
-    return [];
-  }
-
-  // What they have already taken, in one read: a claim is a document
-  // per gift and taker, so the whole answer is a `getAll` of the ids
-  // this shelf could hold
-  const claims = await db.getAll(
-    ...standing.map(({ id }) => db.collection(GIFT_CLAIM_COLLECTION).doc(claimId(id, uid))),
-  );
-  const taken = new Set(claims.filter((claim) => claim.exists).map((claim) => claim.id));
-
-  return standing.filter(({ id }) => !taken.has(claimId(id, uid))).map(({ record }) => asShown(record));
+  return standing.map(({ record }) => asShown(record));
 }
 
 /**
@@ -517,15 +505,25 @@ async function stageGiftEncounter(
   gift: string,
   encounter: EncounterRecord,
 ): Promise<void> {
-  const ref = getAdminFirestore().collection(ENCOUNTER_COLLECTION).doc(`${gift}:${uid}`);
+  // Idempotent by key: a second staging of the same gift writes
+  // nothing, so a retry cannot re-roll or double-count
+  const staged = await tx(async (transaction) => {
+    const rows = await transaction`
+      select 1 from encounters where spawn_id = ${gift} and player = ${uid}
+    `;
 
-  if (docData(await ref.get()) != null) {
-    return;
+    if (rows.length > 0) {
+      return false;
+    }
+    await writeEncounter(transaction, encounter);
+    return true;
+  });
+
+  if (staged) {
+    // Met, whatever becomes of the meeting: the dex counts what a
+    // player has laid eyes on
+    await recordSeenSpecies(uid, encounter.species, encounter.shiny);
   }
-  await ref.set(encounter);
-  // Met, whatever becomes of the meeting — the dex counts what a
-  // player has laid eyes on
-  await recordSeenSpecies(uid, encounter.species, encounter.shiny);
 }
 
 /**
@@ -543,27 +541,36 @@ export async function claimMysteryGift(
   offset: number,
   locale: string,
 ): Promise<GiftClaim | null> {
-  const db = getAdminFirestore();
-  const ref = db.collection(GIFT_COLLECTION).doc(gift);
-  const claim = db.collection(GIFT_CLAIM_COLLECTION).doc(claimId(gift, uid));
+  const taken = await tx(async (transaction) => {
+    const rows = await transaction`
+      select player, gift, offered_at, encounter from gifts where id = ${gift}
+    `;
 
-  const taken = await db.runTransaction(async (transaction) => {
-    const [stored, already] = await transaction.getAll(ref, claim);
-
-    if (!stored.exists || already.exists) {
+    if (rows.at(0) == null) {
       return null;
     }
 
-    const record = asGiftRecord(stored.data());
+    const found = asRecord(rows[0]);
+    const record = asGiftRecord({
+      player: found.player,
+      gift: found.gift,
+      offeredAt: found.offered_at,
+      encounter: found.encounter,
+    });
 
-    if (
-      (record.player != null && record.player !== uid) ||
-      expired(record.gift, now)
-    ) {
+    if ((record.player != null && record.player !== uid) || expired(record.gift, now)) {
       return null;
     }
-    transaction.set(claim, { gift, player: uid, claimedAt: now, catchId: null });
-    return record;
+
+    // The claim is the whole race: written before anything is handed
+    // over, and a second press finds the row already there
+    const claimed = await transaction`
+      insert into gift_claims (gift_id, player, claimed_at, catch_id)
+      values (${gift}, ${uid}, ${now}, null)
+      on conflict do nothing
+    `;
+
+    return claimed.count > 0 ? record : null;
   });
 
   if (taken == null) {
@@ -609,6 +616,9 @@ export async function claimMysteryGift(
 
   // The claim says which record it became, so what a player was given
   // can be followed to what they now own
-  await claim.set({ catchId }, { merge: true });
+  await getSql()`
+    update gift_claims set catch_id = ${catchId}
+    where gift_id = ${gift} and player = ${uid}
+  `;
   return { gift: taken.gift, catchId, encounter: null };
 }

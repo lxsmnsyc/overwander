@@ -1,7 +1,7 @@
 import type Biome from '../data/ids/biome';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { PortalDestination } from '../overworld/portal';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import usePortalOnServerSide from '../server/portals';
 import { syncServerClock } from './clock';
 import getIdToken from './session';

@@ -13,12 +13,13 @@
 - [ ] catch tags
 - [ ] group by generation
 - [ ] tileset
+- [ ] type field in catch/encounter
 
 Held items blocked on engine features (13): the four terrain seeds and Terrain Extender (no terrain), Heavy-Duty Boots (no entry hazards), Room Service (no Trick Room)
 
 Held items I'd leave alone (22): the signature items whose species are past gen 1 — Adamant/Lustrous/Griseous/Red/Blue Orb, Soul Dew, Rusted Sword and Shield, the four Genesect drives.
 
-Battle items — Max Mushrooms. 
+Battle items — Max Mushrooms.
 
 Medicine — 21 missing. The interesting ones: Ether / Max Ether / Elixir / Max Elixir, which map cleanly onto clearing cooldowns the way the Leppa Berry already does; Rare Candy; Sacred Ash (revive the whole party); Ability Capsule.
 

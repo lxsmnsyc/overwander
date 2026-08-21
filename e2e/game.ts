@@ -53,11 +53,20 @@ export function newPlayer(): Player {
 export async function signIn(page: Page, player: Player = newPlayer()): Promise<Player> {
   await page.goto('/');
 
-  await page.getByPlaceholder('Email').fill(player.email);
-  await page.getByPlaceholder('Password').fill(player.password);
-  await page.getByRole('button', { name: 'Register', exact: true }).click();
+  // Filled and pressed again if the world does not arrive: a fill that
+  // lands before the page has hydrated is wiped with the DOM it typed
+  // into, and the local auth service answers an occasional signup with
+  // a 504. Neither is what any spec is testing
+  const register = page.getByRole('button', { name: 'Register', exact: true });
 
-  await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
+  await expect(async () => {
+    if (await register.isVisible()) {
+      await page.getByPlaceholder('Email').fill(player.email);
+      await page.getByPlaceholder('Password').fill(player.password);
+      await register.click();
+    }
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
+  }).toPass({ timeout: 60_000 });
   return player;
 }
 
@@ -188,6 +197,42 @@ export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): P
 
   await expectOpen(dialog);
   return dialog;
+}
+
+/**
+ * Open the sheet's Actions menu and press one of its entries.
+ *
+ * The sheet recentres as its late reads land, and an entry clicked
+ * mid-move lands outside the panel — which the menu reads as an
+ * outside click and closes. So the pair is retried from scratch:
+ * reopen if it shut, then press
+ */
+export async function chooseAction(page: Page, sheet: Locator, action: string): Promise<void> {
+  const trigger = sheet.getByRole('button', { name: /Actions/ });
+  const item = page.getByRole('menuitem', { name: action, exact: true });
+
+  await expect(async () => {
+    // An entry that opens a dialog can swap the whole sheet away
+    // beneath it — the sheet holds itself shut while the smaller
+    // question is up — so a vanished trigger is a taken press, not
+    // something to retry
+    if (!(await trigger.isVisible())) {
+      return;
+    }
+    // Dispatched rather than aimed: the sheet recentres and remounts
+    // as its late reads land, and a pointer press aimed at where the
+    // menu stood a frame ago lands on the overlay behind it, closing
+    // the sheet. A dispatched click reaches the entry wherever it is,
+    // and the menu closing on it is the sign it was taken
+    if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
+      await trigger.dispatchEvent('click');
+    }
+    await expect(item).toBeVisible({ timeout: 2000 });
+    await item.dispatchEvent('click');
+    // Taken means gone: the entry leaves with the closing panel once
+    // the fade ends, and with the whole menu when the sheet swaps
+    await expect(item).not.toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: CLAIMED });
 }
 
 /**

@@ -1,6 +1,5 @@
 import 'server-only';
 import { asCaughtPokemon, getMovePoints } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { assignEffort as assignedValues, unusedEffort } from '../auth/effort';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
@@ -13,10 +12,10 @@ import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins'
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { PP_UP_LIMIT, getMovePP } from '../data/moves';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
-import { docData } from './read';
 
 /**
  * Training, written with admin credentials.
@@ -81,11 +80,8 @@ export async function trainEffort(
   stat: Stats,
   amount: number,
 ): Promise<TrainingResult | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readCaughtIn(transaction, catchId);
 
     // A pokemon fights as the snapshot froze it, and an egg has not
     // taken a level of its own yet. A locked one is refused as well:
@@ -110,7 +106,7 @@ export async function trainEffort(
 
     const trained = { ...record, effortValues };
 
-    transaction.update(ref, {
+    await updateCaughtIn(transaction, catchId, {
       effortValues,
       // Effort in health is a bigger pool, and the share of it the
       // pokemon was carrying is what it keeps
@@ -162,11 +158,8 @@ export async function useEffortItem(
   }
 
   const [stat, amount] = grant;
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readCaughtIn(transaction, catchId);
 
     if (
       stored == null ||
@@ -199,8 +192,8 @@ export async function useEffortItem(
     // finding, or a vitamin worth buying, at any level
     const trained = { ...record, effortValues, effortBonus: record.effortBonus + gained };
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
-    transaction.update(ref, {
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    await updateCaughtIn(transaction, catchId, {
       effortValues,
       effortBonus: trained.effortBonus,
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
@@ -250,11 +243,8 @@ export async function usePPItem(
     return null;
   }
 
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readCaughtIn(transaction, catchId);
 
     if (
       stored == null ||
@@ -288,10 +278,12 @@ export async function usePPItem(
       return null;
     }
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
-    // Written at the one field path, so two moves trained in the same
-    // breath cannot overwrite each other's points
-    transaction.update(ref, { [`movePoints.${move}`]: points });
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    // The points ride on the move's own row, so two moves trained in
+    // the same breath cannot overwrite each other
+    await updateCaughtIn(transaction, catchId, {
+      movePoints: { ...record.movePoints, [move]: points },
+    });
     return { move, points, pp: getMovePP(move, points) };
   });
 }
@@ -321,11 +313,8 @@ export async function feedEffortBerry(
     return null;
   }
 
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readCaughtIn(transaction, catchId);
 
     if (
       stored == null ||
@@ -354,8 +343,8 @@ export async function feedEffortBerry(
     const friendship = gainFriendship(record.friendship, 'berry', 1, friendshipFactor(record.ball));
     const trained = { ...record, effortValues, friendship };
 
-    writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
-    transaction.update(ref, {
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+    await updateCaughtIn(transaction, catchId, {
       effortValues,
       friendship,
       // A smaller pool takes the same share of health with it, so a

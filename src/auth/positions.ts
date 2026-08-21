@@ -1,9 +1,8 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
-import { POSITION_COLLECTION } from './collections';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase from './supabase';
+import { asRecord } from './__normalize';
 import { type PositionRecord, asPositionRecord } from './position-record';
 import getIdToken from './session';
 
@@ -23,10 +22,26 @@ export type { PositionRecord } from './position-record';
  * anywhere — a new player is placed by `pickStartPosition` instead
  */
 export async function getPosition(uid: string): Promise<PositionRecord | null> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), POSITION_COLLECTION, uid));
-  const data = snapshot.data();
+  const { data } = await getSupabase()
+    .from('positions')
+    .select('player, chunk_x, chunk_y, cell_x, cell_y, moved_at')
+    .eq('player', uid)
+    .maybeSingle();
 
-  return data == null ? null : asPositionRecord(data);
+  if (data == null) {
+    return null;
+  }
+
+  const row = asRecord(data);
+
+  return asPositionRecord({
+    player: row.player,
+    chunkX: row.chunk_x,
+    chunkY: row.chunk_y,
+    cellX: row.cell_x,
+    cellY: row.cell_y,
+    movedAt: row.moved_at,
+  });
 }
 
 /**

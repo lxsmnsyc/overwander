@@ -2,22 +2,11 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import {
-  type FirestoreDataConverter,
-  type Unsubscribe,
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  runTransaction,
-  where,
-} from 'firebase/firestore';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
-import { type SnapshotRecord, asSnapshotRecord, spawnId, windowId } from './snapshot-record';
-import { requireUid } from '../server/firebase';
+import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
+import { requireUid } from '../server/auth';
 import {
   type NestOffer,
   claimBerryPatch as claimBerryOnServerSide,
@@ -29,22 +18,41 @@ import {
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
 import { serverNow, syncServerClock } from './clock';
+import { asRecord, asRecordArray } from './__normalize';
 import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
-import { SNAPSHOT_COLLECTION } from './collections';
 import type { EncounterRecord } from './encounter-record';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
 
-const snapshotConverter: FirestoreDataConverter<SnapshotRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => asSnapshotRecord(snapshot.data()),
-};
+/** The stored window plus its spawn rows, in the record shape */
+async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<SnapshotRecord | null> {
+  const { data } = await getSupabase()
+    .from('snapshots')
+    .select(
+      'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
+    )
+    .eq('chunk_seed', chunk.seed)
+    .eq('zone', toZoneKey(asOffset(offset)))
+    .maybeSingle();
 
-/**
- * The document a chunk's window lives at, one per zone
- */
-function chunkWindowId(chunk: Chunk, offset: number): string {
-  return windowId(chunk.seed, toZoneKey(offset));
+  return data == null ? null : fromSnapshotRow(asRecord(data));
+}
+
+function fromSnapshotRow(row: Record<string, unknown>): SnapshotRecord {
+  const spawns = asRecordArray(row.snapshot_spawns).sort(
+    (left, right) => Number(left.idx ?? 0) - Number(right.idx ?? 0),
+  );
+
+  return asSnapshotRecord({
+    seed: row.chunk_seed,
+    offset: row.utc_offset,
+    timestamp: row.window_at,
+    spawns: spawns.map((entry) => ({
+      species: entry.species,
+      individualValue: entry.individual_value,
+      traitValue: entry.trait_value,
+    })),
+  });
 }
 
 /**
@@ -58,51 +66,52 @@ async function resolveSnapshotWindow(
   offset: number,
   count: number,
 ): Promise<SnapshotRecord> {
-  const db = getFirebaseFirestore();
-  const ref = doc(db, SNAPSHOT_COLLECTION, chunkWindowId(chunk, offset)).withConverter(
-    snapshotConverter,
-  );
-
   // The instant must come from the server's clock: a player whose
   // device is skewed would otherwise refresh a live window early or
   // hold an expired one. Only the zone it is read in is the player's
   await syncServerClock();
 
-  return runTransaction(db, async (transaction) => {
-    const existing = (await transaction.get(ref)).data();
-    const now = toLocalTime(serverNow(), offset);
+  const existing = await readSnapshotWindow(chunk, offset);
+  const now = toLocalTime(serverNow(), offset);
 
-    // A live window is adopted whole — its spawns are what everybody
-    // in this zone is looking at. One written before the spawns moved
-    // in has none, so it is rolled again rather than shown empty
-    if (
-      existing != null &&
-      now < existing.timestamp + SNAPSHOT_INTERVAL &&
-      existing.spawns.length > 0
-    ) {
-      return existing;
-    }
+  // A live window is adopted whole; its spawns are what everybody in
+  // this zone is looking at. One written before the spawns moved in
+  // has none, so it is rolled again rather than shown empty
+  if (
+    existing != null &&
+    now < existing.timestamp + SNAPSHOT_INTERVAL &&
+    existing.spawns.length > 0
+  ) {
+    return existing;
+  }
 
-    const timestamp = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
-    // The rolls come from the window itself, so whoever writes it
-    // writes what everyone else will read: one document, one write,
-    // and no stale spawns left behind to sweep up
-    const record: SnapshotRecord = {
-      seed: chunk.seed,
-      offset: asOffset(offset),
-      timestamp,
-      spawns: new ChunkSnapshot(chunk, timestamp, offset)
-        .getSpawns(count)
-        .map(([species, individualValue, traitValue]) => ({
-          species,
-          individualValue,
-          traitValue,
-        })),
-    };
+  const timestamp = Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+  const record: SnapshotRecord = {
+    seed: chunk.seed,
+    offset: asOffset(offset),
+    timestamp,
+    spawns: new ChunkSnapshot(chunk, timestamp, offset)
+      .getSpawns(count)
+      .map(([species, individualValue, traitValue]) => ({
+        species,
+        individualValue,
+        traitValue,
+      })),
+  };
 
-    transaction.set(ref, record);
-    return record;
+  // The publish is a definer function: shape-checked, and monotonic,
+  // so two racing publishers converge on one stored window and a
+  // stale one changes nothing. What is stored is re-read afterwards
+  // rather than assumed, since the race may have been lost
+  await getSupabase().rpc('publish_snapshot', {
+    p_seed: chunk.seed,
+    p_zone: toZoneKey(asOffset(offset)),
+    p_offset: asOffset(offset),
+    p_window: timestamp,
+    p_spawns: record.spawns,
   });
+
+  return (await readSnapshotWindow(chunk, offset)) ?? record;
 }
 
 /**
@@ -127,14 +136,14 @@ export async function getChunkSnapshot(
  * showing right now, once per zone anybody has walked it from
  */
 export async function listChunkWindows(seed: string): Promise<SnapshotRecord[]> {
-  const found = await getDocs(
-    query(
-      collection(getFirebaseFirestore(), SNAPSHOT_COLLECTION).withConverter(snapshotConverter),
-      where('seed', '==', seed),
-    ),
-  );
+  const { data } = await getSupabase()
+    .from('snapshots')
+    .select(
+      'chunk_seed, zone, utc_offset, window_at, snapshot_spawns(idx, species, individual_value, trait_value)',
+    )
+    .eq('chunk_seed', seed);
 
-  return found.docs.map((document) => document.data());
+  return asRecordArray(data).map(fromSnapshotRow);
 }
 
 /**
@@ -146,16 +155,13 @@ export function watchSnapshotWindow(
   chunk: Chunk,
   offset: number,
   onChange: (record: SnapshotRecord | null) => void,
-): Unsubscribe {
-  const ref = doc(
-    getFirebaseFirestore(),
-    SNAPSHOT_COLLECTION,
-    chunkWindowId(chunk, offset),
-  ).withConverter(snapshotConverter);
-
-  return onSnapshot(ref, (snapshot) => {
-    onChange(snapshot.data() ?? null);
-  });
+): Unwatch {
+  return watchTable(
+    'snapshots',
+    [`chunk_seed=eq.${chunk.seed}`],
+    async () => readSnapshotWindow(chunk, offset),
+    onChange,
+  );
 }
 
 /**

@@ -209,10 +209,9 @@ describe('packing each picture once', () => {
         const frame = frames[row * 6 + column];
         const spot = spots[frame.cell];
 
-        expect(
-          frameOf(packed, spot.x, spot.y, 5, 5, frame.flip),
-          `frame ${row},${column}`,
-        ).toBe(frameOf(source, column * 5, row * 5, 5, 5));
+        expect(frameOf(packed, spot.x, spot.y, 5, 5, frame.flip), `frame ${row},${column}`).toBe(
+          frameOf(source, column * 5, row * 5, 5, 5),
+        );
       }
     }
   });

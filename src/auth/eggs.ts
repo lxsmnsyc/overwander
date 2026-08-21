@@ -1,6 +1,6 @@
 import type { Species } from '../data/ids/species';
 import { type WalkReport, hatchEgg as hatchOnServerSide, recordSteps } from '../server/eggs';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import { syncServerClock } from './clock';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';

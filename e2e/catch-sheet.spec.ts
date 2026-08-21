@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { SHEET, claimStarter, offCentre, openCatch, signIn } from './game';
+import { SHEET, chooseAction, claimStarter, offCentre, openCatch, signIn } from './game';
 
 /**
  * One pokemon in full.
@@ -105,8 +105,7 @@ test.describe('the catch sheet', () => {
       }).observe(document.body, { childList: true, subtree: true });
     });
 
-    await sheet.getByRole('button', { name: /Actions/ }).click();
-    await page.getByRole('menuitem', { name: 'Favorite', exact: true }).click();
+    await chooseAction(page, sheet, 'Favorite');
 
     // The record came back marked: the menu now offers to undo it
     await sheet.getByRole('button', { name: /Actions/ }).click();
@@ -127,8 +126,7 @@ test.describe('the catch sheet', () => {
     // until somebody says otherwise
     const species = (await sheet.getByRole('heading', { level: 3 }).first().textContent()) ?? '';
 
-    await sheet.getByRole('button', { name: /Actions/ }).click();
-    await page.getByRole('menuitem', { name: 'Set nickname' }).click();
+    await chooseAction(page, sheet, 'Set nickname');
 
     // The box is there to type in the moment it opens, rather than
     // behind a "do you want to rename it?" step
@@ -151,8 +149,7 @@ test.describe('the catch sheet', () => {
     await expect(sheet.getByText(species.replace('✦ ', ''), { exact: true })).toBeVisible();
 
     // ...and the menu offers to change it rather than to set one
-    await sheet.getByRole('button', { name: /Actions/ }).click();
-    await page.getByRole('menuitem', { name: 'Change nickname' }).click();
+    await chooseAction(page, sheet, 'Change nickname');
     await expect(box).toHaveValue('Sir Scratch');
 
     // Emptying the box hands the pokemon back to its species

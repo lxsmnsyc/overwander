@@ -1,13 +1,11 @@
 import 'server-only';
-import { POSITION_COLLECTION } from '../auth/collections';
 import {
   type PositionRecord,
   asCellCoordinate,
   asChunkCoordinate,
   asPositionRecord,
 } from '../auth/position-record';
-import { getAdminFirestore } from './firebase';
-import { docData } from './read';
+import { getSql } from './db';
 
 /**
  * Where a player is, written with admin credentials.
@@ -37,17 +35,15 @@ export default async function savePosition(
   cellY: number,
   now: number,
 ): Promise<void> {
-  await getAdminFirestore()
-    .collection(POSITION_COLLECTION)
-    .doc(uid)
-    .set({
-      player: uid,
-      chunkX: asChunkCoordinate(chunkX),
-      chunkY: asChunkCoordinate(chunkY),
-      cellX: asCellCoordinate(cellX),
-      cellY: asCellCoordinate(cellY),
-      movedAt: now,
-    });
+  await getSql()`
+    insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, moved_at)
+    values (${uid}, ${asChunkCoordinate(chunkX)}, ${asChunkCoordinate(chunkY)},
+            ${asCellCoordinate(cellX)}, ${asCellCoordinate(cellY)}, ${now})
+    on conflict (player) do update set
+      chunk_x = excluded.chunk_x, chunk_y = excluded.chunk_y,
+      cell_x = excluded.cell_x, cell_y = excluded.cell_y,
+      moved_at = excluded.moved_at
+  `;
 }
 
 /**
@@ -58,9 +54,11 @@ export default async function savePosition(
  * of, and the wrong answer for the profile a lobby opens
  */
 export async function readPosition(uid: string): Promise<PositionRecord | null> {
-  const stored = docData(
-    await getAdminFirestore().collection(POSITION_COLLECTION).doc(uid).get(),
-  );
+  const rows = await getSql()`
+    select player, chunk_x as "chunkX", chunk_y as "chunkY",
+           cell_x as "cellX", cell_y as "cellY", moved_at as "movedAt"
+    from positions where player = ${uid}
+  `;
 
-  return stored == null ? null : asPositionRecord(stored);
+  return rows.at(0) == null ? null : asPositionRecord(rows[0]);
 }

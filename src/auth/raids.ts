@@ -2,24 +2,12 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  type Unsubscribe,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { asString } from './__normalize';
+import { asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import type { RaidReward } from '../server/raids';
 import {
   claimRaidReward as claimRewardOnServerSide,
@@ -31,10 +19,9 @@ import {
   peekRaid as peekOnServer,
   startRaid as startOnServer,
 } from '../server/raids';
-import { RAID_COLLECTION, RAID_REWARD_COLLECTION } from './collections';
 import { syncServerClock } from './clock';
 import { asOffset } from './local-time';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
 
 export {
@@ -52,27 +39,57 @@ export type { RaidRecord, RaidView } from './raid-record';
  */
 export { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../overworld/raid';
 
-const converter: FirestoreDataConverter<RaidRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => asRaidRecord(snapshot.data()),
-};
+const RAID_TABLE = 'raids';
 
-function getRaidRef(id: string): DocumentReference<RaidRecord> {
-  return doc(getFirebaseFirestore(), RAID_COLLECTION, id).withConverter(converter);
+const RAID_EMBED = '*, teams(id, joined_seq)';
+
+/** One raid row plus its team list, in the record shape */
+function fromRaidRow(row: Record<string, unknown>): RaidRecord {
+  const teams = asRecordArray(row.teams).sort(
+    (left, right) => Number(left.joined_seq ?? 0) - Number(right.joined_seq ?? 0),
+  );
+
+  return asRaidRecord({
+    kind: row.kind,
+    lair: row.lair,
+    species: row.species,
+    traitValue: row.trait_value,
+    host: row.host,
+    teams: teams.map((entry) => String(entry.id)),
+    battle: row.battle_id,
+    timestamp: row.window_at,
+    offset: row.utc_offset,
+    chunk: { seed: row.chunk_seed, x: row.chunk_x, y: row.chunk_y },
+    biome: row.biome,
+    cell: row.cell,
+    cleared: row.cleared,
+  });
 }
 
 export async function getRaid(id: string): Promise<RaidRecord | null> {
-  return (await getDoc(getRaidRef(id))).data() ?? null;
+  const { data }: { data: unknown } = await getSupabase()
+    .from(RAID_TABLE)
+    .select(RAID_EMBED)
+    .eq('id', id)
+    .maybeSingle();
+
+  return data == null ? null : fromRaidRow(asRecord(data));
 }
 
 /**
  * Follow a lobby: teams join and leave it, and the host's start
  * writes the battle id everyone else is waiting on
  */
-export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unsubscribe {
-  return onSnapshot(getRaidRef(id), (snapshot) => {
-    onChange(snapshot.data() ?? null);
-  });
+export function watchRaid(id: string, onChange: (raid: RaidRecord | null) => void): Unwatch {
+  // The teams table pings too: a join is an INSERT there, not an
+  // UPDATE of the lobby row, and the lobby view is both together
+  const unwatchRow = watchRow(RAID_TABLE, `id=eq.${id}`, async () => getRaid(id), onChange);
+  const unwatchTeams = watchTable('teams', [`raid_id=eq.${id}`], async () => getRaid(id), onChange);
+
+  return () => {
+    unwatchRow();
+    unwatchTeams();
+  };
 }
 
 /**
@@ -83,21 +100,10 @@ export function watchLiveRaids(
   raidTimestamp: number,
   offset: number,
   onChange: (raids: [string, RaidRecord][]) => void,
-): Unsubscribe {
-  const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
-
-  // The window is local, so two zones can floor to the same one; the
-  // offset is what keeps a listing to the lobbies of its own world
-  return onSnapshot(
-    query(raids, where('timestamp', '==', raidTimestamp), where('offset', '==', asOffset(offset))),
-    (result) => {
-      onChange(
-        result.docs
-          .map((entry): [string, RaidRecord] => [entry.id, entry.data()])
-          .filter(([, raid]) => raid.battle == null && !raid.cleared),
-      );
-    },
-  );
+): Unwatch {
+  // Unfiltered on purpose: a lobby starting or clearing leaves the
+  // set by UPDATE, which the set's own filter would never deliver
+  return watchTable(RAID_TABLE, [], async () => listLiveRaids(raidTimestamp, offset), onChange);
 }
 
 /**
@@ -234,14 +240,17 @@ export async function listLiveRaids(
   raidTimestamp: number,
   offset: number,
 ): Promise<[string, RaidRecord][]> {
-  const raids = collection(getFirebaseFirestore(), RAID_COLLECTION).withConverter(converter);
-  const result = await getDocs(
-    query(raids, where('timestamp', '==', raidTimestamp), where('offset', '==', asOffset(offset))),
-  );
+  // The window is local, so two zones can floor to the same one; the
+  // offset is what keeps a listing to the lobbies of its own world
+  const { data } = await getSupabase()
+    .from(RAID_TABLE)
+    .select(RAID_EMBED)
+    .eq('window_at', raidTimestamp)
+    .eq('utc_offset', asOffset(offset))
+    .is('battle_id', null)
+    .eq('cleared', false);
 
-  return result.docs
-    .map((entry): [string, RaidRecord] => [entry.id, entry.data()])
-    .filter(([, raid]) => raid.battle == null && !raid.cleared);
+  return asRecordArray(data).map((row) => [String(row.id), fromRaidRow(row)]);
 }
 
 /**
@@ -319,10 +328,9 @@ async function claimRewardOnServer(token: string, id: string): Promise<RaidRewar
  * The raids this player has already collected from
  */
 export async function listClaimedRaids(uid: string): Promise<Set<string>> {
-  const claims = collection(getFirebaseFirestore(), RAID_REWARD_COLLECTION);
-  const result = await getDocs(query(claims, where('player', '==', uid)));
+  const { data } = await getSupabase().from('raid_rewards').select('raid_id').eq('player', uid);
 
-  return new Set(result.docs.map((entry) => asString(entry.data().raid)));
+  return new Set(((data ?? []) as { raid_id: unknown }[]).map((row) => asString(row.raid_id)));
 }
 
 /**

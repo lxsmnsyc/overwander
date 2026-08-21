@@ -1,11 +1,11 @@
 import 'server-only';
-import { PROFILE_COLLECTION, RAID_COLLECTION } from '../auth/collections';
 import { type RaidKind, asRaidRecord, getRaidTitle } from '../auth/raid-record';
 import type { Species } from '../data/ids/species';
-import { getAdminAuth, getAdminFirestore } from './firebase';
+import getAdminApi from './admin-api';
+import { getSql } from './db';
 import type { PositionRecord } from '../auth/position-record';
 import { readPosition } from './positions';
-import { asNumber, asString, docData } from './read';
+import { asNumber, asRecord, asString } from './read';
 
 /**
  * What the dashboard reads.
@@ -90,60 +90,62 @@ export interface PlayerRow {
 /**
  * Every account, newest first, filtered by name or address.
  *
- * The two halves of a player live apart: the address is in Firebase
+ * The two halves of a player live apart: the address is in Supabase
  * Auth and everything else is in the profile document, so both are
  * read and joined by uid. An account with no profile yet is still a
  * player — it is somebody who signed in and closed the tab — so it is
  * listed with whatever the auth record knows
  */
 export async function listPlayers(search: string, page: number): Promise<Listing<PlayerRow>> {
-  const auth = getAdminAuth();
+  const api = getAdminApi();
   const accounts: PlayerRow[] = [];
-  let token: string | undefined;
+  let pageAt = 1;
 
-  do {
-    const batch = await auth.listUsers(1_000, token);
+  for (;;) {
+    const { data, error } = await api.auth.admin.listUsers({ page: pageAt, perPage: 1_000 });
 
-    for (const account of batch.users) {
+    if (error != null || data.users.length === 0) {
+      break;
+    }
+    for (const account of data.users) {
       accounts.push({
-        uid: account.uid,
-        nickname: account.displayName ?? '',
+        uid: account.id,
+        nickname: '',
         email: account.email ?? '',
         gold: 0,
         role: '',
         banned: false,
         banReason: '',
-        createdAt: Date.parse(account.metadata.creationTime),
+        createdAt: Date.parse(account.created_at) || 0,
         position: null,
       });
     }
-    token = batch.pageToken;
-  } while (token != null && accounts.length < SCAN_LIMIT);
+    pageAt += 1;
+    if (accounts.length >= SCAN_LIMIT || data.users.length < 1_000) {
+      break;
+    }
+  }
 
   const capped = accounts.length >= SCAN_LIMIT;
 
-  // The profiles in one read rather than one read each: `getAll` takes
-  // the lot, and a missing document comes back as a snapshot that
-  // says so
-  const db = getAdminFirestore();
-  const stored = await Promise.all(
-    chunked(accounts, 200).map(async (some) =>
-      db.getAll(...some.map((row) => db.collection(PROFILE_COLLECTION).doc(row.uid))),
-    ),
-  );
+  // The profiles in one query rather than one read each
+  const stored = await getSql()`
+    select id, nickname, gold, role, banned, ban_reason
+    from profiles where id = any(${accounts.map((row) => row.uid)})
+  `;
+  const profiles = new Map(stored.map((row) => [asString(row.id), row]));
 
-  for (const snapshot of stored.flat()) {
-    const data = docData(snapshot);
-    const row = accounts.find((account) => account.uid === snapshot.id);
+  for (const row of accounts) {
+    const data = profiles.get(row.uid);
 
-    if (data == null || row == null) {
+    if (data == null) {
       continue;
     }
     row.nickname = asString(data.nickname);
     row.gold = asNumber(data.gold);
     row.role = asString(data.role);
     row.banned = data.banned === true;
-    row.banReason = asString(data.banReason);
+    row.banReason = asString(data.ban_reason);
   }
 
   const wanted = search.trim().toLowerCase();
@@ -165,42 +167,31 @@ export async function listPlayers(search: string, page: number): Promise<Listing
  * standing. Resolves null for a uid no account was ever opened under
  */
 export async function readPlayer(uid: string): Promise<PlayerRow | null> {
-  const account = await getAdminAuth()
-    .getUser(uid)
-    .catch(() => null);
+  const { data } = await getAdminApi()
+    .auth.admin.getUserById(uid)
+    .catch(() => ({ data: null }));
+  const account = data?.user ?? null;
 
   if (account == null) {
     return null;
   }
 
-  const stored = docData(
-    await getAdminFirestore().collection(PROFILE_COLLECTION).doc(uid).get(),
-  );
+  const rows = await getSql()`
+    select nickname, gold, role, banned, ban_reason from profiles where id = ${uid}
+  `;
+  const stored = rows.at(0);
 
   return {
     uid,
-    nickname: stored == null ? (account.displayName ?? '') : asString(stored.nickname),
+    nickname: stored == null ? '' : asString(stored.nickname),
     email: account.email ?? '',
     gold: asNumber(stored?.gold),
     role: asString(stored?.role),
     banned: stored?.banned === true,
-    banReason: asString(stored?.banReason),
-    createdAt: Date.parse(account.metadata.creationTime),
+    banReason: asString(stored?.ban_reason),
+    createdAt: Date.parse(account.created_at) || 0,
     position: await readPosition(uid),
   };
-}
-
-/**
- * The refs a `getAll` can take at once. It is a request size rather
- * than a limit of the store, and the accounts are read in slices of it
- */
-function chunked<T>(rows: T[], size: number): T[][] {
-  const slices: T[][] = [];
-
-  for (let at = 0; at < rows.length; at += size) {
-    slices.push(rows.slice(at, at + size));
-  }
-  return slices;
 }
 
 export interface RaidRow {
@@ -225,24 +216,42 @@ export interface RaidRow {
  * of the place it stands in
  */
 export async function listRaids(search: string, page: number): Promise<Listing<RaidRow>> {
-  const db = getAdminFirestore();
-  const stored = await db
-    .collection(RAID_COLLECTION)
-    .orderBy('timestamp', 'desc')
-    .limit(SCAN_LIMIT)
-    .get();
+  const stored = await getSql()`
+    select r.*, coalesce(t.teams, 0)::int as team_count
+    from raids r
+    left join (
+      select raid_id, count(*) as teams from teams group by raid_id
+    ) t on t.raid_id = r.id
+    order by r.window_at desc
+    limit ${SCAN_LIMIT}
+  `;
 
-  const raids = stored.docs.map((document) => {
-    const record = asRaidRecord(document.data());
+  const raids = stored.map((entry) => {
+    const row = asRecord(entry);
+    const record = asRaidRecord({
+      kind: row.kind,
+      lair: row.lair,
+      species: row.species,
+      traitValue: row.trait_value,
+      host: row.host,
+      teams: [],
+      battle: row.battle_id,
+      timestamp: row.window_at,
+      offset: row.utc_offset,
+      chunk: { seed: row.chunk_seed, x: row.chunk_x, y: row.chunk_y },
+      biome: row.biome,
+      cell: row.cell,
+      cleared: row.cleared,
+    });
 
     return {
-      id: document.id,
+      id: asString(row.id),
       title: getRaidTitle(record),
       kind: record.kind,
       species: record.species,
       host: record.host,
       hostName: '',
-      teams: record.teams.length,
+      teams: asNumber(row.team_count),
       battle: record.battle,
       timestamp: record.timestamp,
       chunkX: record.chunk.x,
@@ -255,7 +264,7 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
   const listing = pageOf(
     raids.filter((raid) => wanted === '' || contains(raid.title, wanted)),
     page,
-    stored.size >= SCAN_LIMIT,
+    stored.length >= SCAN_LIMIT,
   );
 
   // The hosts of the page alone: naming every host of every raid ever
@@ -266,12 +275,10 @@ export async function listRaids(search: string, page: number): Promise<Listing<R
     return listing;
   }
 
-  const profiles = await db.getAll(
-    ...hosts.map((uid) => db.collection(PROFILE_COLLECTION).doc(uid)),
-  );
-  const named = new Map(
-    profiles.map((snapshot) => [snapshot.id, asString(docData(snapshot)?.nickname)]),
-  );
+  const profiles = await getSql()`
+    select id, nickname from profiles where id = any(${hosts})
+  `;
+  const named = new Map(profiles.map((row) => [asString(row.id), asString(row.nickname)]));
 
   for (const raid of listing.rows) {
     raid.hostName = named.get(raid.host) ?? '';

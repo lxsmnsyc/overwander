@@ -26,11 +26,11 @@ the id is what the gift calls itself, and what a claim names.
 `gift` is one of three shapes, each carrying an `id`, a `reason` sentence shown
 on its card, and an `expiresAt` after which it is neither listed nor claimable:
 
-| Kind        | Id | Extra fields                                      |
+| Kind        | Id  | Extra fields                                      |
 | ----------- | --- | ------------------------------------------------- |
-| `Catch`     | 0  | the pokemon fields below, plus `ball` and `owner` |
-| `Item`      | 1  | `item`, `amount`                                  |
-| `Encounter` | 2  | the pokemon fields below                          |
+| `Catch`     | 0   | the pokemon fields below, plus `ball` and `owner` |
+| `Item`      | 1   | `item`, `amount`                                  |
+| `Encounter` | 2   | the pokemon fields below                          |
 
 The pokemon fields are `species`, `level`, `shiny`, `shadow`, `individualValue`,
 `traitValue`, `gender`, `nature`, `ivs`, `abilities`, `moves`, `items`, the
@@ -48,7 +48,7 @@ is otherwise the observer's id against the trait value, and a gift is the one
 pokemon whose coat was decided by whoever wrote it.
 
 A **`Catch`** is handed over finished, in the `ball` the gift names, and `owner`
-is a trainer's *name* — "Red" — written as the first entry of the record's
+is a trainer's _name_ — "Red" — written as the first entry of the record's
 ownership history. There is no such account, so the sheet reads the name off the
 entry instead of looking up a profile.
 

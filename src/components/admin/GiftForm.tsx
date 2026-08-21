@@ -199,7 +199,6 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
   /** The room this gift walks in with, as the record stores it */
   const slots = (): number => packSlots(room(abilityRoom()), room(itemRoom()), room(moveRoom()));
 
-
   /**
    * Where the record says it happened. A fateful meeting is at no
    * coordinate anybody walked to, so where it came from is a name —
@@ -409,7 +408,8 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
           {
             value: GiftKind.Encounter,
             label: 'A meeting',
-            description: 'Stood in front of them to throw at. It cannot run, and it cannot break out.',
+            description:
+              'Stood in front of them to throw at. It cannot run, and it cannot break out.',
           },
         ]}
         onChange={(value) => {

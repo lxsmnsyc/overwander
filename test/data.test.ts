@@ -651,7 +651,10 @@ describe('move cast animations', () => {
       // The walk is preferred-first and stops at the first clip the
       // sprite has, so the **last** entry has to be one every sheet
       // carries. Anything else is a move that can fall off the end
-      expect(isCommonCast(cast[cast.length - 1]), `${name}: ${cast.map(spriteAnimName).join(' → ')}`).toBe(true);
+      expect(
+        isCommonCast(cast[cast.length - 1]),
+        `${name}: ${cast.map(spriteAnimName).join(' → ')}`,
+      ).toBe(true);
 
       // Asking for the same clip twice is a typo rather than a
       // preference: the second ask can never be reached
@@ -663,27 +666,56 @@ describe('move cast animations', () => {
     // Standing about, walking, shivering, gathering itself: things a
     // pokemon keeps doing. Stretched to a window they play once, in
     // slow motion
-    for (const looping of [SpriteAnim.Charge, SpriteAnim.Sleep, SpriteAnim.Hurt, SpriteAnim.Walk, SpriteAnim.Idle, SpriteAnim.Shake, SpriteAnim.Dance, SpriteAnim.Rotate]) {
+    for (const looping of [
+      SpriteAnim.Charge,
+      SpriteAnim.Sleep,
+      SpriteAnim.Hurt,
+      SpriteAnim.Walk,
+      SpriteAnim.Idle,
+      SpriteAnim.Shake,
+      SpriteAnim.Dance,
+      SpriteAnim.Rotate,
+    ]) {
       expect(isLoopingCast(looping), spriteAnimName(looping)).toBe(true);
     }
 
     // And the gestures, which are fitted to whatever has to be filled
-    for (const once of [SpriteAnim.Attack, SpriteAnim.Shoot, SpriteAnim.Strike, SpriteAnim.Slice, SpriteAnim.Swing, SpriteAnim.Double, SpriteAnim.Hop]) {
+    for (const once of [
+      SpriteAnim.Attack,
+      SpriteAnim.Shoot,
+      SpriteAnim.Strike,
+      SpriteAnim.Slice,
+      SpriteAnim.Swing,
+      SpriteAnim.Double,
+      SpriteAnim.Hop,
+    ]) {
       expect(isLoopingCast(once), spriteAnimName(once)).toBe(false);
     }
   });
 
   it('walks the preference against the sprite in hand', () => {
-    const punchy = pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack], (name) => name !== SpriteAnim.Punch);
+    const punchy = pickCast(
+      [SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack],
+      (name) => name !== SpriteAnim.Punch,
+    );
 
     // The first clip this sheet actually has, not the first named
-    expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack], () => true)).toBe(SpriteAnim.Punch);
+    expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack], () => true)).toBe(
+      SpriteAnim.Punch,
+    );
     expect(punchy).toBe(SpriteAnim.Uppercut);
-    expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack], (name) => name === SpriteAnim.Attack)).toBe(SpriteAnim.Attack);
+    expect(
+      pickCast(
+        [SpriteAnim.Punch, SpriteAnim.Uppercut, SpriteAnim.Attack],
+        (name) => name === SpriteAnim.Attack,
+      ),
+    ).toBe(SpriteAnim.Attack);
 
     // A sheet with none of the named clips still has to be given
     // something it can play: the common clip every sheet carries
-    expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut], (name) => name === DEFAULT_CAST)).toBe(DEFAULT_CAST);
+    expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut], (name) => name === DEFAULT_CAST)).toBe(
+      DEFAULT_CAST,
+    );
     expect(isCommonCast(DEFAULT_CAST)).toBe(true);
     // ...and a sheet missing even that falls to the one clip nothing
     // can be without. It should not happen — every sheet has the
@@ -706,7 +738,10 @@ describe('status animations', () => {
       // The same rule the move casts follow, for the same reason: the
       // walk stops at the first clip the sheet has, so the last entry
       // has to be one every sheet carries
-      expect(isCommonCast(cast[cast.length - 1]), `${status}: ${cast.map(spriteAnimName).join(' → ')}`).toBe(true);
+      expect(
+        isCommonCast(cast[cast.length - 1]),
+        `${status}: ${cast.map(spriteAnimName).join(' → ')}`,
+      ).toBe(true);
       expect(new Set(cast).size, String(status)).toBe(cast.length);
     }
 
@@ -718,14 +753,22 @@ describe('status animations', () => {
   it('draws what is being done to a pokemon standing about', () => {
     const anySheet = (): boolean => true;
 
-    expect(pickStatusCast((status) => status === Statuses.Sleeping, anySheet)).toBe(SpriteAnim.Sleep);
-    expect(pickStatusCast((status) => status === Statuses.Dormant, anySheet)).toBe(SpriteAnim.Sleep);
-    expect(pickStatusCast((status) => status === Statuses.Flinched, anySheet)).toBe(SpriteAnim.Hurt);
+    expect(pickStatusCast((status) => status === Statuses.Sleeping, anySheet)).toBe(
+      SpriteAnim.Sleep,
+    );
+    expect(pickStatusCast((status) => status === Statuses.Dormant, anySheet)).toBe(
+      SpriteAnim.Sleep,
+    );
+    expect(pickStatusCast((status) => status === Statuses.Flinched, anySheet)).toBe(
+      SpriteAnim.Hurt,
+    );
 
     // The telling clips are the uncommon ones, so a sheet drawn
     // without them still has to say something: a paralyzed pokemon on
     // a sheet with no Shock and no Shake is drawn hurt
-    expect(pickStatusCast((status) => status === Statuses.Paralyzed, anySheet)).toBe(SpriteAnim.Shock);
+    expect(pickStatusCast((status) => status === Statuses.Paralyzed, anySheet)).toBe(
+      SpriteAnim.Shock,
+    );
     expect(
       pickStatusCast(
         (status) => status === Statuses.Paralyzed,

@@ -570,7 +570,9 @@ function AuctionBoard(
       .filter(([, auction]) => {
         const name = nameOf(auction);
 
-        return name == null || matches(name, query());
+        // Searched with the seller alongside, so a board can be
+        // narrowed to one trainer's lots as well as to one thing
+        return name == null || matches(`${name} by ${describeSeller(auction)}`, query());
       });
 
   const running = (): number | null => {

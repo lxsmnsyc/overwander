@@ -2,7 +2,7 @@ import type { Species } from '../data/ids/species';
 import { getSpeciesData, meetsEvolutionCriteria } from '../data/species';
 import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import { getCaught } from './caught';
 import { getInventory } from './inventory';
 import getIdToken from './session';

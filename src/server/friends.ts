@@ -1,47 +1,30 @@
 import 'server-only';
-import {
-  BLOCK_COLLECTION,
-  FRIEND_COLLECTION,
-  FRIEND_REQUEST_COLLECTION,
-  PROFILE_COLLECTION,
-  blockEntryId,
-  friendEntryId,
-  friendRequestId,
-} from '../auth/collections';
 import { FRIEND_LIMIT, type FoundPlayer, FriendTie } from '../auth/friend-record';
-import { getAdminAuth, getAdminFirestore } from './firebase';
+import getAdminApi from './admin-api';
+import { type Tx, getSql, tx } from './db';
+import { asNumber } from './read';
 
 /**
- * Who knows whom, decided here because a client that could write a
- * friendship could put itself on somebody else's list.
+ * Friendships, requests and blocks, written over the owner
+ * connection. Every write is refused to browsers so a player cannot
+ * write themselves onto somebody's list; what a client may do is ask,
+ * and these are the asks.
  *
- * A friendship is stored **twice**, one document from each side, so
- * that "who are mine" is one query rather than a scan of everybody's.
- * A request is stored once, pointing one way, and a block the same —
- * all three under an id made of the two uids, which is what makes
- * asking twice harmless.
- *
- * Reading them is the browser's: the rules hand a player their own
- * rows and nobody else's, so the lists follow the store live. Only the
- * writes and the lookup by address are here.
+ * A friendship is stored twice, one row per direction, so "who are
+ * mine" is a primary-key prefix scan from either side.
  */
 
-type Transaction = FirebaseFirestore.Transaction;
-
 /** Write both sides of one friendship */
-function befriend(transaction: Transaction, left: string, right: string, now: number): void {
-  const db = getAdminFirestore();
+async function befriend(transaction: Tx, left: string, right: string, now: number): Promise<void> {
+  const rows = [
+    { owner: left, friend: right, since: now },
+    { owner: right, friend: left, since: now },
+  ];
 
-  for (const [owner, friend] of [
-    [left, right],
-    [right, left],
-  ]) {
-    transaction.set(db.collection(FRIEND_COLLECTION).doc(friendEntryId(owner, friend)), {
-      owner,
-      friend,
-      since: now,
-    });
-  }
+  await transaction`
+    insert into friends ${transaction(rows, 'owner', 'friend', 'since')}
+    on conflict do nothing
+  `;
 }
 
 /**
@@ -50,13 +33,14 @@ function befriend(transaction: Transaction, left: string, right: string, now: nu
  * cannot ask them either
  */
 async function blockedBetween(uid: string, other: string): Promise<boolean> {
-  const db = getAdminFirestore();
-  const found = await db.getAll(
-    db.collection(BLOCK_COLLECTION).doc(blockEntryId(uid, other)),
-    db.collection(BLOCK_COLLECTION).doc(blockEntryId(other, uid)),
-  );
+  const rows = await getSql()`
+    select 1 from blocks
+    where (blocker = ${uid} and blocked = ${other})
+       or (blocker = ${other} and blocked = ${uid})
+    limit 1
+  `;
 
-  return found.some((snapshot) => snapshot.exists);
+  return rows.length > 0;
 }
 
 /**
@@ -65,7 +49,7 @@ async function blockedBetween(uid: string, other: string): Promise<boolean> {
  * since both sides have now said yes.
  *
  * Resolves where the two now stand. Throws when the asker's list is
- * full or one of them has blocked the other — the second says nothing
+ * full or one of them has blocked the other; the second says nothing
  * about which way the block goes
  */
 export async function sendFriendRequest(
@@ -76,10 +60,10 @@ export async function sendFriendRequest(
   if (target === '' || target === uid) {
     return FriendTie.None;
   }
-  const db = getAdminFirestore();
-  const account = await db.collection(PROFILE_COLLECTION).doc(target).get();
 
-  if (!account.exists) {
+  const accounts = await getSql()`select 1 from profiles where id = ${target}`;
+
+  if (accounts.length === 0) {
     return FriendTie.None;
   }
   if (await blockedBetween(uid, target)) {
@@ -88,27 +72,39 @@ export async function sendFriendRequest(
   if (await isFull(uid)) {
     throw new Error('Your friends list is full');
   }
-  return db.runTransaction(async (transaction) => {
-    const mine = db.collection(FRIEND_COLLECTION).doc(friendEntryId(uid, target));
-    const asked = db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(uid, target));
-    const theirs = db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(target, uid));
-    const [already, sent, waiting] = await transaction.getAll(mine, asked, theirs);
+  return tx(async (transaction) => {
+    const already = await transaction`
+      select 1 from friends where owner = ${uid} and friend = ${target}
+    `;
 
-    if (already.exists) {
+    if (already.length > 0) {
       return FriendTie.Friends;
     }
-    if (waiting.exists) {
-      befriend(transaction, uid, target, now);
-      transaction.delete(theirs);
+
+    const waiting = await transaction`
+      select 1 from friend_requests
+      where sender = ${target} and recipient = ${uid}
+      for update
+    `;
+
+    if (waiting.length > 0) {
+      await befriend(transaction, uid, target, now);
       // Both directions go: a crossed pair would otherwise leave the
       // other player holding a request from somebody already a friend
-      transaction.delete(asked);
+      await transaction`
+        delete from friend_requests
+        where (sender = ${target} and recipient = ${uid})
+           or (sender = ${uid} and recipient = ${target})
+      `;
       return FriendTie.Friends;
     }
-    if (sent.exists) {
-      return FriendTie.Sent;
-    }
-    transaction.set(asked, { from: uid, to: target, sentAt: now });
+
+    await transaction`
+      insert into friend_requests (sender, recipient, sent_at)
+      values (${uid}, ${target}, ${now})
+      on conflict do nothing
+    `;
+
     return FriendTie.Sent;
   });
 }
@@ -133,17 +129,16 @@ export async function acceptFriendRequest(
   if (await isFull(uid)) {
     throw new Error('Your friends list is full');
   }
-  const db = getAdminFirestore();
+  return tx(async (transaction) => {
+    const asked = await transaction`
+      delete from friend_requests
+      where sender = ${from} and recipient = ${uid}
+    `;
 
-  return db.runTransaction(async (transaction) => {
-    const asking = db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(from, uid));
-    const request = await transaction.get(asking);
-
-    if (!request.exists) {
+    if (asked.count === 0) {
       return FriendTie.None;
     }
-    befriend(transaction, uid, from, now);
-    transaction.delete(asking);
+    await befriend(transaction, uid, from, now);
     return FriendTie.Friends;
   });
 }
@@ -153,12 +148,11 @@ export async function acceptFriendRequest(
  * Declining and cancelling are the same write from opposite ends
  */
 export async function dropFriendRequest(uid: string, other: string): Promise<FriendTie> {
-  const db = getAdminFirestore();
-  const batch = db.batch();
-
-  batch.delete(db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(uid, other)));
-  batch.delete(db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(other, uid)));
-  await batch.commit();
+  await getSql()`
+    delete from friend_requests
+    where (sender = ${uid} and recipient = ${other})
+       or (sender = ${other} and recipient = ${uid})
+  `;
   return FriendTie.None;
 }
 
@@ -173,14 +167,18 @@ export async function removeFriend(uid: string, other: string): Promise<FriendTi
 
 /** Take away everything standing between two players */
 async function unfriend(uid: string, other: string): Promise<void> {
-  const db = getAdminFirestore();
-  const batch = db.batch();
-
-  batch.delete(db.collection(FRIEND_COLLECTION).doc(friendEntryId(uid, other)));
-  batch.delete(db.collection(FRIEND_COLLECTION).doc(friendEntryId(other, uid)));
-  batch.delete(db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(uid, other)));
-  batch.delete(db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(other, uid)));
-  await batch.commit();
+  await tx(async (transaction) => {
+    await transaction`
+      delete from friends
+      where (owner = ${uid} and friend = ${other})
+         or (owner = ${other} and friend = ${uid})
+    `;
+    await transaction`
+      delete from friend_requests
+      where (sender = ${uid} and recipient = ${other})
+         or (sender = ${other} and recipient = ${uid})
+    `;
+  });
 }
 
 /**
@@ -193,16 +191,17 @@ export async function blockPlayer(uid: string, other: string, now: number): Prom
     return FriendTie.None;
   }
   await unfriend(uid, other);
-  await getAdminFirestore()
-    .collection(BLOCK_COLLECTION)
-    .doc(blockEntryId(uid, other))
-    .set({ blocker: uid, blocked: other, since: now });
+  await getSql()`
+    insert into blocks (blocker, blocked, since)
+    values (${uid}, ${other}, ${now})
+    on conflict do nothing
+  `;
   return FriendTie.Blocked;
 }
 
 /** Let them back in. It does not put back the friendship it undid */
 export async function unblockPlayer(uid: string, other: string): Promise<FriendTie> {
-  await getAdminFirestore().collection(BLOCK_COLLECTION).doc(blockEntryId(uid, other)).delete();
+  await getSql()`delete from blocks where blocker = ${uid} and blocked = ${other}`;
   return FriendTie.None;
 }
 
@@ -215,37 +214,33 @@ export async function readFriendTie(uid: string, other: string): Promise<FriendT
   if (other === '' || other === uid) {
     return FriendTie.None;
   }
-  const db = getAdminFirestore();
-  // Read by position rather than by document id: a friendship, a
-  // request and a block between the same two players are the same id
-  // in different collections, so an id alone cannot say which was found
-  const [blocked, friend, sent, received] = await db.getAll(
-    db.collection(BLOCK_COLLECTION).doc(blockEntryId(uid, other)),
-    db.collection(FRIEND_COLLECTION).doc(friendEntryId(uid, other)),
-    db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(uid, other)),
-    db.collection(FRIEND_REQUEST_COLLECTION).doc(friendRequestId(other, uid)),
-  );
 
-  if (blocked.exists) {
+  const sql = getSql();
+  const [blocked, friend, sent, received] = await Promise.all([
+    sql`select 1 from blocks where blocker = ${uid} and blocked = ${other}`,
+    sql`select 1 from friends where owner = ${uid} and friend = ${other}`,
+    sql`select 1 from friend_requests where sender = ${uid} and recipient = ${other}`,
+    sql`select 1 from friend_requests where sender = ${other} and recipient = ${uid}`,
+  ]);
+
+  if (blocked.length > 0) {
     return FriendTie.Blocked;
   }
-  if (friend.exists) {
+  if (friend.length > 0) {
     return FriendTie.Friends;
   }
-  if (sent.exists) {
+  if (sent.length > 0) {
     return FriendTie.Sent;
   }
-  return received.exists ? FriendTie.Received : FriendTie.None;
+  return received.length > 0 ? FriendTie.Received : FriendTie.None;
 }
 
 async function isFull(uid: string): Promise<boolean> {
-  const count = await getAdminFirestore()
-    .collection(FRIEND_COLLECTION)
-    .where('owner', '==', uid)
-    .count()
-    .get();
+  const rows = await getSql()`
+    select count(*)::int as held from friends where owner = ${uid}
+  `;
 
-  return count.data().count >= FRIEND_LIMIT;
+  return asNumber(rows[0]?.held) >= FRIEND_LIMIT;
 }
 
 /**
@@ -254,9 +249,9 @@ async function isFull(uid: string): Promise<boolean> {
  * An address rather than a name because a name is not a handle: two
  * players may call themselves the same thing and a player who has
  * renamed themselves is unfindable by the old one. It is an **exact**
- * match — the addresses live in Firebase Auth, which a browser cannot
- * query and which cannot match part of one anyway — so a player has to
- * be given the address by the person it belongs to.
+ * match, since the addresses live in Supabase Auth, which a browser
+ * cannot query, so a player has to be given the address by the person
+ * it belongs to.
  *
  * Resolves null for an address nobody plays under, and for the
  * reader's own: nobody befriends themselves
@@ -267,19 +262,24 @@ export async function findPlayerByEmail(uid: string, email: string): Promise<Fou
   if (wanted === '') {
     return null;
   }
-  const account = await getAdminAuth()
-    .getUserByEmail(wanted)
-    .catch(() => null);
 
-  if (account == null || account.uid === uid) {
+  const { data } = await getAdminApi()
+    .auth.admin.listUsers({ page: 1, perPage: 1000 })
+    .catch(() => ({ data: null }));
+  const account = data?.users.find((user) => user.email?.toLowerCase() === wanted) ?? null;
+
+  if (account == null || account.id === uid) {
     return null;
   }
-  const profile = await getAdminFirestore().collection(PROFILE_COLLECTION).doc(account.uid).get();
+
+  const profiles = await getSql()`
+    select banned from profiles where id = ${account.id}
+  `;
 
   // Somebody who signed in once and never opened a profile is not
   // playing yet, and a request written against them would sit forever
-  if (!profile.exists || profile.data()?.banned === true) {
+  if (profiles.at(0) == null || profiles[0].banned === true) {
     return null;
   }
-  return { uid: account.uid, tie: await readFriendTie(uid, account.uid) };
+  return { uid: account.id, tie: await readFriendTie(uid, account.id) };
 }

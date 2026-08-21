@@ -1,15 +1,7 @@
 import 'server-only';
-import {
-  BERRY_CLAIM_COLLECTION,
-  CACHE_CLAIM_COLLECTION,
-  ENCOUNTER_COLLECTION,
-  FLED_COLLECTION,
-  NEST_CLAIM_COLLECTION,
-  PHENOMENON_CLAIM_COLLECTION,
-  SNAPSHOT_COLLECTION,
-} from '../auth/collections';
+
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
-import { asSpawnRolls, spawnId as nameSpawn, windowId } from '../auth/snapshot-record';
+import { asSpawnRolls, spawnId as nameSpawn } from '../auth/snapshot-record';
 import AleaRNG from '../core/alea';
 import type { ItemStack } from '../data/overworld/item-pool';
 import ChunkSnapshot, {
@@ -23,10 +15,11 @@ import { encounterKey, encounterWindow } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { grantNestEgg } from './eggs';
-import { getAdminFirestore } from './firebase';
+import { getSql, jsonOf, tx } from './db';
+import { readEncounter, writeEncounter } from './encounter-io';
 import { recordSeenSpecies } from './pokedex';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
-import { asNumber, asStringArray, docData } from './read';
+import { asNumber, asRecordArray } from './read';
 import { grantItem, grantItems } from './inventory';
 
 /**
@@ -60,13 +53,11 @@ export async function resolveSnapshot(
 ): Promise<ChunkSnapshot | null> {
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
-  const stored = docData(
-    await getAdminFirestore()
-      .collection(SNAPSHOT_COLLECTION)
-      .doc(windowId(chunk.seed, toZoneKey(zone)))
-      .get(),
-  );
-  const timestamp = asNumber(stored?.timestamp);
+  const rows = await getSql()`
+    select window_at from snapshots
+    where chunk_seed = ${chunk.seed} and zone = ${toZoneKey(zone)}
+  `;
+  const timestamp = asNumber(rows[0]?.window_at);
 
   if (timestamp === 0 || toLocalTime(now, zone) >= timestamp + SNAPSHOT_INTERVAL) {
     return null;
@@ -79,20 +70,79 @@ export async function resolveSnapshot(
  * landmark, window and player, so a landmark pays each player once
  * per window and regenerates with the next one
  */
-export async function claim(
-  collection: string,
-  id: string,
-  record: Record<string, unknown>,
-): Promise<boolean> {
-  const db = getAdminFirestore();
-  const ref = db.collection(collection).doc(id);
+export async function claim(table: string, id: string, record: ClaimRecord): Promise<boolean> {
+  return writeClaim(table, id, record);
+}
 
-  return db.runTransaction(async (transaction) => {
-    if ((await transaction.get(ref)).exists) {
-      return false;
+/**
+ * What a claim writer takes: who is claiming, and whatever the table
+ * keeps beside the marker
+ */
+export interface ClaimRecord {
+  player: string;
+  [extra: string]: unknown;
+}
+
+/** The phenomenon kinds as the table stores them */
+const PHENOMENON_KINDS: Record<string, number> = { item: 0, encounter: 1, egg: 2 };
+
+/**
+ * The marker as one insert: the primary key is the whole race, and
+ * the row count is the answer. A marker that is already there grants
+ * nothing
+ */
+async function writeClaim(table: string, marker: string, record: ClaimRecord): Promise<boolean> {
+  const { player, ...extra } = record;
+
+  return tx(async (transaction) => {
+    let inserted: { count: number };
+
+    if (table === 'cache_claims') {
+      inserted = await transaction`
+        insert into cache_claims (marker, player, claimed_at)
+        values (${marker}, ${player}, ${Date.now()})
+        on conflict do nothing
+      `;
+      if (inserted.count > 0) {
+        const rows = asRecordArray(extra.items).map((stack) => ({
+          marker,
+          player,
+          item: asNumber(stack.item),
+          amount: asNumber(stack.amount),
+        }));
+
+        if (rows.length > 0) {
+          await transaction`
+            insert into cache_claim_items ${transaction(rows, 'marker', 'player', 'item', 'amount')}
+          `;
+        }
+      }
+    } else if (table === 'berry_claims') {
+      inserted = await transaction`
+        insert into berry_claims (marker, player, item, amount)
+        values (${marker}, ${player}, ${asNumber(extra.item)}, ${asNumber(extra.amount)})
+        on conflict do nothing
+      `;
+    } else if (table === 'nest_claims') {
+      inserted = await transaction`
+        insert into nest_claims (marker, player, species)
+        values (${marker}, ${player}, ${asNumber(extra.species)})
+        on conflict do nothing
+      `;
+    } else if (table === 'phenomenon_claims') {
+      inserted = await transaction`
+        insert into phenomenon_claims (marker, player, kind)
+        values (${marker}, ${player}, ${PHENOMENON_KINDS[String(extra.kind)] ?? 0})
+        on conflict do nothing
+      `;
+    } else {
+      inserted = await transaction`
+        insert into npc_claims (marker, player, payload)
+        values (${marker}, ${player}, ${jsonOf(transaction, extra)})
+        on conflict do nothing
+      `;
     }
-    transaction.set(ref, record);
-    return true;
+    return inserted.count > 0;
   });
 }
 
@@ -116,11 +166,11 @@ export async function claimItemCache(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$${cell}`;
 
   // The marker records the whole stash, so what a cache paid is
   // readable afterwards rather than only that it paid
-  if (!(await claim(CACHE_CLAIM_COLLECTION, id, { player: uid, items: stash }))) {
+  if (!(await claim('cache_claims', id, { player: uid, items: stash }))) {
     return null;
   }
   await grantStash(uid, stash);
@@ -158,10 +208,10 @@ export async function claimBerryPatch(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$berry${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$berry${cell}`;
 
   if (
-    !(await claim(BERRY_CLAIM_COLLECTION, id, {
+    !(await claim('berry_claims', id, {
       player: uid,
       item: berries.item,
       amount: berries.amount,
@@ -178,8 +228,8 @@ export async function claimBerryPatch(
  * window, is written against. Both the peek and the claim name it, so
  * looking and taking cannot disagree about which egg is in question
  */
-function nestClaimId(snapshot: ChunkSnapshot, cell: number, uid: string): string {
-  return `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}:${uid}`;
+function nestClaimId(snapshot: ChunkSnapshot, cell: number): string {
+  return `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}`;
 }
 
 /**
@@ -207,14 +257,12 @@ export async function peekNest(
   if (snapshot == null || species == null) {
     return null;
   }
-  return {
-    taken: (
-      await getAdminFirestore()
-        .collection(NEST_CLAIM_COLLECTION)
-        .doc(nestClaimId(snapshot, cell, uid))
-        .get()
-    ).exists,
-  };
+  const marker = nestClaimId(snapshot, cell);
+  const rows = await getSql()`
+    select 1 from nest_claims where marker = ${marker} and player = ${uid}
+  `;
+
+  return { taken: rows.length > 0 };
 }
 
 /**
@@ -260,9 +308,9 @@ export async function claimNest(
     return null;
   }
 
-  const id = nestClaimId(snapshot, cell, uid);
+  const id = nestClaimId(snapshot, cell);
 
-  if (!(await claim(NEST_CLAIM_COLLECTION, id, { player: uid, species }))) {
+  if (!(await claim('nest_claims', id, { player: uid, species }))) {
     return null;
   }
   return grantNestEgg(uid, snapshot, cell, species, now, offset, locale);
@@ -303,14 +351,12 @@ export async function peekPhenomenonEgg(
   if (snapshot == null || reward?.kind !== 'egg') {
     return null;
   }
-  return {
-    taken: (
-      await getAdminFirestore()
-        .collection(PHENOMENON_CLAIM_COLLECTION)
-        .doc(`${phenomenonKey(snapshot, cell)}:${uid}`)
-        .get()
-    ).exists,
-  };
+  const rows = await getSql()`
+    select 1 from phenomenon_claims
+    where marker = ${phenomenonKey(snapshot, cell)} and player = ${uid}
+  `;
+
+  return { taken: rows.length > 0 };
 }
 
 /**
@@ -354,9 +400,7 @@ export async function claimPhenomenon(
 
   const key = phenomenonKey(snapshot, cell);
 
-  if (
-    !(await claim(PHENOMENON_CLAIM_COLLECTION, `${key}:${uid}`, { player: uid, kind: reward.kind }))
-  ) {
+  if (!(await claim('phenomenon_claims', key, { player: uid, kind: reward.kind }))) {
     return null;
   }
 
@@ -394,8 +438,7 @@ export async function startEncounter(
   spawn: Spawn,
   options: EncounterOptions = {},
 ): Promise<EncounterRecord> {
-  const ref = getAdminFirestore().collection(ENCOUNTER_COLLECTION).doc(`${id}:${uid}`);
-  const existing = docData(await ref.get());
+  const existing = await readEncounter(id, uid);
 
   if (existing != null) {
     return asEncounterRecord(existing);
@@ -420,7 +463,7 @@ export async function startEncounter(
     player: uid,
   };
 
-  await ref.set(record);
+  await tx(async (transaction) => writeEncounter(transaction, record));
   // Met, whatever becomes of the meeting: the dex counts what a player
   // has laid eyes on, so one that flees or is walked away from is
   // still one they have seen. The early return above is what keeps a
@@ -472,13 +515,13 @@ export async function meetSpawn(
   // id and **not** by `snapshot.key`: the two are a separator apart,
   // and asking for the key found nothing at all — so every published
   // spawn in the game answered as though its window had turned over
-  const window = docData(
-    await getAdminFirestore()
-      .collection(SNAPSHOT_COLLECTION)
-      .doc(windowId(snapshot.chunk.seed, toZoneKey(snapshot.offset)))
-      .get(),
-  );
-  const rolls = asSpawnRolls(window?.spawns);
+  const stored = await getSql()`
+    select species, individual_value as "individualValue", trait_value as "traitValue"
+    from snapshot_spawns
+    where chunk_seed = ${snapshot.chunk.seed} and zone = ${toZoneKey(snapshot.offset)}
+    order by idx
+  `;
+  const rolls = asSpawnRolls([...stored]);
 
   if (index >= rolls.length) {
     return null;
@@ -514,24 +557,19 @@ function spawnIndex(spawnId: string): number {
  * from the caller, so a player cannot retire a meeting they never had
  */
 export async function retireSpawn(uid: string, spawnId: string): Promise<void> {
-  const db = getAdminFirestore();
-  const stored = docData(await db.collection(ENCOUNTER_COLLECTION).doc(`${spawnId}:${uid}`).get());
+  const stored = await readEncounter(spawnId, uid);
 
   if (stored == null) {
     return;
   }
 
   const key = encounterKey(asEncounterRecord(stored));
-  const ref = db.collection(FLED_COLLECTION).doc(uid);
 
-  await db.runTransaction(async (transaction) => {
-    const keys = asStringArray(docData(await transaction.get(ref))?.keys);
-
-    if (new Set(keys).has(key)) {
-      return;
-    }
-    transaction.set(ref, { keys: [...keep(keys, encounterWindow(key)), key] }, { merge: true });
-  });
+  await getSql()`
+    insert into fled_encounters (player, key, window_at)
+    values (${uid}, ${key}, ${encounterWindow(key)})
+    on conflict do nothing
+  `;
 }
 
 /**
@@ -545,15 +583,8 @@ export async function retireSpawn(uid: string, spawnId: string): Promise<void> {
  * written against, and an hour is more than any of that is worth
  * arguing about.
  *
- * Without it the list only ever grows: one key per encounter a player
- * has ever walked away from, in one document, until it meets
- * Firestore's megabyte
+ * The hourly sweep in the schema is what actually forgets them;
+ * readers filter by this figure, so a sweep that has not run yet
+ * changes nothing they see
  */
 export const FLED_MEMORY = 60 * 60 * 1000;
-
-/**
- * The keys still worth keeping, measured against the newest one
- */
-function keep(keys: string[], newest: number): string[] {
-  return keys.filter((key) => newest - encounterWindow(key) < FLED_MEMORY);
-}

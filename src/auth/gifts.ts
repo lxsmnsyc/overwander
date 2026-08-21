@@ -1,5 +1,5 @@
 import type { MysteryGift } from './gift-record';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import type { GiftClaim } from '../server/gifts';
 import { claimMysteryGift as claimOne, listMysteryGifts as listOwed } from '../server/gifts';
 import { syncServerClock } from './clock';

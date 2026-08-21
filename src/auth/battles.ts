@@ -1,24 +1,11 @@
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  type Unsubscribe,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import type { Species } from '../data/ids/species';
-import { asNumber, asString, asStringArray } from './__normalize';
-import { getFirebaseFirestore } from './firebase';
-import { requireUid } from '../server/firebase';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
+import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
+import { requireUid } from '../server/auth';
 import BattleOutcome from './battle-outcome';
 import recordOnServer from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
-import { BATTLE_COLLECTION } from './collections';
 import type BattleAftermath from './battle-aftermath';
 
 import getIdToken from './session';
@@ -64,34 +51,47 @@ export interface BattleRecord {
   limits: number;
 }
 
-const converter: FirestoreDataConverter<BattleRecord> = {
-  toFirestore: (record) => record,
-  fromFirestore: (snapshot) => {
-    const data = snapshot.data();
+const BATTLE_TABLE = 'battles';
 
-    return {
-      teams: asStringArray(data.teams),
-      players: asStringArray(data.players),
-      raid: asString(data.raid),
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      species: asNumber(data.species) as Species,
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      outcome: asNumber(data.outcome) as BattleOutcome,
-      startedAt: asNumber(data.startedAt),
-      // A battle written before the field existed was a raid, and a
-      // raid allows everything
-      limits: data.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(data.limits),
-    };
-  },
-};
+/** One battle row plus its team list, in the record shape */
+async function readBattleRow(id: string): Promise<BattleRecord | null> {
+  const { data }: { data: unknown } = await getSupabase()
+    .from(BATTLE_TABLE)
+    .select('*, battle_teams(position, snapshot_id, player)')
+    .eq('id', id)
+    .maybeSingle();
+
+  return data == null ? null : fromBattleRow(asRecord(data));
+}
+
+function fromBattleRow(row: Record<string, unknown>): BattleRecord {
+  const teams = asRecordArray(row.battle_teams).sort(
+    (left, right) => Number(left.position ?? 0) - Number(right.position ?? 0),
+  );
+
+  return {
+    teams: teams.map((entry) => asString(entry.snapshot_id)),
+    players: [
+      ...new Set(
+        teams
+          .map((entry) => entry.player)
+          .filter((player): player is string => typeof player === 'string'),
+      ),
+    ],
+    raid: asString(row.raid_id),
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    species: asNumber(row.species) as Species,
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    outcome: asNumber(row.outcome) as BattleOutcome,
+    startedAt: asNumber(row.started_at),
+    limits: row.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(row.limits),
+  };
+}
 
 /**
  * A typed handle on one battle document, for callers that have to
  * read it inside a transaction of their own
  */
-export function getBattleRef(id: string): DocumentReference<BattleRecord> {
-  return doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
-}
 
 /**
  * Battles are created by the server when a raid starts — see
@@ -100,24 +100,15 @@ export function getBattleRef(id: string): DocumentReference<BattleRecord> {
  */
 
 export async function getBattle(id: string): Promise<BattleRecord | null> {
-  const ref = doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
-
-  return (await getDoc(ref)).data() ?? null;
+  return readBattleRow(id);
 }
 
 /**
  * Follow a battle record: the outcome is stamped by whoever watches
  * the fight settle, and every other participant should see it
  */
-export function watchBattle(
-  id: string,
-  onChange: (battle: BattleRecord | null) => void,
-): Unsubscribe {
-  const ref = doc(getFirebaseFirestore(), BATTLE_COLLECTION, id).withConverter(converter);
-
-  return onSnapshot(ref, (snapshot) => {
-    onChange(snapshot.data() ?? null);
-  });
+export function watchBattle(id: string, onChange: (battle: BattleRecord | null) => void): Unwatch {
+  return watchRow(BATTLE_TABLE, `id=eq.${id}`, async () => readBattleRow(id), onChange);
 }
 
 /**
@@ -127,17 +118,25 @@ export function watchBattle(
 export function watchBattleHistory(
   player: string,
   onChange: (battles: [string, BattleRecord][]) => void,
-): Unsubscribe {
-  const battles = collection(getFirebaseFirestore(), BATTLE_COLLECTION).withConverter(converter);
+): Unwatch {
+  const read = async (): Promise<[string, BattleRecord][]> => {
+    const { data } = await getSupabase()
+      .from('battle_teams')
+      .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
+      .eq('player', player);
 
-  return onSnapshot(query(battles, where('players', 'array-contains', player)), (result) => {
-    onChange(
-      result.docs
-        .map((entry): [string, BattleRecord] => [entry.id, entry.data()])
-        .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
-        .sort((left, right) => right[1].startedAt - left[1].startedAt),
-    );
-  });
+    return asRecordArray(data)
+      .map((entry): [string, BattleRecord] => [
+        String(entry.battle_id),
+        fromBattleRow(asRecord(entry.battles)),
+      ])
+      .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
+      .sort((left, right) => right[1].startedAt - left[1].startedAt);
+  };
+
+  // The junction row filtered to this player is the invalidation
+  // signal; every ping re-reads the list
+  return watchTable('battle_teams', [`player=eq.${player}`], read, onChange);
 }
 
 /**
@@ -191,11 +190,16 @@ async function recordAftermathOnServer(
  * out of the history — an abandoned fight is not a result
  */
 export async function listBattleHistory(player: string): Promise<[string, BattleRecord][]> {
-  const battles = collection(getFirebaseFirestore(), BATTLE_COLLECTION).withConverter(converter);
-  const result = await getDocs(query(battles, where('players', 'array-contains', player)));
+  const { data } = await getSupabase()
+    .from('battle_teams')
+    .select('battle_id, battles(*, battle_teams(position, snapshot_id, player))')
+    .eq('player', player);
 
-  return result.docs
-    .map((entry): [string, BattleRecord] => [entry.id, entry.data()])
+  return asRecordArray(data)
+    .map((entry): [string, BattleRecord] => [
+      String(entry.battle_id),
+      fromBattleRow(asRecord(entry.battles)),
+    ])
     .filter(([, record]) => record.outcome !== BattleOutcome.Unfinished)
     .sort((left, right) => right[1].startedAt - left[1].startedAt);
 }

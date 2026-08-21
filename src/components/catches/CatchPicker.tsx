@@ -229,7 +229,7 @@ function PickerBox(
    * round trip
    */
   const offered = (): CatchOption[] =>
-    (props.options ?? props.owned() ?? [])
+    (props.options ?? props.owned.latest ?? [])
       .filter((option) => props.filter?.(option) ?? true)
       .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
 
@@ -424,7 +424,7 @@ function PickerBox(
    * does with this screen, and one of them was floating above a list
    * while the other sat in the corner
    */
-  const confirm = (): JSX.Element => (
+  const confirmButton = (): JSX.Element => (
     <Button
       tone="primary"
       disabled={props.disabled === true || draft().length === 0}
@@ -527,19 +527,13 @@ function PickerBox(
         )}
       </Show>
 
-      {/* Inline, the confirm sits under the list: there is no dialog
-          row for it to stand on. A live picker draws none at all —
-          the caller has its own, and two buttons saying nearly the
-          same thing is the thing being fixed */}
-      <Show
-        when={
-          props.multiple === true &&
-          props.inline === true &&
-          props.live !== true &&
-          props.viewOnly !== true
-        }
-      >
-        <Row class="justify-center">{confirm()}</Row>
+      {/* The confirm sits under the list in both shapes: the dialog's
+          own action row belongs to the outer component, which does not
+          hold the draft. A live picker draws none at all — the caller
+          has its own, and two buttons saying nearly the same thing is
+          the thing being fixed */}
+      <Show when={props.multiple === true && props.live !== true && props.viewOnly !== true}>
+        <Row class="justify-center">{confirmButton()}</Row>
       </Show>
 
       {/* The bag, opened from an empty slot on a pokemon's card. It is

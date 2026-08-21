@@ -28,10 +28,7 @@ function walked(at: number): string {
  */
 function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Element {
   return (
-    <Show
-      when={props.place()}
-      fallback={<Note>They have not walked anywhere yet.</Note>}
-    >
+    <Show when={props.place()} fallback={<Note>They have not walked anywhere yet.</Note>}>
       {(at) => (
         <Row>
           <Badge tone="leaf">{namePlace(at().chunkX, at().chunkY)}</Badge>

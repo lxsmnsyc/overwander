@@ -3,19 +3,19 @@ import { getCatchName, isFavorite, isGuarded, isShiny } from './caught-record';
 import { BALL_ITEMS } from '../data/ids/items';
 import { ENCOUNTER_TYPE_NAMES } from '../overworld/encounter';
 import { GENDER_NAMES } from '../data/ids/species';
-import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../data/items';
+import { getItemData } from '../data/items';
 import { NATURE_NAMES } from '../data/ids/natures';
 import { PERFECT_IVS } from '../data/constants/stats';
 import { TYPE_NAMES } from '../data/constants/types';
-import { getAbilityData, getRegisteredAbilities } from '../data/abilities';
+import { getAbilityData } from '../data/abilities';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../data/species';
-import { getMoveData, getRegisteredMoves } from '../data/moves';
+import { getMoveData } from '../data/moves';
 import type { Species } from '../data/ids/species';
 import { isEgg } from './egg';
 import { isFainted } from './health';
 import BATTLE_TIMEOUT, { isLockLive } from './battle-lock';
 import { serverNow } from './clock';
-import parseQuery, { holds, holdsAny, named, only, within } from '../core/query';
+import parseQuery, { holds, holdsAny, named, within } from '../core/query';
 
 /**
  * What a search box over a box of pokemon can be asked.
@@ -241,11 +241,6 @@ function speciesWhere(keep: (species: Species) => boolean): Species[] {
   return getRegisteredSpecies().filter(keep);
 }
 
-/** Every registered item, which the registry keeps by type */
-function everyItem(): number[] {
-  return ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
-}
-
 /**
  * What one term could be asked of the store, or null where it can
  * only be answered by reading the record
@@ -283,7 +278,8 @@ function constrain(field: string, value: string): CatchConstraint | null {
       return met == null ? null : { field: 'type', equals: met };
     }
     case 'caught':
-      return wanted === '' ? null : { field: 'caughtAt', prefix: wanted };
+      // The stamp is a reconstructed string; the loaded box answers it
+      return null;
     case 'friendship':
     case 'walked':
     case 'steps':
@@ -309,58 +305,18 @@ function constrain(field: string, value: string): CatchConstraint | null {
 
       return oneOf.length > 0 && oneOf.length <= IN_LIMIT ? { field: 'species', oneOf } : null;
     }
-    case 'move': {
-      const move = only(
-        getRegisteredMoves().filter((entry) => holds(getMoveData(entry).name, wanted)),
-      );
-
-      return move == null ? null : { field: 'moves', has: move };
-    }
-    case 'ability': {
-      const ability = only(
-        getRegisteredAbilities().filter((entry) => holds(getAbilityData(entry).name, wanted)),
-      );
-
-      return ability == null ? null : { field: 'abilities', has: ability };
-    }
-    case 'item': {
-      const item = only(everyItem().filter((entry) => holds(getItemData(entry).name, wanted)));
-
-      return item == null ? null : { field: 'items', has: item };
-    }
+    // Moves, abilities and held items live in child tables, and the
+    // stamp is a string this side reassembles: all four are answered
+    // over the loaded box by `matchesCatch` rather than pushed
+    case 'move':
+    case 'ability':
+    case 'item':
+      return null;
     default:
       // A plain word is a substring of a name, which no document
       // store answers
       return null;
   }
-}
-
-/**
- * How much a constraint is worth pushing. One is pushed and no more:
- * every field asked beside `owner` needs its own composite index, and
- * a single extra keeps that list one entry per field rather than one
- * per combination anybody types
- */
-function worth(constraint: CatchConstraint): number {
-  if ('oneOf' in constraint) {
-    return 0;
-  }
-  if ('has' in constraint) {
-    return 1;
-  }
-  // One nature out of twenty-five, one ball, one way of being met
-  if ('equals' in constraint) {
-    return 2;
-  }
-  if ('prefix' in constraint) {
-    return 3;
-  }
-  if ('is' in constraint) {
-    // A yes is a handful of records; a no is nearly the whole box, so
-    // it is worth less than a range
-    return constraint.is ? 4 : 6;
-  }
-  return 5;
 }
 
 /**
@@ -372,13 +328,10 @@ function worth(constraint: CatchConstraint): number {
  * wrong thing is the only way to be wrong
  */
 export function planCatchSearch(query: string): CatchConstraint[] {
-  const candidates = parseQuery(query)
+  return parseQuery(query)
     .filter((term) => term.field !== '')
     .map((term) => constrain(term.field, term.value))
-    .filter((constraint): constraint is CatchConstraint => constraint != null)
-    .sort((one, other) => worth(one) - worth(other));
-
-  return candidates.length === 0 ? [] : [candidates[0]];
+    .filter((constraint): constraint is CatchConstraint => constraint != null);
 }
 
 /**

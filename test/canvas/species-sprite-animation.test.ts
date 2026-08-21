@@ -589,9 +589,7 @@ describe('where the parts of a pokemon are', () => {
     // the end of the sheet
     expect(sprite.play(SpriteAnim.Sleep, { direction: 'Up' })).toBe(true);
     expect(SAMPLE.sprites[SpriteAnim.Sleep]?.rows).toBe(1);
-    expect(sprite.anchor('shadow')).toEqual(
-      SAMPLE.sprites[SpriteAnim.Sleep]?.frames[0].shadow,
-    );
+    expect(sprite.anchor('shadow')).toEqual(SAMPLE.sprites[SpriteAnim.Sleep]?.frames[0].shadow);
   });
 });
 
@@ -697,10 +695,10 @@ describe('drawing a pokemon somewhere', () => {
     // ...whose box is in the same place, which is what makes the
     // difference between the two frames visible. The pictures
     // themselves hang wherever their own crop leaves them
-    expect([
-      drawn[1][4] - moved[0] * scale,
-      drawn[1][5] - moved[1] * scale,
-    ]).toEqual([drawn[0][4] - held[0] * scale, drawn[0][5] - held[1] * scale]);
+    expect([drawn[1][4] - moved[0] * scale, drawn[1][5] - moved[1] * scale]).toEqual([
+      drawn[0][4] - held[0] * scale,
+      drawn[0][5] - held[1] * scale,
+    ]);
   });
 
   it('leaves the ground where it was while the pokemon moves over it', () => {

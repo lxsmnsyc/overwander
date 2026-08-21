@@ -384,8 +384,22 @@ export function heart(
 ): void {
   context.beginPath();
   context.moveTo(x, y + size * 0.7);
-  context.bezierCurveTo(x - size * 1.4, y - size * 0.4, x - size * 0.4, y - size * 1.2, x, y - size * 0.35);
-  context.bezierCurveTo(x + size * 0.4, y - size * 1.2, x + size * 1.4, y - size * 0.4, x, y + size * 0.7);
+  context.bezierCurveTo(
+    x - size * 1.4,
+    y - size * 0.4,
+    x - size * 0.4,
+    y - size * 1.2,
+    x,
+    y - size * 0.35,
+  );
+  context.bezierCurveTo(
+    x + size * 0.4,
+    y - size * 1.2,
+    x + size * 1.4,
+    y - size * 0.4,
+    x,
+    y + size * 0.7,
+  );
   context.fillStyle = fade(painted.color, painted.alpha ?? 1);
   context.fill();
 }

@@ -1,4 +1,4 @@
-import type { User } from 'firebase/auth';
+import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
   type JSX,
@@ -46,7 +46,7 @@ import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 export interface RaidLobbyProps {
-  user: User;
+  user: PlayerIdentity;
   raidId: string;
   /**
    * What the lobby is called, reported upwards as soon as it is known.

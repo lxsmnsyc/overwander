@@ -1,6 +1,6 @@
 # The battle engine
 
-Developer notes on how the real-time battle actually runs. What a *player* needs
+Developer notes on how the real-time battle actually runs. What a _player_ needs
 to know is in [Battles](mechanics/battles.md); this page is the machinery
 underneath it.
 
@@ -66,7 +66,7 @@ Units are driven by the AI in [`src/battle/ai/`](../src/battle/ai/). Every tick,
 each **idle** unit — alive, not casting, not channelling, no triggered move still
 pending, not locked out by a status — picks its best move and casts it. The idle
 set is maintained by the lifecycle events rather than rescanned, and the outcome
-check deliberately never asks the AI what it *would* do, since consuming a random
+check deliberately never asks the AI what it _would_ do, since consuming a random
 would pull every replay off its seed.
 
 A set that stands in for a check is only worth keeping while it cannot go stale,

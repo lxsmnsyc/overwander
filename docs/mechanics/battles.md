@@ -98,8 +98,8 @@ damage = base damage × critical × 0.85–1.00 × type matchup × same-type bon
 | Type matchup        | The full type chart, applied once per type the target has |
 | Random roll         | Between 0.85 and 1.00                                     |
 
-A critical hit ignores the attacker's *lowered* attack buffs and the defender's
-*raised* defence buffs, and nothing else, so a sweeper that has been snarled at
+A critical hit ignores the attacker's _lowered_ attack buffs and the defender's
+_raised_ defence buffs, and nothing else, so a sweeper that has been snarled at
 still lands its criticals properly.
 
 Three things block a move outright before any of this: the type chart's own

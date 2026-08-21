@@ -1,6 +1,6 @@
 import type { Balls, Items } from '../data/ids/items';
 import useBallOnServerSide from '../server/balls';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import getIdToken from './session';
 
 /**

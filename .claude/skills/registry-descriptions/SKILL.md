@@ -16,7 +16,7 @@ It is player-facing text under the name in a list — a market row, a bag entry,
 
 ## Rules
 
-- **Describe this engine, never the mainline.** Where the two differ, the line follows the code. A Zoom Lens here answers a target that is *casting or channelling*, because there is no "moved second" in a real-time fight. Analytic is the same. Leftovers pays out *each time its holder acts*, because there are no turns to hang a residual on. Pressure doubles a *cooldown*, not PP.
+- **Describe this engine, never the mainline.** Where the two differ, the line follows the code. A Zoom Lens here answers a target that is _casting or channelling_, because there is no "moved second" in a real-time fight. Analytic is the same. Leftovers pays out _each time its holder acts_, because there are no turns to hang a residual on. Pressure doubles a _cooldown_, not PP.
 - **Use the engine's own numbers.** Read the constant, do not remember the mainline's. `1.2x`, `a sixteenth of its pool`, `30%`. Round a fraction like `5325 / 4096` to `1.3x` — the reader wants the size, not the ratio.
 - **One sentence where one will do, two at most.** Ends with a full stop; a test enforces that.
 - **Say the cost as well as the benefit** when the entry has one: "1.5x Attack, but physical moves are 20% less accurate."
@@ -41,9 +41,9 @@ Entries whose behaviour is genuinely their own get a hand-written line, kept in 
 
 ## Where they live
 
-| registry | field added in | filled in |
-| --- | --- | --- |
-| items | `src/data/items/__create.ts` | each `src/data/items/*.ts` |
+| registry  | field added in                   | filled in                     |
+| --------- | -------------------------------- | ----------------------------- |
+| items     | `src/data/items/__create.ts`     | each `src/data/items/*.ts`    |
 | abilities | `src/data/abilities/__create.ts` | `src/data/abilities/gen-1.ts` |
 
 ## Test it

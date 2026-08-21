@@ -2,17 +2,12 @@ import 'server-only';
 import type BattleAftermath from '../auth/battle-aftermath';
 import { type CatchSnapshot, asCatchSnapshot } from '../auth/catch-snapshot';
 import { asCaughtPokemon } from '../auth/caught-record';
-import {
-  BATTLE_AFTERMATH_COLLECTION,
-  BATTLE_COLLECTION,
-  CAUGHT_COLLECTION,
-  TEAM_SNAPSHOT_COLLECTION,
-} from '../auth/collections';
 import { carriedStatuses, getMaxHealth } from '../auth/health';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
-import { getAdminFirestore } from './firebase';
-import { asNumberArray, asStringArray, docData } from './read';
+import { getSql, tx } from './db';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { asNumberArray } from './read';
 
 /**
  * What a battle leaves behind, written with admin credentials. A
@@ -48,26 +43,17 @@ const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[]
  * server's own writing, so they — not the report — decide what a unit
  * could possibly have spent
  */
-async function readFielded(
-  battle: Record<string, unknown>,
-  player: string,
-): Promise<Map<string, CatchSnapshot>> {
-  const db = getAdminFirestore();
-  const ids = asStringArray(battle.teams);
+async function readFielded(battleId: string, player: string): Promise<Map<string, CatchSnapshot>> {
   const fielded = new Map<string, CatchSnapshot>();
+  const snapshots = await getSql()`
+    select ts.catches
+    from battle_teams bt
+    join team_snapshots ts on ts.id = bt.snapshot_id
+    where bt.battle_id = ${battleId} and bt.player = ${player}
+  `;
 
-  if (ids.length === 0) {
-    return fielded;
-  }
-
-  const snapshots = await db.getAll(
-    ...ids.map((id) => db.collection(TEAM_SNAPSHOT_COLLECTION).doc(id)),
-  );
-
-  for (const entry of snapshots) {
-    const data = docData(entry);
-
-    if (data == null || data.player !== player || !Array.isArray(data.catches)) {
+  for (const data of snapshots) {
+    if (!Array.isArray(data.catches)) {
       continue;
     }
     for (const value of data.catches) {
@@ -101,34 +87,36 @@ export default async function recordAftermath(
     return false;
   }
 
-  const db = getAdminFirestore();
-  const battle = docData(await db.collection(BATTLE_COLLECTION).doc(battleId).get());
+  const fought = await getSql()`
+    select 1 from battle_teams where battle_id = ${battleId} and player = ${uid} limit 1
+  `;
 
-  if (battle == null || !new Set(asStringArray(battle.players)).has(uid)) {
+  if (fought.length === 0) {
     return false;
   }
 
-  const fielded = await readFielded(battle, uid);
+  const fielded = await readFielded(battleId, uid);
   const reported = aftermath.filter((entry) => fielded.has(entry.caught));
 
   if (reported.length === 0) {
     return false;
   }
 
-  return db.runTransaction(async (transaction) => {
-    const marker = db.collection(BATTLE_AFTERMATH_COLLECTION).doc(`${battleId}:${uid}`);
+  return tx(async (transaction) => {
+    // The marker is the whole race: one battle settles one player
+    // exactly once, however many times the report arrives
+    const claimed = await transaction`
+      insert into battle_aftermaths (battle_id, player, settled_at)
+      values (${battleId}, ${uid}, ${Date.now()})
+      on conflict do nothing
+    `;
 
-    if ((await transaction.get(marker)).exists) {
+    if (claimed.count === 0) {
       return false;
     }
 
-    const refs = reported.map((entry) => db.collection(CAUGHT_COLLECTION).doc(entry.caught));
-    const stored = await transaction.getAll(...refs);
-
-    transaction.set(marker, { player: uid, battle: battleId });
-
-    for (const [at, target] of reported.entries()) {
-      const data = docData(stored[at]);
+    for (const target of reported) {
+      const data = await readCaughtIn(transaction, target.caught);
 
       // A catch sold, released or handed on since the battle started
       // is nobody's to charge
@@ -161,7 +149,7 @@ export default async function recordAftermath(
       // battle
       const statuses = carriedStatuses(target.statuses);
 
-      transaction.update(refs[at], {
+      await updateCaughtIn(transaction, target.caught, {
         health,
         statuses,
         ...(taken.size > 0 ? { items: remaining } : {}),

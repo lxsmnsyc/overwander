@@ -51,19 +51,15 @@ export default defineConfig({
   },
   test: {
     /**
-     * `test/firestore` is the one part of the suite that needs
-     * something running — the rules language has no interpreter
-     * outside the emulator. Left in, `pnpm test` would fail on a
-     * machine that has no Java rather than on anything to do with the
-     * code, so those tests are run on their own by `pnpm test:rules`,
-     * which starts an emulator around them (see `vitest.rules.ts`).
+     * `test/rls` needs the local Supabase stack and clears it between
+     * cases — run inside `pnpm test` it fails on a machine with no
+     * stack, and run beside the e2e suite it deletes the accounts the
+     * browsers are signed in as. It runs on its own as `pnpm
+     * test:rules` (see `vitest.rules.ts`).
      *
-     * `e2e` is left out for the same reason and more so: those are
-     * Playwright specs, and Playwright refuses to have its `test`
-     * called by another runner — collected here they do not merely
-     * fail, they fail with an error about configuration files that
-     * says nothing about the game
+     * `e2e` is left out because those are Playwright specs, and
+     * Playwright refuses to have its `test` called by another runner
      */
-    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/firestore/**', 'e2e/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/rls/**', 'e2e/**'],
   },
 });

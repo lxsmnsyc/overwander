@@ -1,11 +1,6 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import {
-  BATTLE_COLLECTION,
-  ROCKET_COLLECTION,
-  TEAM_SNAPSHOT_COLLECTION,
-} from '../auth/collections';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import {
@@ -28,11 +23,12 @@ import {
 } from '../overworld/rocket';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
-import { getAdminFirestore } from './firebase';
+import { getSql, jsonOf, newDocId, tx } from './db';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
+import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
-import { asNumber, asStringArray, docData } from './read';
+import { asNumber, asString } from './read';
 
 /**
  * Team Rocket stops, written with admin credentials. A grunt hands
@@ -48,13 +44,6 @@ import { asNumber, asStringArray, docData } from './read';
 const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOutcome;
 
 /**
- * The document one player's dealings with one stop live at
- */
-function stopEntryId(stop: string, uid: string): string {
-  return `${stop}:${uid}`;
-}
-
-/**
  * Walk up to a Team Rocket stop. The grunt's party comes from the
  * chunk's own roll for the window, so it is the one the world staged
  * wherever the caller says they are standing, and the record is
@@ -65,6 +54,41 @@ function stopEntryId(stop: string, uid: string): string {
  * the
  * one it stages
  */
+
+/** One stop for one player, in the record shape, or null */
+async function readRocketStop(
+  stop: string,
+  player: string,
+): Promise<Record<string, unknown> | null> {
+  const sql = getSql();
+  const rows = await sql`
+    select * from rocket_stops where stop_id = ${stop} and player = ${player}
+  `;
+  const row = rows.at(0);
+
+  if (row == null) {
+    return null;
+  }
+
+  const party = await sql`
+    select species, individual_value as "individualValue", trait_value as "traitValue"
+    from rocket_party
+    where stop_id = ${stop} and player = ${player}
+    order by slot
+  `;
+
+  return {
+    player: row.player,
+    party: [...party],
+    battle: row.battle_id,
+    timestamp: row.window_at,
+    offset: row.utc_offset,
+    chunk: { seed: asString(row.chunk_seed), x: asNumber(row.chunk_x), y: asNumber(row.chunk_y) },
+    cell: row.cell,
+    defeated: row.defeated,
+  };
+}
+
 export async function enterRocketStop(
   uid: string,
   x: number,
@@ -82,10 +106,8 @@ export async function enterRocketStop(
     return null;
   }
 
-  const db = getAdminFirestore();
   const stop = rocketStopId(chunk, snapshot.npcTimestamp, cell, zone);
-  const ref = db.collection(ROCKET_COLLECTION).doc(stopEntryId(stop, uid));
-  const stored = docData(await ref.get());
+  const stored = await readRocketStop(stop, uid);
 
   if (stored != null) {
     const existing = asRocketRecord(stored);
@@ -110,7 +132,32 @@ export async function enterRocketStop(
     defeated: false,
   };
 
-  await ref.set(fresh);
+  await tx(async (transaction) => {
+    await transaction`
+      insert into rocket_stops
+        (stop_id, player, battle_id, window_at, utc_offset,
+         chunk_seed, chunk_x, chunk_y, cell, defeated)
+      values
+        (${stop}, ${uid}, null, ${fresh.timestamp}, ${fresh.offset},
+         ${chunk.seed}, ${chunk.x}, ${chunk.y}, ${cell}, false)
+      on conflict do nothing
+    `;
+
+    const rows = fresh.party.map((entry, slot) => ({
+      stop_id: stop,
+      player: uid,
+      slot,
+      species: entry.species,
+      individual_value: entry.individualValue,
+      trait_value: entry.traitValue,
+    }));
+
+    await transaction`
+      insert into rocket_party
+        ${transaction(rows, 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
+      on conflict do nothing
+    `;
+  });
   return [stop, fresh];
 }
 
@@ -120,9 +167,7 @@ export async function enterRocketStop(
  * fight is over may be fought again
  */
 async function isBattleUnfinished(battleId: string): Promise<boolean> {
-  const battle = docData(
-    await getAdminFirestore().collection(BATTLE_COLLECTION).doc(battleId).get(),
-  );
+  const battle = await readBattle(battleId);
 
   return battle != null && asOutcome(battle.outcome) === BattleOutcome.Unfinished;
 }
@@ -151,9 +196,7 @@ export async function startRocketBattle(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const ref = db.collection(ROCKET_COLLECTION).doc(stopEntryId(stop, uid));
-  const stored = docData(await ref.get());
+  const stored = await readRocketStop(stop, uid);
 
   if (stored == null) {
     return null;
@@ -178,7 +221,7 @@ export async function startRocketBattle(
     return null;
   }
 
-  const battle = db.collection(BATTLE_COLLECTION).doc();
+  const battleId = newDocId();
   const party = await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now);
 
   if (party == null) {
@@ -187,30 +230,37 @@ export async function startRocketBattle(
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
-  const grunt = db.collection(TEAM_SNAPSHOT_COLLECTION).doc();
+  const gruntId = newDocId();
 
-  // The grunt's party belongs to nobody, the way a raid boss' does
-  await grunt.set({
-    player: '',
-    alliance: ROCKET_ALLIANCE,
-    catches: createRocketParty(snapshot, toSpawns(record.party)),
+  await tx(async (transaction) => {
+    // The grunt's party belongs to nobody, the way a raid boss' does
+    await transaction`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${gruntId}, null, ${ROCKET_ALLIANCE},
+              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party)))})
+    `;
+    await transaction`
+      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      values (${battleId}, null, ${record.party[0]?.species ?? 0},
+              ${BattleOutcome.Unfinished}, ${now},
+              ${PVP_BATTLE_LIMITS})
+    `;
+
+    const rows = [
+      { battle_id: battleId, position: 0, snapshot_id: gruntId, player: null as string | null },
+      { battle_id: battleId, position: 1, snapshot_id: party, player: uid as string | null },
+    ];
+
+    await transaction`
+      insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
+    `;
+    await transaction`
+      update rocket_stops set battle_id = ${battleId}
+      where stop_id = ${stop} and player = ${uid}
+    `;
   });
 
-  await battle.set({
-    teams: [grunt.id, party],
-    players: [uid],
-    // A stop is not a raid, so no lobby owns this fight
-    raid: '',
-    species: record.party[0]?.species ?? 0,
-    outcome: BattleOutcome.Unfinished,
-    startedAt: now,
-    // A trainer battle is held to the mainline's shape: one ability,
-    // one held item, four moves apiece
-    limits: PVP_BATTLE_LIMITS,
-  });
-  await ref.update({ battle: battle.id });
-
-  return battle.id;
+  return battleId;
 }
 
 /**
@@ -231,9 +281,7 @@ export interface RocketReward {
  * has already been collected
  */
 export async function claimRocketReward(uid: string, stop: string): Promise<RocketReward | null> {
-  const db = getAdminFirestore();
-  const ref = db.collection(ROCKET_COLLECTION).doc(stopEntryId(stop, uid));
-  const stored = docData(await ref.get());
+  const stored = await readRocketStop(stop, uid);
 
   if (stored == null) {
     return null;
@@ -245,27 +293,24 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     return null;
   }
 
-  const battle = docData(await db.collection(BATTLE_COLLECTION).doc(record.battle).get());
+  const battle = await readBattle(record.battle);
 
   if (
     battle == null ||
     asOutcome(battle.outcome) !== BattleOutcome.Won ||
-    !new Set(asStringArray(battle.players)).has(uid)
+    !(await foughtBattle(record.battle, uid))
   ) {
     return null;
   }
 
-  const claimed = await db.runTransaction(async (transaction) => {
-    const current = docData(await transaction.get(ref));
+  // The defeated flag is both the record of the win and the marker
+  // that guards the payout; the guard rides in the statement
+  const claimed = await getSql()`
+    update rocket_stops set defeated = true
+    where stop_id = ${stop} and player = ${uid} and not defeated
+  `;
 
-    if (current == null || current.defeated === true) {
-      return false;
-    }
-    transaction.update(ref, { defeated: true });
-    return true;
-  });
-
-  if (!claimed) {
+  if (claimed.count === 0) {
     return null;
   }
 

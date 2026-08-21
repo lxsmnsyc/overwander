@@ -1,6 +1,5 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import {
   EGG_LEVEL,
   MAX_STEP_REPORT,
@@ -39,7 +38,8 @@ import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
-import { getAdminFirestore } from './firebase';
+import { newDocId, tx } from './db';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, writeStackIn } from './stacks';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
@@ -53,9 +53,8 @@ import {
 } from '../data/constants/friendship';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
-import { freeFields, isCatchLocked } from './locks';
+import { isCatchLocked } from './locks';
 import { recordCaughtSpecies } from './pokedex';
-import { docData } from './read';
 
 /**
  * Eggs, written with admin credentials.
@@ -151,9 +150,9 @@ async function writeEgg(
   offset: number,
   locale: string,
 ): Promise<string> {
-  const db = getAdminFirestore();
-  const ref = db.collection(CAUGHT_COLLECTION).doc();
-  const foundAt = toLocalISO(now, asOffset(offset));
+  const id = newDocId();
+  const zone = asOffset(offset);
+  const foundAt = toLocalISO(now, zone);
   // Whatever was walking beside the player when they picked it up has
   // its say on how far it has to be carried — a Flame Body buddy warms
   // it. It is asked here, once, because from now on the egg is what
@@ -164,87 +163,55 @@ async function writeEgg(
     fields.hatchSteps,
   );
 
-  await ref.set({
-    owner: uid,
-    type: EncounterType.Hatched,
-    species: fields.species,
-    // Unnamed, and doubly so: nothing in a shell has been introduced
-    // to anybody yet
-    nickname: '',
-    level: EGG_LEVEL,
-    individualValue: fields.individualValue,
-    traitValue: fields.traitValue,
-    ivs: fields.ivs,
-    gender: fields.gender,
-    nature: fields.nature,
-    moves: fields.moves,
-    // An egg has had nothing spent on what is inside it
-    movePoints: {},
-    // A shadow keeps its Shadow ability for good, the way a shadow
-    // raid's prize does
-    abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
-    // The room it will have when it comes out of the shell. The
-    // shadow it may be carrying takes none of it
-    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS),
-    // An egg holds nothing, and cannot be handed anything until it
-    // has hatched
-    items: [],
-    // It was never anybody else's: this owner is where the pokemon
-    // begins, egg and all
-    history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],
-    // An egg on top of whatever the pokemon inside is, and never
-    // locked: an egg cannot be fielded
-    shiny: fields.shiny,
-    shadow: fields.shadow,
-    egg: true,
-    favorite: false,
-    guarded: false,
-    // It begins here: an egg has passed through no hands at all
-    traded: false,
-    // What is inside the shell is already decided, so what it will be
-    // worth to somebody else is decided with it
-    auctionable: isAuctionableCatch({
-      ivs: fields.ivs,
-      shiny: fields.shiny,
-      species: fields.species,
-    }),
-    ...freeFields(),
-    // Whole and clean: nothing has fought with it, and an egg cannot
-    // be fought with. The figure is what the hatchling will have,
-    // since an egg is already the pokemon inside it
-    health: getMaxHealth({
-      species: fields.species,
-      level: EGG_LEVEL,
-      ivs: fields.ivs,
-      effortValues: zeroEffortValues(),
-    }),
-    statuses: 0,
-    // Nothing hatched was fought for in a lair
-    lair: null,
-    steps: 0,
-    // Frozen here, so a later change to what hatching costs cannot
-    // move the finish line on an egg already being carried — nor can
-    // picking up a Ponyta afterwards
-    hatchSteps,
-    steppedAt: now,
-    // An egg was never thrown at. A nest's is recorded under the ball
-    // named for where eggs come from; a bred one is laid into whatever
-    // its mother was caught in
-    ball: fields.ball,
-    caughtAt: foundAt,
-    locale: asLocale(locale),
-    effortValues: zeroEffortValues(),
-    effortBonus: 0,
-    friendship: fields.shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP,
-    origin: {
-      timestamp: fields.timestamp,
-      x: snapshot.chunk.x,
-      y: snapshot.chunk.y,
-      biome: snapshot.chunk.biome,
-    },
+  await tx(async (transaction) => {
+    await transaction`
+      insert into caught (
+        id, owner, type, species, nickname, level, individual_value, trait_value,
+        ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
+        auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
+        statuses, lair, ball, caught_at_local, caught_at_offset, locale,
+        effort_bonus, walked, friendship,
+        origin_timestamp, origin_x, origin_y, origin_biome, origin_place
+      ) values (
+        ${id}, ${uid}, ${EncounterType.Hatched}, ${fields.species}, '',
+        ${EGG_LEVEL}, ${fields.individualValue}, ${fields.traitValue},
+        ${fields.ivs}, ${fields.gender}, ${fields.nature},
+        ${fields.shiny}, ${fields.shadow}, true, false, false, false,
+        ${isAuctionableCatch({
+          ivs: fields.ivs,
+          shiny: fields.shiny,
+          species: fields.species,
+        })},
+        ${packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
+        0, 0, ${hatchSteps}, ${now},
+        ${getMaxHealth({
+          species: fields.species,
+          level: EGG_LEVEL,
+          ivs: fields.ivs,
+          effortValues: zeroEffortValues(),
+        })},
+        0, null, ${fields.ball},
+        ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
+        0, 0, ${fields.shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP},
+        ${fields.timestamp}, ${snapshot.chunk.x}, ${snapshot.chunk.y},
+        ${snapshot.chunk.biome}, null
+      )
+    `;
+
+    await updateCaughtIn(transaction, id, {
+      moves: fields.moves,
+      movePoints: {},
+      // A shadow keeps its Shadow ability for good, the way a shadow
+      // raid's prize does
+      abilities: fields.shadow ? [fields.ability, Abilities.Shadow] : [fields.ability],
+      items: [],
+      // It was never anybody else's: this owner is where the pokemon
+      // begins, egg and all
+      history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],
+    });
   });
 
-  return ref.id;
+  return id;
 }
 
 /**
@@ -415,18 +382,15 @@ export async function recordSteps(
   reported: number,
   now: number,
 ): Promise<WalkReport | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const profile = docData(await transaction.get(db.collection(PROFILE_COLLECTION).doc(uid)));
-    const catchId = profile?.buddy;
+  return tx(async (transaction) => {
+    const profiles = await transaction`select buddy_id from profiles where id = ${uid}`;
+    const catchId: unknown = profiles.at(0)?.buddy_id;
 
     if (typeof catchId !== 'string' || catchId === '') {
       return null;
     }
 
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+    const stored = await readCaughtIn(transaction, catchId);
 
     if (stored == null || stored.owner !== uid) {
       return null;
@@ -464,13 +428,13 @@ export async function recordSteps(
       );
       // Every stack is read before anything is written, the way a
       // transaction requires
-      const stacks = await Promise.all(
-        [...found.keys()].map(
-          async (item) => [item, await readStackIn(transaction, ITEM_STACKS, uid, item)] as const,
-        ),
-      );
+      const stacks: [Items, number][] = [];
 
-      transaction.update(ref, {
+      for (const item of found.keys()) {
+        stacks.push([item, await readStackIn(transaction, ITEM_STACKS, uid, item)]);
+      }
+
+      await updateCaughtIn(transaction, catchId, {
         walked,
         steppedAt: now,
         // A Luxury Ball's comfort is what the pokemon remembers the
@@ -488,7 +452,7 @@ export async function recordSteps(
       });
 
       for (const [item, carried] of stacks) {
-        writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
+        await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
       return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
     }
@@ -503,7 +467,7 @@ export async function recordSteps(
     // The stamp moves whether or not anything was credited: it is
     // what the next report is measured from, and a refused report
     // should not leave time banked for the one after it
-    transaction.update(ref, { steps, steppedAt: now });
+    await updateCaughtIn(transaction, catchId, { steps, steppedAt: now });
     // An egg finds nothing: whatever is inside it is not out here
     // looking at the ground
     return { egg: { caught: catchId, steps, hatchSteps: caught.hatchSteps }, picked: [] };
@@ -525,10 +489,8 @@ export async function hatchEgg(
   now: number,
   offset: number,
 ): Promise<Species | null> {
-  const db = getAdminFirestore();
-  const hatched = await db.runTransaction(async (transaction) => {
-    const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const stored = docData(await transaction.get(ref));
+  const hatched = await tx(async (transaction) => {
+    const stored = await readCaughtIn(transaction, catchId);
 
     if (stored == null || stored.owner !== uid || !isEggRecord(stored) || isCatchLocked(stored)) {
       return null;
@@ -543,7 +505,7 @@ export async function hatchEgg(
     // Only the shell comes off: whatever else is true of it — that it
     // sparkles, that it is a shadow — is a field of its own and comes
     // through the hatching untouched
-    transaction.update(ref, {
+    await updateCaughtIn(transaction, catchId, {
       egg: false,
       steps: caught.hatchSteps,
       // Everything that hatches has already been carried every step

@@ -74,6 +74,6 @@ export default class AleaRNG {
   }
 
   int32(): number {
-    return this.random() * 0x100000000;
+    return (this.random() * 0xffffffff) | 0;
   }
 }

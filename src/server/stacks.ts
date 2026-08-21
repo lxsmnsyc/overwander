@@ -1,91 +1,102 @@
 import 'server-only';
-import { FieldValue } from 'firebase-admin/firestore';
-import { BAG_COLLECTION, type StackSpec, bagId, getStack } from '../auth/stacks';
-import { getAdminFirestore } from './firebase';
-import { docData } from './read';
+import type { StackSpec } from '../auth/stacks';
+import { type Tx, getSql, tx } from './db';
+import { asNumber } from './read';
 
 /**
- * The bag, written with admin credentials.
+ * The bag, written over the owner connection.
  *
- * What a player carries is currency whichever map it is in: a client
- * that could write the items map could mint Master Balls, and one
- * that could write the candies map could mint levels. So every change
- * comes through here.
+ * What a player carries is currency whichever table it is in: a
+ * client that could write the item rows could mint Master Balls, and
+ * one that could write the candy rows could mint levels. So every
+ * change comes through here.
  *
  * There are two layers on purpose. Most callers change a stack **and
- * something else** in the same breath — an item leaves the bag as a
- * move is learned, a candy leaves the pile as a level lands — and
+ * something else** in the same breath (an item leaves the bag as a
+ * move is learned, a candy leaves the pile as a level lands) and
  * those have to share one transaction, so they take the `In`
  * functions and pass their own. The rest take the self-contained
- * ones, which open a transaction of their own.
+ * ones, which are single atomic statements.
  *
- * Every write is a **merge at one field path**, never a whole
- * document: two kinds changed in one transaction are two mutations
- * against `items.114` and `items.117`, so the second cannot overwrite
- * the first. A stack spent to its last is **deleted** from the map
- * rather than left at zero, so the bag holds what is carried and
- * nothing else
+ * A stack spent to its last is **deleted** rather than left at zero,
+ * so the bag holds what is carried and nothing else. The tables
+ * enforce it: `count > 0` is a constraint, not a habit.
  */
 
-export function bagRef(uid: string): FirebaseFirestore.DocumentReference {
-  return getAdminFirestore().collection(BAG_COLLECTION).doc(bagId(uid));
+/** The table and key column a kind of stack lives in */
+function tableOf(spec: StackSpec): { table: string; key: string } {
+  return spec.field === 'candies'
+    ? { table: 'bag_candies', key: 'family' }
+    : { table: 'bag_items', key: 'item' };
 }
 
 /**
  * How many of it the player holds, read inside a transaction the
- * caller already opened.
- *
- * Two kinds read in one transaction are two reads of the same
- * document, which is what makes the reads-before-writes rule hold for
- * a caller that gathers several before writing any
+ * caller already opened. The row is locked as it is read, because
+ * every caller of this is about to write it back
  */
 export async function readStackIn(
-  transaction: FirebaseFirestore.Transaction,
+  transaction: Tx,
   spec: StackSpec,
   uid: string,
   key: number,
 ): Promise<number> {
-  return getStack(docData(await transaction.get(bagRef(uid))), spec, key);
+  const { table, key: column } = tableOf(spec);
+  const rows = await transaction`
+    select count from ${transaction(table)}
+    where player = ${uid} and ${transaction(column)} = ${key}
+    for update
+  `;
+
+  return rows.at(0) == null ? 0 : asNumber(rows[0].count);
 }
 
 /**
  * Write one count to a known figure inside the caller's transaction.
- * Nothing is checked here — the caller has already read the map and
+ * Nothing is checked here; the caller has already read the row and
  * decided what it should say
  */
-export function writeStackIn(
-  transaction: FirebaseFirestore.Transaction,
+export async function writeStackIn(
+  transaction: Tx,
   spec: StackSpec,
   uid: string,
   key: number,
   count: number,
-): void {
+): Promise<void> {
+  const { table, key: column } = tableOf(spec);
   const held = Math.max(0, Math.floor(count));
 
-  transaction.set(
-    bagRef(uid),
-    { [spec.field]: { [key]: held > 0 ? held : FieldValue.delete() } },
-    { merge: true },
-  );
+  if (held > 0) {
+    await transaction`
+      insert into ${transaction(table)} (player, ${transaction(column)}, count)
+      values (${uid}, ${key}, ${held})
+      on conflict (player, ${transaction(column)}) do update set count = ${held}
+    `;
+  } else {
+    await transaction`
+      delete from ${transaction(table)}
+      where player = ${uid} and ${transaction(column)} = ${key}
+    `;
+  }
 }
 
 /**
  * Take some of it inside the caller's transaction, given the figure
- * they have already read. Answers false — and writes nothing — when
- * the player does not hold enough, so a refusal costs nothing
+ * they have already read. Answers false, and writes nothing, when the
+ * player does not hold enough, so a refusal costs nothing
  */
-export function spendStackIn(
-  transaction: FirebaseFirestore.Transaction,
+export async function spendStackIn(
+  transaction: Tx,
   spec: StackSpec,
   uid: string,
   key: number,
   held: number,
   count = 1,
-): boolean {
+): Promise<boolean> {
   if (held < count) {
     return false;
   }
-  writeStackIn(transaction, spec, uid, key, held - count);
+  await writeStackIn(transaction, spec, uid, key, held - count);
   return true;
 }
 
@@ -93,11 +104,18 @@ export function spendStackIn(
  * How many of it the player holds
  */
 export async function readStack(spec: StackSpec, uid: string, key: number): Promise<number> {
-  return getStack(docData(await bagRef(uid).get()), spec, key);
+  const { table, key: column } = tableOf(spec);
+  const rows = await getSql()`
+    select count from ${getSql()(table)}
+    where player = ${uid} and ${getSql()(column)} = ${key}
+  `;
+
+  return rows.at(0) == null ? 0 : asNumber(rows[0].count);
 }
 
 /**
- * Add to a stack, creating the bag on first acquisition
+ * Add to a stack, one atomic statement: two grants landing together
+ * both count
  */
 export async function grantStack(
   spec: StackSpec,
@@ -105,16 +123,21 @@ export async function grantStack(
   key: number,
   count = 1,
 ): Promise<void> {
-  await getAdminFirestore().runTransaction(async (transaction) => {
-    const held = await readStackIn(transaction, spec, uid, key);
+  const { table, key: column } = tableOf(spec);
+  const sql = getSql();
 
-    writeStackIn(transaction, spec, uid, key, held + count);
-  });
+  await sql`
+    insert into ${sql(table)} (player, ${sql(column)}, count)
+    values (${uid}, ${key}, ${count})
+    on conflict (player, ${sql(column)})
+      do update set count = ${sql(table)}.count + ${count}
+  `;
 }
 
 /**
  * Spend from a stack. Resolves false (and changes nothing) when the
- * player does not hold enough
+ * player does not hold enough. The guard rides in the statement, so
+ * two spends racing cannot both land on the same copies
  */
 export async function spendStack(
   spec: StackSpec,
@@ -122,20 +145,32 @@ export async function spendStack(
   key: number,
   count = 1,
 ): Promise<boolean> {
-  return getAdminFirestore().runTransaction(async (transaction) => {
-    const held = await readStackIn(transaction, spec, uid, key);
+  const { table, key: column } = tableOf(spec);
 
-    return spendStackIn(transaction, spec, uid, key, held, count);
+  return tx(async (transaction) => {
+    // Strictly more than the spend keeps the row positive, which the
+    // count > 0 constraint insists on; an exact spend deletes instead
+    const spent = await transaction`
+      update ${transaction(table)} set count = count - ${count}
+      where player = ${uid} and ${transaction(column)} = ${key} and count > ${count}
+    `;
+
+    if (spent.count > 0) {
+      return true;
+    }
+
+    const emptied = await transaction`
+      delete from ${transaction(table)}
+      where player = ${uid} and ${transaction(column)} = ${key} and count = ${count}
+    `;
+
+    return emptied.count > 0;
   });
 }
 
 /**
- * Hand over several kinds at once, in **one** write.
- *
- * A bag is one document, so a caller that grants three kinds one at a
- * time is three writes queueing behind each other for no reason —
- * and three chances to land half a stash. This is what the pickups, a
- * dug-up cache and a released pokemon's held items use
+ * Hand over several kinds at once, in one statement, so a stash never
+ * half-lands
  */
 export async function grantStacks(
   spec: StackSpec,
@@ -148,15 +183,13 @@ export async function grantStacks(
     return;
   }
 
-  await getAdminFirestore().runTransaction(async (transaction) => {
-    const bag = docData(await transaction.get(bagRef(uid)));
+  const { table, key: column } = tableOf(spec);
+  const sql = getSql();
+  const rows = owed.map(([key, count]) => ({ player: uid, [column]: key, count }));
 
-    for (const [key, count] of owed) {
-      transaction.set(
-        bagRef(uid),
-        { [spec.field]: { [key]: getStack(bag, spec, key) + count } },
-        { merge: true },
-      );
-    }
-  });
+  await sql`
+    insert into ${sql(table)} ${sql(rows, 'player', column, 'count')}
+    on conflict (player, ${sql(column)})
+      do update set count = ${sql(table)}.count + excluded.count
+  `;
 }

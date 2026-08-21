@@ -76,8 +76,8 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
       fallback={
         <Card title="No such account">
           <Note>
-            Nothing has ever signed in under {props.uid}. <A href="/admin/players">Back to the
-            accounts.</A>
+            Nothing has ever signed in under {props.uid}.{' '}
+            <A href="/admin/players">Back to the accounts.</A>
           </Note>
         </Card>
       }
@@ -95,7 +95,9 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
               <Badge tone="gold">{row().gold} gold</Badge>
               <Meta>joined {opened(row().createdAt)}</Meta>
             </Row>
-            <Meta class="font-mono break-all">{row().email === '' ? 'no address' : row().email}</Meta>
+            <Meta class="font-mono break-all">
+              {row().email === '' ? 'no address' : row().email}
+            </Meta>
             <Meta class="font-mono break-all">{row().uid}</Meta>
           </Card>
 
@@ -129,9 +131,13 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
                     }))}
                     disabled={busy()}
                     onChange={(wanted) => {
-                      act(setPlayerRole(row().uid, wanted), 'That role is not yours to hand out.', (role) => {
-                        setGranted(role);
-                      });
+                      act(
+                        setPlayerRole(row().uid, wanted),
+                        'That role is not yours to hand out.',
+                        (role) => {
+                          setGranted(role);
+                        },
+                      );
                     }}
                   />
                 </Row>

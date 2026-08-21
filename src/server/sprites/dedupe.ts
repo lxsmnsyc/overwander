@@ -120,11 +120,7 @@ export interface Deduper {
    * which coats that drawing has — two clips only ever share a picture
    * when they were compared across the same coats
    */
-  add(
-    coats: { raster: Pixels; grid: SourceGrid }[],
-    source: number,
-    coatKey: string,
-  ): FrameCell[];
+  add(coats: { raster: Pixels; grid: SourceGrid }[], source: number, coatKey: string): FrameCell[];
 }
 
 /**

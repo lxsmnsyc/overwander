@@ -15,7 +15,7 @@ import { listPlayers } from '../../auth/admin';
  * Choosing one account out of all of them.
  *
  * A list this long is searched rather than scrolled, and the search
- * happens on the server — the addresses are in Firebase Auth, which
+ * happens on the server — the addresses are in Supabase Auth, which
  * the browser cannot query. Only the first page of matches is offered:
  * somebody who cannot see who they meant should type more of the name
  */

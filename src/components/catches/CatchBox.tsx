@@ -225,7 +225,15 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   aria-label={entry().label}
                   aria-pressed={entry().mark === 'picked'}
                   class={`${SQUARE} cursor-pointer ${toneOf(entry())}`}
-                  onClick={() => {
+                  onClick={(event) => {
+                    // The hover card is portaled out of this button but
+                    // its clicks still bubble here through the component
+                    // tree; only a press on the square itself counts,
+                    // or pressing Add on the card would also toggle the
+                    // square straight back off
+                    if (!event.currentTarget.contains(event.target)) {
+                      return;
+                    }
                     props.onOpen?.(entry().id);
                   }}
                 >

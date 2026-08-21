@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { patchDocument, uidOf } from './emulator';
+import { setDexCounts, uidOf } from './admin';
 import {
   type Player,
   SHEET,
@@ -8,6 +8,7 @@ import {
   expectOpen,
   openPanel,
   pressBoxSquare,
+  settled,
   signIn,
 } from './game';
 
@@ -37,9 +38,7 @@ const DEX = 'Dex Entry';
  * it as the emulator's owner and the page is read again
  */
 async function stageDex(page: Page, player: Player, species: number): Promise<void> {
-  const counted = { mapValue: { fields: { [String(species)]: { integerValue: '2' } } } };
-
-  await patchDocument('pokedex', await uidOf(player), { seen: counted, caught: counted });
+  await setDexCounts(await uidOf(player), [species]);
   await page.reload();
   await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 }
@@ -86,7 +85,10 @@ test.describe('the pokedex', () => {
     await expect(grid).toBeVisible();
 
     // Wide enough to be a grid of squares, and thirty of them: a page is
-    // full whatever the dex holds
+    // full whatever the dex holds. Measured only once the dialog has
+    // finished growing, or the figure is the mid-animation one
+    await settled(page);
+
     const bounds = await grid.boundingBox();
 
     expect(bounds?.width ?? 0).toBeGreaterThan(200);

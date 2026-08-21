@@ -1,16 +1,3 @@
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  type Unsubscribe,
-  collection,
-  doc,
-  documentId,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import {
   placeBid as bidOnServerSide,
@@ -18,7 +5,7 @@ import {
   openAuction as openOnServerSide,
   reclaimAuction as reclaimOnServerSide,
 } from '../server/auctions';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import {
   AuctionLot,
   type AuctionOffer,
@@ -28,10 +15,9 @@ import {
   asAuctionRecord,
   asPlayerBid,
 } from './auction-record';
-import { AUCTION_COLLECTION, AUCTION_SELLER_COLLECTION, BID_COLLECTION } from './collections';
 import { syncServerClock } from './clock';
-import { getFirebaseFirestore } from './firebase';
-import { asNumber, asString } from './__normalize';
+import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { getLocalOffset } from './local-time';
 import getIdToken from './session';
 
@@ -69,17 +55,38 @@ export type { AuctionOffer, AuctionRecord, AuctionTerms, PlayerBid } from './auc
  * read here is the board itself, which every signed-in player can see
  */
 
-const converter: FirestoreDataConverter<AuctionRecord> = {
-  toFirestore: (auction) => auction,
-  fromFirestore: (snapshot) => asAuctionRecord(snapshot.data()),
-};
+const AUCTION_TABLE = 'auctions';
 
-function getAuctionRef(id: string): DocumentReference<AuctionRecord> {
-  return doc(getFirebaseFirestore(), AUCTION_COLLECTION, id).withConverter(converter);
+const AUCTION_COLUMNS =
+  'id, seller, lot, item, caught_id, starting_bid, increment, bid, bidder, ' +
+  'created_at, ends_at, utc_offset, settled';
+
+/** One auction row in the record shape the rules read */
+function fromAuctionRow(row: Record<string, unknown>): AuctionRecord {
+  return asAuctionRecord({
+    seller: row.seller,
+    lot: row.lot,
+    item: row.item,
+    caught: row.caught_id ?? '',
+    startingBid: row.starting_bid,
+    increment: row.increment,
+    bid: row.bid,
+    bidder: row.bidder ?? '',
+    createdAt: row.created_at,
+    endsAt: row.ends_at,
+    offset: row.utc_offset,
+    settled: row.settled,
+  });
 }
 
 export async function getAuction(id: string): Promise<AuctionRecord | null> {
-  return (await getDoc(getAuctionRef(id))).data() ?? null;
+  const { data } = await getSupabase()
+    .from(AUCTION_TABLE)
+    .select(AUCTION_COLUMNS)
+    .eq('id', id)
+    .maybeSingle();
+
+  return data == null ? null : fromAuctionRow(asRecord(data));
 }
 
 /**
@@ -88,10 +95,8 @@ export async function getAuction(id: string): Promise<AuctionRecord | null> {
 export function watchAuction(
   id: string,
   onChange: (auction: AuctionRecord | null) => void,
-): Unsubscribe {
-  return onSnapshot(getAuctionRef(id), (snapshot) => {
-    onChange(snapshot.data() ?? null);
-  });
+): Unwatch {
+  return watchRow(AUCTION_TABLE, `id=eq.${id}`, async () => getAuction(id), onChange);
 }
 
 /**
@@ -106,24 +111,33 @@ export function watchAuction(
  */
 export function watchOpenAuctions(
   onChange: (auctions: [string, AuctionRecord][]) => void,
-): Unsubscribe {
-  const auctions = collection(getFirebaseFirestore(), AUCTION_COLLECTION).withConverter(converter);
+): Unwatch {
+  const read = async (): Promise<[string, AuctionRecord][]> => {
+    const { data } = await getSupabase()
+      .from(AUCTION_TABLE)
+      .select(AUCTION_COLUMNS)
+      .eq('settled', false);
 
-  return onSnapshot(query(auctions, where('settled', '==', false)), (result) => {
-    onChange(result.docs.map((entry): [string, AuctionRecord] => [entry.id, entry.data()]));
-  });
+    return asRecordArray(data).map((row) => [String(row.id), fromAuctionRow(row)]);
+  };
+
+  // The subscription is unfiltered on purpose: the settling of a lot
+  // is an UPDATE that leaves the set, which a settled=false filter
+  // would never deliver
+  return watchTable(AUCTION_TABLE, [], read, onChange);
 }
 
 /**
  * Everything this player has ever put up, newest last
  */
 export async function listAuctionsBy(seller: string): Promise<[string, AuctionRecord][]> {
-  const auctions = collection(getFirebaseFirestore(), AUCTION_COLLECTION).withConverter(converter);
-  const result = await getDocs(query(auctions, where('seller', '==', seller)));
+  const { data } = await getSupabase()
+    .from(AUCTION_TABLE)
+    .select(AUCTION_COLUMNS)
+    .eq('seller', seller)
+    .order('created_at', { ascending: true });
 
-  return result.docs
-    .map((entry): [string, AuctionRecord] => [entry.id, entry.data()])
-    .sort(([, one], [, other]) => one.createdAt - other.createdAt);
+  return asRecordArray(data).map((row) => [String(row.id), fromAuctionRow(row)]);
 }
 
 /**
@@ -137,12 +151,6 @@ export interface BidHistoryEntry {
 }
 
 /**
- * The most auction ids one lookup will ask for. Firestore caps a
- * `documentId() in [...]` query, so a long history is read in batches
- */
-const BID_QUERY_LIMIT = 30;
-
-/**
  * The player's bidding history, newest first: everything they have bid
  * on, whether they are still winning it or were outbid an hour later.
  *
@@ -154,11 +162,19 @@ const BID_QUERY_LIMIT = 30;
  * by looking at this, so it is where the answer belongs
  */
 export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
-  const bids = await getDocs(
-    query(collection(getFirebaseFirestore(), BID_COLLECTION), where('player', '==', uid)),
-  );
-  const placed = bids.docs
-    .map((entry) => asPlayerBid(entry.data()))
+  const { data: bids } = await getSupabase()
+    .from('bids')
+    .select('player, auction, amount, bid_at')
+    .eq('player', uid);
+  const placed = asRecordArray(bids)
+    .map((row) =>
+      asPlayerBid({
+        player: row.player,
+        auction: row.auction,
+        amount: row.amount,
+        bidAt: row.bid_at,
+      }),
+    )
     .filter((bid) => bid.auction !== '')
     .sort((one, other) => other.bidAt - one.bidAt);
 
@@ -166,16 +182,14 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
     return [];
   }
 
-  const auctions = collection(getFirebaseFirestore(), AUCTION_COLLECTION).withConverter(converter);
+  const { data: found } = await getSupabase()
+    .from(AUCTION_TABLE)
+    .select(AUCTION_COLUMNS)
+    .in('id', [...new Set(placed.map((bid) => bid.auction))]);
   const lots = new Map<string, AuctionRecord>();
 
-  for (let at = 0; at < placed.length; at += BID_QUERY_LIMIT) {
-    const ids = placed.slice(at, at + BID_QUERY_LIMIT).map((bid) => bid.auction);
-    const found = await getDocs(query(auctions, where(documentId(), 'in', ids)));
-
-    for (const entry of found.docs) {
-      lots.set(entry.id, entry.data());
-    }
+  for (const row of asRecordArray(found)) {
+    lots.set(String(row.id), fromAuctionRow(row));
   }
 
   // A bid whose lot has vanished has nothing left to show; nothing
@@ -200,13 +214,16 @@ export async function listBidHistory(uid: string): Promise<BidHistoryEntry[]> {
 export async function getSellerStanding(
   uid: string,
 ): Promise<{ auction: string; endsAt: number } | null> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), AUCTION_SELLER_COLLECTION, uid));
-  const data = snapshot.data();
+  const { data } = await getSupabase()
+    .from('auction_sellers')
+    .select('auction, ends_at')
+    .eq('player', uid)
+    .maybeSingle();
 
   if (data == null) {
     return null;
   }
-  return { auction: asString(data.auction), endsAt: asNumber(data.endsAt) };
+  return { auction: asString(data.auction), endsAt: asNumber(data.ends_at) };
 }
 
 /**

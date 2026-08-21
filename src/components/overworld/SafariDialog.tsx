@@ -1,3 +1,4 @@
+import type { PlayerIdentity } from '../../auth/user';
 import {
   type JSX,
   type Resource,
@@ -8,7 +9,6 @@ import {
   createSignal,
   on,
 } from 'solid-js';
-import type { User } from 'firebase/auth';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
@@ -63,7 +63,7 @@ const STATE_MESSAGES: Record<SafariState, string> = {
 };
 
 export interface SafariDialogProps {
-  user: User;
+  user: PlayerIdentity;
   /**
    * The open session, or null when no encounter is being met
    */
@@ -238,7 +238,7 @@ function SafariBody(
         return null;
       }
       if (thrown != null) {
-        const eaten = await feedEncounter(props.user, active, thrown);
+        const eaten = await feedEncounter(active, thrown);
 
         setTreat(null);
         return eaten

@@ -1,4 +1,4 @@
-import type { User } from 'firebase/auth';
+import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
   type JSX,
@@ -945,7 +945,7 @@ function OverworldBoard(props: {
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
    * once per player and the safari session opens over it
    */
-  const meet = async (user: User, encounter: EncounterRecord): Promise<string | null> => {
+  const meet = async (user: PlayerIdentity, encounter: EncounterRecord): Promise<string | null> => {
     if (await isEncounterRetired(user.uid, encounter)) {
       // Either it ran off or it is already in the bag; from the cell's
       // side those are the same thing — nobody is standing there
@@ -955,7 +955,11 @@ function OverworldBoard(props: {
     return null;
   };
 
-  const interact = async (loaded: ChunkView, user: User, at: number): Promise<string | null> => {
+  const interact = async (
+    loaded: ChunkView,
+    user: PlayerIdentity,
+    at: number,
+  ): Promise<string | null> => {
     const spawn = loaded.spawns.get(at);
 
     if (spawn != null) {

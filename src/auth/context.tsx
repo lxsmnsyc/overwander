@@ -1,4 +1,3 @@
-import type { User } from 'firebase/auth';
 import { useLocation } from '@solidjs/router';
 import {
   type Accessor,
@@ -10,12 +9,13 @@ import {
   onMount,
   useContext,
 } from 'solid-js';
+import type { PlayerIdentity } from './user';
 
 export interface AuthState {
   /**
    * The signed-in user; null while loading or signed out
    */
-  user: Accessor<User | null>;
+  user: Accessor<PlayerIdentity | null>;
   /**
    * True until the first auth state resolves on the client
    */
@@ -37,7 +37,7 @@ export function useAuth(): AuthState {
  * The pages that are not the game.
  *
  * `/demo/*` stages a battle out of a seed and reads nothing and
- * writes nothing — there is no player, so there is no session to
+ * writes nothing: there is no player, so there is no session to
  * open. Naming them here rather than giving every page a prop keeps
  * the root layout one shape, and the list is short because the game
  * is the default
@@ -45,20 +45,17 @@ export function useAuth(): AuthState {
 const SESSIONLESS = '/demo';
 
 /**
- * Tracks the Firebase session for the whole app. The subscription
+ * Tracks the Supabase session for the whole app. The subscription
  * lives in onMount, which never runs during SSR, so the server
  * renders the signed-out shell and the client hydrates the session.
  *
- * Firebase is brought in **on demand** rather than imported at the
- * top. It is by a long way the heaviest thing the browser downloads,
- * and a page with no player on it should neither fetch it nor call
- * `initializeApp`: a demo battle that opened an auth listener would
- * be a demo battle talking to a project. Loading it inside `onMount`
- * puts the whole SDK in a chunk of its own, asked for by the pages
- * that actually have a session
+ * The SDK is brought in **on demand** rather than imported at the
+ * top, for the same reason its predecessor was: a page with no player
+ * on it should neither fetch the auth machinery nor open a socket,
+ * and loading it inside `onMount` keeps it in a chunk of its own
  */
 export default function AuthProvider(props: ParentProps): JSX.Element {
-  const [user, setUser] = createSignal<User | null>(null);
+  const [user, setUser] = createSignal<PlayerIdentity | null>(null);
   const [loading, setLoading] = createSignal(true);
   const location = useLocation();
 
@@ -72,17 +69,32 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
 
     const session = { unsubscribe: null as (() => void) | null, dropped: false };
 
-    Promise.all([import('firebase/auth'), import('./firebase')])
-      .then(([{ onAuthStateChanged }, { default: getFirebaseAuth }]) => {
+    Promise.all([import('./supabase'), import('./user')])
+      .then(([{ default: getSupabase }, { asPlayerIdentity }]) => {
         // Unmounted while the SDK was in the air: nothing to subscribe
         // to any more, and nothing to leave running
         if (session.dropped) {
           return;
         }
-        session.unsubscribe = onAuthStateChanged(getFirebaseAuth(), (next) => {
-          setUser(next);
+
+        const { data } = getSupabase().auth.onAuthStateChange((_event, next) => {
+          setUser(asPlayerIdentity(next));
           setLoading(false);
         });
+
+        session.unsubscribe = () => {
+          data.subscription.unsubscribe();
+        };
+        // The change listener fires INITIAL_SESSION on subscribe, but
+        // an explicit read keeps `loading` honest if that contract
+        // ever softens
+        getSupabase()
+          .auth.getSession()
+          .then(({ data: current }) => {
+            setUser(asPlayerIdentity(current.session));
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
       })
       .catch(() => {
         // Nothing to fall back to: a session that cannot be read is a

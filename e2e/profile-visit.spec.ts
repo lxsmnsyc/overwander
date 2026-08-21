@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { findDocuments, uidOf } from './emulator';
+import { findRows, uidOf } from './admin';
 import { SHEET, claimStarter, dialogNamed, expectOpen, openPanel, signIn } from './game';
 import { stageCatchLot, stageSeller } from './stranger';
 
@@ -65,10 +65,10 @@ test.describe('another trainer', () => {
     // the player's own starter — a catch has three dozen fields and
     // the sheet reads every one of them, so the honest way to get a
     // valid record is to take a valid record
-    const [starter] = await findDocuments('caught', 'owner', await uidOf(player));
+    const [starter] = await findRows('caught', 'owner', await uidOf(player));
 
     expect(starter, 'the starter should be there').toBeTruthy();
-    await stageCatchLot(seller, starter.fields);
+    await stageCatchLot(seller, String(starter.id));
 
     const board = await openPanel(page, 'Auctions');
     // Every lot of theirs says who listed it, and the staging put an

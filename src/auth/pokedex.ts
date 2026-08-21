@@ -1,17 +1,14 @@
-import { doc, getDoc } from 'firebase/firestore';
 import type { Species } from '../data/ids/species';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase from './supabase';
 import {
   DEX_CAUGHT,
   DEX_SEEN,
   type DexTally,
-  POKEDEX_COLLECTION,
   countDexSpecies,
   getDexTally,
   hasCaughtShiny,
   hasSeenSpecies,
   listDexTallies,
-  pokedexId,
 } from './pokedex-record';
 
 /**
@@ -50,9 +47,31 @@ export interface PokedexView {
  * The player's whole dex, in one read
  */
 async function readPokedex(uid: string): Promise<unknown> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), POKEDEX_COLLECTION, pokedexId(uid)));
+  const { data } = await getSupabase()
+    .from('pokedex_entries')
+    .select('species, seen, seen_shiny, caught, caught_shiny')
+    .eq('player', uid);
+  const seen: Record<string, number> = {};
+  const seenShiny: Record<string, number> = {};
+  const caught: Record<string, number> = {};
+  const caughtShiny: Record<string, number> = {};
 
-  return snapshot.data();
+  for (const row of data ?? []) {
+    const key = String(row.species);
+    const counts: [Record<string, number>, unknown][] = [
+      [seen, row.seen],
+      [seenShiny, row.seen_shiny],
+      [caught, row.caught],
+      [caughtShiny, row.caught_shiny],
+    ];
+
+    for (const [bucket, count] of counts) {
+      if (Number(count) > 0) {
+        bucket[key] = Number(count);
+      }
+    }
+  }
+  return { seen, seenShiny, caught, caughtShiny };
 }
 
 /**

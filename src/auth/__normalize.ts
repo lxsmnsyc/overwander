@@ -41,6 +41,18 @@ export function asRecord(value: unknown): Record<string, unknown> {
   return isRecord(value) ? value : {};
 }
 
+function isUnknownArray(value: unknown): value is unknown[] {
+  return Array.isArray(value);
+}
+
+/**
+ * The store hands rows back untyped; this is the one narrowing from
+ * a result set to records, done by guard rather than assertion
+ */
+export function asRecordArray(value: unknown): Record<string, unknown>[] {
+  return isUnknownArray(value) ? value.filter(isRecord) : [];
+}
+
 export function asStatRecord(value: unknown): Record<Stats, number> {
   const source = asRecord(value);
 

@@ -283,7 +283,7 @@ weather, is never offered rather than waved through. A held item is required but
 not consumed; only a used item is spent.
 
 `Trade` reads the record's own `traded` field rather than watching a handover
-happen. The mainline evolves a pokemon *during* the trade, which is a moment this
+happen. The mainline evolves a pokemon _during_ the trade, which is a moment this
 game has nowhere to put, so changing hands opens the evolution and the record
 carries the fact for good. Winning a lot at auction is the one handover there is
 so far.

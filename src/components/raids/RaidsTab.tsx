@@ -1,4 +1,4 @@
-import type { User } from 'firebase/auth';
+import type { PlayerIdentity } from '../../auth/user';
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
@@ -10,7 +10,7 @@ import { List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
 import { useGame } from '../app/game-context';
 
 export interface RaidsTabProps {
-  user: User;
+  user: PlayerIdentity;
   /**
    * What the panel should be called: the lair, while the player is
    * standing in a lobby, and nothing while they are looking at the

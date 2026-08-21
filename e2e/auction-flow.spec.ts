@@ -1,7 +1,7 @@
 import { type Browser, type Locator, type Page, expect, test } from '@playwright/test';
 import { PERFECT_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
-import { findDocuments, patchDocument, uidOf, writeDocument } from './emulator';
+import { findRows, insertRow, patchRow, setBagItem, setGold, uidOf } from './admin';
 import {
   type Player,
   claimStarter,
@@ -62,7 +62,7 @@ async function arrive(browser: Browser): Promise<Trader> {
  * the emulator's owner
  */
 async function grantGold(trader: Trader, gold: number): Promise<void> {
-  await patchDocument('profiles', trader.uid, { gold: { integerValue: String(gold) } });
+  await setGold(trader.uid, gold);
   await trader.page.reload();
   await expect(trader.page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 }
@@ -73,12 +73,10 @@ async function grantGold(trader: Trader, gold: number): Promise<void> {
  * moving the time is the whole of what "a day later" means here
  */
 async function closeBidding(sellerUid: string): Promise<void> {
-  const [auction] = await findDocuments('auctions', 'seller', sellerUid);
+  const [auction] = await findRows('auctions', 'seller', sellerUid);
 
   expect(auction, 'the listing should have written an auction').toBeTruthy();
-  await patchDocument('auctions', auction.id, {
-    endsAt: { integerValue: String(Date.now() - 60_000) },
-  });
+  await patchRow('auctions', 'id', String(auction.id), { ends_at: Date.now() - 60_000 });
 }
 
 /**
@@ -159,6 +157,36 @@ async function bid(page: Page, board: Locator, lot: Locator, amount: number): Pr
   ).toBeVisible();
 }
 
+/**
+ * Narrow a board to one seller's lots. The board accumulates a lot per
+ * run for as long as the stack lives, and a closed lot re-sorts the
+ * squares under a pointer already aimed at one — searched down to one
+ * seller, the square being read is the only square there is.
+ *
+ * The seller's own lot is waited for first: the search box only draws
+ * once the board is long enough to need one, so a board still arriving
+ * has neither. A short board has no box and needs no narrowing
+ */
+async function narrowTo(board: Locator, seller: Trader, lot: Locator): Promise<void> {
+  await expect(lot).toBeVisible({ timeout: 20_000 });
+
+  const search = board.getByRole('searchbox');
+
+  if (await search.isVisible()) {
+    await search.fill(nicknameOf(seller));
+  }
+}
+
+/**
+ * The purse badge at the head of a board. Asked for as the first match
+ * because a lot's square wears its price in the same words, and the
+ * shared board can be holding somebody's lot at exactly this figure —
+ * the badge is drawn above the trays, so it is always first
+ */
+function purseOf(board: Locator, gold: number): Locator {
+  return board.getByText(`${gold} gold`, { exact: true }).first();
+}
+
 test.describe('the auction house', () => {
   test('an item goes up, is bid on, and is collected', async ({ browser }) => {
     const seller = await arrive(browser);
@@ -166,9 +194,7 @@ test.describe('the auction house', () => {
 
     // A Master Ball: the special band, which is the only band the
     // block takes
-    await patchDocument('bags', seller.uid, {
-      items: { mapValue: { fields: { [String(Items.MasterBall)]: { integerValue: '1' } } } },
-    });
+    await setBagItem(seller.uid, Items.MasterBall, 1);
     await seller.page.reload();
 
     const sellerBoard = await openPanel(seller.page, 'Auctions');
@@ -187,7 +213,10 @@ test.describe('the auction house', () => {
     await grantGold(buyer, 100);
 
     const buyerBoard = await openPanel(buyer.page, 'Auctions');
+
     const lot = lotOf(buyerBoard, seller, 'item');
+
+    await narrowTo(buyerBoard, seller, lot);
 
     // What it is and whose it is, in the card the square puts up
     const card = await cardOf(buyer.page, lot);
@@ -198,7 +227,7 @@ test.describe('the auction house', () => {
 
     // The gold left the bidder's purse as the bid was made rather than
     // when the lot closed: a standing bid is always paid for
-    await expect(buyerBoard.getByText('90 gold', { exact: true })).toBeVisible();
+    await expect(purseOf(buyerBoard, 90)).toBeVisible();
 
     await closeBidding(seller.uid);
 
@@ -222,9 +251,7 @@ test.describe('the auction house', () => {
     await expect(bag.getByRole('button', { name: /^Master Ball, 1 carried/ })).toBeVisible();
 
     // And the purse is the seller's, paid when the winner collected
-    await expect(sellerBoard.getByText('10 gold', { exact: true })).toBeVisible({
-      timeout: 20_000,
-    });
+    await expect(purseOf(sellerBoard, 10)).toBeVisible({ timeout: 20_000 });
   });
 
   test('a pokemon goes up, is bid on, and lands in the winner`s box', async ({ browser }) => {
@@ -235,14 +262,14 @@ test.describe('the auction house', () => {
     // are one of the four things that make a pokemon worth a day of the
     // board, and the copy leaves them a second pokemon — nobody may
     // list their last one
-    const [starter] = await findDocuments('caught', 'owner', seller.uid);
+    const [starter] = await findRows('caught', 'owner', seller.uid);
 
     expect(starter, 'the starter should be there').toBeTruthy();
-    await writeDocument('caught', `flawless-${seller.uid}`, {
-      ...starter.fields,
-      ivs: { integerValue: String(PERFECT_IVS) },
-      auctionable: { booleanValue: true },
-      caughtAt: { stringValue: new Date().toISOString() },
+    await insertRow('caught', {
+      ...starter,
+      id: `flawless-${seller.uid}`,
+      ivs: PERFECT_IVS,
+      auctionable: true,
     });
     await seller.page.reload();
 
@@ -266,7 +293,10 @@ test.describe('the auction house', () => {
     await grantGold(buyer, 100);
 
     const buyerBoard = await openPanel(buyer.page, 'Auctions');
+
     const lot = lotOf(buyerBoard, seller, 'catch');
+
+    await narrowTo(buyerBoard, seller, lot);
 
     // What a bidder is buying, on the card the square puts up: the
     // values, said as stars rather than as six numbers

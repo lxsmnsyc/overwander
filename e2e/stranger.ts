@@ -1,10 +1,10 @@
 // From the record module rather than from `auth/auctions`, which
 // reaches into the server half of the app: importing it here drags
 // `server-only` into a plain Node test and refuses to load at all
-import { AUCTION_DURATION, AUCTION_ESCROW, AuctionLot } from '../src/auth/auction-record';
+import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
 import { getLocalOffset } from '../src/auth/local-time';
 import { Items } from '../src/data/ids/items';
-import { stageAccount, writeDocument } from './emulator';
+import { admin, findRows, insertRow, stageAccount } from './admin';
 
 /**
  * Somebody who is not the player.
@@ -44,36 +44,33 @@ export async function stageSeller(called: string): Promise<Stranger> {
   const opened = Date.now();
   // A real account rather than a profile alone: a friend is looked up
   // by the address they signed up with, and an address lives in
-  // Firebase Auth
+  // Supabase Auth
   const email = `seller-${stamp}@example.com`;
-  const uid = await stageAccount(email);
+  const uid = await stageAccount(email, 'walking-in-the-tall-grass');
   // Stamped, because the emulator is reused between runs: a lot stands
   // for a day, so yesterday's Wisteria is still on the board this
   // morning and a spec asking for "the seller called Wisteria" finds
   // two of her
   const nickname = `${called} ${stamp}`;
 
-  await writeDocument('profiles', uid, {
-    nickname: { stringValue: nickname },
-    avatar: { nullValue: null },
-    gold: { integerValue: '0' },
-    buddy: { stringValue: '' },
-    role: { stringValue: '' },
-  });
+  // The trigger opened a bare profile; the name is what the board
+  // shows
+  await admin.from('profiles').update({ nickname }).eq('id', uid);
 
-  await writeDocument('auctions', `e2e-lot-${stamp}`, {
-    seller: { stringValue: uid },
-    lot: { integerValue: String(AuctionLot.Item) },
-    item: { integerValue: String(Items.PokeBall) },
-    caught: { stringValue: '' },
-    startingBid: { integerValue: '10' },
-    increment: { integerValue: '5' },
-    bid: { integerValue: '0' },
-    bidder: { stringValue: '' },
-    createdAt: { integerValue: String(opened) },
-    endsAt: { integerValue: String(opened + AUCTION_DURATION) },
-    offset: { integerValue: String(getLocalOffset()) },
-    settled: { booleanValue: false },
+  await insertRow('auctions', {
+    id: `e2e-lot-${stamp}`,
+    seller: uid,
+    lot: AuctionLot.Item,
+    item: Items.PokeBall,
+    caught_id: null,
+    starting_bid: 10,
+    increment: 5,
+    bid: 0,
+    bidder: null,
+    created_at: opened,
+    ends_at: opened + AUCTION_DURATION,
+    utc_offset: getLocalOffset(),
+    settled: false,
   });
 
   return { uid, nickname, email };
@@ -92,50 +89,62 @@ export async function stageSeller(called: string): Promise<Stranger> {
  *
  * Resolves the id of the copy
  */
-export async function stageCatchLot(
-  seller: Stranger,
-  fields: Record<string, unknown>,
-): Promise<string> {
+export async function stageCatchLot(seller: Stranger, sourceCatch: string): Promise<string> {
   const stamp = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
   const caught = `e2e-lot-catch-${stamp}`;
   const opened = Date.now();
 
-  await writeDocument('caught', caught, {
-    ...fields,
+  // A catch is copied rather than made up: a record has three dozen
+  // fields and every one of them is read by the sheet, so the honest
+  // way to get a valid one is to take a valid one
+  const source = (await findRows('caught', 'id', sourceCatch)).at(0);
+
+  if (source == null) {
+    throw new Error(`no catch at ${sourceCatch}`);
+  }
+
+  await insertRow('caught', {
+    ...source,
+    id: caught,
     // Held by nobody while it is on the block, which is what the
     // server does to a listing
-    owner: { stringValue: AUCTION_ESCROW },
-    history: {
-      arrayValue: {
-        values: [
-          {
-            mapValue: {
-              fields: {
-                owner: { stringValue: seller.uid },
-                acquiredAt: { stringValue: new Date(opened).toISOString() },
-                kind: { integerValue: '0' },
-              },
-            },
-          },
-        ],
-      },
-    },
-    auctionable: { booleanValue: true },
+    owner: null,
+    auctionable: true,
+  });
+  for (const table of ['caught_moves', 'caught_abilities', 'caught_items'] as const) {
+    const children = await findRows(table, 'caught_id', sourceCatch);
+
+    for (const child of children) {
+      await insertRow(table, { ...child, caught_id: caught });
+    }
+  }
+  // The history says the stranger had it
+  await insertRow('caught_history', {
+    caught_id: caught,
+    seq: 0,
+    owner: seller.uid,
+    owner_name: null,
+    acquired_at_local: new Date(opened),
+    acquired_at_offset: getLocalOffset(),
+    kind: 0,
+    paid: null,
+    ball: null,
   });
 
-  await writeDocument('auctions', `e2e-catch-lot-${stamp}`, {
-    seller: { stringValue: seller.uid },
-    lot: { integerValue: String(AuctionLot.Catch) },
-    item: { integerValue: '0' },
-    caught: { stringValue: caught },
-    startingBid: { integerValue: '10' },
-    increment: { integerValue: '5' },
-    bid: { integerValue: '0' },
-    bidder: { stringValue: '' },
-    createdAt: { integerValue: String(opened) },
-    endsAt: { integerValue: String(opened + AUCTION_DURATION) },
-    offset: { integerValue: String(getLocalOffset()) },
-    settled: { booleanValue: false },
+  await insertRow('auctions', {
+    id: `e2e-catch-lot-${stamp}`,
+    seller: seller.uid,
+    lot: AuctionLot.Catch,
+    item: null,
+    caught_id: caught,
+    starting_bid: 10,
+    increment: 5,
+    bid: 0,
+    bidder: null,
+    created_at: opened,
+    ends_at: opened + AUCTION_DURATION,
+    utc_offset: getLocalOffset(),
+    settled: false,
   });
 
   return caught;

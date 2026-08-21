@@ -1,4 +1,4 @@
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import { grantDevAdmin } from '../server/roles';
 import getIdToken from './session';
 

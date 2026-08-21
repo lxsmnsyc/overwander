@@ -74,7 +74,13 @@ const SHIPPED = described()
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = { 100001: [SpriteAnim.Shoot] };
+const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {
+  // The Clefairy line's upstream sheets were drawn without a Shoot;
+  // their ranged casts stand in an Attack
+  35: [SpriteAnim.Shoot],
+  36: [SpriteAnim.Shoot],
+  100001: [SpriteAnim.Shoot],
+};
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
@@ -95,7 +101,9 @@ describe('cast clips', () => {
 
     expect(short.has(SpriteAnim.Shoot), 'the gap is still there').toBe(false);
     // A list that ends on Shoot used to fall through to Idle here
-    expect(pickCast([SpriteAnim.Emit, SpriteAnim.Shoot], (name) => short.has(name))).toBe(SpriteAnim.Attack);
+    expect(pickCast([SpriteAnim.Emit, SpriteAnim.Shoot], (name) => short.has(name))).toBe(
+      SpriteAnim.Attack,
+    );
     expect(pickCast([SpriteAnim.Shoot], (name) => short.has(name))).toBe(SpriteAnim.Attack);
   });
 

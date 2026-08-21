@@ -34,7 +34,7 @@ export interface Sky {
  * field is never momentarily empty
  */
 function falling(index: number, clock: number, span: number): number {
-  return ((clock / span + noise(1, index)) % 1 + 1) % 1;
+  return (((clock / span + noise(1, index)) % 1) + 1) % 1;
 }
 
 function rain(context: CanvasRenderingContext2D, sky: Sky, clock: number, heavy: boolean): void {
@@ -82,7 +82,7 @@ function sand(context: CanvasRenderingContext2D, sky: Sky, clock: number): void 
   for (let grain = 0; grain < DROPS * 2; grain += 1) {
     // Sideways rather than down: what makes a sandstorm read as one is
     // that everything in it is going the same way, fast
-    const along = ((clock / 600 + noise(5, grain)) % 1 + 1) % 1;
+    const along = (((clock / 600 + noise(5, grain)) % 1) + 1) % 1;
 
     context.fillRect(along * sky.width, noise(6, grain) * sky.height, 6, 1);
   }

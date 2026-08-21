@@ -42,6 +42,16 @@ const paged = createPager(() => rows(), LIST_PAGE);
 - The item tray pages itself at `GRID_SIZE` inside `ItemGrid`; do not
   page around it.
 
+## Grids of squares
+
+Pokemon squares get their furniture from `CatchGrid`
+(`src/components/catches/CatchGrid.tsx`) — search, box paging and
+empty states over a bare `CatchBox` — the way items get theirs from
+`ItemGrid`. Feed it `{ square, caught }` entries; pass `bare` when the
+caller narrows with its own search, or `search`/`onSearch` when the
+query also drives a store read. Never hand a raw `CatchBox` an
+unpaged list.
+
 ## Never truncate silently
 
 A component with a fixed number of slots (`CatchBox` draws exactly

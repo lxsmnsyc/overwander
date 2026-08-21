@@ -1,7 +1,7 @@
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import {
   type RevivedFossil,
   type TradeResult,

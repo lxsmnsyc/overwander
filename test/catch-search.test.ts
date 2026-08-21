@@ -150,16 +150,12 @@ describe('planning the store half of a search', () => {
     expect(planCatchSearch('level:45')).toEqual([{ field: 'level', low: 45, high: 45 }]);
   });
 
-  it('names a move only when the word means exactly one of them', () => {
-    expect(planCatchSearch('move:ember')).toEqual([{ field: 'moves', has: Moves.Ember }]);
-    // "beam" is several moves, and a query has to name an id
-    expect(planCatchSearch('move:beam')).toEqual([]);
-  });
-
-  it('names an ability the same way it names a move', () => {
-    expect(planCatchSearch('ability:blaze')).toEqual([
-      { field: 'abilities', has: Abilities.Blaze },
-    ]);
+  it('leaves the child-table fields to the loaded box', () => {
+    // Moves, abilities and items live in tables of their own now, and
+    // the runtime predicate answers them over what the owner query
+    // already fetched
+    expect(planCatchSearch('move:ember')).toEqual([]);
+    expect(planCatchSearch('ability:blaze')).toEqual([]);
   });
 
   it('expands a family into the species it holds', () => {
@@ -170,11 +166,12 @@ describe('planning the store half of a search', () => {
     expect('oneOf' in planned ? planned.oneOf : []).toContain(Species.Charizard);
   });
 
-  it('pushes one term and no more, choosing the narrowest', () => {
-    // Every field asked beside the owner needs its own composite
-    // index; one keeps that list one entry per field
-    expect(planCatchSearch('shiny:1 move:ember level:10-90')).toEqual([
-      { field: 'moves', has: Moves.Ember },
+  it('pushes every term the store can answer, in query order', () => {
+    // One WHERE takes them all: the one-push rule was a composite
+    // index economy the relational store does not need
+    expect(planCatchSearch('is:shiny move:ember level:10-90')).toEqual([
+      { field: 'shiny', is: true },
+      { field: 'level', low: 10, high: 90 },
     ]);
   });
 
@@ -248,7 +245,8 @@ describe('the fields added for the query builder', () => {
     expect(planCatchSearch('friendship:150-255')).toEqual([
       { field: 'friendship', low: 150, high: 255 },
     ]);
-    expect(planCatchSearch('caught:2026-08')).toEqual([{ field: 'caughtAt', prefix: '2026-08' }]);
+    // The stamp is reassembled client-side, so the box answers it
+    expect(planCatchSearch('caught:2026-08')).toEqual([]);
   });
 
   it('turns fighting into the same line the lock is drawn at', () => {

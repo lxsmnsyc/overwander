@@ -6,6 +6,7 @@ import {
   PopoverButton,
   PopoverPanel,
   Transition,
+  TransitionChild,
 } from 'terracotta';
 import { SHEER, holdFade } from './transition';
 
@@ -73,8 +74,10 @@ export default function Menu(props: MenuProps): JSX.Element {
           header, so a panel laid out rightwards from there runs off
           the side of the screen — and a menu you have to scroll the
           page sideways to read is a menu with nothing in it */}
-      <Transition show={open()} {...SHEER} class="absolute top-full right-0 z-30 mt-1.5 w-max">
+      <Transition show={open()} class="absolute top-full right-0 z-30 mt-1.5 w-max">
         <PopoverPanel
+          as={TransitionChild}
+          {...SHEER}
           // Kept mounted, since the fade needs something to fade, and
           // out of reach while it is going: a menu that has been
           // dismissed is not one to pick from

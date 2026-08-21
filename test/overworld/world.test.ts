@@ -49,6 +49,7 @@ import ChunkSnapshot, {
   RAID_INTERVAL,
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
+  type Spawn,
 } from '../../src/overworld/chunk-snapshot';
 import {
   BANNED_BOSS_SPECIES,
@@ -1745,9 +1746,10 @@ describe('chunk snapshot', () => {
       expect(getSpeciesData(species).biomes).toContain(chunk.biome);
       expect(getSpeciesData(species).activeTimes & getTimeOfDay(NOON)).not.toBe(0);
       for (const value of [individualValue, traitValue]) {
+        // Signed 32-bit by construction: what an integer column holds
         expect(Number.isInteger(value)).toBe(true);
-        expect(value).toBeGreaterThanOrEqual(0);
-        expect(value).toBeLessThan(2 ** 32);
+        expect(value).toBeGreaterThanOrEqual(-(2 ** 31));
+        expect(value).toBeLessThan(2 ** 31);
       }
     }
 
@@ -1987,11 +1989,25 @@ describe('chunk snapshot', () => {
 
   it('derives concrete encounters from spawn tuples', () => {
     const world = new World('overworld');
-    const chunk = world.getChunk(3, -7);
     const NOON = 12 * 60 * 60 * 1000;
-    const snapshot = new ChunkSnapshot(chunk, NOON);
 
-    const spawn = snapshot.getSpawns(1)[0];
+    // Whichever nearby chunk rolls one: which biomes spawn what is
+    // the seed's own business, and this is about deriving, not maps
+    let snapshot: ChunkSnapshot | null = null;
+    let spawn: Spawn | undefined;
+
+    for (let at = 0; at < 64 && spawn == null; at++) {
+      const probe = new ChunkSnapshot(world.getChunk(at % 8, Math.floor(at / 8)), NOON);
+
+      spawn = probe.getSpawns(1).at(0);
+      if (spawn != null) {
+        snapshot = probe;
+      }
+    }
+    if (snapshot == null || spawn == null) {
+      throw new Error('no chunk in the probe area rolled a spawn');
+    }
+
     const instance = deriveEncounter(snapshot, spawn);
 
     expect(instance.type).toBe(EncounterType.Wild);
@@ -2029,9 +2045,9 @@ describe('chunk snapshot', () => {
     }
 
     expect(instance.timestamp).toBe(snapshot.timestamp);
-    expect(instance.x).toBe(3);
-    expect(instance.y).toBe(-7);
-    expect(instance.biome).toBe(chunk.biome);
+    expect(instance.x).toBe(snapshot.chunk.x);
+    expect(instance.y).toBe(snapshot.chunk.y);
+    expect(instance.biome).toBe(snapshot.chunk.biome);
 
     // Same tuple, same instance
     expect(deriveEncounter(snapshot, spawn)).toEqual(instance);

@@ -211,11 +211,16 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
   [Statuses.Substituted]: {
     paint: (context, stage, share, paint) => {
       for (let shell = 0; shell < 2; shell += 1) {
-        ring(context, stage.source, REACH * stage.scale * (1.2 + shell * 0.3) * (0.7 + share * 0.4), {
-          ...paint,
-          alpha: swell(share) * (0.9 - shell * 0.3),
-          width: 2 * stage.scale,
-        });
+        ring(
+          context,
+          stage.source,
+          REACH * stage.scale * (1.2 + shell * 0.3) * (0.7 + share * 0.4),
+          {
+            ...paint,
+            alpha: swell(share) * (0.9 - shell * 0.3),
+            width: 2 * stage.scale,
+          },
+        );
       }
     },
     color: '#9a9a6a',
@@ -229,11 +234,16 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
       for (let coil = 0; coil < 3; coil += 1) {
         const held = (share * 1.2 + coil * 0.3) % 1;
 
-        ring(context, [stage.source[0], stage.source[1] - (held - 0.5) * size], size * (1.3 - held * 0.5), {
-          ...paint,
-          alpha: swell(held) * 0.9,
-          width: 2.4 * stage.scale,
-        });
+        ring(
+          context,
+          [stage.source[0], stage.source[1] - (held - 0.5) * size],
+          size * (1.3 - held * 0.5),
+          {
+            ...paint,
+            alpha: swell(held) * 0.9,
+            width: 2.4 * stage.scale,
+          },
+        );
       }
     },
     color: '#b8a038',
@@ -315,12 +325,7 @@ const TICK_SCALE = 0.75;
  * the refusal — and each one keeps its own mark underneath
  */
 function stalled(
-  under?: (
-    context: CanvasRenderingContext2D,
-    stage: Stage,
-    share: number,
-    paint: Painted,
-  ) => void,
+  under?: (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted) => void,
 ) {
   return (context: CanvasRenderingContext2D, stage: Stage, share: number, paint: Painted): void => {
     under?.(context, stage, share, paint);

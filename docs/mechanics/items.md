@@ -39,7 +39,7 @@ The line between rare and prized is **permanence**. Rare is where a walk turns u
 something that gets a party through the next fight: a stone, a Revive, a plate.
 Prized is where it turns up something that changes a pokemon for good and cannot
 be undone — a Bottle Cap fixes what a pokemon was born with, a Purifying Gem
-removes a shadow, a Max Revive answers a lost *party* rather than a lost fight.
+removes a shadow, a Max Revive answers a lost _party_ rather than a lost fight.
 
 A prized find is not unique. A stash may hold two, and they come in stacks like
 anything else.
@@ -69,7 +69,7 @@ none of those three appears anywhere in the world, so reviving one at the
 
 An **item cache** holds a stash rather than a single item. The rarity it rolled
 is the **best thing in there**, and one of that kind is guaranteed. How many
-*kinds* it holds is a separate roll of up to three, and each further kind rolls
+_kinds_ it holds is a separate roll of up to three, and each further kind rolls
 its own rarity beneath that ceiling. A stash might therefore be two rares and a
 common, three commons, or one of each: rarity and quantity are independent, which
 stops a good dig being the same three slots every time.
@@ -239,7 +239,7 @@ buddy is refused outright rather than quietly sent home.
 
 Nothing happens when bidding closes, because somebody must come back for the lot.
 Usually that is the winner; a lot **nobody bid on** has no winner, so the seller
-reclaims it unsold. What a seller cannot do is reclaim it *early*: a listing that
+reclaims it unsold. What a seller cannot do is reclaim it _early_: a listing that
 could be pulled the moment a bid looked unlikely is not one anybody would bid on.
 
 The board is a single list, newest lot first. A lot that has stopped taking bids

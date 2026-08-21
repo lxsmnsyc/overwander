@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: '**'
 ---
 
 Keep comments light: short enough to read at a glance, and about the why rather than the what.

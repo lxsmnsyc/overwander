@@ -1,6 +1,5 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon, isShadow } from '../auth/caught-record';
-import { CAUGHT_COLLECTION, NPC_CLAIM_COLLECTION, PROFILE_COLLECTION } from '../auth/collections';
 import { boostedSteps, isEgg, stepsRemaining } from '../auth/egg';
 import { getMaxHealth } from '../auth/health';
 import { groomedFriendship } from '../data/constants/friendship';
@@ -29,7 +28,8 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { writeCaughtRecord } from './caught';
 import { grantBredEgg } from './eggs';
 import { consumeItem, grantItem } from './inventory';
-import { getAdminFirestore } from './firebase';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { getSql, jsonOf, tx } from './db';
 import { learnMove } from './moves';
 import { readStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
@@ -37,7 +37,7 @@ import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
-import { type UpdateFields, asNumber, asStringArray, docData } from './read';
+import { asNumber, asRecord, asStringArray } from './read';
 
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.
@@ -94,9 +94,9 @@ async function takeVisit(
   uid: string,
   record: Record<string, unknown> = {},
 ): Promise<string | null> {
-  const id = `${snapshot.key}@${snapshot.npcTimestamp}$${tag}${cell}:${uid}`;
+  const id = `${snapshot.key}@${snapshot.npcTimestamp}$${tag}${cell}`;
 
-  return (await claim(NPC_CLAIM_COLLECTION, id, { player: uid, ...record })) ? id : null;
+  return (await claim('npc_claims', id, { player: uid, ...record })) ? `${id}:${uid}` : null;
 }
 
 /**
@@ -118,13 +118,15 @@ async function takeCare(
   uid: string,
   catches: string[],
 ): Promise<string[]> {
-  const db = getAdminFirestore();
-  const ref = db
-    .collection(NPC_CLAIM_COLLECTION)
-    .doc(`${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`);
+  const marker = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}`;
 
-  return db.runTransaction(async (transaction) => {
-    const seen = asStringArray(docData(await transaction.get(ref))?.catches);
+  return tx(async (transaction) => {
+    const rows = await transaction`
+      select payload from npc_claims
+      where marker = ${marker} and player = ${uid}
+      for update
+    `;
+    const seen = asStringArray(asRecord(rows.at(0)?.payload).catches);
     const already = new Set(seen);
     const room = catches
       .filter((one) => !already.has(one))
@@ -133,7 +135,11 @@ async function takeCare(
     if (room.length === 0) {
       return [];
     }
-    transaction.set(ref, { player: uid, catches: [...seen, ...room] });
+    await transaction`
+      insert into npc_claims (marker, player, payload)
+      values (${marker}, ${uid}, ${jsonOf(transaction, { catches: [...seen, ...room] })})
+      on conflict (marker, player) do update set payload = excluded.payload
+    `;
     return room;
   });
 }
@@ -147,18 +153,24 @@ async function dropCare(
   uid: string,
   catches: string[],
 ): Promise<void> {
-  const db = getAdminFirestore();
-  const ref = db
-    .collection(NPC_CLAIM_COLLECTION)
-    .doc(`${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}:${uid}`);
+  const marker = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}`;
   const given = new Set(catches);
 
-  await db.runTransaction(async (transaction) => {
-    const seen = asStringArray(docData(await transaction.get(ref))?.catches).filter(
+  await tx(async (transaction) => {
+    const rows = await transaction`
+      select payload from npc_claims
+      where marker = ${marker} and player = ${uid}
+      for update
+    `;
+    const seen = asStringArray(asRecord(rows.at(0)?.payload).catches).filter(
       (one) => !given.has(one),
     );
 
-    transaction.set(ref, { player: uid, catches: seen });
+    await transaction`
+      insert into npc_claims (marker, player, payload)
+      values (${marker}, ${uid}, ${jsonOf(transaction, { catches: seen })})
+      on conflict (marker, player) do update set payload = excluded.payload
+    `;
   });
 }
 
@@ -167,7 +179,14 @@ async function dropCare(
  * window should not be spent on it
  */
 async function releaseVisit(id: string): Promise<void> {
-  await getAdminFirestore().collection(NPC_CLAIM_COLLECTION).doc(id).delete();
+  // The id carries the player after the last ':', the way the old
+  // document id did; the row is the marker and that player
+  const at = id.lastIndexOf(':');
+
+  await getSql()`
+    delete from npc_claims
+    where marker = ${id.slice(0, at)} and player = ${id.slice(at + 1)}
+  `;
 }
 
 /**
@@ -237,12 +256,11 @@ export async function breedCatches(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const stored = await db.getAll(
-    db.collection(CAUGHT_COLLECTION).doc(left),
-    db.collection(CAUGHT_COLLECTION).doc(right),
-  );
-  const pair = stored.map((entry) => asParent(docData(entry), uid));
+  const stored = await tx(async (transaction) => [
+    await readCaughtIn(transaction, left, false),
+    await readCaughtIn(transaction, right, false),
+  ]);
+  const pair = stored.map((entry) => asParent(entry, uid));
   const [first, second] = pair;
 
   if (first == null || second == null) {
@@ -287,7 +305,7 @@ export async function breedCatches(
  * What Nurse Joy did to one pokemon, or null when there was nothing
  * of hers to do for it
  */
-function tended(caught: Record<string, unknown>, uid: string): UpdateFields | null {
+function tended(caught: Record<string, unknown>, uid: string): Record<string, unknown> | null {
   // She heals and purifies, and a guarded pokemon is to be left alone
   // on both counts; it is simply not one of the ones she takes
   if (
@@ -356,19 +374,18 @@ export async function visitNurse(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const refs = catches.map((id) => db.collection(CAUGHT_COLLECTION).doc(id));
-  const stored = await db.getAll(...refs);
-  const care: [FirebaseFirestore.DocumentReference, UpdateFields][] = [];
+  const care: [string, Record<string, unknown>][] = [];
 
-  for (const [at, entry] of stored.entries()) {
-    const caught = docData(entry);
-    const fields = caught == null ? null : tended(caught, uid);
+  await tx(async (transaction) => {
+    for (const id of catches) {
+      const caught = await readCaughtIn(transaction, id, false);
+      const fields = caught == null ? null : tended(caught, uid);
 
-    if (fields != null) {
-      care.push([refs[at], fields]);
+      if (fields != null) {
+        care.push([id, fields]);
+      }
     }
-  }
+  });
 
   // Nothing of hers to do, so the visit is not spent on it
   if (care.length === 0) {
@@ -380,7 +397,7 @@ export async function visitNurse(
       snapshot,
       cell,
       uid,
-      care.map(([ref]) => ref.id),
+      care.map(([id]) => id),
     ),
   );
 
@@ -388,15 +405,14 @@ export async function visitNurse(
     return null;
   }
 
-  const batch = db.batch();
-  const tending = care.filter(([ref]) => room.has(ref.id));
-
-  for (const [ref, fields] of tending) {
-    batch.update(ref, fields);
-  }
+  const tending = care.filter(([id]) => room.has(id));
 
   try {
-    await batch.commit();
+    await tx(async (transaction) => {
+      for (const [id, fields] of tending) {
+        await updateCaughtIn(transaction, id, fields);
+      }
+    });
   } catch (error) {
     // She was asked and did nothing; the room is given back rather than
     // spent on a write that never landed
@@ -404,7 +420,7 @@ export async function visitNurse(
     throw error;
   }
 
-  return tending.map(([ref]) => ref.id);
+  return tending.map(([id]) => id);
 }
 
 /**
@@ -435,9 +451,7 @@ export async function boostEgg(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-  const stored = docData(await ref.get());
+  const stored = await tx(async (transaction) => readCaughtIn(transaction, catchId, false));
 
   if (stored == null || stored.owner !== uid || !isEggRecord(stored) || isCatchLocked(stored)) {
     return null;
@@ -464,7 +478,9 @@ export async function boostEgg(
   try {
     // The stamp moves with it: the steps were not walked, so the time
     // they would have taken must not be banked for the next report
-    await ref.update({ steps: warmed, steppedAt: now });
+    await getSql()`
+      update caught set steps = ${warmed}, stepped_at = ${now} where id = ${catchId}
+    `;
   } catch (error) {
     await grantGold(uid, DAYCARE_FEE);
     await releaseVisit(visit);
@@ -497,9 +513,7 @@ export async function groomCatch(
     return null;
   }
 
-  const db = getAdminFirestore();
-  const ref = db.collection(CAUGHT_COLLECTION).doc(catchId);
-  const stored = docData(await ref.get());
+  const stored = await tx(async (transaction) => readCaughtIn(transaction, catchId, false));
 
   // An egg thinks nothing of anybody yet: what is inside it has not
   // met the player, and the shell is what the daycare lady is for
@@ -536,7 +550,7 @@ export async function groomCatch(
   }
 
   try {
-    await ref.update({ friendship: groomed });
+    await getSql()`update caught set friendship = ${groomed} where id = ${catchId}`;
   } catch (error) {
     await grantGold(uid, GROOMING_FEE);
     await releaseVisit(visit);
@@ -631,18 +645,17 @@ async function trade(
   basket: [item: Items, amount: number][],
   gold: number,
 ): Promise<TradeResult | null> {
-  const db = getAdminFirestore();
+  return tx(async (transaction) => {
+    const profiles = await transaction`
+      select gold from profiles where id = ${uid} for update
+    `;
+    const carried: number[] = [];
 
-  return db.runTransaction(async (transaction) => {
-    const purse = db.collection(PROFILE_COLLECTION).doc(uid);
-    // Every read happens before any write, which is Firestore's own
-    // rule for a transaction — and the bag is one document, so a
-    // basket of six kinds is still one read and one write
-    const [profile, ...carried] = await Promise.all([
-      transaction.get(purse),
-      ...basket.map(async ([item]) => readStackIn(transaction, ITEM_STACKS, uid, item)),
-    ]);
-    const balance = asNumber(docData(profile)?.gold) + gold;
+    for (const [item] of basket) {
+      carried.push(await readStackIn(transaction, ITEM_STACKS, uid, item));
+    }
+
+    const balance = asNumber(profiles[0]?.gold) + gold;
     const held = basket.map(([, amount], at) => carried[at] + amount);
 
     // The player cannot pay, or is selling what they have not got.
@@ -652,9 +665,9 @@ async function trade(
       return null;
     }
 
-    transaction.set(purse, { gold: balance }, { merge: true });
+    await transaction`update profiles set gold = ${balance} where id = ${uid}`;
     for (const [at, [item]] of basket.entries()) {
-      writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
+      await writeStackIn(transaction, ITEM_STACKS, uid, item, held[at]);
     }
     return { gold: balance, carried: held.reduce((total, count) => total + count, 0) };
   });

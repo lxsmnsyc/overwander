@@ -1,5 +1,3 @@
-import { type Unsubscribe, collection, onSnapshot, query, where } from 'firebase/firestore';
-import { BLOCK_COLLECTION, FRIEND_COLLECTION, FRIEND_REQUEST_COLLECTION } from './collections';
 import type { FoundPlayer, FriendLink, FriendRequests, FriendTie } from './friend-record';
 import {
   acceptFriendRequest as acceptOnServerSide,
@@ -11,10 +9,10 @@ import {
   sendFriendRequest as sendOnServerSide,
   unblockPlayer as unblockOnServerSide,
 } from '../server/friends';
-import { asNumber, asString } from './__normalize';
-import { requireUid } from '../server/firebase';
+import { asNumber, asRecordArray, asString } from './__normalize';
+import { requireUid } from '../server/auth';
 import { syncServerClock } from './clock';
-import { getFirebaseFirestore } from './firebase';
+import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
 
 /**
@@ -27,7 +25,7 @@ import getIdToken from './session';
  * see [`friends.md`](../../docs/firestore/friends.md).
  *
  * Everything that writes is the server's, and so is the lookup by
- * address: the addresses are in Firebase Auth, which a browser cannot
+ * address: the addresses are in Supabase Auth, which a browser cannot
  * query.
  */
 
@@ -45,64 +43,62 @@ function byNewest(left: FriendLink, right: FriendLink): number {
  * on the far side of the tie
  */
 function watchLinks(
-  name: string,
+  table: string,
   mine: string,
   uid: string,
   theirs: string,
   stamp: string,
   onChange: (rows: FriendLink[]) => void,
-): Unsubscribe {
-  return onSnapshot(
-    query(collection(getFirebaseFirestore(), name), where(mine, '==', uid)),
-    (found) => {
-      onChange(
-        found.docs
-          .map((document) => ({
-            uid: asString(document.data()[theirs]),
-            since: asNumber(document.data()[stamp]),
-          }))
-          .sort(byNewest),
-      );
-    },
-  );
+): Unwatch {
+  const read = async (): Promise<FriendLink[]> => {
+    const { data } = await getSupabase().from(table).select('*').eq(mine, uid);
+
+    return asRecordArray(data)
+      .map((row) => ({ uid: asString(row[theirs]), since: asNumber(row[stamp]) }))
+      .sort(byNewest);
+  };
+
+  return watchTable(table, [`${mine}=eq.${uid}`], read, onChange);
 }
 
 /** Everybody this player has agreed with */
-export function watchFriends(uid: string, onChange: (rows: FriendLink[]) => void): Unsubscribe {
-  return watchLinks(FRIEND_COLLECTION, 'owner', uid, 'friend', 'since', onChange);
+export function watchFriends(uid: string, onChange: (rows: FriendLink[]) => void): Unwatch {
+  return watchLinks('friends', 'owner', uid, 'friend', 'since', onChange);
 }
 
 /** Everybody this player has shut out */
-export function watchBlocked(uid: string, onChange: (rows: FriendLink[]) => void): Unsubscribe {
-  return watchLinks(BLOCK_COLLECTION, 'blocker', uid, 'blocked', 'since', onChange);
+export function watchBlocked(uid: string, onChange: (rows: FriendLink[]) => void): Unwatch {
+  return watchLinks('blocks', 'blocker', uid, 'blocked', 'since', onChange);
 }
 
 /**
- * What is waiting on an answer, both ways. It is two queries because
- * it is two questions — a store cannot ask for either of two fields
- * matching — and they are reported together so a reader sees one list
+ * What is waiting on an answer, both ways: one subscription with a
+ * binding per direction, reported together so a reader sees one list
  */
 export function watchFriendRequests(
   uid: string,
   onChange: (requests: FriendRequests) => void,
-): Unsubscribe {
-  const waiting: FriendRequests = { incoming: [], outgoing: [] };
-  const stop = [
-    watchLinks(FRIEND_REQUEST_COLLECTION, 'to', uid, 'from', 'sentAt', (rows) => {
-      waiting.incoming = rows;
-      onChange({ ...waiting });
-    }),
-    watchLinks(FRIEND_REQUEST_COLLECTION, 'from', uid, 'to', 'sentAt', (rows) => {
-      waiting.outgoing = rows;
-      onChange({ ...waiting });
-    }),
-  ];
+): Unwatch {
+  const read = async (): Promise<FriendRequests> => {
+    const { data } = await getSupabase()
+      .from('friend_requests')
+      .select('sender, recipient, sent_at')
+      .or(`sender.eq.${uid},recipient.eq.${uid}`);
+    const rows = asRecordArray(data);
 
-  return () => {
-    for (const end of stop) {
-      end();
-    }
+    return {
+      incoming: rows
+        .filter((row) => row.recipient === uid)
+        .map((row) => ({ uid: asString(row.sender), since: asNumber(row.sent_at) }))
+        .sort(byNewest),
+      outgoing: rows
+        .filter((row) => row.sender === uid)
+        .map((row) => ({ uid: asString(row.recipient), since: asNumber(row.sent_at) }))
+        .sort(byNewest),
+    };
   };
+
+  return watchTable('friend_requests', [`sender=eq.${uid}`, `recipient=eq.${uid}`], read, onChange);
 }
 
 /** Where this player stands with another, for the button that offers it */

@@ -55,8 +55,9 @@ async function measure(): Promise<void> {
   const after = Date.now();
 
   // Assume a symmetric round trip: the server read its clock around
-  // the midpoint of the two local readings
-  offset = server + (after - before) / 2 - after;
+  // the midpoint of the two local readings. Rounded, so every derived
+  // stamp stays a whole millisecond — bigint columns refuse halves
+  offset = Math.round(server + (after - before) / 2 - after);
   measuredAt = after;
 }
 

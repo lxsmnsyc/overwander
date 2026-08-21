@@ -1,35 +1,21 @@
 import 'server-only';
-import { PROFILE_COLLECTION } from '../auth/collections';
-import { getAdminFirestore } from './firebase';
-import { asNumber, docData } from './read';
+import { getSql } from './db';
 
 /**
- * The gold balance, written with admin credentials. A player edits
- * their own nickname and avatar directly — those are theirs to set —
- * but the balance is currency, so it only moves here
+ * The gold balance, written over the owner connection. A player edits
+ * their own nickname and avatar directly (those are theirs to set)
+ * but the balance is currency, so it only moves here.
+ *
+ * Both moves are single atomic statements: the guard rides in the
+ * WHERE, so two spends racing cannot both land, and the `gold >= 0`
+ * constraint stands behind the guard as the last line
  */
 
-function getProfileRef(uid: string): FirebaseFirestore.DocumentReference {
-  return getAdminFirestore().collection(PROFILE_COLLECTION).doc(uid);
-}
-
-function readGold(snapshot: FirebaseFirestore.DocumentSnapshot): number {
-  return asNumber(docData(snapshot)?.gold);
-}
-
 /**
- * Add gold. The read and the write share a transaction so concurrent
- * rewards cannot clobber each other
+ * Add gold
  */
 export async function grantGold(uid: string, amount: number): Promise<void> {
-  const db = getAdminFirestore();
-
-  await db.runTransaction(async (transaction) => {
-    const ref = getProfileRef(uid);
-    const gold = readGold(await transaction.get(ref));
-
-    transaction.set(ref, { gold: gold + amount }, { merge: true });
-  });
+  await getSql()`update profiles set gold = gold + ${amount} where id = ${uid}`;
 }
 
 /**
@@ -37,16 +23,10 @@ export async function grantGold(uid: string, amount: number): Promise<void> {
  * cannot cover the amount
  */
 export async function spendGold(uid: string, amount: number): Promise<boolean> {
-  const db = getAdminFirestore();
+  const spent = await getSql()`
+    update profiles set gold = gold - ${amount}
+    where id = ${uid} and gold >= ${amount}
+  `;
 
-  return db.runTransaction(async (transaction) => {
-    const ref = getProfileRef(uid);
-    const gold = readGold(await transaction.get(ref));
-
-    if (gold < amount) {
-      return false;
-    }
-    transaction.set(ref, { gold: gold - amount }, { merge: true });
-    return true;
-  });
+  return spent.count > 0;
 }

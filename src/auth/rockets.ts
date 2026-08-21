@@ -1,4 +1,4 @@
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import {
   type RocketReward,
   claimRocketReward as claimOnServer,

@@ -1,13 +1,5 @@
 import 'server-only';
 import {
-  AUCTION_COLLECTION,
-  AUCTION_SELLER_COLLECTION,
-  BID_COLLECTION,
-  CAUGHT_COLLECTION,
-  PROFILE_COLLECTION,
-  bidEntryId,
-} from '../auth/collections';
-import {
   AUCTION_DURATION,
   AUCTION_ESCROW,
   AuctionLot,
@@ -27,13 +19,14 @@ import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
 import { isEggRecord, isFavoriteRecord } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import { getAdminFirestore } from './firebase';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { hasSpareCatch } from './caught';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { asNumber } from './read';
 
 /**
  * Auctions, written with admin credentials.
@@ -62,15 +55,28 @@ import { asNumber, docData } from './read';
  * [`src/auth/auction-record.ts`](../auth/auction-record.ts)
  */
 
-/**
- * The seller's own document, naming the auction they have running
- */
-function getSellerRef(uid: string): FirebaseFirestore.DocumentReference {
-  return getAdminFirestore().collection(AUCTION_SELLER_COLLECTION).doc(uid);
-}
+/** One auction row in the record shape, locked for the transaction */
+async function readAuctionIn(transaction: Tx, id: string): Promise<Record<string, unknown> | null> {
+  const rows = await transaction`select * from auctions where id = ${id} for update`;
+  const row = rows.at(0);
 
-function getProfileRef(uid: string): FirebaseFirestore.DocumentReference {
-  return getAdminFirestore().collection(PROFILE_COLLECTION).doc(uid);
+  if (row == null) {
+    return null;
+  }
+  return {
+    seller: row.seller,
+    lot: row.lot,
+    item: row.item,
+    caught: row.caught_id ?? '',
+    startingBid: row.starting_bid,
+    increment: row.increment,
+    bid: row.bid,
+    bidder: row.bidder ?? '',
+    createdAt: row.created_at,
+    endsAt: row.ends_at,
+    offset: row.utc_offset,
+    settled: row.settled,
+  };
 }
 
 /**
@@ -118,19 +124,19 @@ export async function openAuction(
     return null;
   }
 
-  const db = getAdminFirestore();
   const asked = asAuctionTerms(terms.startingBid, terms.increment);
 
-  return db.runTransaction(async (transaction) => {
-    const sellerRef = getSellerRef(uid);
-    const seller = docData(await transaction.get(sellerRef));
+  return tx(async (transaction) => {
+    const sellers = await transaction`
+      select ends_at from auction_sellers where player = ${uid} for update
+    `;
 
     // Their last one is still taking bids
-    if (seller != null && now < asNumber(seller.endsAt)) {
+    if (sellers.at(0) != null && now < asNumber(sellers[0].ends_at)) {
       return null;
     }
 
-    const ref = db.collection(AUCTION_COLLECTION).doc();
+    const auctionId = newDocId();
     const auction: AuctionRecord = {
       seller: uid,
       lot: offer.lot,
@@ -157,14 +163,14 @@ export async function openAuction(
 
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, offer.item);
 
-      if (!spendStackIn(transaction, ITEM_STACKS, uid, offer.item, stock)) {
+      if (!(await spendStackIn(transaction, ITEM_STACKS, uid, offer.item, stock))) {
         return null;
       }
     } else {
-      const caughtRef = db.collection(CAUGHT_COLLECTION).doc(offer.caught);
-      const profileRef = db.collection(PROFILE_COLLECTION).doc(uid);
-      const [caughtDoc, profileDoc] = await transaction.getAll(caughtRef, profileRef);
-      const caught = docData(caughtDoc);
+      const caught = await readCaughtIn(transaction, offer.caught);
+      const profiles = await transaction`
+        select buddy_id from profiles where id = ${uid}
+      `;
 
       // A pokemon fighting right now is running on a frozen snapshot
       // of a record that has to still be theirs when the battle ends
@@ -187,7 +193,7 @@ export async function openAuction(
       // misreading a list, and a lot cannot be taken back off the
       // block; sending it home first is one press and makes the sale
       // deliberate
-      if (docData(profileDoc)?.buddy === offer.caught) {
+      if (profiles[0]?.buddy_id === offer.caught) {
         return null;
       }
       // And so is anything a bidder could go and catch for themselves.
@@ -199,12 +205,26 @@ export async function openAuction(
       }
       // Whatever it is holding goes with it: the item was handed to
       // the pokemon, and the pokemon is what is being sold
-      transaction.update(caughtRef, { owner: AUCTION_ESCROW });
+      await updateCaughtIn(transaction, offer.caught, { owner: AUCTION_ESCROW });
     }
 
-    transaction.set(ref, auction);
-    transaction.set(sellerRef, { player: uid, auction: ref.id, endsAt: auction.endsAt });
-    return ref.id;
+    await transaction`
+      insert into auctions
+        (id, seller, lot, item, caught_id, starting_bid, increment, bid, bidder,
+         created_at, ends_at, utc_offset, settled)
+      values
+        (${auctionId}, ${uid}, ${auction.lot}, ${auction.item},
+         ${auction.caught === '' ? null : auction.caught},
+         ${auction.startingBid}, ${auction.increment}, 0, null,
+         ${auction.createdAt}, ${auction.endsAt}, ${auction.offset}, false)
+    `;
+    await transaction`
+      insert into auction_sellers (player, auction, ends_at)
+      values (${uid}, ${auctionId}, ${auction.endsAt})
+      on conflict (player) do update
+        set auction = excluded.auction, ends_at = excluded.ends_at
+    `;
+    return auctionId;
   });
 }
 
@@ -230,12 +250,10 @@ export async function placeBid(
   amount: number,
   now: number,
 ): Promise<number | null> {
-  const db = getAdminFirestore();
   const bid = asGold(amount);
 
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(AUCTION_COLLECTION).doc(auctionId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readAuctionIn(transaction, auctionId);
 
     if (stored == null) {
       return null;
@@ -247,35 +265,38 @@ export async function placeBid(
       return null;
     }
 
-    // The bidder's own balance, and the one the refund is owed to.
-    // They are never the same document — nobody outbids themselves —
-    // so the two move independently
-    const bidderRef = getProfileRef(uid);
-    const outbid = auction.bidder;
-    const outbidRef = outbid === '' ? null : getProfileRef(outbid);
-    const gold = asNumber(docData(await transaction.get(bidderRef))?.gold);
+    // The bidder pays as the bid lands; the guard rides in the
+    // statement, so a balance that cannot cover it changes nothing
+    const paid = await transaction`
+      update profiles set gold = gold - ${bid}
+      where id = ${uid} and gold >= ${bid}
+    `;
 
-    if (gold < bid) {
+    if (paid.count === 0) {
       return null;
     }
 
-    if (outbidRef != null) {
-      const refunded = asNumber(docData(await transaction.get(outbidRef))?.gold);
-
-      transaction.set(outbidRef, { gold: refunded + auction.bid }, { merge: true });
+    // The bid it outbid is handed back in the same breath: a standing
+    // bid is always money that has already been paid. Never the same
+    // row, since nobody outbids themselves
+    if (auction.bidder !== '') {
+      await transaction`
+        update profiles set gold = gold + ${auction.bid} where id = ${auction.bidder}
+      `;
     }
-    transaction.set(bidderRef, { gold: gold - bid }, { merge: true });
-    transaction.update(ref, { bid, bidder: uid });
+    await transaction`
+      update auctions set bid = ${bid}, bidder = ${uid} where id = ${auctionId}
+    `;
     // The lot keeps only the bid that is standing; the bidder keeps
     // their own record of having bid at all, so being outbid an hour
     // ago does not erase the lot from their history. Bidding again
     // rewrites it rather than adding to it
-    transaction.set(db.collection(BID_COLLECTION).doc(bidEntryId(uid, auctionId)), {
-      player: uid,
-      auction: auctionId,
-      amount: bid,
-      bidAt: now,
-    });
+    await transaction`
+      insert into bids (player, auction, amount, bid_at)
+      values (${uid}, ${auctionId}, ${bid}, ${now})
+      on conflict (player, auction) do update
+        set amount = excluded.amount, bid_at = excluded.bid_at
+    `;
     return bid;
   });
 }
@@ -299,11 +320,8 @@ export async function claimAuction(
   now: number,
   offset: number,
 ): Promise<boolean> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(AUCTION_COLLECTION).doc(auctionId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readAuctionIn(transaction, auctionId);
 
     if (stored == null) {
       return false;
@@ -315,16 +333,12 @@ export async function claimAuction(
       return false;
     }
 
-    const sellerRef = getProfileRef(auction.seller);
-    const paid = asNumber(docData(await transaction.get(sellerRef))?.gold);
-
     if (auction.lot === AuctionLot.Item && auction.item != null) {
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
 
-      writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
+      await writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
     } else {
-      const caughtRef = db.collection(CAUGHT_COLLECTION).doc(auction.caught);
-      const caught = docData(await transaction.get(caughtRef));
+      const caught = await readCaughtIn(transaction, auction.caught);
 
       // The record was moved into escrow when the auction opened and
       // nothing else can touch it there, so anything else in that
@@ -348,7 +362,7 @@ export async function claimAuction(
       // has just changed: whatever it walked, levelled and was groomed
       // for belonged to the seller, and carrying that over would make
       // an inseparable pokemon a thing that could be bought
-      transaction.update(caughtRef, {
+      await updateCaughtIn(transaction, auction.caught, {
         owner: uid,
         history: [
           ...record.history,
@@ -373,8 +387,10 @@ export async function claimAuction(
       });
     }
 
-    transaction.set(sellerRef, { gold: paid + auction.bid }, { merge: true });
-    transaction.update(ref, { settled: true });
+    await transaction`
+      update profiles set gold = gold + ${auction.bid} where id = ${auction.seller}
+    `;
+    await transaction`update auctions set settled = true where id = ${auctionId}`;
     return true;
   });
 }
@@ -401,11 +417,8 @@ export async function reclaimAuction(
   auctionId: string,
   now: number,
 ): Promise<boolean> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const ref = db.collection(AUCTION_COLLECTION).doc(auctionId);
-    const stored = docData(await transaction.get(ref));
+  return tx(async (transaction) => {
+    const stored = await readAuctionIn(transaction, auctionId);
 
     if (stored == null) {
       return false;
@@ -420,10 +433,9 @@ export async function reclaimAuction(
     if (auction.lot === AuctionLot.Item && auction.item != null) {
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
 
-      writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
+      await writeStackIn(transaction, ITEM_STACKS, uid, auction.item, stock + 1);
     } else {
-      const caughtRef = db.collection(CAUGHT_COLLECTION).doc(auction.caught);
-      const caught = docData(await transaction.get(caughtRef));
+      const caught = await readCaughtIn(transaction, auction.caught);
 
       if (caught == null) {
         return false;
@@ -437,10 +449,10 @@ export async function reclaimAuction(
       // Only the owner field moves. It did not change hands, so
       // nothing about how it has been kept changes either: the
       // friendship a sale resets is still the seller's own
-      transaction.update(caughtRef, { owner: uid });
+      await updateCaughtIn(transaction, auction.caught, { owner: uid });
     }
 
-    transaction.update(ref, { settled: true });
+    await transaction`update auctions set settled = true where id = ${auctionId}`;
     return true;
   });
 }

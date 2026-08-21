@@ -1,5 +1,4 @@
 import 'server-only';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { CANDY_STACKS } from '../auth/stacks';
 import getCandyCost, { SPECIES_DAY_CANDY_BOOST, getCatchCandy } from '../auth/candy-rules';
 import { asCaughtPokemon } from '../auth/caught-record';
@@ -10,9 +9,10 @@ import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { asNumber } from './read';
 import { grantStack, readStackIn, spendStackIn } from './stacks';
 
 /**
@@ -70,11 +70,8 @@ export async function grantCatchCandy(
  * catch already sits at MAX_LEVEL
  */
 export async function useCandy(uid: string, catchId: string): Promise<number | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     if (
       caught == null ||
@@ -101,12 +98,12 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
     // The candy and the level land together or not at all: a candy
     // spent without the level is the failure this transaction exists
     // to prevent
-    if (!spendStackIn(transaction, CANDY_STACKS, uid, family, held, cost)) {
+    if (!(await spendStackIn(transaction, CANDY_STACKS, uid, family, held, cost))) {
       return null;
     }
 
     const level = record.level + 1;
-    transaction.update(caughtRef, {
+    await updateCaughtIn(transaction, catchId, {
       level,
       // A level restores what the last fight took, status and all
       health: getMaxHealth({ ...record, level }),

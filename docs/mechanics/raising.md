@@ -94,7 +94,7 @@ Three things move them:
 
 - **Assigning** puts unused points into a stat or takes them back out. Nothing is
   consumed, so retraining is free and reversible forever.
-- **A wing** grants 3 points in its own stat *and* raises the pokemon's budget by
+- **A wing** grants 3 points in its own stat _and_ raises the pokemon's budget by
   the same, so a wing adds to what there is to spend rather than spending it. It
   is the only training a pokemon ever gets that its levels did not pay for, and
   it is worth the same at level 5 as at level 100.

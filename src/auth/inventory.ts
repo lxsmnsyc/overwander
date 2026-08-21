@@ -1,7 +1,7 @@
-import { doc, getDoc } from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
-import { BAG_COLLECTION, ITEM_STACKS, bagId, getStack, listStacks } from './stacks';
-import { getFirebaseFirestore } from './firebase';
+import { asNumber, asRecordArray } from './__normalize';
+import { ITEM_STACKS, getStack, listStacks } from './stacks';
+import getSupabase from './supabase';
 
 /**
  * The bag as a list of stacks, which is how every picker in the game
@@ -30,9 +30,13 @@ export interface InventoryEntry {
  * The player's whole bag, in one read
  */
 async function readBag(uid: string): Promise<unknown> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), BAG_COLLECTION, bagId(uid)));
+  const { data } = await getSupabase().from('bag_items').select('item, count').eq('player', uid);
 
-  return snapshot.data();
+  return {
+    items: Object.fromEntries(
+      asRecordArray(data).map((row) => [asNumber(row.item), asNumber(row.count)]),
+    ),
+  };
 }
 
 /**

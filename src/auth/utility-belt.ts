@@ -1,5 +1,5 @@
 import useUtilityBeltOnServerSide from '../server/utility-belt';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import getIdToken from './session';
 
 /**

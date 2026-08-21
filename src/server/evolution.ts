@@ -1,16 +1,16 @@
 import 'server-only';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
 import { readStackIn, writeStackIn } from './stacks';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { asNumber, asNumberArray, docData } from './read';
+import { asNumber, asNumberArray } from './read';
 
 /**
  * Evolving, written with admin credentials. An evolution turns a
@@ -27,11 +27,8 @@ export default async function evolveCatch(
   catchId: string,
   into: Species,
 ): Promise<Species | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon in a live battle fights as the species its snapshot
     // froze, so it evolves once the fight is over and not before —
@@ -89,14 +86,14 @@ export default async function evolveCatch(
     }
 
     if (consumed != null) {
-      writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
+      await writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
     }
     // An evolution is a bigger pokemon, not a healed one: the share
     // of health it had is what it keeps, so a Charmander at half
     // stays a Charmeleon at half
     const record = asCaughtPokemon(caught);
 
-    transaction.update(caughtRef, {
+    await updateCaughtIn(transaction, catchId, {
       species: into,
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line

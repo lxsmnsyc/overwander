@@ -1,21 +1,3 @@
-// Firestore returns untyped documents; the converters below restore
-// const-enum fields via assertions that tsc requires but tsgolint
-// (resolving const enums to number) considers unnecessary
-// oxlint-disable typescript/no-unnecessary-type-assertion
-import {
-  type DocumentReference,
-  type FirestoreDataConverter,
-  type QueryFieldFilterConstraint,
-  collection,
-  doc,
-  documentId,
-  getCountFromServer,
-  getDoc,
-  getDocs,
-  limit,
-  query,
-  where,
-} from 'firebase/firestore';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
@@ -26,11 +8,12 @@ import {
   releaseCatch as releaseOnServerSide,
   takeItem as takeOnServer,
 } from '../server/caught';
-import { requireUid } from '../server/firebase';
+import { requireUid } from '../server/auth';
 import type { CatchConstraint } from './catch-search';
-import { type CaughtPokemon, asCaughtPokemon } from './caught-record';
-import { CAUGHT_COLLECTION } from './collections';
-import { getFirebaseFirestore } from './firebase';
+import { asRecord, asRecordArray } from './__normalize';
+import type { CaughtPokemon } from './caught-record';
+import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
+import getSupabase from './supabase';
 import getIdToken from './session';
 
 export {
@@ -44,18 +27,11 @@ export {
 } from './caught-record';
 export type { CaughtPokemon, OwnershipRecord } from './caught-record';
 
-const caughtConverter: FirestoreDataConverter<CaughtPokemon> = {
-  toFirestore: (caught) => caught,
-  fromFirestore: (snapshot) => asCaughtPokemon(snapshot.data()),
-};
+const CAUGHT_TABLE = 'caught';
 
-/**
- * The catch's document reference, converter attached. Exported so
- * stores that mutate a catch alongside their own documents (candies,
- * say) can join it in one transaction
- */
-export function getCaughtRef(id: string): DocumentReference<CaughtPokemon> {
-  return doc(getFirebaseFirestore(), CAUGHT_COLLECTION, id).withConverter(caughtConverter);
+/** Rows out of a dynamic select, paired as [id, record] */
+function rowsToPairs(data: unknown): [string, CaughtPokemon][] {
+  return asRecordArray(data).map((row) => [String(row.id), fromCaughtRow(row)]);
 }
 
 /**
@@ -66,21 +42,41 @@ export function getCaughtRef(id: string): DocumentReference<CaughtPokemon> {
  */
 
 export async function getCaught(id: string): Promise<CaughtPokemon | null> {
-  const snapshot = await getDoc(getCaughtRef(id));
+  const { data } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select(CAUGHT_EMBED)
+    .eq('id', id)
+    .maybeSingle();
 
-  return snapshot.data() ?? null;
+  return data == null ? null : fromCaughtRow(asRecord(data));
 }
 
 /**
  * Every pokemon currently owned by the user, as id-record pairs
  */
-export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(query(caught, where('owner', '==', owner)));
+/**
+ * The box selection, widened to `string` on purpose: left literal,
+ * supabase-js parses it at the type level, fails on the embed syntax,
+ * and the `ParserError` type poisons every constraint chained onto
+ * the query
+ */
+// oxlint-disable-next-line typescript/no-inferrable-types
+const ROW_SELECTION: string = `id, ${CAUGHT_EMBED}`;
 
-  return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+/**
+ * The rows of one owner's box, with the embeds along. An arrow with
+ * its type left to inference: the builder's type is the anchor the
+ * constraint chain below is checked against, and nobody can write it
+ * out by hand
+ */
+// oxlint-disable-next-line typescript/explicit-function-return-type
+const caughtRows = (owner: string) =>
+  getSupabase().from(CAUGHT_TABLE).select(ROW_SELECTION).eq('owner', owner);
+
+export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
+  const { data } = await caughtRows(owner);
+
+  return rowsToPairs(data);
 }
 
 /**
@@ -101,44 +97,49 @@ export async function searchCaught(
   owner: string,
   narrowing: CatchConstraint[],
 ): Promise<[string, CaughtPokemon][]> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(
-    query(caught, where('owner', '==', owner), ...narrowing.flatMap(asConstraint)),
-  );
+  let request = caughtRows(owner);
 
-  return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+  for (const narrowed of narrowing) {
+    request = applyConstraint(request, narrowed);
+  }
+
+  const { data } = await request;
+
+  return rowsToPairs(data);
 }
 
-/** One planned constraint, in the words the web SDK takes */
-function asConstraint(narrowed: CatchConstraint): QueryFieldFilterConstraint[] {
+/** The columns the pushable fields live in */
+const CONSTRAINT_COLUMNS: Record<string, string> = {
+  lockedAt: 'locked_at',
+};
+
+type Chain = ReturnType<typeof caughtRows>;
+
+/** One planned constraint, applied to the running query */
+function applyConstraint(request: Chain, narrowed: CatchConstraint): Chain {
+  const column = CONSTRAINT_COLUMNS[narrowed.field] ?? narrowed.field;
+
   if ('oneOf' in narrowed) {
-    return [where(narrowed.field, 'in', narrowed.oneOf)];
-  }
-  if ('has' in narrowed) {
-    return [where(narrowed.field, 'array-contains', narrowed.has)];
+    return request.in(column, narrowed.oneOf);
   }
   if ('is' in narrowed) {
-    return [where(narrowed.field, '==', narrowed.is)];
+    return request.eq(column, narrowed.is);
   }
   if ('equals' in narrowed) {
-    return [where(narrowed.field, '==', narrowed.equals)];
+    return request.eq(column, narrowed.equals);
   }
-  // Everything from here to the next thing that sorts after it. The
-  // stamps are ISO strings, so "the month of August" is a range
-  if ('prefix' in narrowed) {
-    return [
-      where(narrowed.field, '>=', narrowed.prefix),
-      where(narrowed.field, '<', `${narrowed.prefix}\uffff`),
-    ];
+  if ('low' in narrowed) {
+    let ranged = request;
+
+    if (Number.isFinite(narrowed.low)) {
+      ranged = ranged.gte(column, narrowed.low);
+    }
+    if (Number.isFinite(narrowed.high)) {
+      ranged = ranged.lte(column, narrowed.high);
+    }
+    return ranged;
   }
-  // An open end is left off rather than compared against infinity,
-  // which Firestore has no number for
-  return [
-    ...(Number.isFinite(narrowed.low) ? [where(narrowed.field, '>=', narrowed.low)] : []),
-    ...(Number.isFinite(narrowed.high) ? [where(narrowed.field, '<=', narrowed.high)] : []),
-  ];
+  return request;
 }
 
 /**
@@ -150,10 +151,12 @@ function asConstraint(narrowed: CatchConstraint): QueryFieldFilterConstraint[] {
  * comes to, so this stays cheap for a player with three hundred
  */
 export async function countCaught(owner: string): Promise<number> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION);
-  const counted = await getCountFromServer(query(caught, where('owner', '==', owner)));
+  const { count } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select('id', { count: 'exact', head: true })
+    .eq('owner', owner);
 
-  return counted.data().count;
+  return count ?? 0;
 }
 
 /**
@@ -186,14 +189,13 @@ export async function listCaughtMarked(
   owner: string,
   mark: CatchMark,
 ): Promise<[string, CaughtPokemon][]> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(
-    query(caught, where('owner', '==', owner), where(mark, '==', true)),
-  );
+  const { data } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select(`id, ${CAUGHT_EMBED}`)
+    .eq('owner', owner)
+    .eq(mark, true);
 
-  return snapshot.docs.map((entry) => [entry.id, entry.data()]);
+  return rowsToPairs(data);
 }
 
 /**
@@ -215,14 +217,13 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
     return new Set();
   }
 
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(query(caught, where(documentId(), 'in', ids)));
+  const { data } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select('id')
+    .eq('owner', owner)
+    .in('id', ids);
 
-  return new Set(
-    snapshot.docs.filter((entry) => entry.data().owner === owner).map((entry) => entry.id),
-  );
+  return new Set(((data ?? []) as { id: unknown }[]).map((row) => String(row.id)));
 }
 
 /**
@@ -231,12 +232,12 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
  * walks in, and the answer is a yes or no
  */
 export async function hasAnyCaught(owner: string): Promise<boolean> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(query(caught, where('owner', '==', owner), limit(1)));
+  const { count } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select('id', { count: 'exact', head: true })
+    .eq('owner', owner);
 
-  return !snapshot.empty;
+  return (count ?? 0) > 0;
 }
 
 /**
@@ -245,14 +246,13 @@ export async function hasAnyCaught(owner: string): Promise<boolean> {
  * Ball's condition
  */
 export async function hasCaughtSpecies(owner: string, species: Species): Promise<boolean> {
-  const caught = collection(getFirebaseFirestore(), CAUGHT_COLLECTION).withConverter(
-    caughtConverter,
-  );
-  const snapshot = await getDocs(
-    query(caught, where('owner', '==', owner), where('species', '==', species), limit(1)),
-  );
+  const { count } = await getSupabase()
+    .from(CAUGHT_TABLE)
+    .select('id', { count: 'exact', head: true })
+    .eq('owner', owner)
+    .eq('species', species);
 
-  return !snapshot.empty;
+  return (count ?? 0) > 0;
 }
 
 /**

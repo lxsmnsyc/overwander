@@ -15,11 +15,7 @@ import type { Stage } from '../stage';
  */
 
 /** What a phase draws at one instant. */
-export type Painter = (
-  context: CanvasRenderingContext2D,
-  stage: Stage,
-  share: number,
-) => void;
+export type Painter = (context: CanvasRenderingContext2D, stage: Stage, share: number) => void;
 
 /** What the field holds: either kind of picture answers this. */
 export interface FieldVisual {

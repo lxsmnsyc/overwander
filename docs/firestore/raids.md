@@ -102,7 +102,7 @@ Looking at a lair stages nothing. `peekRaid` reads the cell, the stored lobby an
 where one exists, its battle, then answers with what is standing there and the
 **one** thing this player may do about it. Nothing is written, so a player who
 opens the dialog and thinks better of it leaves no lobby behind. Before this,
-looking *was* hosting.
+looking _was_ hosting.
 
 | `RaidAction` | When                                                      | What the button does                      |
 | ------------ | --------------------------------------------------------- | ----------------------------------------- |

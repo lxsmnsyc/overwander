@@ -151,7 +151,7 @@ export default function MoveDemo(): JSX.Element {
     if (aim?.type === MoveTargetType.Team) {
       return demo.allied
         ? 'Aimed at its own team: the dummies stand together.'
-        : "Aimed at the other team: the dummies stand apart.";
+        : 'Aimed at the other team: the dummies stand apart.';
     }
     if (aim?.type === MoveTargetType.Unit && aim.unit === demo.caster) {
       return 'Aimed at itself: the other dummy is only standing there.';
@@ -245,9 +245,7 @@ export default function MoveDemo(): JSX.Element {
         >
           Stage it again
         </Button>
-        <Show when={staged()}>
-          {(demo) => <Meta>{aiming(demo())}</Meta>}
-        </Show>
+        <Show when={staged()}>{(demo) => <Meta>{aiming(demo())}</Meta>}</Show>
         <Show when={waiting()}>{(said) => <Meta>{said()}</Meta>}</Show>
         <Show when={staged() != null && !standing()}>
           <Meta>Somebody is down. Stage it again to carry on.</Meta>
@@ -277,8 +275,8 @@ export default function MoveDemo(): JSX.Element {
       </Show>
 
       <Meta>
-        Two dummies, no AI and no outcome: nothing acts on its own and nothing here is won. The
-        move in the address is what is staged, so a link is a demonstration.
+        Two dummies, no AI and no outcome: nothing acts on its own and nothing here is won. The move
+        in the address is what is staged, so a link is a demonstration.
       </Meta>
     </main>
   );

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { claimStarter, dialogNamed, expectOpen, openPanel, settled, signIn } from './game';
-import { uidOf, writeDocument } from './emulator';
+import { insertRow, uidOf } from './admin';
 import { stageSeller } from './stranger';
 
 /**
@@ -108,10 +108,10 @@ test.describe('friends', () => {
 
     // The other half of the game: a request written the way the
     // server writes one, since nothing here can sign in as them
-    await writeDocument('friendRequests', `${stranger.uid}:${await uidOf(player)}`, {
-      from: { stringValue: stranger.uid },
-      to: { stringValue: await uidOf(player) },
-      sentAt: { integerValue: String(Date.now()) },
+    await insertRow('friend_requests', {
+      sender: stranger.uid,
+      recipient: await uidOf(player),
+      sent_at: Date.now(),
     });
 
     const profile = await openPanel(page, 'Profile');

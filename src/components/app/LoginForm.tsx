@@ -1,10 +1,9 @@
-import { type JSX, Show, createSignal, onMount } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import {
   registerWithEmail,
   signInWithEmail,
   signInWithGithub,
   signInWithGoogle,
-  takeRedirectResult,
 } from '../../auth/actions';
 import { Button, Row, Status } from '../styled';
 
@@ -36,11 +35,6 @@ export default function LoginForm(): JSX.Element {
   // signed in needs nothing from this — the auth listener has it —
   // but one that failed on the way would otherwise come back to a
   // form with nothing to say about why
-  onMount(() => {
-    takeRedirectResult().catch((caught: unknown) => {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    });
-  });
 
   return (
     <div class="flex flex-col gap-3 text-left">

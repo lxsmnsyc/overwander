@@ -2,12 +2,12 @@
 // const-enum fields via assertions that tsc requires but tsgolint
 // (resolving const enums to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { doc, getDoc } from 'firebase/firestore';
 import type Families from '../data/ids/families';
-import { BAG_COLLECTION, CANDY_STACKS, bagId, getStack, listStacks } from './stacks';
+import { asNumber, asRecordArray } from './__normalize';
+import { CANDY_STACKS, getStack, listStacks } from './stacks';
 import { useCandy as feedOnServer } from '../server/candy';
-import { requireUid } from '../server/firebase';
-import { getFirebaseFirestore } from './firebase';
+import { requireUid } from '../server/auth';
+import getSupabase from './supabase';
 import getIdToken from './session';
 
 export {
@@ -47,9 +47,16 @@ export interface CandyStack {
  * both reads one document
  */
 async function readBag(uid: string): Promise<unknown> {
-  const snapshot = await getDoc(doc(getFirebaseFirestore(), BAG_COLLECTION, bagId(uid)));
+  const { data } = await getSupabase()
+    .from('bag_candies')
+    .select('family, count')
+    .eq('player', uid);
 
-  return snapshot.data();
+  return {
+    candies: Object.fromEntries(
+      asRecordArray(data).map((row) => [asNumber(row.family), asNumber(row.count)]),
+    ),
+  };
 }
 
 /**

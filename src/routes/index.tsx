@@ -1,10 +1,10 @@
 import { Title } from '@solidjs/meta';
-import type { User } from 'firebase/auth';
 import { type JSX, type ParentProps, Show, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
 import { useAuth } from '../auth/context';
+import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/AuctionTab';
 import BattleView from '../components/battle/BattleView';
@@ -75,7 +75,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
 /**
  * The signed-in view: the world, unless a battle has taken the page
  */
-function GameView(props: { user: User }): JSX.Element {
+function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const game = useGame();
   /**
    * Whether the seller's side of the auction board is open. It lives
@@ -343,13 +343,13 @@ function Banned(props: ParentProps<{ uid: string }>): JSX.Element {
   return (
     <Show when={profile()?.banned === true} fallback={props.children}>
       <div class="flex h-full items-center justify-center px-4">
-        <div class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
-          text-center shadow-pop">
+        <div
+          class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
+          text-center shadow-pop"
+        >
           <h1>This account is banned.</h1>
           <Note>
-            {profile()?.banReason === ''
-              ? 'Nothing else was said about it.'
-              : profile()?.banReason}
+            {profile()?.banReason === '' ? 'Nothing else was said about it.' : profile()?.banReason}
           </Note>
           <Button
             onClick={() => {

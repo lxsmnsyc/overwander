@@ -1,13 +1,13 @@
 import 'server-only';
-import { CAUGHT_COLLECTION } from '../auth/collections';
 import { ITEM_STACKS } from '../auth/stacks';
 import { MAX_SLOTS, getSlots, withSlots } from '../data/constants/slots';
 import { Items } from '../data/ids/items';
 import { UTILITY_BELT_SLOT } from '../data/items/utility-belt';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { getAdminFirestore } from './firebase';
+import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { asNumber, docData } from './read';
+import { asNumber } from './read';
 import { readStackIn, writeStackIn } from './stacks';
 
 /**
@@ -29,11 +29,8 @@ import { readStackIn, writeStackIn } from './stacks';
  * already has as much room as the field can hold
  */
 export default async function useUtilityBelt(uid: string, catchId: string): Promise<number | null> {
-  const db = getAdminFirestore();
-
-  return db.runTransaction(async (transaction) => {
-    const caughtRef = db.collection(CAUGHT_COLLECTION).doc(catchId);
-    const caught = docData(await transaction.get(caughtRef));
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon fights as the snapshot froze it, so widening one
     // mid-raid would change the record its own battle is not reading;
@@ -62,8 +59,8 @@ export default async function useUtilityBelt(uid: string, catchId: string): Prom
       return null;
     }
 
-    writeStackIn(transaction, ITEM_STACKS, uid, Items.UtilityBelt, stock - 1);
-    transaction.update(caughtRef, {
+    await writeStackIn(transaction, ITEM_STACKS, uid, Items.UtilityBelt, stock - 1);
+    await updateCaughtIn(transaction, catchId, {
       slots: withSlots(slots, UTILITY_BELT_SLOT, room + 1),
     });
 

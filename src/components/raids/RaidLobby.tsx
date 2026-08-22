@@ -21,7 +21,10 @@ import {
   startRaid,
   watchRaid,
 } from '../../auth/raids';
-import { getProfile } from '../../auth/profile';
+import { type Profile, getProfiles } from '../../auth/profile';
+import { type CaughtPokemon, getCaught } from '../../auth/caught';
+import TeamStrip from '../catches/TeamStrip';
+import PlayerPlate from '../profile/PlayerPlate';
 import { type TeamRecord, getTeam } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
@@ -37,13 +40,43 @@ import {
   ListRow,
   Note,
   Row,
-  RowButton,
   SEARCH_FROM,
   Search,
   Status,
 } from '../styled';
 import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+
+/**
+ * One lobby team's live party, read record by record. The reads live
+ * here and are rendered a child down, so a party still arriving
+ * suspends its own strip rather than the lobby
+ */
+function LobbyParty(props: { catches: string[] }): JSX.Element {
+  const [party] = createResource(
+    () => props.catches.join(','),
+    async (key): Promise<[string, CaughtPokemon][]> => {
+      const rows = await Promise.all(
+        key
+          .split(',')
+          .filter(Boolean)
+          .map(async (id): Promise<[string, CaughtPokemon | null]> => [id, await getCaught(id)]),
+      );
+
+      return rows.filter((row): row is [string, CaughtPokemon] => row[1] != null);
+    },
+  );
+
+  return (
+    <Suspense fallback={<Note>Reading the party…</Note>}>
+      <PartyStrip party={party} />
+    </Suspense>
+  );
+}
+
+function PartyStrip(props: { party: Resource<[string, CaughtPokemon][]> }): JSX.Element {
+  return <TeamStrip catches={props.party() ?? []} />;
+}
 
 export interface RaidLobbyProps {
   user: PlayerIdentity;
@@ -68,7 +101,7 @@ function LobbyRows(
   props: RaidLobbyProps & {
     raid: () => RaidRecord | null;
     teams: Resource<TeamRecord[]>;
-    names: Resource<Map<string, string>>;
+    names: Resource<Map<string, Profile>>;
     canJoin: Resource<boolean>;
   },
 ): JSX.Element {
@@ -82,7 +115,8 @@ function LobbyRows(
 
   const canJoin = (): boolean | undefined => props.canJoin();
 
-  const named = (uid: string): string => props.names()?.get(uid) ?? uid;
+  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.avatar ?? null;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
@@ -247,9 +281,9 @@ function LobbyRows(
                       {(team) => (
                         <ListRow
                           selected={team.player === props.user.uid}
-                          class={
+                          class={`flex-wrap justify-between ${
                             team.player === props.user.uid ? 'sticky top-0 z-10 bg-leaf-soft' : ''
-                          }
+                          }`}
                         >
                           {/* Anybody but the reader is somebody worth
                               knowing about before the fight starts:
@@ -259,19 +293,20 @@ function LobbyRows(
                               their own name in a lobby would be
                               opening a read-only copy of the profile
                               the menu already gives them */}
-                          <Show
-                            when={team.player !== props.user.uid}
-                            fallback={<span class="grow">You</span>}
-                          >
-                            <RowButton
-                              onClick={() => {
-                                game.setVisiting(team.player);
-                              }}
-                            >
-                              {named(team.player)}
-                            </RowButton>
-                          </Show>
-                          <Badge>{team.catches.length} pokemon</Badge>
+                          <PlayerPlate
+                            name={team.player === props.user.uid ? 'You' : named(team.player)}
+                            avatar={faceOf(team.player)}
+                            onOpen={
+                              team.player === props.user.uid
+                                ? undefined
+                                : () => {
+                                    game.setVisiting(team.player);
+                                  }
+                            }
+                          />
+                          {/* The party itself, square for square, with
+                              the same card the box would put over each */}
+                          <LobbyParty catches={team.catches} />
                         </ListRow>
                       )}
                     </For>
@@ -349,32 +384,15 @@ function LobbyTeams(
   },
 ): JSX.Element {
   /**
-   * What everybody in the lobby is called. A party is named by its
-   * player's uid in the record, and a uid is not a person: the row is
-   * the way into their profile, so it should say the name that profile
-   * opens under. Read once for the whole lobby, keyed on who is in it,
-   * and falling back to the uid — a lobby of thirty rows all reading
-   * "a trainer" tells nobody which is which
+   * Who everybody in the lobby is. A party is named by its player's
+   * uid in the record, and a uid is not a person: the row is the way
+   * into their profile, so it wears the name and the face that
+   * profile opens under. Read once for the whole lobby, keyed on who
+   * is in it
    */
   const [names] = createResource(
     () => [...new Set((props.teams() ?? []).map((team) => team.player))].sort().join(','),
-    async (key): Promise<Map<string, string>> => {
-      const found = new Map<string, string>();
-
-      await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (uid) => {
-            const profile = await getProfile(uid);
-
-            if (profile != null) {
-              found.set(uid, profile.nickname);
-            }
-          }),
-      );
-      return found;
-    },
+    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
   );
 
   return (

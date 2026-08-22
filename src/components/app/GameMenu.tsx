@@ -208,7 +208,7 @@ export default function GameMenu(): JSX.Element {
           <PopoverPanel
             // Kept mounted, since the fade needs something to fade,
             // and out of reach while it is going
-            unmount={false}
+            // unmount={false}
             class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
           >
             {/* Day or night, over the keypad: it changes how the game

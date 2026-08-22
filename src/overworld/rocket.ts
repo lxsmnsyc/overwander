@@ -124,8 +124,27 @@ export function createRocketParty(snapshot: ChunkSnapshot, spawns: Spawn[]): Cat
 }
 
 /**
- * Assemble the fight from its stored team snapshots. It is an
- * ordinary trainer battle: no raid rules, and the per-unit ability
+ * Assemble a trainer fight from its stored team snapshots: no raid
+ * rules, under whichever non-raid mode the fight was — a grunt's by
+ * default, a player's when both sides are somebody's
+ */
+export function createTrainerBattle(
+  battleId: string,
+  teams: TeamSnapshotRecord[],
+  limits = PVP_BATTLE_LIMITS,
+  mode: BattleModes = BattleModes.Npc,
+): RaidBattle {
+  const battle: Battle = createBattle(battleId, {
+    mode,
+    realtime: true,
+    limits,
+  });
+
+  return { battle, ...fieldTeams(battle, teams, null) };
+}
+
+/**
+ * A grunt's fight: an ordinary trainer battle whose per-unit ability
  * limit only has to fit the rolled ability alongside Shadow
  */
 export function createRocketBattle(
@@ -133,11 +152,5 @@ export function createRocketBattle(
   teams: TeamSnapshotRecord[],
   limits = PVP_BATTLE_LIMITS,
 ): RaidBattle {
-  const battle: Battle = createBattle(battleId, {
-    mode: BattleModes.Npc,
-    realtime: true,
-    limits,
-  });
-
-  return { battle, ...fieldTeams(battle, teams, null) };
+  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc);
 }

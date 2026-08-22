@@ -188,6 +188,11 @@ function GiftShelf(props: {
   };
 
   const take = (gift: string): void => {
+    // One at a time: the buttons grey out, but a square press arrives
+    // through no button
+    if (taking() != null) {
+      return;
+    }
     setTaking(gift);
     claimMysteryGift(gift)
       .then((claimed) => {
@@ -227,9 +232,10 @@ function GiftShelf(props: {
         <DialogSection title="Pokemon">
           <CatchGrid
             entries={squares()}
-            // The square is a picture; the card over it holds the one
-            // button, so a stray press cannot take a gift
-            cardOnly
+            // The card carries one button, so the square presses it
+            // too; a visited shelf has nothing to press anywhere
+            cardOnly={props.viewOnly === true}
+            onOpen={props.viewOnly === true ? undefined : take}
             cell={(entry) => (
               <HoverCard
                 class="block size-full"
@@ -273,11 +279,19 @@ function GiftShelf(props: {
         <DialogSection title="Items">
           <ItemGrid
             bare
-            cardOnly
+            // The card carries one button, so the square presses it
+            // too; a visited tray has nothing to press anywhere
+            cardOnly={props.viewOnly === true}
             entries={things().map((gift) => ({
               item: gift.item,
               amount: gift.amount,
               said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
+              onPress:
+                props.viewOnly === true
+                  ? undefined
+                  : () => {
+                      take(gift.id);
+                    },
               card: () => <Meta>{gift.reason}</Meta>,
               footer: () =>
                 props.viewOnly === true ? (

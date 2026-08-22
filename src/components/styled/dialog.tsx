@@ -295,10 +295,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                 which a button standing on it would otherwise
                 inherit — a white label on a white button */}
               {lead() == null ? null : <div class="absolute left-0 text-ink">{lead()}</div>}
-              <HeadlessDialogTitle
-                tabindex={0}
-                class="text-center text-lg font-extrabold tracking-tight"
-              >
+              <HeadlessDialogTitle class="text-center text-lg font-extrabold tracking-tight">
                 {props.title}
               </HeadlessDialogTitle>
               {aside() == null ? null : <div class="absolute right-0 text-ink">{aside()}</div>}

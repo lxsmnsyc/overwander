@@ -80,6 +80,31 @@ describe('damage mechanics', () => {
     expect(victim.alive).toBe(true);
   });
 
+  it('counts damage dealt as health actually taken', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    attacker.damage(NONE_CAUSE, victim, 60, 0);
+    expect(attacker.dealt).toBe(60);
+
+    // Overkill counts what was there, not what the hit was worth
+    attacker.damage(NONE_CAUSE, victim, 999, 0);
+    expect(attacker.dealt).toBe(160);
+    expect(victim.dealt).toBe(0);
+  });
+
+  it('ranks nobody for recoil or friendly fire', () => {
+    const { battle, teamA } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+
+    attacker.damage(NONE_CAUSE, attacker, 30, 0);
+    attacker.damage(NONE_CAUSE, ally, 30, 0);
+
+    expect(attacker.dealt).toBe(0);
+  });
+
   it('healing clamps at max health', () => {
     const { battle, teamA } = createBattle();
     const unit = createUnit(battle, teamA);

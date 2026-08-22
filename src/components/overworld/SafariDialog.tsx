@@ -3,7 +3,9 @@ import {
   type JSX,
   type Resource,
   Show,
+  Suspense,
   createEffect,
+  createMemo,
   createResource,
   createSignal,
   on,
@@ -93,9 +95,9 @@ export interface SafariDialogProps {
 /**
  * The encounter itself, which is where the bag is read.
  *
- * A bag read in the body that declared it lands on the boundary
- * around the whole page rather than on the dialog panel's own, which
- * would take the world down mid-throw
+ * A bag read in the body that declared it would land on the boundary
+ * around the whole page and take the world down mid-throw, so the
+ * reading half stands under the boundary below
  */
 function SafariBody(
   props: SafariDialogProps & { bag: Resource<InventoryEntry[]>; onSpent: () => void },
@@ -119,22 +121,41 @@ function SafariBody(
   // every action to re-read its state, turn count and bonus
   const [revision, setRevision] = createSignal(0);
 
-  const session = (): SafariSession<EncounterRecord> | null => {
-    revision();
-    return props.session;
-  };
+  /**
+   * The session as the panel shows it, held one beat past the end.
+   *
+   * Running away empties the prop at once, and the dialog is still on
+   * screen for the length of its fade: reading it live blanked the
+   * panel and put the heading back to "Encounter" on the way out.
+   * `equals: false` because the session is mutated in place, so a
+   * nudge has to carry even when the object is the one before
+   */
+  const session = createMemo<SafariSession<EncounterRecord> | null>(
+    (held) => {
+      revision();
+      return props.session ?? held ?? null;
+    },
+    null,
+    { equals: false },
+  );
 
   // A new encounter starts on a blank dialog.
   //
   // Nothing here belongs to the pokemon standing there now: "Caught!"
   // is about the last one, and so is the treat left in hand and the
-  // bag left open. The dialog is not rebuilt between encounters — the
-  // same one is handed a new session — so the state it kept was the
-  // previous encounter's, announced over the next one
+  // bag left open. The dialog is not rebuilt between encounters, the
+  // same one is handed a new session, so the state it kept was the
+  // previous encounter's announced over the next one.
+  //
+  // On the way in only: clearing as the session goes empties a panel
+  // the player is still watching fade
   createEffect(
     on(
       () => props.session,
-      () => {
+      (active) => {
+        if (active == null) {
+          return;
+        }
         setStatus(null);
         setRummaging(false);
         setTreat(null);
@@ -188,7 +209,7 @@ function SafariBody(
    * What the throw would send: the treat in hand, or the ball the
    * session is set to
    */
-  const inHand = (): Items => treat() ?? BALL_ITEMS[props.session?.ball ?? Balls.PokeBall];
+  const inHand = (): Items => treat() ?? BALL_ITEMS[session()?.ball ?? Balls.PokeBall];
 
   const settle = (message: string | null): void => {
     setStatus(message);
@@ -274,7 +295,7 @@ function SafariBody(
    * pretending otherwise would only be coy
    */
   const met = (): string => {
-    const active = props.session;
+    const active = session();
 
     if (active == null) {
       return 'Encounter';
@@ -309,10 +330,8 @@ function SafariBody(
     if (active != null && active.state === SafariState.Active) {
       active.runAway();
     }
-    setStatus(null);
-    setRummaging(false);
-    setTreat(null);
-    setCaught(null);
+    // What the panel is showing is left alone: it is on screen until
+    // the fade is over, and the next encounter blanks it on the way in
     props.onClose();
   };
 
@@ -474,12 +493,14 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   );
 
   return (
-    <SafariBody
-      {...props}
-      bag={bag}
-      onSpent={() => {
-        Promise.resolve(refetch()).catch(() => undefined);
-      }}
-    />
+    <Suspense>
+      <SafariBody
+        {...props}
+        bag={bag}
+        onSpent={() => {
+          Promise.resolve(refetch()).catch(() => undefined);
+        }}
+      />
+    </Suspense>
   );
 }

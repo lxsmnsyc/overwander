@@ -522,6 +522,13 @@ export default class Unit {
    */
   coins = 0;
 
+  /**
+   * The damage this unit has landed on the other side, as health
+   * actually taken. The battle decides nothing by it; it is what the
+   * end-of-fight summary ranks contributions with
+   */
+  dealt = 0;
+
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',

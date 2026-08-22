@@ -47,7 +47,6 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
       // A press on a square takes it into the party, and a press on a
       // taken one puts it back: forming a team is six of those, and a
       // card and a button in the way of each is five steps too many
-      pressable
       player={props.player}
       open={props.isOpen}
       onClose={props.onClose}

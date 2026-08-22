@@ -103,6 +103,29 @@ function setupUnitDamageMechanics(battle: Battle): void {
     }
   });
 
+  // The health standing before the hit lands, so what the hit is
+  // worth can be read as health actually taken — overkill and the
+  // non-lethal clamp both settle out of the difference
+  const standing = new WeakMap<object, number>();
+
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+    standing.set(event, event.target.health);
+  });
+
+  battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+    const before = standing.get(event);
+
+    // Only what crossed the lines counts as contribution: recoil, a
+    // confused self-hit and friendly fire rank nobody
+    if (
+      event.success &&
+      before != null &&
+      event.source.team.alliance !== event.target.team.alliance
+    ) {
+      event.source.dealt += Math.max(0, before - event.target.health);
+    }
+  });
+
   battle.on(BattleEvents.UnitDamage, AttackPriority.Exact, (event) => {
     if (event.target.alive) {
       let value = Math.max(0, event.target.health - event.value);

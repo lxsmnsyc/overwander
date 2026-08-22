@@ -273,7 +273,6 @@ function BuddyBody(
         <CatchPicker
           player={props.player}
           open={picking()}
-          pressable
           value={buddy()?.[0] ?? null}
           title="Walk with"
           verb="Walk with"

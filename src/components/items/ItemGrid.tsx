@@ -73,6 +73,12 @@ export interface ItemCell {
    */
   action?: string | null;
   /**
+   * What pressing this square itself does, where one square's press is
+   * not the tray's — a gift tray claims the gift behind the square,
+   * not the item on it. It wins over the tray-wide `onPress`
+   */
+  onPress?: () => void;
+  /**
    * More about this square, under what the item itself says. It is for
    * a tray whose squares are not simply things — a lot on the auction
    * board is an item *and* whose it is and what it stands at.
@@ -177,6 +183,10 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
 
   const press = (cell: ItemCell): void => {
     if (props.disabled === true || cell.blocked != null) {
+      return;
+    }
+    if (cell.onPress != null) {
+      cell.onPress();
       return;
     }
     props.onPress?.(cell.item);

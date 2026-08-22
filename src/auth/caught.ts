@@ -9,7 +9,7 @@ import {
   takeItem as takeOnServer,
 } from '../server/caught';
 import { requireUid } from '../server/auth';
-import type { CatchConstraint, CatchContext } from './catch-search';
+import type { CatchConstraint, CatchContext, RowConstraint } from './catch-search';
 import { asRecord, asRecordArray } from './__normalize';
 import type { CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
@@ -115,7 +115,9 @@ export async function searchCaught(
   narrowing: CatchConstraint[],
 ): Promise<[string, CaughtPokemon][]> {
   const joins = narrowing
-    .filter((narrowed) => narrowed.on !== 'row')
+    .filter(
+      (narrowed): narrowed is Exclude<CatchConstraint, RowConstraint> => narrowed.on !== 'row',
+    )
     .map((narrowed) => `${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
   let request = getSupabase()
     .from(CAUGHT_TABLE)

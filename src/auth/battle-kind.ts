@@ -28,8 +28,8 @@ const enum BattleKind {
 
 export const BATTLE_KIND_NAMES: Record<BattleKind, string> = {
   [BattleKind.Raid]: 'Raids',
-  [BattleKind.Npc]: 'Trainers',
-  [BattleKind.Player]: 'Players',
+  [BattleKind.Npc]: 'NPC',
+  [BattleKind.Player]: 'PVP',
 };
 
 export function getBattleKind(record: BattleRecord): BattleKind {

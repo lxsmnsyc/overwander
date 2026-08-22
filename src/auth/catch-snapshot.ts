@@ -3,13 +3,16 @@
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Stats } from '../data/constants/stats';
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { defaultSlots } from '../data/constants/slots';
+import Biome from '../data/ids/biome';
+import { Balls } from '../data/ids/items';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
-import { deriveSize } from '../overworld/encounter';
+import { EncounterType, deriveSize } from '../overworld/encounter';
 import {
   asBoolean,
   asNumber,
@@ -84,6 +87,55 @@ export interface CatchSnapshot {
    * mask of `StatusFlags`
    */
   statuses: number;
+}
+
+/**
+ * Read a snapshot back as the record it was copied from, for a screen
+ * that draws frozen teams with the same card and square a live catch
+ * gets. Whatever a snapshot does not keep — history, friendship, the
+ * marks — reads as a fresh record's nothing
+ */
+export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
+  return {
+    owner: '',
+    type: EncounterType.Fateful,
+    species: snapshot.species,
+    nickname: '',
+    level: snapshot.level,
+    individualValue: snapshot.ivs,
+    traitValue: 0,
+    ivs: snapshot.ivs,
+    gender: snapshot.gender,
+    nature: snapshot.nature,
+    shiny: snapshot.shiny,
+    shadow: snapshot.shadow,
+    egg: false,
+    favorite: false,
+    guarded: false,
+    traded: false,
+    auctionable: false,
+    moves: snapshot.moves,
+    movePoints: snapshot.movePoints,
+    abilities: snapshot.abilities,
+    slots: snapshot.slots,
+    items: snapshot.items,
+    history: [],
+    lockedAt: 0,
+    steps: 0,
+    hatchSteps: 0,
+    steppedAt: 0,
+    statuses: snapshot.statuses,
+    lair: null,
+    ball: Balls.PokeBall,
+    caughtAt: '',
+    locale: '',
+    effortValues: snapshot.effortValues,
+    effortBonus: 0,
+    walked: 0,
+    friendship: BASE_FRIENDSHIP,
+    health: snapshot.health,
+    origin: { timestamp: 0, x: 0, y: 0, biome: Biome.Beyond },
+  };
 }
 
 /**

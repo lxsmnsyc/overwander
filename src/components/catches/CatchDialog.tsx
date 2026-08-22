@@ -1561,7 +1561,9 @@ function CatchSheetBody(
             screen for the length of one round trip */}
         <Show
           when={view()}
-          fallback={<Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>}
+          fallback={
+            <Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>
+          }
         >
           {(loaded) => (
             <>
@@ -1720,7 +1722,8 @@ function CatchSheetBody(
                     <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
                   </Show>
                   <Badge tone="gold">
-                    {props.candies.latest ?? 0} {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
+                    {props.candies.latest ?? 0}{' '}
+                    {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
                   </Badge>
                 </Row>
 

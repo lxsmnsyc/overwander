@@ -75,6 +75,37 @@ interface Drawn {
   /** Where the pokemon touches the ground, in box pixels */
   feet: Point | null;
   shadow: { x: number; y: number };
+  /**
+   * Everything the sprite paints, in box pixels: the box itself, grown
+   * to hold the shadow where one is drawn. It is what the element is
+   * sized to and what every share below is measured against, so a
+   * shadow wider than the box is inside the element rather than
+   * hanging out of it for a square to shave off
+   */
+  bounds: { x: number; y: number; width: number; height: number };
+}
+
+/** The box and the shadow under it as one rectangle */
+function boundsOf(
+  cell: { width: number; height: number },
+  feet: Point | null,
+  shadow: { x: number; y: number },
+): { x: number; y: number; width: number; height: number } {
+  if (feet == null) {
+    return { x: 0, y: 0, width: cell.width, height: cell.height };
+  }
+
+  const x = feet[0] + 0.5;
+  const y = feet[1] + 0.5;
+  const left = Math.min(0, x - shadow.x);
+  const top = Math.min(0, y - shadow.y);
+
+  return {
+    x: left,
+    y: top,
+    width: Math.max(cell.width, x + shadow.x) - left,
+    height: Math.max(cell.height, y + shadow.y) - top,
+  };
 }
 
 const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part / whole) * 100}%`;
@@ -93,10 +124,10 @@ const share = (part: number, whole: number): string => `${whole <= 0 ? 0 : (part
 function pictureOf(drawn: Drawn): JSX.CSSProperties {
   return {
     position: 'absolute',
-    left: share(drawn.trim[0], drawn.cell.width),
-    top: share(drawn.trim[1], drawn.cell.height),
-    width: share(drawn.frame.width, drawn.cell.width),
-    height: share(drawn.frame.height, drawn.cell.height),
+    left: share(drawn.trim[0] - drawn.bounds.x, drawn.bounds.width),
+    top: share(drawn.trim[1] - drawn.bounds.y, drawn.bounds.height),
+    width: share(drawn.frame.width, drawn.bounds.width),
+    height: share(drawn.frame.height, drawn.bounds.height),
     'background-image': `url(${drawn.source})`,
     'background-position': `${share(drawn.frame.x, drawn.sheet.width - drawn.frame.width)} ${share(
       drawn.frame.y,
@@ -127,10 +158,10 @@ function groundOf(drawn: Drawn): JSX.CSSProperties | null {
 
   return {
     position: 'absolute',
-    left: share(x - drawn.shadow.x, drawn.cell.width),
-    top: share(y - drawn.shadow.y, drawn.cell.height),
-    width: share(drawn.shadow.x * 2, drawn.cell.width),
-    height: share(drawn.shadow.y * 2, drawn.cell.height),
+    left: share(x - drawn.shadow.x - drawn.bounds.x, drawn.bounds.width),
+    top: share(y - drawn.shadow.y - drawn.bounds.y, drawn.bounds.height),
+    width: share(drawn.shadow.x * 2, drawn.bounds.width),
+    height: share(drawn.shadow.y * 2, drawn.bounds.height),
     'border-radius': '50%',
     background: SHADOW,
   };
@@ -153,11 +184,16 @@ const STAR = 'polygon(50% 0%, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0% 
  * rather than a draw loop: one keyframe, one delay each
  */
 function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
-  const across = drawn.frame.width / drawn.cell.width;
-  const up = drawn.frame.height / drawn.cell.height;
+  const across = drawn.frame.width / drawn.bounds.width;
+  const up = drawn.frame.height / drawn.bounds.height;
+  // The middle of the box rather than of the element: the shadow may
+  // have widened one side and the pokemon has not moved
+  const middle = (drawn.cell.width / 2 - drawn.bounds.x) / drawn.bounds.width;
   // The stars are thrown up from the point the pokemon stands on, which
   // is not the bottom of the box on a clip that leaves the ground
-  const floor = drawn.feet == null ? 1 : (drawn.feet[1] + 0.5) / drawn.cell.height;
+  const floor =
+    (drawn.feet == null ? drawn.cell.height : drawn.feet[1] + 0.5 - drawn.bounds.y) /
+    drawn.bounds.height;
   const size = across * SPARKLE_STAR_SIZE * 2;
 
   return Array.from({ length: SPARKLE_STARS }, (_, star) => {
@@ -165,7 +201,7 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
 
     return {
       position: 'absolute',
-      left: `${(0.5 + spot.x * across - size / 2) * 100}%`,
+      left: `${(middle + spot.x * across - size / 2) * 100}%`,
       top: `${(floor + spot.y * up - size / 2) * 100}%`,
       width: `${size * 100}%`,
       'aspect-ratio': '1',
@@ -395,36 +431,43 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     if (cell.width <= 0 || cell.height <= 0) {
       return null;
     }
+    const feet = playing.anchor('shadow');
+    const shadow = playing.shadowRadius();
+
     return {
       source: playing.source,
       sheet: playing.data.sheet,
       cell,
       frame,
       trim: playing.frameInset,
-      feet: playing.anchor('shadow'),
-      shadow: playing.shadowRadius(),
+      feet,
+      shadow,
+      bounds: boundsOf(cell, props.shadow === true ? feet : null, shadow),
     };
   });
 
   /**
-   * The box the pokemon is drawn in, sized however the caller asked. It
-   * is held before the sheet arrives so a row of squares does not jump
-   * about as they load
+   * The box the pokemon is drawn in, sized however the caller asked and
+   * grown to hold the shadow. Sizing it to the sprite alone left the
+   * shadow outside the element, where a square that clips its overflow
+   * shaved it and a centred sprite sat off centre by half of it. Held
+   * at a default before the sheet arrives so a row of squares does not
+   * jump about as they load
    */
   const box = (): JSX.CSSProperties => {
-    const cell = drawn()?.cell ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
-    const longest = Math.max(1, cell.width, cell.height);
+    const bounds = drawn()?.bounds ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
+    const longest = Math.max(1, bounds.width, bounds.height);
 
     if (props.fill === true) {
       return {
-        width: share(cell.width, longest),
-        height: share(cell.height, longest),
+        width: share(bounds.width, longest),
+        height: share(bounds.height, longest),
       };
     }
 
     const scale = props.scale ?? 1;
 
-    return { width: `${cell.width * scale}px`, height: `${cell.height * scale}px` };
+    return { width: `${bounds.width * scale}px`, height: `${bounds.height * scale}px` };
   };
 
   return (

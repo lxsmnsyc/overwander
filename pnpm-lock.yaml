@@ -45,8 +45,8 @@ importers:
         specifier: ^1.9.14
         version: 1.9.14
       terracotta:
-        specifier: ^1.2.2
-        version: 1.2.2(solid-js@1.9.14)
+        specifier: ^1.2.4
+        version: 1.2.4(solid-js@1.9.14)
       vite:
         specifier: ^8.0.0
         version: 8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0)
@@ -2309,8 +2309,8 @@ packages:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
 
-  terracotta@1.2.2:
-    resolution: {integrity: sha512-nn8e3pzKMqwJNAqI6tOnexEHb/Xzh52LuMnMLISkJWxff9qlb1MqXacq6zw1/Vju01QYqQi862WhYjmvUidS0A==}
+  terracotta@1.2.4:
+    resolution: {integrity: sha512-lVBegOwHeQ4483/H0736+D6orU8YDgG5msLyEsoB/ZBess/RWe8NRBKh0lEfpZTIyKYiLm2VzzWd6axkkWt0kQ==}
     engines: {node: '>=10'}
     peerDependencies:
       solid-js: ^1.8
@@ -3359,7 +3359,7 @@ snapshots:
       solid-js: 1.9.14
       source-map-js: 1.2.1
       srvx: 0.12.5
-      terracotta: 1.2.2(solid-js@1.9.14)
+      terracotta: 1.2.4(solid-js@1.9.14)
       vite: 8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0)
       vite-plugin-solid: 2.11.14(solid-js@1.9.14)(vite@8.2.1(@types/node@26.2.0)(jiti@2.7.0)(yaml@2.9.0))
     optionalDependencies:
@@ -4504,7 +4504,7 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terracotta@1.2.2(solid-js@1.9.14):
+  terracotta@1.2.4(solid-js@1.9.14):
     dependencies:
       solid-js: 1.9.14
       solid-use: 0.9.1(solid-js@1.9.14)

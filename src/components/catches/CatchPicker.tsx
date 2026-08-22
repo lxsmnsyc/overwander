@@ -111,17 +111,6 @@ interface CatchPickerCommonProps {
    */
   viewOnly?: boolean;
   /**
-   * Whether a press on the square itself takes the pick, instead of
-   * only the button on the card over it.
-   *
-   * For a list that is *browsing* rather than choosing: opening a
-   * record is what a player does to square after square, and hovering
-   * for a card each time is a step in the way of it. A picker whose
-   * pick costs something keeps the card's button, since a stray press
-   * there spends a fee
-   */
-  pressable?: boolean;
-  /**
    * Render the list on its own, with no dialog and no button to open
    * one
    */
@@ -505,8 +494,12 @@ function PickerBox(
         onSearch={(typed) => {
           props.onSearch(typed);
         }}
+        // The square is the button everywhere the card carries one
+        // action: the card's own button stays for whoever hovered
+        // first, and anything that costs something confirms on its
+        // own terms — a listing opens its dialog, a double pick asks
+        // "Sure?"
         onOpen={pressById}
-        cardOnly={props.pressable !== true}
         empty={props.empty ?? 'You have nothing for this.'}
         noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
         cell={(entry) => (

@@ -1102,7 +1102,6 @@ function NpcCounter(
         // The squares say what he has and what it costs, so the
         // sentence is kept for the screen reader and off the screen
         terse
-        cardOnly
         // What is in the purse, under the crate it is spent on: it is
         // the number every press on this window changes, and it was
         // one screen behind on the counter

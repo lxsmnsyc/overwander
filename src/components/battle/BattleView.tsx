@@ -1,4 +1,15 @@
-import { type JSX, Show, batch, createEffect, createSignal, from, onCleanup } from 'solid-js';
+import {
+  For,
+  type JSX,
+  Show,
+  batch,
+  createEffect,
+  createResource,
+  createSignal,
+  from,
+  onCleanup,
+} from 'solid-js';
+import type Team from '../../battle/team';
 import type Unit from '../../battle/unit';
 import {
   BattleOutcome,
@@ -11,12 +22,21 @@ import {
 import { useAuth } from '../../auth/context';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../auth/raids';
 import { BattleModes } from '../../battle/core';
+import BattleKind, { getBattleKind } from '../../auth/battle-kind';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../../overworld/raid';
-import { createRocketBattle } from '../../overworld/rocket';
+import { createTrainerBattle } from '../../overworld/rocket';
 import BattleField from './BattleField';
+import TeamsPreview from './TeamsPreview';
 import CatchDialog from '../catches/CatchDialog';
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
 import { type ActiveBattle, GameDialog, useGame } from '../app/game-context';
+import { type Profile, getProfiles } from '../../auth/profile';
+import PlayerPlate from '../profile/PlayerPlate';
+import AnimatedSprite from '../sprites/AnimatedSprite';
+import { getSpeciesData } from '../../data/species';
+import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import type { Species } from '../../data/ids/species';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
  * How often the view re-reads the units; the battle itself runs on
@@ -91,7 +111,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return;
     }
 
-    const fighting = props.active.rocket != null;
     let cancelled = false;
 
     listBattleTeams(loaded)
@@ -100,13 +119,23 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           return;
         }
 
-        // A stop's fight is an ordinary trainer battle; a raid runs
-        // under raid rules, with the boss side marked. What either
-        // allows a unit to bring is the record's, so a fight replays
-        // under the rules it was fought under
-        const built = fighting
-          ? createRocketBattle(props.active.id, teams, loaded.limits)
-          : createRaidBattle(props.active.id, teams, loaded.limits);
+        // Rebuilt under the rules it was fought under, read off the
+        // record rather than off how the view was opened: a replay
+        // arrives with no hints, and a grunt's fight replayed as a
+        // raid is a different fight
+        const kind = getBattleKind(loaded);
+        let built: RaidBattle;
+
+        if (kind === BattleKind.Raid) {
+          built = createRaidBattle(props.active.id, teams, loaded.limits);
+        } else {
+          built = createTrainerBattle(
+            props.active.id,
+            teams,
+            loaded.limits,
+            kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
+          );
+        }
 
         // Built and set up, but not yet running. The canvas says when
         // it has every sheet the fight needs, and the countdown starts
@@ -247,6 +276,147 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The grunt is beaten — what they dropped is waiting in the overworld.';
     }
     return 'The raid boss is down — it is waiting in the overworld.';
+  };
+
+  /**
+   * One line of the summary: who, and how much of the other side's
+   * health they took
+   */
+  interface Contribution {
+    label: string;
+    player: string;
+    dealt: number;
+  }
+
+  /**
+   * One side of a player or trainer fight: whose it was, what the
+   * whole team took off the other side, and each pokemon's own share
+   */
+  interface SideSummary {
+    player: string;
+    lead: Species;
+    dealt: number;
+    units: { species: Species; dealt: number }[];
+  }
+
+  /**
+   * The fight's contributions, largest first. A raid ranks whole
+   * teams — the boss included, since how hard it hit back is part of
+   * the story; player and npc fights are small enough to rank every
+   * unit on its own
+   */
+  const contributions = (): Contribution[] => {
+    revision();
+    const built = instance();
+
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+
+    const rows: Contribution[] = [];
+
+    if (built.battle.mode === BattleModes.Raid) {
+      const teams = new Map<Team, number>();
+
+      for (const fielded of built.units.values()) {
+        for (const unit of fielded) {
+          teams.set(unit.team, (teams.get(unit.team) ?? 0) + unit.dealt);
+        }
+      }
+      for (const [team, dealt] of teams) {
+        const lead = [...team.units].at(0);
+
+        rows.push({
+          // A side no player owns is named for what led it out
+          label: team.player === '' && lead != null ? getSpeciesData(lead.species).name : '',
+          player: team.player,
+          dealt,
+        });
+      }
+    } else {
+      for (const fielded of built.units.values()) {
+        for (const unit of fielded) {
+          rows.push({
+            label: getSpeciesData(unit.species).name,
+            player: unit.team.player,
+            dealt: unit.dealt,
+          });
+        }
+      }
+    }
+    return rows.sort((one, other) => other.dealt - one.dealt);
+  };
+
+  /**
+   * The fight by sides, for the summary of a player or trainer
+   * battle: each team under its owner, largest total first, each
+   * pokemon under its team, largest share first
+   */
+  const sides = (): SideSummary[] => {
+    revision();
+    const built = instance();
+
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+
+    const teams = new Map<Team, SideSummary>();
+
+    for (const fielded of built.units.values()) {
+      for (const unit of fielded) {
+        let side = teams.get(unit.team);
+
+        if (side == null) {
+          side = { player: unit.team.player, lead: unit.species, dealt: 0, units: [] };
+          teams.set(unit.team, side);
+        }
+        side.dealt += unit.dealt;
+        side.units.push({ species: unit.species, dealt: unit.dealt });
+      }
+    }
+    return [...teams.values()]
+      .map((side) => ({
+        ...side,
+        units: side.units.sort((one, other) => other.dealt - one.dealt),
+      }))
+      .sort((one, other) => other.dealt - one.dealt);
+  };
+
+  /**
+   * Who the rows belong to, by nickname. Read once when the verdict
+   * lands, keyed on who is in it; the reader is "You"
+   */
+  const [names] = createResource(
+    () => {
+      const players = [...new Set(contributions().map((row) => row.player))].filter(Boolean);
+
+      return players.length > 0 ? players.sort().join(',') : null;
+    },
+    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',')),
+  );
+
+  /** Whether this fight ranks whole teams rather than single pokemon */
+  const raiding = (): boolean => instance()?.battle.mode === BattleModes.Raid;
+
+  /** The raid's damage shares, keyed by who dealt them — the boss under '' */
+  const shares = (): Map<string, number> =>
+    new Map(contributions().map((row) => [row.player, row.dealt]));
+
+  /**
+   * What a side's header calls its owner. The reader is "You"; a side
+   * nobody owns is the grunt where a grunt was fought, and otherwise
+   * whatever led it out
+   */
+  const sideName = (side: SideSummary): string => {
+    if (side.player === '') {
+      return props.active.rocket == null
+        ? getSpeciesData(side.lead).name
+        : NPC_NAMES[Npc.RocketGrunt];
+    }
+    if (side.player === auth.user()?.uid) {
+      return 'You';
+    }
+    return names()?.get(side.player)?.nickname ?? 'A trainer';
   };
 
   /**
@@ -482,6 +652,73 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                 set under it in the header's own smaller type reads as
                 a caption to the title rather than as the news */}
             <p class="text-center">{said().said}</p>
+
+            {/* Who did what, side by side. Each team stands under its
+                owner — the face, the name and the team's whole take —
+                with each pokemon's own share listed beneath. A raid
+                says all of this on the team list below instead */}
+            <Show when={!raiding() && sides().length > 0}>
+              <div class="flex flex-col gap-3">
+                <For each={sides()}>
+                  {(side) => (
+                    <section class="flex flex-col gap-1">
+                      <div class="flex items-center justify-between gap-4">
+                        <PlayerPlate
+                          name={sideName(side)}
+                          avatar={names()?.get(side.player)?.avatar ?? null}
+                        />
+                        <span class="text-sm text-muted">
+                          {Math.round(side.dealt).toLocaleString()} damage
+                        </span>
+                      </div>
+                      <ul class="flex list-none flex-col gap-0.5 pl-3">
+                        <For each={side.units}>
+                          {(unit) => (
+                            <li class="flex items-center justify-between gap-4">
+                              <span class="flex items-center gap-1.5">
+                                {/* Fitted to one square cell, the way a
+                                    box square fits its sprite, so every
+                                    row's picture is the same size */}
+                                <span class="relative size-8 shrink-0">
+                                  <span class="absolute inset-0.5 flex items-center justify-center">
+                                    <AnimatedSprite
+                                      species={unit.species}
+                                      animation={SpriteAnim.Idle}
+                                      direction="DownLeft"
+                                      label={getSpeciesData(unit.species).name}
+                                      fill
+                                    />
+                                  </span>
+                                </span>
+                                {getSpeciesData(unit.species).name}
+                              </span>
+                              <span class="text-sm text-muted">
+                                {Math.round(unit.dealt).toLocaleString()} damage
+                              </span>
+                            </li>
+                          )}
+                        </For>
+                      </ul>
+                    </section>
+                  )}
+                </For>
+              </div>
+            </Show>
+
+            {/* The teams as they were frozen for this fight, each
+                player's face and name beside what they fielded and
+                the share of the damage that was theirs. Raids only:
+                a trainer fight already said all of this side by side
+                above, and a demo battle stands on no record */}
+            <Show when={raiding() ? record() : null}>
+              {(stamped) => (
+                <TeamsPreview
+                  teams={stamped().teams}
+                  player={auth.user()?.uid ?? ''}
+                  dealt={shares()}
+                />
+              )}
+            </Show>
 
             {/* Centred, like everything else in the panel. The
                 verdict is one line about what happened and two things

@@ -1,9 +1,11 @@
 import {
   For,
   type JSX,
+  Match,
   type Resource,
   Show,
   Suspense,
+  Switch,
   createResource,
   createSignal,
   from,
@@ -14,7 +16,6 @@ import { listClaimedRaids } from '../../auth/raids';
 import { getSpeciesData } from '../../data/species';
 import {
   Badge,
-  type BadgeTone,
   Button,
   Filter,
   type FilterOption,
@@ -24,11 +25,18 @@ import {
   Meta,
   Note,
   Row,
-  RowButton,
   createPager,
 } from '../styled';
-import { describeMoment } from '../../core/dates';
 import { GameDialog, useGame } from '../app/game-context';
+import type { CaughtPokemon } from '../../auth/caught';
+import { previewSnapshot } from '../../auth/catch-snapshot';
+import { getProfiles } from '../../auth/profile';
+import { type TeamSnapshotRecord, getTeamSnapshot } from '../../auth/teams';
+import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import { SpriteAnim } from '../../data/ids/sprite-anims';
+import AnimatedSprite from '../sprites/AnimatedSprite';
+import TeamStrip from '../catches/TeamStrip';
+import PlayerPlate from '../profile/PlayerPlate';
 
 const OUTCOME_LABELS: Record<BattleOutcome, string> = {
   [BattleOutcome.Unfinished]: 'Unfinished',
@@ -36,8 +44,13 @@ const OUTCOME_LABELS: Record<BattleOutcome, string> = {
   [BattleOutcome.Lost]: 'Lost',
 };
 
-const OUTCOME_TONES: Record<BattleOutcome, BadgeTone> = {
-  [BattleOutcome.Unfinished]: 'neutral',
+/**
+ * How a row is coloured by how it ended. The colour is the outcome's
+ * whole appearance on the row, so the label rides along for the
+ * screen reader and the row's own title
+ */
+const OUTCOME_ROW_TONES: Record<BattleOutcome, 'leaf' | 'ember' | undefined> = {
+  [BattleOutcome.Unfinished]: undefined,
   [BattleOutcome.Won]: 'leaf',
   [BattleOutcome.Lost]: 'ember',
 };
@@ -77,6 +90,154 @@ export interface BattleHistoryProps {
 }
 
 /**
+ * What one row shows beside the record: the owner's own frozen team,
+ * and — when the other side was a player — who they were
+ */
+interface FoughtLine {
+  mine: [string, CaughtPokemon][];
+  rival: { uid: string; name: string; avatar: string | null } | null;
+}
+
+async function loadFought(key: string): Promise<FoughtLine> {
+  const [joined, owner] = key.split('|');
+  const found = await Promise.all(
+    joined
+      .split(',')
+      .filter(Boolean)
+      .map(async (id) => getTeamSnapshot(id)),
+  );
+  const snapshots = found.filter((snapshot): snapshot is TeamSnapshotRecord => snapshot != null);
+  const mine = snapshots.find((snapshot) => snapshot.player === owner);
+  const other = snapshots.find((snapshot) => snapshot.player !== '' && snapshot.player !== owner);
+  const profiles = other == null ? null : await getProfiles([other.player]);
+  const profile = profiles?.get(other?.player ?? '');
+
+  return {
+    mine: (mine?.catches ?? []).map((caught, at): [string, CaughtPokemon] => [
+      caught.caught === '' ? `${at}` : caught.caught,
+      previewSnapshot(caught),
+    ]),
+    rival:
+      other == null
+        ? null
+        : {
+            uid: other.player,
+            name: profile?.nickname ?? 'A trainer',
+            avatar: profile?.avatar ?? null,
+          },
+  };
+}
+
+/** The other player, once the snapshots say who they were */
+function RivalPlate(props: {
+  fought: Resource<FoughtLine>;
+  onVisit: (uid: string) => void;
+}): JSX.Element {
+  return (
+    <Show when={props.fought()?.rival} fallback={<Meta>A trainer</Meta>}>
+      {(rival) => (
+        <PlayerPlate
+          name={rival().name}
+          avatar={rival().avatar}
+          onOpen={() => {
+            props.onVisit(rival().uid);
+          }}
+        />
+      )}
+    </Show>
+  );
+}
+
+/** The owner's own frozen party, square for square */
+function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
+  return <TeamStrip catches={props.fought()?.mine ?? []} />;
+}
+
+/**
+ * One battle as one row: what kind of fight, who it was against, and
+ * what the owner of this history fielded — coloured by how it ended
+ */
+function HistoryRow(props: {
+  id: string;
+  record: BattleRecord;
+  owner: string;
+  owes: boolean;
+  onClaimed: () => void;
+}): JSX.Element {
+  const game = useGame();
+  const [fought] = createResource(
+    () => `${props.record.teams.join(',')}|${props.owner}`,
+    loadFought,
+  );
+  const kind = (): BattleKind => getBattleKind(props.record);
+
+  return (
+    <ListRow
+      tone={OUTCOME_ROW_TONES[props.record.outcome]}
+      title={OUTCOME_LABELS[props.record.outcome]}
+    >
+      <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
+      <Meta>vs</Meta>
+      <Switch>
+        <Match when={kind() === BattleKind.Raid}>
+          <span class="flex items-center gap-1.5 font-medium">
+            <AnimatedSprite
+              species={props.record.species}
+              animation={SpriteAnim.Idle}
+              direction="DownLeft"
+              scale={2}
+              label={getSpeciesData(props.record.species).name}
+            />
+            {getSpeciesData(props.record.species).name}
+          </span>
+        </Match>
+        <Match when={kind() === BattleKind.Npc}>
+          <span class="font-medium">{NPC_NAMES[Npc.RocketGrunt]}</span>
+        </Match>
+        <Match when={kind() === BattleKind.Player}>
+          <Suspense fallback={<Meta>A trainer</Meta>}>
+            <RivalPlate
+              fought={fought}
+              onVisit={(uid) => {
+                game.setVisiting(uid);
+              }}
+            />
+          </Suspense>
+        </Match>
+      </Switch>
+      <Show when={props.owes}>
+        <Button
+          tone="primary"
+          onClick={() => {
+            // The overworld meets it: the encounter derives from the
+            // raid's own chunk and window
+            game.setReward({ raid: props.record.raid });
+            game.setDialog(GameDialog.None);
+            props.onClaimed();
+          }}
+        >
+          Claim {getSpeciesData(props.record.species).name}
+        </Button>
+      </Show>
+      <span class="grow" />
+      <Suspense fallback={<Note>Reading the team…</Note>}>
+        <OwnStrip fought={fought} />
+      </Suspense>
+      {/* Watching it back, from the row's end. It is called View
+          because that is all a replay is: the same fight again, with
+          nothing at stake */}
+      <Button
+        onClick={() => {
+          game.setBattle({ id: props.id, replay: true });
+        }}
+      >
+        View
+      </Button>
+    </ListRow>
+  );
+}
+
+/**
  * The list itself, which is where the claims are read.
  *
  * It is a component of its own so that the read has a boundary above
@@ -86,7 +247,6 @@ export interface BattleHistoryProps {
 function BattleList(
   props: BattleHistoryProps & { claimed: Resource<Set<string>>; onClaimed: () => void },
 ): JSX.Element {
-  const game = useGame();
   const battles = from<[string, BattleRecord][]>((set) =>
     watchBattleHistory(props.player, (records) => {
       set(records);
@@ -152,35 +312,13 @@ function BattleList(
           <List>
             <For each={paged.shown()}>
               {([id, record]) => (
-                <ListRow>
-                  <RowButton
-                    class="font-medium"
-                    onClick={() => {
-                      game.setBattle({ id, replay: true });
-                    }}
-                  >
-                    {getSpeciesData(record.species).name}
-                  </RowButton>
-                  <Badge>{BATTLE_KIND_NAMES[getBattleKind(record)]}</Badge>
-                  <Badge tone={OUTCOME_TONES[record.outcome]}>
-                    {OUTCOME_LABELS[record.outcome]}
-                  </Badge>
-                  <Meta>{describeMoment(record.startedAt)}</Meta>
-                  <Show when={owes(record)}>
-                    <Button
-                      tone="primary"
-                      onClick={() => {
-                        // The overworld meets it: the encounter derives
-                        // from the raid's own chunk and window
-                        game.setReward({ raid: record.raid });
-                        game.setDialog(GameDialog.None);
-                        props.onClaimed();
-                      }}
-                    >
-                      Claim {getSpeciesData(record.species).name}
-                    </Button>
-                  </Show>
-                </ListRow>
+                <HistoryRow
+                  id={id}
+                  record={record}
+                  owner={props.player}
+                  owes={owes(record)}
+                  onClaimed={props.onClaimed}
+                />
               )}
             </For>
           </List>

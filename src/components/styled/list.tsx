@@ -21,6 +21,11 @@ export interface ListRowProps extends ParentProps {
    * that gets the wrong thing picked
    */
   selected?: boolean;
+  /**
+   * A standing colour for the row itself — a battle won reads green,
+   * one lost reads ember — under whatever `selected` says
+   */
+  tone?: 'leaf' | 'ember';
   class?: string;
   /**
    * What the row means, in a sentence, for a row that is written in
@@ -31,16 +36,30 @@ export interface ListRowProps extends ParentProps {
   title?: string;
 }
 
+/**
+ * How a row is coloured: picked out, tinted by its `tone`, or plain.
+ * One function because the three states write the same two classes
+ * and only one of them may win
+ */
+function rowColors(props: ListRowProps): string {
+  if (props.selected === true) {
+    return 'border-leaf bg-leaf-soft';
+  }
+  if (props.tone === 'leaf') {
+    return 'border-leaf bg-leaf-soft hover:border-leaf';
+  }
+  if (props.tone === 'ember') {
+    return 'border-ember bg-ember-soft hover:border-ember';
+  }
+  return 'border-line bg-paper hover:border-tide';
+}
+
 export function ListRow(props: ListRowProps): JSX.Element {
   return (
     <li
       title={props.title}
       class={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-2 px-3 py-2 text-sm
-        shadow-pop-sm transition-colors ${
-          props.selected === true
-            ? 'border-leaf bg-leaf-soft'
-            : 'border-line bg-paper hover:border-tide'
-        } ${props.class ?? ''}`}
+        shadow-pop-sm transition-colors ${rowColors(props)} ${props.class ?? ''}`}
     >
       {props.children}
     </li>

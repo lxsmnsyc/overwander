@@ -89,6 +89,12 @@ export interface CatchBoxProps {
    * the card over it has the button that says what it does
    */
   cardOnly?: boolean;
+  /**
+   * How many squares the box draws, for a box that is not the box: a
+   * team preview is one row of six, not thirty squares five of which
+   * mean anything
+   */
+  capacity?: number;
 }
 
 /**
@@ -180,17 +186,20 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     </>
   );
 
+  const squares = (): null[] =>
+    props.capacity == null ? SQUARES : SQUARES.slice(0, props.capacity);
+
   return (
     // Narrower than the panel it sits in, with air around it: a box
     // stretched across a wide dialog is thirty large squares to sweep
     // the eye over rather than one thing to look at
     <div
       role="group"
-      aria-label={`Box of pokemon, ${props.entries.length} of ${BOX_SIZE} squares filled.`}
+      aria-label={`Box of pokemon, ${props.entries.length} of ${squares().length} squares filled.`}
       class="mx-auto my-2 grid w-full max-w-lg grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
         bg-parchment p-1.5 shadow-pop"
     >
-      <Index each={SQUARES}>
+      <Index each={squares()}>
         {(_, index) => (
           <Show
             when={entryAt(index)}

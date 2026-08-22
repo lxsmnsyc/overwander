@@ -89,6 +89,30 @@ export async function getProfile(uid: string): Promise<Profile | null> {
 }
 
 /**
+ * Several profiles in one read, for a screen naming a roomful of
+ * players: a lobby, a history, a summary. A uid nobody answers to is
+ * simply absent from the map
+ */
+export async function getProfiles(uids: string[]): Promise<Map<string, Profile>> {
+  const found = new Map<string, Profile>();
+  const wanted = [...new Set(uids)].filter(Boolean);
+
+  if (wanted.length === 0) {
+    return found;
+  }
+
+  const { data } = await getSupabase()
+    .from(PROFILE_TABLE)
+    .select(`id, ${PROFILE_COLUMNS}`)
+    .in('id', wanted);
+
+  for (const row of data ?? []) {
+    found.set(String((row as Record<string, unknown>).id), asProfile(row));
+  }
+  return found;
+}
+
+/**
  * Follow the profile as it changes. Gold moves whenever the player
  * earns or spends, and the balance should not wait for a reload
  */

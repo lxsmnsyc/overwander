@@ -15,8 +15,9 @@ import {
   TabGroup,
   TabPane,
   TextArea,
+  TextField,
 } from '../styled';
-import { canProcessSprites, packExtras, packPmd } from '../../auth/sprites';
+import { canProcessSprites, packExtras, packOverworld, packPmd } from '../../auth/sprites';
 import getIdToken from '../../auth/session';
 import type { Drawing } from '../../auth/sprites';
 import DEFAULT_PMD_ANIMS from '../../data/constants/pmd-anims';
@@ -24,22 +25,23 @@ import { Species } from '../../data/ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 
 /**
- * The sprite processor: loose images or a PMD archive packed into a
- * sheet, on the server, written straight into `public/`.
+ * The sprite processor: a PMD archive, loose images or a character
+ * sheet packed on the server and written straight into `public/`.
  *
  * A **development tool** rather than a staff screen: a deployed build
  * serves `public/` from a bundle, and a server that could write its
  * own asset root is a hole. The server refuses either way and the page
  * says so rather than offering a button that cannot work.
  *
- * Both halves are ordinary forms, so the files ride in a multipart
+ * Each half is an ordinary form, so the files ride in a multipart
  * body: the server functions take `FormData`
  */
 
-/** Which of the two the page is on. */
+/** Which of the three the page is on. */
 const enum Mode {
   Pmd = 0,
   Extras = 1,
+  Overworld = 2,
 }
 
 /** How a sheet is named. */
@@ -498,6 +500,132 @@ function ExtrasForm(): JSX.Element {
   );
 }
 
+/** How a charset is laid out when nobody says otherwise. */
+const CHARSET_GRID = { columns: 4, rows: 4 };
+
+/**
+ * A character sheet into `public/sprites/overworld`.
+ *
+ * The one input that is not a file is the grid, because a charset does
+ * not carry it: four across and four down is what the sheets these come
+ * from use, and a sheet laid out any other way has to say so
+ */
+function OverworldForm(): JSX.Element {
+  const token = useToken();
+  const [picked, setPicked] = createSignal(false);
+  const [name, setName] = createSignal('');
+  const [columns, setColumns] = createSignal(String(CHARSET_GRID.columns));
+  const [rows, setRows] = createSignal(String(CHARSET_GRID.rows));
+  const [compact, setCompact] = createSignal(true);
+  const packing = useSubmission(packOverworld);
+  const [form, setForm] = createSignal<HTMLFormElement>();
+
+  const ready = (): boolean => picked() && name().trim().length > 0 && !packing.pending;
+
+  clearedOnSuccess(
+    form,
+    () => packing.result,
+    () => {
+      setPicked(false);
+      setName('');
+      setColumns(String(CHARSET_GRID.columns));
+      setRows(String(CHARSET_GRID.rows));
+    },
+  );
+
+  return (
+    <form
+      ref={(element) => {
+        setForm(element);
+      }}
+      action={packOverworld}
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <input type="hidden" name="token" value={token()} />
+      <input type="hidden" name="name" value={name()} />
+      <input type="hidden" name="columns" value={columns()} />
+      <input type="hidden" name="rows" value={rows()} />
+      <input type="hidden" name="compact" value={compact() ? 'on' : ''} />
+      <FormSection
+        title="Character sheets"
+        lede="One charset — walk frames across, facings down — cropped to the tightest cell that
+          still holds every frame. The grid survives the crop, which is what lets a row and a
+          column still find a frame."
+      >
+        <FilePicker
+          label="Sheet"
+          name="sheet"
+          accept="image/png,image/webp"
+          hint="One image holding the whole grid."
+          onPick={(files) => {
+            setPicked(files.length > 0);
+          }}
+        />
+        <FormGrid>
+          <TextField
+            label="Name"
+            required
+            value={name()}
+            placeholder="rocket-grunt"
+            onChange={(value) => {
+              setName(value);
+            }}
+            hint="What the folder under sprites/overworld is called. Letters and digits only."
+          />
+          <TextField
+            label="Frames across"
+            kind="number"
+            min={1}
+            value={columns()}
+            onChange={(value) => {
+              setColumns(value);
+            }}
+            hint="Walk frames in one row."
+          />
+          <TextField
+            label="Facings down"
+            kind="number"
+            min={1}
+            value={rows()}
+            onChange={(value) => {
+              setRows(value);
+            }}
+            hint="Rows, in the order the sheet has them."
+          />
+          <Switch
+            label="Compact"
+            description="Crop every cell to the tightest rectangle that still holds all of them."
+            checked={compact()}
+            onChange={(value) => {
+              setCompact(value);
+            }}
+          />
+        </FormGrid>
+        <FormActions note="Writes the grid and the description beside it.">
+          <Button type="submit" tone="primary" disabled={!ready()}>
+            {packing.pending ? 'Packing…' : 'Pack'}
+          </Button>
+        </FormActions>
+        <Status message={refusalOf(packing.error)} tone="alert" />
+        <Show when={packing.result}>
+          {(done) => (
+            <Written
+              paths={done().written}
+              drawings={[done().drawing]}
+              note={`${done().grid.columns} × ${done().grid.rows} frames of ${
+                done().grid.frameWidth
+              } × ${done().grid.frameHeight}, cut from ${done().grid.sourceFrameWidth} × ${
+                done().grid.sourceFrameHeight
+              }.`}
+            />
+          )}
+        </Show>
+      </FormSection>
+    </form>
+  );
+}
+
 export default function SpriteProcessor(): JSX.Element {
   return (
     <Show
@@ -514,12 +642,16 @@ export default function SpriteProcessor(): JSX.Element {
         <TabBar>
           <TabButton value={Mode.Pmd}>PMD</TabButton>
           <TabButton value={Mode.Extras}>Loose images</TabButton>
+          <TabButton value={Mode.Overworld}>Overworld</TabButton>
         </TabBar>
         <TabPane value={Mode.Pmd}>
           <PmdForm />
         </TabPane>
         <TabPane value={Mode.Extras}>
           <ExtrasForm />
+        </TabPane>
+        <TabPane value={Mode.Overworld}>
+          <OverworldForm />
         </TabPane>
       </TabGroup>
     </Show>

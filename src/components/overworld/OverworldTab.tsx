@@ -1427,6 +1427,7 @@ function OverworldBoard(props: {
                 player={frozen()?.player ?? cell()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
+                wanderers={loaded().snapshot.getWanderingNpcs()}
                 decorations={loaded().decorations}
                 spawns={
                   new Map(

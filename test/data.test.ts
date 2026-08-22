@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
@@ -155,7 +155,13 @@ import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
 import { isPortalKey } from '../src/data/items/portal-key';
 import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
-import Npc, { NPCS, NPC_NAMES, REMINDER_FEE, getRecallableMoves } from '../src/data/overworld/npc';
+import Npc, {
+  NPCS,
+  NPC_NAMES,
+  REMINDER_FEE,
+  getRecallableMoves,
+  npcSheet,
+} from '../src/data/overworld/npc';
 import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
 import { FOUND_GEAR, GEAR_PRICE, MARKET_GEAR, isGear } from '../src/data/items/gear';
@@ -2647,6 +2653,36 @@ describe('wandering NPCs', () => {
     expect(new Set(NPCS).has(Npc.MoveReminder)).toBe(true);
     // The one wanderer whose price is not gold
     expect(REMINDER_FEE).toBe(Items.HeartScale);
+  });
+
+  it('names everyone their own charset', () => {
+    // The folder is the wanderer's own number, so nobody can end up
+    // wearing somebody else's clothes by a table nobody updated
+    expect(npcSheet(Npc.RocketGrunt)).toBe('landmarks-npc-6');
+    expect(new Set(NPCS.map(npcSheet)).size).toBe(NPCS.length);
+  });
+
+  it('draws whoever has been drawn, and leaves the rest alone', () => {
+    const drawn = NPCS.filter((npc) =>
+      existsSync(`public/sprites/overworld/${npcSheet(npc)}/image.png`),
+    );
+
+    // Whatever ships is a folder holding both halves: a drawing with no
+    // description cannot be cut into frames
+    for (const npc of drawn) {
+      expect(
+        existsSync(`public/sprites/overworld/${npcSheet(npc)}/data.json`),
+        NPC_NAMES[npc],
+      ).toBe(true);
+    }
+    // And nothing on disk claims to be a wanderer who does not exist
+    for (const folder of readdirSync('public/sprites/overworld')) {
+      const numbered = /^landmarks-npc-(\d+)$/.exec(folder);
+
+      if (numbered != null) {
+        expect(new Set<number>(NPCS).has(Number(numbered[1])), folder).toBe(true);
+      }
+    }
   });
 
   it('offers a level its own moves and no others', () => {

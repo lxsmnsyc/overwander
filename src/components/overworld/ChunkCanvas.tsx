@@ -38,7 +38,12 @@ import type Biome from '../../data/ids/biome';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
+import type Npc from '../../data/overworld/npc';
+import { npcSheet } from '../../data/overworld/npc';
 import type { Species } from '../../data/ids/species';
+import facingToward from '../../canvas/facing';
+import type OWCharSprite from '../../canvas/ow-char-sprite';
+import loadOWChar from '../../canvas/ow-char-sprites';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 
 /**
@@ -94,6 +99,17 @@ const APRON = BORDER_CELLS / CHUNK_CELLS;
  * things on it rather than a chart with pictures in it
  */
 const SPRITE_SCALE = 0.95;
+
+/**
+ * How many cells tall a charset's own cell is drawn.
+ *
+ * Not the scale the pokemon are drawn at: a charset is drawn at a
+ * bigger pixel size than a PMD sheet, so sharing one number puts a
+ * nurse two rows tall beside a Bulbasaur three quarters of a cell high.
+ * Measured against the **source** cell rather than the cropped one, so
+ * every charset stands the same height whatever its own crop came to
+ */
+const NPC_CELLS = 1.45;
 
 /**
  * What the board says while the sheets for what is standing on it are
@@ -385,6 +401,12 @@ export interface ChunkCanvasProps {
   player: number;
   landmarks: Map<number, Landmark>;
   /**
+   * Who is standing on each wandering-NPC cell this window. A landmark
+   * says somebody is there; this says who, which is what decides the
+   * charset they are drawn in
+   */
+  wanderers: Map<number, Npc>;
+  /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
    */
@@ -537,6 +559,70 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     return arriving;
   };
 
+  /**
+   * The charsets, by the folder they are in. One entry a sheet rather
+   * than a cell: the people who wander are drawn from a handful of
+   * charsets, and a chunk holding two of the same trade should not
+   * fetch it twice
+   */
+  const people = new Map<string, OWCharSprite | null>();
+
+  const arriving = new Map<string, Promise<void>>();
+
+  const loadPerson = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    // Held as null until it lands, so a sheet is asked for once rather
+    // than once per frame somebody wearing it is drawn in
+    people.set(sheet, null);
+
+    const loading = loadOWChar(sheet)
+      .then((loaded) => {
+        people.set(sheet, loaded);
+      })
+      .catch(() => {
+        // The letter in a circle it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  const personFor = (npc: Npc): OWCharSprite | null => {
+    const sheet = npcSheet(npc);
+
+    if (!people.has(sheet)) {
+      loadPerson(sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+    return people.get(sheet) ?? null;
+  };
+
+  /**
+   * The person on a cell, once their sheet is in hand. A wandering
+   * landmark with no charset yet is the letter in a circle it was
+   * before there were any
+   */
+  const personOn = (index: number): OWCharSprite | null => {
+    const npc = props.wanderers.get(index);
+
+    if (npc == null || props.landmarks.get(index) !== Landmark.WanderingNpc) {
+      return null;
+    }
+
+    const person = personFor(npc);
+
+    return person?.ready === true ? person : null;
+  };
+
+  const drawnAsPerson = (index: number): boolean => personOn(index) != null;
+
   const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
     const key = coatKey(coat);
 
@@ -573,13 +659,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       live = false;
     });
 
+    // The people waiting at a crossroads are part of the picture the
+    // same way the pokemon are, so the board waits for their sheets too
+    const wearing = [...new Set([...props.wanderers.values()].map((npc) => npcSheet(npc)))];
+
     // Nothing to wait for is not a wait: an empty chunk is finished
-    if (coats.every((coat) => sprites.has(coatKey(coat)))) {
+    if (
+      coats.every((coat) => sprites.has(coatKey(coat))) &&
+      wearing.every((sheet) => people.has(sheet))
+    ) {
       setLoading(false);
       return;
     }
     setLoading(true);
-    Promise.all(coats.map(async (coat) => loadCoat(coat)))
+    Promise.all([
+      ...wearing.map(async (sheet) => loadPerson(sheet)),
+      ...coats.map(async (coat) => loadCoat(coat)),
+    ])
       .then(() => {
         if (live) {
           setLoading(false);
@@ -1096,7 +1192,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         const landmark = props.landmarks.get(index);
 
-        if (landmark != null) {
+        // Somebody standing there is drawn with the rest of what
+        // stands, in paint order — so a mark on the ground under their
+        // feet as well would be the cell saying the same thing twice
+        if (landmark != null && !drawnAsPerson(index)) {
           const middle = at(projectCell(index, yaw()));
 
           context.fillStyle = COLORS.landmark;
@@ -1158,6 +1257,36 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // sparkle of its own
         if (standing?.shiny !== true) {
           sparkles.delete(index);
+        }
+
+        const person = loading() ? null : personOn(index);
+
+        if (person != null) {
+          // Looking at the player, seen from wherever the camera has
+          // been walked to: somebody waiting at a crossroads watches
+          // whoever is coming up to it
+          person.facing =
+            SPRITE_DIRECTIONS[
+              facingFrom(
+                SPRITE_DIRECTIONS.indexOf(
+                  facingToward(
+                    index % CHUNK_CELLS,
+                    Math.floor(index / CHUNK_CELLS),
+                    props.player % CHUNK_CELLS,
+                    Math.floor(props.player / CHUNK_CELLS),
+                  ),
+                ),
+                yaw(),
+              )
+            ];
+          person.draw(context, middle.x, middle.y, {
+            scale: (CELL * NPC_CELLS * middle.scale * magnify) / person.sourceFrameHeight,
+            // Feet on the cell, and the patch under them drawn by the
+            // sheet: a charset has no shadow marker to measure, so the
+            // bottom middle of the cell is where the ground is
+            anchor: 'foot',
+            shadow: true,
+          });
         }
 
         if (standing != null) {

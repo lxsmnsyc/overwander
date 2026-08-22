@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type BasicSpriteData, asBasicSpriteData } from '../../src/canvas/basic-sprite';
-import OWCharSprite from '../../src/canvas/ow-char-sprite';
+import OWCharSprite, { gridLayoutOf } from '../../src/canvas/ow-char-sprite';
 
 /**
  * A charset as the packing tool writes it: one 128x128 picture of a
@@ -58,6 +58,75 @@ function loaded(data: BasicSpriteData = SHEET): OWCharSprite {
   (sprite as unknown as { image: unknown }).image = {};
   return sprite;
 }
+
+describe('the layout a sheet carries', () => {
+  /** What the processor writes beside the pictures. */
+  const described = {
+    compact: true,
+    width: 120,
+    height: 176,
+    grid: {
+      columns: 3,
+      rows: 8,
+      frameWidth: 40,
+      frameHeight: 22,
+      sourceFrameWidth: 65,
+      sourceFrameHeight: 65,
+      trim: [17, 10],
+    },
+    images: [{ name: 'grid', x: 0, y: 0, width: 120, height: 176 }],
+  };
+
+  it('reads the grid the sheet was packed on', () => {
+    // The cell it was cut from as well as the one it was cut to: two
+    // charsets cropped differently still have that in common, so it is
+    // what a board scales them by
+    expect(gridLayoutOf(described)).toEqual({
+      columns: 3,
+      rows: 8,
+      sourceFrameWidth: 65,
+      sourceFrameHeight: 65,
+    });
+  });
+
+  it('falls back to the cropped cell where a sheet says nothing', () => {
+    const bare = new OWCharSprite('image.png', SHEET);
+
+    expect([bare.sourceFrameWidth, bare.sourceFrameHeight]).toEqual([
+      bare.frameWidth,
+      bare.frameHeight,
+    ]);
+  });
+
+  it('says nothing about a sheet that carries nothing', () => {
+    expect(gridLayoutOf({ width: 64, height: 64, images: [] })).toEqual({});
+    expect(gridLayoutOf(null)).toEqual({});
+    expect(gridLayoutOf('grid')).toEqual({});
+    // A grid nobody could act on is one to ignore rather than to halve
+    expect(gridLayoutOf({ grid: { columns: 0, rows: -4 } })).toEqual({});
+  });
+
+  it('cuts the cells the way the sheet says, not the way four by four would', () => {
+    const sprite = new OWCharSprite('image.png', asBasicSpriteData(described), {
+      ...gridLayoutOf(described),
+    });
+
+    expect([sprite.columns, sprite.rows]).toEqual([3, 8]);
+    // 120 across three and 176 down eight, rather than 30 x 44
+    expect([sprite.frameWidth, sprite.frameHeight]).toEqual([40, 22]);
+  });
+
+  it('lets the caller overrule what the sheet says', () => {
+    const sprite = new OWCharSprite('image.png', asBasicSpriteData(described), {
+      columns: gridLayoutOf(described).columns,
+      // A caller that knows better — a sheet whose bottom rows are
+      // something other than facings
+      rows: 4,
+    });
+
+    expect([sprite.columns, sprite.rows]).toEqual([3, 4]);
+  });
+});
 
 describe('OWCharSprite', () => {
   it('cuts the grid out of the sub-image it was packed into', () => {

@@ -86,6 +86,19 @@ export const NPCS: Npc[] = [
   Npc.FossilScientist,
 ];
 
+/**
+ * The charset one of them is drawn with in the overworld: the folder
+ * under `public/sprites/overworld` named after the wanderer itself.
+ *
+ * Derived rather than listed, so a wanderer added here cannot end up
+ * wearing somebody else's clothes by a table nobody updated. A sheet
+ * that has not been drawn yet is a landmark drawn the way it always
+ * was, which is the letter in a circle
+ */
+export function npcSheet(npc: Npc): string {
+  return `landmarks-npc-${npc}`;
+}
+
 export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Breeder]: 'Breeder',
   [Npc.DaycareLady]: 'Daycare Lady',

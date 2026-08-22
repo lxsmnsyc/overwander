@@ -110,6 +110,14 @@ export interface OWCharLayout {
    * always has
    */
   grid?: string;
+  /**
+   * The cell the frames were cut from, before the crop took the margin
+   * off. It is what a caller scales by when several charsets have to
+   * come out the same height: the crop is each sheet's own business and
+   * the cell it was drawn in is the one thing they share
+   */
+  sourceFrameWidth?: number;
+  sourceFrameHeight?: number;
 }
 
 export interface OWCharDrawOptions {
@@ -171,6 +179,60 @@ function gridOf(data: BasicSpriteData, name: string | undefined): FrameRect | nu
   return best;
 }
 
+/**
+ * The layout a sheet carries about itself.
+ *
+ * The processor writes a `grid` block beside the pictures saying how
+ * many frames it packed and how many facings, so a sheet that is not
+ * four by four does not have to be described again at every call site.
+ * A caller that passes its own layout still wins: the file says how the
+ * pictures are arranged, the caller says how to play them
+ */
+export function gridLayoutOf(value: unknown): OWCharLayout {
+  if (typeof value !== 'object' || value == null) {
+    return {};
+  }
+
+  const grid: unknown = (value as { grid?: unknown }).grid;
+
+  if (typeof grid !== 'object' || grid == null) {
+    return {};
+  }
+
+  const { columns, rows, sourceFrameWidth, sourceFrameHeight } = grid as {
+    columns?: unknown;
+    rows?: unknown;
+    sourceFrameWidth?: unknown;
+    sourceFrameHeight?: unknown;
+  };
+  const layout: OWCharLayout = {};
+  // Only the numbers that are really there are carried: a key with
+  // nothing under it would overrule what the caller said, which is the
+  // opposite of what a fallback is for
+  const counted = (found: unknown): number | undefined =>
+    typeof found === 'number' && Number.isFinite(found) && found > 0
+      ? Math.trunc(found)
+      : undefined;
+  const across = counted(columns);
+  const down = counted(rows);
+  const cellWidth = counted(sourceFrameWidth);
+  const cellHeight = counted(sourceFrameHeight);
+
+  if (across != null) {
+    layout.columns = across;
+  }
+  if (down != null) {
+    layout.rows = down;
+  }
+  if (cellWidth != null) {
+    layout.sourceFrameWidth = cellWidth;
+  }
+  if (cellHeight != null) {
+    layout.sourceFrameHeight = cellHeight;
+  }
+  return layout;
+}
+
 export default class OWCharSprite {
   /** Where the sheet is, so a failed load can say what failed. */
   readonly source: string;
@@ -187,6 +249,15 @@ export default class OWCharSprite {
   readonly frameWidth: number;
 
   readonly frameHeight: number;
+
+  /**
+   * The cell those were cut from. The same for every charset cut from
+   * one collection, where the cropped cell is not, so it is what to
+   * scale by when several of them stand on the same board
+   */
+  readonly sourceFrameWidth: number;
+
+  readonly sourceFrameHeight: number;
 
   /**
    * Every cell of the grid, row-major. A row and a column index into
@@ -256,6 +327,8 @@ export default class OWCharSprite {
 
     this.frameWidth = width;
     this.frameHeight = height;
+    this.sourceFrameWidth = layout.sourceFrameWidth ?? width;
+    this.sourceFrameHeight = layout.sourceFrameHeight ?? height;
     this.rects = [];
 
     for (let row = 0; row < this.rows; row += 1) {
@@ -280,11 +353,18 @@ export default class OWCharSprite {
     if (!response.ok) {
       throw new Error(`No sprite data at ${basePath}`);
     }
-    return new OWCharSprite(
-      `${basePath}/image.png`,
-      asBasicSpriteData(await response.json()),
-      layout,
-    );
+
+    const described: unknown = await response.json();
+    const carried = gridLayoutOf(described);
+
+    return new OWCharSprite(`${basePath}/image.png`, asBasicSpriteData(described), {
+      ...layout,
+      // Named one by one rather than spread over: a caller that built
+      // its layout from props it does not have passes `undefined`, and
+      // that is a question rather than an answer
+      columns: layout.columns ?? carried.columns,
+      rows: layout.rows ?? carried.rows,
+    });
   }
 
   /**
@@ -327,6 +407,8 @@ export default class OWCharSprite {
       cycle: this.cycle,
       hold: this.hold,
       stride: this.stride,
+      sourceFrameWidth: this.sourceFrameWidth,
+      sourceFrameHeight: this.sourceFrameHeight,
     });
 
     copy.image = this.image;

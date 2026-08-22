@@ -7,7 +7,13 @@ import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
 import { animFilter } from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
-import { extraDestination, pokemonDestination } from '../../src/server/sprites/files';
+import {
+  extraDestination,
+  overworldDestination,
+  overworldSlug,
+  pokemonDestination,
+} from '../../src/server/sprites/files';
+import { GRID_NAME, packGrid } from '../../src/server/sprites/overworld';
 import { storedAs } from '../../src/components/admin/SpriteProcessor';
 import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
@@ -309,6 +315,141 @@ describe('where a sheet is written', () => {
     expect(pokemonDestination({ species: 7.9, female: false, shiny: false }).image).toBe(
       'sprites/pokemon/kanto/regular/7.png',
     );
+  });
+});
+
+/**
+ * A charset: one flat block per cell, each in its own colour, sitting
+ * in the same corner of every cell with a margin around it. Cropping it
+ * should take the margin and nothing else
+ */
+function charset(
+  columns: number,
+  rows: number,
+  cell: number,
+  content: { x: number; y: number; width: number; height: number },
+): Raster {
+  const raster = blank(columns * cell, rows * cell);
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const shade = 20 + (row * columns + column) * 10;
+
+      for (let y = 0; y < content.height; y += 1) {
+        for (let x = 0; x < content.width; x += 1) {
+          const at =
+            ((row * cell + content.y + y) * raster.width + column * cell + content.x + x) * 4;
+
+          raster.data[at] = shade;
+          raster.data[at + 1] = shade;
+          raster.data[at + 2] = shade;
+          raster.data[at + 3] = 255;
+        }
+      }
+    }
+  }
+  return raster;
+}
+
+describe('cutting a charset down', () => {
+  const content = { x: 6, y: 8, width: 20, height: 22 };
+
+  it('crops every cell by the same rectangle', () => {
+    const { sheet, data } = packGrid(charset(4, 4, 32, content), {
+      columns: 4,
+      rows: 4,
+      compact: true,
+    });
+
+    expect(data.grid.frameWidth).toBe(content.width);
+    expect(data.grid.frameHeight).toBe(content.height);
+    expect(data.grid.sourceFrameWidth).toBe(32);
+    expect(data.grid.trim).toEqual([content.x, content.y]);
+    // The sheet is the grid and nothing but the grid
+    expect([sheet.width, sheet.height]).toEqual([content.width * 4, content.height * 4]);
+  });
+
+  it('leaves every frame where a row and a column can find it', () => {
+    const { sheet, data } = packGrid(charset(4, 4, 32, content), {
+      columns: 4,
+      rows: 4,
+      compact: true,
+    });
+
+    // What `OWCharSprite` does to find a frame: multiply. Each cell has
+    // its own shade, so a frame that slid would be reading a neighbour
+    for (let row = 0; row < data.grid.rows; row += 1) {
+      for (let column = 0; column < data.grid.columns; column += 1) {
+        const at = (row * data.grid.frameHeight * sheet.width + column * data.grid.frameWidth) * 4;
+
+        expect(sheet.data[at], `frame ${column},${row}`).toBe(20 + (row * 4 + column) * 10);
+        expect(sheet.data[at + 3], `frame ${column},${row} is drawn`).toBe(255);
+      }
+    }
+  });
+
+  it('keeps the cell whole when it is not asked to crop', () => {
+    const { sheet, data } = packGrid(charset(3, 4, 32, content), {
+      columns: 3,
+      rows: 4,
+      compact: false,
+    });
+
+    expect(data.grid.frameWidth).toBe(32);
+    expect(data.grid.trim).toEqual([0, 0]);
+    expect([sheet.width, sheet.height]).toEqual([96, 128]);
+  });
+
+  it('describes the grid as one picture, since that is how it is drawn', () => {
+    const { data } = packGrid(charset(4, 4, 32, content), {
+      columns: 4,
+      rows: 4,
+      compact: true,
+    });
+
+    expect(data.images).toHaveLength(1);
+    expect(data.images[0].name).toBe(GRID_NAME);
+    expect(data.images[0].width).toBe(data.width);
+    expect(data.images[0].sourceWidth).toBe(128);
+  });
+
+  it('refuses a grid the sheet does not divide into', () => {
+    // 65 across three is somebody guessing, and shaving the remainder
+    // would drop a column of every sheet without saying so
+    expect(() => packGrid(blank(65, 64), { columns: 3, rows: 4, compact: true })).toThrow(
+      /does not divide/,
+    );
+    expect(() => packGrid(blank(64, 64), { columns: 0, rows: 4, compact: true })).toThrow(
+      /at least one/,
+    );
+  });
+
+  it('keeps an empty sheet the size it came at', () => {
+    const { data } = packGrid(blank(64, 64), { columns: 4, rows: 4, compact: true });
+
+    expect(data.grid.frameWidth).toBe(16);
+    expect(data.grid.trim).toEqual([0, 0]);
+  });
+});
+
+describe('what a charset is filed as', () => {
+  it('gives the grid and its description one folder', () => {
+    expect(overworldDestination('Rocket Grunt')).toEqual({
+      image: 'sprites/overworld/rocket-grunt/image.png',
+      meta: 'sprites/overworld/rocket-grunt/data.json',
+    });
+  });
+
+  it('takes a name down to what a folder may be called', () => {
+    expect(overworldSlug('  Nurse Joy ')).toBe('nurse-joy');
+    // Nothing that could climb out of the folder it was given
+    expect(overworldSlug('../../etc/passwd')).toBe('etc-passwd');
+    expect(overworldSlug('Grunt #2!')).toBe('grunt-2');
+  });
+
+  it('refuses a name with nothing in it', () => {
+    expect(() => overworldSlug('   ')).toThrow(/needs a name/);
+    expect(() => overworldSlug('///')).toThrow(/needs a name/);
   });
 });
 

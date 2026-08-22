@@ -12,8 +12,8 @@ import { REGION_NAMES, getSpeciesRegion } from '../../data/species/regions';
  * tree: a deployed build serves those files from a bundle, so writing
  * one would change nothing and a deployed server that can write into
  * its own asset root is a hole. Every path is built here rather than
- * taken from the caller, and nothing but a species number reaches the
- * file system.
+ * taken from the caller: a species number, or a name cut down to
+ * letters and digits, is all that reaches the file system.
  */
 
 /** Only ever true on a developer's own machine. */
@@ -51,6 +51,39 @@ export function pokemonDestination(name: SheetName): Destination {
   return {
     image: `${root}/${name.shiny ? 'shiny' : 'regular'}/${stem(name)}.png`,
     meta: `${root}/meta/${species}.json`,
+  };
+}
+
+/**
+ * What a charset's folder may be called: letters, digits and the
+ * hyphens between them. Anything else a caller typed is dropped rather
+ * than escaped, since a name is a label here and not a path
+ */
+export function overworldSlug(name: string): string {
+  const slug = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+
+  if (slug.length === 0) {
+    throw new Error('The sheet needs a name of letters or digits');
+  }
+  return slug;
+}
+
+/**
+ * A character sheet: a folder of its own holding the grid and the
+ * description beside it, which is the pair `OWCharSprite.fetch` asks
+ * for
+ */
+export function overworldDestination(name: string): Destination {
+  const slug = overworldSlug(name);
+
+  return {
+    image: `sprites/overworld/${slug}/image.png`,
+    meta: `sprites/overworld/${slug}/data.json`,
   };
 }
 

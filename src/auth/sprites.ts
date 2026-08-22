@@ -2,6 +2,8 @@ import { action } from '@solidjs/router';
 import type { ProcessResult, UploadedImage } from '../server/sprites/extras';
 import processExtras from '../server/sprites/extras';
 import type { Drawing } from '../server/sprites/files';
+import type { OverworldGrid, OverworldResult } from '../server/sprites/overworld';
+import processOverworld from '../server/sprites/overworld';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
 import { requireAdmin } from '../server/roles';
@@ -9,19 +11,27 @@ import { requireAdmin } from '../server/roles';
 /**
  * What the sprite processor asks the server to do.
  *
- * Both take the **form** rather than arguments. A file is what these
+ * Each takes the **form** rather than arguments. A file is what these
  * are for, and a file belongs in a multipart body: reading it into a
  * typed array on the client only to serialise it through a function
  * call is a copy of the whole archive for nothing. Everything else the
  * call needs — the caller's token included — rides along as a named
  * input in the same form.
  *
- * Both write into `public/`, so both refuse anywhere but a development
- * build. That is checked on the server, which is the only side of the
- * pair a deployed build runs.
+ * All of them write into `public/`, so all of them refuse anywhere but
+ * a development build. That is checked on the server, which is the only
+ * side of the pair a deployed build runs.
  */
 
-export type { Coats, Drawing, ProcessResult, PmdResult, UploadedImage };
+export type {
+  Coats,
+  Drawing,
+  OverworldGrid,
+  OverworldResult,
+  ProcessResult,
+  PmdResult,
+  UploadedImage,
+};
 
 /** Only a development build can process sprites at all. */
 export function canProcessSprites(): boolean {
@@ -93,6 +103,38 @@ export const packPmd = action(async (form: FormData): Promise<PmdResult> => {
     anims: String(form.get('anims') ?? '').split(/\s+/),
   });
 }, 'sprites/pmd');
+
+/**
+ * A number typed into the form, where a sensible one has been offered
+ * and the field is the caller's to change
+ */
+function grid(form: FormData, name: string, fallback: number): number {
+  const value = Number.parseInt(String(form.get(name) ?? ''), 10);
+
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+/**
+ * A character sheet into its own folder under
+ * `public/sprites/overworld`.
+ *
+ * One image rather than a set: a charset is already a sheet, and what
+ * this does to it is cut the margin off every cell without moving any
+ * of them off the grid
+ */
+export const packOverworld = action(async (form: FormData): Promise<OverworldResult> => {
+  'use server';
+  await requireAdmin(String(form.get('token') ?? ''));
+
+  const picked = asFile(form.get('sheet'), 'sheet');
+
+  return processOverworld(new Uint8Array(await picked.arrayBuffer()), {
+    name: String(form.get('name') ?? ''),
+    columns: grid(form, 'columns', 4),
+    rows: grid(form, 'rows', 4),
+    compact: flag(form, 'compact'),
+  });
+}, 'sprites/overworld');
 
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {

@@ -1,6 +1,114 @@
 {
   "version": 1,
   "sheets": {
+    "public/sprites/overworld/landmarks-npc-0/image.png": {
+      "digest": "8e285bd2e4977528",
+      "bytes": 1462,
+      "width": 176,
+      "height": 216,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1462,
+        "bytes": 1462
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-1/image.png": {
+      "digest": "323f0f54104e1d55",
+      "bytes": 1500,
+      "width": 176,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1500,
+        "bytes": 1500
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-2/image.png": {
+      "digest": "e5534daeccb9e3fa",
+      "bytes": 1575,
+      "width": 152,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:00:40Z",
+        "as": "already compact",
+        "was": 1575,
+        "bytes": 1575
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-3/image.png": {
+      "digest": "b6369bb172e1ebe4",
+      "bytes": 1794,
+      "width": 160,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1794,
+        "bytes": 1794
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-4/image.png": {
+      "digest": "afccd2e4ce573d27",
+      "bytes": 1456,
+      "width": 160,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1456,
+        "bytes": 1456
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-5/image.png": {
+      "digest": "f252a2e67820d487",
+      "bytes": 1598,
+      "width": 168,
+      "height": 216,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1598,
+        "bytes": 1598
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-6/image.png": {
+      "digest": "9afdf3586d832287",
+      "bytes": 1471,
+      "width": 144,
+      "height": 216,
+      "compact": {
+        "at": "2026-08-22T05:00:40Z",
+        "as": "already compact",
+        "was": 1471,
+        "bytes": 1471
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-7/image.png": {
+      "digest": "f17af78959989a02",
+      "bytes": 1253,
+      "width": 144,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1253,
+        "bytes": 1253
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-8/image.png": {
+      "digest": "4e6cdb3d837f3128",
+      "bytes": 1433,
+      "width": 144,
+      "height": 208,
+      "compact": {
+        "at": "2026-08-22T05:25:39Z",
+        "as": "already compact",
+        "was": 1433,
+        "bytes": 1433
+      }
+    },
     "public/sprites/pokemon/kanto/regular/1.png": {
       "digest": "14481dd4aea85ff9",
       "bytes": 4630,

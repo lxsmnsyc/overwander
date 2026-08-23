@@ -1,8 +1,7 @@
 import 'server-only';
 import { FRIEND_LIMIT, type FoundPlayer, FriendTie } from '../auth/friend-record';
-import getAdminApi from './admin-api';
 import { type Tx, getSql, tx } from './db';
-import { asNumber } from './read';
+import { asNumber, asString } from './read';
 
 /**
  * Friendships, requests and blocks, written over the owner
@@ -243,43 +242,77 @@ async function isFull(uid: string): Promise<boolean> {
   return asNumber(rows[0]?.held) >= FRIEND_LIMIT;
 }
 
+/** Twelve digits in three groups, the shape every code is stored in */
+function formatFriendCode(digits: string): string {
+  return `${digits.slice(0, 4)}-${digits.slice(4, 8)}-${digits.slice(8, 12)}`;
+}
+
 /**
- * The one trainer at an address.
- *
- * An address rather than a name because a name is not a handle: two
- * players may call themselves the same thing and a player who has
- * renamed themselves is unfindable by the old one. It is an **exact**
- * match, since the addresses live in Supabase Auth, which a browser
- * cannot query, so a player has to be given the address by the person
- * it belongs to.
- *
- * Resolves null for an address nobody plays under, and for the
- * reader's own: nobody befriends themselves
+ * A typed code brought to the stored shape, or null for anything that
+ * is not twelve digits once the dressing is stripped
  */
-export async function findPlayerByEmail(uid: string, email: string): Promise<FoundPlayer | null> {
-  const wanted = email.trim().toLowerCase();
+export function normalizeFriendCode(typed: string): string | null {
+  const digits = typed.replace(/\D/g, '');
 
-  if (wanted === '') {
+  return digits.length === 12 ? formatFriendCode(digits) : null;
+}
+
+/**
+ * The player's own friend code, minted on first ask.
+ *
+ * A code rather than an address because a name is not a handle and an
+ * address is more than anybody should have to hand out. It is only
+ * readable by its owner and resolved through the server, so having
+ * one to type means its owner shared it, which is the whole check on
+ * who may ask
+ */
+export async function getFriendCode(uid: string): Promise<string> {
+  const sql = getSql();
+
+  for (;;) {
+    const held = await sql`select code from friend_codes where player = ${uid}`;
+
+    if (held.at(0) != null) {
+      return asString(held[0].code);
+    }
+
+    const digits = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join('');
+    // A colliding code loses to the unique index and rolls again; a
+    // concurrent mint for the same player loses to the primary key
+    // and reads back whichever code landed first
+    await sql`
+      insert into friend_codes (player, code)
+      values (${uid}, ${formatFriendCode(digits)})
+      on conflict do nothing
+    `;
+  }
+}
+
+/**
+ * The one trainer behind a code. Resolves null for a code nobody
+ * holds, and for the reader's own: nobody befriends themselves
+ */
+export async function findPlayerByCode(uid: string, typed: string): Promise<FoundPlayer | null> {
+  const code = normalizeFriendCode(typed);
+
+  if (code == null) {
     return null;
   }
 
-  const { data } = await getAdminApi()
-    .auth.admin.listUsers({ page: 1, perPage: 1000 })
-    .catch(() => ({ data: null }));
-  const account = data?.users.find((user) => user.email?.toLowerCase() === wanted) ?? null;
-
-  if (account == null || account.id === uid) {
-    return null;
-  }
-
-  const profiles = await getSql()`
-    select banned from profiles where id = ${account.id}
+  const rows = await getSql()`
+    select player, banned from friend_codes
+    join profiles on profiles.id = friend_codes.player
+    where code = ${code}
   `;
+  const found = rows.at(0);
 
-  // Somebody who signed in once and never opened a profile is not
-  // playing yet, and a request written against them would sit forever
-  if (profiles.at(0) == null || profiles[0].banned === true) {
+  // Somebody with no profile is not playing yet, and a request
+  // written against them would sit forever
+  if (found == null || found.player === uid || found.banned === true) {
     return null;
   }
-  return { uid: account.id, tie: await readFriendTie(uid, account.id) };
+
+  const other = asString(found.player);
+
+  return { uid: other, tie: await readFriendTie(uid, other) };
 }

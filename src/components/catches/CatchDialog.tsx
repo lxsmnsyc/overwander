@@ -53,7 +53,7 @@ import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import usePurifyingGem from '../../auth/purify';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import { isAuctionableCatch } from '../../auth/auctions';
+import { getSellerStanding, isAuctionableCatch } from '../../auth/auctions';
 import { getCandyCost, getCandyCount, getCatchCandy, useCandy } from '../../auth/candy';
 import { learnLevelUpMove } from '../../auth/moves';
 import { useAuth } from '../../auth/context';
@@ -549,6 +549,7 @@ function CatchSheetBody(
     evolutions: Resource<EvolutionOption[]>;
     fighting: Resource<boolean>;
     onlyOne: Resource<boolean>;
+    selling: Resource<boolean>;
     candies: Resource<number>;
     bag: Resource<InventoryEntry[]>;
     buddy: Resource<string | null>;
@@ -1441,9 +1442,12 @@ function CatchSheetBody(
       // listing a day off a player, so it is for perfect values, a
       // shiny or a legendary — anything else a bidder could walk out
       // and catch. The server asks the same of the stored record
+      // ...and one lot at a time: while the player's own auction is
+      // still taking bids, the block has no room for another
       disabled:
         props.onAuction == null ||
         props.fighting() === true ||
+        props.selling() === true ||
         isFavorite(loaded) ||
         isEgg(loaded) ||
         !isAuctionableCatch(loaded),
@@ -2496,6 +2500,7 @@ function CatchSheet(
     siblings: Resource<string[]>;
     dex: Resource<PokedexView>;
     onlyOne: Resource<boolean>;
+    selling: Resource<boolean>;
     bag: Resource<InventoryEntry[]>;
     buddy: Resource<string | null>;
     onRecordChanged: () => void;
@@ -2693,6 +2698,25 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    */
   const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
 
+  /**
+   * Whether the player's one auction a day is still taking bids. The
+   * menu's Auction entry goes dead while it is: the server would
+   * refuse a second listing anyway, and a dialog opened only to be
+   * refused is worse than a dead entry. Keyed on the sheet so a
+   * listing made moments ago is seen the next time one opens
+   */
+  const [selling] = createResource(
+    () => (props.catchId == null ? null : owned()),
+    async (uid) => {
+      const standing = await getSellerStanding(uid);
+
+      if (standing == null) {
+        return false;
+      }
+      return (await syncServerClock()) < standing.endsAt;
+    },
+  );
+
   return (
     <CatchSheet
       {...props}
@@ -2700,6 +2724,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       siblings={siblings}
       dex={dex}
       onlyOne={onlyOne}
+      selling={selling}
       bag={bag}
       buddy={buddy}
       onRecordChanged={() => {

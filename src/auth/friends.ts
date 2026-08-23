@@ -3,7 +3,8 @@ import {
   acceptFriendRequest as acceptOnServerSide,
   blockPlayer as blockOnServerSide,
   dropFriendRequest as dropOnServerSide,
-  findPlayerByEmail as findOnServerSide,
+  findPlayerByCode as findOnServerSide,
+  getFriendCode as getCodeOnServerSide,
   readFriendTie as readTieOnServerSide,
   removeFriend as removeOnServerSide,
   sendFriendRequest as sendOnServerSide,
@@ -25,8 +26,8 @@ import getIdToken from './session';
  * see [`friends.md`](../../docs/database/friends.md).
  *
  * Everything that writes is the server's, and so is the lookup by
- * address: the addresses are in Supabase Auth, which a browser cannot
- * query.
+ * friend code: the codes are readable only by their owners, so a
+ * stranger cannot be found without being handed their code.
  */
 
 export { FRIEND_LIMIT, FriendTie, friendActionLabel } from './friend-record';
@@ -177,12 +178,22 @@ async function unblockOnServer(token: string, other: string): Promise<FriendTie>
   return unblockOnServerSide(await requireUid(token), other);
 }
 
-/** The one trainer at an address, and where the two already stand */
-export async function findPlayerByEmail(email: string): Promise<FoundPlayer | null> {
-  return findOnServer(await getIdToken(), email);
+/** The player's own friend code, minted the first time it is asked for */
+export async function getMyFriendCode(): Promise<string> {
+  return getCodeOnServer(await getIdToken());
 }
 
-async function findOnServer(token: string, email: string): Promise<FoundPlayer | null> {
+async function getCodeOnServer(token: string): Promise<string> {
   'use server';
-  return findOnServerSide(await requireUid(token), email);
+  return getCodeOnServerSide(await requireUid(token));
+}
+
+/** The one trainer behind a code, and where the two already stand */
+export async function findPlayerByCode(code: string): Promise<FoundPlayer | null> {
+  return findOnServer(await getIdToken(), code);
+}
+
+async function findOnServer(token: string, code: string): Promise<FoundPlayer | null> {
+  'use server';
+  return findOnServerSide(await requireUid(token), code);
 }

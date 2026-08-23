@@ -1,19 +1,28 @@
 import { expect, test } from '@playwright/test';
-import { claimStarter, dialogNamed, expectOpen, openPanel, settled, signIn } from './game';
+import {
+  claimStarter,
+  dialogNamed,
+  expectOpen,
+  expectShut,
+  openPanel,
+  settled,
+  signIn,
+} from './game';
 import { insertRow, uidOf } from './admin';
 import { stageSeller } from './stranger';
 
 /**
  * Asking somebody to be your friend.
  *
- * Both ways in are tested: the lookup by address, and the menu on a
- * profile being visited. Neither can be tested with one account alone,
- * so the other trainer is opened straight in the emulator — a real
- * account, since an address is what a friend is found by
+ * Both ways in are tested: the lookup by friend code, and the menu on
+ * a profile being visited. Neither can be tested with one account
+ * alone, so the other trainer is opened straight in the emulator — a
+ * real account, with a friend code written the way the server mints
+ * one
  */
 
 test.describe('friends', () => {
-  test('asks somebody by the address they signed up with', async ({ page }) => {
+  test('asks somebody by their friend code', async ({ page }) => {
     const stranger = await stageSeller('Rosemary');
 
     await signIn(page);
@@ -27,7 +36,9 @@ test.describe('friends', () => {
     const finder = dialogNamed(page, 'Add a friend');
 
     await expectOpen(finder);
-    await finder.getByLabel('Email address').fill(stranger.email);
+    // The player's own code is on the panel for the sharing half
+    await expect(finder.getByText(/\d{4}-\d{4}-\d{4}/)).toBeVisible({ timeout: 20_000 });
+    await finder.getByLabel('Friend code').fill(stranger.code);
     await finder.getByRole('button', { name: 'Look up' }).click();
 
     const row = finder.getByRole('listitem').filter({ hasText: stranger.nickname });
@@ -40,15 +51,21 @@ test.describe('friends', () => {
       timeout: 20_000,
     });
     await finder.getByRole('button', { name: 'Close' }).click();
+    // Gone rather than going: the finder floats inside the profile's
+    // own container, so its row would double every read below
+    await expectShut(finder);
 
     // And it is waiting under the requests tab, on the outgoing half.
     // The lists follow the store, so nothing had to be reopened
     await profile.getByRole('tab', { name: /Friend Requests/ }).click();
     await expect(profile.getByText('Waiting on an answer')).toBeVisible({ timeout: 20_000 });
-    await expect(profile.getByText(stranger.nickname)).toBeVisible();
+    // Inside the pane rather than anywhere in the panel: the closed
+    // finder stays mounted in the profile's portal container, still
+    // holding the same name
+    await expect(profile.getByRole('tabpanel').getByText(stranger.nickname)).toBeVisible();
   });
 
-  test('says so when nobody plays under an address', async ({ page }) => {
+  test('says so when nobody plays under a code', async ({ page }) => {
     await signIn(page);
     await claimStarter(page);
 
@@ -60,9 +77,9 @@ test.describe('friends', () => {
     const finder = dialogNamed(page, 'Add a friend');
 
     await expectOpen(finder);
-    await finder.getByLabel('Email address').fill('nobody-at-all@example.com');
+    await finder.getByLabel('Friend code').fill('9999-9999-9998');
     await finder.getByRole('button', { name: 'Look up' }).click();
-    await expect(finder.getByText('Nobody plays under that address.')).toBeVisible({
+    await expect(finder.getByText('Nobody plays under that code.')).toBeVisible({
       timeout: 20_000,
     });
   });

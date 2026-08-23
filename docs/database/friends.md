@@ -85,15 +85,16 @@ at a time.
 
 ## Finding somebody
 
-"Add a friend" looks a trainer up by the **address they signed up with**, exactly.
+"Add a friend" looks a trainer up by their **friend code**: twelve digits in
+three groups, minted the first time its owner opens the dialog and shown there
+with a copy button.
 
 A name is not a handle: two players may call themselves the same thing, and a
 player who renames themselves is unfindable by the old one. A list of everybody
-playing is also a list of everybody to be asked by strangers. An address has to
-be given by the person it belongs to, which is the whole check.
+playing is also a list of everybody to be asked by strangers. A code has to be
+given by the person it belongs to, which is the whole check.
 
-The addresses live in Supabase's `auth.users`, which a browser cannot read at
-all, so the lookup is a server call made with the service-role key. It answers
-nothing for an address nobody plays under, for a banned account, for somebody who
-signed in once and never opened a profile, and for the reader's own, since nobody
-befriends themselves.
+The codes live in `friend_codes`, readable only by their owners, and the lookup
+is a server call. It answers nothing for a code nobody holds, for a banned
+account, for somebody who signed in once and never opened a profile, and for
+the reader's own, since nobody befriends themselves.

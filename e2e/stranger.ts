@@ -29,8 +29,10 @@ import { admin, copyable, findRows, insertRow, stageAccount } from './admin';
 export interface Stranger {
   uid: string;
   nickname: string;
-  /** What they signed up with, which is how a friend finds them */
+  /** What they signed up with */
   email: string;
+  /** The code a friend finds them by */
+  code: string;
 }
 
 /**
@@ -42,9 +44,8 @@ export interface Stranger {
 export async function stageSeller(called: string): Promise<Stranger> {
   const stamp = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
   const opened = Date.now();
-  // A real account rather than a profile alone: a friend is looked up
-  // by the address they signed up with, and an address lives in
-  // Supabase Auth
+  // A real account rather than a profile alone: friend rows point
+  // into Supabase Auth
   const email = `seller-${stamp}@example.com`;
   const uid = await stageAccount(email, 'walking-in-the-tall-grass');
   // Stamped, because the emulator is reused between runs: a lot stands
@@ -56,6 +57,13 @@ export async function stageSeller(called: string): Promise<Stranger> {
   // The trigger opened a bare profile; the name is what the board
   // shows
   await admin.from('profiles').update({ nickname }).eq('id', uid);
+
+  // The code a friend finds them by, written the way the server mints
+  // one. Twelve digits off the stamp keep parallel sellers apart
+  const digits = `${Date.now()}${Math.floor(Math.random() * 100)}`.slice(-12).padStart(12, '0');
+  const code = `${digits.slice(0, 4)}-${digits.slice(4, 8)}-${digits.slice(8, 12)}`;
+
+  await insertRow('friend_codes', { player: uid, code });
 
   await insertRow('auctions', {
     id: `e2e-lot-${stamp}`,
@@ -73,7 +81,7 @@ export async function stageSeller(called: string): Promise<Stranger> {
     settled: false,
   });
 
-  return { uid, nickname, email };
+  return { uid, nickname, email, code };
 }
 
 /**

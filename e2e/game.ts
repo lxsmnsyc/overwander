@@ -102,14 +102,15 @@ export function dialogNamed(page: Page, name: string | RegExp): Locator {
 /**
  * The paper a dialog is drawn on.
  *
- * The element that calls itself a dialog is a wrapper holding two
- * fixed-position children — the overlay behind and the panel in
- * front — so it has no height of its own. Asking whether *it* can be
- * seen always answers no, and measuring it measures nothing. The panel
- * is the second of those children, and it is the thing on screen
+ * The element that calls itself a dialog is a wrapper of
+ * fixed-position children, so it has no height of its own: asking
+ * whether *it* can be seen always answers no. The panel is the last
+ * of its children **before** the dialog's own portal container, which
+ * stands after everything it wraps and is empty until something
+ * floats
  */
 export function panelOf(dialog: Locator): Locator {
-  return dialog.locator('> div').last();
+  return dialog.locator('> div:not([data-portals])').last();
 }
 
 /**
@@ -270,8 +271,9 @@ export async function claimStarter(page: Page): Promise<void> {
   const gifts = await openPanel(page, 'Gifts');
   // Waited for rather than looked for: the shelf is empty until the
   // server has written the offers down. The three starters stand on
-  // every shelf, so one of them is taken and the rest are left
-  const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
+  // every shelf, so one of them is taken and the rest are left. The
+  // squares are buttons now — the card's press rides on them too
+  const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
   const taking = pokemon.first();
 
   await expect(taking).toBeVisible({ timeout: CLAIMED });

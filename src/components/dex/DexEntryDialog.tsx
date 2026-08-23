@@ -631,8 +631,8 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       // The dex either side of this entry. In the top bar rather than
       // beside the sprite: they walk the dex rather than the pokemon,
       // and they stay put however far down the entry is scrolled
-      lead={<StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />}
-      aside={<StepButton label="Next pokemon" mark="›" onPress={walk(1)} />}
+      lead={<StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />}
+      aside={<StepButton label="Next pokemon" way="next" onPress={walk(1)} />}
       terse
       description="One species in full: what it is, where it lives, and everything it can learn."
     >

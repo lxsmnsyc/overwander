@@ -1,4 +1,5 @@
 import { type Accessor, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import Button from './button';
 import { Meta } from './list';
 import { Row } from './surface';
@@ -40,23 +41,25 @@ export function createPager<T>(items: Accessor<T[]>, size: number, unit = 'Page'
       <Show when={pages() > 1}>
         <Row class="justify-center">
           <Button
+            label="Previous page"
             disabled={page() === 0}
             onClick={() => {
               setPage((at) => Math.max(0, at - 1));
             }}
           >
-            ‹
+            <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
           <Meta>
             {unit} {page() + 1} of {pages()}
           </Meta>
           <Button
+            label="Next page"
             disabled={page() >= pages() - 1}
             onClick={() => {
               setPage((at) => Math.min(pages() - 1, at + 1));
             }}
           >
-            ›
+            <ArrowRightIcon class="size-4" aria-hidden="true" />
           </Button>
         </Row>
       </Show>

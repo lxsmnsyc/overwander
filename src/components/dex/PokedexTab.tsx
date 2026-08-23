@@ -7,6 +7,7 @@ import {
   createSignal,
 } from 'solid-js';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
+import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import type { Species } from '../../data/ids/species';
 import { getBaseForms, getSpeciesData } from '../../data/species';
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
@@ -121,7 +122,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
             setPage((at) => Math.max(0, at - 1));
           }}
         >
-          ‹
+          <ArrowLeftIcon class="size-4" aria-hidden="true" />
         </Button>
         <Meta>{span()}</Meta>
         <Button
@@ -131,7 +132,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
             setPage((at) => Math.min(pages() - 1, at + 1));
           }}
         >
-          ›
+          <ArrowRightIcon class="size-4" aria-hidden="true" />
         </Button>
       </Row>
 

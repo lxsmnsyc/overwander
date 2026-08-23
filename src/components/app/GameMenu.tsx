@@ -1,4 +1,12 @@
-import { For, type JSX, createEffect, createSignal, onCleanup } from 'solid-js';
+import {
+  type ComponentProps,
+  For,
+  type JSX,
+  createEffect,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
+import { Dynamic } from 'solid-js/web';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { serverNow, syncServerClock } from '../../auth/clock';
@@ -7,7 +15,19 @@ import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
-import { Divider, IconSlot } from '../styled';
+import {
+  AuctionIcon,
+  BagIcon,
+  FireIcon,
+  GiftIcon,
+  MapIcon,
+  MenuIcon,
+  SearchIcon,
+  SettingsIcon,
+  SparklesIcon,
+  UserIcon,
+} from '../icons';
+import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
 
@@ -37,18 +57,24 @@ import { ThemeToggle } from './theme';
 interface MenuEntry {
   label: string;
   dialog?: GameDialog;
+  /**
+   * The picture over the word. Both are drawn: the keypad is learnt by
+   * where a thing is and recognised by its picture, and the word is
+   * what makes the first press of it possible
+   */
+  icon: (props: ComponentProps<'svg'>) => JSX.Element;
 }
 
 const ENTRIES: MenuEntry[] = [
-  { label: 'World', dialog: GameDialog.Map },
-  { label: 'Catches', dialog: GameDialog.Catches },
-  { label: 'Pokedex', dialog: GameDialog.Pokedex },
-  { label: 'Inventory', dialog: GameDialog.Inventory },
-  { label: 'Profile', dialog: GameDialog.Profile },
-  { label: 'Raids', dialog: GameDialog.Raids },
-  { label: 'Auctions', dialog: GameDialog.Auctions },
-  { label: 'Gifts', dialog: GameDialog.Gifts },
-  { label: 'Settings' },
+  { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
+  { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
+  { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
+  { label: 'Inventory', dialog: GameDialog.Inventory, icon: BagIcon },
+  { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
+  { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
+  { label: 'Auctions', dialog: GameDialog.Auctions, icon: AuctionIcon },
+  { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
+  { label: 'Settings', icon: SettingsIcon },
 ];
 
 const TILE =
@@ -160,7 +186,7 @@ export default function GameMenu(): JSX.Element {
             transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
             focus-visible:outline-offset-2 focus-visible:outline-tide"
         >
-          <IconSlot size="size-5" />
+          <MenuIcon class="size-5" aria-hidden="true" />
           Menu
         </PopoverButton>
 
@@ -242,7 +268,7 @@ export default function GameMenu(): JSX.Element {
                       game.setDialog(entry.dialog);
                     }}
                   >
-                    <IconSlot />
+                    <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
                     {entry.label}
                   </button>
                 )}

@@ -1,6 +1,6 @@
 import { type JSX, Show, createSignal, from } from 'solid-js';
 import { signOut } from '../../auth/actions';
-import { type Profile, saveProfile, watchProfile } from '../../auth/profile';
+import { type Profile, watchProfile } from '../../auth/profile';
 import AddFriendDialog from '../friends/AddFriendDialog';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
@@ -14,11 +14,12 @@ import {
   friendActionLabel,
   watchFriendRequests,
 } from '../../auth/friends';
+import EditProfileDialog from './EditProfileDialog';
+import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
 import TradesTab from '../trades/TradesTab';
 import {
   Badge,
-  Button,
   Card,
   Menu,
   Note,
@@ -29,7 +30,6 @@ import {
   TabButton,
   TabGroup,
   TabPane,
-  TextField,
 } from '../styled';
 
 /**
@@ -83,14 +83,8 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   );
   const [error, setError] = createSignal<string | null>(null);
   const [said, setSaid] = createSignal<string | null>(null);
-  /**
-   * What is in the box, or null while nobody has typed in it. Null
-   * rather than the stored name so the field follows the profile until
-   * it is edited — a name changed in another tab should show here
-   */
-  const [typed, setTyped] = createSignal<string | null>(null);
-  const [saving, setSaving] = createSignal(false);
   const [adding, setAdding] = createSignal(false);
+  const [editing, setEditing] = createSignal(false);
   /**
    * Where the reader stands with the trainer they are looking at. On
    * the reader's own profile it stands at None and is never asked:
@@ -114,29 +108,6 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   );
   const asking = (): FriendRequests => waiting() ?? { incoming: [], outgoing: [] };
 
-  const rename = (record: Profile): void => {
-    const wanted = (typed() ?? record.nickname).trim();
-
-    if (wanted === '' || wanted === record.nickname) {
-      return;
-    }
-    setError(null);
-    setSaving(true);
-    saveProfile(props.player, { nickname: wanted, avatar: record.avatar })
-      .then(() => {
-        // Back to following the record: what was typed has become what
-        // is stored, and the two should not be kept apart
-        setTyped(null);
-        setSaid('Name changed.');
-      })
-      .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
-      })
-      .finally(() => {
-        setSaving(false);
-      });
-  };
-
   const leave = (): void => {
     setError(null);
     signOut().catch((caught: unknown) => {
@@ -148,7 +119,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
     <Panel>
       <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
         {(loaded) => (
-          <Card class="sm:flex-row sm:items-center sm:gap-4">
+          <Card class="sm:flex-row sm:items-start sm:gap-4">
             {/* The avatar, or the room one will take. It is drawn
                 either way: a card that grows a picture the day a
                 player sets one changes shape under somebody who
@@ -178,39 +149,19 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 />
               )}
             </Show>
-            <div class="flex grow flex-col gap-2">
-              {/* Theirs to set, and the only thing on the profile that
-                  is: what a player is called is what everybody else on
-                  the board and in a lobby sees them as */}
-              <Show
-                when={props.viewOnly !== true}
-                fallback={<span class="text-lg font-semibold">{loaded().nickname}</span>}
-              >
-                <Row class="items-end">
-                  <TextField
-                    class="grow"
-                    label="Nickname"
-                    value={typed() ?? loaded().nickname}
-                    autocomplete="nickname"
-                    disabled={saving()}
-                    onChange={(value) => {
-                      setTyped(value);
-                    }}
-                  />
-                  <Button
-                    tone="primary"
-                    disabled={saving() || (typed() ?? loaded().nickname).trim() === ''}
-                    onClick={() => {
-                      rename(loaded());
-                    }}
-                  >
-                    Save
-                  </Button>
-                </Row>
-              </Show>
-              <Badge tone="gold" class="self-start">
-                {loaded().gold} gold
-              </Badge>
+            <div class="flex min-w-0 grow flex-col gap-2">
+              {/* The purse beside the name rather than on a line of
+                  its own, where it sat looking like a stray under the
+                  place badge */}
+              <Row>
+                <span class="text-lg font-semibold">{loaded().nickname}</span>
+                <Badge tone="gold">{loaded().gold} gold</Badge>
+              </Row>
+              {/* Where in the world they are, under the name: it is
+                  the one fact about a trainer that changes while
+                  somebody is reading it, and it belongs to who they
+                  are rather than to a card of its own */}
+              <PlayerPlace player={props.player} />
             </div>
             {/* Everything the profile can do, behind one button: the
                 way out is a press a player makes once a session, and
@@ -223,6 +174,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               fallback={
                 <Menu
                   label="Actions"
+                  icon={ActionsIcon}
                   actions={[
                     {
                       label: friendActionLabel(friend.tie()),
@@ -247,7 +199,14 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             >
               <Menu
                 label="Actions"
+                icon={ActionsIcon}
                 actions={[
+                  {
+                    label: 'Edit profile',
+                    onSelect: () => {
+                      setEditing(true);
+                    },
+                  },
                   {
                     label: 'Add friend',
                     onSelect: () => {
@@ -261,10 +220,6 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </Card>
         )}
       </Show>
-
-      {/* Where in the world they are, which is the one fact about a
-          trainer that changes while somebody is reading it */}
-      <PlayerPlace player={props.player} />
 
       {/* Who is walking with them, which is the one thing on this
           page that changes what happens outside it: a buddy draws
@@ -342,6 +297,23 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           setAdding(false);
         }}
       />
+      {/* The name and the picture, which are the whole of what a
+          trainer sets about themselves */}
+      <Show when={profile()}>
+        {(loaded) => (
+          <EditProfileDialog
+            player={props.player}
+            profile={loaded()}
+            isOpen={editing()}
+            onClose={() => {
+              setEditing(false);
+            }}
+            onSaved={() => {
+              setSaid('Profile saved.');
+            }}
+          />
+        )}
+      </Show>
       <Status message={said()} />
       <Status message={error()} tone="alert" />
       <Status message={friend.error()} tone="alert" />

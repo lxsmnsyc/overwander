@@ -1,5 +1,5 @@
 import type { CaughtPokemon } from '../../auth/caught';
-import { isShiny } from '../../auth/caught-record';
+import { isFavorite, isGuarded, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
 import { Genders } from '../../data/ids/species';
@@ -77,6 +77,8 @@ export function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
     egg: isEgg(caught),
     progress: hatchProgress(caught),
     fainted: isFainted(caught),
+    locked: isGuarded(caught),
+    favorite: isFavorite(caught),
     label: describeCatch(caught),
   };
 }

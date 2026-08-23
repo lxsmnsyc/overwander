@@ -32,7 +32,7 @@ import matchesCatch, {
   orderCatches,
   planCatchSearch,
 } from '../../auth/catch-search';
-import { Button, Dialog, DialogActions, HoverCard, Meta, Note, Row } from '../styled';
+import { Button, Dialog, DialogActions, HoverCard, Note, Row } from '../styled';
 
 /**
  * Picking one of the player's pokemon.
@@ -511,7 +511,6 @@ function PickerBox(
                 title="Info"
                 footer={
                   <>
-                    <Meta>{props.reason?.(option()) ?? props.note?.(option()) ?? ''}</Meta>
                     <Button
                       tone="primary"
                       disabled={props.disabled === true || props.reason?.(option()) != null}

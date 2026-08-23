@@ -194,9 +194,11 @@ async function releaseVisit(id: string): Promise<void> {
  * player must own and must not have fighting
  */
 function asParent(caught: Record<string, unknown> | null, uid: string): BreedingParent | null {
-  // A locked pokemon may still be a parent: breeding changes nothing
-  // about either of them — the egg is a third record — and the two are
-  // handed straight back
+  // One fighting right now is refused: its battle runs on a frozen
+  // snapshot, and reading it mid-fight would breed from a record the
+  // fight is about to rewrite. A *guarded* pokemon is a different
+  // lock and is welcome, since standing as a parent is one of the few
+  // things putting one away leaves open
   if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
     return null;
   }

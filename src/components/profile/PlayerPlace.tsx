@@ -1,6 +1,6 @@
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import type { PositionRecord } from '../../auth/position-record';
-import { Badge, Card, Meta, Note, Row } from '../styled';
+import { Badge, Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';
 
@@ -34,21 +34,26 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
           <Meta>
             cell {at().cellX}, {at().cellY}
           </Meta>
-          <Meta class="ml-auto">last moved {walked(at().movedAt)}</Meta>
+          {/* In flow rather than pushed to the far edge, where it
+              crowded whatever stood to the card's right */}
+          <Meta>last moved {walked(at().movedAt)}</Meta>
         </Row>
       )}
     </Show>
   );
 }
 
+/**
+ * Where they are, drawn as a line rather than a card: it stands under
+ * the trainer's name, where a reader is already looking to see who
+ * they are
+ */
 export default function PlayerPlace(props: { player: string }): JSX.Element {
   const [place] = createResource(() => props.player, getPlayerPosition);
 
   return (
-    <Card title="Standing">
-      <Suspense fallback={<Note>Looking for them…</Note>}>
-        <PlaceLine place={place} />
-      </Suspense>
-    </Card>
+    <Suspense fallback={<Note>Looking for them…</Note>}>
+      <PlaceLine place={place} />
+    </Suspense>
   );
 }

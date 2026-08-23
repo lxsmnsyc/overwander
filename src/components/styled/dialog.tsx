@@ -302,9 +302,10 @@ export function Dialog(props: DialogProps): JSX.Element {
             the first */}
           {bar() == null ? null : (
             <div
-              // Centred under the heading, the way the action row at
-              // the foot is: the panel's furniture keeps to the middle
-              class={`flex flex-wrap items-center justify-center gap-2 bg-transparent pt-2
+              // To the right, where the rest of the game keeps what can
+              // be done to a thing. The heading stays centred and the
+              // row under it does not compete with it for the middle
+              class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
               ${PAD_IN}`}
             >
               {bar()}

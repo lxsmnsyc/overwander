@@ -18,6 +18,11 @@ import { asNumber } from './read';
  * ends; the stamp it was locked at releases it anyway once the battle
  * timeout has passed, so a party walked out on does not stay held. The
  * check itself is a plain field read; no row is fetched to answer it.
+ *
+ * This is the *battle* lock and nothing else. The `guarded` flag is a
+ * different hold: the player putting a pokemon away by hand, lifted
+ * whenever they say. What each refuses differs too, since a guarded
+ * pokemon still walks and parents where a fighting one does neither.
  */
 
 /**

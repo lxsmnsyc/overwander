@@ -1,6 +1,7 @@
 import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { Items } from '../../data/ids/items';
 import { describeItem, detailItem } from '../details';
+import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { orderItems } from '../../data/items/search';
@@ -346,23 +347,25 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       <Show when={pages() > 1}>
         <Row class="justify-center">
           <Button
+            label="Previous page"
             disabled={page() === 0}
             onClick={() => {
               setPage((at) => Math.max(0, at - 1));
             }}
           >
-            ‹
+            <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
           <Meta>
             Page {page() + 1} of {pages()}
           </Meta>
           <Button
+            label="Next page"
             disabled={page() >= pages() - 1}
             onClick={() => {
               setPage((at) => Math.min(pages() - 1, at + 1));
             }}
           >
-            ›
+            <ArrowRightIcon class="size-4" aria-hidden="true" />
           </Button>
         </Row>
       </Show>

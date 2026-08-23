@@ -11,6 +11,7 @@ import { isLockLive } from '../../auth/battle-lock';
 import { type CaughtPokemon, isGuarded, listCaught } from '../../auth/caught';
 import { syncServerClock } from '../../auth/clock';
 import { isShadow } from '../../auth/caught-record';
+import { getMaxHealth } from '../../auth/health';
 import { boostedSteps, isEgg, stepsRemaining } from '../../auth/egg';
 import { describeFriendship, groomedFriendship } from '../../data/constants/friendship';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
@@ -313,6 +314,15 @@ function NpcCounter(
    * How many Heart Scales are in the bag. It is the reminder's whole
    * price, and it is read off the same bag the vendor's picker reads
    */
+  /**
+   * Whether Nurse Joy would do anything to it: patch it up, take a
+   * status off, or put a shadow right. One that is already whole she
+   * looks over and hands straight back, spending the window on
+   * nothing, so it is left out of her list rather than offered
+   */
+  const needsCare = (caught: CaughtPokemon): boolean =>
+    isShadow(caught) || caught.statuses !== 0 || caught.health < getMaxHealth(caught);
+
   const scales = (): number =>
     (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
@@ -864,7 +874,9 @@ function NpcCounter(
                     value={null}
                     verb="Heal"
                     empty="You have nothing for her to look at."
-                    filter={(option) => !isEgg(option.caught) && !option.fighting}
+                    filter={(option) =>
+                      !isEgg(option.caught) && !option.fighting && needsCare(option.caught)
+                    }
                     reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
                     note={(option) =>
                       isShadow(option.caught) ? 'shadow — she would purify it' : null

@@ -1,5 +1,6 @@
 import { type Accessor, Index, type JSX, Show } from 'solid-js';
 import { Species } from '../../data/ids/species';
+import { LockIcon, SparklesIcon, StarIcon } from '../icons';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 
 /**
@@ -59,6 +60,13 @@ export interface BoxEntry {
   progress: number;
   fainted: boolean;
   /**
+   * The two marks a player puts on one themselves: put away, and kept.
+   * Left out by a caller drawing something that is nobody's yet — a
+   * gift on the shelf, a lot on the block
+   */
+  locked?: boolean;
+  favorite?: boolean;
+  /**
    * Whether the caller has taken this one, or refuses to. A picked
    * square is lit and carries a tick; a refused one is greyed and
    * carries a cross
@@ -90,6 +98,12 @@ export interface CatchBoxProps {
    */
   cardOnly?: boolean;
   /**
+   * How wide the box is, in squares. Six is the box the game keeps
+   * pokemon in; three is for a line-up that is three long, where the
+   * full width would leave half a box of nothing beside it
+   */
+  columns?: 3 | 6;
+  /**
    * How many squares the box draws, for a box that is not the box: a
    * team preview is one row of six, not thirty squares five of which
    * mean anything
@@ -117,6 +131,17 @@ function toneOf(entry: BoxEntry): string {
  * The frame of a square, whether or not it is one that can be pressed
  */
 const SQUARE = 'relative aspect-square w-full rounded-lg border-2 transition-colors';
+
+/**
+ * How wide the grid is laid out, and how wide it is allowed to grow.
+ * The two travel together: a square is a share of the box, so the
+ * width is what keeps a three-square box drawing squares the size of
+ * a six-square one
+ */
+const SHAPE: Record<3 | 6, string> = {
+  3: 'max-w-64 grid-cols-3',
+  6: 'max-w-lg grid-cols-6',
+};
 
 export default function CatchBox(props: CatchBoxProps): JSX.Element {
   /**
@@ -165,6 +190,30 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
         </span>
       </Show>
 
+      {/* What the player has said about it, in the corner away from
+          everything the game says. Both are quiet marks: neither
+          changes what the square does, and both are worth seeing
+          before pressing something irreversible */}
+      <span class="pointer-events-none absolute top-0.5 left-0.5 flex flex-col items-start gap-0.5">
+        <Show when={entry().locked === true}>
+          <LockIcon aria-hidden="true" class="size-3.5 text-tide" />
+        </Show>
+        <Show when={entry().favorite === true}>
+          <StarIcon aria-hidden="true" class="size-3.5 text-gold" />
+        </Show>
+      </span>
+
+      {/* A shiny says so on the square as well as in the sprite: the
+          recolour is the whole of the difference, and two of a species
+          a player has never seen side by side are not obviously one
+          rare and one not. The line the square is named by already
+          carries the mark, so this is for the eye only */}
+      <span class="pointer-events-none absolute top-0.5 right-0.5 flex flex-col items-end gap-0.5">
+        <Show when={entry().shiny}>
+          <SparklesIcon aria-hidden="true" class="size-3.5 text-gold" />
+        </Show>
+      </span>
+
       {/* Whether the caller has it, in the corner the bag puts its
           counts in */}
       <Show when={entry().mark} keyed>
@@ -196,8 +245,8 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     <div
       role="group"
       aria-label={`Box of pokemon, ${props.entries.length} of ${squares().length} squares filled.`}
-      class="mx-auto my-2 grid w-full max-w-lg grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
-        bg-parchment p-1.5 shadow-pop"
+      class={`mx-auto my-2 grid w-full gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+        shadow-pop ${SHAPE[props.columns ?? 6]}`}
     >
       <Index each={squares()}>
         {(_, index) => (

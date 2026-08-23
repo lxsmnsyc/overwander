@@ -20,6 +20,13 @@ import { toZoneKey } from './local-time';
  */
 
 /**
+ * How many players one lobby holds. Distinct players rather than
+ * teams: a player fielding two parties still fills one place. Both
+ * sides read it, so the join button and the server refuse together
+ */
+export const RAID_PLAYER_LIMIT = 20;
+
+/**
  * What a lobby is staging
  */
 export const enum RaidKind {

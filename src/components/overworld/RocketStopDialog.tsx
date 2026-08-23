@@ -1,5 +1,5 @@
 import type { PlayerIdentity } from '../../auth/user';
-import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
 import Npc from '../../data/overworld/npc';
@@ -7,10 +7,10 @@ import { getSpeciesData } from '../../data/species';
 import { ROCKET_PARTY_LEVEL } from '../../overworld/rocket';
 import { NPC_QUOTES } from './NpcDialog';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
-import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Badge, Button, Dialog, DialogActions, Meta, Status } from '../styled';
+import CatchBox, { type BoxEntry } from '../catches/CatchBox';
+import NpcSprite from './NpcSprite';
+import { Button, Dialog, DialogActions, Meta, Status } from '../styled';
 import { useGame } from '../app/game-context';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 export interface RocketStopDialogProps {
   user: PlayerIdentity;
@@ -33,6 +33,22 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   const [status, setStatus] = createSignal<string | null>(null);
 
   const stop = (): string | null => props.challenge?.[0] ?? null;
+
+  /**
+   * The grunt's three as squares. They are not catches and have no
+   * records: what a square needs of one is its species and a name to
+   * be read out by, and a grunt's party is neither hurt nor hatching
+   */
+  const lineup = (record: RocketRecord): BoxEntry[] =>
+    record.party.map((entry, at) => ({
+      id: `${at}`,
+      species: entry.species,
+      shiny: false,
+      egg: false,
+      progress: 0,
+      fainted: false,
+      label: `${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`,
+    }));
 
   // A refusal belongs to the grunt that refused: reopened on another
   // stop, the dialog must not greet the player with the last one's
@@ -76,54 +92,22 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
         <Show when={props.challenge?.[1]}>
           {(record) => (
             <div class="flex flex-col items-center gap-3 py-2 text-center">
-              {/* Where the grunt will stand once there is one drawn.
-                  The room is held now rather than added later, so the
-                  dialog does not change shape under a player who
-                  already knows it — the same reason the gift dialog
-                  kept room for item pictures before there were any */}
-              <div
-                class="flex h-24 w-24 items-end justify-center rounded-panel border border-dashed
-                border-ember bg-ember-soft/40 text-xs text-muted"
-              >
-                <span class="pb-2">Grunt</span>
-              </div>
+              {/* The grunt themselves, from the overworld's own
+                  charset: the dialog already names them, so the
+                  picture is not read out */}
+              <NpcSprite npc={Npc.RocketGrunt} label="" />
 
-              {/* What they are fielding, drawn rather than listed: a
-                  row of names says how many, a row of pokemon says
-                  what a player is walking into.
-
-                  One column each, sized to whatever room the panel
-                  has. Nothing scrolls sideways — a lineup a player has
-                  to drag into view is a lineup they will not see the
-                  end of */}
-              <ul class="m-0 grid w-full list-none grid-cols-3 items-end gap-3 p-0">
-                <For each={record().party}>
-                  {(entry) => (
-                    <li class="flex min-w-0 flex-col items-center gap-1">
-                      {/* Square, and as wide as the column allows: a
-                          filled sprite is drawn as a share of the box
-                          it is given, so the box is what decides how
-                          big the pokemon is */}
-                      <span class="flex aspect-square w-full max-w-24 items-end justify-center">
-                        <AnimatedSprite
-                          species={entry.species}
-                          animation={SpriteAnim.Idle}
-                          direction="Down"
-                          fill
-                          shadow
-                          label={`${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`}
-                        />
-                      </span>
-                      {/* Wrapped rather than held to one line: three
-                          pills that each refuse to break are three
-                          columns the panel has to widen for */}
-                      <Badge tone="ember" wrap class="max-w-full text-center">
-                        Lv. {ROCKET_PARTY_LEVEL} {getSpeciesData(entry.species).name}
-                      </Badge>
-                    </li>
-                  )}
-                </For>
-              </ul>
+              {/* What they are fielding, in the same box of squares
+                  the player reads their own pokemon in: a lineup laid
+                  out the way a box is laid out is one they already
+                  know how to read. Nothing here is theirs to press */}
+              <CatchBox
+                entries={lineup(record())}
+                capacity={record().party.length}
+                columns={3}
+                cardOnly
+              />
+              <Meta>All three at level {ROCKET_PARTY_LEVEL}.</Meta>
 
               {/* And what the fight is worth, which is the decision the
                   buttons below are asking about */}

@@ -77,6 +77,7 @@ import {
   getOtherStat,
 } from '../../data/constants/stats';
 import getSigil from '../../data/constants/sigil';
+import { ActionsIcon, LockIcon, StarIcon } from '../icons';
 
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import { isPPItem, isVitamin } from '../../data/items/vitamins';
@@ -1522,12 +1523,12 @@ function CatchSheetBody(
         // that was never there
         lead={
           props.readOnly === true ? undefined : (
-            <StepButton label="Previous pokemon" mark="‹" onPress={walk(-1)} />
+            <StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />
           )
         }
         aside={
           props.readOnly === true ? undefined : (
-            <StepButton label="Next pokemon" mark="›" onPress={walk(1)} />
+            <StepButton label="Next pokemon" way="next" onPress={walk(1)} />
           )
         }
         // And what can be done to it, on a bar of its own under the
@@ -1547,9 +1548,33 @@ function CatchSheetBody(
           // Whose sheet it is cannot change under a player, so the
           // button stands from the first frame and the entries fill in
           // when the record arrives
-          <Show when={owned() != null}>
-            <Menu label="Actions" actions={menuActions()} />
-          </Show>
+          <>
+            {/* The two marks a player puts on one themselves, at the
+                other end of the same row: they are about the record
+                rather than about the pokemon, which is what the row
+                is for */}
+            <Show when={view()}>
+              {(record) => (
+                <span class="mr-auto flex items-center gap-1.5">
+                  <Show when={isGuarded(record())}>
+                    <Badge tone="tide">
+                      <LockIcon class="size-3.5" aria-hidden="true" />
+                      Locked
+                    </Badge>
+                  </Show>
+                  <Show when={isFavorite(record())}>
+                    <Badge tone="gold">
+                      <StarIcon class="size-3.5" aria-hidden="true" />
+                      Favorite
+                    </Badge>
+                  </Show>
+                </span>
+              )}
+            </Show>
+            <Show when={owned() != null}>
+              <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
+            </Show>
+          </>
         }
         terse
         description={

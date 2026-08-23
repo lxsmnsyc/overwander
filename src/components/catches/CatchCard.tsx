@@ -1,9 +1,16 @@
 import { For, Index, type JSX, Show } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
-import { getCatchName, getCatchSlots, isShiny } from '../../auth/caught-record';
+import {
+  getCatchName,
+  getCatchSlots,
+  isFavorite,
+  isGuarded,
+  isShiny,
+} from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { getMaxHealth, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
+import { LockIcon, SparklesIcon, StarIcon } from '../icons';
 import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
 import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
@@ -95,9 +102,26 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
     <div class={`flex w-full flex-col gap-1.5 text-left text-xs ${props.class ?? ''}`}>
       {/* What its owner calls it, against the mark that says which
           individual it is: two of the same species with the same sigil
-          are the same pokemon */}
-      <div class="flex items-baseline justify-between gap-1">
-        <strong class="truncate">{egg() ? 'Egg' : getCatchName(caught())}</strong>
+          are the same pokemon. Centred rather than sat on a baseline,
+          since the marks in front of the name are pictures and a
+          picture has no baseline to share with the words beside it */}
+      <div class="flex items-center justify-between gap-1">
+        <span class="flex min-w-0 items-center gap-1">
+          {/* What the square says in its corners, said here in front
+              of the name: a card read at a glance should answer "is
+              it shiny, is it kept, is it put away" without being
+              read through */}
+          <Show when={!egg() && isShiny(caught())}>
+            <SparklesIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+          </Show>
+          <Show when={isGuarded(caught())}>
+            <LockIcon aria-hidden="true" class="size-3.5 shrink-0 text-tide" />
+          </Show>
+          <Show when={isFavorite(caught())}>
+            <StarIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+          </Show>
+          <strong class="truncate">{egg() ? 'Egg' : getCatchName(caught())}</strong>
+        </span>
         <Show when={!egg()}>
           <Meta class="shrink-0 font-mono tracking-[0.15em]">
             {getSigil(caught().individualValue, caught().traitValue)}
@@ -133,11 +157,6 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           <Show when={GENDER_MARKS[caught().gender] !== ''}>
             <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]}>
               {GENDER_MARKS[caught().gender]}
-            </span>
-          </Show>
-          <Show when={isShiny(caught())}>
-            <span role="img" aria-label="Shiny" class="shrink-0 text-gold">
-              ✦
             </span>
           </Show>
           <span

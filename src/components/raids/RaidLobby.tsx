@@ -12,6 +12,7 @@ import {
   onCleanup,
 } from 'solid-js';
 import {
+  RAID_PLAYER_LIMIT,
   RaidKind,
   type RaidRecord,
   canJoinRaids,
@@ -163,6 +164,17 @@ function LobbyRows(
    */
   const [query, setQuery] = createSignal('');
 
+  /**
+   * Whether the lobby has no place left for this player. Places are
+   * distinct players, so somebody already in may still bring another
+   * team while everyone outside is turned away
+   */
+  const full = (): boolean => {
+    const players = new Set((teams() ?? []).map((team) => team.player));
+
+    return players.size >= RAID_PLAYER_LIMIT && !players.has(props.user.uid);
+  };
+
   const joined = (): TeamRecord[] =>
     (teams() ?? []).filter((team) =>
       matches(
@@ -269,10 +281,11 @@ function LobbyRows(
               </Show>
             </Row>
 
-            {/* A lobby can hold thirty parties, so the list scrolls
-                rather than growing the panel. The player's own row is
-                stuck to the top of it: it is the one row they came to
-                look at, and it is the one that scrolls away first */}
+            {/* A lobby holds up to twenty players' parties, so the
+                list scrolls rather than growing the panel. The
+                player's own row is stuck to the top of it: it is the
+                one row they came to look at, and it is the one that
+                scrolls away first */}
             <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
               <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
                 <div class="max-h-56 overflow-y-auto">
@@ -321,11 +334,17 @@ function LobbyRows(
               </Note>
             </Show>
 
+            <Show when={full()}>
+              <Note class="text-center">
+                The lobby is full: {RAID_PLAYER_LIMIT} trainers are already in.
+              </Note>
+            </Show>
+
             <Status message={status()} />
 
             {/* Bring a party, start the fight, or walk out of it */}
             <DialogActions>
-              <Show when={canJoin() !== false}>
+              <Show when={canJoin() !== false && !full()}>
                 <Button
                   onClick={() => {
                     setPicking(true);

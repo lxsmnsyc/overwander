@@ -1,4 +1,5 @@
-import { For, type JSX, createSignal } from 'solid-js';
+import { type ComponentProps, For, type JSX, Show, createSignal } from 'solid-js';
+import { Dynamic } from 'solid-js/web';
 import {
   Menu as HeadlessMenu,
   MenuItem,
@@ -37,6 +38,12 @@ export interface MenuProps {
    * so it should say what the actions are about rather than "menu"
    */
   label: string;
+  /**
+   * A picture in place of the word. The label still names the button
+   * for a screen reader, and the caret goes with the word: an icon
+   * that already means "more" does not need one
+   */
+  icon?: (iconProps: ComponentProps<'svg'>) => JSX.Element;
   actions: MenuAction[];
   class?: string;
 }
@@ -60,13 +67,19 @@ export default function Menu(props: MenuProps): JSX.Element {
       class={`relative inline-flex ${props.class ?? ''}`}
     >
       <PopoverButton
-        class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-3
-          py-1 text-sm font-bold shadow-pop-sm transition-colors hover:border-tide
-          hover:text-tide-dark focus-visible:outline-2 focus-visible:outline-offset-2
-          focus-visible:outline-tide"
+        aria-label={props.icon == null ? undefined : props.label}
+        class={`inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper py-1
+          text-sm font-bold shadow-pop-sm transition-colors hover:border-tide hover:text-tide-dark
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide ${
+            props.icon == null ? 'px-3' : 'px-2'
+          }`}
       >
-        {props.label}
-        <span aria-hidden="true">▾</span>
+        <Show when={props.icon} fallback={props.label}>
+          {(icon) => <Dynamic component={icon()} class="size-5" aria-hidden="true" />}
+        </Show>
+        <Show when={props.icon == null}>
+          <span aria-hidden="true">▾</span>
+        </Show>
       </PopoverButton>
       {/* Hung from the button's right edge rather than its left.
           The button that opens it is pinned to the right of a dialog

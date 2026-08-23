@@ -1,5 +1,6 @@
-import type { JSX, ParentProps } from 'solid-js';
+import { type JSX, type ParentProps, Show } from 'solid-js';
 import { ColorSchemeProvider, Toggle, useColorScheme, usePreferredColorScheme } from 'terracotta';
+import { MoonIcon, SunIcon } from '../icons';
 
 /**
  * Day and night.
@@ -63,7 +64,9 @@ export function ThemeToggle(props: { class?: string }): JSX.Element {
       aria-label={showing() === 'dark' ? 'Switch to day' : 'Switch to night'}
       class={props.class}
     >
-      <span aria-hidden="true">{showing() === 'dark' ? '☾' : '☀'}</span>
+      <Show when={showing() === 'dark'} fallback={<SunIcon class="size-5" aria-hidden="true" />}>
+        <MoonIcon class="size-5" aria-hidden="true" />
+      </Show>
     </Toggle>
   );
 }

@@ -25,6 +25,7 @@ import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
 
 export {
+  RAID_PLAYER_LIMIT,
   RaidAction,
   RaidKind,
   asRaidRecord,

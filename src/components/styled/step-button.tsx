@@ -1,5 +1,5 @@
-import type { JSX } from 'solid-js';
-import IconSlot from './icon';
+import { type JSX, Show } from 'solid-js';
+import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 
 /**
  * The way to the one before, and the one after.
@@ -17,11 +17,8 @@ import IconSlot from './icon';
  */
 export interface StepButtonProps {
   label: string;
-  /**
-   * Which way it goes, for a reader who can see it. An absent handler
-   * is an end of the run
-   */
-  mark: string;
+  /** Which way it goes. An absent handler is an end of the run */
+  way: 'previous' | 'next';
   onPress?: () => void;
 }
 
@@ -47,10 +44,12 @@ export default function StepButton(props: StepButtonProps): JSX.Element {
         props.onPress?.();
       }}
     >
-      {/* The picture that will replace the arrow one day; until it is
-          drawn, the arrow is what says which way this goes */}
-      <IconSlot size="size-4" />
-      <span aria-hidden="true">{props.mark}</span>
+      {/* The arrow alone: the button is named by its label, which is
+          what a screen reader is given, and a word beside the arrow
+          would be a second heading in the bar */}
+      <Show when={props.way === 'previous'} fallback={<ArrowRightIcon class="size-5" aria-hidden="true" />}>
+        <ArrowLeftIcon class="size-5" aria-hidden="true" />
+      </Show>
     </button>
   );
 }

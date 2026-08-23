@@ -1,19 +1,21 @@
 ---
 name: dialog-layout
 description: >
-  Dialog bars keep their content centered: the title bar, the action
-  bar under it, and the DialogActions row at the foot. Applies when
-  building or changing any dialog in src/components.
+  Dialog furniture is aligned by the styled primitives: the title bar
+  and the DialogActions row at the foot center their content, and the
+  action bar under the title sits to the right. Applies when building
+  or changing any dialog in src/components.
 ---
 
-The bars at both ends of a dialog panel center their content. This is
-built into the styled primitives in `src/components/styled/dialog.tsx`:
-the heading centers its title, the optional `bar` row under it centers
-its buttons, and `DialogActions` centers whatever it holds.
+The panel's furniture is aligned by the styled primitives in
+`src/components/styled/dialog.tsx`, never per dialog: the heading
+centers its title, `DialogActions` centers whatever it holds, and the
+optional `bar` row under the heading keeps its buttons to the **right**,
+where the rest of the game puts what can be done to a thing.
 
 ## Rules
 
-- Use `Dialog` and `DialogActions` from `../styled` and the centering
+- Use `Dialog` and `DialogActions` from `../styled` and the alignment
   comes for free. Do not re-align them per dialog.
 - Do not add alignment props back to `DialogActions`; it had a
   `center` opt-in once and the opt-in became the only behaviour.

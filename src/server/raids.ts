@@ -9,6 +9,7 @@ import { isFainted } from '../auth/health';
 
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
+  RAID_PLAYER_LIMIT,
   RaidAction,
   RaidKind,
   type RaidRecord,
@@ -524,7 +525,26 @@ export async function joinRaid(
 
   const teamId = newDocId();
 
-  await tx(async (transaction) => {
+  return tx(async (transaction) => {
+    // The raid row is the lock: two parties joining a nearly full
+    // lobby at once count one after the other
+    const held = await transaction`select 1 from raids where id = ${lobby} for update`;
+
+    if (held.length === 0) {
+      return null;
+    }
+
+    // Distinct players other than this one: a second team of their
+    // own fills no new place, and a full lobby still takes it
+    const others = await transaction`
+      select count(distinct player)::int as joined
+      from teams where raid_id = ${lobby} and player <> ${uid}
+    `;
+
+    if (asNumber(others[0]?.joined) >= RAID_PLAYER_LIMIT) {
+      return null;
+    }
+
     await transaction`
       insert into teams (id, player, raid_id) values (${teamId}, ${uid}, ${lobby})
     `;
@@ -534,9 +554,8 @@ export async function joinRaid(
     await transaction`
       insert into team_catches ${transaction(rows, 'team_id', 'slot', 'caught_id')}
     `;
+    return teamId;
   });
-
-  return teamId;
 }
 
 /**

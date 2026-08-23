@@ -1,6 +1,6 @@
 # Releases
 
-Every major release of Poketerra is named after a region and gets a page here,
+Every major release of Overwander is named after a region and gets a page here,
 showing what it brought and what to go and look at first.
 
 | Release                  | What it brought                                                                                        |

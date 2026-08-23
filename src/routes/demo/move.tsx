@@ -17,7 +17,7 @@ const MoveDemo = clientOnly(async () => import('../../components/demo/MoveDemo')
 export default function MoveDemoPage(): JSX.Element {
   return (
     <>
-      <Title>Move demo · Poketerra</Title>
+      <Title>Move demo · Overwander</Title>
       <MoveDemo />
     </>
   );

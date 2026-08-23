@@ -54,7 +54,7 @@ export default function AdminShell(props: AdminShellProps): JSX.Element {
               class="flex items-baseline gap-2 rounded-xl border-2 border-tide bg-tide px-3 py-2
                 text-on-accent no-underline shadow-pop hover:text-on-accent"
             >
-              <span class="text-base font-extrabold tracking-tight">Poketerra</span>
+              <span class="text-base font-extrabold tracking-tight">Overwander</span>
               <span class="text-xs font-bold tracking-[0.12em] uppercase opacity-80">Admin</span>
             </A>
             <nav aria-label="Dashboard sections">

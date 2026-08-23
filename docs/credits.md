@@ -10,14 +10,14 @@ written.
 
 ## The game
 
-Poketerra is written by **Alexis H. Munsayac**, and the code is MIT licensed —
+Overwander is written by **Alexis H. Munsayac**, and the code is MIT licensed —
 see [LICENSE](../LICENSE). That covers the source in `src/`, `test/`, `e2e/`
 and `scripts/`, and the documentation in `docs/`. It does not cover the art, or
 anything named in the notice below.
 
 ## What this is not
 
-Poketerra is a fan project. **Pokémon** is a trademark of Nintendo, Creatures
+Overwander is a fan project. **Pokémon** is a trademark of Nintendo, Creatures
 Inc. and GAME FREAK Inc., and The Pokémon Company owns the franchise. None of
 them is affiliated with this project, has endorsed it, or has seen it. The
 species, moves, abilities, items and type chart are theirs. The names are used

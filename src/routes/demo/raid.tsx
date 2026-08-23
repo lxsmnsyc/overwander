@@ -130,7 +130,7 @@ export default function RaidDemo(): JSX.Element {
 
   return (
     <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6">
-      <Title>Raid demo · Poketerra</Title>
+      <Title>Raid demo · Overwander</Title>
 
       {/* The way to another fight sits with the title rather than
           under the field: the field is as tall as a lobby is big, and

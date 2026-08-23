@@ -1,6 +1,6 @@
 # The world
 
-The **world** of Poketerra is a single square map, 4,096 chunks across, that is
+The **world** of Overwander is a single square map, 4,096 chunks across, that is
 calculated rather than stored. Its climate, its biomes, the landmarks in every
 chunk and everything buried in them are all derived from one world seed at the
 moment a player looks at them, so every player sees the same world without any of

@@ -1,6 +1,6 @@
 # Kanto
 
-**Kanto** is the first release of Poketerra: a world to walk, the original 151
+**Kanto** is the first release of Overwander: a world to walk, the original 151
 pokemon living in it, and everything you do with them.
 
 Every major release is named after a region. This one is named for the region

@@ -1,6 +1,6 @@
 # Raising a pokemon
 
-Pokemon in Poketerra do not gain experience from fighting. A pokemon grows
+Pokemon in Overwander do not gain experience from fighting. A pokemon grows
 because its owner spends **candy** on it, assigns its **training points**, and
 walks with it. All three are decisions rather than by-products of grinding.
 

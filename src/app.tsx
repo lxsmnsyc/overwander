@@ -22,7 +22,7 @@ export default function App(): JSX.Element {
               beside the app is in the same theme as the app */}
           <ThemeProvider>
             <AuthProvider>
-              <Title>Poketerra</Title>
+              <Title>Overwander</Title>
               {/* No bar over the top. The game is one page — the world,
                   with what the player wants pulled over it — and a nav
                   offering to leave it was three links to two pages that

@@ -1,6 +1,6 @@
 # Battles
 
-Battles in Poketerra are fought in **real time** rather than in turns. Each
+Battles in Overwander are fought in **real time** rather than in turns. Each
 pokemon winds up a move, the move lands, and that move then has to cool down
 before it can be used again. Two pokemon with quick moves trade several times
 while a third is still charging a Solar Beam.

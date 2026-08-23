@@ -1,6 +1,6 @@
 # Catching
 
-Poketerra has no wild battles. Meeting a pokemon opens a **safari session**, in
+Overwander has no wild battles. Meeting a pokemon opens a **safari session**, in
 which the player throws balls, feeds berries or walks away. Every action costs a
 turn, every failed throw risks the pokemon fleeing, and the session ends in one
 of three ways: caught, fled, or left alone.

@@ -1,4 +1,4 @@
-# Poketerra
+# Overwander
 
 A Pokémon-style overworld you walk through, generated as you go. The map is
 never stored. One seed produces climate noise, the climate sorts into biomes,

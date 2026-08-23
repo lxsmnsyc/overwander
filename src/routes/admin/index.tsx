@@ -17,7 +17,7 @@ export default function AdminOverview(): JSX.Element {
     <div class="flex flex-col gap-4">
       <Card title="What this is">
         <Note>
-          The staff side of Poketerra. Nothing here is part of the game a player sees, and every
+          The staff side of Overwander. Nothing here is part of the game a player sees, and every
           screen behind it is checked again on the server before it reads or changes anything.
         </Note>
       </Card>

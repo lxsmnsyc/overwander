@@ -1,6 +1,6 @@
-# Poketerra: player's guide
+# Overwander: player's guide
 
-**Poketerra** is a Pokémon-style game played on a world that is generated as it
+**Overwander** is a Pokémon-style game played on a world that is generated as it
 is walked. Players explore an endless map of chunks, meet wild pokemon, throw
 balls at them, dig items out of the ground, hatch eggs, fight raids and Team
 Rocket grunts, and trade rare finds at an auction house.

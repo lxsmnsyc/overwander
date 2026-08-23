@@ -369,7 +369,7 @@ export default function Home(): JSX.Element {
 
   return (
     <main class="fixed inset-0 overflow-hidden">
-      <Title>Poketerra</Title>
+      <Title>Overwander</Title>
       <Show
         when={auth.user()}
         fallback={
@@ -386,7 +386,7 @@ export default function Home(): JSX.Element {
                   border-tide bg-paper text-center shadow-window"
               >
                 <header class="relative flex flex-col gap-1 bg-tide px-4 py-4 text-on-accent">
-                  <h1 class="text-3xl">Poketerra</h1>
+                  <h1 class="text-3xl">Overwander</h1>
                   <p class="text-sm text-on-accent/85">Sign in to walk the overworld.</p>
                   {/* The theme is worth changing before signing in as
                       much as after it — the menu that carries it is

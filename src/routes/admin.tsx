@@ -106,7 +106,7 @@ export default function AdminLayout(props: RouteSectionProps): JSX.Element {
 
   return (
     <>
-      <Title>Admin · Poketerra</Title>
+      <Title>Admin · Overwander</Title>
       <Show
         when={auth.user()}
         fallback={

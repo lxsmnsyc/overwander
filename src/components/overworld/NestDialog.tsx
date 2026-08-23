@@ -134,7 +134,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
         )}
       </Show>
 
-      <DialogActions center>
+      <DialogActions>
         <Show when={asking()}>
           <Button tone="primary" disabled={props.busy} onClick={props.onAccept}>
             Take it

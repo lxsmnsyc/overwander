@@ -21,6 +21,7 @@ import PokedexTab from '../components/dex/PokedexTab';
 import ProfileDialog from '../components/profile/ProfileDialog';
 import ProfileTab from '../components/profile/ProfileTab';
 import RaidsTab from '../components/raids/RaidsTab';
+import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Note } from '../components/styled';
@@ -63,7 +64,7 @@ const TITLES: Record<Panelled, string> = {
 
 const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Profile]:
-    'Your details, your buddy, your friends, your battles and what you have bid on.',
+    'Your details, your buddy, your friends, your battles, your bids and your trades.',
   [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
   [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
   [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',
@@ -223,19 +224,6 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             width="wide"
             terse
             title={TITLES[GameDialog.Auctions]}
-            // The one thing the board is for that is not looking at
-            // it. Selling takes the whole panel rather than a card on
-            // top of the lots, so the key that opened it is also the
-            // way back out
-            aside={
-              <Button
-                onClick={() => {
-                  setSelling(!selling());
-                }}
-              >
-                {selling() ? 'Board' : 'Add'}
-              </Button>
-            }
             description={DESCRIPTIONS[GameDialog.Auctions]}
           >
             <AuctionTab
@@ -246,6 +234,17 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               }}
             />
             <DialogActions>
+              {/* The one thing the board is for that is not looking
+                  at it. Selling takes the whole panel rather than a
+                  card on top of the lots, so the key that opened it
+                  is also the way back out */}
+              <Button
+                onClick={() => {
+                  setSelling(!selling());
+                }}
+              >
+                {selling() ? 'Board' : 'Add'}
+              </Button>
               <Button onClick={close}>Close</Button>
             </DialogActions>
           </Dialog>
@@ -302,6 +301,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             player={game.visiting()}
             onClose={() => {
               game.setVisiting(null);
+            }}
+          />
+
+          {/* An offer to a friend, opened over wherever they were
+              found: their row in the list, or their profile */}
+          <TradeOfferDialog
+            player={props.user.uid}
+            friend={game.trading()}
+            onClose={() => {
+              game.setTrading(null);
             }}
           />
 

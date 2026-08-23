@@ -188,6 +188,15 @@ export interface GameState {
   visiting: Accessor<string | null>;
   setVisiting: Setter<string | null>;
   /**
+   * The friend a trade is being offered to, or null when none is.
+   *
+   * It lives here for the reason `visiting` does: the offer starts
+   * wherever the friend was found — their row in the list, their
+   * profile — and the dialog opens over that rather than inside it
+   */
+  trading: Accessor<string | null>;
+  setTrading: Setter<string | null>;
+  /**
    * The species whose dex entry is open, or null when none is.
    *
    * It travels the same road the catch sheet does and for the same
@@ -304,6 +313,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
   const [visiting, setVisiting] = createSignal<string | null>(null);
+  const [trading, setTrading] = createSignal<string | null>(null);
   const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
 
@@ -364,6 +374,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setListing,
         visiting,
         setVisiting,
+        trading,
+        setTrading,
         dexEntry,
         setDexEntry,
         records,

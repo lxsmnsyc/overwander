@@ -136,7 +136,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
           )}
         </Show>
 
-        <DialogActions center>
+        <DialogActions>
           <Button
             tone="primary"
             onClick={() => {

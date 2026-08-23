@@ -10,7 +10,6 @@
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
-- [ ] group by generation
 - [ ] tileset
 
 - [ ] fix item/catch grid interactions

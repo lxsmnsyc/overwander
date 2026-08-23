@@ -1139,7 +1139,7 @@ function NpcCounter(
             wanted had to look for the button that did it, and in the
             reminder's case scroll past a list of moves to find it. The
             bar is where a dialog is answered */}
-        <DialogActions center>
+        <DialogActions>
           {/* Keyed on the pair rather than on the npc: `Npc.Breeder`
               is 0, and a `Show` asked about it is a `Show` asked about
               a falsy value — the breeder's own button was the one

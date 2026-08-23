@@ -417,7 +417,7 @@ function SafariBody(
 
       {/* Items, throw, run away: what the player is reaching for most
           often sits nearest the way out */}
-      <DialogActions center>
+      <DialogActions>
         <Show when={session()?.state === SafariState.Active}>
           <Show
             when={rummaging()}

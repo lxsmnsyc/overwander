@@ -724,7 +724,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                 verdict is one line about what happened and two things
                 to do about it, and buttons pushed to the right of a
                 centred sentence read as belonging to something else */}
-            <DialogActions center>
+            <DialogActions>
               <Button
                 onClick={() => {
                   setDismissed(true);

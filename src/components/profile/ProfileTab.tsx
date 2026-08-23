@@ -15,6 +15,7 @@ import {
   watchFriendRequests,
 } from '../../auth/friends';
 import PlayerPlace from './PlayerPlace';
+import TradesTab from '../trades/TradesTab';
 import {
   Badge,
   Button,
@@ -50,6 +51,7 @@ const enum InnerTab {
   Friends = 1,
   Requests = 2,
   Bids = 3,
+  Trades = 4,
 }
 
 export interface ProfileTabProps {
@@ -297,6 +299,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               </Show>
             </TabButton>
             <TabButton value={InnerTab.Bids}>Bids</TabButton>
+            <TabButton value={InnerTab.Trades}>Trades</TabButton>
           </TabBar>
           <TabPane value={InnerTab.Battles}>
             <Card title="Battles">
@@ -320,6 +323,13 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           <TabPane value={InnerTab.Bids}>
             <Card title="Bids">
               <BidsList player={props.player} />
+            </Card>
+          </TabPane>
+          {/* Offers between the player and their friends: to answer,
+              waiting on an answer, and what has already changed hands */}
+          <TabPane value={InnerTab.Trades}>
+            <Card title="Trades">
+              <TradesTab player={props.player} />
             </Card>
           </TabPane>
         </TabGroup>

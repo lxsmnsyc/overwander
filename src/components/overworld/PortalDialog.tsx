@@ -168,7 +168,7 @@ function PortalBody(
       </Show>
 
       <Status message={status()} />
-      <DialogActions center>
+      <DialogActions>
         <Button
           tone="primary"
           disabled={busy() || picked() == null || (props.keys() ?? 0) === 0}

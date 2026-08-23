@@ -8,6 +8,12 @@ import { defineConfig } from 'vitest/config';
  * browsers are signed in as. One file at a time for the same reason
  */
 export default defineConfig({
+  resolve: {
+    // The `server-only` marker throws when Node imports it for real;
+    // SolidStart is not in this config to resolve it away, so the
+    // suite maps it to an empty module itself
+    alias: { 'server-only': new URL('test/rls/__server-only.ts', import.meta.url).pathname },
+  },
   test: {
     include: ['test/rls/**/*.test.ts'],
     fileParallelism: false,

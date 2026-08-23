@@ -324,7 +324,7 @@ function LobbyRows(
             <Status message={status()} />
 
             {/* Bring a party, start the fight, or walk out of it */}
-            <DialogActions center>
+            <DialogActions>
               <Show when={canJoin() !== false}>
                 <Button
                   onClick={() => {

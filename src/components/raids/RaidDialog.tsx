@@ -202,7 +202,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                 who pressed it is owed an answer where they are looking
                 rather than in a line under the map */}
             <Note class="py-4 text-center">{summary()}</Note>
-            <DialogActions center>
+            <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
           </>
@@ -243,7 +243,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                   that changes how the raid goes */}
               <Meta class="max-w-prose">{describeRaid(standing())}</Meta>
             </div>
-            <DialogActions center>
+            <DialogActions>
               <Button tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]}
               </Button>

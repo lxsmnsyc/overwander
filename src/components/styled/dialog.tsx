@@ -302,10 +302,9 @@ export function Dialog(props: DialogProps): JSX.Element {
             the first */}
           {bar() == null ? null : (
             <div
-              // To the right, where the rest of the game keeps what
-              // it can do to a thing: the menu at the foot of a
-              // dialog ends there too
-              class={`flex flex-wrap items-center justify-end gap-2 bg-transparent pt-2
+              // Centred under the heading, the way the action row at
+              // the foot is: the panel's furniture keeps to the middle
+              class={`flex flex-wrap items-center justify-center gap-2 bg-transparent pt-2
               ${PAD_IN}`}
             >
               {bar()}
@@ -391,12 +390,11 @@ export function DialogSection(
 }
 
 /**
- * The row a dialog ends on. Buttons sit to the right of it, in the
- * order they are written, with the way out last — or in the middle,
- * for a dialog that is one thing shown down the centre and would
- * look lopsided ending anywhere else
+ * The row a dialog ends on. Buttons sit in the middle of it, in the
+ * order they are written, with the way out last: the bars at both
+ * ends of a panel keep to the centre
  */
-export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Element {
+export function DialogActions(props: ParentProps): JSX.Element {
   return (
     <div
       // One line, whatever is on it. Wrapped, a dialog with three
@@ -405,8 +403,8 @@ export function DialogActions(props: ParentProps<{ center?: boolean }>): JSX.Ele
       // reads as two bars rather than one and moves the button a
       // player reaches for without looking. It scrolls sideways
       // instead, the way the grunt's roster does
-      class={`flex flex-nowrap items-center gap-2 overflow-x-auto border-t-2 border-line-soft pt-4
-        sm:pt-5 ${STUCK_BOTTOM} ${props.center === true ? 'justify-center' : 'justify-end'}`}
+      class={`flex flex-nowrap items-center justify-center gap-2 overflow-x-auto border-t-2
+        border-line-soft pt-4 sm:pt-5 ${STUCK_BOTTOM}`}
     >
       {props.children}
     </div>

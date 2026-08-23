@@ -86,6 +86,13 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
                   View
                 </Button>
                 <Button
+                  onClick={() => {
+                    game.setTrading(uid);
+                  }}
+                >
+                  Trade
+                </Button>
+                <Button
                   tone="danger"
                   disabled={busy() === uid}
                   onClick={() => {

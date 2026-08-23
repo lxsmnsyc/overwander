@@ -4,7 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { asRecord, asRecordArray, asString } from './__normalize';
+import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
 import { requireUid } from '../server/auth';
@@ -12,8 +12,10 @@ import type { RaidReward } from '../server/raids';
 import {
   claimRaidReward as claimRewardOnServerSide,
   clearRaid as clearOnServer,
+  declineRaidInvite as declineInviteOnServer,
   enterRaid as enterOnServer,
   hostMythicalRaid as hostMythicalOnServerSide,
+  inviteToRaid as inviteOnServer,
   joinRaid as joinOnServer,
   leaveRaid as leaveOnServer,
   peekRaid as peekOnServer,
@@ -260,6 +262,60 @@ export async function listLiveRaids(
  * pulls only the teams that name them as owner, and leaves a started
  * raid alone — it is already frozen into snapshots
  */
+/** One call into a lobby, waiting on the player it was sent to */
+export interface RaidInvite {
+  raid: string;
+  sender: string;
+  sentAt: number;
+}
+
+/**
+ * Follow the invites waiting on this player: one arriving, one
+ * dismissed elsewhere, and one going down with its raid all move the
+ * list
+ */
+export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) => void): Unwatch {
+  const read = async (): Promise<RaidInvite[]> => {
+    const { data } = await getSupabase()
+      .from('raid_invites')
+      .select('raid_id, sender, sent_at')
+      .eq('recipient', uid)
+      .order('sent_at', { ascending: false });
+
+    return asRecordArray(data).map((row) => ({
+      raid: asString(row.raid_id),
+      sender: asString(row.sender),
+      sentAt: asNumber(row.sent_at),
+    }));
+  };
+
+  return watchTable('raid_invites', [`recipient=eq.${uid}`], read, onChange);
+}
+
+/**
+ * Call a friend into the lobby the player is standing in. Resolves
+ * false when the raid is gone or started, the two are not friends, or
+ * the friend is already in it
+ */
+export async function inviteToRaid(id: string, friend: string): Promise<boolean> {
+  return inviteToRaidOnServer(await getIdToken(), id, friend);
+}
+
+async function inviteToRaidOnServer(token: string, id: string, friend: string): Promise<boolean> {
+  'use server';
+  return inviteOnServer(await requireUid(token), id, friend, await syncServerClock());
+}
+
+/** Put an invite away unanswered */
+export async function declineRaidInvite(id: string): Promise<void> {
+  await declineRaidInviteOnServer(await getIdToken(), id);
+}
+
+async function declineRaidInviteOnServer(token: string, id: string): Promise<void> {
+  'use server';
+  await declineInviteOnServer(await requireUid(token), id);
+}
+
 export async function leaveRaid(id: string): Promise<void> {
   await leaveRaidOnServer(await getIdToken(), id);
 }

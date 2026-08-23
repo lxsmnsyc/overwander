@@ -96,10 +96,13 @@ export function guest(): StageClient {
 
 /** Every account gone; their rows cascade with them */
 export async function clearAll(): Promise<void> {
-  await sql`delete from auth.users`;
+  // Auctions first: a seller cannot be deleted while their lot rows
+  // stand, and the browser suite leaves staged sellers behind
   await sql`
-    truncate snapshots, snapshot_spawns, gifts, battles, team_snapshots, raids cascade
+    truncate snapshots, snapshot_spawns, gifts, battles, team_snapshots, raids,
+      auctions, trades cascade
   `;
+  await sql`delete from auth.users`;
 }
 
 /** The minimal caught row the suite plants under a player */

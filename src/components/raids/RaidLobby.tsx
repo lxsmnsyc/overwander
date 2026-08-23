@@ -30,6 +30,7 @@ import { type TeamRecord, getTeam } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
 import AnimatedSprite from '../sprites/AnimatedSprite';
+import InviteFriendsDialog from './InviteFriendsDialog';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import TypeBadge from '../sprites/TypeBadge';
 import matches from '../../core/search';
@@ -108,6 +109,7 @@ function LobbyRows(
 ): JSX.Element {
   const game = useGame();
   const [picking, setPicking] = createSignal(false);
+  const [calling, setCalling] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
 
   const raid = (): RaidRecord | null => props.raid();
@@ -163,6 +165,14 @@ function LobbyRows(
    * are the one row somebody scrolling a full lobby wants to find
    */
   const [query, setQuery] = createSignal('');
+
+  /**
+   * Whether this player may call friends in: the host, or anybody
+   * with a team. A spectator has no standing to fill somebody else's
+   * lobby
+   */
+  const mayInvite = (): boolean =>
+    isHost() || (teams() ?? []).some((team) => team.player === props.user.uid);
 
   /**
    * Whether the lobby has no place left for this player. Places are
@@ -353,6 +363,15 @@ function LobbyRows(
                   Form a team
                 </Button>
               </Show>
+              <Show when={mayInvite()}>
+                <Button
+                  onClick={() => {
+                    setCalling(true);
+                  }}
+                >
+                  Invite
+                </Button>
+              </Show>
               <Show when={isHost()}>
                 <Button
                   tone="primary"
@@ -369,6 +388,16 @@ function LobbyRows(
           </div>
         )}
       </Show>
+
+      <InviteFriendsDialog
+        raidId={props.raidId}
+        player={props.user.uid}
+        isOpen={calling()}
+        onClose={() => {
+          setCalling(false);
+        }}
+        present={(teams() ?? []).map((team) => team.player)}
+      />
 
       <TeamPickerDialog
         player={props.user.uid}

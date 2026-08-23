@@ -427,6 +427,67 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
 }
 
 /**
+ * Call a friend into a lobby. Anybody standing in it may ask — the
+ * host, or anyone with a team — and only of their own friends, which
+ * is what keeps an invite from being spam. One row per lobby and
+ * friend: a second sender changes nothing.
+ *
+ * Resolves false when the raid is gone or started, the sender is not
+ * in it, the two are not friends, or the friend already has a team
+ * there
+ */
+export async function inviteToRaid(
+  uid: string,
+  lobby: string,
+  friend: string,
+  now: number,
+): Promise<boolean> {
+  if (friend === '' || friend === uid) {
+    return false;
+  }
+
+  const raid = await readRaid(lobby);
+
+  if (raid == null || raid.battle != null) {
+    return false;
+  }
+
+  const sql = getSql();
+  const [ties, standing] = await Promise.all([
+    sql`select 1 from friends where owner = ${uid} and friend = ${friend}`,
+    sql`select player from teams where raid_id = ${lobby} and player in (${uid}, ${friend})`,
+  ]);
+  const there = new Set(standing.map((row) => asString(row.player)));
+
+  if (ties.length === 0) {
+    return false;
+  }
+  if (asRaidRecord(raid).host !== uid && !there.has(uid)) {
+    return false;
+  }
+  if (there.has(friend)) {
+    return false;
+  }
+
+  await sql`
+    insert into raid_invites (raid_id, sender, recipient, sent_at)
+    values (${lobby}, ${uid}, ${friend}, ${now})
+    on conflict do nothing
+  `;
+  return true;
+}
+
+/**
+ * Put an invite away unanswered. The row is the recipient's to drop,
+ * and dropping one that is already gone is nothing
+ */
+export async function declineRaidInvite(uid: string, lobby: string): Promise<void> {
+  await getSql()`
+    delete from raid_invites where raid_id = ${lobby} and recipient = ${uid}
+  `;
+}
+
+/**
  * Whether any of the catches is already queued in a lobby. A team
  * names the raid it joined, so the player's own teams are enough to
  * answer it: a team still listed by a raid that has not started is a
@@ -553,6 +614,10 @@ export async function joinRaid(
 
     await transaction`
       insert into team_catches ${transaction(rows, 'team_id', 'slot', 'caught_id')}
+    `;
+    // An invite that was answered has done its work
+    await transaction`
+      delete from raid_invites where raid_id = ${lobby} and recipient = ${uid}
     `;
     return teamId;
   });

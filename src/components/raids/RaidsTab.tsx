@@ -1,12 +1,21 @@
 import type { PlayerIdentity } from '../../auth/user';
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { For, type JSX, type Resource, Show, Suspense, createResource, from } from 'solid-js';
 import { syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
-import { type RaidRecord, getRaidTitle, watchLiveRaids } from '../../auth/raids';
+import {
+  type RaidInvite,
+  type RaidRecord,
+  declineRaidInvite,
+  getRaid,
+  getRaidTitle,
+  watchLiveRaids,
+  watchRaidInvites,
+} from '../../auth/raids';
+import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
 import watchLive from '../app/watch';
-import { List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
+import { Button, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
 import { useGame } from '../app/game-context';
 
 export interface RaidsTabProps {
@@ -17,6 +26,47 @@ export interface RaidsTabProps {
    * list of them
    */
   onTitle?: (title: string | null) => void;
+}
+
+/**
+ * One raid a friend called the player into. The lobby is usually in
+ * the live list already; one staged in another zone's window is
+ * fetched by name instead, read through `latest` so a row still
+ * arriving does not suspend the tab
+ */
+function InvitedRow(props: {
+  invite: RaidInvite;
+  known: RaidRecord | undefined;
+  onOpen: () => void;
+}): JSX.Element {
+  const [fetched] = createResource(() => (props.known == null ? props.invite.raid : null), getRaid);
+  const raid = (): RaidRecord | null => props.known ?? fetched.latest ?? null;
+  const caller = from<Profile | null>((set) =>
+    watchProfile(props.invite.sender, (record) => {
+      set(record);
+    }),
+  );
+  const named = (): string => {
+    const nickname = caller()?.nickname ?? '';
+
+    return nickname === '' ? 'A friend' : nickname;
+  };
+
+  return (
+    <ListRow>
+      <RowButton class="font-medium" onClick={props.onOpen}>
+        {raid() == null ? 'A raid' : getRaidTitle(raid()!)}
+      </RowButton>
+      <Meta class="grow">called in by {named()}</Meta>
+      <Button
+        onClick={() => {
+          declineRaidInvite(props.invite.raid).catch(() => undefined);
+        }}
+      >
+        Dismiss
+      </Button>
+    </ListRow>
+  );
 }
 
 /**
@@ -40,6 +90,15 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
       set(live);
     });
   });
+  // What friends have called the player into, shown above the list
+  // and only while something is waiting
+  const invites = from<RaidInvite[]>((set) =>
+    watchRaidInvites(props.user.uid, (waiting) => {
+      set(waiting);
+    }),
+  );
+  const knownRaid = (id: string): RaidRecord | undefined =>
+    (raids() ?? []).find(([held]) => held === id)?.[1];
 
   return (
     <Panel>
@@ -47,6 +106,26 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
         when={game.raid()}
         fallback={
           <Show when={raids()} fallback={<Note>Loading raids…</Note>}>
+            <Show when={(invites() ?? []).length > 0}>
+              <Note>Invited</Note>
+              <List>
+                <For each={(invites() ?? []).map((invite) => invite.raid)}>
+                  {(id) => (
+                    <Show when={(invites() ?? []).find((invite) => invite.raid === id)}>
+                      {(invite) => (
+                        <InvitedRow
+                          invite={invite()}
+                          known={knownRaid(id)}
+                          onOpen={() => {
+                            game.setRaid(id);
+                          }}
+                        />
+                      )}
+                    </Show>
+                  )}
+                </For>
+              </List>
+            </Show>
             <Show when={raids()?.length} fallback={<Note>No raids are gathering right now.</Note>}>
               <List>
                 <For each={raids()}>

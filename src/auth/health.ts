@@ -66,6 +66,7 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Floating]: 'Floating',
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
+  [Statuses.Switching]: 'Switching',
 };
 
 /**

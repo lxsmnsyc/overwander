@@ -6,6 +6,7 @@ import type Battle from '../../src/battle/core';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { MOVE_DELAY, resolveMoveTargets } from '../../src/battle/mechanics/move';
+import { SWITCHING_SPAN } from '../../src/battle/status/switching';
 import turns from '../../src/battle/turn';
 import { Slots, packSlots } from '../../src/data/constants/slots';
 import { Stages, Stats, StatsKind } from '../../src/data/constants/stats';
@@ -595,7 +596,7 @@ describe('casting flow', () => {
     expect(defender.health).toBeLessThan(160);
   });
 
-  it('a teleporting unit comes back', () => {
+  it('a teleporting unit switches, and the switch lets go of it', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const unit = createUnit(battle, teamA);
@@ -615,17 +616,18 @@ describe('casting flow', () => {
     // Teleport is priority -6, so both its wind-up and its one
     // channelled step run 200 frames (~3333ms)
     advance(battle, 3400 + MOVE_DELAY);
-
-    expect(attackerIsHidden(unit)).toBe(true);
-
     advance(battle, 3400 + MOVE_DELAY);
 
-    // Vanishing and never reappearing is the failure this guards: the
-    // step that brings the user back is a channelled one, so a channel
-    // that never starts leaves it invulnerable for the rest of the
-    // fight
-    expect(attackerIsHidden(unit)).toBe(false);
+    // The switch fired, and both ends of it are mid-walk: Teleport's
+    // untouchable moment is the switch's own now, not a wind-up trick
     expect(switches).toBe(1);
+    expect(unit.status[Statuses.Switching]).toBeDefined();
+
+    // Walking out and never arriving is the failure this guards
+    advance(battle, SWITCHING_SPAN + 1000 / 60);
+
+    expect(unit.status[Statuses.Switching]).toBeUndefined();
+    expect(attackerIsHidden(unit)).toBe(false);
   });
 
   it('interruption stops the cast without resolving the move', () => {

@@ -36,6 +36,11 @@ export const enum Statuses {
    * field for the first time)
    */
   Dormant = 21,
+  /**
+   * The unit is mid-switch, walking to its new spot: it cannot act,
+   * and nothing reaches it on the way
+   */
+  Switching = 22,
 }
 
 /**

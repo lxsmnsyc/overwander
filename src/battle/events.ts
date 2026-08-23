@@ -276,6 +276,8 @@ export const enum BattleEvents {
    * a Heal Block or a wound that will not close
    */
   CheckUnitCanHeal = 141,
+  UnitUpdateSwitch = 142,
+  UnitFinishSwitch = 143,
 }
 
 export const enum MoveTargetType {
@@ -741,6 +743,16 @@ export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
 }
 
+/**
+ * A switch advanced, structured like UnitUpdateCast: emitted every
+ * tick while the pair walk to each other's spots, authoritative on
+ * Exact so external code can fast-forward it
+ */
+export interface UnitUpdateSwitchEvent extends UnitEvent {
+  target: Unit;
+  data: Partial<ProgressData>;
+}
+
 export interface CheckUnitRecoilEvent extends BaseEvent {
   parent: UnitDamageEvent;
   recoil: boolean;
@@ -918,6 +930,8 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitEntersField]: [UnitEntersFieldEvent, EventPriority];
   [BattleEvents.UnitLeavesField]: [UnitEvent, EventPriority];
   [BattleEvents.UnitSwitch]: [UnitSwitchEvent, EventPriority];
+  [BattleEvents.UnitUpdateSwitch]: [UnitUpdateSwitchEvent, EventPriority];
+  [BattleEvents.UnitFinishSwitch]: [UnitSwitchEvent, EventPriority];
   [BattleEvents.UnitInterrupt]: [UnitEvent, EventPriority];
 
   [BattleEvents.UnitAddAbility]: [UnitAbilityEvent, EventPriority];

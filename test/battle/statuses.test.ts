@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import { RESIDUAL_TICK } from '../../src/battle/status/__create';
+import { SWITCHING_SPAN } from '../../src/battle/status/switching';
 import turns from '../../src/battle/turn';
 import type Unit from '../../src/battle/unit';
 import { Stages } from '../../src/data/constants/stats';
@@ -264,6 +265,104 @@ describe('Reflect', () => {
 
     battle.tick(10000);
     expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+});
+
+/** Walk the battle clock forward in frame-sized ticks */
+function advance(battle: ReturnType<typeof createBattle>['battle'], duration: number): void {
+  const frame = 1000 / 60;
+
+  for (let elapsed = 0; elapsed < duration; elapsed += frame) {
+    battle.tick(frame);
+  }
+}
+
+describe('Switching', () => {
+  it('holds both ends of a swap for a second, then lets go', () => {
+    const { battle, teamA } = createBattle();
+    const out = createUnit(battle, teamA);
+    const into = createUnit(battle, teamA);
+    out.addMove(Moves.Tackle);
+
+    out.forceSwitch(into);
+
+    expect(out.status[Statuses.Switching]).toBeDefined();
+    expect(into.status[Statuses.Switching]).toBeDefined();
+    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(false);
+
+    battle.tick(SWITCHING_SPAN);
+
+    expect(out.status[Statuses.Switching]).toBeUndefined();
+    expect(into.status[Statuses.Switching]).toBeUndefined();
+    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(true);
+  });
+
+  it('leaves at once and takes the field only when the walk ends', () => {
+    const { battle, teamA } = createBattle();
+    const out = createUnit(battle, teamA);
+    const into = createUnit(battle, teamA);
+    const entries: Unit[] = [];
+
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      entries.push(event.source);
+    });
+
+    out.forceSwitch(into);
+
+    expect(entries).toHaveLength(0);
+
+    battle.tick(SWITCHING_SPAN);
+
+    expect(entries).toEqual([out, into]);
+    expect(out.status[Statuses.Switching]).toBeUndefined();
+  });
+
+  it('fast-forwards the whole switch through its own progression event', () => {
+    const { battle, teamA } = createBattle();
+    const out = createUnit(battle, teamA);
+    const into = createUnit(battle, teamA);
+    const entries: Unit[] = [];
+
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      entries.push(event.source);
+    });
+
+    out.forceSwitch(into);
+    battle.emit(BattleEvents.UnitUpdateSwitch, {
+      id: 'UnitUpdateSwitch',
+      disabled: false,
+      source: out,
+      target: into,
+      data: { progress: SWITCHING_SPAN },
+    });
+
+    expect(entries).toEqual([out, into]);
+    expect(out.status[Statuses.Switching]).toBeUndefined();
+    expect(into.status[Statuses.Switching]).toBeUndefined();
+  });
+
+  it('makes every move against it miss until the walk is over', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const out = createUnit(battle, teamB);
+    const into = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit, unit: out } as const;
+
+    // The swing lands its roll mid-walk, so it whiffs
+    out.forceSwitch(into);
+    attacker.triggerMove(Moves.Tackle, target, 0);
+    advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));
+
+    expect(out.health).toBe(160);
+
+    // The walk is over by now — the misses above already spent most
+    // of the span — and the same swing connects
+    battle.tick(SWITCHING_SPAN);
+    attacker.triggerMove(Moves.Tackle, target, 0);
+    advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));
+
+    expect(out.health).toBeLessThan(160);
   });
 });
 

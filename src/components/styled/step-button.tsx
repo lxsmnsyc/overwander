@@ -47,7 +47,10 @@ export default function StepButton(props: StepButtonProps): JSX.Element {
       {/* The arrow alone: the button is named by its label, which is
           what a screen reader is given, and a word beside the arrow
           would be a second heading in the bar */}
-      <Show when={props.way === 'previous'} fallback={<ArrowRightIcon class="size-5" aria-hidden="true" />}>
+      <Show
+        when={props.way === 'previous'}
+        fallback={<ArrowRightIcon class="size-5" aria-hidden="true" />}
+      >
         <ArrowLeftIcon class="size-5" aria-hidden="true" />
       </Show>
     </button>

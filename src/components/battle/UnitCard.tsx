@@ -63,6 +63,7 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Floating]: '#9fc4dd',
   [Statuses.Submerged]: '#3f7fa0',
   [Statuses.Dormant]: '#6f6f6f',
+  [Statuses.Switching]: '#7fa8c9',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -88,6 +89,7 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Floating]: 'Floating',
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
+  [Statuses.Switching]: 'Switching',
 };
 
 /**

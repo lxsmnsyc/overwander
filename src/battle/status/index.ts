@@ -19,6 +19,7 @@ import setupScreenStatus from './reflect';
 import setupSeedingStatus from './seeding';
 import setupSleepingStatus from './sleeping';
 import setupSubstitutedStatus from './substituted';
+import setupSwitchingStatus from './switching';
 import setupTrappedStatus from './trapped';
 
 /**
@@ -44,6 +45,7 @@ export const MOVE_LOCKING_STATUS = new Set<Statuses>([
   Statuses.Flinched,
   Statuses.Recharging,
   Statuses.Dormant,
+  Statuses.Switching,
 ]);
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
@@ -128,6 +130,7 @@ export default function setupStatus(battle: Battle): void {
   setupInfatuatedStatus(battle);
   setupGroundedStatus(battle);
   setupDormantStatus(battle);
+  setupSwitchingStatus(battle);
   setupMistStatus(battle);
 
   setupNonRefreshableStatus(battle);

@@ -10,9 +10,10 @@ import type Unit from '../unit';
  * Multi-step moves that force a unit off the field, replaced by a
  * teammate. Whirlwind throws out the target, Teleport recalls the user.
  *
- * The first step is a wind-up delay; self switch-out moves are also
- * registered as semi-invulnerable, so the user vanishes during it. The
- * final step performs the actual switch-in.
+ * The first step is a wind-up delay; the final step performs the
+ * actual switch. Both ends of the swap then spend a second under the
+ * Switching status — locked out, untouchable, and walking to each
+ * other's spots on the canvas.
  *
  * Offensive switch-outs drag in the target team's weakest unit, while
  * friendly ones bring in the strongest available. Team-wide switch-out

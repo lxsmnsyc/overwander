@@ -11,7 +11,9 @@ import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import type Battle from '../core';
-import { BattleEvents } from '../events';
+import { BattleEvents, type ProgressData } from '../events';
+import type Unit from '../unit';
+import { SWITCHING_SPAN } from '../status/switching';
 
 function setupUnitStatusMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitAddStatus, EventPriority.Exact, (event) => {
@@ -311,16 +313,72 @@ function setupUnitSwitchMechanics(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitEscape, EventPriority.Exact, (event) => {
     event.success = !event.source.channeling;
   });
+
+  /**
+   * The switches mid-walk, keyed by whoever is leaving. Progression
+   * flows through UnitUpdateSwitch every tick, the way a cast does,
+   * and UnitFinishSwitch is where both ends actually take the field
+   */
+  const walking = new Map<Unit, { target: Unit; time: ProgressData }>();
+
+  const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+    // Snapshot: completions mutate the map mid-walk
+    for (const [source, walk] of [...walking]) {
+      battle.emit(BattleEvents.UnitUpdateSwitch, {
+        id: 'UnitUpdateSwitch',
+        disabled: false,
+        source,
+        target: walk.target,
+        data: { progress: walk.time.progress + event.duration },
+      });
+    }
+  });
+
+  timer.stop();
+
   battle.on(BattleEvents.UnitSwitch, EventPriority.Exact, (event) => {
     event.source.leave();
-    if (event.source !== event.target) {
-      event.target.leave();
+    // A degenerate self-switch swaps nothing, so nothing waits either
+    if (event.source === event.target) {
+      event.source.enter();
+      return;
     }
-    // Trigger re-entry
+    event.target.leave();
+
+    walking.set(event.source, {
+      target: event.target,
+      time: { progress: 0, duration: SWITCHING_SPAN },
+    });
+    timer.start();
+  });
+
+  battle.on(BattleEvents.UnitUpdateSwitch, EventPriority.Exact, (event) => {
+    const walk = walking.get(event.source);
+
+    if (walk == null) {
+      return;
+    }
+    walk.time = { ...walk.time, ...event.data };
+
+    if (walk.time.progress >= walk.time.duration) {
+      battle.emit(BattleEvents.UnitFinishSwitch, {
+        id: 'UnitFinishSwitch',
+        disabled: false,
+        source: event.source,
+        target: walk.target,
+      });
+    }
+  });
+
+  // The walk is over: both ends take the field, and everything that
+  // fires on arrival fires now rather than when they set out
+  battle.on(BattleEvents.UnitFinishSwitch, EventPriority.Exact, (event) => {
+    walking.delete(event.source);
+    if (walking.size === 0) {
+      timer.stop();
+    }
     event.source.enter();
-    if (event.source !== event.target) {
-      event.target.enter();
-    }
+    event.target.enter();
   });
 }
 

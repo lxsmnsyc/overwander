@@ -1027,6 +1027,25 @@ describe('the one-shots that put somebody on the bench', () => {
     expect(switches).toHaveLength(1);
   });
 
+  it('cannot show a Red Card to a boss, and keeps the card', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    // A benchmate, so the refusal is the ability's and not an empty
+    // bench
+    bench(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+    holder.addItem(Items.RedCard);
+
+    const switches = recordSwitches(battle);
+
+    boss.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(switches).toHaveLength(0);
+    expect(holder.items[Items.RedCard]).toBeDefined();
+  });
+
   it('keeps the card when there is nobody to send out', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);

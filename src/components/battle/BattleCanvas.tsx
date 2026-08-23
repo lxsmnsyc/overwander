@@ -31,8 +31,10 @@ import {
   type ProgressData,
 } from '../../battle/events';
 import Abilities from '../../data/ids/abilities';
+import type Team from '../../battle/team';
 import type Unit from '../../battle/unit';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { SWITCHING_SPAN } from '../../battle/status/switching';
 import { AI_REST_PERIOD } from '../../battle/ai/idle';
 import { isLoopingCast, pickCast } from '../../data/constants/cast';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
@@ -218,6 +220,19 @@ interface Lunge {
 /** How long the whole out-and-back takes, in battle milliseconds. */
 const LUNGE_SPAN = 480;
 
+/**
+ * Two teammates trading places: a switch swaps where they stand, and
+ * the swap is walked rather than teleported — each glides from the
+ * other's old spot into its own. The walk keeps no clock of its own:
+ * the engine's UnitUpdateSwitch events carry how far along it is
+ */
+interface Trade {
+  a: Unit;
+  b: Unit;
+  elapsed: number;
+  window: number;
+}
+
 /** How much of the gap it crosses. Not all of it: they do not overlap */
 const LUNGE_REACH = 0.42;
 
@@ -266,7 +281,11 @@ interface Field {
   mine: number | null;
 }
 
-function readField(battle: Battle, player: string): Field {
+function readField(
+  battle: Battle,
+  player: string,
+  arrange: (team: Team, units: Unit[]) => Unit[],
+): Field {
   const middle: Unit[] = [];
   const teams: { units: Unit[]; friendly: boolean }[] = [];
   let mine: number | null = null;
@@ -292,7 +311,10 @@ function readField(battle: Battle, player: string): Field {
       if (team.player === player && player !== '') {
         mine = teams.length;
       }
-      teams.push({ units: [...team.units], friendly: own == null || alliance === own });
+      teams.push({
+        units: arrange(team, [...team.units]),
+        friendly: own == null || alliance === own,
+      });
     }
   }
   return { middle, teams, mine };
@@ -930,6 +952,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   const lunging: Lunge[] = [];
 
   /**
+   * Teammates mid-swap, walking to each other's spots
+   */
+  const trades: Trade[] = [];
+
+  /**
+   * The order each party is drawn in. The engine's own order never
+   * changes — a switch swaps nothing in the team — so the canvas
+   * keeps the order it draws, and a switch swaps it here
+   */
+  const arranged = new Map<Team, Unit[]>();
+
+  const arrange = (team: Team, units: Unit[]): Unit[] => {
+    const kept = arranged.get(team);
+
+    if (kept == null || kept.length !== units.length || kept.some((one) => !team.units.has(one))) {
+      const fresh = [...units];
+
+      arranged.set(team, fresh);
+      return fresh;
+    }
+    return kept;
+  };
+
+  /**
    * How long this battle has been running, by its own clock rather
    * than the wall's — what spaces out a cue that keeps firing
    */
@@ -1145,7 +1191,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         return;
       }
 
-      const field = readField(props.battle, props.player);
+      const field = readField(props.battle, props.player, arrange);
 
       // The camera. It starts behind whoever is looking at the fight,
       // which is the one thing about the field a player should never
@@ -1167,6 +1213,23 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // so everything measured off the slot comes with it: the bars,
       // the name, and the move's own picture, which should go off
       // where the body actually is
+      // Mid-swap, each stands part of the way from the other's spot
+      // to its own: eased at both ends, so the walk reads as a walk
+      for (const trade of trades) {
+        const one = at.get(trade.a);
+        const other = at.get(trade.b);
+
+        if (one == null || other == null) {
+          continue;
+        }
+
+        const share = (1 - Math.cos(Math.PI * Math.min(1, trade.elapsed / trade.window))) / 2;
+        const rest = 1 - share;
+
+        one.offset = [(other.x - one.x) * rest, (other.y - one.y) * rest];
+        other.offset = [(one.x - other.x) * rest, (one.y - other.y) * rest];
+      }
+
       for (const lunge of lunging) {
         const from = at.get(lunge.source);
         const to = at.get(lunge.target);
@@ -1544,6 +1607,55 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       gone.delete(event.source);
     });
 
+    // A switch swaps two teammates' places. The engine's team keeps
+    // its order, so the drawn order swaps here — and the pair walk to
+    // each other's spots rather than appearing there
+    const trading = props.battle.on(BattleEvents.UnitSwitch, EventPriority.Post, (event) => {
+      if (event.source === event.target) {
+        return;
+      }
+
+      const order = arrange(event.source.team, [...event.source.team.units]);
+      const from = order.indexOf(event.source);
+      const to = order.indexOf(event.target);
+
+      if (from < 0 || to < 0) {
+        return;
+      }
+      [order[from], order[to]] = [order[to], order[from]];
+
+      // A pair switched again mid-walk starts the walk over
+      const already = trades.findIndex(
+        (trade) => trade.a === event.source || trade.b === event.source,
+      );
+
+      if (already >= 0) {
+        trades.splice(already, 1);
+      }
+      trades.push({ a: event.source, b: event.target, elapsed: 0, window: SWITCHING_SPAN });
+    });
+
+    // The walk is the engine's: its progression events move the
+    // picture, so a fast-forwarded switch fast-forwards the walk
+    const walking = props.battle.on(BattleEvents.UnitUpdateSwitch, EventPriority.Post, (event) => {
+      const trade = trades.find((entry) => entry.a === event.source);
+
+      if (trade == null) {
+        return;
+      }
+      trade.elapsed = event.data.progress ?? trade.elapsed;
+      trade.window = event.data.duration ?? trade.window;
+    });
+
+    // Arrival snaps both onto their spots, however the walk got there
+    const arriving = props.battle.on(BattleEvents.UnitFinishSwitch, EventPriority.Post, (event) => {
+      const already = trades.findIndex((trade) => trade.a === event.source);
+
+      if (already >= 0) {
+        trades.splice(already, 1);
+      }
+    });
+
     const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       clock += event.duration;
       // A gesture runs out on its own clock rather than when the hit
@@ -1753,6 +1865,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       landing.stop();
       stopping.stop();
       fainting.stop();
+      trading.stop();
+      walking.stop();
+      arriving.stop();
       ticking.stop();
     });
   });

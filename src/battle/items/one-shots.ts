@@ -116,6 +116,13 @@ function bench(
     return false;
   }
 
+  // A boss is never sent away by the other side: the refusal Roar
+  // meets, met here by the card — and the card is not spent on it
+  if (switched.hasAbility(Abilities.Boss) && switched.team.alliance !== holder.team.alliance) {
+    switched.triggerAbility(Abilities.Boss);
+    return false;
+  }
+
   const replacement = replacementFor(battle, switched, priority, forced);
 
   if (replacement == null || !spendItem(holder, item)) {

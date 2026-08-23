@@ -111,6 +111,22 @@ const setupAbilities = [
           });
         }
       }),
+      // Half health rouses it early: a party that hits hard enough
+      // buys the fight instead of waiting the warm-up out
+      battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
+        if (
+          event.source.hasAbility(Abilities.Boss) &&
+          event.source.status[Statuses.Dormant] != null &&
+          event.value <= event.source.checkStat(Stats.HP, 0) / 2
+        ) {
+          event.source.removeStatus(Statuses.Dormant, {
+            type: EffectType.Ability,
+            ability: Abilities.Boss,
+            unit: event.source,
+          });
+        }
+      }),
+
       // Boss moves wind up slowly: casts take twice as long
       battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {

@@ -2176,6 +2176,30 @@ describe('Boss', () => {
     expect(boss.status[Statuses.Dormant]).toBeUndefined();
   });
 
+  it('is roused early when its health falls to half', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+
+    boss.enter();
+
+    expect(boss.status[Statuses.Dormant]).toBeDefined();
+
+    // A dent that leaves it above half leaves it sleeping
+    const half = boss.checkStat(Stats.HP, 0) / 2;
+
+    attacker.damage({ type: EffectType.None }, boss, boss.health - Math.floor(half) - 1, 0);
+
+    expect(boss.status[Statuses.Dormant]).toBeDefined();
+
+    attacker.damage({ type: EffectType.None }, boss, 1, 0);
+
+    expect(boss.status[Statuses.Dormant]).toBeUndefined();
+    expect(boss.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(true);
+  });
+
   it('widens single-target enemy moves to every enemy', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);

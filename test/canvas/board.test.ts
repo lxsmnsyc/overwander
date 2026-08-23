@@ -20,6 +20,7 @@ import {
   projectCellQuad,
   projectGround,
   unprojectGround,
+  yawTurns,
 } from '../../src/canvas/board';
 import { CHUNK_CELLS } from '../../src/overworld/chunk';
 
@@ -312,5 +313,26 @@ describe('walking the camera round the board', () => {
         expect(seen).toBeLessThan(SPRITE_FACINGS);
       }
     }
+  });
+});
+
+describe('which quarter the camera is standing in', () => {
+  it('counts the quarters a board has been turned', () => {
+    expect(yawTurns(0)).toBe(0);
+    expect(yawTurns(Math.PI / 2)).toBe(1);
+    expect(yawTurns(Math.PI)).toBe(2);
+    expect(yawTurns((3 * Math.PI) / 2)).toBe(3);
+    expect(yawTurns(2 * Math.PI)).toBe(0);
+  });
+
+  it('serves a camera in between from whichever quarter is nearest', () => {
+    expect(yawTurns((Math.PI / 2) * 0.4)).toBe(0);
+    expect(yawTurns((Math.PI / 2) * 0.6)).toBe(1);
+  });
+
+  it('answers a quarter for a camera walked the other way round', () => {
+    expect(yawTurns(-Math.PI / 2)).toBe(3);
+    expect(yawTurns(-Math.PI)).toBe(2);
+    expect(yawTurns(-4 * Math.PI)).toBe(0);
   });
 });

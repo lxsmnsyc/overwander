@@ -1,5 +1,5 @@
 import 'server-only';
-import type { Drawing, SheetName } from './files';
+import type { Drawing } from './files';
 import { extraDestination, writeSheet } from './files';
 import pack from './packing';
 import type { Raster } from './raster';
@@ -21,7 +21,9 @@ export interface UploadedImage {
   bytes: Uint8Array;
 }
 
-export interface ExtraOptions extends SheetName {
+export interface ExtraOptions {
+  /** What the sheet is called under `sprites/extras` */
+  name: string;
   /** Whether each image is cropped to its own content before packing. */
   compact: boolean;
 }
@@ -127,7 +129,7 @@ export default async function processExtras(
 
   const drawn = encode(sheet);
   const written = await writeSheet(
-    extraDestination(options),
+    extraDestination(options.name),
     drawn.bytes,
     JSON.stringify(data, null, 2),
   );

@@ -15,9 +15,11 @@ import {
   sellToVendor as sellOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
+import { asRecord, asStringArray } from './__normalize';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
+import getSupabase from './supabase';
 
 /**
  * The wandering NPCs, as the client asks them for things.
@@ -469,4 +471,37 @@ async function reviveOnServer(
     offset,
     locale,
   );
+}
+
+/**
+ * Whether whoever is standing at the cell has already dealt with the
+ * signed-in player this window. The claim rows are readable by their
+ * owner, so a dialog can show "sold" instead of offering a press the
+ * server would only refuse
+ */
+export async function hasVisited(
+  snapshot: ChunkSnapshot,
+  tag: string,
+  cell: number,
+): Promise<boolean> {
+  const { data } = await getSupabase()
+    .from('npc_claims')
+    .select('marker')
+    .eq('marker', snapshot.visitMarker(tag, cell));
+
+  return (data ?? []).length > 0;
+}
+
+/**
+ * How many pokemon Nurse Joy has already seen to for the signed-in
+ * player this window. Her visit counts rather than merely existing,
+ * so the dialog needs the number to say how much room is left
+ */
+export async function getTendedCount(snapshot: ChunkSnapshot, cell: number): Promise<number> {
+  const { data } = await getSupabase()
+    .from('npc_claims')
+    .select('payload')
+    .eq('marker', snapshot.visitMarker('nurse', cell));
+
+  return asStringArray(asRecord(data?.[0]?.payload).catches).length;
 }

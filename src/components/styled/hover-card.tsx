@@ -255,6 +255,12 @@ export interface HoverCardProps extends ParentProps {
   width?: HoverCardWidth;
   /** Room for how the trigger sits in its row */
   class?: string;
+  /**
+   * Whether a press on the trigger leaves the card up. For a trigger
+   * whose press acts in place (buying from a crate, claiming a gift)
+   * rather than opening a window the card would then stand on top of
+   */
+  stayOnPress?: boolean;
 }
 
 export default function HoverCard(props: HoverCardProps): JSX.Element {
@@ -467,6 +473,11 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     if (inner > 0 || holds(card(), event.target)) {
       return;
     }
+    // A press on the trigger itself acts in place where the caller
+    // says so, and the card is how the next press is decided
+    if (props.stayOnPress === true && holds(trigger, event.target)) {
+      return;
+    }
     cancel();
     setOpen(false);
   };
@@ -648,7 +659,15 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                   hide();
                 }}
                 onFocusOut={(event) => {
-                  if (!holds(card(), event.relatedTarget) && !holds(trigger, event.relatedTarget)) {
+                  // The pointer outranks the focus here too: a button
+                  // that spends (Buy, Use) disables itself while the
+                  // trade runs, which drops the focus to the body. The
+                  // pointer is still resting on the card, so it stays
+                  if (
+                    !holds(card(), event.relatedTarget) &&
+                    !holds(trigger, event.relatedTarget) &&
+                    card()?.matches(':hover') !== true
+                  ) {
                     hide(0);
                   }
                 }}

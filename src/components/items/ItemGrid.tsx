@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { Items } from '../../data/ids/items';
 import { describeItem, detailItem } from '../details';
 import ItemCard from './ItemCard';
@@ -129,6 +129,12 @@ export interface ItemGridProps {
    * otherwise have three of them
    */
   bare?: boolean;
+  /**
+   * Whether a square's card stays up through a press on the square.
+   * For a tray whose press acts in place, buying and buying again,
+   * rather than opening a window the card would stand on top of
+   */
+  keepCards?: boolean;
   onPress?: (item: Items) => void;
 }
 
@@ -220,7 +226,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
           shadow-pop"
       >
-        <For each={shown()}>
+        {/* `Index`, not `For`: callers rebuild the cell objects every
+            time a purse or a bag moves, and a reference-keyed loop
+            would tear every square down mid-hover. Keyed by slot, the
+            DOM stays put and only the numbers on it change */}
+        <Index each={shown()}>
           {(cell) => (
             // A window rather than a label, because what a square is
             // worth doing is a button rather than a sentence: use it,
@@ -228,49 +238,58 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             <HoverCard
               class="block w-full"
               title="Info"
+              stayOnPress={props.keepCards}
               // One button and nothing else, unless the caller brought
               // its own. Why a square is refused stays off the card —
               // a greyed picture with a dead button under it has
-              // already said it
+              // already said it. Built as nested Shows so the button
+              // is one DOM node whose attributes update: rebuilt, the
+              // button a purchase was just pressed on would be torn
+              // down under the pointer and take the card with it
               footer={
-                cell.footer?.() ?? (
-                  <Show when={cell.action ?? props.verb}>
-                    {(verb) => (
-                      <Button
-                        tone="primary"
-                        disabled={props.disabled === true || cell.blocked != null}
-                        onClick={() => {
-                          press(cell);
-                        }}
-                      >
-                        {verb()}
-                      </Button>
-                    )}
-                  </Show>
-                )
+                <Show
+                  when={cell().footer}
+                  fallback={
+                    <Show when={cell().action ?? props.verb}>
+                      {(verb) => (
+                        <Button
+                          tone="primary"
+                          disabled={props.disabled === true || cell().blocked != null}
+                          onClick={() => {
+                            press(cell());
+                          }}
+                        >
+                          {verb()}
+                        </Button>
+                      )}
+                    </Show>
+                  }
+                >
+                  {(foot) => foot()()}
+                </Show>
               }
               trigger={
                 <button
                   type="button"
-                  disabled={props.disabled === true || cell.blocked != null}
+                  disabled={props.disabled === true || cell().blocked != null}
                   aria-label={
-                    cell.said ??
-                    `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell.item)}${
-                      cell.amount == null ? '' : `, ${cell.amount} carried`
-                    }${cell.blocked == null ? '' : ` — ${cell.blocked}`}`
+                    cell().said ??
+                    `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell().item)}${
+                      cell().amount == null ? '' : `, ${cell().amount} carried`
+                    }${cell().blocked == null ? '' : ` — ${cell().blocked}`}`
                   }
-                  aria-pressed={cell.selected === true}
+                  aria-pressed={cell().selected === true}
                   onClick={() => {
                     if (props.cardOnly !== true) {
-                      press(cell);
+                      press(cell());
                     }
                   }}
                   class={`relative flex aspect-square w-full items-center justify-center rounded-lg
                     border-2 p-1 transition-colors disabled:cursor-not-allowed ${
-                      cell.selected === true
+                      cell().selected === true
                         ? 'border-leaf bg-leaf-soft'
                         : 'border-line bg-paper hover:bg-line-soft'
-                    } ${handOf(cell)}`}
+                    } ${handOf(cell())}`}
                 >
                   {/* Laid over the square rather than inside it: the
                       picture is a fixed number of pixels and the square
@@ -281,19 +300,19 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                     class="pointer-events-none absolute inset-1.5 flex items-center
                       justify-center"
                   >
-                    <ItemSprite item={cell.item} fill label="" />
+                    <ItemSprite item={cell().item} fill label="" />
                   </span>
                   {/* How many, in the corner the games put it in */}
-                  <Show when={cell.amount != null}>
+                  <Show when={cell().amount != null}>
                     <span
                       class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
                         border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
                     >
-                      {cell.amount}
+                      {cell().amount}
                     </span>
                   </Show>
                   {/* And the asking price, where there is one */}
-                  <Show when={cell.note} keyed>
+                  <Show when={cell().note} keyed>
                     {(note) => (
                       <span
                         class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate
@@ -307,11 +326,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                 </button>
               }
             >
-              <ItemCard item={cell.item} carried={cell.carried ?? cell.amount} />
-              {cell.card?.()}
+              <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />
+              {cell().card?.()}
             </HoverCard>
           )}
-        </For>
+        </Index>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>

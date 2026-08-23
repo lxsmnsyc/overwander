@@ -324,6 +324,9 @@ function PickerList(
           verb={props.verb}
           disabled={props.disabled}
           cardOnly={props.cardOnly}
+          // A list that stays up is traded with square after square,
+          // so the card being pressed from stays up with it
+          keepCards={props.keepOpen}
           onPress={(item) => {
             const entry = offered().find((one) => one.item === item);
 

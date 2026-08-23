@@ -6,7 +6,7 @@ import {
   createEffect,
   createSignal,
 } from 'solid-js';
-import { Portal, isServer } from 'solid-js/web';
+import { Portal } from 'solid-js/web';
 import {
   DialogOverlay,
   DialogPanel,
@@ -17,6 +17,7 @@ import {
   TransitionChild,
 } from 'terracotta';
 import FADE, { SHEER } from './transition';
+import { PortalHost, usePortalHost } from './portal-host';
 
 /**
  * The game's dialogs, as a set rather than as a habit.
@@ -103,25 +104,6 @@ const STUCK_TOP = `sticky top-0 z-20 -mt-4 sm:-mt-5 ${BLEED_OUT}`;
  * of a long dialog should not be somewhere a player has to travel to
  */
 const STUCK_BOTTOM = `sticky bottom-0 z-20 -mb-4 bg-paper pb-4 sm:-mb-5 sm:pb-5 ${BLEED}`;
-
-/**
- * Where the dialogs are drawn: a container of their own, standing
- * beside the app root rather than inside it.
- *
- * A dialog rendered where it was written is a fixed-position panel
- * inside whatever the page had built around it, and it inherits every
- * accident of that — a stacking context from a transform, a clip from
- * an `overflow-hidden`, a `z-index` race with the floating bar. Drawn
- * into a container that is a sibling of the app, a dialog is over
- * everything by construction, and the order they appear in that
- * container is the order they were opened in
- */
-function portalHost(): HTMLElement | undefined {
-  if (isServer) {
-    return undefined;
-  }
-  return document.getElementById('portals') ?? undefined;
-}
 
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
@@ -210,6 +192,13 @@ export interface DialogProps extends ParentProps {
  * opens with what it is and what it is for; the rest is the caller's
  */
 export function Dialog(props: DialogProps): JSX.Element {
+  /**
+   * Where this dialog is drawn: the container of whatever opened it,
+   * which is the document's own for one opened from the page and the
+   * parent's for one opened from inside another dialog
+   */
+  const host = usePortalHost();
+
   /**
    * Whether the dialog is showing, which is the caller's answer until
    * something asks to close: then it goes false here first, the fade
@@ -329,7 +318,7 @@ export function Dialog(props: DialogProps): JSX.Element {
   };
 
   return (
-    <Portal mount={portalHost()}>
+    <Portal mount={host()}>
       {/* This says *when* the dialog is there and nothing about how it
           looks getting there: the two `TransitionChild` wrappers below
           carry the fades. An animated wrapper here would multiply its
@@ -367,13 +356,19 @@ export function Dialog(props: DialogProps): JSX.Element {
               panel waiting on a read holds the overlay and the frame
               it was opened in. No fallback: the panel arrives when it
               has something to show */}
-          <Suspense>
-            <TransitionChild {...FADE} class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
-              <DialogPanel class="contents">
-                <Frame />
-              </DialogPanel>
-            </TransitionChild>
-          </Suspense>
+          {/* Everything the panel floats lands in the container after
+              it: a card, a menu or a dialog opened from inside this
+              one belongs to this one, so it stacks with it and goes
+              when it goes */}
+          <PortalHost>
+            <Suspense>
+              <TransitionChild {...FADE} class={`${PANEL} ${WIDTHS[props.width ?? 'narrow']}`}>
+                <DialogPanel class="contents">
+                  <Frame />
+                </DialogPanel>
+              </TransitionChild>
+            </Suspense>
+          </PortalHost>
         </HeadlessDialog>
       </Transition>
     </Portal>

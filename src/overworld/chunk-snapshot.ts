@@ -3,7 +3,7 @@ import AleaRNG from '../core/alea';
 import { boostFamilyWeights, getSpawnPool, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
-import { getTimeOfDay } from '../data/ids/biome';
+import { TimeOfDay, getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
@@ -458,6 +458,16 @@ export default class ChunkSnapshot {
     return Math.floor(this.timestamp / NPC_INTERVAL) * NPC_INTERVAL;
   }
 
+  /**
+   * The claim marker one visit to a wandering NPC writes: per tag,
+   * cell and window, with the player as the row's other half. Derived
+   * here so the server that takes the visit and the client that asks
+   * whether it was taken spell it the same way
+   */
+  visitMarker(tag: string, cell: number): string {
+    return `${this.key}@${this.npcTimestamp}$${tag}${cell}`;
+  }
+
   private wanderers: Map<number, Npc> | null = null;
 
   /**
@@ -500,14 +510,36 @@ export default class ChunkSnapshot {
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.npcTimestamp));
-      const bands = [pool.base, pool.uncommon, pool.rare];
+      // A biome asleep at this hour still patrols: the window's own
+      // pool first, then the other periods in a fixed order, so a
+      // grunt drawn on night tundra fields the tundra's daytime
+      // residents instead of standing there unfightable
+      const times = [
+        getTimeOfDay(this.npcTimestamp),
+        TimeOfDay.Morning,
+        TimeOfDay.Day,
+        TimeOfDay.Evening,
+        TimeOfDay.Night,
+      ];
+      let bands: SpawnRarityGroups['base'][] = [];
       // Weakest first, so the party reads the way it is fought; a
       // thin band borrows from the commonest one that is not empty
-      const stocked = bands.find((band) => band.length > 0);
+      let stocked: SpawnRarityGroups['base'] | undefined;
+
+      for (const time of times) {
+        const pool = getSpawnPool(this.chunk.biome, time);
+
+        bands = [pool.base, pool.uncommon, pool.rare];
+        stocked = bands.find((band) => band.length > 0);
+        if (stocked != null) {
+          break;
+        }
+      }
 
       if (stocked != null) {
-        const fielded = bands.map((band) => (band.length > 0 ? band : stocked));
+        // Named as a const so the closure below keeps the narrowing
+        const filled = stocked;
+        const fielded = bands.map((band) => (band.length > 0 ? band : filled));
 
         for (const [cell, standing] of this.getWanderingNpcs()) {
           if (standing !== Npc.RocketGrunt) {

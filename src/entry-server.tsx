@@ -44,15 +44,13 @@ export default createHandler(() => (
         </head>
         <body>
           <div id="app">{children}</div>
-          {/* Where every dialog is drawn. It stands beside the app
-              rather than inside it so a panel is never clipped by, or
-              stacked under, whatever the page happened to build around
-              the button that opened it */}
+          {/* Where everything that floats over the page is drawn. It
+              stands beside the app rather than inside it so a panel is
+              never clipped by, or stacked under, whatever the page
+              happened to build around the button that opened it. A
+              dialog carries a container of its own for whatever it
+              floats, so what belongs to a dialog is inside it */}
           <div id="portals" />
-          {/* And where the tooltips are, after the dialogs: a card over
-              a square in a dialog has to be over the dialog too, and
-              standing later in the document is what puts it there */}
-          <div id="tooltip" />
           {scripts}
         </body>
       </html>

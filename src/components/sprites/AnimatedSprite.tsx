@@ -8,6 +8,7 @@ import {
   createSignal,
   onCleanup,
 } from 'solid-js';
+import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import {
@@ -213,6 +214,76 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
 }
 
 /**
+ * How much sharper the aura canvas is than the box it covers: the
+ * wisps are soft shapes, and a one-to-one buffer under a sprite drawn
+ * at four times its sheet reads as mush
+ */
+const AURA_RESOLUTION = 3;
+
+/**
+ * An aura painted behind the picture — a shadow's haze, or the light
+ * of one put right.
+ *
+ * A small canvas rather than a sheet: the painters in
+ * [`auras`](../../canvas/auras.ts) are the ones the battle canvas
+ * runs, sized off the pokemon's ground shadow and centred on the same
+ * point. It rides the shared clock the sprites tick on, and it is the
+ * one canvas the interface allows itself — the effect is procedural,
+ * so there is no sheet to hang as a background
+ */
+function AuraCanvas(props: {
+  drawn: Accessor<Drawn | null>;
+  paint: typeof paintShadowAura;
+}): JSX.Element {
+  let canvas: HTMLCanvasElement | undefined;
+  let played = 0;
+
+  onCleanup(
+    ticking((elapsed) => {
+      played += elapsed;
+
+      const drawn = props.drawn();
+      const context = canvas?.getContext('2d');
+
+      if (canvas == null || context == null || drawn == null) {
+        return;
+      }
+
+      const box = drawn.bounds;
+      const width = Math.max(1, Math.round(box.width * AURA_RESOLUTION));
+      const height = Math.max(1, Math.round(box.height * AURA_RESOLUTION));
+
+      if (canvas.width !== width) {
+        canvas.width = width;
+      }
+      if (canvas.height !== height) {
+        canvas.height = height;
+      }
+      context.clearRect(0, 0, width, height);
+
+      const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
+
+      props.paint(
+        context,
+        (-box.x + feet[0] + 0.5) * AURA_RESOLUTION,
+        (-box.y + feet[1] + 0.5) * AURA_RESOLUTION,
+        drawn.shadow.x * AURA_RESOLUTION,
+        drawn.shadow.y * AURA_RESOLUTION,
+        played,
+      );
+    }),
+  );
+
+  return (
+    <canvas
+      ref={canvas}
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 h-full w-full"
+    />
+  );
+}
+
+/**
  * The stars, thrown once.
  *
  * They are placed from the first frame that is drawn and then left
@@ -323,6 +394,12 @@ export interface AnimatedSpriteProps {
   /** Whether to draw the ground under it */
   shadow?: boolean;
   /**
+   * The aura it stands in, which **replaces** the ground shadow: a
+   * shadow pokemon's dark haze, or the light of one put right. Left
+   * out, the pokemon casts its plain shadow like anything else
+   */
+  aura?: AuraKind;
+  /**
    * Whether to throw a handful of stars over it as it appears, once.
    *
    * It is the caller's rather than something read off `shiny`, because
@@ -431,7 +508,11 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     if (cell.width <= 0 || cell.height <= 0) {
       return null;
     }
-    const feet = playing.anchor('shadow');
+    // The first frame's mark, not the frame showing: the anchors
+    // travel with the body, so per-frame feet resized the box and
+    // walked the shadow on every frame, and the dialog around the
+    // sprite resized with it
+    const feet = playing.resting('shadow');
     const shadow = playing.shadowRadius();
 
     return {
@@ -442,7 +523,9 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       trim: playing.frameInset,
       feet,
       shadow,
-      bounds: boundsOf(cell, props.shadow === true ? feet : null, shadow),
+      // Grown for the aura the way it is for the shadow: the pool is
+      // painted from the same measurements and needs the same room
+      bounds: boundsOf(cell, props.shadow === true || props.aura != null ? feet : null, shadow),
     };
   });
 
@@ -481,8 +564,22 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       <Show when={drawn()}>
         {(showing) => (
           <>
-            <Show when={props.shadow === true ? groundOf(showing()) : null}>
+            {/* The plain shadow, or the aura standing in for it —
+                never both: a haze rooted in the ground is the shadow
+                of the thing standing in it */}
+            <Show when={props.shadow === true && props.aura == null ? groundOf(showing()) : null}>
               {(ground) => <span style={ground()} />}
+            </Show>
+            {/* Behind the picture: the pokemon stands in its aura
+                rather than under it. Keyed, so a record purified while
+                its sheet is open swaps cleanly */}
+            <Show when={props.aura} keyed>
+              {(aura) => (
+                <AuraCanvas
+                  drawn={drawn}
+                  paint={aura === 'shadow' ? paintShadowAura : paintPurifiedAura}
+                />
+              )}
             </Show>
             <span style={pictureOf(showing())} />
             {/* Keyed on which pokemon it is, so meeting a second shiny

@@ -87,11 +87,31 @@ export function overworldDestination(name: string): Destination {
   };
 }
 
-/** Anything else packed out of loose images. */
-export function extraDestination(name: SheetName): Destination {
+/**
+ * A biome's tileset: the atlas and the description of how it is cut,
+ * filed under the biome's own number so a chunk finds its ground
+ * without a table of names in between
+ */
+export function biomeDestination(biome: number): Destination {
+  const id = Math.trunc(biome);
+
+  if (!Number.isFinite(id) || id < 0) {
+    throw new Error('A tileset needs a biome to belong to');
+  }
+  return { image: `sprites/biome/${id}/image.png`, meta: `sprites/biome/${id}/data.json` };
+}
+
+/**
+ * Anything else packed out of loose images, filed under a name of its
+ * own: an extras sheet is not about a species, so nothing here asks
+ * for one
+ */
+export function extraDestination(name: string): Destination {
+  const slug = overworldSlug(name);
+
   return {
-    image: `sprites/extras/${stem(name)}.png`,
-    meta: `sprites/extras/${stem(name)}.json`,
+    image: `sprites/extras/${slug}.png`,
+    meta: `sprites/extras/${slug}.json`,
   };
 }
 

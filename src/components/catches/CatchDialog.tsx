@@ -32,6 +32,7 @@ import {
   ACQUISITION_NAMES,
   NICKNAME_LIMIT,
   asNickname,
+  catchAura,
   getCatchName,
   getCatchSlots,
   getMovePoints,
@@ -1267,15 +1268,19 @@ function CatchSheetBody(
         );
 
   /**
-   * The tallest of the five the bars are drawn against. Health is left
-   * out of it: it is counted on a different scale from the rest and
-   * would flatten every other bar into the same short stub
+   * The tallest of the six the bars are drawn against. Health counts
+   * with the rest: it is the longest bar on most pokemon, which is
+   * the honest picture of a stat that is bigger than the others
    */
   const bestTotal = (caught: CaughtPokemon): number =>
-    Math.max(
-      1,
-      ...STAT_ORDER.filter((stat) => stat !== Stats.HP).map((stat) => totalOf(caught, stat)),
-    );
+    Math.max(1, ...STAT_ORDER.map((stat) => totalOf(caught, stat)));
+
+  /** What it has left, as a share of what it has */
+  const healthLeft = (caught: CaughtPokemon): number => {
+    const max = getMaxHealth(caught);
+
+    return max <= 0 ? 0 : Math.max(0, Math.min(1, caught.health / max));
+  };
 
   /**
    * Whether the item is one this pokemon could be given right now —
@@ -1637,6 +1642,7 @@ function CatchSheetBody(
                     species={isEgg(loaded()) ? Species.Egg : loaded().species}
                     shiny={!isEgg(loaded()) && isShiny(loaded())}
                     female={!isEgg(loaded()) && loaded().gender === Genders.Female}
+                    aura={isEgg(loaded()) ? undefined : catchAura(loaded())}
                     animation={SpriteAnim.Walk}
                     direction="DownLeft"
                     scale={4}
@@ -1661,6 +1667,29 @@ function CatchSheetBody(
                   <Meta class="font-mono tracking-[0.2em]">
                     {getSigil(loaded().individualValue, loaded().traitValue)}
                   </Meta>
+                  {/* What it has left, drawn the way the box draws it.
+                      It is here rather than in the stats below because
+                      it is about this pokemon *now* rather than about
+                      what it is made of, and it is the one number a
+                      player checks before sending it anywhere. An egg
+                      has nothing to lose yet */}
+                  <Show when={!isEgg(loaded())}>
+                    <div class="flex w-48 max-w-full items-center gap-2">
+                      <div
+                        class="h-1.5 grow overflow-hidden rounded-full border border-line-soft
+                          bg-line-soft"
+                      >
+                        <div
+                          class={`h-full ${isFainted(loaded()) ? 'bg-muted' : 'bg-leaf'}`}
+                          style={{ width: `${healthLeft(loaded()) * 100}%` }}
+                        />
+                      </div>
+                      <Meta class="shrink-0 tabular-nums">
+                        {Math.max(0, Math.round(loaded().health))}/{getMaxHealth(loaded())}
+                        {isFainted(loaded()) ? ' · fainted' : ''}
+                      </Meta>
+                    </div>
+                  </Show>
                 </div>
 
                 {/* What it is: what the dex calls its kind, the types
@@ -1853,19 +1882,12 @@ function CatchSheetBody(
 
                       <TabPane value={StatView.Total}>
                         <List>
-                          <ListRow>
-                            {/* Nothing can move health — no nature
-                                touches it — but the column it would be
-                                marked in is still paid for, so the six
-                                names below start where this one does */}
-                            <span class="w-3 shrink-0" />
-                            <span class="w-24 shrink-0 text-left">Health</span>
-                            <span class="grow text-left tabular-nums">
-                              {loaded().health} / {getMaxHealth(loaded())}
-                              {isFainted(loaded()) ? ' · fainted' : ''}
-                            </span>
-                          </ListRow>
-                          <For each={STAT_ORDER.filter((stat) => stat !== Stats.HP)}>
+                          {/* All six, health included: what it is worth
+                              in a fight is the whole set, and what it
+                              has left of its health is said under the
+                              sprite. No nature moves health, so its
+                              mark column simply comes out empty */}
+                          <For each={STAT_ORDER}>
                             {(stat) => (
                               <ListRow>
                                 {/* The arrow the games have always used,

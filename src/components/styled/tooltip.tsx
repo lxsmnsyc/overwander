@@ -1,7 +1,8 @@
 import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
-import { Portal, isServer } from 'solid-js/web';
+import { Portal } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
+import { usePortalHost } from './portal-host';
 import { SHEER } from './transition';
 
 /**
@@ -69,23 +70,13 @@ export function Tooltip(props: TooltipProps): JSX.Element {
 }
 
 /**
- * Where the cards are drawn: a container standing after the dialogs'
- * own, so a card over a square inside a dialog is over the dialog
- * rather than under it
- */
-function tooltipHost(): HTMLElement | undefined {
-  if (isServer) {
-    return undefined;
-  }
-  return document.getElementById('tooltip') ?? undefined;
-}
-
-/**
- * Anything else that has to float over a dialog — a card placed by its
- * own caller rather than by `TooltipHost`
+ * Anything else that floats over the page or over a dialog: a card
+ * placed by its own caller rather than by `TooltipHost`
  */
 export function TooltipLayer(props: ParentProps): JSX.Element {
-  return <Portal mount={tooltipHost()}>{props.children}</Portal>;
+  const host = usePortalHost();
+
+  return <Portal mount={host()}>{props.children}</Portal>;
 }
 
 export interface TooltipHostProps extends ParentProps, TooltipProps {
@@ -105,6 +96,7 @@ export interface TooltipHostProps extends ParentProps, TooltipProps {
  */
 export function TooltipHost(props: TooltipHostProps): JSX.Element {
   let host: HTMLSpanElement | undefined;
+  const drawnIn = usePortalHost();
   const [at, setAt] = createSignal<{ x: number; y: number; below: boolean } | null>(null);
   /**
    * Whether the card is wanted, which is not the same as whether it is
@@ -154,7 +146,7 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
           set on an ancestor here would never reach it */}
       <Show when={at()} keyed>
         {(spot) => (
-          <Portal mount={tooltipHost()}>
+          <Portal mount={drawnIn()}>
             <Transition
               show={wanted()}
               {...SHEER}

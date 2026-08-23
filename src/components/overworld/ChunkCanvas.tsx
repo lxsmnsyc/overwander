@@ -25,6 +25,7 @@ import {
   radiusOf,
   shortestTurn,
   unprojectGround,
+  yawTurns,
 } from '../../canvas/board';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import { SPRITE_DIRECTIONS } from '../../canvas/sprite-sheet';
@@ -33,8 +34,16 @@ import { type Cast, getCast, paintAmbient } from '../../canvas/daylight';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { serverNow } from '../../auth/clock';
 import loadSpeciesSprite from '../../canvas/species-sprites';
+import type BiomeTileset from '../../canvas/biome-tileset';
+import { variantAt } from '../../canvas/biome-tileset';
+import loadBiomeTileset from '../../canvas/biome-tilesets';
+import drawTileQuad from '../../canvas/tile-quad';
 import { BIOME_COLORS } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
+import { isWaterBiome } from '../../data/ids/biome';
+import type { TerrainRole } from '../../data/overworld/terrain';
+import boardTerrain from '../../overworld/terrain';
+import { rotateMask } from '../../data/overworld/autotile';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
@@ -99,6 +108,19 @@ const APRON = BORDER_CELLS / CHUNK_CELLS;
  * things on it rather than a chart with pictures in it
  */
 const SPRITE_SCALE = 0.95;
+
+/**
+ * How much of that a pokemon gets, by the size the game calls it.
+ *
+ * Drawn pixels alone are a poor measure of how big something is: a
+ * frame is trimmed to the widest pose in the sheet, so a Zubat with
+ * its wings out came out taller on the board than most of the pokemon
+ * twice its size. `shadowSize` is the game's own answer and the only
+ * one a sheet carries, so it corrects what the drawing says rather
+ * than replacing it. Gentle on purpose, since the artists already draw
+ * a Gyarados larger than a Caterpie and this multiplies that
+ */
+const SIZE_TIERS = [0.85, 1, 1.1];
 
 /**
  * How many cells tall a charset's own cell is drawn.
@@ -622,6 +644,33 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   const drawnAsPerson = (index: number): boolean => personOn(index) != null;
+
+  /**
+   * The biome's own ground, once it has landed.
+   *
+   * Not part of the wait the pokemon are: a chunk with no tileset
+   * packed yet is drawn in the flat colour it always was, so the board
+   * has nothing to gain by standing still until this arrives
+   */
+  const [tileset, setTileset] = createSignal<BiomeTileset | null>(null);
+
+  createEffect(() => {
+    const biome = props.biome;
+    let live = true;
+
+    onCleanup(() => {
+      live = false;
+    });
+    loadBiomeTileset(biome)
+      .then((loaded) => {
+        if (live) {
+          setTileset(loaded);
+        }
+      })
+      .catch(() => {
+        // The flat colour it was drawn in before there were tilesets
+      });
+  });
 
   const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
     const key = coatKey(coat);
@@ -1163,6 +1212,76 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * is flat and cannot occlude anything, so it is finished before
        * the first pokemon is drawn
        */
+      /**
+       * The ground as tiles, where the biome has been packed.
+       *
+       * Which tile a cell gets is decided by what is around it, so the
+       * terrain is read once for the whole board rather than per cell:
+       * every cell asks about its eight neighbours, and half of those
+       * questions are the same question asked from the other side
+       */
+      const land = boardTerrain({
+        landmarks: props.landmarks,
+        water: isWaterBiome(props.biome),
+      });
+      const tiles = tileset();
+      // How far round the camera has been walked, in quarters. The
+      // ground art is drawn for one point of view and can only be
+      // turned in quarters, so it changes over at the halfway point
+      const turns = yawTurns(yaw());
+
+      /**
+       * One cell of ground, drawn from the biome's own tileset.
+       * Answers whether it drew anything, since a cell it could not
+       * draw still wants the flat colour it had before
+       */
+      const paintGround = (square: BoardCell, corners: ProjectedPoint[]): boolean => {
+        if (tiles == null) {
+          return false;
+        }
+        const wanted = land.at(square.x, square.y);
+        // A rip with no water in it still has to draw an ocean chunk,
+        // and its ground is a better answer than a hole
+        const role: TerrainRole = tiles.has(wanted) ? wanted : 'ground';
+        // Asked per cell rather than once for the board: each terrain
+        // runs on its palette's own beat, and a rip that says the
+        // water moves faster than the ground means it
+        const spot = tiles.tileAt(
+          role,
+          rotateMask(land.maskAt(square.x, square.y), turns),
+          variantAt(square.x, square.y, tiles.data.variants),
+          clock,
+        );
+
+        if (spot == null) {
+          return false;
+        }
+        drawTileQuad(context, spot.sheet, spot, tiles.tile, corners, turns);
+        return true;
+      };
+
+      /**
+       * The ground, in one pass of its own before anything is ruled
+       * over it.
+       *
+       * Over a wider square than the board is: the four corners of the
+       * apron are not cells and are never pressed, but a wall drawn
+       * round the chunk with its corners left out is a frame with four
+       * holes in it
+       */
+      if (tiles != null) {
+        // Off for the pass: these are pixel tiles, and smoothed up to
+        // the size of a cell they lose the edges they are drawn with
+        context.save();
+        context.imageSmoothingEnabled = false;
+        for (let y = -BORDER_CELLS; y < CHUNK_CELLS + BORDER_CELLS; y++) {
+          for (let x = -BORDER_CELLS; x < CHUNK_CELLS + BORDER_CELLS; x++) {
+            paintGround({ x, y }, projectBoardCellQuad({ x, y }, yaw()).map(at));
+          }
+        }
+        context.restore();
+      }
+
       for (const square of squares) {
         traceCell(square);
 
@@ -1171,6 +1290,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // chunk rather than a square of it, and a player should be able
         // to see that without pressing one to find out
         if (isBorderCell(square)) {
+          // Shaded whether or not it is tiled. The apron is the same
+          // ground as the chunk now, so the shade is the only thing
+          // saying where a player stops being in this chunk
           context.fillStyle = COLORS.border;
           context.fill();
           context.strokeStyle = COLORS.borderLine;
@@ -1301,7 +1423,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               loop: true,
             });
 
-            const scale = SPRITE_SCALE * middle.scale * magnify;
+            const scale =
+              SPRITE_SCALE * (SIZE_TIERS[sprite.shadowSize] ?? 1) * middle.scale * magnify;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
             // the whole of standing a pokemon there — whatever is drawn

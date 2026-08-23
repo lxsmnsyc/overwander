@@ -484,6 +484,15 @@ export default class OWCharSprite {
     this.position = 0;
   }
 
+  /**
+   * The cell showing, as its rectangle on the sheet. For DOM callers,
+   * which draw the sheet as a CSS background rather than through
+   * `draw`
+   */
+  get frameRect(): FrameRect | null {
+    return this.rects[this.row * this.columns + this.frame] ?? null;
+  }
+
   /** Which cell is showing, as an index into the row. */
   get frame(): number {
     if (!this.moving) {

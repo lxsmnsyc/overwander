@@ -94,7 +94,7 @@ async function takeVisit(
   uid: string,
   record: Record<string, unknown> = {},
 ): Promise<string | null> {
-  const id = `${snapshot.key}@${snapshot.npcTimestamp}$${tag}${cell}`;
+  const id = snapshot.visitMarker(tag, cell);
 
   return (await claim('npc_claims', id, { player: uid, ...record })) ? `${id}:${uid}` : null;
 }
@@ -118,7 +118,7 @@ async function takeCare(
   uid: string,
   catches: string[],
 ): Promise<string[]> {
-  const marker = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}`;
+  const marker = snapshot.visitMarker('nurse', cell);
 
   return tx(async (transaction) => {
     const rows = await transaction`
@@ -153,7 +153,7 @@ async function dropCare(
   uid: string,
   catches: string[],
 ): Promise<void> {
-  const marker = `${snapshot.key}@${snapshot.npcTimestamp}$nurse${cell}`;
+  const marker = snapshot.visitMarker('nurse', cell);
   const given = new Set(catches);
 
   await tx(async (transaction) => {

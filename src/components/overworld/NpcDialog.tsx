@@ -20,7 +20,9 @@ import {
   breed,
   buyFossil,
   buyFromVendor,
+  getTendedCount,
   groomCatch,
+  hasVisited,
   remindMove,
   reviveFossil,
   sellToVendor,
@@ -31,21 +33,25 @@ import type { Moves } from '../../data/ids/moves';
 import { getItemData, isFossil } from '../../data/items';
 import { getHeldPowerStat } from '../../data/items/power-items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
+import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import Npc, {
   BREEDING_FEE,
   DAYCARE_FEE,
   GROOMING_FEE,
   NPC_NAMES,
+  NURSE_CARE_LIMIT,
   REMINDER_FEE,
   getRecallableMoves,
 } from '../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT } from '../../data/overworld/vendor';
-import { type BreedingParent, canBreed } from '../../overworld/breeding';
+import { type BreedingParent, canBreed, canLayEggs } from '../../overworld/breeding';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
 import InventoryPicker, { type ItemAmount, describeItem } from '../items/InventoryPicker';
 import ItemGrid from '../items/ItemGrid';
+import NpcSprite from './NpcSprite';
+import AnimatedSprite from '../sprites/AnimatedSprite';
 import ItemSprite from '../items/ItemSprite';
 import TeachMoveDialog, { MoveLine } from '../catches/TeachMoveDialog';
 import {
@@ -62,6 +68,7 @@ import {
   Row,
   RowButton,
   Status,
+  useToast,
 } from '../styled';
 
 /**
@@ -182,10 +189,17 @@ function NpcCounter(
     catches: Resource<CatchOption[]>;
     gold: Resource<number>;
     bag: Resource<InventoryEntry[]>;
+    /** Whether the maniac has already sold to this player this window */
+    visited: Resource<boolean>;
+    /** How many pokemon Nurse Joy has seen to this window */
+    tended: Resource<number>;
+    /** Whether the daycare lady has already warmed an egg this window */
+    warmed: Resource<boolean>;
     onServed: () => void;
     onTraded: () => void;
   },
 ): JSX.Element {
+  const toast = useToast();
   const [status, setStatus] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
@@ -200,11 +214,6 @@ function NpcCounter(
   const [remindee, setRemindee] = createSignal<string | null>(null);
   const [recall, setRecall] = createSignal<Moves | null>(null);
   const [reminding, setReminding] = createSignal<[catchId: string, move: Moves] | null>(null);
-  // Which of the two the maniac is carrying has been pointed at, and
-  // which of the ones in the bag has been put on the scientist's
-  // bench. Neither is spent until the button on the bar is pressed
-  const [buying, setBuying] = createSignal<Items | null>(null);
-  const [opening, setOpening] = createSignal<Items | null>(null);
 
   /**
    * The purse and the bag. Both are re-read after every trade, since a
@@ -308,6 +317,13 @@ function NpcCounter(
     (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
   /**
+   * How many pokemon Nurse Joy still has room for this window. Her
+   * limit counts pokemon rather than visits, which is why it is a
+   * number rather than a seen-already flag
+   */
+  const nurseRoom = (): number => Math.max(0, NURSE_CARE_LIMIT - (props.tended.latest ?? 0));
+
+  /**
    * Which pokemon has been picked out for the reminder
    */
   const remembering = (): CatchOption | null =>
@@ -356,8 +372,6 @@ function NpcCounter(
     setCounter(null);
     forget();
     setReminding(null);
-    setBuying(null);
-    setOpening(null);
     props.onClose();
   };
 
@@ -375,14 +389,22 @@ function NpcCounter(
       .then((egg) => {
         setBusy(false);
 
+        // Said in passing rather than in the panel: the egg is
+        // already in the box by the time there is anything to report
         if (egg == null) {
-          setStatus(
-            'The breeder handed them back — that pair, that price, or you have already left a pair with him this while.',
-          );
+          toast.push({
+            message:
+              'The breeder handed them back: that pair, that price, or you have already left a pair with him this while.',
+            tone: 'ember',
+          });
           return;
         }
         setChosen([]);
-        setStatus(`An egg. It is yours — carry it as your buddy and walk. (−${BREEDING_FEE} gold)`);
+        toast.push({
+          title: 'An egg',
+          message: `Carry it as your buddy and walk. −${BREEDING_FEE} gold`,
+          tone: 'leaf',
+        });
         props.onServed();
         props.onChange?.();
       })
@@ -430,17 +452,34 @@ function NpcCounter(
     boostEgg(snapshot, standing[0], id)
       .then((steps) => {
         setBusy(false);
-        setStatus(
-          steps == null
-            ? 'She would not take it — it may be ready already, or she has already warmed one for you this while.'
-            : `She warmed it along to ${steps} steps. (−${DAYCARE_FEE} gold)`,
-        );
+
+        if (steps == null) {
+          toast.push({
+            message:
+              'She would not take it: it may be ready already, or she has already warmed one for you this while.',
+            tone: 'ember',
+          });
+          return;
+        }
+        toast.push({
+          title: 'Egg',
+          message: `Warmed along to ${steps} steps. −${DAYCARE_FEE} gold`,
+          art: () => (
+            <span class="flex size-8 items-center justify-center">
+              <AnimatedSprite species={Species.Egg} direction="DownLeft" fill still label="" />
+            </span>
+          ),
+          tone: 'leaf',
+        });
         props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -507,21 +546,18 @@ function NpcCounter(
         setBusy(false);
 
         if (done == null) {
-          setStatus(
-            buyingIt
-              ? 'He would not sell you that — it is not in his crate, or your purse will not cover it.'
-              : 'He would not take that — it is worth nothing to him, or you have not got it.',
-          );
           return;
         }
-
-        const moved = priceOf(item, buyingIt);
-
-        setStatus(
-          buyingIt
-            ? `He handed over a ${describeItem(item)} and counted your gold. (−${moved} gold)`
-            : `He looked your ${describeItem(item)} over and paid up. (+${moved} gold)`,
-        );
+        // A purchase is worth a word in passing; a sale's receipt is
+        // the purse badge climbing, and a refusal is the greyed square
+        if (buyingIt) {
+          toast.push({
+            title: describeItem(item),
+            message: `−${priceOf(item, true)} gold`,
+            art: () => <ItemSprite item={item} size={24} label="" />,
+            tone: 'leaf',
+          });
+        }
         props.onTraded();
         props.onChange?.();
       })
@@ -532,16 +568,16 @@ function NpcCounter(
   };
 
   /**
-   * Buy the fossil that has been pointed at. He sells one while he is
-   * standing here, so the refusal covers both a purse that will not
-   * stretch and a player he has already dealt with
+   * Buy one of the maniac's rocks. One press, one purchase, the way
+   * the vendor's crate trades: the price is on the square, and he
+   * sells one while he is standing here, so the sold state that
+   * follows is what ends the shopping
    */
-  const buyRock = (): void => {
+  const buyRock = (item: Items): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
-    const item = buying();
 
-    if (snapshot == null || standing == null || item == null) {
+    if (snapshot == null || standing == null) {
       return;
     }
     setStatus(null);
@@ -550,16 +586,18 @@ function NpcCounter(
       .then((done) => {
         setBusy(false);
 
-        if (done == null) {
-          setStatus(
-            'He would not part with it — your purse will not cover it, or he has already sold you one this while.',
-          );
-          return;
+        // The word in passing is the purchase; the shelf turning to
+        // "sold" says the rest
+        if (done != null) {
+          toast.push({
+            title: describeItem(item),
+            message: `−${getFossilPrice(item)} gold`,
+            art: () => <ItemSprite item={item} size={24} label="" />,
+            tone: 'leaf',
+          });
+          props.onTraded();
+          props.onChange?.();
         }
-        setBuying(null);
-        setStatus(`He wrapped it up and counted your gold. (−${getFossilPrice(item)} gold)`);
-        props.onTraded();
-        props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
@@ -569,16 +607,14 @@ function NpcCounter(
 
   /**
    * Put the fossil on the bench. What comes out is the fossil's
-   * rather than anybody's choice, and the rock is gone either way —
-   * which is why it is a button on the bar rather than a press on the
-   * row
+   * rather than anybody's choice; one press opens one rock, the way
+   * every other counter here trades
    */
-  const openRock = (): void => {
+  const openRock = (item: Items): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
-    const item = opening();
 
-    if (snapshot == null || standing == null || item == null) {
+    if (snapshot == null || standing == null) {
       return;
     }
     setStatus(null);
@@ -588,22 +624,44 @@ function NpcCounter(
         setBusy(false);
 
         if (revived == null) {
-          setStatus('Nothing came of it — you may not be carrying that any more.');
+          toast.push({
+            message: 'Nothing came of it: you may not be carrying that any more.',
+            tone: 'ember',
+          });
           return;
         }
-        setOpening(null);
-        setStatus(
-          `The rock came apart and left a ${getSpeciesData(revived.species).name} behind, level ${
-            revived.level
-          }.${revived.shiny ? ' It sparkles.' : ''}`,
-        );
+        // Said over the counter rather than under it: the bench is
+        // cleared for the next rock the moment this one is open, and a
+        // line in the panel would go with it
+        toast.push({
+          title: getSpeciesData(revived.species).name,
+          message: `Level ${revived.level}, out of ${describeItem(item)}.${
+            revived.shiny ? ' It sparkles.' : ''
+          }`,
+          art: () => (
+            <span class="flex size-8 items-center justify-center">
+              <AnimatedSprite
+                species={revived.species}
+                shiny={revived.shiny}
+                direction="DownLeft"
+                fill
+                still
+                label=""
+              />
+            </span>
+          ),
+          tone: 'leaf',
+        });
         props.onTraded();
         props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        toast.push({
+          message: caught instanceof Error ? caught.message : String(caught),
+          tone: 'ember',
+        });
       });
   };
 
@@ -641,7 +699,7 @@ function NpcCounter(
     if (npc === Npc.Breeder) {
       return (
         <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
-          Breed ({BREEDING_FEE} gold)
+          Breed <Badge tone="gold">{BREEDING_FEE} gold</Badge>
         </Button>
       );
     }
@@ -650,6 +708,9 @@ function NpcCounter(
         <Button
           tone="primary"
           disabled={busy() || scales() < 1 || remindee() == null || recall() == null}
+          // The badge is the price drawn rather than spelled out, so
+          // the button says in a picture what the bag says in one
+          label="Remind, 1 Heart Scale"
           onClick={() => {
             const id = remindee();
             const move = recall();
@@ -659,34 +720,17 @@ function NpcCounter(
             }
           }}
         >
-          Remind it (1 Heart Scale)
-        </Button>
-      );
-    }
-    if (npc === Npc.FossilManiac) {
-      const item = buying();
-
-      return (
-        <Button
-          tone="primary"
-          disabled={busy() || item == null || getFossilPrice(item) > (props.gold.latest ?? 0)}
-          onClick={buyRock}
-        >
-          {item == null ? 'Buy' : `Buy (${getFossilPrice(item)} gold)`}
-        </Button>
-      );
-    }
-    if (npc === Npc.FossilScientist) {
-      return (
-        <Button tone="primary" disabled={busy() || opening() == null} onClick={openRock}>
-          Revive it
+          Remind{' '}
+          <Badge tone="gold">
+            <ItemSprite item={REMINDER_FEE} size={16} label="" />1
+          </Badge>
         </Button>
       );
     }
     if (npc !== Npc.Vendor) {
-      // The daycare lady and the groomer take one pokemon and act on
-      // it the moment it is pressed, so there is nothing left to agree
-      // to — a button here would only ask the same question twice
+      // The daycare lady, the groomer, the maniac and the scientist
+      // act the moment something is pressed, so there is nothing left
+      // to agree to — a button here would only ask the question twice
       return null;
     }
 
@@ -744,22 +788,17 @@ function NpcCounter(
         <Show when={showing()}>
           {(standing) => (
             <>
-              {/* Where they will stand once there is somebody drawn.
-                  The room is held now rather than added later, so the
-                  dialog does not change shape under a player who
-                  already knows it — the same room the grunt's stop
-                  keeps.
+              {/* The person themselves, off their overworld charset —
+                  the same figure the player just walked up to. The
+                  room is held whether or not the sheet has landed, so
+                  the dialog does not change shape under a player who
+                  already knows it.
 
                   What they say goes under them rather than in the
                   dialog's description, where it was the game's voice
                   rather than theirs */}
               <div class="flex flex-col items-center gap-2 pt-1 text-center">
-                <div
-                  class="flex h-24 w-24 items-end justify-center rounded-panel border border-dashed
-                    border-line bg-line-soft/60 text-xs text-muted"
-                >
-                  <span class="pb-2">{who()}</span>
-                </div>
+                <NpcSprite npc={standing()[1]} label="" />
                 <blockquote class="m-0 max-w-prose text-sm text-muted italic">
                   “{NPC_QUOTES[standing()[1]]}”
                 </blockquote>
@@ -785,8 +824,13 @@ function NpcCounter(
                     value={chosen()}
                     verb="Breed"
                     empty="You have nothing to breed."
-                    filter={(option) => !isEgg(option.caught) && !option.fighting}
-                    note={(option) => (isShadow(option.caught) ? 'shadow' : null)}
+                    filter={(option) =>
+                      // The undiscovered group is left out rather than
+                      // shown and refused: a legendary is unbreedable
+                      // whatever it stands beside, so a square for it
+                      // is a press that can never come to anything
+                      !isEgg(option.caught) && !option.fighting && canLayEggs(option.caught.species)
+                    }
                     onPick={(picked) => {
                       setStatus(null);
                       setChosen(picked);
@@ -810,10 +854,12 @@ function NpcCounter(
                     there is nothing to weigh up before handing one over
                     — and a counter that took a party first and a button
                     second was two presses for a decision nobody makes.
-                    What keeps her from being a tap is the window: one
-                    visit per player while she is standing here */}
+                    What keeps her from being a tap is the window: her
+                    limit counts pokemon, and the picker goes dead when
+                    the room is spent rather than pretending otherwise */}
                   <CatchPicker
                     inline
+                    disabled={busy() || nurseRoom() === 0}
                     options={offers()}
                     value={null}
                     verb="Heal"
@@ -829,6 +875,13 @@ function NpcCounter(
                       }
                     }}
                   />
+                  {/* What the visit buys, in numbers: the quote above
+                      says she is free, this says how far free goes */}
+                  <Meta class="block">
+                    {nurseRoom() === 0
+                      ? 'She has seen all she can for you while she is here.'
+                      : `Up to ${NURSE_CARE_LIMIT} pokemon while she is here, ${nurseRoom()} to go.`}
+                  </Meta>
                 </DialogSection>
               </Show>
 
@@ -850,12 +903,22 @@ function NpcCounter(
                       isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
                     }
                     note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
+                    disabled={props.warmed.latest === true}
                     onPick={(id) => {
                       if (id != null) {
                         pushEgg(id);
                       }
                     }}
                   />
+                  {/* What it costs, and whether there is anything left
+                      to spend it on: one egg a window is her rule, and
+                      after it the squares would only offer a press the
+                      server refuses */}
+                  <Meta class="block">
+                    {props.warmed.latest === true
+                      ? 'She has warmed her one for you this while.'
+                      : `${DAYCARE_FEE} gold, once while she is here.`}
+                  </Meta>
                 </DialogSection>
               </Show>
 
@@ -981,31 +1044,40 @@ function NpcCounter(
                   {/* Two rocks, and nothing about what is in them.
                     He is selling the dig rather than the pokemon, and
                     a player who knew which species each held would be
-                    buying a name off a shelf */}
+                    buying a name off a shelf.
+
+                    Sold is a state of the shelf, not a message: one a
+                    window is his rule, and after it the squares would
+                    only offer a press the server refuses */}
                   <Show
-                    when={offer().length > 0}
-                    fallback={<Note>He has nothing on him just now.</Note>}
+                    when={props.visited.latest !== true}
+                    fallback={<Note>He has sold you his one for today.</Note>}
                   >
-                    {/* The bag's own tray, so two rocks on a stranger
-                        read the way everything else the player is
-                        offered does: a picture with the price on it,
-                        and what is inside on the card over it */}
-                    <ItemGrid
-                      bare
-                      verb="Choose"
-                      disabled={busy()}
-                      entries={offer().map((item) => ({
-                        item,
-                        selected: buying() === item,
-                        note: `${getFossilPrice(item)} gold`,
-                        said: `Choose ${describeItem(item)} — ${getFossilPrice(item)} gold`,
-                        card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
-                      }))}
-                      onPress={(item) => {
-                        setStatus(null);
-                        setBuying(item);
-                      }}
-                    />
+                    <Show
+                      when={offer().length > 0}
+                      fallback={<Note>He has nothing on him just now.</Note>}
+                    >
+                      {/* The bag's own tray, trading the way the
+                        vendor's crate does: the press is the purchase,
+                        with the price on the square and the purse
+                        greying what it will not stretch to */}
+                      <ItemGrid
+                        bare
+                        verb="Buy"
+                        disabled={busy()}
+                        entries={offer().map((item) => ({
+                          item,
+                          note: `${getFossilPrice(item)} gold`,
+                          said: `Buy ${describeItem(item)}, ${getFossilPrice(item)} gold`,
+                          blocked:
+                            getFossilPrice(item) > (props.gold.latest ?? 0)
+                              ? 'More than you hold'
+                              : null,
+                          card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
+                        }))}
+                        onPress={buyRock}
+                      />
+                    </Show>
                   </Show>
                 </DialogSection>
               </Show>
@@ -1020,26 +1092,19 @@ function NpcCounter(
                     when={fossils().length > 0}
                     fallback={<Note>You are carrying nothing he can open.</Note>}
                   >
-                    <List>
-                      <For each={fossils()}>
-                        {(entry) => (
-                          <ListRow selected={opening() === entry.item}>
-                            <RowButton
-                              pressed={opening() === entry.item}
-                              disabled={busy()}
-                              onClick={() => {
-                                setStatus(null);
-                                setOpening(entry.item);
-                              }}
-                            >
-                              <ItemSprite item={entry.item} size={24} label="" />
-                              <span class="grow text-left">{describeItem(entry.item)}</span>
-                              <Meta>× {entry.amount}</Meta>
-                            </RowButton>
-                          </ListRow>
-                        )}
-                      </For>
-                    </List>
+                    {/* The bag's own tray, opening rocks the way the
+                        crate sells: one press, one rock on the bench */}
+                    <ItemGrid
+                      bare
+                      verb="Revive"
+                      disabled={busy()}
+                      entries={fossils().map((entry) => ({
+                        item: entry.item,
+                        amount: entry.amount,
+                        said: `Revive ${describeItem(entry.item)}`,
+                      }))}
+                      onPress={openRock}
+                    />
                     {/* What comes out is the rock's business, but the
                         level is not — a party picked around it is
                         worth planning before the fossil is spent */}
@@ -1179,8 +1244,10 @@ function NpcCounter(
  */
 export default function NpcDialog(props: NpcDialogProps): JSX.Element {
   // Bumped after every trade, so the purse and the bag catch up with
-  // what was just bought or sold
+  // what was just bought or sold; served counts the free visits, for
+  // the reads that follow the window rather than the purse
   const [traded, setTraded] = createSignal(0);
+  const [served, setServed] = createSignal(0);
 
   // Both lists are drawn from this one read: the pair the breeder
   // wants and the egg the daycare lady wants are the same records,
@@ -1204,13 +1271,49 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     async ([player]) => getInventory(player),
   );
 
+  // Whether the maniac has already sold to this player this window.
+  // The server refuses a second sale either way; this is what lets
+  // the dialog say so instead of offering a dead trade
+  const [visited] = createResource(
+    () =>
+      props.snapshot == null || props.standing?.[1] !== Npc.FossilManiac
+        ? null
+        : ([props.snapshot, props.standing[0], traded()] as const),
+    async ([snapshot, cell]) => hasVisited(snapshot, 'fossil', cell),
+  );
+
+  // Whether the daycare lady has already taken an egg this window.
+  // One is her rule, and this is what greys the box afterwards rather
+  // than leaving a press the server refuses
+  const [warmed] = createResource(
+    () =>
+      props.snapshot == null || props.standing?.[1] !== Npc.DaycareLady
+        ? null
+        : ([props.snapshot, props.standing[0], served()] as const),
+    async ([snapshot, cell]) => hasVisited(snapshot, 'daycare', cell),
+  );
+
+  // How much of Nurse Joy's window this player has used. Re-read
+  // after every pokemon handed over, so the room left counts down
+  const [tended] = createResource(
+    () =>
+      props.snapshot == null || props.standing?.[1] !== Npc.NurseJoy
+        ? null
+        : ([props.snapshot, props.standing[0], served()] as const),
+    async ([snapshot, cell]) => getTendedCount(snapshot, cell),
+  );
+
   return (
     <NpcCounter
       {...props}
       catches={catches}
       gold={gold}
       bag={bag}
+      visited={visited}
+      tended={tended}
+      warmed={warmed}
       onServed={() => {
+        setServed((count) => count + 1);
         Promise.resolve(refetch()).catch(() => undefined);
       }}
       onTraded={() => {

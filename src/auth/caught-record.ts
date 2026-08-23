@@ -8,7 +8,8 @@ import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { isPerfectIVs } from '../data/items/bottle-caps';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import { type Stats, isZeroIVs } from '../data/constants/stats';
-import type Abilities from '../data/ids/abilities';
+import type { AuraKind } from '../canvas/auras';
+import Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Balls, Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -304,6 +305,28 @@ export function isAuctionableCatch(caught: {
  */
 export function isShadow(caught: { shadow: boolean }): boolean {
   return caught.shadow;
+}
+
+/**
+ * Whether it is a shadow put right. The Purified mark does nothing in
+ * a fight, but it is worth drawing
+ */
+export function isPurified(caught: { abilities: Abilities[] }): boolean {
+  return new Set(caught.abilities).has(Abilities.Purified);
+}
+
+/**
+ * Which aura it stands in — a shadow's haze, a purified one's light —
+ * or none, in which case it casts a plain shadow like anything else
+ */
+export function catchAura(caught: {
+  shadow: boolean;
+  abilities: Abilities[];
+}): AuraKind | undefined {
+  if (isShadow(caught)) {
+    return 'shadow';
+  }
+  return isPurified(caught) ? 'purified' : undefined;
 }
 
 /**

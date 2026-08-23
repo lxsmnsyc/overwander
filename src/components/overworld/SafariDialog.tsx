@@ -15,7 +15,7 @@ import type { EncounterRecord } from '../../auth/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
 import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
-import { isShiny } from '../../auth/caught-record';
+import { isShadow, isShiny } from '../../auth/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../../overworld/safari';
@@ -371,6 +371,7 @@ function SafariBody(
                     // front of the player is the one encounter worth
                     // spending the whole bag on
                     sparkle={isShiny(active().encounter)}
+                    aura={isShadow(active().encounter) ? 'shadow' : undefined}
                     animation={SpriteAnim.Idle}
                     direction="Down"
                     scale={4}

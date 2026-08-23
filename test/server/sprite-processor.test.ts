@@ -284,9 +284,9 @@ describe('where a sheet is written', () => {
   });
 
   it('keeps anything else out of the pokemon tree', () => {
-    expect(extraDestination({ species: 12, female: false, shiny: false })).toEqual({
-      image: 'sprites/extras/12.png',
-      meta: 'sprites/extras/12.json',
+    expect(extraDestination('Battle Effects!')).toEqual({
+      image: 'sprites/extras/battle-effects.png',
+      meta: 'sprites/extras/battle-effects.json',
     });
   });
 

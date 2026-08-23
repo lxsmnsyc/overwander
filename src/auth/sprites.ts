@@ -6,6 +6,10 @@ import type { OverworldGrid, OverworldResult } from '../server/sprites/overworld
 import processOverworld from '../server/sprites/overworld';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
+import type { TerrainBlock, TilesetResult, TilesetSheet } from '../server/sprites/tileset';
+import processTileset, { parseSpeeds, parseTerrains } from '../server/sprites/tileset';
+import type { DrawnRole } from '../data/constants/tileset-rip';
+import { DRAWN_ROLES } from '../data/constants/tileset-rip';
 import { requireAdmin } from '../server/roles';
 
 /**
@@ -28,14 +32,32 @@ export type {
   Drawing,
   OverworldGrid,
   OverworldResult,
-  ProcessResult,
+  DrawnRole,
   PmdResult,
+  ProcessResult,
+  TerrainBlock,
+  TilesetResult,
+  TilesetSheet,
   UploadedImage,
 };
 
 /** Only a development build can process sprites at all. */
 export function canProcessSprites(): boolean {
   return import.meta.env.DEV;
+}
+
+/** Which terrain the form named for each role, where it named one. */
+function drawnFrom(form: FormData): Partial<Record<DrawnRole, string>> {
+  const draws: Partial<Record<DrawnRole, string>> = {};
+
+  for (const role of DRAWN_ROLES) {
+    const name = String(form.get(`draws-${role}`) ?? '').trim();
+
+    if (name.length > 0) {
+      draws[role] = name;
+    }
+  }
+  return draws;
 }
 
 /** A checkbox that was never ticked is not in the form at all. */
@@ -136,6 +158,30 @@ export const packOverworld = action(async (form: FormData): Promise<OverworldRes
   });
 }, 'sprites/overworld');
 
+/**
+ * A dungeon tileset rip into `public/sprites/biome/{biome}`.
+ *
+ * The sheet says where its own table, legend and palettes are, so the
+ * only things asked for here are the ones written on it in English:
+ * which column is which terrain, and how many drawings of each it
+ * holds
+ */
+export const packBiome = action(async (form: FormData): Promise<TilesetResult> => {
+  'use server';
+  await requireAdmin(String(form.get('token') ?? ''));
+
+  const picked = asFile(form.get('sheet'), 'sheet');
+
+  return processTileset(new Uint8Array(await picked.arrayBuffer()), {
+    biome: Number.parseInt(String(form.get('biome') ?? ''), 10),
+    terrains: parseTerrains(String(form.get('terrains') ?? '')),
+    speeds: parseSpeeds(String(form.get('speeds') ?? '')),
+    // Blank means the first terrain of that role, which is what every
+    // sheet packed before there was a choice took
+    draws: drawnFrom(form),
+  });
+}, 'sprites/biome');
+
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {
   'use server';
@@ -152,6 +198,8 @@ export const packExtras = action(async (form: FormData): Promise<ProcessResult> 
         bytes: new Uint8Array(await file.arrayBuffer()),
       })),
     ),
-    { ...naming(form), female: flag(form, 'female'), shiny: false },
+    // A sheet of loose images is about nothing in particular, so it is
+    // named rather than filed under a species
+    { name: String(form.get('name') ?? ''), compact: flag(form, 'compact') },
   );
 }, 'sprites/extras');

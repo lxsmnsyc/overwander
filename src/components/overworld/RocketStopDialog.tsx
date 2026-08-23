@@ -1,5 +1,5 @@
 import type { PlayerIdentity } from '../../auth/user';
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
 import Npc from '../../data/overworld/npc';
@@ -33,6 +33,14 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   const [status, setStatus] = createSignal<string | null>(null);
 
   const stop = (): string | null => props.challenge?.[0] ?? null;
+
+  // A refusal belongs to the grunt that refused: reopened on another
+  // stop, the dialog must not greet the player with the last one's
+  createEffect(() => {
+    if (props.challenge != null) {
+      setStatus(null);
+    }
+  });
 
   const accept = (catches: string[]): void => {
     const id = stop();

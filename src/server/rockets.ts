@@ -1,7 +1,7 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import type { EncounterRecord } from '../auth/encounter-record';
+import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import {
   type RocketRecord,
@@ -21,9 +21,11 @@ import {
   ROCKET_STOP_GOLD,
   createRocketParty,
 } from '../overworld/rocket';
+import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { getSql, jsonOf, newDocId, tx } from './db';
+import { readEncounter } from './encounter-io';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
 import { foughtBattle, readBattle } from './raid-io';
@@ -272,13 +274,16 @@ export interface RocketReward {
 }
 
 /**
- * Collect what a beaten grunt owes. The `defeated` flag is both the
- * record of the win and the marker that guards it: it is set inside a
- * transaction, and only the call that sets it pays, so a stop pays
- * once however many times it is claimed.
+ * Collect what a beaten grunt owes. The `defeated` flag guards the
+ * **gold**: it is set inside a transaction, and only the call that
+ * sets it pays, so a stop pays once however many times it is claimed.
+ *
+ * The pokemon is not spent by walking away from it: the encounter is
+ * staged per player and handed back as-is until it is caught, so a
+ * reward run from can be walked back to. Only a catch retires it.
  *
  * Resolves null when the fight was not won, was somebody else's, or
- * has already been collected
+ * the pokemon is already caught and the gold already paid
  */
 export async function claimRocketReward(uid: string, stop: string): Promise<RocketReward | null> {
   const stored = await readRocketStop(stop, uid);
@@ -289,7 +294,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 
   const record = asRocketRecord(stored);
 
-  if (record.player !== uid || record.defeated || record.battle == null) {
+  if (record.player !== uid || record.battle == null) {
     return null;
   }
 
@@ -303,15 +308,30 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     return null;
   }
 
-  // The defeated flag is both the record of the win and the marker
-  // that guards the payout; the guard rides in the statement
+  // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
     update rocket_stops set defeated = true
     where stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
+  const [spawnId, spawn] = deriveRocketReward(record, stop, uid);
+
   if (claimed.count === 0) {
-    return null;
+    // Paid already: the only thing possibly still owed is the
+    // pokemon. Caught, it is retired and there is nothing left here
+    const existing = await readEncounter(spawnId, uid);
+
+    if (existing == null) {
+      return null;
+    }
+
+    const encounter = asEncounterRecord(existing);
+    const gone = await getSql()`
+      select 1 from fled_encounters
+      where player = ${uid} and key = ${encounterKey(encounter)}
+    `;
+
+    return gone.length > 0 ? null : { encounter, gold: 0 };
   }
 
   // What the grunt is worth, and then what the winner brought along:
@@ -323,7 +343,6 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
-  const [spawnId, spawn] = deriveRocketReward(record, stop, uid);
   // Fixed rather than rolled, so the same grunt is worth the same to
   // everyone who put them down — and far below the level-50 party it
   // was taken from

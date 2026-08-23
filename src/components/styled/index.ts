@@ -51,5 +51,6 @@ export { default as TextArea } from './textarea';
 export type { TextAreaProps } from './textarea';
 export { default as TextField } from './text-field';
 export type { TextFieldKind, TextFieldProps } from './text-field';
+export { PortalHost, usePortalHost } from './portal-host';
 export { Detail, Tooltip, TooltipHost, TooltipLayer } from './tooltip';
 export type { TooltipHostProps, TooltipProps } from './tooltip';

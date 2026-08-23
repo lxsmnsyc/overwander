@@ -520,6 +520,21 @@ export function facingFrom(worldFacing: number, yaw: Yaw = 0): number {
 }
 
 /**
+ * How many quarter turns the board has been given, rounded to the
+ * nearest.
+ *
+ * Ground tiles are drawn for one point of view and can only be turned
+ * in quarters, so a camera anywhere in between is served by whichever
+ * quarter it is closest to. It changes over as the camera passes the
+ * halfway point, which is the only place the switch is least visible
+ */
+export function yawTurns(yaw: Yaw = 0): number {
+  const quarter = Math.round(yaw / (Math.PI / 2));
+
+  return ((quarter % 4) + 4) % 4;
+}
+
+/**
  * The angle a ground point stands at, seen from the middle of the
  * board. It is what a drag is measured in: grab a bit of the plane
  * and the board turns so that bit stays under the pointer

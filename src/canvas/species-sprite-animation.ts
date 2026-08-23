@@ -707,9 +707,12 @@ export default class SpeciesSpriteAnimation {
    * because the anchors travel with the body: pinning each frame's own
    * mark to one spot subtracts exactly the motion the artist drew. A
    * Charge bobs a pixel and its shadow mark bobs with it, so anchoring
-   * frame by frame leaves the pokemon standing perfectly still
+   * frame by frame leaves the pokemon standing perfectly still.
+   *
+   * Public for the DOM sprite, whose box and shadow have to hold one
+   * size for the whole clip for the same reason
    */
-  private resting(kind: SpriteAnchor): Point | null {
+  resting(kind: SpriteAnchor): Point | null {
     const clip = this.clip;
     const anchors = this.anchorsAt(0);
 
@@ -725,6 +728,17 @@ export default class SpeciesSpriteAnimation {
    * that belongs to the pokemon rather than to whatever it is standing
    * on
    */
+  /**
+   * Which of the three sizes the game itself calls this pokemon:
+   * small, ordinary, large. It is the only judgment of how big a
+   * pokemon *is* that a sheet carries, since what is drawn measures
+   * the pose and a Zubat with its wings out fills more of a frame
+   * than a Bulbasaur does
+   */
+  get shadowSize(): number {
+    return this.data.anims.shadowSize;
+  }
+
   shadowRadius(scale = 1, squash = SHADOW_FLATNESS): { x: number; y: number } {
     // The cell rather than the trimmed frame: a pokemon's shadow is a
     // fact about the pokemon, and trimming would shrink it on the

@@ -30,7 +30,7 @@ import {
   MoveTargetType,
   type ProgressData,
 } from '../../battle/events';
-import type Abilities from '../../data/ids/abilities';
+import Abilities from '../../data/ids/abilities';
 import type Unit from '../../battle/unit';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { AI_REST_PERIOD } from '../../battle/ai/idle';
@@ -40,6 +40,7 @@ import pickStatusCast from '../../data/constants/status-cast';
 import { Stats } from '../../data/constants/stats';
 import { MoveFlags, type Moves } from '../../data/ids/moves';
 import { Genders, type Species } from '../../data/ids/species';
+import { paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
 import type { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 
@@ -756,6 +757,7 @@ function drawSlot(
   context: CanvasRenderingContext2D,
   slot: Slot,
   striking: Map<Unit, Striking>,
+  clock: number,
   hidden = false,
 ): void {
   const { unit } = slot;
@@ -799,7 +801,22 @@ function drawSlot(
       const placement = { scale: scaleOf(slot), anchor: 'shadow' } as const;
       const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
 
-      sprite.drawShadow(context, x, y, placement);
+      // A shadow pokemon stands in its haze and a purified one in its
+      // light, and the aura **is** its shadow — the plain ellipse is
+      // for everything else. The painters are the ones the dialogs
+      // run, on the battle's own clock so a replay paints the same
+      // wisps
+      if (unit.hasAbility(Abilities.Shadow)) {
+        const radius = sprite.shadowRadius(scaleOf(slot));
+
+        paintShadowAura(context, x, y, radius.x, radius.y, clock, slot.x + slot.y);
+      } else if (unit.hasAbility(Abilities.Purified)) {
+        const radius = sprite.shadowRadius(scaleOf(slot));
+
+        paintPurifiedAura(context, x, y, radius.x, radius.y, clock, slot.x + slot.y);
+      } else {
+        sprite.drawShadow(context, x, y, placement);
+      }
       sprite.draw(context, x, y, placement);
     } else {
       context.beginPath();
@@ -1171,7 +1188,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       placed = slots;
 
       for (const slot of slots) {
-        drawSlot(context, slot, striking, gone.has(slot.unit));
+        drawSlot(context, slot, striking, clock, gone.has(slot.unit));
       }
 
       // The sky, over the pokemon and under whatever is going off:

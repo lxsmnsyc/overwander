@@ -127,9 +127,11 @@ function isDitto(species: Species): boolean {
 
 /**
  * Whether the species can breed at all. The undiscovered group is
- * what the games put legendaries, mythicals and the unbreedable in
+ * what the games put legendaries, mythicals and the unbreedable in.
+ * Exported so a picker can leave them out rather than offer a pairing
+ * that is refused whatever it is put beside
  */
-function canLayEggs(species: Species): boolean {
+export function canLayEggs(species: Species): boolean {
   const groups = new Set(getSpeciesData(species).eggGroups);
 
   return groups.size > 0 && !groups.has(EggGroups.NoEggsDiscovered);

@@ -1,6 +1,102 @@
 {
   "version": 1,
   "sheets": {
+    "public/sprites/biome/0/image.png": {
+      "digest": "ffc924b59f552f59",
+      "bytes": 17691,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T06:36:43Z",
+        "as": "already compact",
+        "was": 17691,
+        "bytes": 17691
+      }
+    },
+    "public/sprites/biome/1/image.png": {
+      "digest": "1daf01626438a63c",
+      "bytes": 12240,
+      "width": 144,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T07:19:29Z",
+        "as": "already compact",
+        "was": 12240,
+        "bytes": 12240
+      }
+    },
+    "public/sprites/biome/11/image.png": {
+      "digest": "476441bb77a0d9d1",
+      "bytes": 20682,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T07:19:29Z",
+        "as": "already compact",
+        "was": 20682,
+        "bytes": 20682
+      }
+    },
+    "public/sprites/biome/19/image.png": {
+      "digest": "e0f82fa46a3fce4a",
+      "bytes": 17719,
+      "width": 168,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T10:34:53Z",
+        "as": "already compact",
+        "was": 17719,
+        "bytes": 17719
+      }
+    },
+    "public/sprites/biome/21/image.png": {
+      "digest": "a43fde42ccd87f48",
+      "bytes": 17563,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T10:34:53Z",
+        "as": "already compact",
+        "was": 17563,
+        "bytes": 17563
+      }
+    },
+    "public/sprites/biome/23/image.png": {
+      "digest": "411923ab097a8653",
+      "bytes": 12270,
+      "width": 144,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T06:59:59Z",
+        "as": "already compact",
+        "was": 12270,
+        "bytes": 12270
+      }
+    },
+    "public/sprites/biome/4/image.png": {
+      "digest": "d5919870026fc22d",
+      "bytes": 21368,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T10:34:53Z",
+        "as": "already compact",
+        "was": 21368,
+        "bytes": 21368
+      }
+    },
+    "public/sprites/biome/9/image.png": {
+      "digest": "8ed1a5a11a247ada",
+      "bytes": 19940,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-22T10:34:53Z",
+        "as": "already compact",
+        "was": 19940,
+        "bytes": 19940
+      }
+    },
     "public/sprites/overworld/landmarks-npc-0/image.png": {
       "digest": "8e285bd2e4977528",
       "bytes": 1462,

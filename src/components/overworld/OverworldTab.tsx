@@ -26,8 +26,8 @@ import {
   peekRaid,
 } from '../../auth/raids';
 import { savePosition } from '../../auth/positions';
-import { enterRocketStop } from '../../auth/rockets';
-import type { RocketRecord } from '../../auth/rocket-record';
+import { claimRocketReward, enterRocketStop } from '../../auth/rockets';
+import { type RocketRecord, rocketStopId } from '../../auth/rocket-record';
 import { createSafariSession, getRetiredKeys, isEncounterRetired } from '../../auth/safari';
 import type { NestOffer } from '../../server/overworld';
 import {
@@ -1000,8 +1000,22 @@ function OverworldBoard(props: {
         const stop = await enterRocketStop(loaded.snapshot, at);
 
         if (stop == null) {
-          // Either the window stages no grunt here, or this player has
-          // already put the one it stages on the ground
+          // The grunt is gone once beaten, but the pokemon they left
+          // may still be standing: claiming again pays nothing and
+          // hands it back until it is caught
+          const owed = await claimRocketReward(
+            rocketStopId(
+              loaded.snapshot.chunk,
+              loaded.snapshot.npcTimestamp,
+              at,
+              loaded.snapshot.offset,
+            ),
+          );
+
+          if (owed != null) {
+            game.setEncounter(owed.encounter);
+            return null;
+          }
           return 'The grunt has moved on.';
         }
         if (!(await canJoinRaids(user.uid))) {

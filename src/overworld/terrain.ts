@@ -1,15 +1,18 @@
 import { Around, canonicalMask } from '../data/overworld/autotile';
 import type { TerrainRole } from '../data/overworld/terrain';
 import { joins } from '../data/overworld/terrain';
-import { CHUNK_CELLS } from './chunk';
+import { CHUNK_CELLS, isGateCell } from './chunk';
 
 /**
  * The chunk read as ground rather than as a list of things on it.
  *
  * The walls are the rim: everything outside the chunk proper, apron
- * included, is rock, so the board sits inside a solid frame. A
- * landmark keeps its ordinary ground; the sprite standing on the cell
- * is what says something is there.
+ * included, is rock, so the board sits inside a solid frame. The
+ * frame opens at the four gates — a centered strip on each side —
+ * where the ground runs on outward, so the way into the next chunk
+ * is drawn as a path rather than found by pressing rock. A landmark
+ * keeps its ordinary ground; the sprite standing on the cell is what
+ * says something is there.
  *
  * Inside the frame everything is walked on, and is water where the
  * biome is.
@@ -46,8 +49,20 @@ const NEIGHBOURS: [dx: number, dy: number, bit: number][] = [
 export default function boardTerrain(options: TerrainOptions): BoardTerrain {
   const walkable: TerrainRole = options.water ? 'water' : 'ground';
 
-  const at = (x: number, y: number): TerrainRole =>
-    x < 0 || y < 0 || x >= CHUNK_CELLS || y >= CHUNK_CELLS ? 'wall' : walkable;
+  const at = (x: number, y: number): TerrainRole => {
+    const outX = x < 0 || x >= CHUNK_CELLS;
+    const outY = y < 0 || y >= CHUNK_CELLS;
+
+    if (!outX && !outY) {
+      return walkable;
+    }
+    // A gate's ground runs on outward as far as anybody asks, so the
+    // opening reads as a path leading away rather than an alcove
+    if (outX && outY) {
+      return 'wall';
+    }
+    return isGateCell(outX ? y : x) ? walkable : 'wall';
+  };
 
   return {
     at,

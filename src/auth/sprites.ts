@@ -6,6 +6,8 @@ import type { OverworldGrid, OverworldResult } from '../server/sprites/overworld
 import processOverworld from '../server/sprites/overworld';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
+import type { RecolorResult } from '../server/sprites/recolor';
+import recolorTileset, { parseSwaps } from '../server/sprites/recolor';
 import type { TerrainBlock, TilesetResult, TilesetSheet } from '../server/sprites/tileset';
 import processTileset, { parseSpeeds, parseTerrains } from '../server/sprites/tileset';
 import type { DrawnRole } from '../data/constants/tileset-rip';
@@ -35,6 +37,7 @@ export type {
   DrawnRole,
   PmdResult,
   ProcessResult,
+  RecolorResult,
   TerrainBlock,
   TilesetResult,
   TilesetSheet,
@@ -181,6 +184,22 @@ export const packBiome = action(async (form: FormData): Promise<TilesetResult> =
     draws: drawnFrom(form),
   });
 }, 'sprites/biome');
+
+/**
+ * A packed biome, palette-swapped into another biome's folder. No
+ * file rides along: the source is what an earlier pack wrote, and the
+ * map is typed in — run it empty first to be told the sheet's colours
+ */
+export const recolorBiome = action(async (form: FormData): Promise<RecolorResult> => {
+  'use server';
+  await requireAdmin(String(form.get('token') ?? ''));
+
+  return recolorTileset({
+    source: Number.parseInt(String(form.get('source') ?? ''), 10),
+    biome: Number.parseInt(String(form.get('biome') ?? ''), 10),
+    swaps: parseSwaps(String(form.get('swaps') ?? '')),
+  });
+}, 'sprites/recolor');
 
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {

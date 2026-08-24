@@ -182,32 +182,45 @@ describe('the apron around the chunk', () => {
   });
 
   it('is the way out of the chunk, one straight step over', () => {
-    expect(borderExit({ x: -1, y: 5 })).toEqual({ cell: 5 * CHUNK_CELLS, step: [-1, 0] });
-    expect(borderExit({ x: CHUNK_CELLS, y: 5 })).toEqual({
-      cell: 5 * CHUNK_CELLS + CHUNK_CELLS - 1,
+    expect(borderExit({ x: -1, y: 7 })).toEqual({ cell: 7 * CHUNK_CELLS, step: [-1, 0] });
+    expect(borderExit({ x: CHUNK_CELLS, y: 7 })).toEqual({
+      cell: 7 * CHUNK_CELLS + CHUNK_CELLS - 1,
       step: [1, 0],
     });
-    expect(borderExit({ x: 5, y: -1 })).toEqual({ cell: 5, step: [0, -1] });
-    expect(borderExit({ x: 5, y: CHUNK_CELLS })).toEqual({
-      cell: (CHUNK_CELLS - 1) * CHUNK_CELLS + 5,
+    expect(borderExit({ x: 7, y: -1 })).toEqual({ cell: 7, step: [0, -1] });
+    expect(borderExit({ x: 7, y: CHUNK_CELLS })).toEqual({
+      cell: (CHUNK_CELLS - 1) * CHUNK_CELLS + 7,
       step: [0, 1],
     });
 
     // A cell of the chunk is not a way out of it, and neither is a
     // corner, which is not a cell at all
-    expect(borderExit({ x: 5, y: 5 })).toBeNull();
+    expect(borderExit({ x: 7, y: 7 })).toBeNull();
     expect(borderExit({ x: -1, y: -1 })).toBeNull();
   });
 
-  it('leaves every threshold beside the edge it steps off', () => {
+  it('goes through at the gates and nowhere else', () => {
+    // The gates are the centered four cells of each side
+    expect(borderExit({ x: -1, y: 6 })).not.toBeNull();
+    expect(borderExit({ x: -1, y: 9 })).not.toBeNull();
+    expect(borderExit({ x: -1, y: 5 })).toBeNull();
+    expect(borderExit({ x: -1, y: 10 })).toBeNull();
+    expect(borderExit({ x: 5, y: -1 })).toBeNull();
+    expect(borderExit({ x: 10, y: CHUNK_CELLS })).toBeNull();
+    expect(borderExit({ x: CHUNK_CELLS, y: 0 })).toBeNull();
+  });
+
+  it('leaves every gate threshold beside the edge it steps off', () => {
     for (const cell of APRON) {
       const exit = borderExit(cell);
 
-      expect(exit).not.toBeNull();
+      if (exit == null) {
+        continue;
+      }
       // The edge cell it leaves from is the one it is level with
       const from: BoardCell = {
-        x: (exit?.cell ?? 0) % CHUNK_CELLS,
-        y: Math.floor((exit?.cell ?? 0) / CHUNK_CELLS),
+        x: exit.cell % CHUNK_CELLS,
+        y: Math.floor(exit.cell / CHUNK_CELLS),
       };
 
       expect(Math.abs(from.x - cell.x) + Math.abs(from.y - cell.y)).toBe(1);

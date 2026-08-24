@@ -174,13 +174,6 @@ const COLORS = {
   loading: '#1c1c1c',
   loadingHalo: 'rgba(255, 255, 255, 0.75)',
   /**
-   * The apron: the ring of thresholds around the chunk. Darker than the
-   * board and outside its lit surface, because it is not part of the
-   * chunk — it is the edge of it, and stepping onto one is leaving
-   */
-  border: 'rgba(0, 0, 0, 0.22)',
-  borderLine: 'rgba(0, 0, 0, 0.10)',
-  /**
    * The ground under something standing on it
    */
   shadow: 'rgba(0, 0, 0, 0.28)',
@@ -802,15 +795,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   });
 
   /**
-   * Point somewhere else. The apron counts — walking off the edge is
-   * something a player at a keyboard has to be able to ask for too —
-   * and its corners do not, since they are not cells
+   * Point somewhere else. The gates count — leaving is something a
+   * player at a keyboard has to be able to ask for too — but the rim
+   * wall's thresholds and the apron's corners do not: nothing pressed
+   * there does anything
    */
   const moveCursor = ([dx, dy]: [number, number]): void => {
     setCursor((at) => {
       const next = { x: at.x + dx, y: at.y + dy };
 
-      return isBoardCell(next) ? next : at;
+      if (!isBoardCell(next) || (isBorderCell(next) && borderExit(next) == null)) {
+        return at;
+      }
+      return next;
     });
   };
 
@@ -869,8 +866,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   const cellAt = (event: MouseEvent): BoardCell | null => {
     const at = fractionAt(event);
+    const cell = at == null ? null : boardCellAtFraction(at.x, at.y, yaw());
 
-    return at == null ? null : boardCellAtFraction(at.x, at.y, yaw());
+    // A threshold in the rim wall goes nowhere, so the pointer does
+    // not offer it
+    if (cell != null && isBorderCell(cell) && borderExit(cell) == null) {
+      return null;
+    }
+    return cell;
   };
 
   /**
@@ -1282,18 +1285,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       for (const square of squares) {
         traceCell(square);
 
-        // The apron is drawn as ground of a different kind: shaded
-        // over, and ruled with a fainter line. It is a step out of the
-        // chunk rather than a square of it, and a player should be able
-        // to see that without pressing one to find out
+        // The apron keeps the tiles' own look: the rim wall and the
+        // gates through it already say where the chunk ends, so no
+        // shade or rule is drawn over them
         if (isBorderCell(square)) {
-          // Shaded whether or not it is tiled. The apron is the same
-          // ground as the chunk now, so the shade is the only thing
-          // saying where a player stops being in this chunk
-          context.fillStyle = COLORS.border;
-          context.fill();
-          context.strokeStyle = COLORS.borderLine;
-          context.stroke();
           continue;
         }
         context.strokeStyle = COLORS.grid;

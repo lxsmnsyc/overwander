@@ -1220,10 +1220,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * every cell asks about its eight neighbours, and half of those
        * questions are the same question asked from the other side
        */
-      const land = boardTerrain({
-        landmarks: props.landmarks,
-        water: isWaterBiome(props.biome),
-      });
+      const land = boardTerrain({ water: isWaterBiome(props.biome) });
       const tiles = tileset();
       // How far round the camera has been walked, in quarters. The
       // ground art is drawn for one point of view and can only be

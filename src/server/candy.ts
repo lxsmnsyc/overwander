@@ -1,7 +1,8 @@
 import 'server-only';
-import { CANDY_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import getCandyCost, { SPECIES_DAY_CANDY_BOOST, getCatchCandy } from '../auth/candy-rules';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { type CaughtPokemon, asCaughtPokemon } from '../auth/caught-record';
+import { Items } from '../data/ids/items';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
 import { getMaxHealth } from '../auth/health';
 import { MAX_LEVEL } from '../data/constants/levels';
@@ -10,7 +11,7 @@ import type { Species } from '../data/ids/species';
 import { getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { tx } from './db';
+import { type Tx, tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber } from './read';
 import { grantStack, readStackIn, spendStackIn } from './stacks';
@@ -70,6 +71,44 @@ export async function grantCatchCandy(
  * catch already sits at MAX_LEVEL
  */
 export async function useCandy(uid: string, catchId: string): Promise<number | null> {
+  return feed(uid, catchId, async (transaction, caught, record) => {
+    const { family } = getSpeciesData(asSpecies(caught.species));
+    const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
+
+    return spendStackIn(transaction, CANDY_STACKS, uid, family, held, getCandyCost(record));
+  });
+}
+
+/**
+ * A Rare Candy is the universal one: the same level, paid with a
+ * single item out of the bag instead of the family's stack, so what
+ * a family's candy costs never enters into it.
+ *
+ * Resolves the new level, or null when the feeding is refused for the
+ * same reasons a family candy is, or the bag holds none
+ */
+export async function useRareCandy(uid: string, catchId: string): Promise<number | null> {
+  return feed(uid, catchId, async (transaction) => {
+    const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy);
+
+    return spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy, held, 1);
+  });
+}
+
+/**
+ * The feeding both candies share: the same refusals, the same level,
+ * the same transaction. `pay` is the only difference (which stack
+ * covers it), and a payment that fails leaves everything unwritten
+ */
+async function feed(
+  uid: string,
+  catchId: string,
+  pay: (
+    transaction: Tx,
+    caught: Record<string, unknown>,
+    record: CaughtPokemon,
+  ) => Promise<boolean>,
+): Promise<number | null> {
   return tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
@@ -91,14 +130,11 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
     }
 
     const record = asCaughtPokemon(caught);
-    const { family } = getSpeciesData(asSpecies(caught.species));
-    const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
-    const cost = getCandyCost(record);
 
     // The candy and the level land together or not at all: a candy
     // spent without the level is the failure this transaction exists
     // to prevent
-    if (!(await spendStackIn(transaction, CANDY_STACKS, uid, family, held, cost))) {
+    if (!(await pay(transaction, caught, record))) {
       return null;
     }
 

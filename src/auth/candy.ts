@@ -5,7 +5,7 @@
 import type Families from '../data/ids/families';
 import { asNumber, asRecordArray } from './__normalize';
 import { CANDY_STACKS, getStack, listStacks } from './stacks';
-import { useCandy as feedOnServer } from '../server/candy';
+import { useCandy as feedOnServer, useRareCandy as rareOnServer } from '../server/candy';
 import { requireUid } from '../server/auth';
 import getSupabase from './supabase';
 import getIdToken from './session';
@@ -97,4 +97,18 @@ export async function useCandy(catchId: string): Promise<number | null> {
 async function feedCandyOnServer(token: string, catchId: string): Promise<number | null> {
   'use server';
   return feedOnServer(await requireUid(token), catchId);
+}
+
+/**
+ * Spend one Rare Candy from the bag for the same level, whatever the
+ * catch's family. Resolves the new level, or null when the feeding is
+ * refused or the bag holds none
+ */
+export async function useRareCandy(catchId: string): Promise<number | null> {
+  return feedRareOnServer(await getIdToken(), catchId);
+}
+
+async function feedRareOnServer(token: string, catchId: string): Promise<number | null> {
+  'use server';
+  return rareOnServer(await requireUid(token), catchId);
 }

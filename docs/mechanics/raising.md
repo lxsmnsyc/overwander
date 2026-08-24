@@ -35,6 +35,10 @@ Neither stacks with the species day, which already pays four times over.
 A level is also a heal: the pokemon returns to full health with its statuses
 cleared, and thinks slightly better of its trainer for it.
 
+A **Rare Candy** is the exception to the family rule: used from the bag on any
+pokemon, it buys one level no matter what family the pokemon belongs to and no
+matter what its levels normally cost. Nothing sells them; they are prizes.
+
 Releasing a pokemon pays its family the same candy catching it did — rarity and
 all, though never the family-day bonus. Letting one go is a decision about space
 rather than a punishment, and what the pokemon was worth does not change on the

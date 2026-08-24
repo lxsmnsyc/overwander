@@ -79,14 +79,14 @@ const STARTER_BALL_GIFT = 'starterBalls';
  * gift and the server names the player, so nobody can ask for
  * somebody else's
  */
-function giftId(gift: string, uid: string): string {
+export function giftId(gift: string, uid: string): string {
   return `${gift}:${uid}`;
 }
 
 /**
  * One gift, ready to be written down
  */
-interface Offer {
+export interface Offer {
   /** The id of the row it goes in, and what the gift calls itself */
   id: string;
   gift: MysteryGift;
@@ -101,7 +101,7 @@ interface Offer {
  * it. Resolves false when any part of the giving already exists,
  * which is the ordinary answer for anybody who has played before
  */
-async function offer(player: string | null, offers: Offer[], now: number): Promise<boolean> {
+export async function offer(player: string | null, offers: Offer[], now: number): Promise<boolean> {
   return tx(async (transaction) => {
     const stored = await transaction`
       select 1 from gifts where id = any(${offers.map(({ id }) => id)})

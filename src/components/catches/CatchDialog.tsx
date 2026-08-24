@@ -54,7 +54,13 @@ import useBottleCap from '../../auth/bottle-caps';
 import usePurifyingGem from '../../auth/purify';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { getSellerStanding, isAuctionableCatch } from '../../auth/auctions';
-import { getCandyCost, getCandyCount, getCatchCandy, useCandy } from '../../auth/candy';
+import {
+  getCandyCost,
+  getCandyCount,
+  getCatchCandy,
+  useCandy,
+  useRareCandy,
+} from '../../auth/candy';
 import { learnLevelUpMove } from '../../auth/moves';
 import { useAuth } from '../../auth/context';
 import { type EvolutionOption, evolveCatch, listEvolutionOptions } from '../../auth/evolution';
@@ -88,7 +94,7 @@ import {
   BALL_ITEMS,
   Balls,
   ItemFlags,
-  type Items,
+  Items,
   getBall,
   getMachineMove,
   isMachineItem,
@@ -778,6 +784,33 @@ function CatchSheetBody(
   };
 
   /**
+   * The universal candy, spent out of the bag rather than from the
+   * family's stack: same level, same level-move offer afterwards
+   */
+  const feedRareCandy = (): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    useRareCandy(catchId)
+      .then((level) => {
+        say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+        props.onRecordChanged();
+        props.onBagChanged();
+        props.onEvolutionsChanged();
+        props.onChange?.();
+
+        if (level != null) {
+          offerLevelMoves(level);
+        }
+      })
+      .catch((caught: unknown) => {
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
+  };
+
+  /**
    * What the dialog is called: what its owner calls it, which is the
    * species' own name until somebody names it otherwise.
    *
@@ -1297,6 +1330,10 @@ function CatchSheetBody(
     if (caught == null) {
       return false;
     }
+    // The universal candy: a level for anything that can still grow
+    if (item === Items.RareCandy) {
+      return !isEgg(caught) && caught.level < MAX_LEVEL;
+    }
     if (isBottleCap(item)) {
       return !isPerfectIVs(caught.ivs);
     }
@@ -1360,7 +1397,9 @@ function CatchSheetBody(
       setBottle(item);
       return;
     }
-    if (getBall(item) != null) {
+    if (item === Items.RareCandy) {
+      feedRareCandy();
+    } else if (getBall(item) != null) {
       reball(item);
     } else if (isBottleCap(item)) {
       polish(item);

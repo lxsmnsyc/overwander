@@ -10,6 +10,7 @@ import AuctionTab from '../components/auctions/AuctionTab';
 import BattleView from '../components/battle/BattleView';
 import CatchDialog from '../components/catches/CatchDialog';
 import CatchesList from '../components/catches/CatchesList';
+import FirstSteps from '../components/app/FirstSteps';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import InventoryList from '../components/items/InventoryList';
@@ -111,6 +112,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
         <div class="relative h-full">
           <OverworldTab />
           <GameMenu />
+          {/* The learn-the-game checklist, gone for good once paid */}
+          <FirstSteps />
 
           {/* The two that came out of the profile. Each is one list and
               nothing else, so each is its own panel rather than a tab

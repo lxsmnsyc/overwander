@@ -10,7 +10,6 @@ import AuctionTab from '../components/auctions/AuctionTab';
 import BattleView from '../components/battle/BattleView';
 import CatchDialog from '../components/catches/CatchDialog';
 import CatchesList from '../components/catches/CatchesList';
-import FirstSteps from '../components/app/FirstSteps';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import InventoryList from '../components/items/InventoryList';
@@ -21,6 +20,7 @@ import OverworldTab from '../components/overworld/OverworldTab';
 import PokedexTab from '../components/dex/PokedexTab';
 import ProfileDialog from '../components/profile/ProfileDialog';
 import ProfileTab from '../components/profile/ProfileTab';
+import QuestsTab from '../components/quests/QuestsTab';
 import RaidsTab from '../components/raids/RaidsTab';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
@@ -51,7 +51,8 @@ type Panelled =
   | GameDialog.Catches
   | GameDialog.Inventory
   | GameDialog.Pokedex
-  | GameDialog.Gifts;
+  | GameDialog.Gifts
+  | GameDialog.Quests;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
@@ -61,6 +62,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Inventory]: 'Inventory',
   [GameDialog.Pokedex]: 'Pokedex',
   [GameDialog.Gifts]: 'Gifts',
+  [GameDialog.Quests]: 'Quests',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -72,6 +74,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Inventory]: 'Everything you are carrying.',
   [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
   [GameDialog.Gifts]: 'What the game is holding for you, until you come for it.',
+  [GameDialog.Quests]: 'What the game asks of you, and what each ask pays.',
 };
 
 /**
@@ -112,8 +115,6 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
         <div class="relative h-full">
           <OverworldTab />
           <GameMenu />
-          {/* The learn-the-game checklist, gone for good once paid */}
-          <FirstSteps />
 
           {/* The two that came out of the profile. Each is one list and
               nothing else, so each is its own panel rather than a tab
@@ -172,6 +173,22 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Gifts]}
           >
             <GiftsTab />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* The quest board: chained asks and their pay, read beside
+              the gifts it pays through */}
+          <Dialog
+            isOpen={showing(GameDialog.Quests)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Quests]}
+            description={DESCRIPTIONS[GameDialog.Quests]}
+          >
+            <QuestsTab onClose={close} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>

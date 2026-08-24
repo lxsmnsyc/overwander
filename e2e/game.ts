@@ -157,6 +157,7 @@ const MENU_DIALOGS: Record<string, string> = {
   Raids: 'Raids',
   Auctions: 'Auctions',
   Gifts: 'Gifts',
+  Quests: 'Quests',
 };
 
 /**

@@ -25,6 +25,7 @@ import {
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
+  TrophyIcon,
   UserIcon,
 } from '../icons';
 import { Divider } from '../styled';
@@ -74,6 +75,7 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
   { label: 'Auctions', dialog: GameDialog.Auctions, icon: AuctionIcon },
   { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
+  { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
   { label: 'Settings', icon: SettingsIcon },
 ];
 

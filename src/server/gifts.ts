@@ -133,7 +133,7 @@ export async function offer(player: string | null, offers: Offer[], now: number)
  */
 const GIFT_CHUNK = 0;
 
-function giftPlace(now: number): ChunkSnapshot {
+export function giftPlace(now: number): ChunkSnapshot {
   return new ChunkSnapshot(
     getWorld().getChunk(GIFT_CHUNK, GIFT_CHUNK),
     Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL,
@@ -337,25 +337,28 @@ export async function giveGift(spec: StaffGift, now: number): Promise<boolean> {
   const name = `staff-${now.toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
   const id = spec.player == null ? name : giftId(name, spec.player);
 
+  return offer(spec.player, [makeGiftOffer(spec, id, now)], now);
+}
+
+/**
+ * One gift spec as a ready row, under the id the caller names. Split
+ * from `giveGift` so the quests can pay rewards through the same
+ * machinery with ids that are theirs to fix
+ */
+export function makeGiftOffer(spec: StaffGift, id: string, now: number): Offer {
   if (spec.kind === GiftKind.Item) {
-    return offer(
-      spec.player,
-      [
-        {
-          id,
-          gift: {
-            kind: GiftKind.Item,
-            id,
-            reason: spec.reason,
-            expiresAt: spec.expiresAt,
-            item: spec.item,
-            amount: spec.amount,
-          },
-          encounter: null,
-        },
-      ],
-      now,
-    );
+    return {
+      id,
+      gift: {
+        kind: GiftKind.Item,
+        id,
+        reason: spec.reason,
+        expiresAt: spec.expiresAt,
+        item: spec.item,
+        amount: spec.amount,
+      },
+      encounter: null,
+    };
   }
 
   const pokemon = {
@@ -389,21 +392,15 @@ export async function giveGift(spec: StaffGift, now: number): Promise<boolean> {
   // goes on the shelf
   const encounter = rollGift(spec.player ?? id, gift, now);
 
-  return offer(
-    spec.player,
-    [
-      {
-        id,
-        gift: {
-          ...gift,
-          individualValue: encounter.individualValue,
-          traitValue: encounter.traitValue,
-        },
-        encounter,
-      },
-    ],
-    now,
-  );
+  return {
+    id,
+    gift: {
+      ...gift,
+      individualValue: encounter.individualValue,
+      traitValue: encounter.traitValue,
+    },
+    encounter,
+  };
 }
 
 /** Whether a gift has stopped being takeable */

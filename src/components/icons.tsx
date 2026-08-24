@@ -38,6 +38,21 @@ export function ArrowRightIcon(props: ComponentProps<'svg'>): JSX.Element {
   );
 }
 
+export function ChevronRightIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+    </svg>
+  );
+}
+
 export function SettingsIcon(props: ComponentProps<'svg'>): JSX.Element {
   return (
     <svg
@@ -488,6 +503,51 @@ export function BagIcon(props: ComponentProps<'svg'>): JSX.Element {
       {...props}
     >
       <path d="M16 6.09V4.5A2.5 2.5 0 0 0 13.5 2h-3A2.5 2.5 0 0 0 8 4.5v1.59C5.17 6.57 3 9.03 3 12v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8c0-2.97-2.17-5.43-5-5.91M10 4.5c0-.28.22-.5.5-.5h3c.28 0 .5.22.5.5V6h-4zM9 20v-2h6v2zm6-4H9v-2h6zm2 4v-6c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v6H5v-8c0-2.21 1.79-4 4-4h6c2.21 0 4 1.79 4 4v8z"></path>
+    </svg>
+  );
+}
+
+export function CheckIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
+}
+
+export function ChevronUpIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
     </svg>
   );
 }

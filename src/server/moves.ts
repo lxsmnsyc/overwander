@@ -7,8 +7,10 @@ import type { Species } from '../data/ids/species';
 import { Slots, getSlots } from '../data/constants/slots';
 import { getMovesLearnedAt, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
+import { Metric } from '../auth/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { bumpProgress } from './quest-progress';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asRecord } from './read';
@@ -61,7 +63,7 @@ export async function learnMove(
   replaces: number,
   allowed: MoveSource,
 ): Promise<Moves[] | null> {
-  return tx(async (transaction) => {
+  const learned = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     // An egg has learned nothing yet, a pokemon in a live battle is
@@ -131,6 +133,11 @@ export async function learnMove(
     await updateCaughtIn(transaction, catchId, { moves, movePoints: points });
     return moves;
   });
+
+  if (learned != null && price != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, price, 1]]);
+  }
+  return learned;
 }
 
 /**

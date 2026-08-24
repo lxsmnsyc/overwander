@@ -11,6 +11,8 @@ import {
   purifyAbilities,
   purifyIVs,
 } from '../data/items/purifying-gem';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
@@ -89,7 +91,7 @@ export default async function usePurifyingGem(
     return null;
   }
 
-  return tx(async (transaction) => {
+  const cleansed = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     if (caught == null || !isPurifiableRecord(caught, uid)) {
@@ -108,4 +110,9 @@ export default async function usePurifyingGem(
     await updateCaughtIn(transaction, catchId, purified);
     return asNumber(purified.ivs);
   });
+
+  if (cleansed != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return cleansed;
 }

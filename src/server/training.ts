@@ -11,9 +11,11 @@ import { BERRY_EFFORT_DROP, BERRY_EFFORT_DROPS } from '../data/items/berries';
 import { PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../data/items/vitamins';
 import { WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { PP_UP_LIMIT, getMovePP } from '../data/moves';
+import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
+import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { isCatchLocked } from './locks';
 
@@ -158,7 +160,7 @@ export async function useEffortItem(
   }
 
   const [stat, amount] = grant;
-  return tx(async (transaction) => {
+  const fed = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
     if (
@@ -200,6 +202,11 @@ export async function useEffortItem(
     });
     return asResult(trained);
   });
+
+  if (fed != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return fed;
 }
 
 /**
@@ -237,7 +244,7 @@ export async function usePPItem(
     return null;
   }
 
-  return tx(async (transaction) => {
+  const bottled = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
     if (
@@ -280,6 +287,11 @@ export async function usePPItem(
     });
     return { move, points, pp: getMovePP(move, points) };
   });
+
+  if (bottled != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return bottled;
 }
 
 /**
@@ -307,7 +319,7 @@ export async function feedEffortBerry(
     return null;
   }
 
-  return tx(async (transaction) => {
+  const eased = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
     if (
@@ -347,4 +359,9 @@ export async function feedEffortBerry(
     });
     return asResult(trained);
   });
+
+  if (eased != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return eased;
 }

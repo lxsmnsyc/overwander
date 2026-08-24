@@ -19,6 +19,8 @@ import { type Tx, getSql, newDocId, tx } from './db';
 import { readFriendTie } from './friends';
 import { isCatchLocked } from './locks';
 import { isAnyCatchQueued } from './raids';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
 
 /**
@@ -209,14 +211,15 @@ export async function acceptTrade(
   // What would cross is needed before the transaction for the raid
   // queue check, which reads other tables; the trade is read again
   // under lock below
-  const rows = await getSql()`select asked_caught from trades where id = ${tradeId}`;
+  const rows = await getSql()`select asked_caught, proposer from trades where id = ${tradeId}`;
   const given = asString(rows.at(0)?.asked_caught) || pick;
+  const proposer = asString(rows.at(0)?.proposer);
 
   if (given === '' || (await isAnyCatchQueued(uid, [given]))) {
     return false;
   }
 
-  return tx(async (transaction) => {
+  const accepted = await tx(async (transaction) => {
     const trade = await readTradeIn(transaction, tradeId);
 
     if (trade == null || !canAnswerTrade(trade, uid)) {
@@ -316,6 +319,13 @@ export async function acceptTrade(
     `;
     return true;
   });
+
+  // A settled trade counts once for each side of it
+  if (accepted && proposer !== '') {
+    await bumpProgress(uid, [[Metric.Trades, 0, 1]]);
+    await bumpProgress(proposer, [[Metric.Trades, 0, 1]]);
+  }
+  return accepted;
 }
 
 /**

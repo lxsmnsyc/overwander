@@ -6,8 +6,11 @@ import { carriedStatuses, getMaxHealth } from '../auth/health';
 import { settleStatuses } from '../data/ids/status';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
+import BattleOutcome from '../auth/battle-outcome';
+import { Metric } from '../auth/quest-record';
 import { getSql, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
 
 /**
@@ -102,7 +105,7 @@ export default async function recordAftermath(
   // leaves every record as it stood — the coming gym-seat battles
   // must cost nothing but the time — so a battle nobody's raid owns
   // that fielded more than one player is refused whole
-  const battles = await getSql()`select raid_id from battles where id = ${battleId}`;
+  const battles = await getSql()`select raid_id, outcome from battles where id = ${battleId}`;
   const others = await getSql()`
     select count(distinct player)::int as players
     from battle_teams where battle_id = ${battleId} and player is not null
@@ -131,7 +134,7 @@ export default async function recordAftermath(
     0,
   );
 
-  return tx(async (transaction) => {
+  const settled = await tx(async (transaction) => {
     // The marker is the whole race: one battle settles one player
     // exactly once, however many times the report arrives
     const claimed = await transaction`
@@ -196,4 +199,17 @@ export default async function recordAftermath(
 
     return true;
   });
+
+  // Settling is the once-per-battle moment, so it is where a raid run
+  // counts; a win counts on top from the stamped outcome
+  if (settled && battles[0].raid_id != null) {
+    // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+    const won = asNumber(battles[0].outcome) === BattleOutcome.Won;
+
+    await bumpProgress(uid, [
+      [Metric.RaidRuns, 0, 1],
+      ...(won ? [[Metric.RaidWins, 0, 1] satisfies ProgressBump] : []),
+    ]);
+  }
+  return settled;
 }

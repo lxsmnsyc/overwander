@@ -39,7 +39,21 @@ import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { asNumber, asRecord, asStringArray } from './read';
+
+/**
+ * Count a served visit for the quests, passing the answer through:
+ * the bridges wrap their server calls in this so every wanderer's
+ * yes lands on the same counter
+ */
+export async function countVisit<T>(uid: string, npc: Npc, served: T): Promise<T> {
+  if (served != null) {
+    await bumpProgress(uid, [[Metric.NpcVisits, npc, 1]]);
+  }
+  return served;
+}
 
 /**
  * The people a player meets at a wandering-NPC cell, and what they do.

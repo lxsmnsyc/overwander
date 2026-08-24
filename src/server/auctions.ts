@@ -26,6 +26,8 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { hasSpareCatch } from './caught';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { asNumber } from './read';
 
 /**
@@ -303,7 +305,8 @@ export async function claimAuction(
   now: number,
   offset: number,
 ): Promise<boolean> {
-  return tx(async (transaction) => {
+  let seller = '';
+  const claimed = await tx(async (transaction) => {
     const stored = await readAuctionIn(transaction, auctionId);
 
     if (stored == null) {
@@ -315,6 +318,7 @@ export async function claimAuction(
     if (!canClaim(auction, uid, now)) {
       return false;
     }
+    seller = auction.seller;
 
     if (auction.lot === AuctionLot.Item && auction.item != null) {
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
@@ -376,6 +380,13 @@ export async function claimAuction(
     await transaction`update auctions set settled = true where id = ${auctionId}`;
     return true;
   });
+
+  // A settled sale counts once for the winner and once for the seller
+  if (claimed && seller !== '') {
+    await bumpProgress(uid, [[Metric.Auctions, 0, 1]]);
+    await bumpProgress(seller, [[Metric.Auctions, 0, 1]]);
+  }
+  return claimed;
 }
 
 /**

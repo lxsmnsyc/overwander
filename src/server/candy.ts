@@ -9,9 +9,11 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData, isFeaturedSpecies } from '../data/species';
+import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, tx } from './db';
+import { bumpProgress } from './quest-progress';
 import { isCatchLocked } from './locks';
 import { asNumber } from './read';
 import { grantStack, readStackIn, spendStackIn } from './stacks';
@@ -88,11 +90,16 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
  * same reasons a family candy is, or the bag holds none
  */
 export async function useRareCandy(uid: string, catchId: string): Promise<number | null> {
-  return feed(uid, catchId, async (transaction) => {
+  const level = await feed(uid, catchId, async (transaction) => {
     const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy);
 
     return spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy, held, 1);
   });
+
+  if (level != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, Items.RareCandy, 1]]);
+  }
+  return level;
 }
 
 /**
@@ -109,7 +116,7 @@ async function feed(
     record: CaughtPokemon,
   ) => Promise<boolean>,
 ): Promise<number | null> {
-  return tx(async (transaction) => {
+  const grown = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     if (
@@ -152,4 +159,9 @@ async function feed(
     });
     return level;
   });
+
+  if (grown != null) {
+    await bumpProgress(uid, [[Metric.LevelUps, 0, 1]]);
+  }
+  return grown;
 }

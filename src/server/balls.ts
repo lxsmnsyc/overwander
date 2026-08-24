@@ -5,6 +5,8 @@ import { isEggRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 
 /**
@@ -43,7 +45,7 @@ export default async function useBall(
     return null;
   }
 
-  return tx(async (transaction) => {
+  const swapped = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     // An egg is refused because the ball on an egg is the nest it came
@@ -70,4 +72,9 @@ export default async function useBall(
 
     return ball;
   });
+
+  if (swapped != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return swapped;
 }

@@ -21,6 +21,8 @@ import { recordSeenSpecies } from './pokedex';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
 import { asNumber, asRecordArray } from './read';
 import { grantItem, grantItems } from './inventory';
+import { Landmark, Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 
 /**
  * The overworld's privileged side: what a landmark pays out, and what
@@ -174,6 +176,7 @@ export async function claimItemCache(
     return null;
   }
   await grantStash(uid, stash);
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Cache, 1]]);
   return stash;
 }
 
@@ -219,6 +222,7 @@ export async function claimBerryPatch(
     return null;
   }
   await grantItem(uid, berries.item, berries.amount);
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Berry, 1]]);
   return berries;
 }
 
@@ -312,6 +316,7 @@ export async function claimNest(
   if (!(await claim('nest_claims', id, { player: uid, species }))) {
     return null;
   }
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Nest, 1]]);
   return grantNestEgg(uid, snapshot, cell, species, now, offset, locale);
 }
 
@@ -402,6 +407,7 @@ export async function claimPhenomenon(
   if (!(await claim('phenomenon_claims', key, { player: uid, kind: reward.kind }))) {
     return null;
   }
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Phenomenon, 1]]);
 
   if (reward.kind === 'item') {
     await grantStash(uid, reward.items);

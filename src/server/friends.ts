@@ -1,6 +1,8 @@
 import 'server-only';
 import { FRIEND_LIMIT, type FoundPlayer, FriendTie } from '../auth/friend-record';
+import { Metric } from '../auth/quest-record';
 import { type Tx, getSql, tx } from './db';
+import { bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
 
 /**
@@ -128,7 +130,7 @@ export async function acceptFriendRequest(
   if (await isFull(uid)) {
     throw new Error('Your friends list is full');
   }
-  return tx(async (transaction) => {
+  const tie = await tx(async (transaction) => {
     const asked = await transaction`
       delete from friend_requests
       where sender = ${from} and recipient = ${uid}
@@ -140,6 +142,13 @@ export async function acceptFriendRequest(
     await befriend(transaction, uid, from, now);
     return FriendTie.Friends;
   });
+
+  // A friendship counts once for each side of it
+  if (tie === FriendTie.Friends) {
+    await bumpProgress(uid, [[Metric.Friends, 0, 1]]);
+    await bumpProgress(from, [[Metric.Friends, 0, 1]]);
+  }
+  return tie;
 }
 
 /**

@@ -23,6 +23,9 @@ import {
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
+import Npc from '../data/overworld/npc';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
 import { getSql, jsonOf, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
@@ -341,6 +344,9 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 
     return gone.length > 0 ? null : { encounter, gold: 0 };
   }
+
+  // A first claim is the one moment a beaten grunt counts once
+  await bumpProgress(uid, [[Metric.NpcVisits, Npc.RocketGrunt, 1]]);
 
   // What the grunt is worth, and then what the winner brought along:
   // a buddy burning a Luck Incense doubles the purse

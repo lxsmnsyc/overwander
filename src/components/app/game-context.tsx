@@ -60,6 +60,10 @@ export const enum GameDialog {
    * What the game is holding for the player until they come for it
    */
   Gifts = 8,
+  /**
+   * The quest board: what the game asks, and what each ask pays
+   */
+  Quests = 9,
 }
 
 /**

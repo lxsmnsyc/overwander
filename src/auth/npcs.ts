@@ -1,5 +1,6 @@
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/auth';
 import {
@@ -9,6 +10,7 @@ import {
   breedCatches as breedOnServerSide,
   buyFossil as buyFossilOnServerSide,
   buyFromVendor as buyOnServerSide,
+  countVisit,
   groomCatch as groomOnServerSide,
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
@@ -74,15 +76,12 @@ async function breedOnServer(
   locale: string,
 ): Promise<string | null> {
   'use server';
-  return breedOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    parents,
-    await syncServerClock(),
-    offset,
-    locale,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Breeder,
+    await breedOnServerSide(uid, x, y, cell, parents, await syncServerClock(), offset, locale),
   );
 }
 
@@ -120,14 +119,12 @@ async function boostOnServer(
   offset: number,
 ): Promise<number | null> {
   'use server';
-  return boostOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    catchId,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.DaycareLady,
+    await boostOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
   );
 }
 
@@ -170,14 +167,12 @@ async function visitNurseOnServer(
   offset: number,
 ): Promise<string[] | null> {
   'use server';
-  return visitNurseOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    catches,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.NurseJoy,
+    await visitNurseOnServerSide(uid, x, y, cell, catches, await syncServerClock(), offset),
   );
 }
 
@@ -214,14 +209,12 @@ async function groomOnServer(
   offset: number,
 ): Promise<number | null> {
   'use server';
-  return groomOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    catchId,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Groomer,
+    await groomOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
   );
 }
 
@@ -270,16 +263,22 @@ async function remindOnServer(
   offset: number,
 ): Promise<Moves[] | null> {
   'use server';
-  return remindOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    catchId,
-    move,
-    replaces,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.MoveReminder,
+    await remindOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      catchId,
+      move,
+      replaces,
+      await syncServerClock(),
+      offset,
+    ),
   );
 }
 
@@ -321,16 +320,22 @@ async function tutorOnServer(
   offset: number,
 ): Promise<Moves[] | null> {
   'use server';
-  return tutorOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    catchId,
-    move,
-    replaces,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.MoveTutor,
+    await tutorOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      catchId,
+      move,
+      replaces,
+      await syncServerClock(),
+      offset,
+    ),
   );
 }
 
@@ -372,14 +377,12 @@ async function buyOnServer(
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
-  return buyOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    basket,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Vendor,
+    await buyOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset),
   );
 }
 
@@ -418,14 +421,12 @@ async function sellOnServer(
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
-  return sellOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    basket,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Vendor,
+    await sellOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset),
   );
 }
 
@@ -465,14 +466,12 @@ async function buyFossilOnServer(
   offset: number,
 ): Promise<TradeResult | null> {
   'use server';
-  return buyFossilOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    item,
-    await syncServerClock(),
-    offset,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.FossilManiac,
+    await buyFossilOnServerSide(uid, x, y, cell, item, await syncServerClock(), offset),
   );
 }
 
@@ -513,15 +512,12 @@ async function reviveOnServer(
   locale: string,
 ): Promise<RevivedFossil | null> {
   'use server';
-  return reviveOnServerSide(
-    await requireUid(token),
-    x,
-    y,
-    cell,
-    item,
-    await syncServerClock(),
-    offset,
-    locale,
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.FossilScientist,
+    await reviveOnServerSide(uid, x, y, cell, item, await syncServerClock(), offset, locale),
   );
 }
 

@@ -36,6 +36,8 @@ import { BASE_FRIENDSHIP, SHADOW_FRIENDSHIP } from '../data/constants/friendship
 import { getSql, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { recordCaughtSpecies } from './pokedex';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -180,6 +182,7 @@ export async function writeCaughtRecord(
   // and writes its own record; it is logged when it hatches, since
   // what is in the shell is not something the player has met yet
   await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
+  await bumpProgress(uid, [[Metric.Catches, encounter.species, 1]]);
   return id;
 }
 

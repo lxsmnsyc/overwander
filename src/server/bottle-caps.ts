@@ -5,7 +5,9 @@ import AleaRNG from '../core/alea';
 import type { Items } from '../data/ids/items';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { BOTTLE_CAPS, polishIVs } from '../data/items/bottle-caps';
+import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
+import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
@@ -47,7 +49,7 @@ export default async function useBottleCap(
     return null;
   }
 
-  return tx(async (transaction) => {
+  const capped = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon fights as the snapshot froze it, and an egg is not a
@@ -100,4 +102,9 @@ export default async function useBottleCap(
     });
     return polished;
   });
+
+  if (capped != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return capped;
 }

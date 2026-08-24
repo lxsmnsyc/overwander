@@ -5,7 +5,9 @@ import { type HealthState, healedByItem } from '../auth/health';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { bitterness } from '../data/items/medicine';
+import { Metric } from '../auth/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
+import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
@@ -46,7 +48,7 @@ export default async function useHealingItem(
   catchId: string,
   item: Items,
 ): Promise<HealthState | null> {
-  return tx(async (transaction) => {
+  const used = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     // A pokemon in a live battle is fighting on a frozen snapshot;
@@ -94,4 +96,9 @@ export default async function useHealingItem(
     await updateCaughtIn(transaction, catchId, fields);
     return healed;
   });
+
+  if (used != null) {
+    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+  }
+  return used;
 }

@@ -36,8 +36,10 @@ import {
 } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
+import { Metric } from '../auth/quest-record';
 import deriveEncounter, { EncounterType, deriveEggMoves } from '../overworld/encounter';
 import { grantCatchCandy } from './candy';
+import { bumpProgress } from './quest-progress';
 import { newDocId, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { ITEM_STACKS } from '../auth/stacks';
@@ -454,6 +456,7 @@ export async function recordSteps(
       for (const [item, carried] of stacks) {
         await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + (found.get(item) ?? 0));
       }
+      await bumpProgress(uid, [[Metric.Steps, 0, credited]]);
       return { egg: null, picked: [...found].map(([item, amount]) => ({ item, amount })) };
     }
 
@@ -468,6 +471,7 @@ export async function recordSteps(
     // what the next report is measured from, and a refused report
     // should not leave time banked for the one after it
     await updateCaughtIn(transaction, catchId, { steps, steppedAt: now });
+    await bumpProgress(uid, [[Metric.Steps, 0, paced]]);
     // An egg finds nothing: whatever is inside it is not out here
     // looking at the ground
     return { egg: { caught: catchId, steps, hatchSteps: caught.hatchSteps }, picked: [] };
@@ -527,5 +531,6 @@ export async function hatchEgg(
   // is inside a shell is not something the player has met, and an egg
   // that never hatches is a species they never saw
   await recordCaughtSpecies(uid, hatched.species, hatched.shiny);
+  await bumpProgress(uid, [[Metric.Hatches, hatched.species, 1]]);
   return hatched.species;
 }

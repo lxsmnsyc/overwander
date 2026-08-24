@@ -4,18 +4,18 @@ import GiftForm from '../../components/admin/GiftForm';
 import GiftsTab from '../../components/gifts/GiftsTab';
 
 /**
- * The shelf, and the way to put something on somebody else's.
+ * The ledger, and the way to add to it.
  *
- * The shelf below is the reader's own, with nothing to press: a gift
- * is taken in the world, where the player is standing and a meeting
- * can be stood in front of them. The form above writes to whoever is
- * picked in it
+ * The list below is every gift ever written, not the reader's own
+ * shelf: whose each is, how often it has been taken, and what has run
+ * out. There is nothing to press on it; taking happens in the game.
+ * The form above writes to whoever is picked in it
  */
 export default function AdminGiftsPage(): JSX.Element {
   const [adding, setAdding] = createSignal(false);
   /**
-   * Bumped when a gift is written, so a gift given to the reader
-   * themselves shows up on the shelf under the form
+   * Bumped when a gift is written, so the ledger under the form is
+   * read again with the new line on it
    */
   const [given, setGiven] = createSignal(0);
 
@@ -46,12 +46,12 @@ export default function AdminGiftsPage(): JSX.Element {
         />
       </Show>
 
-      <Card title="Your shelf">
-        <Note>What is waiting for you. Taking it happens in the game.</Note>
-        {/* Keyed on the count, so a gift given to yourself is read
-            again rather than sitting behind the shelf that was
-            already drawn */}
-        <For each={[given()]}>{() => <GiftsTab viewOnly />}</For>
+      <Card title="Every gift">
+        <Note>Everything that has been put on a shelf, taken or not.</Note>
+        {/* Keyed on the count, so a gift just written is read again
+            rather than sitting behind the ledger that was already
+            drawn */}
+        <For each={[given()]}>{() => <GiftsTab everything />}</For>
       </Card>
     </div>
   );

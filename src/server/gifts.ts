@@ -20,7 +20,7 @@ import { grantItem } from './inventory';
 import { recordSeenSpecies } from './pokedex';
 import { getSql, jsonOf, tx } from './db';
 import { writeEncounter } from './encounter-io';
-import { asRecord, asString } from './read';
+import { asNumber, asRecord, asString } from './read';
 
 /**
  * The gifts the game gives.
@@ -480,6 +480,61 @@ function asShown(record: GiftRecord): MysteryGift {
     moves: encounter.moves,
     items: encounter.items,
   };
+}
+
+/**
+ * One line of the dashboard's ledger: a gift as it was offered,
+ * whoever it was for, however it has moved since
+ */
+export interface GiftLedgerRow {
+  gift: MysteryGift;
+  /** Who it was for, as a nickname (or uid); null for everybody */
+  recipient: string | null;
+  offeredAt: number;
+  /** How many players have taken it */
+  claims: number;
+  expired: boolean;
+}
+
+/**
+ * Every gift ever written, newest first, for the dashboard: the
+ * player's shelf hides what they have taken and what has run out,
+ * and this hides nothing
+ */
+export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
+  const rows = await getSql()`
+    select g.player, g.offered_at, g.gift, g.encounter, p.nickname,
+           (select count(*)::int from gift_claims c where c.gift_id = g.id) as claims
+    from gifts g
+    left join profiles p on p.id = g.player
+    order by g.offered_at desc
+  `;
+
+  return rows.map((entry) => {
+    const row = asRecord(entry);
+    const record = asGiftRecord({
+      player: row.player,
+      gift: row.gift,
+      offeredAt: row.offered_at,
+      encounter: row.encounter,
+    });
+    // The uid stands in where the profile is gone, so the line still
+    // says who it was for
+    const named = typeof row.nickname === 'string' && row.nickname !== '';
+    let recipient: string | null = null;
+
+    if (record.player != null) {
+      recipient = named ? asString(row.nickname) : record.player;
+    }
+
+    return {
+      gift: asShown(record),
+      recipient,
+      offeredAt: record.offeredAt,
+      claims: asNumber(row.claims),
+      expired: expired(record.gift, now),
+    };
+  });
 }
 
 /**

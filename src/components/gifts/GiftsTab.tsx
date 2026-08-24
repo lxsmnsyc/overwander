@@ -15,6 +15,7 @@ import {
   type MysteryGift,
 } from '../../auth/gift-record';
 import { GameDialog, useGame } from '../app/game-context';
+import { type GiftLedgerRow, listAllGifts } from '../../auth/admin';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
 import type { CaughtPokemon } from '../../auth/caught';
 import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
@@ -55,6 +56,35 @@ function describeGift(gift: MysteryGift): string {
   return gift.kind === GiftKind.Item
     ? `${gift.amount} × ${describeItem(gift.item)}`
     : describeGiven(gift);
+}
+
+/**
+ * A gift as the shelf holds it. The note is the dashboard's extra
+ * line, absent when a player is reading their own shelf
+ */
+interface ShelfRow {
+  gift: MysteryGift;
+  note?: string;
+}
+
+function takenTimes(claims: number): string {
+  if (claims === 0) {
+    return 'not taken yet';
+  }
+  return claims === 1 ? 'taken once' : `taken ${claims} times`;
+}
+
+/** The ledger's line: whose it is, and how it has moved since */
+function describeLedger(row: GiftLedgerRow): string {
+  const parts = [
+    row.recipient == null ? 'For everybody' : `For ${row.recipient}`,
+    takenTimes(row.claims),
+  ];
+
+  if (row.expired) {
+    parts.push('expired');
+  }
+  return parts.join(' · ');
 }
 
 /**
@@ -155,8 +185,10 @@ function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
  * page, so the reading half is its own component
  */
 function GiftShelf(props: {
-  owed: Resource<MysteryGift[]>;
+  owed: Resource<ShelfRow[]>;
   viewOnly?: boolean;
+  /** Whether this is the dashboard's ledger rather than a shelf */
+  everything?: boolean;
   onClaimed: () => void;
 }): JSX.Element {
   const game = useGame();
@@ -168,19 +200,22 @@ function GiftShelf(props: {
    */
   const [taking, setTaking] = createSignal<string | null>(null);
 
-  const gifts = (): MysteryGift[] => props.owed() ?? [];
-  const pokemon = (): (CatchGift | EncounterGift)[] =>
-    gifts().filter((gift): gift is CatchGift | EncounterGift => gift.kind !== GiftKind.Item);
-  const things = (): ItemGift[] =>
-    gifts().filter((gift): gift is ItemGift => gift.kind === GiftKind.Item);
+  const gifts = (): ShelfRow[] => props.owed() ?? [];
+  const pokemon = (): (ShelfRow & { gift: CatchGift | EncounterGift })[] =>
+    gifts().filter(
+      (row): row is ShelfRow & { gift: CatchGift | EncounterGift } =>
+        row.gift.kind !== GiftKind.Item,
+    );
+  const things = (): (ShelfRow & { gift: ItemGift })[] =>
+    gifts().filter((row): row is ShelfRow & { gift: ItemGift } => row.gift.kind === GiftKind.Item);
 
-  const found = (id: string): CatchGift | EncounterGift | undefined =>
-    pokemon().find((gift) => gift.id === id);
+  const found = (id: string): (ShelfRow & { gift: CatchGift | EncounterGift }) | undefined =>
+    pokemon().find((row) => row.gift.id === id);
 
   // Read as the records they would become, so the grid's search speaks
   // the same syntax as every other box of squares
   const squares = createMemo<CatchGridEntry[]>(() =>
-    pokemon().map((gift) => ({ square: asSquare(gift), caught: asPreview(gift) })),
+    pokemon().map(({ gift }) => ({ square: asSquare(gift), caught: asPreview(gift) })),
   );
 
   const say = (message: string, tone: ToastTone): void => {
@@ -225,7 +260,11 @@ function GiftShelf(props: {
   return (
     <div class="flex flex-col gap-4">
       <Show when={gifts().length === 0}>
-        <Note class="text-center">Nothing is waiting for you.</Note>
+        <Note class="text-center">
+          {props.everything === true
+            ? 'Nothing has been offered yet.'
+            : 'Nothing is waiting for you.'}
+        </Note>
       </Show>
 
       <Show when={pokemon().length > 0}>
@@ -243,7 +282,7 @@ function GiftShelf(props: {
                 title="Gift"
                 footer={
                   <Show when={props.viewOnly !== true && found(entry().id)}>
-                    {(gift) => (
+                    {(row) => (
                       <Button
                         tone="primary"
                         disabled={taking() != null}
@@ -251,21 +290,22 @@ function GiftShelf(props: {
                           take(entry().id);
                         }}
                       >
-                        {verbFor(gift())}
+                        {verbFor(row().gift)}
                       </Button>
                     )}
                   </Show>
                 }
               >
                 <Show when={found(entry().id)}>
-                  {(gift) => (
+                  {(row) => (
                     <div class="flex flex-col gap-1.5">
                       {/* The box's own card, reading the gift as the
                           record it is about to become: the same sigil,
                           stars, moves and held items a pokemon in the
                           box is read by */}
-                      <CatchCard caught={asPreview(gift())} />
-                      <Meta>{gift().reason}</Meta>
+                      <CatchCard caught={asPreview(row().gift)} />
+                      <Meta>{row().gift.reason}</Meta>
+                      <Show when={row().note}>{(said) => <Meta>{said()}</Meta>}</Show>
                     </div>
                   )}
                 </Show>
@@ -282,7 +322,7 @@ function GiftShelf(props: {
             // The card carries one button, so the square presses it
             // too; a visited tray has nothing to press anywhere
             cardOnly={props.viewOnly === true}
-            entries={things().map((gift) => ({
+            entries={things().map(({ gift, note }) => ({
               item: gift.item,
               amount: gift.amount,
               said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
@@ -292,7 +332,12 @@ function GiftShelf(props: {
                   : () => {
                       take(gift.id);
                     },
-              card: () => <Meta>{gift.reason}</Meta>,
+              card: () => (
+                <>
+                  <Meta>{gift.reason}</Meta>
+                  <Show when={note}>{(said) => <Meta>{said()}</Meta>}</Show>
+                </>
+              ),
               footer: () =>
                 props.viewOnly === true ? (
                   <></>
@@ -328,16 +373,27 @@ export interface GiftsTabProps {
    * somewhere — so a button here would be one that led nowhere
    */
   viewOnly?: boolean;
+  /**
+   * The dashboard's ledger instead of the reader's shelf: every gift
+   * ever written, whoever it was for, taken or not, run out or not.
+   * Implies viewOnly, and is refused server-side below admin
+   */
+  everything?: boolean;
 }
 
 export default function GiftsTab(props: GiftsTabProps): JSX.Element {
-  const [owed, { refetch }] = createResource(listMysteryGifts);
+  const [owed, { refetch }] = createResource<ShelfRow[]>(async () =>
+    props.everything === true
+      ? (await listAllGifts()).map((row) => ({ gift: row.gift, note: describeLedger(row) }))
+      : (await listMysteryGifts()).map((gift) => ({ gift })),
+  );
 
   return (
     <Suspense fallback={looking()}>
       <GiftShelf
         owed={owed}
-        viewOnly={props.viewOnly}
+        viewOnly={props.viewOnly === true || props.everything === true}
+        everything={props.everything}
         onClaimed={() => {
           Promise.resolve(refetch()).catch(() => undefined);
         }}

@@ -4,8 +4,8 @@ import {
   listRaids as listRaidsOnServer,
   readPlayer as readPlayerOnServer,
 } from '../server/admin';
-import type { StaffGift } from '../server/gifts';
-import { giveGift } from '../server/gifts';
+import type { GiftLedgerRow, StaffGift } from '../server/gifts';
+import { giveGift, listAllGifts as listAllOnServer } from '../server/gifts';
 import { requireAdmin, requireStaff, setBan, setRole } from '../server/roles';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
@@ -18,7 +18,7 @@ import getIdToken from './session';
  * are what would happen if somebody called them anyway
  */
 
-export type { Listing, PlayerRow, RaidRow, StaffGift };
+export type { GiftLedgerRow, Listing, PlayerRow, RaidRow, StaffGift };
 
 export async function listPlayers(search: string, page: number): Promise<Listing<PlayerRow>> {
   return playersOnServer(await getIdToken(), search, page);
@@ -110,4 +110,18 @@ async function giftOnServer(token: string, gift: StaffGift): Promise<boolean> {
   'use server';
   await requireAdmin(token);
   return giveGift(gift, await syncServerClock());
+}
+
+/**
+ * Every gift ever written, newest first: whose it is, how often it has
+ * been taken, and whether it has run out
+ */
+export async function listAllGifts(): Promise<GiftLedgerRow[]> {
+  return allGiftsOnServer(await getIdToken());
+}
+
+async function allGiftsOnServer(token: string): Promise<GiftLedgerRow[]> {
+  'use server';
+  await requireAdmin(token);
+  return listAllOnServer(await syncServerClock());
 }

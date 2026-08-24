@@ -13,6 +13,7 @@ export {
   getSpeciesAbilityPools,
   getSpeciesByBiome,
   getSpeciesData,
+  getTeachableMoves,
   isBaseForm,
 } from './__create';
 export type { EvolutionData, LearnSetData, SpeciesAbilityPools, SpeciesData } from './__create';

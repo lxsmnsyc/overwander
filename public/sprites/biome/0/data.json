@@ -1,5 +1,6 @@
 {
   "biome": 0,
+  "draws": {},
   "tile": 24,
   "width": 240,
   "height": 1128,
@@ -59,11 +60,7 @@
       "role": "wall",
       "column": 0,
       "palette": 0,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "missing": []
     },
     {
       "name": "walls-b",
@@ -71,9 +68,6 @@
       "column": 1,
       "palette": 1,
       "missing": [
-        10,
-        26,
-        31,
         46
       ]
     },
@@ -102,7 +96,6 @@
         26,
         29,
         30,
-        31,
         32,
         34,
         38,
@@ -135,7 +128,6 @@
         26,
         29,
         30,
-        31,
         32,
         34,
         38,
@@ -244,33 +236,21 @@
       "role": "ground",
       "column": 6,
       "palette": 0,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "missing": []
     },
     {
       "name": "ground-b",
       "role": "ground",
       "column": 7,
       "palette": 1,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "missing": []
     },
     {
       "name": "water",
       "role": "water",
       "column": 8,
       "palette": 2,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "missing": []
     },
     {
       "name": "water-sparkle",
@@ -278,9 +258,6 @@
       "column": 9,
       "palette": 3,
       "missing": [
-        10,
-        26,
-        31,
         46
       ]
     }

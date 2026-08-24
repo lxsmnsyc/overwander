@@ -13,6 +13,7 @@ import {
   remindMove as remindOnServerSide,
   reviveFossil as reviveOnServerSide,
   sellToVendor as sellOnServerSide,
+  tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
 import { asRecord, asStringArray } from './__normalize';
@@ -270,6 +271,57 @@ async function remindOnServer(
 ): Promise<Moves[] | null> {
   'use server';
   return remindOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    catchId,
+    move,
+    replaces,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Have the Move Tutor teach a move from the species' teachable list,
+ * for gold. Which moves he offers is derived, so the client already
+ * knows the list (`getTutorableMoves`) and the server derives it
+ * again from the stored record before it takes the fee.
+ *
+ * Resolves the move list as it now stands, or null when he refuses
+ */
+export async function tutorMove(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces = 0,
+): Promise<Moves[] | null> {
+  return tutorOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    move,
+    replaces,
+    snapshot.offset,
+  );
+}
+
+async function tutorOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces: number,
+  offset: number,
+): Promise<Moves[] | null> {
+  'use server';
+  return tutorOnServerSide(
     await requireUid(token),
     x,
     y,

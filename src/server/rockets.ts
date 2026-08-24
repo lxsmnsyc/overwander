@@ -91,6 +91,14 @@ async function readRocketStop(
   };
 }
 
+/**
+ * Two ways for a walk-up to find nobody, told apart because they say
+ * different things: `'beaten'` is this player's own win still standing
+ * on the cell, and null is a cell the window stages no grunt on at
+ * all, which is what a stale client's board looks like from here
+ */
+export type RocketStopEntry = [string, RocketRecord] | 'beaten' | null;
+
 export async function enterRocketStop(
   uid: string,
   x: number,
@@ -98,7 +106,7 @@ export async function enterRocketStop(
   cell: number,
   now: number,
   offset: number,
-): Promise<[string, RocketRecord] | null> {
+): Promise<RocketStopEntry> {
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
@@ -116,7 +124,7 @@ export async function enterRocketStop(
 
     // A grunt already beaten is gone for the window; a grunt that won
     // is still standing there, and can be fought again
-    return existing.defeated ? null : [stop, existing];
+    return existing.defeated ? 'beaten' : [stop, existing];
   }
 
   const fresh: RocketRecord = {

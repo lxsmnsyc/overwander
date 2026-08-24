@@ -37,7 +37,10 @@ export default function NpcSprite(props: NpcSpriteProps): JSX.Element {
     });
     loadOWChar(sheet)
       .then((loaded) => {
-        if (live) {
+        if (live && loaded != null) {
+          // Said rather than assumed: row 0 is only the down-facing
+          // pose when the sheet happens to list Down first
+          loaded.facing = 'Down';
           setSprite(loaded);
         }
       })

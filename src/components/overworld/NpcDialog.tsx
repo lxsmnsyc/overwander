@@ -27,6 +27,7 @@ import {
   remindMove,
   reviveFossil,
   sellToVendor,
+  tutorMove,
   visitNurse,
 } from '../../auth/npcs';
 import { Items } from '../../data/ids/items';
@@ -43,7 +44,9 @@ import Npc, {
   NPC_NAMES,
   NURSE_CARE_LIMIT,
   REMINDER_FEE,
+  TUTOR_FEE,
   getRecallableMoves,
+  getTutorableMoves,
 } from '../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT } from '../../data/overworld/vendor';
 import { type BreedingParent, canBreed, canLayEggs } from '../../overworld/breeding';
@@ -106,6 +109,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'Dug these out myself. Two is all I am carrying, and one is all I am parting with today — the rest of the world stopped making them.',
   [Npc.FossilScientist]:
     'Hand me the rock and give me a moment. Whatever is in there has been waiting rather a long while — bring me another when you find one.',
+  [Npc.MoveTutor]:
+    'Some moves are never grown into, only taught. One Heart Scale buys one lesson, and it will not forget it.',
 };
 
 /**
@@ -215,6 +220,11 @@ function NpcCounter(
   const [remindee, setRemindee] = createSignal<string | null>(null);
   const [recall, setRecall] = createSignal<Moves | null>(null);
   const [reminding, setReminding] = createSignal<[catchId: string, move: Moves] | null>(null);
+  // And the tutor's half of the same conversation: which pokemon,
+  // which lesson, and the pair agreed to
+  const [tutee, setTutee] = createSignal<string | null>(null);
+  const [lesson, setLesson] = createSignal<Moves | null>(null);
+  const [tutoring, setTutoring] = createSignal<[catchId: string, move: Moves] | null>(null);
 
   /**
    * The purse and the bag. Both are re-read after every trade, since a
@@ -356,6 +366,23 @@ function NpcCounter(
   const forget = (): void => {
     setRemindee(null);
     setRecall(null);
+    setTutee(null);
+    setLesson(null);
+  };
+
+  /**
+   * Which pokemon has been brought to the tutor, and what he could
+   * put on it: the species' teachable list minus what it knows.
+   * Derived here for the list and again on the server before the fee
+   * moves
+   */
+  const learning = (): CatchOption | null =>
+    offers().find((option) => option.id === tutee()) ?? null;
+
+  const lessons = (): Moves[] => {
+    const option = learning();
+
+    return option == null ? [] : getTutorableMoves(option.caught.species, option.caught.moves);
   };
 
   /**
@@ -382,6 +409,7 @@ function NpcCounter(
     setCounter(null);
     forget();
     setReminding(null);
+    setTutoring(null);
     props.onClose();
   };
 
@@ -698,6 +726,21 @@ function NpcCounter(
   };
 
   /**
+   * The tutor's half of the same handover: the fee moves in the
+   * transaction the move list is written in, so a refusal costs
+   * nothing
+   */
+  const tutor = async (catchId: string, move: Moves, replaces: number): Promise<Moves[] | null> => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return null;
+    }
+    return tutorMove(snapshot, standing[0], catchId, move, replaces);
+  };
+
+  /**
    * What each of them offers, as the one or two buttons that do it.
    *
    * They live on the dialog's bottom bar rather than in the section
@@ -733,6 +776,28 @@ function NpcCounter(
           Remind{' '}
           <Badge tone="gold">
             <ItemSprite item={REMINDER_FEE} size={16} label="" />1
+          </Badge>
+        </Button>
+      );
+    }
+    if (npc === Npc.MoveTutor) {
+      return (
+        <Button
+          tone="primary"
+          disabled={busy() || scales() < 1 || tutee() == null || lesson() == null}
+          label="Teach, 1 Heart Scale"
+          onClick={() => {
+            const id = tutee();
+            const move = lesson();
+
+            if (id != null && move != null) {
+              setTutoring([id, move]);
+            }
+          }}
+        >
+          Teach{' '}
+          <Badge tone="gold">
+            <ItemSprite item={TUTOR_FEE} size={16} label="" />1
           </Badge>
         </Button>
       );
@@ -784,10 +849,22 @@ function NpcCounter(
     props.onChange?.();
   };
 
+  /**
+   * The fee is gone and the lesson took. The purse is re-read the way
+   * a trade re-reads it, since that is where the fee went from
+   */
+  const tutored = (): void => {
+    forget();
+    setStatus('One lesson, well spent. (−1 Heart Scale)');
+    props.onTraded();
+    props.onServed();
+    props.onChange?.();
+  };
+
   return (
     <>
       <Dialog
-        isOpen={props.standing != null && reminding() == null}
+        isOpen={props.standing != null && reminding() == null && tutoring() == null}
         onClose={close}
         title={who()}
         terse
@@ -1047,6 +1124,68 @@ function NpcCounter(
                 </DialogSection>
               </Show>
 
+              <Show when={standing()[1] === Npc.MoveTutor}>
+                <DialogSection class={CENTRED}>
+                  {/* The scale is his whole price, the same one the
+                      reminder takes */}
+                  <Row>
+                    <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
+                      <ItemSprite item={TUTOR_FEE} size={20} label="" />
+                      {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
+                    </Badge>
+                  </Row>
+
+                  {/* The same counter the reminder keeps: both inputs
+                    on it at once, and the button dead until they are
+                    filled in and the fee is in the purse */}
+                  <CatchPicker
+                    inline
+                    options={offers()}
+                    value={tutee()}
+                    verb="Teach"
+                    empty="You have nothing he could teach."
+                    filter={(option) =>
+                      !isEgg(option.caught) &&
+                      !option.fighting &&
+                      getTutorableMoves(option.caught.species, option.caught.moves).length > 0
+                    }
+                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+                    note={(option) =>
+                      `${getTutorableMoves(option.caught.species, option.caught.moves).length} to learn`
+                    }
+                    onPick={(id) => {
+                      setStatus(null);
+                      setLesson(null);
+                      setTutee(id);
+                    }}
+                  />
+
+                  {/* The second input only means anything once the
+                      first is answered: what can be taught is a
+                      question about a particular pokemon */}
+                  <Show when={learning()} fallback={<Note>Choose one of yours first.</Note>}>
+                    <Meta>What he could teach it:</Meta>
+                    <List>
+                      <For each={lessons()}>
+                        {(move) => (
+                          <ListRow selected={lesson() === move}>
+                            <RowButton
+                              pressed={lesson() === move}
+                              disabled={busy()}
+                              onClick={() => {
+                                setLesson(move);
+                              }}
+                            >
+                              <MoveLine move={move} />
+                            </RowButton>
+                          </ListRow>
+                        )}
+                      </For>
+                    </List>
+                  </Show>
+                </DialogSection>
+              </Show>
+
               <Show when={standing()[1] === Npc.FossilManiac}>
                 <DialogSection class={CENTRED}>
                   <Row class="justify-center">
@@ -1242,6 +1381,19 @@ function NpcCounter(
           setReminding(null);
         }}
         onTaught={remembered}
+      />
+
+      {/* And the tutor's last step, which is the same question again:
+        whether there is room, and which move goes if there is not */}
+      <TeachMoveDialog
+        catchId={tutoring()?.[0] ?? null}
+        move={tutoring()?.[1] ?? null}
+        cost="The Heart Scale"
+        teach={tutor}
+        onClose={() => {
+          setTutoring(null);
+        }}
+        onTaught={tutored}
       />
     </>
   );

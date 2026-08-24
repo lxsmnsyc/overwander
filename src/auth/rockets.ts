@@ -1,17 +1,17 @@
 import { requireUid } from '../server/auth';
 import {
   type RocketReward,
+  type RocketStopEntry,
   claimRocketReward as claimOnServer,
   enterRocketStop as enterOnServer,
   startRocketBattle as startOnServer,
 } from '../server/rockets';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { syncServerClock } from './clock';
-import type { RocketRecord } from './rocket-record';
 import getIdToken from './session';
 
 export type { RocketPokemon, RocketRecord } from './rocket-record';
-export type { RocketReward } from '../server/rockets';
+export type { RocketReward, RocketStopEntry } from '../server/rockets';
 
 /**
  * Team Rocket stops as the client sees them. Every one of these is a
@@ -23,13 +23,13 @@ export type { RocketReward } from '../server/rockets';
 
 /**
  * Walk up to a stop. Resolves the stop id and the player's state of
- * it, or null when the cell stages no grunt this window or the player
- * has already beaten the one it stages
+ * it, `'beaten'` for a grunt this player has already put down, or
+ * null when the cell stages no grunt this window at all
  */
 export async function enterRocketStop(
   snapshot: ChunkSnapshot,
   cell: number,
-): Promise<[string, RocketRecord] | null> {
+): Promise<RocketStopEntry> {
   return enterStopOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -45,7 +45,7 @@ async function enterStopOnServer(
   y: number,
   cell: number,
   offset: number,
-): Promise<[string, RocketRecord] | null> {
+): Promise<RocketStopEntry> {
   'use server';
   return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset);
 }

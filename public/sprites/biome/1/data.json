@@ -1,5 +1,6 @@
 {
   "biome": 1,
+  "draws": {},
   "tile": 24,
   "width": 144,
   "height": 1128,
@@ -58,18 +59,14 @@
       "name": "walls",
       "role": "wall",
       "column": 0,
-      "palette": 0,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "palette": -1,
+      "missing": []
     },
     {
       "name": "wall-alt-1",
       "role": "wall",
       "column": 1,
-      "palette": 0,
+      "palette": -1,
       "missing": [
         0,
         1,
@@ -100,7 +97,6 @@
         27,
         28,
         29,
-        31,
         32,
         33,
         34,
@@ -119,7 +115,7 @@
       "name": "wall-alt-2",
       "role": "wall",
       "column": 2,
-      "palette": 0,
+      "palette": -1,
       "missing": [
         0,
         1,
@@ -151,7 +147,6 @@
         28,
         29,
         30,
-        31,
         32,
         33,
         34,
@@ -170,12 +165,8 @@
       "name": "ground",
       "role": "ground",
       "column": 3,
-      "palette": 0,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "palette": -1,
+      "missing": []
     },
     {
       "name": "water-ground",
@@ -183,9 +174,6 @@
       "column": 4,
       "palette": 0,
       "missing": [
-        10,
-        26,
-        31,
         39,
         41,
         44,
@@ -197,11 +185,7 @@
       "role": "water",
       "column": 5,
       "palette": 1,
-      "missing": [
-        10,
-        26,
-        31
-      ]
+      "missing": []
     }
   ],
   "palettes": [

@@ -9,7 +9,9 @@ import Npc, {
   GROOMING_FEE,
   NURSE_CARE_LIMIT,
   REMINDER_FEE,
+  TUTOR_FEE,
   getRecallableMoves,
+  getTutorableMoves,
 } from '../data/overworld/npc';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../data/overworld/fossil';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../data/overworld/vendor';
@@ -611,6 +613,61 @@ export async function remindMove(
   }
 
   // He was asked and gave nothing back — no scale, the wrong move, a
+  // pokemon he cannot touch. The window is given back with it
+  if (taught == null) {
+    await releaseVisit(visit);
+  }
+  return taught;
+}
+
+/**
+ * Have the Move Tutor put a teachable move on the pokemon, for gold.
+ *
+ * The reminder's trade run the other way: the tutor deals in what a
+ * machine would teach rather than in what levelling once gave, for
+ * the same one Heart Scale. It leaves the bag in the transaction the
+ * move is written in, so a refusal costs nothing.
+ *
+ * Resolves the move list as it now stands, or null when he refuses:
+ * the catch is not the player's, it is fighting, locked or still an
+ * egg, the move is not on the species' teachable list, no scale is
+ * carried, or this window's visit has already been made
+ */
+export async function tutorMove(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  move: Moves,
+  replaces: number,
+  now: number,
+  offset: number,
+): Promise<Moves[] | null> {
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
+
+  if (snapshot == null) {
+    return null;
+  }
+
+  const visit = await takeVisit(snapshot, 'tutor', cell, uid, { caught: catchId, move });
+
+  if (visit == null) {
+    return null;
+  }
+
+  let taught: Moves[] | null;
+
+  try {
+    taught = await learnMove(uid, catchId, move, TUTOR_FEE, replaces, (species, _level, known) =>
+      new Set(getTutorableMoves(species, known)).has(move),
+    );
+  } catch (error) {
+    await releaseVisit(visit);
+    throw error;
+  }
+
+  // He was asked and taught nothing — a thin purse, the wrong move, a
   // pokemon he cannot touch. The window is given back with it
   if (taught == null) {
     await releaseVisit(visit);

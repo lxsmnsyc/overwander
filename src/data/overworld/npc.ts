@@ -1,7 +1,7 @@
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
-import { getLevelUpMoves } from '../species';
+import { getLevelUpMoves, getTeachableMoves } from '../species';
 
 /**
  * The people who pass through a wandering-NPC landmark. The cell is
@@ -67,6 +67,12 @@ const enum Npc {
    * pokemon — he will do it as often as a player has fossils
    */
   FossilScientist = 8,
+  /**
+   * Takes gold and puts a move on a pokemon that its species can be
+   * taught but never grows into. The reminder's counter run the other
+   * way: he deals in what a machine would teach, not in what was lost
+   */
+  MoveTutor = 9,
 }
 
 export default Npc;
@@ -84,6 +90,7 @@ export const NPCS: Npc[] = [
   Npc.RocketGrunt,
   Npc.FossilManiac,
   Npc.FossilScientist,
+  Npc.MoveTutor,
 ];
 
 /**
@@ -109,6 +116,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.RocketGrunt]: 'Team Rocket Grunt',
   [Npc.FossilManiac]: 'Fossil Maniac',
   [Npc.FossilScientist]: 'Fossil Scientist',
+  [Npc.MoveTutor]: 'Move Tutor',
 };
 
 /**
@@ -174,4 +182,22 @@ export function getRecallableMoves(
   const knows = new Set(known);
 
   return getLevelUpMoves(species, level).filter((move) => !knows.has(move));
+}
+
+/**
+ * What the tutor charges per lesson: the reminder's own price. One
+ * scale, one lesson, and gold is no use to either of them
+ */
+export const TUTOR_FEE = Items.HeartScale;
+
+/**
+ * What the tutor can put on a pokemon: everything on its species'
+ * teachable list, minus the moves it already knows. The list is the
+ * machines' own — he teaches nothing a machine could not — so what he
+ * sells is the lesson without the hunt for the disc
+ */
+export function getTutorableMoves(species: Species, known: Iterable<Moves>): Moves[] {
+  const knows = new Set(known);
+
+  return getTeachableMoves(species).filter((move) => !knows.has(move));
 }

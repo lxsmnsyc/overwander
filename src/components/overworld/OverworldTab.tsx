@@ -999,7 +999,7 @@ function OverworldBoard(props: {
       if (standing === Npc.RocketGrunt) {
         const stop = await enterRocketStop(loaded.snapshot, at);
 
-        if (stop == null) {
+        if (stop === 'beaten') {
           // The grunt is gone once beaten, but the pokemon they left
           // may still be standing: claiming again pays nothing and
           // hands it back until it is caught
@@ -1017,6 +1017,14 @@ function OverworldBoard(props: {
             return null;
           }
           return 'The grunt has moved on.';
+        }
+        if (stop == null) {
+          // The server stages nobody there: the board is behind the
+          // world — a window rolled over, or the game was updated
+          // under an open tab — so it is asked for again rather than
+          // blamed on a grunt that was never beaten
+          askForWindow(true);
+          return 'Nobody is standing there any more.';
         }
         if (!(await canJoinRaids(user.uid))) {
           return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';

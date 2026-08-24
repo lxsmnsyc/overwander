@@ -185,11 +185,23 @@ export async function ensureProfile(user: PlayerIdentity): Promise<Profile> {
   // The trigger writes 'Trainer' when the provider offered no name;
   // a provider that did offer one fills it in on first sight
   if (existing != null) {
-    if (existing.nickname === 'Trainer' && defaults.nickname !== 'Trainer') {
+    let held = existing;
+
+    if (held.nickname === 'Trainer' && defaults.nickname !== 'Trainer') {
       await saveProfile(user.uid, { nickname: defaults.nickname, avatar: defaults.avatar });
-      return { ...existing, nickname: defaults.nickname, avatar: defaults.avatar };
+      held = { ...held, nickname: defaults.nickname, avatar: defaults.avatar };
     }
-    return existing;
+    // The trigger usually wins the race, so the dev keys are handed
+    // out here too, not only to the account that outran its own row
+    if (import.meta.env.DEV && held.role === '') {
+      try {
+        return { ...held, role: await claimDevAdmin() };
+      } catch {
+        // The keys are a convenience; signing in is not worth
+        // failing over them
+      }
+    }
+    return held;
   }
 
   // The trigger has not landed yet (a fresh sign-up racing its own

@@ -258,6 +258,14 @@ export function getEggMoves(species: Species): Moves[] {
 }
 
 /**
+ * The moves a machine or a tutor can put on the species: the ones it
+ * never grows into on its own
+ */
+export function getTeachableMoves(species: Species): Moves[] {
+  return getSpeciesData(species).learnSet.teachable;
+}
+
+/**
  * Every move the species can ever come by: what it levels into, what a
  * machine teaches it and what it can only inherit.
  *

@@ -14,7 +14,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
       ],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Magnemite, weight: 20 },
+        { species: Species.Voltorb, weight: 20 },
+      ],
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -22,6 +25,8 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dodrio, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
+        { species: Species.Magneton, weight: 10 },
+        { species: Species.Electrode, weight: 10 },
       ],
       special: [],
     },
@@ -33,7 +38,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
       ],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Magnemite, weight: 20 },
+        { species: Species.Voltorb, weight: 20 },
+      ],
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
@@ -42,19 +50,35 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dodrio, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
+        { species: Species.Magneton, weight: 10 },
+        { species: Species.Electrode, weight: 10 },
       ],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Ekans, weight: 20 }],
-      uncommon: [],
-      rare: [{ species: Species.Arbok, weight: 10 }],
+      uncommon: [
+        { species: Species.Magnemite, weight: 20 },
+        { species: Species.Voltorb, weight: 20 },
+      ],
+      rare: [
+        { species: Species.Arbok, weight: 10 },
+        { species: Species.Magneton, weight: 10 },
+        { species: Species.Electrode, weight: 10 },
+      ],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Ekans, weight: 20 }],
-      uncommon: [],
-      rare: [{ species: Species.Arbok, weight: 10 }],
+      uncommon: [
+        { species: Species.Magnemite, weight: 20 },
+        { species: Species.Voltorb, weight: 20 },
+      ],
+      rare: [
+        { species: Species.Arbok, weight: 10 },
+        { species: Species.Magneton, weight: 10 },
+        { species: Species.Electrode, weight: 10 },
+      ],
       special: [],
     },
   });

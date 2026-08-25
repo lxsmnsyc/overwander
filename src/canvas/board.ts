@@ -1,4 +1,4 @@
-import { CHUNK_CELLS, isGateCell } from '../overworld/chunk';
+import { CHUNK_CELLS } from '../overworld/chunk';
 
 /**
  * The chunk seen from a chair rather than from a satellite: the ground
@@ -399,9 +399,9 @@ export function boardCellOf(index: number): BoardCell {
 /**
  * The way out of the chunk a threshold cell is: the edge cell stepped
  * off, and the step that takes the player over. Null for anything that
- * is not a threshold, and for a threshold in the rim wall — only the
- * gates go through. The step is the ordinary one, so nothing about
- * crossing a boundary had to learn that the apron exists
+ * is not a threshold, and for a corner — a crossing is one side at a
+ * time. The step is the ordinary one, so nothing about crossing a
+ * boundary had to learn that the apron exists
  */
 export function borderExit(cell: BoardCell): { cell: number; step: [number, number] } | null {
   if (!isBoardCell(cell) || !isBorderCell(cell)) {
@@ -420,9 +420,9 @@ export function borderExit(cell: BoardCell): { cell: number; step: [number, numb
   };
   const step: [number, number] = [beyond(cell.x), beyond(cell.y)];
 
-  // Only the gates let a player through: a threshold in front of the
-  // wall is more wall
-  if (!isGateCell(step[0] === 0 ? cell.x : cell.y)) {
+  // A corner threshold is off two sides at once, which no single
+  // step crosses
+  if (step[0] !== 0 && step[1] !== 0) {
     return null;
   }
   const from = {

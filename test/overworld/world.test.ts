@@ -25,6 +25,7 @@ import Lairs, {
 import Natures from '../../src/data/ids/natures';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
+import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
@@ -1674,6 +1675,62 @@ describe('world', () => {
     expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
   });
 
+  it('startles what the phenomenon looks like', () => {
+    const water = new Set([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]);
+    // Skip the item half, then walk both bands with a spread of picks
+    const draws = [];
+
+    for (const rare of [0, 0.5]) {
+      for (let pick = 0; pick < 8; pick++) {
+        draws.push([0.9, rare, pick / 8]);
+      }
+    }
+
+    for (const roll of draws) {
+      const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+      // A shadow over grassland is always something that flies
+      const shadowed = resolvePhenomenon(
+        Phenomenon.FlyingShadow,
+        Biome.Grassland,
+        TimeOfDay.Morning,
+        rolls([...roll]),
+      );
+
+      expect(shadowed?.kind).toBe('pokemon');
+      if (shadowed?.kind === 'pokemon') {
+        expect(getSpeciesData(shadowed.species).eggGroups).toContain(EggGroups.Flying);
+      }
+
+      // A ripple in a swamp is never the Farfetch'd wading beside it
+      const rippled = resolvePhenomenon(
+        Phenomenon.RipplingWater,
+        Biome.Swamp,
+        TimeOfDay.Morning,
+        rolls([...roll]),
+      );
+
+      expect(rippled?.kind).toBe('pokemon');
+      if (rippled?.kind === 'pokemon') {
+        const groups = getSpeciesData(rippled.species).eggGroups;
+
+        expect(groups.some((group) => water.has(group))).toBe(true);
+      }
+    }
+
+    // A biome with nothing that fits still answers from the plain band
+    const landlocked = resolvePhenomenon(
+      Phenomenon.RipplingWater,
+      Biome.Grassland,
+      TimeOfDay.Morning,
+      (() => {
+        const values = [0.9, 0.5, 0];
+        return () => values.shift() ?? 0.999;
+      })(),
+    );
+
+    expect(landlocked?.kind).toBe('pokemon');
+  });
+
   it('produces varied biomes across a region', () => {
     const world = new World('overworld');
     const biomes = new Set<Biome>();
@@ -2724,6 +2781,59 @@ describe('portal balancing', () => {
         const landmarks = world.getChunk(x, y).getLandmarks();
 
         expect(landmarks.filter((kind) => kind === Landmark.Portal).length).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it('stations the keeper beside the portal, some windows', () => {
+    const world = new World('overworld');
+    let stationed = 0;
+    let quiet = 0;
+
+    for (let x = 0; x < 25 && stationed === 0; x++) {
+      for (let y = 0; y < 8; y++) {
+        const chunk = world.getChunk(x, y);
+        const portal = getPortalCell(chunk);
+
+        if (portal == null) {
+          continue;
+        }
+
+        for (let window = 0; window < 64; window++) {
+          const snapshot = new ChunkSnapshot(chunk, window * SNAPSHOT_INTERVAL);
+          const spawns = snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS);
+
+          // The keeper counts against the window rather than on top
+          expect(spawns.length).toBeLessThanOrEqual(SPAWN_COUNT + LURE_SPAWN_BONUS);
+
+          const keepers = [...snapshot.getSpawnCells()].filter(
+            ([, spawn]) => spawn[0] === Species.Porygon,
+          );
+
+          if (keepers.length === 0) {
+            quiet++;
+            continue;
+          }
+          // One keeper, published first, standing in the portal's ring
+          expect(keepers.length).toBe(1);
+          expect(spawns[0][0]).toBe(Species.Porygon);
+          expect(neighborCells(portal)).toContain(keepers[0][0]);
+          stationed++;
+        }
+      }
+    }
+    expect(stationed).toBeGreaterThan(0);
+    expect(quiet).toBeGreaterThan(0);
+  });
+
+  it('keeps porygon out of every wild pool', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
+        const pool = getSpawnPool(biome, time);
+
+        for (const band of [pool.base, pool.uncommon, pool.rare, pool.special]) {
+          expect(band.some((entry) => entry.species === Species.Porygon)).toBe(false);
+        }
       }
     }
   });

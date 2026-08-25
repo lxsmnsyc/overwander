@@ -5,8 +5,10 @@ import {
   getSpawnPool,
   pickFromEntries,
 } from '../data/biome';
+import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import type { TimeOfDay } from '../data/ids/biome';
+import EggGroups from '../data/ids/egg-groups';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
@@ -18,7 +20,7 @@ import Phenomenon, {
   PHENOMENON_RARE_CHANCE,
   getPhenomenonItems,
 } from '../data/overworld/phenomenon';
-import { SPECIES_DAY_WEIGHT_BOOST } from '../data/species';
+import { SPECIES_DAY_WEIGHT_BOOST, getSpeciesData } from '../data/species';
 
 /**
  * What a phenomenon turned out to be: something to meet, something to
@@ -95,16 +97,44 @@ export function resolveBerryPatch(random: () => number): ItemStack | null {
 }
 
 /**
+ * The egg groups a phenomenon insists on: rippling water startles the
+ * three water groups, a flying shadow the flying one. The others take
+ * whatever the biome has
+ */
+const PHENOMENON_EGG_GROUPS: Partial<Record<Phenomenon, Set<EggGroups>>> = {
+  [Phenomenon.RipplingWater]: new Set([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]),
+  [Phenomenon.FlyingShadow]: new Set([EggGroups.Flying]),
+};
+
+/**
+ * The band's entries that fit what the phenomenon looks like; the
+ * whole band when it insists on nothing
+ */
+function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): SpawnEntry[] {
+  if (groups == null) {
+    return entries;
+  }
+  return entries.filter((entry) =>
+    getSpeciesData(entry.species).eggGroups.some((group) => groups.has(group)),
+  );
+}
+
+/**
  * The pokemon a phenomenon startled out: the biome's **uncommon** band
  * most of the time and its **rare** band one draw in eight, with
  * either standing in for the other when it comes up empty. The base
  * band is not in it at all — what a player can meet by walking is not
  * worth stopping for — and neither is the special one.
  *
+ * Rippling water and a flying shadow look like something particular,
+ * so the pick prefers the egg groups they suggest and falls back to
+ * the whole band only when the biome has nothing that fits.
+ *
  * The day's featured family, when one is given, crowds the pool
  * exactly as it crowds the overworld's
  */
 function startled(
+  phenomenon: Phenomenon,
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
@@ -115,11 +145,15 @@ function startled(
     featured == null
       ? biomePool
       : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
+  const groups = PHENOMENON_EGG_GROUPS[phenomenon];
   const rare = random() < PHENOMENON_RARE_CHANCE;
   const preferred = rare ? pool.rare : pool.uncommon;
   const fallback = rare ? pool.uncommon : pool.rare;
+  // Fitting entries of either band first, then any entry at all: a
+  // biome with nothing that fits still answers, as it always did
+  const bands = [fitting(preferred, groups), fitting(fallback, groups), preferred, fallback];
 
-  return pickFromEntries(preferred.length > 0 ? preferred : fallback, random);
+  return pickFromEntries(bands.find((band) => band.length > 0) ?? [], random);
 }
 
 /**
@@ -158,7 +192,7 @@ export function resolvePhenomenon(
     return item == null ? null : { kind: 'item', items: [{ item, amount: 1 }] };
   }
 
-  const species = startled(biome, time, random, featured);
+  const species = startled(phenomenon, biome, time, random, featured);
 
   return species == null ? null : { kind: 'pokemon', species };
 }

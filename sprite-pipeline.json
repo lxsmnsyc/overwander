@@ -26,15 +26,15 @@
       }
     },
     "public/sprites/biome/10/image.png": {
-      "digest": "c6d23825158b508c",
-      "bytes": 16405,
-      "width": 192,
+      "digest": "422853b0305d17ca",
+      "bytes": 14722,
+      "width": 168,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-25T10:38:31Z",
         "as": "already compact",
-        "was": 16405,
-        "bytes": 16405
+        "was": 14722,
+        "bytes": 14722
       }
     },
     "public/sprites/biome/11/image.png": {

@@ -1,22 +1,20 @@
 import { Around, canonicalMask } from '../data/overworld/autotile';
 import type { TerrainRole } from '../data/overworld/terrain';
 import { joins } from '../data/overworld/terrain';
-import { CHUNK_CELLS, isGateCell } from './chunk';
+import { CHUNK_CELLS } from './chunk';
 
 /**
  * The chunk read as ground rather than as a list of things on it.
  *
- * The walls are the rim: everything outside the chunk proper, apron
- * included, is rock, so the board sits inside a solid frame. The
- * frame opens at the four gates — a centered strip on each side —
- * where the ground runs on outward, so the way into the next chunk
- * is drawn as a path rather than found by pressing rock. A landmark
- * keeps its ordinary ground; the sprite standing on the cell is what
- * says something is there.
+ * The chunk has no rim of its own: its ground runs on outward past
+ * the edge, apron included, so a chunk reads as a stretch of open
+ * country and the next one begins where this one leaves off. A
+ * landmark keeps its ordinary ground; the sprite standing on the
+ * cell is what says something is there.
  *
- * Inside the frame everything is walked on, and is water where the
- * biome is. The chunk's spots break the surface up: a pool of water
- * on a land chunk, a bank of ground on a water one.
+ * Everything is walked on, and is water where the biome is. The
+ * chunk's spots break the surface up: a pool of water on a land
+ * chunk, a bank of ground on a water one.
  */
 
 export interface BoardTerrain {
@@ -65,31 +63,26 @@ export default function boardTerrain(options: TerrainOptions): BoardTerrain {
   const walkable: TerrainRole = options.water ? 'water' : 'ground';
 
   const at = (x: number, y: number): TerrainRole => {
-    const outX = x < 0 || x >= CHUNK_CELLS;
-    const outY = y < 0 || y >= CHUNK_CELLS;
-
-    if (!outX && !outY) {
-      const cell = y * CHUNK_CELLS + x;
-
-      if (options.rocks?.has(cell) === true) {
-        return 'wall';
-      }
-      // A spot is the other ground: a pool in a field, a bank in a
-      // wetland
-      if (options.spots?.has(cell) === true) {
-        return options.spotRole ?? (options.water ? 'ground' : 'water');
-      }
-      if (options.shallows?.has(cell) === true) {
-        return 'ground';
-      }
+    // Past the edge the walkable ground simply continues, so the way
+    // out is drawn as country going on rather than as a boundary
+    if (x < 0 || x >= CHUNK_CELLS || y < 0 || y >= CHUNK_CELLS) {
       return walkable;
     }
-    // A gate's ground runs on outward as far as anybody asks, so the
-    // opening reads as a path leading away rather than an alcove
-    if (outX && outY) {
+
+    const cell = y * CHUNK_CELLS + x;
+
+    if (options.rocks?.has(cell) === true) {
       return 'wall';
     }
-    return isGateCell(outX ? y : x) ? walkable : 'wall';
+    // A spot is the other ground: a pool in a field, a bank in a
+    // wetland
+    if (options.spots?.has(cell) === true) {
+      return options.spotRole ?? (options.water ? 'ground' : 'water');
+    }
+    if (options.shallows?.has(cell) === true) {
+      return 'ground';
+    }
+    return walkable;
   };
 
   return {

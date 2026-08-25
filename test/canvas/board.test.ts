@@ -199,18 +199,17 @@ describe('the apron around the chunk', () => {
     expect(borderExit({ x: -1, y: -1 })).toBeNull();
   });
 
-  it('goes through at the gates and nowhere else', () => {
-    // The gates are the centered four cells of each side
-    expect(borderExit({ x: -1, y: 6 })).not.toBeNull();
-    expect(borderExit({ x: -1, y: 9 })).not.toBeNull();
-    expect(borderExit({ x: -1, y: 5 })).toBeNull();
-    expect(borderExit({ x: -1, y: 10 })).toBeNull();
-    expect(borderExit({ x: 5, y: -1 })).toBeNull();
-    expect(borderExit({ x: 10, y: CHUNK_CELLS })).toBeNull();
-    expect(borderExit({ x: CHUNK_CELLS, y: 0 })).toBeNull();
+  it('goes through anywhere along an edge', () => {
+    // No rim wall: every straight threshold is a way out
+    expect(borderExit({ x: -1, y: 0 })).not.toBeNull();
+    expect(borderExit({ x: -1, y: 5 })).not.toBeNull();
+    expect(borderExit({ x: -1, y: 10 })).not.toBeNull();
+    expect(borderExit({ x: 5, y: -1 })).not.toBeNull();
+    expect(borderExit({ x: 10, y: CHUNK_CELLS })).not.toBeNull();
+    expect(borderExit({ x: CHUNK_CELLS, y: 0 })).not.toBeNull();
   });
 
-  it('leaves every gate threshold beside the edge it steps off', () => {
+  it('leaves every threshold beside the edge it steps off', () => {
     for (const cell of APRON) {
       const exit = borderExit(cell);
 

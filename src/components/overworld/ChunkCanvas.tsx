@@ -809,10 +809,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   });
 
   /**
-   * Point somewhere else. The gates count — leaving is something a
-   * player at a keyboard has to be able to ask for too — but the rim
-   * wall's thresholds and the apron's corners do not: nothing pressed
-   * there does anything
+   * Point somewhere else. The thresholds count, since leaving is
+   * something a player at a keyboard has to be able to ask for too,
+   * but the apron's corners do not: nothing pressed there does
+   * anything
    */
   const moveCursor = ([dx, dy]: [number, number]): void => {
     setCursor((at) => {
@@ -882,8 +882,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const at = fractionAt(event);
     const cell = at == null ? null : boardCellAtFraction(at.x, at.y, yaw());
 
-    // A threshold in the rim wall goes nowhere, so the pointer does
-    // not offer it
+    // A corner threshold goes nowhere, so the pointer does not
+    // offer it
     if (cell != null && isBorderCell(cell) && borderExit(cell) == null) {
       return null;
     }
@@ -1321,9 +1321,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       for (const square of squares) {
         traceCell(square);
 
-        // The apron keeps the tiles' own look: the rim wall and the
-        // gates through it already say where the chunk ends, so no
-        // shade or rule is drawn over them
+        // The apron keeps the tiles' own look: the grid stopping is
+        // what says where the chunk ends, so no shade or rule is
+        // drawn out there
         if (isBorderCell(square)) {
           continue;
         }

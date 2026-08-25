@@ -6,7 +6,7 @@ import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
-import type { Species } from '../data/ids/species';
+import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
@@ -16,7 +16,8 @@ import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
-import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
+import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
+import { getPortalCell } from './portal';
 import type { PhenomenonReward } from './landmarks';
 import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
 
@@ -37,6 +38,13 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * every player of the chunk shares one set of rolls
  */
 export const SPAWN_COUNT = 8;
+
+/**
+ * How often a portal has its keeper standing beside it: Porygon, the
+ * made pokemon, lives in the portal network rather than in any
+ * biome's wild pool
+ */
+export const PORTAL_KEEPER_CHANCE = 1 / 8;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -192,7 +200,27 @@ export default class ChunkSnapshot {
       ]);
       const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
 
-      for (let i = 0; i < count && free.length > 0; i++) {
+      // The portal's keeper rolls before the pool does, so it is the
+      // first published spawn and every player sees it, lure or none
+      const portal = getPortalCell(this.chunk);
+
+      if (portal != null && this.rng.random() < PORTAL_KEEPER_CHANCE) {
+        const open = new Set(free);
+        const beside = neighborCells(portal).filter((cell) => open.has(cell));
+
+        if (beside.length > 0) {
+          const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
+          const cell = beside[Math.floor(this.rng.random() * beside.length)];
+
+          free.splice(free.indexOf(cell), 1);
+          this.cells[cell] = spawn;
+          spawns.push(spawn);
+        }
+      }
+
+      // The keeper counts against the window, so a portal chunk never
+      // publishes more rolls than any other
+      for (let i = spawns.length; i < count && free.length > 0; i++) {
         const species = pickSpawn(pool, () => this.rng.random());
 
         if (species == null) {

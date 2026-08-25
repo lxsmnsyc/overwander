@@ -18,23 +18,6 @@ export const CHUNK_CELLS = 16;
 export const CELL_COUNT = CHUNK_CELLS * CHUNK_CELLS;
 
 /**
- * How wide the opening in each side's wall is. The rest of the rim is
- * rock: a chunk is entered and left through its four gates, not
- * anywhere along an edge
- */
-export const GATE_CELLS = 4;
-
-const GATE_START = (CHUNK_CELLS - GATE_CELLS) / 2;
-
-/**
- * Whether a row or column lines up with the gates, which are centered
- * on every side
- */
-export function isGateCell(along: number): boolean {
-  return along >= GATE_START && along < GATE_START + GATE_CELLS;
-}
-
-/**
  * How much of the chunk anything may be placed in: the central 14x14,
  * which is the whole grid but for a clear cell all the way round.
  *

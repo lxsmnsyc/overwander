@@ -349,6 +349,30 @@
         "bytes": 19940
       }
     },
+    "public/sprites/overworld/characters/frlg/red/image.png": {
+      "digest": "4f99941fa79f2bbd",
+      "bytes": 1073,
+      "width": 51,
+      "height": 100,
+      "compact": {
+        "at": "2026-08-25T12:08:21Z",
+        "as": "already compact",
+        "was": 1073,
+        "bytes": 1073
+      }
+    },
+    "public/sprites/overworld/characters/hgss/red/image.png": {
+      "digest": "4f99941fa79f2bbd",
+      "bytes": 1073,
+      "width": 51,
+      "height": 100,
+      "compact": {
+        "at": "2026-08-25T12:08:21Z",
+        "as": "already compact",
+        "was": 1073,
+        "bytes": 1073
+      }
+    },
     "public/sprites/overworld/landmarks-item-cache/image.png": {
       "digest": "ff851620ccc26cff",
       "bytes": 226,

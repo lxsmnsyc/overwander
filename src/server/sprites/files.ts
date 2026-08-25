@@ -56,21 +56,27 @@ export function pokemonDestination(name: SheetName): Destination {
 
 /**
  * What a charset's folder may be called: letters, digits and the
- * hyphens between them. Anything else a caller typed is dropped rather
- * than escaped, since a name is a label here and not a path
+ * hyphens between them, with slashes keeping subfolders — a charset
+ * files under `characters/{version}/{name}`. Anything else a caller
+ * typed is dropped rather than escaped, so a dotted segment cannot
+ * climb out: `..` reduces to nothing and is refused
  */
 export function overworldSlug(name: string): string {
-  const slug = name
+  const parts = name
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
+    .split('/')
+    .map((part) =>
+      part
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 40),
+    );
 
-  if (slug.length === 0) {
-    throw new Error('The sheet needs a name of letters or digits');
+  if (parts.some((part) => part.length === 0)) {
+    throw new Error('The sheet needs a name of letters or digits, one between each slash');
   }
-  return slug;
+  return parts.join('/');
 }
 
 /**

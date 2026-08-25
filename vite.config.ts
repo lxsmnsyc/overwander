@@ -31,6 +31,16 @@ export default defineConfig({
     }),
     ...(forTests ? [] : [nitro()]),
   ],
+  server: {
+    watch: {
+      // The sprite processor writes finished sheets straight into
+      // public/ and a credit row into docs/, and the watcher's
+      // full-page reload on those writes is what wiped the processor
+      // form mid-use. Nothing imports either; the browser fetches
+      // sheets by path, so a stale watch costs nothing
+      ignored: ['**/public/sprites/**', '**/docs/**'],
+    },
+  },
   ssr: {
     // `server-only` is a marker, not a library. SolidStart's
     // `boundary-modules` plugin resolves it to an empty module on the

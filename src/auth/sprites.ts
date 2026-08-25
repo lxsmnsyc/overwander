@@ -2,8 +2,8 @@ import { action } from '@solidjs/router';
 import type { ProcessResult, UploadedImage } from '../server/sprites/extras';
 import processExtras from '../server/sprites/extras';
 import type { Drawing } from '../server/sprites/files';
-import type { OverworldGrid, OverworldResult } from '../server/sprites/overworld';
-import processOverworld from '../server/sprites/overworld';
+import type { PokengineGrid, PokengineResult } from '../server/sprites/pokengine';
+import processPokengine, { parseOrder } from '../server/sprites/pokengine';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
 import type { RecolorResult } from '../server/sprites/recolor';
@@ -32,8 +32,8 @@ import { requireAdmin } from '../server/roles';
 export type {
   Coats,
   Drawing,
-  OverworldGrid,
-  OverworldResult,
+  PokengineGrid,
+  PokengineResult,
   DrawnRole,
   PmdResult,
   ProcessResult,
@@ -130,36 +130,27 @@ export const packPmd = action(async (form: FormData): Promise<PmdResult> => {
 }, 'sprites/pmd');
 
 /**
- * A number typed into the form, where a sensible one has been offered
- * and the field is the caller's to change
- */
-function grid(form: FormData, name: string, fallback: number): number {
-  const value = Number.parseInt(String(form.get(name) ?? ''), 10);
-
-  return Number.isFinite(value) && value > 0 ? value : fallback;
-}
-
-/**
- * A character sheet into its own folder under
+ * A Pokengine community charset into its own folder under
  * `public/sprites/overworld`.
  *
- * One image rather than a set: a charset is already a sheet, and what
- * this does to it is cut the margin off every cell without moving any
- * of them off the grid
+ * The format is fixed — three walk frames across, four facings down —
+ * so what is asked for is the name, the sheet's own row order, whether
+ * to cut the margin off every cell, and the artist's credit, which the
+ * pack writes into the credits page beside the sheet
  */
-export const packOverworld = action(async (form: FormData): Promise<OverworldResult> => {
+export const packPokengine = action(async (form: FormData): Promise<PokengineResult> => {
   'use server';
   await requireAdmin(String(form.get('token') ?? ''));
 
   const picked = asFile(form.get('sheet'), 'sheet');
 
-  return processOverworld(new Uint8Array(await picked.arrayBuffer()), {
+  return processPokengine(new Uint8Array(await picked.arrayBuffer()), {
     name: String(form.get('name') ?? ''),
-    columns: grid(form, 'columns', 4),
-    rows: grid(form, 'rows', 4),
+    order: parseOrder(String(form.get('order') ?? 'down up right left')),
     compact: flag(form, 'compact'),
+    credit: String(form.get('credit') ?? ''),
   });
-}, 'sprites/overworld');
+}, 'sprites/pokengine');
 
 /**
  * A dungeon tileset rip into `public/sprites/biome/{biome}`.

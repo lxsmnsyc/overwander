@@ -21,7 +21,7 @@ import {
   canProcessSprites,
   packBiome,
   packExtras,
-  packOverworld,
+  packPokengine,
   packPmd,
   recolorBiome,
 } from '../../auth/sprites';
@@ -52,7 +52,7 @@ import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 const enum Mode {
   Pmd = 0,
   Extras = 1,
-  Overworld = 2,
+  Pokengine = 2,
   Tileset = 3,
   Recolor = 4,
 }
@@ -529,27 +529,28 @@ function ExtrasForm(): JSX.Element {
   );
 }
 
-/** How a charset is laid out when nobody says otherwise. */
-const CHARSET_GRID = { columns: 4, rows: 4 };
+/** The row order a Pokengine sheet arrives in. */
+const POKENGINE_ORDER = 'down up right left';
 
 /**
- * A character sheet into `public/sprites/overworld`.
+ * A Pokengine community charset into `public/sprites/overworld`.
  *
- * The one input that is not a file is the grid, because a charset does
- * not carry it: four across and four down is what the sheets these come
- * from use, and a sheet laid out any other way has to say so
+ * The format is fixed — three walk frames across, four facings down —
+ * so the one input that is not a file or a name is the sheet's own row
+ * order, which the pack puts into the game's reading order
  */
-function OverworldForm(): JSX.Element {
+function PokengineForm(): JSX.Element {
   const token = useToken();
   const [picked, setPicked] = createSignal(false);
   const [name, setName] = createSignal('');
-  const [columns, setColumns] = createSignal(String(CHARSET_GRID.columns));
-  const [rows, setRows] = createSignal(String(CHARSET_GRID.rows));
+  const [order, setOrder] = createSignal(POKENGINE_ORDER);
+  const [credit, setCredit] = createSignal('');
   const [compact, setCompact] = createSignal(true);
-  const packing = useSubmission(packOverworld);
+  const packing = useSubmission(packPokengine);
   const [form, setForm] = createSignal<HTMLFormElement>();
 
-  const ready = (): boolean => picked() && name().trim().length > 0 && !packing.pending;
+  const ready = (): boolean =>
+    picked() && name().trim().length > 0 && credit().trim().length > 0 && !packing.pending;
 
   clearedOnSuccess(
     form,
@@ -557,8 +558,8 @@ function OverworldForm(): JSX.Element {
     () => {
       setPicked(false);
       setName('');
-      setColumns(String(CHARSET_GRID.columns));
-      setRows(String(CHARSET_GRID.rows));
+      setOrder(POKENGINE_ORDER);
+      setCredit('');
     },
   );
 
@@ -567,26 +568,26 @@ function OverworldForm(): JSX.Element {
       ref={(element) => {
         setForm(element);
       }}
-      action={packOverworld}
+      action={packPokengine}
       method="post"
       enctype="multipart/form-data"
     >
       <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="name" value={name()} />
-      <input type="hidden" name="columns" value={columns()} />
-      <input type="hidden" name="rows" value={rows()} />
+      <input type="hidden" name="order" value={order()} />
+      <input type="hidden" name="credit" value={credit()} />
       <input type="hidden" name="compact" value={compact() ? 'on' : ''} />
       <FormSection
-        title="Character sheets"
-        lede="One charset — walk frames across, facings down — cropped to the tightest cell that
-          still holds every frame. The grid survives the crop, which is what lets a row and a
-          column still find a frame."
+        title="Pokengine charsets"
+        lede="One Pokengine community charset — standing, one step, the other step across, four
+          facings down. The rows land in the game's order whatever order they arrived in, and the
+          description carries the walk cycle a three-frame charset plays."
       >
         <FilePicker
           label="Sheet"
           name="sheet"
           accept="image/png,image/webp"
-          hint="One image holding the whole grid."
+          hint="One image holding the whole 3 × 4 grid."
           onPick={(files) => {
             setPicked(files.length > 0);
           }}
@@ -596,31 +597,30 @@ function OverworldForm(): JSX.Element {
             label="Name"
             required
             value={name()}
-            placeholder="rocket-grunt"
+            placeholder="characters/frlg/red"
             onChange={(value) => {
               setName(value);
             }}
-            hint="What the folder under sprites/overworld is called. Letters and digits only."
+            hint="The folder under sprites/overworld. Letters and digits; slashes keep subfolders."
           />
           <TextField
-            label="Frames across"
-            kind="number"
-            min={1}
-            value={columns()}
+            label="Row order"
+            value={order()}
+            placeholder={POKENGINE_ORDER}
             onChange={(value) => {
-              setColumns(value);
+              setOrder(value);
             }}
-            hint="Walk frames in one row."
+            hint="The sheet's facings, top to bottom. Each of down, left, right, up once."
           />
           <TextField
-            label="Facings down"
-            kind="number"
-            min={1}
-            value={rows()}
+            label="Credit"
+            required
+            value={credit()}
+            placeholder="Artist"
             onChange={(value) => {
-              setRows(value);
+              setCredit(value);
             }}
-            hint="Rows, in the order the sheet has them."
+            hint="Who drew it. Written into the Pokengine table on the credits page."
           />
           <Switch
             label="Compact"
@@ -631,7 +631,7 @@ function OverworldForm(): JSX.Element {
             }}
           />
         </FormGrid>
-        <FormActions note="Writes the grid and the description beside it.">
+        <FormActions note="Writes the grid, the description beside it, and the credit row.">
           <Button type="submit" tone="primary" disabled={!ready()}>
             {packing.pending ? 'Packing…' : 'Pack'}
           </Button>
@@ -928,7 +928,7 @@ export default function SpriteProcessor(): JSX.Element {
         <TabBar>
           <TabButton value={Mode.Pmd}>PMD</TabButton>
           <TabButton value={Mode.Extras}>Loose images</TabButton>
-          <TabButton value={Mode.Overworld}>Overworld</TabButton>
+          <TabButton value={Mode.Pokengine}>Pokengine</TabButton>
           <TabButton value={Mode.Tileset}>Biome</TabButton>
           <TabButton value={Mode.Recolor}>Palette swap</TabButton>
         </TabBar>
@@ -938,8 +938,8 @@ export default function SpriteProcessor(): JSX.Element {
         <TabPane value={Mode.Extras}>
           <ExtrasForm />
         </TabPane>
-        <TabPane value={Mode.Overworld}>
-          <OverworldForm />
+        <TabPane value={Mode.Pokengine}>
+          <PokengineForm />
         </TabPane>
         <TabPane value={Mode.Tileset}>
           <BiomeForm />

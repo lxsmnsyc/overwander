@@ -13,7 +13,13 @@ import {
   overworldSlug,
   pokemonDestination,
 } from '../../src/server/sprites/files';
-import { GRID_NAME, packGrid } from '../../src/server/sprites/overworld';
+import {
+  FACINGS,
+  GRID_NAME,
+  packPokengine,
+  parseOrder,
+  withCredit,
+} from '../../src/server/sprites/pokengine';
 import { storedAs } from '../../src/components/admin/SpriteProcessor';
 import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
@@ -351,13 +357,13 @@ function charset(
   return raster;
 }
 
-describe('cutting a charset down', () => {
+describe('cutting a pokengine charset down', () => {
   const content = { x: 6, y: 8, width: 20, height: 22 };
+  const straight = [...FACINGS];
 
   it('crops every cell by the same rectangle', () => {
-    const { sheet, data } = packGrid(charset(4, 4, 32, content), {
-      columns: 4,
-      rows: 4,
+    const { sheet, data } = packPokengine(charset(3, 4, 32, content), {
+      order: straight,
       compact: true,
     });
 
@@ -366,13 +372,12 @@ describe('cutting a charset down', () => {
     expect(data.grid.sourceFrameWidth).toBe(32);
     expect(data.grid.trim).toEqual([content.x, content.y]);
     // The sheet is the grid and nothing but the grid
-    expect([sheet.width, sheet.height]).toEqual([content.width * 4, content.height * 4]);
+    expect([sheet.width, sheet.height]).toEqual([content.width * 3, content.height * 4]);
   });
 
   it('leaves every frame where a row and a column can find it', () => {
-    const { sheet, data } = packGrid(charset(4, 4, 32, content), {
-      columns: 4,
-      rows: 4,
+    const { sheet, data } = packPokengine(charset(3, 4, 32, content), {
+      order: straight,
       compact: true,
     });
 
@@ -382,16 +387,41 @@ describe('cutting a charset down', () => {
       for (let column = 0; column < data.grid.columns; column += 1) {
         const at = (row * data.grid.frameHeight * sheet.width + column * data.grid.frameWidth) * 4;
 
-        expect(sheet.data[at], `frame ${column},${row}`).toBe(20 + (row * 4 + column) * 10);
+        expect(sheet.data[at], `frame ${column},${row}`).toBe(20 + (row * 3 + column) * 10);
         expect(sheet.data[at + 3], `frame ${column},${row} is drawn`).toBe(255);
       }
     }
   });
 
+  it('puts the rows into reading order whatever order they arrived in', () => {
+    // The sheet arrives upside down; the pack lands it down, left,
+    // right, up all the same
+    const { sheet, data } = packPokengine(charset(3, 4, 32, content), {
+      order: ['up', 'right', 'left', 'down'],
+      compact: true,
+    });
+
+    for (let row = 0; row < data.grid.rows; row += 1) {
+      const source = 3 - row;
+      const at = row * data.grid.frameHeight * sheet.width * 4;
+
+      expect(sheet.data[at], `facing ${FACINGS[row]}`).toBe(20 + source * 3 * 10);
+    }
+  });
+
+  it('carries the three-frame walk: stand first, a step either side', () => {
+    const { data } = packPokengine(charset(3, 4, 32, content), {
+      order: straight,
+      compact: true,
+    });
+
+    expect(data.grid.standFrame).toBe(0);
+    expect(data.grid.cycle).toEqual([1, 0, 2, 0]);
+  });
+
   it('keeps the cell whole when it is not asked to crop', () => {
-    const { sheet, data } = packGrid(charset(3, 4, 32, content), {
-      columns: 3,
-      rows: 4,
+    const { sheet, data } = packPokengine(charset(3, 4, 32, content), {
+      order: straight,
       compact: false,
     });
 
@@ -401,34 +431,81 @@ describe('cutting a charset down', () => {
   });
 
   it('describes the grid as one picture, since that is how it is drawn', () => {
-    const { data } = packGrid(charset(4, 4, 32, content), {
-      columns: 4,
-      rows: 4,
+    const { data } = packPokengine(charset(3, 4, 32, content), {
+      order: straight,
       compact: true,
     });
 
     expect(data.images).toHaveLength(1);
     expect(data.images[0].name).toBe(GRID_NAME);
     expect(data.images[0].width).toBe(data.width);
-    expect(data.images[0].sourceWidth).toBe(128);
+    expect(data.images[0].sourceWidth).toBe(96);
   });
 
-  it('refuses a grid the sheet does not divide into', () => {
-    // 65 across three is somebody guessing, and shaving the remainder
+  it('refuses a sheet the format does not divide into', () => {
+    // 65 across three is not this format, and shaving the remainder
     // would drop a column of every sheet without saying so
-    expect(() => packGrid(blank(65, 64), { columns: 3, rows: 4, compact: true })).toThrow(
+    expect(() => packPokengine(blank(65, 64), { order: straight, compact: true })).toThrow(
       /does not divide/,
-    );
-    expect(() => packGrid(blank(64, 64), { columns: 0, rows: 4, compact: true })).toThrow(
-      /at least one/,
     );
   });
 
   it('keeps an empty sheet the size it came at', () => {
-    const { data } = packGrid(blank(64, 64), { columns: 4, rows: 4, compact: true });
+    const { data } = packPokengine(blank(96, 64), { order: straight, compact: true });
 
-    expect(data.grid.frameWidth).toBe(16);
+    expect(data.grid.frameWidth).toBe(32);
     expect(data.grid.trim).toEqual([0, 0]);
+  });
+
+  it('reads a row order and refuses a guessed one', () => {
+    expect(parseOrder('down, left, right, up')).toEqual(straight);
+    expect(parseOrder('UP right DOWN left')).toEqual(['up', 'right', 'down', 'left']);
+    expect(() => parseOrder('down left right')).toThrow(/exactly once/);
+    expect(() => parseOrder('down down left right')).toThrow(/exactly once/);
+    expect(() => parseOrder('north south east west')).toThrow(/exactly once/);
+  });
+});
+
+describe('crediting a pokengine sheet', () => {
+  const page = [
+    '## Art',
+    '',
+    '### Pokengine community',
+    '',
+    'Where the charsets come from.',
+    '',
+    '| Sheet | Credit |',
+    '| ----- | ------ |',
+    '',
+    '> The note after the table stays.',
+    '',
+    '## The rules',
+    '',
+  ].join('\n');
+
+  it('adds a row and keeps the rest of the page', () => {
+    const credited = withCredit(page, 'rocket-grunt', 'Artist');
+
+    expect(credited).toContain('| `rocket-grunt` | Artist |');
+    expect(credited).toContain('> The note after the table stays.');
+    expect(credited).toContain('## The rules');
+  });
+
+  it('updates a re-packed sheet rather than adding a second row', () => {
+    const twice = withCredit(withCredit(page, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
+
+    expect(twice).toContain('| `rocket-grunt` | Other |');
+    expect(twice).not.toContain('| Artist |');
+  });
+
+  it('keeps the rows sorted by sheet', () => {
+    const credited = withCredit(withCredit(page, 'zubat-keeper', 'Z'), 'aide', 'A');
+
+    expect(credited.indexOf('`aide`')).toBeLessThan(credited.indexOf('`zubat-keeper`'));
+  });
+
+  it('refuses a page with no section to credit into', () => {
+    expect(() => withCredit('# Credits\n', 'rocket-grunt', 'Artist')).toThrow(/Pokengine/);
   });
 });
 
@@ -442,14 +519,17 @@ describe('what a charset is filed as', () => {
 
   it('takes a name down to what a folder may be called', () => {
     expect(overworldSlug('  Nurse Joy ')).toBe('nurse-joy');
-    // Nothing that could climb out of the folder it was given
-    expect(overworldSlug('../../etc/passwd')).toBe('etc-passwd');
     expect(overworldSlug('Grunt #2!')).toBe('grunt-2');
+    // Slashes keep subfolders, and each segment is slugged on its own
+    expect(overworldSlug('Characters/FRLG/Red')).toBe('characters/frlg/red');
   });
 
   it('refuses a name with nothing in it', () => {
     expect(() => overworldSlug('   ')).toThrow(/needs a name/);
     expect(() => overworldSlug('///')).toThrow(/needs a name/);
+    // A dotted segment reduces to nothing rather than climbing out
+    expect(() => overworldSlug('../../etc/passwd')).toThrow(/needs a name/);
+    expect(() => overworldSlug('characters/')).toThrow(/needs a name/);
   });
 });
 

@@ -133,6 +133,27 @@ on the `held` sheet. Its README is explicit that the code is MIT and **the sprit
 images are not** — they are © Nintendo/Creatures Inc./GAME FREAK Inc., like the
 names in `src/data`.
 
+### Pokengine community
+
+The overworld character sheets under `public/sprites/overworld` are fan-made
+sprites from the [Pokengine](https://pokengine.org) community. The rights to
+each sheet stay with the artist who drew it; they are used here with credit and
+not commercially, on the same footing as the pokemon sheets above.
+
+The sprite processor's Pokengine step writes a row into this table for every
+charset it packs, from the credit typed in beside the sheet, so a sheet cannot
+land in `public/` without its artist landing here. A sheet missing from the
+table predates the step and came from ripped Gen 4 overworlds; those are being
+replaced.
+
+| Sheet | Credit |
+| ----- | ------ |
+| `characters/frlg/brock` | kyledove |
+| `characters/frlg/leaf` | kyledove |
+| `characters/frlg/red` | Jext |
+| `characters/hgss/brock` | Jext |
+| `characters/hgss/red` | Jext |
+
 > **What is still missing.** Three of the sheets under `pokemon` are not pokemon
 > — the Missingno placeholder, an egg and a substitute, numbered past a hundred
 > thousand — and nobody wrote down which entry of which pack each came from. The

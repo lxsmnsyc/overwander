@@ -199,11 +199,13 @@ export function gridLayoutOf(value: unknown): OWCharLayout {
     return {};
   }
 
-  const { columns, rows, sourceFrameWidth, sourceFrameHeight } = grid as {
+  const { columns, rows, sourceFrameWidth, sourceFrameHeight, standFrame, cycle } = grid as {
     columns?: unknown;
     rows?: unknown;
     sourceFrameWidth?: unknown;
     sourceFrameHeight?: unknown;
+    standFrame?: unknown;
+    cycle?: unknown;
   };
   const layout: OWCharLayout = {};
   // Only the numbers that are really there are carried: a key with
@@ -229,6 +231,21 @@ export function gridLayoutOf(value: unknown): OWCharLayout {
   }
   if (cellHeight != null) {
     layout.sourceFrameHeight = cellHeight;
+  }
+  // A three-frame charset carries how it plays as well as how it is
+  // cut: which column is the standing pose, and the step-stand-step
+  // order the walk runs in
+  if (typeof standFrame === 'number' && Number.isFinite(standFrame) && standFrame >= 0) {
+    layout.standFrame = Math.trunc(standFrame);
+  }
+  if (Array.isArray(cycle)) {
+    const frames = cycle.filter(
+      (frame): frame is number => typeof frame === 'number' && Number.isFinite(frame) && frame >= 0,
+    );
+
+    if (frames.length > 0) {
+      layout.cycle = frames.map(Math.trunc);
+    }
   }
   return layout;
 }
@@ -364,6 +381,8 @@ export default class OWCharSprite {
       // that is a question rather than an answer
       columns: layout.columns ?? carried.columns,
       rows: layout.rows ?? carried.rows,
+      standFrame: layout.standFrame ?? carried.standFrame,
+      cycle: layout.cycle ?? carried.cycle,
     });
   }
 

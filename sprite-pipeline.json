@@ -349,6 +349,18 @@
         "bytes": 19940
       }
     },
+    "public/sprites/overworld/landmarks-item-cache/image.png": {
+      "digest": "ff851620ccc26cff",
+      "bytes": 226,
+      "width": 80,
+      "height": 80,
+      "compact": {
+        "at": "2026-08-25T11:01:00Z",
+        "as": "already compact",
+        "was": 226,
+        "bytes": 226
+      }
+    },
     "public/sprites/overworld/landmarks-npc-0/image.png": {
       "digest": "8e285bd2e4977528",
       "bytes": 1462,

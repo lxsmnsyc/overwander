@@ -1466,6 +1466,7 @@ function OverworldBoard(props: {
                 player={frozen()?.player ?? cell()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
+                phenomena={loaded().snapshot.getPhenomena()}
                 spots={loaded().spots}
                 shallows={loaded().shallows}
                 rocks={loaded().rocks}

@@ -47,6 +47,7 @@ import { rotateMask } from '../../data/overworld/autotile';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
+import Phenomenon from '../../data/overworld/phenomenon';
 import type Npc from '../../data/overworld/npc';
 import { npcSheet } from '../../data/overworld/npc';
 import type { Species } from '../../data/ids/species';
@@ -385,6 +386,107 @@ function drawDecoration(
   context.restore();
 }
 
+/**
+ * What a phenomenon looks like from above, drawn in code the way the
+ * scenery is. Each is the thing itself rather than a marker: rings
+ * spreading on water, dust hanging over dry ground, the shadow of
+ * something passing overhead. The grotto is the exception — hidden is
+ * what it is, so it keeps the plain landmark mark
+ */
+function drawPhenomenon(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  phenomenon: Phenomenon,
+  now: number,
+  magnify: number,
+): void {
+  const size = CELL * spot.scale * magnify;
+
+  context.save();
+
+  if (phenomenon === Phenomenon.RipplingWater) {
+    // Two rings a half-beat apart, each spreading out and thinning
+    // away, squashed to lie on the ground
+    for (const phase of [0, 0.5]) {
+      const part = (now / 1600 + phase) % 1;
+      const reach = size * (0.12 + part * 0.42);
+
+      context.globalAlpha = (1 - part) * 0.9;
+      context.strokeStyle = '#eaf7ff';
+      context.lineWidth = Math.max(1, size * 0.06 * (1 - part * 0.6));
+      context.beginPath();
+      context.ellipse(spot.x, spot.y, reach, reach * 0.55, 0, 0, Math.PI * 2);
+      context.stroke();
+    }
+  } else if (phenomenon === Phenomenon.DustCloud) {
+    // Three puffs slowly wheeling about the cell, each breathing on
+    // its own beat, with a pair of kicked-up specks running ahead
+    const turn = now / 1100;
+
+    // Each puff is a darker roll with a lit crown offset over it, so
+    // the cloud reads as dust even on ground the same colour
+    for (let puff = 0; puff < 3; puff++) {
+      const angle = turn + (puff * Math.PI * 2) / 3;
+      const breath = 1 + Math.sin(now / 260 + puff * 2) * 0.15;
+      const x = spot.x + Math.cos(angle) * size * 0.16;
+      const y = spot.y + Math.sin(angle) * size * 0.1 - size * 0.06;
+
+      context.globalAlpha = 0.75;
+      context.fillStyle = '#a37f47';
+      context.beginPath();
+      context.ellipse(x, y, size * 0.16 * breath, size * 0.12 * breath, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#e5cd9a';
+      context.beginPath();
+      context.ellipse(
+        x - size * 0.04,
+        y - size * 0.05,
+        size * 0.1 * breath,
+        size * 0.07 * breath,
+        0,
+        0,
+        Math.PI * 2,
+      );
+      context.fill();
+    }
+    for (let speck = 0; speck < 2; speck++) {
+      const angle = turn * 1.8 + speck * Math.PI;
+
+      context.globalAlpha = 0.8;
+      context.fillStyle = '#9a7b45';
+      context.beginPath();
+      context.arc(
+        spot.x + Math.cos(angle) * size * 0.3,
+        spot.y + Math.sin(angle) * size * 0.18 - size * 0.1,
+        Math.max(1, size * 0.035),
+        0,
+        Math.PI * 2,
+      );
+      context.fill();
+    }
+  } else if (phenomenon === Phenomenon.FlyingShadow) {
+    // The shadow alone: a dark patch gliding to and fro across the
+    // cell, swelling a little as whatever casts it banks lower
+    const sweep = Math.sin(now / 1400);
+    const low = 1 + Math.sin(now / 700) * 0.12;
+
+    context.globalAlpha = 0.4;
+    context.fillStyle = '#101820';
+    context.beginPath();
+    context.ellipse(
+      spot.x + sweep * size * 0.22,
+      spot.y + Math.cos(now / 900) * size * 0.06,
+      size * 0.22 * low,
+      size * 0.12 * low,
+      0,
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
+  }
+  context.restore();
+}
+
 const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'C',
   [Landmark.Phenomenon]: '!',
@@ -415,6 +517,12 @@ export interface ChunkCanvasProps {
    */
   player: number;
   landmarks: Map<number, Landmark>;
+  /**
+   * What each phenomenon cell is showing this hour. The kind decides
+   * the picture: rings, dust or a passing shadow, drawn as the thing
+   * itself rather than as a marker
+   */
+  phenomena: Map<number, Phenomenon>;
   /**
    * The chunk's terrain spots, drawn as the other ground: water
    * pools on a land chunk, ground banks in a wetland
@@ -1347,14 +1455,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // feet as well would be the cell saying the same thing twice
         if (landmark != null && !drawnAsPerson(index)) {
           const middle = at(projectCell(index, yaw()));
+          const showing = landmark === Landmark.Phenomenon ? props.phenomena.get(index) : undefined;
 
-          context.fillStyle = COLORS.landmark;
-          context.beginPath();
-          context.arc(middle.x, middle.y, CELL * 0.36 * middle.scale * magnify, 0, Math.PI * 2);
-          context.fill();
-          context.fillStyle = COLORS.glyph;
-          context.font = `bold ${Math.round(CELL * 0.6 * middle.scale * magnify)}px monospace`;
-          context.fillText(LANDMARK_GLYPHS[landmark], middle.x, middle.y + 1);
+          // A phenomenon is drawn as the thing going on there; the
+          // grotto hides, so it keeps the plain mark like the rest
+          if (showing != null && showing !== Phenomenon.HiddenGrotto) {
+            drawPhenomenon(context, middle, showing, clock, magnify);
+          } else {
+            context.fillStyle = COLORS.landmark;
+            context.beginPath();
+            context.arc(middle.x, middle.y, CELL * 0.36 * middle.scale * magnify, 0, Math.PI * 2);
+            context.fill();
+            context.fillStyle = COLORS.glyph;
+            context.font = `bold ${Math.round(CELL * 0.6 * middle.scale * magnify)}px monospace`;
+            context.fillText(LANDMARK_GLYPHS[landmark], middle.x, middle.y + 1);
+          }
         }
       }
 

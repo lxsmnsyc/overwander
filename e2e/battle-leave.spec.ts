@@ -43,6 +43,12 @@ test.describe('leaving a battle', () => {
 
     await leave.click();
 
+    // Leaving a live fight asks first; walking out is confirmed
+    const confirm = page.getByRole('dialog', { name: 'Leave the battle?' });
+
+    await expect(confirm).toBeVisible();
+    await confirm.getByRole('button', { name: 'Leave anyway', exact: true }).click();
+
     // The world, and nothing over it. Each of these is a different
     // way the button has failed before, so they are asserted apart:
     // the battle still up, the raids panel back on top of the world,

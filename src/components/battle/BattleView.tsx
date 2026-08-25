@@ -90,6 +90,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   // Whether the player has closed the verdict. Once, per battle: the
   // view is rebuilt for the next one, so nothing has to reset it
   const [dismissed, setDismissed] = createSignal(false);
+  // Whether the player is being asked to confirm walking out of a
+  // live fight
+  const [leaving, setLeaving] = createSignal(false);
   /**
    * Seconds left before the fight starts, or null once it has
    */
@@ -443,6 +446,60 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   /**
+   * Whether the signed-in player fought in this battle. A spectator
+   * — anyone who walked in on a raid already under way — watches the
+   * same deterministic fight but settles nothing and is owed nothing
+   */
+  const fought = (): boolean => {
+    const user = auth.user();
+
+    return user != null && record()?.players.includes(user.uid) === true;
+  };
+
+  /**
+   * Walking out of a grunt's fight concedes it: the loss is stamped
+   * and the party's aftermath written on the way out. Nothing else
+   * ever could — the fight lives on a stop the player may never walk
+   * back to, and an Unfinished battle holds its stop until the window
+   * rolls. A raid is left freely (the lobby restages, and the fight
+   * may be someone else's to finish), and a fight that already
+   * settled is the recording effect's to write
+   */
+  const concede = (): void => {
+    const loaded = record();
+    const built = instance();
+    const user = auth.user();
+
+    if (
+      props.active.replay ||
+      recorded() ||
+      outcome() != null ||
+      loaded == null ||
+      getBattleKind(loaded) !== BattleKind.Npc ||
+      !fought()
+    ) {
+      return;
+    }
+    setRecorded(true);
+
+    // Collected before the engine is torn down; the writes then run
+    // behind the teardown. Aftermath first — stamping the outcome
+    // frees the party, and a freed pokemon can have its berry pulled
+    // back
+    const aftermath = built != null && user != null ? collectAftermath(built, user.uid) : [];
+
+    (async () => {
+      if (aftermath.length > 0) {
+        await recordAftermath(props.active.id, aftermath);
+      }
+      await finishBattle(props.active.id, BattleOutcome.Lost);
+    })().catch(() => {
+      // Leaving is not a moment to hold the player in; if the write
+      // never lands, the battle lock's own timeout frees the party
+    });
+  };
+
+  /**
    * Out of the fight and back into the world, in one batch.
    *
    * The lobby goes with the battle, because a lobby watching its own
@@ -452,6 +509,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * pressed in
    */
   const leave = (): void => {
+    concede();
     instance()?.battle.end();
     batch(() => {
       // The instance is deliberately **not** cleared here. Unsetting
@@ -467,14 +525,29 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   /**
-   * Whether the signed-in player fought in this battle. A spectator
-   * — anyone who walked in on a raid already under way — watches the
-   * same deterministic fight but settles nothing and is owed nothing
+   * What leaving now would mean, for the confirmation to say: a
+   * grunt's fight is conceded, anything else just goes on unfinished
    */
-  const fought = (): boolean => {
-    const user = auth.user();
+  const leavingSaid = (): string => {
+    const loaded = record();
 
-    return user != null && record()?.players.includes(user.uid) === true;
+    if (loaded != null && getBattleKind(loaded) === BattleKind.Npc) {
+      return 'Walking out concedes the fight: it counts as a loss, and what the party spent stays spent.';
+    }
+    return 'The party stays locked to the fight until it settles or times out. Walk back into the lair to rejoin it.';
+  };
+
+  /**
+   * The Leave press. Walking out of a fight still being fought is
+   * asked about first — for a grunt's fight it concedes — while a
+   * replay, a spectator or a finished field is left without ceremony
+   */
+  const askToLeave = (): void => {
+    if (props.active.replay || outcome() != null || record() == null || !fought()) {
+      leave();
+      return;
+    }
+    setLeaving(true);
   };
 
   // A raid battle is recorded once, by whichever fighter sees it end
@@ -583,7 +656,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
         {/* And the way out, in the other one */}
         <div class="absolute top-3 right-3">
-          <Button tone="primary" onClick={leave}>
+          <Button tone="primary" onClick={askToLeave}>
             Leave
           </Button>
         </div>
@@ -630,6 +703,33 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           setOpened(null);
         }}
       />
+
+      {/* Walking out of a live fight is confirmed first, because it
+          cannot be walked back: a grunt's fight is conceded on the
+          way out, and a raid holds the party until it settles */}
+      <Dialog
+        isOpen={leaving()}
+        onClose={() => {
+          setLeaving(false);
+        }}
+        title="Leave the battle?"
+        description="Whether to walk out of a fight that is still going."
+        terse
+      >
+        <p class="text-center">{leavingSaid()}</p>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setLeaving(false);
+            }}
+          >
+            Keep fighting
+          </Button>
+          <Button tone="primary" onClick={leave}>
+            Leave anyway
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* A fight that has been won or lost says so rather than leaving
           a line of text under a field that is no longer moving. It

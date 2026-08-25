@@ -30,6 +30,10 @@ export const BIOME_NAMES: Record<Biome, string> = {
   [Biome.MontaneForest]: 'Montane Forest',
   [Biome.PolarOcean]: 'Polar Ocean',
   [Biome.Volcano]: 'Volcano',
+  [Biome.Badlands]: 'Badlands',
+  [Biome.RockyCoast]: 'Rocky Coast',
+  [Biome.Bog]: 'Bog',
+  [Biome.KelpForest]: 'Kelp Forest',
   [Biome.Beyond]: 'Beyond',
 };
 
@@ -64,6 +68,10 @@ export const BIOME_COLORS: Record<Biome, string> = {
   [Biome.MontaneForest]: '#46705a',
   [Biome.PolarOcean]: '#7fa8c4',
   [Biome.Volcano]: '#6b3326',
+  [Biome.Badlands]: '#b0764a',
+  [Biome.RockyCoast]: '#8d9aa0',
+  [Biome.Bog]: '#5c566b',
+  [Biome.KelpForest]: '#2e8a6e',
   // Nowhere on the map is ever painted with it; it is here because a
   // record can carry the biome and something has to answer for it
   [Biome.Beyond]: '#1a1030',

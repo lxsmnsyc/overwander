@@ -97,6 +97,11 @@ const DECORATIONS: Record<Biome, Decoration[]> = {
   [Biome.Steppe]: [Decoration.Grass, Decoration.Grass, Decoration.Rock],
   [Biome.MontaneForest]: [Decoration.Pine, Decoration.Tree, Decoration.Boulder],
   [Biome.PolarOcean]: [Decoration.Ice, Decoration.Ice, Decoration.Coral],
+  [Biome.Badlands]: [Decoration.Boulder, Decoration.Rock, Decoration.Cactus],
+  [Biome.RockyCoast]: [Decoration.Rock, Decoration.Boulder, Decoration.Shrub],
+  [Biome.Bog]: [Decoration.Reed, Decoration.Mushroom, Decoration.Mushroom, Decoration.Stump],
+  // The reeds stand in for the kelp itself
+  [Biome.KelpForest]: [Decoration.Reed, Decoration.Reed, Decoration.Coral],
   // Nowhere on the map, and nothing standing in it
   [Biome.Beyond]: [],
 };

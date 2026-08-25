@@ -37,6 +37,12 @@ const enum Biome {
    * to be until this
    */
   Volcano = 25,
+  // The second set of gap fillers: the dry hot highland, the cool
+  // shore, the cold wetland and the temperate shallow sea
+  Badlands = 26,
+  RockyCoast = 27,
+  Bog = 28,
+  KelpForest = 29,
   /**
    * Nowhere on the map: where a mythical comes from.
    *
@@ -119,8 +125,10 @@ const WATER_BIOMES = new Set<Biome>([
   Biome.Ocean,
   Biome.CoralReef,
   Biome.PolarOcean,
+  Biome.KelpForest,
   Biome.Mangrove,
   Biome.Swamp,
+  Biome.Bog,
 ]);
 
 /**
@@ -203,6 +211,14 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
   // Bare, baking and above everything: the corner of the climate
   // cube nothing else reaches
   [Biome.Volcano]: { humidity: -0.4, temperature: 0.9, elevation: 0.8 },
+  // Hot dry highland between the desert floor and the volcano's rim
+  [Biome.Badlands]: { humidity: -0.7, temperature: 0.7, elevation: 0.5 },
+  // The cool shoreline; the warm one is the beach
+  [Biome.RockyCoast]: { humidity: 0.5, temperature: -0.3, elevation: 0 },
+  // Cold wetland, where the swamp's water sits under a colder sky
+  [Biome.Bog]: { humidity: 0.8, temperature: -0.3, elevation: 0.05 },
+  // The temperate shelf sea, between the open ocean and the shore
+  [Biome.KelpForest]: { humidity: 1, temperature: 0.1, elevation: -0.35 },
 };
 
 /**

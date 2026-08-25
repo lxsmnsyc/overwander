@@ -2,39 +2,135 @@
   "version": 1,
   "sheets": {
     "public/sprites/biome/0/image.png": {
-      "digest": "ffc924b59f552f59",
-      "bytes": 17691,
+      "digest": "2b55448dce50eae5",
+      "bytes": 18138,
       "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T06:36:43Z",
+        "at": "2026-08-25T05:23:03Z",
         "as": "already compact",
-        "was": 17691,
-        "bytes": 17691
+        "was": 18138,
+        "bytes": 18138
       }
     },
     "public/sprites/biome/1/image.png": {
-      "digest": "1daf01626438a63c",
-      "bytes": 12240,
+      "digest": "0d8b280621683aaf",
+      "bytes": 12598,
       "width": 144,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T07:19:29Z",
+        "at": "2026-08-25T05:23:03Z",
         "as": "already compact",
-        "was": 12240,
-        "bytes": 12240
+        "was": 12598,
+        "bytes": 12598
       }
     },
-    "public/sprites/biome/11/image.png": {
-      "digest": "476441bb77a0d9d1",
-      "bytes": 20682,
+    "public/sprites/biome/10/image.png": {
+      "digest": "c6d23825158b508c",
+      "bytes": 16405,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T07:19:29Z",
+        "at": "2026-08-25T05:23:03Z",
         "as": "already compact",
-        "was": 20682,
-        "bytes": 20682
+        "was": 16405,
+        "bytes": 16405
+      }
+    },
+    "public/sprites/biome/11/image.png": {
+      "digest": "5b8de0deef349ed8",
+      "bytes": 18593,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 18593,
+        "bytes": 18593
+      }
+    },
+    "public/sprites/biome/12/image.png": {
+      "digest": "8752b14af29cccc2",
+      "bytes": 23955,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 23955,
+        "bytes": 23955
+      }
+    },
+    "public/sprites/biome/13/image.png": {
+      "digest": "2f377c562395ee28",
+      "bytes": 18558,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 18558,
+        "bytes": 18558
+      }
+    },
+    "public/sprites/biome/14/image.png": {
+      "digest": "5f55a474fcb15aba",
+      "bytes": 17513,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 17513,
+        "bytes": 17513
+      }
+    },
+    "public/sprites/biome/15/image.png": {
+      "digest": "2669d506421acae4",
+      "bytes": 21837,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 21837,
+        "bytes": 21837
+      }
+    },
+    "public/sprites/biome/16/image.png": {
+      "digest": "90369fc895632a03",
+      "bytes": 17563,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 17563,
+        "bytes": 17563
+      }
+    },
+    "public/sprites/biome/17/image.png": {
+      "digest": "bdb2c27d7ff690ab",
+      "bytes": 20325,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 20325,
+        "bytes": 20325
+      }
+    },
+    "public/sprites/biome/18/image.png": {
+      "digest": "2580104139056fce",
+      "bytes": 16461,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 16461,
+        "bytes": 16461
       }
     },
     "public/sprites/biome/19/image.png": {
@@ -49,6 +145,30 @@
         "bytes": 17719
       }
     },
+    "public/sprites/biome/2/image.png": {
+      "digest": "d149688005fcfba2",
+      "bytes": 12598,
+      "width": 144,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 12598,
+        "bytes": 12598
+      }
+    },
+    "public/sprites/biome/20/image.png": {
+      "digest": "206f8a8c1a71a803",
+      "bytes": 20829,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 20829,
+        "bytes": 20829
+      }
+    },
     "public/sprites/biome/21/image.png": {
       "digest": "a43fde42ccd87f48",
       "bytes": 17563,
@@ -59,6 +179,18 @@
         "as": "already compact",
         "was": 17563,
         "bytes": 17563
+      }
+    },
+    "public/sprites/biome/22/image.png": {
+      "digest": "b29cb833f8c888ab",
+      "bytes": 22744,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 22744,
+        "bytes": 22744
       }
     },
     "public/sprites/biome/23/image.png": {
@@ -73,6 +205,78 @@
         "bytes": 12270
       }
     },
+    "public/sprites/biome/25/image.png": {
+      "digest": "d80577dca1a75c76",
+      "bytes": 21574,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 21574,
+        "bytes": 21574
+      }
+    },
+    "public/sprites/biome/26/image.png": {
+      "digest": "25986dfe540b132d",
+      "bytes": 18790,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 18790,
+        "bytes": 18790
+      }
+    },
+    "public/sprites/biome/27/image.png": {
+      "digest": "56a91b04e7ba036a",
+      "bytes": 20128,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 20128,
+        "bytes": 20128
+      }
+    },
+    "public/sprites/biome/28/image.png": {
+      "digest": "4f13e0ad34b53dbb",
+      "bytes": 19798,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 19798,
+        "bytes": 19798
+      }
+    },
+    "public/sprites/biome/29/image.png": {
+      "digest": "6dddb93af3bf4f9f",
+      "bytes": 12270,
+      "width": 144,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 12270,
+        "bytes": 12270
+      }
+    },
+    "public/sprites/biome/3/image.png": {
+      "digest": "6b9488b61b1da02a",
+      "bytes": 20863,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 20863,
+        "bytes": 20863
+      }
+    },
     "public/sprites/biome/4/image.png": {
       "digest": "d5919870026fc22d",
       "bytes": 21368,
@@ -83,6 +287,54 @@
         "as": "already compact",
         "was": 21368,
         "bytes": 21368
+      }
+    },
+    "public/sprites/biome/5/image.png": {
+      "digest": "96fa271680bc51bc",
+      "bytes": 19502,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 19502,
+        "bytes": 19502
+      }
+    },
+    "public/sprites/biome/6/image.png": {
+      "digest": "5c1c8ae052739963",
+      "bytes": 21683,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 21683,
+        "bytes": 21683
+      }
+    },
+    "public/sprites/biome/7/image.png": {
+      "digest": "43972a84004bc32d",
+      "bytes": 21009,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 21009,
+        "bytes": 21009
+      }
+    },
+    "public/sprites/biome/8/image.png": {
+      "digest": "ca37431c023559b4",
+      "bytes": 20829,
+      "width": 192,
+      "height": 1128,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 20829,
+        "bytes": 20829
       }
     },
     "public/sprites/biome/9/image.png": {
@@ -203,6 +455,18 @@
         "as": "already compact",
         "was": 1433,
         "bytes": 1433
+      }
+    },
+    "public/sprites/overworld/landmarks-npc-9/image.png": {
+      "digest": "615d13f5fdcd4b8b",
+      "bytes": 1194,
+      "width": 144,
+      "height": 200,
+      "compact": {
+        "at": "2026-08-25T05:23:03Z",
+        "as": "already compact",
+        "was": 1194,
+        "bytes": 1194
       }
     },
     "public/sprites/pokemon/kanto/regular/1.png": {

@@ -91,6 +91,10 @@ export const BIOME_PHENOMENA: Record<Biome, Phenomenon[]> = {
   [Biome.Steppe]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
   [Biome.MontaneForest]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
   [Biome.PolarOcean]: [Phenomenon.RipplingWater],
+  [Biome.Badlands]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
+  [Biome.RockyCoast]: [Phenomenon.RipplingWater, Phenomenon.FlyingShadow],
+  [Biome.Bog]: [Phenomenon.RipplingWater, Phenomenon.HiddenGrotto],
+  [Biome.KelpForest]: [Phenomenon.RipplingWater],
   // Nothing lives beyond the map, so nothing is startled out of it
   [Biome.Beyond]: [],
 };

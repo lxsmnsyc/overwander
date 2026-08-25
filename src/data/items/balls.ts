@@ -69,8 +69,7 @@ export default function registerBalls(): void {
   registerItem(Items.LuxuryBall, {
     name: 'Luxury Ball',
     type: ItemTypes.PokeBall,
-    description:
-      'Catches like a plain ball. Whatever it holds warms to you twice as fast, for life.',
+    description: 'Catches like a plain ball. Whatever it holds warms to you 2x as fast, for life.',
     icon: 'balls/luxury',
     flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
     buy: 1000,

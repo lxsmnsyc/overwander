@@ -206,8 +206,8 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       onClose={props.onClose}
       title="Portal"
       terse
-      description="A ring of standing stones, and a way through. Name a biome and it opens onto the
-        nearest portal in one — the key is spent going through."
+      description="A ring of standing stones, and a way through. Name a biome and it opens onto
+        the nearest portal there. One key per crossing."
     >
       <Suspense fallback={<Note class="text-center">Counting keys…</Note>}>
         <PortalBody

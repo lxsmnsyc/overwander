@@ -71,18 +71,18 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
 
   const stakes = (): string => {
     if (duel()) {
-      return `Three of theirs against as many as you bring. Winning pays a purse — the trainer
-        keeps their pokemon — and losing costs the fight and nothing else; they will still be
-        here while the window lasts.`;
+      return `Three of theirs against as many as you bring. Win and the purse is yours; the
+        trainer keeps their pokemon. Lose and you lose nothing but the fight. They will be
+        here all window.`;
     }
     if (boss()) {
-      return `Six of his against as many as you bring. Beaten, the boss leaves one of his six
-        behind — any of the six; losing costs the fight and nothing else, and he will still be
-        here while the window lasts.`;
+      return `Six of his against as many as you bring. Beat him and he leaves one of the six
+        behind, along with a purse worth the trouble. Lose and you lose nothing but the
+        fight. He is not going anywhere this window.`;
     }
-    return `Three of theirs against as many as you bring. Beaten, the grunt drops what they were
-      carrying and leaves it in the overworld; losing costs the fight and nothing else — they
-      will still be here while the window lasts.`;
+    return `Three of theirs against as many as you bring. Win and the grunt drops a purse and
+      whatever they were carrying. Lose and you lose nothing but the fight. They will be
+      here all window.`;
   };
 
   // A refusal belongs to the grunt that refused: reopened on another
@@ -106,8 +106,8 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
         if (battle == null) {
           setStatus(
             duel()
-              ? 'The trainer is done with you for now.'
-              : 'The grunt is done with you for now.',
+              ? 'The trainer waves you off. Nothing more today.'
+              : 'The grunt wants nothing more to do with you.',
           );
           return;
         }

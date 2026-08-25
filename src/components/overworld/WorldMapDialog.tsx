@@ -114,8 +114,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       description={
         <>
           {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
-          arrow keys — hold shift to cross it faster, or press Home to come back to where you are
-          standing.
+          arrow keys. Shift crosses it faster, and Home brings you back to where you stand.
         </>
       }
     >

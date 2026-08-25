@@ -33,7 +33,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.LeechSeed, {
     name: 'Leech Seed',
     description:
-      'Roots the target: an eighth of its pool every two seconds, drained to the seeder. Grass is immune.',
+      'Roots the target: 1/8 of its HP every 2 seconds, drained to the seeder. Grass is immune.',
     type: Types.Grass,
     category: MoveCategories.Status,
     pp: 10,
@@ -104,7 +104,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.SwordsDance, {
     name: 'Swords Dance',
-    description: "Raises the user's Attack two stages.",
+    description: "Raises the user's Attack 2 stages.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
@@ -125,7 +125,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.BodySlam, {
     name: 'Body Slam',
-    description: '30% to paralyse. Never misses a minimized target, and doubles on it.',
+    description: '30% to paralyse. Never misses a minimized target, and hits 2x on it.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
@@ -137,7 +137,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.TakeDown, {
     name: 'Take Down',
-    description: 'The user takes a quarter of the damage it deals.',
+    description: 'The user takes 1/4 of the damage it deals.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -149,7 +149,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.DoubleEdge, {
     name: 'Double Edge',
-    description: 'The user takes a third of the damage it deals.',
+    description: 'The user takes 1/3 of the damage it deals.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
@@ -174,7 +174,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.MegaDrain, {
     name: 'Mega Drain',
-    description: 'Heals the user for half the damage dealt.',
+    description: 'Heals the user for 1/2 the damage dealt.',
     type: Types.Grass,
     category: MoveCategories.Special,
     pp: 15,
@@ -206,7 +206,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Bide, {
     name: 'Bide',
-    description: 'Channels twice as long, then throws back double the damage taken while biding.',
+    description: 'Channels 2x as long, then throws back 2x the damage taken while biding.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 10,
@@ -218,7 +218,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Reflect, {
     name: 'Reflect',
-    description: "Cuts physical damage against the user's side by a third for ten seconds.",
+    description: "Cuts physical damage against the user's side by 1/3 for 10 seconds.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 20,
@@ -274,7 +274,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Substitute, {
     name: 'Substitute',
-    description: 'Spends a quarter of the pool on a decoy that takes hits for the user.',
+    description: "Spends 1/4 of the user's HP on a decoy that takes the hits.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
@@ -344,8 +344,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.FireSpin, {
     name: 'Fire Spin',
-    description:
-      'Binds the target: an eighth of its pool a second for four seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
     type: Types.Fire,
     category: MoveCategories.Special,
     pp: 15,
@@ -381,7 +380,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Submission, {
     name: 'Submission',
-    description: 'The user takes a quarter of the damage it deals.',
+    description: 'The user takes 1/4 of the damage it deals.',
     type: Types.Fighting,
     category: MoveCategories.Physical,
     pp: 20,
@@ -416,7 +415,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Dig, {
     name: 'Dig',
     description:
-      'The user burrows out of sight, then strikes. Only Earthquake — for double — and Fissure reach it.',
+      'The user burrows out of sight, then strikes. Only Earthquake , at 2x, and Fissure reach it.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     pp: 10,
@@ -479,7 +478,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Earthquake, {
     name: 'Earthquake',
-    description: 'Hits everything opposite, and doubles on anything underground from Dig.',
+    description: 'Hits everything opposite, and hits 2x on anything underground from Dig.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     pp: 10,
@@ -503,7 +502,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Fly, {
     name: 'Fly',
     description:
-      'The user takes to the air, then strikes. Only Gust — for double — and Thunder reach it.',
+      'The user takes to the air, then strikes. Only Gust , at 2x, and Thunder reach it.',
     type: Types.Flying,
     category: MoveCategories.Physical,
     pp: 15,
@@ -626,7 +625,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Counter, {
     name: 'Counter',
     description:
-      'Returns double the last physical hit taken, at whoever landed it rather than the chosen target.',
+      'Returns 2x the last physical hit taken, at whoever landed it rather than the chosen target.',
     type: Types.Fighting,
     category: MoveCategories.Physical,
     pp: 20,
@@ -650,7 +649,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.StringShot, {
     name: 'String Shot',
-    description: 'Drops the Speed of everything opposite by two stages.',
+    description: 'Drops the Speed of everything opposite by 2 stages.',
     type: Types.Bug,
     category: MoveCategories.Status,
     pp: 40,
@@ -742,7 +741,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Psywave, {
     name: 'Psywave',
-    description: "Deals between half and one and a half times the user's level.",
+    description: "Deals between 0.5x and 1.5x the user's level.",
     type: Types.Psychic,
     category: MoveCategories.Special,
     pp: 15,
@@ -789,7 +788,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.FuryAttack, {
     name: 'Fury Attack',
-    description: 'Strikes two to five times, a quarter-second apart.',
+    description: 'Strikes 2 to 5 times, 0.25 seconds apart.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -811,7 +810,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Twineedle, {
     name: 'Twineedle',
-    description: 'Strikes twice, each strike with a 20% chance to poison.',
+    description: 'Strikes 2 times, each with a 20% chance to poison.',
     type: Types.Bug,
     category: MoveCategories.Physical,
     pp: 20,
@@ -824,7 +823,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.PinMissile, {
     name: 'Pin Missile',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Bug,
     category: MoveCategories.Physical,
     pp: 20,
@@ -837,7 +836,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Agility, {
     name: 'Agility',
-    description: "Raises the user's Speed two stages.",
+    description: "Raises the user's Speed 2 stages.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 30,
@@ -847,7 +846,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Gust, {
     name: 'Gust',
-    description: 'Doubles on anything in the air from Fly.',
+    description: '2x on anything in the air from Fly.',
     type: Types.Flying,
     category: MoveCategories.Special,
     pp: 35,
@@ -979,8 +978,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Wrap, {
     name: 'Wrap',
-    description:
-      'Binds the target: an eighth of its pool a second for four seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -1003,7 +1001,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Screech, {
     name: 'Screech',
-    description: "Drops the target's Defense two stages. It is a sound.",
+    description: "Drops the target's Defense 2 stages. It is a sound.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 40,
@@ -1087,7 +1085,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.PayDay, {
     name: 'Pay Day',
-    description: "Scatters coins worth five times the user's level, paid out after the fight.",
+    description: "Scatters coins worth 5x the user's level, paid out after the fight.",
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -1100,7 +1098,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.FurySwipes, {
     name: 'Fury Swipes',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
@@ -1112,7 +1110,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.DoubleKick, {
     name: 'Double Kick',
-    description: 'Strikes twice.',
+    description: 'Strikes 2 times.',
     type: Types.Fighting,
     category: MoveCategories.Physical,
     pp: 30,
@@ -1148,7 +1146,7 @@ export default function registerGen1Moves(): void {
   // Rampage: every step lands the same attack
   registerMove(Moves.Thrash, {
     name: 'Thrash',
-    description: 'Lands the same hit three times over, and leaves the user confused.',
+    description: 'Lands the same hit 3 times over, and leaves the user confused.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1184,7 +1182,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.DoubleSlap, {
     name: 'Double Slap',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1197,7 +1195,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Minimize, {
     name: 'Minimize',
     description:
-      "Raises the user's evasion two stages, but Body Slam and Stomp then never miss it and double.",
+      "Raises the user's evasion 2 stages, but Body Slam and Stomp then never miss it and hit 2x.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
@@ -1227,7 +1225,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.LightScreen, {
     name: 'Light Screen',
-    description: "Cuts special damage against the user's side by a third for ten seconds.",
+    description: "Cuts special damage against the user's side by 1/3 for 10 seconds.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 30,
@@ -1262,7 +1260,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Disable, {
     name: 'Disable',
     description:
-      'Shuts off the move the target is using — interrupting it — or its last, for five seconds.',
+      'Shuts off the move the target is using — interrupting it — or its last, for 5 seconds.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
@@ -1273,7 +1271,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.LeechLife, {
     name: 'Leech Life',
-    description: 'Heals the user for half the damage dealt.',
+    description: 'Heals the user for 1/2 the damage dealt.',
     type: Types.Bug,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1295,7 +1293,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Absorb, {
     name: 'Absorb',
-    description: 'Heals the user for half the damage dealt.',
+    description: 'Heals the user for 1/2 the damage dealt.',
     type: Types.Grass,
     category: MoveCategories.Special,
     pp: 25,
@@ -1308,7 +1306,7 @@ export default function registerGen1Moves(): void {
   // Rampage: every step lands the same attack
   registerMove(Moves.PetalDance, {
     name: 'Petal Dance',
-    description: 'Lands the same hit three times over, and leaves the user confused.',
+    description: 'Lands the same hit 3 times over, and leaves the user confused.',
     type: Types.Grass,
     category: MoveCategories.Special,
     pp: 10,
@@ -1355,7 +1353,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Amnesia, {
     name: 'Amnesia',
-    description: "Raises the user's Special Defense two stages.",
+    description: "Raises the user's Special Defense 2 stages.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 20,
@@ -1365,7 +1363,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Recover, {
     name: 'Recover',
-    description: 'Heals the user half its pool.',
+    description: 'Heals the user 1/2 its HP.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,
@@ -1415,7 +1413,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Barrier, {
     name: 'Barrier',
-    description: "Raises the user's Defense two stages.",
+    description: "Raises the user's Defense 2 stages.",
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 20,
@@ -1470,7 +1468,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Stomp, {
     name: 'Stomp',
-    description: '30% to flinch. Never misses a minimized target, and doubles on it.',
+    description: '30% to flinch. Never misses a minimized target, and hits 2x on it.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -1555,8 +1553,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Clamp, {
     name: 'Clamp',
-    description:
-      'Binds the target: an eighth of its pool a second for four seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
     type: Types.Water,
     category: MoveCategories.Physical,
     pp: 15,
@@ -1568,7 +1565,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.SpikeCannon, {
     name: 'Spike Cannon',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
@@ -1604,7 +1601,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.DreamEater, {
     name: 'Dream Eater',
-    description: 'Only works on a sleeping target. Heals the user for half the damage dealt.',
+    description: 'Only works on a sleeping target. Heals the user for 1/2 the damage dealt.',
     type: Types.Psychic,
     category: MoveCategories.Special,
     pp: 15,
@@ -1616,8 +1613,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Bind, {
     name: 'Bind',
-    description:
-      'Binds the target: an eighth of its pool a second for four seconds, and no escape.',
+    description: 'Binds the target: 1/8 of its HP a second for 4 seconds, and no escape.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -1674,7 +1670,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Barrage, {
     name: 'Barrage',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 20,
@@ -1712,7 +1708,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Bonemerang, {
     name: 'Bonemerang',
-    description: 'Strikes twice.',
+    description: 'Strikes 2 times.',
     type: Types.Ground,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1725,7 +1721,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.CometPunch, {
     name: 'Comet Punch',
-    description: 'Strikes two to five times.',
+    description: 'Strikes 2 to 5 times.',
     type: Types.Normal,
     category: MoveCategories.Physical,
     pp: 15,
@@ -1785,7 +1781,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.JumpKick, {
     name: 'Jump Kick',
-    description: 'A miss costs the user half its pool.',
+    description: 'A miss costs the user 1/2 its HP.',
     type: Types.Fighting,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1797,7 +1793,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.HiJumpKick, {
     name: 'High Jump Kick',
-    description: 'A miss costs the user half its pool.',
+    description: 'A miss costs the user 1/2 its HP.',
     type: Types.Fighting,
     category: MoveCategories.Physical,
     pp: 10,
@@ -1878,7 +1874,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.Mist, {
     name: 'Mist',
-    description: "For ten seconds, nobody else can lower a stat stage on the user's side.",
+    description: "For 10 seconds, nobody else can lower a stat stage on the user's side.",
     type: Types.Ice,
     category: MoveCategories.Status,
     pp: 30,
@@ -1899,7 +1895,7 @@ export default function registerGen1Moves(): void {
   });
   registerMove(Moves.AcidArmor, {
     name: 'Acid Armor',
-    description: "Raises the user's Defense two stages.",
+    description: "Raises the user's Defense 2 stages.",
     type: Types.Poison,
     category: MoveCategories.Status,
     pp: 20,
@@ -1944,7 +1940,7 @@ export default function registerGen1Moves(): void {
   // https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
   registerMove(Moves.SoftBoiled, {
     name: 'Soft-Boiled',
-    description: 'Heals the user half its pool.',
+    description: 'Heals the user 1/2 its HP.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
@@ -1987,7 +1983,7 @@ export default function registerGen1Moves(): void {
   registerMove(Moves.Struggle, {
     name: 'Struggle',
     description:
-      'Thrown when every move is shut off. Nothing resists it, and it costs a quarter of the pool.',
+      "Thrown when every move is shut off. Nothing resists it, and it costs 1/4 of the user's HP.",
     type: Types.Unknown,
     category: MoveCategories.Physical,
     power: 50,

@@ -790,8 +790,8 @@ function OverworldBoard(props: {
                 ...standing,
                 message:
                   catchId == null
-                    ? 'It is gone — somebody else may have been here, or the window has turned over.'
-                    : 'Carry it as your buddy and walk. Nothing about it is known until it opens.',
+                    ? 'It is gone. Somebody beat you to it, or the window turned over.'
+                    : 'Yours now. Walk it warm and see what hatches.',
               },
         );
 
@@ -974,7 +974,7 @@ function OverworldBoard(props: {
     if (await isEncounterRetired(user.uid, encounter)) {
       // Either it ran off or it is already in the bag; from the cell's
       // side those are the same thing — nobody is standing there
-      return 'Nothing here — this one is done with you.';
+      return 'Nothing here. This one is done with you.';
     }
     setSession(await createSafariSession(user, encounter));
     return null;
@@ -992,7 +992,7 @@ function OverworldBoard(props: {
       // window that has turned over is no longer met
       const encounter = await startEncounter(loaded.snapshot, spawn.id);
 
-      return encounter == null ? 'It is gone — the chunk has moved on.' : meet(user, encounter);
+      return encounter == null ? 'Too late. The chunk has moved on.' : meet(user, encounter);
     }
 
     const landmark = loaded.landmarks.get(at);
@@ -1003,13 +1003,13 @@ function OverworldBoard(props: {
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
-      announce('The cache is empty until the next window.', stash);
+      announce('Picked clean. Come back next window.', stash);
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(loaded.snapshot, at);
 
-      announce('The patch is bare until the next window.', berries == null ? null : [berries]);
+      announce('Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
     // The two landmarks somebody fights at share one flow: Team
@@ -1038,7 +1038,7 @@ function OverworldBoard(props: {
           game.setEncounter(owed.encounter);
           return null;
         }
-        return duel ? 'The trainer is done with you for now.' : 'They have moved on.';
+        return duel ? 'The trainer is done with you.' : 'They have moved on.';
       }
       if (stop == null) {
         // The server stages nobody there: the board is behind the
@@ -1050,8 +1050,8 @@ function OverworldBoard(props: {
       }
       if (!(await canJoinRaids(user.uid))) {
         return duel
-          ? 'A trainer wants to battle — and you have no pokemon to answer with.'
-          : 'Team Rocket blocks the way — and you have no pokemon to answer with.';
+          ? 'A trainer wants to battle, and you have nothing to fight with.'
+          : 'Team Rocket blocks the way, and you have nothing to fight with.';
       }
       // The challenge is put to the player rather than taken for
       // them; the dialog is what accepts it
@@ -1107,7 +1107,9 @@ function OverworldBoard(props: {
       if (claim == null) {
         // Either the hour staged nothing here, or this player has
         // already had what it staged
-        return `${showing == null ? 'It' : PHENOMENON_NAMES[showing]} — nothing there now.`;
+        return showing == null
+          ? 'Whatever it was has passed. Nothing there now.'
+          : `${PHENOMENON_NAMES[showing]}, and nothing under it now.`;
       }
       if (claim.kind === 'item') {
         // Shown the way a cache or a patch is shown: something was
@@ -1120,7 +1122,7 @@ function OverworldBoard(props: {
         // Unreachable in practice — an egg is peeked at above and
         // taken through the dialog — but the claim can still answer
         // one if the hour turned over between the two calls
-        return 'An egg, tucked away in the grotto. Walk with it to hatch it.';
+        return 'An egg, tucked away in the grotto. Walk it warm.';
       }
       return meet(user, claim.encounter);
     }
@@ -1144,7 +1146,7 @@ function OverworldBoard(props: {
       // looking at the lair, not at the line under the map
       setLairReason(
         standing != null || (await canJoinRaids(user.uid))
-          ? 'The lair is quiet right now — nothing has come out of it this window.'
+          ? 'The lair is quiet. Nothing has come out this window.'
           : 'You need a pokemon of your own to raid. You can watch one already under way.',
       );
       setLair([at, standing]);
@@ -1620,7 +1622,7 @@ function OverworldBoard(props: {
                 setCellX(destination.cell % CHUNK_CELLS);
                 setCellY(Math.floor(destination.cell / CHUNK_CELLS));
                 remark(
-                  `Through to ${BIOME_NAMES[destination.biome]} — chunk ${destination.x}, ${destination.y}.`,
+                  `Through to ${BIOME_NAMES[destination.biome]}. Chunk ${destination.x}, ${destination.y}.`,
                 );
                 // A key was spent getting here, so where it got them is
                 // written down now rather than in a second and a half.

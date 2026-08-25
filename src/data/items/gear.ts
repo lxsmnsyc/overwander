@@ -25,26 +25,23 @@ import { nameToIcon, registerItem } from './__create';
  * rather than what they can afford
  */
 export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new Map([
-  [Items.ShellBell, ['Shell Bell', 'Hands its holder back an eighth of the damage it deals.']],
+  [Items.ShellBell, ['Shell Bell', 'Hands its holder back 1/8 of the damage it deals.']],
   [Items.MuscleBand, ['Muscle Band', '1.1x damage from physical moves.']],
   [Items.WiseGlasses, ['Wise Glasses', '1.1x damage from special moves.']],
   [Items.ExpertBelt, ['Expert Belt', '1.2x damage, but only from super-effective blows.']],
   [
     Items.Metronome,
-    ['Metronome', '1.2x damage for each repeat of the same move, up to twice. Resets on a change.'],
+    ['Metronome', '1.2x damage for each repeat of the same move, up to 2x. Resets on a change.'],
   ],
   [Items.WideLens, ['Wide Lens', '1.1x accuracy on everything its holder throws.']],
-  [Items.ScopeLens, ['Scope Lens', 'Doubles its holder’s odds of a critical.']],
+  [Items.ScopeLens, ['Scope Lens', '2x its holder’s odds of a critical.']],
   [Items.BrightPowder, ['Bright Powder', 'Anything aimed at its holder is 10% likelier to miss.']],
   [
     Items.QuickClaw,
-    ['Quick Claw', 'A fifth of the time, its holder’s next move winds up a bracket faster.'],
+    ['Quick Claw', '1/5 of the time, its holder’s next move winds up a bracket faster.'],
   ],
-  [Items.FocusBand, ['Focus Band', 'A tenth of the time, its holder is left standing on 1 HP.']],
-  [
-    Items.RockyHelmet,
-    ['Rocky Helmet', 'Anything that touches its holder pays a sixth of its own pool.'],
-  ],
+  [Items.FocusBand, ['Focus Band', '1/10 of the time, its holder is left standing on 1 HP.']],
+  [Items.RockyHelmet, ['Rocky Helmet', 'Anything that touches its holder pays 1/6 of its own HP.']],
   [
     Items.SafetyGoggles,
     ['Safety Goggles', 'No sandstorm or hail damage, and powder moves do nothing.'],
@@ -56,7 +53,7 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
   [Items.SmokeBall, ['Smoke Ball', 'Its holder can always flee a wild encounter.']],
   [Items.DestinyKnot, ['Destiny Knot', 'Whoever infatuates its holder is infatuated back.']],
   [Items.GripClaw, ['Grip Claw', 'Binds its holder lands hold 1.75x as long.']],
-  [Items.BindingBand, ['Binding Band', 'Binds its holder lands chip a third harder.']],
+  [Items.BindingBand, ['Binding Band', 'Binds its holder lands chip 1/3 harder.']],
   [Items.ZoomLens, ['Zoom Lens', '1.2x accuracy against a target already casting or channelling.']],
   [Items.IronBall, ['Iron Ball', 'Halves its holder’s Speed and drags it to the ground.']],
   [
@@ -86,24 +83,18 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
 export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new Map([
   [
     Items.BlackSludge,
-    [
-      'Black Sludge',
-      'Feeds a Poison type an eighth of its pool per move; costs anybody else an eighth.',
-    ],
+    ['Black Sludge', 'Feeds a Poison type 1/8 of its HP per move; costs anybody else 1/8.'],
   ],
   [
     Items.LuckyPunch,
-    ['Lucky Punch', 'Sharpens a Chansey’s criticals by two stages. Nothing to anybody else.'],
+    ['Lucky Punch', 'Sharpens a Chansey’s criticals by 2 stages. Nothing to anybody else.'],
   ],
   [
     Items.Stick,
-    ['Stick', 'Sharpens a Farfetch’d’s criticals by two stages. Nothing to anybody else.'],
+    ['Stick', 'Sharpens a Farfetch’d’s criticals by 2 stages. Nothing to anybody else.'],
   ],
   [Items.ShedShell, ['Shed Shell', 'Its holder can always flee, whatever is holding it.']],
-  [
-    Items.Leftovers,
-    ['Leftovers', 'Hands its holder a sixteenth of its pool back every time it acts.'],
-  ],
+  [Items.Leftovers, ['Leftovers', 'Hands its holder 1/16 of its HP back every time it acts.']],
   [Items.DampRock, ['Damp Rock', 'Rain its holder calls lasts 1.6x as long.']],
   [Items.HeatRock, ['Heat Rock', 'Sun its holder calls lasts 1.6x as long.']],
   [Items.IcyRock, ['Icy Rock', 'Hail and snow its holder calls last 1.6x as long.']],
@@ -113,10 +104,7 @@ export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new M
   // A burr off a bush, which is why nobody sells one
   [
     Items.StickyBarb,
-    [
-      'Sticky Barb',
-      'Costs its holder an eighth of its pool per move, and sticks to whoever touches it.',
-    ],
+    ['Sticky Barb', 'Costs its holder 1/8 of its HP per move, and sticks to whoever touches it.'],
   ],
 ]);
 

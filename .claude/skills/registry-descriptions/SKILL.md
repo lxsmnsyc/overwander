@@ -17,7 +17,10 @@ It is player-facing text under the name in a list — a market row, a bag entry,
 ## Rules
 
 - **Describe this engine, never the mainline.** Where the two differ, the line follows the code. A Zoom Lens here answers a target that is _casting or channelling_, because there is no "moved second" in a real-time fight. Analytic is the same. Leftovers pays out _each time its holder acts_, because there are no turns to hang a residual on. Pressure doubles a _cooldown_, not PP.
-- **Use the engine's own numbers.** Read the constant, do not remember the mainline's. `1.2x`, `a sixteenth of its pool`, `30%`. Round a fraction like `5325 / 4096` to `1.3x` — the reader wants the size, not the ratio.
+- **Use the engine's own numbers.** Read the constant, do not remember the mainline's. `1.2x`, `a sixteenth of its HP`, `30%`. Round a fraction like `5325 / 4096` to `1.3x` — the reader wants the size, not the ratio.
+- **State the modifier, not a derived total.** Sniper is "1.5x on critical hits", never "criticals do 3x rather than 2x": a total baked from today's base goes stale the moment another feature also touches that number. Describe what this entry contributes.
+- **Say "HP" for health, never "pool".** Pool is too broad a term to read cold in a list.
+- **Figures, not number words.** "1/3 of its HP", "at 1/2 HP", "2 stages", "2x Speed", "5 seconds" — never "a third", "two stages", "doubles", "five seconds". Shorter and easier to scan. Articles stay words: "one of its moves", "the two nobody learns".
 - **One sentence where one will do, two at most.** Ends with a full stop; a test enforces that.
 - **Say the cost as well as the benefit** when the entry has one: "1.5x Attack, but physical moves are 20% less accurate."
 - **No implementation vocabulary.** No event names, no file paths, no "listener", "veto", "lifecycle". "Refuses every stat drop from anybody else" — not "vetoes CheckUnitCanAddStage".

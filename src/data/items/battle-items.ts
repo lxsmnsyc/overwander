@@ -36,7 +36,7 @@ const DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.XSpDef]: '+2 Special Defense when its holder’s Special Defense is knocked down.',
   [Items.XSpeed]: '+2 Speed when its holder’s Speed is knocked down.',
   [Items.XAccuracy]: '+2 Accuracy when its holder’s Accuracy is knocked down.',
-  [Items.DireHit]: 'Sharpens its holder’s criticals by two stages when any stat is knocked down.',
+  [Items.DireHit]: 'Sharpens its holder’s criticals by 2 stages when any stat is knocked down.',
   [Items.GuardSpec]: 'Refuses the first stat drop anybody else tries on its holder.',
 };
 

@@ -52,14 +52,11 @@ export const GENERAL_STAT_BOOSTERS: Map<Items, [name: string, description: strin
 export const RELIC_STAT_BOOSTERS: Map<Items, [name: string, description: string]> = new Map([
   [
     Items.LightBall,
-    ['Light Ball', 'Doubles a Pikachu’s Attack and Special Attack. Nothing to anybody else.'],
+    ['Light Ball', '2x a Pikachu’s Attack and Special Attack. Nothing to anybody else.'],
   ],
-  [
-    Items.ThickClub,
-    ['Thick Club', 'Doubles a Cubone’s or Marowak’s Attack. Nothing to anybody else.'],
-  ],
-  [Items.MetalPowder, ['Metal Powder', 'Doubles a Ditto’s Defense. Nothing to anybody else.']],
-  [Items.QuickPowder, ['Quick Powder', 'Doubles a Ditto’s Speed. Nothing to anybody else.']],
+  [Items.ThickClub, ['Thick Club', '2x a Cubone’s or Marowak’s Attack. Nothing to anybody else.']],
+  [Items.MetalPowder, ['Metal Powder', '2x a Ditto’s Defense. Nothing to anybody else.']],
+  [Items.QuickPowder, ['Quick Powder', '2x a Ditto’s Speed. Nothing to anybody else.']],
 ]);
 
 export const STAT_BOOSTER_PRICE = 8000;

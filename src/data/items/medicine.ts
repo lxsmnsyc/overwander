@@ -160,13 +160,13 @@ export function describeMedicine(item: Items): string {
   if (effect.revives > 0) {
     parts.push(
       effect.revives >= 1
-        ? 'Revives a fainted pokemon on a full pool.'
-        : `Revives a fainted pokemon on ${effect.revives === 0.5 ? 'half a pool' : `${Math.round(effect.revives * 100)}% of its pool`}.`,
+        ? 'Revives a fainted pokemon at full HP.'
+        : `Revives a fainted pokemon at ${effect.revives === 0.5 ? '1/2 HP' : `${Math.round(effect.revives * 100)}% of its HP`}.`,
     );
   } else if (effect.restore === FULL) {
-    parts.push('Restores a whole pool.');
+    parts.push('Restores all HP.');
   } else if (effect.restore > 0) {
-    parts.push(`Restores ${effect.restore} health.`);
+    parts.push(`Restores ${effect.restore} HP.`);
   }
 
   if (effect.cures === EVERY_STATUS) {

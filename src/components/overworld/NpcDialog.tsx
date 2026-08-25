@@ -88,33 +88,27 @@ import {
  * They are quotes, so they are written as quotes
  */
 export const NPC_QUOTES: Record<Npc, string> = {
-  [Npc.Breeder]:
-    'Leave me two that get along and I will see what comes of it. The egg is yours — you do the walking.',
+  [Npc.Breeder]: 'Two that get along, that is all I ask. I do the matching, you do the walking.',
   [Npc.DaycareLady]:
-    'Give me that egg a while. I cannot hurry it much, but half of what is left is half you need not walk.',
-  [Npc.NurseJoy]:
-    'Hand them over, all of them. Nothing to pay — I am only here until the day turns over.',
-  [Npc.Groomer]:
-    'Brushed, fussed over and handed straight back thinking the world of you. Works best on one that barely knows you — and not at all on a shadow.',
+    'Leave the egg with me a while, dear. Half of what it has left, gone like that.',
+  [Npc.NurseJoy]: 'Oh, hand them over, all of them. No charge. I am here until the day turns.',
+  [Npc.Groomer]: 'One good brushing and it will think the world of you. Shadows? Out of my hands.',
   [Npc.Vendor]:
-    'Crate is open. I will sell you what is in it and buy near enough anything you are carrying — as often as your purse holds out.',
+    'Step up, step up. I sell what is in the crate and buy near anything, long as your purse holds.',
   [Npc.MoveReminder]:
-    'It has not forgotten a thing, you know. One Heart Scale and I will remind it.',
-  // The grunt never opens this dialog — walking up to one puts the
-  // challenge in `RocketStopDialog`, which says this line instead —
-  // but they are one of the people a wandering cell draws, so their
-  // words live with the rest
-  [Npc.RocketGrunt]: 'Three of mine against however many of yours.',
+    'Forgotten? Hah. Nothing is ever forgotten. One Heart Scale and I will prove it.',
+  // The grunt never opens this dialog: walking up to one puts the
+  // challenge in `RocketStopDialog`, which says this line instead.
+  // They are still one of the people a cell can draw, so their words
+  // live with the rest
+  [Npc.RocketGrunt]: 'Wrong path, kid. Three of mine say so.',
   [Npc.FossilManiac]:
-    'Dug these out myself. Two is all I am carrying, and one is all I am parting with today — the rest of the world stopped making them.',
-  [Npc.FossilScientist]:
-    'Hand me the rock and give me a moment. Whatever is in there has been waiting rather a long while — bring me another when you find one.',
-  [Npc.MoveTutor]:
-    'Some moves are never grown into, only taught. One Heart Scale buys one lesson, and it will not forget it.',
+    'Dug these up myself! Two beauties, and I will part with one. Just one, mind.',
+  [Npc.FossilScientist]: 'A fossil? Marvelous! Hand it over. It has waited in there long enough.',
+  [Npc.MoveTutor]: 'Some moves are taught, never grown into. One Heart Scale buys the lesson.',
   // The trainer opens `RocketStopDialog` too: a duel is put the same
   // way an ambush is, only asked rather than sprung
-  [Npc.Trainer]:
-    'You look strong. Three of the local best against whatever you bring — winner takes the purse.',
+  [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
 };
 
 /**
@@ -436,7 +430,7 @@ function NpcCounter(
         if (egg == null) {
           toast.push({
             message:
-              'The breeder handed them back: that pair, that price, or you have already left a pair with him this while.',
+              'He handed them back. Wrong pair, short purse, or you have already bred this while.',
             tone: 'ember',
           });
           return;
@@ -470,7 +464,7 @@ function NpcCounter(
         setBusy(false);
         setStatus(
           tended == null
-            ? 'She looked it over and handed it straight back — there was nothing to do, or she has already seen you this while.'
+            ? 'She handed it straight back. Nothing to heal, or she has already seen you this while.'
             : 'She looked after it. Right as rain.',
         );
         props.onServed();
@@ -497,8 +491,7 @@ function NpcCounter(
 
         if (steps == null) {
           toast.push({
-            message:
-              'She would not take it: it may be ready already, or she has already warmed one for you this while.',
+            message: 'She would not take it. It may be ready, or she has warmed her one for you.',
             tone: 'ember',
           });
           return;
@@ -539,7 +532,7 @@ function NpcCounter(
         setBusy(false);
         setStatus(
           friendship == null
-            ? 'He would not take it — it may be a shadow, it may think as well of you as it can already, or he has already seen you this while.'
+            ? 'He would not take it. A shadow, a friend already, or he has seen you this while.'
             : `Brushed, fussed over and handed back ${describeFriendship(friendship)}. (−${GROOMING_FEE} gold)`,
         );
         props.onServed();
@@ -667,7 +660,7 @@ function NpcCounter(
 
         if (revived == null) {
           toast.push({
-            message: 'Nothing came of it: you may not be carrying that any more.',
+            message: 'Nothing came of it. That rock is not in your bag any more.',
             tone: 'ember',
           });
           return;
@@ -872,9 +865,8 @@ function NpcCounter(
         onClose={close}
         title={who()}
         terse
-        description="Somebody standing out here with an offer. They will be gone when the window
-        turns over, and each of them takes you up on it once while they are here — the vendor
-        as often as your purse allows."
+        description="Somebody passing through with an offer. Gone when the window turns, and most
+        of them will serve you once. The vendor trades as long as your purse holds."
       >
         <Show when={showing()}>
           {(standing) => (
@@ -964,7 +956,7 @@ function NpcCounter(
                     }
                     reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
                     note={(option) =>
-                      isShadow(option.caught) ? 'shadow — she would purify it' : null
+                      isShadow(option.caught) ? 'shadow, she would purify it' : null
                     }
                     onPick={(id) => {
                       if (id != null) {
@@ -1332,8 +1324,8 @@ function NpcCounter(
         below={<Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>}
         description={
           counter() === 'sell'
-            ? 'One at a time, off the card over whatever he can have.'
-            : 'One at a time, off the card over whatever you want.'
+            ? 'One at a time. Press a card to sell it.'
+            : 'One at a time. Press a card to buy it.'
         }
         verb={counter() === 'sell' ? 'Sell' : 'Buy'}
         entries={counter() === 'sell' ? props.bag.latest : crate()}

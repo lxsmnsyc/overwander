@@ -58,8 +58,8 @@ const THROW_SPRITE = 28;
 
 const STATE_MESSAGES: Record<SafariState, string> = {
   [SafariState.Active]: '',
-  [SafariState.Caught]: 'Caught — it is yours.',
-  [SafariState.Fled]: 'It fled; this one will not show up again.',
+  [SafariState.Caught]: 'Caught. It is yours.',
+  [SafariState.Fled]: 'It fled, and it will not be back.',
   [SafariState.Exited]: 'You walked away.',
 };
 

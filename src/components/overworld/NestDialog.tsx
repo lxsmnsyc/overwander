@@ -29,12 +29,12 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 export type EggSource = 'nest' | 'grotto';
 
 const FOUND: Record<EggSource, string> = {
-  nest: 'An egg is lying in the nest.',
+  nest: 'An egg, warm in the nest.',
   grotto: 'An egg, tucked away in the grotto.',
 };
 
 const AGAIN: Record<EggSource, string> = {
-  nest: 'The nest holds one egg per player between refills, and you have had this one.',
+  nest: 'One egg per player between refills, and you have had yours.',
   grotto: 'You have already had what this hour hid here.',
 };
 
@@ -126,8 +126,8 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
                   nothing, and the pokemon already walking with them is
                   what pays for it */}
               <Meta class="max-w-prose">
-                It hatches by being walked, and only your buddy walks it — taking it means putting
-                down whatever is walking with you now. Nothing about it is known until it opens.
+                Only your buddy can walk it warm, so taking it means putting down whoever walks with
+                you now. What is inside stays a secret until it opens.
               </Meta>
             </Show>
           </div>

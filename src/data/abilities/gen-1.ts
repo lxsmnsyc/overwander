@@ -13,26 +13,25 @@ export default function registerGen1Abilities(): void {
   // Bulbasaur
   registerAbility(Abilities.Overgrow, {
     name: 'Overgrow',
-    description: '1.5x Grass moves at a third of its pool or less.',
+    description: 'Grass moves hit 1.5x while it is down to 1/3 of its HP.',
   });
   registerAbility(Abilities.Chlorophyll, {
     name: 'Chlorophyll',
-    description: 'Doubles Speed in sunlight.',
+    description: '2x Speed in sunlight.',
   });
   registerAbility(Abilities.ThickFat, {
     name: 'Thick Fat',
-    description: 'Halves the Attack behind Fire and Ice moves aimed at it.',
+    description: 'Fire and Ice moves hit it at 0.5x.',
   });
 
   // Charmander
   registerAbility(Abilities.Blaze, {
     name: 'Blaze',
-    description: '1.5x Fire moves at a third of its pool or less.',
+    description: 'Fire moves hit 1.5x while it is down to 1/3 of its HP.',
   });
   registerAbility(Abilities.SolarPower, {
     name: 'Solar Power',
-    description:
-      'Doubles Special Attack in sunlight, and costs an eighth of its pool each time it acts.',
+    description: '2x Special Attack in sunlight, and costs 1/8 of its HP each time it acts.',
   });
   registerAbility(Abilities.ToughClaws, {
     name: 'Tough Claws',
@@ -46,11 +45,11 @@ export default function registerGen1Abilities(): void {
   // Squirtle
   registerAbility(Abilities.Torrent, {
     name: 'Torrent',
-    description: '1.5x Water moves at a third of its pool or less.',
+    description: 'Water moves hit 1.5x while it is down to 1/3 of its HP.',
   });
   registerAbility(Abilities.RainDish, {
     name: 'Rain Dish',
-    description: 'Restores a sixteenth of its pool each time it acts in rain.',
+    description: 'Restores 1/16 of its HP each time it acts in rain.',
   });
 
   // Caterpie
@@ -76,13 +75,13 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.TintedLens, {
     name: 'Tinted Lens',
-    description: 'Doubles its own not-very-effective blows.',
+    description: 'Its not-very-effective moves hit 2x.',
   });
 
   // Beedrill
   registerAbility(Abilities.Swarm, {
     name: 'Swarm',
-    description: '1.5x Bug moves at a third of its pool or less.',
+    description: 'Bug moves hit 1.5x while it is down to 1/3 of its HP.',
   });
   registerAbility(Abilities.Sniper, {
     name: 'Sniper',
@@ -96,7 +95,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.TangledFeet, {
     name: 'Tangled Feet',
-    description: 'Doubles evasion while confused.',
+    description: '2x evasion while confused.',
   });
   registerAbility(Abilities.BigPecks, {
     name: 'Big Pecks',
@@ -141,7 +140,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.SandRush, {
     name: 'Sand Rush',
-    description: 'Doubles Speed in a sandstorm, which never chips it.',
+    description: '2x Speed in a sandstorm, which never chips it.',
   });
 
   // Nidoran
@@ -169,11 +168,11 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.FriendGuard, {
     name: 'Friend Guard',
-    description: 'Allies take a quarter less damage.',
+    description: 'Allies take 1/4 less damage.',
   });
   registerAbility(Abilities.Unaware, {
     name: 'Unaware',
-    description: 'Ignores stat stages on both sides of any blow it is in.',
+    description: "Ignores the other side's stat stages in any blow it deals or takes.",
   });
 
   // Vulpix
@@ -216,7 +215,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.DrySkin, {
     name: 'Dry Skin',
     description:
-      'Immune to Water and healed a quarter by it. Rain feeds it, sun burns it, and Fire hits 1.25x.',
+      'Immune to Water and healed 1/4 by it. Rain feeds it, sun burns it, and Fire hits 1.25x.',
   });
   registerAbility(Abilities.Damp, {
     name: 'Damp',
@@ -260,7 +259,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.SwiftSwim, {
     name: 'Swift Swim',
-    description: 'Doubles Speed in rain.',
+    description: '2x Speed in rain.',
   });
 
   // Mankey
@@ -286,7 +285,7 @@ export default function registerGen1Abilities(): void {
   // Poliwag
   registerAbility(Abilities.WaterAbsorb, {
     name: 'Water Absorb',
-    description: 'Immune to Water, and healed a quarter of its pool by it.',
+    description: 'Immune to Water, and healed 1/4 of its HP by it.',
   });
 
   // Abra
@@ -308,7 +307,7 @@ export default function registerGen1Abilities(): void {
   // Bellsprout
   registerAbility(Abilities.Gluttony, {
     name: 'Gluttony',
-    description: 'Eats its pinch items at twice the usual threshold.',
+    description: 'Eats its pinch items at 2x the usual HP threshold.',
   });
 
   // Tentacool
@@ -349,7 +348,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Regenerator, {
     name: 'Regenerator',
-    description: 'Heals a third of its pool when it leaves the field alive.',
+    description: 'Heals 1/3 of its HP when it leaves the field alive.',
   });
 
   // Magnemite
@@ -365,7 +364,7 @@ export default function registerGen1Abilities(): void {
   // Doduo
   registerAbility(Abilities.EarlyBird, {
     name: 'Early Bird',
-    description: 'Sleeps half as long.',
+    description: 'Sleeps 1/2 as long.',
   });
 
   // Seel
@@ -375,8 +374,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.IceBody, {
     name: 'Ice Body',
-    description:
-      'Restores a sixteenth of its pool each time it acts in hail, which never chips it.',
+    description: 'Restores 1/16 of its HP each time it acts in hail, which never chips it.',
   });
 
   // Grimer
@@ -438,13 +436,13 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Aftermath, {
     name: 'Aftermath',
-    description: 'Whoever lands the killing touch pays a quarter of its own pool.',
+    description: 'Whatever knocks it out by touch loses 1/4 of its own HP.',
   });
 
   // Exeggcute
   registerAbility(Abilities.Harvest, {
     name: 'Harvest',
-    description: 'Regrows the berry it ate — always in sun, half the time otherwise.',
+    description: 'Regrows the berry it ate: always in sun, 1/2 the time otherwise.',
   });
 
   // Cubone
@@ -460,7 +458,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Unburden, {
     name: 'Unburden',
-    description: 'Doubles Speed while its item is gone.',
+    description: '2x Speed while its item is gone.',
   });
   registerAbility(Abilities.IronFist, {
     name: 'Iron Fist',
@@ -480,7 +478,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.SereneGrace, {
     name: 'Serene Grace',
-    description: "Doubles the odds of a move's added effect.",
+    description: "2x the odds of a move's added effect.",
   });
   registerAbility(Abilities.Healer, {
     name: 'Healer',
@@ -514,7 +512,7 @@ export default function registerGen1Abilities(): void {
   // MrMime
   registerAbility(Abilities.Filter, {
     name: 'Filter',
-    description: 'Super-effective blows on it hit a quarter softer.',
+    description: 'Super-effective blows on it hit 1/4 softer.',
   });
 
   // Pinsir
@@ -552,7 +550,7 @@ export default function registerGen1Abilities(): void {
   // Jolteon
   registerAbility(Abilities.VoltAbsorb, {
     name: 'Volt Absorb',
-    description: 'Immune to Electric, and healed a quarter of its pool by it.',
+    description: 'Immune to Electric, and healed 1/4 of its HP by it.',
   });
   registerAbility(Abilities.QuickFeet, {
     name: 'Quick Feet',
@@ -572,7 +570,7 @@ export default function registerGen1Abilities(): void {
   // Aerodactyl
   registerAbility(Abilities.Pressure, {
     name: 'Pressure',
-    description: 'Moves aimed at it cost twice the cooldown.',
+    description: 'Moves aimed at it cost 2x the cooldown.',
   });
 
   // Snorlax
@@ -603,7 +601,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      '5,000 health plus ten times its own, every other stat doubled. Shrugs off disabling statuses, and nothing heals it.',
+      '5,000 HP plus 10x its own, every other stat 2x. Shrugs off disabling statuses, and nothing heals it.',
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',

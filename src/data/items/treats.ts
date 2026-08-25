@@ -58,7 +58,7 @@ export default function registerTreats(): void {
       name: treat.name,
       description:
         treat.restore > 0
-          ? `Restores ${treat.restore} health when its holder drops to a fifth of its pool.`
+          ? `Restores ${treat.restore} HP when its holder drops to 1/5 of its HP.`
           : 'Cures every status a second after one lands on its holder.',
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', treat.name),

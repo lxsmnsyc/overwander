@@ -336,15 +336,15 @@ const BERRY_DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.PersimBerry]: 'Cures confusion the moment it lands.',
   [Items.LumBerry]: 'Cures any status the moment it lands.',
   [Items.LeppaBerry]: 'Clears the cooldown on a move its holder has run down.',
-  [Items.OranBerry]: 'Restores 10 health at half a pool.',
-  [Items.SitrusBerry]: 'Restores a quarter of the pool at half a pool.',
-  [Items.LansatBerry]: 'Sharpens its holder’s criticals by two stages at a quarter pool.',
-  [Items.StarfBerry]: '+2 to one stat at random at a quarter pool.',
-  [Items.CustapBerry]: 'Its holder’s next move winds up a bracket faster, at a quarter pool.',
-  [Items.MicleBerry]: '1.2x accuracy at a quarter pool.',
-  [Items.EnigmaBerry]: 'Restores a quarter of the pool after a super-effective blow lands.',
-  [Items.JabocaBerry]: 'A physical attacker pays an eighth of its own pool.',
-  [Items.RowapBerry]: 'A special attacker pays an eighth of its own pool.',
+  [Items.OranBerry]: 'Restores 10 HP at 1/2 HP.',
+  [Items.SitrusBerry]: 'Restores 1/4 of max HP at 1/2 HP.',
+  [Items.LansatBerry]: 'Sharpens its holder’s criticals by 2 stages at 1/4 HP.',
+  [Items.StarfBerry]: '+2 to 1 random stat at 1/4 HP.',
+  [Items.CustapBerry]: 'Its holder’s next move winds up a bracket faster, at 1/4 HP.',
+  [Items.MicleBerry]: '1.2x accuracy at 1/4 HP.',
+  [Items.EnigmaBerry]: 'Restores 1/4 of max HP after a super-effective blow lands.',
+  [Items.JabocaBerry]: 'A physical attacker pays 1/8 of its own HP.',
+  [Items.RowapBerry]: 'A special attacker pays 1/8 of its own HP.',
   [Items.KeeBerry]: '+1 Defense after a physical blow lands on its holder.',
   [Items.MarangaBerry]: '+1 Sp. Defense after a special blow lands on its holder.',
 };
@@ -370,13 +370,13 @@ export function describeBerry(item: Items): string {
   const pinch = BERRY_PINCH_STAGES.get(item);
 
   if (pinch != null) {
-    return `+1 ${STAGE_NAMES[pinch]} at a quarter pool.`;
+    return `+1 ${STAGE_NAMES[pinch]} at 1/4 HP.`;
   }
 
   const nature = BERRY_NATURE_HEALS.get(item);
 
   if (nature != null) {
-    return `Restores a third of the pool at half a pool. Confuses a pokemon whose nature lowers ${STAT_NAMES[nature]}.`;
+    return `Restores 1/3 of max HP at 1/2 HP. Confuses a pokemon whose nature lowers ${STAT_NAMES[nature]}.`;
   }
 
   const effort = BERRY_EFFORT_DROPS.get(item);

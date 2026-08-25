@@ -440,46 +440,75 @@ function drawPhenomenon(
       context.stroke();
     }
   } else if (phenomenon === Phenomenon.DustCloud) {
-    // Three puffs slowly wheeling about the cell, each breathing on
-    // its own beat, with a pair of kicked-up specks running ahead
-    const turn = now / 1100;
+    // A rolling heap of billows rather than a flat swirl: a ground
+    // shadow, a wheeling ring of rolls with one riding on top, each
+    // shaded dark-below and lit-above so the mound has volume
+    const turn = now / 1400;
 
-    // Each puff is a darker roll with a lit crown offset over it, so
-    // the cloud reads as dust even on ground the same colour
-    for (let puff = 0; puff < 3; puff++) {
-      const angle = turn + (puff * Math.PI * 2) / 3;
-      const breath = 1 + Math.sin(now / 260 + puff * 2) * 0.15;
-      const x = spot.x + Math.cos(angle) * size * 0.16;
-      const y = spot.y + Math.sin(angle) * size * 0.1 - size * 0.06;
+    context.globalAlpha = 0.22;
+    context.fillStyle = '#2e2416';
+    context.beginPath();
+    context.ellipse(spot.x, spot.y + size * 0.12, size * 0.5, size * 0.2, 0, 0, Math.PI * 2);
+    context.fill();
 
-      context.globalAlpha = 0.75;
-      context.fillStyle = '#a37f47';
-      context.beginPath();
-      context.ellipse(x, y, size * 0.16 * breath, size * 0.12 * breath, 0, 0, Math.PI * 2);
-      context.fill();
-      context.fillStyle = '#e5cd9a';
-      context.beginPath();
-      context.ellipse(
-        x - size * 0.04,
-        y - size * 0.05,
-        size * 0.1 * breath,
-        size * 0.07 * breath,
-        0,
-        0,
-        Math.PI * 2,
+    const rolls = Array.from({ length: 5 }, (_, puff) => {
+      const angle = turn + (puff * Math.PI * 2) / 5;
+      const breath = 1 + Math.sin(now / 300 + puff * 1.7) * 0.12;
+
+      return {
+        x: spot.x + Math.cos(angle) * size * 0.34,
+        y: spot.y + Math.sin(angle) * size * 0.15 - size * 0.12,
+        reach: size * (0.22 + 0.07 * ((puff * 2) % 3)) * breath,
+      };
+    });
+
+    rolls.push({
+      x: spot.x + Math.sin(turn * 0.7) * size * 0.1,
+      y: spot.y - size * 0.4,
+      reach: size * 0.19 * (1 + Math.sin(now / 340) * 0.1),
+    });
+    rolls.push({
+      x: spot.x + Math.cos(turn * 0.9) * size * 0.16,
+      y: spot.y - size * 0.24,
+      reach: size * 0.17 * (1 + Math.sin(now / 360 + 2) * 0.1),
+    });
+    // Far rolls first, so the near ones overlap them: the overlap is
+    // what turns a scatter of ellipses into one heap
+    rolls.sort((left, right) => left.y - right.y);
+
+    // Each billow is one soft gradient ball, lit from the upper left
+    // and fading out at its rim: the soft rims are what let the balls
+    // melt into a single cloud instead of a pile of stones
+    for (const roll of rolls) {
+      const glow = context.createRadialGradient(
+        roll.x - roll.reach * 0.3,
+        roll.y - roll.reach * 0.35,
+        roll.reach * 0.35,
+        roll.x,
+        roll.y,
+        roll.reach * 1.25,
       );
+
+      glow.addColorStop(0, 'rgba(226, 205, 158, 0.9)');
+      glow.addColorStop(0.5, 'rgba(163, 130, 82, 0.85)');
+      glow.addColorStop(1, 'rgba(110, 87, 50, 0)');
+      context.globalAlpha = 1;
+      context.fillStyle = glow;
+      context.beginPath();
+      context.arc(roll.x, roll.y, roll.reach * 1.25, 0, Math.PI * 2);
       context.fill();
     }
-    for (let speck = 0; speck < 2; speck++) {
-      const angle = turn * 1.8 + speck * Math.PI;
+
+    for (let speck = 0; speck < 3; speck++) {
+      const angle = turn * 2.2 + (speck * Math.PI * 2) / 3;
 
       context.globalAlpha = 0.8;
       context.fillStyle = '#9a7b45';
       context.beginPath();
       context.arc(
-        spot.x + Math.cos(angle) * size * 0.3,
-        spot.y + Math.sin(angle) * size * 0.18 - size * 0.1,
-        Math.max(1, size * 0.035),
+        spot.x + Math.cos(angle) * size * 0.5,
+        spot.y + Math.sin(angle) * size * 0.24,
+        Math.max(1, size * 0.04),
         0,
         Math.PI * 2,
       );
@@ -1550,11 +1579,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       for (const square of squares) {
         traceCell(square);
 
-        // The apron keeps the tiles' own look: the grid stopping is
-        // what says where the chunk ends, so no shade or rule is
-        // drawn out there. A threshold that goes through breathes a
-        // little light instead, so the way into the next chunk reads
-        // as somewhere to press
+        // A threshold that goes through keeps the grid, so it reads
+        // as ground that can be walked, and breathes a little light
+        // on top so the way into the next chunk reads as somewhere
+        // to press. The apron's corners go nowhere and get neither:
+        // the grid stopping is what says where the walkable ends
         if (isBorderCell(square)) {
           if (borderExit(square) != null) {
             const prior = context.globalAlpha;
@@ -1563,6 +1592,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             context.fillStyle = COLORS.highlight;
             context.fill();
             context.globalAlpha = prior;
+            context.strokeStyle = COLORS.grid;
+            context.stroke();
           }
           continue;
         }

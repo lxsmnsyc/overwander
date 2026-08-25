@@ -17,6 +17,7 @@ import Biome, {
   isWaterBiome,
 } from '../../src/data/ids/biome';
 import Lairs, {
+  EVERY_LAIR,
   getBiomeLairs,
   getLairSpecies,
   getLairTitle,
@@ -73,9 +74,15 @@ import {
   getBossMoves,
 } from '../../src/overworld/raid';
 import {
+  GIOVANNI_GOLD_MAX,
+  GIOVANNI_GOLD_MIN,
+  GIOVANNI_PARTY_LEVEL,
   ROCKET_PARTY_LEVEL,
   ROCKET_REWARD_LEVEL,
+  STOP_GOLD_MAX,
+  STOP_GOLD_MIN,
   createRocketParty,
+  rollStopGold,
 } from '../../src/overworld/rocket';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
@@ -99,7 +106,7 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
-import Npc, { NPCS, npcSheets } from '../../src/data/overworld/npc';
+import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../../src/data/overworld/npc';
 import Phenomenon, {
   BIOME_PHENOMENA,
   getPhenomenonItems,
@@ -782,11 +789,14 @@ describe('world', () => {
 
     expect(stops.size).toBeGreaterThan(0);
     for (const [cell, party] of stops) {
-      // A stop is a grunt drawn onto a wandering-NPC cell rather than
-      // a landmark of its own
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.WanderingNpc);
-      expect(snapshot.getWanderingNpcs().get(cell)).toBe(Npc.RocketGrunt);
+      // A stop stands at Team Rocket's own landmark now
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocket);
 
+      if (snapshot.isRocketBoss(cell)) {
+        // The boss fields six: five rares and a legendary at the end
+        expect(party).toHaveLength(6);
+        continue;
+      }
       // Three pokemon, weakest first: one from each of the biome's
       // base, uncommon and rare bands — a band the window leaves empty
       // borrows from the commonest one that is not
@@ -838,6 +848,143 @@ describe('world', () => {
     // one build
     expect(new Set(party.map((member) => member.nature)).size).toBeGreaterThanOrEqual(1);
     expect(party.map((member) => member.ivs)).not.toEqual([]);
+
+    // A duelling trainer fields the same three as their ordinary
+    // selves: same species and level, nothing shadowed
+    const duel = createRocketParty(snapshot, spawns, false);
+
+    for (const [at, member] of duel.entries()) {
+      expect(member.level).toBe(ROCKET_PARTY_LEVEL);
+      expect(member.species).toBe(spawns[at][0]);
+      expect(member.shadow).toBe(false);
+      expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(false);
+    }
+  });
+
+  it('stands duelling trainers at their own landmark', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getTrainerStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+
+    for (const [cell, party] of snapshot.getTrainerStops()) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Trainer);
+      expect(party).toHaveLength(3);
+      // Dressed from the trainer's wardrobe, not the grunt's
+      expect(npcSheets(Npc.Trainer)).toContain(snapshot.getWandererCoats().get(cell));
+    }
+  });
+
+  it('rolls Giovanni once in a long while, six strong', () => {
+    const world = new World('overworld');
+    let staged: { snapshot: ChunkSnapshot; cell: number } | null = null;
+
+    // 1/64 a stop a window: a few hundred stop-windows finds him
+    for (let x = 0; x < 48 && staged == null; x++) {
+      for (let y = 0; y < 8 && staged == null; y++) {
+        const chunk = world.getChunk(x, y);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocket) {
+            continue;
+          }
+          for (let window = 0; window < 16; window++) {
+            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+            if (snapshot.isRocketBoss(cell) && snapshot.getRocketStops().get(cell) != null) {
+              staged = { snapshot, cell };
+              break;
+            }
+          }
+          if (staged != null) {
+            break;
+          }
+        }
+      }
+    }
+
+    expect(staged).not.toBeNull();
+    if (staged == null) {
+      return;
+    }
+
+    const party = staged.snapshot.getRocketStops().get(staged.cell) ?? [];
+    const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+
+    // Six strong: five of the biome's rares and a legendary at the end
+    expect(party).toHaveLength(6);
+    expect(legendaries.has(party[5][0])).toBe(true);
+
+    // Dressed as the boss himself
+    expect(GIOVANNI_CHARSETS).toContain(staged.snapshot.getWandererCoats().get(staged.cell));
+
+    // Fielded at his own level, all shadows
+    const fielded = createRocketParty(staged.snapshot, party);
+
+    for (const member of fielded) {
+      expect(member.level).toBe(GIOVANNI_PARTY_LEVEL);
+      expect(member.shadow).toBe(true);
+    }
+  });
+
+  it('rolls a purse in the stop’s own range, the same on every ask', () => {
+    for (let winner = 0; winner < 32; winner++) {
+      const seed = `stop:purse:player-${winner}`;
+      const purse = rollStopGold(seed, 3);
+      const bounty = rollStopGold(seed, 6);
+
+      expect(purse).toBeGreaterThanOrEqual(STOP_GOLD_MIN);
+      expect(purse).toBeLessThanOrEqual(STOP_GOLD_MAX);
+      expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD_MIN);
+      expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD_MAX);
+      // Seeded: asking again answers the same
+      expect(rollStopGold(seed, 3)).toBe(purse);
+    }
+  });
+
+  it('offers any of the boss’ six as the reward', () => {
+    const record: RocketRecord = {
+      player: 'red',
+      party: [
+        Species.Magnemite,
+        Species.Voltorb,
+        Species.Porygon,
+        Species.Growlithe,
+        Species.Ponyta,
+        Species.Mewtwo,
+      ].map((species, at) => ({
+        species,
+        individualValue: at,
+        traitValue: at,
+      })),
+      battle: 'battle-id',
+      timestamp: 0,
+      offset: 0,
+      chunk: { seed: 'overworld0,0', x: 0, y: 0 },
+      cell: 60,
+      defeated: false,
+    };
+    const met = new Set<Species>();
+
+    for (let winner = 0; winner < 64; winner++) {
+      const [, spawn] = deriveRocketReward(record, 'stop-id', `player-${winner}`);
+
+      met.add(spawn[0]);
+    }
+    // Not the commoner pair alone: the back of the party is on offer,
+    // the legendary included
+    expect(met.size).toBeGreaterThan(2);
+    expect(
+      [...met].some((species) => record.party.slice(2).some((entry) => entry.species === species)),
+    ).toBe(true);
   });
 
   it('pays a beaten grunt out in one of its two commoner species', () => {
@@ -1387,30 +1534,36 @@ describe('world', () => {
     }
 
     const styles = new Map<Npc, Set<string>>();
+    const seen = new Map<Npc, number>();
 
-    for (let window = 0; window < 48; window++) {
+    for (let window = 0; window < 96; window++) {
       const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
       const wanderers = snapshot.getWanderingNpcs();
       const coats = snapshot.getWandererCoats();
 
-      // One coat per wanderer, always one of the role's own styles
-      expect(coats.size).toBe(wanderers.size);
-      for (const [cell, coat] of coats) {
-        const npc = wanderers.get(cell);
+      // A coat for every wanderer, and for whoever stands at the
+      // fighting landmarks besides
+      expect(coats.size).toBeGreaterThanOrEqual(wanderers.size);
+      for (const [cell, npc] of wanderers) {
+        const coat = coats.get(cell);
 
-        expect(npc).not.toBeUndefined();
-        if (npc != null) {
+        expect(coat).not.toBeUndefined();
+        if (coat != null) {
+          // Always one of the role's own styles
           expect(npcSheets(npc)).toContain(coat);
           styles.set(npc, (styles.get(npc) ?? new Set()).add(coat));
+          seen.set(npc, (seen.get(npc) ?? 0) + 1);
         }
       }
       // The window's roll is everybody's roll
       expect(new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWandererCoats()).toEqual(coats);
     }
 
-    // A role both packs drew actually turns up in both styles
+    // A role both packs drew actually turns up in both styles — asked
+    // only of a role met often enough that one style would be a fault
+    // in the roll rather than a short visit
     for (const [npc, worn] of styles) {
-      if (npcSheets(npc).length > 1) {
+      if (npcSheets(npc).length > 1 && (seen.get(npc) ?? 0) >= 6) {
         expect(worn.size, String(npc)).toBeGreaterThan(1);
       }
     }

@@ -1,3 +1,4 @@
+import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
@@ -9,7 +10,7 @@ import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import type ChunkSnapshot from './chunk-snapshot';
-import type { Spawn } from './chunk-snapshot';
+import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './raid';
 
@@ -31,10 +32,47 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './r
 export const ROCKET_PARTY_LEVEL = 50;
 
 /**
- * What beating one pays. A grunt is a commoner's purse next to a
- * raid boss, and unlike a raid it can be found again next window
+ * The boss' six all stand here instead: Giovanni is the hardest fight
+ * a walk can find, well past a grunt and shy of a raid
  */
-export const ROCKET_STOP_GOLD = 500;
+export const GIOVANNI_PARTY_LEVEL = 75;
+
+/**
+ * The level a stop's party fights at, told apart by its size: only
+ * the boss fields a full six
+ */
+export function rocketPartyLevel(size: number): number {
+  return size >= GIOVANNI_PARTY_SIZE ? GIOVANNI_PARTY_LEVEL : ROCKET_PARTY_LEVEL;
+}
+
+/**
+ * What beating a grunt or a duelling trainer pays: a purse rolled in
+ * this range rather than a flat fee, so a stop is worth walking to
+ * and no two wins feel quite alike
+ */
+export const STOP_GOLD_MIN = 1000;
+export const STOP_GOLD_MAX = 10000;
+
+/**
+ * And the boss' purse: one win in sixty-four windows should fund
+ * something, not buy a round of potions
+ */
+export const GIOVANNI_GOLD_MIN = 10000;
+export const GIOVANNI_GOLD_MAX = 50000;
+
+/**
+ * The purse a beaten stop pays, seeded so each winner's roll is their
+ * own and asking again answers the same. Only the boss' six-strong
+ * party draws from his range
+ */
+export function rollStopGold(seed: string, size: number): number {
+  const rng = new AleaRNG(seed);
+  const boss = size >= GIOVANNI_PARTY_SIZE;
+  const floor = boss ? GIOVANNI_GOLD_MIN : STOP_GOLD_MIN;
+  const ceiling = boss ? GIOVANNI_GOLD_MAX : STOP_GOLD_MAX;
+
+  return floor + Math.floor(rng.random() * (ceiling - floor + 1));
+}
 
 /**
  * The level the pokemon a beaten grunt drops comes at. It is fixed,
@@ -66,50 +104,55 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
- * One of the grunt's pokemon as a catch snapshot, so its party is
- * fielded from the same shape a player's is. Every one of them is a
- * shadow — that is what a Team Rocket pokemon is — and every one
- * stands at ROCKET_PARTY_LEVEL whatever its trait value would have
- * rolled. Its IVs, nature, gender, ability and moves are the ones the
- * spawn tuple gives, so no two grunts field the same three pokemon
+ * One of the stop's pokemon as a catch snapshot, so the party is
+ * fielded from the same shape a player's is. A grunt's is a shadow —
+ * that is what a Team Rocket pokemon is — where a duelling trainer's
+ * is its ordinary self; either stands at ROCKET_PARTY_LEVEL whatever
+ * its trait value would have rolled. Its IVs, nature, gender, ability
+ * and moves are the ones the spawn tuple gives, so no two stops field
+ * the same three pokemon
  */
-export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): CatchSnapshot {
-  const grunt = deriveEncounter(snapshot, spawn, undefined, {
+export function createRocketSnapshot(
+  snapshot: ChunkSnapshot,
+  spawn: Spawn,
+  shadow = true,
+  level = ROCKET_PARTY_LEVEL,
+): CatchSnapshot {
+  const fielded = deriveEncounter(snapshot, spawn, undefined, {
     type: EncounterType.Rocket,
-    level: ROCKET_PARTY_LEVEL,
-    shadow: true,
+    level,
+    shadow,
   });
-  const size = deriveSize(grunt.species, grunt.traitValue);
+  const size = deriveSize(fielded.species, fielded.traitValue);
+  const abilities = shadow ? [fielded.ability, Abilities.Shadow] : [fielded.ability];
 
   return {
-    // A grunt's pokemon stands for no catch record
+    // A stop's pokemon stands for no catch record
     caught: '',
-    species: grunt.species,
-    level: grunt.level,
-    ivs: grunt.ivs,
+    species: fielded.species,
+    level: fielded.level,
+    ivs: fielded.ivs,
     effortValues: zeroEffortValues(),
-    nature: grunt.nature,
-    gender: grunt.gender,
+    nature: fielded.nature,
+    gender: fielded.gender,
     height: size.height,
     weight: size.weight,
-    // A grunt's pokemon never sparkles: the prize is what it drops,
-    // not what it fields. Every one of them is a shadow, which its
-    // ability list carries too
+    // A stop's pokemon never sparkles: the prize is what the fight
+    // pays, not what it fields
     shiny: false,
-    shadow: true,
-    moves: grunt.moves,
-    // A grunt buys no PP Ups: what it fields is what the roll gave it
+    shadow,
+    moves: fielded.moves,
+    // A stop buys no PP Ups: what it fields is what the roll gave it
     movePoints: {},
-    abilities: [grunt.ability, Abilities.Shadow],
+    abilities,
     items: [],
-    // Room for the shadow it carries alongside its own
-    slots: defaultSlots([grunt.ability, Abilities.Shadow]),
-    // A grunt's pokemon has no record to have been hurt on: it is
+    slots: defaultSlots(abilities),
+    // A stop's pokemon has no record to have been hurt on: it is
     // made for this fight and arrives whole
     health: getMaxHealth({
-      species: grunt.species,
-      level: grunt.level,
-      ivs: grunt.ivs,
+      species: fielded.species,
+      level: fielded.level,
+      ivs: fielded.ivs,
       effortValues: zeroEffortValues(),
     }),
     statuses: 0,
@@ -117,10 +160,18 @@ export function createRocketSnapshot(snapshot: ChunkSnapshot, spawn: Spawn): Cat
 }
 
 /**
- * The grunt's whole party, weakest first
+ * The stop's whole party, weakest first: shadows for a grunt or the
+ * boss, the biome's ordinary residents for a duelling trainer. The
+ * party's size is what says whose it is, and fixes its level
  */
-export function createRocketParty(snapshot: ChunkSnapshot, spawns: Spawn[]): CatchSnapshot[] {
-  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn));
+export function createRocketParty(
+  snapshot: ChunkSnapshot,
+  spawns: Spawn[],
+  shadow = true,
+): CatchSnapshot[] {
+  const level = rocketPartyLevel(spawns.length);
+
+  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, level));
 }
 
 /**

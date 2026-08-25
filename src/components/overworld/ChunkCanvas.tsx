@@ -48,8 +48,7 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 import Decoration from '../../data/overworld/decoration';
 import Landmark from '../../data/overworld/landmark';
 import Phenomenon from '../../data/overworld/phenomenon';
-import type Npc from '../../data/overworld/npc';
-import { npcSheet } from '../../data/overworld/npc';
+import Npc, { npcSheet } from '../../data/overworld/npc';
 import type { Species } from '../../data/ids/species';
 import facingToward from '../../canvas/facing';
 import type OWCharSprite from '../../canvas/ow-char-sprite';
@@ -518,6 +517,8 @@ const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.Nest]: 'N',
   [Landmark.WanderingNpc]: 'P',
   [Landmark.Portal]: 'O',
+  [Landmark.TeamRocket]: 'G',
+  [Landmark.Trainer]: 'T',
 };
 
 export interface ChunkCanvasProps {
@@ -797,18 +798,26 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   /**
-   * The person on a cell, once their sheet is in hand. A wandering
-   * landmark with no charset yet is the letter in a circle it was
-   * before there were any
+   * The person on a cell, once their sheet is in hand: a wanderer, or
+   * whoever stands at one of the fighting landmarks. A cell with no
+   * charset yet is the letter in a circle it was before there were any
    */
   const personOn = (index: number): OWCharSprite | null => {
-    const npc = props.wanderers.get(index);
+    const landmark = props.landmarks.get(index);
+    let fallback: Npc | null = null;
 
-    if (npc == null || props.landmarks.get(index) !== Landmark.WanderingNpc) {
+    if (landmark === Landmark.WanderingNpc) {
+      fallback = props.wanderers.get(index) ?? null;
+    } else if (landmark === Landmark.TeamRocket) {
+      fallback = Npc.RocketGrunt;
+    } else if (landmark === Landmark.Trainer) {
+      fallback = Npc.Trainer;
+    }
+    if (fallback == null) {
       return null;
     }
 
-    const person = personFor(props.coats.get(index) ?? npcSheet(npc));
+    const person = personFor(props.coats.get(index) ?? npcSheet(fallback));
 
     return person?.ready === true ? person : null;
   };
@@ -904,10 +913,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       live = false;
     });
 
-    // The people waiting at a crossroads are part of the picture the
-    // same way the pokemon are, so the board waits for their sheets too
+    // The people standing in the chunk are part of the picture the
+    // same way the pokemon are, so the board waits for their sheets
+    // too. The coats carry everyone — wanderers and the fighting
+    // landmarks alike
     const wearing = [
-      ...new Set([...props.wanderers].map(([at, npc]) => props.coats.get(at) ?? npcSheet(npc))),
+      ...new Set([
+        ...props.coats.values(),
+        ...[...props.wanderers.values()].map((npc) => npcSheet(npc)),
+      ]),
     ];
 
     // Nothing to wait for is not a wait: an empty chunk is finished

@@ -4,15 +4,12 @@ import type { Species } from '../ids/species';
 import { getLevelUpMoves, getTeachableMoves } from '../species';
 
 /**
- * The people who pass through a wandering-NPC landmark. The cell is
- * fixed by the chunk seed, the way every landmark is, but who is
- * standing on it is not: every six hours brings somebody else, so the
- * spot is a crossroads rather than a shop.
- *
- * Not all of them are there to help. A Team Rocket grunt is one of the
- * people a crossroads brings, which is why the stop is not a landmark
- * of its own: a player walking up to a wandering cell does not know
- * yet whether they have found a nurse or a fight
+ * The people who stand at the world's people landmarks. Most pass
+ * through a wandering-NPC cell: the cell is fixed by the chunk seed,
+ * the way every landmark is, but who is standing on it is not — every
+ * six hours brings somebody else, so the spot is a crossroads rather
+ * than a shop. The two who fight, Team Rocket and the duelling
+ * trainer, stand at landmarks of their own instead
  */
 const enum Npc {
   /**
@@ -50,9 +47,10 @@ const enum Npc {
    */
   MoveReminder = 5,
   /**
-   * Bars the cell and fights whoever accepts, with three shadows of
-   * the biome's own. Beaten, they pay a purse and leave one of their
-   * commoners behind; they are the one wanderer a player can lose to
+   * Bars the cell and fights whoever accepts, with shadows of the
+   * biome's own. Beaten, they pay a purse and leave one of their
+   * party behind. Not a wanderer any more: Team Rocket stands at a
+   * landmark of its own, and once in a long while it is Giovanni
    */
   RocketGrunt = 6,
   /**
@@ -73,12 +71,21 @@ const enum Npc {
    * way: he deals in what a machine would teach, not in what was lost
    */
   MoveTutor = 9,
+  /**
+   * Offers a fair duel: three of the biome's own against whatever the
+   * player brings, purse on a win. The grunt's fight without the
+   * ambush — nothing fielded is a shadow. Like Team Rocket, a
+   * landmark of their own rather than a wanderer
+   */
+  Trainer = 10,
 }
 
 export default Npc;
 
 /**
- * Everyone who wanders, for uniform rolls over the variants
+ * Everyone who wanders, for uniform rolls over the variants. The two
+ * who fight — the grunt and the trainer — stand at landmarks of their
+ * own and are not in it
  */
 export const NPCS: Npc[] = [
   Npc.Breeder,
@@ -87,7 +94,6 @@ export const NPCS: Npc[] = [
   Npc.Groomer,
   Npc.Vendor,
   Npc.MoveReminder,
-  Npc.RocketGrunt,
   Npc.FossilManiac,
   Npc.FossilScientist,
   Npc.MoveTutor,
@@ -97,20 +103,32 @@ export const NPCS: Npc[] = [
  * The charsets a role may turn up wearing: the community packs' takes
  * on the same figure, FRLG and LGPE where both drew one. Which of a
  * role's styles is standing there is the window's roll — see
- * `ChunkSnapshot.getWandererCoats`. A role listed nowhere keeps its
- * numbered Gen 4 folder: Nurse Joy and the grunt, whose packs hold no
- * sheet yet
+ * `ChunkSnapshot.getWandererCoats`. A role listed nowhere would keep
+ * its numbered Gen 4 folder; every role is covered today
  */
 const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
   [Npc.Breeder]: ['characters/frlg/camper-f', 'characters/lgpe/picnicker'],
   [Npc.DaycareLady]: ['characters/frlg/woman'],
+  [Npc.NurseJoy]: ['characters/extra/nurse'],
   [Npc.Groomer]: ['characters/frlg/daisy-oak', 'characters/lgpe/daisy-oak'],
   [Npc.Vendor]: ['characters/frlg/shop-keeper'],
   [Npc.MoveReminder]: ['characters/frlg/old-man'],
+  [Npc.RocketGrunt]: ['characters/hgss/rocket-f', 'characters/hgss/rocket-m'],
   [Npc.FossilManiac]: ['characters/frlg/ruin-maniac', 'characters/lgpe/poke-maniac'],
   [Npc.FossilScientist]: ['characters/lgpe/scientist', 'characters/frlg/staff-member'],
   [Npc.MoveTutor]: ['characters/frlg/gentleman', 'characters/lgpe/gentleman'],
+  [Npc.Trainer]: [
+    'characters/frlg/ace-trainer-f',
+    'characters/frlg/ace-trainer-m',
+    'characters/lgpe/ace-trainer',
+  ],
 };
+
+/**
+ * The boss himself, when a Team Rocket stop rolls him: not a role of
+ * his own, only the grunt's landmark wearing its rarest face
+ */
+export const GIOVANNI_CHARSETS: string[] = ['characters/frlg/giovanni', 'characters/hgss/giovanni'];
 
 /**
  * Every charset a wanderer of this role may be drawn with
@@ -139,6 +157,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.FossilManiac]: 'Fossil Maniac',
   [Npc.FossilScientist]: 'Fossil Scientist',
   [Npc.MoveTutor]: 'Move Tutor',
+  [Npc.Trainer]: 'Trainer',
 };
 
 /**

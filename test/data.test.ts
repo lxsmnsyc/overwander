@@ -2657,14 +2657,13 @@ describe('wandering NPCs', () => {
   });
 
   it('names everyone their own charset', () => {
-    // The roles the packs cover wear them; the two they do not —
-    // Nurse Joy and the grunt — keep their numbered Gen 4 folders
     expect(npcSheet(Npc.Vendor)).toBe('characters/frlg/shop-keeper');
-    expect(npcSheet(Npc.NurseJoy)).toBe('landmarks-npc-2');
-    expect(npcSheet(Npc.RocketGrunt)).toBe('landmarks-npc-6');
+    expect(npcSheet(Npc.NurseJoy)).toBe('characters/extra/nurse');
     expect(new Set(NPCS.map(npcSheet)).size).toBe(NPCS.length);
-    // A role both packs drew has both styles to turn up in
+    // A role the packs drew twice has both styles to turn up in
     expect(npcSheets(Npc.MoveTutor)).toContain('characters/lgpe/gentleman');
+    expect(npcSheets(Npc.RocketGrunt)).toContain('characters/hgss/rocket-m');
+    expect(npcSheets(Npc.Trainer)).toContain('characters/lgpe/ace-trainer');
   });
 
   it('dresses every role only in sheets that ship', () => {
@@ -2689,12 +2688,15 @@ describe('wandering NPCs', () => {
         NPC_NAMES[npc],
       ).toBe(true);
     }
-    // And nothing on disk claims to be a wanderer who does not exist
+    // And nothing on disk claims to be somebody who does not exist:
+    // a numbered folder is one of the roles, wanderer or fighter
+    const roles = new Set<number>([...NPCS, Npc.RocketGrunt, Npc.Trainer]);
+
     for (const folder of readdirSync('public/sprites/overworld')) {
       const numbered = /^landmarks-npc-(\d+)$/.exec(folder);
 
       if (numbered != null) {
-        expect(new Set<number>(NPCS).has(Number(numbered[1])), folder).toBe(true);
+        expect(roles.has(Number(numbered[1])), folder).toBe(true);
       }
     }
   });

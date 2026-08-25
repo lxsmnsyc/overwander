@@ -10,17 +10,16 @@ import { asNumber, asRecord, asString } from './__normalize';
 import { toZoneKey } from './local-time';
 
 /**
- * What a Team Rocket stop is, and how a stored one is read back.
+ * What a fighting stop is, and how a stored one is read back. It
+ * serves the Team Rocket landmark — a grunt, or rarely Giovanni —
+ * and the duelling trainer's alike; both keep the NPC window and
+ * turn their party over with it.
  *
- * A stop is not a landmark of its own: it is a grunt drawn onto a
- * wandering-NPC cell, so it keeps that cell's window and turns over
- * with whoever comes next.
- *
- * Unlike a raid lobby, a stop is **per player**: the grunt stands at
- * the cell for its window and fights each passer-by on their own. A
- * player who loses may try again while the window lasts; one who wins
- * is done with that stop until the next window rolls a new grunt. One
- * player's victory closes nothing for anybody else.
+ * Unlike a raid lobby, a stop is **per player**: whoever stands at
+ * the cell fights each passer-by on their own. A player who loses may
+ * try again while the window lasts; one who wins is done with that
+ * stop until the next window. One player's victory closes nothing for
+ * anybody else.
  */
 
 /**
@@ -40,7 +39,8 @@ export interface RocketRecord {
    */
   player: string;
   /**
-   * The grunt's three pokemon, weakest first: base, uncommon, rare
+   * The party fielded, weakest first: a grunt's or a trainer's three,
+   * or the boss' six
    */
   party: RocketPokemon[];
   /**
@@ -123,9 +123,10 @@ export function rocketStopId(chunk: Chunk, npcTimestamp: number, cell: number, o
 }
 
 /**
- * What a beaten grunt leaves behind: one of the two commoner species
- * it fielded, as a spawn the player then has to catch. The rare one
- * is not on offer — a grunt does not hand over its best.
+ * What a beaten stop leaves behind, as a spawn the player then has to
+ * catch. A grunt offers one of the two commoner species it fielded —
+ * it does not hand over its best. Giovanni offers any of his six,
+ * the legendary among them: beating the boss is worth the draw.
  *
  * The rolls are seeded by the stop and the player, so each winner
  * meets their own individual of it, and meeting it again resolves the
@@ -133,7 +134,10 @@ export function rocketStopId(chunk: Chunk, npcTimestamp: number, cell: number, o
  */
 export function deriveRocketReward(record: RocketRecord, id: string, uid: string): [string, Spawn] {
   const rng = new AleaRNG(`${id}:reward:${uid}`);
-  const offered = toSpawns(record.party).slice(0, 2);
+  const spawns = toSpawns(record.party);
+  // A party past a grunt's three is the boss', and all of it is on
+  // offer
+  const offered = spawns.length > 3 ? spawns : spawns.slice(0, 2);
   const [species] = offered[Math.floor(rng.random() * offered.length)];
 
   return [`${id}$reward`, [species, rng.int32(), rng.int32()]];

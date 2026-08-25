@@ -431,6 +431,15 @@ function OverworldBoard(props: {
    * challenge is taken or declined
    */
   const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
+
+  /**
+   * Who put the challenge: the grunt's ambush or the trainer's duel.
+   * It decides the dialog's copy and what winning promises; the coat
+   * is the style they were wandering in, so the portrait matches
+   */
+  const [challenger, setChallenger] = createSignal<Npc>(Npc.RocketGrunt);
+
+  const [challengeCoat, setChallengeCoat] = createSignal<string | undefined>(undefined);
   /**
    * The passer-by the player has stopped at: the cell they are
    * standing on and who is on it this window, until their business is
@@ -1003,52 +1012,59 @@ function OverworldBoard(props: {
       announce('The patch is bare until the next window.', berries == null ? null : [berries]);
       return null;
     }
+    // The two landmarks somebody fights at share one flow: Team
+    // Rocket's ambush and the trainer's duel, put in the challenge
+    // dialog rather than the wanderer's
+    if (landmark === Landmark.TeamRocket || landmark === Landmark.Trainer) {
+      const duel = landmark === Landmark.Trainer;
+      const stop = await enterRocketStop(loaded.snapshot, at);
+
+      if (stop === 'beaten') {
+        // A beaten grunt may still owe the pokemon they left:
+        // claiming again pays nothing and hands it back until it is
+        // caught. A beaten trainer owed only the purse
+        const owed = duel
+          ? null
+          : await claimRocketReward(
+              rocketStopId(
+                loaded.snapshot.chunk,
+                loaded.snapshot.npcTimestamp,
+                at,
+                loaded.snapshot.offset,
+              ),
+            );
+
+        if (owed?.encounter != null) {
+          game.setEncounter(owed.encounter);
+          return null;
+        }
+        return duel ? 'The trainer is done with you for now.' : 'They have moved on.';
+      }
+      if (stop == null) {
+        // The server stages nobody there: the board is behind the
+        // world — a window rolled over, or the game was updated
+        // under an open tab — so it is asked for again rather than
+        // blamed on a fight that was never won
+        askForWindow(true);
+        return 'Nobody is standing there any more.';
+      }
+      if (!(await canJoinRaids(user.uid))) {
+        return duel
+          ? 'A trainer wants to battle — and you have no pokemon to answer with.'
+          : 'Team Rocket blocks the way — and you have no pokemon to answer with.';
+      }
+      // The challenge is put to the player rather than taken for
+      // them; the dialog is what accepts it
+      setChallenger(duel ? Npc.Trainer : Npc.RocketGrunt);
+      setChallengeCoat(loaded.snapshot.getWandererCoats().get(at));
+      setChallenge(stop);
+      return null;
+    }
     if (landmark === Landmark.WanderingNpc) {
       const standing = loaded.snapshot.getWanderingNpcs().get(at);
 
       if (standing == null) {
         return 'Nobody is passing through right now.';
-      }
-      // One of the people a crossroads brings is not there to trade.
-      // The grunt's own dialog is what the challenge is put in, so the
-      // branch is here rather than inside the wanderer's
-      if (standing === Npc.RocketGrunt) {
-        const stop = await enterRocketStop(loaded.snapshot, at);
-
-        if (stop === 'beaten') {
-          // The grunt is gone once beaten, but the pokemon they left
-          // may still be standing: claiming again pays nothing and
-          // hands it back until it is caught
-          const owed = await claimRocketReward(
-            rocketStopId(
-              loaded.snapshot.chunk,
-              loaded.snapshot.npcTimestamp,
-              at,
-              loaded.snapshot.offset,
-            ),
-          );
-
-          if (owed != null) {
-            game.setEncounter(owed.encounter);
-            return null;
-          }
-          return 'The grunt has moved on.';
-        }
-        if (stop == null) {
-          // The server stages nobody there: the board is behind the
-          // world — a window rolled over, or the game was updated
-          // under an open tab — so it is asked for again rather than
-          // blamed on a grunt that was never beaten
-          askForWindow(true);
-          return 'Nobody is standing there any more.';
-        }
-        if (!(await canJoinRaids(user.uid))) {
-          return 'A Team Rocket grunt blocks the way — and you have no pokemon to answer with.';
-        }
-        // The challenge is put to the player rather than taken for
-        // them; the dialog is what accepts it
-        setChallenge(stop);
-        return null;
       }
       // What they want is put to the player rather than taken from
       // them; the dialog is where the fee is agreed to
@@ -1397,6 +1413,11 @@ function OverworldBoard(props: {
 
       return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
     }
+    // The boss is named when he is actually standing there: 1/64 is
+    // worth crossing the chunk for
+    if (landmark === Landmark.TeamRocket && loaded?.snapshot.isRocketBoss(index) === true) {
+      return 'Giovanni';
+    }
     if (landmark === Landmark.Phenomenon) {
       const showing = loaded?.snapshot.getPhenomena().get(index);
 
@@ -1552,6 +1573,8 @@ function OverworldBoard(props: {
             <RocketStopDialog
               user={user()}
               challenge={challenge()}
+              npc={challenger()}
+              sheet={challengeCoat()}
               onClose={() => {
                 setChallenge(null);
               }}

@@ -111,6 +111,10 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'Hand me the rock and give me a moment. Whatever is in there has been waiting rather a long while — bring me another when you find one.',
   [Npc.MoveTutor]:
     'Some moves are never grown into, only taught. One Heart Scale buys one lesson, and it will not forget it.',
+  // The trainer opens `RocketStopDialog` too: a duel is put the same
+  // way an ambush is, only asked rather than sprung
+  [Npc.Trainer]:
+    'You look strong. Three of the local best against whatever you bring — winner takes the purse.',
 };
 
 /**

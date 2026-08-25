@@ -49,6 +49,19 @@ const enum Landmark {
    * a network rather than a teleport
    */
   Portal = 7,
+  /**
+   * A Team Rocket stop: a grunt bars the cell for the window and
+   * fights whoever accepts, with shadows of the biome's own. Once in
+   * a long while it is Giovanni himself, and his six are another
+   * matter entirely
+   */
+  TeamRocket = 8,
+  /**
+   * A trainer after a fair duel: the biome's own against whatever the
+   * player brings, purse on a win, nothing dropped and nothing
+   * shadowed. The challenge is the player's to accept
+   */
+  Trainer = 9,
 }
 
 export default Landmark;
@@ -65,6 +78,8 @@ export const LANDMARKS: Landmark[] = [
   Landmark.Nest,
   Landmark.WanderingNpc,
   Landmark.Portal,
+  Landmark.TeamRocket,
+  Landmark.Trainer,
 ];
 
 /**
@@ -79,4 +94,6 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Nest]: 'Nest',
   [Landmark.WanderingNpc]: 'Wandering NPC',
   [Landmark.Portal]: 'Portal',
+  [Landmark.TeamRocket]: 'Team Rocket',
+  [Landmark.Trainer]: 'Trainer',
 };

@@ -10,8 +10,8 @@ import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
-import Npc, { NPCS, npcSheets } from '../data/overworld/npc';
+import { EVERY_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
+import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
@@ -45,6 +45,18 @@ export const SPAWN_COUNT = 8;
  * biome's wild pool
  */
 export const PORTAL_KEEPER_CHANCE = 1 / 8;
+
+/**
+ * How often a Team Rocket stop is Giovanni himself rather than a
+ * grunt: the rare band's own odds, so a walk remembers meeting him
+ */
+export const GIOVANNI_CHANCE = 1 / 64;
+
+/**
+ * How many the boss fields: a full six against the player's six,
+ * where a grunt makes do with three
+ */
+export const GIOVANNI_PARTY_SIZE = 6;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -505,9 +517,8 @@ export default class ChunkSnapshot {
    * is the chunk's own, fixed forever like every landmark, but the
    * person on it is drawn afresh every six hours — so a player who
    * needs a breeder waits for one, or goes looking somewhere else.
-   *
-   * A Team Rocket grunt is one of the draws, so the same walk that
-   * finds a nurse can find a fight instead
+   * The people who fight are not among the draws: Team Rocket and the
+   * duelling trainer stand at landmarks of their own
    */
   getWanderingNpcs(): Map<number, Npc> {
     if (this.wanderers == null) {
@@ -530,76 +541,146 @@ export default class ChunkSnapshot {
   private coats: Map<number, string> | null = null;
 
   /**
-   * The style each of the window's wanderers turned up in, by cell:
-   * one roll over the role's own wardrobe, so a role both packs drew
-   * wears either. The coat is the window's the way the wanderer is,
-   * and every observer of the window sees the same one
+   * The style everyone standing at a people landmark turned up in, by
+   * cell: one roll over their own wardrobe, so a figure both packs
+   * drew wears either. The coat is the window's the way the person
+   * is, and every observer of the window sees the same one. A Team
+   * Rocket stop that rolled the boss wears Giovanni
    */
   getWandererCoats(): Map<number, string> {
     if (this.coats == null) {
       const coats = new Map<number, string>();
-
-      for (const [cell, npc] of this.getWanderingNpcs()) {
-        const wardrobe = npcSheets(npc);
+      const dress = (cell: number, wardrobe: string[]): void => {
         const rng = new AleaRNG(`${this.key}${this.npcTimestamp}coat${cell}`);
 
         coats.set(cell, wardrobe[Math.floor(rng.random() * wardrobe.length)]);
+      };
+
+      for (const [cell, npc] of this.getWanderingNpcs()) {
+        dress(cell, npcSheets(npc));
+      }
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark === Landmark.Trainer) {
+          dress(cell, npcSheets(Npc.Trainer));
+        } else if (landmark === Landmark.TeamRocket) {
+          dress(cell, this.isRocketBoss(cell) ? GIOVANNI_CHARSETS : npcSheets(Npc.RocketGrunt));
+        }
       }
       this.coats = coats;
     }
     return this.coats;
   }
 
+  /**
+   * Whether this Team Rocket stop rolled the boss himself this
+   * window: one draw in sixty-four, the rarest thing a walk meets
+   */
+  isRocketBoss(cell: number): boolean {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.TeamRocket) {
+      return false;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`);
+
+    return rng.random() < GIOVANNI_CHANCE;
+  }
+
+  /**
+   * The biome's bands a fighting stop draws from, weakest first. A
+   * biome asleep at this hour still patrols: the window's own pool
+   * first, then the other periods in a fixed order, so a fight drawn
+   * on night tundra fields the tundra's daytime residents instead of
+   * standing there unfightable. A thin band borrows from the
+   * commonest one that is not empty; null when the pool has nothing
+   * at all
+   */
+  private fightBands(): SpawnRarityGroups['base'][] | null {
+    const times = [
+      getTimeOfDay(this.npcTimestamp),
+      TimeOfDay.Morning,
+      TimeOfDay.Day,
+      TimeOfDay.Evening,
+      TimeOfDay.Night,
+    ];
+
+    for (const time of times) {
+      const pool = getSpawnPool(this.chunk.biome, time);
+      const bands = [pool.base, pool.uncommon, pool.rare];
+      const stocked = bands.find((band) => band.length > 0);
+
+      if (stocked != null) {
+        return bands.map((band) => (band.length > 0 ? band : stocked));
+      }
+    }
+    return null;
+  }
+
   private rocketStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Team Rocket stops, keyed by the NPC cell: three
-   * pokemon, one from each of the biome's base, uncommon and rare
-   * bands. An empty band falls back to the nearest one with anything,
-   * so somewhere thin is still patrolled; only an empty pool stages
-   * nobody. Each draw carries its own rolls but no level, which the
-   * fight fixes for all three
+   * The window's Team Rocket stops, keyed by their landmark cell. A
+   * grunt fields three: one from each of the biome's base, uncommon
+   * and rare bands. The window that rolled Giovanni fields six: five
+   * from the rare band and a legendary — the biome's own lair where
+   * it has one, any lair at all where it does not. Each draw carries
+   * its own rolls but no level, which the fight fixes for the party
    */
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
       const stops = new Map<number, Spawn[]>();
-      // A biome asleep at this hour still patrols: the window's own
-      // pool first, then the other periods in a fixed order, so a
-      // grunt drawn on night tundra fields the tundra's daytime
-      // residents instead of standing there unfightable
-      const times = [
-        getTimeOfDay(this.npcTimestamp),
-        TimeOfDay.Morning,
-        TimeOfDay.Day,
-        TimeOfDay.Evening,
-        TimeOfDay.Night,
-      ];
-      let bands: SpawnRarityGroups['base'][] = [];
-      // Weakest first, so the party reads the way it is fought; a
-      // thin band borrows from the commonest one that is not empty
-      let stocked: SpawnRarityGroups['base'] | undefined;
+      const fielded = this.fightBands();
 
-      for (const time of times) {
-        const pool = getSpawnPool(this.chunk.biome, time);
-
-        bands = [pool.base, pool.uncommon, pool.rare];
-        stocked = bands.find((band) => band.length > 0);
-        if (stocked != null) {
-          break;
-        }
-      }
-
-      if (stocked != null) {
-        // Named as a const so the closure below keeps the narrowing
-        const filled = stocked;
-        const fielded = bands.map((band) => (band.length > 0 ? band : filled));
-
-        for (const [cell, standing] of this.getWanderingNpcs()) {
-          if (standing !== Npc.RocketGrunt) {
+      if (fielded != null) {
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocket) {
             continue;
           }
 
           const rng = new AleaRNG(`${this.key}${this.npcTimestamp}rocket${cell}`);
+          const draw = (band: SpawnRarityGroups['base']): Spawn => {
+            const entry = band[Math.floor(rng.random() * band.length)];
+
+            return [entry.species, rng.int32(), rng.int32()];
+          };
+
+          if (this.isRocketBoss(cell)) {
+            const rares = fielded[fielded.length - 1];
+            const lairs = getBiomeLairs(this.chunk.biome);
+            const homes = lairs.length > 0 ? lairs : EVERY_LAIR;
+            const lair = homes[Math.floor(rng.random() * homes.length)];
+            const party = Array.from({ length: GIOVANNI_PARTY_SIZE - 1 }, () => draw(rares));
+
+            party.push([getLairSpecies(lair), rng.int32(), rng.int32()]);
+            stops.set(cell, party);
+          } else {
+            stops.set(cell, fielded.map(draw));
+          }
+        }
+      }
+      this.rocketStops = stops;
+    }
+    return this.rocketStops;
+  }
+
+  private trainerStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The window's duelling trainers, keyed by their landmark cell:
+   * the grunt's three bands drawn the same way, fought as their
+   * ordinary selves rather than as shadows
+   */
+  getTrainerStops(): Map<number, Spawn[]> {
+    if (this.trainerStops == null) {
+      const stops = new Map<number, Spawn[]>();
+      const fielded = this.fightBands();
+
+      if (fielded != null) {
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.Trainer) {
+            continue;
+          }
+
+          const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duel${cell}`);
 
           stops.set(
             cell,
@@ -611,9 +692,9 @@ export default class ChunkSnapshot {
           );
         }
       }
-      this.rocketStops = stops;
+      this.trainerStops = stops;
     }
-    return this.rocketStops;
+    return this.trainerStops;
   }
 
   /**

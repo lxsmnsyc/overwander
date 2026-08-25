@@ -18,11 +18,12 @@ import { PLAYER_ALLIANCE } from '../overworld/raid';
 import {
   ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
-  ROCKET_STOP_GOLD,
   createRocketParty,
+  rollStopGold,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
+import Landmark from '../data/overworld/landmark';
 import Npc from '../data/overworld/npc';
 import { Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
@@ -113,7 +114,12 @@ export async function enterRocketStop(
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const party = snapshot.getRocketStops().get(cell);
+  // The cell's landmark says whose stop this is: Team Rocket's, or
+  // the duelling trainer's
+  const party =
+    chunk.getLandmarkCells().get(cell) === Landmark.Trainer
+      ? snapshot.getTrainerStops().get(cell)
+      : snapshot.getRocketStops().get(cell);
 
   if (party == null) {
     return null;
@@ -243,14 +249,17 @@ export async function startRocketBattle(
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
+  // The cell's landmark decides what they field: Team Rocket's are
+  // shadows, a duelling trainer's are the biome's ordinary own
+  const shadow = chunk.getLandmarkCells().get(record.cell) !== Landmark.Trainer;
   const gruntId = newDocId();
 
   await tx(async (transaction) => {
-    // The grunt's party belongs to nobody, the way a raid boss' does
+    // The stop's party belongs to nobody, the way a raid boss' does
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
       values (${gruntId}, null, ${ROCKET_ALLIANCE},
-              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party)))})
+              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow))})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, limits)
@@ -277,10 +286,12 @@ export async function startRocketBattle(
 }
 
 /**
- * What a beaten grunt owed: the purse, and the pokemon they left
+ * What a beaten stop owed: the purse, and — a grunt's alone — the
+ * pokemon they left. A duelling trainer keeps their party, so their
+ * reward is the purse and nothing else
  */
 export interface RocketReward {
-  encounter: EncounterRecord;
+  encounter: EncounterRecord | null;
   gold: number;
 }
 
@@ -319,6 +330,11 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     return null;
   }
 
+  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
+  const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
+  const kind =
+    chunk.getLandmarkCells().get(record.cell) === Landmark.Trainer ? Npc.Trainer : Npc.RocketGrunt;
+
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
     update rocket_stops set defeated = true
@@ -328,8 +344,12 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const [spawnId, spawn] = deriveRocketReward(record, stop, uid);
 
   if (claimed.count === 0) {
-    // Paid already: the only thing possibly still owed is the
-    // pokemon. Caught, it is retired and there is nothing left here
+    // Paid already: the only thing possibly still owed is a grunt's
+    // pokemon. Caught, it is retired; a trainer never owed one
+    if (kind === Npc.Trainer) {
+      return null;
+    }
+
     const existing = await readEncounter(spawnId, uid);
 
     if (existing == null) {
@@ -345,18 +365,25 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     return gone.length > 0 ? null : { encounter, gold: 0 };
   }
 
-  // A first claim is the one moment a beaten grunt counts once
-  await bumpProgress(uid, [[Metric.NpcVisits, Npc.RocketGrunt, 1]]);
+  // A first claim is the one moment a beaten stop counts once
+  await bumpProgress(uid, [[Metric.NpcVisits, kind, 1]]);
 
-  // What the grunt is worth, and then what the winner brought along:
-  // a buddy burning a Luck Incense doubles the purse
+  // What the stop is worth — a purse rolled per winner, the boss'
+  // range for a six-strong party — and then what the winner brought
+  // along: a buddy burning a Luck Incense doubles it
   const overworld = createOverworld(uid, await resolveBuddy(uid));
-  const gold = overworld.checkGoldReward(stop, ROCKET_STOP_GOLD);
+  const gold = overworld.checkGoldReward(
+    stop,
+    rollStopGold(`${stop}:purse:${uid}`, record.party.length),
+  );
 
   await grantGold(uid, gold);
 
-  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
-  const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
+  // A trainer's purse is the whole prize: they keep their party
+  if (kind === Npc.Trainer) {
+    return { encounter: null, gold };
+  }
+
   // Fixed rather than rolled, so the same grunt is worth the same to
   // everyone who put them down — and far below the level-50 party it
   // was taken from

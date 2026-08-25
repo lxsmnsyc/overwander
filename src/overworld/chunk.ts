@@ -59,11 +59,17 @@ const MAX_WATER_SPOTS = 3;
 
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
- * and an npc has nowhere to stand, so neither is rolled there
+ * and people have nowhere to stand, so neither bushes nor any of the
+ * three landmarks somebody stands at is rolled there
  */
-const SEA_LANDMARKS = LANDMARKS.filter(
-  (kind) => kind !== Landmark.BerryPatch && kind !== Landmark.WanderingNpc,
-);
+const SEA_PEOPLE = new Set([
+  Landmark.BerryPatch,
+  Landmark.WanderingNpc,
+  Landmark.TeamRocket,
+  Landmark.Trainer,
+]);
+
+const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
 
 /**
  * How many shallow patches an open-sea chunk gets: the lighter

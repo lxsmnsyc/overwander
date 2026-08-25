@@ -344,7 +344,9 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     setReward(null);
     (owed.stop == null ? claimRaidReward(owed.raid) : claimRocketReward(owed.stop))
       .then((collected) => {
-        if (collected != null) {
+        // A duelling trainer pays a purse and leaves no pokemon, so
+        // there is nothing to stand waiting in the overworld
+        if (collected?.encounter != null) {
           setEncounter(collected.encounter);
         }
       })

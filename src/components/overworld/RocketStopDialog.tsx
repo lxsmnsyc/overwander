@@ -4,7 +4,7 @@ import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
 import Npc from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
-import { ROCKET_PARTY_LEVEL } from '../../overworld/rocket';
+import { rocketPartyLevel } from '../../overworld/rocket';
 import { NPC_QUOTES } from './NpcDialog';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
@@ -15,10 +15,14 @@ import { useGame } from '../app/game-context';
 export interface RocketStopDialogProps {
   user: PlayerIdentity;
   /**
-   * The stop's id and what the grunt is fielding, or null when the
-   * player is not standing in front of one
+   * The stop's id and what is being fielded, or null when the player
+   * is not standing in front of one
    */
   challenge: [string, RocketRecord] | null;
+  /** Who put the challenge: the grunt's ambush or the trainer's duel */
+  npc: Npc;
+  /** The style they were wandering in, so the portrait matches */
+  sheet?: string;
   onClose: () => void;
 }
 
@@ -35,9 +39,9 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   const stop = (): string | null => props.challenge?.[0] ?? null;
 
   /**
-   * The grunt's three as squares. They are not catches and have no
+   * The fielded party as squares. They are not catches and have no
    * records: what a square needs of one is its species and a name to
-   * be read out by, and a grunt's party is neither hurt nor hatching
+   * be read out by, and a stop's party is neither hurt nor hatching
    */
   const lineup = (record: RocketRecord): BoxEntry[] =>
     record.party.map((entry, at) => ({
@@ -47,8 +51,39 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       egg: false,
       progress: 0,
       fainted: false,
-      label: `${getSpeciesData(entry.species).name}, Lv. ${ROCKET_PARTY_LEVEL}`,
+      label: `${getSpeciesData(entry.species).name}, Lv. ${rocketPartyLevel(record.party.length)}`,
     }));
+
+  /** The boss fields six; everybody else makes do with three. */
+  const boss = (): boolean => (props.challenge?.[1].party.length ?? 0) > 3;
+
+  const duel = (): boolean => props.npc === Npc.Trainer;
+
+  const greeting = (): string => {
+    if (duel()) {
+      return `A trainer squares up. “${NPC_QUOTES[Npc.Trainer]}”`;
+    }
+    if (boss()) {
+      return 'Giovanni himself bars the way. “So you are the one. Show me what you have.”';
+    }
+    return `A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`;
+  };
+
+  const stakes = (): string => {
+    if (duel()) {
+      return `Three of theirs against as many as you bring. Winning pays a purse — the trainer
+        keeps their pokemon — and losing costs the fight and nothing else; they will still be
+        here while the window lasts.`;
+    }
+    if (boss()) {
+      return `Six of his against as many as you bring. Beaten, the boss leaves one of his six
+        behind — any of the six; losing costs the fight and nothing else, and he will still be
+        here while the window lasts.`;
+    }
+    return `Three of theirs against as many as you bring. Beaten, the grunt drops what they were
+      carrying and leaves it in the overworld; losing costs the fight and nothing else — they
+      will still be here while the window lasts.`;
+  };
 
   // A refusal belongs to the grunt that refused: reopened on another
   // stop, the dialog must not greet the player with the last one's
@@ -69,7 +104,11 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     startRocketBattle(id, catches)
       .then((battle) => {
         if (battle == null) {
-          setStatus('The grunt is done with you for now.');
+          setStatus(
+            duel()
+              ? 'The trainer is done with you for now.'
+              : 'The grunt is done with you for now.',
+          );
           return;
         }
         props.onClose();
@@ -85,17 +124,17 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       <Dialog
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
-        title="Team Rocket"
+        title={duel() ? 'Trainer' : 'Team Rocket'}
         terse
-        description={`A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`}
+        description={greeting()}
       >
         <Show when={props.challenge?.[1]}>
           {(record) => (
             <div class="flex flex-col items-center gap-3 py-2 text-center">
-              {/* The grunt themselves, from the overworld's own
+              {/* The challenger themselves, from the overworld's own
                   charset: the dialog already names them, so the
                   picture is not read out */}
-              <NpcSprite npc={Npc.RocketGrunt} label="" />
+              <NpcSprite npc={props.npc} sheet={props.sheet} label="" />
 
               {/* What they are fielding, in the same box of squares
                   the player reads their own pokemon in: a lineup laid
@@ -107,15 +146,14 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                 columns={3}
                 cardOnly
               />
-              <Meta>All three at level {ROCKET_PARTY_LEVEL}.</Meta>
+              <Meta>
+                All {record().party.length === 6 ? 'six' : 'three'} at level{' '}
+                {rocketPartyLevel(record().party.length)}.
+              </Meta>
 
               {/* And what the fight is worth, which is the decision the
                   buttons below are asking about */}
-              <Meta class="max-w-prose">
-                Three of theirs against as many as you bring. Beaten, the grunt drops what they were
-                carrying and leaves it in the overworld; losing costs the fight and nothing else —
-                they will still be here while the window lasts.
-              </Meta>
+              <Meta class="max-w-prose">{stakes()}</Meta>
             </div>
           )}
         </Show>

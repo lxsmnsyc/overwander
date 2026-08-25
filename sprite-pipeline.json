@@ -349,6 +349,18 @@
         "bytes": 19940
       }
     },
+    "public/sprites/overworld/characters/extra/nurse/image.png": {
+      "digest": "ac7b7ced28e5fa58",
+      "bytes": 1272,
+      "width": 93,
+      "height": 112,
+      "compact": {
+        "at": "2026-08-25T16:32:24Z",
+        "as": "already compact",
+        "was": 1272,
+        "bytes": 1272
+      }
+    },
     "public/sprites/overworld/characters/frlg/ace-trainer-f/image.png": {
       "digest": "1fb9e08997eb4af2",
       "bytes": 1441,
@@ -1043,6 +1055,30 @@
         "as": "already compact",
         "was": 1073,
         "bytes": 1073
+      }
+    },
+    "public/sprites/overworld/characters/hgss/rocket-f/image.png": {
+      "digest": "2c70dd437b6fcaac",
+      "bytes": 1397,
+      "width": 57,
+      "height": 108,
+      "compact": {
+        "at": "2026-08-25T16:32:24Z",
+        "as": "already compact",
+        "was": 1397,
+        "bytes": 1397
+      }
+    },
+    "public/sprites/overworld/characters/hgss/rocket-m/image.png": {
+      "digest": "dd252f03a2634421",
+      "bytes": 1114,
+      "width": 54,
+      "height": 108,
+      "compact": {
+        "at": "2026-08-25T16:32:24Z",
+        "as": "already compact",
+        "was": 1114,
+        "bytes": 1114
       }
     },
     "public/sprites/overworld/characters/hgss/sabrina/image.png": {

@@ -194,15 +194,15 @@
       }
     },
     "public/sprites/biome/23/image.png": {
-      "digest": "411923ab097a8653",
-      "bytes": 12270,
+      "digest": "557f35144c5b6f99",
+      "bytes": 12680,
       "width": 144,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T06:59:59Z",
+        "at": "2026-08-25T05:57:52Z",
         "as": "already compact",
-        "was": 12270,
-        "bytes": 12270
+        "was": 12680,
+        "bytes": 12680
       }
     },
     "public/sprites/biome/25/image.png": {
@@ -254,15 +254,15 @@
       }
     },
     "public/sprites/biome/29/image.png": {
-      "digest": "6dddb93af3bf4f9f",
-      "bytes": 12270,
+      "digest": "06ad65d0274a65cd",
+      "bytes": 12680,
       "width": 144,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-25T05:57:52Z",
         "as": "already compact",
-        "was": 12270,
-        "bytes": 12270
+        "was": 12680,
+        "bytes": 12680
       }
     },
     "public/sprites/biome/3/image.png": {
@@ -374,15 +374,15 @@
       }
     },
     "public/sprites/overworld/landmarks-npc-2/image.png": {
-      "digest": "e5534daeccb9e3fa",
-      "bytes": 1575,
-      "width": 152,
+      "digest": "fd3164e144d1ae8a",
+      "bytes": 1366,
+      "width": 144,
       "height": 208,
       "compact": {
-        "at": "2026-08-22T05:00:40Z",
+        "at": "2026-08-25T07:28:18Z",
         "as": "already compact",
-        "was": 1575,
-        "bytes": 1575
+        "was": 1366,
+        "bytes": 1366
       }
     },
     "public/sprites/overworld/landmarks-npc-3/image.png": {

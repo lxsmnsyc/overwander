@@ -416,6 +416,20 @@ export interface ChunkCanvasProps {
   player: number;
   landmarks: Map<number, Landmark>;
   /**
+   * The chunk's terrain spots, drawn as the other ground: water
+   * pools on a land chunk, ground banks in a wetland
+   */
+  spots: Set<number>;
+  /**
+   * An open-sea chunk's shallow patches, drawn with the ground tiles
+   * to break up the deep. Empty everywhere else
+   */
+  shallows: Set<number>;
+  /**
+   * The chunk's rock outcrops, drawn with the wall tiles
+   */
+  rocks: Set<number>;
+  /**
    * Who is standing on each wandering-NPC cell this window. A landmark
    * says somebody is there; this says who, which is what decides the
    * charset they are drawn in
@@ -1223,7 +1237,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * every cell asks about its eight neighbours, and half of those
        * questions are the same question asked from the other side
        */
-      const land = boardTerrain({ water: isWaterBiome(props.biome) });
+      const water = isWaterBiome(props.biome);
+      const land = boardTerrain({
+        water,
+        spots: props.spots,
+        // A spot is a pool on land, a bank in a wetland
+        spotRole: water ? 'ground' : 'water',
+        shallows: props.shallows,
+        rocks: props.rocks,
+      });
       const tiles = tileset();
       // How far round the camera has been walked, in quarters. The
       // ground art is drawn for one point of view and can only be
@@ -1257,6 +1279,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           return false;
         }
         drawTileQuad(context, spot.sheet, spot, tiles.tile, corners, turns);
+
+        // Deep water against a shore takes the sea rips' foam overlay
+        // on top, which is what actually blends the two
+        if (role === 'water') {
+          const foam = tiles.shoreAt(
+            rotateMask(land.maskAt(square.x, square.y), turns),
+            variantAt(square.x, square.y, tiles.data.variants),
+            clock,
+          );
+
+          if (foam != null) {
+            drawTileQuad(context, foam.sheet, foam, tiles.tile, corners, turns);
+          }
+        }
         return true;
       };
 

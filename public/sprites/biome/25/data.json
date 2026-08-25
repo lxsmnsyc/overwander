@@ -1,6 +1,8 @@
 {
   "biome": 25,
-  "draws": {},
+  "draws": {
+    "water": "lava"
+  },
   "tile": 24,
   "width": 240,
   "height": 1128,

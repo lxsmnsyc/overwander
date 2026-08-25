@@ -15,7 +15,8 @@ import { CHUNK_CELLS, isGateCell } from './chunk';
  * says something is there.
  *
  * Inside the frame everything is walked on, and is water where the
- * biome is.
+ * biome is. The chunk's spots break the surface up: a pool of water
+ * on a land chunk, a bank of ground on a water one.
  */
 
 export interface BoardTerrain {
@@ -32,6 +33,20 @@ export interface BoardTerrain {
 export interface TerrainOptions {
   /** Whether what a player walks on here is water. */
   water: boolean;
+  /**
+   * The chunk's terrain spots by row-major index: pools of water on a
+   * land chunk, banks of ground in a wetland, rock on the open sea
+   */
+  spots?: Set<number>;
+  /** What a spot is made of. Without one: water on land, ground at sea. */
+  spotRole?: TerrainRole;
+  /**
+   * Open-sea cells drawn with the ground tiles — the lighter shelf
+   * mixed through the deep. Only a look: they are swum like the rest
+   */
+  shallows?: Set<number>;
+  /** The chunk's rock outcrops, drawn as wall and walked around. */
+  rocks?: Set<number>;
 }
 
 /** The eight neighbours, in the order their bits are counted. */
@@ -54,6 +69,19 @@ export default function boardTerrain(options: TerrainOptions): BoardTerrain {
     const outY = y < 0 || y >= CHUNK_CELLS;
 
     if (!outX && !outY) {
+      const cell = y * CHUNK_CELLS + x;
+
+      if (options.rocks?.has(cell) === true) {
+        return 'wall';
+      }
+      // A spot is the other ground: a pool in a field, a bank in a
+      // wetland
+      if (options.spots?.has(cell) === true) {
+        return options.spotRole ?? (options.water ? 'ground' : 'water');
+      }
+      if (options.shallows?.has(cell) === true) {
+        return 'ground';
+      }
       return walkable;
     }
     // A gate's ground runs on outward as far as anybody asks, so the

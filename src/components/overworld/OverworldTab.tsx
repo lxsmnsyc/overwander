@@ -231,6 +231,19 @@ interface ChunkView {
   snapshot: ChunkSnapshot;
   landmarks: Map<number, Landmark>;
   /**
+   * The chunk's terrain spots, for the ground drawing: pools on
+   * land, banks in a wetland
+   */
+  spots: Set<number>;
+  /**
+   * An open-sea chunk's shallow patches, for the ground drawing
+   */
+  shallows: Set<number>;
+  /**
+   * The spot cells that are solid rock, which a walk goes round
+   */
+  rocks: Set<number>;
+  /**
    * The chunk's scenery by cell. Nothing is done with it — it is what
    * makes a taiga look like a taiga rather than a grassland in another
    * colour
@@ -320,6 +333,9 @@ function buildChunkView(
     biome: chunk.biome,
     snapshot,
     landmarks: chunk.getLandmarkCells(),
+    spots: chunk.getSpotCells(),
+    shallows: chunk.getShallowCells(),
+    rocks: chunk.getRockCells(),
     decorations: chunk.getDecorationCells(),
     spawns,
     caches: snapshot.getItemCaches(),
@@ -1250,8 +1266,9 @@ function OverworldBoard(props: {
     // pokemon is not — where one is this window is not a fact about
     // the ground, and a route that bent round every spawn made a busy
     // chunk feel like a maze
+    // Solid rock stops a walk the way a fixture does
     const passable = (index: number): boolean =>
-      !loaded.landmarks.has(index) && !loaded.decorations.has(index);
+      !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.rocks.has(index);
     const route = plan.act
       ? findPathBeside(here, plan.goal, passable)
       : findPath(here, plan.goal, passable);
@@ -1449,6 +1466,9 @@ function OverworldBoard(props: {
                 player={frozen()?.player ?? cell()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
+                spots={loaded().spots}
+                shallows={loaded().shallows}
+                rocks={loaded().rocks}
                 wanderers={loaded().snapshot.getWanderingNpcs()}
                 decorations={loaded().decorations}
                 spawns={

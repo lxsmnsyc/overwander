@@ -54,6 +54,43 @@ describe('what a cell of the board is', () => {
     expect(land.at(200, 3)).toBe('wall');
   });
 
+  it('floods the chunk’s spots on land', () => {
+    const spots = new Set([8 * CHUNK_CELLS + 8, 8 * CHUNK_CELLS + 7]);
+    const land = boardTerrain({ water: false, spots });
+
+    expect(land.at(8, 8)).toBe('water');
+    expect(land.at(7, 8)).toBe('water');
+    expect(land.at(6, 8)).toBe('ground');
+  });
+
+  it('raises the chunk’s spots as ground at sea', () => {
+    const spots = new Set([8 * CHUNK_CELLS + 8, 8 * CHUNK_CELLS + 7]);
+    const sea = boardTerrain({ water: true, spots });
+
+    expect(sea.at(8, 8)).toBe('ground');
+    expect(sea.at(7, 8)).toBe('ground');
+    expect(sea.at(6, 8)).toBe('water');
+  });
+
+  it('stands a spot as rock where the caller says so', () => {
+    const spots = new Set([8 * CHUNK_CELLS + 8]);
+    const sea = boardTerrain({ water: true, spots, spotRole: 'wall' });
+
+    expect(sea.at(8, 8)).toBe('wall');
+    expect(sea.at(7, 8)).toBe('water');
+  });
+
+  it('mixes the shallows in as ground, swum like the rest', () => {
+    const shallows = new Set([8 * CHUNK_CELLS + 8, 8 * CHUNK_CELLS + 9]);
+    const sea = boardTerrain({ water: true, shallows });
+
+    expect(sea.at(8, 8)).toBe('ground');
+    expect(sea.at(9, 8)).toBe('ground');
+    expect(sea.at(7, 8)).toBe('water');
+    // The deep draws its own edge against the shelf
+    expect(sea.maskAt(7, 8) & Around.East).toBe(0);
+  });
+
   it('gates a water chunk with water', () => {
     const land = boardTerrain({ water: true });
 
@@ -106,6 +143,16 @@ describe('which tile a cell gets', () => {
     // The wall beside the opening does not continue into it
     expect(land.maskAt(5, -1) & Around.East).toBe(0);
     expect(land.maskAt(10, -1) & Around.West).toBe(0);
+  });
+
+  it('shores a water spot on the water’s own side', () => {
+    const spots = new Set([8 * CHUNK_CELLS + 8, 8 * CHUNK_CELLS + 7]);
+    const land = boardTerrain({ water: false, spots });
+
+    // The water draws its shoreline; the ground reads to the shore
+    expect(land.maskAt(8, 8) & Around.East).toBe(0);
+    expect(land.maskAt(8, 8) & Around.West).toBe(Around.West);
+    expect(land.maskAt(6, 8) & Around.East).toBe(Around.East);
   });
 
   it('never asks for a neighbourhood the artist was not given', () => {

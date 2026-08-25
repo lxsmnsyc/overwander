@@ -9,7 +9,13 @@ import registerBiomeSpawns, {
   getSpawnPool,
   getSpawnRarity,
 } from '../../src/data/biome';
-import Biome, { BIOME_CONFIGS, TimeOfDay, getTimeOfDay } from '../../src/data/ids/biome';
+import Biome, {
+  BIOME_CONFIGS,
+  TimeOfDay,
+  getTimeOfDay,
+  isOpenSea,
+  isWaterBiome,
+} from '../../src/data/ids/biome';
 import Lairs, {
   getBiomeLairs,
   getLairSpecies,
@@ -295,11 +301,19 @@ describe('world', () => {
     const showing = new ChunkSnapshot(chunk, 0).getPhenomena();
 
     // Every one of them sits on a phenomenon cell and is something
-    // this biome can actually host
+    // this biome can actually host — or the forced ripple of a cell
+    // standing in the water
     expect(showing.size).toBeGreaterThan(0);
+    const spots = chunk.getSpotCells();
+
     for (const [cell, phenomenon] of showing) {
+      const wet = isWaterBiome(chunk.biome) ? !spots.has(cell) : spots.has(cell);
+
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Phenomenon);
-      expect(new Set(BIOME_PHENOMENA[chunk.biome]).has(phenomenon)).toBe(true);
+      expect(
+        new Set(BIOME_PHENOMENA[chunk.biome]).has(phenomenon) ||
+          (wet && phenomenon === Phenomenon.RipplingWater),
+      ).toBe(true);
     }
 
     // Whatever is going on there goes on for the whole hour, and
@@ -1818,7 +1832,10 @@ describe('chunk snapshot', () => {
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
     const room = centeredCells(PLACEMENT_AREA).filter(
-      (cell) => !chunk.getLandmarkCells().has(cell) && !chunk.getDecorationCells().has(cell),
+      (cell) =>
+        !chunk.getLandmarkCells().has(cell) &&
+        !chunk.getDecorationCells().has(cell) &&
+        !chunk.getRockCells().has(cell),
     );
 
     expect(packed.getSpawns(1000)).toHaveLength(room.length);
@@ -2400,5 +2417,314 @@ describe('chunk snapshot', () => {
     // Around 1/8 of spawns carry the hidden ability
     expect(hidden / SAMPLES).toBeGreaterThan(0.08);
     expect(hidden / SAMPLES).toBeLessThan(0.17);
+  });
+});
+
+describe('terrain spots', () => {
+  it('grows 1-3 seeded patches on land and in the wetlands', () => {
+    const world = new World('overworld');
+
+    // The open seas have no spots at all: their variation is the
+    // rocks and the shallows
+    const sea = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+
+    if (sea != null) {
+      expect(sea.getSpotCells().size).toBe(0);
+    }
+
+    for (const chunk of [
+      findChunk(world, (candidate) => !isWaterBiome(candidate.biome)),
+      findChunk(world, (candidate) => isWaterBiome(candidate.biome) && !isOpenSea(candidate.biome)),
+    ]) {
+      expect(chunk).not.toBeNull();
+      if (chunk == null) {
+        continue;
+      }
+
+      const spots = chunk.getSpotCells();
+
+      // One grown patch at least, three at most, all confined inside
+      // the placement area's own ring
+      expect(spots.size).toBeGreaterThanOrEqual(5);
+      expect(spots.size).toBeLessThanOrEqual(27);
+      for (const cell of spots) {
+        expect(cell % 16).toBeGreaterThanOrEqual(2);
+        expect(cell % 16).toBeLessThanOrEqual(13);
+        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
+        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
+      }
+
+      // Grown, not scattered: every cell continues its patch
+      for (const cell of spots) {
+        const joined = [cell - 1, cell + 1, cell - 16, cell + 16].some((next) => spots.has(next));
+
+        expect(joined).toBe(true);
+      }
+
+      // Fixed forever: a fresh resolution of the chunk agrees
+      expect([...world.getChunk(chunk.x, chunk.y).getSpotCells()]).toEqual([...spots]);
+    }
+  });
+
+  it('keeps scenery and the grounded landmarks out of the water', () => {
+    const world = new World('overworld');
+    let seen = 0;
+
+    for (let x = 0; x < 60 && seen < 12; x++) {
+      const chunk = world.getChunk(x, 0);
+
+      if (isWaterBiome(chunk.biome)) {
+        continue;
+      }
+      seen += 1;
+
+      const water = chunk.getSpotCells();
+
+      for (const cell of chunk.getDecorationCells().keys()) {
+        expect(water.has(cell)).toBe(false);
+      }
+      // Only a phenomenon may stand in a pool
+      for (const [cell, landmark] of chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.Phenomenon) {
+          expect(water.has(cell)).toBe(false);
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+  });
+
+  it('always shows rippling water on a phenomenon standing in a pool', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) => {
+      if (isWaterBiome(candidate.biome)) {
+        return false;
+      }
+
+      const water = candidate.getSpotCells();
+
+      return [...candidate.getLandmarkCells()].some(
+        ([cell, kind]) => kind === Landmark.Phenomenon && water.has(cell),
+      );
+    });
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const water = chunk.getSpotCells();
+    const wet = [...chunk.getLandmarkCells()]
+      .filter(([cell, kind]) => kind === Landmark.Phenomenon && water.has(cell))
+      .map(([cell]) => cell);
+
+    // Whatever the hour, the water is what is going on there
+    for (let window = 0; window < 6; window++) {
+      const showing = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL).getPhenomena();
+
+      for (const cell of wet) {
+        expect(showing.get(cell)).toBe(Phenomenon.RipplingWater);
+      }
+    }
+  });
+
+  it('always ripples at sea off the banks, whatever the biome hosts', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) => {
+      if (!isWaterBiome(candidate.biome)) {
+        return false;
+      }
+
+      const banks = candidate.getSpotCells();
+
+      return [...candidate.getLandmarkCells()].some(
+        ([cell, kind]) => kind === Landmark.Phenomenon && !banks.has(cell),
+      );
+    });
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const banks = chunk.getSpotCells();
+    const afloat = [...chunk.getLandmarkCells()]
+      .filter(([cell, kind]) => kind === Landmark.Phenomenon && !banks.has(cell))
+      .map(([cell]) => cell);
+
+    for (let window = 0; window < 6; window++) {
+      const showing = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL).getPhenomena();
+
+      for (const cell of afloat) {
+        expect(showing.get(cell)).toBe(Phenomenon.RipplingWater);
+      }
+    }
+  });
+});
+
+describe('the open seas', () => {
+  it('rolls no berry patch and no wandering npc afloat', () => {
+    const world = new World('overworld');
+    let seen = 0;
+
+    for (let x = -100; x < 100 && seen < 12; x += 2) {
+      for (let y = -100; y < 100 && seen < 12; y += 25) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
+        seen += 1;
+        for (const landmark of chunk.getLandmarks()) {
+          expect(landmark).not.toBe(Landmark.BerryPatch);
+          expect(landmark).not.toBe(Landmark.WanderingNpc);
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+  });
+
+  it('keeps everything out of the rocks, and mixes shallows in around them', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const rocks = chunk.getRockCells();
+    const shallows = chunk.getShallowCells();
+
+    // At least one grown outcrop, confined inside the placement
+    // area's own ring, and nothing stands in one
+    expect(rocks.size).toBeGreaterThanOrEqual(5);
+    expect(rocks.size).toBeLessThanOrEqual(27);
+    for (const cell of rocks) {
+      expect(cell % 16).toBeGreaterThanOrEqual(2);
+      expect(cell % 16).toBeLessThanOrEqual(13);
+      expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
+      expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
+    }
+    expect([...world.getChunk(chunk.x, chunk.y).getRockCells()]).toEqual([...rocks]);
+    for (const cell of chunk.getDecorationCells().keys()) {
+      expect(rocks.has(cell)).toBe(false);
+    }
+    for (const cell of chunk.getLandmarkCells().keys()) {
+      expect(rocks.has(cell)).toBe(false);
+    }
+    const snapshot = new ChunkSnapshot(chunk, 0);
+
+    snapshot.getSpawns(10);
+    expect(snapshot.getSpawnCells().size).toBeGreaterThan(0);
+    for (const [cell] of snapshot.getSpawnCells()) {
+      expect(rocks.has(cell)).toBe(false);
+    }
+
+    // Shallow patches exist, keep clear of the rock, and hold still
+    expect(shallows.size).toBeGreaterThan(0);
+    for (const cell of shallows) {
+      expect(rocks.has(cell)).toBe(false);
+    }
+    expect([...world.getChunk(chunk.x, chunk.y).getShallowCells()]).toEqual([...shallows]);
+
+    // A land chunk has no shallows, and 0-2 outcrops of its own
+    const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
+
+    if (land != null) {
+      expect(land.getShallowCells().size).toBe(0);
+      expect(land.getRockCells().size).toBeLessThanOrEqual(18);
+    }
+  });
+
+  it('grows rocks on land too, kept clear of the pools', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => !isWaterBiome(candidate.biome) && candidate.getRockCells().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const rocks = chunk.getRockCells();
+    const pools = chunk.getSpotCells();
+
+    for (const cell of rocks) {
+      expect(pools.has(cell)).toBe(false);
+    }
+    // Fixtures keep their ring from the outcrop
+    for (const cell of [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()]) {
+      expect(rocks.has(cell)).toBe(false);
+      for (const neighbor of neighborCells(cell)) {
+        expect(rocks.has(neighbor)).toBe(false);
+      }
+    }
+  });
+});
+
+describe('placement invariants', () => {
+  it('keeps every fixture a ring away from the rocks', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const rocks = chunk.getRockCells();
+    const standing = [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()];
+
+    for (const cell of standing) {
+      expect(rocks.has(cell)).toBe(false);
+      for (const neighbor of neighborCells(cell)) {
+        expect(rocks.has(neighbor)).toBe(false);
+      }
+    }
+  });
+
+  it('stands a wetland phenomenon on a bank, where a grotto can be', () => {
+    const world = new World('overworld');
+    let phenomena = 0;
+    let banked = 0;
+
+    for (let x = -200; x < 200; x += 4) {
+      for (let y = -200; y < 200 && phenomena < 12; y += 4) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isWaterBiome(chunk.biome) || isOpenSea(chunk.biome)) {
+          continue;
+        }
+
+        const banks = chunk.getSpotCells();
+
+        for (const [cell, kind] of chunk.getLandmarkCells()) {
+          if (kind === Landmark.Phenomenon) {
+            phenomena += 1;
+            banked += banks.has(cell) ? 1 : 0;
+          }
+        }
+      }
+    }
+    // The preference holds unless a chunk had no bank cell free,
+    // which the sample should not be dominated by
+    expect(phenomena).toBeGreaterThan(0);
+    expect(banked).toBeGreaterThan(phenomena / 2);
+  });
+});
+
+describe('portal balancing', () => {
+  it('never rolls a second portal into a chunk', () => {
+    const world = new World('overworld');
+
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 25; x++) {
+        const landmarks = world.getChunk(x, y).getLandmarks();
+
+        expect(landmarks.filter((kind) => kind === Landmark.Portal).length).toBeLessThanOrEqual(1);
+      }
+    }
   });
 });

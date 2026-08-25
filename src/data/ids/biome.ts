@@ -139,6 +139,23 @@ export function isWaterBiome(biome: Biome): boolean {
   return WATER_BIOMES.has(biome);
 }
 
+/**
+ * The open seas: water with no ground to stand on, as opposed to the
+ * waterlogged wetlands. What cannot happen afloat — a berry bush, a
+ * strolling npc — keeps to everywhere else
+ */
+const OPEN_SEAS = new Set<Biome>([
+  Biome.DeepOcean,
+  Biome.Ocean,
+  Biome.CoralReef,
+  Biome.PolarOcean,
+  Biome.KelpForest,
+]);
+
+export function isOpenSea(biome: Biome): boolean {
+  return OPEN_SEAS.has(biome);
+}
+
 export interface BiomeConfig {
   /**
    * Moisture level, -1 (arid) to 1 (saturated)

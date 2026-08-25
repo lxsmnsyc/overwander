@@ -3,7 +3,7 @@ import AleaRNG from '../core/alea';
 import { boostFamilyWeights, getSpawnPool, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
-import { TimeOfDay, getTimeOfDay } from '../data/ids/biome';
+import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
 import type { Species } from '../data/ids/species';
@@ -12,8 +12,7 @@ import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
 import Npc, { NPCS } from '../data/overworld/npc';
-import type Phenomenon from '../data/overworld/phenomenon';
-import { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
+import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
@@ -184,9 +183,12 @@ export default class ChunkSnapshot {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
+      // Nothing spawns inside solid rock; a pool is fine, since a
+      // pokemon in the water is a pokemon in the water
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
+        ...this.chunk.getRockCells(),
       ]);
       const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
 
@@ -628,8 +630,17 @@ export default class ChunkSnapshot {
       const kinds = BIOME_PHENOMENA[this.chunk.biome];
 
       if (kinds.length > 0) {
+        const spots = this.chunk.getSpotCells();
+        const flooded = isWaterBiome(this.chunk.biome);
+
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
           if (landmark !== Landmark.Phenomenon) {
+            continue;
+          }
+          // Standing on water — in a pool, or at sea off the banks —
+          // the only thing going on is the water itself
+          if (flooded ? !spots.has(cell) : spots.has(cell)) {
+            showing.set(cell, Phenomenon.RipplingWater);
             continue;
           }
 

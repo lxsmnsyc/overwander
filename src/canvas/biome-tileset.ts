@@ -232,7 +232,29 @@ export default class BiomeTileset {
         frames: [],
       });
     }
+
+    // The sea rips carry a `water-ground` column: transparent foam
+    // laid over the deep where it laps against ground. Picked by its
+    // conventional name — its role reads as neither water nor ground
+    const shore = data.terrains.find((block) => block.name === 'water-ground');
+
+    if (shore != null) {
+      const palette = this.paletteOf(shore);
+
+      this.shore = {
+        role: 'water',
+        block: shore,
+        gaps: new Set(shore.missing),
+        count: Math.max(1, palette?.frames.length ?? 1),
+        speed: palette?.speed ?? 8,
+        frames: [],
+      };
+      this.drawn.push(this.shore);
+    }
   }
+
+  /** The foam overlay, kept apart from the role lookups. */
+  private readonly shore: Drawn | null = null;
 
   /**
    * The sheet and its description, fetched together. Which terrains
@@ -344,6 +366,34 @@ export default class BiomeTileset {
     const frame = this.frameOf(role, now) % terrain.frames.length;
 
     return { sheet: terrain.frames[frame], x: spot.x, y: spot.y };
+  }
+
+  /**
+   * The foam laid over a deep-water cell against a shore, or nothing:
+   * no sheet loaded, no shore column packed, or a neighbourhood the
+   * artist left out. No fallback — the overlay is a garnish, and the
+   * water underneath is already drawn
+   */
+  shoreAt(mask: number, variant: number, now: number): TileSpot | null {
+    const shore = this.shore;
+
+    if (shore == null || shore.frames.length === 0) {
+      return null;
+    }
+    const wanted = [mask, withoutDiagonals(mask)].map((one) => autotileRow(one));
+    const row = wanted.find((one) => !shore.gaps.has(one));
+
+    if (row == null || row === autotileRow(SURROUNDED)) {
+      return null;
+    }
+    const variants = this.data.variants;
+    const frame = Math.floor(now / ((shore.speed * 1000) / 60)) % shore.frames.length;
+
+    return {
+      sheet: shore.frames[frame],
+      x: (((variant % variants) + variants) % variants) * this.tile,
+      y: row * this.tile,
+    };
   }
 
   /**

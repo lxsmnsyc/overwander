@@ -559,6 +559,10 @@ export default class OWCharSprite {
     const above = anchor === 'foot' ? height : height / 2;
     const top = anchor === 'top-left' ? y : y - above;
     const alpha = context.globalAlpha;
+    const smoothing = context.imageSmoothingEnabled;
+
+    // Pixel art blown up: smoothing would turn a walker into a smear
+    context.imageSmoothingEnabled = false;
 
     if (options.alpha != null) {
       context.globalAlpha = options.alpha;
@@ -587,5 +591,6 @@ export default class OWCharSprite {
     }
     context.drawImage(sheet, rect.x, rect.y, rect.width, rect.height, left, top, width, height);
     context.globalAlpha = alpha;
+    context.imageSmoothingEnabled = smoothing;
   }
 }

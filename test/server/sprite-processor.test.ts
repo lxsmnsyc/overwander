@@ -419,6 +419,33 @@ describe('cutting a pokengine charset down', () => {
     expect(data.grid.cycle).toEqual([1, 0, 2, 0]);
   });
 
+  it('snaps antialiased edges to pixel art', () => {
+    const raster = charset(3, 4, 32, content);
+    const paint = (x: number, y: number, alpha: number): void => {
+      const at = (y * raster.width + x) * 4;
+
+      raster.data[at] = 200;
+      raster.data[at + 1] = 100;
+      raster.data[at + 2] = 50;
+      raster.data[at + 3] = alpha;
+    };
+
+    // A soft fringe outside the content, and two touched pixels inside
+    paint(content.x - 2, content.y, 100);
+    paint(content.x + 1, content.y + 1, 200);
+    paint(content.x + 2, content.y + 2, 60);
+
+    const { sheet, data } = packPokengine(raster, { order: straight, compact: true });
+
+    // The fringe neither survives nor holds the crop open
+    expect(data.grid.frameWidth).toBe(content.width);
+    expect(data.grid.trim).toEqual([content.x, content.y]);
+    // Above half is solid, below half is gone whole
+    expect(sheet.data[(sheet.width + 1) * 4 + 3]).toBe(255);
+    expect(sheet.data[(2 * sheet.width + 2) * 4 + 3]).toBe(0);
+    expect(sheet.data[(2 * sheet.width + 2) * 4]).toBe(0);
+  });
+
   it('keeps the cell whole when it is not asked to crop', () => {
     const { sheet, data } = packPokengine(charset(3, 4, 32, content), {
       order: straight,

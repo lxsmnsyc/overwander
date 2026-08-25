@@ -123,6 +123,25 @@ export function parseOrder(text: string): Facing[] {
 }
 
 /**
+ * Antialiased edges snapped to pixel art: alpha below half is gone,
+ * the rest is solid, and a gone pixel is zeroed whole so the palette
+ * the encoder builds carries no invisible colours. Fewer distinct
+ * values is also what lets the encoder pick an indexed container
+ */
+function harden(raster: Raster): void {
+  for (let at = 0; at < raster.data.length; at += 4) {
+    if (raster.data[at + 3] < 128) {
+      raster.data[at] = 0;
+      raster.data[at + 1] = 0;
+      raster.data[at + 2] = 0;
+      raster.data[at + 3] = 0;
+    } else {
+      raster.data[at + 3] = 255;
+    }
+  }
+}
+
+/**
  * The sheet cut down and its rows put in reading order, with the
  * description of both.
  *
@@ -144,6 +163,10 @@ export function packPokengine(
       `${raster.width} × ${raster.height} does not divide into ${columns} × ${rows} cells`,
     );
   }
+
+  // Before the trim, so a soft fringe that snaps away does not hold
+  // the crop open
+  harden(raster);
 
   const sourceFrameWidth = raster.width / columns;
   const sourceFrameHeight = raster.height / rows;

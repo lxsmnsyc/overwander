@@ -35,7 +35,11 @@ async function fetchSheet(name: string, layout: OWCharLayout): Promise<OWCharSpr
 /**
  * One character, ready to walk. Answers null where there is no such
  * sheet — a caller with nothing to draw draws what it drew before
- * there were charsets at all
+ * there were charsets at all.
+ *
+ * Only a sheet that landed is remembered: a miss is forgotten so the
+ * next ask fetches again, since a sheet the processor is writing this
+ * minute is missing now and there in a moment
  */
 export default async function loadOWChar(
   name: string,
@@ -44,11 +48,25 @@ export default async function loadOWChar(
   const known = SHEETS.get(name);
 
   if (known != null) {
-    return (await known)?.clone() ?? null;
+    const sheet = await known;
+
+    if (sheet != null) {
+      return sheet.clone();
+    }
   }
 
   const loading = fetchSheet(name, layout);
 
   SHEETS.set(name, loading);
-  return (await loading)?.clone() ?? null;
+
+  const sheet = await loading;
+
+  if (sheet == null) {
+    // Only this ask's own entry: a newer retry may already be waiting
+    if (SHEETS.get(name) === loading) {
+      SHEETS.delete(name);
+    }
+    return null;
+  }
+  return sheet.clone();
 }

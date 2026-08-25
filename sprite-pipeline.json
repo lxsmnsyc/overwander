@@ -349,6 +349,30 @@
         "bytes": 19940
       }
     },
+    "public/sprites/overworld/characters/frlg/brock/image.png": {
+      "digest": "c36e57a5dec6894e",
+      "bytes": 1288,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-08-25T12:30:39Z",
+        "as": "already compact",
+        "was": 1288,
+        "bytes": 1288
+      }
+    },
+    "public/sprites/overworld/characters/frlg/leaf/image.png": {
+      "digest": "caaf429f216c35bb",
+      "bytes": 1285,
+      "width": 57,
+      "height": 100,
+      "compact": {
+        "at": "2026-08-25T12:30:39Z",
+        "as": "already compact",
+        "was": 1285,
+        "bytes": 1285
+      }
+    },
     "public/sprites/overworld/characters/frlg/red/image.png": {
       "digest": "4f99941fa79f2bbd",
       "bytes": 1073,
@@ -359,6 +383,18 @@
         "as": "already compact",
         "was": 1073,
         "bytes": 1073
+      }
+    },
+    "public/sprites/overworld/characters/hgss/brock/image.png": {
+      "digest": "ed849acfac73914d",
+      "bytes": 1205,
+      "width": 60,
+      "height": 112,
+      "compact": {
+        "at": "2026-08-25T12:30:39Z",
+        "as": "already compact",
+        "was": 1205,
+        "bytes": 1205
       }
     },
     "public/sprites/overworld/characters/hgss/red/image.png": {

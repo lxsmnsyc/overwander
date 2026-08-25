@@ -28,7 +28,7 @@ import {
   yawTurns,
 } from '../../canvas/board';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
-import { SPRITE_DIRECTIONS } from '../../canvas/sprite-sheet';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../canvas/sprite-sheet';
 import drawSparkle from '../../canvas/sparkle';
 import { type Cast, getCast, paintAmbient } from '../../canvas/daylight';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
@@ -133,6 +133,28 @@ const SIZE_TIERS = [0.85, 1, 1.1];
  * every charset stands the same height whatever its own crop came to
  */
 const NPC_CELLS = 1.45;
+
+/** The charset the player walks in when nothing else is chosen. */
+const PLAYER_SHEET = 'characters/frlg/red';
+
+/**
+ * How long sliding across one cell takes, in milliseconds. It is the
+ * tab's own step pace, so the slide arrives just as the next step
+ * lands and a long walk reads as one motion
+ */
+const SLIDE_PACE = 250;
+
+/**
+ * A jump of more than this many cells is not a walk: a crossing or a
+ * portal moved the player, and the slide teleports with them
+ */
+const SNAP_CELLS = 2;
+
+/**
+ * World pixels one cell is worth to a charset's walk cycle: a full
+ * cycle of steps carries the walker across one cell
+ */
+const CELL_STRIDE = 32;
 
 /**
  * What the board says while the sheets for what is standing on it are
@@ -516,6 +538,11 @@ export interface ChunkCanvasProps {
    * The cell the player is standing on
    */
   player: number;
+  /**
+   * The charset the player is drawn in, under `sprites/overworld`.
+   * Left out, the default red-trainer sheet
+   */
+  charset?: string;
   landmarks: Map<number, Landmark>;
   /**
    * What each phenomenon cell is showing this hour. The kind decides
@@ -706,11 +733,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   const arriving = new Map<string, Promise<void>>();
 
+  /**
+   * When a sheet last failed to come, so a miss is retried after a
+   * pause rather than either refetched every frame or given up on for
+   * the life of the board — a charset the processor is writing this
+   * minute is missing now and there in a moment
+   */
+  const missedAt = new Map<string, number>();
+
+  const RETRY_PACE = 5000;
+
   const loadPerson = async (sheet: string): Promise<void> => {
     const already = arriving.get(sheet);
 
     if (already != null) {
       return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
     }
 
     // Held as null until it lands, so a sheet is asked for once rather
@@ -719,7 +762,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     const loading = loadOWChar(sheet)
       .then((loaded) => {
-        people.set(sheet, loaded);
+        if (loaded == null) {
+          // Forgotten rather than kept: the next ask past the pause
+          // fetches again
+          missedAt.set(sheet, performance.now());
+          people.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          people.set(sheet, loaded);
+          missedAt.delete(sheet);
+        }
       })
       .catch(() => {
         // The letter in a circle it always was
@@ -759,6 +811,32 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   const drawnAsPerson = (index: number): boolean => personOn(index) != null;
+
+  /** The player's own charset, loaded like anybody else's. */
+  const playerPerson = (): OWCharSprite | null => {
+    const sheet = props.charset ?? PLAYER_SHEET;
+
+    if (!people.has(sheet)) {
+      loadPerson(sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const person = people.get(sheet) ?? null;
+
+    return person?.ready === true ? person : null;
+  };
+
+  /**
+   * Where the player is drawn, in board-cell coordinates. It chases
+   * `props.player` one cell per `SLIDE_PACE`, which is what turns a
+   * step into a slide; a jump too far to be a step snaps instead
+   */
+  const slide = { x: props.player % CHUNK_CELLS, y: Math.floor(props.player / CHUNK_CELLS) };
+
+  /** The way the player last walked, which is the way they stand. */
+  let heading: SpriteDirection = 'Down';
 
   /**
    * The biome's own ground, once it has landed.
@@ -1240,6 +1318,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       for (const sprite of sprites.values()) {
         sprite?.update(elapsed);
       }
+
+      // The player's slide toward wherever the tab says they are, and
+      // the walk cycle fed by how far it actually moved this frame
+      const walker = playerPerson();
+      const goalX = props.player % CHUNK_CELLS;
+      const goalY = Math.floor(props.player / CHUNK_CELLS);
+      const dx = goalX - slide.x;
+      const dy = goalY - slide.y;
+      const span = Math.hypot(dx, dy);
+
+      if (span > SNAP_CELLS) {
+        slide.x = goalX;
+        slide.y = goalY;
+        walker?.stop();
+      } else if (span > 0) {
+        const gain = Math.min(span, elapsed / SLIDE_PACE);
+
+        heading = facingToward(slide.x, slide.y, goalX, goalY);
+        slide.x += (dx / span) * gain;
+        slide.y += (dy / span) * gain;
+        walker?.advanceBy(gain * CELL_STRIDE);
+      } else {
+        walker?.stop();
+      }
       setBeat((count) => count + 1);
     });
 
@@ -1431,8 +1533,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         // The apron keeps the tiles' own look: the grid stopping is
         // what says where the chunk ends, so no shade or rule is
-        // drawn out there
+        // drawn out there. A threshold that goes through breathes a
+        // little light instead, so the way into the next chunk reads
+        // as somewhere to press
         if (isBorderCell(square)) {
+          if (borderExit(square) != null) {
+            const prior = context.globalAlpha;
+
+            context.globalAlpha = prior * (0.1 + 0.05 * Math.sin(clock / 600));
+            context.fillStyle = COLORS.highlight;
+            context.fill();
+            context.globalAlpha = prior;
+          }
           continue;
         }
         context.strokeStyle = COLORS.grid;
@@ -1510,6 +1622,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * so a pokemon in front is drawn over the one behind it rather
        * than through it
        */
+      // The sliding player belongs to the row they are passing
+      // through, so occlusion is read off where they are drawn rather
+      // than where the walk is headed
+      const playerCell = Math.round(slide.y) * CHUNK_CELLS + Math.round(slide.x);
+
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
         // Nothing standing anywhere while the sheets are still coming:
@@ -1628,13 +1745,34 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
         }
 
-        if (index === props.player) {
-          context.fillStyle = COLORS.player;
-          context.beginPath();
-          context.arc(middle.x, middle.y, CELL * 0.3 * middle.scale * magnify, 0, Math.PI * 2);
-          context.fill();
-          context.strokeStyle = COLORS.glyph;
-          context.stroke();
+        if (index === playerCell) {
+          const walker = playerPerson();
+          const spot = at(
+            projectGround(
+              { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
+              yaw(),
+            ),
+          );
+
+          if (walker == null) {
+            // The dot it was before the sheet landed
+            context.fillStyle = COLORS.player;
+            context.beginPath();
+            context.arc(spot.x, spot.y, CELL * 0.3 * spot.scale * magnify, 0, Math.PI * 2);
+            context.fill();
+            context.strokeStyle = COLORS.glyph;
+            context.stroke();
+          } else {
+            // Facing the walked way, seen from wherever the camera
+            // has been walked to
+            walker.facing =
+              SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
+            walker.draw(context, spot.x, spot.y, {
+              scale: (CELL * NPC_CELLS * spot.scale * magnify) / walker.sourceFrameHeight,
+              anchor: 'foot',
+              shadow: true,
+            });
+          }
         }
       }
 

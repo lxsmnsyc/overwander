@@ -33,12 +33,12 @@ export default defineConfig({
   ],
   server: {
     watch: {
-      // The sprite processor writes finished sheets straight into
-      // public/ and a credit row into docs/, and the watcher's
-      // full-page reload on those writes is what wiped the processor
-      // form mid-use. Nothing imports either; the browser fetches
-      // sheets by path, so a stale watch costs nothing
-      ignored: ['**/public/sprites/**', '**/docs/**'],
+      // The sprite processor writes a credit row into docs/, and
+      // nothing in the app imports docs/ — a doc edit reloading the
+      // game is a reload for nothing. public/ stays watched: a
+      // freshly packed sheet should show up without a manual reload,
+      // even though the pack's own write reloads the processor page
+      ignored: ['**/docs/**'],
     },
   },
   ssr: {

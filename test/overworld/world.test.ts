@@ -99,7 +99,7 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
-import Npc, { NPCS } from '../../src/data/overworld/npc';
+import Npc, { NPCS, npcSheets } from '../../src/data/overworld/npc';
 import Phenomenon, {
   BIOME_PHENOMENA,
   getPhenomenonItems,
@@ -1373,6 +1373,47 @@ describe('world', () => {
     expect(met.has(Npc.Groomer)).toBe(true);
     expect(met.has(Npc.Vendor)).toBe(true);
     expect(met.has(Npc.MoveReminder)).toBe(true);
+  });
+
+  it('dresses each wanderer from their role’s own wardrobe', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const styles = new Map<Npc, Set<string>>();
+
+    for (let window = 0; window < 48; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+      const wanderers = snapshot.getWanderingNpcs();
+      const coats = snapshot.getWandererCoats();
+
+      // One coat per wanderer, always one of the role's own styles
+      expect(coats.size).toBe(wanderers.size);
+      for (const [cell, coat] of coats) {
+        const npc = wanderers.get(cell);
+
+        expect(npc).not.toBeUndefined();
+        if (npc != null) {
+          expect(npcSheets(npc)).toContain(coat);
+          styles.set(npc, (styles.get(npc) ?? new Set()).add(coat));
+        }
+      }
+      // The window's roll is everybody's roll
+      expect(new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWandererCoats()).toEqual(coats);
+    }
+
+    // A role both packs drew actually turns up in both styles
+    for (const [npc, worn] of styles) {
+      if (npcSheets(npc).length > 1) {
+        expect(worn.size, String(npc)).toBeGreaterThan(1);
+      }
+    }
   });
 
   it('fills a vendor’s crate from the window he was drawn in', () => {

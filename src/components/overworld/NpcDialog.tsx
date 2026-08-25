@@ -885,7 +885,11 @@ function NpcCounter(
                   dialog's description, where it was the game's voice
                   rather than theirs */}
               <div class="flex flex-col items-center gap-2 pt-1 text-center">
-                <NpcSprite npc={standing()[1]} label="" />
+                <NpcSprite
+                  npc={standing()[1]}
+                  sheet={props.snapshot?.getWandererCoats().get(standing()[0])}
+                  label=""
+                />
                 <blockquote class="m-0 max-w-prose text-sm text-muted italic">
                   “{NPC_QUOTES[standing()[1]]}”
                 </blockquote>

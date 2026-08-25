@@ -11,7 +11,7 @@ import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
-import Npc, { NPCS } from '../data/overworld/npc';
+import Npc, { NPCS, npcSheets } from '../data/overworld/npc';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
@@ -525,6 +525,29 @@ export default class ChunkSnapshot {
       this.wanderers = wanderers;
     }
     return this.wanderers;
+  }
+
+  private coats: Map<number, string> | null = null;
+
+  /**
+   * The style each of the window's wanderers turned up in, by cell:
+   * one roll over the role's own wardrobe, so a role both packs drew
+   * wears either. The coat is the window's the way the wanderer is,
+   * and every observer of the window sees the same one
+   */
+  getWandererCoats(): Map<number, string> {
+    if (this.coats == null) {
+      const coats = new Map<number, string>();
+
+      for (const [cell, npc] of this.getWanderingNpcs()) {
+        const wardrobe = npcSheets(npc);
+        const rng = new AleaRNG(`${this.key}${this.npcTimestamp}coat${cell}`);
+
+        coats.set(cell, wardrobe[Math.floor(rng.random() * wardrobe.length)]);
+      }
+      this.coats = coats;
+    }
+    return this.coats;
   }
 
   private rocketStops: Map<number, Spawn[]> | null = null;

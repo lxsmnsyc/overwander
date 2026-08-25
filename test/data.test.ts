@@ -161,6 +161,7 @@ import Npc, {
   REMINDER_FEE,
   getRecallableMoves,
   npcSheet,
+  npcSheets,
 } from '../src/data/overworld/npc';
 import { MEDICINES, bitterness, isHerbal, isMedicine, isRevive } from '../src/data/items/medicine';
 import { GEMS, GEM_PRICE } from '../src/data/items/gems';
@@ -2656,10 +2657,23 @@ describe('wandering NPCs', () => {
   });
 
   it('names everyone their own charset', () => {
-    // The folder is the wanderer's own number, so nobody can end up
-    // wearing somebody else's clothes by a table nobody updated
+    // The roles the packs cover wear them; the two they do not —
+    // Nurse Joy and the grunt — keep their numbered Gen 4 folders
+    expect(npcSheet(Npc.Vendor)).toBe('characters/frlg/shop-keeper');
+    expect(npcSheet(Npc.NurseJoy)).toBe('landmarks-npc-2');
     expect(npcSheet(Npc.RocketGrunt)).toBe('landmarks-npc-6');
     expect(new Set(NPCS.map(npcSheet)).size).toBe(NPCS.length);
+    // A role both packs drew has both styles to turn up in
+    expect(npcSheets(Npc.MoveTutor)).toContain('characters/lgpe/gentleman');
+  });
+
+  it('dresses every role only in sheets that ship', () => {
+    for (const npc of NPCS) {
+      for (const sheet of npcSheets(npc)) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+        expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
+      }
+    }
   });
 
   it('draws whoever has been drawn, and leaves the rest alone', () => {

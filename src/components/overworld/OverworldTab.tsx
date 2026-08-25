@@ -1471,6 +1471,7 @@ function OverworldBoard(props: {
                 shallows={loaded().shallows}
                 rocks={loaded().rocks}
                 wanderers={loaded().snapshot.getWanderingNpcs()}
+                coats={loaded().snapshot.getWandererCoats()}
                 decorations={loaded().decorations}
                 spawns={
                   new Map(

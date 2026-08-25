@@ -94,16 +94,38 @@ export const NPCS: Npc[] = [
 ];
 
 /**
- * The charset one of them is drawn with in the overworld: the folder
- * under `public/sprites/overworld` named after the wanderer itself.
- *
- * Derived rather than listed, so a wanderer added here cannot end up
- * wearing somebody else's clothes by a table nobody updated. A sheet
- * that has not been drawn yet is a landmark drawn the way it always
- * was, which is the letter in a circle
+ * The charsets a role may turn up wearing: the community packs' takes
+ * on the same figure, FRLG and LGPE where both drew one. Which of a
+ * role's styles is standing there is the window's roll — see
+ * `ChunkSnapshot.getWandererCoats`. A role listed nowhere keeps its
+ * numbered Gen 4 folder: Nurse Joy and the grunt, whose packs hold no
+ * sheet yet
+ */
+const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
+  [Npc.Breeder]: ['characters/frlg/camper-f', 'characters/lgpe/picnicker'],
+  [Npc.DaycareLady]: ['characters/frlg/woman'],
+  [Npc.Groomer]: ['characters/frlg/daisy-oak', 'characters/lgpe/daisy-oak'],
+  [Npc.Vendor]: ['characters/frlg/shop-keeper'],
+  [Npc.MoveReminder]: ['characters/frlg/old-man'],
+  [Npc.FossilManiac]: ['characters/frlg/ruin-maniac', 'characters/lgpe/poke-maniac'],
+  [Npc.FossilScientist]: ['characters/lgpe/scientist', 'characters/frlg/staff-member'],
+  [Npc.MoveTutor]: ['characters/frlg/gentleman', 'characters/lgpe/gentleman'],
+};
+
+/**
+ * Every charset a wanderer of this role may be drawn with
+ */
+export function npcSheets(npc: Npc): string[] {
+  return NPC_CHARSETS[npc] ?? [`landmarks-npc-${npc}`];
+}
+
+/**
+ * The role's first style, for anywhere that has no window to roll
+ * one: a sheet that has not been drawn yet is a landmark drawn the
+ * way it always was, which is the letter in a circle
  */
 export function npcSheet(npc: Npc): string {
-  return `landmarks-npc-${npc}`;
+  return npcSheets(npc)[0];
 }
 
 export const NPC_NAMES: Record<Npc, string> = {

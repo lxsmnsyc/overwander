@@ -571,6 +571,11 @@ export interface ChunkCanvasProps {
    */
   wanderers: Map<number, Npc>;
   /**
+   * The style each wanderer turned up in this window, by cell. A cell
+   * with no coat falls back to the role's first style
+   */
+  coats: Map<number, string>;
+  /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
    */
@@ -781,9 +786,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     return loading;
   };
 
-  const personFor = (npc: Npc): OWCharSprite | null => {
-    const sheet = npcSheet(npc);
-
+  const personFor = (sheet: string): OWCharSprite | null => {
     if (!people.has(sheet)) {
       loadPerson(sheet).catch(() => {
         // Already answered inside: nothing else to do with it
@@ -805,7 +808,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const person = personFor(npc);
+    const person = personFor(props.coats.get(index) ?? npcSheet(npc));
 
     return person?.ready === true ? person : null;
   };
@@ -903,7 +906,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     // The people waiting at a crossroads are part of the picture the
     // same way the pokemon are, so the board waits for their sheets too
-    const wearing = [...new Set([...props.wanderers.values()].map((npc) => npcSheet(npc)))];
+    const wearing = [
+      ...new Set([...props.wanderers].map(([at, npc]) => props.coats.get(at) ?? npcSheet(npc))),
+    ];
 
     // Nothing to wait for is not a wait: an empty chunk is finished
     if (

@@ -2,6 +2,7 @@ import { type JSX, Show, createSignal, from } from 'solid-js';
 import { signOut } from '../../auth/actions';
 import { type Profile, watchProfile } from '../../auth/profile';
 import AddFriendDialog from '../friends/AddFriendDialog';
+import AwardsCard from './AwardsCard';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
 import BidsList from '../auctions/BidsList';
@@ -220,6 +221,11 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </Card>
         )}
       </Show>
+
+      {/* What they have won for good: the badge shelf, every slot
+          shown so a visitor can see what is earned and what is still
+          out there */}
+      <AwardsCard player={props.player} />
 
       {/* Who is walking with them, which is the one thing on this
           page that changes what happens outside it: a buddy draws

@@ -201,7 +201,7 @@ it.
 | An auction bid          | Whatever was named              |
 
 The four paid travellers set the pace as much as the price, since each helps a
-player once per six-hour window at a given cell: gold buys convenience rather
+player once per three-hour window at a given cell: gold buys convenience rather
 than volume. The maniac's fossil is the most expensive because it is the only
 purchase that buys a **pokemon** — one of the three the world does not produce at
 all.

@@ -11,7 +11,7 @@ import {
   toSpawns,
 } from '../auth/rocket-record';
 import { TEAM_SIZE } from '../auth/teams';
-import ChunkSnapshot, { NPC_INTERVAL } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { NPC_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
@@ -19,12 +19,17 @@ import {
   ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
   createRocketParty,
+  isBossPurse,
   rollStopGold,
+  stopPartyLevel,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
 import Npc from '../data/overworld/npc';
+import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
+import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES } from '../data/overworld/experts';
+import { hasAwards, recordAwardWin } from './awards';
 import { Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
@@ -96,12 +101,38 @@ async function readRocketStop(
 }
 
 /**
- * Two ways for a walk-up to find nobody, told apart because they say
- * different things: `'beaten'` is this player's own win still standing
- * on the cell, and null is a cell the window stages no grunt on at
- * all, which is what a stale client's board looks like from here
+ * The ways for a walk-up to find no fight, told apart because they
+ * say different things: `'beaten'` is this player's own win still
+ * standing on the cell, `'locked'` is an expert who will not take
+ * this challenger yet, and null is a cell the window stages nobody
+ * on at all, which is what a stale client's board looks like from
+ * here
  */
-export type RocketStopEntry = [string, RocketRecord] | 'beaten' | null;
+export type RocketStopEntry = [string, RocketRecord] | 'beaten' | 'locked' | null;
+
+/**
+ * The party a fighting landmark stages at this cell this window, or
+ * null for a cell that stages none
+ */
+function stagedParty(
+  snapshot: ChunkSnapshot,
+  landmark: Landmark | undefined,
+  cell: number,
+): Spawn[] | null {
+  if (landmark === Landmark.Trainer) {
+    return snapshot.getTrainerStops().get(cell) ?? null;
+  }
+  if (landmark === Landmark.GymLeader) {
+    return snapshot.getGymStops().get(cell) ?? null;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return snapshot.getEliteStops().get(cell) ?? null;
+  }
+  if (landmark === Landmark.Champion) {
+    return snapshot.getChampionStops().get(cell) ?? null;
+  }
+  return snapshot.getRocketStops().get(cell) ?? null;
+}
 
 export async function enterRocketStop(
   uid: string,
@@ -114,15 +145,22 @@ export async function enterRocketStop(
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  // The cell's landmark says whose stop this is: Team Rocket's, or
-  // the duelling trainer's
-  const party =
-    chunk.getLandmarkCells().get(cell) === Landmark.Trainer
-      ? snapshot.getTrainerStops().get(cell)
-      : snapshot.getRocketStops().get(cell);
+  // The cell's landmark says whose stop this is: Team Rocket's, the
+  // duelling trainer's, or one of the experts'
+  const landmark = chunk.getLandmarkCells().get(cell);
+  const party = stagedParty(snapshot, landmark, cell);
 
   if (party == null) {
     return null;
+  }
+
+  // The ladder's gates: the Elite Four ask to see the region's whole
+  // badge case, and the Champion asks for the Elite Four themselves
+  if (landmark === Landmark.EliteFour && !(await hasAwards(uid, KANTO_BADGES))) {
+    return 'locked';
+  }
+  if (landmark === Landmark.Champion && !(await hasAwards(uid, KANTO_HONORS))) {
+    return 'locked';
   }
 
   const stop = rocketStopId(chunk, snapshot.npcTimestamp, cell, zone);
@@ -249,9 +287,12 @@ export async function startRocketBattle(
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
-  // The cell's landmark decides what they field: Team Rocket's are
-  // shadows, a duelling trainer's are the biome's ordinary own
-  const shadow = chunk.getLandmarkCells().get(record.cell) !== Landmark.Trainer;
+  // The cell's landmark decides what they field: only Team Rocket
+  // fields shadows, and it fixes the level — every expert brings a
+  // full 6, so size alone cannot say what the fight is worth
+  const landmark = chunk.getLandmarkCells().get(record.cell);
+  const shadow = landmark === Landmark.TeamRocket;
+  const level = stopPartyLevel(landmark ?? Landmark.TeamRocket, record.party.length);
   const gruntId = newDocId();
 
   await tx(async (transaction) => {
@@ -259,7 +300,7 @@ export async function startRocketBattle(
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
       values (${gruntId}, null, ${ROCKET_ALLIANCE},
-              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow))})
+              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, level))})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, limits)
@@ -286,13 +327,15 @@ export async function startRocketBattle(
 }
 
 /**
- * What a beaten stop owed: the purse, and — a grunt's alone — the
- * pokemon they left. A duelling trainer keeps their party, so their
- * reward is the purse and nothing else
+ * What a beaten stop owed: the purse, a grunt's dropped pokemon, and
+ * an expert's award. A duelling trainer keeps their party and hands
+ * out no award, so their reward is the purse alone; `award` is only
+ * ever the one this win earned, never one already held
  */
 export interface RocketReward {
   encounter: EncounterRecord | null;
   gold: number;
+  award: Awards | null;
 }
 
 /**
@@ -332,8 +375,10 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
-  const kind =
-    chunk.getLandmarkCells().get(record.cell) === Landmark.Trainer ? Npc.Trainer : Npc.RocketGrunt;
+  const landmark = chunk.getLandmarkCells().get(record.cell);
+  // Every expert counts as a trainer for the quest ledger: what sets
+  // them apart is the award, not the metric
+  const kind = landmark === Landmark.TeamRocket ? Npc.RocketGrunt : Npc.Trainer;
 
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
@@ -362,26 +407,37 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
       where player = ${uid} and key = ${encounterKey(encounter)}
     `;
 
-    return gone.length > 0 ? null : { encounter, gold: 0 };
+    return gone.length > 0 ? null : { encounter, gold: 0, award: null };
   }
 
   // A first claim is the one moment a beaten stop counts once
   await bumpProgress(uid, [[Metric.NpcVisits, kind, 1]]);
 
-  // What the stop is worth — a purse rolled per winner, the boss'
-  // range for a six-strong party — and then what the winner brought
+  // What the stop is worth — a purse rolled per winner, the top range
+  // for Giovanni and the Champion — and then what the winner brought
   // along: a buddy burning a Luck Incense doubles it
   const overworld = createOverworld(uid, await resolveBuddy(uid));
   const gold = overworld.checkGoldReward(
     stop,
-    rollStopGold(`${stop}:purse:${uid}`, record.party.length),
+    rollStopGold(
+      `${stop}:purse:${uid}`,
+      isBossPurse(landmark ?? Landmark.TeamRocket, record.party.length),
+    ),
   );
 
   await grantGold(uid, gold);
 
-  // A trainer's purse is the whole prize: they keep their party
+  // An expert's win carries their award as well: the resident gym
+  // leader's badge, the elite's mark, or the region's title. Each is
+  // earned once for good; every win counts on the shelf, and only
+  // the earning one reports the award
+  const owed = awardFor(landmark, snapshot, record.cell);
+  const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
+
+  // A trainer's and an expert's purse is the whole of what changes
+  // hands: they keep their party
   if (kind === Npc.Trainer) {
-    return { encounter: null, gold };
+    return { encounter: null, gold, award };
   }
 
   // Fixed rather than rolled, so the same grunt is worth the same to
@@ -393,5 +449,31 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     shadow: true,
   });
 
-  return { encounter, gold };
+  return { encounter, gold, award };
+}
+
+/**
+ * The award a fighting landmark pays, or null for the two that pay
+ * none: a badge is the resident leader's, a mark the resident
+ * elite's, and the title the region's
+ */
+function awardFor(
+  landmark: Landmark | undefined,
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Awards | null {
+  if (landmark === Landmark.GymLeader) {
+    const leader = snapshot.getGymLeader(cell);
+
+    return leader == null ? null : GYM_LEADER_BADGES[leader];
+  }
+  if (landmark === Landmark.EliteFour) {
+    const member = snapshot.getEliteMember(cell);
+
+    return member == null ? null : ELITE_MEMBER_HONORS[member];
+  }
+  if (landmark === Landmark.Champion) {
+    return Awards.KantoChampion;
+  }
+  return null;
 }

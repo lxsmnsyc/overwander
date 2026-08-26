@@ -18,7 +18,6 @@ import {
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
-import { asRecord, asStringArray } from './__normalize';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
@@ -129,19 +128,17 @@ async function boostOnServer(
 }
 
 /**
- * Hand a party to Nurse Joy. Up to `NURSE_CARE_LIMIT` of them come
- * back at full health with nothing left on them, and any shadow among
- * them comes back purified — the Shadow ability replaced, the doubled
- * candy cost gone, every value two higher, and the friendship a
- * shadow never arrived with handed over.
+ * Hand a party to Nurse Joy. Up to `NURSE_CARE_LIMIT` of them per
+ * handover come back at full health with nothing left on them, and
+ * any shadow among them comes back purified — the Shadow ability
+ * replaced, the doubled candy cost gone, every value 2 higher, and
+ * the friendship a shadow never arrived with handed over.
  *
- * She takes nothing for it. What she asks instead is that it be once:
- * the server marks the visit against her window, and a party that
- * needed nothing is turned away without spending it.
+ * She takes nothing for it and turns nobody away: the cap is the
+ * handover's, and there is no limit on how often she is asked.
  *
  * Resolves the ids she actually tended, or null when she is not
- * standing there, there was nothing to do, or this window's visit has
- * already been made
+ * standing there or there was nothing to do
  */
 export async function visitNurse(
   snapshot: ChunkSnapshot,
@@ -538,18 +535,4 @@ export async function hasVisited(
     .eq('marker', snapshot.visitMarker(tag, cell));
 
   return (data ?? []).length > 0;
-}
-
-/**
- * How many pokemon Nurse Joy has already seen to for the signed-in
- * player this window. Her visit counts rather than merely existing,
- * so the dialog needs the number to say how much room is left
- */
-export async function getTendedCount(snapshot: ChunkSnapshot, cell: number): Promise<number> {
-  const { data } = await getSupabase()
-    .from('npc_claims')
-    .select('payload')
-    .eq('marker', snapshot.visitMarker('nurse', cell));
-
-  return asStringArray(asRecord(data?.[0]?.payload).catches).length;
 }

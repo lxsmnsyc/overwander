@@ -1,8 +1,8 @@
 # People you meet
 
 Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
-whoever is standing on it changes every **six hours**, so the same spot may offer
-a breeder in the morning and a daycare lady in the afternoon.
+whoever is standing on it changes every **three hours**, so the same spot may
+offer a breeder in the morning and a daycare lady by midday.
 
 Nine people can be standing there: the vendor, the breeder, the daycare lady,
 Nurse Joy, the groomer, the Move Reminder, the Fossil Maniac, the Fossil
@@ -12,9 +12,9 @@ reveal in advance whether it holds a nurse or a fight.
 
 ## The once-per-window rule
 
-Every traveller except the **vendor** and the **Fossil Scientist** helps a player
-once per six-hour window. Asking again before the window turns over is refused
-whatever the player can pay.
+Every traveller except the **vendor**, **Nurse Joy** and the **Fossil
+Scientist** helps a player once per three-hour window. Asking again before the
+window turns over is refused whatever the player can pay.
 
 The limit applies per cell, so walking to another wandering cell finds somebody
 who has not served that player yet. That walk is what a second egg costs.
@@ -25,9 +25,9 @@ gold or any visit is spent.
 
 ## The vendor
 
-The **Vendor** is the game's only shop, and the one person with no
-once-per-window limit. What everybody else hands over is something the world
-cannot produce twice in six hours; what he hands over is a potion, so a player may
+The **Vendor** is the game's only shop. What most others hand over is
+something the world cannot produce twice in a window; what he hands over is a
+potion, so a player may
 trade with him as often as their purse allows while he is standing there.
 
 Buying and selling are both one thing at a time. His crate and the bag are the
@@ -64,7 +64,7 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | -------------------- | ---------------------------------------- | ------------------------------------------ |
 | **Breeder**          | Two pokemon, 5,000 gold                  | An egg; both parents returned immediately  |
 | **Daycare Lady**     | An egg, 2,500 gold                       | Half of the walk that remained             |
-| **Nurse Joy**        | Up to six pokemon, one at a time, free   | Each healed, and any shadow purified       |
+| **Nurse Joy**        | Any number, one at a time, free          | Each healed, and any shadow purified       |
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
@@ -72,8 +72,8 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
 cleared, and any shadow pokemon purified on the way. Press a pokemon and she sees
-to that one; she will see to six of them while she is standing there, so there is
-nothing to gather up first. Only the six-hour window paces her.
+to that one; she will see to as many as you bring, as often as you come back,
+so there is nothing to gather up first and nothing to ration.
 
 **The Groomer** always adds half of what friendship remains, so he is worth a
 great deal to a pokemon fresh out of a ball and almost nothing to one that is
@@ -102,7 +102,7 @@ ordinary trainer battle, so a simultaneous knockout is a draw.
 
 Every player fights the grunt separately. One player's victory closes nothing for
 anybody else, and losing costs nothing but the attempt: the grunt is still
-standing and may be challenged again until the six hours are up.
+standing and may be challenged again until the three hours are up.
 
 Beating one pays **500 gold** and leaves behind one of the two commoners it
 fielded — never the rare one — shadowed and at level 10.

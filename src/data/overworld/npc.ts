@@ -7,7 +7,7 @@ import { getLevelUpMoves, getTeachableMoves } from '../species';
  * The people who stand at the world's people landmarks. Most pass
  * through a wandering-NPC cell: the cell is fixed by the chunk seed,
  * the way every landmark is, but who is standing on it is not — every
- * six hours brings somebody else, so the spot is a crossroads rather
+ * 3 hours brings somebody else, so the spot is a crossroads rather
  * than a shop. The two who fight, Team Rocket and the duelling
  * trainer, stand at landmarks of their own instead
  */
@@ -23,8 +23,8 @@ const enum Npc {
   DaycareLady = 1,
   /**
    * Looks a party over and hands it back whole: health, statuses and
-   * — for a shadow — the shadow itself. She charges nothing, and she
-   * does it once per window
+   * — for a shadow — the shadow itself. She charges nothing and turns
+   * nobody away, however often they come back
    */
   NurseJoy = 2,
   /**
@@ -180,9 +180,8 @@ export const DAYCARE_FEE = 2500;
 export const GROOMING_FEE = 2500;
 
 /**
- * How many pokemon Nurse Joy looks at in one visit. It is a party's
- * worth: she is what a player walks to between raids, not a way to put
- * a whole box right in one stop
+ * The most Nurse Joy takes in one handover: a party's worth. The cap
+ * is the request's, not hers — she heals as often as she is asked
  */
 export const NURSE_CARE_LIMIT = 6;
 

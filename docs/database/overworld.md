@@ -17,7 +17,7 @@ never rolls over halfway through the window a player is standing in.
 | `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches                                           |
 | `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell                                    |
 | `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies                                        |
-| `NPC_INTERVAL`        | 6 hours    | Who is at a wandering-NPC cell, and the party a Team Rocket grunt fields |
+| `NPC_INTERVAL`        | 3 hours    | Who is at a wandering-NPC cell, and the party a Team Rocket grunt fields |
 | `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                                                  |
 
 All of them derive from the one snapshot the player is standing in
@@ -304,10 +304,9 @@ to walk the egg at all.
 
 A `WanderingNpc` landmark has **no table of its own**. The cell is fixed by the
 chunk seed like any landmark, but who is standing on it is drawn afresh every
-`NPC_INTERVAL` (6 hours) from `getWanderingNpcs`, twice as long as the raid a
-chunk stages, so a raid rolling over changes nothing about who is at the cell. A
-player who needs a breeder and finds a daycare lady waits for the afternoon or
-walks to another one.
+`NPC_INTERVAL` (3 hours) from `getWanderingNpcs`, the same window a raid stands
+for. A player who needs a breeder and finds a daycare lady waits for the next
+window or walks to another one.
 
 `NPCS` holds **nine** of them. `Npc.RocketGrunt` bars the cell and fights whoever
 accepts, and its state lives in [`rocket_stops`](raids.md#rocket_stops) rather
@@ -334,13 +333,8 @@ claim the visit _before_ taking the gold, since a player already seen should not
 be charged to be told so, and both the gold and the visit go back if the write
 behind them fails.
 
-Nurse Joy's marker **counts** rather than merely existing. She is pressed one
-pokemon at a time, and her window is still one visit of up to
-`NURSE_CARE_LIMIT` pokemon, so her row's `payload` holds the ids she has already
-seen to and each press takes what room is left. Handing the same pokemon over
-twice takes no room, since the first press left it whole. It is the one claim
-marker without a `write_once` trigger, because a quota has to be rewritten as it
-is spent.
+Nurse Joy takes no marker at all: she heals as often as she is asked, so there
+is no visit to spend.
 
 - **Breeder** takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed back
@@ -361,11 +355,11 @@ is spent.
   taken must not be banked for the next report.
 
 - **Nurse Joy** takes the player's pokemon a press at a time, up to
-  `NURSE_CARE_LIMIT` (6) in a window, and charges **nothing**. Each comes back at
-  full health with its statuses cleared, and a shadow is
-  [purified](catches.md#purifying-a-shadow) on the way. What paces her is the
-  window alone, since there is no fee to pace her: one that needed nothing is
-  handed straight back without taking any of her room.
+  `NURSE_CARE_LIMIT` (6) per handover, and charges **nothing**. Each comes back
+  at full health with its statuses cleared, and a shadow is
+  [purified](catches.md#purifying-a-shadow) on the way. Nothing paces her: she
+  takes no marker and turns nobody away, and one that needed nothing is handed
+  straight back.
 
 - **Groomer** takes one of the player's pokemon and `GROOMING_FEE` gold, and
   hands it back thinking half again as well of them. `groomedFriendship` adds half
@@ -411,15 +405,15 @@ is spent.
   met it, and calling it wild would name a chunk the species has not lived in for
   a very long time.
 
-  He is the **second wanderer who takes no marker**. What paces him is how many
+  He is another wanderer who takes **no marker**. What paces him is how many
   fossils have been dug up rather than the window, since turning away the second
   of two already carried would only be a walk to the next cell to do the same
   thing. The
   fossil leaves the bag first and is put back if the record is never written,
   since a fossil spent on nothing cannot be walked off.
 
-- **Vendor**, the shop, and one of the two who take **no marker at all**. What
-  the others hand over is something the world cannot make twice in six hours; what
+- **Vendor**, the shop, another who takes **no marker at all**. What most of
+  the others hand over is something the world cannot make twice in a window; what
   he hands over is a potion, so a player may deal with him as often as their purse
   allows while he is standing there.
 

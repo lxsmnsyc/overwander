@@ -12,6 +12,20 @@ import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { EVERY_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
 import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
+import {
+  BIOME_ELITE_MEMBERS,
+  BIOME_GYM_LEADERS,
+  CHAMPION_CHARSETS,
+  ELITE_MEMBER_CHARSETS,
+  ELITE_MEMBER_TYPES,
+  EXPERT_PARTY_SIZE,
+  type EliteMember,
+  GYM_LEADER_CHARSETS,
+  GYM_LEADER_TYPES,
+  type GymLeader,
+  getExpertPool,
+} from '../data/overworld/experts';
+import Regions from '../data/ids/regions';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
 import type Chunk from './chunk';
@@ -20,6 +34,30 @@ import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells }
 import { getPortalCell } from './portal';
 import type { PhenomenonReward } from './landmarks';
 import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
+
+/**
+ * The region a chunk's experts belong to: the whole world is Kanto
+ * until another region's species exist to field. The seam where a
+ * real mapping will go when one does
+ */
+function regionOf(_chunk: Chunk): Regions {
+  return Regions.Kanto;
+}
+
+/**
+ * A full 6 drawn from an expert's pool, with replacement: the Gen 1
+ * type pools run as thin as 3 species, and a doubled Gengar is
+ * exactly what an elite's party looks like
+ */
+function expertParty(pool: Species[], seed: string): Spawn[] {
+  const rng = new AleaRNG(seed);
+
+  return Array.from({ length: EXPERT_PARTY_SIZE }, (): Spawn => {
+    const species = pool[Math.floor(rng.random() * pool.length)];
+
+    return [species, rng.int32(), rng.int32()];
+  });
+}
 
 /**
  * One spawn roll: the species, the 32-bit individual value that
@@ -83,12 +121,11 @@ export const RAID_INTERVAL = 3 * 60 * 60 * 1000;
 
 /**
  * How long the same person stays at a wandering-NPC cell — a Team
- * Rocket grunt among them. Twice a raid: a player who needs a breeder
- * and finds a daycare lady is waiting for the afternoon rather than
- * the next quarter hour, which is what makes finding the one they
- * wanted worth something
+ * Rocket grunt among them. One raid window: long enough that who is
+ * standing there means something, short enough that hunting the one
+ * a player needs is an afternoon rather than a day
  */
-export const NPC_INTERVAL = 6 * 60 * 60 * 1000;
+export const NPC_INTERVAL = 3 * 60 * 60 * 1000;
 
 /**
  * A nest runs slower than anything else in a chunk: one egg every
@@ -493,8 +530,8 @@ export default class ChunkSnapshot {
 
   /**
    * The window a wandering NPC's rounds belong to. Whoever is
-   * standing at the cell stays there for six hours, which is longer
-   * than anything else a player walks up to and shorter than a nest
+   * standing at the cell stays there for 3 hours, a raid's own
+   * window, and shorter than a nest
    */
   get npcTimestamp(): number {
     return Math.floor(this.timestamp / NPC_INTERVAL) * NPC_INTERVAL;
@@ -515,7 +552,7 @@ export default class ChunkSnapshot {
   /**
    * Who is standing at each wandering-NPC cell this window. The cell
    * is the chunk's own, fixed forever like every landmark, but the
-   * person on it is drawn afresh every six hours — so a player who
+   * person on it is drawn afresh every 3 hours — so a player who
    * needs a breeder waits for one, or goes looking somewhere else.
    * The people who fight are not among the draws: Team Rocket and the
    * duelling trainer stand at landmarks of their own
@@ -564,6 +601,20 @@ export default class ChunkSnapshot {
           dress(cell, npcSheets(Npc.Trainer));
         } else if (landmark === Landmark.TeamRocket) {
           dress(cell, this.isRocketBoss(cell) ? GIOVANNI_CHARSETS : npcSheets(Npc.RocketGrunt));
+        } else if (landmark === Landmark.GymLeader) {
+          const leader = this.getGymLeader(cell);
+
+          if (leader != null) {
+            dress(cell, GYM_LEADER_CHARSETS[leader]);
+          }
+        } else if (landmark === Landmark.EliteFour) {
+          const member = this.getEliteMember(cell);
+
+          if (member != null) {
+            dress(cell, ELITE_MEMBER_CHARSETS[member]);
+          }
+        } else if (landmark === Landmark.Champion) {
+          dress(cell, CHAMPION_CHARSETS);
         }
       }
       this.coats = coats;
@@ -695,6 +746,129 @@ export default class ChunkSnapshot {
       this.trainerStops = stops;
     }
     return this.trainerStops;
+  }
+
+  /**
+   * Which gym leader keeps the gym at this cell, or null when the
+   * cell holds no gym. The biome names the candidates — every gym in
+   * fire country is a fire gym, so a player hunting one badge knows
+   * which country to walk — and the chunk's own fixture roll picks
+   * among the leaders who share it, the same one every visit
+   */
+  getGymLeader(cell: number): GymLeader | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.GymLeader) {
+      return null;
+    }
+
+    const seated = BIOME_GYM_LEADERS[this.chunk.biome];
+    const rng = new AleaRNG(`${this.chunk.seed}leader${cell}`);
+
+    return seated[Math.floor(rng.random() * seated.length)] ?? null;
+  }
+
+  /**
+   * Which of the Elite Four holds this cell, or null. The biome
+   * names the candidates the way it does for the gyms, and the
+   * fixture roll seats one of them for good
+   */
+  getEliteMember(cell: number): EliteMember | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.EliteFour) {
+      return null;
+    }
+
+    const seated = BIOME_ELITE_MEMBERS[this.chunk.biome];
+    const rng = new AleaRNG(`${this.chunk.seed}elite${cell}`);
+
+    return seated[Math.floor(rng.random() * seated.length)] ?? null;
+  }
+
+  private gymStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The window's gym parties, keyed by their landmark cell: 6 of the
+   * resident leader's own type, re-drawn each window. Blue's gym has
+   * no type and draws from the whole region
+   */
+  getGymStops(): Map<number, Spawn[]> {
+    if (this.gymStops == null) {
+      const stops = new Map<number, Spawn[]>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.GymLeader) {
+          continue;
+        }
+
+        const leader = this.getGymLeader(cell);
+
+        if (leader == null) {
+          continue;
+        }
+
+        const pool = getExpertPool(regionOf(this.chunk), GYM_LEADER_TYPES[leader] ?? null);
+
+        if (pool.length > 0) {
+          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}gym${cell}`));
+        }
+      }
+      this.gymStops = stops;
+    }
+    return this.gymStops;
+  }
+
+  private eliteStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The window's Elite Four parties, keyed by their landmark cell: 6
+   * of the resident member's own type
+   */
+  getEliteStops(): Map<number, Spawn[]> {
+    if (this.eliteStops == null) {
+      const stops = new Map<number, Spawn[]>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.EliteFour) {
+          continue;
+        }
+
+        const member = this.getEliteMember(cell);
+
+        if (member == null) {
+          continue;
+        }
+
+        const pool = getExpertPool(regionOf(this.chunk), ELITE_MEMBER_TYPES[member]);
+
+        if (pool.length > 0) {
+          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}elite${cell}`));
+        }
+      }
+      this.eliteStops = stops;
+    }
+    return this.eliteStops;
+  }
+
+  private championStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * The window's Champion parties, keyed by their landmark cell: 6
+   * drawn from the whole region, no specialty and no shadows — the
+   * hardest fair fight there is
+   */
+  getChampionStops(): Map<number, Spawn[]> {
+    if (this.championStops == null) {
+      const stops = new Map<number, Spawn[]>();
+      const pool = getExpertPool(regionOf(this.chunk), null);
+
+      if (pool.length > 0) {
+        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+          if (landmark === Landmark.Champion) {
+            stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}champ${cell}`));
+          }
+        }
+      }
+      this.championStops = stops;
+    }
+    return this.championStops;
   }
 
   /**

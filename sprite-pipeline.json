@@ -349,6 +349,18 @@
         "bytes": 19940
       }
     },
+    "public/sprites/extras/badges/kanto.png": {
+      "digest": "11a27973bc9188bb",
+      "bytes": 2093,
+      "width": 115,
+      "height": 112,
+      "compact": {
+        "at": "2026-08-26T04:08:58Z",
+        "as": "already compact",
+        "was": 2093,
+        "bytes": 2093
+      }
+    },
     "public/sprites/overworld/characters/extra/nurse/image.png": {
       "digest": "ac7b7ced28e5fa58",
       "bytes": 1272,

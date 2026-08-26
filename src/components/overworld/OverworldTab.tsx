@@ -51,6 +51,16 @@ import type Decoration from '../../data/overworld/decoration';
 import { DECORATION_NAMES } from '../../data/overworld/decoration';
 import Landmark, { LANDMARK_NAMES } from '../../data/overworld/landmark';
 import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import { AWARD_NAMES } from '../../data/ids/awards';
+import {
+  CHAMPION_NAME,
+  ELITE_MEMBER_NAMES,
+  EliteMember,
+  GYM_LEADER_BADGES,
+  GYM_LEADER_NAMES,
+  GymLeader,
+} from '../../data/overworld/experts';
+import { CHAMPION_PARTY_LEVEL, ELITE_PARTY_LEVEL, GYM_PARTY_LEVEL } from '../../overworld/rocket';
 import { PHENOMENON_NAMES } from '../../data/overworld/phenomenon';
 import { getItemData } from '../../data/items';
 import { getInventory } from '../../auth/inventory';
@@ -76,11 +86,106 @@ import NpcDialog from './NpcDialog';
 import PortalDialog from './PortalDialog';
 import NestDialog, { type EggSource, type EggState } from './NestDialog';
 import RaidDialog from '../raids/RaidDialog';
-import RocketStopDialog from './RocketStopDialog';
+import RocketStopDialog, { type ExpertChallenge } from './RocketStopDialog';
 import ItemSprite from '../items/ItemSprite';
 import SafariDialog from './SafariDialog';
 import { Badge, Button, Note, useToast } from '../styled';
 import { GameDialog, useGame } from '../app/game-context';
+
+/**
+ * The landmarks a player fights somebody at, all served by the one
+ * challenge dialog and the rocket-stop machinery under it
+ */
+const FIGHT_LANDMARKS = new Set([
+  Landmark.TeamRocket,
+  Landmark.Trainer,
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
+]);
+
+/**
+ * What each expert says as the challenge is put. Their quotes live
+ * here with the challenge builder rather than in the wanderer's
+ * table: an expert is a person, not a role a cell rolls
+ */
+const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
+  [GymLeader.Brock]: 'Rock is solid, kid. Show me you are harder.',
+  [GymLeader.Misty]: 'My water pokemon are tougher than they look. So am I.',
+  [GymLeader.LtSurge]: 'Ten-hut! Survive my electric barrage and the badge is yours, baby!',
+  [GymLeader.Erika]: 'The grass is calm today. Shall we?',
+  [GymLeader.Koga]: 'A ninja’s poison works slowly. Your defeat will not.',
+  [GymLeader.Sabrina]: 'I foresaw this fight. I did not foresee you winning.',
+  [GymLeader.Blaine]: 'My fire burns hot! Bring water. It will not help.',
+  [GymLeader.Blue]: 'Smell ya later... after I flatten you, that is.',
+};
+
+const ELITE_QUOTES: Record<EliteMember, string> = {
+  [EliteMember.Lorelei]: 'Ice has no mercy. Neither do I.',
+  [EliteMember.Bruno]: 'We will grind you down with our superior power! Hoo hah!',
+  [EliteMember.Agatha]: 'You want to see real ghosts, child? Look closely.',
+  [EliteMember.Lance]: 'My dragons know no weakness. Prove me wrong.',
+};
+
+/**
+ * The named challenger a fighting landmark stages, or null for the
+ * rank and file. The name, the level and the stakes are the dialog's
+ * copy; who actually stands there is the chunk's own fixture
+ */
+function expertOf(
+  snapshot: ChunkSnapshot,
+  landmark: Landmark,
+  cell: number,
+): ExpertChallenge | null {
+  if (landmark === Landmark.GymLeader) {
+    const leader = snapshot.getGymLeader(cell);
+
+    if (leader == null) {
+      return null;
+    }
+
+    const name = GYM_LEADER_NAMES[leader];
+    const badge = AWARD_NAMES[GYM_LEADER_BADGES[leader]];
+
+    return {
+      name,
+      level: GYM_PARTY_LEVEL,
+      greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
+      stakes: `6 of their best at level ${GYM_PARTY_LEVEL} against as many as you bring. Win and
+        the purse is yours, and the ${badge} with it if you do not hold it yet. Lose and you
+        lose nothing but the fight.`,
+    };
+  }
+  if (landmark === Landmark.EliteFour) {
+    const member = snapshot.getEliteMember(cell);
+
+    if (member == null) {
+      return null;
+    }
+
+    const name = ELITE_MEMBER_NAMES[member];
+
+    return {
+      name,
+      level: ELITE_PARTY_LEVEL,
+      greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
+      stakes: `6 at level ${ELITE_PARTY_LEVEL} against as many as you bring. Win and the purse
+        is yours; beat all 4 of the Elite Four and the Champion will see you. Lose and you
+        lose nothing but the fight.`,
+    };
+  }
+  if (landmark === Landmark.Champion) {
+    return {
+      name: CHAMPION_NAME,
+      level: CHAMPION_PARTY_LEVEL,
+      greeting: `${CHAMPION_NAME} says nothing. He reaches for a ball.`,
+      stakes: `6 at level ${CHAMPION_PARTY_LEVEL} against as many as you bring. Win and the
+        title of Kanto Champion is yours, with a purse to match. Lose and you lose nothing
+        but the fight.`,
+    };
+  }
+  return null;
+}
 
 /**
  * How many spawns a visit publishes: the ordinary eight plus the
@@ -440,6 +545,12 @@ function OverworldBoard(props: {
   const [challenger, setChallenger] = createSignal<Npc>(Npc.RocketGrunt);
 
   const [challengeCoat, setChallengeCoat] = createSignal<string | undefined>(undefined);
+
+  /**
+   * The named expert whose challenge is on the table, or null when it
+   * is a grunt's or a plain trainer's
+   */
+  const [challengeExpert, setChallengeExpert] = createSignal<ExpertChallenge | null>(null);
   /**
    * The passer-by the player has stopped at: the cell they are
    * standing on and who is on it this window, until their business is
@@ -1012,33 +1123,40 @@ function OverworldBoard(props: {
       announce('Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
-    // The two landmarks somebody fights at share one flow: Team
-    // Rocket's ambush and the trainer's duel, put in the challenge
-    // dialog rather than the wanderer's
-    if (landmark === Landmark.TeamRocket || landmark === Landmark.Trainer) {
-      const duel = landmark === Landmark.Trainer;
+    // The landmarks somebody fights at share one flow: Team Rocket's
+    // ambush, the trainer's duel, and the experts' ladder, all put in
+    // the challenge dialog rather than the wanderer's
+    if (landmark != null && FIGHT_LANDMARKS.has(landmark)) {
+      const grunt = landmark === Landmark.TeamRocket;
+      const expert = expertOf(loaded.snapshot, landmark, at);
+      const who = expert?.name ?? (grunt ? 'Team Rocket' : 'A trainer');
       const stop = await enterRocketStop(loaded.snapshot, at);
 
+      if (stop === 'locked') {
+        return landmark === Landmark.EliteFour
+          ? `${who} only faces challengers holding all 8 Kanto badges.`
+          : `${who} only faces challengers who have beaten the Elite Four.`;
+      }
       if (stop === 'beaten') {
         // A beaten grunt may still owe the pokemon they left:
         // claiming again pays nothing and hands it back until it is
-        // caught. A beaten trainer owed only the purse
-        const owed = duel
-          ? null
-          : await claimRocketReward(
+        // caught. Everybody else owed only the purse
+        const owed = grunt
+          ? await claimRocketReward(
               rocketStopId(
                 loaded.snapshot.chunk,
                 loaded.snapshot.npcTimestamp,
                 at,
                 loaded.snapshot.offset,
               ),
-            );
+            )
+          : null;
 
         if (owed?.encounter != null) {
           game.setEncounter(owed.encounter);
           return null;
         }
-        return duel ? 'The trainer is done with you.' : 'They have moved on.';
+        return grunt ? 'They have moved on.' : `${who} is done with you this window.`;
       }
       if (stop == null) {
         // The server stages nobody there: the board is behind the
@@ -1049,13 +1167,12 @@ function OverworldBoard(props: {
         return 'Nobody is standing there any more.';
       }
       if (!(await canJoinRaids(user.uid))) {
-        return duel
-          ? 'A trainer wants to battle, and you have nothing to fight with.'
-          : 'Team Rocket blocks the way, and you have nothing to fight with.';
+        return `${who} wants a battle, and you have nothing to fight with.`;
       }
       // The challenge is put to the player rather than taken for
       // them; the dialog is what accepts it
-      setChallenger(duel ? Npc.Trainer : Npc.RocketGrunt);
+      setChallenger(grunt ? Npc.RocketGrunt : Npc.Trainer);
+      setChallengeExpert(expert);
       setChallengeCoat(loaded.snapshot.getWandererCoats().get(at));
       setChallenge(stop);
       return null;
@@ -1420,6 +1537,21 @@ function OverworldBoard(props: {
     if (landmark === Landmark.TeamRocket && loaded?.snapshot.isRocketBoss(index) === true) {
       return 'Giovanni';
     }
+    // The experts are named outright: which leader keeps this gym is
+    // what decides whether the walk is worth it
+    if (landmark === Landmark.GymLeader) {
+      const leader = loaded?.snapshot.getGymLeader(index);
+
+      return leader == null ? LANDMARK_NAMES[landmark] : GYM_LEADER_NAMES[leader];
+    }
+    if (landmark === Landmark.EliteFour) {
+      const member = loaded?.snapshot.getEliteMember(index);
+
+      return member == null ? LANDMARK_NAMES[landmark] : ELITE_MEMBER_NAMES[member];
+    }
+    if (landmark === Landmark.Champion) {
+      return CHAMPION_NAME;
+    }
     if (landmark === Landmark.Phenomenon) {
       const showing = loaded?.snapshot.getPhenomena().get(index);
 
@@ -1577,6 +1709,7 @@ function OverworldBoard(props: {
               challenge={challenge()}
               npc={challenger()}
               sheet={challengeCoat()}
+              expert={challengeExpert()}
               onClose={() => {
                 setChallenge(null);
               }}

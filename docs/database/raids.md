@@ -49,7 +49,7 @@ Once open it is an ordinary lobby: it appears in the window's listing, anyone ma
 join it, and it is fought, cleared and claimed through the same calls.
 
 A fourth fight is not a raid at all: a **Team Rocket grunt** at a `WanderingNpc`
-cell, which runs on the six-hour `NPC_INTERVAL` rather than a raid window. It is
+cell, which runs on the three-hour `NPC_INTERVAL` rather than a raid window. It is
 described under [`rocketStops`](#rocket_stops) below.
 
 ## `raids`
@@ -330,8 +330,8 @@ window in which a berry could be pulled back into the bag and kept.
 
 ## `rocket_stops`
 
-A **Team Rocket grunt** (`Npc.RocketGrunt`) stands at a `WanderingNpc` cell for
-`NPC_INTERVAL` (6 hours), the window that decides who is at one.
+A **Team Rocket grunt** (`Npc.RocketGrunt`) stands at a `TeamRocket` cell for
+`NPC_INTERVAL` (3 hours), the window that decides who is at one.
 
 Unlike a raid it is not a lobby. The grunt fights each passer-by on their own, so
 the state is **per player**, and one player's victory closes nothing for anybody

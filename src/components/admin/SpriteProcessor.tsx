@@ -494,11 +494,12 @@ function ExtrasForm(): JSX.Element {
             label="Name"
             required
             value={name()}
-            placeholder="battle-effects"
+            placeholder="ui/battle-effects"
             onChange={(value) => {
               setName(value);
             }}
-            hint="What the sheet under sprites/extras is called. Letters and digits only."
+            hint="What the sheet under sprites/extras is called. Letters and digits; a slash
+              files it in a subfolder."
           />
           <Switch
             label="Compact"

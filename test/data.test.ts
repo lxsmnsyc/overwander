@@ -19,7 +19,13 @@ import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import { TYPE_COLORS, TYPE_NAMES, Types } from '../src/data/constants/types';
-import Biome, { AnyTimeOfDay, TimeOfDay, getBiome, isWaterBiome } from '../src/data/ids/biome';
+import Biome, {
+  AnyTimeOfDay,
+  TimeOfDay,
+  getBiome,
+  isOpenSea,
+  isWaterBiome,
+} from '../src/data/ids/biome';
 import {
   BALL_ITEMS,
   ItemFlags,
@@ -211,6 +217,25 @@ import {
   registerSpecies,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
+import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../src/data/ids/awards';
+import {
+  BIOME_ELITE_MEMBERS,
+  BIOME_GYM_LEADERS,
+  CHAMPION_CHARSETS,
+  ELITE_MEMBERS,
+  ELITE_MEMBER_CHARSETS,
+  ELITE_MEMBER_HONORS,
+  ELITE_MEMBER_NAMES,
+  ELITE_MEMBER_TYPES,
+  GYM_LEADERS,
+  GYM_LEADER_BADGES,
+  GYM_LEADER_CHARSETS,
+  GYM_LEADER_NAMES,
+  GYM_LEADER_TYPES,
+  GymLeader,
+  getExpertPool,
+} from '../src/data/overworld/experts';
+import Regions from '../src/data/ids/regions';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -3117,5 +3142,93 @@ describe('biome data', () => {
     expect(
       pickSpawn({ base: [], uncommon: [], rare: [], special: [] }, rolls([0.5, 0])),
     ).toBeNull();
+  });
+});
+
+describe('type experts', () => {
+  it('gives every leader a name, a badge and a shipped wardrobe', () => {
+    const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
+
+    // The 8 leaders carry the region's 8 badges, one each
+    expect(new Set(badges).size).toBe(KANTO_BADGES.length);
+    expect(badges.every((badge) => KANTO_BADGES.includes(badge))).toBe(true);
+
+    for (const leader of GYM_LEADERS) {
+      expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
+      for (const sheet of GYM_LEADER_CHARSETS[leader]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+        expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
+      }
+    }
+    // Blue is the one gym with no specialty
+    expect(GYM_LEADER_TYPES[GymLeader.Blue]).toBeUndefined();
+    expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
+  });
+
+  it('gives every elite a mark and the champion a title', () => {
+    const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
+
+    expect(new Set(honors).size).toBe(KANTO_HONORS.length);
+    expect(honors.every((honor) => KANTO_HONORS.includes(honor))).toBe(true);
+
+    for (const member of ELITE_MEMBERS) {
+      expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
+      for (const sheet of ELITE_MEMBER_CHARSETS[member]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+    }
+    for (const sheet of CHAMPION_CHARSETS) {
+      expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+    }
+    // Every award reads as something on a shelf
+    for (const award of [...KANTO_BADGES, ...KANTO_HONORS, Awards.KantoChampion]) {
+      expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
+    }
+  });
+
+  it('seats every leader and every elite in some walkable country', () => {
+    // A leader no land biome maps to keeps a badge nobody can earn,
+    // and an unseated elite locks the Champion for good. Open seas
+    // never roll a people landmark, so they do not count as a seat
+    const land = Object.entries(BIOME_GYM_LEADERS)
+      .filter(([biome]) => !isOpenSea(Number(biome)))
+      .flatMap(([, seated]) => seated);
+
+    for (const leader of GYM_LEADERS) {
+      expect(land, GYM_LEADER_NAMES[leader]).toContain(leader);
+    }
+
+    const seats = Object.entries(BIOME_ELITE_MEMBERS)
+      .filter(([biome]) => !isOpenSea(Number(biome)))
+      .flatMap(([, seated]) => seated);
+
+    for (const member of ELITE_MEMBERS) {
+      expect(seats, ELITE_MEMBER_NAMES[member]).toContain(member);
+    }
+    // And nobody's country is empty ground: every biome seats at
+    // least one leader and one elite
+    for (const seated of Object.values(BIOME_GYM_LEADERS)) {
+      expect(seated.length).toBeGreaterThan(0);
+    }
+    for (const seated of Object.values(BIOME_ELITE_MEMBERS)) {
+      expect(seated.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('pools every specialty from the region, legendaries left out', () => {
+    for (const member of ELITE_MEMBERS) {
+      expect(getExpertPool(Regions.Kanto, ELITE_MEMBER_TYPES[member]).length).toBeGreaterThan(0);
+    }
+    // Lance makes do with the one dragon line there is
+    expect(getExpertPool(Regions.Kanto, Types.Dragon)).toEqual([
+      Species.Dratini,
+      Species.Dragonair,
+      Species.Dragonite,
+    ]);
+    // Sabrina's pool holds no Mewtwo: lair species belong to raids
+    expect(getExpertPool(Regions.Kanto, Types.Psychic)).not.toContain(Species.Mewtwo);
+    // The open pool serves Blue and the Champion
+    expect(getExpertPool(Regions.Kanto, null).length).toBeGreaterThan(100);
+    expect(getExpertPool(Regions.Kanto, null)).not.toContain(Species.Egg);
   });
 });

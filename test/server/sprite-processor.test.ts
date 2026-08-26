@@ -296,6 +296,17 @@ describe('where a sheet is written', () => {
     });
   });
 
+  it('files an extras sheet under a subfolder when the name has one', () => {
+    expect(extraDestination('UI/Battle Effects')).toEqual({
+      image: 'sprites/extras/ui/battle-effects.png',
+      meta: 'sprites/extras/ui/battle-effects.json',
+    });
+    // The same slug rules as a charset's: a dotted segment reduces to
+    // nothing and is refused rather than climbing out
+    expect(() => extraDestination('../loose')).toThrow();
+    expect(() => extraDestination('ui//loose')).toThrow();
+  });
+
   it('names all four drawings of one pokemon', () => {
     const four = [
       { female: false, shiny: false },

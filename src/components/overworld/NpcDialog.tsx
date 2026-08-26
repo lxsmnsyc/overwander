@@ -21,7 +21,6 @@ import {
   breed,
   buyFossil,
   buyFromVendor,
-  getTendedCount,
   groomCatch,
   hasVisited,
   remindMove,
@@ -42,7 +41,6 @@ import Npc, {
   DAYCARE_FEE,
   GROOMING_FEE,
   NPC_NAMES,
-  NURSE_CARE_LIMIT,
   REMINDER_FEE,
   TUTOR_FEE,
   getRecallableMoves,
@@ -195,8 +193,6 @@ function NpcCounter(
     bag: Resource<InventoryEntry[]>;
     /** Whether the maniac has already sold to this player this window */
     visited: Resource<boolean>;
-    /** How many pokemon Nurse Joy has seen to this window */
-    tended: Resource<number>;
     /** Whether the daycare lady has already warmed an egg this window */
     warmed: Resource<boolean>;
     onServed: () => void;
@@ -335,13 +331,6 @@ function NpcCounter(
     (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
   /**
-   * How many pokemon Nurse Joy still has room for this window. Her
-   * limit counts pokemon rather than visits, which is why it is a
-   * number rather than a seen-already flag
-   */
-  const nurseRoom = (): number => Math.max(0, NURSE_CARE_LIMIT - (props.tended.latest ?? 0));
-
-  /**
    * Which pokemon has been picked out for the reminder
    */
   const remembering = (): CatchOption | null =>
@@ -464,7 +453,7 @@ function NpcCounter(
         setBusy(false);
         setStatus(
           tended == null
-            ? 'She handed it straight back. Nothing to heal, or she has already seen you this while.'
+            ? 'She handed it straight back. Nothing to heal.'
             : 'She looked after it. Right as rain.',
         );
         props.onServed();
@@ -937,16 +926,14 @@ function NpcCounter(
 
               <Show when={standing()[1] === Npc.NurseJoy}>
                 <DialogSection class={CENTRED}>
-                  {/* One press, one pokemon seen to. She is free, so
-                    there is nothing to weigh up before handing one over
-                    — and a counter that took a party first and a button
-                    second was two presses for a decision nobody makes.
-                    What keeps her from being a tap is the window: her
-                    limit counts pokemon, and the picker goes dead when
-                    the room is spent rather than pretending otherwise */}
+                  {/* One press, one pokemon seen to. She is free and
+                    turns nobody away, so there is nothing to weigh up
+                    before handing one over — a counter that took a
+                    party first and a button second was two presses
+                    for a decision nobody makes */}
                   <CatchPicker
                     inline
-                    disabled={busy() || nurseRoom() === 0}
+                    disabled={busy()}
                     options={offers()}
                     value={null}
                     verb="Heal"
@@ -964,13 +951,9 @@ function NpcCounter(
                       }
                     }}
                   />
-                  {/* What the visit buys, in numbers: the quote above
-                      says she is free, this says how far free goes */}
-                  <Meta class="block">
-                    {nurseRoom() === 0
-                      ? 'She has seen all she can for you while she is here.'
-                      : `Up to ${NURSE_CARE_LIMIT} pokemon while she is here, ${nurseRoom()} to go.`}
-                  </Meta>
+                  {/* The quote above says she is free; this says free
+                      has no bottom */}
+                  <Meta class="block">As many as you bring, as often as you like.</Meta>
                 </DialogSection>
               </Show>
 
@@ -1457,16 +1440,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     async ([snapshot, cell]) => hasVisited(snapshot, 'daycare', cell),
   );
 
-  // How much of Nurse Joy's window this player has used. Re-read
-  // after every pokemon handed over, so the room left counts down
-  const [tended] = createResource(
-    () =>
-      props.snapshot == null || props.standing?.[1] !== Npc.NurseJoy
-        ? null
-        : ([props.snapshot, props.standing[0], served()] as const),
-    async ([snapshot, cell]) => getTendedCount(snapshot, cell),
-  );
-
   return (
     <NpcCounter
       {...props}
@@ -1474,7 +1447,6 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       gold={gold}
       bag={bag}
       visited={visited}
-      tended={tended}
       warmed={warmed}
       onServed={() => {
         setServed((count) => count + 1);

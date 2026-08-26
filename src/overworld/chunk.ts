@@ -60,16 +60,26 @@ const MAX_WATER_SPOTS = 3;
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
  * and people have nowhere to stand, so neither bushes nor any of the
- * three landmarks somebody stands at is rolled there
+ * landmarks somebody stands at is rolled there
  */
 const SEA_PEOPLE = new Set([
   Landmark.BerryPatch,
   Landmark.WanderingNpc,
   Landmark.TeamRocket,
   Landmark.Trainer,
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
 ]);
 
 const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
+
+/**
+ * The landmarks a chunk holds at most one of: a second portal goes
+ * nowhere the first does not, and a gym or a champion's seat is a
+ * place, not a patrol
+ */
+const SINGLETON_LANDMARKS = new Set([Landmark.Portal, Landmark.GymLeader, Landmark.Champion]);
 
 /**
  * How many shallow patches an open-sea chunk gets: the lighter
@@ -415,10 +425,11 @@ export default class Chunk {
   private landmarkCells: Map<number, Landmark> | null = null;
 
   /**
-   * The chunk's 8-12 landmarks (duplicates allowed), each on its own
-   * cell, keyed by row-major cell index. Rolled from the chunk seed
-   * alone — no clock or snapshot involved — so the same chunk yields
-   * the same landmarks on the same cells forever.
+   * The chunk's 8-12 landmarks (duplicates allowed, the singletons
+   * aside), each on its own cell, keyed by row-major cell index.
+   * Rolled from the chunk seed alone — no clock or snapshot involved
+   * — so the same chunk yields the same landmarks on the same cells
+   * forever.
    *
    * Placed first of the fixtures — the landmarks carry the gameplay
    * promise, so the scenery fits around them. Every landmark keeps
@@ -438,16 +449,16 @@ export default class Chunk {
       // a pool without the landmarks that need ground under them
       const rocks = this.rockArea();
       const base = isOpenSea(this.biome) ? SEA_LANDMARKS : LANDMARKS;
-      const encore = base.filter((kind) => kind !== Landmark.Portal);
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();
-      let gated = false;
+      const rolled = new Set<Landmark>();
 
       for (let i = 0; i < count; i++) {
         // The draws land in pair order: the landmark, then its cell.
-        // A second portal is never rolled
-        const pool: Landmark[] = gated ? encore : base;
+        // A singleton already rolled leaves the pool for the rest of
+        // the chunk: a second portal, gym or champion is never rolled
+        const pool = base.filter((kind) => !(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind)));
         const landmark = pool[Math.floor(rng.random() * pool.length)];
         // Only a phenomenon may stand in the water
         const fits = (candidate: number): boolean =>
@@ -464,7 +475,7 @@ export default class Chunk {
           break;
         }
         cells.set(cell, landmark);
-        gated ||= landmark === Landmark.Portal;
+        rolled.add(landmark);
 
         // Its own approach is now spoken for, so the next landmark
         // goes somewhere with room of its own

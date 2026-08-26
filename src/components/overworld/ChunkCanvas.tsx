@@ -548,6 +548,9 @@ const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.Portal]: 'O',
   [Landmark.TeamRocket]: 'G',
   [Landmark.Trainer]: 'T',
+  [Landmark.GymLeader]: 'L',
+  [Landmark.EliteFour]: 'E',
+  [Landmark.Champion]: 'V',
 };
 
 export interface ChunkCanvasProps {
@@ -839,7 +842,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       fallback = props.wanderers.get(index) ?? null;
     } else if (landmark === Landmark.TeamRocket) {
       fallback = Npc.RocketGrunt;
-    } else if (landmark === Landmark.Trainer) {
+    } else if (
+      landmark === Landmark.Trainer ||
+      landmark === Landmark.GymLeader ||
+      landmark === Landmark.EliteFour ||
+      landmark === Landmark.Champion
+    ) {
+      // The experts wear their own coats from the snapshot; the plain
+      // trainer's sheet only stands in while a coat is missing
       fallback = Npc.Trainer;
     }
     if (fallback == null) {

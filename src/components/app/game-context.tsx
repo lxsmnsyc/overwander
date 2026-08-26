@@ -17,6 +17,8 @@ import type { PositionRecord } from '../../auth/position-record';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import { getPosition, savePosition } from '../../auth/positions';
+import { AWARD_NAMES } from '../../data/ids/awards';
+import { useToast } from '../styled';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
@@ -240,6 +242,7 @@ export function useGame(): GameState {
  */
 export default function GameProvider(props: ParentProps): JSX.Element {
   const auth = useAuth();
+  const toast = useToast();
   const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
   const [place, setPlace] = createSignal<string | null>(null);
@@ -342,11 +345,41 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
     setReward(null);
-    (owed.stop == null ? claimRaidReward(owed.raid) : claimRocketReward(owed.stop))
+
+    if (owed.stop == null) {
+      claimRaidReward(owed.raid)
+        .then((collected) => {
+          if (collected?.encounter != null) {
+            setEncounter(collected.encounter);
+          }
+        })
+        .catch(() => {
+          // Nothing is lost by a claim that failed: the raid keeps
+          // what it owes until somebody collects it
+        });
+      return;
+    }
+    claimRocketReward(owed.stop)
       .then((collected) => {
+        if (collected == null) {
+          return;
+        }
+        // The purse and the badge are said in passing the moment the
+        // fight pays them: the winner is still on the battle screen,
+        // and nothing else would tell them what the win was worth
+        if (collected.gold > 0) {
+          toast.push({ message: `The purse is yours. +${collected.gold} gold`, tone: 'leaf' });
+        }
+        if (collected.award != null) {
+          toast.push({
+            title: AWARD_NAMES[collected.award],
+            message: 'Yours, for good.',
+            tone: 'leaf',
+          });
+        }
         // A duelling trainer pays a purse and leaves no pokemon, so
         // there is nothing to stand waiting in the overworld
-        if (collected?.encounter != null) {
+        if (collected.encounter != null) {
           setEncounter(collected.encounter);
         }
       })

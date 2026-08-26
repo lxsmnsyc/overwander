@@ -226,7 +226,7 @@ a boss at all.
 
 ## Team Rocket grunts
 
-A grunt stands at a wandering cell for six hours at a time; see
+A grunt stands at a Team Rocket cell for three hours at a time; see
 [People you meet](npcs.md).
 
 The grunt fields three pokemon — one common, one uncommon and one rare from that

@@ -74,16 +74,31 @@ import {
   getBossMoves,
 } from '../../src/overworld/raid';
 import {
+  CHAMPION_PARTY_LEVEL,
+  ELITE_PARTY_LEVEL,
   GIOVANNI_GOLD_MAX,
   GIOVANNI_GOLD_MIN,
   GIOVANNI_PARTY_LEVEL,
+  GYM_PARTY_LEVEL,
   ROCKET_PARTY_LEVEL,
   ROCKET_REWARD_LEVEL,
   STOP_GOLD_MAX,
   STOP_GOLD_MIN,
   createRocketParty,
+  isBossPurse,
   rollStopGold,
+  stopPartyLevel,
 } from '../../src/overworld/rocket';
+import {
+  BIOME_ELITE_MEMBERS,
+  BIOME_GYM_LEADERS,
+  CHAMPION_CHARSETS,
+  ELITE_MEMBER_CHARSETS,
+  ELITE_MEMBER_TYPES,
+  EXPERT_PARTY_SIZE,
+  GYM_LEADER_CHARSETS,
+  GYM_LEADER_TYPES,
+} from '../../src/data/overworld/experts';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
 import deriveEncounter, {
@@ -938,16 +953,124 @@ describe('world', () => {
   it('rolls a purse in the stop’s own range, the same on every ask', () => {
     for (let winner = 0; winner < 32; winner++) {
       const seed = `stop:purse:player-${winner}`;
-      const purse = rollStopGold(seed, 3);
-      const bounty = rollStopGold(seed, 6);
+      const purse = rollStopGold(seed, false);
+      const bounty = rollStopGold(seed, true);
 
       expect(purse).toBeGreaterThanOrEqual(STOP_GOLD_MIN);
       expect(purse).toBeLessThanOrEqual(STOP_GOLD_MAX);
       expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD_MIN);
       expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD_MAX);
       // Seeded: asking again answers the same
-      expect(rollStopGold(seed, 3)).toBe(purse);
+      expect(rollStopGold(seed, false)).toBe(purse);
     }
+  });
+
+  it('keeps one leader to a gym and fields 6 of their type', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getGymStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+
+    for (const [cell, party] of snapshot.getGymStops()) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.GymLeader);
+      expect(party).toHaveLength(EXPERT_PARTY_SIZE);
+
+      const leader = snapshot.getGymLeader(cell);
+
+      expect(leader).not.toBeNull();
+      if (leader == null) {
+        continue;
+      }
+      // The biome names the candidates, so a badge has a country to
+      // be hunted in — and the next window keeps whoever was seated
+      expect(BIOME_GYM_LEADERS[chunk.biome]).toContain(leader);
+      expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getGymLeader(cell)).toBe(leader);
+
+      // Every fielded species carries the gym's type; Blue's gym has
+      // none and takes what it likes
+      const type = GYM_LEADER_TYPES[leader];
+
+      if (type != null) {
+        for (const [species] of party) {
+          expect(getSpeciesData(species).types).toContain(type);
+        }
+      }
+      // Dressed as the leader themselves
+      expect(GYM_LEADER_CHARSETS[leader]).toContain(snapshot.getWandererCoats().get(cell));
+    }
+  });
+
+  it('stages the elite and the champion with full parties of their own', () => {
+    const world = new World('overworld');
+    const eliteChunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getEliteStops().size > 0,
+    );
+
+    expect(eliteChunk).not.toBeNull();
+    if (eliteChunk != null) {
+      const snapshot = new ChunkSnapshot(eliteChunk, 0);
+
+      for (const [cell, party] of snapshot.getEliteStops()) {
+        const member = snapshot.getEliteMember(cell);
+
+        expect(party).toHaveLength(EXPERT_PARTY_SIZE);
+        expect(member).not.toBeNull();
+        if (member == null) {
+          continue;
+        }
+        expect(BIOME_ELITE_MEMBERS[eliteChunk.biome]).toContain(member);
+        for (const [species] of party) {
+          expect(getSpeciesData(species).types).toContain(ELITE_MEMBER_TYPES[member]);
+        }
+        expect(ELITE_MEMBER_CHARSETS[member]).toContain(snapshot.getWandererCoats().get(cell));
+      }
+    }
+
+    const champChunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getChampionStops().size > 0,
+    );
+
+    expect(champChunk).not.toBeNull();
+    if (champChunk != null) {
+      const snapshot = new ChunkSnapshot(champChunk, 0);
+      const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+
+      for (const [cell, party] of snapshot.getChampionStops()) {
+        expect(party).toHaveLength(EXPERT_PARTY_SIZE);
+        // The Champion fields no legendary: those belong to raids
+        for (const [species] of party) {
+          expect(legendaries.has(species)).toBe(false);
+        }
+        expect(CHAMPION_CHARSETS).toContain(snapshot.getWandererCoats().get(cell));
+      }
+    }
+  });
+
+  it('prices every rank of stop by its landmark', () => {
+    expect(stopPartyLevel(Landmark.GymLeader, 6)).toBe(GYM_PARTY_LEVEL);
+    expect(stopPartyLevel(Landmark.EliteFour, 6)).toBe(ELITE_PARTY_LEVEL);
+    expect(stopPartyLevel(Landmark.Champion, 6)).toBe(CHAMPION_PARTY_LEVEL);
+    expect(stopPartyLevel(Landmark.TeamRocket, 6)).toBe(GIOVANNI_PARTY_LEVEL);
+    expect(stopPartyLevel(Landmark.TeamRocket, 3)).toBe(ROCKET_PARTY_LEVEL);
+    expect(stopPartyLevel(Landmark.Trainer, 3)).toBe(ROCKET_PARTY_LEVEL);
+
+    // Only the two rarest wins pay from the top range: a gym would
+    // otherwise be a 6-strong purse farmed every window
+    expect(isBossPurse(Landmark.TeamRocket, 6)).toBe(true);
+    expect(isBossPurse(Landmark.TeamRocket, 3)).toBe(false);
+    expect(isBossPurse(Landmark.Champion, 6)).toBe(true);
+    expect(isBossPurse(Landmark.EliteFour, 6)).toBe(false);
+    expect(isBossPurse(Landmark.GymLeader, 6)).toBe(false);
   });
 
   it('offers any of the boss’ six as the reward', () => {
@@ -1456,7 +1579,7 @@ describe('world', () => {
     expect(SNAPSHOT_INTERVAL).toBe(5 * 60 * 1000);
     expect(LANDMARK_INTERVAL).toBe(15 * 60 * 1000);
     expect(RAID_INTERVAL).toBe(3 * 60 * 60 * 1000);
-    expect(NPC_INTERVAL).toBe(6 * 60 * 60 * 1000);
+    expect(NPC_INTERVAL).toBe(3 * 60 * 60 * 1000);
     expect(NEST_INTERVAL).toBe(12 * 60 * 60 * 1000);
 
     // Every window is a whole number of spawn windows, so no landmark
@@ -1471,7 +1594,7 @@ describe('world', () => {
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), NPC_INTERVAL + LANDMARK_INTERVAL);
 
     expect(snapshot.landmarkTimestamp).toBe(NPC_INTERVAL + LANDMARK_INTERVAL);
-    expect(snapshot.raidTimestamp).toBe(RAID_INTERVAL * 2);
+    expect(snapshot.raidTimestamp).toBe(RAID_INTERVAL);
     expect(snapshot.npcTimestamp).toBe(NPC_INTERVAL);
     expect(snapshot.nestTimestamp).toBe(0);
   });
@@ -1495,17 +1618,17 @@ describe('world', () => {
       expect(new Set(NPCS).has(npc)).toBe(true);
     }
 
-    // Whoever it is stands for six hours — twice a raid, so a raid
-    // rolling over does not change who is at the cell — and the
+    // Whoever it is stands for the whole 3-hour window, and the
     // windows are not all the same person
-    expect(new ChunkSnapshot(chunk, RAID_INTERVAL).getWanderingNpcs()).toEqual(wanderers);
     expect(new ChunkSnapshot(chunk, NPC_INTERVAL - 1).getWanderingNpcs()).toEqual(wanderers);
     expect(new ChunkSnapshot(chunk, NPC_INTERVAL).npcTimestamp).toBe(NPC_INTERVAL);
 
     const shapes = new Set<string>();
     const met = new Set<Npc>();
 
-    for (let window = 0; window < 24; window++) {
+    // Enough windows that all 9 roles have room to turn up on however
+    // few wandering cells the chunk rolled
+    for (let window = 0; window < 96; window++) {
       const standing = new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs();
 
       shapes.add(JSON.stringify([...standing]));
@@ -2967,14 +3090,17 @@ describe('placement invariants', () => {
 });
 
 describe('portal balancing', () => {
-  it('never rolls a second portal into a chunk', () => {
+  it('never rolls a second portal, gym or champion into a chunk', () => {
     const world = new World('overworld');
+    const singletons = [Landmark.Portal, Landmark.GymLeader, Landmark.Champion];
 
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 25; x++) {
         const landmarks = world.getChunk(x, y).getLandmarks();
 
-        expect(landmarks.filter((kind) => kind === Landmark.Portal).length).toBeLessThanOrEqual(1);
+        for (const singleton of singletons) {
+          expect(landmarks.filter((kind) => kind === singleton).length).toBeLessThanOrEqual(1);
+        }
       }
     }
   });

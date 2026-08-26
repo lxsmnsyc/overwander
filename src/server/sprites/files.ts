@@ -110,7 +110,8 @@ export function biomeDestination(biome: number): Destination {
 /**
  * Anything else packed out of loose images, filed under a name of its
  * own: an extras sheet is not about a species, so nothing here asks
- * for one
+ * for one. The name takes slashes the way a charset's does, so a
+ * sheet can be filed under `sprites/extras/ui/...`
  */
 export function extraDestination(name: string): Destination {
   const slug = overworldSlug(name);

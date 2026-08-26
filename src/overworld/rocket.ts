@@ -9,6 +9,7 @@ import { Stats } from '../data/constants/stats';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
+import Landmark from '../data/overworld/landmark';
 import type ChunkSnapshot from './chunk-snapshot';
 import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize } from './encounter';
@@ -46,6 +47,33 @@ export function rocketPartyLevel(size: number): number {
 }
 
 /**
+ * The ladder the type experts fight on: a gym leader stands with a
+ * grunt, the Elite Four with the boss, and the Champion above them
+ * all
+ */
+export const GYM_PARTY_LEVEL = 50;
+export const ELITE_PARTY_LEVEL = 75;
+export const CHAMPION_PARTY_LEVEL = 100;
+
+/**
+ * The level any stop's party fights at, keyed by the landmark it
+ * stands on. The experts all field 6, so size alone cannot tell a
+ * gym from the Champion
+ */
+export function stopPartyLevel(landmark: Landmark, size: number): number {
+  if (landmark === Landmark.GymLeader) {
+    return GYM_PARTY_LEVEL;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return ELITE_PARTY_LEVEL;
+  }
+  if (landmark === Landmark.Champion) {
+    return CHAMPION_PARTY_LEVEL;
+  }
+  return rocketPartyLevel(size);
+}
+
+/**
  * What beating a grunt or a duelling trainer pays: a purse rolled in
  * this range rather than a flat fee, so a stop is worth walking to
  * and no two wins feel quite alike
@@ -62,16 +90,27 @@ export const GIOVANNI_GOLD_MAX = 50000;
 
 /**
  * The purse a beaten stop pays, seeded so each winner's roll is their
- * own and asking again answers the same. Only the boss' six-strong
- * party draws from his range
+ * own and asking again answers the same. `boss` draws from the top
+ * range: Giovanni's, and the Champion's — the two rarest wins a walk
+ * can land
  */
-export function rollStopGold(seed: string, size: number): number {
+export function rollStopGold(seed: string, boss: boolean): number {
   const rng = new AleaRNG(seed);
-  const boss = size >= GIOVANNI_PARTY_SIZE;
   const floor = boss ? GIOVANNI_GOLD_MIN : STOP_GOLD_MIN;
   const ceiling = boss ? GIOVANNI_GOLD_MAX : STOP_GOLD_MAX;
 
   return floor + Math.floor(rng.random() * (ceiling - floor + 1));
+}
+
+/**
+ * Whether a stop's purse is a boss purse: Giovanni's full six on a
+ * Team Rocket cell, or the Champion's on their own
+ */
+export function isBossPurse(landmark: Landmark, size: number): boolean {
+  return (
+    landmark === Landmark.Champion ||
+    (landmark === Landmark.TeamRocket && size >= GIOVANNI_PARTY_SIZE)
+  );
 }
 
 /**
@@ -161,16 +200,16 @@ export function createRocketSnapshot(
 
 /**
  * The stop's whole party, weakest first: shadows for a grunt or the
- * boss, the biome's ordinary residents for a duelling trainer. The
- * party's size is what says whose it is, and fixes its level
+ * boss, ordinary pokemon for a duelling trainer or a type expert.
+ * The level defaults to what the party's size says, for the callers
+ * that predate the experts; an expert's is the landmark's to fix
  */
 export function createRocketParty(
   snapshot: ChunkSnapshot,
   spawns: Spawn[],
   shadow = true,
+  level = rocketPartyLevel(spawns.length),
 ): CatchSnapshot[] {
-  const level = rocketPartyLevel(spawns.length);
-
   return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, level));
 }
 

@@ -106,7 +106,7 @@ quarters of the way; one past halfway is finished outright; any egg at all is
 finished by two visits. The fee is what paces it.
 
 She refuses only an egg already ready to hatch, and, like most travellers, helps
-each player once per six-hour window at a given cell. See
+each player once per three-hour window at a given cell. See
 [People you meet](npcs.md).
 
 ## See also

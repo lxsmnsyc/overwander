@@ -37,7 +37,7 @@ const enum Landmark {
   Nest = 5,
   /**
    * A spot people pass through: which of them is standing there
-   * changes every six hours, and each has their own business with a
+   * changes every 3 hours, and each has their own business with a
    * player who stops — including the Team Rocket grunt, who bars the
    * cell and fights whoever accepts
    */
@@ -62,6 +62,22 @@ const enum Landmark {
    * shadowed. The challenge is the player's to accept
    */
   Trainer = 9,
+  /**
+   * A gym: one of the region's 8 leaders, fixed to the spot, with a
+   * full 6 of their own type at level 50. Beating them earns their
+   * signature badge, once, on top of the purse
+   */
+  GymLeader = 10,
+  /**
+   * One of the region's Elite Four, 6 of their type at level 75. They
+   * take a challenger who holds all 8 of the region's badges
+   */
+  EliteFour = 11,
+  /**
+   * The region's Champion, 6 at level 100. They take a challenger who
+   * has beaten all 4 of the Elite Four, and a win takes the title
+   */
+  Champion = 12,
 }
 
 export default Landmark;
@@ -80,6 +96,9 @@ export const LANDMARKS: Landmark[] = [
   Landmark.Portal,
   Landmark.TeamRocket,
   Landmark.Trainer,
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
 ];
 
 /**
@@ -96,4 +115,7 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Portal]: 'Portal',
   [Landmark.TeamRocket]: 'Team Rocket',
   [Landmark.Trainer]: 'Trainer',
+  [Landmark.GymLeader]: 'Gym Leader',
+  [Landmark.EliteFour]: 'Elite Four',
+  [Landmark.Champion]: 'Champion',
 };

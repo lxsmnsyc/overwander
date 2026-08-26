@@ -96,7 +96,7 @@ to obtain, the sooner it returns.
 | Item caches and berry patches                   | 15 minutes |
 | What is happening at a phenomenon cell          | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |
-| Who is at a wandering-NPC cell, grunts included | 6 hours    |
+| Who is at a wandering-NPC cell, grunts included | 3 hours    |
 | The egg lying in a nest                         | 12 hours   |
 
 Every one of these is a whole number of five-minute windows and all of them are

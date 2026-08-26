@@ -31,7 +31,7 @@ import { writeCaughtRecord } from './caught';
 import { grantBredEgg } from './eggs';
 import { consumeItem, grantItem } from './inventory';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { getSql, jsonOf, tx } from './db';
+import { getSql, tx } from './db';
 import { learnMove } from './moves';
 import { readStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
@@ -41,7 +41,7 @@ import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
 import { Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
-import { asNumber, asRecord, asStringArray } from './read';
+import { asNumber } from './read';
 
 /**
  * Count a served visit for the quests, passing the answer through:
@@ -113,81 +113,6 @@ async function takeVisit(
   const id = snapshot.visitMarker(tag, cell);
 
   return (await claim('npc_claims', id, { player: uid, ...record })) ? `${id}:${uid}` : null;
-}
-
-/**
- * Take room in Nurse Joy's window for the pokemon she is about to see
- * to.
- *
- * Hers counts rather than merely existing, because she is pressed one
- * pokemon at a time: her window is still one visit, and one visit is
- * still `NURSE_CARE_LIMIT` pokemon, so the marker holds which ones she
- * has already had and refuses once the room is used up. Handing the same
- * one over twice takes no room — the first press left it whole.
- *
- * Resolves the ids she has room for, which is empty when she has none
- * left
- */
-async function takeCare(
-  snapshot: ChunkSnapshot,
-  cell: number,
-  uid: string,
-  catches: string[],
-): Promise<string[]> {
-  const marker = snapshot.visitMarker('nurse', cell);
-
-  return tx(async (transaction) => {
-    const rows = await transaction`
-      select payload from npc_claims
-      where marker = ${marker} and player = ${uid}
-      for update
-    `;
-    const seen = asStringArray(asRecord(rows.at(0)?.payload).catches);
-    const already = new Set(seen);
-    const room = catches
-      .filter((one) => !already.has(one))
-      .slice(0, NURSE_CARE_LIMIT - seen.length);
-
-    if (room.length === 0) {
-      return [];
-    }
-    await transaction`
-      insert into npc_claims (marker, player, payload)
-      values (${marker}, ${uid}, ${jsonOf(transaction, { catches: [...seen, ...room] })})
-      on conflict (marker, player) do update set payload = excluded.payload
-    `;
-    return room;
-  });
-}
-
-/**
- * Give room in her window back, for pokemon she turned out not to tend
- */
-async function dropCare(
-  snapshot: ChunkSnapshot,
-  cell: number,
-  uid: string,
-  catches: string[],
-): Promise<void> {
-  const marker = snapshot.visitMarker('nurse', cell);
-  const given = new Set(catches);
-
-  await tx(async (transaction) => {
-    const rows = await transaction`
-      select payload from npc_claims
-      where marker = ${marker} and player = ${uid}
-      for update
-    `;
-    const seen = asStringArray(asRecord(rows.at(0)?.payload).catches).filter(
-      (one) => !given.has(one),
-    );
-
-    await transaction`
-      insert into npc_claims (marker, player, payload)
-      values (${marker}, ${uid}, ${jsonOf(transaction, { catches: seen })})
-      on conflict (marker, player) do update set payload = excluded.payload
-    `;
-  });
 }
 
 /**
@@ -356,18 +281,15 @@ function tended(caught: Record<string, unknown>, uid: string): Record<string, un
 }
 
 /**
- * Walk a party up to Nurse Joy. She takes up to `NURSE_CARE_LIMIT` of
- * them, hands every one back at full health with nothing left on it,
- * and purifies any shadow among them — all of it for nothing.
- *
- * What she charges instead is the window: the claim marker at
- * npcClaims/{cell key}:{uid} is taken once she has actually done
- * something, so a player gets one visit per NPC window and an empty
- * ask — a party already whole — costs them nothing.
+ * Walk a party up to Nurse Joy. She takes up to `NURSE_CARE_LIMIT` in
+ * one handover, hands every one back at full health with nothing left
+ * on it, and purifies any shadow among them — all of it for nothing,
+ * as often as she is asked. The cap is the handover's, not hers: she
+ * turns nobody away while she is standing there.
  *
  * Resolves the ids she tended, or null when she is not standing there,
- * none of them are the player's to hand over, there was nothing to do,
- * or this window's visit has already been made
+ * none of them are the player's to hand over, or there was nothing to
+ * do
  */
 export async function visitNurse(
   uid: string,
@@ -405,40 +327,19 @@ export async function visitNurse(
     }
   });
 
-  // Nothing of hers to do, so the visit is not spent on it
+  // Nothing of hers to do: a party already whole is handed straight
+  // back
   if (care.length === 0) {
     return null;
   }
 
-  const room = new Set(
-    await takeCare(
-      snapshot,
-      cell,
-      uid,
-      care.map(([id]) => id),
-    ),
-  );
+  await tx(async (transaction) => {
+    for (const [id, fields] of care) {
+      await updateCaughtIn(transaction, id, fields);
+    }
+  });
 
-  if (room.size === 0) {
-    return null;
-  }
-
-  const tending = care.filter(([id]) => room.has(id));
-
-  try {
-    await tx(async (transaction) => {
-      for (const [id, fields] of tending) {
-        await updateCaughtIn(transaction, id, fields);
-      }
-    });
-  } catch (error) {
-    // She was asked and did nothing; the room is given back rather than
-    // spent on a write that never landed
-    await dropCare(snapshot, cell, uid, [...room]);
-    throw error;
-  }
-
-  return tending.map(([id]) => id);
+  return care.map(([id]) => id);
 }
 
 /**

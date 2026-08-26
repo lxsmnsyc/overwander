@@ -12,6 +12,18 @@ import NpcSprite from './NpcSprite';
 import { Button, Dialog, DialogActions, Meta, Status } from '../styled';
 import { useGame } from '../app/game-context';
 
+/**
+ * A named challenger above the rank and file: a gym leader, one of
+ * the Elite Four, or the Champion. The name titles the dialog, the
+ * level prices the lineup, and the stake line says what a win earns
+ */
+export interface ExpertChallenge {
+  name: string;
+  level: number;
+  greeting: string;
+  stakes: string;
+}
+
 export interface RocketStopDialogProps {
   user: PlayerIdentity;
   /**
@@ -23,6 +35,8 @@ export interface RocketStopDialogProps {
   npc: Npc;
   /** The style they were wandering in, so the portrait matches */
   sheet?: string;
+  /** Set when the challenger is an expert rather than a role */
+  expert?: ExpertChallenge | null;
   onClose: () => void;
 }
 
@@ -43,6 +57,11 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
    * records: what a square needs of one is its species and a name to
    * be read out by, and a stop's party is neither hurt nor hatching
    */
+  /** The level the fielded party stands at: the expert's own, or
+      what the party's size says */
+  const level = (record: RocketRecord): number =>
+    props.expert?.level ?? rocketPartyLevel(record.party.length);
+
   const lineup = (record: RocketRecord): BoxEntry[] =>
     record.party.map((entry, at) => ({
       id: `${at}`,
@@ -51,7 +70,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       egg: false,
       progress: 0,
       fainted: false,
-      label: `${getSpeciesData(entry.species).name}, Lv. ${rocketPartyLevel(record.party.length)}`,
+      label: `${getSpeciesData(entry.species).name}, Lv. ${level(record)}`,
     }));
 
   /** The boss fields six; everybody else makes do with three. */
@@ -60,6 +79,11 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   const duel = (): boolean => props.npc === Npc.Trainer;
 
   const greeting = (): string => {
+    const expert = props.expert;
+
+    if (expert != null) {
+      return expert.greeting;
+    }
     if (duel()) {
       return `A trainer squares up. “${NPC_QUOTES[Npc.Trainer]}”`;
     }
@@ -70,6 +94,11 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   };
 
   const stakes = (): string => {
+    const expert = props.expert;
+
+    if (expert != null) {
+      return expert.stakes;
+    }
     if (duel()) {
       return `Three of theirs against as many as you bring. Win and the purse is yours; the
         trainer keeps their pokemon. Lose and you lose nothing but the fight. They will be
@@ -83,6 +112,17 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     return `Three of theirs against as many as you bring. Win and the grunt drops a purse and
       whatever they were carrying. Lose and you lose nothing but the fight. They will be
       here all window.`;
+  };
+
+  /** What a challenge that can no longer be taken says */
+  const refusal = (): string => {
+    if (props.expert != null) {
+      return `${props.expert.name} waves you off. Nothing more today.`;
+    }
+    if (duel()) {
+      return 'The trainer waves you off. Nothing more today.';
+    }
+    return 'The grunt wants nothing more to do with you.';
   };
 
   // A refusal belongs to the grunt that refused: reopened on another
@@ -104,11 +144,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     startRocketBattle(id, catches)
       .then((battle) => {
         if (battle == null) {
-          setStatus(
-            duel()
-              ? 'The trainer waves you off. Nothing more today.'
-              : 'The grunt wants nothing more to do with you.',
-          );
+          setStatus(refusal());
           return;
         }
         props.onClose();
@@ -124,7 +160,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       <Dialog
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
-        title={duel() ? 'Trainer' : 'Team Rocket'}
+        title={props.expert?.name ?? (duel() ? 'Trainer' : 'Team Rocket')}
         terse
         description={greeting()}
       >
@@ -147,8 +183,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                 cardOnly
               />
               <Meta>
-                All {record().party.length === 6 ? 'six' : 'three'} at level{' '}
-                {rocketPartyLevel(record().party.length)}.
+                All {record().party.length === 6 ? 6 : 3} at level {level(record())}.
               </Meta>
 
               {/* And what the fight is worth, which is the decision the

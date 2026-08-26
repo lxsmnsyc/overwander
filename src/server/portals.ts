@@ -4,8 +4,10 @@ import { Items } from '../data/ids/items';
 import Landmark from '../data/overworld/landmark';
 import getWorld from '../overworld/current';
 import { type PortalDestination, findPortal } from '../overworld/portal';
+import { Landmark as QuestLandmark, Metric } from '../auth/quest-record';
 import { consumeItem } from './inventory';
 import { resolveSnapshot } from './overworld';
+import { bumpProgress } from './quest-progress';
 
 /**
  * Crossing the world by portal, written with admin credentials.
@@ -58,5 +60,9 @@ export default async function usePortal(
   if (!(await consumeItem(uid, Items.PortalKey))) {
     return null;
   }
+
+  // A crossing made is a crossing counted, on the same ledger the
+  // ground landmarks use
+  await bumpProgress(uid, [[Metric.Landmarks, QuestLandmark.Portal, 1]]);
   return destination;
 }

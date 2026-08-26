@@ -29,6 +29,7 @@ import {
   makeGiftOffer,
   offer,
 } from './gifts';
+import { readCaughtDexCount } from './pokedex';
 import { readProgress } from './quest-progress';
 import { getSql, tx } from './db';
 import { readStack, readStackIn, spendStackIn } from './stacks';
@@ -44,8 +45,8 @@ import { asNumber, asRecord } from './read';
 type Counters = Map<Metric, Map<number, number>>;
 
 function countOf(counters: Counters, requirement: QuestRequirement): number {
-  if (requirement.kind === RequirementKind.TurnIn) {
-    // Filled in from the bag by the caller; this path never runs
+  if (requirement.kind !== RequirementKind.Counter) {
+    // The bag and the dex are read by the caller; this path never runs
     return 0;
   }
 
@@ -62,6 +63,12 @@ function countOf(counters: Counters, requirement: QuestRequirement): number {
   }
   if (requirement.landmark != null) {
     return held.get(requirement.landmark) ?? 0;
+  }
+  if (requirement.move != null) {
+    return held.get(requirement.move) ?? 0;
+  }
+  if (requirement.foe != null) {
+    return held.get(requirement.foe) ?? 0;
   }
 
   let total = 0;
@@ -144,7 +151,11 @@ async function readClaims(uid: string): Promise<Set<Quests>> {
  * player stands on each
  */
 export async function listQuests(uid: string): Promise<QuestStanding[]> {
-  const [counters, claims] = await Promise.all([readProgress(uid), readClaims(uid)]);
+  const [counters, claims, dex] = await Promise.all([
+    readProgress(uid),
+    readClaims(uid),
+    readCaughtDexCount(uid),
+  ]);
   const standings: QuestStanding[] = [];
 
   for (const quest of QUEST_ORDER) {
@@ -158,10 +169,15 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
     const requirements: RequirementStanding[] = [];
 
     for (const requirement of data.requirements) {
-      const have =
-        requirement.kind === RequirementKind.TurnIn
-          ? await readStack(ITEM_STACKS, uid, requirement.item)
-          : countOf(counters, requirement);
+      let have: number;
+
+      if (requirement.kind === RequirementKind.TurnIn) {
+        have = await readStack(ITEM_STACKS, uid, requirement.item);
+      } else if (requirement.kind === RequirementKind.Dex) {
+        have = dex;
+      } else {
+        have = countOf(counters, requirement);
+      }
 
       requirements.push({ requirement, have, met: have >= requirement.count });
     }
@@ -224,6 +240,16 @@ export async function claimQuest(
 
   if (!metricsMet) {
     return null;
+  }
+
+  const dexAsks = data.requirements.filter((one) => one.kind === RequirementKind.Dex);
+
+  if (dexAsks.length > 0) {
+    const dex = await readCaughtDexCount(uid);
+
+    if (dexAsks.some((one) => dex < one.count)) {
+      return null;
+    }
   }
 
   // The claim row and the turn-ins land together: a bag short of one

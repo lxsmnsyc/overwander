@@ -30,7 +30,7 @@ import Npc from '../data/overworld/npc';
 import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
 import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES } from '../data/overworld/experts';
 import { hasAwards, recordAwardWin } from './awards';
-import { Metric } from '../auth/quest-record';
+import { Foe, Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
 import { getSql, jsonOf, newDocId, tx } from './db';
@@ -40,6 +40,14 @@ import { grantGold } from './profile';
 import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { asNumber, asString } from './read';
+
+/** Which BattleWins foe a fighting landmark's resident counts as */
+const FOE_OF: Partial<Record<Landmark, Foe>> = {
+  [Landmark.TeamRocket]: Foe.Rocket,
+  [Landmark.GymLeader]: Foe.GymLeader,
+  [Landmark.EliteFour]: Foe.EliteFour,
+  [Landmark.Champion]: Foe.Champion,
+};
 
 /**
  * Team Rocket stops, written with admin credentials. A grunt hands
@@ -410,9 +418,6 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     return gone.length > 0 ? null : { encounter, gold: 0, award: null };
   }
 
-  // A first claim is the one moment a beaten stop counts once
-  await bumpProgress(uid, [[Metric.NpcVisits, kind, 1]]);
-
   // What the stop is worth — a purse rolled per winner, the top range
   // for Giovanni and the Champion — and then what the winner brought
   // along: a buddy burning a Luck Incense doubles it
@@ -426,6 +431,15 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   );
 
   await grantGold(uid, gold);
+
+  // A first claim is the one moment a beaten stop counts once
+  const foe = FOE_OF[landmark ?? Landmark.TeamRocket] ?? Foe.Rocket;
+
+  await bumpProgress(uid, [
+    [Metric.NpcVisits, kind, 1],
+    [Metric.BattleWins, foe, 1],
+    [Metric.GoldEarned, 0, gold],
+  ]);
 
   // An expert's win carries their award as well: the resident gym
   // leader's badge, the elite's mark, or the region's title. Each is

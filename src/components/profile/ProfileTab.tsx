@@ -19,10 +19,12 @@ import EditProfileDialog from './EditProfileDialog';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
 import TradesTab from '../trades/TradesTab';
+import { getTitleName } from '../../data/ids/titles';
 import {
   Badge,
   Card,
   Menu,
+  Meta,
   Note,
   Panel,
   Row,
@@ -158,6 +160,10 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 <span class="text-lg font-semibold">{loaded().nickname}</span>
                 <Badge tone="gold">{loaded().gold} gold</Badge>
               </Row>
+              {/* The worn title, under the name it decorates */}
+              <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
+                {(worn) => <Meta class="-mt-1">{worn}</Meta>}
+              </Show>
               {/* Where in the world they are, under the name: it is
                   the one fact about a trainer that changes while
                   somebody is reading it, and it belongs to who they

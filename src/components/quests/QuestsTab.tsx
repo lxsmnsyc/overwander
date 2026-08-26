@@ -11,6 +11,7 @@ import {
 import { Dynamic } from 'solid-js/web';
 import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
 import {
+  Foe,
   Landmark,
   Metric,
   type QuestStanding,
@@ -32,17 +33,22 @@ import {
 } from '../../data/quests';
 import { TYPE_NAMES } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
+import { getMoveData } from '../../data/moves';
 import { NPC_NAMES } from '../../data/overworld/npc';
 import { getFamilyName, getSpeciesData } from '../../data/species';
 import { describeItem } from '../details';
 import {
+  ActionsIcon,
+  ArrowRightIcon,
   AtIcon,
   AuctionIcon,
   BagIcon,
   ChevronRightIcon,
   FireIcon,
+  GiftIcon,
   GlobeIcon,
   MapIcon,
+  SearchIcon,
   SparklesIcon,
   StarIcon,
   SunIcon,
@@ -66,12 +72,24 @@ const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Berry]: 'berry patches',
   [Landmark.Nest]: 'nests',
   [Landmark.Phenomenon]: 'phenomena',
+  [Landmark.Portal]: 'portal crossings',
+};
+
+/** What a battle foe is called on a requirement line */
+const FOE_NAMES: Record<Foe, string> = {
+  [Foe.Rocket]: 'Team Rocket stops',
+  [Foe.GymLeader]: 'gym leaders',
+  [Foe.EliteFour]: 'Elite Four members',
+  [Foe.Champion]: 'Champions',
 };
 
 /** One requirement, as a line of words */
 function describeRequirement(requirement: QuestRequirement): string {
   if (requirement.kind === RequirementKind.TurnIn) {
     return `Hand over ${requirement.count} × ${describeItem(requirement.item)}`;
+  }
+  if (requirement.kind === RequirementKind.Dex) {
+    return `Catch ${requirement.count} different species`;
   }
 
   const count = requirement.count;
@@ -119,6 +137,44 @@ function describeRequirement(requirement: QuestRequirement): string {
       return `Make ${count} friend${count === 1 ? '' : 's'}`;
     case Metric.Auctions:
       return `Settle ${count} auction${count === 1 ? '' : 's'}`;
+    case Metric.Purifies:
+      return `Purify ${count} shadow${count === 1 ? '' : 's'}`;
+    case Metric.Evolutions: {
+      if (requirement.species != null) {
+        return `Evolve ${count} × ${getSpeciesData(requirement.species).name}`;
+      }
+      if (requirement.family != null) {
+        return `Evolve ${count} from the ${getFamilyName(requirement.family)} line`;
+      }
+      if (requirement.type != null) {
+        return `Evolve ${count} ${TYPE_NAMES[requirement.type]} type${count === 1 ? '' : 's'}`;
+      }
+      return `Evolve ${count} pokemon`;
+    }
+    case Metric.Releases:
+      return requirement.species == null
+        ? `Release ${count} pokemon`
+        : `Release ${count} × ${getSpeciesData(requirement.species).name}`;
+    case Metric.MovesLearned:
+      return requirement.move == null
+        ? `Teach ${count} move${count === 1 ? '' : 's'}`
+        : `Teach ${getMoveData(requirement.move).name} ${count} time${count === 1 ? '' : 's'}`;
+    case Metric.BattleWins:
+      return requirement.foe == null
+        ? `Beat ${count} trainer${count === 1 ? '' : 's'}`
+        : `Beat ${count} ${FOE_NAMES[requirement.foe]}`;
+    case Metric.GoldEarned:
+      return `Earn ${count.toLocaleString()} gold`;
+    case Metric.GoldSpent:
+      return `Spend ${count.toLocaleString()} gold`;
+    case Metric.Gifts:
+      return `Claim ${count} mystery gift${count === 1 ? '' : 's'}`;
+    case Metric.Bids:
+      return `Bid in ${count} auction${count === 1 ? '' : 's'}`;
+    case Metric.ShinyCatches:
+      return requirement.species == null
+        ? `Catch ${count} shiny pokemon`
+        : `Catch ${count} shiny ${getSpeciesData(requirement.species).name}`;
   }
   // Every metric returns above; this only settles the return rule
   return '';
@@ -163,6 +219,16 @@ const METRIC_ICONS: Record<Metric, (props: ComponentProps<'svg'>) => JSX.Element
   [Metric.Trades]: TagIcon,
   [Metric.Friends]: AtIcon,
   [Metric.Auctions]: AuctionIcon,
+  [Metric.Purifies]: SparklesIcon,
+  [Metric.Evolutions]: SparklesIcon,
+  [Metric.Releases]: ArrowRightIcon,
+  [Metric.MovesLearned]: ActionsIcon,
+  [Metric.BattleWins]: TrophyIcon,
+  [Metric.GoldEarned]: TagIcon,
+  [Metric.GoldSpent]: BagIcon,
+  [Metric.Gifts]: GiftIcon,
+  [Metric.Bids]: AuctionIcon,
+  [Metric.ShinyCatches]: SparklesIcon,
 };
 
 /**
@@ -170,6 +236,16 @@ const METRIC_ICONS: Record<Metric, (props: ComponentProps<'svg'>) => JSX.Element
  * grey square; a type is already a pill of its own colour and stands
  * bare, since a pill on a square reads as two badges fighting
  */
+function requirementGlyph(requirement: QuestRequirement): JSX.Element {
+  if (requirement.kind === RequirementKind.Dex) {
+    return <SearchIcon class="size-5 text-muted" />;
+  }
+  if (requirement.kind === RequirementKind.TurnIn || requirement.item != null) {
+    return <ItemSprite item={requirement.item ?? Items.PokeBall} size={24} label="" />;
+  }
+  return <Dynamic component={METRIC_ICONS[requirement.metric]} class="size-5 text-muted" />;
+}
+
 function requirementIcon(requirement: QuestRequirement): JSX.Element {
   if (requirement.kind === RequirementKind.Counter && requirement.type != null) {
     return <TypeBadge type={requirement.type} class="shrink-0" />;
@@ -177,11 +253,7 @@ function requirementIcon(requirement: QuestRequirement): JSX.Element {
 
   return (
     <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-line-soft/60">
-      {requirement.kind === RequirementKind.TurnIn || requirement.item != null ? (
-        <ItemSprite item={requirement.item ?? Items.PokeBall} size={24} label="" />
-      ) : (
-        <Dynamic component={METRIC_ICONS[requirement.metric]} class="size-5 text-muted" />
-      )}
+      {requirementGlyph(requirement)}
     </span>
   );
 }

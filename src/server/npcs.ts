@@ -233,8 +233,10 @@ export async function breedCatches(
   // a different one
   const seed = `${snapshot.key}${snapshot.npcTimestamp}breed${cell}:${uid}:${left}:${right}:${now}`;
 
+  let egg: string;
+
   try {
-    return await grantBredEgg(uid, snapshot, seed, species, [first, second], now, offset, locale);
+    egg = await grantBredEgg(uid, snapshot, seed, species, [first, second], now, offset, locale);
   } catch (error) {
     // The fee bought an egg that was never written; the player keeps
     // their gold and their visit rather than the breeder keeping both
@@ -242,13 +244,19 @@ export async function breedCatches(
     await releaseVisit(visit);
     throw error;
   }
+  await bumpProgress(uid, [[Metric.GoldSpent, 0, BREEDING_FEE]]);
+  return egg;
 }
 
 /**
- * What Nurse Joy did to one pokemon, or null when there was nothing
- * of hers to do for it
+ * What Nurse Joy did to one pokemon — and whether the doing included
+ * a purification, which is counted apart — or null when there was
+ * nothing of hers to do for it
  */
-function tended(caught: Record<string, unknown>, uid: string): Record<string, unknown> | null {
+function tended(
+  caught: Record<string, unknown>,
+  uid: string,
+): { fields: Record<string, unknown>; purifies: boolean } | null {
   // She heals and purifies, and a guarded pokemon is to be left alone
   // on both counts; it is simply not one of the ones she takes
   if (
@@ -274,9 +282,12 @@ function tended(caught: Record<string, unknown>, uid: string): Record<string, un
   // being: the two are one visit, so the order they are written in
   // must not leave the pokemon short
   return {
-    ...purified,
-    health: getMaxHealth({ ...record, ivs: purifyIVs(record.ivs) }),
-    statuses: 0,
+    fields: {
+      ...purified,
+      health: getMaxHealth({ ...record, ivs: purifyIVs(record.ivs) }),
+      statuses: 0,
+    },
+    purifies: purified != null,
   };
 }
 
@@ -314,15 +325,15 @@ export async function visitNurse(
     return null;
   }
 
-  const care: [string, Record<string, unknown>][] = [];
+  const care: [string, Record<string, unknown>, boolean][] = [];
 
   await tx(async (transaction) => {
     for (const id of catches) {
       const caught = await readCaughtIn(transaction, id, false);
-      const fields = caught == null ? null : tended(caught, uid);
+      const done = caught == null ? null : tended(caught, uid);
 
-      if (fields != null) {
-        care.push([id, fields]);
+      if (done != null) {
+        care.push([id, done.fields, done.purifies]);
       }
     }
   });
@@ -338,6 +349,10 @@ export async function visitNurse(
       await updateCaughtIn(transaction, id, fields);
     }
   });
+
+  const purified = care.filter(([, , purifies]) => purifies).length;
+
+  await bumpProgress(uid, [[Metric.Purifies, 0, purified]]);
 
   return care.map(([id]) => id);
 }
@@ -405,6 +420,7 @@ export async function boostEgg(
     await releaseVisit(visit);
     throw error;
   }
+  await bumpProgress(uid, [[Metric.GoldSpent, 0, DAYCARE_FEE]]);
   return warmed;
 }
 
@@ -475,6 +491,7 @@ export async function groomCatch(
     await releaseVisit(visit);
     throw error;
   }
+  await bumpProgress(uid, [[Metric.GoldSpent, 0, GROOMING_FEE]]);
   return groomed;
 }
 
@@ -616,7 +633,7 @@ async function trade(
   basket: [item: Items, amount: number][],
   gold: number,
 ): Promise<TradeResult | null> {
-  return tx(async (transaction) => {
+  const traded = await tx(async (transaction) => {
     const profiles = await transaction`
       select gold from profiles where id = ${uid} for update
     `;
@@ -642,6 +659,14 @@ async function trade(
     }
     return { gold: balance, carried: held.reduce((total, count) => total + count, 0) };
   });
+
+  // Signed the way the balance moved: buying spends, selling earns
+  if (traded != null && gold !== 0) {
+    await bumpProgress(uid, [
+      gold > 0 ? [Metric.GoldEarned, 0, gold] : [Metric.GoldSpent, 0, -gold],
+    ]);
+  }
+  return traded;
 }
 
 /**

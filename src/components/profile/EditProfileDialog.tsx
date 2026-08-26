@@ -1,15 +1,21 @@
-import { type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
+import { listMyTitles, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
-import { Button, Dialog, DialogActions, Status, TextField } from '../styled';
+import { type Title, getTitleName } from '../../data/ids/titles';
+import { Button, Dialog, DialogActions, Select, Status, TextField } from '../styled';
 
 /**
- * The two things about a trainer that are theirs to set: what they are
- * called, and the picture beside the name.
+ * The things about a trainer that are theirs to set: what they are
+ * called, the picture beside the name, and which earned title hangs
+ * under it.
  *
- * Both live behind a dialog rather than in the card. A name that can be
+ * All live behind a dialog rather than in the card. A name that can be
  * typed over wherever it is shown is a name a player edits by accident,
  * and the card is read far more often than it is changed
  */
+
+/** The picker's stand-in for wearing no title */
+const NO_TITLE = -1;
 export interface EditProfileDialogProps {
   player: string;
   /** What is stored now, which is what the boxes open on */
@@ -22,8 +28,26 @@ export interface EditProfileDialogProps {
 export default function EditProfileDialog(props: EditProfileDialogProps): JSX.Element {
   const [name, setName] = createSignal('');
   const [avatar, setAvatar] = createSignal('');
+  const [title, setTitle] = createSignal<Title>(NO_TITLE);
   const [saving, setSaving] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
+
+  // What may be worn, read when the dialog opens: the earned list is
+  // the server's answer, so the picker never offers a title the save
+  // would refuse
+  const [earned] = createResource(
+    () => (props.isOpen ? props.player : null),
+    async () => listMyTitles(),
+  );
+
+  const choices = (): { value: Title; label: string }[] => [
+    { value: NO_TITLE, label: 'No title' },
+    ...(earned.latest ?? []).flatMap((option) => {
+      const label = getTitleName(option);
+
+      return label == null ? [] : [{ value: option, label }];
+    }),
+  ];
 
   // Opened on what is stored rather than on what was last typed: a
   // dialog closed without saving should not remember the refusal
@@ -36,6 +60,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
         }
         setName(props.profile.nickname);
         setAvatar(props.profile.avatar ?? '');
+        setTitle(props.profile.title ?? NO_TITLE);
         setError(null);
       },
     ),
@@ -51,8 +76,13 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     setError(null);
     setSaving(true);
     // Empty is stored as nothing rather than as an empty string: the
-    // record says a trainer with no picture has `null`
-    saveProfile(props.player, { nickname: wanted, avatar: picture === '' ? null : picture })
+    // record says a trainer with no picture has `null` — and the
+    // title rides its own server call, since wearing one is checked
+    // against what was earned
+    Promise.all([
+      saveProfile(props.player, { nickname: wanted, avatar: picture === '' ? null : picture }),
+      saveTitle(title() === NO_TITLE ? null : title()),
+    ])
       .then(() => {
         props.onSaved?.();
         props.onClose();
@@ -89,6 +119,19 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
         disabled={saving()}
         onChange={(value) => {
           setAvatar(value);
+        }}
+      />
+
+      {/* Only what has been earned is offered: the list is the
+          server's, and the save is checked against it again */}
+      <Select
+        label="Title"
+        value={title()}
+        options={choices()}
+        disabled={saving()}
+        hint="Earned from achievements and the badge ladder; worn under your name."
+        onChange={(value) => {
+          setTitle(value);
         }}
       />
 

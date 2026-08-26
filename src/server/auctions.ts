@@ -237,7 +237,7 @@ export async function placeBid(
 ): Promise<number | null> {
   const bid = asGold(amount);
 
-  return tx(async (transaction) => {
+  const placed = await tx(async (transaction) => {
     const stored = await readAuctionIn(transaction, auctionId);
 
     if (stored == null) {
@@ -284,6 +284,13 @@ export async function placeBid(
     `;
     return bid;
   });
+
+  // The gold is not counted as spent here: a standing bid comes back
+  // if it is outbid, and only settling makes it money that left
+  if (placed != null) {
+    await bumpProgress(uid, [[Metric.Bids, 0, 1]]);
+  }
+  return placed;
 }
 
 /**
@@ -306,6 +313,7 @@ export async function claimAuction(
   offset: number,
 ): Promise<boolean> {
   let seller = '';
+  let price = 0;
   const claimed = await tx(async (transaction) => {
     const stored = await readAuctionIn(transaction, auctionId);
 
@@ -319,6 +327,7 @@ export async function claimAuction(
       return false;
     }
     seller = auction.seller;
+    price = auction.bid;
 
     if (auction.lot === AuctionLot.Item && auction.item != null) {
       const stock = await readStackIn(transaction, ITEM_STACKS, uid, auction.item);
@@ -381,10 +390,19 @@ export async function claimAuction(
     return true;
   });
 
-  // A settled sale counts once for the winner and once for the seller
+  // A settled sale counts once for the winner and once for the
+  // seller. The winning bid left the winner's purse when it was
+  // placed, but it only stops being theirs here, so this is where it
+  // counts as spent and as the seller's earnings
   if (claimed && seller !== '') {
-    await bumpProgress(uid, [[Metric.Auctions, 0, 1]]);
-    await bumpProgress(seller, [[Metric.Auctions, 0, 1]]);
+    await bumpProgress(uid, [
+      [Metric.Auctions, 0, 1],
+      [Metric.GoldSpent, 0, price],
+    ]);
+    await bumpProgress(seller, [
+      [Metric.Auctions, 0, 1],
+      [Metric.GoldEarned, 0, price],
+    ]);
   }
   return claimed;
 }

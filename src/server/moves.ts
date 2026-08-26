@@ -10,7 +10,7 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { Metric } from '../auth/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { bumpProgress } from './quest-progress';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asRecord } from './read';
@@ -134,8 +134,11 @@ export async function learnMove(
     return moves;
   });
 
-  if (learned != null && price != null) {
-    await bumpProgress(uid, [[Metric.ItemUses, price, 1]]);
+  if (learned != null) {
+    await bumpProgress(uid, [
+      [Metric.MovesLearned, move, 1],
+      ...(price == null ? [] : [[Metric.ItemUses, price, 1] satisfies ProgressBump]),
+    ]);
   }
   return learned;
 }

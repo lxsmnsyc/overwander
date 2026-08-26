@@ -1,6 +1,7 @@
-import { type Landmark, Metric } from '../../auth/quest-record';
+import { type Foe, type Landmark, Metric } from '../../auth/quest-record';
 import type Families from '../ids/families';
 import { Balls, Items } from '../ids/items';
+import type { Moves } from '../ids/moves';
 import Npc from '../overworld/npc';
 import { Species } from '../ids/species';
 import { Types } from '../constants/types';
@@ -31,6 +32,8 @@ export const enum RequirementKind {
   Counter = 0,
   /** Items standing in the bag, taken when the reward is */
   TurnIn = 1,
+  /** Distinct species the dex has as caught */
+  Dex = 2,
 }
 
 export interface MetricRequirement {
@@ -39,9 +42,9 @@ export interface MetricRequirement {
   count: number;
   /**
    * Narrowings, at most one, and only where the metric has the
-   * dimension: species/family/type for catches and hatches, item for
-   * uses, npc for visits, landmark for landmarks. None asks for the
-   * total
+   * dimension: species/family/type where the params are species, item
+   * for uses, npc for visits, landmark for landmarks, move for moves
+   * learned, foe for battle wins. None asks for the total
    */
   species?: Species;
   family?: Families;
@@ -49,6 +52,8 @@ export interface MetricRequirement {
   item?: Items;
   npc?: Npc;
   landmark?: Landmark;
+  move?: Moves;
+  foe?: Foe;
 }
 
 export interface TurnInRequirement {
@@ -57,7 +62,12 @@ export interface TurnInRequirement {
   count: number;
 }
 
-export type QuestRequirement = MetricRequirement | TurnInRequirement;
+export interface DexRequirement {
+  kind: RequirementKind.Dex;
+  count: number;
+}
+
+export type QuestRequirement = MetricRequirement | TurnInRequirement | DexRequirement;
 
 export const enum QuestRewardKind {
   Item = 0,

@@ -20,7 +20,7 @@ import { readFriendTie } from './friends';
 import { isCatchLocked } from './locks';
 import { isAnyCatchQueued } from './raids';
 import { Metric } from '../auth/quest-record';
-import { bumpProgress } from './quest-progress';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
 
 /**
@@ -219,6 +219,7 @@ export async function acceptTrade(
     return false;
   }
 
+  let goldMoved = 0;
   const accepted = await tx(async (transaction) => {
     const trade = await readTradeIn(transaction, tradeId);
 
@@ -272,6 +273,7 @@ export async function acceptTrade(
         update profiles set gold = gold + ${-trade.gold} where id = ${trade.proposer}
       `;
     }
+    goldMoved = trade.gold;
 
     // Each arrives thinking of its new owner what a fresh catch would:
     // the friendship it built belonged to the hands it left
@@ -320,10 +322,21 @@ export async function acceptTrade(
     return true;
   });
 
-  // A settled trade counts once for each side of it
+  // A settled trade counts once for each side of it, and the gold
+  // that rode with it counts for whoever paid and whoever was paid.
+  // Positive gold came from the proposer, negative was asked of the
+  // acceptor
   if (accepted && proposer !== '') {
-    await bumpProgress(uid, [[Metric.Trades, 0, 1]]);
-    await bumpProgress(proposer, [[Metric.Trades, 0, 1]]);
+    await bumpProgress(uid, [
+      [Metric.Trades, 0, 1],
+      ...(goldMoved > 0 ? [[Metric.GoldEarned, 0, goldMoved] satisfies ProgressBump] : []),
+      ...(goldMoved < 0 ? [[Metric.GoldSpent, 0, -goldMoved] satisfies ProgressBump] : []),
+    ]);
+    await bumpProgress(proposer, [
+      [Metric.Trades, 0, 1],
+      ...(goldMoved > 0 ? [[Metric.GoldSpent, 0, goldMoved] satisfies ProgressBump] : []),
+      ...(goldMoved < 0 ? [[Metric.GoldEarned, 0, -goldMoved] satisfies ProgressBump] : []),
+    ]);
   }
   return accepted;
 }

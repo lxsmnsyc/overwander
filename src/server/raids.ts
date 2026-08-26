@@ -39,6 +39,8 @@ import type { Items } from '../data/ids/items';
 import { getRaidSpecies } from '../data/items/raid-items';
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
+import { Metric } from '../auth/quest-record';
+import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import Biome from '../data/ids/biome';
 import { getSpeciesLair } from '../data/overworld/lair';
@@ -898,6 +900,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     return null;
   }
   await grantGold(uid, gold);
+  await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
 
   const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
   // The raid's own window and zone, not wherever the claimant is now

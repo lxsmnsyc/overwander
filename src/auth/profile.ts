@@ -53,11 +53,17 @@ export interface Profile {
    * nearly every overworld action
    */
   buddy: string;
+  /**
+   * The earned title worn under the nickname, or null for none. A
+   * Title id from `src/data/ids/titles.ts`; written by the server
+   * alone, since wearing one takes earning it
+   */
+  title: number | null;
 }
 
 const PROFILE_TABLE = 'profiles';
 
-const PROFILE_COLUMNS = 'nickname, avatar, gold, role, banned, ban_reason, buddy_id';
+const PROFILE_COLUMNS = 'nickname, avatar, gold, role, banned, ban_reason, buddy_id, title';
 
 /**
  * The store hands back untyped rows; normalize the fields instead of
@@ -75,6 +81,7 @@ function asProfile(data: Record<string, unknown>): Profile {
     // Everybody is welcome until somebody says otherwise
     banned: data.banned === true,
     banReason: typeof data.ban_reason === 'string' ? data.ban_reason : '',
+    title: typeof data.title === 'number' ? data.title : null,
   };
 }
 
@@ -169,6 +176,8 @@ export function deriveProfileDefaults(user: PlayerIdentity): Profile {
     role: '',
     banned: false,
     banReason: '',
+    // A title is earned before it is worn
+    title: null,
   };
 }
 

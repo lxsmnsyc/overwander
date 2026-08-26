@@ -37,6 +37,26 @@ export const enum Metric {
   Friends = 10,
   /** An auction settled, counted for seller and winner */
   Auctions = 11,
+  /** A shadow purified, by Nurse Joy or a Purifying Gem alike */
+  Purifies = 12,
+  /** A pokemon evolved, by the species it evolved from */
+  Evolutions = 13,
+  /** A pokemon let go, by species */
+  Releases = 14,
+  /** A move learned by any road, by move */
+  MovesLearned = 15,
+  /** A fighting landmark's resident beaten, by foe */
+  BattleWins = 16,
+  /** Gold taken in; param 0, the count is the amount */
+  GoldEarned = 17,
+  /** Gold paid out for good; param 0, the count is the amount */
+  GoldSpent = 18,
+  /** A mystery gift claimed off the shelf */
+  Gifts = 19,
+  /** An auction bid placed, outbid or not */
+  Bids = 20,
+  /** A shiny caught, by species; these count under Catches too */
+  ShinyCatches = 21,
 }
 
 /** The landmark kinds the Landmarks metric counts, as its params */
@@ -45,6 +65,16 @@ export const enum Landmark {
   Berry = 1,
   Nest = 2,
   Phenomenon = 3,
+  /** A portal crossed, key and all */
+  Portal = 4,
+}
+
+/** The foes the BattleWins metric counts, as its params */
+export const enum Foe {
+  Rocket = 0,
+  GymLeader = 1,
+  EliteFour = 2,
+  Champion = 3,
 }
 
 /**

@@ -19,6 +19,7 @@ import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
+import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
 import resolveBuddy, { resolveBuddyCatch } from './buddy';
@@ -37,7 +38,7 @@ import { getSql, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { recordCaughtSpecies } from './pokedex';
 import { Metric } from '../auth/quest-record';
-import { bumpProgress } from './quest-progress';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
@@ -182,7 +183,12 @@ export async function writeCaughtRecord(
   // and writes its own record; it is logged when it hatches, since
   // what is in the shell is not something the player has met yet
   await recordCaughtSpecies(uid, encounter.species, encounter.shiny);
-  await bumpProgress(uid, [[Metric.Catches, encounter.species, 1]]);
+  await bumpProgress(uid, [
+    [Metric.Catches, encounter.species, 1],
+    ...(encounter.shiny
+      ? [[Metric.ShinyCatches, encounter.species, 1] satisfies ProgressBump]
+      : []),
+  ]);
   return id;
 }
 
@@ -471,7 +477,8 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
     return false;
   }
 
-  return tx(async (transaction) => {
+  let gone: Species | null = null;
+  const released = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
     if (
@@ -511,6 +518,13 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
       candies + getCatchCandy(record.species),
     );
     await transaction`delete from caught where id = ${catchId}`;
+    gone = record.species;
     return true;
   });
+
+  // oxlint-disable-next-line typescript/no-unnecessary-condition
+  if (released && gone != null) {
+    await bumpProgress(uid, [[Metric.Releases, gone, 1]]);
+  }
+  return released;
 }

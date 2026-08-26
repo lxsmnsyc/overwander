@@ -1,5 +1,15 @@
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import listAwards, { type AwardRecord } from '../../auth/awards';
+import {
+  type AchievementStanding,
+  AchievementTier,
+  LINE_DEEDS,
+  LINE_NAMES,
+  TIER_NAMES,
+  tierName,
+} from '../../data/achievements';
+import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
 import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../../data/ids/awards';
 import Npc from '../../data/overworld/npc';
 import {
@@ -207,17 +217,147 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   );
 }
 
+/** The metals, as the ring around a slot */
+const TIER_COLORS: Record<AchievementTier, string> = {
+  [AchievementTier.None]: '',
+  [AchievementTier.Bronze]: '#b0793f',
+  [AchievementTier.Silver]: '#9aa4b0',
+  [AchievementTier.Gold]: '#e0b64f',
+  [AchievementTier.Platinum]: '#7bc8d2',
+};
+
+/**
+ * One achievement as a slot: the name in the square, the tier as the
+ * ring and the corner number, and the exact standing on the hover
+ */
+function LineSlot(props: {
+  name: string;
+  deed: string;
+  standing: AchievementStanding | null;
+  tint?: string;
+}): JSX.Element {
+  const tier = (): AchievementTier => props.standing?.tier ?? AchievementTier.None;
+  const count = (): number => props.standing?.count ?? 0;
+  const ranked = (): boolean => tier() !== AchievementTier.None;
+
+  const progress = (): string => {
+    const next = props.standing?.next;
+
+    return next == null
+      ? `${count().toLocaleString('en-US')} ${props.deed}. ${TIER_NAMES[tier()]}.`
+      : `${count().toLocaleString('en-US')} ${props.deed}. ${tierName(tier() + 1)} at ${next.toLocaleString('en-US')}.`;
+  };
+
+  return (
+    <HoverCard
+      class="block w-full"
+      title="Info"
+      trigger={
+        <button
+          type="button"
+          aria-label={`${props.name}, ${TIER_NAMES[tier()]}. ${progress()}`}
+          class={`relative flex aspect-square w-full cursor-default items-center justify-center
+            rounded-lg border-2 bg-paper p-1 ${ranked() ? '' : 'border-dashed border-line'}`}
+          style={ranked() ? { 'border-color': TIER_COLORS[tier()] } : undefined}
+        >
+          <span
+            class={`pointer-events-none text-center text-[9px] leading-tight font-bold break-words
+              ${ranked() ? '' : 'text-muted opacity-60'}`}
+            style={props.tint != null && ranked() ? { color: props.tint } : undefined}
+          >
+            {props.name}
+          </span>
+          <Show when={ranked()}>
+            <span
+              class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
+                border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+            >
+              {tier()}
+            </span>
+          </Show>
+        </button>
+      }
+    >
+      <div class="flex flex-col gap-1">
+        <span class="font-semibold">{props.name}</span>
+        <Detail label="Tier">{TIER_NAMES[tier()]}</Detail>
+        <Meta>{progress()}</Meta>
+      </div>
+    </HoverCard>
+  );
+}
+
+/**
+ * The achievement trays: the general lines, then the type lines, in
+ * the same tray dress the awards wear. Standings are the server's
+ * derivation from the lifetime counters
+ */
+function fillers(count: number): number[] {
+  const short = Math.ceil(count / GRID_COLUMNS) * GRID_COLUMNS - count;
+
+  return Array.from({ length: short }, (_, at) => at);
+}
+
+function Filler(): JSX.Element {
+  return (
+    <span
+      aria-hidden="true"
+      class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+    />
+  );
+}
+
+function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+  return (
+    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
+      <Meta>Achievements</Meta>
+      <div
+        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+          shadow-pop"
+      >
+        <For each={props.sheet()?.lines ?? []}>
+          {([line, standing]) => (
+            <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
+          )}
+        </For>
+        <For each={fillers((props.sheet()?.lines ?? []).length)}>{() => <Filler />}</For>
+      </div>
+      <Meta>Type specialists</Meta>
+      <div
+        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+          shadow-pop"
+      >
+        <For each={props.sheet()?.types ?? []}>
+          {([type, standing]) => (
+            <LineSlot
+              name={TYPE_NAMES[type]}
+              deed={`${TYPE_NAMES[type]} pokemon caught`}
+              standing={standing}
+              tint={TYPE_COLORS[type]}
+            />
+          )}
+        </For>
+        <For each={fillers((props.sheet()?.types ?? []).length)}>{() => <Filler />}</For>
+      </div>
+    </div>
+  );
+}
+
 export interface AwardsCardProps {
   player: string;
 }
 
 export default function AwardsCard(props: AwardsCardProps): JSX.Element {
   const [held] = createResource(() => props.player, listAwards);
+  const [sheet] = createResource(() => props.player, listAchievements);
 
   return (
     <Card title="Awards">
       <Suspense fallback={<Note>Reading the shelf…</Note>}>
         <Shelf held={held} />
+      </Suspense>
+      <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+        <AchievementShelves sheet={sheet} />
       </Suspense>
     </Card>
   );

@@ -236,6 +236,20 @@ import {
   getExpertPool,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
+import {
+  ACHIEVEMENT_LINES,
+  ACHIEVEMENT_TYPES,
+  AchievementLine,
+  AchievementTier,
+  LINE_DEEDS,
+  LINE_NAMES,
+  LINE_TIERS,
+  TYPE_TIERS,
+  deriveAchievements,
+  tierOf,
+} from '../src/data/achievements';
+import { LadderTitle, getTitleName, lineTitle, typeTitle } from '../src/data/ids/titles';
+import { Landmark as QuestLandmark, Metric } from '../src/auth/quest-record';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -3230,5 +3244,104 @@ describe('type experts', () => {
     // The open pool serves Blue and the Champion
     expect(getExpertPool(Regions.Kanto, null).length).toBeGreaterThan(100);
     expect(getExpertPool(Regions.Kanto, null)).not.toContain(Species.Egg);
+  });
+});
+
+describe('achievements', () => {
+  it('prices every line in 4 ascending tiers', () => {
+    for (const line of ACHIEVEMENT_LINES) {
+      expect(LINE_NAMES[line].length).toBeGreaterThan(0);
+      expect(LINE_DEEDS[line].length).toBeGreaterThan(0);
+
+      const tiers = LINE_TIERS[line];
+
+      expect(tiers).toHaveLength(4);
+      for (let at = 1; at < tiers.length; at++) {
+        expect(tiers[at]).toBeGreaterThan(tiers[at - 1]);
+      }
+    }
+    expect(new Set(ACHIEVEMENT_TYPES).size).toBe(15);
+    for (let at = 1; at < TYPE_TIERS.length; at++) {
+      expect(TYPE_TIERS[at]).toBeGreaterThan(TYPE_TIERS[at - 1]);
+    }
+  });
+
+  it('reads a tier off the thresholds, edges included', () => {
+    const tiers: [number, number, number, number] = [10, 50, 250, 1000];
+
+    expect(tierOf(0, tiers)).toBe(AchievementTier.None);
+    expect(tierOf(9, tiers)).toBe(AchievementTier.None);
+    expect(tierOf(10, tiers)).toBe(AchievementTier.Bronze);
+    expect(tierOf(249, tiers)).toBe(AchievementTier.Silver);
+    expect(tierOf(250, tiers)).toBe(AchievementTier.Gold);
+    expect(tierOf(999, tiers)).toBe(AchievementTier.Gold);
+    expect(tierOf(1000, tiers)).toBe(AchievementTier.Platinum);
+  });
+
+  it('derives standings from the counters, types through the registry', () => {
+    const counters: Map<Metric, Map<number, number>> = new Map([
+      [
+        Metric.Catches,
+        new Map<number, number>([
+          [Species.Magikarp, 12],
+          [Species.Gastly, 40],
+        ]),
+      ],
+      [
+        Metric.NpcVisits,
+        new Map<number, number>([
+          [Npc.Breeder, 3],
+          [Npc.Groomer, 4],
+        ]),
+      ],
+      [
+        Metric.Landmarks,
+        new Map<number, number>([
+          [QuestLandmark.Cache, 20],
+          [QuestLandmark.Portal, 10],
+        ]),
+      ],
+      [Metric.Purifies, new Map<number, number>([[0, 3]])],
+    ]);
+    const derived = deriveAchievements(counters);
+
+    // 52 catches in all; the types split them, dual-type Gastly
+    // counting for both of its
+    expect(derived.lines.get(AchievementLine.Collector)?.count).toBe(52);
+    expect(derived.lines.get(AchievementLine.Collector)?.tier).toBe(AchievementTier.Silver);
+    expect(derived.lines.get(AchievementLine.Collector)?.next).toBe(250);
+    expect(derived.types.get(Types.Water)?.count).toBe(12);
+    expect(derived.types.get(Types.Ghost)?.count).toBe(40);
+    expect(derived.types.get(Types.Ghost)?.tier).toBe(AchievementTier.Bronze);
+    expect(derived.types.get(Types.Poison)?.count).toBe(40);
+    expect(derived.types.get(Types.Fire)?.count).toBe(0);
+
+    // The narrowed lines read their own params, not the totals
+    expect(derived.lines.get(AchievementLine.Socialite)?.count).toBe(7);
+    expect(derived.lines.get(AchievementLine.Matchmaker)?.count).toBe(3);
+    expect(derived.lines.get(AchievementLine.Matchmaker)?.tier).toBe(AchievementTier.Bronze);
+    expect(derived.lines.get(AchievementLine.Forager)?.count).toBe(30);
+    expect(derived.lines.get(AchievementLine.Wayfinder)?.count).toBe(10);
+    expect(derived.lines.get(AchievementLine.Wayfinder)?.tier).toBe(AchievementTier.Silver);
+    expect(derived.lines.get(AchievementLine.Purifier)?.count).toBe(3);
+    // Platinum has nothing further to reach
+    expect(
+      deriveAchievements(new Map([[Metric.Friends, new Map<number, number>([[0, 50]])]])).lines.get(
+        AchievementLine.Confidant,
+      )?.next,
+    ).toBeNull();
+  });
+
+  it('names every title, and only the titles there are', () => {
+    expect(getTitleName(lineTitle(AchievementLine.Collector, false))).toBe('Collector');
+    expect(getTitleName(lineTitle(AchievementLine.Collector, true))).toBe('Master Collector');
+    expect(getTitleName(typeTitle(Types.Dragon, false))).toBe('Dragon Specialist');
+    expect(getTitleName(typeTitle(Types.Dragon, true))).toBe('Dragon Master');
+    expect(getTitleName(LadderTitle.LeagueChallenger)).toBe('League Challenger');
+    expect(getTitleName(LadderTitle.EliteConqueror)).toBe('Elite Conqueror');
+    expect(getTitleName(LadderTitle.KantoChampion)).toBe('Kanto Champion');
+    // A number that names nothing reads as no title
+    expect(getTitleName(99)).toBeNull();
+    expect(getTitleName(typeTitle(Types.Fairy, false))).toBeNull();
   });
 });

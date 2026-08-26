@@ -201,14 +201,17 @@ export default async function recordAftermath(
   });
 
   // Settling is the once-per-battle moment, so it is where a raid run
-  // counts; a win counts on top from the stamped outcome
-  if (settled && battles[0].raid_id != null) {
+  // counts; a win counts on top from the stamped outcome, and Pay Day
+  // gold counts as earned the moment it lands
+  if (settled) {
     // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
     const won = asNumber(battles[0].outcome) === BattleOutcome.Won;
+    const raid = battles[0].raid_id != null;
 
     await bumpProgress(uid, [
-      [Metric.RaidRuns, 0, 1],
-      ...(won ? [[Metric.RaidWins, 0, 1] satisfies ProgressBump] : []),
+      ...(coins > 0 ? [[Metric.GoldEarned, 0, coins] satisfies ProgressBump] : []),
+      ...(raid ? [[Metric.RaidRuns, 0, 1] satisfies ProgressBump] : []),
+      ...(raid && won ? [[Metric.RaidWins, 0, 1] satisfies ProgressBump] : []),
     ]);
   }
   return settled;

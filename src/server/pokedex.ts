@@ -2,6 +2,7 @@ import 'server-only';
 import type { Species } from '../data/ids/species';
 import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../auth/pokedex-record';
 import { getSql } from './db';
+import { asNumber } from './read';
 
 /**
  * The dex, written over the owner connection.
@@ -70,4 +71,14 @@ export async function recordCaughtSpecies(
   shiny: boolean,
 ): Promise<void> {
   await logSpecies(uid, DEX_CAUGHT, species, shiny);
+}
+
+/** How many distinct species this dex has as caught, shinies included */
+export async function readCaughtDexCount(uid: string): Promise<number> {
+  const rows = await getSql()`
+    select count(*)::int as held from pokedex_entries
+    where player = ${uid} and caught + caught_shiny > 0
+  `;
+
+  return asNumber(rows.at(0)?.held);
 }

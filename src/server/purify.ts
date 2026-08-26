@@ -112,7 +112,10 @@ export default async function usePurifyingGem(
   });
 
   if (cleansed != null) {
-    await bumpProgress(uid, [[Metric.ItemUses, item, 1]]);
+    await bumpProgress(uid, [
+      [Metric.ItemUses, item, 1],
+      [Metric.Purifies, 0, 1],
+    ]);
   }
   return cleansed;
 }

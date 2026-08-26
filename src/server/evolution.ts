@@ -7,7 +7,7 @@ import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { bumpProgress } from './quest-progress';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
@@ -30,6 +30,7 @@ export default async function evolveCatch(
   into: Species,
 ): Promise<Species | null> {
   let spent: Items | null = null;
+  let from: Species | null = null;
   const evolved = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
@@ -92,6 +93,7 @@ export default async function evolveCatch(
       await writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
       spent = consumed;
     }
+    from = species;
     // An evolution is a bigger pokemon, not a healed one: the share
     // of health it had is what it keeps, so a Charmander at half
     // stays a Charmeleon at half
@@ -113,8 +115,12 @@ export default async function evolveCatch(
   });
 
   // oxlint-disable-next-line typescript/no-unnecessary-condition
-  if (evolved != null && spent != null) {
-    await bumpProgress(uid, [[Metric.ItemUses, spent, 1]]);
+  if (evolved != null && from != null) {
+    await bumpProgress(uid, [
+      [Metric.Evolutions, from, 1],
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      ...(spent == null ? [] : [[Metric.ItemUses, spent, 1] satisfies ProgressBump]),
+    ]);
   }
   return evolved;
 }

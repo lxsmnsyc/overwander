@@ -21,17 +21,18 @@ import {
   createRocketParty,
   isBossPurse,
   rollStopGold,
-  stopPartyLevel,
+  stopPartyLevels,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
 import Npc from '../data/overworld/npc';
+import { trainerLevels } from '../data/overworld/trainers';
 import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
 import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES } from '../data/overworld/experts';
 import { hasAwards, recordAwardWin } from './awards';
 import { Foe, Metric } from '../auth/quest-record';
-import { bumpProgress } from './quest-progress';
+import { type ProgressBump, bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
 import { getSql, jsonOf, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
@@ -47,6 +48,7 @@ const FOE_OF: Partial<Record<Landmark, Foe>> = {
   [Landmark.GymLeader]: Foe.GymLeader,
   [Landmark.EliteFour]: Foe.EliteFour,
   [Landmark.Champion]: Foe.Champion,
+  [Landmark.Trainer]: Foe.Trainer,
 };
 
 /**
@@ -296,11 +298,17 @@ export async function startRocketBattle(
   const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
   const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
   // The cell's landmark decides what they field: only Team Rocket
-  // fields shadows, and it fixes the level — every expert brings a
-  // full 6, so size alone cannot say what the fight is worth
+  // fields shadows, and it fixes the band — every league seat brings
+  // a full 6, so size alone cannot say what the fight is worth, and a
+  // duellist's band is their class'
   const landmark = chunk.getLandmarkCells().get(record.cell);
   const shadow = landmark === Landmark.TeamRocket;
-  const level = stopPartyLevel(landmark ?? Landmark.TeamRocket, record.party.length);
+  const duellist = snapshot.getTrainerClass(record.cell);
+  const levels = stopPartyLevels(
+    landmark ?? Landmark.TeamRocket,
+    record.party.length,
+    duellist == null ? undefined : trainerLevels(duellist),
+  );
   const gruntId = newDocId();
 
   await tx(async (transaction) => {
@@ -308,7 +316,7 @@ export async function startRocketBattle(
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
       values (${gruntId}, null, ${ROCKET_ALLIANCE},
-              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, level))})
+              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, levels))})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, limits)
@@ -432,13 +440,17 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 
   await grantGold(uid, gold);
 
-  // A first claim is the one moment a beaten stop counts once
+  // A first claim is the one moment a beaten stop counts once. A
+  // duellist counts twice over: once as a trainer beaten, and once
+  // under the class they were, which is what their title is worn off
   const foe = FOE_OF[landmark ?? Landmark.TeamRocket] ?? Foe.Rocket;
+  const duelled = landmark === Landmark.Trainer ? snapshot.getTrainerClass(record.cell) : null;
 
   await bumpProgress(uid, [
     [Metric.NpcVisits, kind, 1],
     [Metric.BattleWins, foe, 1],
     [Metric.GoldEarned, 0, gold],
+    ...(duelled == null ? [] : ([[Metric.TrainerWins, duelled, 1]] as ProgressBump[])),
   ]);
 
   // An expert's win carries their award as well: the resident gym

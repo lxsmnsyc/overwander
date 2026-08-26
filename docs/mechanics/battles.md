@@ -230,13 +230,31 @@ A grunt stands at a Team Rocket cell for three hours at a time; see
 [People you meet](npcs.md).
 
 The grunt fields three pokemon — one common, one uncommon and one rare from that
-biome — all shadowed and all at level 50, so the fight turns on what the player
-brought rather than on how the window rolled. It is an ordinary trainer battle:
-neither side is a boss, so a simultaneous knockout is a draw.
+biome — all shadowed, each rolling its own level between **45 and 55**. It is an
+ordinary trainer battle: neither side is a boss, so a simultaneous knockout is a
+draw. Giovanni, on the rare window that stages him, fields six at **70-80**.
 
 Every player fights the grunt separately. Winning closes nothing for anybody else,
 and losing costs nothing but the attempt — the grunt is still there and may be
 fought again until the window turns over.
+
+## Trainers and the league
+
+Every other fight a walk can find is fought the same way, and what changes is who
+is standing there and how hard they hit. Each pokemon rolls its own level inside
+its side's band, so a party has a spread rather than a rank. Which type expert is
+standing at a trainer cell depends on the country; see
+[People you meet](npcs.md).
+
+| Who               | What they field                           | Levels |
+| ----------------- | ----------------------------------------- | ------ |
+| **Team Rocket grunt** | Three shadows of the biome's own      | 45-55  |
+| **Type expert**   | Three to five of their own type            | 40-60  |
+| **Ace Trainer**   | Five fully-grown pokemon of any type       | 60-80  |
+| **Gym leader**    | Six of their gym's type                    | 45-65  |
+| **Giovanni**      | Six shadows, one of them a legendary       | 70-80  |
+| **Elite Four**    | Six of their seat's type                   | 65-85  |
+| **Champion**      | Six of anything                            | 85-100 |
 
 ## Costs and rewards
 

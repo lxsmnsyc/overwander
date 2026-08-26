@@ -57,6 +57,12 @@ export const enum Metric {
   Bids = 20,
   /** A shiny caught, by species; these count under Catches too */
   ShinyCatches = 21,
+  /**
+   * A duelling trainer beaten, by their class. It counts under
+   * BattleWins as well, the way a shiny counts under Catches: this is
+   * the one that tells a Bug Catcher from a Swimmer
+   */
+  TrainerWins = 22,
 }
 
 /** The landmark kinds the Landmarks metric counts, as its params */
@@ -75,6 +81,8 @@ export const enum Foe {
   GymLeader = 1,
   EliteFour = 2,
   Champion = 3,
+  /** Any duelling trainer, whatever class they were */
+  Trainer = 4,
 }
 
 /**

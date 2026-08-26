@@ -1,3 +1,4 @@
+import { TRAINER_NAMES } from '../../../data/overworld/trainers';
 import { Foe, Landmark, Metric } from '../../../auth/quest-record';
 import type { QuestPayout } from '../../../auth/quests';
 import { TYPE_NAMES } from '../../../data/constants/types';
@@ -28,6 +29,7 @@ const FOE_NAMES: Record<Foe, string> = {
   [Foe.GymLeader]: 'gym leaders',
   [Foe.EliteFour]: 'Elite Four members',
   [Foe.Champion]: 'Champions',
+  [Foe.Trainer]: 'duelling trainers',
 };
 
 /** One requirement, as a line of words */
@@ -122,6 +124,10 @@ export function describeRequirement(requirement: QuestRequirement): string {
       return requirement.species == null
         ? `Catch ${count} shiny pokemon`
         : `Catch ${count} shiny ${getSpeciesData(requirement.species).name}`;
+    case Metric.TrainerWins:
+      return requirement.trainer == null
+        ? `Beat ${count} duelling trainer${count === 1 ? '' : 's'}`
+        : `Beat ${count} ${TRAINER_NAMES[requirement.trainer]}${count === 1 ? '' : 's'}`;
   }
   // Every metric returns above; this only settles the return rule
   return '';
@@ -176,6 +182,7 @@ const METRIC_ICONS: Record<Metric, (props: ComponentProps<'svg'>) => JSX.Element
   [Metric.Gifts]: GiftIcon,
   [Metric.Bids]: AuctionIcon,
   [Metric.ShinyCatches]: SparklesIcon,
+  [Metric.TrainerWins]: TrophyIcon,
 };
 
 /**

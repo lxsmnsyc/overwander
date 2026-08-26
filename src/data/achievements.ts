@@ -1,6 +1,7 @@
 import { Landmark, Metric } from '../auth/quest-record';
 import { Types } from './constants/types';
 import Npc from './overworld/npc';
+import { TRAINER_CLASSES, type TrainerClass } from './overworld/trainers';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
 
@@ -177,6 +178,16 @@ export const ACHIEVEMENT_TYPES: Types[] = [
 
 export const TYPE_TIERS: [number, number, number, number] = [10, 50, 250, 1000];
 
+/**
+ * The trainer lines: one per class of duelling trainer, counting
+ * lifetime wins against that class. A stop stands for one window and
+ * pays once per player, so these climb far more slowly than a catch
+ * counter — the thresholds are priced for that
+ */
+export const ACHIEVEMENT_TRAINERS: TrainerClass[] = TRAINER_CLASSES;
+
+export const TRAINER_TIERS: [number, number, number, number] = [3, 10, 50, 200];
+
 /** The counters as `readProgress` hands them over */
 export type Counters = Map<Metric, Map<number, number>>;
 
@@ -269,6 +280,7 @@ function typeCounts(counters: Counters): Map<Types, number> {
 export interface Achievements {
   lines: Map<AchievementLine, AchievementStanding>;
   types: Map<Types, AchievementStanding>;
+  trainers: Map<TrainerClass, AchievementStanding>;
 }
 
 /**
@@ -278,6 +290,7 @@ export interface Achievements {
 export function deriveAchievements(counters: Counters): Achievements {
   const lines = new Map<AchievementLine, AchievementStanding>();
   const types = new Map<Types, AchievementStanding>();
+  const trainers = new Map<TrainerClass, AchievementStanding>();
 
   for (const line of ACHIEVEMENT_LINES) {
     lines.set(line, standingOf(lineCount(counters, LINE_ASKS[line]), LINE_TIERS[line]));
@@ -288,5 +301,11 @@ export function deriveAchievements(counters: Counters): Achievements {
   for (const type of ACHIEVEMENT_TYPES) {
     types.set(type, standingOf(caught.get(type) ?? 0, TYPE_TIERS));
   }
-  return { lines, types };
+
+  const beaten = counters.get(Metric.TrainerWins) ?? new Map<number, number>();
+
+  for (const trainer of ACHIEVEMENT_TRAINERS) {
+    trainers.set(trainer, standingOf(beaten.get(trainer) ?? 0, TRAINER_TIERS));
+  }
+  return { lines, types, trainers };
 }

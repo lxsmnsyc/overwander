@@ -1,5 +1,5 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
-import expertOf from './experts';
+import challengerOf from './challengers';
 import { type Journey, describeItem, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
 import { type EggWalk, walk } from '../../../auth/eggs';
@@ -39,7 +39,7 @@ import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
-import RocketStopDialog, { type ExpertChallenge } from '../RocketStopDialog';
+import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
@@ -141,15 +141,16 @@ export default function OverworldBoard(props: {
    * It decides the dialog's copy and what winning promises; the coat
    * is the style they were wandering in, so the portrait matches
    */
-  const [challenger, setChallenger] = createSignal<Npc>(Npc.RocketGrunt);
+  const [challengerNpc, setChallengerNpc] = createSignal<Npc>(Npc.RocketGrunt);
 
   const [challengeCoat, setChallengeCoat] = createSignal<string | undefined>(undefined);
 
   /**
-   * The named expert whose challenge is on the table, or null when it
-   * is a grunt's or a plain trainer's
+   * Whose challenge is on the table, named: the duellist's class, the
+   * gym's leader, an elite's seat or the Champion. Null for a Team
+   * Rocket grunt, whom the dialog names itself
    */
-  const [challengeExpert, setChallengeExpert] = createSignal<ExpertChallenge | null>(null);
+  const [challenger, setChallenger] = createSignal<StopChallenge | null>(null);
   /**
    * The passer-by the player has stopped at: the cell they are
    * standing on and who is on it this window, until their business is
@@ -727,8 +728,8 @@ export default function OverworldBoard(props: {
     // the challenge dialog rather than the wanderer's
     if (landmark != null && FIGHT_LANDMARKS.has(landmark)) {
       const grunt = landmark === Landmark.TeamRocket;
-      const expert = expertOf(loaded.snapshot, landmark, at);
-      const who = expert?.name ?? (grunt ? 'Team Rocket' : 'A trainer');
+      const staged = challengerOf(loaded.snapshot, landmark, at);
+      const who = staged?.name ?? 'Team Rocket';
       const stop = await enterRocketStop(loaded.snapshot, at);
 
       if (stop === 'locked') {
@@ -770,8 +771,8 @@ export default function OverworldBoard(props: {
       }
       // The challenge is put to the player rather than taken for
       // them; the dialog is what accepts it
-      setChallenger(grunt ? Npc.RocketGrunt : Npc.Trainer);
-      setChallengeExpert(expert);
+      setChallengerNpc(grunt ? Npc.RocketGrunt : Npc.Trainer);
+      setChallenger(staged);
       setChallengeCoat(loaded.snapshot.getWandererCoats().get(at));
       setChallenge(stop);
       return null;
@@ -1306,9 +1307,9 @@ export default function OverworldBoard(props: {
             <RocketStopDialog
               user={user()}
               challenge={challenge()}
-              npc={challenger()}
+              npc={challengerNpc()}
               sheet={challengeCoat()}
-              expert={challengeExpert()}
+              challenger={challenger()}
               onClose={() => {
                 setChallenge(null);
               }}

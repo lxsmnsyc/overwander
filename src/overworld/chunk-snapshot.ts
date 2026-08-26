@@ -25,6 +25,15 @@ import {
   type GymLeader,
   getExpertPool,
 } from '../data/overworld/experts';
+import {
+  ACE_PARTY_SIZE,
+  TRAINER_CHARSETS,
+  TYPE_TRAINER_PARTY_MAX,
+  TYPE_TRAINER_PARTY_MIN,
+  TrainerClass,
+  getBiomeTrainers,
+  getTrainerPool,
+} from '../data/overworld/trainers';
 import Regions from '../data/ids/regions';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import { rollVendorStock } from '../data/overworld/vendor';
@@ -598,7 +607,9 @@ export default class ChunkSnapshot {
       }
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.Trainer) {
-          dress(cell, npcSheets(Npc.Trainer));
+          const trainer = this.getTrainerClass(cell);
+
+          dress(cell, trainer == null ? npcSheets(Npc.Trainer) : TRAINER_CHARSETS[trainer]);
         } else if (landmark === Landmark.TeamRocket) {
           dress(cell, this.isRocketBoss(cell) ? GIOVANNI_CHARSETS : npcSheets(Npc.RocketGrunt));
         } else if (landmark === Landmark.GymLeader) {
@@ -713,35 +724,71 @@ export default class ChunkSnapshot {
     return this.rocketStops;
   }
 
+  /**
+   * Who is duelling at this cell this window, or null where the cell
+   * holds no duelling landmark. The class turns over with the window
+   * the way a grunt's party does, and it is drawn from what this
+   * country puts on the road: a Swimmer stands on the water and a
+   * Hiker on hard ground, with the Ace anywhere at all
+   */
+  getTrainerClass(cell: number): TrainerClass | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Trainer) {
+      return null;
+    }
+
+    const standing = getBiomeTrainers(this.chunk.biome);
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duellist${cell}`);
+
+    return standing[Math.floor(rng.random() * standing.length)] ?? null;
+  }
+
   private trainerStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's duelling trainers, keyed by their landmark cell:
-   * the grunt's three bands drawn the same way, fought as their
-   * ordinary selves rather than as shadows
+   * The window's duelling trainers, keyed by their landmark cell. The
+   * class decides the party: an Ace fields 5 of anything fully grown,
+   * a type expert 3 to 5 of their own type. Neither is the biome's
+   * business — a trainer walked here — and neither is a shadow
    */
   getTrainerStops(): Map<number, Spawn[]> {
     if (this.trainerStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const fielded = this.fightBands();
 
-      if (fielded != null) {
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.Trainer) {
-            continue;
-          }
-
-          const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duel${cell}`);
-
-          stops.set(
-            cell,
-            fielded.map((band): Spawn => {
-              const entry = band[Math.floor(rng.random() * band.length)];
-
-              return [entry.species, rng.int32(), rng.int32()];
-            }),
-          );
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.Trainer) {
+          continue;
         }
+
+        const trainer = this.getTrainerClass(cell);
+
+        if (trainer == null) {
+          continue;
+        }
+
+        const pool = getTrainerPool(regionOf(this.chunk), trainer);
+
+        if (pool.length === 0) {
+          continue;
+        }
+
+        const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duel${cell}`);
+        const size =
+          trainer === TrainerClass.AceTrainer
+            ? ACE_PARTY_SIZE
+            : TYPE_TRAINER_PARTY_MIN +
+              Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
+
+        stops.set(
+          cell,
+          // Drawn with replacement, as an expert's party is: a Kanto
+          // type runs as thin as one fully-grown species, and a
+          // Channeler with three Gengar is exactly right
+          Array.from({ length: size }, (): Spawn => {
+            const species = pool[Math.floor(rng.random() * pool.length)];
+
+            return [species, rng.int32(), rng.int32()];
+          }),
+        );
       }
       this.trainerStops = stops;
     }

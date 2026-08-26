@@ -2,12 +2,13 @@ import 'server-only';
 import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
 import {
   ACHIEVEMENT_LINES,
+  ACHIEVEMENT_TRAINERS,
   ACHIEVEMENT_TYPES,
   AchievementTier,
   type Achievements,
   deriveAchievements,
 } from '../data/achievements';
-import { LadderTitle, type Title, lineTitle, typeTitle } from '../data/ids/titles';
+import { LadderTitle, type Title, lineTitle, trainerTitle, typeTitle } from '../data/ids/titles';
 import { listAwards } from './awards';
 import { getSql } from './db';
 import { readProgress } from './quest-progress';
@@ -26,7 +27,8 @@ export async function readAchievements(player: string): Promise<Achievements> {
  * Every title this player may wear: Bronze unlocks a line's base
  * title (the badge it is drawn on carries the tier's colour from
  * there), Platinum its Master variant, and the badge ladder adds its
- * own 3 on top
+ * own 3 on top. Beating trainers earns their class' name the same
+ * way — enough Bug Catchers put down is what makes a player one
  */
 export async function listUnlockedTitles(player: string): Promise<Title[]> {
   const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
@@ -51,6 +53,16 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
     }
     if (tier >= AchievementTier.Platinum) {
       titles.push(typeTitle(type, true));
+    }
+  }
+  for (const trainer of ACHIEVEMENT_TRAINERS) {
+    const tier = standings.trainers.get(trainer)?.tier ?? AchievementTier.None;
+
+    if (tier >= AchievementTier.Bronze) {
+      titles.push(trainerTitle(trainer, false));
+    }
+    if (tier >= AchievementTier.Platinum) {
+      titles.push(trainerTitle(trainer, true));
     }
   }
   if (KANTO_BADGES.every((badge) => awards.has(badge))) {

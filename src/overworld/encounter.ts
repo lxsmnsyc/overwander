@@ -499,6 +499,13 @@ export interface EncounterOptions {
    */
   level?: number;
   /**
+   * A level band to roll within, overriding the species' own. A
+   * trainer's party comes this way: every pokemon rolls its own level
+   * off its trait value, so a party has a spread rather than a rank.
+   * `level` wins where both are given
+   */
+  levels?: [minimum: number, maximum: number];
+  /**
    * Whether it comes out of a shadow raid, and so keeps the Shadow
    * ability for good
    */
@@ -521,6 +528,18 @@ export interface EncounterOptions {
   shinyBoost?: number;
 }
 
+/**
+ * The level a spawn rolls inside a band. It is the same arithmetic
+ * the encounter does, exported so a lineup can be priced before the
+ * fight is staged
+ */
+export function levelInBand(
+  traitValue: number,
+  [lowest, highest]: [minimum: number, maximum: number],
+): number {
+  return lowest + Math.floor(((traitValue & TRAIT_MASK) / TRAIT_RANGE) * (highest - lowest + 1));
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -538,7 +557,7 @@ export default function deriveEncounter(
   // the level are read by the derive helpers above
   const levelSlice = traitValue & TRAIT_MASK;
 
-  const [lowest, highest] = SPAWN_LEVELS[getSpawnRarity(species)];
+  const [lowest, highest] = options.levels ?? SPAWN_LEVELS[getSpawnRarity(species)];
   const level =
     options.level ?? lowest + Math.floor((levelSlice / TRAIT_RANGE) * (highest - lowest + 1));
 

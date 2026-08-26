@@ -74,20 +74,20 @@ import {
   getBossMoves,
 } from '../../src/overworld/raid';
 import {
-  CHAMPION_PARTY_LEVEL,
-  ELITE_PARTY_LEVEL,
+  CHAMPION_PARTY_LEVELS,
+  ELITE_PARTY_LEVELS,
   GIOVANNI_GOLD_MAX,
   GIOVANNI_GOLD_MIN,
-  GIOVANNI_PARTY_LEVEL,
-  GYM_PARTY_LEVEL,
-  ROCKET_PARTY_LEVEL,
+  GIOVANNI_PARTY_LEVELS,
+  GYM_PARTY_LEVELS,
+  ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
   STOP_GOLD_MAX,
   STOP_GOLD_MIN,
   createRocketParty,
   isBossPurse,
   rollStopGold,
-  stopPartyLevel,
+  stopPartyLevels,
 } from '../../src/overworld/rocket';
 import {
   BIOME_ELITE_MEMBERS,
@@ -99,6 +99,22 @@ import {
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
 } from '../../src/data/overworld/experts';
+import Regions from '../../src/data/ids/regions';
+import {
+  ACE_PARTY_SIZE,
+  ACE_TRAINER_LEVELS,
+  TRAINER_CHARSETS,
+  TRAINER_CLASSES,
+  TRAINER_NAMES,
+  TRAINER_TYPES,
+  TYPE_TRAINER_LEVELS,
+  TYPE_TRAINER_PARTY_MAX,
+  TYPE_TRAINER_PARTY_MIN,
+  TrainerClass,
+  getBiomeTrainers,
+  getTrainerPool,
+  trainerLevels,
+} from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
 import deriveEncounter, {
@@ -848,9 +864,10 @@ describe('world', () => {
 
     expect(party).toHaveLength(3);
     for (const [at, member] of party.entries()) {
-      // Every one of them stands at the same level whatever its
-      // trait value would have rolled, and every one is a shadow
-      expect(member.level).toBe(ROCKET_PARTY_LEVEL);
+      // Every one rolls its level inside the grunt's band whatever
+      // its species would have rolled, and every one is a shadow
+      expect(member.level).toBeGreaterThanOrEqual(ROCKET_PARTY_LEVELS[0]);
+      expect(member.level).toBeLessThanOrEqual(ROCKET_PARTY_LEVELS[1]);
       expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(true);
       expect(member.species).toBe(spawns[at][0]);
       // It belongs to no catch record, and never sparkles
@@ -869,7 +886,8 @@ describe('world', () => {
     const duel = createRocketParty(snapshot, spawns, false);
 
     for (const [at, member] of duel.entries()) {
-      expect(member.level).toBe(ROCKET_PARTY_LEVEL);
+      expect(member.level).toBeGreaterThanOrEqual(ROCKET_PARTY_LEVELS[0]);
+      expect(member.level).toBeLessThanOrEqual(ROCKET_PARTY_LEVELS[1]);
       expect(member.species).toBe(spawns[at][0]);
       expect(member.shadow).toBe(false);
       expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(false);
@@ -889,13 +907,61 @@ describe('world', () => {
     }
 
     const snapshot = new ChunkSnapshot(chunk, 0);
+    const lairSpecies = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
 
     for (const [cell, party] of snapshot.getTrainerStops()) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Trainer);
-      expect(party).toHaveLength(3);
-      // Dressed from the trainer's wardrobe, not the grunt's
-      expect(npcSheets(Npc.Trainer)).toContain(snapshot.getWandererCoats().get(cell));
+
+      const trainer = snapshot.getTrainerClass(cell);
+
+      expect(trainer).not.toBeNull();
+      if (trainer == null) {
+        continue;
+      }
+
+      // Whoever is standing there is one this country puts on the
+      // road, or the Ace, who belongs to no country
+      expect(getBiomeTrainers(chunk.biome)).toContain(trainer);
+
+      // The Ace fields five of anything; a type expert three to five
+      // of their own type, and nothing of the biome's choosing
+      const type = TRAINER_TYPES[trainer];
+
+      if (trainer === TrainerClass.AceTrainer) {
+        expect(party).toHaveLength(ACE_PARTY_SIZE);
+      } else {
+        expect(party.length).toBeGreaterThanOrEqual(TYPE_TRAINER_PARTY_MIN);
+        expect(party.length).toBeLessThanOrEqual(TYPE_TRAINER_PARTY_MAX);
+      }
+      for (const [species] of party) {
+        // Fully grown, never a legendary, and of the class' type
+        expect(getSpawnRarity(species)).toBe(SpawnRarity.Rare);
+        expect(lairSpecies.has(species)).toBe(false);
+        if (type != null) {
+          expect(getSpeciesData(species).types).toContain(type);
+        }
+      }
+      // Dressed from their own class' wardrobe rather than the
+      // landmark's old one
+      expect(TRAINER_CHARSETS[trainer]).toContain(snapshot.getWandererCoats().get(cell));
     }
+  });
+
+  it('gives every trainer class a name, a wardrobe and a pool', () => {
+    for (const trainer of TRAINER_CLASSES) {
+      expect(TRAINER_NAMES[trainer]).not.toBe('');
+      expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
+      expect(getTrainerPool(Regions.Kanto, trainer).length).toBeGreaterThan(0);
+      expect(trainerLevels(trainer)).toEqual(
+        trainer === TrainerClass.AceTrainer ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
+      );
+    }
+
+    // One class per type at most, and only the Ace has none
+    const claimed = TRAINER_CLASSES.map((trainer) => TRAINER_TYPES[trainer]);
+
+    expect(new Set(claimed).size).toBe(claimed.length);
+    expect(claimed.filter((type) => type == null)).toHaveLength(1);
   });
 
   it('rolls Giovanni once in a long while, six strong', () => {
@@ -945,7 +1011,8 @@ describe('world', () => {
     const fielded = createRocketParty(staged.snapshot, party);
 
     for (const member of fielded) {
-      expect(member.level).toBe(GIOVANNI_PARTY_LEVEL);
+      expect(member.level).toBeGreaterThanOrEqual(GIOVANNI_PARTY_LEVELS[0]);
+      expect(member.level).toBeLessThanOrEqual(GIOVANNI_PARTY_LEVELS[1]);
       expect(member.shadow).toBe(true);
     }
   });
@@ -1057,12 +1124,14 @@ describe('world', () => {
   });
 
   it('prices every rank of stop by its landmark', () => {
-    expect(stopPartyLevel(Landmark.GymLeader, 6)).toBe(GYM_PARTY_LEVEL);
-    expect(stopPartyLevel(Landmark.EliteFour, 6)).toBe(ELITE_PARTY_LEVEL);
-    expect(stopPartyLevel(Landmark.Champion, 6)).toBe(CHAMPION_PARTY_LEVEL);
-    expect(stopPartyLevel(Landmark.TeamRocket, 6)).toBe(GIOVANNI_PARTY_LEVEL);
-    expect(stopPartyLevel(Landmark.TeamRocket, 3)).toBe(ROCKET_PARTY_LEVEL);
-    expect(stopPartyLevel(Landmark.Trainer, 3)).toBe(ROCKET_PARTY_LEVEL);
+    expect(stopPartyLevels(Landmark.GymLeader, 6)).toEqual(GYM_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.EliteFour, 6)).toEqual(ELITE_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Champion, 6)).toEqual(CHAMPION_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.TeamRocket, 6)).toEqual(GIOVANNI_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.TeamRocket, 3)).toEqual(ROCKET_PARTY_LEVELS);
+    // A duellist's band is their class', which the caller passes in
+    expect(stopPartyLevels(Landmark.Trainer, 3, ACE_TRAINER_LEVELS)).toEqual(ACE_TRAINER_LEVELS);
+    expect(stopPartyLevels(Landmark.Trainer, 3)).toEqual(ROCKET_PARTY_LEVELS);
 
     // Only the two rarest wins pay from the top range: a gym would
     // otherwise be a 6-strong purse farmed every window

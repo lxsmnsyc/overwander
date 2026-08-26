@@ -11,6 +11,11 @@ import {
   tierName,
 } from '../../data/achievements';
 import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
+import {
+  TRAINER_NAMES,
+  TRAINER_TYPES,
+  type TrainerClass,
+} from '../../data/overworld/trainers';
 import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../../data/ids/awards';
 import Npc from '../../data/overworld/npc';
 import {
@@ -280,9 +285,9 @@ function LineSlot(props: {
 }
 
 /**
- * The achievement trays: the general lines, then the type lines, in
- * the same tray dress the awards wear. Standings are the server's
- * derivation from the lifetime counters
+ * The achievement trays: the general lines, the type lines and the
+ * trainer classes, in the same tray dress the awards wear. Standings
+ * are the server's derivation from the lifetime counters
  */
 function fillers(count: number): number[] {
   const short = Math.ceil(count / GRID_COLUMNS) * GRID_COLUMNS - count;
@@ -297,6 +302,16 @@ function Filler(): JSX.Element {
       class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
     />
   );
+}
+
+/**
+ * What a trainer slot is tinted with: the type they field. The Ace
+ * fields anything, so theirs is left in the tray's own colour
+ */
+function tintOf(trainer: TrainerClass): string | undefined {
+  const type = TRAINER_TYPES[trainer];
+
+  return type == null ? undefined : TYPE_COLORS[type];
 }
 
 function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
@@ -330,6 +345,23 @@ function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.E
           )}
         </For>
         <For each={fillers((props.sheet()?.types ?? []).length)}>{() => <Filler />}</For>
+      </div>
+      <Meta>Trainers beaten</Meta>
+      <div
+        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+          shadow-pop"
+      >
+        <For each={props.sheet()?.trainers ?? []}>
+          {([trainer, standing]) => (
+            <LineSlot
+              name={TRAINER_NAMES[trainer]}
+              deed={`${TRAINER_NAMES[trainer]}s beaten`}
+              standing={standing}
+              tint={tintOf(trainer)}
+            />
+          )}
+        </For>
+        <For each={fillers((props.sheet()?.trainers ?? []).length)}>{() => <Filler />}</For>
       </div>
     </div>
   );

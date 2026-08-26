@@ -2,8 +2,26 @@ import { AWARD_NAMES } from '../../../data/ids/awards';
 import { CHAMPION_NAME, ELITE_MEMBER_NAMES, EliteMember, GYM_LEADER_BADGES, GYM_LEADER_NAMES, GymLeader } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
-import { CHAMPION_PARTY_LEVEL, ELITE_PARTY_LEVEL, GYM_PARTY_LEVEL } from '../../../overworld/rocket';
-import type { ExpertChallenge } from '../RocketStopDialog';
+import {
+  CHAMPION_PARTY_LEVELS,
+  ELITE_PARTY_LEVELS,
+  GYM_PARTY_LEVELS,
+  type LevelBand,
+} from '../../../overworld/rocket';
+import {
+  TRAINER_NAMES,
+  TRAINER_QUOTES,
+  TRAINER_TYPES,
+  TrainerClass,
+  trainerLevels,
+} from '../../../data/overworld/trainers';
+import { TYPE_NAMES } from '../../../data/constants/types';
+import type { StopChallenge } from '../RocketStopDialog';
+
+/** A band said the way a lineup reads it: "levels 45-65" */
+function saidLevels([lowest, highest]: LevelBand): string {
+  return `levels ${lowest}-${highest}`;
+}
 
 /**
  * What each expert says as the challenge is put. Their quotes live
@@ -30,14 +48,39 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
 
 /**
  * The named challenger a fighting landmark stages, or null for the
- * rank and file. The name, the level and the stakes are the dialog's
- * copy; who actually stands there is the chunk's own fixture
+ * rank and file — a Team Rocket grunt, whom the dialog names itself.
+ * The name, the levels and the stakes are the dialog's copy; who
+ * actually stands there is the chunk's roll
  */
-export default function expertOf(
+export default function challengerOf(
   snapshot: ChunkSnapshot,
   landmark: Landmark,
   cell: number,
-): ExpertChallenge | null {
+): StopChallenge | null {
+  if (landmark === Landmark.Trainer) {
+    const trainer = snapshot.getTrainerClass(cell);
+
+    if (trainer == null) {
+      return null;
+    }
+
+    const name = TRAINER_NAMES[trainer];
+    const levels = trainerLevels(trainer);
+    const type = TRAINER_TYPES[trainer];
+    const fields =
+      trainer === TrainerClass.AceTrainer
+        ? 'Five fully-grown pokemon of any type'
+        : `Their ${TYPE_NAMES[type ?? 0]} pokemon`;
+
+    return {
+      name,
+      levels,
+      greeting: `A ${name} squares up. “${TRAINER_QUOTES[trainer]}”`,
+      stakes: `${fields} at ${saidLevels(levels)} against as many as you bring. Win and the purse
+        is yours; they keep their pokemon. Lose and you lose nothing but the fight. They will be
+        here all window.`,
+    };
+  }
   if (landmark === Landmark.GymLeader) {
     const leader = snapshot.getGymLeader(cell);
 
@@ -50,11 +93,11 @@ export default function expertOf(
 
     return {
       name,
-      level: GYM_PARTY_LEVEL,
+      levels: GYM_PARTY_LEVELS,
       greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
-      stakes: `6 of their best at level ${GYM_PARTY_LEVEL} against as many as you bring. Win and
-        the purse is yours, and the ${badge} with it if you do not hold it yet. Lose and you
-        lose nothing but the fight.`,
+      stakes: `6 of their best at ${saidLevels(GYM_PARTY_LEVELS)} against as many as you bring.
+        Win and the purse is yours, and the ${badge} with it if you do not hold it yet. Lose and
+        you lose nothing but the fight.`,
     };
   }
   if (landmark === Landmark.EliteFour) {
@@ -68,20 +111,20 @@ export default function expertOf(
 
     return {
       name,
-      level: ELITE_PARTY_LEVEL,
+      levels: ELITE_PARTY_LEVELS,
       greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
-      stakes: `6 at level ${ELITE_PARTY_LEVEL} against as many as you bring. Win and the purse
-        is yours; beat all 4 of the Elite Four and the Champion will see you. Lose and you
+      stakes: `6 at ${saidLevels(ELITE_PARTY_LEVELS)} against as many as you bring. Win and the
+        purse is yours; beat all 4 of the Elite Four and the Champion will see you. Lose and you
         lose nothing but the fight.`,
     };
   }
   if (landmark === Landmark.Champion) {
     return {
       name: CHAMPION_NAME,
-      level: CHAMPION_PARTY_LEVEL,
+      levels: CHAMPION_PARTY_LEVELS,
       greeting: `${CHAMPION_NAME} says nothing. He reaches for a ball.`,
-      stakes: `6 at level ${CHAMPION_PARTY_LEVEL} against as many as you bring. Win and the
-        title of Kanto Champion is yours, with a purse to match. Lose and you lose nothing
+      stakes: `6 at ${saidLevels(CHAMPION_PARTY_LEVELS)} against as many as you bring. Win and
+        the title of Kanto Champion is yours, with a purse to match. Lose and you lose nothing
         but the fight.`,
     };
   }

@@ -238,17 +238,32 @@ import {
 import Regions from '../src/data/ids/regions';
 import {
   ACHIEVEMENT_LINES,
+  ACHIEVEMENT_TRAINERS,
   ACHIEVEMENT_TYPES,
   AchievementLine,
   AchievementTier,
   LINE_DEEDS,
   LINE_NAMES,
   LINE_TIERS,
+  TRAINER_TIERS,
   TYPE_TIERS,
   deriveAchievements,
   tierOf,
 } from '../src/data/achievements';
-import { LadderTitle, getTitleName, lineTitle, typeTitle } from '../src/data/ids/titles';
+import {
+  LadderTitle,
+  getTitleName,
+  lineTitle,
+  trainerTitle,
+  typeTitle,
+} from '../src/data/ids/titles';
+import {
+  BIOME_TRAINERS,
+  TRAINER_CLASSES,
+  TRAINER_TYPES,
+  TrainerClass,
+  getBiomeTrainers,
+} from '../src/data/overworld/trainers';
 import { Landmark as QuestLandmark, Metric } from '../src/auth/quest-record';
 
 // Registry-only tests: no battle is involved, the data just has to
@@ -3264,6 +3279,10 @@ describe('achievements', () => {
     for (let at = 1; at < TYPE_TIERS.length; at++) {
       expect(TYPE_TIERS[at]).toBeGreaterThan(TYPE_TIERS[at - 1]);
     }
+    expect(new Set(ACHIEVEMENT_TRAINERS).size).toBe(ACHIEVEMENT_TRAINERS.length);
+    for (let at = 1; at < TRAINER_TIERS.length; at++) {
+      expect(TRAINER_TIERS[at]).toBeGreaterThan(TRAINER_TIERS[at - 1]);
+    }
   });
 
   it('reads a tier off the thresholds, edges included', () => {
@@ -3302,6 +3321,13 @@ describe('achievements', () => {
         ]),
       ],
       [Metric.Purifies, new Map<number, number>([[0, 3]])],
+      [
+        Metric.TrainerWins,
+        new Map<number, number>([
+          [TrainerClass.BugCatcher, 4],
+          [TrainerClass.AceTrainer, 1],
+        ]),
+      ],
     ]);
     const derived = deriveAchievements(counters);
 
@@ -3324,6 +3350,13 @@ describe('achievements', () => {
     expect(derived.lines.get(AchievementLine.Wayfinder)?.count).toBe(10);
     expect(derived.lines.get(AchievementLine.Wayfinder)?.tier).toBe(AchievementTier.Silver);
     expect(derived.lines.get(AchievementLine.Purifier)?.count).toBe(3);
+    // A class is counted on its own: beating Bug Catchers says
+    // nothing about Swimmers
+    expect(derived.trainers.get(TrainerClass.BugCatcher)?.count).toBe(4);
+    expect(derived.trainers.get(TrainerClass.BugCatcher)?.tier).toBe(AchievementTier.Bronze);
+    expect(derived.trainers.get(TrainerClass.AceTrainer)?.tier).toBe(AchievementTier.None);
+    expect(derived.trainers.get(TrainerClass.Swimmer)?.count).toBe(0);
+
     // Platinum has nothing further to reach
     expect(
       deriveAchievements(new Map([[Metric.Friends, new Map<number, number>([[0, 50]])]])).lines.get(
@@ -3332,11 +3365,40 @@ describe('achievements', () => {
     ).toBeNull();
   });
 
+  it('puts each type expert in the countries their type belongs to', () => {
+    const roads = new Set<TrainerClass>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      const standing = BIOME_TRAINERS[biome];
+
+      // Every country puts somebody on the road, and the Ace is in
+      // none of the lists: they belong to no country
+      expect(standing.length).toBeGreaterThan(0);
+      expect(standing).not.toContain(TrainerClass.AceTrainer);
+      expect(new Set(standing).size).toBe(standing.length);
+      for (const trainer of standing) {
+        expect(TRAINER_TYPES[trainer]).not.toBeNull();
+        roads.add(trainer);
+      }
+      // What may actually be met there: the country's own, plus the Ace
+      expect(getBiomeTrainers(biome)).toEqual([TrainerClass.AceTrainer, ...standing]);
+    }
+
+    // No class is written out of the world
+    for (const trainer of TRAINER_CLASSES) {
+      if (trainer !== TrainerClass.AceTrainer) {
+        expect(roads.has(trainer)).toBe(true);
+      }
+    }
+  });
+
   it('names every title, and only the titles there are', () => {
     expect(getTitleName(lineTitle(AchievementLine.Collector, false))).toBe('Collector');
     expect(getTitleName(lineTitle(AchievementLine.Collector, true))).toBe('Master Collector');
     expect(getTitleName(typeTitle(Types.Dragon, false))).toBe('Dragon Specialist');
     expect(getTitleName(typeTitle(Types.Dragon, true))).toBe('Dragon Master');
+    expect(getTitleName(trainerTitle(TrainerClass.BugCatcher, false))).toBe('Bug Catcher');
+    expect(getTitleName(trainerTitle(TrainerClass.BugCatcher, true))).toBe('Master Bug Catcher');
     expect(getTitleName(LadderTitle.LeagueChallenger)).toBe('League Challenger');
     expect(getTitleName(LadderTitle.EliteConqueror)).toBe('Elite Conqueror');
     expect(getTitleName(LadderTitle.KantoChampion)).toBe('Kanto Champion');

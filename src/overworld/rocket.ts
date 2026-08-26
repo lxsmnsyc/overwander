@@ -27,50 +27,57 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './r
  */
 
 /**
- * Every pokemon a grunt fields stands at the same level, so the fight
- * is about what the player brings rather than how the window rolled
+ * A level band rather than one level: every pokemon rolls its own
+ * inside it off its trait value, so a party has a spread and the
+ * fight is still about what the player brought
  */
-export const ROCKET_PARTY_LEVEL = 50;
+export type LevelBand = [minimum: number, maximum: number];
+
+export const ROCKET_PARTY_LEVELS: LevelBand = [45, 55];
 
 /**
- * The boss' six all stand here instead: Giovanni is the hardest fight
- * a walk can find, well past a grunt and shy of a raid
+ * The boss' six stand well above his grunts: Giovanni is the hardest
+ * fight a walk can find that is not a league seat
  */
-export const GIOVANNI_PARTY_LEVEL = 75;
+export const GIOVANNI_PARTY_LEVELS: LevelBand = [70, 80];
 
 /**
- * The level a stop's party fights at, told apart by its size: only
- * the boss fields a full six
+ * The band a stop's party fights in, told apart by its size: only the
+ * boss fields a full six
  */
-export function rocketPartyLevel(size: number): number {
-  return size >= GIOVANNI_PARTY_SIZE ? GIOVANNI_PARTY_LEVEL : ROCKET_PARTY_LEVEL;
+export function rocketPartyLevels(size: number): LevelBand {
+  return size >= GIOVANNI_PARTY_SIZE ? GIOVANNI_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
 }
 
 /**
- * The ladder the type experts fight on: a gym leader stands with a
- * grunt, the Elite Four with the boss, and the Champion above them
- * all
+ * The ladder the league fights on: a gym leader takes on challengers
+ * who have beaten the road, the Elite Four stand above them, and the
+ * Champion above all of it
  */
-export const GYM_PARTY_LEVEL = 50;
-export const ELITE_PARTY_LEVEL = 75;
-export const CHAMPION_PARTY_LEVEL = 100;
+export const GYM_PARTY_LEVELS: LevelBand = [45, 65];
+export const ELITE_PARTY_LEVELS: LevelBand = [65, 85];
+export const CHAMPION_PARTY_LEVELS: LevelBand = [85, 100];
 
 /**
- * The level any stop's party fights at, keyed by the landmark it
- * stands on. The experts all field 6, so size alone cannot tell a
- * gym from the Champion
+ * The band any stop's party fights in, keyed by the landmark it
+ * stands on. The league all field 6, so size alone cannot tell a gym
+ * from the Champion; a duelling trainer's band is their class', which
+ * the caller passes in
  */
-export function stopPartyLevel(landmark: Landmark, size: number): number {
+export function stopPartyLevels(landmark: Landmark, size: number, trainer?: LevelBand): LevelBand {
   if (landmark === Landmark.GymLeader) {
-    return GYM_PARTY_LEVEL;
+    return GYM_PARTY_LEVELS;
   }
   if (landmark === Landmark.EliteFour) {
-    return ELITE_PARTY_LEVEL;
+    return ELITE_PARTY_LEVELS;
   }
   if (landmark === Landmark.Champion) {
-    return CHAMPION_PARTY_LEVEL;
+    return CHAMPION_PARTY_LEVELS;
   }
-  return rocketPartyLevel(size);
+  if (landmark === Landmark.Trainer && trainer != null) {
+    return trainer;
+  }
+  return rocketPartyLevels(size);
 }
 
 /**
@@ -146,20 +153,20 @@ function zeroEffortValues(): Record<Stats, number> {
  * One of the stop's pokemon as a catch snapshot, so the party is
  * fielded from the same shape a player's is. A grunt's is a shadow —
  * that is what a Team Rocket pokemon is — where a duelling trainer's
- * is its ordinary self; either stands at ROCKET_PARTY_LEVEL whatever
- * its trait value would have rolled. Its IVs, nature, gender, ability
- * and moves are the ones the spawn tuple gives, so no two stops field
- * the same three pokemon
+ * is its ordinary self; either rolls its level inside the band it was
+ * staged with rather than the one its species would have taken. Its
+ * IVs, nature, gender, ability and moves are the ones the spawn tuple
+ * gives, so no two stops field the same three pokemon
  */
 export function createRocketSnapshot(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
   shadow = true,
-  level = ROCKET_PARTY_LEVEL,
+  levels: LevelBand = ROCKET_PARTY_LEVELS,
 ): CatchSnapshot {
   const fielded = deriveEncounter(snapshot, spawn, undefined, {
     type: EncounterType.Rocket,
-    level,
+    levels,
     shadow,
   });
   const size = deriveSize(fielded.species, fielded.traitValue);
@@ -200,17 +207,17 @@ export function createRocketSnapshot(
 
 /**
  * The stop's whole party, weakest first: shadows for a grunt or the
- * boss, ordinary pokemon for a duelling trainer or a type expert.
- * The level defaults to what the party's size says, for the callers
- * that predate the experts; an expert's is the landmark's to fix
+ * boss, ordinary pokemon for a duelling trainer or a league seat. The
+ * band defaults to what the party's size says, for the callers that
+ * predate the league; theirs is the landmark's to fix
  */
 export function createRocketParty(
   snapshot: ChunkSnapshot,
   spawns: Spawn[],
   shadow = true,
-  level = rocketPartyLevel(spawns.length),
+  levels: LevelBand = rocketPartyLevels(spawns.length),
 ): CatchSnapshot[] {
-  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, level));
+  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels));
 }
 
 /**

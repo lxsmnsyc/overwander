@@ -1,5 +1,6 @@
 import type { AchievementLine, AchievementStanding } from '../data/achievements';
 import type { Types } from '../data/constants/types';
+import type { TrainerClass } from '../data/overworld/trainers';
 import type { Title } from '../data/ids/titles';
 import { requireUid } from '../server/auth';
 import {
@@ -19,6 +20,7 @@ import getIdToken from './session';
 export interface AchievementSheet {
   lines: [AchievementLine, AchievementStanding][];
   types: [Types, AchievementStanding][];
+  trainers: [TrainerClass, AchievementStanding][];
 }
 
 export async function listAchievements(player: string): Promise<AchievementSheet> {
@@ -29,7 +31,11 @@ async function listAchievementsOnServer(player: string): Promise<AchievementShee
   'use server';
   const standings = await readOnServer(player);
 
-  return { lines: [...standings.lines], types: [...standings.types] };
+  return {
+    lines: [...standings.lines],
+    types: [...standings.types],
+    trainers: [...standings.trainers],
+  };
 }
 
 /** The titles the signed-in player has earned */

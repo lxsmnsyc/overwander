@@ -3,6 +3,7 @@ import type Families from '../ids/families';
 import { Balls, Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import Npc from '../overworld/npc';
+import type { TrainerClass } from '../overworld/trainers';
 import { Species } from '../ids/species';
 import { Types } from '../constants/types';
 
@@ -54,6 +55,8 @@ export interface MetricRequirement {
   landmark?: Landmark;
   move?: Moves;
   foe?: Foe;
+  /** Which class of duelling trainer, for TrainerWins */
+  trainer?: TrainerClass;
 }
 
 export interface TurnInRequirement {

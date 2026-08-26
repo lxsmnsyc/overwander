@@ -77,6 +77,7 @@ patches.
 | **Legendary Raid** | A legendary's lair; the raid is named after the place            |
 | **Shadow Raid**    | A lair with something wrong in it                                |
 | **Wandering NPC**  | Whoever is passing through: a specialist, or a Team Rocket grunt |
+| **Trainer**        | A duelling trainer: an Ace, or an expert in one type             |
 | **Portal**         | A way through to another portal, for the price of a Portal Key   |
 
 Walking up to a wandering cell does not reveal in advance whether it holds a
@@ -97,6 +98,7 @@ to obtain, the sooner it returns.
 | What is happening at a phenomenon cell          | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |
 | Who is at a wandering-NPC cell, grunts included | 3 hours    |
+| Which trainer is standing at a trainer cell     | 3 hours    |
 | The egg lying in a nest                         | 12 hours   |
 
 Every one of these is a whole number of five-minute windows and all of them are

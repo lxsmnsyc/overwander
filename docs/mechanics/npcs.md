@@ -7,7 +7,7 @@ offer a breeder in the morning and a daycare lady by midday.
 Nine people can be standing there: the vendor, the breeder, the daycare lady,
 Nurse Joy, the groomer, the Move Reminder, the Fossil Maniac, the Fossil
 Scientist, and a **Team Rocket grunt**, who is there to fight rather than to
-help. A cell is a crossroads rather than a shop, so walking up to one does not
+help. Duelling trainers keep a landmark of their own, further down. A cell is a crossroads rather than a shop, so walking up to one does not
 reveal in advance whether it holds a nurse or a fight.
 
 ## The once-per-window rule
@@ -97,8 +97,9 @@ no once-per-window limit: what paces him is how many fossils have been dug up.
 ## The Team Rocket grunt
 
 The grunt bars the cell and fights whoever accepts, with three shadowed pokemon of
-the biome's own — one common, one uncommon and one rare, all at level 50. It is an
-ordinary trainer battle, so a simultaneous knockout is a draw.
+the biome's own — one common, one uncommon and one rare, each somewhere between
+**level 45 and 55**. It is an ordinary trainer battle, so a simultaneous knockout is
+a draw.
 
 Every player fights the grunt separately. One player's victory closes nothing for
 anybody else, and losing costs nothing but the attempt: the grunt is still
@@ -109,6 +110,34 @@ fielded — never the rare one — shadowed and at level 10.
 
 The grunt is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
+
+## Duelling trainers
+
+A **trainer cell** is its own landmark rather than a wanderer's crossroads, and
+whoever is standing on it changes with the same three-hour window. They fight
+fair: nothing they field is a shadow, and a win costs them only the purse.
+
+Who turns up decides what they bring:
+
+| Standing there | What they field |
+| -------------- | --------------- |
+| **Ace Trainer** | Five fully-grown pokemon of any type, levels 60-80 |
+| **A type expert** | Three to five of their own type, levels 40-60 |
+
+The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
+Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the
+Burglar, the Rocker, the Psychic and the Lass. Which of them may be standing on a
+cell is the country's own: a Swimmer is met on the water, a Hiker on hard ground,
+a Channeler in the swamps — the same rule the gyms follow, so a player hunting one
+class knows where to walk. What they field is their type and nothing else,
+wherever they are met, and it is drawn from the whole region rather than from the
+country they are standing in.
+
+The **Ace Trainer** belongs to no country and may turn up anywhere.
+
+Beating them is counted for life, class by class. Enough wins over one class earns
+that class' own **title** to wear on the profile, from **Bronze** on its
+achievement; see the awards shelf on the profile for where each one stands.
 
 ## See also
 

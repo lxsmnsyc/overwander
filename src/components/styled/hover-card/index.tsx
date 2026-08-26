@@ -1,20 +1,14 @@
-import {
-  type JSX,
-  type ParentProps,
-  Show,
-  createContext,
-  createEffect,
-  createSignal,
-  createUniqueId,
-  onCleanup,
-  onMount,
-  useContext,
-} from 'solid-js';
-import { isServer } from 'solid-js/web';
+import { type JSX, type ParentProps, Show, createContext, createEffect, createSignal, createUniqueId, onCleanup, onMount, useContext } from 'solid-js';
+
 import { Transition } from 'terracotta';
-import closeWhenGone from './gone';
-import { TooltipLayer } from './tooltip';
-import { SHEER } from './transition';
+import closeWhenGone from '../gone';
+import { TooltipLayer } from '../tooltip';
+import { SHEER } from '../transition';
+import { type HoverCardPlacement, type Point, apart, holds, place, within } from './placing';
+import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
+
+export type { HoverCardPlacement };
+export { showSafeAreas };
 
 /**
  * A card that opens on hover: what a row is about, without opening it.
@@ -37,82 +31,6 @@ import { SHEER } from './transition';
  */
 const OPEN_DELAY = 180;
 const CLOSE_DELAY = 140;
-
-/** The gap between the trigger and the card, and from the card to the
- * edge of the window */
-const GAP = 8;
-const MARGIN = 8;
-
-/**
- * How far from the apex a pointer still counts as being on its way.
- *
- * The triangle is one point wide where the pointer left, so the first
- * position the browser reports — a fraction of a pixel to the side —
- * is outside it by the maths and on the way out by any other reading.
- * This is that much room around the exit point itself; the shape is
- * otherwise exact
- */
-const GRACE = 12;
-
-/**
- * Where the answer to "why did the card close" is remembered. Chasing
- * a triangle takes more than one reload, so the choice outlives the page
- */
-const SAFE_AREA_KEY = 'hover-card:safe-area';
-
-/**
- * How long a triangle that has just failed stays on screen. The card goes
- * with the failure, so without this the one drawing worth seeing is
- * the one that is never seen
- */
-const LINGER = 1200;
-
-/**
- * A triangle as it is drawn: green while the pointer is still inside it,
- * red where it left, with `at` marking the point that failed
- */
-interface SafeShape {
-  corners: Point[];
-  live: boolean;
-  at: Point | null;
-}
-
-/**
- * Whether the safe triangles are painted. It is a development tool: every
- * use of it is behind `import.meta.env.DEV`, so the build drops the
- * drawing along with this signal
- */
-const [painting, setPainting] = createSignal(false);
-
-/**
- * Dev-only: paint each card's safe triangle while the pointer is crossing
- * to it, so a card that closes too early shows why. Also on `window`
- * as `hoverCardSafeAreas()`, which is where it is actually reached
- * from — a triangle is something to look at rather than something to
- * write a call for
- */
-export function showSafeAreas(on = true): void {
-  if (!import.meta.env.DEV) {
-    return;
-  }
-  setPainting(on);
-  try {
-    localStorage.setItem(SAFE_AREA_KEY, on ? '1' : '');
-  } catch {
-    // A browser refusing storage still gets the triangles this session
-  }
-}
-
-if (import.meta.env.DEV && !isServer) {
-  try {
-    setPainting(localStorage.getItem(SAFE_AREA_KEY) === '1');
-  } catch {
-    // Nothing remembered means nothing painted
-  }
-  window.hoverCardSafeAreas = showSafeAreas;
-}
-
-export type HoverCardPlacement = 'top' | 'bottom';
 
 export type HoverCardWidth = 'narrow' | 'wide';
 
@@ -149,67 +67,6 @@ const BODY = 'flex flex-col gap-2 px-3 py-2.5 text-sm';
 const FOOT =
   'flex flex-wrap items-center justify-center gap-2 border-t-2 border-line-soft' +
   ' bg-line-soft/60 px-3 py-2 text-center text-xs text-muted';
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-/** How far apart two points are */
-function apart(one: Point, two: Point): number {
-  return Math.hypot(one.x - two.x, one.y - two.y);
-}
-
-/**
- * Whether a point is inside a convex shape, by the sign of the
- * cross-product against each edge: inside means they all agree
- */
-function within(point: Point, corners: Point[]): boolean {
-  let negative = false;
-  let positive = false;
-
-  for (const [index, a] of corners.entries()) {
-    const b = corners[(index + 1) % corners.length];
-    const cross = (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x);
-
-    negative ||= cross < 0;
-    positive ||= cross > 0;
-  }
-  return !(negative && positive);
-}
-
-/**
- * Where the card goes: centred on the trigger, on the asked-for side
- * unless there is no room for it there, and never off the window
- */
-function place(
-  anchor: DOMRect,
-  card: { width: number; height: number },
-  wanted: HoverCardPlacement,
-): Point {
-  const above = anchor.top - card.height - GAP;
-  const below = anchor.bottom + GAP;
-  const fitsAbove = above >= MARGIN;
-  const fitsBelow = below + card.height <= window.innerHeight - MARGIN;
-  const room = window.innerWidth - card.width - MARGIN;
-  const centred = anchor.left + anchor.width / 2 - card.width / 2;
-  const x = Math.min(Math.max(centred, MARGIN), Math.max(room, MARGIN));
-
-  // The side it asked for, unless that is the side with no room —
-  // and if neither side has room, the side it asked for anyway
-  if (wanted === 'top') {
-    return { x, y: fitsAbove || !fitsBelow ? above : below };
-  }
-  return { x, y: fitsBelow || !fitsAbove ? below : above };
-}
-
-/**
- * Whether the focus landed inside a box. Focus leaving the trigger for
- * the card is not focus leaving the card
- */
-function holds(box: HTMLElement | undefined, target: EventTarget | null): boolean {
-  return target instanceof Node && box?.contains(target) === true;
-}
 
 /**
  * What a card offers whatever is inside it: a way to shut itself, and

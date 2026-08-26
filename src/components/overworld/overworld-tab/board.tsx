@@ -1,451 +1,50 @@
-import type { PlayerIdentity } from '../../auth/user';
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-  onCleanup,
-  onMount,
-  untrack,
-} from 'solid-js';
-import { type BoardCell, borderExit, chunkCellOf } from '../../canvas/board';
-import { latitudeOf } from '../../canvas/daylight';
-import { getBuddyEffects } from '../../auth/buddy';
-import { useAuth } from '../../auth/context';
-import { getLocalOffset } from '../../auth/local-time';
-import type { EncounterRecord } from '../../auth/encounter-record';
-import {
-  RaidKind,
-  type RaidView,
-  canJoinRaids,
-  hostMythicalRaid,
-  peekRaid,
-} from '../../auth/raids';
-import { savePosition } from '../../auth/positions';
-import { claimRocketReward, enterRocketStop } from '../../auth/rockets';
-import { type RocketRecord, rocketStopId } from '../../auth/rocket-record';
-import { createSafariSession, getRetiredKeys, isEncounterRetired } from '../../auth/safari';
-import type { NestOffer } from '../../server/overworld';
-import {
-  claimBerryPatch,
-  claimItemCache,
-  claimNest,
-  claimPhenomenon,
-  peekNest,
-  peekPhenomenonEgg,
-  startEncounter,
-  visitChunk,
-  watchSnapshotWindow,
-} from '../../auth/snapshots';
-import { type EggWalk, walk } from '../../auth/eggs';
-import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
-import type Biome from '../../data/ids/biome';
-import type { Items } from '../../data/ids/items';
-import type { Species } from '../../data/ids/species';
-import type { ItemStack } from '../../data/overworld/item-pool';
-import type Decoration from '../../data/overworld/decoration';
-import { DECORATION_NAMES } from '../../data/overworld/decoration';
-import Landmark, { LANDMARK_NAMES } from '../../data/overworld/landmark';
-import Npc, { NPC_NAMES } from '../../data/overworld/npc';
-import { AWARD_NAMES } from '../../data/ids/awards';
-import {
-  CHAMPION_NAME,
-  ELITE_MEMBER_NAMES,
-  EliteMember,
-  GYM_LEADER_BADGES,
-  GYM_LEADER_NAMES,
-  GymLeader,
-} from '../../data/overworld/experts';
-import { CHAMPION_PARTY_LEVEL, ELITE_PARTY_LEVEL, GYM_PARTY_LEVEL } from '../../overworld/rocket';
-import { PHENOMENON_NAMES } from '../../data/overworld/phenomenon';
-import { getItemData } from '../../data/items';
-import { getInventory } from '../../auth/inventory';
-import { getRaidSpecies } from '../../data/items/raid-items';
-import { getSpeciesData } from '../../data/species';
-import { CHUNK_CELLS } from '../../overworld/chunk';
-import { findPath, findPathBeside } from '../../overworld/path';
-import { type SnapshotRecord, type SpawnRoll, spawnId } from '../../auth/snapshot-record';
-import ChunkSnapshot, { SPAWN_COUNT } from '../../overworld/chunk-snapshot';
-import { LURE_SPAWN_BONUS } from '../../overworld/abilities/__create';
-import type { Buddy } from '../../overworld/core';
-import deriveEncounter from '../../overworld/encounter';
-import createOverworld from '../../overworld/setup';
-import type { Spawn } from '../../overworld/chunk-snapshot';
-import getWorld from '../../overworld/current';
-import namePlace from '../../overworld/place';
-import { isInWorld } from '../../overworld/world';
-import type SafariSession from '../../overworld/safari';
-import { spawnKey } from '../../overworld/safari';
-import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from './ChunkCanvas';
-import watchLive from '../app/watch';
-import NpcDialog from './NpcDialog';
-import PortalDialog from './PortalDialog';
-import NestDialog, { type EggSource, type EggState } from './NestDialog';
-import RaidDialog from '../raids/RaidDialog';
-import RocketStopDialog, { type ExpertChallenge } from './RocketStopDialog';
-import ItemSprite from '../items/ItemSprite';
-import SafariDialog from './SafariDialog';
-import { Badge, Button, Note, useToast } from '../styled';
-import { GameDialog, useGame } from '../app/game-context';
-
-/**
- * The landmarks a player fights somebody at, all served by the one
- * challenge dialog and the rocket-stop machinery under it
- */
-const FIGHT_LANDMARKS = new Set([
-  Landmark.TeamRocket,
-  Landmark.Trainer,
-  Landmark.GymLeader,
-  Landmark.EliteFour,
-  Landmark.Champion,
-]);
-
-/**
- * What each expert says as the challenge is put. Their quotes live
- * here with the challenge builder rather than in the wanderer's
- * table: an expert is a person, not a role a cell rolls
- */
-const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
-  [GymLeader.Brock]: 'Rock is solid, kid. Show me you are harder.',
-  [GymLeader.Misty]: 'My water pokemon are tougher than they look. So am I.',
-  [GymLeader.LtSurge]: 'Ten-hut! Survive my electric barrage and the badge is yours, baby!',
-  [GymLeader.Erika]: 'The grass is calm today. Shall we?',
-  [GymLeader.Koga]: 'A ninja’s poison works slowly. Your defeat will not.',
-  [GymLeader.Sabrina]: 'I foresaw this fight. I did not foresee you winning.',
-  [GymLeader.Blaine]: 'My fire burns hot! Bring water. It will not help.',
-  [GymLeader.Blue]: 'Smell ya later... after I flatten you, that is.',
-};
-
-const ELITE_QUOTES: Record<EliteMember, string> = {
-  [EliteMember.Lorelei]: 'Ice has no mercy. Neither do I.',
-  [EliteMember.Bruno]: 'We will grind you down with our superior power! Hoo hah!',
-  [EliteMember.Agatha]: 'You want to see real ghosts, child? Look closely.',
-  [EliteMember.Lance]: 'My dragons know no weakness. Prove me wrong.',
-};
-
-/**
- * The named challenger a fighting landmark stages, or null for the
- * rank and file. The name, the level and the stakes are the dialog's
- * copy; who actually stands there is the chunk's own fixture
- */
-function expertOf(
-  snapshot: ChunkSnapshot,
-  landmark: Landmark,
-  cell: number,
-): ExpertChallenge | null {
-  if (landmark === Landmark.GymLeader) {
-    const leader = snapshot.getGymLeader(cell);
-
-    if (leader == null) {
-      return null;
-    }
-
-    const name = GYM_LEADER_NAMES[leader];
-    const badge = AWARD_NAMES[GYM_LEADER_BADGES[leader]];
-
-    return {
-      name,
-      level: GYM_PARTY_LEVEL,
-      greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
-      stakes: `6 of their best at level ${GYM_PARTY_LEVEL} against as many as you bring. Win and
-        the purse is yours, and the ${badge} with it if you do not hold it yet. Lose and you
-        lose nothing but the fight.`,
-    };
-  }
-  if (landmark === Landmark.EliteFour) {
-    const member = snapshot.getEliteMember(cell);
-
-    if (member == null) {
-      return null;
-    }
-
-    const name = ELITE_MEMBER_NAMES[member];
-
-    return {
-      name,
-      level: ELITE_PARTY_LEVEL,
-      greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
-      stakes: `6 at level ${ELITE_PARTY_LEVEL} against as many as you bring. Win and the purse
-        is yours; beat all 4 of the Elite Four and the Champion will see you. Lose and you
-        lose nothing but the fight.`,
-    };
-  }
-  if (landmark === Landmark.Champion) {
-    return {
-      name: CHAMPION_NAME,
-      level: CHAMPION_PARTY_LEVEL,
-      greeting: `${CHAMPION_NAME} says nothing. He reaches for a ball.`,
-      stakes: `6 at level ${CHAMPION_PARTY_LEVEL} against as many as you bring. Win and the
-        title of Kanto Champion is yours, with a purse to match. Lose and you lose nothing
-        but the fight.`,
-    };
-  }
-  return null;
-}
-
-/**
- * How many spawns a visit publishes: the ordinary eight plus the
- * three a lure draws in, rolled for every window so that a lure
- * changes who can see them rather than whether they exist
- */
-const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
-
-/**
- * Where a player entering a chunk without a stored position starts
- */
-const START_CELL = CHUNK_CELLS / 2;
-
-/**
- * How long the game waits before writing down where somebody is. A
- * walk is a run of keypresses, and what is worth keeping is where it
- * ended
- */
-const SAVE_DELAY = 1500;
-
-/**
- * How many paces are walked before the egg being carried is told
- * about them. Reporting every cell would be a write per keypress;
- * reporting in batches costs the walker nothing, since the server
- * credits against the time that passed rather than the moment the
- * report arrived
- */
-const STEP_REPORT_SIZE = 8;
-
-/**
- * How often the chunk may be asked for while the player is playing.
- *
- * The window it is showing lasts five minutes, and asking for it again
- * is a write: whoever asks for an expired one rolls the next set of
- * spawns for everybody standing there. Left on a timer, a player who
- * walked away from the screen kept rolling windows for a chunk nobody
- * was looking at, once every five minutes, for as long as the tab was
- * open.
- *
- * So it is asked for when it is actually worth asking: when the page
- * comes back to the front, and while the player is doing something —
- * and no more than once in five seconds, since a walk is twenty
- * presses and each one is not a question about the world
- */
-const REFRESH_DEBOUNCE = 5000;
-
-/**
- * How big the picture on one of those lines is. Small: the line is
- * two words wide, and the picture is there to be recognised rather
- * than admired
- */
-const ICON_SIZE = 24;
-
-/**
- * How long a cell takes to walk, in milliseconds.
- *
- * Slow enough to be a walk rather than a jump to the far side of the
- * chunk, and quick enough that crossing one is not something a player
- * sits through. It is also what a step *costs*: the egg being carried
- * counts every one of them, so a walk that took no time would be a
- * hatching machine
- */
-const STEP_PACE = 250;
-
-/**
- * How long a chunk may be held on screen after the player has walked
- * out of it.
- *
- * The board being carried off is held up until the next chunk's window
- * lands, and that is a round trip nobody can promise. Past this it is
- * let go of whether or not there is anything to put in its place: a
- * player looking at a chunk they left ten seconds ago is worse off
- * than one looking at a line that says the next one is loading
- */
-const CROSSING_LIMIT = 4000;
-
-/**
- * A walk in progress: where it is going, and what happens when it gets
- * there.
- *
- * The goal is a cell of the chunk the walk started in, so a walk does
- * not survive leaving it — which is the whole of what `exit` is for.
- * A threshold press is a walk to the edge cell in front of it and then
- * one step over, and that step is the last thing the walk does
- */
-interface Journey {
-  /**
-   * The cell being walked to, or the one being walked up to
-   */
-  goal: number;
-  /**
-   * A step out of the chunk on arrival, for a threshold press
-   */
-  exit: [number, number] | null;
-  /**
-   * Whether the goal is a thing rather than a place: something stands
-   * on it, so the walk ends beside it and reaches out
-   */
-  act: boolean;
-}
-
-function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
-}
-
-/**
- * What a stash came to, read out: "3 Poke Ball, 2 Ultra Ball and a
- * Fire Stone". A single piece is named without a count, since one of
- * something is what a cache used to always be
- */
-function describeStash(stash: ItemStack[]): string {
-  const parts = stash.map(({ item, amount }) =>
-    amount === 1 ? describeItem(item) : `${amount} × ${describeItem(item)}`,
-  );
-
-  if (parts.length <= 1) {
-    return parts[0] ?? 'nothing';
-  }
-  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
-}
-
-/**
- * Whether an egg the world is holding is still going spare, or is one
- * this player has already had out of this window
- */
-function stateOf(offer: NestOffer): EggState {
-  return offer.taken ? 'taken' : 'offered';
-}
-
-/**
- * Where a chunk is, in the words the game names it by: the country
- * and the two numbers that pick it out of the world. It is said at
- * the top of the menu and told to a screen reader as the name of the
- * board, which is the same fact twice and so is written once
- */
-function naming(chunk: ChunkView): string {
-  return namePlace(chunk.x, chunk.y);
-}
-
-interface ChunkView {
-  x: number;
-  y: number;
-  biome: Biome;
-  snapshot: ChunkSnapshot;
-  landmarks: Map<number, Landmark>;
-  /**
-   * The chunk's terrain spots, for the ground drawing: pools on
-   * land, banks in a wetland
-   */
-  spots: Set<number>;
-  /**
-   * An open-sea chunk's shallow patches, for the ground drawing
-   */
-  shallows: Set<number>;
-  /**
-   * The spot cells that are solid rock, which a walk goes round
-   */
-  rocks: Set<number>;
-  /**
-   * The chunk's scenery by cell. Nothing is done with it — it is what
-   * makes a taiga look like a taiga rather than a grassland in another
-   * colour
-   */
-  decorations: Map<number, Decoration>;
-  /**
-   * The window's spawns by cell, each with the id it was published
-   * under, so an interaction can derive the same encounter every
-   * observer sees
-   */
-  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean }>;
-  caches: Map<number, ItemStack[]>;
-}
-
-/**
- * Build the chunk's view from the window and the spawns the store
- * currently holds. Everything else — landmarks, caches, grottos,
- * raids — re-derives from the chunk seed and the window, so the
- * subscription only has to carry those two
- */
-function buildChunkView(
-  x: number,
-  y: number,
-  timestamp: number,
-  offset: number,
-  published: SpawnRoll[],
-  player: string | null,
-  buddy: Buddy | null,
-  fled: Set<string>,
-): ChunkView {
-  const chunk = getWorld().getChunk(x, y);
-  const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
-  // Rolling locally reproduces the published placement — same seed,
-  // same window, same count — and is what pins each spawn to a cell
-  snapshot.getSpawns(PUBLISHED_SPAWNS);
-
-  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean }>();
-  const cells = [...snapshot.getSpawnCells()];
-  // The same engine the server stages encounters with: a lure decides
-  // how many of the window's rolls are there for this player
-  const overworld = createOverworld(player ?? '', player == null ? null : buddy);
-  const visible = overworld.checkSpawnCount(SPAWN_COUNT);
-
-  cells.forEach(([cell], index) => {
-    // Roll order and publication order are the same, so the nth
-    // placed cell carries the nth published spawn
-    if (index >= visible || index >= published.length) {
-      return;
-    }
-
-    const stored = published[index];
-
-    // One that has already run from this player is not standing
-    // there any more — for them. It stays in the window, since the
-    // window is everybody's, and it is left out of what this player
-    // is shown rather than out of what was rolled
-    if (fled.has(spawnKey(x, y, timestamp, stored.individualValue))) {
-      return;
-    }
-
-    // The name is derived from the window rather than stored with
-    // the roll, so the two cannot disagree about which spawn it is
-    const id = spawnId(snapshot.key, timestamp, index);
-    const spawn: Spawn = [stored.species, stored.individualValue, stored.traitValue];
-
-    spawns.set(cell, {
-      id,
-      spawn,
-      // Whether it sparkles for *this* player, worked out the way the
-      // server will work it out when the meeting is staged: the same
-      // derivation, the same species-day boost, and the same overworld
-      // engine asked what the buddy adds to the odds. A shiny standing
-      // in a field is the one thing in the world worth crossing it
-      // for, so it is drawn in its own coat rather than left as a
-      // surprise sprung after the ball is thrown
-      shiny:
-        player != null &&
-        deriveEncounter(snapshot, spawn, player, {
-          shinyBoost: overworld.checkEncounterShiny(id),
-        }).shiny,
-    });
-  });
-
-  return {
-    x,
-    y,
-    biome: chunk.biome,
-    snapshot,
-    landmarks: chunk.getLandmarkCells(),
-    spots: chunk.getSpotCells(),
-    shallows: chunk.getShallowCells(),
-    rocks: chunk.getRockCells(),
-    decorations: chunk.getDecorationCells(),
-    spawns,
-    caches: snapshot.getItemCaches(),
-  };
-}
+import { type ChunkView, buildChunkView, naming } from './chunk-view';
+import expertOf from './experts';
+import { type Journey, describeItem, describeStash, stateOf } from './journey';
+import { useAuth } from '../../../auth/context';
+import { type EggWalk, walk } from '../../../auth/eggs';
+import type { EncounterRecord } from '../../../auth/encounter-record';
+import { getLocalOffset } from '../../../auth/local-time';
+import { savePosition } from '../../../auth/positions';
+import { RaidKind, type RaidView, canJoinRaids, hostMythicalRaid, peekRaid } from '../../../auth/raids';
+import { type RocketRecord, rocketStopId } from '../../../auth/rocket-record';
+import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
+import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
+import type { SnapshotRecord } from '../../../auth/snapshot-record';
+import { claimBerryPatch, claimItemCache, claimNest, claimPhenomenon, peekNest, peekPhenomenonEgg, startEncounter, visitChunk, watchSnapshotWindow } from '../../../auth/snapshots';
+import type { PlayerIdentity } from '../../../auth/user';
+import { type BoardCell, borderExit, chunkCellOf } from '../../../canvas/board';
+import { latitudeOf } from '../../../canvas/daylight';
+import { BIOME_COLORS, BIOME_NAMES } from '../../../data/biome';
+import type { Items } from '../../../data/ids/items';
+import type { Species } from '../../../data/ids/species';
+import { DECORATION_NAMES } from '../../../data/overworld/decoration';
+import { CHAMPION_NAME, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../../../data/overworld/experts';
+import type { ItemStack } from '../../../data/overworld/item-pool';
+import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
+import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
+import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
+import { getSpeciesData } from '../../../data/species';
+import { CHUNK_CELLS } from '../../../overworld/chunk';
+import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+import type { Buddy } from '../../../overworld/core';
+import getWorld from '../../../overworld/current';
+import { findPath, findPathBeside } from '../../../overworld/path';
+import type SafariSession from '../../../overworld/safari';
+import { isInWorld } from '../../../overworld/world';
+import { GameDialog, useGame } from '../../app/game-context';
+import watchLive from '../../app/watch';
+import ItemSprite from '../../items/ItemSprite';
+import RaidDialog from '../../raids/RaidDialog';
+import { Badge, Button, Note, useToast } from '../../styled';
+import NestDialog, { type EggSource, type EggState } from '../NestDialog';
+import PortalDialog from '../PortalDialog';
+import RocketStopDialog, { type ExpertChallenge } from '../RocketStopDialog';
+import SafariDialog from '../SafariDialog';
+import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from '../chunk-canvas';
+import NpcDialog from '../npc-dialog';
+import { For, type JSX, type Resource, Show, createEffect, createSignal, onCleanup, onMount, untrack } from 'solid-js';
+import { CROSSING_LIMIT, FIGHT_LANDMARKS, ICON_SIZE, PUBLISHED_SPAWNS, REFRESH_DEBOUNCE, SAVE_DELAY, START_CELL, STEP_PACE, STEP_REPORT_SIZE } from './metrics';
 
 /**
  * The overworld as the player walks it: arrow keys or WASD move one
@@ -461,7 +60,7 @@ function buildChunkView(
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
-function OverworldBoard(props: {
+export default function OverworldBoard(props: {
   relics: Resource<{ item: Items; amount: number; species: Species }[]>;
   buddy: Resource<Buddy | null>;
   fled: Resource<Set<string>>;
@@ -1773,63 +1372,5 @@ function OverworldBoard(props: {
         )}
       </Show>
     </div>
-  );
-}
-
-/**
- * The chunk the player is standing in, drawn to fill the screen.
- *
- * The three things about the player that the board is drawn from —
- * what they carry that calls a raid, who walks with them, and what
- * has run from them — are read one component down, under this
- * boundary
- */
-export default function OverworldTab(): JSX.Element {
-  const auth = useAuth();
-
-  /**
-   * The raid items the player carries, each with what it calls. They
-   * are used where the player stands, so they live here rather than
-   * in the bag listing
-   */
-  const [relics, { refetch: refetchRelics }] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => {
-      const carried = await getInventory(uid);
-
-      return carried
-        .map((entry) => ({ ...entry, species: getRaidSpecies(entry.item) }))
-        .filter(
-          (entry): entry is typeof entry & { species: Species } =>
-            entry.species != null && entry.amount > 0,
-        );
-    },
-  );
-
-  const [buddy] = createResource(() => auth.user()?.uid ?? null, getBuddyEffects);
-
-  /**
-   * What has run from this player. Re-read when a meeting ends, since
-   * the one that just fled is the one that has to stop being drawn
-   */
-  const [fled, { refetch: refetchFled }] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => getRetiredKeys(uid),
-  );
-
-  return (
-    <Suspense fallback={<Note>Reading the world…</Note>}>
-      <OverworldBoard
-        relics={relics}
-        buddy={buddy}
-        fled={fled}
-        onRelicSpent={() => {
-          Promise.resolve(refetchRelics()).catch(() => undefined);
-        }}
-        onFled={() => {
-          Promise.resolve(refetchFled()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
   );
 }

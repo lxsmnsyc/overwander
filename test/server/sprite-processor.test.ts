@@ -20,7 +20,7 @@ import {
   parseOrder,
   withCredit,
 } from '../../src/server/sprites/pokengine';
-import { storedAs } from '../../src/components/admin/SpriteProcessor';
+import { storedAs } from '../../src/components/admin/sprite-processor/shared';
 import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
 /**

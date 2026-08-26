@@ -1,5 +1,5 @@
 import { type JSX, Show } from 'solid-js';
-import AuctionTab from '../../components/auctions/AuctionTab';
+import AuctionTab from '../../components/auctions/auction-tab';
 import { Note } from '../../components/styled';
 import { useAuth } from '../../auth/context';
 

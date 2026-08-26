@@ -1,5 +1,4 @@
 import {
-  For,
   type JSX,
   Show,
   batch,
@@ -9,8 +8,7 @@ import {
   from,
   onCleanup,
 } from 'solid-js';
-import type Team from '../../battle/team';
-import type Unit from '../../battle/unit';
+import type Unit from '../../../battle/unit';
 import {
   BattleOutcome,
   type BattleRecord,
@@ -18,25 +16,25 @@ import {
   listBattleTeams,
   recordAftermath,
   watchBattle,
-} from '../../auth/battles';
-import { useAuth } from '../../auth/context';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../auth/raids';
-import { BattleModes } from '../../battle/core';
-import BattleKind, { getBattleKind } from '../../auth/battle-kind';
-import { type RaidBattle, collectAftermath, createRaidBattle } from '../../overworld/raid';
-import { createTrainerBattle } from '../../overworld/rocket';
-import BattleField from './BattleField';
-import TeamsPreview from './TeamsPreview';
-import CatchDialog from '../catches/CatchDialog';
-import { Badge, Button, Dialog, DialogActions, Note, Status } from '../styled';
-import { type ActiveBattle, GameDialog, useGame } from '../app/game-context';
-import { type Profile, getProfiles } from '../../auth/profile';
-import PlayerPlate from '../profile/PlayerPlate';
-import AnimatedSprite from '../sprites/AnimatedSprite';
-import { getSpeciesData } from '../../data/species';
-import Npc, { NPC_NAMES } from '../../data/overworld/npc';
-import type { Species } from '../../data/ids/species';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
+} from '../../../auth/battles';
+import { useAuth } from '../../../auth/context';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
+import { BattleModes } from '../../../battle/core';
+import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
+import { type RaidBattle, collectAftermath, createRaidBattle } from '../../../overworld/raid';
+import { createTrainerBattle } from '../../../overworld/rocket';
+import BattleField from '../BattleField';
+import VerdictDialog from './VerdictDialog';
+import {
+  type Contribution,
+  type SideSummary,
+  readContributions,
+  readSides,
+} from './summary';
+import CatchDialog from '../../catches/catch-dialog';
+import { Badge, Button, Dialog, DialogActions, Note, Status } from '../../styled';
+import { type ActiveBattle, GameDialog, useGame } from '../../app/game-context';
+import { type Profile, getProfiles } from '../../../auth/profile';
 
 /**
  * How often the view re-reads the units; the battle itself runs on
@@ -280,109 +278,23 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
     return 'The raid boss is down — it is waiting in the overworld.';
   };
-
   /**
-   * One line of the summary: who, and how much of the other side's
-   * health they took
-   */
-  interface Contribution {
-    label: string;
-    player: string;
-    dealt: number;
-  }
-
-  /**
-   * One side of a player or trainer fight: whose it was, what the
-   * whole team took off the other side, and each pokemon's own share
-   */
-  interface SideSummary {
-    player: string;
-    lead: Species;
-    dealt: number;
-    units: { species: Species; dealt: number }[];
-  }
-
-  /**
-   * The fight's contributions, largest first. A raid ranks whole
-   * teams — the boss included, since how hard it hit back is part of
-   * the story; player and npc fights are small enough to rank every
-   * unit on its own
+   * The fight's contributions and its sides, both only once the
+   * battle has settled. `revision` is read so they are re-counted as
+   * the units mutate
    */
   const contributions = (): Contribution[] => {
     revision();
     const built = instance();
 
-    if (built == null || !built.battle.settled) {
-      return [];
-    }
-
-    const rows: Contribution[] = [];
-
-    if (built.battle.mode === BattleModes.Raid) {
-      const teams = new Map<Team, number>();
-
-      for (const fielded of built.units.values()) {
-        for (const unit of fielded) {
-          teams.set(unit.team, (teams.get(unit.team) ?? 0) + unit.dealt);
-        }
-      }
-      for (const [team, dealt] of teams) {
-        const lead = [...team.units].at(0);
-
-        rows.push({
-          // A side no player owns is named for what led it out
-          label: team.player === '' && lead != null ? getSpeciesData(lead.species).name : '',
-          player: team.player,
-          dealt,
-        });
-      }
-    } else {
-      for (const fielded of built.units.values()) {
-        for (const unit of fielded) {
-          rows.push({
-            label: getSpeciesData(unit.species).name,
-            player: unit.team.player,
-            dealt: unit.dealt,
-          });
-        }
-      }
-    }
-    return rows.sort((one, other) => other.dealt - one.dealt);
+    return built == null || !built.battle.settled ? [] : readContributions(built);
   };
 
-  /**
-   * The fight by sides, for the summary of a player or trainer
-   * battle: each team under its owner, largest total first, each
-   * pokemon under its team, largest share first
-   */
   const sides = (): SideSummary[] => {
     revision();
     const built = instance();
 
-    if (built == null || !built.battle.settled) {
-      return [];
-    }
-
-    const teams = new Map<Team, SideSummary>();
-
-    for (const fielded of built.units.values()) {
-      for (const unit of fielded) {
-        let side = teams.get(unit.team);
-
-        if (side == null) {
-          side = { player: unit.team.player, lead: unit.species, dealt: 0, units: [] };
-          teams.set(unit.team, side);
-        }
-        side.dealt += unit.dealt;
-        side.units.push({ species: unit.species, dealt: unit.dealt });
-      }
-    }
-    return [...teams.values()]
-      .map((side) => ({
-        ...side,
-        units: side.units.sort((one, other) => other.dealt - one.dealt),
-      }))
-      .sort((one, other) => other.dealt - one.dealt);
+    return built == null || !built.battle.settled ? [] : readSides(built);
   };
 
   /**
@@ -404,23 +316,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   /** The raid's damage shares, keyed by who dealt them — the boss under '' */
   const shares = (): Map<string, number> =>
     new Map(contributions().map((row) => [row.player, row.dealt]));
-
-  /**
-   * What a side's header calls its owner. The reader is "You"; a side
-   * nobody owns is the grunt where a grunt was fought, and otherwise
-   * whatever led it out
-   */
-  const sideName = (side: SideSummary): string => {
-    if (side.player === '') {
-      return props.active.rocket == null
-        ? getSpeciesData(side.lead).name
-        : NPC_NAMES[Npc.RocketGrunt];
-    }
-    if (side.player === auth.user()?.uid) {
-      return 'You';
-    }
-    return names()?.get(side.player)?.nickname ?? 'A trainer';
-  };
 
   /**
    * What the end of the fight is called, and what it says. A replay
@@ -736,109 +631,22 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           opens the moment the engine settles it, and closing it leaves
           the player on the finished field rather than walking them out
           — the prize is already recorded either way */}
-      <Show when={verdict()}>
-        {(said) => (
-          <Dialog
-            isOpen={!dismissed()}
-            onClose={() => {
-              setDismissed(true);
-            }}
-            title={said().title}
-            description={said().said}
-            terse
-          >
-            {/* What happened, in the panel rather than on the bar. The
-                bar carries the word — Victory, Defeat — and a sentence
-                set under it in the header's own smaller type reads as
-                a caption to the title rather than as the news */}
-            <p class="text-center">{said().said}</p>
-
-            {/* Who did what, side by side. Each team stands under its
-                owner — the face, the name and the team's whole take —
-                with each pokemon's own share listed beneath. A raid
-                says all of this on the team list below instead */}
-            <Show when={!raiding() && sides().length > 0}>
-              <div class="flex flex-col gap-3">
-                <For each={sides()}>
-                  {(side) => (
-                    <section class="flex flex-col gap-1">
-                      <div class="flex items-center justify-between gap-4">
-                        <PlayerPlate
-                          name={sideName(side)}
-                          avatar={names()?.get(side.player)?.avatar ?? null}
-                        />
-                        <span class="text-sm text-muted">
-                          {Math.round(side.dealt).toLocaleString()} damage
-                        </span>
-                      </div>
-                      <ul class="flex list-none flex-col gap-0.5 pl-3">
-                        <For each={side.units}>
-                          {(unit) => (
-                            <li class="flex items-center justify-between gap-4">
-                              <span class="flex items-center gap-1.5">
-                                {/* Fitted to one square cell, the way a
-                                    box square fits its sprite, so every
-                                    row's picture is the same size */}
-                                <span class="relative size-8 shrink-0">
-                                  <span class="absolute inset-0.5 flex items-center justify-center">
-                                    <AnimatedSprite
-                                      species={unit.species}
-                                      animation={SpriteAnim.Idle}
-                                      direction="DownLeft"
-                                      label={getSpeciesData(unit.species).name}
-                                      fill
-                                    />
-                                  </span>
-                                </span>
-                                {getSpeciesData(unit.species).name}
-                              </span>
-                              <span class="text-sm text-muted">
-                                {Math.round(unit.dealt).toLocaleString()} damage
-                              </span>
-                            </li>
-                          )}
-                        </For>
-                      </ul>
-                    </section>
-                  )}
-                </For>
-              </div>
-            </Show>
-
-            {/* The teams as they were frozen for this fight, each
-                player's face and name beside what they fielded and
-                the share of the damage that was theirs. Raids only:
-                a trainer fight already said all of this side by side
-                above, and a demo battle stands on no record */}
-            <Show when={raiding() ? record() : null}>
-              {(stamped) => (
-                <TeamsPreview
-                  teams={stamped().teams}
-                  player={auth.user()?.uid ?? ''}
-                  dealt={shares()}
-                />
-              )}
-            </Show>
-
-            {/* Centred, like everything else in the panel. The
-                verdict is one line about what happened and two things
-                to do about it, and buttons pushed to the right of a
-                centred sentence read as belonging to something else */}
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  setDismissed(true);
-                }}
-              >
-                Stay and look
-              </Button>
-              <Button tone="primary" onClick={leave}>
-                {props.active.replay ? 'Exit replay' : 'Leave battle'}
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-      </Show>
+      <VerdictDialog
+        verdict={verdict}
+        dismissed={dismissed()}
+        onDismiss={() => {
+          setDismissed(true);
+        }}
+        raiding={raiding()}
+        sides={sides()}
+        names={names}
+        player={auth.user()?.uid ?? ''}
+        rocket={props.active.rocket != null}
+        teams={raiding() ? (record()?.teams ?? null) : null}
+        shares={shares()}
+        replay={props.active.replay}
+        onLeave={leave}
+      />
     </section>
   );
 }

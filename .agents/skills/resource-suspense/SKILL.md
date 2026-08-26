@@ -61,3 +61,43 @@ The resource is handed down as the accessor itself, not as a value — passing `
 - `refetch` belongs to the outer body, and is handed down like the accessor when the child is what acts.
 - [`TabPane`](../../../src/components/styled/tabs.tsx) carries a boundary, so a panel it renders is already a child of one.
 - A dialog is not a boundary. Portalled markup keeps its owner, so a read inside a dialog reaches whatever boundary is above the component, and closes the dialog on the way out.
+
+## Which side of the boundary a computation goes
+
+The split is not only about reads. Two kinds of computation have a side of their own.
+
+**Derived signals go outside.** A memo or an accessor over props, plain signals or anything else that cannot suspend belongs in the declaring body, above the boundary, and is handed down. Kept inside, it is recomputed under a subtree that stops while the data is in the air, and the parent cannot read it at all.
+
+```tsx
+function Outer(props: { player: string }): JSX.Element {
+  const [search, setSearch] = createSignal('');
+  const [data] = createResource(() => props.player, listThings);
+  // Derived from a signal, not from the resource: it stays here
+  const wanted = createMemo(() => search().trim().toLowerCase());
+
+  return (
+    <>
+      <SearchBox value={search()} onChange={setSearch} />
+      <Suspense>
+        <Inner data={data} wanted={wanted} />
+      </Suspense>
+    </>
+  );
+}
+```
+
+**Effects that read go inside.** A `createEffect` reading the resource — or reading anything that reaches it — belongs in the child, under the boundary. In the declaring body it throws past every boundary in the component and takes the page down with it, and it runs while the data is still coming.
+
+```tsx
+function Inner(props: { data: Resource<Thing[]>; wanted: () => string }): JSX.Element {
+  // Under the boundary: it may suspend, and it runs when there is
+  // something to run on
+  createEffect(() => {
+    report(props.data().length, props.wanted());
+  });
+
+  return <For each={props.data()}>{(thing) => <Row thing={thing} />}</For>;
+}
+```
+
+An effect that writes a signal the outer body owns still lives inside; it is handed the setter.

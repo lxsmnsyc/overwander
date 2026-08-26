@@ -3,10 +3,7 @@ import {
   ASPECT,
   BORDER_CELLS,
   type BoardCell,
-  PICTURE_SPAN,
-  PITCH,
   type ProjectedPoint,
-  SPRITE_FACINGS,
   angleOf,
   boardCellAtFraction,
   boardCellOf,
@@ -26,34 +23,70 @@ import {
   shortestTurn,
   unprojectGround,
   yawTurns,
-} from '../../canvas/board';
-import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
-import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../canvas/sprite-sheet';
-import drawSparkle from '../../canvas/sparkle';
-import { type Cast, getCast, paintAmbient } from '../../canvas/daylight';
-import { getLocalOffset, toLocalTime } from '../../auth/local-time';
-import { serverNow } from '../../auth/clock';
-import loadSpeciesSprite from '../../canvas/species-sprites';
-import type BiomeTileset from '../../canvas/biome-tileset';
-import { variantAt } from '../../canvas/biome-tileset';
-import loadBiomeTileset from '../../canvas/biome-tilesets';
-import drawTileQuad from '../../canvas/tile-quad';
-import { BIOME_COLORS } from '../../data/biome';
-import type Biome from '../../data/ids/biome';
-import { isWaterBiome } from '../../data/ids/biome';
-import type { TerrainRole } from '../../data/overworld/terrain';
-import boardTerrain from '../../overworld/terrain';
-import { rotateMask } from '../../data/overworld/autotile';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
-import Decoration from '../../data/overworld/decoration';
-import Landmark from '../../data/overworld/landmark';
-import Phenomenon from '../../data/overworld/phenomenon';
-import Npc, { npcSheet } from '../../data/overworld/npc';
-import type { Species } from '../../data/ids/species';
-import facingToward from '../../canvas/facing';
-import type OWCharSprite from '../../canvas/ow-char-sprite';
-import loadOWChar from '../../canvas/ow-char-sprites';
-import { CHUNK_CELLS } from '../../overworld/chunk';
+} from '../../../canvas/board';
+import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
+import drawSparkle from '../../../canvas/sparkle';
+import { type Cast, getCast, paintAmbient } from '../../../canvas/daylight';
+import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
+import { serverNow } from '../../../auth/clock';
+import loadSpeciesSprite from '../../../canvas/species-sprites';
+import type BiomeTileset from '../../../canvas/biome-tileset';
+import { variantAt } from '../../../canvas/biome-tileset';
+import loadBiomeTileset from '../../../canvas/biome-tilesets';
+import drawTileQuad from '../../../canvas/tile-quad';
+import { BIOME_COLORS } from '../../../data/biome';
+import type Biome from '../../../data/ids/biome';
+import { isWaterBiome } from '../../../data/ids/biome';
+import type { TerrainRole } from '../../../data/overworld/terrain';
+import boardTerrain from '../../../overworld/terrain';
+import { rotateMask } from '../../../data/overworld/autotile';
+import { SpriteAnim } from '../../../data/ids/sprite-anims';
+import type Decoration from '../../../data/overworld/decoration';
+import Landmark from '../../../data/overworld/landmark';
+import Phenomenon from '../../../data/overworld/phenomenon';
+import Npc, { npcSheet } from '../../../data/overworld/npc';
+import type { Species } from '../../../data/ids/species';
+import facingToward from '../../../canvas/facing';
+import type OWCharSprite from '../../../canvas/ow-char-sprite';
+import loadOWChar from '../../../canvas/ow-char-sprites';
+import { CHUNK_CELLS } from '../../../overworld/chunk';
+import {
+  APRON,
+  BEARINGS,
+  CELL,
+  CELL_STRIDE,
+  COLORS,
+  COMPASS_HALO,
+  COMPASS_SIZE,
+  CROSSING_IN,
+  CROSSING_OUT,
+  CROSSING_SLIDE,
+  type Crossing,
+  GROUND_SQUASH,
+  LOADING_LABEL,
+  LOADING_SIZE,
+  MOVE_KEYS,
+  NPC_CELLS,
+  PLAYER_SHEET,
+  QUARTER_TURN,
+  SIZE_TIERS,
+  SLIDE_PACE,
+  SNAP_CELLS,
+  SPRITE_SCALE,
+  TURN_DEAD_ZONE,
+  WIDTH,
+  isTurningPress,
+} from './metrics';
+import {
+  LANDMARK_GLYPHS,
+  type SpawnCoat,
+  drawDecoration,
+  drawPhenomenon,
+  facingOf,
+} from './scenery';
+
+export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress };
 
 /**
  * The chunk the player is standing in, drawn rather than laid out.
@@ -69,490 +102,6 @@ import { CHUNK_CELLS } from '../../overworld/chunk';
  * what is on a cell and whether it can be reached are all the tab's to
  * decide; this asks for them per cell and paints the answers.
  */
-
-/**
- * How big a cell is at the size the picture was drawn at.
- *
- * The canvas is the page now, so the picture is however large the
- * screen allows rather than a fixed number of pixels. What this and
- * the sizes beside it describe is one **reference** picture: a radius
- * of `CELL * 0.3` is that on a board of this width and proportionally
- * more on a wider one. Everything measured in pixels is multiplied by
- * how much larger the real picture came out
- */
-const CELL = 26;
-
-/**
- * The reference picture's width. It is wider than the chunk: there is
- * an apron of threshold cells around it and the compass letters stand
- * off that again
- */
-const WIDTH = CELL * CHUNK_CELLS * PICTURE_SPAN;
-
-/**
- * How far past the chunk the apron of thresholds reaches, in board
- * fractions — the units the ground is measured in, where the chunk
- * itself runs from 0 to 1
- */
-const APRON = BORDER_CELLS / CHUNK_CELLS;
-
-/**
- * How much bigger than the sheet a pokemon standing in a cell is
- * drawn, at the board's middle row. The rows in front of it are drawn
- * larger and the rows behind smaller — that factor is the projection's
- * and comes back with every point it is asked about.
- *
- * A little larger than it was, because a sprite is no longer sitting
- * inside its cell: it stands **up** out of it, over the row behind,
- * which is the whole of what makes the board read as a place with
- * things on it rather than a chart with pictures in it
- */
-const SPRITE_SCALE = 0.95;
-
-/**
- * How much of that a pokemon gets, by the size the game calls it.
- *
- * Drawn pixels alone are a poor measure of how big something is: a
- * frame is trimmed to the widest pose in the sheet, so a Zubat with
- * its wings out came out taller on the board than most of the pokemon
- * twice its size. `shadowSize` is the game's own answer and the only
- * one a sheet carries, so it corrects what the drawing says rather
- * than replacing it. Gentle on purpose, since the artists already draw
- * a Gyarados larger than a Caterpie and this multiplies that
- */
-const SIZE_TIERS = [0.85, 1, 1.1];
-
-/**
- * How many cells tall a charset's own cell is drawn.
- *
- * Not the scale the pokemon are drawn at: a charset is drawn at a
- * bigger pixel size than a PMD sheet, so sharing one number puts a
- * nurse two rows tall beside a Bulbasaur three quarters of a cell high.
- * Measured against the **source** cell rather than the cropped one, so
- * every charset stands the same height whatever its own crop came to
- */
-const NPC_CELLS = 1.45;
-
-/** The charset the player walks in when nothing else is chosen. */
-const PLAYER_SHEET = 'characters/frlg/red';
-
-/**
- * How long sliding across one cell takes, in milliseconds. It is the
- * tab's own step pace, so the slide arrives just as the next step
- * lands and a long walk reads as one motion
- */
-const SLIDE_PACE = 250;
-
-/**
- * A jump of more than this many cells is not a walk: a crossing or a
- * portal moved the player, and the slide teleports with them
- */
-const SNAP_CELLS = 2;
-
-/**
- * World pixels one cell is worth to a charset's walk cycle: a full
- * cycle of steps carries the walker across one cell
- */
-const CELL_STRIDE = 32;
-
-/**
- * What the board says while the sheets for what is standing on it are
- * still coming, and how large it is drawn in board pixels
- */
-const LOADING_LABEL = 'Loading…';
-const LOADING_SIZE = 18;
-
-const COLORS = {
-  grid: 'rgba(0, 0, 0, 0.12)',
-  /**
-   * The cell the player is on
-   */
-  player: '#ffd166',
-  /**
-   * The line round how far the player can lean: their own square and
-   * the eight about it, drawn as one ring rather than as nine lit
-   * cells. Whatever is inside it is theirs to press
-   */
-  highlight: '#ffffff',
-  spawn: '#2b2b2b',
-  glyph: '#1c1c1c',
-  landmark: 'rgba(255, 255, 255, 0.65)',
-  /**
-   * The keyboard's own pointer, drawn only while the canvas has focus
-   */
-  cursor: '#3b82f6',
-  /**
-   * The compass, which is four letters standing on the ground off the
-   * edges of the board. They are read against whatever country the
-   * chunk is made of, so each one is drawn on a halo of its own rather
-   * than trusting a dark letter to show up on dark ground
-   */
-  compass: '#1c1c1c',
-  compassHalo: 'rgba(255, 255, 255, 0.75)',
-  /**
-   * The word said over the board while its pokemon are still coming,
-   * on a halo for the same reason the compass has one
-   */
-  loading: '#1c1c1c',
-  loadingHalo: 'rgba(255, 255, 255, 0.75)',
-  /**
-   * The ground under something standing on it
-   */
-  shadow: 'rgba(0, 0, 0, 0.28)',
-  /**
-   * What lifts the board off the country it lies in. The ground
-   * beyond it is the same colour — it is the same country — so the
-   * board is the part of it with the light on
-   */
-  surface: 'rgba(255, 255, 255, 0.10)',
-} as const;
-
-/**
- * How near the middle of the board a grab has to be before it is not
- * worth turning by.
- *
- * The board turns about its own middle, so a bit of plane grabbed
- * right at the centre has no angle to speak of: a pixel of movement
- * there would swing it half a turn. A grab inside this holds the
- * board still until the pointer has been dragged out past it, which
- * is what a hand on a turntable does
- */
-const TURN_DEAD_ZONE = 0.06;
-
-/**
- * How big the compass letters are on the reference picture. They are
- * the only writing on it, and they are read at a glance rather than
- * studied
- */
-const COMPASS_SIZE = 15;
-
-/**
- * How thick the halo under a compass letter is drawn
- */
-const COMPASS_HALO = 3;
-
-/**
- * How flat the shadow lies. It is on the ground, and the ground is
- * laid back under the camera, so it is squashed the way the ground is
- */
-const GROUND_SQUASH = Math.sin((PITCH * Math.PI) / 180) * 0.55;
-
-/**
- * Crossing a boundary, drawn rather than waited through.
- *
- * The next chunk's window is a round trip, and while it is in the air
- * there is nothing to draw. The world used to be taken off the screen
- * for that moment and a line of text put in its place, which is a
- * flash of the whole page for what is usually a fraction of a second
- * — and it happens every time a player walks off an edge.
- *
- * So the board is carried off instead: the one being left slides away
- * behind the walker and fades, and the one they have walked into comes
- * on from the far side. Nothing waits on the drawing — the caller
- * holds the old board up until the new one has arrived, and says which
- * half of the crossing this is
- */
-export interface Crossing {
-  /**
-   * The step that took them over, in the world's own cells: north is
-   * `dy` of -1 whichever way the camera is pointing
-   */
-  dx: number;
-  dy: number;
-  /**
-   * Whether the board is being carried off or brought on
-   */
-  phase: 'out' | 'in';
-}
-
-/**
- * How long each half of a crossing takes. Short: it is a step, and a
- * player crossing several chunks would otherwise spend the walk
- * watching the boards rather than the world
- */
-export const CROSSING_OUT = 180;
-
-export const CROSSING_IN = 220;
-
-/**
- * How far the board travels while it is being carried off, as a
- * fraction of the picture. Far enough to be leaving, near enough that
- * it is the same board the whole way
- */
-const CROSSING_SLIDE = 0.3;
-
-/**
- * Which button turns the board. The left one is for pressing cells
- * and the right one has no other business here
- */
-const RIGHT_BUTTON = 2;
-
-/**
- * How far a keyboard press turns the board. A quarter is what the
- * halves of it are counted in; a press is half of that, which lands
- * on a sprite facing every time
- */
-const QUARTER_TURN = Math.PI / 2;
-
-/**
- * Whether this press is asking to turn the board rather than to press
- * a cell.
- *
- * The right button, or — for the Mac, where a trackpad and a Magic
- * Mouse both ship without one — **control and the left button**, which
- * is what that platform means by a secondary click everywhere else.
- * It costs nothing on the machines that do have a right button, since
- * control-clicking one was never a way of pressing a cell
- */
-export function isTurningPress(event: { button: number; ctrlKey: boolean }): boolean {
-  return event.button === RIGHT_BUTTON || (event.button === 0 && event.ctrlKey);
-}
-
-/**
- * Which way a pokemon standing on a cell happens to be facing.
- *
- * A field of pokemon all facing the camera reads as a shop window.
- * They face whichever way they were standing when the window rolled
- * them, and it is derived rather than stored: the cell and the species
- * are what the world already knows, so every player looking at that
- * chunk sees the same Rattata looking the same way, and it does not
- * change under a camera walking around it
- */
-/**
- * A pokemon standing in the chunk, and which coat it is wearing.
- *
- * Shininess is not the world's — it is a resonance between the trait
- * value and the player reading the screen, so the same spawn sparkles
- * for one trainer and not for the next — which is why it travels with
- * the species rather than being worked out here
- */
-export interface SpawnCoat {
-  species: Species;
-  shiny: boolean;
-}
-
-function facingOf(index: number, species: Species): number {
-  const mixed = Math.imul(index + 1, 2_654_435_761) ^ Math.imul(species + 1, 40_503);
-
-  return (Math.abs(mixed) >>> 3) % SPRITE_FACINGS;
-}
-
-/**
- * One letter per landmark, the same ones the list used before the
- * chunk was a picture — they are short enough to read at this size and
- * a player already knows them
- */
-/**
- * How each piece of scenery is drawn: a colour and a shape.
- *
- * Shapes rather than pictures, because there are no sheets for any of
- * this yet — a green cone is a tree in the way a letter in a circle is
- * a landmark, and it says what a chunk is made of at a glance. What is
- * standing there is named to a screen reader instead
- */
-const DECORATION_LOOKS: Record<Decoration, { color: string; shape: 'tall' | 'round' | 'tuft' }> = {
-  [Decoration.Tree]: { color: '#3f7a3f', shape: 'tall' },
-  [Decoration.Pine]: { color: '#2f5f4a', shape: 'tall' },
-  [Decoration.Palm]: { color: '#4f8f5f', shape: 'tall' },
-  [Decoration.Cactus]: { color: '#5f8f4f', shape: 'tall' },
-  [Decoration.Shrub]: { color: '#5f8a4a', shape: 'round' },
-  [Decoration.Grass]: { color: '#6faa55', shape: 'tuft' },
-  [Decoration.Flower]: { color: '#c9739f', shape: 'tuft' },
-  [Decoration.Rock]: { color: '#8a8a8a', shape: 'round' },
-  [Decoration.Boulder]: { color: '#6f6f6f', shape: 'round' },
-  [Decoration.Reed]: { color: '#7a8f4a', shape: 'tuft' },
-  [Decoration.Coral]: { color: '#d1707f', shape: 'tall' },
-  [Decoration.Ice]: { color: '#a9d8e8', shape: 'round' },
-  [Decoration.Mushroom]: { color: '#b0603f', shape: 'round' },
-  [Decoration.Stump]: { color: '#7a5a3a', shape: 'round' },
-};
-
-/**
- * One piece of scenery, drawn on the ground it stands on. A cone for
- * anything that grows upward, a mound for anything that lies about,
- * and three strokes for anything low enough to walk through
- */
-function drawDecoration(
-  context: CanvasRenderingContext2D,
-  spot: { x: number; y: number; scale: number },
-  decoration: Decoration,
-  magnify: number,
-): void {
-  const look = DECORATION_LOOKS[decoration];
-  const size = CELL * 0.32 * spot.scale * magnify;
-
-  context.save();
-  context.fillStyle = look.color;
-  context.strokeStyle = look.color;
-  context.lineWidth = Math.max(1, size * 0.22);
-  context.lineCap = 'round';
-  context.beginPath();
-
-  if (look.shape === 'tall') {
-    context.moveTo(spot.x, spot.y - size * 1.4);
-    context.lineTo(spot.x + size * 0.8, spot.y + size * 0.6);
-    context.lineTo(spot.x - size * 0.8, spot.y + size * 0.6);
-    context.closePath();
-    context.fill();
-  } else if (look.shape === 'round') {
-    context.ellipse(spot.x, spot.y, size * 0.9, size * 0.65, 0, 0, Math.PI * 2);
-    context.fill();
-  } else {
-    for (const lean of [-0.7, 0, 0.7]) {
-      context.moveTo(spot.x + size * lean * 0.9, spot.y + size * 0.5);
-      context.lineTo(spot.x + size * lean * 1.3, spot.y - size * 0.7);
-    }
-    context.stroke();
-  }
-  context.restore();
-}
-
-/**
- * What a phenomenon looks like from above, drawn in code the way the
- * scenery is. Each is the thing itself rather than a marker: rings
- * spreading on water, dust hanging over dry ground, the shadow of
- * something passing overhead. The grotto is the exception — hidden is
- * what it is, so it keeps the plain landmark mark
- */
-function drawPhenomenon(
-  context: CanvasRenderingContext2D,
-  spot: { x: number; y: number; scale: number },
-  phenomenon: Phenomenon,
-  now: number,
-  magnify: number,
-): void {
-  const size = CELL * spot.scale * magnify;
-
-  context.save();
-
-  if (phenomenon === Phenomenon.RipplingWater) {
-    // Two rings a half-beat apart, each spreading out and thinning
-    // away, squashed to lie on the ground
-    for (const phase of [0, 0.5]) {
-      const part = (now / 1600 + phase) % 1;
-      const reach = size * (0.12 + part * 0.42);
-
-      context.globalAlpha = (1 - part) * 0.9;
-      context.strokeStyle = '#eaf7ff';
-      context.lineWidth = Math.max(1, size * 0.06 * (1 - part * 0.6));
-      context.beginPath();
-      context.ellipse(spot.x, spot.y, reach, reach * 0.55, 0, 0, Math.PI * 2);
-      context.stroke();
-    }
-  } else if (phenomenon === Phenomenon.DustCloud) {
-    // A rolling heap of billows rather than a flat swirl: a ground
-    // shadow, a wheeling ring of rolls with one riding on top, each
-    // shaded dark-below and lit-above so the mound has volume
-    const turn = now / 1400;
-
-    context.globalAlpha = 0.22;
-    context.fillStyle = '#2e2416';
-    context.beginPath();
-    context.ellipse(spot.x, spot.y + size * 0.12, size * 0.5, size * 0.2, 0, 0, Math.PI * 2);
-    context.fill();
-
-    const rolls = Array.from({ length: 5 }, (_, puff) => {
-      const angle = turn + (puff * Math.PI * 2) / 5;
-      const breath = 1 + Math.sin(now / 300 + puff * 1.7) * 0.12;
-
-      return {
-        x: spot.x + Math.cos(angle) * size * 0.34,
-        y: spot.y + Math.sin(angle) * size * 0.15 - size * 0.12,
-        reach: size * (0.22 + 0.07 * ((puff * 2) % 3)) * breath,
-      };
-    });
-
-    rolls.push({
-      x: spot.x + Math.sin(turn * 0.7) * size * 0.1,
-      y: spot.y - size * 0.4,
-      reach: size * 0.19 * (1 + Math.sin(now / 340) * 0.1),
-    });
-    rolls.push({
-      x: spot.x + Math.cos(turn * 0.9) * size * 0.16,
-      y: spot.y - size * 0.24,
-      reach: size * 0.17 * (1 + Math.sin(now / 360 + 2) * 0.1),
-    });
-    // Far rolls first, so the near ones overlap them: the overlap is
-    // what turns a scatter of ellipses into one heap
-    rolls.sort((left, right) => left.y - right.y);
-
-    // Each billow is one soft gradient ball, lit from the upper left
-    // and fading out at its rim: the soft rims are what let the balls
-    // melt into a single cloud instead of a pile of stones
-    for (const roll of rolls) {
-      const glow = context.createRadialGradient(
-        roll.x - roll.reach * 0.3,
-        roll.y - roll.reach * 0.35,
-        roll.reach * 0.35,
-        roll.x,
-        roll.y,
-        roll.reach * 1.25,
-      );
-
-      glow.addColorStop(0, 'rgba(226, 205, 158, 0.9)');
-      glow.addColorStop(0.5, 'rgba(163, 130, 82, 0.85)');
-      glow.addColorStop(1, 'rgba(110, 87, 50, 0)');
-      context.globalAlpha = 1;
-      context.fillStyle = glow;
-      context.beginPath();
-      context.arc(roll.x, roll.y, roll.reach * 1.25, 0, Math.PI * 2);
-      context.fill();
-    }
-
-    for (let speck = 0; speck < 3; speck++) {
-      const angle = turn * 2.2 + (speck * Math.PI * 2) / 3;
-
-      context.globalAlpha = 0.8;
-      context.fillStyle = '#9a7b45';
-      context.beginPath();
-      context.arc(
-        spot.x + Math.cos(angle) * size * 0.5,
-        spot.y + Math.sin(angle) * size * 0.24,
-        Math.max(1, size * 0.04),
-        0,
-        Math.PI * 2,
-      );
-      context.fill();
-    }
-  } else if (phenomenon === Phenomenon.FlyingShadow) {
-    // The shadow alone: a dark patch gliding to and fro across the
-    // cell, swelling a little as whatever casts it banks lower
-    const sweep = Math.sin(now / 1400);
-    const low = 1 + Math.sin(now / 700) * 0.12;
-
-    context.globalAlpha = 0.4;
-    context.fillStyle = '#101820';
-    context.beginPath();
-    context.ellipse(
-      spot.x + sweep * size * 0.22,
-      spot.y + Math.cos(now / 900) * size * 0.06,
-      size * 0.22 * low,
-      size * 0.12 * low,
-      0,
-      0,
-      Math.PI * 2,
-    );
-    context.fill();
-  }
-  context.restore();
-}
-
-const LANDMARK_GLYPHS: Record<Landmark, string> = {
-  [Landmark.ItemCache]: 'C',
-  [Landmark.Phenomenon]: '!',
-  [Landmark.LegendaryLair]: 'R',
-  [Landmark.ShadowLair]: 'S',
-  [Landmark.BerryPatch]: 'B',
-  [Landmark.Nest]: 'N',
-  [Landmark.WanderingNpc]: 'P',
-  [Landmark.Portal]: 'O',
-  [Landmark.TeamRocket]: 'G',
-  [Landmark.Trainer]: 'T',
-  [Landmark.GymLeader]: 'L',
-  [Landmark.EliteFour]: 'E',
-  [Landmark.Champion]: 'V',
-};
-
 export interface ChunkCanvasProps {
   /**
    * What the ground is made of, which is the whole of the background
@@ -651,34 +200,6 @@ export interface ChunkCanvasProps {
    */
   onPress: (cell: BoardCell) => void;
 }
-
-/**
- * The keys that move the cursor, and which way. They no longer walk
- * anybody: a walk is a press on where you want to be, and this is that
- * press for a player who is using the keyboard for it
- */
-/**
- * Which way a step off the board goes, in the world's own words. North
- * is the far edge of the chunk however the camera has been walked
- * round, which is the same north the compass letters are drawn from
- */
-const BEARINGS = new Map<string, string>([
-  ['0,-1', 'north'],
-  ['1,0', 'east'],
-  ['0,1', 'south'],
-  ['-1,0', 'west'],
-]);
-
-const MOVE_KEYS = new Map<string, [number, number]>([
-  ['ArrowUp', [0, -1]],
-  ['ArrowDown', [0, 1]],
-  ['ArrowLeft', [-1, 0]],
-  ['ArrowRight', [1, 0]],
-  ['w', [0, -1]],
-  ['s', [0, 1]],
-  ['a', [-1, 0]],
-  ['d', [1, 0]],
-]);
 
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;

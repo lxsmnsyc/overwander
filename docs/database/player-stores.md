@@ -228,7 +228,7 @@ Each square is in one of three states, and the gaps are the point: a number alon
 for a species never met, its own silhouette for one met and never kept, and the
 pokemon itself for one that has been owned.
 
-Opening a square opens [`DexEntryDialog`](../../src/components/dex/DexEntryDialog.tsx):
+Opening a square opens [`DexEntryDialog`](../../src/components/dex/dex-entry-dialog/index.tsx):
 both coats (each a silhouette until it has been owned), the category, the height
 and weight, the family's candy the reader is holding, the abilities, the base stats,
 **where it lives**, and everything it can learn.

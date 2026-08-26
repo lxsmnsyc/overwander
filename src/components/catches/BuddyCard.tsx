@@ -7,7 +7,7 @@ import getSigil from '../../data/constants/sigil';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
-import CatchPicker from './CatchPicker';
+import CatchPicker from './catch-picker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Card, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';

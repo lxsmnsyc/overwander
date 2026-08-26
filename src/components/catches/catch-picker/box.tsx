@@ -1,52 +1,15 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createMemo,
-  createResource,
-  createSignal,
-  untrack,
-} from 'solid-js';
-import { isLockLive } from '../../auth/battle-lock';
-import {
-  type CaughtPokemon,
-  findDuplicates,
-  giveItem,
-  readCatchContext,
-  searchCaught,
-  takeItem,
-} from '../../auth/caught';
-import { syncServerClock } from '../../auth/clock';
-import { useAuth } from '../../auth/context';
-import { ItemFlags, type Items } from '../../data/ids/items';
-import { getItemData } from '../../data/items';
-import InventoryPicker from '../items/InventoryPicker';
-import CatchGrid, { type CatchGridEntry } from './CatchGrid';
-import CatchCard from './CatchCard';
-import { asBoxEntry, describeCatch } from './catch-summary';
-import matchesCatch, {
-  type CatchConstraint,
-  type CatchContext,
-  orderCatches,
-  planCatchSearch,
-} from '../../auth/catch-search';
-import { Button, Dialog, DialogActions, HoverCard, Note, Row } from '../styled';
-
-/**
- * Picking one of the player's pokemon.
- *
- * A raid party, a breeding pair, a lot to auction, an egg to hand to
- * the daycare lady — every one of them is the same question with a
- * different rule about what counts as an answer, and each used to ask
- * it with its own list. This is the list; the rule is `filter` for what
- * to leave out and `reason` for what to show but refuse.
- *
- * It is a dialog by default. `inline` renders the list on its own for
- * callers that are already inside a dialog of their own, since a
- * dialog opened over a dialog fights it for the click that closes it.
- */
+import matchesCatch, { type CatchContext, orderCatches } from '../../../auth/catch-search';
+import { findDuplicates, giveItem, takeItem } from '../../../auth/caught';
+import { useAuth } from '../../../auth/context';
+import { ItemFlags, type Items } from '../../../data/ids/items';
+import { getItemData } from '../../../data/items';
+import InventoryPicker from '../../items/InventoryPicker';
+import { Button, HoverCard, Row } from '../../styled';
+import CatchCard from '../CatchCard';
+import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
+import { asBoxEntry, describeCatch } from '../catch-summary';
+import { type JSX, type Resource, Show, createEffect, createMemo, createSignal, untrack } from 'solid-js';
+import type { CatchOption, CatchPickerProps } from './options';
 
 /**
  * Whether a pokemon is allowed to hold it at all. An item the registry
@@ -62,128 +25,13 @@ function isHoldable(item: Items): boolean {
 }
 
 /**
- * One of the player's pokemon, with the one thing a caller cannot read
- * off the record itself: whether it is in a battle right now. That
- * needs the server's clock, which the picker reads once for the whole
- * list rather than making every caller do it
- */
-export interface CatchOption {
-  id: string;
-  caught: CaughtPokemon;
-  fighting: boolean;
-}
-
-interface CatchPickerCommonProps {
-  /**
-   * Whose pokemon. Defaults to the signed-in player
-   */
-  player?: string;
-  title?: string;
-  /**
-   * What the caller is asking for, in a sentence. The picker says
-   * something sensible about how many it wants if the caller does not
-   */
-  description?: string;
-  label?: string;
-  /**
-   * What a row's button says it will do. The pokemon follows it
-   */
-  verb?: string;
-  empty?: string;
-  /**
-   * Ask once more before handing the pick back
-   */
-  confirm?: boolean;
-  /**
-   * Whether the list is showing but not taking picks — a catch in a
-   * live battle, say, where every row is refused for the same reason
-   */
-  disabled?: boolean;
-  /**
-   * Whether the box belongs to somebody else.
-   *
-   * It is not `disabled`: the squares still answer a press, because
-   * looking at one of a stranger's pokemon is the whole reason their
-   * box is on screen. What goes is everything that would *take* one —
-   * the confirm, the "Pick none", the second press that asks whether
-   * you meant it — since none of them is a question about a
-   * collection that is not yours
-   */
-  viewOnly?: boolean;
-  /**
-   * Render the list on its own, with no dialog and no button to open
-   * one
-   */
-  inline?: boolean;
-  open?: boolean;
-  onClose?: () => void;
-  /**
-   * Which pokemon the caller can accept at all. Anything else is left
-   * out of the list
-   */
-  filter?: (option: CatchOption) => boolean;
-  /**
-   * Why a pokemon that *is* in the list cannot be picked — "in a
-   * raid", "fainted". A row with a reason is shown, said, and
-   * disabled, so a player counting their party knows where one went
-   * instead of finding it missing
-   */
-  reason?: (option: CatchOption) => string | null;
-  /**
-   * Something worth saying about a row that does not stop it being
-   * picked — what a fee would buy this particular egg, say
-   */
-  note?: (option: CatchOption) => string | null;
-  /**
-   * The records, already in hand. A caller showing two pickers over
-   * one set of catches reads them once and passes them to both
-   */
-  options?: CatchOption[];
-  /**
-   * Changing this re-reads the records
-   */
-  revision?: unknown;
-}
-
-export type CatchPickerProps = CatchPickerCommonProps &
-  (
-    | {
-        multiple?: false;
-        value: string | null;
-        onPick: (caught: string | null) => void;
-        max?: undefined;
-      }
-    | {
-        multiple: true;
-        value: string[];
-        onPick: (caught: string[]) => void;
-        /**
-         * How many may be picked at once — a party of six, a pair of
-         * parents. Rows stop taking picks once it is reached
-         */
-        max?: number;
-        /**
-         * Report every press rather than waiting to be confirmed, and
-         * draw no confirm button.
-         *
-         * It is for a caller that already has a button of its own —
-         * the breeder's "Breed", the nurse's "Hand over" — where the
-         * picker's own confirm was a second button next to it saying
-         * very nearly the same thing. The caller holds the picks and
-         * decides what they are worth
-         */
-        live?: boolean;
-      }
-  );
-
-/**
  * The box itself, which is where the records are read.
  *
  * A list read in the body that declared it throws past every
  * `Suspense` written there and lands on the boundary around the whole
  * page, so the reading half is a component of its own
  */
-function PickerBox(
+export default function PickerBox(
   props: CatchPickerProps & {
     owned: Resource<CatchOption[]>;
     /**
@@ -598,151 +446,5 @@ function PickerBox(
         }}
       />
     </div>
-  );
-}
-
-/**
- * Picking one of the player's pokemon: the button that opens it, the
- * dialog it opens into, and the box inside that.
- *
- * The records are read one component down, under the boundary this
- * puts around the box — a list read here would throw past it and take
- * the page with it
- */
-export default function CatchPicker(props: CatchPickerProps): JSX.Element {
-  const auth = useAuth();
-  const [opened, setOpened] = createSignal(false);
-  /** Bumped by a give or a take, so the records are read again */
-  const [handled, setHandled] = createSignal(0);
-
-  const owner = (): string => props.player ?? auth.user()?.uid ?? '';
-
-  const showing = (): boolean => props.inline === true || (props.open ?? opened());
-
-  const [query, setQuery] = createSignal('');
-  /**
-   * The half of the search the store can answer, which is what decides
-   * whether the box has to be read again.
-   *
-   * Compared by what it says rather than by identity: a keystroke that
-   * changes only the part the runtime filters — a name, a second type
-   * — leaves this the same and reads nothing
-   */
-  const narrowing = createMemo<CatchConstraint[]>(() => planCatchSearch(query()), [], {
-    equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
-      JSON.stringify(before) === JSON.stringify(after),
-  });
-
-  const [owned] = createResource(
-    () =>
-      showing() && props.options == null
-        ? ([owner(), props.revision, handled(), narrowing()] as const)
-        : null,
-    async ([player, , , narrowed]): Promise<CatchOption[]> => {
-      // The clock is the server's, so a lock that has timed out reads
-      // as free rather than as whatever this device believes
-      const [records, now] = await Promise.all([searchCaught(player, narrowed), syncServerClock()]);
-
-      return records.map(([id, caught]) => ({ id, caught, fighting: isLockLive(caught, now) }));
-    },
-  );
-
-  /**
-   * The facts about the box that live in other tables, read once
-   * beside the rows. A view-only box reads them too: they are about
-   * whose pokemon these are, not about who is looking
-   */
-  const [around] = createResource(
-    () => (showing() && props.options == null ? ([owner(), handled()] as const) : null),
-    async ([player]): Promise<CatchContext> => readCatchContext(player),
-  );
-
-  const limit = (): number =>
-    props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
-
-  /**
-   * What the picker is asking for. A caller with something more
-   * specific to say says it; otherwise the question is how many, which
-   * the picker already knows
-   */
-  const purpose = (): string => {
-    if (props.description != null) {
-      return props.description;
-    }
-    if (props.viewOnly === true) {
-      return 'What this trainer has caught.';
-    }
-    if (props.multiple !== true) {
-      return 'Choose one of your pokemon.';
-    }
-    return limit() === Number.POSITIVE_INFINITY
-      ? 'Choose from your pokemon.'
-      : `Choose from your pokemon — up to ${limit()} of them.`;
-  };
-
-  const close = (): void => {
-    setOpened(false);
-    props.onClose?.();
-  };
-
-  const box = (): JSX.Element => (
-    <Suspense fallback={<Note>Looking them over…</Note>}>
-      <PickerBox
-        {...props}
-        owned={owned}
-        around={around}
-        showing={showing()}
-        search={query()}
-        onSearch={(typed) => {
-          setQuery(typed);
-        }}
-        onHandled={() => {
-          setHandled((count) => count + 1);
-        }}
-        onDone={close}
-      />
-    </Suspense>
-  );
-
-  return (
-    <Show when={props.inline !== true} fallback={box()}>
-      {/* The button that opens it, for a caller that has not said
-          when it opens. One that passes `open` has a trigger of its
-          own — a grunt's challenge, a lair — and this one turned up
-          beside it saying the same thing twice, or, where the caller
-          was a dialog, loose on the page behind it */}
-      <Show when={props.open === undefined}>
-        <Button
-          onClick={() => {
-            setOpened(true);
-          }}
-        >
-          {props.label ?? props.title ?? 'Pick a pokemon'}
-        </Button>
-      </Show>
-      <Dialog
-        isOpen={showing()}
-        onClose={close}
-        title={props.title ?? (props.viewOnly === true ? 'Their pokemon' : 'Your pokemon')}
-        description={purpose()}
-      >
-        {box()}
-        <DialogActions>
-          <Show when={props.multiple !== true && props.value != null && props.viewOnly !== true}>
-            <Button
-              onClick={() => {
-                if (props.multiple !== true) {
-                  props.onPick(null);
-                }
-                close();
-              }}
-            >
-              Pick none
-            </Button>
-          </Show>
-          <Button onClick={close}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </Show>
   );
 }

@@ -12,7 +12,7 @@ import {
   watchTrades,
 } from '../../auth/trades';
 import { useGame } from '../app/game-context';
-import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
+import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import PlayerPlate from '../profile/PlayerPlate';
 import NamedCatch from './NamedCatch';
 import {

@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import CatchDialog from '../catches/CatchDialog';
+import CatchDialog from '../catches/catch-dialog';
 import ProfileDialog from '../profile/ProfileDialog';
 import { useGame } from '../app/game-context';
 

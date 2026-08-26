@@ -13,7 +13,7 @@ import { getFamilyName } from '../../data/species';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { getItemData } from '../../data/items';
 import { isEgg } from '../../auth/egg';
-import CatchPicker from '../catches/CatchPicker';
+import CatchPicker from '../catches/catch-picker';
 import ItemGrid from './ItemGrid';
 import { useGame } from '../app/game-context';
 import { Badge, List, ListRow, Note } from '../styled';

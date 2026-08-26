@@ -11,7 +11,7 @@ import {
 } from '../../src/data/constants/cast';
 import { Moves } from '../../src/data/ids/moves';
 import { getMoveData } from '../../src/data/moves';
-import { animationFor } from '../../src/components/battle/BattleCanvas';
+import { animationFor } from '../../src/components/battle/battle-canvas/motion';
 import { AI_REST_PERIOD } from '../../src/battle/ai/idle';
 import { MOVE_DELAY } from '../../src/battle/mechanics/move';
 import { createBattle, createUnit } from '../battle/harness';

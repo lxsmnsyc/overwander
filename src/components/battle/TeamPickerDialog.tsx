@@ -3,7 +3,7 @@ import { isGuarded } from '../../auth/caught';
 import { isEgg } from '../../auth/egg';
 import { isFainted } from '../../auth/health';
 import { TEAM_SIZE } from '../../auth/teams';
-import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
+import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 
 /**
  * Why a pokemon cannot be brought into a raid. All four are shown

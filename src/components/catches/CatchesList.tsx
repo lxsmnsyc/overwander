@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import CatchPicker from './CatchPicker';
+import CatchPicker from './catch-picker';
 import { useGame } from '../app/game-context';
 
 export interface CatchesListProps {

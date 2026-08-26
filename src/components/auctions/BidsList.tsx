@@ -20,7 +20,8 @@ import {
   placeBid,
 } from '../../auth/auctions';
 import { type Profile, watchProfile } from '../../auth/profile';
-import { AuctionLotLabel, BidControls } from './AuctionTab';
+import { BidControls } from './auction-tab/bidding';
+import { AuctionLotLabel } from './auction-tab/lots';
 import {
   Badge,
   type BadgeTone,

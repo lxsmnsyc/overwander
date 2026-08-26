@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isTurningPress } from '../../src/components/overworld/ChunkCanvas';
+import { isTurningPress } from '../../src/components/overworld/chunk-canvas';
 
 describe('what turns the board rather than pressing it', () => {
   const LEFT = 0;

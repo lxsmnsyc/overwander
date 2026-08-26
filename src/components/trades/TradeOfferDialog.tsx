@@ -6,7 +6,7 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { TRADE_GOLD_LIMIT, offerTrade } from '../../auth/trades';
 import { useGame } from '../app/game-context';
 import watchLive from '../app/watch';
-import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
+import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import NamedCatch from './NamedCatch';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Select, useToast } from '../styled';
 

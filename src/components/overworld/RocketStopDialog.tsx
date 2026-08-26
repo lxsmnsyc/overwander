@@ -5,7 +5,7 @@ import { startRocketBattle } from '../../auth/rockets';
 import Npc from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
 import { rocketPartyLevel } from '../../overworld/rocket';
-import { NPC_QUOTES } from './NpcDialog';
+import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';

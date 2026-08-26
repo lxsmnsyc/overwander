@@ -1,135 +1,37 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  createMemo,
-  createResource,
-  createSignal,
-} from 'solid-js';
-import { isLockLive } from '../../auth/battle-lock';
-import { type CaughtPokemon, isGuarded, listCaught } from '../../auth/caught';
-import { syncServerClock } from '../../auth/clock';
-import { isShadow } from '../../auth/caught-record';
-import { getMaxHealth } from '../../auth/health';
-import { boostedSteps, isEgg, stepsRemaining } from '../../auth/egg';
-import { describeFriendship, groomedFriendship } from '../../data/constants/friendship';
-import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import { getProfile } from '../../auth/profile';
-import {
-  boostEgg,
-  breed,
-  buyFossil,
-  buyFromVendor,
-  groomCatch,
-  hasVisited,
-  remindMove,
-  reviveFossil,
-  sellToVendor,
-  tutorMove,
-  visitNurse,
-} from '../../auth/npcs';
-import { Items } from '../../data/ids/items';
-import type { Moves } from '../../data/ids/moves';
-import { getItemData, isFossil } from '../../data/items';
-import { getHeldPowerStat } from '../../data/items/power-items';
-import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
-import { Species } from '../../data/ids/species';
-import { getSpeciesData } from '../../data/species';
-import Npc, {
-  BREEDING_FEE,
-  DAYCARE_FEE,
-  GROOMING_FEE,
-  NPC_NAMES,
-  REMINDER_FEE,
-  TUTOR_FEE,
-  getRecallableMoves,
-  getTutorableMoves,
-} from '../../data/overworld/npc';
-import { VENDOR_TRADE_LIMIT } from '../../data/overworld/vendor';
-import { type BreedingParent, canBreed, canLayEggs } from '../../overworld/breeding';
-import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import CatchPicker, { type CatchOption } from '../catches/CatchPicker';
-import InventoryPicker, { type ItemAmount, describeItem } from '../items/InventoryPicker';
-import ItemGrid from '../items/ItemGrid';
-import NpcSprite from './NpcSprite';
-import AnimatedSprite from '../sprites/AnimatedSprite';
-import ItemSprite from '../items/ItemSprite';
-import TeachMoveDialog, { MoveLine } from '../catches/TeachMoveDialog';
-import {
-  Badge,
-  Button,
-  Detail,
-  Dialog,
-  DialogActions,
-  DialogSection,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Row,
-  RowButton,
-  Status,
-  useToast,
-} from '../styled';
+import { type JSX, type Resource, Show, createMemo, createResource, createSignal } from 'solid-js';
+import { isLockLive } from '../../../auth/battle-lock';
+import { type CaughtPokemon, listCaught } from '../../../auth/caught';
+import { syncServerClock } from '../../../auth/clock';
+import { isShadow } from '../../../auth/caught-record';
+import { getMaxHealth } from '../../../auth/health';
 
-/**
- * What the person standing there actually says.
- *
- * Each of them is one offer, and the sentence explaining it used to be
- * the dialog's own description — the same line of small grey text
- * every screen in the game has, which is the game explaining rather
- * than somebody talking. Said in their own words and set under them,
- * it reads as the person the player has walked up to, and it says the
- * one thing the row of controls beneath cannot: what this is for.
- *
- * They are quotes, so they are written as quotes
- */
-export const NPC_QUOTES: Record<Npc, string> = {
-  [Npc.Breeder]: 'Two that get along, that is all I ask. I do the matching, you do the walking.',
-  [Npc.DaycareLady]:
-    'Leave the egg with me a while, dear. Half of what it has left, gone like that.',
-  [Npc.NurseJoy]: 'Oh, hand them over, all of them. No charge. I am here until the day turns.',
-  [Npc.Groomer]: 'One good brushing and it will think the world of you. Shadows? Out of my hands.',
-  [Npc.Vendor]:
-    'Step up, step up. I sell what is in the crate and buy near anything, long as your purse holds.',
-  [Npc.MoveReminder]:
-    'Forgotten? Hah. Nothing is ever forgotten. One Heart Scale and I will prove it.',
-  // The grunt never opens this dialog: walking up to one puts the
-  // challenge in `RocketStopDialog`, which says this line instead.
-  // They are still one of the people a cell can draw, so their words
-  // live with the rest
-  [Npc.RocketGrunt]: 'Wrong path, kid. Three of mine say so.',
-  [Npc.FossilManiac]:
-    'Dug these up myself! Two beauties, and I will part with one. Just one, mind.',
-  [Npc.FossilScientist]: 'A fossil? Marvelous! Hand it over. It has waited in there long enough.',
-  [Npc.MoveTutor]: 'Some moves are taught, never grown into. One Heart Scale buys the lesson.',
-  // The trainer opens `RocketStopDialog` too: a duel is put the same
-  // way an ambush is, only asked rather than sprung
-  [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
-};
+import { describeFriendship } from '../../../data/constants/friendship';
+import { type InventoryEntry, getInventory } from '../../../auth/inventory';
+import { getProfile } from '../../../auth/profile';
+import { boostEgg, breed, buyFossil, buyFromVendor, groomCatch, hasVisited, remindMove, reviveFossil, sellToVendor, tutorMove, visitNurse } from '../../../auth/npcs';
+import type { Items } from '../../../data/ids/items';
+import type { Moves } from '../../../data/ids/moves';
+import { isFossil } from '../../../data/items';
 
-/**
- * A catch as the breeding rules read one
- */
-function asParent(caught: CaughtPokemon): BreedingParent {
-  const held = new Set(caught.items);
+import { getFossilPrice } from '../../../data/overworld/fossil';
+import { Species } from '../../../data/ids/species';
+import { getSpeciesData } from '../../../data/species';
+import Npc, { BREEDING_FEE, DAYCARE_FEE, GROOMING_FEE, NPC_NAMES, REMINDER_FEE, TUTOR_FEE } from '../../../data/overworld/npc';
+import { VENDOR_TRADE_LIMIT } from '../../../data/overworld/vendor';
+import { canBreed } from '../../../overworld/breeding';
+import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+import type { CatchOption } from '../../catches/catch-picker';
+import InventoryPicker, { type ItemAmount, describeItem } from '../../items/InventoryPicker';
 
-  return {
-    species: caught.species,
-    gender: caught.gender,
-    ivs: caught.ivs,
-    moves: caught.moves,
-    shadow: isShadow(caught),
-    nature: caught.nature,
-    ability: caught.abilities[0],
-    ball: caught.ball,
-    everstone: held.has(Items.Everstone),
-    destinyKnot: held.has(Items.DestinyKnot),
-    powerStat: getHeldPowerStat(caught.items),
-    egg: isEgg(caught),
-  };
-}
+import NpcSprite from '../NpcSprite';
+import AnimatedSprite from '../../sprites/AnimatedSprite';
+import ItemSprite from '../../items/ItemSprite';
+import TeachMoveDialog from '../../catches/TeachMoveDialog';
+import { Badge, Button, Detail, Dialog, DialogActions, Status, useToast } from '../../styled';
+import { BreederCounter, DaycareCounter, GroomerCounter, NurseCounter } from './counters/care';
+import { FossilCounter, ReviveCounter, VendorCounter } from './counters/goods';
+import { ReminderCounter, TutorCounter } from './counters/moves';
+import { NPC_QUOTES, asParent, priceOf } from './shared';
 
 /**
  * How every one of these sections is laid out.
@@ -139,18 +41,6 @@ function asParent(caught: CaughtPokemon): BreedingParent {
  * they want picked — and a column of left-aligned lists under a
  * centred portrait read as two screens stuck together
  */
-const CENTRED = 'items-center text-center';
-
-/**
- * What one of these costs, from whichever side of the counter it is
- * being looked at. He charges `buy` and pays `sell`, and `sell` is
- * half of `buy` everywhere
- */
-function priceOf(item: Items, buying: boolean): number {
-  const data = getItemData(item);
-
-  return buying ? data.buy : data.sell;
-}
 
 export interface NpcDialogProps {
   player: string;
@@ -330,46 +220,11 @@ function NpcCounter(
   const scales = (): number =>
     (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
-  /**
-   * Which pokemon has been picked out for the reminder
-   */
-  const remembering = (): CatchOption | null =>
-    offers().find((option) => option.id === remindee()) ?? null;
-
-  /**
-   * What he could give this one back: everything its species learns by
-   * levelling up to its level, minus the moves it still knows. It is
-   * derived, so the client works it out for the list and the server
-   * works it out again from the stored record before taking the scale
-   */
-  const forgotten = (): Moves[] => {
-    const option = remembering();
-
-    return option == null
-      ? []
-      : getRecallableMoves(option.caught.species, option.caught.level, option.caught.moves);
-  };
-
   const forget = (): void => {
     setRemindee(null);
     setRecall(null);
     setTutee(null);
     setLesson(null);
-  };
-
-  /**
-   * Which pokemon has been brought to the tutor, and what he could
-   * put on it: the species' teachable list minus what it knows.
-   * Derived here for the list and again on the server before the fee
-   * moves
-   */
-  const learning = (): CatchOption | null =>
-    offers().find((option) => option.id === tutee()) ?? null;
-
-  const lessons = (): Moves[] => {
-    const option = learning();
-
-    return option == null ? [] : getTutorableMoves(option.caught.species, option.caught.moves);
   };
 
   /**
@@ -881,384 +736,95 @@ function NpcCounter(
               </div>
 
               <Show when={standing()[1] === Npc.Breeder}>
-                <DialogSection class={CENTRED}>
-                  {/* The pair is picked with the same list every other
-                    part of the game picks a pokemon with; what makes
-                    it a breeding pair is the two, and the rule about
-                    what can be one.
-
-                    Live, so the picker draws no confirm of its own:
-                    "Leave 2/2" and "Leave them" were two buttons for
-                    one press, and the second was the only one that
-                    did anything */}
-                  <CatchPicker
-                    inline
-                    multiple
-                    live
-                    max={2}
-                    options={offers()}
-                    value={chosen()}
-                    verb="Breed"
-                    empty="You have nothing to breed."
-                    filter={(option) =>
-                      // The undiscovered group is left out rather than
-                      // shown and refused: a legendary is unbreedable
-                      // whatever it stands beside, so a square for it
-                      // is a press that can never come to anything
-                      !isEgg(option.caught) && !option.fighting && canLayEggs(option.caught.species)
-                    }
-                    onPick={(picked) => {
-                      setStatus(null);
-                      setChosen(picked);
-                    }}
-                  />
-                  {/* The pairing is checked here only so the button can
-                    say so first; the refusal itself is the server's */}
-                  <Status
-                    message={
-                      chosen().length === 2 && !compatible()
-                        ? 'Those two will have nothing to do with each other.'
-                        : null
-                    }
-                  />
-                </DialogSection>
+                <BreederCounter
+                  options={offers()}
+                  chosen={chosen()}
+                  compatible={compatible()}
+                  onPick={(picked) => {
+                    setStatus(null);
+                    setChosen(picked);
+                  }}
+                />
               </Show>
-
               <Show when={standing()[1] === Npc.NurseJoy}>
-                <DialogSection class={CENTRED}>
-                  {/* One press, one pokemon seen to. She is free and
-                    turns nobody away, so there is nothing to weigh up
-                    before handing one over — a counter that took a
-                    party first and a button second was two presses
-                    for a decision nobody makes */}
-                  <CatchPicker
-                    inline
-                    disabled={busy()}
-                    options={offers()}
-                    value={null}
-                    verb="Heal"
-                    empty="You have nothing for her to look at."
-                    filter={(option) =>
-                      !isEgg(option.caught) && !option.fighting && needsCare(option.caught)
-                    }
-                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-                    note={(option) =>
-                      isShadow(option.caught) ? 'shadow, she would purify it' : null
-                    }
-                    onPick={(id) => {
-                      if (id != null) {
-                        tendParty([id]);
-                      }
-                    }}
-                  />
-                  {/* The quote above says she is free; this says free
-                      has no bottom */}
-                  <Meta class="block">As many as you bring, as often as you like.</Meta>
-                </DialogSection>
+                <NurseCounter
+                  options={offers()}
+                  busy={busy()}
+                  needsCare={(option) => needsCare(option.caught)}
+                  onHeal={(id) => {
+                    tendParty([id]);
+                  }}
+                />
               </Show>
-
               <Show when={standing()[1] === Npc.DaycareLady}>
                 {/* Centred, like everything else she is standing in
                     the middle of: one egg, one price, and the box the
                     egg is picked out of */}
-                <DialogSection class={CENTRED}>
-                  {/* The note on each row is what the fee actually buys
-                    that egg: half of a long walk is further than half
-                    of a short one */}
-                  <CatchPicker
-                    inline
-                    options={offers()}
-                    value={null}
-                    verb="Warm"
-                    empty="You have no egg for her."
-                    filter={(option) =>
-                      isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0
-                    }
-                    note={(option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`}
-                    disabled={props.warmed.latest === true}
-                    onPick={(id) => {
-                      if (id != null) {
-                        pushEgg(id);
-                      }
-                    }}
-                  />
-                  {/* What it costs, and whether there is anything left
-                      to spend it on: one egg a window is her rule, and
-                      after it the squares would only offer a press the
-                      server refuses */}
-                  <Meta class="block">
-                    {props.warmed.latest === true
-                      ? 'She has warmed her one for you this while.'
-                      : `${DAYCARE_FEE} gold, once while she is here.`}
-                  </Meta>
-                </DialogSection>
+                <DaycareCounter
+                  options={offers()}
+                  warmed={props.warmed.latest === true}
+                  fee={DAYCARE_FEE}
+                  onWarm={pushEgg}
+                />
               </Show>
-
               <Show when={standing()[1] === Npc.Groomer}>
-                <DialogSection class={CENTRED}>
-                  {/* The note is what the fee actually buys this
-                    pokemon: half of what it has left to give, which is
-                    a great deal to one just out of its ball and next
-                    to nothing to one that already adores its owner */}
-                  <CatchPicker
-                    inline
-                    options={offers()}
-                    value={null}
-                    verb="Groom"
-                    empty="You have nothing for him to see to."
-                    filter={(option) =>
-                      !isEgg(option.caught) &&
-                      !option.fighting &&
-                      !isShadow(option.caught) &&
-                      groomedFriendship(option.caught.friendship) > option.caught.friendship
-                    }
-                    note={(option) =>
-                      `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
-                    }
-                    onPick={(id) => {
-                      if (id != null) {
-                        groom(id);
-                      }
-                    }}
-                  />
-                  {/* What it costs. The rest of what he is for is
-                      said in his own words under him */}
-                  <Meta class="block">{GROOMING_FEE} gold, once while he is here.</Meta>
-                </DialogSection>
+                <GroomerCounter options={offers()} fee={GROOMING_FEE} onGroom={groom} />
               </Show>
 
               <Show when={standing()[1] === Npc.MoveReminder}>
-                <DialogSection class={CENTRED}>
-                  {/* The scale itself rather than the words for it.
-                      It is the whole price of what he does, and a
-                      player who has one in the bag knows it by the
-                      picture — the bag draws it the same way */}
-                  <Row>
-                    <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
-                      <ItemSprite item={REMINDER_FEE} size={20} label="" />
-                      {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
-                    </Badge>
-                  </Row>
-
-                  {/* Both inputs are on the counter the moment he is
-                    walked up to: the pokemon, and what that pokemon
-                    has lost. There is nothing to agree to first — what
-                    he offers *is* the two of them — so the button is
-                    the only step, and it stays dead until they are
-                    both filled in and a scale is in the bag.
-
-                    The pickers are inline rather than dialogs of their
-                    own, since this is already one */}
-                  <CatchPicker
-                    inline
-                    options={offers()}
-                    value={remindee()}
-                    verb="Remind"
-                    empty="You have nothing that has forgotten anything."
-                    filter={(option) =>
-                      !isEgg(option.caught) &&
-                      !option.fighting &&
-                      getRecallableMoves(
-                        option.caught.species,
-                        option.caught.level,
-                        option.caught.moves,
-                      ).length > 0
-                    }
-                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-                    note={(option) =>
-                      `${
-                        getRecallableMoves(
-                          option.caught.species,
-                          option.caught.level,
-                          option.caught.moves,
-                        ).length
-                      } forgotten`
-                    }
-                    onPick={(id) => {
-                      setStatus(null);
-                      setRecall(null);
-                      setRemindee(id);
-                    }}
-                  />
-
-                  {/* The second input only means anything once the
-                      first is answered: what has been forgotten is a
-                      question about a particular pokemon */}
-                  <Show when={remembering()} fallback={<Note>Choose one of yours first.</Note>}>
-                    <Meta>What it has learned and lost:</Meta>
-                    <List>
-                      <For each={forgotten()}>
-                        {(move) => (
-                          <ListRow selected={recall() === move}>
-                            <RowButton
-                              pressed={recall() === move}
-                              disabled={busy()}
-                              onClick={() => {
-                                setRecall(move);
-                              }}
-                            >
-                              <MoveLine move={move} />
-                            </RowButton>
-                          </ListRow>
-                        )}
-                      </For>
-                    </List>
-                  </Show>
-                </DialogSection>
+                <ReminderCounter
+                  options={offers()}
+                  scales={scales()}
+                  fee={REMINDER_FEE}
+                  picked={remindee()}
+                  chosen={recall()}
+                  busy={busy()}
+                  onPick={(id) => {
+                    setStatus(null);
+                    setRecall(null);
+                    setRemindee(id);
+                  }}
+                  onChoose={(move) => {
+                    setRecall(move);
+                  }}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.MoveTutor}>
-                <DialogSection class={CENTRED}>
-                  {/* The scale is his whole price, the same one the
-                      reminder takes */}
-                  <Row>
-                    <Badge tone={scales() > 0 ? 'leaf' : 'ember'}>
-                      <ItemSprite item={TUTOR_FEE} size={20} label="" />
-                      {scales()} Heart {scales() === 1 ? 'Scale' : 'Scales'}
-                    </Badge>
-                  </Row>
-
-                  {/* The same counter the reminder keeps: both inputs
-                    on it at once, and the button dead until they are
-                    filled in and the fee is in the purse */}
-                  <CatchPicker
-                    inline
-                    options={offers()}
-                    value={tutee()}
-                    verb="Teach"
-                    empty="You have nothing he could teach."
-                    filter={(option) =>
-                      !isEgg(option.caught) &&
-                      !option.fighting &&
-                      getTutorableMoves(option.caught.species, option.caught.moves).length > 0
-                    }
-                    reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-                    note={(option) =>
-                      `${getTutorableMoves(option.caught.species, option.caught.moves).length} to learn`
-                    }
-                    onPick={(id) => {
-                      setStatus(null);
-                      setLesson(null);
-                      setTutee(id);
-                    }}
-                  />
-
-                  {/* The second input only means anything once the
-                      first is answered: what can be taught is a
-                      question about a particular pokemon */}
-                  <Show when={learning()} fallback={<Note>Choose one of yours first.</Note>}>
-                    <Meta>What he could teach it:</Meta>
-                    <List>
-                      <For each={lessons()}>
-                        {(move) => (
-                          <ListRow selected={lesson() === move}>
-                            <RowButton
-                              pressed={lesson() === move}
-                              disabled={busy()}
-                              onClick={() => {
-                                setLesson(move);
-                              }}
-                            >
-                              <MoveLine move={move} />
-                            </RowButton>
-                          </ListRow>
-                        )}
-                      </For>
-                    </List>
-                  </Show>
-                </DialogSection>
+                <TutorCounter
+                  options={offers()}
+                  scales={scales()}
+                  fee={TUTOR_FEE}
+                  picked={tutee()}
+                  chosen={lesson()}
+                  busy={busy()}
+                  onPick={(id) => {
+                    setStatus(null);
+                    setLesson(null);
+                    setTutee(id);
+                  }}
+                  onChoose={(move) => {
+                    setLesson(move);
+                  }}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.FossilManiac}>
-                <DialogSection class={CENTRED}>
-                  <Row class="justify-center">
-                    <Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>
-                  </Row>
-
-                  {/* Two rocks, and nothing about what is in them.
-                    He is selling the dig rather than the pokemon, and
-                    a player who knew which species each held would be
-                    buying a name off a shelf.
-
-                    Sold is a state of the shelf, not a message: one a
-                    window is his rule, and after it the squares would
-                    only offer a press the server refuses */}
-                  <Show
-                    when={props.visited.latest !== true}
-                    fallback={<Note>He has sold you his one for today.</Note>}
-                  >
-                    <Show
-                      when={offer().length > 0}
-                      fallback={<Note>He has nothing on him just now.</Note>}
-                    >
-                      {/* The bag's own tray, trading the way the
-                        vendor's crate does: the press is the purchase,
-                        with the price on the square and the purse
-                        greying what it will not stretch to */}
-                      <ItemGrid
-                        bare
-                        verb="Buy"
-                        disabled={busy()}
-                        entries={offer().map((item) => ({
-                          item,
-                          note: `${getFossilPrice(item)} gold`,
-                          said: `Buy ${describeItem(item)}, ${getFossilPrice(item)} gold`,
-                          blocked:
-                            getFossilPrice(item) > (props.gold.latest ?? 0)
-                              ? 'More than you hold'
-                              : null,
-                          card: () => <Detail label="Costs">{getFossilPrice(item)} gold</Detail>,
-                        }))}
-                        onPress={buyRock}
-                      />
-                    </Show>
-                  </Show>
-                </DialogSection>
+                <FossilCounter
+                  offer={offer()}
+                  gold={props.gold.latest ?? 0}
+                  busy={busy()}
+                  sold={props.visited.latest === true}
+                  onBuy={buyRock}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.FossilScientist}>
-                <DialogSection class={CENTRED}>
-                  {/* What he takes is in the bag rather than in a
-                    crate, so the list is the player's own fossils. He
-                    charges nothing else, and he will do it as often as
-                    there are rocks to open */}
-                  <Show
-                    when={fossils().length > 0}
-                    fallback={<Note>You are carrying nothing he can open.</Note>}
-                  >
-                    {/* The bag's own tray, opening rocks the way the
-                        crate sells: one press, one rock on the bench */}
-                    <ItemGrid
-                      bare
-                      verb="Revive"
-                      disabled={busy()}
-                      entries={fossils().map((entry) => ({
-                        item: entry.item,
-                        amount: entry.amount,
-                        said: `Revive ${describeItem(entry.item)}`,
-                      }))}
-                      onPress={openRock}
-                    />
-                    {/* What comes out is the rock's business, but the
-                        level is not — a party picked around it is
-                        worth planning before the fossil is spent */}
-                    <Meta class="block">
-                      Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.
-                    </Meta>
-                  </Show>
-                </DialogSection>
+                <ReviveCounter fossils={fossils()} busy={busy()} onRevive={openRock} />
               </Show>
 
               <Show when={standing()[1] === Npc.Vendor}>
-                <DialogSection title="Trading" class={CENTRED}>
-                  <Row class="justify-center">
-                    <Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>
-                  </Row>
-
-                  {/* His crate and the player's bag are windows of
-                      their own, opened from the bar below */}
-                  <Note>Buy from him, or sell to him.</Note>
-                </DialogSection>
+                <VendorCounter gold={props.gold.latest ?? 0} />
               </Show>
 
               <Status message={status()} />

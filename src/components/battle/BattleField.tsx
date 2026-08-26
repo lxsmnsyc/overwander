@@ -2,7 +2,7 @@ import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import type Battle from '../../battle/core';
 import type Unit from '../../battle/unit';
 import { type BaseEvent, EventPriority } from '../../core/event-emitter';
-import BattleCanvas, { type UnitSpot } from './BattleCanvas';
+import BattleCanvas, { type UnitSpot } from './battle-canvas';
 import { CARD_EVENTS, unitsOf } from './BattleParty';
 import UnitCard from './UnitCard';
 

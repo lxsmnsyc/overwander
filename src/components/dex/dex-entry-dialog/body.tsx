@@ -1,94 +1,22 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
-import { getCandyCount } from '../../auth/candy';
-import { EGG_HATCH_STEPS } from '../../auth/egg';
-import { type SpeciesDexEntry, getSpeciesDexEntry } from '../../auth/pokedex';
-import {
-  BIOME_NAMES,
-  SPAWN_RARITY_NAMES,
-  type SpeciesHabitat,
-  TIMES_OF_DAY,
-  TIME_OF_DAY_NAMES,
-  listSpeciesHabitats,
-} from '../../data/biome';
-import type Biome from '../../data/ids/biome';
-import { getItemData, getSpeciesFossil } from '../../data/items';
-import { LAIR_NAMES, getBiomeLairs, getSpeciesLair } from '../../data/overworld/lair';
-import { STAT_ORDER, Stats } from '../../data/constants/stats';
-import type { Moves } from '../../data/ids/moves';
-import type { Species } from '../../data/ids/species';
-import { getMoveData } from '../../data/moves';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
-import { type SpeciesData, getBaseForms, getFamilyName, getSpeciesData } from '../../data/species';
-import { STAT_LABELS, describeAbility, detailAbility } from '../catches/CatchDialog';
-import MoveCategorySprite from '../sprites/MoveCategorySprite';
-import { dexLabel } from './PokedexGrid';
-import { hasFemaleSheet } from '../../canvas/species-sprites';
-import SpeciesCoat from '../sprites/SpeciesCoat';
-import TypeBadge from '../sprites/TypeBadge';
-import {
-  Badge,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogSection,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Row,
-  StepButton,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
-  TooltipHost,
-} from '../styled';
-
-/**
- * One species in full: what it is, where it lives and what it can do.
- *
- * It is the catch sheet's opposite number. A catch sheet is about one
- * individual — its values, its nature, what it is carrying, what can
- * be done to it — and every line of it is a fact about that pokemon.
- * This is about the **species**, so nothing on it can be pressed and
- * nothing on it changes: two players reading the same entry read the
- * same thing.
- *
- * What the reader has earned decides only how much of the picture they
- * get. A species met but never kept is a silhouette, and a coat never
- * owned is a silhouette beside it — while the numbers underneath are
- * the dex's, and the dex knows what it knows whether or not the player
- * has ever held one.
- */
-
-/**
- * The ceiling the stat bars are drawn against.
- *
- * A fixed one rather than the biggest stat on the page: a Shuckle's
- * defence should look enormous next to its attack *and* next to a
- * Pidgey's, which it does not if every entry rescales itself to its
- * own best number
- */
-const STAT_CEILING = 200;
-
-/**
- * How long one turn on the spot takes, in milliseconds.
- *
- * The sheets spin at the speed a battle wants — a pokemon whipping
- * round mid-fight — which on a page that is being read is a fidget.
- * Four seconds is slow enough that each of the eight facings is
- * actually looked at, which is the point of turning at all
- */
-const ROTATION = 4000;
-
-const STAT_BARS: Record<Stats, string> = {
-  [Stats.HP]: 'bg-leaf',
-  [Stats.Attack]: 'bg-ember',
-  [Stats.Defense]: 'bg-tide',
-  [Stats.SpecialAttack]: 'bg-ember',
-  [Stats.SpecialDefense]: 'bg-tide',
-  [Stats.Speed]: 'bg-gold',
-};
+import { ROTATION, STAT_BARS, STAT_CEILING, describeLair, groupHabitats, listLevelMoves } from './species-facts';
+import { EGG_HATCH_STEPS } from '../../../auth/egg';
+import type { SpeciesDexEntry } from '../../../auth/pokedex';
+import { BIOME_NAMES } from '../../../data/biome';
+import { STAT_ORDER } from '../../../data/constants/stats';
+import type { Moves } from '../../../data/ids/moves';
+import type { Species } from '../../../data/ids/species';
+import { SpriteAnim } from '../../../data/ids/sprite-anims';
+import { getItemData, getSpeciesFossil } from '../../../data/items';
+import { getMoveData } from '../../../data/moves';
+import { type SpeciesData, getFamilyName, getSpeciesData } from '../../../data/species';
+import { STAT_LABELS } from '../../catches/catch-dialog/describe';
+import { describeAbility, detailAbility } from '../../details';
+import MoveCategorySprite from '../../sprites/MoveCategorySprite';
+import SpeciesCoat from '../../sprites/SpeciesCoat';
+import TypeBadge from '../../sprites/TypeBadge';
+import { Badge, DialogSection, List, ListRow, Meta, Note, Row, TabBar, TabButton, TabGroup, TabPane, TooltipHost } from '../../styled';
+import { dexLabel } from '../PokedexGrid';
+import { For, type JSX, type Resource, Show } from 'solid-js';
 
 /**
  * Which list of moves is being read
@@ -97,99 +25,6 @@ const enum MoveTab {
   Level = 0,
   Machines = 1,
   Egg = 2,
-}
-
-/**
- * Every level the species learns something at, in order, with what it
- * learns there
- */
-function listLevelMoves(species: Species): [level: number, moves: Moves[]][] {
-  const { level } = getSpeciesData(species).learnSet;
-
-  return Object.keys(level)
-    .map(Number)
-    .sort((one, other) => one - other)
-    .map((threshold): [number, Moves[]] => [threshold, level[threshold]]);
-}
-
-/**
- * One biome's worth of the habitat list: the hours it is met there,
- * each with how lucky the walk has to be.
- *
- * Grouped by **place** rather than by hour because that is the
- * question a player is asking — they are standing in a grassland and
- * want to know whether it is worth coming back at night
- */
-interface Habitat {
-  biome: Biome;
-  /**
-   * One badge per period it is met in — or a single **Anytime** badge
-   * for something met around the clock at the same odds, which is most
-   * of what lives anywhere. Four badges all saying the same thing is
-   * four times the reading for the same fact
-   */
-  hours: string[];
-}
-
-function groupHabitats(species: Species): Habitat[] {
-  const places = new Map<Biome, SpeciesHabitat[]>();
-
-  for (const habitat of listSpeciesHabitats(species)) {
-    places.set(habitat.biome, [...(places.get(habitat.biome) ?? []), habitat]);
-  }
-
-  return [...places]
-    .map(([biome, found]): Habitat => {
-      const bands = new Map(found.map((habitat) => [habitat.time, habitat.rarity]));
-      const met = TIMES_OF_DAY.filter((time) => bands.has(time));
-      const rarities = new Set(met.map((time) => bands.get(time)));
-
-      if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
-        return { biome, hours: [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`] };
-      }
-      return {
-        biome,
-        hours: met.map(
-          (time) => `${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`,
-        ),
-      };
-    })
-    .sort((one, other) => BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]));
-}
-
-/**
- * The place this species is at home in, if it has one, and the biomes
- * that place turns up in.
- *
- * A legendary is not caught by walking into it: it stands in a lair,
- * and a lair is a landmark the world stages in the biomes that could
- * hold it — the Seafoam Islands in cold water, Mt. Ember in a volcano.
- * Naming it is most of what a player needs, since a lair is what they
- * would travel to
- */
-function describeLair(species: Species): { name: string; where: string[] } | null {
-  const lair = getSpeciesLair(species);
-
-  if (lair == null) {
-    return null;
-  }
-
-  const where = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).filter((biome) =>
-    new Set(getBiomeLairs(biome)).has(lair),
-  );
-
-  return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
-}
-
-/**
- * The dex in the order it is printed. Base forms only — a dex is one
- * entry per pokemon rather than one per costume — and the arrows walk
- * this list
- */
-function dexOrder(): Species[] {
-  return getBaseForms().sort(
-    (one, other) => getSpeciesData(one).dexNumber - getSpeciesData(other).dexNumber,
-  );
 }
 
 export interface DexEntryDialogProps {
@@ -211,6 +46,7 @@ export interface DexEntryDialogProps {
   onSpecies: (species: Species) => void;
 }
 
+
 /**
  * The entry itself, which is where the dex and the candy are read.
  *
@@ -218,7 +54,7 @@ export interface DexEntryDialogProps {
  * `Suspense` written there and land on the boundary around the page,
  * taking the dialog with it — so the reading half stands on its own
  */
-function DexEntryBody(
+export function DexEntryBody(
   props: DexEntryDialogProps & {
     dex: Resource<SpeciesDexEntry | null>;
     candy: Resource<number>;
@@ -555,94 +391,5 @@ function DexEntryBody(
         )}
       </Show>
     </>
-  );
-}
-
-/**
- * One species in full, opened out of the dex and over it.
- *
- * What the reader has met and what candy they hold are read one
- * component down, under the boundary this puts inside the panel: a
- * dex still arriving replaces the entry rather than the page
- */
-export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element {
-  // What the reader has met. It decides which sprites are drawn in
-  // full and nothing else on the page
-  const [dex] = createResource(
-    () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getSpeciesDexEntry(player, species),
-  );
-
-  const [candy] = createResource(
-    () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) => getCandyCount(player, getSpeciesData(species).family),
-  );
-
-  /**
-   * Whether there is a second drawing to show. Asked here and read in
-   * the body, so the page waits for the answer with everything else
-   * rather than growing a column halfway through being looked at
-   */
-  const [female] = createResource(
-    () => props.species ?? null,
-    async (species) => hasFemaleSheet(species),
-  );
-
-  /**
-   * The entry either side of this one. The ends of the dex are ends
-   * rather than a loop: somebody pressing "next" through the whole of
-   * it should stop at the last one instead of finding themselves back
-   * at the first wondering what they missed
-   */
-  const neighbour = (step: number): Species | null => {
-    const species = props.species;
-
-    if (species == null) {
-      return null;
-    }
-
-    const listed = dexOrder();
-    const at = listed.indexOf(species);
-    const wanted = at + step;
-
-    return at < 0 || wanted < 0 || wanted >= listed.length ? null : listed[wanted];
-  };
-
-  const walk = (step: number): (() => void) | undefined => {
-    const next = neighbour(step);
-
-    if (next == null) {
-      return undefined;
-    }
-    return () => {
-      props.onSpecies(next);
-    };
-  };
-
-  return (
-    <Dialog
-      width="wide"
-      isOpen={props.species != null}
-      onClose={props.onClose}
-      // Named apart from the dex it was opened out of: two dialogs
-      // both called "Pokedex" are two panels a player cannot tell
-      // apart when one is standing on the other
-      title="Dex Entry"
-      // The dex either side of this entry. In the top bar rather than
-      // beside the sprite: they walk the dex rather than the pokemon,
-      // and they stay put however far down the entry is scrolled
-      lead={<StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />}
-      aside={<StepButton label="Next pokemon" way="next" onPress={walk(1)} />}
-      terse
-      description="One species in full: what it is, where it lives, and everything it can learn."
-    >
-      <Suspense fallback={<Note>Reading the dex…</Note>}>
-        <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
-      </Suspense>
-
-      <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
-      </DialogActions>
-    </Dialog>
   );
 }

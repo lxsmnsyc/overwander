@@ -46,6 +46,7 @@ import { isShadow, isShiny } from '../../src/auth/caught-record';
 import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
+import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import { PLACEMENT_AREA, centeredCells, neighborCells } from '../../src/overworld/chunk';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
@@ -1717,8 +1718,9 @@ describe('world', () => {
     // drawn from the same pool as the two who came first
     expect(met.has(Npc.NurseJoy)).toBe(true);
     expect(met.has(Npc.Groomer)).toBe(true);
-    expect(met.has(Npc.Vendor)).toBe(true);
     expect(met.has(Npc.MoveReminder)).toBe(true);
+    // The vendor is not among them any more: his stall is a landmark
+    expect(met.has(Npc.Vendor)).toBe(false);
   });
 
   it('dresses each wanderer from their role’s own wardrobe', () => {
@@ -1768,11 +1770,15 @@ describe('world', () => {
     }
   });
 
-  it('fills a vendor’s crate from the window he was drawn in', () => {
+  it('fills a trader’s crate from the window he was drawn in', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
-    );
+    // A chunk with both, so the stall and the wandering chef are
+    // measured against each other in one place
+    const chunk = findChunk(world, (candidate) => {
+      const kinds = new Set(candidate.getLandmarkCells().values());
+
+      return kinds.has(Landmark.WanderingNpc) && kinds.has(Landmark.Market);
+    });
 
     expect(chunk).not.toBeNull();
     if (chunk == null) {
@@ -1782,12 +1788,31 @@ describe('world', () => {
     const crates = new Set<string>();
     const counters = new Set<VendorKind>();
     let found = 0;
+    let stalls = 0;
 
     for (let window = 0; window < 24; window++) {
       const at = window * NPC_INTERVAL;
       const snapshot = new ChunkSnapshot(chunk, at);
+      // Everyone who could be selling: the window's wanderers, and
+      // whoever the landmarks put on a cell for good
+      const standing = new Map<number, Npc>();
 
-      for (const [cell, npc] of snapshot.getWanderingNpcs()) {
+      for (const cell of snapshot.getWanderingNpcs().keys()) {
+        const npc = snapshot.getStandingNpc(cell);
+
+        if (npc != null) {
+          standing.set(cell, npc);
+        }
+      }
+      for (const [cell, landmark] of chunk.getLandmarkCells()) {
+        if (landmark === Landmark.Market) {
+          expect(snapshot.getStandingNpc(cell)).toBe(Npc.Vendor);
+          standing.set(cell, Npc.Vendor);
+          stalls++;
+        }
+      }
+
+      for (const [cell, npc] of standing) {
         const stock = snapshot.getVendorStock(cell);
 
         // Anybody else's cell holds no crate at all
@@ -1850,10 +1875,78 @@ describe('world', () => {
     }
 
     expect(found).toBeGreaterThan(0);
+    // The stall is there every window, which is the whole point of
+    // moving him off the wandering roll. A chunk may keep more than
+    // one, so the count is per window rather than exact
+    expect(stalls).toBeGreaterThanOrEqual(24);
     // The crates are not all the same crate, and the vendor is not
     // always behind the same counter
     expect(crates.size).toBeGreaterThan(1);
     expect(counters.size).toBeGreaterThan(1);
+  });
+
+  it('keeps a vendor on every market stall, whatever the window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.Market),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const stalls = [...chunk.getLandmarkCells()]
+      .filter(([, landmark]) => landmark === Landmark.Market)
+      .map(([cell]) => cell);
+
+    for (let window = 0; window < 24; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+      for (const cell of stalls) {
+        // He is never rolled away: the stall is the landmark, and only
+        // which counter he set up turns over
+        expect(snapshot.getStandingNpc(cell)).toBe(Npc.Vendor);
+        expect(snapshot.getVendorKind(cell)).not.toBeNull();
+        // And he is dressed, so the board draws a person rather than a
+        // letter in a circle
+        expect(snapshot.getWandererCoats().get(cell)).not.toBeUndefined();
+      }
+      // A wandering cell never stages him any more
+      for (const npc of snapshot.getWanderingNpcs().values()) {
+        expect(npc).not.toBe(Npc.Vendor);
+      }
+    }
+  });
+
+  it('names a gym seat by its place and never by its window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.GymSeat),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const cells = [...chunk.getLandmarkCells()]
+      .filter(([, landmark]) => landmark === Landmark.GymSeat)
+      .map(([cell]) => cell);
+
+    expect(cells.length).toBe(1);
+
+    const cell = cells[0];
+    const id = seatId(chunk, cell);
+
+    // The same cell answers the same id however long anybody waits:
+    // a seat outlives windows, which is what makes it a place to come
+    // back to rather than a thing to catch while it is there
+    expect(seatId(chunk, cell)).toBe(id);
+    expect(id).toContain(chunk.seed);
+    // A different cell, and a different chunk, are different seats
+    expect(seatId(chunk, cell + 1)).not.toBe(id);
+    expect(seatId(world.getChunk(chunk.x + 1, chunk.y), cell)).not.toBe(id);
   });
 
   it('gives the fossil maniac two of the three, drawn with his window', () => {
@@ -3059,6 +3152,9 @@ describe('the open seas', () => {
         for (const landmark of chunk.getLandmarks()) {
           expect(landmark).not.toBe(Landmark.BerryPatch);
           expect(landmark).not.toBe(Landmark.WanderingNpc);
+          // Nobody keeps a stall or a seat out at sea either
+          expect(landmark).not.toBe(Landmark.Market);
+          expect(landmark).not.toBe(Landmark.GymSeat);
         }
       }
     }
@@ -3198,9 +3294,9 @@ describe('placement invariants', () => {
 });
 
 describe('portal balancing', () => {
-  it('never rolls a second portal, gym or champion into a chunk', () => {
+  it('never rolls a second portal, gym, champion or seat into a chunk', () => {
     const world = new World('overworld');
-    const singletons = [Landmark.Portal, Landmark.GymLeader, Landmark.Champion];
+    const singletons = [Landmark.Portal, Landmark.GymLeader, Landmark.Champion, Landmark.GymSeat];
 
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 25; x++) {

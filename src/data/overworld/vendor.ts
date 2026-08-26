@@ -45,6 +45,17 @@ export const VENDOR_KINDS: VendorKind[] = [
 ];
 
 /**
+ * What each counter is called on the board. It is the stall's name
+ * from across the chunk, so it says the shelf rather than the trade
+ */
+export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
+  [VendorKind.Medicine]: 'Ball & Potion Stall',
+  [VendorKind.Vitamins]: 'Vitamin Stall',
+  [VendorKind.Incenses]: 'Incense Stall',
+  [VendorKind.BattleItems]: 'Battle Item Stall',
+};
+
+/**
  * How many kinds one crate holds. Small enough that walking to the
  * next one is worth doing, large enough that a crate is a choice
  * rather than an offer

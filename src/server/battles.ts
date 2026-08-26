@@ -101,10 +101,13 @@ export default async function recordAftermath(
     return false;
   }
 
-  // Only a raid or an npc fight settles. A fight between players
-  // leaves every record as it stood — the coming gym-seat battles
-  // must cost nothing but the time — so a battle nobody's raid owns
-  // that fielded more than one player is refused whole
+  // A raid or an npc fight settles for whoever fought it. A fight
+  // between players settles for **the challenger of a gym seat and
+  // nobody else**: they were there, and their party carries the wear
+  // out with it. The holder's side is a frozen copy standing in for
+  // somebody who is not present — settling it would charge them for a
+  // fight they never saw — and any other player-versus-player battle
+  // settles for neither side
   const battles = await getSql()`select raid_id, outcome from battles where id = ${battleId}`;
   const others = await getSql()`
     select count(distinct player)::int as players
@@ -115,7 +118,13 @@ export default async function recordAftermath(
     return false;
   }
   if (battles[0].raid_id == null && asNumber(others.at(0)?.players) > 1) {
-    return false;
+    const challenged = await getSql()`
+      select 1 from gym_challenges where battle_id = ${battleId} and challenger = ${uid} limit 1
+    `;
+
+    if (challenged.length === 0) {
+      return false;
+    }
   }
 
   const fielded = await readFielded(battleId, uid);

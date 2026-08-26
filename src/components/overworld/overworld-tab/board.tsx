@@ -6,12 +6,28 @@ import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset } from '../../../auth/local-time';
 import { savePosition } from '../../../auth/positions';
-import { RaidKind, type RaidView, canJoinRaids, hostMythicalRaid, peekRaid } from '../../../auth/raids';
+import {
+  RaidKind,
+  type RaidView,
+  canJoinRaids,
+  hostMythicalRaid,
+  peekRaid,
+} from '../../../auth/raids';
 import { type RocketRecord, rocketStopId } from '../../../auth/rocket-record';
 import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
-import { claimBerryPatch, claimItemCache, claimNest, claimPhenomenon, peekNest, peekPhenomenonEgg, startEncounter, visitChunk, watchSnapshotWindow } from '../../../auth/snapshots';
+import {
+  claimBerryPatch,
+  claimItemCache,
+  claimNest,
+  claimPhenomenon,
+  peekNest,
+  peekPhenomenonEgg,
+  startEncounter,
+  visitChunk,
+  watchSnapshotWindow,
+} from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
 import { type BoardCell, borderExit, chunkCellOf } from '../../../canvas/board';
 import { latitudeOf } from '../../../canvas/daylight';
@@ -19,10 +35,18 @@ import { BIOME_COLORS, BIOME_NAMES } from '../../../data/biome';
 import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
-import { CHAMPION_NAME, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../../../data/overworld/experts';
+import {
+  CHAMPION_NAME,
+  ELITE_MEMBER_NAMES,
+  GYM_LEADER_NAMES,
+} from '../../../data/overworld/experts';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
+import type { GymSeatStanding } from '../../../auth/gym-seat-record';
+import { enterGymSeat } from '../../../auth/gym-seats';
+import GymSeatDialog from '../GymSeatDialog';
+import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
@@ -43,8 +67,28 @@ import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
-import { For, type JSX, type Resource, Show, createEffect, createSignal, onCleanup, onMount, untrack } from 'solid-js';
-import { CROSSING_LIMIT, FIGHT_LANDMARKS, ICON_SIZE, PUBLISHED_SPAWNS, REFRESH_DEBOUNCE, SAVE_DELAY, START_CELL, STEP_PACE, STEP_REPORT_SIZE } from './metrics';
+import {
+  For,
+  type JSX,
+  type Resource,
+  Show,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  untrack,
+} from 'solid-js';
+import {
+  CROSSING_LIMIT,
+  FIGHT_LANDMARKS,
+  ICON_SIZE,
+  PUBLISHED_SPAWNS,
+  REFRESH_DEBOUNCE,
+  SAVE_DELAY,
+  START_CELL,
+  STEP_PACE,
+  STEP_REPORT_SIZE,
+} from './metrics';
 
 /**
  * The overworld as the player walks it: arrow keys or WASD move one
@@ -162,6 +206,12 @@ export default function OverworldBoard(props: {
    * onto is derived in the dialog rather than here
    */
   const [portal, setPortal] = createSignal<number | null>(null);
+  /**
+   * The gym seat the player has walked up to: the cell, and where
+   * this player stands with it — who holds it, when they may
+   * challenge again, and whether they are the one just beaten off it
+   */
+  const [seat, setSeat] = createSignal<[number, GymSeatStanding] | null>(null);
   /**
    * The lair the player is standing in front of, and what it holds.
    * Looking at one stages nothing — the dialog's button is where a
@@ -777,8 +827,22 @@ export default function OverworldBoard(props: {
       setChallenge(stop);
       return null;
     }
-    if (landmark === Landmark.WanderingNpc) {
-      const standing = loaded.snapshot.getWanderingNpcs().get(at);
+    if (landmark === Landmark.GymSeat) {
+      const standing = await enterGymSeat(loaded.snapshot, at);
+
+      if (standing === 'absent') {
+        // The board is behind the world: the seat is a fixture, so
+        // this is a stale chunk rather than a seat that moved
+        askForWindow(true);
+        return 'There is no seat there any more.';
+      }
+      setSeat([at, standing]);
+      return null;
+    }
+    // The wandering cell and the market stall open the same counter:
+    // who is standing there is the snapshot's answer either way
+    if (landmark === Landmark.WanderingNpc || landmark === Landmark.Market) {
+      const standing = loaded.snapshot.getStandingNpc(at);
 
       if (standing == null) {
         return 'Nobody is passing through right now.';
@@ -1132,6 +1196,13 @@ export default function OverworldBoard(props: {
 
       return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
     }
+    // A stall is named for the counter it set up this window, so a
+    // player short of vitamins can see which one to walk to
+    if (landmark === Landmark.Market) {
+      const counter = loaded?.snapshot.getVendorKind(index);
+
+      return counter == null ? LANDMARK_NAMES[landmark] : VENDOR_KIND_NAMES[counter];
+    }
     // The boss is named when he is actually standing there: 1/64 is
     // worth crossing the chunk for
     if (landmark === Landmark.TeamRocket && loaded?.snapshot.isRocketBoss(index) === true) {
@@ -1320,6 +1391,31 @@ export default function OverworldBoard(props: {
               standing={wanderer()}
               onClose={() => {
                 setWanderer(null);
+              }}
+            />
+            <GymSeatDialog
+              user={user()}
+              snapshot={view()?.snapshot ?? null}
+              cell={seat()?.[0] ?? null}
+              standing={seat()?.[1] ?? null}
+              onClose={() => {
+                setSeat(null);
+              }}
+              onChange={() => {
+                // The seat moved under the dialog, so what it is
+                // showing is re-read rather than guessed at
+                const standing = seat();
+                const loaded = view();
+
+                if (standing != null && loaded != null) {
+                  enterGymSeat(loaded.snapshot, standing[0])
+                    .then((held) => {
+                      setSeat(held === 'absent' ? null : [standing[0], held]);
+                    })
+                    .catch(() => {
+                      setSeat(null);
+                    });
+                }
               }}
             />
             <NestDialog

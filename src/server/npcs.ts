@@ -86,7 +86,7 @@ async function resolveNpc(
   expected: Npc,
 ): Promise<ChunkSnapshot | null> {
   const snapshot = await resolveSnapshot(x, y, now, offset);
-  const standing = snapshot?.getWanderingNpcs().get(cell);
+  const standing = snapshot?.getStandingNpc(cell);
 
   return snapshot != null && standing === expected ? snapshot : null;
 }

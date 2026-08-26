@@ -589,6 +589,19 @@ export default class ChunkSnapshot {
     return this.wanderers;
   }
 
+  /**
+   * Who is standing at this cell, wherever they came from: the
+   * window's wanderer, or the vendor whose stall is fixed to a Market
+   * cell. Everything that asks "is this person really there" asks
+   * this, so the server's refusal and the board's offer agree
+   */
+  getStandingNpc(cell: number): Npc | null {
+    if (this.chunk.getLandmarkCells().get(cell) === Landmark.Market) {
+      return Npc.Vendor;
+    }
+    return this.getWanderingNpcs().get(cell) ?? null;
+  }
+
   private coats: Map<number, string> | null = null;
 
   /**
@@ -631,6 +644,8 @@ export default class ChunkSnapshot {
           }
         } else if (landmark === Landmark.Champion) {
           dress(cell, CHAMPION_CHARSETS);
+        } else if (landmark === Landmark.Market) {
+          dress(cell, npcSheets(Npc.Vendor));
         }
       }
       this.coats = coats;
@@ -929,7 +944,7 @@ export default class ChunkSnapshot {
    * so a new shelf added to the list does not reshuffle every crate
    */
   getVendorKind(cell: number): VendorKind | null {
-    if (this.getWanderingNpcs().get(cell) !== Npc.Vendor) {
+    if (this.getStandingNpc(cell) !== Npc.Vendor) {
       return null;
     }
 
@@ -950,7 +965,7 @@ export default class ChunkSnapshot {
    * different crate
    */
   getVendorStock(cell: number): Items[] {
-    const standing = this.getWanderingNpcs().get(cell);
+    const standing = this.getStandingNpc(cell);
 
     if (standing !== Npc.Vendor && standing !== Npc.Chef) {
       return [];

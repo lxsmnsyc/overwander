@@ -33,6 +33,9 @@ beforeEach(async () => {
   await sql`delete from auctions`;
   await sql`delete from battle_aftermaths`;
   await sql`delete from raid_rewards`;
+  // Before the battles and snapshots they point at
+  await sql`delete from gym_challenges`;
+  await sql`delete from gym_seats`;
   await sql`delete from battle_teams`;
   await sql`delete from battles`;
   await sql`delete from team_snapshots`;
@@ -218,6 +221,86 @@ describe('gifts', () => {
       .insert({ id: 'rls-gift-2', player: null, offered_at: 0, gift: {} });
 
     expect(written.error).not.toBeNull();
+  });
+});
+
+describe('gym seats', () => {
+  it('is readable by anybody and writable by nobody', async () => {
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values ('rls-seat-party', ${alice.uid}, 0, '[]'::jsonb)
+    `;
+    await sql`
+      insert into gym_seats
+        (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
+      values ('rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
+    `;
+
+    // Who is holding a seat is the whole reason to walk to it, so
+    // anybody signed in may see it
+    const seen = await bob.client.from('gym_seats').select('holder, defenses');
+
+    expect(seen.error).toBeNull();
+    expect(seen.data?.length).toBe(1);
+    expect(seen.data?.[0]?.holder).toBe(alice.uid);
+
+    // But taking one is the server's to write: a browser cannot seat
+    // itself, move a seat, or turn a holder out
+    const forged = await bob.client.from('gym_seats').insert({
+      seat_id: 'rls-seat-2',
+      holder: bob.uid,
+      snapshot_id: 'rls-seat-party',
+      chunk_seed: 'rls-seed',
+      chunk_x: 0,
+      chunk_y: 0,
+      cell: 6,
+      seated_at: 1000,
+    });
+
+    expect(forged.error).not.toBeNull();
+
+    const stolen = await bob.client
+      .from('gym_seats')
+      .update({ holder: bob.uid })
+      .eq('seat_id', 'rls-seat');
+
+    expect(stolen.error).not.toBeNull();
+
+    const razed = await bob.client.from('gym_seats').delete().eq('seat_id', 'rls-seat');
+
+    expect(razed.error).not.toBeNull();
+
+    // A guest sees no seats at all
+    const hidden = await guest().from('gym_seats').select('holder');
+
+    expect(hidden.data ?? []).toEqual([]);
+  });
+
+  it('shows a challenge only to the two players in it', async () => {
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values ('rls-seat-party', ${alice.uid}, 0, '[]'::jsonb)
+    `;
+    await sql`
+      insert into gym_seats
+        (seat_id, holder, snapshot_id, chunk_seed, chunk_x, chunk_y, cell, seated_at)
+      values ('rls-seat', ${alice.uid}, 'rls-seat-party', 'rls-seed', 0, 0, 5, 1000)
+    `;
+    await sql`
+      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      values ('rls-seat-battle', null, 0, 0, 1000, 0)
+    `;
+    await sql`
+      insert into gym_challenges (seat_id, challenger, battle_id, held_by, started_at)
+      values ('rls-seat', ${bob.uid}, 'rls-seat-battle', ${alice.uid}, 1000)
+    `;
+
+    // The challenger and the holder are both in it, so both see it
+    const challenger = await bob.client.from('gym_challenges').select('battle_id');
+    const holder = await alice.client.from('gym_challenges').select('battle_id');
+
+    expect(challenger.data?.length).toBe(1);
+    expect(holder.data?.length).toBe(1);
   });
 });
 

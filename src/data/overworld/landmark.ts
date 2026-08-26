@@ -78,6 +78,19 @@ const enum Landmark {
    * has beaten all 4 of the Elite Four, and a win takes the title
    */
   Champion = 12,
+  /**
+   * A market stall: a vendor behind one of the trade's counters,
+   * fixed to the spot. Which counter he set up turns over with the
+   * window; that he is there at all does not, so a player short of
+   * balls knows where to walk
+   */
+  Market = 13,
+  /**
+   * A seat a player leaves a team standing on for others to fight.
+   * It belongs to whoever last took it rather than to the window, and
+   * the fight is against their frozen party rather than against them
+   */
+  GymSeat = 14,
 }
 
 export default Landmark;
@@ -99,6 +112,8 @@ export const LANDMARKS: Landmark[] = [
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,
+  Landmark.Market,
+  Landmark.GymSeat,
 ];
 
 /**
@@ -118,4 +133,6 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.GymLeader]: 'Gym Leader',
   [Landmark.EliteFour]: 'Elite Four',
   [Landmark.Champion]: 'Champion',
+  [Landmark.Market]: 'Market',
+  [Landmark.GymSeat]: 'Gym Seat',
 };

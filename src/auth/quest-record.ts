@@ -91,6 +91,8 @@ export const enum Foe {
   Champion = 3,
   /** Any duelling trainer, whatever class they were */
   Trainer = 4,
+  /** A gym seat taken off another player */
+  GymSeat = 5,
 }
 
 /**

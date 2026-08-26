@@ -54,7 +54,10 @@ export function facingOf(index: number, species: Species): number {
  * a landmark, and it says what a chunk is made of at a glance. What is
  * standing there is named to a screen reader instead
  */
-export const DECORATION_LOOKS: Record<Decoration, { color: string; shape: 'tall' | 'round' | 'tuft' }> = {
+export const DECORATION_LOOKS: Record<
+  Decoration,
+  { color: string; shape: 'tall' | 'round' | 'tuft' }
+> = {
   [Decoration.Tree]: { color: '#3f7a3f', shape: 'tall' },
   [Decoration.Pine]: { color: '#2f5f4a', shape: 'tall' },
   [Decoration.Palm]: { color: '#4f8f5f', shape: 'tall' },
@@ -255,4 +258,6 @@ export const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.GymLeader]: 'L',
   [Landmark.EliteFour]: 'E',
   [Landmark.Champion]: 'V',
+  [Landmark.Market]: 'M',
+  [Landmark.GymSeat]: 'A',
 };

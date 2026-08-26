@@ -361,6 +361,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     if (landmark === Landmark.WanderingNpc) {
       fallback = props.wanderers.get(index) ?? null;
+    } else if (landmark === Landmark.Market) {
+      fallback = Npc.Vendor;
     } else if (landmark === Landmark.TeamRocket) {
       fallback = Npc.RocketGrunt;
     } else if (

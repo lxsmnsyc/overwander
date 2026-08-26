@@ -55,6 +55,7 @@ const FOE_NAMES: Record<Foe, string> = {
   [Foe.EliteFour]: 'Elite Four members',
   [Foe.Champion]: 'Champions',
   [Foe.Trainer]: 'duelling trainers',
+  [Foe.GymSeat]: 'gym seats',
 };
 
 /** A region's name with its capital back on, off the sheet-directory names */

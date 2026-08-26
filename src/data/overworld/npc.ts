@@ -34,10 +34,12 @@ const enum Npc {
    */
   Groomer = 3,
   /**
-   * Carries a crate off one of the market's counters — balls and
-   * medicine, vitamins, incenses, or the X items — and a purse. What
-   * he sells is fixed for the window; what he buys is anything the
-   * market puts a price on, and he deals as often as the purse holds
+   * Keeps the market stall: a crate off one of the trade's counters —
+   * balls and medicine, vitamins, incenses, or the X items — and a
+   * purse. He does not wander. His stall is a landmark of its own, so
+   * a player short of balls knows where to walk; which counter he set
+   * up is still the window's roll. He deals as often as the purse
+   * holds, and buys anything the market puts a price on
    */
   Vendor = 4,
   /**
@@ -89,16 +91,19 @@ const enum Npc {
 export default Npc;
 
 /**
- * Everyone who wanders, for uniform rolls over the variants. The two
- * who fight — the grunt and the trainer — stand at landmarks of their
- * own and are not in it
+ * Everyone who wanders, for uniform rolls over the variants.
+ *
+ * Three of them are not in it. The grunt and the trainer stand at
+ * landmarks of their own; so does the vendor, whose stall is the
+ * Market. Every service left here rotates, and the list is short on
+ * purpose — each name added to it makes every other name rarer, and
+ * Nurse Joy is the one a player cannot do without
  */
 export const NPCS: Npc[] = [
   Npc.Breeder,
   Npc.DaycareLady,
   Npc.NurseJoy,
   Npc.Groomer,
-  Npc.Vendor,
   Npc.MoveReminder,
   Npc.FossilManiac,
   Npc.FossilScientist,

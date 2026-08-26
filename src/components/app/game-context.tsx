@@ -13,6 +13,7 @@ import { useAuth } from '../../auth/context';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { claimRaidReward } from '../../auth/raids';
 import { claimRocketReward } from '../../auth/rockets';
+import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
@@ -87,6 +88,11 @@ export interface ActiveBattle {
    * The Team Rocket stop the battle was accepted at
    */
   rocket?: string;
+  /**
+   * The gym seat the battle was a challenge for. A win moves the
+   * seat, so the settlement is the seat's rather than a purse's
+   */
+  seat?: string;
 }
 
 /**
@@ -97,7 +103,12 @@ export interface ActiveBattle {
  * whether it is shadowed, the chunk and window it comes from are all
  * read off the raid or the stop when it is claimed
  */
-export type PendingReward = { raid: string; stop?: undefined } | { stop: string; raid?: undefined };
+export type PendingReward =
+  | { raid: string; stop?: undefined; seat?: undefined }
+  | { stop: string; raid?: undefined; seat?: undefined }
+  // A seat settles whichever way the fight went: a win moves it, a
+  // loss counts towards the stand its holder is keeping
+  | { seat: string; raid?: undefined; stop?: undefined };
 
 /**
  * A catch opened in full, and whether it is being read or handled.
@@ -347,6 +358,46 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       return;
     }
     setReward(null);
+
+    if (owed.seat != null) {
+      const seat = owed.seat;
+
+      settleGymChallenge(seat)
+        .then((settled) => {
+          if (settled == null) {
+            return;
+          }
+          // Said the moment it happens, for the same reason the purse
+          // is: the winner is still on the battle screen, and the
+          // seat is the whole of what the fight was for
+          // The seat is opened rather than handed over, so what is
+          // said is that it is open. Sitting down on it is the
+          // player's next move, back in the world
+          if (settled.freed) {
+            toast.push({
+              title: 'The seat is open',
+              message:
+                settled.gold > 0
+                  ? `You beat them off it. +${settled.gold} gold`
+                  : 'You beat them off it. Sit down while it is free.',
+              tone: 'leaf',
+            });
+            return;
+          }
+          toast.push({
+            message:
+              settled.gold > 0
+                ? `Their line-up held. −${settled.gold} gold`
+                : 'Their line-up held. The seat stays theirs.',
+            tone: 'ember',
+          });
+        })
+        .catch(() => {
+          // Nothing is lost: the challenge stays unsettled until
+          // somebody reports it, and the seat has not moved
+        });
+      return;
+    }
 
     if (owed.stop == null) {
       claimRaidReward(owed.raid)

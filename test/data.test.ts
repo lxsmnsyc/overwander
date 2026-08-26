@@ -2787,8 +2787,9 @@ describe('wandering NPCs', () => {
       ).toBe(true);
     }
     // And nothing on disk claims to be somebody who does not exist:
-    // a numbered folder is one of the roles, wanderer or fighter
-    const roles = new Set<number>([...NPCS, Npc.RocketGrunt, Npc.Trainer]);
+    // a numbered folder is one of the roles, wanderer or fighter or
+    // the vendor, whose stall is a landmark rather than a round
+    const roles = new Set<number>([...NPCS, Npc.RocketGrunt, Npc.Trainer, Npc.Vendor]);
 
     for (const folder of readdirSync('public/sprites/overworld')) {
       const numbered = /^landmarks-npc-(\d+)$/.exec(folder);

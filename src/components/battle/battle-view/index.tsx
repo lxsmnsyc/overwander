@@ -18,19 +18,20 @@ import {
   watchBattle,
 } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
+import {
+  BOSS_ALLIANCE,
+  PLAYER_ALLIANCE,
+  clearRaid,
+  getRaid,
+  getRaidTitle,
+} from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
 import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../../../overworld/raid';
 import { createTrainerBattle } from '../../../overworld/rocket';
 import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
-import {
-  type Contribution,
-  type SideSummary,
-  readContributions,
-  readSides,
-} from './summary';
+import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { Badge, Button, Dialog, DialogActions, Note, Status } from '../../styled';
 import { type ActiveBattle, GameDialog, useGame } from '../../app/game-context';
@@ -456,6 +457,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     const won = result === 'won';
     const stop = props.active.rocket;
+    const seat = props.active.seat;
     const built = instance();
     const user = auth.user();
 
@@ -467,9 +469,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // reported, and the aftermath is written before the outcome is
       // stamped — stamping it frees the party, and a freed pokemon
       // can have its berry pulled back
-      // A fight between players settles nothing; the server refuses
-      // one anyway, so this only spares the round trip
-      if (built != null && user != null && built.battle.mode !== BattleModes.PvP) {
+      // A fight between players settles for the gym seat's challenger
+      // and nobody else: their party was really there. Every other
+      // player-versus-player fight settles nothing, and the server
+      // refuses one anyway, so this only spares the round trip
+      if (
+        built != null &&
+        user != null &&
+        (built.battle.mode !== BattleModes.PvP || seat != null)
+      ) {
         const aftermath = collectAftermath(built, user.uid);
 
         if (aftermath.length > 0) {
@@ -490,6 +498,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // the stop; losing leaves them standing there
       if (won && stop != null) {
         game.setReward({ stop });
+      }
+      // A seat is settled either way: the win takes it, and the loss
+      // is one more challenge its holder turned away
+      if (seat != null) {
+        game.setReward({ seat });
       }
     })().catch((caught: unknown) => {
       setStatus(caught instanceof Error ? caught.message : String(caught));

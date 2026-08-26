@@ -70,6 +70,8 @@ const SEA_PEOPLE = new Set([
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,
+  Landmark.Market,
+  Landmark.GymSeat,
 ]);
 
 const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
@@ -79,7 +81,14 @@ const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
  * nowhere the first does not, and a gym or a champion's seat is a
  * place, not a patrol
  */
-const SINGLETON_LANDMARKS = new Set([Landmark.Portal, Landmark.GymLeader, Landmark.Champion]);
+const SINGLETON_LANDMARKS = new Set([
+  Landmark.Portal,
+  Landmark.GymLeader,
+  Landmark.Champion,
+  // One seat to a chunk: a seat is a place players come back to, and
+  // two of them beside each other would be one contest split in half
+  Landmark.GymSeat,
+]);
 
 /**
  * How many shallow patches an open-sea chunk gets: the lighter

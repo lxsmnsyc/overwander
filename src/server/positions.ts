@@ -5,7 +5,11 @@ import {
   asChunkCoordinate,
   asPositionRecord,
 } from '../auth/position-record';
+import type Biome from '../data/ids/biome';
+import getWorld from '../overworld/current';
+import { Metric } from '../auth/quest-record';
 import { getSql } from './db';
+import { markProgress } from './quest-progress';
 
 /**
  * Where a player is, written with admin credentials.
@@ -23,8 +27,16 @@ import { getSql } from './db';
  */
 
 /**
+ * The biome each player last stood in, so a walk inside one biome
+ * marks the discovery row once rather than on every step. The map is
+ * only a saver: the row itself is written once for good
+ */
+const lastStoodIn = new Map<string, Biome>();
+
+/**
  * Remember where the player is standing. Stamped as it is written, so
- * a later look can tell a stale record from a fresh one
+ * a later look can tell a stale record from a fresh one. Standing in
+ * a biome is also what discovers it, so the mark rides the same save
  */
 export default async function savePosition(
   uid: string,
@@ -43,6 +55,13 @@ export default async function savePosition(
       cell_x = excluded.cell_x, cell_y = excluded.cell_y,
       moved_at = excluded.moved_at
   `;
+
+  const biome = getWorld().getChunk(asChunkCoordinate(chunkX), asChunkCoordinate(chunkY)).biome;
+
+  if (lastStoodIn.get(uid) !== biome) {
+    await markProgress(uid, Metric.Biomes, biome);
+    lastStoodIn.set(uid, biome);
+  }
 }
 
 /**

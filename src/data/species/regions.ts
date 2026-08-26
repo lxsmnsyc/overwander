@@ -33,6 +33,13 @@ export const REGION_NAMES: Record<Regions, string> = {
 /** Every region there is, in order. */
 export const REGIONS: Regions[] = [Regions.Unknown, Regions.Kanto];
 
+/** The dex numbers one region covers, ends included, or null for Unknown */
+export function getRegionSpan(region: Regions): [from: number, to: number] | null {
+  const range = RANGES.find((one) => one.region === region);
+
+  return range == null ? null : [range.from, range.to];
+}
+
 export function getSpeciesRegion(species: Species): Regions {
   // Widened on purpose: a dex number is what the ranges are written in
   const dex: number = species;

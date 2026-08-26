@@ -18,6 +18,8 @@ import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import { getPosition, savePosition } from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
+import { getItemData } from '../../data/items';
+import ItemSprite from '../items/ItemSprite';
 import { useToast } from '../styled';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
 import { ensureProfile } from '../../auth/profile';
@@ -374,6 +376,18 @@ export default function GameProvider(props: ParentProps): JSX.Element {
           toast.push({
             title: AWARD_NAMES[collected.award],
             message: 'Yours, for good.',
+            tone: 'leaf',
+          });
+        }
+        // A leader's TM rides the same claim as the badge; the disc
+        // is already in the bag by the time there is anything to say
+        if (collected.machine != null) {
+          const machine = collected.machine;
+
+          toast.push({
+            title: getItemData(machine).name,
+            message: 'The leader’s parting gift.',
+            art: () => <ItemSprite item={machine} size={24} label="" />,
             tone: 'leaf',
           });
         }

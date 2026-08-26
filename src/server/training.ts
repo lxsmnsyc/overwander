@@ -82,7 +82,7 @@ export async function trainEffort(
   stat: Stats,
   amount: number,
 ): Promise<TrainingResult | null> {
-  return tx(async (transaction) => {
+  const result = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
     // A pokemon fights as the snapshot froze it, and an egg has not
@@ -116,6 +116,13 @@ export async function trainEffort(
     });
     return asResult(trained);
   });
+
+  // Only putting points in counts: taking them back out is tidying,
+  // not training
+  if (result != null && amount > 0) {
+    await bumpProgress(uid, [[Metric.EffortAssigned, 0, amount]]);
+  }
+  return result;
 }
 
 /**

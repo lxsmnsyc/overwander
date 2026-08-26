@@ -692,15 +692,16 @@ function priced(
 }
 
 /**
- * Buy from the vendor's crate. The crate is derived from the same seed
- * he is, so the basket has to be what he is actually standing behind,
- * and the price is the registry's `buy`.
+ * Buy from a trader's crate — the vendor's, or the chef's larder. The
+ * crate is derived from the same seed the trader is, so the basket has
+ * to be what they are actually standing behind, and the price is the
+ * registry's `buy`.
  *
- * The whole basket is one transaction — six kinds or none — and he is
- * the one wanderer not limited to once per window.
+ * The whole basket is one transaction — six kinds or none — and the
+ * traders are the wanderers not limited to once per window.
  *
- * Resolves the balance and what the bag now holds, or null when he is
- * not there, is not carrying it, or the player cannot pay
+ * Resolves the balance and what the bag now holds, or null when the
+ * trader is not there, is not carrying it, or the player cannot pay
  */
 export async function buyFromVendor(
   uid: string,
@@ -710,8 +711,13 @@ export async function buyFromVendor(
   basket: [item: Items, amount: number][],
   now: number,
   offset: number,
+  trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
+  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+    return null;
+  }
+
+  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;
@@ -749,8 +755,13 @@ export async function sellToVendor(
   basket: [item: Items, amount: number][],
   now: number,
   offset: number,
+  trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Vendor);
+  if (trader !== Npc.Vendor && trader !== Npc.Chef) {
+    return null;
+  }
+
+  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;

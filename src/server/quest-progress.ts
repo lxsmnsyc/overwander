@@ -33,6 +33,23 @@ export async function bumpProgress(uid: string, bumps: ProgressBump[]): Promise<
   }
 }
 
+/**
+ * Mark a fact rather than add to a count: the row is written at 1
+ * once and never touched again, so the metric's total is how many
+ * distinct params were ever marked. Swallowed the way a bump is
+ */
+export async function markProgress(uid: string, metric: Metric, param: number): Promise<void> {
+  try {
+    await getSql()`
+      insert into quest_progress (player, metric, param, count)
+      values (${uid}, ${metric}, ${param}, 1)
+      on conflict (player, metric, param) do nothing
+    `;
+  } catch {
+    // Marked or not, the visit itself already happened
+  }
+}
+
 /** Every counter this player has, as metric -> param -> count */
 export async function readProgress(uid: string): Promise<Map<Metric, Map<number, number>>> {
   const rows = await getSql()`

@@ -1,6 +1,8 @@
 import 'server-only';
+import type Regions from '../data/ids/regions';
 import type { Species } from '../data/ids/species';
 import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../auth/pokedex-record';
+import { getRegionSpan } from '../data/species/regions';
 import { getSql } from './db';
 import { asNumber } from './read';
 
@@ -73,11 +75,17 @@ export async function recordCaughtSpecies(
   await logSpecies(uid, DEX_CAUGHT, species, shiny);
 }
 
-/** How many distinct species this dex has as caught, shinies included */
-export async function readCaughtDexCount(uid: string): Promise<number> {
-  const rows = await getSql()`
+/**
+ * How many distinct species this dex has as caught, shinies included.
+ * Given a region, only its stretch of dex numbers counts
+ */
+export async function readCaughtDexCount(uid: string, region?: Regions): Promise<number> {
+  const span = region == null ? null : getRegionSpan(region);
+  const sql = getSql();
+  const rows = await sql`
     select count(*)::int as held from pokedex_entries
     where player = ${uid} and caught + caught_shiny > 0
+    ${span == null ? sql`` : sql`and species between ${span[0]} and ${span[1]}`}
   `;
 
   return asNumber(rows.at(0)?.held);

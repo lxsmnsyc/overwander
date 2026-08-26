@@ -18,6 +18,8 @@ const enum Awards {
   AgathaDefeated = 10,
   LanceDefeated = 11,
   KantoChampion = 12,
+  /** Kanto's dex filled to 150 caught */
+  KantoDexMedal = 13,
 }
 
 export default Awards;
@@ -36,6 +38,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.AgathaDefeated]: 'Agatha Defeated',
   [Awards.LanceDefeated]: 'Lance Defeated',
   [Awards.KantoChampion]: 'Kanto Champion',
+  [Awards.KantoDexMedal]: 'Kanto Dex Medal',
 };
 
 /**

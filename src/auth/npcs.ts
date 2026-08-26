@@ -354,6 +354,7 @@ export async function buyFromVendor(
   snapshot: ChunkSnapshot,
   cell: number,
   basket: [item: Items, amount: number][],
+  trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
   return buyOnServer(
     await getIdToken(),
@@ -362,6 +363,7 @@ export async function buyFromVendor(
     cell,
     basket,
     snapshot.offset,
+    trader,
   );
 }
 
@@ -372,14 +374,18 @@ async function buyOnServer(
   cell: number,
   basket: [item: Items, amount: number][],
   offset: number,
+  trader: Npc,
 ): Promise<TradeResult | null> {
   'use server';
   const uid = await requireUid(token);
 
+  // The server refuses a trader that is not one, and refuses a cell
+  // where they are not standing — so the caller's word only picks
+  // which counter is being asked
   return countVisit(
     uid,
-    Npc.Vendor,
-    await buyOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset),
+    trader,
+    await buyOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset, trader),
   );
 }
 
@@ -398,6 +404,7 @@ export async function sellToVendor(
   snapshot: ChunkSnapshot,
   cell: number,
   basket: [item: Items, amount: number][],
+  trader: Npc = Npc.Vendor,
 ): Promise<TradeResult | null> {
   return sellOnServer(
     await getIdToken(),
@@ -406,6 +413,7 @@ export async function sellToVendor(
     cell,
     basket,
     snapshot.offset,
+    trader,
   );
 }
 
@@ -416,14 +424,15 @@ async function sellOnServer(
   cell: number,
   basket: [item: Items, amount: number][],
   offset: number,
+  trader: Npc,
 ): Promise<TradeResult | null> {
   'use server';
   const uid = await requireUid(token);
 
   return countVisit(
     uid,
-    Npc.Vendor,
-    await sellOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset),
+    trader,
+    await sellOnServerSide(uid, x, y, cell, basket, await syncServerClock(), offset, trader),
   );
 }
 

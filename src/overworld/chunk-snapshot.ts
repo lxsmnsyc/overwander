@@ -36,7 +36,12 @@ import {
 } from '../data/overworld/trainers';
 import Regions from '../data/ids/regions';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
-import { rollVendorStock } from '../data/overworld/vendor';
+import {
+  VENDOR_KINDS,
+  type VendorKind,
+  rollChefStock,
+  rollVendorStock,
+} from '../data/overworld/vendor';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
@@ -919,23 +924,43 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * What the vendor at this cell is carrying, or an empty crate when
-   * somebody else is standing there.
+   * Which counter the vendor at this cell set up this window, or null
+   * when somebody else is standing there. Rolled apart from the crate,
+   * so a new shelf added to the list does not reshuffle every crate
+   */
+  getVendorKind(cell: number): VendorKind | null {
+    if (this.getWanderingNpcs().get(cell) !== Npc.Vendor) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}counter${cell}`);
+
+    return VENDOR_KINDS[Math.floor(rng.random() * VENDOR_KINDS.length)];
+  }
+
+  /**
+   * What the trader at this cell is carrying — the vendor's crate of
+   * whichever counter he rolled, or the chef's larder — or an empty
+   * crate when nobody who sells is standing there.
    *
    * It is drawn from the same seed the person was drawn from, so the
    * crate is part of who walked up rather than something stored: every
-   * player who reaches this vendor this window is offered the same six
-   * things, and the next window brings a different trader with a
+   * player who reaches this trader this window is offered the same six
+   * things, and the next window brings a different one with a
    * different crate
    */
   getVendorStock(cell: number): Items[] {
-    if (this.getWanderingNpcs().get(cell) !== Npc.Vendor) {
+    const standing = this.getWanderingNpcs().get(cell);
+
+    if (standing !== Npc.Vendor && standing !== Npc.Chef) {
       return [];
     }
 
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}wares${cell}`);
 
-    return rollVendorStock(() => rng.random());
+    return standing === Npc.Chef
+      ? rollChefStock(() => rng.random())
+      : rollVendorStock(() => rng.random(), this.getVendorKind(cell) ?? undefined);
   }
 
   /**

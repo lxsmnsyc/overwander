@@ -1,14 +1,39 @@
 import { TRAINER_NAMES } from '../../../data/overworld/trainers';
 import { Foe, Landmark, Metric } from '../../../auth/quest-record';
+import { AWARD_NAMES } from '../../../data/ids/awards';
+import type Regions from '../../../data/ids/regions';
+import { REGION_NAMES } from '../../../data/species/regions';
 import type { QuestPayout } from '../../../auth/quests';
 import { TYPE_NAMES } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
 import { getMoveData } from '../../../data/moves';
 import { NPC_NAMES } from '../../../data/overworld/npc';
-import { type QuestRequirement, type QuestReward, QuestRewardKind, RequirementKind } from '../../../data/quests';
+import {
+  type QuestRequirement,
+  type QuestReward,
+  QuestRewardKind,
+  RequirementKind,
+} from '../../../data/quests';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { describeItem } from '../../details';
-import { ActionsIcon, ArrowRightIcon, AtIcon, AuctionIcon, BagIcon, FireIcon, GiftIcon, GlobeIcon, MapIcon, SearchIcon, SparklesIcon, StarIcon, SunIcon, TagIcon, TrophyIcon, UserIcon } from '../../icons';
+import {
+  ActionsIcon,
+  ArrowRightIcon,
+  AtIcon,
+  AuctionIcon,
+  BagIcon,
+  FireIcon,
+  GiftIcon,
+  GlobeIcon,
+  MapIcon,
+  SearchIcon,
+  SparklesIcon,
+  StarIcon,
+  SunIcon,
+  TagIcon,
+  TrophyIcon,
+  UserIcon,
+} from '../../icons';
 import ItemSprite from '../../items/ItemSprite';
 import TypeBadge from '../../sprites/TypeBadge';
 import type { ComponentProps, JSX } from 'solid-js';
@@ -32,13 +57,22 @@ const FOE_NAMES: Record<Foe, string> = {
   [Foe.Trainer]: 'duelling trainers',
 };
 
+/** A region's name with its capital back on, off the sheet-directory names */
+function regionTitle(region: Regions): string {
+  const name = REGION_NAMES[region];
+
+  return name.slice(0, 1).toUpperCase() + name.slice(1);
+}
+
 /** One requirement, as a line of words */
 export function describeRequirement(requirement: QuestRequirement): string {
   if (requirement.kind === RequirementKind.TurnIn) {
     return `Hand over ${requirement.count} × ${describeItem(requirement.item)}`;
   }
   if (requirement.kind === RequirementKind.Dex) {
-    return `Catch ${requirement.count} different species`;
+    return requirement.region == null
+      ? `Catch ${requirement.count} different species`
+      : `Catch ${requirement.count} different ${regionTitle(requirement.region)} species`;
   }
 
   const count = requirement.count;
@@ -128,6 +162,10 @@ export function describeRequirement(requirement: QuestRequirement): string {
       return requirement.trainer == null
         ? `Beat ${count} duelling trainer${count === 1 ? '' : 's'}`
         : `Beat ${count} ${TRAINER_NAMES[requirement.trainer]}${count === 1 ? '' : 's'}`;
+    case Metric.Biomes:
+      return `Discover ${count} biome${count === 1 ? '' : 's'}`;
+    case Metric.EffortAssigned:
+      return `Assign ${count} effort point${count === 1 ? '' : 's'}`;
   }
   // Every metric returns above; this only settles the return rule
   return '';
@@ -145,6 +183,8 @@ export function describeReward(reward: QuestReward): string {
     case QuestRewardKind.Egg:
       // What is in an egg is never said before it hatches
       return 'A pokemon egg';
+    case QuestRewardKind.Award:
+      return AWARD_NAMES[reward.award];
   }
   // Every kind returns above; this only settles the return rule
   return '';
@@ -183,6 +223,8 @@ const METRIC_ICONS: Record<Metric, (props: ComponentProps<'svg'>) => JSX.Element
   [Metric.Bids]: AuctionIcon,
   [Metric.ShinyCatches]: SparklesIcon,
   [Metric.TrainerWins]: TrophyIcon,
+  [Metric.Biomes]: GlobeIcon,
+  [Metric.EffortAssigned]: StarIcon,
 };
 
 /**

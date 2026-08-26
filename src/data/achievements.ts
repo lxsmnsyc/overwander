@@ -52,6 +52,7 @@ const enum AchievementLine {
   Wayfinder = 10,
   Matchmaker = 11,
   Purifier = 12,
+  Pathfinder = 13,
 }
 
 export { AchievementLine };
@@ -70,6 +71,7 @@ export const ACHIEVEMENT_LINES: AchievementLine[] = [
   AchievementLine.Wayfinder,
   AchievementLine.Matchmaker,
   AchievementLine.Purifier,
+  AchievementLine.Pathfinder,
 ];
 
 /**
@@ -91,6 +93,7 @@ export const LINE_NAMES: Record<AchievementLine, string> = {
   [AchievementLine.Wayfinder]: 'Wayfinder',
   [AchievementLine.Matchmaker]: 'Matchmaker',
   [AchievementLine.Purifier]: 'Purifier',
+  [AchievementLine.Pathfinder]: 'Pathfinder',
 };
 
 /** What each line is counting, said for the hover card */
@@ -108,6 +111,7 @@ export const LINE_DEEDS: Record<AchievementLine, string> = {
   [AchievementLine.Wayfinder]: 'portals crossed',
   [AchievementLine.Matchmaker]: 'pairs bred',
   [AchievementLine.Purifier]: 'shadows purified',
+  [AchievementLine.Pathfinder]: 'biomes discovered',
 };
 
 /**
@@ -134,6 +138,7 @@ const LINE_ASKS: Record<AchievementLine, LineAsk> = {
   [AchievementLine.Wayfinder]: { metric: Metric.Landmarks, landmark: Landmark.Portal },
   [AchievementLine.Matchmaker]: { metric: Metric.NpcVisits, npc: Npc.Breeder },
   [AchievementLine.Purifier]: { metric: Metric.Purifies },
+  [AchievementLine.Pathfinder]: { metric: Metric.Biomes },
 };
 
 /** Each line's 4 tier thresholds, Bronze to Platinum, ascending */
@@ -151,6 +156,9 @@ export const LINE_TIERS: Record<AchievementLine, [number, number, number, number
   [AchievementLine.Wayfinder]: [3, 10, 50, 200],
   [AchievementLine.Matchmaker]: [3, 10, 50, 200],
   [AchievementLine.Purifier]: [3, 10, 50, 200],
+  // Platinum is every biome the world generates: 29 today, Beyond
+  // excluded since nobody stands there
+  [AchievementLine.Pathfinder]: [3, 10, 20, 29],
 };
 
 /**

@@ -1,6 +1,12 @@
 import { RARE_SPAWN_ODDS, SPECIAL_SPAWN_ODDS, UNCOMMON_SPAWN_ODDS } from '../biome/__create';
 import { Items } from '../ids/items';
+import { MARKET_GEAR } from '../items/gear';
+import { ONE_SHOTS } from '../items/one-shots';
+import { ORBS } from '../items/orbs';
 import { PLATES } from '../items/plates';
+import { POWER_ITEMS } from '../items/power-items';
+import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
+import { TYPE_BOOSTERS } from '../items/type-boosters';
 import { WING_STATS } from '../items/wings';
 
 /**
@@ -30,8 +36,8 @@ export interface ItemRarityGroups {
 }
 
 /**
- * The overworld item pool: balls, evolution stones, the valuables the
- * ground hides, and the Shiny Charm.
+ * The overworld item pool: balls, evolution stones, the held-item
+ * shelves, the valuables the ground hides, and the Shiny Charm.
  *
  * The line between **rare** and **prized** is permanence. Rare is what
  * gets a party through the next fight — a stone, a Revive. Prized is
@@ -127,6 +133,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     // not pay for. Thin slots, because they are the one thing in the
     // game that raises a stat past what a level allows
     ...[...WING_STATS.keys()].map((item) => ({ item, weight: 3 })),
+    // The one-shots, dropped where their moment ended. Each waits for
+    // one thing to happen to its holder and is spent on it, which is
+    // the band's own test: through the next fight and no further
+    ...[...ONE_SHOTS.keys()].map((item) => ({ item, weight: 2 })),
   ],
   rare: [
     { item: Items.FireStone, weight: 10 },
@@ -172,6 +182,18 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The plates, buried where they fell. Seventeen thin slots share
     // about what one stone is worth, so digging one up stays an event
     ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
+    // The held-item shelves, on the plates' terms: whole families of
+    // thin slots, so the band stays the stones' and finding a Choice
+    // Band stays an event. The type boosters also drop off the wild
+    // species that carry them; the rest have no source but here
+    ...[...TYPE_BOOSTERS.keys()].map((item) => ({ item, weight: 1 })),
+    ...[...MARKET_GEAR.keys()].map((item) => ({ item, weight: 1 })),
+    ...[...ORBS.keys()].map((item) => ({ item, weight: 1 })),
+    ...[...GENERAL_STAT_BOOSTERS.keys()].map((item) => ({ item, weight: 1 })),
+    // The candy pair: a walk's worth of extra candy, hidden where the
+    // Leftovers are and half as often
+    { item: Items.ExpShare, weight: 2 },
+    { item: Items.LuckyEgg, weight: 2 },
   ],
   prized: [
     // A dug-up cap fixes one stat of one pokemon, and nothing else in
@@ -222,6 +244,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.CometShard, weight: 2 },
     { item: Items.RelicBand, weight: 2 },
     { item: Items.RelicStatue, weight: 1 },
+    // The power items: each decides what a player's next fifty eggs
+    // are made of, which is the band's permanence test passed on the
+    // next generation rather than on the holder
+    ...[...POWER_ITEMS.keys()].map((item) => ({ item, weight: 2 })),
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },

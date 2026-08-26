@@ -28,18 +28,12 @@ export const DRINKS: Map<Items, Drink> = new Map([
   [Items.SodaPop, { name: 'Soda Pop', restore: 60, buy: 300 }],
   [Items.Lemonade, { name: 'Lemonade', restore: 80, buy: 350 }],
   [Items.MoomooMilk, { name: 'Moomoo Milk', restore: 100, buy: 500 }],
-  // Squeezed rather than bottled: nobody sells it, and what it gives
+  // Squeezed fresh by the chef rather than bottled, and what it gives
   // back is what one handful of berries is worth
-  [Items.BerryJuice, { name: 'Berry Juice', restore: 20, buy: 0 }],
+  [Items.BerryJuice, { name: 'Berry Juice', restore: 20, buy: 300 }],
 ]);
 
 const DRINK_RESALE = 0.5;
-
-/**
- * What a Berry Juice fetches. It is the one drink nothing stocks, so
- * this is only what somebody will pay to take it away
- */
-const BERRY_JUICE_RESALE = 150;
 
 export function isDrink(item: Items): boolean {
   return DRINKS.has(item);
@@ -47,18 +41,14 @@ export function isDrink(item: Items): boolean {
 
 export default function registerDrinks(): void {
   for (const [item, drink] of DRINKS) {
-    const stocked = drink.buy > 0;
-
     registerItem(item, {
       name: drink.name,
       description: `Restores ${drink.restore} HP when its holder drops to 1/5 of its HP.`,
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', drink.name),
-      flags: stocked
-        ? ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable
-        : ItemFlags.Holdable | ItemFlags.Consumable,
+      flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy: drink.buy,
-      sell: stocked ? drink.buy * DRINK_RESALE : BERRY_JUICE_RESALE,
+      sell: drink.buy * DRINK_RESALE,
     });
   }
 }

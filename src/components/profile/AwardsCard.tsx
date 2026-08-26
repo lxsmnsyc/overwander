@@ -11,11 +11,7 @@ import {
   tierName,
 } from '../../data/achievements';
 import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
-import {
-  TRAINER_NAMES,
-  TRAINER_TYPES,
-  type TrainerClass,
-} from '../../data/overworld/trainers';
+import { TRAINER_NAMES, TRAINER_TYPES, type TrainerClass } from '../../data/overworld/trainers';
 import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../../data/ids/awards';
 import Npc from '../../data/overworld/npc';
 import {
@@ -81,13 +77,19 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.AgathaDefeated]: '#8a6fb8',
   [Awards.LanceDefeated]: '#5a78c9',
   [Awards.KantoChampion]: '#e0b64f',
+  [Awards.KantoDexMedal]: '#d0342c',
 };
 
 /**
- * The shelf's order: the 8 badges, the 4 elite marks, and the title
- * at the end — the walk itself, left to right
+ * The shelf's order: the 8 badges, the 4 elite marks, the title, and
+ * the dex medal at the end — the walk itself, left to right
  */
-const SHELF: Awards[] = [...KANTO_BADGES, ...KANTO_HONORS, Awards.KantoChampion];
+const SHELF: Awards[] = [
+  ...KANTO_BADGES,
+  ...KANTO_HONORS,
+  Awards.KantoChampion,
+  Awards.KantoDexMedal,
+];
 
 const GRID_COLUMNS = 6;
 

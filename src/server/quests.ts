@@ -5,6 +5,7 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { Balls } from '../data/ids/items';
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
+  type DexRequirement,
   QUESTS,
   QUEST_ORDER,
   type QuestData,
@@ -16,6 +17,7 @@ import {
   type TurnInRequirement,
   prerequisiteOf,
 } from '../data/quests';
+import type Regions from '../data/ids/regions';
 import { defaultSlots } from '../data/constants/slots';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
@@ -29,6 +31,7 @@ import {
   makeGiftOffer,
   offer,
 } from './gifts';
+import { recordAwardWin } from './awards';
 import { readCaughtDexCount } from './pokedex';
 import { readProgress } from './quest-progress';
 import { getSql, tx } from './db';
@@ -42,9 +45,9 @@ import { asNumber, asRecord } from './read';
  */
 
 /** What one requirement is asking of the counters or the bag */
-type Counters = Map<Metric, Map<number, number>>;
+export type Counters = Map<Metric, Map<number, number>>;
 
-function countOf(counters: Counters, requirement: QuestRequirement): number {
+export function countOf(counters: Counters, requirement: QuestRequirement): number {
   if (requirement.kind !== RequirementKind.Counter) {
     // The bag and the dex are read by the caller; this path never runs
     return 0;
@@ -112,7 +115,7 @@ function asGiftSpec(uid: string, data: QuestData, reward: QuestReward): StaffGif
   if (reward.kind === QuestRewardKind.Item) {
     return { ...common, kind: GiftKind.Item, item: reward.item, amount: reward.amount };
   }
-  if (reward.kind === QuestRewardKind.Egg) {
+  if (reward.kind === QuestRewardKind.Egg || reward.kind === QuestRewardKind.Award) {
     return null;
   }
 
@@ -151,12 +154,23 @@ async function readClaims(uid: string): Promise<Set<Quests>> {
  * player stands on each
  */
 export async function listQuests(uid: string): Promise<QuestStanding[]> {
-  const [counters, claims, dex] = await Promise.all([
-    readProgress(uid),
-    readClaims(uid),
-    readCaughtDexCount(uid),
-  ]);
+  const [counters, claims] = await Promise.all([readProgress(uid), readClaims(uid)]);
   const standings: QuestStanding[] = [];
+  // One dex query per region asked about, however many quests ask
+  const dexCounts = new Map<number, number>();
+  const dexOf = async (region?: Regions): Promise<number> => {
+    const key = region ?? -1;
+    const held = dexCounts.get(key);
+
+    if (held != null) {
+      return held;
+    }
+
+    const count = await readCaughtDexCount(uid, region);
+
+    dexCounts.set(key, count);
+    return count;
+  };
 
   for (const quest of QUEST_ORDER) {
     const data = QUESTS[quest];
@@ -174,7 +188,7 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
       if (requirement.kind === RequirementKind.TurnIn) {
         have = await readStack(ITEM_STACKS, uid, requirement.item);
       } else if (requirement.kind === RequirementKind.Dex) {
-        have = dex;
+        have = await dexOf(requirement.region);
       } else {
         have = countOf(counters, requirement);
       }
@@ -242,12 +256,12 @@ export async function claimQuest(
     return null;
   }
 
-  const dexAsks = data.requirements.filter((one) => one.kind === RequirementKind.Dex);
+  const dexAsks = data.requirements.filter(
+    (one): one is DexRequirement => one.kind === RequirementKind.Dex,
+  );
 
-  if (dexAsks.length > 0) {
-    const dex = await readCaughtDexCount(uid);
-
-    if (dexAsks.some((one) => dex < one.count)) {
+  for (const dexAsk of dexAsks) {
+    if ((await readCaughtDexCount(uid, dexAsk.region)) < dexAsk.count) {
       return null;
     }
   }
@@ -293,6 +307,12 @@ export async function claimQuest(
         offset,
         locale,
       );
+      continue;
+    }
+    // A shelf award is earned in place rather than ridden through the
+    // gift rows; the claim row above already makes this pay once
+    if (reward.kind === QuestRewardKind.Award) {
+      await recordAwardWin(uid, reward.award, now);
       continue;
     }
 

@@ -115,11 +115,15 @@ import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils
 import {
   VENDOR_STAPLES,
   VENDOR_STOCK_KINDS,
+  VendorKind,
+  getChefGoods,
   getVendorGoods,
   isMarketable,
   sellPrice,
 } from '../src/data/overworld/vendor';
 import { VALUABLE_SELL, isValuable } from '../src/data/items/valuables';
+import { PP_ITEMS, VITAMIN_STATS } from '../src/data/items/vitamins';
+import { TREATS } from '../src/data/items/treats';
 import { asBoolean } from '../src/auth/__normalize';
 import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../src/auth/stacks';
 import {
@@ -234,6 +238,7 @@ import {
   GYM_LEADER_TYPES,
   GymLeader,
   getExpertPool,
+  rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
 import {
@@ -264,7 +269,14 @@ import {
   TrainerClass,
   getBiomeTrainers,
 } from '../src/data/overworld/trainers';
-import { Landmark as QuestLandmark, Metric } from '../src/auth/quest-record';
+import { Metric, Landmark as QuestLandmark } from '../src/auth/quest-record';
+import {
+  DAILY_SLOTS,
+  dailyWindow,
+  getDailyQuests,
+  getWeeklyHunt,
+  weeklyWindow,
+} from '../src/data/quests/rotations';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -1185,11 +1197,10 @@ describe('item data', () => {
     expect(getItemData(Items.ExpShare).name).toBe('Exp. Share');
     expect(getItemData(Items.LuckyEgg).name).toBe('Lucky Egg');
 
-    // Neither is hidden in the world: they are what gold is for
-    for (const band of [ITEM_POOL.base, ITEM_POOL.uncommon, ITEM_POOL.rare, ITEM_POOL.special]) {
-      expect(band.some((entry) => entry.item === Items.ExpShare)).toBe(false);
-      expect(band.some((entry) => entry.item === Items.LuckyEgg)).toBe(false);
-    }
+    // Both hide where the Leftovers hide, and thinner: every party
+    // wants one, and the ground is the only counter that carries them
+    expect(getItemBand(Items.ExpShare)).toBe('rare');
+    expect(getItemBand(Items.LuckyEgg)).toBe('rare');
   });
 
   it('stocks the medicine and hides some of it too', () => {
@@ -1338,6 +1349,47 @@ describe('item data', () => {
     // Everything the staples are is something every crate holds
     for (const staple of VENDOR_STAPLES) {
       expect(goods.has(staple)).toBe(true);
+    }
+  });
+
+  it('stocks the other counters from their own shelves', () => {
+    // Each kind carries its one shelf entire: nothing priced is left
+    // off, and nothing from another shelf sneaks in
+    expect(new Set(getVendorGoods(VendorKind.Vitamins))).toEqual(
+      new Set([...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]),
+    );
+    expect(new Set(getVendorGoods(VendorKind.Incenses))).toEqual(new Set(INCENSES));
+    expect(new Set(getVendorGoods(VendorKind.BattleItems))).toEqual(new Set(BATTLE_ITEMS));
+
+    // The two battle items that are not X items ride the same shelf
+    expect(new Set(getVendorGoods(VendorKind.BattleItems)).has(Items.DireHit)).toBe(true);
+    expect(new Set(getVendorGoods(VendorKind.BattleItems)).has(Items.GuardSpec)).toBe(true);
+
+    for (const kind of [VendorKind.Vitamins, VendorKind.Incenses, VendorKind.BattleItems]) {
+      for (const item of getVendorGoods(kind)) {
+        const data = getItemData(item);
+
+        expect(isMarketable(item)).toBe(true);
+        expect(data.buy).toBeGreaterThan(0);
+        expect(data.sell).toBeLessThan(data.buy);
+      }
+    }
+  });
+
+  it('fills the chef’s larder with the drinks and the treats', () => {
+    const larder = getChefGoods();
+
+    // Five drinks and nine treats, all of them his and only his
+    expect(new Set(larder)).toEqual(new Set([...DRINKS.keys(), ...TREATS.keys()]));
+    expect(larder.length).toBe(DRINKS.size + TREATS.size);
+
+    for (const item of larder) {
+      const data = getItemData(item);
+
+      expect(isMarketable(item)).toBe(true);
+      expect(data.buy).toBeGreaterThan(0);
+      // Nothing bought off his counter sells back at a profit
+      expect(data.sell).toBeLessThan(data.buy);
     }
   });
 
@@ -2353,15 +2405,10 @@ describe('type-enhancing items', () => {
       expect(data.sell).toBeLessThan(data.buy);
     }
 
-    // They are stocked, never hidden in the ground
-    const pooled = new Set(
-      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
-        (entry) => entry.item,
-      ),
-    );
-
+    // Beside the wild species that carry them, the ground hides the
+    // whole family on the plates' terms: thin slots in the rare band
     for (const item of TYPE_BOOSTERS.keys()) {
-      expect(pooled.has(item)).toBe(false);
+      expect(getItemBand(item)).toBe('rare');
     }
   });
 
@@ -2469,12 +2516,6 @@ describe('type-enhancing items', () => {
   });
 
   it('stocks the general stat items and hides the relics', () => {
-    const pooled = new Set(
-      [...ITEM_POOL.base, ...ITEM_POOL.uncommon, ...ITEM_POOL.rare, ...ITEM_POOL.special].map(
-        (entry) => entry.item,
-      ),
-    );
-
     for (const item of GENERAL_STAT_BOOSTERS.keys()) {
       const data = getItemData(item);
 
@@ -2486,7 +2527,8 @@ describe('type-enhancing items', () => {
       // Bought, and dear: each is worth half of a stat
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.buy).toBe(STAT_BOOSTER_PRICE);
-      expect(pooled.has(item)).toBe(false);
+      // And the ground hides one now and then besides
+      expect(getItemBand(item)).toBe('rare');
     }
 
     for (const item of RELIC_STAT_BOOSTERS.keys()) {
@@ -2520,7 +2562,8 @@ describe('type-enhancing items', () => {
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.buy).toBe(GEAR_PRICE);
       expect(isGear(item)).toBe(true);
-      expect(pooled.has(item)).toBe(false);
+      // Listed, and hidden in the rare band's thin slots besides
+      expect(getItemBand(item)).toBe('rare');
     }
 
     for (const [item] of FOUND_GEAR) {
@@ -2647,11 +2690,12 @@ describe('type-enhancing items', () => {
       expect(drink.restore).toBeGreaterThan(0);
     }
 
-    // The four a machine sells are listed; the juice is squeezed
+    // All five are listed now that the chef stocks a counter — the
+    // juice he squeezes himself, so it costs less than the milk
     expect(getItemData(Items.Lemonade).buy).toBeGreaterThan(0);
-    expect(getItemData(Items.BerryJuice).buy).toBe(0);
-    expect(getItemData(Items.BerryJuice).flags & ItemFlags.Marketable).toBe(0);
-    expect(getItemData(Items.BerryJuice).sell).toBeGreaterThan(0);
+    expect(getItemData(Items.BerryJuice).buy).toBeGreaterThan(0);
+    expect(getItemData(Items.BerryJuice).flags & ItemFlags.Marketable).not.toBe(0);
+    expect(getItemData(Items.BerryJuice).buy).toBeLessThan(getItemData(Items.MoomooMilk).buy);
 
     // A drink pays for being carried: the cheapest bottle gives back
     // more than a Potion does and costs less, and what it charges for
@@ -3260,6 +3304,47 @@ describe('type experts', () => {
     expect(getExpertPool(Regions.Kanto, null).length).toBeGreaterThan(100);
     expect(getExpertPool(Regions.Kanto, null)).not.toContain(Species.Egg);
   });
+
+  it('hands a beaten leader’s TM out of their own type’s case', () => {
+    for (const leader of GYM_LEADERS) {
+      const type = GYM_LEADER_TYPES[leader] ?? null;
+      const rng = new AleaRNG(`gym-machine-${leader}`);
+      const seen = new Set<Items>();
+
+      for (let roll = 0; roll < 64; roll++) {
+        const item = rollGymMachine(leader, () => rng.random());
+
+        expect(item).not.toBeNull();
+        if (item == null) {
+          continue;
+        }
+        seen.add(item);
+
+        const move = getMachineMove(item);
+
+        expect(move).not.toBeNull();
+        if (type != null && move != null) {
+          expect(getMoveData(move).type).toBe(type);
+        }
+      }
+      // The case never comes up empty; a thin type may be one disc
+      expect(seen.size).toBeGreaterThanOrEqual(1);
+    }
+
+    // Blue's case is the whole shelf: his rolls cross types
+    const rng = new AleaRNG('gym-machine-blue');
+    const types = new Set<Types>();
+
+    for (let roll = 0; roll < 64; roll++) {
+      const item = rollGymMachine(GymLeader.Blue, () => rng.random());
+      const move = item == null ? null : getMachineMove(item);
+
+      if (move != null) {
+        types.add(getMoveData(move).type);
+      }
+    }
+    expect(types.size).toBeGreaterThan(1);
+  });
 });
 
 describe('achievements', () => {
@@ -3405,5 +3490,37 @@ describe('achievements', () => {
     // A number that names nothing reads as no title
     expect(getTitleName(99)).toBeNull();
     expect(getTitleName(typeTitle(Types.Fairy, false))).toBeNull();
+  });
+});
+
+describe('rotating quests', () => {
+  const NOON = Date.UTC(2026, 7, 26, 12);
+
+  it('deals the same board for one day and turns it over at midnight', () => {
+    const today = getDailyQuests(NOON);
+    const again = getDailyQuests(NOON + 3_600_000);
+
+    expect(today).toHaveLength(DAILY_SLOTS);
+    expect(again.map((one) => one.name)).toEqual(today.map((one) => one.name));
+    expect(dailyWindow(NOON)).not.toBe(dailyWindow(NOON + 24 * 3_600_000));
+  });
+
+  it('spotlights the featured family on its day', () => {
+    // Family number 1 is featured on January 2nd, day 1 of the year
+    const featured = Date.UTC(2026, 0, 2, 12);
+    const [spotlight] = getDailyQuests(featured);
+
+    expect(spotlight.name.startsWith('Featured:')).toBe(true);
+    expect(spotlight.requirement.family).toBe(1);
+  });
+
+  it('hunts one registered, lair-free family a week', () => {
+    const hunt = getWeeklyHunt(NOON);
+
+    expect(hunt.requirement.metric).toBe(Metric.Catches);
+    expect(hunt.requirement.count).toBe(5);
+    expect(hunt.requirement.family).not.toBeUndefined();
+    expect(getWeeklyHunt(NOON + 24 * 3_600_000).name).toBe(hunt.name);
+    expect(weeklyWindow(NOON)).not.toBe(weeklyWindow(NOON + 7 * 24 * 3_600_000));
   });
 });

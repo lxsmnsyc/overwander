@@ -41,6 +41,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
   // The trainer opens `RocketStopDialog` too: a duel is put the same
   // way an ambush is, only asked rather than sprung
   [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
+  [Npc.Chef]: 'Fresh off the stove and out of the icebox. Your pokemon carries it, it eats well.',
 };
 
 /**

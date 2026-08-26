@@ -1,14 +1,17 @@
-import { LockedCard, QuestCard } from './cards';
+import { LockedCard, QuestCard, RotationCard } from './cards';
 import { describePayout } from './describe';
 import type { QuestStanding } from '../../../auth/quest-record';
 import { claimQuest } from '../../../auth/quests';
+import { type RotationBoard, type RotationScope, claimRotation } from '../../../auth/rotations';
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';
 import { GameDialog, useGame } from '../../app/game-context';
+import { describeItem } from '../../details';
 import { Badge, DialogSection, type ToastTone, useToast } from '../../styled';
 import { For, type JSX, type Resource, Show, createSignal } from 'solid-js';
 
 export default function QuestBoard(props: {
   standings: Resource<QuestStanding[]>;
+  rotations: Resource<RotationBoard>;
   onChanged: () => void;
   onClose: () => void;
 }): JSX.Element {
@@ -30,6 +33,31 @@ export default function QuestBoard(props: {
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
+  };
+
+  const claimRotating = (scope: RotationScope, slot: number): void => {
+    if (claiming()) {
+      return;
+    }
+    setClaiming(true);
+    claimRotation(scope, slot)
+      .then((paid) => {
+        if (paid == null) {
+          say('That quest is not ready to claim.', 'ember');
+          return;
+        }
+        say(
+          `Received ${paid.map((one) => `${one.amount} × ${describeItem(one.item)}`).join(', ')}.`,
+          'leaf',
+        );
+      })
+      .catch(() => {
+        say('That could not be claimed.', 'ember');
+      })
+      .finally(() => {
+        setClaiming(false);
+        props.onChanged();
+      });
   };
 
   const claim = (quest: Quests): void => {
@@ -67,6 +95,37 @@ export default function QuestBoard(props: {
 
   return (
     <div class="flex flex-col gap-4">
+      {/* The rotating asks first: today's three and the week's hunt
+          turn over on their own, so they outrank the standing board */}
+      <Show when={props.rotations()} keyed>
+        {(board) => (
+          <>
+            <DialogSection title="Today">
+              <For each={board.daily}>
+                {(standing) => (
+                  <RotationCard
+                    standing={standing}
+                    busy={claiming()}
+                    onClaim={() => {
+                      claimRotating('daily', standing.quest.slot);
+                    }}
+                  />
+                )}
+              </For>
+            </DialogSection>
+            <DialogSection title="This week">
+              <RotationCard
+                standing={board.weekly}
+                busy={claiming()}
+                onClaim={() => {
+                  claimRotating('weekly', board.weekly.quest.slot);
+                }}
+              />
+            </DialogSection>
+          </>
+        )}
+      </Show>
+
       {/* Each chain is one group under its own progress count. A link
           not yet unlocked is named and nothing more */}
       <For each={CHAIN_ORDER}>

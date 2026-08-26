@@ -188,7 +188,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Quests]}
             description={DESCRIPTIONS[GameDialog.Quests]}
           >
-            <QuestsTab onClose={close} />
+            <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>

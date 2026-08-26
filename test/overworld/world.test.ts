@@ -142,7 +142,14 @@ import Phenomenon, {
   BIOME_PHENOMENA,
   getPhenomenonItems,
 } from '../../src/data/overworld/phenomenon';
-import { VENDOR_STAPLES, VENDOR_STOCK_KINDS, isMarketable } from '../../src/data/overworld/vendor';
+import {
+  VENDOR_STAPLES,
+  VENDOR_STOCK_KINDS,
+  VendorKind,
+  getChefGoods,
+  getVendorGoods,
+  isMarketable,
+} from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
@@ -1773,6 +1780,7 @@ describe('world', () => {
     }
 
     const crates = new Set<string>();
+    const counters = new Set<VendorKind>();
     let found = 0;
 
     for (let window = 0; window < 24; window++) {
@@ -1783,20 +1791,49 @@ describe('world', () => {
         const stock = snapshot.getVendorStock(cell);
 
         // Anybody else's cell holds no crate at all
-        if (npc !== Npc.Vendor) {
+        if (npc !== Npc.Vendor && npc !== Npc.Chef) {
           expect(stock).toEqual([]);
+          expect(snapshot.getVendorKind(cell)).toBeNull();
           continue;
         }
         found++;
         crates.add(JSON.stringify(stock));
 
-        // Six kinds, none of them twice, and the two staples always
-        // among them — a vendor with neither balls nor potions is one
-        // a player cannot plan a walk around
+        // Six kinds, none of them twice
         expect(stock.length).toBe(VENDOR_STOCK_KINDS);
         expect(new Set(stock).size).toBe(stock.length);
-        for (const staple of VENDOR_STAPLES) {
-          expect(new Set(stock).has(staple)).toBe(true);
+
+        if (npc === Npc.Chef) {
+          // Everything on his counter came out of his own larder
+          const larder = new Set(getChefGoods());
+
+          expect(snapshot.getVendorKind(cell)).toBeNull();
+          for (const item of stock) {
+            expect(larder.has(item)).toBe(true);
+          }
+        } else {
+          // A vendor's crate is his counter's shelf and nothing else
+          const kind = snapshot.getVendorKind(cell);
+
+          expect(kind).not.toBeNull();
+          if (kind == null) {
+            continue;
+          }
+          counters.add(kind);
+
+          const goods = new Set(getVendorGoods(kind));
+
+          for (const item of stock) {
+            expect(goods.has(item)).toBe(true);
+          }
+          // The staples belong to the medicine counter: a vendor with
+          // neither balls nor potions is one a player cannot plan a
+          // walk around, and the other shelves are their own plan
+          if (kind === VendorKind.Medicine) {
+            for (const staple of VENDOR_STAPLES) {
+              expect(new Set(stock).has(staple)).toBe(true);
+            }
+          }
         }
         // Priced goods only, which is what keeps the Master Ball out
         // of the crate without naming it
@@ -1806,15 +1843,17 @@ describe('world', () => {
         }
         expect(new Set(stock).has(Items.MasterBall)).toBe(false);
 
-        // Everybody who walks up to the same vendor is shown the same
+        // Everybody who walks up to the same trader is shown the same
         // crate: it is derived, not stored
         expect(new ChunkSnapshot(chunk, at + 1).getVendorStock(cell)).toEqual(stock);
       }
     }
 
     expect(found).toBeGreaterThan(0);
-    // And the crates are not all the same crate
+    // The crates are not all the same crate, and the vendor is not
+    // always behind the same counter
     expect(crates.size).toBeGreaterThan(1);
+    expect(counters.size).toBeGreaterThan(1);
   });
 
   it('gives the fossil maniac two of the three, drawn with his window', () => {

@@ -6,10 +6,9 @@ import { nameToIcon, registerItem } from './__create';
  * The regional treats: what somebody brings back from a city they
  * went to.
  *
- * Nothing stocks them, which is what separates them from the drinks
- * beside them on the shelf. Most are a Full Heal in the hand; the one
- * candy bar is a bottle of water that came in a wrapper. What they do
- * in a fight is in
+ * The wandering chef is the one counter that stocks them. Most are a
+ * Full Heal in the hand; the one candy bar is a bottle of water that
+ * came in a wrapper. What they do in a fight is in
  * [`src/battle/items/treats.ts`](../../battle/items/treats.ts).
  */
 
@@ -19,7 +18,7 @@ export interface Treat {
    * Health it gives back. Zero for the sweets, which only cure
    */
   restore: number;
-  sell: number;
+  buy: number;
 }
 
 /**
@@ -29,28 +28,30 @@ export interface Treat {
 export const TREAT_CURES: Set<Statuses> = new Set(NON_VOLATILE_STATUSES);
 
 /**
- * What one fetches when sold. A sweet undercuts the Full Heal it
- * copies, since nobody chose to carry it
+ * What the chef charges for a sweet. It undercuts the Full Heal it
+ * copies, and sells back at half like everything else on a counter
  */
-const SWEET_RESALE = 300;
+const SWEET_PRICE = 600;
 
 export const TREATS: Map<Items, Treat> = new Map([
-  [Items.LavaCookie, { name: 'Lava Cookie', restore: 0, sell: SWEET_RESALE }],
-  [Items.OldGateau, { name: 'Old Gateau', restore: 0, sell: SWEET_RESALE }],
-  [Items.Casteliacone, { name: 'Casteliacone', restore: 0, sell: SWEET_RESALE }],
-  [Items.LumioseGalette, { name: 'Lumiose Galette', restore: 0, sell: SWEET_RESALE }],
-  [Items.ShalourSable, { name: 'Shalour Sable', restore: 0, sell: SWEET_RESALE }],
-  [Items.BigMalasada, { name: 'Big Malasada', restore: 0, sell: SWEET_RESALE }],
-  [Items.PewterCrunchies, { name: 'Pewter Crunchies', restore: 0, sell: SWEET_RESALE }],
+  [Items.LavaCookie, { name: 'Lava Cookie', restore: 0, buy: SWEET_PRICE }],
+  [Items.OldGateau, { name: 'Old Gateau', restore: 0, buy: SWEET_PRICE }],
+  [Items.Casteliacone, { name: 'Casteliacone', restore: 0, buy: SWEET_PRICE }],
+  [Items.LumioseGalette, { name: 'Lumiose Galette', restore: 0, buy: SWEET_PRICE }],
+  [Items.ShalourSable, { name: 'Shalour Sable', restore: 0, buy: SWEET_PRICE }],
+  [Items.BigMalasada, { name: 'Big Malasada', restore: 0, buy: SWEET_PRICE }],
+  [Items.PewterCrunchies, { name: 'Pewter Crunchies', restore: 0, buy: SWEET_PRICE }],
   // The two that feed their holder rather than curing them, which
   // puts them with the drinks and not with the sweets
-  [Items.RageCandyBar, { name: 'Rage Candy Bar', restore: 20, sell: 150 }],
-  [Items.SweetHeart, { name: 'Sweet Heart', restore: 20, sell: 150 }],
+  [Items.RageCandyBar, { name: 'Rage Candy Bar', restore: 20, buy: 300 }],
+  [Items.SweetHeart, { name: 'Sweet Heart', restore: 20, buy: 300 }],
 ]);
 
 export function isTreat(item: Items): boolean {
   return TREATS.has(item);
 }
+
+const TREAT_RESALE = 0.5;
 
 export default function registerTreats(): void {
   for (const [item, treat] of TREATS) {
@@ -62,9 +63,9 @@ export default function registerTreats(): void {
           : 'Cures every status a second after one lands on its holder.',
       type: ItemTypes.Held,
       icon: nameToIcon('medicine', treat.name),
-      flags: ItemFlags.Holdable | ItemFlags.Consumable,
-      buy: 0,
-      sell: treat.sell,
+      flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
+      buy: treat.buy,
+      sell: treat.buy * TREAT_RESALE,
     });
   }
 }

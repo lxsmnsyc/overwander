@@ -29,8 +29,11 @@ import Landmark from '../data/overworld/landmark';
 import Npc from '../data/overworld/npc';
 import { trainerLevels } from '../data/overworld/trainers';
 import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
-import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES } from '../data/overworld/experts';
+import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES, rollGymMachine } from '../data/overworld/experts';
+import type { Items } from '../data/ids/items';
+import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
+import { grantItem } from './inventory';
 import { Foe, Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
@@ -352,6 +355,8 @@ export interface RocketReward {
   encounter: EncounterRecord | null;
   gold: number;
   award: Awards | null;
+  /** A gym leader's extra: one TM of their own type, first claim only */
+  machine: Items | null;
 }
 
 /**
@@ -423,7 +428,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
       where player = ${uid} and key = ${encounterKey(encounter)}
     `;
 
-    return gone.length > 0 ? null : { encounter, gold: 0, award: null };
+    return gone.length > 0 ? null : { encounter, gold: 0, award: null, machine: null };
   }
 
   // What the stop is worth — a purse rolled per winner, the top range
@@ -460,10 +465,25 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const owed = awardFor(landmark, snapshot, record.cell);
   const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
 
+  // A beaten leader also hands over one TM of their own type. Rolled
+  // per winner like the purse, and only on the claim that paid, so a
+  // stop is worth one disc however many times it is claimed
+  let machine: Items | null = null;
+
+  if (landmark === Landmark.GymLeader) {
+    const leader = snapshot.getGymLeader(record.cell);
+    const rng = new AleaRNG(`${stop}:machine:${uid}`);
+
+    machine = leader == null ? null : rollGymMachine(leader, () => rng.random());
+    if (machine != null) {
+      await grantItem(uid, machine);
+    }
+  }
+
   // A trainer's and an expert's purse is the whole of what changes
   // hands: they keep their party
   if (kind === Npc.Trainer) {
-    return { encounter: null, gold, award };
+    return { encounter: null, gold, award, machine };
   }
 
   // Fixed rather than rolled, so the same grunt is worth the same to
@@ -475,7 +495,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     shadow: true,
   });
 
-  return { encounter, gold, award };
+  return { encounter, gold, award, machine };
 }
 
 /**

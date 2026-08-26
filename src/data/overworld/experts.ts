@@ -1,8 +1,11 @@
 import { Types } from '../constants/types';
 import Awards from '../ids/awards';
 import Biome from '../ids/biome';
+import { type Items, getMachineItem } from '../ids/items';
 import type Regions from '../ids/regions';
 import { Species } from '../ids/species';
+import { getTeachableMoves } from '../items/machines';
+import { getMoveData } from '../moves';
 import { EVERY_LAIR, getLairSpecies } from './lair';
 import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
 
@@ -132,6 +135,21 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
   [Biome.Shrubland]: [GymLeader.Blue],
   [Biome.Taiga]: [GymLeader.Blue],
 };
+
+/**
+ * The machine a beaten leader hands over: one of the TMs of their own
+ * type, rolled by the caller's draw. Blue, with no specialty, reaches
+ * into the whole case. Null only if a type somehow teaches nothing
+ */
+export function rollGymMachine(leader: GymLeader, random: () => number): Items | null {
+  const type = GYM_LEADER_TYPES[leader] ?? null;
+  const moves = getTeachableMoves().filter(
+    (move) => type == null || getMoveData(move).type === type,
+  );
+  const move = moves.at(Math.floor(random() * moves.length));
+
+  return move == null ? null : getMachineItem(move);
+}
 
 const enum EliteMember {
   Lorelei = 0,

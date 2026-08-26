@@ -63,6 +63,14 @@ export const enum Metric {
    * the one that tells a Bug Catcher from a Swimmer
    */
   TrainerWins = 22,
+  /**
+   * A biome stood in for the first time, by biome. Marked once and
+   * never added to, so the total is how many different biomes the
+   * player has seen
+   */
+  Biomes = 23,
+  /** Pending effort points put into a stat; the count is the points */
+  EffortAssigned = 24,
 }
 
 /** The landmark kinds the Landmarks metric counts, as its params */

@@ -8,7 +8,19 @@ import { getMaxHealth } from '../../../auth/health';
 import { describeFriendship } from '../../../data/constants/friendship';
 import { type InventoryEntry, getInventory } from '../../../auth/inventory';
 import { getProfile } from '../../../auth/profile';
-import { boostEgg, breed, buyFossil, buyFromVendor, groomCatch, hasVisited, remindMove, reviveFossil, sellToVendor, tutorMove, visitNurse } from '../../../auth/npcs';
+import {
+  boostEgg,
+  breed,
+  buyFossil,
+  buyFromVendor,
+  groomCatch,
+  hasVisited,
+  remindMove,
+  reviveFossil,
+  sellToVendor,
+  tutorMove,
+  visitNurse,
+} from '../../../auth/npcs';
 import type { Items } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
 import { isFossil } from '../../../data/items';
@@ -16,7 +28,14 @@ import { isFossil } from '../../../data/items';
 import { getFossilPrice } from '../../../data/overworld/fossil';
 import { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
-import Npc, { BREEDING_FEE, DAYCARE_FEE, GROOMING_FEE, NPC_NAMES, REMINDER_FEE, TUTOR_FEE } from '../../../data/overworld/npc';
+import Npc, {
+  BREEDING_FEE,
+  DAYCARE_FEE,
+  GROOMING_FEE,
+  NPC_NAMES,
+  REMINDER_FEE,
+  TUTOR_FEE,
+} from '../../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT } from '../../../data/overworld/vendor';
 import { canBreed } from '../../../overworld/breeding';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
@@ -418,8 +437,8 @@ function NpcCounter(
     setStatus(null);
     setBusy(true);
     (buyingIt
-      ? buyFromVendor(snapshot, standing[0], picks)
-      : sellToVendor(snapshot, standing[0], picks)
+      ? buyFromVendor(snapshot, standing[0], picks, standing[1])
+      : sellToVendor(snapshot, standing[0], picks, standing[1])
     )
       .then((done) => {
         setBusy(false);
@@ -643,7 +662,7 @@ function NpcCounter(
         </Button>
       );
     }
-    if (npc !== Npc.Vendor) {
+    if (npc !== Npc.Vendor && npc !== Npc.Chef) {
       // The daycare lady, the groomer, the maniac and the scientist
       // act the moment something is pressed, so there is nothing left
       // to agree to — a button here would only ask the question twice
@@ -823,7 +842,7 @@ function NpcCounter(
                 <ReviveCounter fossils={fossils()} busy={busy()} onRevive={openRock} />
               </Show>
 
-              <Show when={standing()[1] === Npc.Vendor}>
+              <Show when={standing()[1] === Npc.Vendor || standing()[1] === Npc.Chef}>
                 <VendorCounter gold={props.gold.latest ?? 0} />
               </Show>
 

@@ -1,6 +1,14 @@
 import { describeRequirement, describeReward, requirementIcon } from './describe';
 import type { QuestStanding, RequirementStanding } from '../../../auth/quest-record';
-import { QUESTS, type QuestData, QuestRewardKind, type Quests, RequirementKind } from '../../../data/quests';
+import type { RotationStanding } from '../../../auth/rotations';
+import {
+  QUESTS,
+  type QuestData,
+  QuestRewardKind,
+  type Quests,
+  RequirementKind,
+} from '../../../data/quests';
+import { describeItem } from '../../details';
 import { ChevronRightIcon } from '../../icons';
 import ItemSprite from '../../items/ItemSprite';
 import { Badge, Button, Meta } from '../../styled';
@@ -109,6 +117,56 @@ export function QuestCard(props: {
         </div>
       </DisclosurePanel>
     </Disclosure>
+  );
+}
+
+/**
+ * One rotating quest as a card: the window's ask, the delta walked
+ * so far, and the claim. The quest itself rides the standing, since
+ * the board it belongs to is the date's rather than the registry's
+ */
+export function RotationCard(props: {
+  standing: RotationStanding;
+  busy: boolean;
+  onClaim: () => void;
+}): JSX.Element {
+  const line = (): RequirementStanding => ({
+    requirement: props.standing.quest.requirement,
+    have: props.standing.have,
+    met: props.standing.have >= props.standing.quest.requirement.count,
+  });
+
+  return (
+    <div class="flex flex-col gap-2 rounded-panel border-2 border-line-soft p-3">
+      <div class="flex items-center gap-3">
+        <span class="min-w-0 grow truncate text-sm font-bold text-ink">
+          {props.standing.quest.name}
+        </span>
+        <Show when={!props.standing.claimed} fallback={<Badge tone="leaf">Claimed</Badge>}>
+          <Button
+            tone="primary"
+            disabled={!props.standing.claimable || props.busy}
+            onClick={() => {
+              props.onClaim();
+            }}
+          >
+            Claim
+          </Button>
+        </Show>
+      </div>
+      <RequirementTile line={line()} />
+      <div class="flex flex-wrap items-center gap-2">
+        <Meta>Pays</Meta>
+        <For each={props.standing.quest.rewards}>
+          {(reward) => (
+            <Badge tone="gold">
+              <ItemSprite item={reward.item} size={16} label="" />
+              {reward.amount} × {describeItem(reward.item)}
+            </Badge>
+          )}
+        </For>
+      </div>
+    </div>
   );
 }
 

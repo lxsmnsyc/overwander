@@ -34,10 +34,10 @@ const enum Npc {
    */
   Groomer = 3,
   /**
-   * Carries a crate of balls and medicine and a purse, and is the
-   * only one of them a player may deal with more than once while he
-   * is standing there. What he sells is fixed for the window; what he
-   * buys is anything the market puts a price on
+   * Carries a crate off one of the market's counters — balls and
+   * medicine, vitamins, incenses, or the X items — and a purse. What
+   * he sells is fixed for the window; what he buys is anything the
+   * market puts a price on, and he deals as often as the purse holds
    */
   Vendor = 4,
   /**
@@ -78,6 +78,12 @@ const enum Npc {
    * landmark of their own rather than a wanderer
    */
   Trainer = 10,
+  /**
+   * Carries a larder of drinks and treats: the vendor's trade with
+   * the one shelf no vendor stocks. Like the vendor, he serves as
+   * often as the purse holds
+   */
+  Chef = 11,
 }
 
 export default Npc;
@@ -97,6 +103,7 @@ export const NPCS: Npc[] = [
   Npc.FossilManiac,
   Npc.FossilScientist,
   Npc.MoveTutor,
+  Npc.Chef,
 ];
 
 /**
@@ -122,6 +129,7 @@ const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
     'characters/frlg/ace-trainer-m',
     'characters/lgpe/ace-trainer',
   ],
+  [Npc.Chef]: ['characters/frlg/chef'],
 };
 
 /**
@@ -158,6 +166,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.FossilScientist]: 'Fossil Scientist',
   [Npc.MoveTutor]: 'Move Tutor',
   [Npc.Trainer]: 'Trainer',
+  [Npc.Chef]: 'Chef',
 };
 
 /**

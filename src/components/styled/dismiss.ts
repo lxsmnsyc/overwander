@@ -15,6 +15,11 @@ export default function dismissOutside(
   root: () => HTMLElement | undefined,
   open: () => boolean,
   close: () => void,
+  /**
+   * A second box that counts as inside: the panel of a control drawn
+   * somewhere else in the document, which `root` no longer holds
+   */
+  drawn?: () => HTMLElement | undefined,
 ): void {
   createEffect(() => {
     if (!open()) {
@@ -23,8 +28,12 @@ export default function dismissOutside(
 
     const away = (event: Event): void => {
       const inside = root();
+      const panel = drawn?.();
 
-      if (inside != null && event.target instanceof Node && !inside.contains(event.target)) {
+      if (inside == null || !(event.target instanceof Node)) {
+        return;
+      }
+      if (!inside.contains(event.target) && panel?.contains(event.target) !== true) {
         close();
       }
     };

@@ -2,7 +2,7 @@ import { type JSX, Show, createEffect, createResource, createSignal, on } from '
 import { listMyTitles, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
 import { type Title, getTitleName } from '../../data/ids/titles';
-import { Button, Dialog, DialogActions, Select, Status, TextField } from '../styled';
+import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 
 /**
  * The things about a trainer that are theirs to set: what they are
@@ -123,12 +123,15 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
       />
 
       {/* Only what has been earned is offered: the list is the
-          server's, and the save is checked against it again */}
-      <Select
+          server's, and the save is checked against it again. Typed
+          rather than scrolled, since a player deep in the ladder has
+          a long list of them */}
+      <Combobox
         label="Title"
         value={title()}
         options={choices()}
         disabled={saving()}
+        placeholder="Search your titles…"
         hint="Earned from achievements and the badge ladder; worn under your name."
         onChange={(value) => {
           setTitle(value);

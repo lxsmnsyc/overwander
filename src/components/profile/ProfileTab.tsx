@@ -64,6 +64,7 @@ const enum InnerTab {
   Requests = 2,
   Bids = 3,
   Trades = 4,
+  Awards = 5,
 }
 
 /**
@@ -309,11 +310,6 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         )}
       </Show>
 
-      {/* What they have won for good: the badge shelf, every slot
-          shown so a visitor can see what is earned and what is still
-          out there */}
-      <AwardsCard player={props.player} />
-
       {/* Who is walking with them, which is the one thing on this
           page that changes what happens outside it: a buddy draws
           spawns in, earns the candy, and is what an egg is counted
@@ -326,14 +322,26 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       <Show
         when={props.viewOnly !== true}
         fallback={
-          <Card title="Battles">
-            <BattleHistory player={props.player} viewOnly />
-          </Card>
+          <TabGroup horizontal defaultValue={InnerTab.Battles} class="flex flex-col gap-3">
+            <TabBar>
+              <TabButton value={InnerTab.Battles}>Battles</TabButton>
+              <TabButton value={InnerTab.Awards}>Awards</TabButton>
+            </TabBar>
+            <TabPane value={InnerTab.Battles}>
+              <Card title="Battles">
+                <BattleHistory player={props.player} viewOnly />
+              </Card>
+            </TabPane>
+            <TabPane value={InnerTab.Awards}>
+              <AwardsCard player={props.player} />
+            </TabPane>
+          </TabGroup>
         }
       >
         <TabGroup horizontal defaultValue={InnerTab.Battles} class="flex flex-col gap-3">
           <TabBar>
             <TabButton value={InnerTab.Battles}>Battles</TabButton>
+            <TabButton value={InnerTab.Awards}>Awards</TabButton>
             <TabButton value={InnerTab.Friends}>Friends</TabButton>
             <TabButton value={InnerTab.Requests}>
               Friend Requests
@@ -353,6 +361,12 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
             <Card title="Battles">
               <BattleHistory player={props.player} />
             </Card>
+          </TabPane>
+          {/* What they have won for good: the badge shelf, every slot
+              shown so a visitor can see what is earned and what is
+              still out there */}
+          <TabPane value={InnerTab.Awards}>
+            <AwardsCard player={props.player} />
           </TabPane>
           <TabPane value={InnerTab.Friends}>
             <Card title="Friends">

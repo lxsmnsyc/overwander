@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { For, type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import {
   AutocompleteStateChild,
   ComboboxInput,
@@ -12,6 +13,7 @@ import { SHEER } from './transition';
 import { Badge } from './feedback';
 import { FieldFrame } from './form';
 import dismissOutside from './dismiss';
+import { usePortalHost } from './portal-host';
 
 /**
  * A choice out of a list nobody would scroll: a species, an account, an
@@ -95,9 +97,20 @@ const DROP =
   ' hover:text-on-accent active:translate-y-0 focus-visible:outline-2' +
   ' focus-visible:outline-offset-1 focus-visible:outline-tide disabled:cursor-not-allowed';
 
+/** The gap between the box and the list under it, in pixels */
+const DROP_GAP = 6;
+
 export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
   /** The whole control, for working out what is a press away from it */
   const [root, setRoot] = createSignal<HTMLElement>();
+  /**
+   * The list is drawn in the nearest dialog's own container rather than
+   * inside the field: a combobox in a panel that scrolls or clips had
+   * its list cut off at the edge of whatever box it was written in
+   */
+  const host = usePortalHost();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const [spot, setSpot] = createSignal<{ left: number; top: number; width: number } | null>(null);
 
   const named = (value: V | null): string =>
     props.options.find((option) => option.value === value)?.label ?? '';
@@ -141,46 +154,83 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
     <DisclosureStateChild>
       {(disclosure) => {
         // Terracotta shuts it on Escape and on the focus leaving; this
-        // is the press on ground that takes no focus, which moves none
-        dismissOutside(root, disclosure.isOpen, disclosure.close);
+        // is the press on ground that takes no focus, which moves none.
+        // The list is drawn elsewhere, so it is named as inside too
+        dismissOutside(root, disclosure.isOpen, disclosure.close, panel);
+
+        // Placed under the box while it is open, and again whenever
+        // the page moves under it: a field in a dialog scrolls
+        createEffect(() => {
+          const anchor = root();
+
+          if (!disclosure.isOpen() || anchor == null) {
+            return;
+          }
+
+          const put = (): void => {
+            const rect = anchor.getBoundingClientRect();
+
+            setSpot({ left: rect.left, top: rect.bottom + DROP_GAP, width: rect.width });
+          };
+
+          put();
+          // Captured, so a scroll inside a dialog counts as well as
+          // the window's own
+          window.addEventListener('scroll', put, true);
+          window.addEventListener('resize', put);
+          onCleanup(() => {
+            window.removeEventListener('scroll', put, true);
+            window.removeEventListener('resize', put);
+          });
+        });
 
         return (
-          <Transition
-            show={disclosure.isOpen()}
-            {...SHEER}
-            class="absolute top-full left-0 z-20 mt-1.5 w-full"
-          >
-            <ComboboxOptions
-              unmount={false}
-              class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-                border-2 border-tide bg-paper p-1 shadow-pop"
+          <Portal mount={host()}>
+            <Transition
+              ref={(element: HTMLElement) => {
+                setPanel(element);
+              }}
+              show={disclosure.isOpen()}
+              {...SHEER}
+              class="fixed z-40"
+              style={{
+                left: `${spot()?.left ?? 0}px`,
+                top: `${spot()?.top ?? 0}px`,
+                width: `${spot()?.width ?? 0}px`,
+              }}
             >
-              <For each={props.options}>
-                {(option) => (
-                  <ComboboxOption
-                    class={OPTION}
-                    value={option.value}
-                    // A full box still lets go of what is in it: what
-                    // is already picked stays pressable, since
-                    // pressing it is how it comes off
-                    disabled={option.disabled === true || (full() && !chosen().has(option.value))}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              </For>
-              {/* Nothing left after the query, which the options
+              <ComboboxOptions
+                unmount={false}
+                class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
+                border-2 border-tide bg-paper p-1 shadow-pop"
+              >
+                <For each={props.options}>
+                  {(option) => (
+                    <ComboboxOption
+                      class={OPTION}
+                      value={option.value}
+                      // A full box still lets go of what is in it: what
+                      // is already picked stays pressable, since
+                      // pressing it is how it comes off
+                      disabled={option.disabled === true || (full() && !chosen().has(option.value))}
+                    >
+                      {option.label}
+                    </ComboboxOption>
+                  )}
+                </For>
+                {/* Nothing left after the query, which the options
                   cannot say between them: each one only knows about
                   itself */}
-              <AutocompleteStateChild>
-                {(state) => (
-                  <Show when={props.options.every((option) => !state.matches(option.value))}>
-                    <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
-                  </Show>
-                )}
-              </AutocompleteStateChild>
-            </ComboboxOptions>
-          </Transition>
+                <AutocompleteStateChild>
+                  {(state) => (
+                    <Show when={props.options.every((option) => !state.matches(option.value))}>
+                      <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
+                    </Show>
+                  )}
+                </AutocompleteStateChild>
+              </ComboboxOptions>
+            </Transition>
+          </Portal>
         );
       }}
     </DisclosureStateChild>

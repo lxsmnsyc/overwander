@@ -863,20 +863,32 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   const drawnAsPerson = (index: number): boolean => personOn(index) != null;
 
-  /** The player's own charset, loaded like anybody else's. */
+  /**
+   * The player's own walker, and the copy is the point.
+   *
+   * The charsets are cached one to a sheet, so everybody wearing a
+   * sheet was drawn from a single sprite — and a sprite carries the
+   * playhead. The player is the only one who walks, so every NPC in
+   * that charset was drawn at whatever frame of the player's stride
+   * the last step left behind: the Champion wears Red's sheet, and so
+   * does the player, so the two moved as one. A clone shares the
+   * picture and the grid and keeps a playhead of its own
+   */
+  let mine: OWCharSprite | null = null;
+  let mineSheet: string | null = null;
+
   const playerPerson = (): OWCharSprite | null => {
     const sheet = props.charset ?? PLAYER_SHEET;
+    const shared = personFor(sheet);
 
-    if (!people.has(sheet)) {
-      loadPerson(sheet).catch(() => {
-        // Already answered inside: nothing else to do with it
-      });
+    if (shared?.ready !== true) {
       return null;
     }
-
-    const person = people.get(sheet) ?? null;
-
-    return person?.ready === true ? person : null;
+    if (mine == null || mineSheet !== sheet) {
+      mine = shared.clone();
+      mineSheet = sheet;
+    }
+    return mine;
   };
 
   /**

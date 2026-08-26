@@ -1,6 +1,16 @@
-import { type JSX, Show, createSignal, from } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+  from,
+} from 'solid-js';
+import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import { signOut } from '../../auth/actions';
 import { type Profile, watchProfile } from '../../auth/profile';
+import { AchievementTier, TIER_COLORS } from '../../data/achievements';
 import AddFriendDialog from '../friends/AddFriendDialog';
 import AwardsCard from './AwardsCard';
 import BattleHistory from '../battle/BattleHistory';
@@ -19,12 +29,11 @@ import EditProfileDialog from './EditProfileDialog';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
 import TradesTab from '../trades/TradesTab';
-import { getTitleName } from '../../data/ids/titles';
+import { getTitleName, titleLine, titleType } from '../../data/ids/titles';
 import {
   Badge,
   Card,
   Menu,
-  Meta,
   Note,
   Panel,
   Row,
@@ -55,6 +64,76 @@ const enum InnerTab {
   Requests = 2,
   Bids = 3,
   Trades = 4,
+}
+
+/**
+ * The tier the wearer stands at on the worn title's line, read off
+ * the sheet in its own component so the resource is read under the
+ * Suspense below
+ */
+function TierBadge(props: {
+  sheet: Resource<AchievementSheet>;
+  title: number;
+  name: string;
+}): JSX.Element {
+  const tier = (): AchievementTier => {
+    const sheet = props.sheet();
+
+    if (sheet == null) {
+      return AchievementTier.None;
+    }
+
+    const line = titleLine(props.title);
+
+    if (line != null) {
+      return sheet.lines.find(([held]) => held === line)?.[1].tier ?? AchievementTier.None;
+    }
+
+    const type = titleType(props.title);
+
+    if (type != null) {
+      return sheet.types.find(([held]) => held === type)?.[1].tier ?? AchievementTier.None;
+    }
+    return AchievementTier.None;
+  };
+
+  return (
+    <Show
+      when={tier() !== AchievementTier.None}
+      fallback={<Badge class="-mt-1 self-start">{props.name}</Badge>}
+    >
+      <Badge
+        class="-mt-1 self-start"
+        style={{ 'border-color': TIER_COLORS[tier()], color: TIER_COLORS[tier()] }}
+      >
+        {props.name}
+      </Badge>
+    </Show>
+  );
+}
+
+/**
+ * The worn title as a pill in its tier's metal: a line or type title
+ * is coloured by where the wearer stands on that line today, so the
+ * same title brightens as they climb. A ladder title has no tier and
+ * wears the gold tone
+ */
+function TitleBadge(props: { player: string; title: number; name: string }): JSX.Element {
+  if (titleLine(props.title) == null && titleType(props.title) == null) {
+    return (
+      <Badge tone="gold" class="-mt-1 self-start">
+        {props.name}
+      </Badge>
+    );
+  }
+
+  const [sheet] = createResource(() => props.player, listAchievements);
+
+  return (
+    <Suspense fallback={<Badge class="-mt-1 self-start">{props.name}</Badge>}>
+      <TierBadge sheet={sheet} title={props.title} name={props.name} />
+    </Suspense>
+  );
 }
 
 export interface ProfileTabProps {
@@ -162,7 +241,9 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               </Row>
               {/* The worn title, under the name it decorates */}
               <Show when={loaded().title != null && getTitleName(loaded().title ?? -1)} keyed>
-                {(worn) => <Meta class="-mt-1">{worn}</Meta>}
+                {(worn) => (
+                  <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
+                )}
               </Show>
               {/* Where in the world they are, under the name: it is
                   the one fact about a trainer that changes while

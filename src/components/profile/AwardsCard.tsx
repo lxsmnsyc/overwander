@@ -6,6 +6,7 @@ import {
   AchievementTier,
   LINE_DEEDS,
   LINE_NAMES,
+  TIER_COLORS,
   TIER_NAMES,
   tierName,
 } from '../../data/achievements';
@@ -216,15 +217,6 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
     </div>
   );
 }
-
-/** The metals, as the ring around a slot */
-const TIER_COLORS: Record<AchievementTier, string> = {
-  [AchievementTier.None]: '',
-  [AchievementTier.Bronze]: '#b0793f',
-  [AchievementTier.Silver]: '#9aa4b0',
-  [AchievementTier.Gold]: '#e0b64f',
-  [AchievementTier.Platinum]: '#7bc8d2',
-};
 
 /**
  * One achievement as a slot: the name in the square, the tier as the

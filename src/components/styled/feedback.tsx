@@ -45,6 +45,8 @@ export function Badge(
      */
     wrap?: boolean;
     class?: string;
+    /** Inline colour overrides, for tones that live in data (tier metals) */
+    style?: JSX.CSSProperties;
   },
 ): JSX.Element {
   return (
@@ -53,6 +55,7 @@ export function Badge(
         ${props.wrap === true ? 'break-words whitespace-normal' : 'whitespace-nowrap'} ${
           BADGE_TONES[props.tone ?? 'neutral']
         } ${props.class ?? ''}`}
+      style={props.style}
     >
       {props.children}
     </span>

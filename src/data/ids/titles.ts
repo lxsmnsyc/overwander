@@ -31,14 +31,42 @@ export const enum LadderTitle {
 const LINE_TITLE_BASE = 100;
 const TYPE_TITLE_BASE = 200;
 
-/** The title an achievement line's Gold (or, `master`, Platinum) tier unlocks */
+/** The title an achievement line's Bronze (or, `master`, Platinum) tier unlocks */
 export function lineTitle(line: AchievementLine, master: boolean): Title {
   return LINE_TITLE_BASE + line * 2 + (master ? 1 : 0);
 }
 
-/** The title a type line's Gold (or, `master`, Platinum) tier unlocks */
+/** The title a type line's Bronze (or, `master`, Platinum) tier unlocks */
 export function typeTitle(type: Types, master: boolean): Title {
   return TYPE_TITLE_BASE + type * 2 + (master ? 1 : 0);
+}
+
+/**
+ * The achievement line a title belongs to, or null for one that is
+ * not a line's. The wearer's tier on this line is what colours the
+ * badge the title is worn on
+ */
+export function titleLine(title: Title): AchievementLine | null {
+  if (title < LINE_TITLE_BASE || title >= TYPE_TITLE_BASE) {
+    return null;
+  }
+
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  const line = Math.floor((title - LINE_TITLE_BASE) / 2) as AchievementLine;
+
+  return ACHIEVEMENT_LINES.includes(line) ? line : null;
+}
+
+/** The type line a title belongs to, or null for one that is not a type's */
+export function titleType(title: Title): Types | null {
+  if (title < TYPE_TITLE_BASE) {
+    return null;
+  }
+
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  const type = Math.floor((title - TYPE_TITLE_BASE) / 2) as Types;
+
+  return ACHIEVEMENT_TYPES.includes(type) ? type : null;
 }
 
 const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
@@ -53,30 +81,25 @@ const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
  * as no title rather than as garbage
  */
 export function getTitleName(title: Title): string | null {
-  if (title >= TYPE_TITLE_BASE) {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    const type = Math.floor((title - TYPE_TITLE_BASE) / 2) as Types;
+  const type = titleType(title);
 
-    if (!ACHIEVEMENT_TYPES.includes(type)) {
-      return null;
-    }
-
+  if (type != null) {
     const name = TYPE_NAMES[type];
 
     return title % 2 === 1 ? `${name} Master` : `${name} Specialist`;
   }
-  if (title >= LINE_TITLE_BASE) {
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    const line = Math.floor((title - LINE_TITLE_BASE) / 2) as AchievementLine;
 
-    if (!ACHIEVEMENT_LINES.includes(line)) {
-      return null;
-    }
+  const line = titleLine(title);
 
+  if (line != null) {
     const name = LINE_NAMES[line];
 
     return title % 2 === 1 ? `Master ${name}` : name;
   }
+  if (title >= LINE_TITLE_BASE) {
+    return null;
+  }
+
   const ladder: Record<number, string> = LADDER_TITLE_NAMES;
 
   return ladder[title] ?? null;

@@ -23,9 +23,10 @@ export async function readAchievements(player: string): Promise<Achievements> {
 }
 
 /**
- * Every title this player may wear: Gold unlocks a line's base title
- * and Platinum its Master variant, and the badge ladder adds its own
- * 3 on top
+ * Every title this player may wear: Bronze unlocks a line's base
+ * title (the badge it is drawn on carries the tier's colour from
+ * there), Platinum its Master variant, and the badge ladder adds its
+ * own 3 on top
  */
 export async function listUnlockedTitles(player: string): Promise<Title[]> {
   const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
@@ -35,7 +36,7 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
   for (const line of ACHIEVEMENT_LINES) {
     const tier = standings.lines.get(line)?.tier ?? AchievementTier.None;
 
-    if (tier >= AchievementTier.Gold) {
+    if (tier >= AchievementTier.Bronze) {
       titles.push(lineTitle(line, false));
     }
     if (tier >= AchievementTier.Platinum) {
@@ -45,7 +46,7 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
   for (const type of ACHIEVEMENT_TYPES) {
     const tier = standings.types.get(type)?.tier ?? AchievementTier.None;
 
-    if (tier >= AchievementTier.Gold) {
+    if (tier >= AchievementTier.Bronze) {
       titles.push(typeTitle(type, false));
     }
     if (tier >= AchievementTier.Platinum) {

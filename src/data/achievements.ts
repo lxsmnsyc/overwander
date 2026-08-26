@@ -8,8 +8,8 @@ import { getSpeciesData } from './species';
  * Achievements: lifetime awards in 4 tiers, derived from the same
  * counters the quests read. Nothing is stored when a tier is
  * reached — the counters are the truth, and a standing is computed
- * from them wherever it is shown. Gold unlocks the line's title,
- * Platinum its Master variant.
+ * from them wherever it is shown. Bronze unlocks the line's title,
+ * worn in the tier's colour; Platinum adds its Master variant.
  */
 
 export const enum AchievementTier {
@@ -26,6 +26,15 @@ export const TIER_NAMES: Record<AchievementTier, string> = {
   [AchievementTier.Silver]: 'Silver',
   [AchievementTier.Gold]: 'Gold',
   [AchievementTier.Platinum]: 'Platinum',
+};
+
+/** The metals: the slot ring and the worn title's badge share them */
+export const TIER_COLORS: Record<AchievementTier, string> = {
+  [AchievementTier.None]: '',
+  [AchievementTier.Bronze]: '#b0793f',
+  [AchievementTier.Silver]: '#9aa4b0',
+  [AchievementTier.Gold]: '#e0b64f',
+  [AchievementTier.Platinum]: '#7bc8d2',
 };
 
 const enum AchievementLine {
@@ -63,8 +72,9 @@ export const ACHIEVEMENT_LINES: AchievementLine[] = [
 ];
 
 /**
- * Line names double as their Gold titles, with Master prefixed at
- * Platinum, so each has to read as something a player would wear
+ * Line names double as their titles, worn from Bronze with Master
+ * prefixed at Platinum, so each has to read as something a player
+ * would wear
  */
 export const LINE_NAMES: Record<AchievementLine, string> = {
   [AchievementLine.Collector]: 'Collector',

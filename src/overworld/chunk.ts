@@ -72,6 +72,7 @@ const SEA_PEOPLE = new Set([
   Landmark.Champion,
   Landmark.Market,
   Landmark.GymSeat,
+  Landmark.AuctionBoard,
 ]);
 
 const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
@@ -88,6 +89,9 @@ const SINGLETON_LANDMARKS = new Set([
   // One seat to a chunk: a seat is a place players come back to, and
   // two of them beside each other would be one contest split in half
   Landmark.GymSeat,
+  // And one board: every board shows the same global lots, so a
+  // second in the same chunk is the same board twice
+  Landmark.AuctionBoard,
 ]);
 
 /**

@@ -16,7 +16,6 @@ import { getTimeOfDay } from '../../data/ids/biome';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import {
-  AuctionIcon,
   BagIcon,
   FireIcon,
   GiftIcon,
@@ -73,7 +72,10 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Inventory', dialog: GameDialog.Inventory, icon: BagIcon },
   { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
   { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
-  { label: 'Auctions', dialog: GameDialog.Auctions, icon: AuctionIcon },
+  // No Auctions key: the lots are read at an auction board out in the
+  // world, which is what makes trading somewhere a player goes rather
+  // than a panel they open. The panel itself still exists, and the
+  // profile still hands over anything already won
   { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
   { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
   { label: 'Settings', icon: SettingsIcon },

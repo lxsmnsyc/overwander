@@ -91,6 +91,13 @@ const enum Landmark {
    * the fight is against their frozen party rather than against them
    */
   GymSeat = 14,
+  /**
+   * The board the region's lots are posted on: the only way to the
+   * auctions. What is on it is global rather than local — every board
+   * shows the same lots — so the walk is what it costs to trade, not
+   * which board is walked to
+   */
+  AuctionBoard = 15,
 }
 
 export default Landmark;
@@ -114,6 +121,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.Champion,
   Landmark.Market,
   Landmark.GymSeat,
+  Landmark.AuctionBoard,
 ];
 
 /**
@@ -135,4 +143,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Champion]: 'Champion',
   [Landmark.Market]: 'Market',
   [Landmark.GymSeat]: 'Gym Seat',
+  [Landmark.AuctionBoard]: 'Auction Board',
 };

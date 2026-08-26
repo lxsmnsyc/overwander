@@ -15,7 +15,6 @@ import {
   asPlayerBid,
   canBid,
   canClaim,
-  canRebid,
   canReclaim,
   getBidState,
   hasEnded,
@@ -256,16 +255,18 @@ describe("a player's bidding history", () => {
     expect(getBidState({ ...mine, settled: true }, 'buyer', ended)).toBe(BidState.Collected);
   });
 
-  it('offers another bid only where one would still be taken', () => {
-    // Outbid while bidding is open is the one state a player can do
-    // something about, and it is answered from their history rather
-    // than by finding the lot again
+  it('leaves answering a raise to the board', () => {
+    // Being outbid is still something a player learns from their own
+    // history; what they cannot do there is answer it. Bidding is the
+    // auction board's alone, so nothing here says whether a raise
+    // would be taken — `canBid` is asked where the bid is actually
+    // made, and the server asks it again
     const theirs = auction({ bid: 200, bidder: 'other' });
 
-    expect(canRebid(theirs, 'buyer', open)).toBe(true);
-    expect(canRebid(theirs, 'buyer', ended)).toBe(false);
-    expect(canRebid(auction({ bid: 200, bidder: 'buyer' }), 'buyer', open)).toBe(false);
-    expect(canRebid({ ...theirs, settled: true }, 'buyer', open)).toBe(false);
+    expect(getBidState(theirs, 'buyer', open)).toBe(BidState.Outbid);
+    expect(canBid(theirs, 'buyer', 300, open)).toBe(true);
+    // ...and not once bidding has closed
+    expect(canBid(theirs, 'buyer', 300, ended)).toBe(false);
   });
 });
 

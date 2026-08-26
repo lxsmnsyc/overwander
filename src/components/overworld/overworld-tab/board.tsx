@@ -827,6 +827,13 @@ export default function OverworldBoard(props: {
       setChallenge(stop);
       return null;
     }
+    // The board is the only way to the auctions now. What it shows is
+    // the region's whole market rather than this chunk's, so walking
+    // to one is the cost of trading rather than a choice of board
+    if (landmark === Landmark.AuctionBoard) {
+      game.setDialog(GameDialog.Auctions);
+      return null;
+    }
     if (landmark === Landmark.GymSeat) {
       const standing = await enterGymSeat(loaded.snapshot, at);
 

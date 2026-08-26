@@ -1919,6 +1919,31 @@ describe('world', () => {
     }
   });
 
+  it('posts an auction board on land, one to a chunk and reachable', () => {
+    const world = new World('overworld');
+    let boards = 0;
+    let chunks = 0;
+
+    for (let x = 0; x < 25; x++) {
+      for (let y = 0; y < 8; y++) {
+        const chunk = world.getChunk(x, y);
+        const cells = [...chunk.getLandmarkCells()].filter(
+          ([, landmark]) => landmark === Landmark.AuctionBoard,
+        );
+
+        chunks++;
+        boards += cells.length;
+        // One board to a chunk: every board reads the same global
+        // lots, so a second would be the same board twice
+        expect(cells.length).toBeLessThanOrEqual(1);
+      }
+    }
+
+    // Common enough that trading is a walk rather than an expedition
+    expect(boards).toBeGreaterThan(0);
+    expect(boards / chunks).toBeGreaterThan(0.2);
+  });
+
   it('names a gym seat by its place and never by its window', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
@@ -3152,9 +3177,10 @@ describe('the open seas', () => {
         for (const landmark of chunk.getLandmarks()) {
           expect(landmark).not.toBe(Landmark.BerryPatch);
           expect(landmark).not.toBe(Landmark.WanderingNpc);
-          // Nobody keeps a stall or a seat out at sea either
+          // Nobody keeps a stall, a seat or a notice board out at sea
           expect(landmark).not.toBe(Landmark.Market);
           expect(landmark).not.toBe(Landmark.GymSeat);
+          expect(landmark).not.toBe(Landmark.AuctionBoard);
         }
       }
     }

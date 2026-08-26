@@ -358,12 +358,3 @@ export function getBidState(auction: AuctionRecord, uid: string, now: number): B
   }
   return hasEnded(auction, now) ? BidState.Won : BidState.Leading;
 }
-
-/**
- * Whether the player can still do something about this lot: outbid,
- * and bidding still open. The Bids panel offers a bid box on it, so a
- * player answers where they found out rather than hunting the board
- */
-export function canRebid(auction: AuctionRecord, uid: string, now: number): boolean {
-  return getBidState(auction, uid, now) === BidState.Outbid;
-}

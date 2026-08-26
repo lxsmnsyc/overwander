@@ -260,4 +260,5 @@ export const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.Champion]: 'V',
   [Landmark.Market]: 'M',
   [Landmark.GymSeat]: 'A',
+  [Landmark.AuctionBoard]: '$',
 };

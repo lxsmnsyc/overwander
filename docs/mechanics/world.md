@@ -65,23 +65,34 @@ scenery belongs to the chunk permanently.
 
 Every chunk contains **eight to twelve landmarks**, and they never move. The
 same chunk has the same landmarks on the same cells permanently; only their
-contents change. Duplicates are allowed, so one chunk may hold two berry
-patches.
+contents change. Most may repeat, so one chunk may hold two berry patches; a
+few are one to a chunk, marked below.
 
-| Landmark           | Description                                                      |
-| ------------------ | ---------------------------------------------------------------- |
-| **Item Cache**     | A buried stash of items                                          |
-| **Berry Patch**    | A bush bearing one kind of berry                                 |
-| **Phenomenon**     | Something happening: a grotto, dust, ripples, a shadow overhead  |
-| **Nest**           | An egg of a local species                                        |
-| **Legendary Raid** | A legendary's lair; the raid is named after the place            |
-| **Shadow Raid**    | A lair with something wrong in it                                |
-| **Wandering NPC**  | Whoever is passing through: a specialist, or a Team Rocket grunt |
-| **Trainer**        | A duelling trainer: an Ace, or an expert in one type             |
-| **Portal**         | A way through to another portal, for the price of a Portal Key   |
+| Landmark            | Description                                                     |
+| ------------------- | --------------------------------------------------------------- |
+| **Item Cache**      | A buried stash of items                                         |
+| **Berry Patch**     | A bush bearing one kind of berry                                |
+| **Phenomenon**      | Something happening: a grotto, dust, ripples, a shadow overhead |
+| **Nest**            | An egg of a local species                                       |
+| **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
+| **Shadow Raid**     | A lair with something wrong in it                               |
+| **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
+| **Market**          | A vendor's stall, behind one of the trade's four counters       |
+| **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |
+| **Team Rocket**     | A grunt barring the cell, and once in a while Giovanni          |
+| **Trainer**         | A duelling trainer: an Ace, or an expert in one type            |
+| **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
+| **Gym Leader**      | One of the region's eight, with a badge on the line. One to a chunk |
+| **Elite Four**      | One of the region's four, for a challenger holding every badge  |
+| **Champion**        | The region's title, for whoever has beaten the Elite Four. One to a chunk |
+| **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
-Walking up to a wandering cell does not reveal in advance whether it holds a
-nurse or a fight.
+Walking up to a wandering cell does not reveal in advance which specialist is
+standing there. The market, the board and the seat are fixtures: a stall is
+always a stall, though which counter it set up changes with the window.
+
+Nothing that somebody stands at is rolled out at sea: the open ocean carries
+caches, phenomena, nests, lairs and portals, and nothing else.
 
 The contents of each are covered in [Items and gold](items.md), [Eggs](eggs.md),
 [People you meet](npcs.md) and [Battles](battles.md).
@@ -98,6 +109,7 @@ to obtain, the sooner it returns.
 | What is happening at a phenomenon cell          | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |
 | Who is at a wandering-NPC cell, grunts included | 3 hours    |
+| Which counter a market stall is keeping         | 3 hours    |
 | Which trainer is standing at a trainer cell     | 3 hours    |
 | The egg lying in a nest                         | 12 hours   |
 

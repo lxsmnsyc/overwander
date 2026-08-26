@@ -3,9 +3,11 @@ import {
   type Resource,
   Show,
   Suspense,
+  createEffect,
   createResource,
   createSignal,
   from,
+  onCleanup,
 } from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import { signOut } from '../../auth/actions';
@@ -15,7 +17,9 @@ import AddFriendDialog from '../friends/AddFriendDialog';
 import AwardsCard from './AwardsCard';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
+import { type AuctionRecord, canReclaim, listAuctionsBy } from '../../auth/auctions';
 import BidsList from '../auctions/BidsList';
+import SellingList from '../auctions/SellingList';
 import FriendsTab from '../friends/FriendsTab';
 import RequestsTab from '../friends/RequestsTab';
 import createFriendTie from '../friends/tie';
@@ -65,6 +69,7 @@ const enum InnerTab {
   Bids = 3,
   Trades = 4,
   Awards = 5,
+  Selling = 6,
 }
 
 /**
@@ -190,6 +195,52 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         }),
   );
   const asking = (): FriendRequests => waiting() ?? { incoming: [], outgoing: [] };
+
+  /**
+   * What the player has put on the block. Read here rather than in
+   * the tab that lists it for the reason the requests are: the count
+   * of what is stranded belongs on the tab itself, and reading it in
+   * both places would be the same query twice.
+   *
+   * A plain signal rather than a resource, so a slow read leaves the
+   * profile standing instead of suspending it
+   */
+  const [reloaded, setReloaded] = createSignal(0);
+  const [lots, setLots] = createSignal<[string, AuctionRecord][]>([]);
+
+  createEffect(() => {
+    reloaded();
+
+    const player = props.player;
+
+    // Somebody else's lots are not the reader's business, and the
+    // reclaim button on them would be theirs to press
+    if (props.viewOnly === true) {
+      setLots([]);
+      return;
+    }
+
+    let live = true;
+
+    listAuctionsBy(player)
+      .then((found) => {
+        if (live) {
+          setLots(found);
+        }
+      })
+      .catch(() => undefined);
+    onCleanup(() => {
+      live = false;
+    });
+  });
+
+  /**
+   * How many lots came back unsold and are still sitting in escrow.
+   * Nothing else in the game ever mentions one, so this count is the
+   * whole of how a player finds out
+   */
+  const stranded = (): number =>
+    lots().filter(([, lot]) => canReclaim(lot, props.player, Date.now())).length;
 
   const leave = (): void => {
     setError(null);
@@ -355,6 +406,17 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               </Show>
             </TabButton>
             <TabButton value={InnerTab.Bids}>Bids</TabButton>
+            <TabButton value={InnerTab.Selling}>
+              Selling
+              {/* A lot nobody bid on comes back only by hand, and
+                  nothing else in the game ever mentions it: the count
+                  is what makes a stranded pokemon findable */}
+              <Show when={stranded() > 0}>
+                <Badge tone="ember" class="ml-1.5">
+                  {stranded()}
+                </Badge>
+              </Show>
+            </TabButton>
             <TabButton value={InnerTab.Trades}>Trades</TabButton>
           </TabBar>
           <TabPane value={InnerTab.Battles}>
@@ -385,6 +447,20 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           <TabPane value={InnerTab.Bids}>
             <Card title="Bids">
               <BidsList player={props.player} />
+            </Card>
+          </TabPane>
+          {/* What they have put on the block, and the unsold lots
+              waiting to be taken out of escrow. New listings are made
+              at an auction board rather than here */}
+          <TabPane value={InnerTab.Selling}>
+            <Card title="Selling">
+              <SellingList
+                player={props.player}
+                lots={lots()}
+                onChanged={() => {
+                  setReloaded((count) => count + 1);
+                }}
+              />
             </Card>
           </TabPane>
           {/* Offers between the player and their friends: to answer,

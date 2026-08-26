@@ -6,21 +6,16 @@ import {
   Suspense,
   createResource,
   createSignal,
-  from,
 } from 'solid-js';
 import {
   type AuctionRecord,
   type BidHistoryEntry,
   BidState,
   canClaim,
-  canRebid,
   claimAuction,
   getBidState,
   listBidHistory,
-  placeBid,
 } from '../../auth/auctions';
-import { type Profile, watchProfile } from '../../auth/profile';
-import { BidControls } from './auction-tab/bidding';
 import { AuctionLotLabel } from './auction-tab/lots';
 import {
   Badge,
@@ -80,45 +75,24 @@ export interface BidsListProps {
  * needs to settle — so this is read from the player's own bid records
  * and the lots looked up from them. A player outbid an hour ago still
  * finds the lot here, which is the point: being outbid is something
- * you learn by looking, so the answer to it is here too. A lot that is
- * still open takes another bid without going back to the board.
+ * you learn by looking.
+ *
+ * What they cannot do here is answer it. **Bidding happens at an
+ * auction board and nowhere else**, so a raise costs the walk the
+ * first bid cost; this list says where a player stands and hands over
+ * what they have already won, which is theirs rather than the
+ * market's.
  *
  * Nothing is polled. Whether bidding has closed is this reader's own
  * clock against the closing time the listing was written with, and the
- * server checks it again for real when a bid or a claim arrives
+ * server checks it again for real when a claim arrives
  */
 function BidRows(
   props: BidsListProps & { history: Resource<BidHistoryEntry[]>; onChanged: () => void },
 ): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
 
-  // Bidding again spends gold, so the balance the bid box is bounded
-  // by is followed rather than read once
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.player, (record) => {
-      set(record);
-    }),
-  );
-
-  const gold = (): number => profile()?.gold ?? 0;
-
   const paged = createPager(() => props.history() ?? [], LIST_PAGE);
-
-  const bid = (id: string, amount: number): void => {
-    setStatus(null);
-    placeBid(id, amount)
-      .then((placed) => {
-        setStatus(
-          placed == null
-            ? 'That bid could not be placed.'
-            : `Bid ${placed} gold — it is yours unless somebody raises it.`,
-        );
-        props.onChanged();
-      })
-      .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
-      });
-  };
 
   const collect = (id: string): void => {
     setStatus(null);
@@ -149,21 +123,9 @@ function BidRows(
                     <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
                   </div>
                   <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]}</Badge>
-                  {/* Outbid, and the lot is still open: the raise is
-                        made here rather than by finding it again on
-                        the board */}
-                  <Show when={canRebid(entry.lot, props.player, Date.now())}>
-                    <BidControls
-                      auction={entry.lot}
-                      player={props.player}
-                      gold={gold()}
-                      onBid={(amount) => {
-                        bid(entry.auction, amount);
-                      }}
-                    />
-                  </Show>
                   {/* Nothing is handed over when bidding closes, so a
-                        won lot is collected here too */}
+                        won lot is collected here. Answering a raise is
+                        not offered: that is the board's */}
                   <Show when={canClaim(entry.lot, props.player, Date.now())}>
                     <Button
                       tone="primary"

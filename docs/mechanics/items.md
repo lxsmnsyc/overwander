@@ -209,6 +209,21 @@ all.
 ## Auctions
 
 The auction house is the one place something passes from one player to another.
+It is read at an **auction board**, one of the landmarks a chunk can hold, and
+nowhere else: trading is somewhere you walk to. Every board posts the same
+lots, so which one you reach does not matter, only that you reach one.
+
+Bidding happens there and nowhere else. Being outbid is something you find out
+from your profile, but answering it costs the same walk the first bid did.
+
+Your own side of it stays on your profile. **Bids** holds everything you have
+bid on and where each one stands, and is where a lot you won is collected.
+**Selling** holds everything you have put up: what is still on the block, what
+sold, and — the one that matters — anything that closed with nobody bidding. A lot nobody bid on comes
+back only when you ask for it, so until you do, the pokemon sits in escrow
+belonging to nobody. The Selling tab counts those on the tab itself, because
+nothing else in the game will ever mention one.
+
 Two rules carry the whole feature:
 
 - **A lot is taken when it is listed.** The item leaves the bag, or the pokemon

@@ -36,7 +36,6 @@ export {
   asPlayerBid,
   canBid,
   canClaim,
-  canRebid,
   canReclaim,
   getBidState,
   hasEnded,

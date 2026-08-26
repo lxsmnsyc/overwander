@@ -82,6 +82,7 @@ import {
   LANDMARK_GLYPHS,
   type SpawnCoat,
   drawDecoration,
+  drawLandmarkMark,
   drawPhenomenon,
   facingOf,
 } from './scenery';
@@ -1156,27 +1157,35 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
 
         const landmark = props.landmarks.get(index);
+        // What is going on here, which is no longer a landmark: it is
+        // rolled over the chunk by the hour and drawn wherever it fell
+        const showing = props.phenomena.get(index);
 
         // Somebody standing there is drawn with the rest of what
         // stands, in paint order — so a mark on the ground under their
         // feet as well would be the cell saying the same thing twice
-        if (landmark != null && !drawnAsPerson(index)) {
+        if (drawnAsPerson(index)) {
+          continue;
+        }
+        if (showing != null) {
+          // The grotto hides, so it keeps the plain mark the rest of
+          // the ground uses; everything else is drawn as itself
           const middle = at(projectCell(index, yaw()));
-          const showing = landmark === Landmark.Phenomenon ? props.phenomena.get(index) : undefined;
 
-          // A phenomenon is drawn as the thing going on there; the
-          // grotto hides, so it keeps the plain mark like the rest
-          if (showing != null && showing !== Phenomenon.HiddenGrotto) {
-            drawPhenomenon(context, middle, showing, clock, magnify);
+          if (showing === Phenomenon.HiddenGrotto) {
+            drawLandmarkMark(context, middle, '!', magnify);
           } else {
-            context.fillStyle = COLORS.landmark;
-            context.beginPath();
-            context.arc(middle.x, middle.y, CELL * 0.36 * middle.scale * magnify, 0, Math.PI * 2);
-            context.fill();
-            context.fillStyle = COLORS.glyph;
-            context.font = `bold ${Math.round(CELL * 0.6 * middle.scale * magnify)}px monospace`;
-            context.fillText(LANDMARK_GLYPHS[landmark], middle.x, middle.y + 1);
+            drawPhenomenon(context, middle, showing, clock, magnify);
           }
+          continue;
+        }
+        if (landmark != null) {
+          drawLandmarkMark(
+            context,
+            at(projectCell(index, yaw())),
+            LANDMARK_GLYPHS[landmark],
+            magnify,
+          );
         }
       }
 

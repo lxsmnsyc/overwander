@@ -455,9 +455,6 @@ export default class Chunk {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       const water = this.wetCells();
-      // The wetland banks: the only ground a grotto can stage on, so
-      // a wetland phenomenon is stood there when a bank cell is free
-      const banks = isWaterBiome(this.biome) && !isOpenSea(this.biome) ? this.getSpotCells() : null;
       // Nothing stands in a rock's reach, and the open seas roll from
       // a pool without the landmarks that need ground under them
       const rocks = this.rockArea();
@@ -473,16 +470,12 @@ export default class Chunk {
         // the chunk: a second portal, gym or champion is never rolled
         const pool = base.filter((kind) => !(SINGLETON_LANDMARKS.has(kind) && rolled.has(kind)));
         const landmark = pool[Math.floor(rng.random() * pool.length)];
-        // Only a phenomenon may stand in the water
+        // Everything that is a landmark now needs ground under it. The
+        // one that did not was the phenomenon, which is no longer one:
+        // something happening is rolled over the chunk by the hour
         const fits = (candidate: number): boolean =>
-          !taken.has(candidate) &&
-          !rocks.has(candidate) &&
-          (landmark === Landmark.Phenomenon || !water.has(candidate));
-        const preferred =
-          landmark === Landmark.Phenomenon && banks != null
-            ? order.find((candidate) => banks.has(candidate) && fits(candidate))
-            : undefined;
-        const cell = preferred ?? order.find(fits);
+          !taken.has(candidate) && !rocks.has(candidate) && !water.has(candidate);
+        const cell = order.find(fits);
 
         if (cell == null) {
           break;

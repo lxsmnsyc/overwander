@@ -3,7 +3,7 @@ import type { Species } from '../../../data/ids/species';
 import Decoration from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
-import { CELL } from './metrics';
+import { CELL, COLORS } from './metrics';
 
 /**
  * What stands on a cell besides a pokemon: scenery, weather, and the
@@ -244,9 +244,28 @@ export function drawPhenomenon(
   context.restore();
 }
 
+/**
+ * The plain mark a cell wears when there is nothing better to draw:
+ * a disc with a letter on it. Everything a player can walk up to gets
+ * one, except the phenomena that draw themselves
+ */
+export function drawLandmarkMark(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  glyph: string,
+  magnify: number,
+): void {
+  context.fillStyle = COLORS.landmark;
+  context.beginPath();
+  context.arc(spot.x, spot.y, CELL * 0.36 * spot.scale * magnify, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = COLORS.glyph;
+  context.font = `bold ${Math.round(CELL * 0.6 * spot.scale * magnify)}px monospace`;
+  context.fillText(glyph, spot.x, spot.y + 1);
+}
+
 export const LANDMARK_GLYPHS: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'C',
-  [Landmark.Phenomenon]: '!',
   [Landmark.LegendaryLair]: 'R',
   [Landmark.ShadowLair]: 'S',
   [Landmark.BerryPatch]: 'B',

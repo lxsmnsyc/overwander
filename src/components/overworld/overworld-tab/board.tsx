@@ -22,6 +22,7 @@ import {
   claimItemCache,
   claimNest,
   claimPhenomenon,
+  listClaimedPhenomena,
   peekNest,
   peekPhenomenonEgg,
   startEncounter,
@@ -47,6 +48,7 @@ import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
+import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
@@ -423,6 +425,60 @@ export default function OverworldBoard(props: {
    */
   const shown = (): ChunkView | null => frozen()?.view ?? view();
 
+  /**
+   * The cells whose happening this player has already walked into.
+   *
+   * A phenomenon is claimed once an hour per player, so one already
+   * taken is a cell that would answer nothing. It is dropped from the
+   * board the moment it pays out rather than left standing to be
+   * pressed again, and re-read from the store on arrival so it stays
+   * dropped across a reload or a walk back into the chunk
+   */
+  const [spent, setSpent] = createSignal<Set<number>>(new Set());
+
+  createEffect(() => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+
+    let live = true;
+
+    listClaimedPhenomena(loaded.snapshot)
+      .then((cells) => {
+        if (live) {
+          setSpent(new Set(cells));
+        }
+      })
+      .catch(() => {
+        // A board that cannot say what was already taken draws them
+        // all: pressing a spent one costs a refusal, not a mistake
+      });
+    onCleanup(() => {
+      live = false;
+    });
+  });
+
+  /**
+   * What is going on at a cell, once what this player has already had
+   * is taken out of it
+   */
+  const showing = (loaded: ChunkView, index: number): Phenomenon | undefined =>
+    spent().has(index) ? undefined : loaded.snapshot.getPhenomena().get(index);
+
+  /**
+   * Everything still going on, as the canvas draws it
+   */
+  const happenings = (loaded: ChunkView): Map<number, Phenomenon> => {
+    const live = new Map(loaded.snapshot.getPhenomena());
+
+    for (const taken of spent()) {
+      live.delete(taken);
+    }
+    return live;
+  };
+
   const cross = (deltaX: number, deltaY: number): void => {
     const standing = view();
 
@@ -559,6 +615,11 @@ export default function OverworldBoard(props: {
         if (catchId != null) {
           // A new record, under whatever list is showing behind this
           game.touchRecords();
+        }
+        // A grotto that has been opened is spent for this player,
+        // whichever way the answer went: the cell stops being drawn
+        if (offer.from === 'grotto') {
+          setSpent((cells) => new Set(cells).add(offer.cell));
         }
       })
       .catch((caught: unknown) => {
@@ -878,8 +939,10 @@ export default function OverworldBoard(props: {
       });
       return null;
     }
-    if (landmark === Landmark.Phenomenon) {
-      const showing = loaded.snapshot.getPhenomena().get(at);
+    const happening = showing(loaded, at);
+
+    if (happening != null) {
+      const showingKind = happening;
       // The grotto's egg is the one thing here that is asked about
       // first; an item and a pokemon are walked into as they always
       // were, and neither is worth a question
@@ -892,12 +955,14 @@ export default function OverworldBoard(props: {
 
       const claim = await claimPhenomenon(loaded.snapshot, at);
 
+      // Taken, or already had, or the hour turned over under them.
+      // Every one of those leaves the cell spent for this player, so
+      // it stops being drawn rather than standing there to be pressed
+      // again for nothing
+      setSpent((cells) => new Set(cells).add(at));
+
       if (claim == null) {
-        // Either the hour staged nothing here, or this player has
-        // already had what it staged
-        return showing == null
-          ? 'Whatever it was has passed. Nothing there now.'
-          : `${PHENOMENON_NAMES[showing]}, and nothing under it now.`;
+        return `${PHENOMENON_NAMES[showingKind]}, and nothing under it now.`;
       }
       if (claim.kind === 'item') {
         // Shown the way a cache or a patch is shown: something was
@@ -964,11 +1029,17 @@ export default function OverworldBoard(props: {
   });
 
   /**
-   * Whether the cell holds anything to interact with. A landmark or
-   * a spawn is a thing; empty ground is not
+   * Whether the cell holds anything to interact with: a landmark, a
+   * spawn, or something going on there. Empty ground is not.
+   *
+   * The happenings have to be asked about separately now that they
+   * are not landmarks. Left out, a press on a dust cloud walks the
+   * player onto it and does nothing — the reach that triggers it is
+   * only taken for a cell that holds something
    */
   const holdsSomething = (loaded: ChunkView | null, index: number): boolean =>
-    loaded != null && (loaded.spawns.has(index) || loaded.landmarks.has(index));
+    loaded != null &&
+    (loaded.spawns.has(index) || loaded.landmarks.has(index) || showing(loaded, index) != null);
 
   /**
    * Whether the player can reach the cell from where they stand: the
@@ -1186,6 +1257,12 @@ export default function OverworldBoard(props: {
     if (spawn != null) {
       return getSpeciesData(spawn.spawn[0]).name;
     }
+    // What is going on is named before the ground it is going on
+    const happening = loaded == null ? null : showing(loaded, index);
+
+    if (happening != null) {
+      return PHENOMENON_NAMES[happening];
+    }
     if (landmark == null) {
       // Scenery is named and nothing more: it is worth knowing what
       // is standing there, and there is nothing to do about it
@@ -1229,11 +1306,6 @@ export default function OverworldBoard(props: {
     }
     if (landmark === Landmark.Champion) {
       return CHAMPION_NAME;
-    }
-    if (landmark === Landmark.Phenomenon) {
-      const showing = loaded?.snapshot.getPhenomena().get(index);
-
-      return showing == null ? LANDMARK_NAMES[landmark] : PHENOMENON_NAMES[showing];
     }
     return LANDMARK_NAMES[landmark];
   };
@@ -1299,7 +1371,7 @@ export default function OverworldBoard(props: {
                 player={frozen()?.player ?? cell()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
-                phenomena={loaded().snapshot.getPhenomena()}
+                phenomena={happenings(loaded())}
                 spots={loaded().spots}
                 shallows={loaded().shallows}
                 rocks={loaded().rocks}

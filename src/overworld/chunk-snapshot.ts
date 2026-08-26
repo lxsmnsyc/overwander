@@ -159,6 +159,17 @@ export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
 export const PHENOMENON_INTERVAL = 60 * 60 * 1000;
 
 /**
+ * How many things may be going on in one chunk at once.
+ *
+ * Zero is deliberately in range: a chunk with nothing happening is
+ * what makes one with a grotto in it worth noticing, and it is the
+ * variance the old landmark roll had for free by not always rolling a
+ * phenomenon cell
+ */
+export const MIN_PHENOMENA = 0;
+export const MAX_PHENOMENA = 2;
+
+/**
  * How often a shadow raid reaches past the biome's rare species and
  * stages a legendary instead — one draw in eight, the same odds the
  * rarer spawn bands run on
@@ -260,6 +271,11 @@ export default class ChunkSnapshot {
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
         ...this.chunk.getRockCells(),
+        // Whatever is going on this hour holds its ground too. The
+        // hour is the slower clock, so it takes its cells first and
+        // the pokemon fit around it; sharing one would put a spawn on
+        // top of a dust cloud, and the spawn would answer the press
+        ...this.getPhenomena().keys(),
       ]);
       const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
 
@@ -1011,36 +1027,64 @@ export default class ChunkSnapshot {
   private phenomena: Map<number, Phenomenon> | null = null;
 
   /**
-   * What is going on at each phenomenon cell this hour, drawn from
-   * what the biome can host. The cell is the chunk's own and never
-   * moves; which of the four is happening on it is the window's, so a
-   * player who wants a dust cloud waits an hour or walks to drier
-   * ground
+   * What is going on in the chunk this hour, and where.
+   *
+   * A phenomenon is **not a landmark**. Everything else a player walks
+   * up to is a place — a stall, a nest, a lair, a board — and stays
+   * where the chunk seed put it forever. Something happening is not a
+   * place, so it is rolled over the chunk's free ground by the hour
+   * and is somewhere else the next one. A chunk a player knows is
+   * still worth re-reading.
+   *
+   * It rides its **own** generator rather than the snapshot's. That
+   * one is a sequential stream the spawn roll draws from, and taking
+   * draws out of it here would shift every pokemon in the world.
+   *
+   * The hour is the clock, not the five-minute window the pokemon
+   * keep: the claim marker and the startled pokemon's rolls are both
+   * named for `(chunk, hour, cell)`, so a cell that moved inside the
+   * hour would be a second claim on the same event
    */
   getPhenomena(): Map<number, Phenomenon> {
     if (this.phenomena == null) {
       const showing = new Map<number, Phenomenon>();
       const kinds = BIOME_PHENOMENA[this.chunk.biome];
 
-      if (kinds.length > 0) {
-        const spots = this.chunk.getSpotCells();
-        const flooded = isWaterBiome(this.chunk.biome);
+      if (kinds.length === 0) {
+        this.phenomena = showing;
+        return showing;
+      }
 
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.Phenomenon) {
-            continue;
-          }
-          // Standing on water — in a pool, or at sea off the banks —
-          // the only thing going on is the water itself
-          if (flooded ? !spots.has(cell) : spots.has(cell)) {
-            showing.set(cell, Phenomenon.RipplingWater);
-            continue;
-          }
+      const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}happenings`);
+      const count = MIN_PHENOMENA + Math.floor(rng.random() * (MAX_PHENOMENA - MIN_PHENOMENA + 1));
+      // A phenomenon may stand in water where a landmark may not: the
+      // water rippling is one of the four. What it may not do is stand
+      // on somebody's stall, in a rock, or inside a tree
+      const occupied = new Set([
+        ...this.chunk.getDecorationCells().keys(),
+        ...this.chunk.getLandmarkCells().keys(),
+        ...this.chunk.getRockCells(),
+      ]);
+      const spots = this.chunk.getSpotCells();
+      const flooded = isWaterBiome(this.chunk.biome);
+      // Standing on water — in a pool, or at sea off the banks — the
+      // only thing that can be going on is the water itself
+      const afloat = (cell: number): boolean => flooded !== spots.has(cell);
+      const open = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      // Dry ground first, so the biome's own four are actually seen.
+      // A wetland is mostly water, and rolling it flat would make
+      // every marsh ripple and no marsh ever hide a grotto; the open
+      // seas have no dry ground at all and ripple, which is right
+      const ground = open.filter((cell) => !afloat(cell));
+      const free = ground.length > 0 ? ground : open;
 
-          const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}phenomenon${cell}`);
+      for (let at = 0; at < count && free.length > 0; at++) {
+        const [cell] = free.splice(Math.floor(rng.random() * free.length), 1);
 
-          showing.set(cell, kinds[Math.floor(rng.random() * kinds.length)]);
-        }
+        showing.set(
+          cell,
+          afloat(cell) ? Phenomenon.RipplingWater : kinds[Math.floor(rng.random() * kinds.length)],
+        );
       }
       this.phenomena = showing;
     }

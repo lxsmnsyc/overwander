@@ -52,6 +52,7 @@ import { PLACEMENT_AREA, centeredCells, neighborCells } from '../../src/overworl
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   LANDMARK_INTERVAL,
+  MAX_PHENOMENA,
   NEST_INTERVAL,
   NPC_INTERVAL,
   PHENOMENON_INTERVAL,
@@ -334,10 +335,105 @@ describe('world', () => {
     expect(shapes.size).toBeGreaterThan(1);
   });
 
+  it('rolls what is happening over the chunk rather than pinning it', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getPhenomena().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const places = new Set<string>();
+    let counted = 0;
+
+    for (let window = 0; window < 24; window++) {
+      const at = window * PHENOMENON_INTERVAL;
+      const showing = new ChunkSnapshot(chunk, at).getPhenomena();
+
+      counted += showing.size;
+      places.add(JSON.stringify([...showing.keys()].sort((left, right) => left - right)));
+
+      // Never more than the chunk may hold at once
+      expect(showing.size).toBeLessThanOrEqual(MAX_PHENOMENA);
+
+      // Nothing stands on scenery, in a rock or on somebody's stall
+      for (const cell of showing.keys()) {
+        expect(chunk.getLandmarkCells().has(cell)).toBe(false);
+        expect(chunk.getDecorationCells().has(cell)).toBe(false);
+        expect(chunk.getRockCells().has(cell)).toBe(false);
+      }
+
+      // Everybody reading the same hour reads the same happenings:
+      // it is derived, not stored
+      expect(new ChunkSnapshot(chunk, at + 1).getPhenomena()).toEqual(showing);
+    }
+
+    // They move between hours rather than sitting on one cell forever,
+    // which is the whole of why they stopped being landmarks
+    expect(counted).toBeGreaterThan(0);
+    expect(places.size).toBeGreaterThan(1);
+  });
+
+  it('never stands a pokemon on top of what is going on', () => {
+    const world = new World('overworld');
+    let checked = 0;
+
+    // The hour is the slower clock, so a happening holds its cell and
+    // the window's pokemon fit around it. Sharing one would hide the
+    // happening behind a spawn that answers the press instead
+    for (let x = 0; x < 25 && checked < 12; x++) {
+      for (let y = 0; y < 8 && checked < 12; y++) {
+        const chunk = world.getChunk(x, y);
+        const snapshot = new ChunkSnapshot(chunk, 0);
+        const happenings = snapshot.getPhenomena();
+
+        if (happenings.size === 0) {
+          continue;
+        }
+        snapshot.getSpawns(SPAWN_COUNT);
+
+        for (const cell of snapshot.getSpawnCells().keys()) {
+          expect(happenings.has(cell)).toBe(false);
+        }
+        checked += happenings.size;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it('leaves the spawn roll alone, drawing on its own generator', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getPhenomena().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    // Reading what is happening first must not shift a single pokemon:
+    // the happenings ride a generator of their own, and the spawn
+    // stream is sequential
+    const asked = new ChunkSnapshot(chunk, 0);
+
+    asked.getPhenomena();
+
+    expect(asked.getSpawns(SPAWN_COUNT)).toEqual(
+      new ChunkSnapshot(chunk, 0).getSpawns(SPAWN_COUNT),
+    );
+  });
+
   it('shows one of the biome\u2019s own phenomena, an hour at a time', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.Phenomenon),
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getPhenomena().size > 0,
     );
 
     expect(chunk).not.toBeNull();
@@ -356,7 +452,9 @@ describe('world', () => {
     for (const [cell, phenomenon] of showing) {
       const wet = isWaterBiome(chunk.biome) ? !spots.has(cell) : spots.has(cell);
 
-      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Phenomenon);
+      // Rolled over the chunk's free ground rather than pinned to a
+      // landmark: what it must not do is stand on one
+      expect(chunk.getLandmarkCells().has(cell)).toBe(false);
       expect(
         new Set(BIOME_PHENOMENA[chunk.biome]).has(phenomenon) ||
           (wet && phenomenon === Phenomenon.RipplingWater),
@@ -389,12 +487,7 @@ describe('world', () => {
     expect(shapes.size).toBeGreaterThan(1);
 
     // Nothing is startled out of the space beyond the map
-    const beyond = findChunk(
-      world,
-      (candidate) =>
-        candidate.biome === Biome.Beyond &&
-        new Set(candidate.getLandmarkCells().values()).has(Landmark.Phenomenon),
-    );
+    const beyond = findChunk(world, (candidate) => candidate.biome === Biome.Beyond);
 
     if (beyond != null) {
       expect(new ChunkSnapshot(beyond, 0).getPhenomena().size).toBe(0);
@@ -3083,81 +3176,70 @@ describe('terrain spots', () => {
       for (const cell of chunk.getDecorationCells().keys()) {
         expect(water.has(cell)).toBe(false);
       }
-      // Only a phenomenon may stand in a pool
-      for (const [cell, landmark] of chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.Phenomenon) {
-          expect(water.has(cell)).toBe(false);
-        }
+      // No landmark stands in a pool now that the phenomenon is not
+      // one: something happening is rolled over the chunk instead,
+      // and the water is the one thing that can be going on there
+      for (const cell of chunk.getLandmarkCells().keys()) {
+        expect(water.has(cell)).toBe(false);
       }
     }
     expect(seen).toBeGreaterThan(0);
   });
 
-  it('always shows rippling water on a phenomenon standing in a pool', () => {
+  it('keeps a happening out of the water where there is ground for it', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => {
-      if (isWaterBiome(candidate.biome)) {
-        return false;
-      }
+    let checked = 0;
 
-      const water = candidate.getSpotCells();
+    // A pool is not where the interesting four are: a chunk with dry
+    // ground puts what is going on onto it, so the pond stays a pond
+    for (let x = 0; x < 25 && checked < 8; x++) {
+      for (let y = 0; y < 8 && checked < 8; y++) {
+        const chunk = world.getChunk(x, y);
 
-      return [...candidate.getLandmarkCells()].some(
-        ([cell, kind]) => kind === Landmark.Phenomenon && water.has(cell),
-      );
-    });
+        if (isWaterBiome(chunk.biome)) {
+          continue;
+        }
 
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
+        const water = chunk.getSpotCells();
 
-    const water = chunk.getSpotCells();
-    const wet = [...chunk.getLandmarkCells()]
-      .filter(([cell, kind]) => kind === Landmark.Phenomenon && water.has(cell))
-      .map(([cell]) => cell);
-
-    // Whatever the hour, the water is what is going on there
-    for (let window = 0; window < 6; window++) {
-      const showing = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL).getPhenomena();
-
-      for (const cell of wet) {
-        expect(showing.get(cell)).toBe(Phenomenon.RipplingWater);
+        for (let window = 0; window < 6; window++) {
+          for (const cell of new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL)
+            .getPhenomena()
+            .keys()) {
+            expect(water.has(cell)).toBe(false);
+            checked += 1;
+          }
+        }
       }
     }
+    expect(checked).toBeGreaterThan(0);
   });
 
-  it('always ripples at sea off the banks, whatever the biome hosts', () => {
+  it('ripples on the open sea, where there is no ground at all', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => {
-      if (!isWaterBiome(candidate.biome)) {
-        return false;
-      }
+    let checked = 0;
 
-      const banks = candidate.getSpotCells();
+    // Nothing out there is standing on anything, so the only thing
+    // that can be going on is the water
+    for (let x = -100; x < 100 && checked < 8; x += 2) {
+      for (let y = -100; y < 100 && checked < 8; y += 25) {
+        const chunk = world.getChunk(x, y);
 
-      return [...candidate.getLandmarkCells()].some(
-        ([cell, kind]) => kind === Landmark.Phenomenon && !banks.has(cell),
-      );
-    });
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
 
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
-
-    const banks = chunk.getSpotCells();
-    const afloat = [...chunk.getLandmarkCells()]
-      .filter(([cell, kind]) => kind === Landmark.Phenomenon && !banks.has(cell))
-      .map(([cell]) => cell);
-
-    for (let window = 0; window < 6; window++) {
-      const showing = new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL).getPhenomena();
-
-      for (const cell of afloat) {
-        expect(showing.get(cell)).toBe(Phenomenon.RipplingWater);
+        for (let window = 0; window < 6; window++) {
+          for (const phenomenon of new ChunkSnapshot(chunk, window * PHENOMENON_INTERVAL)
+            .getPhenomena()
+            .values()) {
+            expect(phenomenon).toBe(Phenomenon.RipplingWater);
+            checked += 1;
+          }
+        }
       }
     }
+    expect(checked).toBeGreaterThan(0);
   });
 });
 
@@ -3289,7 +3371,7 @@ describe('placement invariants', () => {
     }
   });
 
-  it('stands a wetland phenomenon on a bank, where a grotto can be', () => {
+  it('stands a wetland happening on a bank, where a grotto can be', () => {
     const world = new World('overworld');
     let phenomena = 0;
     let banked = 0;
@@ -3304,18 +3386,16 @@ describe('placement invariants', () => {
 
         const banks = chunk.getSpotCells();
 
-        for (const [cell, kind] of chunk.getLandmarkCells()) {
-          if (kind === Landmark.Phenomenon) {
-            phenomena += 1;
-            banked += banks.has(cell) ? 1 : 0;
-          }
+        for (const cell of new ChunkSnapshot(chunk, 0).getPhenomena().keys()) {
+          phenomena += 1;
+          banked += banks.has(cell) ? 1 : 0;
         }
       }
     }
-    // The preference holds unless a chunk had no bank cell free,
-    // which the sample should not be dominated by
+    // A marsh that only ever rippled would be a marsh that never hid
+    // a grotto, so dry ground is taken first where there is any
     expect(phenomena).toBeGreaterThan(0);
-    expect(banked).toBeGreaterThan(phenomena / 2);
+    expect(banked).toBe(phenomena);
   });
 });
 

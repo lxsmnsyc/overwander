@@ -72,7 +72,6 @@ few are one to a chunk, marked below.
 | ------------------- | --------------------------------------------------------------- |
 | **Item Cache**      | A buried stash of items                                         |
 | **Berry Patch**     | A bush bearing one kind of berry                                |
-| **Phenomenon**      | Something happening: a grotto, dust, ripples, a shadow overhead |
 | **Nest**            | An egg of a local species                                       |
 | **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
 | **Shadow Raid**     | A lair with something wrong in it                               |
@@ -91,6 +90,15 @@ Walking up to a wandering cell does not reveal in advance which specialist is
 standing there. The market, the board and the seat are fixtures: a stall is
 always a stall, though which counter it set up changes with the window.
 
+**Phenomena are not landmarks.** A grotto, a dust cloud, rippling water or a
+shadow overhead is something *happening* rather than somewhere to go, so it is
+not fixed to a cell. Up to two are rolled across a chunk's open ground each
+hour and are somewhere else the next one — a chunk you know is still worth
+looking over. They take dry ground where a chunk has any, which is why a marsh
+still hides grottos and the open sea, having no ground at all, only ever
+ripples. Once you have walked into one it stops being drawn for you; somebody
+else walking the same chunk that hour still finds it.
+
 Nothing that somebody stands at is rolled out at sea: the open ocean carries
 caches, phenomena, nests, lairs and portals, and nothing else.
 
@@ -106,7 +114,7 @@ to obtain, the sooner it returns.
 | ----------------------------------------------- | ---------- |
 | The pokemon standing in a chunk                 | 5 minutes  |
 | Item caches and berry patches                   | 15 minutes |
-| What is happening at a phenomenon cell          | 1 hour     |
+| Where things are happening, and what they are   | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |
 | Who is at a wandering-NPC cell, grunts included | 3 hours    |
 | Which counter a market stall is keeping         | 3 hours    |

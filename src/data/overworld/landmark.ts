@@ -6,13 +6,10 @@ const enum Landmark {
    * A hidden item stash rolled from the item pool
    */
   ItemCache = 0,
-  /**
-   * Something happening rather than something buried: a grotto, a
-   * dust cloud, water rippling, a shadow overhead. Which of them the
-   * cell is showing depends on the biome and turns over every hour,
-   * and any of them may be a pokemon
-   */
-  Phenomenon = 1,
+  // 1 was the phenomenon, which is no longer a landmark: something
+  // happening is rolled over the chunk's free ground by the hour
+  // rather than pinned to a cell forever. The number is left unused
+  // so the rest keep theirs
   /**
    * A legendary's lair: the place it lives rather than the pokemon
    * itself. Which lairs a chunk can hold comes from its biome, and
@@ -107,7 +104,6 @@ export default Landmark;
  */
 export const LANDMARKS: Landmark[] = [
   Landmark.ItemCache,
-  Landmark.Phenomenon,
   Landmark.LegendaryLair,
   Landmark.ShadowLair,
   Landmark.BerryPatch,
@@ -129,7 +125,6 @@ export const LANDMARKS: Landmark[] = [
  */
 export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ItemCache]: 'Item Cache',
-  [Landmark.Phenomenon]: 'Phenomenon',
   [Landmark.LegendaryLair]: 'Legendary Raid',
   [Landmark.ShadowLair]: 'Shadow Raid',
   [Landmark.BerryPatch]: 'Berry Patch',

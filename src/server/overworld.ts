@@ -19,7 +19,7 @@ import { getSql, jsonOf, tx } from './db';
 import { readEncounter, writeEncounter } from './encounter-io';
 import { recordSeenSpecies } from './pokedex';
 import { asOffset, toLocalTime, toZoneKey } from '../auth/local-time';
-import { asNumber, asRecordArray } from './read';
+import { asNumber, asRecordArray, asString } from './read';
 import { grantItem, grantItems } from './inventory';
 import { Landmark, Metric } from '../auth/quest-record';
 import { bumpProgress } from './quest-progress';
@@ -369,7 +369,49 @@ export async function peekPhenomenonEgg(
  * from — both the peek and the claim name it the same way
  */
 function phenomenonKey(snapshot: ChunkSnapshot, cell: number): string {
-  return `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening${cell}`;
+  return `${phenomenonPrefix(snapshot)}${cell}`;
+}
+
+/**
+ * Everything this hour's markers share, which is everything but the
+ * cell. It is what lets one query ask which of them a player has
+ * already had
+ */
+function phenomenonPrefix(snapshot: ChunkSnapshot): string {
+  return `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening`;
+}
+
+/**
+ * Which cells of this chunk this player has already taken what was
+ * happening on, inside the hour it is happening in.
+ *
+ * The board draws a phenomenon only until its player has had it: a
+ * cloud somebody has already dug through is a cell they would press
+ * for nothing. It is per player, so what one walks into is still
+ * there for the next
+ */
+export async function listClaimedPhenomena(
+  uid: string,
+  x: number,
+  y: number,
+  now: number,
+  offset: number,
+): Promise<number[]> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+
+  if (snapshot == null) {
+    return [];
+  }
+
+  const prefix = phenomenonPrefix(snapshot);
+  const rows = await getSql()`
+    select marker from phenomenon_claims
+    where player = ${uid} and marker like ${`${prefix}%`}
+  `;
+
+  return rows
+    .map((row) => Number(asString(row.marker).slice(prefix.length)))
+    .filter((cell) => Number.isInteger(cell));
 }
 
 /**

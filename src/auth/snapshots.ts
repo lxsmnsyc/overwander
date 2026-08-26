@@ -13,6 +13,7 @@ import {
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
+  listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
@@ -341,6 +342,36 @@ async function peekPhenomenonEggOnServer(
     x,
     y,
     cell,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Which of this chunk's happenings this player has already walked
+ * into this hour. The board stops drawing them: a cloud already dug
+ * through is a cell that would answer nothing
+ */
+export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<number[]> {
+  return listClaimedOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    snapshot.offset,
+  );
+}
+
+async function listClaimedOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+): Promise<number[]> {
+  'use server';
+  return listClaimedPhenomenaOnServerSide(
+    await requireUid(token),
+    x,
+    y,
     await syncServerClock(),
     offset,
   );

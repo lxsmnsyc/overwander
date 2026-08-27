@@ -17,20 +17,23 @@ import {
   type RaidRecord,
   canJoinRaids,
   getRaidTitle,
+  inviteToRaid,
   joinRaid,
   leaveRaid,
   startRaid,
   watchRaid,
+  watchRaidLobby,
+  watchRaidWatchers,
 } from '../../auth/raids';
 import { type Profile, getProfiles } from '../../auth/profile';
-import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import TeamStrip from '../catches/TeamStrip';
 import PlayerPlate from '../profile/PlayerPlate';
 import { type TeamRecord, getTeam } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import InviteFriendsDialog from './InviteFriendsDialog';
+import LobbyInviteDialog from '../battle/LobbyInviteDialog';
+import LobbyParty from '../battle/LobbyParty';
+import SpectatorList from '../battle/SpectatorList';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import TypeBadge from '../sprites/TypeBadge';
 import matches from '../../core/search';
@@ -38,6 +41,7 @@ import {
   Badge,
   Button,
   DialogActions,
+  DialogSection,
   List,
   ListRow,
   Note,
@@ -46,39 +50,9 @@ import {
   Search,
   Status,
 } from '../styled';
+import watchLive from '../app/watch';
 import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
-
-/**
- * One lobby team's live party, read record by record. The reads live
- * here and are rendered a child down, so a party still arriving
- * suspends its own strip rather than the lobby
- */
-function LobbyParty(props: { catches: string[] }): JSX.Element {
-  const [party] = createResource(
-    () => props.catches.join(','),
-    async (key): Promise<[string, CaughtPokemon][]> => {
-      const rows = await Promise.all(
-        key
-          .split(',')
-          .filter(Boolean)
-          .map(async (id): Promise<[string, CaughtPokemon | null]> => [id, await getCaught(id)]),
-      );
-
-      return rows.filter((row): row is [string, CaughtPokemon] => row[1] != null);
-    },
-  );
-
-  return (
-    <Suspense fallback={<Note>Reading the party…</Note>}>
-      <PartyStrip party={party} />
-    </Suspense>
-  );
-}
-
-function PartyStrip(props: { party: Resource<[string, CaughtPokemon][]> }): JSX.Element {
-  return <TeamStrip catches={props.party() ?? []} />;
-}
 
 export interface RaidLobbyProps {
   user: PlayerIdentity;
@@ -105,6 +79,7 @@ function LobbyRows(
     teams: Resource<TeamRecord[]>;
     names: Resource<Map<string, Profile>>;
     canJoin: Resource<boolean>;
+    watching: () => string[];
   },
 ): JSX.Element {
   const game = useGame();
@@ -183,6 +158,17 @@ function LobbyRows(
     const players = new Set((teams() ?? []).map((team) => team.player));
 
     return players.size >= RAID_PLAYER_LIMIT && !players.has(props.user.uid);
+  };
+
+  /**
+   * Who is in the room with no party in it. A player who forms a team
+   * keeps their presence row — they never left — so the fighters are
+   * subtracted here rather than by the read
+   */
+  const onlookers = (): string[] => {
+    const fighting = new Set((teams() ?? []).map((team) => team.player));
+
+    return props.watching().filter((uid) => !fighting.has(uid));
   };
 
   const joined = (): TeamRecord[] =>
@@ -338,6 +324,14 @@ function LobbyRows(
               </Show>
             </Show>
 
+            {/* Everybody in the room without a party. A player with
+                no pokemon of their own can only ever be one of these,
+                and a host may stage a raid for other people the same
+                way a battle lobby is staged */}
+            <DialogSection title="Spectators">
+              <SpectatorList player={props.user.uid} watching={onlookers()} />
+            </DialogSection>
+
             <Show when={canJoin() === false}>
               <Note class="text-center">
                 You need a pokemon of your own to fight — you can only watch this one.
@@ -389,14 +383,16 @@ function LobbyRows(
         )}
       </Show>
 
-      <InviteFriendsDialog
-        raidId={props.raidId}
+      <LobbyInviteDialog
         player={props.user.uid}
         isOpen={calling()}
         onClose={() => {
           setCalling(false);
         }}
+        title="Invite to the raid"
+        description="They see the call above their list of raids, and joining answers it."
         present={(teams() ?? []).map((team) => team.player)}
+        onInvite={async (uid, role) => inviteToRaid(props.raidId, uid, role)}
       />
 
       <TeamPickerDialog
@@ -429,6 +425,7 @@ function LobbyTeams(
     raid: () => RaidRecord | null;
     teams: Resource<TeamRecord[]>;
     canJoin: Resource<boolean>;
+    watching: () => string[];
   },
 ): JSX.Element {
   /**
@@ -478,9 +475,30 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
     async (uid) => canJoinRaids(uid),
   );
 
+  // Standing here is written down, so the lobby can say who is in the
+  // room. Leaving drops the row again
+  createEffect(() => {
+    watchRaidLobby(props.raidId).catch(() => {
+      // A presence that did not land is a name missing from a list;
+      // nothing about the raid turns on it
+    });
+  });
+
+  const watching = watchLive<string[]>((set) =>
+    watchRaidWatchers(props.raidId, (players) => {
+      set(players);
+    }),
+  );
+
   return (
     <Suspense fallback={<Note>Loading raid…</Note>}>
-      <LobbyTeams {...props} raid={() => raid() ?? null} teams={teams} canJoin={canJoin} />
+      <LobbyTeams
+        {...props}
+        raid={() => raid() ?? null}
+        teams={teams}
+        canJoin={canJoin}
+        watching={() => watching() ?? []}
+      />
     </Suspense>
   );
 }

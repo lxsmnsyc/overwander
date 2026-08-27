@@ -1,5 +1,30 @@
 import type { ComponentProps, JSX } from 'solid-js';
 
+/** Crossed swords: two players fighting each other on purpose */
+export function SwordsIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      {...props}
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6.75 3.75H3v3.75l11.25 11.25H18V15L6.75 3.75Z"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M17.25 3.75H21v3.75L9.75 18.75H6V15L17.25 3.75Z"
+      />
+    </svg>
+  );
+}
+
 export function ArrowLeftIcon(props: ComponentProps<'svg'>): JSX.Element {
   return (
     <svg

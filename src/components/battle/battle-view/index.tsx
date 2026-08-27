@@ -19,13 +19,7 @@ import {
   watchBattle,
 } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
-import {
-  BOSS_ALLIANCE,
-  PLAYER_ALLIANCE,
-  clearRaid,
-  getRaid,
-  getRaidTitle,
-} from '../../../auth/raids';
+import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
 import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
 import { type RaidBattle, collectAftermath, createRaidBattle } from '../../../overworld/raid';
@@ -225,6 +219,32 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * mechanics settle it when nothing can act any more, so the view
    * only has to read the verdict
    */
+  /**
+   * Which alliance this player is fighting under, or null when they
+   * are only watching.
+   *
+   * A raid and a grunt's fight put the player on `PLAYER_ALLIANCE`
+   * every time, and reading that number was enough until two players
+   * stood on opposite sides of the same battle: one of them is on the
+   * other number, and the verdict would have been backwards for them
+   */
+  const side = (): number | null => {
+    const built = instance();
+    const user = auth.user();
+
+    if (built == null || user == null) {
+      return null;
+    }
+    for (const [alliance, fielded] of built.units) {
+      for (const unit of fielded) {
+        if (unit.team.player === user.uid) {
+          return alliance;
+        }
+      }
+    }
+    return null;
+  };
+
   const outcome = (): 'won' | 'lost' | 'draw' | null => {
     revision();
     const built = instance();
@@ -232,10 +252,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (built == null || !built.battle.settled) {
       return null;
     }
-    if (built.battle.winner === built.alliances.get(PLAYER_ALLIANCE)) {
+
+    // A spectator reads it from the party's side, which is what the
+    // raid and the grunt's fight are about
+    const mine = side() ?? PLAYER_ALLIANCE;
+
+    if (built.battle.winner === built.alliances.get(mine)) {
       return 'won';
     }
-    if (built.battle.winner === built.alliances.get(BOSS_ALLIANCE)) {
+    if (built.battle.winner != null) {
       return 'lost';
     }
     // Nobody left standing, or a stalemate neither side can break
@@ -282,6 +307,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (props.active.rocket != null) {
       return 'Team Rocket';
     }
+    if (instance()?.battle.mode === BattleModes.PvP) {
+      return props.active.seat == null ? 'Battle' : 'Gym Seat';
+    }
 
     const named = lair();
 
@@ -298,6 +326,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
     if (props.active.rocket != null) {
       return 'The grunt is beaten — what they dropped is waiting in the overworld.';
+    }
+    // A fight between players pays nothing on purpose, so what a win
+    // says is the win itself
+    if (instance()?.battle.mode === BattleModes.PvP && props.active.seat == null) {
+      return 'Their party is down. Nothing changes hands.';
     }
     return 'The raid boss is down — it is waiting in the overworld.';
   };
@@ -437,6 +470,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // they are being disposed
       setCounting(null);
       game.setRaid(null);
+      game.setDuel(null);
       game.setDialog(GameDialog.None);
       game.setBattle(null);
     });

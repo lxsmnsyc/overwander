@@ -24,6 +24,7 @@ import {
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
+  SwordsIcon,
   TrophyIcon,
   UserIcon,
 } from '../icons';
@@ -35,9 +36,9 @@ import { ThemeToggle } from './theme';
  * The one piece of furniture the game has: a bar along the bottom of
  * the world, with everything else behind the button on it.
  *
- * Ten destinations live in a panel above that button, laid out as a
+ * Every destination lives in a panel above that button, laid out as a
  * grid rather than a list: the same thing stays in the same corner, so
- * it is pressable without reading. A row of ten along the bottom would
+ * it is pressable without reading. A row of them along the bottom would
  * cost every screen a strip of map to say words that never change.
  *
  * Beside the button is what a player would otherwise have to open
@@ -72,6 +73,7 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Inventory', dialog: GameDialog.Inventory, icon: BagIcon },
   { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
   { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
+  { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
   // No Auctions key: the lots are read at an auction board out in the
   // world, which is what makes trading somewhere a player goes rather
   // than a panel they open. The panel itself still exists, and the
@@ -243,7 +245,7 @@ export default function GameMenu(): JSX.Element {
           >
             {/* Day or night, over the keypad: it changes how the game
               looks rather than what is on the screen, so it is not one
-              of the ten keys */}
+              of the keys */}
             <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
               <ThemeToggle
                 class="cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink

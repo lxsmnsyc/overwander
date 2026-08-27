@@ -11,6 +11,7 @@ import {
   watchLiveRaids,
   watchRaidInvites,
 } from '../../auth/raids';
+import { LobbyRole } from '../../auth/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';
@@ -57,7 +58,9 @@ function InvitedRow(props: {
       <RowButton class="font-medium" onClick={props.onOpen}>
         {raid() == null ? 'A raid' : getRaidTitle(raid()!)}
       </RowButton>
-      <Meta class="grow">called in by {named()}</Meta>
+      <Meta class="grow">
+        called in by {named()} to {props.invite.role === LobbyRole.Spectator ? 'watch' : 'fight'}
+      </Meta>
       <Button
         onClick={() => {
           declineRaidInvite(props.invite.raid).catch(() => undefined);

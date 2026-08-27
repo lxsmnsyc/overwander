@@ -100,7 +100,7 @@ export async function clearAll(): Promise<void> {
   // stand, and the browser suite leaves staged sellers behind
   await sql`
     truncate snapshots, snapshot_spawns, gifts, battles, team_snapshots, raids,
-      auctions, trades cascade
+      auctions, trades, duels cascade
   `;
   await sql`delete from auth.users`;
 }

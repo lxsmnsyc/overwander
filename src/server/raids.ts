@@ -19,6 +19,7 @@ import {
   mythicalRaidId,
   raidId,
 } from '../auth/raid-record';
+import { LobbyRole } from '../auth/lobby-role';
 import { TEAM_SIZE } from '../auth/teams';
 import ChunkSnapshot from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
@@ -393,6 +394,12 @@ export async function hostMythicalRaid(
  */
 export async function leaveRaid(uid: string, lobby: string): Promise<void> {
   await tx(async (transaction) => {
+    // Whatever else they were doing in there, they are no longer
+    // standing in it
+    await transaction`
+      delete from raid_watchers where raid_id = ${lobby} and player = ${uid}
+    `;
+
     const raid = await readRaidIn(transaction, lobby);
 
     if (raid == null || raid.battle != null) {
@@ -429,10 +436,27 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
 }
 
 /**
- * Call a friend into a lobby. Anybody standing in it may ask — the
- * host, or anyone with a team — and only of their own friends, which
- * is what keeps an invite from being spam. One row per lobby and
- * friend: a second sender changes nothing.
+ * Stand in a lobby without a party.
+ *
+ * Watching was always allowed and never recorded, so the lobby could
+ * not say who was in the room. The row is the player's own presence:
+ * written on the way in, dropped by `leaveRaid` on the way out, and
+ * taken by the cascade when the lobby goes
+ */
+export async function watchRaidLobby(uid: string, lobby: string, now: number): Promise<void> {
+  await getSql()`
+    insert into raid_watchers (raid_id, player, seen_at)
+    values (${lobby}, ${uid}, ${now})
+    on conflict (raid_id, player) do nothing
+  `;
+}
+
+/**
+ * Call a friend into a lobby, to fight or to watch. Anybody standing
+ * in it may ask — the host, or anyone with a team — and only of their
+ * own friends, which is what keeps an invite from being spam. One row
+ * per lobby and friend; asking again changes what they were called in
+ * as.
  *
  * Resolves false when the raid is gone or started, the sender is not
  * in it, the two are not friends, or the friend already has a team
@@ -443,6 +467,7 @@ export async function inviteToRaid(
   lobby: string,
   friend: string,
   now: number,
+  role: LobbyRole = LobbyRole.Fighter,
 ): Promise<boolean> {
   if (friend === '' || friend === uid) {
     return false;
@@ -472,9 +497,10 @@ export async function inviteToRaid(
   }
 
   await sql`
-    insert into raid_invites (raid_id, sender, recipient, sent_at)
-    values (${lobby}, ${uid}, ${friend}, ${now})
-    on conflict do nothing
+    insert into raid_invites (raid_id, sender, recipient, role, sent_at)
+    values (${lobby}, ${uid}, ${friend}, ${role}, ${now})
+    on conflict (raid_id, recipient) do update
+      set sender = ${uid}, role = ${role}, sent_at = ${now}
   `;
   return true;
 }
@@ -499,11 +525,19 @@ export async function declineRaidInvite(uid: string, lobby: string): Promise<voi
  * ever a party still waiting. The lobby is checked anyway — a raid
  * cleared, or one the team was dropped from on the way out, leaves
  * its pokemon free — and a party that is actually fighting answers
- * the different question the battle lock asks
+ * the different question the battle lock asks.
+ *
+ * A battle lobby's party counts the same way. `exceptDuel` is the one
+ * a caller is assembling right now: replacing a party there must not
+ * find the pokemon it is replacing
  */
-export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<boolean> {
-  // One query says it all: a team of this player's, holding any of
-  // these catches, whose raid is still gathering
+export async function isAnyCatchQueued(
+  uid: string,
+  catches: string[],
+  exceptDuel = '',
+): Promise<boolean> {
+  // One query says it all: a party of this player's, holding any of
+  // these catches, in a lobby that has not started
   const rows = await getSql()`
     select 1
     from teams t
@@ -513,6 +547,14 @@ export async function isAnyCatchQueued(uid: string, catches: string[]): Promise<
       and tc.caught_id = any(${catches})
       and r.battle_id is null
       and not r.cleared
+    union all
+    select 1
+    from duel_catches dc
+    join duels d on d.id = dc.duel_id
+    where dc.player = ${uid}
+      and dc.caught_id = any(${catches})
+      and dc.duel_id <> ${exceptDuel}
+      and d.battle_id is null
     limit 1
   `;
 

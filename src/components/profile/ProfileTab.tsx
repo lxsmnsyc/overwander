@@ -30,6 +30,8 @@ import {
   watchFriendRequests,
 } from '../../auth/friends';
 import EditProfileDialog from './EditProfileDialog';
+import { LobbyRole, hostDuel, inviteToDuel } from '../../auth/duels';
+import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
 import TradesTab from '../trades/TradesTab';
@@ -162,6 +164,7 @@ export interface ProfileTabProps {
  * have bid on
  */
 export default function ProfileTab(props: ProfileTabProps): JSX.Element {
+  const game = useGame();
   // The balance moves whenever the player earns or spends, so the
   // profile is followed rather than read once
   const profile = from<Profile | null>((set) =>
@@ -249,6 +252,41 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
     });
   };
 
+  /**
+   * Whether a lobby is being staged for this trainer. It is two calls
+   * -- open one, call them into it -- and the menu goes dead between
+   * them so a second press does not stage a second fight
+   */
+  const [staging, setStaging] = createSignal(false);
+
+  /**
+   * Ask this trainer for a fight: a lobby of the reader's own, with
+   * them called into the seat opposite. The lobby is opened over
+   * whatever the profile was opened over, which is where the fight is
+   * actually arranged
+   */
+  const challenge = (): void => {
+    setError(null);
+    setStaging(true);
+    hostDuel()
+      .then(async (id) => {
+        const called = await inviteToDuel(id, props.player, LobbyRole.Fighter);
+
+        if (!called) {
+          setError('They could not be called in — your lobby may already have two trainers in it.');
+        }
+        game.setVisiting(null);
+        game.setDuel(id);
+        game.setDialog(GameDialog.Battles);
+      })
+      .catch((caught: unknown) => {
+        setError(caught instanceof Error ? caught.message : String(caught));
+      })
+      .finally(() => {
+        setStaging(false);
+      });
+  };
+
   return (
     <Panel>
       <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
@@ -316,6 +354,14 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                   label="Actions"
                   icon={ActionsIcon}
                   actions={[
+                    // The one thing a reader can do *with* somebody
+                    // rather than about them: stage a fight and call
+                    // them into it
+                    {
+                      label: 'Battle',
+                      disabled: staging(),
+                      onSelect: challenge,
+                    },
                     {
                       label: friendActionLabel(friend.tie()),
                       disabled: friend.busy(),

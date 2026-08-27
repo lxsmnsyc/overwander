@@ -20,8 +20,8 @@ const enum BattleKind {
    */
   Npc = 1,
   /**
-   * Players against each other. Nothing fields one yet — the derivation
-   * is here so the day something does, its battles sort themselves
+   * Players against each other: a battle lobby's duel, or a challenge
+   * for a gym seat. Neither settles an aftermath
    */
   Player = 2,
 }

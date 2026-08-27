@@ -16,6 +16,7 @@ import InventoryList from '../components/items/InventoryList';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
+import DuelsTab from '../components/duels/DuelsTab';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexTab from '../components/dex/PokedexTab';
 import ProfileDialog from '../components/profile/ProfileDialog';
@@ -52,7 +53,8 @@ type Panelled =
   | GameDialog.Inventory
   | GameDialog.Pokedex
   | GameDialog.Gifts
-  | GameDialog.Quests;
+  | GameDialog.Quests
+  | GameDialog.Battles;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
@@ -63,6 +65,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Pokedex]: 'Pokedex',
   [GameDialog.Gifts]: 'Gifts',
   [GameDialog.Quests]: 'Quests',
+  [GameDialog.Battles]: 'Battle',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -75,6 +78,8 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
   [GameDialog.Gifts]: 'What the game is holding for you, until you come for it.',
   [GameDialog.Quests]: 'What the game asks of you, and what each ask pays.',
+  [GameDialog.Battles]:
+    'The private fights you have been called into, and the one you are hosting.',
 };
 
 /**
@@ -93,6 +98,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
    * names the panel rather than the word "Raids"
    */
   const [lobby, setLobby] = createSignal<string | null>(null);
+  /** The same, for the battle lobby a player is standing in */
+  const [duelling, setDuelling] = createSignal<string | null>(null);
   const close = (): void => {
     game.setDialog(GameDialog.None);
   };
@@ -232,6 +239,30 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               }}
             />
             <Show when={lobby() == null}>
+              <DialogActions>
+                <Button onClick={close}>Close</Button>
+              </DialogActions>
+            </Show>
+          </Dialog>
+
+          {/* Battle lobbies. A duel is private, so there is no board
+              of them to browse: what is here is what somebody offered
+              this player, and the one they staged themselves */}
+          <Dialog
+            isOpen={showing(GameDialog.Battles)}
+            onClose={close}
+            width="wide"
+            terse
+            title={duelling() ?? TITLES[GameDialog.Battles]}
+            description={DESCRIPTIONS[GameDialog.Battles]}
+          >
+            <DuelsTab
+              user={props.user}
+              onTitle={(named) => {
+                setDuelling(named);
+              }}
+            />
+            <Show when={duelling() == null}>
               <DialogActions>
                 <Button onClick={close}>Close</Button>
               </DialogActions>

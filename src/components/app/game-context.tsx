@@ -70,6 +70,11 @@ export const enum GameDialog {
    * The quest board: what the game asks, and what each ask pays
    */
   Quests = 9,
+  /**
+   * Battle lobbies: the private fights a player has been called into,
+   * and the one they are hosting
+   */
+  Battles = 10,
 }
 
 /**
@@ -158,6 +163,12 @@ export interface GameState {
    */
   raid: Accessor<string | null>;
   setRaid: Setter<string | null>;
+  /**
+   * The battle lobby the player is in, shown inside the battles
+   * dialog the same way a raid lobby fills the raids one
+   */
+  duel: Accessor<string | null>;
+  setDuel: Setter<string | null>;
   /**
    * The battle in progress. While one is set, it takes the whole
    * page — world, bar and all
@@ -349,6 +360,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   );
 
   const [raid, setRaid] = createSignal<string | null>(null);
+  const [duel, setDuel] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
   const [reward, setReward] = createSignal<PendingReward | null>(null);
   const [encounter, setEncounter] = createSignal<EncounterRecord | null>(null);
@@ -477,6 +489,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setPlace,
         raid,
         setRaid,
+        duel,
+        setDuel,
         battle,
         setBattle,
         reward,

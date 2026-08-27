@@ -10,11 +10,14 @@ import { type Actor, actor, caughtRow, clearAll, guest, service, sql } from './c
 
 let alice: Actor;
 let bob: Actor;
+/** A third player, for the rows that are private to two of them */
+let carol: Actor;
 
 beforeAll(async () => {
   await clearAll();
   alice = await actor('alice');
   bob = await actor('bob');
+  carol = await actor('carol');
 });
 
 afterAll(async () => {
@@ -36,6 +39,11 @@ beforeEach(async () => {
   // Before the battles and snapshots they point at
   await sql`delete from gym_challenges`;
   await sql`delete from gym_seats`;
+  await sql`delete from duel_catches`;
+  await sql`delete from duel_invites`;
+  await sql`delete from duel_members`;
+  await sql`delete from duels`;
+  await sql`delete from raid_watchers`;
   await sql`delete from battle_teams`;
   await sql`delete from battles`;
   await sql`delete from team_snapshots`;
@@ -301,6 +309,85 @@ describe('gym seats', () => {
 
     expect(challenger.data?.length).toBe(1);
     expect(holder.data?.length).toBe(1);
+  });
+});
+
+describe('battle lobbies', () => {
+  const stage = async (host: string): Promise<void> => {
+    await sql`
+      insert into duels (id, host, battle_id, created_at)
+      values ('rls-duel', ${host}, null, 1000)
+    `;
+    await sql`insert into duel_members (duel_id, player, role) values ('rls-duel', ${host}, 0)`;
+  };
+
+  it('is readable by the people in it and by nobody else', async () => {
+    await stage(alice.uid);
+    await sql`
+      insert into duel_invites (duel_id, sender, recipient, role, sent_at)
+      values ('rls-duel', ${alice.uid}, ${bob.uid}, 0, 1000)
+    `;
+
+    // The host is in it, and the trainer they called is on their way
+    const host = await alice.client.from('duels').select('host');
+    const called = await bob.client.from('duels').select('host');
+
+    expect(host.data?.length).toBe(1);
+    expect(called.data?.length).toBe(1);
+
+    // Nobody else knows the fight is being arranged at all. This is
+    // the whole of what makes a duel private, and it is also the case
+    // that would break first if `in_duel` ever became a subquery: a
+    // policy on duel_members reading duel_members recurses
+    const stranger = await carol.client.from('duels').select('host');
+    const members = await carol.client.from('duel_members').select('player');
+
+    expect(stranger.error).toBeNull();
+    expect(stranger.data ?? []).toEqual([]);
+    expect(members.data ?? []).toEqual([]);
+  });
+
+  it('cannot be walked into by writing a row', async () => {
+    await stage(alice.uid);
+
+    const forged = await carol.client
+      .from('duel_members')
+      .insert({ duel_id: 'rls-duel', player: carol.uid, role: 0 });
+
+    expect(forged.error).not.toBeNull();
+
+    const started = await bob.client
+      .from('duels')
+      .update({ battle_id: 'rls-battle' })
+      .eq('id', 'rls-duel');
+
+    expect(started.error).not.toBeNull();
+  });
+
+  it('shows who is watching a raid to anybody', async () => {
+    await sql`
+      insert into raids
+        (id, kind, lair, species, trait_value, host, window_at, utc_offset,
+         chunk_seed, chunk_x, chunk_y, biome, cell)
+      values ('rls-raid', 0, null, 1, 0, ${alice.uid}, 1000, 0, 'rls-seed', 0, 0, 0, 5)
+    `;
+    await sql`
+      insert into raid_watchers (raid_id, player, seen_at)
+      values ('rls-raid', ${alice.uid}, 1000)
+    `;
+
+    // A raid lobby stands open in the world, so who is in the room is
+    // as public as who has joined it
+    const seen = await carol.client.from('raid_watchers').select('player');
+
+    expect(seen.error).toBeNull();
+    expect(seen.data?.length).toBe(1);
+
+    const forged = await carol.client
+      .from('raid_watchers')
+      .insert({ raid_id: 'rls-raid', player: carol.uid, seen_at: 1000 });
+
+    expect(forged.error).not.toBeNull();
   });
 });
 

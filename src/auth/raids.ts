@@ -7,6 +7,7 @@ import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
+import { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
 import type { RaidReward } from '../server/raids';
 import {
@@ -20,6 +21,7 @@ import {
   leaveRaid as leaveOnServer,
   peekRaid as peekOnServer,
   startRaid as startOnServer,
+  watchRaidLobby as watchLobbyOnServer,
 } from '../server/raids';
 import { syncServerClock } from './clock';
 import { asOffset } from './local-time';
@@ -266,7 +268,42 @@ export async function listLiveRaids(
 export interface RaidInvite {
   raid: string;
   sender: string;
+  /** What they were called in as: to fight, or to watch */
+  role: LobbyRole;
   sentAt: number;
+}
+
+/**
+ * Say the player is standing in the lobby without a party, so it can
+ * show them among the onlookers. Leaving the raid drops the row again
+ */
+export async function watchRaidLobby(id: string): Promise<void> {
+  await watchRaidLobbyOnServer(await getIdToken(), id);
+}
+
+async function watchRaidLobbyOnServer(token: string, id: string): Promise<void> {
+  'use server';
+  await watchLobbyOnServer(await requireUid(token), id, await syncServerClock());
+}
+
+/**
+ * Follow who is standing in a lobby without a party. Anybody with a
+ * team is in it to fight, so the lobby subtracts them from this list
+ * rather than the read doing it: a player forms a team without ever
+ * leaving the room
+ */
+export function watchRaidWatchers(id: string, onChange: (players: string[]) => void): Unwatch {
+  const read = async (): Promise<string[]> => {
+    const { data } = await getSupabase()
+      .from('raid_watchers')
+      .select('player')
+      .eq('raid_id', id)
+      .order('seen_at');
+
+    return asRecordArray(data).map((row) => asString(row.player));
+  };
+
+  return watchTable('raid_watchers', [`raid_id=eq.${id}`], read, onChange);
 }
 
 /**
@@ -278,13 +315,14 @@ export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) 
   const read = async (): Promise<RaidInvite[]> => {
     const { data } = await getSupabase()
       .from('raid_invites')
-      .select('raid_id, sender, sent_at')
+      .select('raid_id, sender, role, sent_at')
       .eq('recipient', uid)
       .order('sent_at', { ascending: false });
 
     return asRecordArray(data).map((row) => ({
       raid: asString(row.raid_id),
       sender: asString(row.sender),
+      role: asNumber(row.role) as LobbyRole,
       sentAt: asNumber(row.sent_at),
     }));
   };
@@ -297,13 +335,22 @@ export function watchRaidInvites(uid: string, onChange: (invites: RaidInvite[]) 
  * false when the raid is gone or started, the two are not friends, or
  * the friend is already in it
  */
-export async function inviteToRaid(id: string, friend: string): Promise<boolean> {
-  return inviteToRaidOnServer(await getIdToken(), id, friend);
+export async function inviteToRaid(
+  id: string,
+  friend: string,
+  role: LobbyRole = LobbyRole.Fighter,
+): Promise<boolean> {
+  return inviteToRaidOnServer(await getIdToken(), id, friend, role);
 }
 
-async function inviteToRaidOnServer(token: string, id: string, friend: string): Promise<boolean> {
+async function inviteToRaidOnServer(
+  token: string,
+  id: string,
+  friend: string,
+  role: LobbyRole,
+): Promise<boolean> {
   'use server';
-  return inviteOnServer(await requireUid(token), id, friend, await syncServerClock());
+  return inviteOnServer(await requireUid(token), id, friend, await syncServerClock(), role);
 }
 
 /** Put an invite away unanswered */

@@ -55,6 +55,19 @@ export interface BasicSpriteImage {
   sourceHeight: number;
   /** Where the stored picture sits inside that cell */
   trim: [x: number, y: number];
+  /**
+   * The point of the cell that stands on the ground, where the sheet
+   * says so.
+   *
+   * The middle of the patch the piece is drawn resting on, worked out
+   * when the sheet was cut: not the lowest drawn row, which is the
+   * *front* of that patch, and not the middle of the soft shadow, which
+   * reaches out much further than the piece does. A caller stands one
+   * on a tile by putting this point on the tile and nothing else.
+   * Absent for a sheet that never said, and then the bottom middle of
+   * the cell is the best guess there is
+   */
+  base?: [x: number, y: number];
 }
 
 export interface BasicSpriteData {
@@ -62,6 +75,17 @@ export interface BasicSpriteData {
   compact: boolean;
   width: number;
   height: number;
+  /**
+   * How much ground the pieces of this sheet cover, in cell pixels,
+   * where the sheet says.
+   *
+   * A caller standing them on a board draws this much as one square of
+   * ground, which sizes a tree by the tree rather than by whatever
+   * square the packing needed for the tallest thing on the sheet.
+   * Absent for a sheet of pictures that stand on nothing, an item icon
+   * being the obvious one
+   */
+  stands?: number;
   images: BasicSpriteImage[];
 }
 
@@ -115,6 +139,9 @@ export function asBasicSpriteData(value: unknown): BasicSpriteData {
     compact: root.compact === true,
     width: asNumber(root.width),
     height: asNumber(root.height),
+    ...(typeof root.stands === 'number' && Number.isFinite(root.stands) && root.stands > 0
+      ? { stands: root.stands }
+      : {}),
     images: asArray(root.images).map((entry) => {
       const image = asRecord(entry);
       const width = asNumber(image.width);
@@ -132,6 +159,9 @@ export function asBasicSpriteData(value: unknown): BasicSpriteData {
         sourceWidth: asNumber(image.sourceWidth) || width,
         sourceHeight: asNumber(image.sourceHeight) || height,
         trim: [asNumber(trim[0]), asNumber(trim[1])],
+        ...(Array.isArray(image.base) && image.base.length === 2
+          ? { base: [asNumber(image.base[0]), asNumber(image.base[1])] satisfies [number, number] }
+          : {}),
       };
     }),
   };

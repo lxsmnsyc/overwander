@@ -17,13 +17,14 @@ import {
   BIOME_GYM_LEADERS,
   CHAMPION_CHARSETS,
   ELITE_MEMBER_CHARSETS,
-  ELITE_MEMBER_TYPES,
+  ELITE_MEMBER_POOLS,
   EXPERT_PARTY_SIZE,
   type EliteMember,
   GYM_LEADER_CHARSETS,
-  GYM_LEADER_TYPES,
   type GymLeader,
+  getChampionParty,
   getExpertPool,
+  getGymLeaderPool,
 } from '../data/overworld/experts';
 import {
   ACE_PARTY_SIZE,
@@ -59,9 +60,10 @@ function regionOf(_chunk: Chunk): Regions {
 }
 
 /**
- * A full 6 drawn from an expert's pool, with replacement: the Gen 1
- * type pools run as thin as 3 species, and a doubled Gengar is
- * exactly what an elite's party looks like
+ * A full 6 drawn from an expert's pool, with replacement. It has to
+ * be: the pool is one type's fully-grown species, and for Agatha and
+ * Lance that is a single pokemon. A doubled Gengar is what an elite's
+ * party looks like anyway
  */
 function expertParty(pool: Species[], seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
@@ -71,6 +73,16 @@ function expertParty(pool: Species[], seed: string): Spawn[] {
 
     return [species, rng.int32(), rng.int32()];
   });
+}
+
+/**
+ * A named party rolled out: the species are the trainer's own, so
+ * only the individual and trait values are drawn
+ */
+function signatureParty(species: Species[], seed: string): Spawn[] {
+  const rng = new AleaRNG(seed);
+
+  return species.map((one): Spawn => [one, rng.int32(), rng.int32()]);
 }
 
 /**
@@ -887,7 +899,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), GYM_LEADER_TYPES[leader] ?? null);
+        const pool = getExpertPool(regionOf(this.chunk), getGymLeaderPool(leader));
 
         if (pool.length > 0) {
           stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}gym${cell}`));
@@ -919,7 +931,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), ELITE_MEMBER_TYPES[member]);
+        const pool = getExpertPool(regionOf(this.chunk), ELITE_MEMBER_POOLS[member]);
 
         if (pool.length > 0) {
           stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}elite${cell}`));
@@ -933,19 +945,20 @@ export default class ChunkSnapshot {
   private championStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Champion parties, keyed by their landmark cell: 6
-   * drawn from the whole region, no specialty and no shadows — the
-   * hardest fair fight there is
+   * The window's Champion parties, keyed by their landmark cell: the
+   * champion's own named six, no shadows, the hardest fair fight there
+   * is. Only what drives their rolls turns over with the window; the
+   * team itself does not
    */
   getChampionStops(): Map<number, Spawn[]> {
     if (this.championStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const pool = getExpertPool(regionOf(this.chunk), null);
+      const party = getChampionParty(regionOf(this.chunk));
 
-      if (pool.length > 0) {
+      if (party != null) {
         for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
           if (landmark === Landmark.Champion) {
-            stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}champ${cell}`));
+            stops.set(cell, signatureParty(party, `${this.key}${this.npcTimestamp}champ${cell}`));
           }
         }
       }

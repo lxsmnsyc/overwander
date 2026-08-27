@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
+import groundPoint from './ground.ts';
 
 /**
  * The berry plants, cut out of a rip and filed one to a berry.
@@ -497,6 +498,11 @@ function write(name: string, cells: Image[]): { path: string; bytes: number } {
   const grid = packGrid(cells, trim);
   const drawn = encodeSmallest(grid);
   const folder = join(ROOT, name);
+  // Where the soil the plant grows out of meets the tile, taken off the
+  // grown plant and written in the cell's own coordinates. Every stage
+  // is drawn on the same mound, so one point serves the row: a patch
+  // that has just been picked must not shift on the board
+  const base = groundPoint(cells[(STAGES - 1) * FRAMES]);
 
   mkdirSync(folder, { recursive: true });
   writeFileSync(join(folder, 'image.png'), drawn.bytes);
@@ -515,6 +521,7 @@ function write(name: string, cells: Image[]): { path: string; bytes: number } {
           sourceFrameWidth: CELL.width,
           sourceFrameHeight: CELL.height,
           trim: [trim.x, trim.y],
+          base,
         },
         images: [
           {

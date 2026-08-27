@@ -5,6 +5,7 @@ import { canProcessSprites } from '../../../auth/sprites';
 
 import { BiomeForm } from './biome';
 import ExtrasForm from './extras';
+import GraftForm from './graft';
 import PmdForm from './pmd';
 import PokengineForm from './pokengine';
 import RecolorForm from './recolor';
@@ -29,6 +30,7 @@ const enum Mode {
   Pokengine = 2,
   Tileset = 3,
   Recolor = 4,
+  Graft = 5,
 }
 
 export default function SpriteProcessor(): JSX.Element {
@@ -50,6 +52,7 @@ export default function SpriteProcessor(): JSX.Element {
           <TabButton value={Mode.Pokengine}>Pokengine</TabButton>
           <TabButton value={Mode.Tileset}>Biome</TabButton>
           <TabButton value={Mode.Recolor}>Palette swap</TabButton>
+          <TabButton value={Mode.Graft}>Borrow a wall</TabButton>
         </TabBar>
         <TabPane value={Mode.Pmd}>
           <PmdForm />
@@ -65,6 +68,9 @@ export default function SpriteProcessor(): JSX.Element {
         </TabPane>
         <TabPane value={Mode.Recolor}>
           <RecolorForm />
+        </TabPane>
+        <TabPane value={Mode.Graft}>
+          <GraftForm />
         </TabPane>
       </TabGroup>
     </Show>

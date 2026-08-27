@@ -83,7 +83,7 @@ few are one to a chunk, marked below.
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
 | **Gym Leader**      | One of the region's eight, with a badge on the line. One to a chunk |
 | **Elite Four**      | One of the region's four, for a challenger holding every badge  |
-| **Champion**        | The region's title, for whoever has beaten the Elite Four. One to a chunk |
+| **Champion**        | The region's title, for whoever has beaten the Elite Four. They field the team they are known for. One to a chunk |
 | **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
 Walking up to a wandering cell does not reveal in advance which specialist is

@@ -1,4 +1,5 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
+import { PITCH } from './tilt';
 
 /**
  * The chunk seen from a chair rather than from a satellite: the ground
@@ -8,14 +9,13 @@ import { CHUNK_CELLS } from '../overworld/chunk';
  * in the game may work out where a cell is — the painter asks for
  * corners, the pointer asks which cell it is over, the browser test
  * asks where to click. A pitch changed here changes all three.
+ *
+ * The pitch itself lives in [`tilt`](./tilt.ts), where the tools that
+ * cut sprite sheets can read it too, and is re-exported here because
+ * this is where the rest of the game asks about the board.
  */
 
-/**
- * How far above the board the camera sits, in degrees. 90 is straight
- * down and 0 collapses it to a line; 60 keeps the near rows nearly
- * square and leaves a sprite room to stand in front of the row behind
- */
-export const PITCH = 60;
+export { PITCH };
 
 /**
  * How much of the board's depth survives the tilt. Straight down it

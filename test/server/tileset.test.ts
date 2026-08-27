@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { parseBiomes } from '../../src/server/sprites/graft';
 import {
   AUTOTILE_CASES,
   AUTOTILE_COUNT,
@@ -723,5 +724,21 @@ describe('where a tileset is written', () => {
 
   it('refuses a biome that is not one', () => {
     expect(() => biomeDestination(-1)).toThrow();
+  });
+});
+
+describe('naming biomes to graft a wall onto', () => {
+  it('takes a list however it is separated', () => {
+    expect(parseBiomes('4 6 7')).toEqual([4, 6, 7]);
+    expect(parseBiomes('4,6,7')).toEqual([4, 6, 7]);
+    expect(parseBiomes(' 4 ,\n 6 ')).toEqual([4, 6]);
+    expect(parseBiomes('')).toEqual([]);
+  });
+
+  it('refuses the whole list rather than grafting a shorter one', () => {
+    // Half a list is worse than none: the biomes it skipped would keep
+    // their trees and nobody would be told which
+    expect(() => parseBiomes('4 nope 7')).toThrow('Not a biome');
+    expect(() => parseBiomes('4 -2')).toThrow('Not a biome');
   });
 });

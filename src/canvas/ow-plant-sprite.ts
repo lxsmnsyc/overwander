@@ -47,6 +47,14 @@ export interface OWPlantLayout {
    */
   sourceFrameWidth?: number;
   sourceFrameHeight?: number;
+  /**
+   * The point of the cell that stands on the tile, in the cell's own
+   * coordinates: the middle of the mound the plant grows out of. The
+   * sheet works it out when it is cut, because the bottom of a cell is
+   * the underside of the mound and standing that on a tile leaves the
+   * plant looking like it grew a square further back
+   */
+  base?: [x: number, y: number];
 }
 
 export interface OWPlantDrawOptions {
@@ -65,8 +73,9 @@ export interface OWPlantDrawOptions {
   /** The box to fit a cell in, in pixels, answered as the scale that fits. */
   size?: number;
   /**
-   * Where the point given to `draw` sits on the cell. `foot` is the
-   * bottom middle, which is the soil a plant is growing out of
+   * Where the point given to `draw` sits on the cell. `foot` is where
+   * the plant meets the ground: the sheet's own base where it carries
+   * one, and the bottom middle of the cell where it does not
    */
   anchor?: 'foot' | 'center' | 'top-left';
   alpha?: number;
@@ -92,6 +101,13 @@ export default class OWPlantSprite {
   readonly sourceFrameWidth: number;
 
   readonly sourceFrameHeight: number;
+
+  /**
+   * Where the plant meets the ground, in the **cropped** frame's own
+   * coordinates. Null for a sheet that never said, and then the bottom
+   * middle of the frame is the best guess there is
+   */
+  readonly base: [x: number, y: number] | null;
 
   /**
    * Every cell of the grid, row-major. A stage and a frame index into
@@ -122,6 +138,12 @@ export default class OWPlantSprite {
     this.frameHeight = height;
     this.sourceFrameWidth = layout.sourceFrameWidth ?? width;
     this.sourceFrameHeight = layout.sourceFrameHeight ?? height;
+    // Said in cell coordinates and drawn in the crop's, so the margin
+    // the packing took off comes back off it here
+    this.base =
+      layout.base == null
+        ? null
+        : [layout.base[0] - (grid?.trim[0] ?? 0), layout.base[1] - (grid?.trim[1] ?? 0)];
     this.rects = [];
 
     for (let stage = 0; stage < this.stages; stage += 1) {
@@ -156,6 +178,7 @@ export default class OWPlantSprite {
       rows: layout.rows ?? carried.rows,
       sourceFrameWidth: layout.sourceFrameWidth ?? carried.sourceFrameWidth,
       sourceFrameHeight: layout.sourceFrameHeight ?? carried.sourceFrameHeight,
+      base: layout.base ?? carried.base,
     });
   }
 
@@ -245,14 +268,18 @@ export default class OWPlantSprite {
     const width = this.frameWidth * scale;
     const height = this.frameHeight * scale;
     const anchor = options.anchor ?? 'foot';
-    const left = anchor === 'top-left' ? x : x - width / 2;
-    // `foot` hangs the cell above the point: the point is the soil the
-    // plant is growing out of
-    const above = anchor === 'foot' ? height : height / 2;
-    const top = anchor === 'top-left' ? y : y - above;
+    // `foot` puts the plant's own base on the point, which is the soil
+    // it is growing out of; without one the bottom middle has to do
+    const foot = anchor === 'foot' ? (this.base ?? [this.frameWidth / 2, this.frameHeight]) : null;
+    const left = anchor === 'top-left' ? x : x - (foot == null ? width / 2 : foot[0] * scale);
+    const top = anchor === 'top-left' ? y : y - (foot == null ? height / 2 : foot[1] * scale);
     const alpha = options.alpha ?? 1;
     const was = context.globalAlpha;
+    // Pixel art scaled up: smoothing would blur away the edges it is
+    // drawn with, the way the other sprite classes guard against
+    const smoothing = context.imageSmoothingEnabled;
 
+    context.imageSmoothingEnabled = false;
     if (alpha !== 1) {
       context.globalAlpha = was * alpha;
     }
@@ -270,6 +297,7 @@ export default class OWPlantSprite {
     if (alpha !== 1) {
       context.globalAlpha = was;
     }
+    context.imageSmoothingEnabled = smoothing;
   }
 }
 
@@ -288,11 +316,12 @@ export function plantLayoutOf(value: unknown): OWPlantLayout {
     return {};
   }
 
-  const { columns, rows, sourceFrameWidth, sourceFrameHeight } = grid as {
+  const { columns, rows, sourceFrameWidth, sourceFrameHeight, base } = grid as {
     columns?: unknown;
     rows?: unknown;
     sourceFrameWidth?: unknown;
     sourceFrameHeight?: unknown;
+    base?: unknown;
   };
   const layout: OWPlantLayout = {};
   // Only the numbers really there are carried: a key with nothing under
@@ -317,6 +346,9 @@ export function plantLayoutOf(value: unknown): OWPlantLayout {
   }
   if (cellHeight != null) {
     layout.sourceFrameHeight = cellHeight;
+  }
+  if (Array.isArray(base) && base.length === 2 && base.every((one) => typeof one === 'number')) {
+    layout.base = [base[0], base[1]];
   }
   return layout;
 }

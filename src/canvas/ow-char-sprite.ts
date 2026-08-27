@@ -32,7 +32,7 @@
  *   moved, a foot lands every stride however fast it is going.
  */
 
-import { type BasicSpriteData, asBasicSpriteData } from './basic-sprite';
+import { type BasicSpriteData, type BasicSpriteImage, asBasicSpriteData } from './basic-sprite';
 import { SPRITE_TICK, type SpriteDirection } from './sprite-sheet';
 
 /** The four a character sheet has, in the order sheets lay them out. */
@@ -136,13 +136,47 @@ export interface OWCharDrawOptions {
    */
   anchor?: 'foot' | 'center' | 'top-left';
   alpha?: number;
-  /** Drawn flat under the character before the character is. */
-  shadow?: boolean;
 }
 
-const SHADOW_WIDTH = 0.44;
+/**
+ * Which way the light is throwing shadows, and how far. The same shape
+ * the pokemon sheets take, so one hour's light moves every shadow on a
+ * board together
+ */
+export interface OWCharCast {
+  dx: number;
+  dy: number;
+  length: number;
+  alpha?: number;
+}
 
-const SHADOW_FLATNESS = 0.4;
+export interface OWCharShadowOptions extends OWCharDrawOptions {
+  /**
+   * How flat the ground lies. A board looked along squashes what is
+   * lying on it, and the caller owning the ground is the one that
+   * knows by how much
+   */
+  squash?: number;
+  color?: string;
+  /** Where the hour's light throws it, if it throws one. */
+  cast?: OWCharCast;
+}
+
+/**
+ * How wide the patch under a character is, as a fraction of the cell
+ * they were drawn in.
+ *
+ * Measured off the **cell** and not off the cropped frame: the crop is
+ * as wide as the widest pose in the sheet, so a shadow taken from it
+ * grew and shrank with the swing of an arm. It is the radius, so a
+ * character's patch comes to about half again the width of the boots
+ * standing in it: much narrower and the character reads as hovering
+ * over it
+ */
+const SHADOW_WIDTH = 0.24;
+
+/** How flat it lies where the caller has no opinion. */
+const SHADOW_FLATNESS = 0.42;
 
 const SHADOW_COLOR = 'rgba(0, 0, 0, 0.28)';
 
@@ -159,8 +193,8 @@ function bareName(name: string): string {
  * it does not. The biggest is the right guess: a charset packed whole
  * is sixteen cells and anything else on the sheet beside it is one
  */
-export function gridOf(data: BasicSpriteData, name: string | undefined): FrameRect | null {
-  let best: FrameRect | null = null;
+export function gridOf(data: BasicSpriteData, name: string | undefined): BasicSpriteImage | null {
+  let best: BasicSpriteImage | null = null;
 
   for (const image of data.images) {
     if (image.width <= 0 || image.height <= 0) {
@@ -568,29 +602,59 @@ export default class OWCharSprite {
       context.globalAlpha = options.alpha;
     }
 
-    // A charset carries no anchors, so the shadow is where the feet are
-    // by construction rather than by measurement: the bottom middle of
-    // the cell, which is the point the `foot` anchor is already about
-    if (options.shadow === true) {
-      const radius = (width * SHADOW_WIDTH) / 2;
-
-      context.save();
-      context.fillStyle = SHADOW_COLOR;
-      context.beginPath();
-      context.ellipse(
-        left + width / 2,
-        top + height,
-        radius,
-        radius * SHADOW_FLATNESS,
-        0,
-        0,
-        Math.PI * 2,
-      );
-      context.fill();
-      context.restore();
-    }
     context.drawImage(sheet, rect.x, rect.y, rect.width, rect.height, left, top, width, height);
     context.globalAlpha = alpha;
     context.imageSmoothingEnabled = smoothing;
+  }
+
+  /**
+   * The patch of ground the character is standing on.
+   *
+   * Drawn by the caller rather than by `draw`, the way the pokemon
+   * sheets do it: whoever owns the ground owns its shadows, and only
+   * they know how flat it lies and which way the hour's light is
+   * throwing them. A charset carries no anchors, so the patch is where
+   * the feet are by construction — the point `draw` was given
+   */
+  drawShadow(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    options: OWCharShadowOptions = {},
+  ): void {
+    if (this.frameWidth <= 0) {
+      return;
+    }
+
+    const scale =
+      options.size != null && options.size > 0
+        ? options.size / Math.max(this.frameWidth, this.frameHeight)
+        : (options.scale ?? 1);
+    const across = this.sourceFrameWidth * SHADOW_WIDTH * scale;
+    const flat = across * (options.squash ?? SHADOW_FLATNESS);
+    const cast = options.cast;
+    // Thrown away from the light, with the near end left at the feet:
+    // a shadow that let go of its caster reads as a second thing lying
+    // on the floor
+    const reach = cast == null ? 0 : cast.length * across * 2;
+
+    context.save();
+    context.fillStyle = options.color ?? SHADOW_COLOR;
+
+    if (cast?.alpha != null) {
+      context.globalAlpha = cast.alpha;
+    }
+    context.beginPath();
+    context.ellipse(
+      x + (cast?.dx ?? 0) * reach * 0.5,
+      y + (cast?.dy ?? 0) * reach * 0.5,
+      across + reach * 0.5,
+      flat,
+      cast == null ? 0 : Math.atan2(cast.dy, cast.dx),
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
+    context.restore();
   }
 }

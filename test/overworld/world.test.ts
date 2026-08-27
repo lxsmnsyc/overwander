@@ -102,10 +102,11 @@ import {
   BIOME_GYM_LEADERS,
   CHAMPION_CHARSETS,
   ELITE_MEMBER_CHARSETS,
-  ELITE_MEMBER_TYPES,
+  ELITE_MEMBER_POOLS,
   EXPERT_PARTY_SIZE,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
+  getExpertPool,
 } from '../../src/data/overworld/experts';
 import Regions from '../../src/data/ids/regions';
 import {
@@ -1202,8 +1203,14 @@ describe('world', () => {
           continue;
         }
         expect(BIOME_ELITE_MEMBERS[eliteChunk.biome]).toContain(member);
+
+        // Their own pool rather than their type alone: an elite whose
+        // type runs to one fully-grown species is widened by kinship
+        // or by name, so the party is checked against the pool
+        const pool = new Set(getExpertPool(Regions.Kanto, ELITE_MEMBER_POOLS[member]));
+
         for (const [species] of party) {
-          expect(getSpeciesData(species).types).toContain(ELITE_MEMBER_TYPES[member]);
+          expect(pool.has(species), getSpeciesData(species).name).toBe(true);
         }
         expect(ELITE_MEMBER_CHARSETS[member]).toContain(snapshot.getWandererCoats().get(cell));
       }

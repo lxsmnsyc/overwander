@@ -60,7 +60,9 @@ pnpm dev                # http://localhost:3000
 `pnpm db` is `supabase start`. It prints the API URL, the anon key and the
 service-role key; `pnpm db:stop` puts it away and `pnpm db:reset` rebuilds the
 database from the migrations. `pnpm seed` fills a fresh stack with a couple of
-accounts and enough rows to walk the game.
+accounts and enough rows to walk the game. The whole of it, including what to do
+when something is wrong, is in
+[Running the database locally](docs/database/local-stack.md).
 
 ### Configuring it
 

@@ -60,7 +60,8 @@
       "role": "wall",
       "column": 0,
       "palette": -1,
-      "missing": []
+      "missing": [],
+      "borrowed": 27
     },
     {
       "name": "wall-alt-1",

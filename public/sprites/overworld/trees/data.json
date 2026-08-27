@@ -1,12 +1,13 @@
 {
   "compact": true,
-  "width": 283,
-  "height": 247,
+  "width": 326,
+  "height": 271,
+  "stands": 21,
   "images": [
     {
-      "name": "autumn.png",
-      "x": 171,
-      "y": 66,
+      "name": "autumn-snow.png",
+      "x": 48,
+      "y": 214,
       "width": 47,
       "height": 56,
       "sourceWidth": 71,
@@ -14,6 +15,44 @@
       "trim": [
         12,
         15
+      ],
+      "base": [
+        36,
+        60
+      ]
+    },
+    {
+      "name": "autumn.png",
+      "x": 228,
+      "y": 132,
+      "width": 47,
+      "height": 56,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        15
+      ],
+      "base": [
+        36,
+        60
+      ]
+    },
+    {
+      "name": "broadleaf-snow.png",
+      "x": 116,
+      "y": 0,
+      "width": 57,
+      "height": 71,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        7,
+        0
+      ],
+      "base": [
+        34,
+        53
       ]
     },
     {
@@ -27,6 +66,27 @@
       "trim": [
         7,
         0
+      ],
+      "base": [
+        34,
+        53
+      ]
+    },
+    {
+      "name": "dark-snow.png",
+      "x": 0,
+      "y": 72,
+      "width": 57,
+      "height": 71,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        7,
+        0
+      ],
+      "base": [
+        34,
+        53
       ]
     },
     {
@@ -40,25 +100,16 @@
       "trim": [
         7,
         0
+      ],
+      "base": [
+        34,
+        53
       ]
     },
     {
       "name": "dry-snow.png",
-      "x": 100,
-      "y": 199,
-      "width": 47,
-      "height": 40,
-      "sourceWidth": 71,
-      "sourceHeight": 71,
-      "trim": [
-        12,
-        31
-      ]
-    },
-    {
-      "name": "dry.png",
-      "x": 0,
-      "y": 142,
+      "x": 96,
+      "y": 214,
       "width": 47,
       "height": 56,
       "sourceWidth": 71,
@@ -66,25 +117,33 @@
       "trim": [
         12,
         15
+      ],
+      "base": [
+        36,
+        60
+      ]
+    },
+    {
+      "name": "dry.png",
+      "x": 0,
+      "y": 214,
+      "width": 47,
+      "height": 56,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        15
+      ],
+      "base": [
+        36,
+        60
       ]
     },
     {
       "name": "fir-snow.png",
-      "x": 59,
-      "y": 199,
-      "width": 40,
-      "height": 41,
-      "sourceWidth": 71,
-      "sourceHeight": 71,
-      "trim": [
-        15,
-        30
-      ]
-    },
-    {
-      "name": "fir.png",
-      "x": 228,
-      "y": 105,
+      "x": 285,
+      "y": 49,
       "width": 40,
       "height": 48,
       "sourceWidth": 71,
@@ -92,25 +151,33 @@
       "trim": [
         15,
         23
+      ],
+      "base": [
+        35,
+        64
+      ]
+    },
+    {
+      "name": "fir.png",
+      "x": 285,
+      "y": 0,
+      "width": 40,
+      "height": 48,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        15,
+        23
+      ],
+      "base": [
+        35,
+        64
       ]
     },
     {
       "name": "jungle-snow.png",
-      "x": 228,
-      "y": 0,
-      "width": 54,
-      "height": 52,
-      "sourceWidth": 71,
-      "sourceHeight": 71,
-      "trim": [
-        8,
-        19
-      ]
-    },
-    {
-      "name": "jungle.png",
-      "x": 116,
-      "y": 0,
+      "x": 113,
+      "y": 72,
       "width": 54,
       "height": 70,
       "sourceWidth": 71,
@@ -118,37 +185,49 @@
       "trim": [
         8,
         1
+      ],
+      "base": [
+        35,
+        55
       ]
     },
     {
-      "name": "leaf-snow.png",
-      "x": 0,
-      "y": 199,
-      "width": 58,
-      "height": 47,
+      "name": "jungle.png",
+      "x": 58,
+      "y": 72,
+      "width": 54,
+      "height": 70,
       "sourceWidth": 71,
       "sourceHeight": 71,
       "trim": [
-        6,
-        24
+        8,
+        1
+      ],
+      "base": [
+        35,
+        55
       ]
     },
     {
       "name": "olive-snow.png",
-      "x": 139,
-      "y": 142,
-      "width": 51,
-      "height": 53,
+      "x": 228,
+      "y": 66,
+      "width": 56,
+      "height": 65,
       "sourceWidth": 71,
       "sourceHeight": 71,
       "trim": [
-        10,
-        18
+        7,
+        6
+      ],
+      "base": [
+        35,
+        61
       ]
     },
     {
       "name": "olive.png",
-      "x": 171,
+      "x": 228,
       "y": 0,
       "width": 56,
       "height": 65,
@@ -157,12 +236,16 @@
       "trim": [
         7,
         6
+      ],
+      "base": [
+        35,
+        61
       ]
     },
     {
       "name": "palm.png",
-      "x": 102,
-      "y": 142,
+      "x": 144,
+      "y": 214,
       "width": 36,
       "height": 54,
       "sourceWidth": 71,
@@ -170,12 +253,33 @@
       "trim": [
         17,
         17
+      ],
+      "base": [
+        35,
+        55
+      ]
+    },
+    {
+      "name": "pine-blue-snow.png",
+      "x": 162,
+      "y": 144,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ],
+      "base": [
+        35,
+        62
       ]
     },
     {
       "name": "pine-blue.png",
-      "x": 108,
-      "y": 72,
+      "x": 0,
+      "y": 144,
       "width": 53,
       "height": 69,
       "sourceWidth": 71,
@@ -183,12 +287,33 @@
       "trim": [
         9,
         2
+      ],
+      "base": [
+        35,
+        62
+      ]
+    },
+    {
+      "name": "pine-dark-snow.png",
+      "x": 108,
+      "y": 144,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ],
+      "base": [
+        35,
+        62
       ]
     },
     {
       "name": "pine-dark.png",
-      "x": 54,
-      "y": 72,
+      "x": 174,
+      "y": 70,
       "width": 53,
       "height": 69,
       "sourceWidth": 71,
@@ -196,25 +321,16 @@
       "trim": [
         9,
         2
+      ],
+      "base": [
+        35,
+        62
       ]
     },
     {
       "name": "pine-snow.png",
-      "x": 48,
-      "y": 142,
-      "width": 53,
-      "height": 55,
-      "sourceWidth": 71,
-      "sourceHeight": 71,
-      "trim": [
-        9,
-        16
-      ]
-    },
-    {
-      "name": "pine.png",
-      "x": 0,
-      "y": 72,
+      "x": 54,
+      "y": 144,
       "width": 53,
       "height": 69,
       "sourceWidth": 71,
@@ -222,25 +338,33 @@
       "trim": [
         9,
         2
+      ],
+      "base": [
+        35,
+        62
+      ]
+    },
+    {
+      "name": "pine.png",
+      "x": 174,
+      "y": 0,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ],
+      "base": [
+        35,
+        62
       ]
     },
     {
       "name": "round-snow.png",
       "x": 228,
-      "y": 154,
-      "width": 44,
-      "height": 43,
-      "sourceWidth": 71,
-      "sourceHeight": 71,
-      "trim": [
-        13,
-        28
-      ]
-    },
-    {
-      "name": "round.png",
-      "x": 228,
-      "y": 53,
+      "y": 214,
       "width": 46,
       "height": 51,
       "sourceWidth": 71,
@@ -248,6 +372,27 @@
       "trim": [
         12,
         20
+      ],
+      "base": [
+        35,
+        64
+      ]
+    },
+    {
+      "name": "round.png",
+      "x": 181,
+      "y": 214,
+      "width": 46,
+      "height": 51,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        20
+      ],
+      "base": [
+        35,
+        64
       ]
     }
   ]

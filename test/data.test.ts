@@ -70,17 +70,17 @@ import { WING_STATS, isWing } from '../src/data/items/wings';
 import {
   BAIT_BERRY_NAMES,
   BAIT_CATCH_BONUS,
-  NANAB_FLEE_FACTOR,
-  PINAP_CANDY_HELPINGS,
-  PRIZE_BERRY_NAMES,
-  RAZZ_CATCH_BONUS,
   BERRY_BRACE_STAGES,
   BERRY_EFFORT_DROPS,
   BERRY_NATURE_HEALS,
   BERRY_PINCH_STAGES,
   BERRY_RESIST_TYPES,
   BERRY_STATUS_CURES,
+  NANAB_FLEE_FACTOR,
+  PINAP_CANDY_HELPINGS,
   PINCH_BERRIES,
+  PRIZE_BERRY_NAMES,
+  RAZZ_CATCH_BONUS,
   describeBerry,
   isBerry,
 } from '../src/data/items/berries';
@@ -234,18 +234,23 @@ import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
   CHAMPION_CHARSETS,
+  CHAMPION_PARTIES,
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
   ELITE_MEMBER_NAMES,
-  ELITE_MEMBER_TYPES,
+  ELITE_MEMBER_POOLS,
+  EXPERT_PARTY_SIZE,
+  EliteMember,
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_NAMES,
   GYM_LEADER_TYPES,
   GymLeader,
+  getChampionParty,
   getExpertPool,
+  getGymLeaderPool,
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
@@ -3365,21 +3370,104 @@ describe('type experts', () => {
     }
   });
 
-  it('pools every specialty from the region, legendaries left out', () => {
-    for (const member of ELITE_MEMBERS) {
-      expect(getExpertPool(Regions.Kanto, ELITE_MEMBER_TYPES[member]).length).toBeGreaterThan(0);
+  it('pools every specialty from the region, half-grown and legendaries left out', () => {
+    const open = getExpertPool(Regions.Kanto, { types: [] });
+
+    // The rare band only: what an expert fields is fully evolved or
+    // has nowhere to evolve to
+    for (const species of open) {
+      expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
     }
-    // Lance makes do with the one dragon line there is
-    expect(getExpertPool(Regions.Kanto, Types.Dragon)).toEqual([
-      Species.Dratini,
-      Species.Dragonair,
-      Species.Dragonite,
-    ]);
+    const psychic = getExpertPool(Regions.Kanto, { types: [Types.Psychic] });
+
     // Sabrina's pool holds no Mewtwo: lair species belong to raids
-    expect(getExpertPool(Regions.Kanto, Types.Psychic)).not.toContain(Species.Mewtwo);
-    // The open pool serves Blue and the Champion
-    expect(getExpertPool(Regions.Kanto, null).length).toBeGreaterThan(100);
-    expect(getExpertPool(Regions.Kanto, null)).not.toContain(Species.Egg);
+    expect(psychic).not.toContain(Species.Mewtwo);
+    // ...nor the half-grown a walk turns up on its own
+    expect(psychic).not.toContain(Species.Kadabra);
+    // Blue's gym takes all comers, out of the whole band
+    expect(open.length).toBeGreaterThan(50);
+    expect(open).not.toContain(Species.Egg);
+
+    for (const leader of GYM_LEADERS) {
+      const pool = getExpertPool(Regions.Kanto, getGymLeaderPool(leader));
+
+      expect(pool.length, GYM_LEADER_NAMES[leader]).toBeGreaterThan(0);
+      // A leader is their type and nothing else; the wideners are the
+      // league's
+      for (const species of pool) {
+        const type = GYM_LEADER_TYPES[leader];
+
+        if (type != null) {
+          expect(getSpeciesData(species).types, getSpeciesData(species).name).toContain(type);
+        }
+      }
+    }
+  });
+
+  it('widens an elite past a type that would field one pokemon', () => {
+    const pools = new Map<EliteMember, Species[]>(
+      ELITE_MEMBERS.map((member) => [
+        member,
+        getExpertPool(Regions.Kanto, ELITE_MEMBER_POOLS[member]),
+      ]),
+    );
+    const poolOf = (member: EliteMember): Species[] => pools.get(member) ?? [];
+
+    // Nobody fields six of the same pokemon: Ghost and Dragon each run
+    // to one fully-grown species in Kanto, which is what the wideners
+    // are for
+    for (const member of ELITE_MEMBERS) {
+      expect(poolOf(member).length, ELITE_MEMBER_NAMES[member]).toBeGreaterThan(1);
+    }
+
+    // Named where no rule reaches: Bruno's Onix arrives by the Ground
+    // half of his pool, the other three by name
+    expect(poolOf(EliteMember.Lorelei)).toContain(Species.Slowbro);
+    expect(poolOf(EliteMember.Bruno)).toContain(Species.Onix);
+    expect(poolOf(EliteMember.Agatha)).toContain(Species.Golbat);
+    expect(poolOf(EliteMember.Agatha)).toContain(Species.Arbok);
+    expect(poolOf(EliteMember.Lance)).toContain(Species.Aerodactyl);
+
+    // Kinship the type chart misses: a Gyarados is a dragon by
+    // breeding, which is why one stands on Lance's team
+    expect(poolOf(EliteMember.Lance)).toContain(Species.Gyarados);
+    expect(getSpeciesData(Species.Gyarados).types).not.toContain(Types.Dragon);
+
+    // Agatha is not a second Koga: the Poison **type** would hand her
+    // his pool entire, so she takes the group her ghosts share
+    const koga = getExpertPool(Regions.Kanto, { types: [Types.Poison] });
+
+    expect(poolOf(EliteMember.Agatha).length).toBeLessThan(koga.length);
+    expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
+
+    // Nothing a widener names escapes the band it is drawn from
+    for (const member of ELITE_MEMBERS) {
+      for (const named of ELITE_MEMBER_POOLS[member].also ?? []) {
+        expect(poolOf(member), ELITE_MEMBER_NAMES[member]).toContain(named);
+      }
+      for (const species of poolOf(member)) {
+        expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+      }
+    }
+  });
+
+  it('gives the champion their own six rather than a draw', () => {
+    const party = getChampionParty(Regions.Kanto);
+
+    // Red's Mt. Silver line-up, the version made of Kanto species
+    expect(party).toEqual([
+      Species.Pikachu,
+      Species.Lapras,
+      Species.Snorlax,
+      Species.Venusaur,
+      Species.Charizard,
+      Species.Blastoise,
+    ]);
+    // Every champion fields a full party, the same as every other
+    // expert, and nothing is invented for a region with no known team
+    for (const [region, six] of Object.entries(CHAMPION_PARTIES)) {
+      expect(six, region).toHaveLength(EXPERT_PARTY_SIZE);
+    }
   });
 
   it('hands a beaten leader’s TM out of their own type’s case', () => {

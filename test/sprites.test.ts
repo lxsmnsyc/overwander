@@ -55,6 +55,15 @@ function fieldOf(value: unknown, key: string): unknown {
   return isRecord(value) ? value[key] : undefined;
 }
 
+/** A pair of numbers the sheets write points and offsets as. */
+function pairOf(pair: unknown): [number, number] | null {
+  return Array.isArray(pair) && pair.length === 2 ? [Number(pair[0]), Number(pair[1])] : null;
+}
+
+function trimOf(entry: unknown): [number, number] {
+  return pairOf(fieldOf(entry, 'trim')) ?? [0, 0];
+}
+
 function readLedger(): Map<string, SheetRecord> {
   const sheets = fieldOf(JSON.parse(readFileSync(LEDGER_PATH, 'utf8')) as unknown, 'sheets');
   const found = new Map<string, SheetRecord>();
@@ -170,6 +179,25 @@ describe('the berry plants that ship', () => {
     }
   });
 
+  it('says where every plant meets the ground', () => {
+    for (const { name } of registered()) {
+      const described = JSON.parse(readFileSync(`${ROOT}/${name}/data.json`, 'utf8')) as unknown;
+      const grid = fieldOf(described, 'grid');
+      const base = pairOf(fieldOf(grid, 'base'));
+      const trim = trimOf(grid);
+
+      // Said in the cell's coordinates, and inside the crop that was
+      // packed: the mound is drawn, so it survived the cropping
+      expect(base, name).not.toBe(null);
+      expect(base?.[0], name).toBeGreaterThanOrEqual(trim[0]);
+      expect(base?.[1], name).toBeGreaterThanOrEqual(trim[1]);
+      expect(base?.[0], name).toBeLessThan(trim[0] + Number(fieldOf(grid, 'frameWidth')));
+      expect(base?.[1], name).toBeLessThan(trim[1] + Number(fieldOf(grid, 'frameHeight')));
+      // Above the underside of the mound, which is the front of it
+      expect(base?.[1], name).toBeLessThan(Number(fieldOf(grid, 'sourceFrameHeight')) - 1);
+    }
+  });
+
   it('takes the folder name off the item, so a rename cannot go unnoticed', () => {
     for (const { item, name } of registered()) {
       // A grade is two words in the name and one hyphen in the folder,
@@ -191,6 +219,7 @@ describe('the scenery that ships', () => {
     sourceWidth: number;
     sourceHeight: number;
     trim: [number, number];
+    base: [number, number] | null;
   }
 
   function packed(sheet: string): Packed[] {
@@ -198,11 +227,6 @@ describe('the scenery that ships', () => {
       readFileSync(`${SPRITE_ROOT}/overworld/${sheet}/data.json`, 'utf8'),
     ) as unknown;
     const images = fieldOf(described, 'images');
-    const trimOf = (entry: unknown): [number, number] => {
-      const pair = fieldOf(entry, 'trim');
-
-      return Array.isArray(pair) ? [Number(pair[0]), Number(pair[1])] : [0, 0];
-    };
 
     return (Array.isArray(images) ? images : []).map((entry: unknown) => ({
       name: String(fieldOf(entry, 'name')).replace(/\.png$/, ''),
@@ -211,6 +235,7 @@ describe('the scenery that ships', () => {
       sourceWidth: Number(fieldOf(entry, 'sourceWidth')),
       sourceHeight: Number(fieldOf(entry, 'sourceHeight')),
       trim: trimOf(entry),
+      base: pairOf(fieldOf(entry, 'base')),
     }));
   }
 
@@ -269,15 +294,26 @@ describe('the scenery that ships', () => {
     // The taiga is the archetype: it is below the line, and the pine it
     // grows is the one thing on its cells that the cold shows on
     expect(isSnowy(Biome.Taiga)).toBe(true);
-    expect(decorationPicture(Decoration.Pine, Biome.Taiga).name).toBe('pine-snow');
+    // The snow is composed onto the biome's own tree, so a cold biome
+    // keeps the pine it chose rather than trading it for a white one
+    expect(decorationPicture(Decoration.Pine, Biome.Taiga)).toEqual({
+      sheet: TREE_SHEET,
+      name: 'pine-snow',
+    });
     // A rock in the cold is a rock: a white one would be invisible
     // against the ground it stands on
     expect(decorationPicture(Decoration.Rock, Biome.Taiga)).toEqual(
       decorationPicture(Decoration.Rock, Biome.Savanna),
     );
-    // The mountain is cold too, and its darker pine goes under the same
-    // snow rather than needing one of its own
-    expect(decorationPicture(Decoration.Pine, Biome.Mountain).name).toBe('pine-snow');
+    // The palm has no coat cut for it, so a cold beach keeps a bare one
+    expect(decorationPicture(Decoration.Palm, Biome.Taiga).name).toBe('palm');
+    // The mountain is cold, but its tiles are bare rock and its walls
+    // carry no snow, so its pine stands bare too
+    expect(isSnowy(Biome.Mountain)).toBe(false);
+    expect(decorationPicture(Decoration.Pine, Biome.Mountain)).toEqual({
+      sheet: TREE_SHEET,
+      name: 'pine-dark',
+    });
     // A warm biome keeps its own tree
     expect(isSnowy(Biome.TropicalRainforest)).toBe(false);
     expect(decorationPicture(Decoration.Tree, Biome.TropicalRainforest).name).toBe('jungle');
@@ -295,21 +331,59 @@ describe('the scenery that ships', () => {
     );
   });
 
-  it('packs every picture of both sheets in one square cell, on its floor', () => {
-    const all = BOTH.flatMap((sheet) => packed(sheet));
-    const cell = all[0].sourceWidth;
+  it('says where every piece of scenery meets the ground', () => {
+    for (const sheet of BOTH) {
+      for (const one of packed(sheet)) {
+        const cell = one.sourceWidth;
 
-    for (const one of all) {
-      // One cell across both sheets: a rock beside a pine keeps the
-      // proportions the rip drew them in, whichever sheet it came from
-      expect(one.sourceWidth, one.name).toBe(cell);
-      expect(one.sourceHeight, one.name).toBe(cell);
-      // Sitting on the floor, centred across it, so the point a caller
-      // puts scenery on is the ground it stands on
-      expect(one.trim[1], one.name).toBe(cell - one.height);
-      expect(one.trim[0], one.name).toBe(Math.floor((cell - one.width) / 2));
-      expect(one.width, one.name).toBeLessThanOrEqual(cell);
-      expect(one.height, one.name).toBeLessThanOrEqual(cell);
+        // Without it a caller can only guess the bottom middle, which
+        // stands the shadow on the tile and the piece a row behind it
+        expect(one.base, one.name).not.toBe(null);
+        expect(one.base?.[0], one.name).toBeGreaterThanOrEqual(0);
+        expect(one.base?.[0], one.name).toBeLessThan(cell);
+        expect(one.base?.[1], one.name).toBeGreaterThanOrEqual(0);
+        expect(one.base?.[1], one.name).toBeLessThan(cell);
+        // The ground is under the picture, never above its middle
+        expect(one.base?.[1], one.name).toBeGreaterThan(one.trim[1]);
+        // Above the lowest row it is drawn on, which is the front of
+        // the patch it stands on rather than the middle: the sheet has
+        // already taken the board's tilt off it
+        expect(one.base?.[1], one.name).toBeLessThan(one.trim[1] + one.height - 1);
+      }
+    }
+  });
+
+  it('says how much ground a tree covers, so a tree is sized by the tree', () => {
+    const described = JSON.parse(
+      readFileSync(`${SPRITE_ROOT}/overworld/${TREE_SHEET}/data.json`, 'utf8'),
+    ) as unknown;
+    const stands = Number(fieldOf(described, 'stands'));
+    const cell = packed(TREE_SHEET)[0].sourceWidth;
+
+    // A tree covers a good part of the square it was cut in, and never
+    // the whole of it: the square holds the tallest crown on the sheet
+    expect(stands).toBeGreaterThan(cell / 4);
+    expect(stands).toBeLessThan(cell);
+  });
+
+  it('packs each sheet in one square cell, every picture on its floor', () => {
+    for (const sheet of BOTH) {
+      const all = packed(sheet);
+      // One cell to a sheet, sized off that sheet's tallest piece. The
+      // props are their own sheet for this reason: measured against the
+      // tallest pine there is, a rock came out a speck
+      const cell = all[0].sourceWidth;
+
+      for (const one of all) {
+        expect(one.sourceWidth, one.name).toBe(cell);
+        expect(one.sourceHeight, one.name).toBe(cell);
+        expect(one.width, one.name).toBeLessThanOrEqual(cell);
+        expect(one.height, one.name).toBeLessThanOrEqual(cell);
+        // Sitting on the floor, centred across it, so the point a
+        // caller puts scenery on is the ground it stands on
+        expect(one.trim[1], one.name).toBe(cell - one.height);
+        expect(one.trim[0], one.name).toBe(Math.floor((cell - one.width) / 2));
+      }
     }
   });
 });

@@ -6,6 +6,8 @@ import type { PokengineGrid, PokengineResult } from '../server/sprites/pokengine
 import processPokengine, { parseOrder } from '../server/sprites/pokengine';
 import type { Coats, PmdResult } from '../server/sprites/pmd';
 import processPmd from '../server/sprites/pmd';
+import type { GraftResult } from '../server/sprites/graft';
+import graftWall, { parseBiomes } from '../server/sprites/graft';
 import type { RecolorResult } from '../server/sprites/recolor';
 import recolorTileset, { parseSwaps } from '../server/sprites/recolor';
 import type { TerrainBlock, TilesetResult, TilesetSheet } from '../server/sprites/tileset';
@@ -191,6 +193,20 @@ export const recolorBiome = action(async (form: FormData): Promise<RecolorResult
     swaps: parseSwaps(String(form.get('swaps') ?? '')),
   });
 }, 'sprites/recolor');
+
+/**
+ * One packed biome's wall written over another's. No file rides along:
+ * both sheets are what earlier packs wrote
+ */
+export const graftBiomeWall = action(async (form: FormData): Promise<GraftResult> => {
+  'use server';
+  await requireAdmin(String(form.get('token') ?? ''));
+
+  return graftWall({
+    from: Number.parseInt(String(form.get('from') ?? ''), 10),
+    biomes: parseBiomes(String(form.get('biomes') ?? '')),
+  });
+}, 'sprites/graft');
 
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {

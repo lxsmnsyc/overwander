@@ -87,9 +87,14 @@ const BY_BIOME: Partial<Record<Biome, Partial<Record<Decoration, string>>>> = {
  * A line rather than a list, because the answer is already in the
  * world: a biome carries the temperature it was placed by, and a tree
  * standing in a taiga is under snow for the same reason the taiga is
- * there at all
+ * there at all.
+ *
+ * It sits **below the mountain**, which is the one biome the line has
+ * to be drawn against: the mountain's own tiles are bare rock and its
+ * walls carry no snow, so a white pine standing on them read as a tree
+ * from somewhere else. Only the taiga grows a tree above the line now
  */
-export const SNOW_LINE = -0.2;
+export const SNOW_LINE = -0.3;
 
 const SNOWY = new Set<Biome>(
   Object.entries(BIOME_CONFIGS)
@@ -101,27 +106,26 @@ const SNOWY = new Set<Biome>(
 /**
  * What each tree is drawn as where it snows.
  *
- * The rip draws a snowbound version beside every family, on the
- * family's own silhouette, so a tree under snow is the same tree rather
- * than a different one: the three pines all go under one snow pine, and
- * the two trees with trunks share theirs.
+ * The rip draws the snow as a coat, not as a tree, so the sheet carries
+ * every tree with its own coat already composed onto it. A snowbound
+ * pine is that pine's own trunk and shadow under the snow, which is
+ * what lets a cold biome keep the shade of pine it chose.
  *
- * A tree left out keeps its own picture in the cold. The palm is the
- * one that means it: there is no snowbound palm on the sheet and no
- * beach cold enough to want one
+ * A tree left out goes bare in the cold. The palm is the one that means
+ * it: there is no coat cut for it and no beach cold enough to want one
  */
 const SNOW: Partial<Record<string, string>> = {
   round: 'round-snow',
-  broadleaf: 'leaf-snow',
-  dark: 'leaf-snow',
+  broadleaf: 'broadleaf-snow',
+  dark: 'dark-snow',
   jungle: 'jungle-snow',
   olive: 'olive-snow',
-  autumn: 'dry-snow',
+  autumn: 'autumn-snow',
   dry: 'dry-snow',
   fir: 'fir-snow',
   pine: 'pine-snow',
-  'pine-dark': 'pine-snow',
-  'pine-blue': 'pine-snow',
+  'pine-dark': 'pine-dark-snow',
+  'pine-blue': 'pine-blue-snow',
 };
 
 /**
@@ -155,9 +159,9 @@ export function decorationPictures(): DecorationPicture[] {
       keep({ sheet: PICTURES[Number(kind) as Decoration].sheet, name });
     }
   }
-  // Every snowbound counterpart of a tree that is drawn at all. Named by
-  // the table rather than reached through a biome, so the set does not
-  // shrink to whichever cold biomes happen to grow a tree today
+  // Every snowbound tree that is drawn at all. Named by the table
+  // rather than reached through a biome, so the set does not shrink to
+  // whichever cold biomes happen to grow a tree today
   for (const [tree, snow] of Object.entries(SNOW)) {
     if (snow != null && found.has(`${TREE_SHEET}/${tree}`)) {
       keep({ sheet: TREE_SHEET, name: snow });

@@ -1,4 +1,5 @@
-import { BORDER_CELLS, PICTURE_SPAN, PITCH } from '../../../canvas/board';
+import { BORDER_CELLS, PICTURE_SPAN } from '../../../canvas/board';
+import { GROUND_SQUASH } from '../../../canvas/tilt';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 
 /**
@@ -74,7 +75,7 @@ export const NPC_CELLS = 1.45;
  * a bush the player walks up to should not hide whoever is standing
  * behind it
  */
-export const PLANT_CELLS = 1.1;
+export const PLANT_CELLS = 1.5;
 
 /**
  * How many points of the sway loop the patches are spread over. A
@@ -89,6 +90,18 @@ export const PLANT_PHASES = 7;
  */
 export const PICKED_STAGE = 0;
 
+/**
+ * How many cells tall a scenery **cell** is drawn, for a sheet that
+ * does not say how much ground its pieces cover.
+ *
+ * Each sheet packs its pieces in a square of its own, sized off its own
+ * tallest, so this sizes whatever fills that square and everything
+ * shorter comes out in proportion. It is a drawing choice rather than a
+ * measurement, which is why the trees do not use it: a sheet carrying a
+ * `stands` is drawn so that much ground covers a square instead
+ */
+export const SCENERY_CELLS = 1.7;
+
 /** The charset the player walks in when nothing else is chosen. */
 export const PLAYER_SHEET = 'characters/frlg/red';
 
@@ -98,6 +111,23 @@ export const PLAYER_SHEET = 'characters/frlg/red';
  * lands and a long walk reads as one motion
  */
 export const SLIDE_PACE = 250;
+
+/**
+ * How far the slide moves this frame, in cells, with `span` still to
+ * cover and `elapsed` milliseconds gone.
+ *
+ * One cell per pace is the walking speed, and on its own it is a
+ * speed the slide can never make up ground at: the walk lays down a
+ * step in exactly that time, so a frame lost to a chunk arriving was
+ * lost for good and the arrears piled up over a long walk until they
+ * passed `SNAP_CELLS` and the walker jumped. So whatever it is behind
+ * by beyond the one cell it owes is walked off **on top** of the
+ * normal speed, which puts it back in step within a pace and leaves
+ * the snap for the jumps it is meant for
+ */
+export function slideGain(span: number, elapsed: number): number {
+  return Math.min(span, (elapsed / SLIDE_PACE) * (1 + Math.max(0, span - 1)));
+}
 
 /**
  * A jump of more than this many cells is not a walk: a crossing or a
@@ -189,9 +219,12 @@ export const COMPASS_HALO = 3;
 
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
- * laid back under the camera, so it is squashed the way the ground is
+ * laid back under the camera, so it is squashed the way the ground is.
+ * From [`tilt`](../../../canvas/tilt.ts), which is where the sheet
+ * cutters read it from as well: a sheet says where a piece of scenery
+ * meets the ground, and finding that point needs this
  */
-export const GROUND_SQUASH = Math.sin((PITCH * Math.PI) / 180) * 0.55;
+export { GROUND_SQUASH };
 
 /**
  * Crossing a boundary, drawn rather than waited through.

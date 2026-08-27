@@ -1235,10 +1235,16 @@ export default function OverworldBoard(props: {
     let timer: ReturnType<typeof setInterval> | null = null;
 
     const pace = (): void => {
-      untrack(stride);
+      // The clock is started before the step, not after. A step can end
+      // the walk from inside itself, by arriving or by crossing an
+      // edge, and ending it disposes this effect there and then: a
+      // clock started afterwards is one nothing holds a handle to. Those
+      // outlive the walk, and every one of them drives the next walk, so
+      // two of them is a player moving three cells a pace
       timer = setInterval(() => {
         untrack(stride);
       }, STEP_PACE);
+      untrack(stride);
     };
 
     if (owed > 0) {

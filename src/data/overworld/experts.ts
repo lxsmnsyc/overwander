@@ -1,8 +1,10 @@
+import { SpawnRarity, getSpawnRarity } from '../biome';
 import { Types } from '../constants/types';
 import Awards from '../ids/awards';
 import Biome from '../ids/biome';
+import EggGroups from '../ids/egg-groups';
 import { type Items, getMachineItem } from '../ids/items';
-import type Regions from '../ids/regions';
+import Regions from '../ids/regions';
 import { Species } from '../ids/species';
 import { getTeachableMoves } from '../items/machines';
 import { getMoveData } from '../moves';
@@ -244,18 +246,136 @@ export const CHAMPION_NAME = 'Red';
 export const CHAMPION_CHARSETS: string[] = ['characters/frlg/red', 'characters/lgpe/red'];
 
 /**
- * The species an expert may field: every base form of their own
- * region and their named type, or of any type for an expert with no
- * specialty. Lair species stay out (a legendary belongs to its raid),
- * and so does the egg
+ * The Champion's own six, by region.
+ *
+ * A champion is the one expert who does not draw from a pool: the
+ * team is the character, and a player who has walked the whole league
+ * to reach them should meet the party they are known for. Red's is
+ * his Mt. Silver line-up from HeartGold and SoulSilver, which is the
+ * version of it made entirely of Kanto species.
+ *
+ * A region with no entry has no champion to stand: nothing is
+ * invented for it, and the seat stays empty until the team is known
+ */
+export const CHAMPION_PARTIES: Partial<Record<Regions, Species[]>> = {
+  [Regions.Kanto]: [
+    Species.Pikachu,
+    Species.Lapras,
+    Species.Snorlax,
+    Species.Venusaur,
+    Species.Charizard,
+    Species.Blastoise,
+  ],
+};
+
+export function getChampionParty(region: Regions): Species[] | null {
+  return CHAMPION_PARTIES[region] ?? null;
+}
+
+/**
+ * What counts as an expert's own.
+ *
+ * A type alone is too narrow for some of them: Kanto has one
+ * fully-grown Ghost and one fully-grown Dragon, so Agatha and Lance
+ * would each field six of the same pokemon. The wideners are the ones
+ * the mainline's own teams are built from. **Kinship** the type table
+ * misses, since Lance's Gyarados is a dragon by breeding and nothing
+ * else; and the odd pokemon that is simply **theirs**, since Bruno's
+ * Onix answers to no rule at all.
+ *
+ * Every route is still held to the rare band, so `also` cannot smuggle
+ * a Magikarp or a Mewtwo onto a team
+ */
+export interface ExpertPool {
+  /** The types that count as theirs; empty for an expert with none */
+  types: Types[];
+  /** Egg groups that count as theirs besides */
+  eggGroups?: EggGroups[];
+  /** Named species no rule reaches */
+  also?: Species[];
+}
+
+/**
+ * What each of the Elite Four fields.
+ *
+ * Each widening is the one their mainline team actually shows. Bruno
+ * brings hard ground along with the muscle, Agatha's ghosts keep the
+ * company they keep, and Lance's dragons are read off the breeding
+ * table rather than the type chart
+ */
+export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
+  // Slowbro is hers in every game she appears in and there is nothing
+  // icy about him, so he is named rather than derived
+  [EliteMember.Lorelei]: { types: [Types.Ice], also: [Species.Slowbro] },
+  // The Ground half is his two Onix, and it brings the rest of the
+  // heavy ground with it. It overlaps Brock's rock at Golem, Onix and
+  // Rhydon, which is right: they are the same three pokemon a
+  // fighting specialist and a rock specialist would both want
+  [EliteMember.Bruno]: { types: [Types.Fighting, Types.Ground] },
+  // Not the Poison **type**, which in Kanto is Koga's pool exactly
+  // and would make her a second Koga. The Amorphous group is what her
+  // ghosts have in common, and her Golbat and Arbok are named
+  [EliteMember.Agatha]: {
+    types: [Types.Ghost],
+    eggGroups: [EggGroups.Amorphous],
+    also: [Species.Golbat, Species.Arbok],
+  },
+  // The Dragon egg group is the whole point: it is why a Gyarados
+  // stands on a dragon master's team. Aerodactyl is a dragon by
+  // neither rule and by every eye, so he is named
+  [EliteMember.Lance]: {
+    types: [Types.Dragon],
+    eggGroups: [EggGroups.Dragon],
+    also: [Species.Aerodactyl],
+  },
+};
+
+/**
+ * And what a gym leader fields: their own type and nothing more, read
+ * off the table above rather than kept twice. Blue, with no specialty,
+ * takes the whole band
+ */
+export function getGymLeaderPool(leader: GymLeader): ExpertPool {
+  const type = GYM_LEADER_TYPES[leader];
+
+  return { types: type == null ? [] : [type] };
+}
+
+/**
+ * The species an expert may field: the **rare** band of their own
+ * region, which is the fully-evolved and single-line species, narrowed
+ * to what their pool counts as theirs.
+ *
+ * The band is the whole of what separates them from a duelling
+ * trainer: a leader fielding the same Bellsprout a player meets in the
+ * grass is a leader nobody remembers beating. It leaves the babies and
+ * the legendaries out with the half-grown, which is right for both.
+ * A legendary belongs to its raid, and the egg to nothing at all
  */
 const LAIR_SPECIES = new Set(EVERY_LAIR.map(getLairSpecies));
 
-export function getExpertPool(region: Regions, type: Types | null): Species[] {
+export function getExpertPool(region: Regions, pool: ExpertPool): Species[] {
+  const types = new Set(pool.types);
+  const groups = new Set(pool.eggGroups);
+  const named = new Set(pool.also);
+
   return getSpeciesByRegion(region).filter((species) => {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
       return false;
     }
-    return type == null || getSpeciesData(species).types.includes(type);
+    if (getSpawnRarity(species) !== SpawnRarity.Rare) {
+      return false;
+    }
+    // An expert with no specialty takes the band whole
+    if (types.size === 0 || named.has(species)) {
+      return true;
+    }
+
+    const data = getSpeciesData(species);
+
+    return (
+      data.types.some((type) => types.has(type)) ||
+      data.eggGroups.some((group) => groups.has(group))
+    );
   });
 }

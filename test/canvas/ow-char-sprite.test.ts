@@ -271,8 +271,33 @@ describe('OWCharSprite', () => {
     const sprite = loaded();
     const { context, ellipses } = recorder();
 
-    sprite.draw(context, 100, 200, { shadow: true });
-    expect(ellipses[0]?.slice(0, 4)).toEqual([100, 200, 32 * 0.44 * 0.5, 32 * 0.44 * 0.5 * 0.4]);
+    // Measured off the cell rather than the cropped frame, so it does
+    // not grow and shrink with the swing of an arm
+    sprite.drawShadow(context, 100, 200);
+    expect(ellipses[0]?.slice(0, 4)).toEqual([100, 200, 32 * 0.24, 32 * 0.24 * 0.42]);
+  });
+
+  it('lies as flat as the ground it is on', () => {
+    const sprite = loaded();
+    const { context, ellipses } = recorder();
+
+    sprite.drawShadow(context, 100, 200, { squash: 0.5 });
+    expect(ellipses[0]?.[3]).toBe(32 * 0.24 * 0.5);
+  });
+
+  it('keeps a thrown shadow attached to the feet', () => {
+    const sprite = loaded();
+    const { context, ellipses } = recorder();
+    const across = 32 * 0.24;
+
+    sprite.drawShadow(context, 100, 200, { cast: { dx: 1, dy: 0, length: 1 } });
+
+    // Slid out by half its own reach and stretched by as much, so the
+    // near end is still where the feet are
+    const [x, , radius] = ellipses[0];
+
+    expect(radius).toBe(across * 2);
+    expect(x - radius).toBeCloseTo(100 - across);
   });
 
   it('shares the sheet with a clone and nothing else', () => {

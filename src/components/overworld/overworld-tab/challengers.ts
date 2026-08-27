@@ -130,9 +130,9 @@ export default function challengerOf(
       name: CHAMPION_NAME,
       levels: CHAMPION_PARTY_LEVELS,
       greeting: `${CHAMPION_NAME} says nothing. He reaches for a ball.`,
-      stakes: `6 at ${saidLevels(CHAMPION_PARTY_LEVELS)} against as many as you bring. Win and
-        the title of Kanto Champion is yours, with a purse to match. Lose and you lose nothing
-        but the fight.`,
+      stakes: `His own six at ${saidLevels(CHAMPION_PARTY_LEVELS)} against as many as you bring.
+        Win and the title of Kanto Champion is yours, with a purse to match. Lose and you lose
+        nothing but the fight.`,
     };
   }
   return null;

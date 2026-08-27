@@ -26,51 +26,51 @@
       }
     },
     "public/sprites/biome/10/image.png": {
-      "digest": "422853b0305d17ca",
-      "bytes": 14722,
+      "digest": "722630a81e2e12e8",
+      "bytes": 17266,
       "width": 168,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T10:38:31Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 14722,
-        "bytes": 14722
+        "was": 17266,
+        "bytes": 17266
       }
     },
     "public/sprites/biome/11/image.png": {
-      "digest": "5b8de0deef349ed8",
-      "bytes": 18593,
+      "digest": "026e7d34199a8e33",
+      "bytes": 18195,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 18593,
-        "bytes": 18593
+        "was": 18195,
+        "bytes": 18195
       }
     },
     "public/sprites/biome/12/image.png": {
-      "digest": "8752b14af29cccc2",
-      "bytes": 23955,
+      "digest": "c4a268910f23e088",
+      "bytes": 21364,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 23955,
-        "bytes": 23955
+        "was": 21364,
+        "bytes": 21364
       }
     },
     "public/sprites/biome/13/image.png": {
-      "digest": "2f377c562395ee28",
-      "bytes": 18558,
+      "digest": "6e3b190c399f1939",
+      "bytes": 19784,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 18558,
-        "bytes": 18558
+        "was": 19784,
+        "bytes": 19784
       }
     },
     "public/sprites/biome/14/image.png": {
@@ -86,15 +86,15 @@
       }
     },
     "public/sprites/biome/15/image.png": {
-      "digest": "2669d506421acae4",
-      "bytes": 21837,
+      "digest": "e4556c0277685f52",
+      "bytes": 19598,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 21837,
-        "bytes": 21837
+        "was": 19598,
+        "bytes": 19598
       }
     },
     "public/sprites/biome/16/image.png": {
@@ -158,15 +158,15 @@
       }
     },
     "public/sprites/biome/20/image.png": {
-      "digest": "206f8a8c1a71a803",
-      "bytes": 20829,
+      "digest": "ebf44add50419a8b",
+      "bytes": 21665,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 20829,
-        "bytes": 20829
+        "was": 21665,
+        "bytes": 21665
       }
     },
     "public/sprites/biome/21/image.png": {
@@ -182,15 +182,15 @@
       }
     },
     "public/sprites/biome/22/image.png": {
-      "digest": "b29cb833f8c888ab",
-      "bytes": 22744,
+      "digest": "dec8ef1ef51c0e88",
+      "bytes": 22825,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 22744,
-        "bytes": 22744
+        "was": 22825,
+        "bytes": 22825
       }
     },
     "public/sprites/biome/23/image.png": {
@@ -242,15 +242,15 @@
       }
     },
     "public/sprites/biome/28/image.png": {
-      "digest": "4f13e0ad34b53dbb",
-      "bytes": 19798,
+      "digest": "b855d242fb36f556",
+      "bytes": 18267,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 19798,
-        "bytes": 19798
+        "was": 18267,
+        "bytes": 18267
       }
     },
     "public/sprites/biome/29/image.png": {
@@ -278,15 +278,15 @@
       }
     },
     "public/sprites/biome/4/image.png": {
-      "digest": "d5919870026fc22d",
-      "bytes": 21368,
+      "digest": "e7314c759819e522",
+      "bytes": 21344,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T10:34:53Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 21368,
-        "bytes": 21368
+        "was": 21344,
+        "bytes": 21344
       }
     },
     "public/sprites/biome/5/image.png": {
@@ -302,39 +302,39 @@
       }
     },
     "public/sprites/biome/6/image.png": {
-      "digest": "5c1c8ae052739963",
-      "bytes": 21683,
+      "digest": "6b9765b17e0f2826",
+      "bytes": 22645,
       "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 21683,
-        "bytes": 21683
+        "was": 22645,
+        "bytes": 22645
       }
     },
     "public/sprites/biome/7/image.png": {
-      "digest": "43972a84004bc32d",
-      "bytes": 21009,
+      "digest": "2caf367aa16d9c15",
+      "bytes": 19977,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 21009,
-        "bytes": 21009
+        "was": 19977,
+        "bytes": 19977
       }
     },
     "public/sprites/biome/8/image.png": {
-      "digest": "ca37431c023559b4",
-      "bytes": 20829,
+      "digest": "fa893742dd681b77",
+      "bytes": 22276,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-08-27T11:48:33Z",
         "as": "already compact",
-        "was": 20829,
-        "bytes": 20829
+        "was": 22276,
+        "bytes": 22276
       }
     },
     "public/sprites/biome/9/image.png": {
@@ -1675,7 +1675,7 @@
       "width": 28,
       "height": 81,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 650,
         "bytes": 650
@@ -1687,7 +1687,7 @@
       "width": 32,
       "height": 75,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 636,
         "bytes": 636
@@ -1699,7 +1699,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 726,
         "bytes": 726
@@ -1711,7 +1711,7 @@
       "width": 32,
       "height": 90,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 685,
         "bytes": 685
@@ -1723,7 +1723,7 @@
       "width": 28,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 623,
         "bytes": 623
@@ -1735,7 +1735,7 @@
       "width": 34,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 865,
         "bytes": 865
@@ -1747,7 +1747,7 @@
       "width": 30,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 582,
         "bytes": 582
@@ -1759,7 +1759,7 @@
       "width": 30,
       "height": 84,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 600,
         "bytes": 600
@@ -1771,7 +1771,7 @@
       "width": 32,
       "height": 81,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 748,
         "bytes": 748
@@ -1783,7 +1783,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 689,
         "bytes": 689
@@ -1795,7 +1795,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 828,
         "bytes": 828
@@ -1807,7 +1807,7 @@
       "width": 32,
       "height": 54,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 656,
         "bytes": 656
@@ -1819,7 +1819,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 657,
         "bytes": 657
@@ -1831,7 +1831,7 @@
       "width": 32,
       "height": 75,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 675,
         "bytes": 675
@@ -1843,7 +1843,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 612,
         "bytes": 612
@@ -1855,7 +1855,7 @@
       "width": 32,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 814,
         "bytes": 814
@@ -1867,7 +1867,7 @@
       "width": 32,
       "height": 90,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 666,
         "bytes": 666
@@ -1879,7 +1879,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 732,
         "bytes": 732
@@ -1891,7 +1891,7 @@
       "width": 28,
       "height": 84,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 637,
         "bytes": 637
@@ -1903,7 +1903,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 844,
         "bytes": 844
@@ -1915,7 +1915,7 @@
       "width": 30,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 559,
         "bytes": 559
@@ -1927,7 +1927,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 813,
         "bytes": 813
@@ -1939,7 +1939,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 675,
         "bytes": 675
@@ -1951,7 +1951,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 671,
         "bytes": 671
@@ -1963,7 +1963,7 @@
       "width": 28,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 616,
         "bytes": 616
@@ -1975,7 +1975,7 @@
       "width": 30,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 591,
         "bytes": 591
@@ -1987,7 +1987,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 567,
         "bytes": 567
@@ -1999,7 +1999,7 @@
       "width": 28,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 593,
         "bytes": 593
@@ -2011,7 +2011,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 721,
         "bytes": 721
@@ -2023,7 +2023,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T07:39:25Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 562,
         "bytes": 562
@@ -2035,7 +2035,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 744,
         "bytes": 744
@@ -2047,7 +2047,7 @@
       "width": 32,
       "height": 63,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 517,
         "bytes": 517
@@ -2059,7 +2059,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 594,
         "bytes": 594
@@ -2071,7 +2071,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 585,
         "bytes": 585
@@ -2083,7 +2083,7 @@
       "width": 32,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 688,
         "bytes": 688
@@ -2095,7 +2095,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 835,
         "bytes": 835
@@ -2107,7 +2107,7 @@
       "width": 30,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 589,
         "bytes": 589
@@ -2119,7 +2119,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T07:39:25Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 636,
         "bytes": 636
@@ -2131,7 +2131,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 607,
         "bytes": 607
@@ -2143,7 +2143,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 851,
         "bytes": 851
@@ -2155,7 +2155,7 @@
       "width": 30,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 666,
         "bytes": 666
@@ -2167,7 +2167,7 @@
       "width": 32,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 702,
         "bytes": 702
@@ -2179,7 +2179,7 @@
       "width": 34,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 858,
         "bytes": 858
@@ -2191,7 +2191,7 @@
       "width": 32,
       "height": 93,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 717,
         "bytes": 717
@@ -2203,7 +2203,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 729,
         "bytes": 729
@@ -2215,7 +2215,7 @@
       "width": 30,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 699,
         "bytes": 699
@@ -2227,7 +2227,7 @@
       "width": 32,
       "height": 81,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 728,
         "bytes": 728
@@ -2239,7 +2239,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 676,
         "bytes": 676
@@ -2251,7 +2251,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 479,
         "bytes": 479
@@ -2263,7 +2263,7 @@
       "width": 30,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 565,
         "bytes": 565
@@ -2275,7 +2275,7 @@
       "width": 30,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 591,
         "bytes": 591
@@ -2287,7 +2287,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 641,
         "bytes": 641
@@ -2299,7 +2299,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 708,
         "bytes": 708
@@ -2311,7 +2311,7 @@
       "width": 32,
       "height": 54,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 664,
         "bytes": 664
@@ -2323,7 +2323,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 813,
         "bytes": 813
@@ -2335,7 +2335,7 @@
       "width": 30,
       "height": 84,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 701,
         "bytes": 701
@@ -2347,7 +2347,7 @@
       "width": 30,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:39:25Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 689,
         "bytes": 689
@@ -2359,7 +2359,7 @@
       "width": 32,
       "height": 69,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 636,
         "bytes": 636
@@ -2371,7 +2371,7 @@
       "width": 28,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 501,
         "bytes": 501
@@ -2383,7 +2383,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 704,
         "bytes": 704
@@ -2395,7 +2395,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 844,
         "bytes": 844
@@ -2407,7 +2407,7 @@
       "width": 30,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 559,
         "bytes": 559
@@ -2419,7 +2419,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T07:53:04Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 813,
         "bytes": 813
@@ -2431,7 +2431,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 1258,
         "bytes": 1258
@@ -2443,7 +2443,7 @@
       "width": 28,
       "height": 60,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 492,
         "bytes": 492
@@ -2455,7 +2455,7 @@
       "width": 32,
       "height": 75,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 659,
         "bytes": 659
@@ -2467,7 +2467,7 @@
       "width": 30,
       "height": 84,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 683,
         "bytes": 683
@@ -2479,7 +2479,7 @@
       "width": 32,
       "height": 75,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 711,
         "bytes": 711
@@ -2491,7 +2491,7 @@
       "width": 32,
       "height": 87,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 826,
         "bytes": 826
@@ -2503,7 +2503,7 @@
       "width": 32,
       "height": 78,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 757,
         "bytes": 757
@@ -2515,7 +2515,7 @@
       "width": 32,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T07:26:26Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 667,
         "bytes": 667
@@ -2527,7 +2527,7 @@
       "width": 34,
       "height": 72,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 747,
         "bytes": 747
@@ -2539,7 +2539,7 @@
       "width": 28,
       "height": 66,
       "compact": {
-        "at": "2026-08-27T06:54:50Z",
+        "at": "2026-08-27T14:21:19Z",
         "as": "already compact",
         "was": 525,
         "bytes": 525
@@ -2678,15 +2678,15 @@
       }
     },
     "public/sprites/overworld/trees/image.png": {
-      "digest": "a51ac6e4dd3de851",
-      "bytes": 13936,
-      "width": 283,
-      "height": 247,
+      "digest": "b912ea4727370010",
+      "bytes": 15562,
+      "width": 326,
+      "height": 271,
       "compact": {
-        "at": "2026-08-27T11:20:33Z",
+        "at": "2026-08-27T12:49:11Z",
         "as": "already compact",
-        "was": 13936,
-        "bytes": 13936
+        "was": 15562,
+        "bytes": 15562
       }
     },
     "public/sprites/pokemon/kanto/regular/1.png": {

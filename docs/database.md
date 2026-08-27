@@ -16,8 +16,10 @@ the battle engine runs is in [The battle engine](engine.md). These pages are the
 storage side of the same thing.
 
 The schema itself lives in [`supabase/migrations/`](../supabase/migrations),
-applied in filename order. `pnpm db` starts a local stack and `pnpm db:reset`
-rebuilds it from the migrations.
+applied in filename order. [Running the database
+locally](database/local-stack.md) is the guide to standing one up: what to
+install, what `pnpm db` prints, what goes in `.env`, and how to reset and seed
+it.
 
 ## The tables
 
@@ -36,6 +38,7 @@ rebuilds it from the migrations.
 | [Encounter kinds](database/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as                                         |
 | [Time](database/time.md)                         | The server clock, and the player-local zone everything is read in                                          |
 | [Security](database/security.md)                 | Privileged writes, the policies, the grants, and the indexes the queries need                              |
+| [Running it locally](database/local-stack.md)    | Starting the stack, pointing the app at it, seeding, resetting, and what to check when it misbehaves       |
 
 ## How to read these
 

@@ -49,10 +49,13 @@ import Npc, { npcSheet } from '../../../data/overworld/npc';
 import type { Species } from '../../../data/ids/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
-import loadOWChar from '../../../canvas/ow-char-sprites';
+import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
 import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
 import loadOWPlant from '../../../canvas/ow-plant-sprites';
 import berryPlantSheet from '../../../data/overworld/berry-plant';
+import decorationPicture from '../../../data/overworld/decoration-sprite';
+import type BasicSprite from '../../../canvas/basic-sprite';
+import loadBasicSprite from '../../../canvas/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 import {
@@ -77,13 +80,14 @@ import {
   PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
+  SCENERY_CELLS,
   SIZE_TIERS,
-  SLIDE_PACE,
   SNAP_CELLS,
   SPRITE_SCALE,
   TURN_DEAD_ZONE,
   WIDTH,
   isTurningPress,
+  slideGain,
 } from './metrics';
 import {
   LANDMARK_GLYPHS,
@@ -94,7 +98,7 @@ import {
   facingOf,
 } from './scenery';
 
-export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress };
+export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
 
 /**
  * The chunk the player is standing in, drawn rather than laid out.
@@ -321,6 +325,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   const plants = new Map<string, OWPlantSprite | null>();
 
   /**
+   * The scenery atlases, by the folder they are in. Both are stills, so
+   * one copy serves every cell that draws off them
+   */
+  const scenery = new Map<string, BasicSprite | null>();
+
+  /**
    * When a sheet last failed to come, so a miss is retried after a
    * pause rather than either refetched every frame or given up on for
    * the life of the board — a charset the processor is writing this
@@ -474,6 +484,66 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     return plant?.ready === true ? plant : null;
   };
 
+  const loadScenery = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
+    }
+
+    scenery.set(sheet, null);
+
+    const loading = loadBasicSprite(`${OW_SPRITE_ROOT}/${sheet}`)
+      .then((loaded) => {
+        if (loaded == null) {
+          missedAt.set(sheet, performance.now());
+          scenery.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          scenery.set(sheet, loaded);
+          missedAt.delete(sheet);
+        }
+      })
+      .catch(() => {
+        // The cone and the mound it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  /**
+   * The picture a piece of scenery is drawn as, once its atlas is in
+   * hand. A kind whose sheet has not landed is the shape it was before
+   * there were any
+   */
+  const sceneryOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    const kind = props.decorations.get(index);
+
+    if (kind == null) {
+      return null;
+    }
+
+    const picture = decorationPicture(kind, props.biome);
+
+    if (!scenery.has(picture.sheet)) {
+      loadScenery(picture.sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(picture.sheet) ?? null;
+
+    return sheet?.ready === true ? { sheet, name: picture.name } : null;
+  };
+
   /**
    * The player's own walker, and the copy is the point.
    *
@@ -504,8 +574,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   /**
    * Where the player is drawn, in board-cell coordinates. It chases
-   * `props.player` one cell per `SLIDE_PACE`, which is what turns a
-   * step into a slide; a jump too far to be a step snaps instead
+   * `props.player` at walking pace, catching up if it has fallen
+   * behind, which is what turns a step into a slide; a jump too far to
+   * be a step snaps instead
    */
   const slide = { x: props.player % CHUNK_CELLS, y: Math.floor(props.player / CHUNK_CELLS) };
 
@@ -1014,7 +1085,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         slide.y = goalY;
         walker?.stop();
       } else if (span > 0) {
-        const gain = Math.min(span, elapsed / SLIDE_PACE);
+        const gain = slideGain(span, elapsed);
 
         heading = facingToward(slide.x, slide.y, goalX, goalY);
         slide.x += (dx / span) * gain;
@@ -1236,10 +1307,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const index = square.y * CHUNK_CELLS + square.x;
         const decoration = props.decorations.get(index);
 
-        // Scenery goes down with the ground, under everything else:
-        // it is what the chunk is made of rather than something
-        // standing on it
-        if (decoration != null) {
+        // A shape only while the atlas is still coming. Drawn scenery
+        // is a tree rather than a cone, so it stands with everything
+        // else that stands rather than lying under it
+        if (decoration != null && sceneryOn(index) == null) {
           drawDecoration(context, at(projectCell(index, yaw())), decoration, magnify);
         }
 
@@ -1332,6 +1403,46 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           sparkles.delete(index);
         }
 
+        // Scenery first of everything that stands on a cell: a tree is
+        // the backdrop a pokemon is standing in front of
+        const standingScenery = loading() ? null : sceneryOn(index);
+
+        if (standingScenery != null) {
+          const cell = standingScenery.sheet.frameOf(standingScenery.name);
+
+          if (cell != null) {
+            // A sheet that says how much ground its pieces cover is
+            // drawn so that much of it is one square: a tree comes out
+            // the size of the tree rather than the size of the square
+            // the packing needed for the tallest one on the sheet.
+            // Anything that does not say is sized off its own cell
+            const stands = standingScenery.sheet.data.stands;
+            const scale =
+              stands == null
+                ? (CELL * SCENERY_CELLS * middle.scale * magnify) / cell.sourceHeight
+                : (CELL * middle.scale * magnify) / stands;
+            // The atlas is pixel art and BasicSprite draws for the
+            // interface, where nothing is scaled up far enough to care
+            const smoothing = context.imageSmoothingEnabled;
+
+            context.imageSmoothingEnabled = false;
+            // Where the piece meets the ground, which the sheet worked
+            // out when it was cut: the middle of the patch it stands
+            // on, never the shadow the rip lays under it. Standing the
+            // cell's floor on the tile instead puts the shadow on the
+            // tile and the piece a row behind it
+            const base = cell.base ?? [cell.sourceWidth / 2, cell.sourceHeight];
+            standingScenery.sheet.draw(
+              context,
+              standingScenery.name,
+              middle.x - base[0] * scale,
+              middle.y - base[1] * scale,
+              { scale, anchor: 'top-left' },
+            );
+            context.imageSmoothingEnabled = smoothing;
+          }
+        }
+
         // A bush is drawn before whatever is standing beside it: it is
         // scenery with a berry on it, and a pokemon in front of it
         // should read as being in front of it
@@ -1349,7 +1460,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // patches on it is four bushes rather than one drawn four
             // times
             phase: (index % PLANT_PHASES) / PLANT_PHASES,
-            // The soil the plant grows out of is the bottom of the cell
+            // The soil the plant grows out of, which the sheet says
+            // where to find
             anchor: 'foot',
           });
         }
@@ -1374,14 +1486,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
                 yaw(),
               )
             ];
-          person.draw(context, middle.x, middle.y, {
+          // Feet on the cell, and the patch under them drawn first:
+          // a charset has no shadow marker to measure, so the bottom
+          // middle of the cell is where the ground is
+          const standingPerson = {
             scale: (CELL * NPC_CELLS * middle.scale * magnify) / person.sourceFrameHeight,
-            // Feet on the cell, and the patch under them drawn by the
-            // sheet: a charset has no shadow marker to measure, so the
-            // bottom middle of the cell is where the ground is
             anchor: 'foot',
-            shadow: true,
+          } as const;
+
+          person.drawShadow(context, middle.x, middle.y, {
+            ...standingPerson,
+            color: COLORS.shadow,
+            // Lying the way the board lies, and thrown the way this
+            // hour's light throws every other shadow on it
+            squash: GROUND_SQUASH,
+            cast: cast(),
           });
+          person.draw(context, middle.x, middle.y, standingPerson);
         }
 
         if (standing != null) {
@@ -1480,11 +1601,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // has been walked to
             walker.facing =
               SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
-            walker.draw(context, spot.x, spot.y, {
+            const walking = {
               scale: (CELL * NPC_CELLS * spot.scale * magnify) / walker.sourceFrameHeight,
               anchor: 'foot',
-              shadow: true,
+            } as const;
+
+            walker.drawShadow(context, spot.x, spot.y, {
+              ...walking,
+              color: COLORS.shadow,
+              squash: GROUND_SQUASH,
+              cast: cast(),
             });
+            walker.draw(context, spot.x, spot.y, walking);
           }
         }
       }

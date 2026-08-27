@@ -63,7 +63,7 @@ scenery belongs to the chunk permanently.
 
 ## Landmarks
 
-Every chunk contains **eight to twelve landmarks**, and they never move. The
+Every chunk contains **five to eight landmarks**, and they never move. The
 same chunk has the same landmarks on the same cells permanently; only their
 contents change. Most may repeat, so one chunk may hold two berry patches; a
 few are one to a chunk, marked below.

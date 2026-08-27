@@ -272,7 +272,7 @@ describe('world', () => {
     expect(chunk.biome).toBe(world.getChunk(3, -7).biome);
   });
 
-  it('rolls 5-7 fixed landmarks per chunk, each on its own cell', () => {
+  it('rolls 5-8 fixed landmarks per chunk, each on its own cell', () => {
     const world = new World('overworld');
     const shapes = new Set<string>();
 
@@ -280,8 +280,8 @@ describe('world', () => {
       const chunk = world.getChunk(x, 0);
       const landmarks = chunk.getLandmarks();
 
-      expect(landmarks.length).toBeGreaterThanOrEqual(8);
-      expect(landmarks.length).toBeLessThanOrEqual(12);
+      expect(landmarks.length).toBeGreaterThanOrEqual(5);
+      expect(landmarks.length).toBeLessThanOrEqual(8);
 
       // One cell each: the cell map holds every landmark, all
       // within the central 15x15
@@ -2605,9 +2605,9 @@ describe('chunk snapshot', () => {
 
         // Nine cells at most per landmark, out of the central 15x15's
         // two hundred and twenty-five: the ring never costs a chunk
-        // one of its eight to twelve
-        expect(landmarks.size).toBeGreaterThanOrEqual(8);
-        expect(landmarks.size).toBeLessThanOrEqual(12);
+        // one of its five to eight
+        expect(landmarks.size).toBeGreaterThanOrEqual(5);
+        expect(landmarks.size).toBeLessThanOrEqual(8);
         // The area is the landmarks plus their rings, and a ring
         // inside the placement area is never empty
         expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);
@@ -3462,9 +3462,16 @@ describe('placement invariants', () => {
 });
 
 describe('portal balancing', () => {
-  it('never rolls a second portal, gym, champion or seat into a chunk', () => {
+  it('never rolls a second of anything a chunk keeps one of', () => {
     const world = new World('overworld');
-    const singletons = [Landmark.Portal, Landmark.GymLeader, Landmark.Champion, Landmark.GymSeat];
+    const singletons = [
+      Landmark.Portal,
+      Landmark.GymLeader,
+      Landmark.EliteFour,
+      Landmark.Champion,
+      Landmark.GymSeat,
+      Landmark.AuctionBoard,
+    ];
 
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 25; x++) {

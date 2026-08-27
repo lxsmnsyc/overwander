@@ -47,8 +47,13 @@ export function centeredCells(size: number): number[] {
   return cells;
 }
 
-const MIN_LANDMARKS = 8;
-const MAX_LANDMARKS = 12;
+/**
+ * How many landmarks a chunk holds. Few enough that a chunk is worth
+ * reading rather than a shopping list: at a dozen apiece every service
+ * was on the doorstep and nothing was worth walking to
+ */
+const MIN_LANDMARKS = 5;
+const MAX_LANDMARKS = 8;
 
 /**
  * How many terrain spots a chunk gets: grown pools on land, banks in
@@ -514,7 +519,7 @@ export default class Chunk {
   private landmarkCells: Map<number, Landmark> | null = null;
 
   /**
-   * The chunk's 8-12 landmarks (duplicates allowed, the singletons
+   * The chunk's 5-8 landmarks (duplicates allowed, the singletons
    * aside), each on its own cell, keyed by row-major cell index.
    * Rolled from the chunk seed alone — no clock or snapshot involved
    * — so the same chunk yields the same landmarks on the same cells

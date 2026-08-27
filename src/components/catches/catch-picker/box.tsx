@@ -8,7 +8,15 @@ import { Button, HoverCard, Row } from '../../styled';
 import CatchCard from '../CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
 import { asBoxEntry, describeCatch } from '../catch-summary';
-import { type JSX, type Resource, Show, createEffect, createMemo, createSignal, untrack } from 'solid-js';
+import {
+  type JSX,
+  type Resource,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  untrack,
+} from 'solid-js';
 import type { CatchOption, CatchPickerProps } from './options';
 
 /**

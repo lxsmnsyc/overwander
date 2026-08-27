@@ -11,7 +11,8 @@ import {
 import { useAuth } from '../../auth/context';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import type { Items } from '../../data/ids/items';
-import ItemGrid, { type ItemCell, describeItem } from './ItemGrid';
+import { describeItem } from '../details';
+import ItemGrid, { type ItemCell } from './ItemGrid';
 import { Button, Dialog, DialogActions, Note, Row } from '../styled';
 
 /**
@@ -33,8 +34,6 @@ import { Button, Dialog, DialogActions, Note, Row } from '../styled';
  * "three Potions" is a different answer from "a Potion"
  */
 export type ItemAmount = [item: Items, amount: number];
-
-export { describeItem };
 
 interface InventoryPickerCommonProps {
   /**

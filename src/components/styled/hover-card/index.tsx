@@ -1,4 +1,15 @@
-import { type JSX, type ParentProps, Show, createContext, createEffect, createSignal, createUniqueId, onCleanup, onMount, useContext } from 'solid-js';
+import {
+  type JSX,
+  type ParentProps,
+  Show,
+  createContext,
+  createEffect,
+  createSignal,
+  createUniqueId,
+  onCleanup,
+  onMount,
+  useContext,
+} from 'solid-js';
 
 import { Transition } from 'terracotta';
 import closeWhenGone from '../gone';

@@ -1,7 +1,6 @@
-import type { Items } from '../../../data/ids/items';
-import { getItemData } from '../../../data/items';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import type { NestOffer } from '../../../server/overworld';
+import { describeItem } from '../../details';
 import type { EggState } from '../NestDialog';
 
 /**
@@ -27,14 +26,6 @@ export interface Journey {
    * on it, so the walk ends beside it and reaches out
    */
   act: boolean;
-}
-
-export function describeItem(item: Items): string {
-  try {
-    return getItemData(item).name;
-  } catch {
-    return `Item #${item}`;
-  }
 }
 
 /**

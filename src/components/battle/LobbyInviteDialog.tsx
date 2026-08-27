@@ -22,7 +22,7 @@ import {
  * Both kinds of lobby use it. The list is the player's own friends,
  * which is what keeps a raid invite from being spam; a lobby that can
  * also reach strangers passes `onInviteByCode`, and the code is the
- * check there — its owner handed it over.
+ * check there: its owner handed it over.
  */
 export interface LobbyInviteDialogProps {
   player: string;

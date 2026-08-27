@@ -1,4 +1,3 @@
-
 import { type JSX, Suspense, createResource } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';

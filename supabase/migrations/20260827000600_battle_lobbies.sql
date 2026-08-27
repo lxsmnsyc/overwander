@@ -128,9 +128,9 @@ alter table duel_invites replica identity full;
 
 -- Who is standing in a raid lobby without a party.
 --
--- A raid has always had onlookers -- anybody may walk up to a lair and
--- watch, and a player with no pokemon of their own can do nothing else
--- -- and until now the lobby had no way to say so. The row is the
+-- A raid has always had onlookers. Anybody may walk up to a lair and
+-- watch, and a player with no pokemon of their own can do nothing
+-- else, but until now the lobby had no way to say so. The row is the
 -- player's own presence: written on the way in, dropped on the way
 -- out, and taken by the cascade when the lobby goes
 create table raid_watchers (

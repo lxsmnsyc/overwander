@@ -12,8 +12,13 @@ import { getNatureFactor } from '../../../data/ids/natures';
 import { EvolutionMethod } from '../../../data/ids/species';
 import { getLairTitle } from '../../../data/overworld/lair';
 import { type EvolutionData, SUPPORTED_METHODS, getSpeciesData } from '../../../data/species';
-import { ENCOUNTER_TYPE_NAMES, EncounterType, isFatefulEncounter, isRaidEncounter } from '../../../overworld/encounter';
-import { describeItem } from '../../items/ItemGrid';
+import {
+  ENCOUNTER_TYPE_NAMES,
+  EncounterType,
+  isFatefulEncounter,
+  isRaidEncounter,
+} from '../../../overworld/encounter';
+import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { type JSX, Show } from 'solid-js';
 import { getMaxHealth } from '../../../auth/health';

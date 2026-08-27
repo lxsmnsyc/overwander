@@ -1,4 +1,11 @@
-import { BIOME_NAMES, SPAWN_RARITY_NAMES, type SpeciesHabitat, TIMES_OF_DAY, TIME_OF_DAY_NAMES, listSpeciesHabitats } from '../../../data/biome';
+import {
+  BIOME_NAMES,
+  SPAWN_RARITY_NAMES,
+  type SpeciesHabitat,
+  TIMES_OF_DAY,
+  TIME_OF_DAY_NAMES,
+  listSpeciesHabitats,
+} from '../../../data/biome';
 import { Stats } from '../../../data/constants/stats';
 import type Biome from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';

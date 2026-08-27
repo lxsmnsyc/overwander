@@ -30,7 +30,8 @@ import {
   watchFriendRequests,
 } from '../../auth/friends';
 import EditProfileDialog from './EditProfileDialog';
-import { LobbyRole, hostDuel, inviteToDuel } from '../../auth/duels';
+import { hostDuel, inviteToDuel } from '../../auth/duels';
+import { LobbyRole } from '../../auth/lobby-role';
 import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';

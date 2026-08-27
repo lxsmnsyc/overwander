@@ -1,7 +1,7 @@
 import { AuctionLot, type AuctionRecord } from '../../../auth/auctions';
 import { type CaughtPokemon, getCaught } from '../../../auth/caught';
 import { describeCatch } from '../../catches/catch-summary';
-import { describeItem } from '../../items/InventoryPicker';
+import { describeItem } from '../../details';
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 
 /**

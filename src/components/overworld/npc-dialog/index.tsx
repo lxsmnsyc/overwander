@@ -40,7 +40,8 @@ import { VENDOR_TRADE_LIMIT } from '../../../data/overworld/vendor';
 import { canBreed } from '../../../overworld/breeding';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { CatchOption } from '../../catches/catch-picker';
-import InventoryPicker, { type ItemAmount, describeItem } from '../../items/InventoryPicker';
+import { describeItem } from '../../details';
+import InventoryPicker, { type ItemAmount } from '../../items/InventoryPicker';
 
 import NpcSprite from '../NpcSprite';
 import AnimatedSprite from '../../sprites/AnimatedSprite';

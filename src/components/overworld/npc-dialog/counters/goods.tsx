@@ -3,7 +3,7 @@ import type { InventoryEntry } from '../../../../auth/inventory';
 import type { Items } from '../../../../data/ids/items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../../../data/overworld/fossil';
 import ItemGrid from '../../../items/ItemGrid';
-import { describeItem } from '../../../items/InventoryPicker';
+import { describeItem } from '../../../details';
 import { Badge, Detail, DialogSection, Meta, Note, Row } from '../../../styled';
 import { CENTRED } from '../shared';
 
@@ -46,10 +46,7 @@ export function FossilCounter(props: FossilCounterProps): JSX.Element {
           his rule, and after it the squares would only offer a press
           the server refuses */}
       <Show when={!props.sold} fallback={<Note>He has sold you his one for today.</Note>}>
-        <Show
-          when={props.offer.length > 0}
-          fallback={<Note>He has nothing on him just now.</Note>}
-        >
+        <Show when={props.offer.length > 0} fallback={<Note>He has nothing on him just now.</Note>}>
           {/* The bag's own tray, trading the way the vendor's crate
               does: the press is the purchase, with the price on the
               square and the purse greying what it will not stretch
@@ -106,9 +103,7 @@ export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
         {/* What comes out is the rock's business, but the level is not
             — a party picked around it is worth planning before the
             fossil is spent */}
-        <Meta class="block">
-          Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.
-        </Meta>
+        <Meta class="block">Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.</Meta>
       </Show>
     </DialogSection>
   );

@@ -1,6 +1,14 @@
 import { FilePicker, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
 import { packPokengine } from '../../../auth/sprites';
-import { Button, FormActions, FormGrid, FormSection, Status, Switch, TextField } from '../../styled';
+import {
+  Button,
+  FormActions,
+  FormGrid,
+  FormSection,
+  Status,
+  Switch,
+  TextField,
+} from '../../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 

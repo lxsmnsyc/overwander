@@ -4,9 +4,18 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
 import attackMarkVisual from '../../../canvas/battle/attack';
-import abilityCueFor, { itemCueFor, statusCueFor, statusTriggerFor } from '../../../canvas/battle/cues';
+import abilityCueFor, {
+  itemCueFor,
+  statusCueFor,
+  statusTriggerFor,
+} from '../../../canvas/battle/cues';
 import paintWeather from '../../../canvas/battle/weather';
-import { delayShapeFor, moveDelayVisual, moveEffectVisual, moveMissVisual } from '../../../canvas/battle/moves';
+import {
+  delayShapeFor,
+  moveDelayVisual,
+  moveEffectVisual,
+  moveMissVisual,
+} from '../../../canvas/battle/moves';
 import type { FieldView } from '../../../canvas/battle/field';
 
 import loadSpeciesSprite from '../../../canvas/species-sprites';
@@ -28,7 +37,15 @@ import { getMoveData } from '../../../data/moves';
 import { bodyOf, boxOf, drawSlot, scaleOf, withinSlot } from './draw';
 import { type Slot, lobbyCamera, project, readField, ringStandings } from './field';
 import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, WIDTH } from './metrics';
-import { CUE_GAP, type Casting, LUNGE_REACH, LUNGE_SPAN, type Lunge, type Striking, type Trade } from './motion';
+import {
+  CUE_GAP,
+  type Casting,
+  LUNGE_REACH,
+  LUNGE_SPAN,
+  type Lunge,
+  type Striking,
+  type Trade,
+} from './motion';
 
 /**
  * The battle as a picture.

@@ -14,7 +14,7 @@ import { isEgg } from '../../auth/egg';
 import type { Items } from '../../data/ids/items';
 import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
-import { describeItem } from '../items/InventoryPicker';
+import { describeItem } from '../details';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';

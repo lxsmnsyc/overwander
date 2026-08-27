@@ -1,4 +1,14 @@
-import { COATS, FilePicker, type Naming, NamingFields, START, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
+import {
+  COATS,
+  FilePicker,
+  type Naming,
+  NamingFields,
+  START,
+  Written,
+  clearedOnSuccess,
+  refusalOf,
+  useToken,
+} from './shared';
 import { packPmd } from '../../../auth/sprites';
 import DEFAULT_PMD_ANIMS from '../../../data/constants/pmd-anims';
 import { Button, FormActions, FormGrid, FormSection, Status, TextArea } from '../../styled';

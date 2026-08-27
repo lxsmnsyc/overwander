@@ -4,7 +4,12 @@ import type Battle from '../../../battle/core';
 import { MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
 import type Unit from '../../../battle/unit';
-import projectField, { type FieldPoint, type FieldView, ringOf, ringRadius } from '../../../canvas/battle/field';
+import projectField, {
+  type FieldPoint,
+  type FieldView,
+  ringOf,
+  ringRadius,
+} from '../../../canvas/battle/field';
 import facingToward from '../../../canvas/facing';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
@@ -324,7 +329,11 @@ function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
  * stands in front of one further off, and the only thing that makes
  * that true on a canvas is the order the two were painted in
  */
-export function project(standings: Standing[], view: FieldView, striking: Map<Unit, Striking>): Slot[] {
+export function project(
+  standings: Standing[],
+  view: FieldView,
+  striking: Map<Unit, Striking>,
+): Slot[] {
   // Where everybody is, so a unit can be turned to look at whichever
   // of them it is aiming at
   const places = new Map(standings.map((standing) => [standing.unit, standing.place]));

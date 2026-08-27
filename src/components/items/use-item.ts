@@ -20,7 +20,7 @@ import { isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
 import { getMovesLearnedAt, getSpeciesData } from '../../data/species';
 import type { ToastTone } from '../styled';
-import { describeItem } from './ItemGrid';
+import { describeItem } from '../details';
 import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
 
 /**
@@ -88,7 +88,7 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
 /**
  * Whether the item asks a question back before it is spent. A machine
  * asks which move is given up for it, and a bottle which move the
- * points land on -- neither can be taken back afterwards, so neither
+ * points land on. Neither can be taken back afterwards, so neither
  * leaves the bag until the question is answered
  */
 export function asksAQuestion(item: Items): boolean {
@@ -98,10 +98,10 @@ export function asksAQuestion(item: Items): boolean {
 /**
  * The moves the level just reached has to offer.
  *
- * The species' list for **that level exactly** -- a move from any
- * earlier one is the Move Reminder's trade and costs a Heart Scale --
- * minus anything it knows already, so a candy bringing a pokemon back
- * to a level it has been at before does not offer the same move twice
+ * The species' list for **that level exactly**, minus anything it
+ * knows already, so a candy bringing a pokemon back to a level it has
+ * been at before does not offer the same move twice. A move from any
+ * earlier level is the Move Reminder's trade and costs a Heart Scale
  */
 export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
   if (isEgg(caught)) {
@@ -119,7 +119,7 @@ export interface Spent {
   tone: ToastTone;
   /**
    * The level it grew to, for the one item that grows one. A level may
-   * have a move waiting behind it -- see `getLevelMoves`
+   * have a move waiting behind it: see `getLevelMoves`
    */
   level: number | null;
 }

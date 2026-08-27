@@ -1,5 +1,12 @@
 import { AWARD_NAMES } from '../../../data/ids/awards';
-import { CHAMPION_NAME, ELITE_MEMBER_NAMES, EliteMember, GYM_LEADER_BADGES, GYM_LEADER_NAMES, GymLeader } from '../../../data/overworld/experts';
+import {
+  CHAMPION_NAME,
+  ELITE_MEMBER_NAMES,
+  EliteMember,
+  GYM_LEADER_BADGES,
+  GYM_LEADER_NAMES,
+  GymLeader,
+} from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import {

@@ -1,7 +1,18 @@
 import { BidDialog, bidRefusal } from './bidding';
 import { nameItemLot } from './lots';
 import { describeRemaining, describeStanding, now } from './time';
-import { AuctionLot, type AuctionRecord, canClaim, canReclaim, claimAuction, isAuctionableCatch, isAuctionableItem, isLive, placeBid, reclaimAuction } from '../../../auth/auctions';
+import {
+  AuctionLot,
+  type AuctionRecord,
+  canClaim,
+  canReclaim,
+  claimAuction,
+  isAuctionableCatch,
+  isAuctionableItem,
+  isLive,
+  placeBid,
+  reclaimAuction,
+} from '../../../auth/auctions';
 import { type CaughtPokemon, isFavorite } from '../../../auth/caught';
 import { isEgg } from '../../../auth/egg';
 import { type Profile, watchProfile } from '../../../auth/profile';
@@ -11,9 +22,23 @@ import CatchCard from '../../catches/CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../../catches/CatchGrid';
 import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import { asBoxEntry, describeCatch } from '../../catches/catch-summary';
-import InventoryPicker, { describeItem } from '../../items/InventoryPicker';
+import { describeItem } from '../../details';
+import InventoryPicker from '../../items/InventoryPicker';
 import ItemGrid, { type ItemCell } from '../../items/ItemGrid';
-import { Badge, Button, Card, Detail, HoverCard, Note, Panel, Row, RowButton, SEARCH_FROM, Search, Status } from '../../styled';
+import {
+  Badge,
+  Button,
+  Card,
+  Detail,
+  HoverCard,
+  Note,
+  Panel,
+  Row,
+  RowButton,
+  SEARCH_FROM,
+  Search,
+  Status,
+} from '../../styled';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 

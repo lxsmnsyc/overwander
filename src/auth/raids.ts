@@ -21,6 +21,7 @@ import {
   leaveRaid as leaveOnServer,
   peekRaid as peekOnServer,
   startRaid as startOnServer,
+  unwatchRaidLobby as unwatchLobbyOnServer,
   watchRaidLobby as watchLobbyOnServer,
 } from '../server/raids';
 import { syncServerClock } from './clock';
@@ -284,6 +285,19 @@ export async function watchRaidLobby(id: string): Promise<void> {
 async function watchRaidLobbyOnServer(token: string, id: string): Promise<void> {
   'use server';
   await watchLobbyOnServer(await requireUid(token), id, await syncServerClock());
+}
+
+/**
+ * Stop standing in it. It is the panel closing rather than the player
+ * leaving the raid, so a party they brought stays in the fight
+ */
+export async function unwatchRaidLobby(id: string): Promise<void> {
+  await unwatchRaidLobbyOnServer(await getIdToken(), id);
+}
+
+async function unwatchRaidLobbyOnServer(token: string, id: string): Promise<void> {
+  'use server';
+  await unwatchLobbyOnServer(await requireUid(token), id);
 }
 
 /**

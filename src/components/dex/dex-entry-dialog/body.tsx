@@ -1,4 +1,11 @@
-import { ROTATION, STAT_BARS, STAT_CEILING, describeLair, groupHabitats, listLevelMoves } from './species-facts';
+import {
+  ROTATION,
+  STAT_BARS,
+  STAT_CEILING,
+  describeLair,
+  groupHabitats,
+  listLevelMoves,
+} from './species-facts';
 import { EGG_HATCH_STEPS } from '../../../auth/egg';
 import type { SpeciesDexEntry } from '../../../auth/pokedex';
 import { BIOME_NAMES } from '../../../data/biome';
@@ -14,7 +21,20 @@ import { describeAbility, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
 import SpeciesCoat from '../../sprites/SpeciesCoat';
 import TypeBadge from '../../sprites/TypeBadge';
-import { Badge, DialogSection, List, ListRow, Meta, Note, Row, TabBar, TabButton, TabGroup, TabPane, TooltipHost } from '../../styled';
+import {
+  Badge,
+  DialogSection,
+  List,
+  ListRow,
+  Meta,
+  Note,
+  Row,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
+  TooltipHost,
+} from '../../styled';
 import { dexLabel } from '../PokedexGrid';
 import { For, type JSX, type Resource, Show } from 'solid-js';
 
@@ -45,7 +65,6 @@ export interface DexEntryDialogProps {
    */
   onSpecies: (species: Species) => void;
 }
-
 
 /**
  * The entry itself, which is where the dex and the candy are read.

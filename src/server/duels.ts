@@ -22,8 +22,8 @@ import { findPlayerByCode } from './friends';
  * Battle lobbies: a private fight between two players, with anybody
  * they call in watching.
  *
- * Nothing in the world stages one -- a duel exists because somebody
- * asked for it and somebody else said yes -- so every read here is
+ * Nothing in the world stages one. A duel exists because somebody
+ * asked for it and somebody else said yes, so every read here is
  * gated on membership rather than on where a player is standing. The
  * fight it becomes settles no aftermath and pays nothing: see
  * `recordAftermath`, which refuses any battle with two players in it.
@@ -74,9 +74,15 @@ async function isMember(id: string, uid: string): Promise<boolean> {
 }
 
 /**
- * Open a lobby, or hand back the one this player already has open. A
- * player hosts one duel at a time: a second would be a lobby their
- * guests are waiting in while they stand in another
+ * Open a lobby, or step back into the one this player already has
+ * open. A player hosts one duel at a time: a second would be a lobby
+ * their guests are waiting in while they stand in another.
+ *
+ * `watching` stages the fight for other people. It is applied to a
+ * lobby that already stands as well as to a fresh one, since the two
+ * buttons that call this say which side of the fight the host is on,
+ * and one that quietly handed back the lobby as it was would be
+ * saying something it did not do
  */
 export async function hostDuel(uid: string, watching: boolean, now: number): Promise<string> {
   const sql = getSql();
@@ -86,6 +92,9 @@ export async function hostDuel(uid: string, watching: boolean, now: number): Pro
   const held = asString(standing.at(0)?.id);
 
   if (held !== '') {
+    // Refused when the other seat is already taken, which leaves them
+    // watching a fight they arranged: the right answer either way
+    await setDuelRole(uid, held, watching ? LobbyRole.Spectator : LobbyRole.Fighter);
     return held;
   }
 
@@ -124,7 +133,7 @@ async function isBlocked(uid: string, other: string): Promise<boolean> {
  * host's fight to arrange.
  *
  * There is no friendship check, unlike a raid invite: a duel is
- * arranged with whoever the host has in front of them -- a friend, a
+ * arranged with whoever the host has in front of them: a friend, a
  * trainer whose profile they are reading, or somebody who handed over
  * a code. What keeps it from being spam is that it is one dismissible
  * row and a block refuses it
@@ -286,8 +295,8 @@ export async function setDuelRole(uid: string, id: string, role: LobbyRole): Pro
 
 /**
  * Assemble the party this side is bringing. The catches are checked
- * the way a raid team's are -- owned, distinct, not fighting, not
- * fainted, not put away, not queued anywhere else -- and the ready is
+ * the way a raid team's are (owned, distinct, not fighting, not
+ * fainted, not put away, not queued anywhere else) and the ready is
  * taken back: what the other side agreed to was the party they could
  * see
  */
@@ -377,9 +386,9 @@ export async function setDuelReady(uid: string, id: string, ready: boolean): Pro
 }
 
 /**
- * Walk out. The host leaving takes the lobby with them -- it was their
- * fight to arrange, and a lobby nobody can start is worse than none --
- * and everything hanging off it goes by cascade.
+ * Walk out. The host leaving takes the lobby with them, since it was
+ * their fight to arrange and a lobby nobody can start is worse than
+ * none; everything hanging off it goes by cascade.
  *
  * A lobby whose fight has already started is left the same way. What
  * the battle runs on is its own frozen snapshots, so nothing is lost

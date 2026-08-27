@@ -271,4 +271,3 @@ export const MOVE_KEYS = new Map<string, [number, number]>([
   ['a', [-1, 0]],
   ['d', [1, 0]],
 ]);
-

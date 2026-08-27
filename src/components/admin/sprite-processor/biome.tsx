@@ -4,7 +4,17 @@ import { BIOME_NAMES } from '../../../data/biome';
 import { DEFAULT_SPEEDS, DEFAULT_TERRAINS, DRAWN_ROLES } from '../../../data/constants/tileset-rip';
 import Biome from '../../../data/ids/biome';
 import { AUTOTILE_COUNT } from '../../../data/overworld/autotile';
-import { Button, Combobox, FormActions, FormGrid, FormSection, Note, Status, TextArea, TextField } from '../../styled';
+import {
+  Button,
+  Combobox,
+  FormActions,
+  FormGrid,
+  FormSection,
+  Note,
+  Status,
+  TextArea,
+  TextField,
+} from '../../styled';
 import { useSubmission } from '@solidjs/router';
 import { For, type JSX, Show, createSignal } from 'solid-js';
 

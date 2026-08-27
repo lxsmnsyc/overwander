@@ -44,7 +44,7 @@ import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
 import InventoryPicker from '../../items/InventoryPicker';
 
-import { describeItem } from '../../items/ItemGrid';
+import { describeItem } from '../../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from '../../items/use-item';
 
 import {

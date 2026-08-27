@@ -17,7 +17,7 @@ import { Species } from '../../data/ids/species';
 import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { PP_ITEMS } from '../../data/items/vitamins';
-import { describeItem } from '../items/InventoryPicker';
+import { describeItem } from '../details';
 import MovePicker from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';

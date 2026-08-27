@@ -21,6 +21,7 @@ import {
   joinRaid,
   leaveRaid,
   startRaid,
+  unwatchRaidLobby,
   watchRaid,
   watchRaidLobby,
   watchRaidWatchers,
@@ -476,11 +477,20 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   );
 
   // Standing here is written down, so the lobby can say who is in the
-  // room. Leaving drops the row again
+  // room. It is dropped again on the way out, and the way out is not
+  // only the Cancel button: shutting the panel unmounts this, and a
+  // row left behind would show them watching a raid they walked away
+  // from until the window turned over
   createEffect(() => {
-    watchRaidLobby(props.raidId).catch(() => {
+    const lobby = props.raidId;
+
+    watchRaidLobby(lobby).catch(() => {
       // A presence that did not land is a name missing from a list;
       // nothing about the raid turns on it
+    });
+
+    onCleanup(() => {
+      unwatchRaidLobby(lobby).catch(() => undefined);
     });
   });
 

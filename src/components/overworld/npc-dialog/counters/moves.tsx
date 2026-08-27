@@ -7,16 +7,7 @@ import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworl
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
 import { MoveLine } from '../../../catches/TeachMoveDialog';
 import ItemSprite from '../../../items/ItemSprite';
-import {
-  Badge,
-  DialogSection,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Row,
-  RowButton,
-} from '../../../styled';
+import { Badge, DialogSection, List, ListRow, Meta, Note, Row, RowButton } from '../../../styled';
 import { CENTRED } from '../shared';
 
 /**
@@ -116,7 +107,9 @@ export function ReminderCounter(props: MoveCounterProps): JSX.Element {
         value={props.picked}
         verb="Remind"
         empty="You have nothing that has forgotten anything."
-        filter={(option) => !isEgg(option.caught) && !option.fighting && forgotten(option).length > 0}
+        filter={(option) =>
+          !isEgg(option.caught) && !option.fighting && forgotten(option).length > 0
+        }
         reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
         note={(option) => `${forgotten(option).length} forgotten`}
         onPick={props.onPick}

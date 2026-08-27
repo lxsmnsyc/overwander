@@ -24,7 +24,6 @@ import getIdToken from './session';
 
 export { DUEL_FIGHTERS, getDuelBlocker, getDuelFighters, getDuelSpectators } from './duel-record';
 export type { DuelInvite, DuelMember, DuelRecord } from './duel-record';
-export { LOBBY_ROLE_NAMES, LobbyRole } from './lobby-role';
 
 const DUEL_TABLE = 'duels';
 

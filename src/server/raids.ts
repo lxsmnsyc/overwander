@@ -452,6 +452,20 @@ export async function watchRaidLobby(uid: string, lobby: string, now: number): P
 }
 
 /**
+ * Stop standing in it, without leaving the raid.
+ *
+ * `leaveRaid` is the way out of a lobby and takes the player's teams
+ * with it. This is only the presence: the panel was shut, so they are
+ * no longer in the room, but a party they brought is still in the
+ * fight
+ */
+export async function unwatchRaidLobby(uid: string, lobby: string): Promise<void> {
+  await getSql()`
+    delete from raid_watchers where raid_id = ${lobby} and player = ${uid}
+  `;
+}
+
+/**
  * Call a friend into a lobby, to fight or to watch. Anybody standing
  * in it may ask — the host, or anyone with a team — and only of their
  * own friends, which is what keeps an invite from being spam. One row

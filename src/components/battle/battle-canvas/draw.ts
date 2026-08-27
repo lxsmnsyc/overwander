@@ -119,7 +119,9 @@ export function bodyOf(slot: Slot): Point {
  * The box a slot's pokemon was drawn in, or nothing while its sheet is
  * still coming
  */
-export function boxOf(slot: Slot): { left: number; top: number; width: number; height: number } | null {
+export function boxOf(
+  slot: Slot,
+): { left: number; top: number; width: number; height: number } | null {
   const sprite = slot.sprite;
 
   return sprite?.ready === true

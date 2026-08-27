@@ -3,7 +3,11 @@ import { isLockLive } from '../../../auth/battle-lock';
 import { readCatchContext, searchCaught } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
 import { useAuth } from '../../../auth/context';
-import { type CatchConstraint, type CatchContext, planCatchSearch } from '../../../auth/catch-search';
+import {
+  type CatchConstraint,
+  type CatchContext,
+  planCatchSearch,
+} from '../../../auth/catch-search';
 import { Button, Dialog, DialogActions, Note } from '../../styled';
 import PickerBox from './box';
 import type { CatchOption, CatchPickerProps } from './options';

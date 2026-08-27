@@ -171,7 +171,11 @@ export function storedAs(drawing: Drawing): string {
  * writes over the same path, and a browser that already has that path
  * shows the sheet from before it
  */
-export function Written(props: { paths: string[]; drawings: Drawing[]; note?: string }): JSX.Element {
+export function Written(props: {
+  paths: string[];
+  drawings: Drawing[];
+  note?: string;
+}): JSX.Element {
   const stamp = Date.now();
   const found = (path: string): Drawing | undefined =>
     props.drawings.find((written) => written.path === path);

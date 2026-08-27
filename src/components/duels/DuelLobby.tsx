@@ -1,7 +1,9 @@
 import {
   For,
   type JSX,
+  type Resource,
   Show,
+  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -12,7 +14,6 @@ import {
   DUEL_FIGHTERS,
   type DuelMember,
   type DuelRecord,
-  LobbyRole,
   getDuelBlocker,
   getDuelFighters,
   getDuelSpectators,
@@ -25,6 +26,7 @@ import {
   startDuel,
   watchDuel,
 } from '../../auth/duels';
+import { LobbyRole } from '../../auth/lobby-role';
 import { type Profile, getProfiles } from '../../auth/profile';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
@@ -55,39 +57,27 @@ export interface DuelLobbyProps {
 }
 
 /**
- * One private fight being arranged: two seats, whoever is watching,
- * and the readiness both sides have to give before the host may
- * start.
+ * What is in the lobby, which is where the names are read.
  *
- * The readiness is what a raid lobby has no use for. A raid boss is
- * not consulted; the other trainer is, and a fight started while they
- * were still picking their sixth is a fight they did not agree to
+ * A read in the body that declared the resource throws past every
+ * boundary written there and lands on the one around the whole page,
+ * taking the tab down with it
  */
-export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
+function LobbyRows(
+  props: DuelLobbyProps & {
+    duel: () => DuelRecord | null;
+    names: Resource<Map<string, Profile>>;
+  },
+): JSX.Element {
   const game = useGame();
   const [picking, setPicking] = createSignal(false);
   const [calling, setCalling] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  // Followed rather than read once: the second player arriving, a
-  // party assembled and the host's start all land here
-  const duel = watchLive<DuelRecord | null>((set) =>
-    watchDuel(props.duelId, (record) => {
-      set(record);
-    }),
-  );
-
-  const [names] = createResource(
-    () =>
-      (duel()?.members ?? [])
-        .map((member) => member.player)
-        .sort()
-        .join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
-  );
-  const named = (uid: string): string => names.latest?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => names.latest?.get(uid)?.avatar ?? null;
+  const duel = (): DuelRecord | null => props.duel();
+  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.avatar ?? null;
 
   const mine = (): DuelMember | undefined =>
     duel()?.members.find((member) => member.player === props.user.uid);
@@ -171,7 +161,7 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
     <ListRow selected={member()?.player === props.user.uid}>
       <Show
         when={member()}
-        fallback={<Note class="grow">Seat {at + 1} is open — invite somebody to it.</Note>}
+        fallback={<Note class="grow">Seat {at + 1} is open. Invite somebody to it.</Note>}
       >
         {(taken) => (
           <>
@@ -332,10 +322,49 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
           setPicking(false);
           act(
             async () => setDuelParty(props.duelId, catches),
-            'That team could not be brought — one of them may already be in another lobby.',
+            'That team could not be brought: one of them may already be in another lobby.',
           );
         }}
       />
     </>
+  );
+}
+
+/**
+ * One private fight being arranged: two seats, whoever is watching,
+ * and the readiness both sides have to give before the host may
+ * start.
+ *
+ * The readiness is what a raid lobby has no use for. A raid boss is
+ * not consulted; the other trainer is, and a fight started while they
+ * were still picking their sixth is a fight they did not agree to
+ */
+export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
+  // Followed rather than read once: the second player arriving, a
+  // party assembled and the host's start all land here
+  const duel = watchLive<DuelRecord | null>((set) =>
+    watchDuel(props.duelId, (record) => {
+      set(record);
+    }),
+  );
+
+  /**
+   * Who everybody in the room is. A member is a uid in the record, and
+   * a uid is not a person: the row is the way into their profile, so
+   * it wears the name and the face that profile opens under
+   */
+  const [names] = createResource(
+    () =>
+      (duel()?.members ?? [])
+        .map((member) => member.player)
+        .sort()
+        .join(','),
+    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+  );
+
+  return (
+    <Suspense fallback={<Note>Loading the lobby…</Note>}>
+      <LobbyRows {...props} duel={() => duel() ?? null} names={names} />
+    </Suspense>
   );
 }

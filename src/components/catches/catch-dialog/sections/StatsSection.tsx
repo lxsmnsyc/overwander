@@ -1,4 +1,14 @@
-import { EFFORT_STEP, NATURE_BARS, NATURE_MARKS, NATURE_NUMBERS, NATURE_WORDS, STAT_LABELS, bestTotal, natureShift, totalOf } from '../describe';
+import {
+  EFFORT_STEP,
+  NATURE_BARS,
+  NATURE_MARKS,
+  NATURE_NUMBERS,
+  NATURE_WORDS,
+  STAT_LABELS,
+  bestTotal,
+  natureShift,
+  totalOf,
+} from '../describe';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
 
@@ -6,12 +16,22 @@ import { assignableEffort, unusedEffort } from '../../../../auth/effort';
 
 import { STATUS_NAMES } from '../../../../auth/health';
 
-import type { Stats} from '../../../../data/constants/stats';
+import type { Stats } from '../../../../data/constants/stats';
 import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, getIV } from '../../../../data/constants/stats';
 
 import { unpackStatuses } from '../../../../data/ids/status';
 
-import { Button, DialogSection, List, ListRow, Meta, TabBar, TabButton, TabGroup, TabPane } from '../../../styled';
+import {
+  Button,
+  DialogSection,
+  List,
+  ListRow,
+  Meta,
+  TabBar,
+  TabButton,
+  TabGroup,
+  TabPane,
+} from '../../../styled';
 
 import { For, type JSX, Show } from 'solid-js';
 
@@ -58,7 +78,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
             <For each={STAT_ORDER}>
               {(stat) => (
                 <ListRow>
-{/* The arrow the games have always used,
+                  {/* The arrow the games have always used,
     in a column of its own at the head of
     the row — the mirror of the number at
     the far end of it. Written after the
@@ -69,54 +89,54 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
     anything. The bar and the number are
     already tinted, and a colour is not
     something everybody can read */}
-<span
-  class={`w-3 shrink-0 text-left ${
-    NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
-  }`}
-  title={
-    NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-      ? undefined
-      : `${STAT_LABELS[stat]} is ${
-          NATURE_WORDS[natureShift(props.caught.nature, stat)]
-        }`
-  }
-  aria-label={
-    NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-      ? undefined
-      : NATURE_WORDS[natureShift(props.caught.nature, stat)]
-  }
-  role={
-    NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
-      ? undefined
-      : 'img'
-  }
->
-  {NATURE_MARKS[natureShift(props.caught.nature, stat)]}
-</span>
-<span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-{/* Measured against its own best rather
+                  <span
+                    class={`w-3 shrink-0 text-left ${
+                      NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
+                    }`}
+                    title={
+                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
+                        ? undefined
+                        : `${STAT_LABELS[stat]} is ${
+                            NATURE_WORDS[natureShift(props.caught.nature, stat)]
+                          }`
+                    }
+                    aria-label={
+                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
+                        ? undefined
+                        : NATURE_WORDS[natureShift(props.caught.nature, stat)]
+                    }
+                    role={
+                      NATURE_MARKS[natureShift(props.caught.nature, stat)] === ''
+                        ? undefined
+                        : 'img'
+                    }
+                  >
+                    {NATURE_MARKS[natureShift(props.caught.nature, stat)]}
+                  </span>
+                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                  {/* Measured against its own best rather
     than against a ceiling: what a player
     wants off this list is which end of
     the pokemon is the sharp one, and the
     bar the nature moved is the colour of
     the way it moved it */}
-<div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-  <div
-    class={`h-full rounded-full ${
-      NATURE_BARS[natureShift(props.caught.nature, stat)]
-    }`}
-    style={{
-      width: `${(totalOf(props.caught, stat) / bestTotal(props.caught)) * 100}%`,
-    }}
-  />
-</div>
-<Meta
-  class={`w-12 text-right tabular-nums ${
-    NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
-  }`}
->
-  {totalOf(props.caught, stat)}
-</Meta>
+                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                    <div
+                      class={`h-full rounded-full ${
+                        NATURE_BARS[natureShift(props.caught.nature, stat)]
+                      }`}
+                      style={{
+                        width: `${(totalOf(props.caught, stat) / bestTotal(props.caught)) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <Meta
+                    class={`w-12 text-right tabular-nums ${
+                      NATURE_NUMBERS[natureShift(props.caught.nature, stat)]
+                    }`}
+                  >
+                    {totalOf(props.caught, stat)}
+                  </Meta>
                 </ListRow>
               )}
             </For>
@@ -135,23 +155,21 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
             <For each={STAT_ORDER}>
               {(stat) => (
                 <ListRow>
-{/* The column the Total tab marks a
+                  {/* The column the Total tab marks a
     nature in, empty here: a stat's name
     should not move when the tab under
     it changes */}
-<span class="w-3 shrink-0" />
-<span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-<div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-  <div
-    class="h-full rounded-full bg-gold"
-    style={{
-      width: `${(getIV(props.caught.ivs, stat) / MAX_IV) * 100}%`,
-    }}
-  />
-</div>
-<Meta class="w-12 text-right tabular-nums">
-  {getIV(props.caught.ivs, stat)}
-</Meta>
+                  <span class="w-3 shrink-0" />
+                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                    <div
+                      class="h-full rounded-full bg-gold"
+                      style={{
+                        width: `${(getIV(props.caught.ivs, stat) / MAX_IV) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <Meta class="w-12 text-right tabular-nums">{getIV(props.caught.ivs, stat)}</Meta>
                 </ListRow>
               )}
             </For>
@@ -163,43 +181,41 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
             <For each={STAT_ORDER}>
               {(stat) => (
                 <ListRow>
-{/* The column the Total tab marks a
+                  {/* The column the Total tab marks a
     nature in, empty here: a stat's name
     should not move when the tab under
     it changes */}
-<span class="w-3 shrink-0" />
-<span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
-<div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
-  <div
-    class="h-full rounded-full bg-leaf"
-    style={{
-      width: `${(props.caught.effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
-    }}
-  />
-</div>
-<Meta class="w-12 text-right tabular-nums">
-  {props.caught.effortValues[stat]}
-</Meta>
-{/* Only up. Effort is taken back off a
+                  <span class="w-3 shrink-0" />
+                  <span class="w-24 shrink-0 text-left">{STAT_LABELS[stat]}</span>
+                  <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
+                    <div
+                      class="h-full rounded-full bg-leaf"
+                      style={{
+                        width: `${(props.caught.effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <Meta class="w-12 text-right tabular-nums">
+                    {props.caught.effortValues[stat]}
+                  </Meta>
+                  {/* Only up. Effort is taken back off a
     stat by feeding the pokemon a bitter
     berry — a Pomeg for health, a Kelpsy
     for attack — which costs an item and
     earns the pokemon's regard. A button
     here undid all of that for free, and
     made six berries pointless */}
-<Show when={props.owned}>
-  <Button
-    tone="primary"
-    disabled={
-      props.frozen || assignableEffort(props.caught, stat) < EFFORT_STEP
-    }
-    onClick={() => {
-      props.onTrain(stat, EFFORT_STEP);
-    }}
-  >
-    +{EFFORT_STEP}
-  </Button>
-</Show>
+                  <Show when={props.owned}>
+                    <Button
+                      tone="primary"
+                      disabled={props.frozen || assignableEffort(props.caught, stat) < EFFORT_STEP}
+                      onClick={() => {
+                        props.onTrain(stat, EFFORT_STEP);
+                      }}
+                    >
+                      +{EFFORT_STEP}
+                    </Button>
+                  </Show>
                 </ListRow>
               )}
             </For>

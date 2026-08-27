@@ -1,6 +1,15 @@
 import { FilePicker, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
 import { packExtras } from '../../../auth/sprites';
-import { Button, FormActions, FormGrid, FormSection, Note, Status, Switch, TextField } from '../../styled';
+import {
+  Button,
+  FormActions,
+  FormGrid,
+  FormSection,
+  Note,
+  Status,
+  Switch,
+  TextField,
+} from '../../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 

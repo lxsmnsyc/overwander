@@ -1,6 +1,6 @@
 import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { Items } from '../../data/ids/items';
-import { describeItem, detailItem } from '../details';
+import { describeItem } from '../details';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
@@ -31,7 +31,6 @@ export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
  * Re-exported from where the battle card reads them too: a tray of
  * items and a pokemon's held item are named the same way
  */
-export { describeItem, detailItem };
 
 /**
  * One square: what is in it, how many, and what the caller thinks of

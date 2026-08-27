@@ -1,4 +1,3 @@
-
 /** Which side of the anchor a card is put on */
 export type HoverCardPlacement = 'top' | 'bottom';
 

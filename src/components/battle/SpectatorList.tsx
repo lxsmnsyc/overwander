@@ -1,7 +1,7 @@
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { type Profile, getProfiles } from '../../auth/profile';
 import PlayerPlate from '../profile/PlayerPlate';
-import { List, ListRow, Note } from '../styled';
+import { LIST_PAGE, List, ListRow, Note, type Pager, createPager } from '../styled';
 import { useGame } from '../app/game-context';
 
 /**
@@ -16,25 +16,26 @@ export interface SpectatorListProps {
   watching: string[];
 }
 
-export default function SpectatorList(props: SpectatorListProps): JSX.Element {
+/**
+ * The rows, which is where the names are read. A read in the body that
+ * declared the resource throws past every boundary written there and
+ * lands on the one around the whole page
+ */
+function Watchers(
+  props: SpectatorListProps & { names: Resource<Map<string, Profile>>; page: Pager<string> },
+): JSX.Element {
   const game = useGame();
-  // Read through `latest`: a lobby that suspended every time somebody
-  // walked in would blink on its way to saying so
-  const [names] = createResource(
-    () => [...new Set(props.watching)].sort().join(','),
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
-  );
-  const named = (uid: string): string => names.latest?.get(uid)?.nickname ?? uid;
+  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
 
   return (
-    <Show when={props.watching.length > 0} fallback={<Note>Nobody is watching.</Note>}>
+    <>
       <List>
-        <For each={props.watching}>
+        <For each={props.page.shown()}>
           {(uid) => (
             <ListRow selected={uid === props.player}>
               <PlayerPlate
                 name={uid === props.player ? 'You' : named(uid)}
-                avatar={names.latest?.get(uid)?.avatar ?? null}
+                avatar={props.names()?.get(uid)?.avatar ?? null}
                 onOpen={
                   uid === props.player
                     ? undefined
@@ -47,6 +48,25 @@ export default function SpectatorList(props: SpectatorListProps): JSX.Element {
           )}
         </For>
       </List>
+      {props.page.controls()}
+    </>
+  );
+}
+
+export default function SpectatorList(props: SpectatorListProps): JSX.Element {
+  // A lobby has no limit on who may watch it, so the list is paged the
+  // way every other unbounded one is
+  const page = createPager(() => props.watching, LIST_PAGE);
+  const [names] = createResource(
+    () => [...new Set(props.watching)].sort().join(','),
+    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',').filter(Boolean)),
+  );
+
+  return (
+    <Show when={props.watching.length > 0} fallback={<Note>Nobody is watching.</Note>}>
+      <Suspense fallback={<Note>Reading the room…</Note>}>
+        <Watchers {...props} names={names} page={page} />
+      </Suspense>
     </Show>
   );
 }

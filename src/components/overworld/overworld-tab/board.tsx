@@ -1,6 +1,7 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
 import challengerOf from './challengers';
-import { type Journey, describeItem, describeStash, stateOf } from './journey';
+import { describeItem } from '../../details';
+import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
 import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';

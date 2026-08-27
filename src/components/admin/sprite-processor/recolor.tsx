@@ -1,7 +1,16 @@
 import { biomeOptions } from './biome';
 import { Written, refusalOf, useToken } from './shared';
 import { recolorBiome } from '../../../auth/sprites';
-import { Button, Combobox, FormActions, FormGrid, FormSection, Note, Status, TextArea } from '../../styled';
+import {
+  Button,
+  Combobox,
+  FormActions,
+  FormGrid,
+  FormSection,
+  Note,
+  Status,
+  TextArea,
+} from '../../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 

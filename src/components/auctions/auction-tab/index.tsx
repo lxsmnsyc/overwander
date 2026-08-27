@@ -1,5 +1,10 @@
 import { type JSX, Suspense, createResource, createSignal, from } from 'solid-js';
-import { AuctionLot, type AuctionRecord, getSellerStanding, watchOpenAuctions } from '../../../auth/auctions';
+import {
+  AuctionLot,
+  type AuctionRecord,
+  getSellerStanding,
+  watchOpenAuctions,
+} from '../../../auth/auctions';
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
@@ -13,7 +18,6 @@ import { Note } from '../../styled';
 import { AuctionBoard, type AuctionTabProps } from './board';
 
 export type { AuctionTabProps };
-
 
 /**
  * The auction board and the seller's side of it.

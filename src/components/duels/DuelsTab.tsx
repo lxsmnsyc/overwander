@@ -3,13 +3,13 @@ import type { PlayerIdentity } from '../../auth/user';
 import {
   type DuelInvite,
   type DuelRecord,
-  LOBBY_ROLE_NAMES,
   declineDuelInvite,
   hostDuel,
   joinDuel,
   watchDuelInvites,
   watchMyDuels,
 } from '../../auth/duels';
+import { LOBBY_ROLE_NAMES } from '../../auth/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import DuelLobby from './DuelLobby';
 import { Button, DialogSection, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
@@ -58,7 +58,7 @@ export interface DuelsTabProps {
  * the ones they have been called into, and the way to stage another.
  *
  * Nothing here is public. A duel exists because somebody asked for it,
- * so there is no board of open lobbies to browse — only what has been
+ * so there is no board of open lobbies to browse: only what has been
  * offered to this player
  */
 export default function DuelsTab(props: DuelsTabProps): JSX.Element {

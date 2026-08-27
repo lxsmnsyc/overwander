@@ -1,4 +1,3 @@
-
 /**
  * The picture's own measurements and colours. Everything drawn is laid
  * out in these coordinates whatever the element is sized to.

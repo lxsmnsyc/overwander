@@ -3,7 +3,6 @@ import { type JSX, Show } from 'solid-js';
 import { Status, TabBar, TabButton, TabGroup, TabPane } from '../../styled';
 import { canProcessSprites } from '../../../auth/sprites';
 
-
 import { BiomeForm } from './biome';
 import ExtrasForm from './extras';
 import PmdForm from './pmd';

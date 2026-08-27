@@ -1,0 +1,254 @@
+{
+  "compact": true,
+  "width": 283,
+  "height": 247,
+  "images": [
+    {
+      "name": "autumn.png",
+      "x": 171,
+      "y": 66,
+      "width": 47,
+      "height": 56,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        15
+      ]
+    },
+    {
+      "name": "broadleaf.png",
+      "x": 0,
+      "y": 0,
+      "width": 57,
+      "height": 71,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        7,
+        0
+      ]
+    },
+    {
+      "name": "dark.png",
+      "x": 58,
+      "y": 0,
+      "width": 57,
+      "height": 71,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        7,
+        0
+      ]
+    },
+    {
+      "name": "dry-snow.png",
+      "x": 100,
+      "y": 199,
+      "width": 47,
+      "height": 40,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        31
+      ]
+    },
+    {
+      "name": "dry.png",
+      "x": 0,
+      "y": 142,
+      "width": 47,
+      "height": 56,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        15
+      ]
+    },
+    {
+      "name": "fir-snow.png",
+      "x": 59,
+      "y": 199,
+      "width": 40,
+      "height": 41,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        15,
+        30
+      ]
+    },
+    {
+      "name": "fir.png",
+      "x": 228,
+      "y": 105,
+      "width": 40,
+      "height": 48,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        15,
+        23
+      ]
+    },
+    {
+      "name": "jungle-snow.png",
+      "x": 228,
+      "y": 0,
+      "width": 54,
+      "height": 52,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        8,
+        19
+      ]
+    },
+    {
+      "name": "jungle.png",
+      "x": 116,
+      "y": 0,
+      "width": 54,
+      "height": 70,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        8,
+        1
+      ]
+    },
+    {
+      "name": "leaf-snow.png",
+      "x": 0,
+      "y": 199,
+      "width": 58,
+      "height": 47,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        6,
+        24
+      ]
+    },
+    {
+      "name": "olive-snow.png",
+      "x": 139,
+      "y": 142,
+      "width": 51,
+      "height": 53,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        10,
+        18
+      ]
+    },
+    {
+      "name": "olive.png",
+      "x": 171,
+      "y": 0,
+      "width": 56,
+      "height": 65,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "palm.png",
+      "x": 102,
+      "y": 142,
+      "width": 36,
+      "height": 54,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        17,
+        17
+      ]
+    },
+    {
+      "name": "pine-blue.png",
+      "x": 108,
+      "y": 72,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ]
+    },
+    {
+      "name": "pine-dark.png",
+      "x": 54,
+      "y": 72,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ]
+    },
+    {
+      "name": "pine-snow.png",
+      "x": 48,
+      "y": 142,
+      "width": 53,
+      "height": 55,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        16
+      ]
+    },
+    {
+      "name": "pine.png",
+      "x": 0,
+      "y": 72,
+      "width": 53,
+      "height": 69,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        9,
+        2
+      ]
+    },
+    {
+      "name": "round-snow.png",
+      "x": 228,
+      "y": 154,
+      "width": 44,
+      "height": 43,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        13,
+        28
+      ]
+    },
+    {
+      "name": "round.png",
+      "x": 228,
+      "y": 53,
+      "width": 46,
+      "height": 51,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        12,
+        20
+      ]
+    }
+  ]
+}

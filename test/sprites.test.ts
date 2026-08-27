@@ -5,6 +5,19 @@ import { describe, expect, it } from 'vitest';
 import { ItemTypes, Items } from '../src/data/ids/items';
 import registerItems, { getItemData, listItemsByType } from '../src/data/items';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
+import { BIOME_NAMES } from '../src/data/biome/names';
+import Biome from '../src/data/ids/biome';
+import Decoration, {
+  DECORATION_NAMES,
+  getBiomeDecorations,
+} from '../src/data/overworld/decoration';
+import decorationPicture, {
+  DECORATION_SHEET,
+  TREE_SHEET,
+  biomeVariants,
+  decorationPictures,
+  isSnowy,
+} from '../src/data/overworld/decoration-sprite';
 
 /**
  * The sprites and what has been done to them.
@@ -167,5 +180,136 @@ describe('the berry plants that ship', () => {
 
   it('spells a two-word berry the way its icon is filed', () => {
     expect(berryPlantSheet(Items.GoldenRazzBerry)).toBe('landmarks-berry/golden-razz');
+  });
+});
+
+describe('the scenery that ships', () => {
+  interface Packed {
+    name: string;
+    width: number;
+    height: number;
+    sourceWidth: number;
+    sourceHeight: number;
+    trim: [number, number];
+  }
+
+  function packed(sheet: string): Packed[] {
+    const described = JSON.parse(
+      readFileSync(`${SPRITE_ROOT}/overworld/${sheet}/data.json`, 'utf8'),
+    ) as unknown;
+    const images = fieldOf(described, 'images');
+    const trimOf = (entry: unknown): [number, number] => {
+      const pair = fieldOf(entry, 'trim');
+
+      return Array.isArray(pair) ? [Number(pair[0]), Number(pair[1])] : [0, 0];
+    };
+
+    return (Array.isArray(images) ? images : []).map((entry: unknown) => ({
+      name: String(fieldOf(entry, 'name')).replace(/\.png$/, ''),
+      width: Number(fieldOf(entry, 'width')),
+      height: Number(fieldOf(entry, 'height')),
+      sourceWidth: Number(fieldOf(entry, 'sourceWidth')),
+      sourceHeight: Number(fieldOf(entry, 'sourceHeight')),
+      trim: trimOf(entry),
+    }));
+  }
+
+  const BOTH = [DECORATION_SHEET, TREE_SHEET];
+
+  it('has a picture for everything anything is drawn as', () => {
+    const drawn = new Set(
+      BOTH.flatMap((sheet) => packed(sheet).map((one) => `${sheet}/${one.name}`)),
+    );
+    const missing = decorationPictures()
+      .map((one) => `${one.sheet}/${one.name}`)
+      .filter((key) => !drawn.has(key));
+
+    expect(missing, 'run `node scripts/decorations.ts <sheet>` for these').toEqual([]);
+  });
+
+  it('carries no picture nothing is drawn as', () => {
+    const wanted = new Set(decorationPictures().map((one) => `${one.sheet}/${one.name}`));
+
+    for (const sheet of BOTH) {
+      expect(
+        packed(sheet)
+          .map((one) => `${sheet}/${one.name}`)
+          .filter((key) => !wanted.has(key)),
+        sheet,
+      ).toEqual([]);
+    }
+  });
+
+  it('draws every kind of scenery as something', () => {
+    const kinds = Object.keys(DECORATION_NAMES).map(Number) as Decoration[];
+
+    for (const kind of kinds) {
+      const picture = decorationPicture(kind, Biome.Grassland);
+
+      expect(picture.name, String(kind)).not.toBe('');
+      expect(BOTH, String(kind)).toContain(picture.sheet);
+    }
+  });
+
+  it('names every biome variant on a kind that biome actually grows', () => {
+    const biomes = Object.keys(BIOME_NAMES).map(Number) as Biome[];
+
+    for (const biome of biomes) {
+      const grown = new Set(getBiomeDecorations(biome));
+
+      for (const kind of biomeVariants(biome)) {
+        expect(grown.has(kind), `${BIOME_NAMES[biome]} has no ${DECORATION_NAMES[kind]}`).toBe(
+          true,
+        );
+      }
+    }
+  });
+
+  it('puts the trees of a cold biome under snow, and nothing else', () => {
+    // The taiga is the archetype: it is below the line, and the pine it
+    // grows is the one thing on its cells that the cold shows on
+    expect(isSnowy(Biome.Taiga)).toBe(true);
+    expect(decorationPicture(Decoration.Pine, Biome.Taiga).name).toBe('pine-snow');
+    // A rock in the cold is a rock: a white one would be invisible
+    // against the ground it stands on
+    expect(decorationPicture(Decoration.Rock, Biome.Taiga)).toEqual(
+      decorationPicture(Decoration.Rock, Biome.Savanna),
+    );
+    // The mountain is cold too, and its darker pine goes under the same
+    // snow rather than needing one of its own
+    expect(decorationPicture(Decoration.Pine, Biome.Mountain).name).toBe('pine-snow');
+    // A warm biome keeps its own tree
+    expect(isSnowy(Biome.TropicalRainforest)).toBe(false);
+    expect(decorationPicture(Decoration.Tree, Biome.TropicalRainforest).name).toBe('jungle');
+  });
+
+  it('gives a tree its biome and a rock the same picture everywhere', () => {
+    // A forest and a savanna both put a tree on a cell and mean
+    // different things by it
+    expect(decorationPicture(Decoration.Tree, Biome.Savanna).name).not.toBe(
+      decorationPicture(Decoration.Tree, Biome.TropicalRainforest).name,
+    );
+    // Scenery that is not a tree is the same wherever it stands
+    expect(decorationPicture(Decoration.Rock, Biome.Volcano)).toEqual(
+      decorationPicture(Decoration.Rock, Biome.Glacier),
+    );
+  });
+
+  it('packs every picture of both sheets in one square cell, on its floor', () => {
+    const all = BOTH.flatMap((sheet) => packed(sheet));
+    const cell = all[0].sourceWidth;
+
+    for (const one of all) {
+      // One cell across both sheets: a rock beside a pine keeps the
+      // proportions the rip drew them in, whichever sheet it came from
+      expect(one.sourceWidth, one.name).toBe(cell);
+      expect(one.sourceHeight, one.name).toBe(cell);
+      // Sitting on the floor, centred across it, so the point a caller
+      // puts scenery on is the ground it stands on
+      expect(one.trim[1], one.name).toBe(cell - one.height);
+      expect(one.trim[0], one.name).toBe(Math.floor((cell - one.width) / 2));
+      expect(one.width, one.name).toBeLessThanOrEqual(cell);
+      expect(one.height, one.name).toBeLessThanOrEqual(cell);
+    }
   });
 });

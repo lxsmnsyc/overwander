@@ -1,0 +1,150 @@
+{
+  "compact": true,
+  "width": 106,
+  "height": 92,
+  "images": [
+    {
+      "name": "boulder.png",
+      "x": 81,
+      "y": 0,
+      "width": 24,
+      "height": 27,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        23,
+        44
+      ]
+    },
+    {
+      "name": "cactus.png",
+      "x": 0,
+      "y": 37,
+      "width": 30,
+      "height": 29,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        20,
+        42
+      ]
+    },
+    {
+      "name": "coral.png",
+      "x": 62,
+      "y": 52,
+      "width": 11,
+      "height": 13,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        30,
+        58
+      ]
+    },
+    {
+      "name": "flower.png",
+      "x": 81,
+      "y": 45,
+      "width": 14,
+      "height": 15,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        28,
+        56
+      ]
+    },
+    {
+      "name": "grass.png",
+      "x": 81,
+      "y": 28,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        27,
+        55
+      ]
+    },
+    {
+      "name": "ice.png",
+      "x": 31,
+      "y": 37,
+      "width": 30,
+      "height": 29,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        20,
+        42
+      ]
+    },
+    {
+      "name": "mushroom.png",
+      "x": 31,
+      "y": 0,
+      "width": 16,
+      "height": 30,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        27,
+        41
+      ]
+    },
+    {
+      "name": "reed.png",
+      "x": 0,
+      "y": 0,
+      "width": 30,
+      "height": 36,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        20,
+        35
+      ]
+    },
+    {
+      "name": "rock.png",
+      "x": 62,
+      "y": 37,
+      "width": 14,
+      "height": 14,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        28,
+        57
+      ]
+    },
+    {
+      "name": "shrub.png",
+      "x": 0,
+      "y": 67,
+      "width": 27,
+      "height": 24,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        22,
+        47
+      ]
+    },
+    {
+      "name": "stump.png",
+      "x": 48,
+      "y": 0,
+      "width": 32,
+      "height": 30,
+      "sourceWidth": 71,
+      "sourceHeight": 71,
+      "trim": [
+        19,
+        41
+      ]
+    }
+  ]
+}

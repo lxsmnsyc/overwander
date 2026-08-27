@@ -10,12 +10,7 @@ import {
   type MoveTarget,
   MoveTargetType,
 } from '../../src/battle/events';
-import {
-  BASE_SCORE,
-  HEAL_BONUS,
-  STEP_PENALTY,
-  USELESS_PENALTY,
-} from '../../src/battle/ai/score';
+import { BASE_SCORE, HEAL_BONUS, STEP_PENALTY, USELESS_PENALTY } from '../../src/battle/ai/score';
 import type Unit from '../../src/battle/unit';
 import { EventPriority } from '../../src/core/event-emitter';
 import Abilities from '../../src/data/ids/abilities';

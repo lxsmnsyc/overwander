@@ -21,12 +21,7 @@ import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
 import { estimateMoveHits } from '../moves/multi-hit';
 import { getStageMoveEffect } from '../moves/stage';
-import {
-  ACCURACY_PENALTY,
-  BASE_SCORE,
-  STEP_PENALTY,
-  USELESS_PENALTY,
-} from './score';
+import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 

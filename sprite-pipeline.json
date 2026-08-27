@@ -1657,6 +1657,18 @@
         "bytes": 1248
       }
     },
+    "public/sprites/overworld/decorations/image.png": {
+      "digest": "cf50edd333474b1c",
+      "bytes": 2819,
+      "width": 106,
+      "height": 92,
+      "compact": {
+        "at": "2026-08-27T11:14:54Z",
+        "as": "already compact",
+        "was": 2819,
+        "bytes": 2819
+      }
+    },
     "public/sprites/overworld/landmarks-berry/aguav/image.png": {
       "digest": "ca85d5964ad0610d",
       "bytes": 650,
@@ -2663,6 +2675,18 @@
         "as": "already compact",
         "was": 1194,
         "bytes": 1194
+      }
+    },
+    "public/sprites/overworld/trees/image.png": {
+      "digest": "a51ac6e4dd3de851",
+      "bytes": 13936,
+      "width": 283,
+      "height": 247,
+      "compact": {
+        "at": "2026-08-27T11:20:33Z",
+        "as": "already compact",
+        "was": 13936,
+        "bytes": 13936
       }
     },
     "public/sprites/pokemon/kanto/regular/1.png": {

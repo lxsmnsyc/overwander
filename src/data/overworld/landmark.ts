@@ -95,6 +95,32 @@ const enum Landmark {
    * which board is walked to
    */
   AuctionBoard = 15,
+
+  // TODO: Apricorn Tree, with Johto. Kurt's seven apricorns grow on
+  // trees and each becomes a ball sold nowhere, so it is a berry
+  // patch that bears balls rather than fruit. Needs the seven
+  // apricorn items and the seven balls, none of them registered.
+  //
+  // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
+  // left alone; something is waiting at it hours later, which makes
+  // it the one landmark a player arms rather than claims. `Items.Honey`
+  // has an id and no registration, and the pokemon it draws are a
+  // Sinnoh pool that does not exist.
+  //
+  // TODO: Frontier Brain, with Hoenn or Sinnoh. The house champion of
+  // a Battle Frontier facility, which is the fourth rank above a gym
+  // leader and belongs beside them in `experts.ts`: a named roster, a
+  // party, and something to win off them. Hoenn has seven brains and
+  // Sinnoh five, and each hands out a silver mark and a gold one
+  // rather than the single badge a gym gives, so `Awards` needs two
+  // tiers per facility. The facilities themselves are the hard half
+  // and are deliberately out of scope: a Battle Factory that rents a
+  // party and a Battle Pyramid walked in the dark are their own
+  // games, and what fits here is the brain at the end of one.
+  //
+  // All three take the next free numbers and want a row in
+  // `LANDMARKS`, `LANDMARK_NAMES`, `SEA_PEOPLE` (none of them stands
+  // on water) and a resolver in `chunk-snapshot.ts`.
 }
 
 export default Landmark;

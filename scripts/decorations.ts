@@ -1,8 +1,16 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
-import groundPoint, { groundSpan } from './ground.ts';
+import { readFileSync } from 'node:fs';
+import decode, { type Image } from '../src/server/sprites/png.ts';
+import writeAtlas, {
+  type Crop,
+  type Cut,
+  type Drawn,
+  assertWhole,
+  compose,
+  cut,
+  standsOn,
+  tighten,
+} from './atlas.ts';
+import groundPoint from './ground.ts';
 
 /**
  * The scenery, cut out of an overworld rip and packed into two atlases.
@@ -24,25 +32,6 @@ import groundPoint, { groundSpan } from './ground.ts';
  */
 
 const SOURCE = process.argv[2] ?? 'image.png';
-const ROOT = 'public/sprites/overworld';
-
-interface Cut {
-  name: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  /**
-   * Whether the picture is a cell of one of the rip's 16px prop grids
-   * rather than a free-standing piece.
-   *
-   * It changes what counts as clipped. A free-standing piece has clear
-   * air under its shadow, so anything lit in the row below the box is
-   * the box being too small. A grid cell has the next cell of the grid
-   * under it, and a box that grew into that would swallow its neighbour
-   */
-  grid?: true;
-}
 
 /**
  * Where each piece sits on the rip, and what it is.
@@ -54,8 +43,8 @@ interface Cut {
 const DECORATION_CUTS: Cut[] = [
   { name: 'cactus', x: 321, y: 195, width: 30, height: 29 },
   { name: 'shrub', x: 210, y: 202, width: 27, height: 25 },
-  { name: 'grass', x: 48, y: 320, width: 16, height: 16, grid: true },
-  { name: 'flower', x: 48, y: 352, width: 16, height: 16, grid: true },
+  { name: 'grass', x: 48, y: 320, width: 16, height: 16, crowded: true },
+  { name: 'flower', x: 48, y: 352, width: 16, height: 16, crowded: true },
   { name: 'rock', x: 481, y: 369, width: 14, height: 14 },
   { name: 'boulder', x: 484, y: 645, width: 24, height: 27 },
   // Reeds and kelp are the same plant here, so the tallest blades on
@@ -130,140 +119,6 @@ const COAT_CUTS: Coat[] = [
   },
 ];
 
-/** Padding between packed pictures, so no sprite bleeds into its neighbour. */
-const GUTTER = 1;
-
-interface Piece {
-  name: string;
-  /** The picture, cropped to its lit pixels. */
-  image: Image;
-  /** Where the crop sits in the shared cell. */
-  trim: [number, number];
-  /** The point of the cell that stands on the ground. */
-  base: [number, number];
-  w: number;
-  h: number;
-}
-
-/** A cut cropped to its lit pixels, and where that crop sat in the cut. */
-interface Crop {
-  image: Image;
-  left: number;
-  top: number;
-}
-
-function cut(sheet: Image, area: Cut): Image {
-  const out: Image = {
-    width: area.width,
-    height: area.height,
-    rgba: Buffer.alloc(area.width * area.height * 4),
-  };
-
-  for (let y = 0; y < area.height; y += 1) {
-    for (let x = 0; x < area.width; x += 1) {
-      const from = ((area.y + y) * sheet.width + area.x + x) * 4;
-      const to = (y * out.width + x) * 4;
-
-      out.rgba[to] = sheet.rgba[from];
-      out.rgba[to + 1] = sheet.rgba[from + 1];
-      out.rgba[to + 2] = sheet.rgba[from + 2];
-      out.rgba[to + 3] = sheet.rgba[from + 3];
-    }
-  }
-  return out;
-}
-
-/** The picture again, cropped to the pixels that are actually lit. */
-function tighten(image: Image): Crop {
-  let left = image.width;
-  let right = -1;
-  let top = image.height;
-  let bottom = -1;
-
-  for (let y = 0; y < image.height; y += 1) {
-    for (let x = 0; x < image.width; x += 1) {
-      if (image.rgba[(y * image.width + x) * 4 + 3] === 0) {
-        continue;
-      }
-      if (x < left) {
-        left = x;
-      }
-      if (x > right) {
-        right = x;
-      }
-      if (y < top) {
-        top = y;
-      }
-      if (y > bottom) {
-        bottom = y;
-      }
-    }
-  }
-  if (right < 0) {
-    return { image, left: 0, top: 0 };
-  }
-
-  const width = right - left + 1;
-  const height = bottom - top + 1;
-  const out: Image = { width, height, rgba: Buffer.alloc(width * height * 4) };
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const from = ((top + y) * image.width + left + x) * 4;
-      const to = (y * width + x) * 4;
-
-      out.rgba[to] = image.rgba[from];
-      out.rgba[to + 1] = image.rgba[from + 1];
-      out.rgba[to + 2] = image.rgba[from + 2];
-      out.rgba[to + 3] = image.rgba[from + 3];
-    }
-  }
-  return { image: out, left, top };
-}
-
-/**
- * Whether any pixel of a row is drawn, over one span of columns
- */
-function rowLit(sheet: Image, y: number, from: number, to: number): boolean {
-  if (y < 0 || y >= sheet.height) {
-    return false;
-  }
-  for (let x = Math.max(0, from); x < Math.min(sheet.width, to); x += 1) {
-    if (sheet.rgba[(y * sheet.width + x) * 4 + 3] > 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Refuse a box the picture spills out of.
- *
- * The coordinates were read off the rip by eye, and the way that goes
- * wrong is silent: a box measured off the foliage misses the soft
- * shadow under it, and the sprite ships with its feet cut off looking
- * like a crop nobody chose. Checked above and below rather than at the
- * sides, since the rip sets its props shoulder to shoulder and a
- * neighbour's pixels are not this one's spill
- */
-function assertWhole(sheet: Image, area: Cut): void {
-  if (area.grid === true) {
-    return;
-  }
-  const to = area.x + area.width;
-
-  for (const [edge, y] of [
-    ['above', area.y - 1],
-    ['below', area.y + area.height],
-  ] as const) {
-    if (rowLit(sheet, y, area.x, to)) {
-      throw new Error(
-        `The box for ${area.name} is too small: row ${y}, just ${edge} it, is still drawing.`,
-      );
-    }
-  }
-}
-
 const sheet = decode(readFileSync(SOURCE));
 const ALL: Cut[] = [...DECORATION_CUTS, ...TREE_CUTS, ...COAT_CUTS];
 
@@ -292,18 +147,6 @@ function cropOf(name: string): Crop {
     throw new Error(`Nothing on the rip is called ${name}.`);
   }
   return crop;
-}
-
-/** What ends up on a sheet: a name and the picture packed under it. */
-interface Drawn {
-  name: string;
-  image: Image;
-  /**
-   * Where it meets the ground, where that is not its own to say. A
-   * tree in snow stands on its trunk, and the snow hangs off the crown
-   * in drips that reach lower than the trunk does
-   */
-  base?: [x: number, y: number];
 }
 
 function cutOf(name: string): Cut {
@@ -336,39 +179,12 @@ function underSnow(coat: Coat, tree: string): Drawn {
   }
   const x = over.left - under.left;
   const y = cutOf(coat.name).y - cutOf(tree).y + over.top - under.top;
+  const out = compose([
+    { image: under.image, x: 0, y: 0 },
+    { image: over.image, x, y },
+  ]);
   const left = Math.min(0, x);
   const top = Math.min(0, y);
-  const right = Math.max(under.image.width, x + over.image.width);
-  const bottom = Math.max(under.image.height, y + over.image.height);
-  const out: Image = {
-    width: right - left,
-    height: bottom - top,
-    rgba: Buffer.alloc((right - left) * (bottom - top) * 4),
-  };
-  const lay = (picture: Image, atX: number, atY: number): void => {
-    for (let row = 0; row < picture.height; row += 1) {
-      for (let column = 0; column < picture.width; column += 1) {
-        const from = (row * picture.width + column) * 4;
-        const alpha = picture.rgba[from + 3];
-
-        if (alpha === 0) {
-          continue;
-        }
-        const to = ((atY + row) * out.width + atX + column) * 4;
-        const behind = (out.rgba[to + 3] * (255 - alpha)) / 255;
-
-        for (let band = 0; band < 3; band += 1) {
-          out.rgba[to + band] = Math.round(
-            (picture.rgba[from + band] * alpha + out.rgba[to + band] * behind) / (alpha + behind),
-          );
-        }
-        out.rgba[to + 3] = Math.min(255, Math.round(alpha + behind));
-      }
-    }
-  };
-
-  lay(under.image, -left, -top);
-  lay(over.image, x - left, y - top);
 
   const whole = tighten(out);
   const [baseX, baseY] = groundPoint(under.image);
@@ -393,123 +209,8 @@ const treeArt: Drawn[] = [
   ...COAT_CUTS.flatMap((coat) => coat.over.map((tree) => underSnow(coat, tree))),
 ];
 
-/**
- * The cell a sheet is packed in: its own tallest piece, squared.
- *
- * One cell to a sheet rather than one across both. A caller draws a
- * cell at whatever a board cell is worth, so measuring a rock against
- * the tallest pine there is left it a fifth of a square and drew it as
- * a speck. Within a sheet the proportions are still the rip's own
- */
-function cellFor(art: Drawn[]): number {
-  return Math.max(...art.map((one) => Math.max(one.image.width, one.image.height)));
-}
-
-/**
- * A piece placed on the floor of its cell and centred across it, so
- * the cell is a square anything on the sheet can be drawn in
- */
-function pieceOf({ name, image, base }: Drawn, cell: number): Piece {
-  const trim: [number, number] = [Math.floor((cell - image.width) / 2), cell - image.height];
-  const [baseX, baseY] = base ?? groundPoint(image);
-
-  return {
-    name,
-    image,
-    trim,
-    // Written in the cell's own coordinates, which is what a caller
-    // standing one on a tile is working in
-    base: [trim[0] + baseX, trim[1] + baseY],
-    w: image.width + GUTTER,
-    h: image.height + GUTTER,
-  };
-}
-
-/**
- * How much ground the pieces of a sheet cover, in cell pixels: the
- * middle one of them, so one odd wide piece does not size the rest.
- *
- * A sheet that says this is drawn so that much ground covers a tile,
- * which sizes a tree by the tree rather than by whatever square the
- * packing happened to need
- */
-function standsOn(art: Drawn[]): number {
-  const spans = art.map((one) => groundSpan(one.image)).sort((left, right) => left - right);
-
-  return spans[Math.floor(spans.length / 2)];
-}
-
-function build(folder: string, art: Drawn[], stands?: number): void {
-  const cell = cellFor(art);
-  const pieces = art.map((one) => pieceOf(one, cell));
-  const packed = pack(pieces);
-  const atlas: Image = {
-    width: packed.width,
-    height: packed.height,
-    rgba: Buffer.alloc(packed.width * packed.height * 4),
-  };
-
-  for (const { box, x, y } of packed.placed) {
-    for (let row = 0; row < box.image.height; row += 1) {
-      for (let column = 0; column < box.image.width; column += 1) {
-        const from = (row * box.image.width + column) * 4;
-        const to = ((y + row) * atlas.width + x + column) * 4;
-
-        atlas.rgba[to] = box.image.rgba[from];
-        atlas.rgba[to + 1] = box.image.rgba[from + 1];
-        atlas.rgba[to + 2] = box.image.rgba[from + 2];
-        atlas.rgba[to + 3] = box.image.rgba[from + 3];
-      }
-    }
-  }
-
-  const drawn = encodeSmallest(atlas);
-  const into = join(ROOT, folder);
-
-  mkdirSync(into, { recursive: true });
-  writeFileSync(join(into, 'image.png'), drawn.bytes);
-  writeFileSync(
-    join(into, 'data.json'),
-    `${JSON.stringify(
-      {
-        compact: true,
-        width: atlas.width,
-        height: atlas.height,
-        ...(stands == null ? {} : { stands }),
-        images: packed.placed
-          .map(({ box, x, y }) => ({
-            name: `${box.name}.png`,
-            x,
-            y,
-            width: box.image.width,
-            height: box.image.height,
-            sourceWidth: cell,
-            sourceHeight: cell,
-            trim: box.trim,
-            base: box.base,
-          }))
-          .sort((one, two) => one.name.localeCompare(two.name)),
-      },
-      null,
-      2,
-    )}\n`,
-  );
-
-  console.log(
-    `\n${folder}: ${pieces.length} pictures in a ${cell}x${cell} cell, ${drawn.as}` +
-      (stands == null ? '' : `, standing on ${stands} of ground`),
-  );
-  for (const piece of pieces) {
-    console.log(
-      `  ${piece.name.padEnd(16)} ${String(piece.image.width).padStart(2)}x${String(piece.image.height).padStart(2)}` +
-        `  at ${piece.trim[0]},${piece.trim[1]}, standing on ${piece.base[0]},${piece.base[1]} of the cell`,
-    );
-  }
-  console.log(`  ${into}/image.png  ${atlas.width}x${atlas.height}  ${drawn.bytes.length}b`);
-}
-
-build('decorations', decorationArt);
+writeAtlas('decorations', decorationArt);
 // Measured over the trees themselves rather than the whole sheet: a
 // tree in snow is the same tree, and counting both would give the
 // families with the most shades the most votes
-build('trees', treeArt, standsOn(bareTrees));
+writeAtlas('trees', treeArt, standsOn(bareTrees));

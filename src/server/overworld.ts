@@ -168,7 +168,7 @@ export async function claimItemCache(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$${cell}`;
+  const id = `${cachePrefix(snapshot)}${cell}`;
 
   // The marker records the whole stash, so what a cache paid is
   // readable afterwards rather than only that it paid
@@ -189,6 +189,43 @@ async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
     uid,
     stash.map(({ item, amount }) => [item, amount]),
   );
+}
+
+function cachePrefix(snapshot: ChunkSnapshot): string {
+  return `${snapshot.key}@${snapshot.landmarkTimestamp}$`;
+}
+
+/**
+ * Which of this chunk's caches this player has already dug up, inside
+ * the window they were buried in.
+ *
+ * The board draws one of those open and empty, which is the same thing
+ * the refusal says in words. Per player and keyed by the window, so a
+ * stash one trainer carried off is still buried for the next and the
+ * answer empties itself when the window turns over
+ */
+export async function listClaimedItemCaches(
+  uid: string,
+  x: number,
+  y: number,
+  now: number,
+  offset: number,
+): Promise<number[]> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+
+  if (snapshot == null) {
+    return [];
+  }
+
+  const prefix = cachePrefix(snapshot);
+  const rows = await getSql()`
+    select marker from cache_claims
+    where player = ${uid} and marker like ${`${prefix}%`}
+  `;
+
+  return rows
+    .map((row) => Number(asString(row.marker).slice(prefix.length)))
+    .filter((cell) => Number.isInteger(cell));
 }
 
 function berryPrefix(snapshot: ChunkSnapshot): string {

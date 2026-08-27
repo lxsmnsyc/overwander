@@ -23,6 +23,7 @@ import {
   claimItemCache,
   claimNest,
   claimPhenomenon,
+  listClaimedItemCaches,
   listClaimedPhenomena,
   listPickedBerryPatches,
   peekNest,
@@ -472,6 +473,14 @@ export default function OverworldBoard(props: {
    */
   const [picked, setPicked] = createSignal<Set<number>>(new Set());
 
+  /**
+   * The caches this player has already dug up this window, which the
+   * board draws open and empty. Read from the store for the same
+   * reason the bare bushes are: an emptied cache should stay emptied
+   * across a reload
+   */
+  const [dug, setDug] = createSignal<Set<number>>(new Set());
+
   createEffect(() => {
     const loaded = view();
 
@@ -490,6 +499,15 @@ export default function OverworldBoard(props: {
       .catch(() => {
         // A board that cannot say which bushes are bare draws them all
         // in fruit: pressing one costs a refusal, not a mistake
+      });
+    listClaimedItemCaches(loaded.snapshot)
+      .then((cells) => {
+        if (live) {
+          setDug(new Set(cells));
+        }
+      })
+      .catch(() => {
+        // The same bargain the bushes make
       });
     onCleanup(() => {
       live = false;
@@ -858,6 +876,9 @@ export default function OverworldBoard(props: {
     if (landmark === Landmark.ItemCache) {
       const stash = await claimItemCache(loaded.snapshot, at);
 
+      // Empty either way: the stash was already carried off, or this
+      // press carried it off
+      setDug((cells) => new Set(cells).add(at));
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
@@ -1452,6 +1473,7 @@ export default function OverworldBoard(props: {
                 // frame
                 berries={loaded().snapshot.getBerryPatches()}
                 picked={picked()}
+                dug={dug()}
                 decorations={loaded().decorations}
                 spawns={
                   new Map(

@@ -13,6 +13,7 @@ import {
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
+  listClaimedItemCaches as listClaimedItemCachesOnServerSide,
   listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
   listPickedBerryPatches as listPickedBerryPatchesOnServerSide,
   meetSpawn,
@@ -400,6 +401,36 @@ async function listPickedOnServer(
 ): Promise<number[]> {
   'use server';
   return listPickedBerryPatchesOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Which of this chunk's caches this player has already dug up this
+ * window. The board draws those open and empty, for the same reason it
+ * draws a picked patch bare
+ */
+export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return listDugCachesOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    snapshot.offset,
+  );
+}
+
+async function listDugCachesOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+): Promise<number[]> {
+  'use server';
+  return listClaimedItemCachesOnServerSide(
     await requireUid(token),
     x,
     y,

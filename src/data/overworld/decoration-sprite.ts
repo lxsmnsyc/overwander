@@ -4,7 +4,7 @@
 // redundant
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import Biome, { BIOME_CONFIGS } from '../ids/biome';
-import Decoration from './decoration';
+import Decoration, { getBiomeDecorations } from './decoration';
 
 /**
  * Where a piece of scenery is drawn from, and which one a biome grows.
@@ -127,6 +127,28 @@ const SNOW: Partial<Record<string, string>> = {
   'pine-dark': 'pine-dark-snow',
   'pine-blue': 'pine-blue-snow',
 };
+
+/** What counts as a tree to hide a grotto under, in order of preference. */
+const TREE_KINDS = [Decoration.Tree, Decoration.Pine, Decoration.Palm];
+
+/**
+ * The tree a hidden grotto is hiding as.
+ *
+ * It is a tree and nothing else, which is the whole of how it hides:
+ * the biome's own tree, drawn the way every other tree on the chunk is
+ * drawn, snow included. What is behind it is only found by walking up
+ * to it
+ */
+export function grottoPicture(biome: Biome): DecorationPicture {
+  const grown = new Set(getBiomeDecorations(biome));
+  // Whichever tree the biome actually grows, drawn exactly as that
+  // tree: a taiga grows pines and nothing else, so a grotto standing
+  // there as a broadleaf would be the one tree on the chunk that stood
+  // out. A biome that grows no tree at all falls back to the plain one
+  const kind = TREE_KINDS.find((one) => grown.has(one)) ?? Decoration.Tree;
+
+  return decorationPicture(kind, biome);
+}
 
 /**
  * The picture one piece of scenery is drawn as, in the biome it is

@@ -53,7 +53,8 @@ import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
 import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
 import loadOWPlant from '../../../canvas/ow-plant-sprites';
 import berryPlantSheet from '../../../data/overworld/berry-plant';
-import decorationPicture from '../../../data/overworld/decoration-sprite';
+import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
+import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
 import type BasicSprite from '../../../canvas/basic-sprite';
 import loadBasicSprite from '../../../canvas/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
@@ -182,6 +183,12 @@ export interface ChunkCanvasProps {
    * lying about the cell
    */
   picked: Set<number>;
+  /**
+   * The caches this player has already dug up this window. They are
+   * still there and still drawn: an empty one open on the ground says
+   * what a cell that would answer nothing looks like
+   */
+  dug: Set<number>;
   /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
@@ -542,6 +549,110 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const sheet = scenery.get(picture.sheet) ?? null;
 
     return sheet?.ready === true ? { sheet, name: picture.name } : null;
+  };
+
+  /**
+   * Stand one picture from an atlas on a cell.
+   *
+   * Everything that stands on the board and is not alive comes through
+   * here: a tree, a rock, a cave mouth. The sheet says where the piece
+   * meets the ground and how much ground it covers, and this is what
+   * puts those two answers on a tile
+   */
+  const standPiece = (
+    context: CanvasRenderingContext2D,
+    piece: { sheet: BasicSprite; name: string } | null,
+    middle: { x: number; y: number; scale: number },
+    magnify: number,
+  ): void => {
+    const cell = piece?.sheet.frameOf(piece.name);
+
+    if (piece == null || cell == null) {
+      return;
+    }
+
+    // A sheet that says how much ground its pieces cover is drawn so
+    // that much of it is one square: a tree comes out the size of the
+    // tree rather than the size of the square the packing needed for
+    // the tallest one on the sheet. Anything that does not say is
+    // sized off its own cell
+    const stands = piece.sheet.data.stands;
+    const scale =
+      stands == null
+        ? (CELL * SCENERY_CELLS * middle.scale * magnify) / cell.sourceHeight
+        : (CELL * middle.scale * magnify) / stands;
+    // The atlas is pixel art and BasicSprite draws for the interface,
+    // where nothing is scaled up far enough to care
+    const smoothing = context.imageSmoothingEnabled;
+
+    context.imageSmoothingEnabled = false;
+    // Where the piece meets the ground, which the sheet worked out
+    // when it was cut: the middle of the patch it stands on, never the
+    // shadow the rip lays under it. Standing the cell's floor on the
+    // tile instead puts the shadow on the tile and the piece a row
+    // behind it
+    const base = cell.base ?? [cell.sourceWidth / 2, cell.sourceHeight];
+
+    piece.sheet.draw(context, piece.name, middle.x - base[0] * scale, middle.y - base[1] * scale, {
+      scale,
+      anchor: 'top-left',
+    });
+    context.imageSmoothingEnabled = smoothing;
+  };
+
+  /**
+   * The tree a hidden grotto is hiding under, once the tree sheet has
+   * landed. It is drawn as scenery and nothing else: what makes a
+   * grotto hidden is that it looks like a tree
+   */
+  const grottoOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    if (props.phenomena.get(index) !== Phenomenon.HiddenGrotto) {
+      return null;
+    }
+
+    const picture = grottoPicture(props.biome);
+
+    if (!scenery.has(picture.sheet)) {
+      loadScenery(picture.sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(picture.sheet) ?? null;
+
+    return sheet?.ready === true ? { sheet, name: picture.name } : null;
+  };
+
+  /**
+   * The picture a landmark is drawn as, once its sheet is in hand.
+   *
+   * Null for the landmarks somebody is standing on and for the berry
+   * patches, which grow their own bush: both are drawn already, and a
+   * mark under them would be the cell saying the same thing twice
+   */
+  const landmarkOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    const kind = props.landmarks.get(index);
+
+    if (kind == null || drawnAsPerson(index)) {
+      return null;
+    }
+
+    const name = landmarkPicture(kind, props.biome, props.dug.has(index), index);
+
+    if (name == null) {
+      return null;
+    }
+    if (!scenery.has(LANDMARK_SHEET)) {
+      loadScenery(LANDMARK_SHEET).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(LANDMARK_SHEET) ?? null;
+
+    return sheet?.ready === true ? { sheet, name } : null;
   };
 
   /**
@@ -1326,18 +1437,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           continue;
         }
         if (showing != null) {
-          // The grotto hides, so it keeps the plain mark the rest of
-          // the ground uses; everything else is drawn as itself
-          const middle = at(projectCell(index, yaw()));
-
-          if (showing === Phenomenon.HiddenGrotto) {
-            drawLandmarkMark(context, middle, '!', magnify);
-          } else {
-            drawPhenomenon(context, middle, showing, clock, magnify);
+          // The grotto is a tree with a hollow in it, so it stands with
+          // the scenery rather than lying on the ground with the marks;
+          // everything else that is going on is drawn here
+          if (showing !== Phenomenon.HiddenGrotto) {
+            drawPhenomenon(context, at(projectCell(index, yaw())), showing, clock, magnify);
           }
           continue;
         }
-        if (landmark != null) {
+        // A landmark drawn as itself stands with everything else that
+        // stands, so a letter on the ground under it would be the cell
+        // saying the same thing twice
+        if (landmark != null && landmarkOn(index) == null) {
           drawLandmarkMark(
             context,
             at(projectCell(index, yaw())),
@@ -1404,43 +1515,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
 
         // Scenery first of everything that stands on a cell: a tree is
-        // the backdrop a pokemon is standing in front of
-        const standingScenery = loading() ? null : sceneryOn(index);
-
-        if (standingScenery != null) {
-          const cell = standingScenery.sheet.frameOf(standingScenery.name);
-
-          if (cell != null) {
-            // A sheet that says how much ground its pieces cover is
-            // drawn so that much of it is one square: a tree comes out
-            // the size of the tree rather than the size of the square
-            // the packing needed for the tallest one on the sheet.
-            // Anything that does not say is sized off its own cell
-            const stands = standingScenery.sheet.data.stands;
-            const scale =
-              stands == null
-                ? (CELL * SCENERY_CELLS * middle.scale * magnify) / cell.sourceHeight
-                : (CELL * middle.scale * magnify) / stands;
-            // The atlas is pixel art and BasicSprite draws for the
-            // interface, where nothing is scaled up far enough to care
-            const smoothing = context.imageSmoothingEnabled;
-
-            context.imageSmoothingEnabled = false;
-            // Where the piece meets the ground, which the sheet worked
-            // out when it was cut: the middle of the patch it stands
-            // on, never the shadow the rip lays under it. Standing the
-            // cell's floor on the tile instead puts the shadow on the
-            // tile and the piece a row behind it
-            const base = cell.base ?? [cell.sourceWidth / 2, cell.sourceHeight];
-            standingScenery.sheet.draw(
-              context,
-              standingScenery.name,
-              middle.x - base[0] * scale,
-              middle.y - base[1] * scale,
-              { scale, anchor: 'top-left' },
-            );
-            context.imageSmoothingEnabled = smoothing;
-          }
+        // the backdrop a pokemon is standing in front of, and a lair
+        // is the backdrop the whole cell is about
+        if (!loading()) {
+          standPiece(context, sceneryOn(index), middle, magnify);
+          standPiece(context, grottoOn(index), middle, magnify);
+          standPiece(context, landmarkOn(index), middle, magnify);
         }
 
         // A bush is drawn before whatever is standing beside it: it is

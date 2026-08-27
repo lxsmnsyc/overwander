@@ -7,6 +7,12 @@ import registerItems, { getItemData, listItemsByType } from '../src/data/items';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
 import { BIOME_NAMES } from '../src/data/biome/names';
 import Biome from '../src/data/ids/biome';
+import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
+import landmarkPicture, {
+  LANDMARK_SHEET,
+  hasLandmarkPicture,
+  landmarkPictures,
+} from '../src/data/overworld/landmark-sprite';
 import Decoration, {
   DECORATION_NAMES,
   getBiomeDecorations,
@@ -16,6 +22,7 @@ import decorationPicture, {
   TREE_SHEET,
   biomeVariants,
   decorationPictures,
+  grottoPicture,
   isSnowy,
 } from '../src/data/overworld/decoration-sprite';
 
@@ -211,34 +218,112 @@ describe('the berry plants that ship', () => {
   });
 });
 
+interface Packed {
+  name: string;
+  width: number;
+  height: number;
+  sourceWidth: number;
+  sourceHeight: number;
+  trim: [number, number];
+  base: [number, number] | null;
+}
+
+function packed(sheet: string): Packed[] {
+  const described = JSON.parse(
+    readFileSync(`${SPRITE_ROOT}/overworld/${sheet}/data.json`, 'utf8'),
+  ) as unknown;
+  const images = fieldOf(described, 'images');
+
+  return (Array.isArray(images) ? images : []).map((entry: unknown) => ({
+    name: String(fieldOf(entry, 'name')).replace(/\.png$/, ''),
+    width: Number(fieldOf(entry, 'width')),
+    height: Number(fieldOf(entry, 'height')),
+    sourceWidth: Number(fieldOf(entry, 'sourceWidth')),
+    sourceHeight: Number(fieldOf(entry, 'sourceHeight')),
+    trim: trimOf(entry),
+    base: pairOf(fieldOf(entry, 'base')),
+  }));
+}
+
+describe('the landmarks that ship', () => {
+  it('has a picture for every landmark drawn as one', () => {
+    const drawn = new Set(packed(LANDMARK_SHEET).map((one) => one.name));
+    const missing = landmarkPictures().filter((name) => !drawn.has(name));
+
+    expect(missing, 'run `node scripts/landmarks.ts <sheet>` for these').toEqual([]);
+  });
+
+  it('leaves the landmarks somebody stands on to their charsets', () => {
+    // A market is its vendor and a gym is its leader. A picture as well
+    // would be the cell saying the same thing twice
+    for (const kind of [
+      Landmark.Market,
+      Landmark.Trainer,
+      Landmark.GymLeader,
+      Landmark.EliteFour,
+      Landmark.Champion,
+      Landmark.TeamRocket,
+      Landmark.WanderingNpc,
+      // And the patch grows its own bush
+      Landmark.BerryPatch,
+    ]) {
+      expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
+      expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).toBe(null);
+    }
+  });
+
+  it('draws every other landmark as something', () => {
+    for (const kind of LANDMARKS) {
+      if (!hasLandmarkPicture(kind)) {
+        continue;
+      }
+      expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).not.toBe(null);
+    }
+  });
+
+  it('hangs a cold lair with ice and a wet one with moss', () => {
+    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Grassland)).toBe('lair');
+    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Glacier)).toBe('lair-ice');
+    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Swamp)).toBe('lair-moss');
+    // Only the lair varies: a board is a board wherever it is posted
+    expect(landmarkPicture(Landmark.AuctionBoard, Biome.Glacier)).toBe(
+      landmarkPicture(Landmark.AuctionBoard, Biome.Swamp),
+    );
+  });
+
+  it('finds a shadow lair choked or boarded, and always the same one', () => {
+    const mouths = new Set(
+      Array.from({ length: 32 }, (_, cell) =>
+        landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, cell),
+      ),
+    );
+
+    expect([...mouths].sort()).toEqual(['lair-rubble', 'lair-sealed']);
+    // The same cell keeps the mouth it had: a lair that changed every
+    // frame would be a lair nobody could recognise
+    expect(landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, 7)).toBe(
+      landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, 7),
+    );
+  });
+
+  it('opens a cache this player has already dug up', () => {
+    expect(landmarkPicture(Landmark.ItemCache, Biome.Grassland)).toBe('cache');
+    expect(landmarkPicture(Landmark.ItemCache, Biome.Grassland, true)).toBe('cache-taken');
+    // Nothing else has a second state, and asking for one gives the
+    // picture it always had rather than nothing at all
+    expect(landmarkPicture(Landmark.Nest, Biome.Grassland, true)).toBe('nest');
+  });
+
+  it('says where every landmark meets the ground', () => {
+    for (const one of packed(LANDMARK_SHEET)) {
+      expect(one.base, one.name).not.toBe(null);
+      expect(one.base?.[1], one.name).toBeGreaterThan(one.trim[1]);
+      expect(one.base?.[1], one.name).toBeLessThan(one.sourceHeight);
+    }
+  });
+});
+
 describe('the scenery that ships', () => {
-  interface Packed {
-    name: string;
-    width: number;
-    height: number;
-    sourceWidth: number;
-    sourceHeight: number;
-    trim: [number, number];
-    base: [number, number] | null;
-  }
-
-  function packed(sheet: string): Packed[] {
-    const described = JSON.parse(
-      readFileSync(`${SPRITE_ROOT}/overworld/${sheet}/data.json`, 'utf8'),
-    ) as unknown;
-    const images = fieldOf(described, 'images');
-
-    return (Array.isArray(images) ? images : []).map((entry: unknown) => ({
-      name: String(fieldOf(entry, 'name')).replace(/\.png$/, ''),
-      width: Number(fieldOf(entry, 'width')),
-      height: Number(fieldOf(entry, 'height')),
-      sourceWidth: Number(fieldOf(entry, 'sourceWidth')),
-      sourceHeight: Number(fieldOf(entry, 'sourceHeight')),
-      trim: trimOf(entry),
-      base: pairOf(fieldOf(entry, 'base')),
-    }));
-  }
-
   const BOTH = [DECORATION_SHEET, TREE_SHEET];
 
   it('has a picture for everything anything is drawn as', () => {
@@ -317,6 +402,24 @@ describe('the scenery that ships', () => {
     // A warm biome keeps its own tree
     expect(isSnowy(Biome.TropicalRainforest)).toBe(false);
     expect(decorationPicture(Decoration.Tree, Biome.TropicalRainforest).name).toBe('jungle');
+  });
+
+  it('draws a grotto as whatever tree the biome grows', () => {
+    // What makes a grotto hidden is that it is a tree: the same tree
+    // every other cell of the chunk is drawn with, snow and all
+    for (const biome of [Biome.Grassland, Biome.Savanna, Biome.Taiga, Biome.Beach]) {
+      const trees = getBiomeDecorations(biome).filter((kind) =>
+        [Decoration.Tree, Decoration.Pine, Decoration.Palm].includes(kind),
+      );
+
+      expect(grottoPicture(biome), BIOME_NAMES[biome]).toEqual(
+        decorationPicture(trees[0] ?? Decoration.Tree, biome),
+      );
+    }
+    // A taiga grows pines and nothing else, so a grotto there is a pine
+    // under snow rather than the plain tree
+    expect(isSnowy(Biome.Taiga)).toBe(true);
+    expect(grottoPicture(Biome.Taiga).name).toBe('pine-snow');
   });
 
   it('gives a tree its biome and a rock the same picture everywhere', () => {

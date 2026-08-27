@@ -1,0 +1,195 @@
+{
+  "compact": true,
+  "width": 147,
+  "height": 108,
+  "stands": 24,
+  "images": [
+    {
+      "name": "board.png",
+      "x": 0,
+      "y": 83,
+      "width": 34,
+      "height": 24,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        3,
+        17
+      ],
+      "base": [
+        20,
+        32
+      ]
+    },
+    {
+      "name": "cache-taken.png",
+      "x": 82,
+      "y": 58,
+      "width": 15,
+      "height": 14,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        13,
+        27
+      ],
+      "base": [
+        20,
+        36
+      ]
+    },
+    {
+      "name": "cache.png",
+      "x": 35,
+      "y": 83,
+      "width": 15,
+      "height": 12,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        13,
+        29
+      ],
+      "base": [
+        20,
+        36
+      ]
+    },
+    {
+      "name": "lair-ice.png",
+      "x": 0,
+      "y": 42,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "lair-moss.png",
+      "x": 65,
+      "y": 0,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "lair-rubble.png",
+      "x": 41,
+      "y": 42,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "lair-sealed.png",
+      "x": 106,
+      "y": 0,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "lair.png",
+      "x": 24,
+      "y": 0,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "nest.png",
+      "x": 82,
+      "y": 42,
+      "width": 15,
+      "height": 15,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        13,
+        26
+      ],
+      "base": [
+        20,
+        37
+      ]
+    },
+    {
+      "name": "portal.png",
+      "x": 106,
+      "y": 41,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "seat.png",
+      "x": 0,
+      "y": 0,
+      "width": 23,
+      "height": 41,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        9,
+        0
+      ],
+      "base": [
+        20,
+        34
+      ]
+    }
+  ]
+}

@@ -1,14 +1,12 @@
-import { STAT_LABELS, describeIVs, isHoldable, withArticle } from './describe';
+import { STAT_LABELS, isHoldable } from './describe';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
 import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
 import { isAuctionableCatch } from '../../../auth/auctions';
-import useBall from '../../../auth/balls';
-import useBottleCap from '../../../auth/bottle-caps';
 import { setBuddy } from '../../../auth/buddy';
-import { getCandyCost, getCatchCandy, useCandy, useRareCandy } from '../../../auth/candy';
+import { getCandyCost, getCatchCandy, useCandy } from '../../../auth/candy';
 import {
   type CaughtPokemon,
   giveItem,
@@ -20,54 +18,34 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import {
-  NICKNAME_LIMIT,
-  asNickname,
-  getCatchName,
-  getMovePoints,
-  isShadow,
-  isShiny,
-} from '../../../auth/caught-record';
+import { NICKNAME_LIMIT, asNickname, getCatchName, isShiny } from '../../../auth/caught-record';
 import { useAuth } from '../../../auth/context';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
-import useHealingItem from '../../../auth/healing';
-import { type HealthState, healedByItem } from '../../../auth/health';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import type { PokedexView } from '../../../auth/pokedex';
-import usePurifyingGem from '../../../auth/purify';
-import {
-  type TrainingResult,
-  feedEffortBerry,
-  trainEffort,
-  useEffortItem,
-} from '../../../auth/training';
+import { type TrainingResult, trainEffort } from '../../../auth/training';
 
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
 import type { Stats } from '../../../data/constants/stats';
-import { Items, getBall, getMachineMove, isMachineItem } from '../../../data/ids/items';
+import { type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
 import { NATURE_NAMES } from '../../../data/ids/natures';
 import type { Species } from '../../../data/ids/species';
 
-import { BERRY_EFFORT_DROPS } from '../../../data/items/berries';
-import { isBottleCap, isPerfectIVs } from '../../../data/items/bottle-caps';
-import { isHerbal } from '../../../data/items/medicine';
-import { isPurifyingGem } from '../../../data/items/purifying-gem';
-import { isPPItem, isVitamin } from '../../../data/items/vitamins';
-import { isWing } from '../../../data/items/wings';
-import { PP_UP_LIMIT } from '../../../data/moves';
+import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
-import { getFamilyName, getMovesLearnedAt, getSpeciesData } from '../../../data/species';
+import { getFamilyName, getSpeciesData } from '../../../data/species';
 
 import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../items/ItemGrid';
+import spendItemOn, { getLevelMoves, isUsableOn } from '../../items/use-item';
 
 import {
   Badge,
@@ -88,7 +66,7 @@ import {
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
-import { type JSX, type Resource, Show, createEffect, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, createSignal } from 'solid-js';
 
 /**
  * Re-exported from where the battle card reads them too: an ability on
@@ -141,13 +119,6 @@ export interface CatchDialogProps {
    * This is so the buttons are not offered in the first place
    */
   readOnly?: boolean;
-  /**
-   * Something out of the bag to spend on this pokemon the moment the
-   * sheet opens. It is how the bag uses an item: the item is chosen
-   * first and the pokemon second, which is the way round the sheet
-   * cannot ask it
-   */
-  useItem?: Items | null;
   /**
    * Open a different one of the player's pokemon — the one before this
    * in the box, or the one after.
@@ -367,15 +338,7 @@ export function CatchSheetBody(
    */
   const offerLevelMoves = (level: number): void => {
     const caught = view();
-
-    if (caught == null || isEgg(caught)) {
-      return;
-    }
-
-    const knows = new Set(caught.moves);
-    const learning = getMovesLearnedAt(caught.species, level).filter(
-      (learned) => !knows.has(learned),
-    );
+    const learning = caught == null ? [] : getLevelMoves(caught, level);
 
     if (learning.length > 0) {
       setTeaching({ move: learning[0], rest: learning.slice(1), levelled: true });
@@ -394,33 +357,6 @@ export function CatchSheetBody(
         say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
         props.onRecordChanged();
         props.onCandiesChanged();
-        props.onEvolutionsChanged();
-        props.onChange?.();
-
-        if (level != null) {
-          offerLevelMoves(level);
-        }
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
-  };
-
-  /**
-   * The universal candy, spent out of the bag rather than from the
-   * family's stack: same level, same level-move offer afterwards
-   */
-  const feedRareCandy = (): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    useRareCandy(catchId)
-      .then((level) => {
-        say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
-        props.onRecordChanged();
-        props.onBagChanged();
         props.onEvolutionsChanged();
         props.onChange?.();
 
@@ -461,18 +397,6 @@ export function CatchSheetBody(
   const holdables = (): InventoryEntry[] =>
     (props.bag.latest ?? []).filter((entry) => isHoldable(entry.item));
 
-  /**
-   * Whether the item would do this pokemon some good — a berry, a
-   * potion, a cure, a revive. The rules decide: an item that would
-   * change nothing about this pokemon is not offered, because using it
-   * would spend it
-   */
-  const isRemedy = (item: Items): boolean => {
-    const caught = view();
-
-    return caught != null && healedByItem(caught, item) != null;
-  };
-
   const moveItem = (item: Items, give: boolean): void => {
     const uid = owned();
     const catchId = props.catchId;
@@ -490,32 +414,6 @@ export function CatchSheetBody(
         props.onRecordChanged();
         props.onBagChanged();
         props.onEvolutionsChanged();
-        props.onChange?.();
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
-  };
-
-  const heal = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    useHealingItem(catchId, item)
-      .then((state: HealthState | null) => {
-        say(
-          state == null
-            ? `${describeItem(item)} would do nothing for it.`
-            : // Herbal medicine is swallowed, and the pokemon holds it
-              // against whoever handed it over
-              `${describeItem(item)} used — ${state.health} HP.${
-                isHerbal(item) ? ' It did not enjoy that.' : ''
-              }`,
-        );
-        props.onRecordChanged();
-        props.onBagChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -558,110 +456,6 @@ export function CatchSheetBody(
       (result) =>
         `${STAT_LABELS[stat]} trained to ${result.effortValues[stat]} — ${result.unused} left to spend.`,
     );
-  };
-
-  /**
-   * Whether the item is one that grants effort: a wing found on the
-   * ground, or a vitamin bought off a shelf
-   */
-  const isEffortItem = (item: Items): boolean => isWing(item) || isVitamin(item);
-
-  const trainWithItem = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    settleTraining(
-      useEffortItem(catchId, item),
-      `${describeItem(item)} could not be used.`,
-      () => `${describeItem(item)} — points it did not have to earn.`,
-    );
-  };
-
-  const feedBitterBerry = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    settleTraining(
-      feedEffortBerry(catchId, item),
-      `${describeItem(item)} could not be fed.`,
-      (result) =>
-        `Bitter, and good for it — ${result.unused} points back to spend, and it thinks the better of you.`,
-    );
-  };
-
-  const purify = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    usePurifyingGem(catchId, item)
-      .then((ivs) => {
-        say(
-          ivs == null
-            ? `${describeItem(item)} could not be used.`
-            : `The shadow is gone — ${describeIVs(ivs)}.`,
-        );
-        props.onRecordChanged();
-        props.onBagChanged();
-        props.onChange?.();
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
-  };
-
-  const polish = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    useBottleCap(catchId, item)
-      .then((ivs) => {
-        say(
-          ivs == null
-            ? `${describeItem(item)} could not be used.`
-            : `${describeItem(item)} polished it — ${describeIVs(ivs)}.`,
-        );
-        props.onRecordChanged();
-        props.onBagChanged();
-        props.onChange?.();
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
-  };
-
-  /**
-   * Put it in the ball that was just spent on it. The history is not
-   * touched: what each owner received it in is a fact about the
-   * handover, not about the ball it sits in today
-   */
-  const reball = (item: Items): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    useBall(catchId, item)
-      .then((ball) => {
-        say(
-          ball == null
-            ? `${describeItem(item)} could not be used.`
-            : `It is in ${withArticle(describeItem(item))} now.`,
-        );
-        props.onRecordChanged();
-        props.onBagChanged();
-        props.onChange?.();
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
   };
 
   const takeAlong = (): void => {
@@ -884,65 +678,14 @@ export function CatchSheetBody(
   const [panel, setPanel] = createSignal<'items' | 'give' | null>(null);
 
   /**
-   * Whether the item the bag sent along has already been spent. It is
-   * cleared whenever the sheet is pointed at something new, so a
-   * second potion out of the bag is a second potion spent
-   */
-  let spent = false;
-
-  createEffect(() => {
-    props.catchId;
-    props.useItem;
-    spent = false;
-  });
-
-  /**
-   * Whether the item is one this pokemon could be given right now —
-   * a remedy, a cap it would gain from, a gem for a shadow, a wing, a
-   * bitter berry. It is the one question behind the whole Use item
-   * panel, so what is offered is never something that would be spent
-   * on nothing
+   * Whether the item is one this pokemon could be given right now.
+   * The rule is the bag's own, so the panel here and the picker there
+   * offer exactly the same pokemon for exactly the same item
    */
   const isUsable = (item: Items): boolean => {
     const caught = view();
 
-    if (caught == null) {
-      return false;
-    }
-    // The universal candy: a level for anything that can still grow
-    if (item === Items.RareCandy) {
-      return !isEgg(caught) && caught.level < MAX_LEVEL;
-    }
-    if (isBottleCap(item)) {
-      return !isPerfectIVs(caught.ivs);
-    }
-    // A ball re-balls it, so the one it is already in would be spent
-    // on nothing
-    const ball = getBall(item);
-
-    if (ball != null) {
-      return ball !== caught.ball;
-    }
-    if (isPurifyingGem(item)) {
-      return isShadow(caught);
-    }
-    // A machine is offered only where it would teach something: one
-    // this species can learn and does not know already
-    if (isMachineItem(item)) {
-      const move = getMachineMove(item);
-
-      return (
-        move != null &&
-        new Set(getSpeciesData(caught.species).learnSet.teachable).has(move) &&
-        !new Set(caught.moves).has(move)
-      );
-    }
-    // A bottle is offered only where there is a move for it to go on
-    // that has not already taken everything it will take
-    if (isPPItem(item)) {
-      return caught.moves.some((move) => getMovePoints(caught, move) < PP_UP_LIMIT);
-    }
-    return isRemedy(item) || isEffortItem(item) || BERRY_EFFORT_DROPS.has(item);
+    return caught != null && isUsableOn(item, caught);
   };
 
   /**
@@ -955,66 +698,48 @@ export function CatchSheetBody(
     (props.bag.latest ?? []).some((entry) => entry.amount > 0 && isUsable(entry.item));
 
   /**
-   * Spend it, whatever it is. Each kind already has its own call and
-   * its own message; this only decides which one the item belongs to
+   * Spend it, whatever it is.
+   *
+   * The two that ask a question back are the sheet's own business: a
+   * machine asks which move is given up for it, and a bottle which
+   * move the points land on. Everything else is one call, and the
+   * sentence it comes back with is the bag's to write
    */
   const useOn = (item: Items): void => {
-    setPanel(null);
+    const catchId = props.catchId;
 
-    // A machine is the one item that asks a question back: what a
-    // pokemon gives up for it depends on how full its move list is,
-    // and that is the teaching dialog's business
+    setPanel(null);
+    if (owned() == null || catchId == null) {
+      return;
+    }
+
     const move = isMachineItem(item) ? getMachineMove(item) : null;
 
     if (move != null) {
       setTeaching({ move, rest: [], levelled: false });
       return;
     }
-    // And so does a bottle, for the same reason: what it buys lands on
-    // one move and cannot be moved off it afterwards
     if (isPPItem(item)) {
       setBottle(item);
       return;
     }
-    if (item === Items.RareCandy) {
-      feedRareCandy();
-    } else if (getBall(item) != null) {
-      reball(item);
-    } else if (isBottleCap(item)) {
-      polish(item);
-    } else if (isPurifyingGem(item)) {
-      purify(item);
-    } else if (isEffortItem(item)) {
-      trainWithItem(item);
-    } else if (BERRY_EFFORT_DROPS.has(item)) {
-      feedBitterBerry(item);
-    } else {
-      heal(item);
-    }
+
+    spendItemOn(catchId, item)
+      .then((result) => {
+        say(result.said, result.tone);
+        props.onRecordChanged();
+        props.onBagChanged();
+        props.onEvolutionsChanged();
+        props.onChange?.();
+
+        if (result.level != null) {
+          offerLevelMoves(result.level);
+        }
+      })
+      .catch((caught: unknown) => {
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
   };
-
-  /**
-   * Something the bag asked to be spent on this one.
-   *
-   * The pokemon was chosen after the item, so that choice is the
-   * agreement and the sheet spends it on arrival. Once only — the
-   * record changes underneath and the sheet reads it again — and a
-   * cap on a flawless pokemon is said rather than quietly swallowed
-   */
-  createEffect(() => {
-    const item = props.useItem;
-    const caught = view();
-
-    if (item == null || caught == null || spent) {
-      return;
-    }
-    spent = true;
-    if (isUsable(item)) {
-      useOn(item);
-    } else {
-      say(`${describeItem(item)} would do this one no good.`, 'ember');
-    }
-  });
 
   /**
    * What the menu offers. Everything in it is occasional — the things

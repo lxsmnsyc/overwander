@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { claimStarter, expectShut, openPanel, signIn } from './game';
+import { type Player, claimStarter, expectShut, signIn } from './game';
+import { openAuctionBoard } from './walk';
 import { stageSeller } from './stranger';
 
 /**
@@ -11,9 +12,11 @@ import { stageSeller } from './stranger';
  * and say it is empty rather than leaving the panel looking broken.
  */
 
+let player: Player;
+
 test.describe('the auction board', () => {
   test.beforeEach(async ({ page }) => {
-    await signIn(page);
+    player = await signIn(page);
     await claimStarter(page);
   });
 
@@ -21,7 +24,7 @@ test.describe('the auction board', () => {
     // Somebody else's lot, so the board has something on it whatever
     // the emulator was left holding
     const seller = await stageSeller('Bracken');
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
 
     await expect(board.getByText('Loading auctions…')).toBeHidden({ timeout: 20_000 });
 
@@ -50,7 +53,7 @@ test.describe('the auction board', () => {
   test('offers selling from the top bar rather than from the bottom of the list', async ({
     page,
   }) => {
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
     const add = board.getByRole('button', { name: 'Add' });
 
     // Beside the heading, which is the top of the panel
@@ -74,7 +77,7 @@ test.describe('the auction board', () => {
   });
 
   test('closes and gives the world back', async ({ page }) => {
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
 
     await board.getByRole('button', { name: 'Close' }).click();
     await expectShut(board);

@@ -28,9 +28,9 @@ test.describe('the overworld', () => {
   test('reaches everything from the one button at the bottom', async ({ page }) => {
     const menu = await openMenu(page);
 
-    // Everything that is not the world, as a keypad. The three that
-    // are kept for later are drawn and unpressable rather than left
-    // out, so the keys do not move as the game grows
+    // Everything that is not the world, as a keypad. There is no key
+    // for the auctions: the lots are read at a board out in the world,
+    // which is what makes trading somewhere a player goes
     for (const label of [
       'World',
       'Catches',
@@ -38,8 +38,9 @@ test.describe('the overworld', () => {
       'Inventory',
       'Profile',
       'Raids',
-      'Auctions',
+      'Battle',
       'Gifts',
+      'Quests',
     ]) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
     }
@@ -67,6 +68,6 @@ test.describe('the overworld', () => {
     // leaves its overlay behind looks shut and swallows every press
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
     // `openPanel` asserts the panel is up, which is the whole point
-    await openPanel(page, 'Auctions');
+    await openPanel(page, 'Catches');
   });
 });

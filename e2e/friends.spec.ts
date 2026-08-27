@@ -10,6 +10,7 @@ import {
 } from './game';
 import { insertRow, uidOf } from './admin';
 import { stageSeller } from './stranger';
+import { openAuctionBoard } from './walk';
 
 /**
  * Asking somebody to be your friend.
@@ -86,11 +87,11 @@ test.describe('friends', () => {
 
   test('asks the trainer whose profile is open', async ({ page }) => {
     const seller = await stageSeller('Juniper');
+    const player = await signIn(page);
 
-    await signIn(page);
     await claimStarter(page);
 
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
     const square = board.getByRole('button', { name: new RegExp(`by ${seller.nickname}`) });
 
     await expect(square).toBeVisible({ timeout: 20_000 });
@@ -158,11 +159,11 @@ test.describe('friends', () => {
 
   test('shuts somebody out, and lists them where the block can be lifted', async ({ page }) => {
     const seller = await stageSeller('Nettle');
+    const player = await signIn(page);
 
-    await signIn(page);
     await claimStarter(page);
 
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
     const square = board.getByRole('button', { name: new RegExp(`by ${seller.nickname}`) });
 
     await expect(square).toBeVisible({ timeout: 20_000 });

@@ -156,6 +156,18 @@ export async function insertRow(table: string, row: Record<string, unknown>): Pr
   }
 }
 
+/**
+ * Write one row over whatever is there. For the stores a player
+ * already has a row in by the time a spec wants to move them
+ */
+export async function upsertRow(table: string, row: Record<string, unknown>): Promise<void> {
+  const { error } = await admin.from(table).upsert(row);
+
+  if (error != null) {
+    throw new Error(`${table}: ${error.message}`);
+  }
+}
+
 /** Patch one row by id column */
 export async function patchRow(
   table: string,

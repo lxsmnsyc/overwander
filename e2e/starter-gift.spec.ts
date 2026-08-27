@@ -15,7 +15,7 @@ test.describe('the starter gift', () => {
     await signIn(page);
 
     const gifts = await openPanel(page, GIFT);
-    const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
+    const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
 
     await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });
     // The three starters, waiting for whoever asks
@@ -63,7 +63,7 @@ test.describe('the starter gift', () => {
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 
     const gifts = await openPanel(page, GIFT);
-    const pokemon = gifts.getByRole('img', { name: /^Claim Lv\./ });
+    const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
 
     // The two that were not taken are still standing there; the one
     // that was, and the balls, are gone

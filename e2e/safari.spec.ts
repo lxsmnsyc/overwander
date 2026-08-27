@@ -1,8 +1,8 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { type BoardCell, fitPicture, projectBoardCell, projectCell } from '../src/canvas/board';
 import { CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from '../src/overworld/chunk';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
+import { nameAt, placeOf, pressCell, pressEdge } from './walk';
 
 /**
  * Meeting something and catching it.
@@ -71,98 +71,6 @@ const WALK_LIMIT = (CHUNK_CELLS * 2 + WALK_SLACK) * WALK_PACE;
  * the length of the board
  */
 const MIDDLE = CHUNK_CELLS / 2;
-
-/**
- * Where a fraction of the picture sits on screen.
- *
- * Through the game's own projection and the game's own fitting rather
- * than by dividing the box into a grid. The board is drawn as a tilted
- * plane — the far rows are narrower and shallower than the near ones —
- * so an evenly divided box would aim at the wrong cell everywhere
- * except the middle. And the canvas is the whole page now, with the
- * picture fitted inside it, so the element's own box is not the
- * picture either
- */
-function spotOf(
-  bounds: { x: number; y: number; width: number; height: number },
-  point: { x: number; y: number },
-): { x: number; y: number } {
-  const frame = fitPicture(bounds.width, bounds.height);
-
-  return {
-    x: bounds.x + frame.x + point.x * frame.width,
-    y: bounds.y + frame.y + point.y * frame.height,
-  };
-}
-
-/**
- * Where a cell sits on screen
- */
-async function cellAt(world: Locator, index: number): Promise<{ x: number; y: number } | null> {
-  const bounds = await world.boundingBox();
-
-  if (bounds == null) {
-    return null;
-  }
-  return spotOf(bounds, projectCell(index));
-}
-
-/**
- * What the cell is called, which is how a spawn is told from bare
- * ground. The pointer is moved rather than the locator hovered: the
- * board is one canvas that redraws every frame, so there is nothing
- * for Playwright's actionability checks to wait for and paying for
- * them 256 times is the whole cost of the sweep
- */
-async function nameAt(page: Page, world: Locator, index: number): Promise<string> {
-  const at = await cellAt(world, index);
-
-  if (at == null) {
-    return '';
-  }
-  await page.mouse.move(at.x, at.y);
-  return (await world.getAttribute('title')) ?? '';
-}
-
-async function pressCell(page: Page, world: Locator, index: number): Promise<void> {
-  const at = await cellAt(world, index);
-
-  if (at != null) {
-    await page.mouse.click(at.x, at.y);
-  }
-}
-
-/**
- * Press one of the threshold cells around the chunk, which is how a
- * player leaves it: the walk goes to the edge and takes one more step
- * over it, into the chunk beyond
- */
-async function pressEdge(page: Page, world: Locator, cell: BoardCell): Promise<void> {
-  const bounds = await world.boundingBox();
-
-  if (bounds == null) {
-    return;
-  }
-
-  const spot = spotOf(bounds, projectBoardCell(cell));
-
-  await page.mouse.click(spot.x, spot.y);
-}
-
-/**
- * Which chunk the player is standing in, read off the board's own
- * name: "Savanna (209, -105)".
- *
- * The whole label will not do — it ends with whatever the cursor is
- * pointing at, and pressing a threshold moves the cursor onto it and
- * renames the label there and then. The country and the coordinates
- * are the part that only changes when a boundary is crossed
- */
-async function placeOf(world: Locator): Promise<string> {
-  const said = (await world.getAttribute('aria-label')) ?? '';
-
-  return /Chunk map\. ([^.]+)\./.exec(said)?.[1] ?? said;
-}
 
 /**
  * How far a cell is from the middle of the chunk, in straight steps —

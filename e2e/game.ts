@@ -139,6 +139,13 @@ export async function expectOpen(dialog: Locator, timeout?: number): Promise<voi
  */
 export const CLAIMED = 30_000;
 
+/**
+ * How long one attempt at a claim is given to show up on the shelf
+ * before it is pressed again. Short next to `CLAIMED`, which is the
+ * whole budget for however many attempts that takes
+ */
+const SETTLED = 5_000;
+
 export async function expectShut(dialog: Locator): Promise<void> {
   await expect(dialog).not.toBeAttached();
 }
@@ -155,7 +162,6 @@ const MENU_DIALOGS: Record<string, string> = {
   Pokedex: 'Pokedex',
   Inventory: 'Inventory',
   Raids: 'Raids',
-  Auctions: 'Auctions',
   Gifts: 'Gifts',
   Quests: 'Quests',
   Battle: 'Battle',
@@ -243,7 +249,11 @@ export async function chooseAction(page: Page, sheet: Locator, action: string): 
  * button is in the card over it, so it is taken the way a player takes
  * one: hover, wait for the card, press it
  */
-async function claimGift(page: Page, square: Locator): Promise<void> {
+async function claimGift(
+  page: Page,
+  square: Locator,
+  landed?: () => Promise<boolean>,
+): Promise<void> {
   const card = page.getByRole('dialog', { name: /^(Gift|Info)$/ });
 
   // Hovered again from scratch on each attempt. A card that closes
@@ -251,12 +261,24 @@ async function claimGift(page: Page, square: Locator): Promise<void> {
   // underneath, the pointer crossing a corner — is gone for good
   // otherwise: a retried click never hovers anything again
   await expect(async () => {
+    // The press is not the claim. It is a round trip, and one made
+    // while the world is still coming up can be swallowed whole,
+    // which used to leave the shelf as it was and the caller waiting
+    // on a square that was never going to go. So the shelf itself is
+    // what says the claim landed, and it is checked inside the retry
+    if (landed != null && (await landed())) {
+      return;
+    }
     // Out of the way first: a hover that moves the pointer nowhere
     // sends no `mouseenter`, and the card never opens
     await page.mouse.move(0, 0);
     await square.hover();
     await expect(card).toBeVisible({ timeout: 2000 });
     await card.getByRole('button', { name: 'Claim', exact: true }).click({ timeout: 2000 });
+
+    if (landed != null) {
+      await expect.poll(landed, { timeout: SETTLED }).toBe(true);
+    }
   }).toPass({ timeout: CLAIMED });
 }
 
@@ -276,23 +298,28 @@ export async function claimStarter(page: Page): Promise<void> {
   // every shelf, so one of them is taken and the rest are left. The
   // squares are buttons now — the card's press rides on them too
   const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
-  const taking = pokemon.first();
 
-  await expect(taking).toBeVisible({ timeout: CLAIMED });
+  await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });
 
-  const before = await pokemon.count();
+  // The one being taken, by its own name rather than by its place in
+  // the row. A retry has to be able to go back for the *same* starter:
+  // aimed at whichever is first, a second attempt made after a slow
+  // claim finally landed would take a second pokemon
+  const named = await pokemon.first().getAttribute('aria-label');
 
-  await claimGift(page, taking);
+  expect(named).not.toBeNull();
+
+  const taking = gifts.getByRole('button', { name: named ?? '', exact: true });
+
   // The shelf is read again after a claim, so the square goes when the
-  // server answers. Going for the next one before that is going for a
-  // node that is about to be replaced
-  await expect(pokemon).toHaveCount(before - 1);
+  // server answers rather than when the press lands. That square going
+  // is the claim; until it does, the press never reached the shelf
+  await claimGift(page, taking, async () => (await taking.count()) === 0);
 
   const balls = gifts.getByRole('button', { name: /^Claim \d+ × / });
 
   await expect(balls).toBeVisible();
-  await claimGift(page, balls);
-  await expect(balls).toHaveCount(0);
+  await claimGift(page, balls, async () => (await balls.count()) === 0);
 
   await gifts.getByRole('button', { name: 'Close' }).click();
   await expectShut(gifts);

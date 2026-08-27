@@ -2,6 +2,7 @@ import { type Browser, type Locator, type Page, expect, test } from '@playwright
 import { PERFECT_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
 import { copyable, findRows, insertRow, patchRow, setBagItem, setGold, uidOf } from './admin';
+import { openAuctionBoard } from './walk';
 import {
   type Player,
   claimStarter,
@@ -197,7 +198,7 @@ test.describe('the auction house', () => {
     await setBagItem(seller.uid, Items.MasterBall, 1);
     await seller.page.reload();
 
-    const sellerBoard = await openPanel(seller.page, 'Auctions');
+    const sellerBoard = await openAuctionBoard(seller.page, seller.player);
 
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
     // The bag is a tray of pictures, so the square says what pressing
@@ -212,7 +213,7 @@ test.describe('the auction house', () => {
     // The other side of the board
     await grantGold(buyer, 100);
 
-    const buyerBoard = await openPanel(buyer.page, 'Auctions');
+    const buyerBoard = await openAuctionBoard(buyer.page, buyer.player);
 
     const lot = lotOf(buyerBoard, seller, 'item');
 
@@ -273,7 +274,7 @@ test.describe('the auction house', () => {
     });
     await seller.page.reload();
 
-    const sellerBoard = await openPanel(seller.page, 'Auctions');
+    const sellerBoard = await openAuctionBoard(seller.page, seller.player);
 
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
 
@@ -292,7 +293,7 @@ test.describe('the auction house', () => {
 
     await grantGold(buyer, 100);
 
-    const buyerBoard = await openPanel(buyer.page, 'Auctions');
+    const buyerBoard = await openAuctionBoard(buyer.page, buyer.player);
 
     const lot = lotOf(buyerBoard, seller, 'catch');
 

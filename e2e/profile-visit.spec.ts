@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { findRows, uidOf } from './admin';
-import { SHEET, claimStarter, dialogNamed, expectOpen, openPanel, signIn } from './game';
+import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
 import { stageCatchLot, stageSeller } from './stranger';
+import { openAuctionBoard } from './walk';
 
 /**
  * Looking at somebody else.
@@ -18,10 +19,10 @@ test.describe('another trainer', () => {
   test('opens from the board, with nothing on it to press', async ({ page }) => {
     const seller = await stageSeller('Wisteria');
 
-    await signIn(page);
+    const player = await signIn(page);
     await claimStarter(page);
 
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
     const square = board.getByRole('button', { name: new RegExp(`by ${seller.nickname}`) });
 
     // The board follows the auctions collection, so the staged lot
@@ -70,7 +71,7 @@ test.describe('another trainer', () => {
     expect(starter, 'the starter should be there').toBeTruthy();
     await stageCatchLot(seller, String(starter.id));
 
-    const board = await openPanel(page, 'Auctions');
+    const board = await openAuctionBoard(page, player);
     // Every lot of theirs says who listed it, and the staging put an
     // item of theirs up as well; the pokemon is a square of the box
     // rather than of the bag, and the card over it opens the record
